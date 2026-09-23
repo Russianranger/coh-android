@@ -17,13 +17,24 @@ Updated: 2026-09-23.
 - Wrote [the staged Android proposal](ANDROID_PORT_PROPOSAL.md) and verified
   snapshot identity. No port implementation or APK was created in this assessment.
 
+## User environment constraint
+
+The user has no Windows PC. Do not require Windows installation, a local MSVC
+build, SQL Server administration, or a desktop-client gameplay test from the user.
+Use GitHub-hosted Windows runners for build/reference automation and deliver
+artifacts for testing on the AYN Thor. A headless TestClient smoke test on CI is
+not a substitute for visual/gameplay verification; bring forward a Thor client
+runtime probe and test full gameplay there. Cloud build/SQL tooling compatibility
+still needs verification. No paid cloud resources are assumed.
+
 ## Next implementation sequence
 
 1. **Reference build and data:** set up a Windows build runner matching the
    imported presets; freeze its toolchain and all dependencies. Obtain the
    companion data candidate at the lock's revision, inventory external binary
-   assets, generate templates/bins, and create a hashed runtime package. Prove
-   combat, normal mission entry/exit and character save/reload using MSSQL.
+   assets, generate templates/bins, and create a hashed runtime package. Use
+   headless TestClient/reference fixtures in CI; verify combat, normal mission
+   entry/exit and saves on Thor when the diagnostic client is ready.
 2. **Database prototype:** add an x86 Windows ODBC connection/transaction harness
    for PostgreSQL. Audit provider-specific SQL and attributes; fix the confirmed
    `sqlRemoveIndexAsync` PostgreSQL syntax error on a separate port branch. Test
@@ -32,7 +43,7 @@ Updated: 2026-09-23.
    candidate, Win32 ODBC harness, process supervision and support-log export.
    Prove app-identity execution, child processes, shutdown and restart on Thor.
 4. **Playable server:** integrate modified DBServer, Launcher/MapServer and any
-   services actually required by the profile. Test with a desktop client first.
+   services actually required by the profile. Test with headless TestClient first, then the Thor diagnostic client.
 5. **Integrated client:** evaluate OpenGL/Cg via Wine/Mesa and the selected Vulkan
    driver; add editable controller mapping, audio, surface and focus handling.
 6. **Product workflow:** imports/profiles, offline operation, backup/restore,
