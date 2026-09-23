@@ -5,6 +5,11 @@ Adreno 740, 16 GB RAM. Scope: an app that can ultimately run both a local
 City of Heroes server and its matching client, without a separate Termux install,
 root, external SQL Server, or an always-on PC after setup.
 
+**User constraint:** no Windows PC is available, including during setup. Windows
+build/reference work must run on GitHub-hosted Windows runners; user-facing
+installation and gameplay testing must be possible on the AYN Thor. No purchase
+of cloud compute is assumed. [GitHub-hosted runners](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners).
+
 ## Recommendation and evidence boundary
 
 Proceed with a **compatibility runtime first**, using native ARM64 PostgreSQL
@@ -67,9 +72,10 @@ flowchart TD
 ```
 
 This is a proposed process/graphics arrangement, not a currently implemented
-pipeline. A PC client connects to the Android server during early tests to
-separate server faults from client-rendering faults. The final app can have both
-server-only and integrated-client modes.
+pipeline. Headless TestClient automation isolates server faults first. Bring
+forward a Thor client-runtime probe for graphical/gameplay tests; a desktop
+client is optional and must not be a user prerequisite. The final app can have
+both server-only and integrated-client modes.
 
 ### Architecture choices
 
@@ -261,7 +267,7 @@ creating destination CI. Offline reproducibility needs a dependency cache with
 hashes for all CPM downloads. The existing upstream workflows are reference files
 only; they are not active at this repository's root.
 
-Initially compile CoH on a Windows build machine/runner and deliver versioned
+Initially compile CoH on GitHub-hosted Windows runners and deliver versioned
 runtime packages to Android. In-app compilation is a later feature: this baseline
 requires MSVC for the main targets. Downloading source into Android does not
 provide that compiler or make the Win32 dependency graph NDK-buildable.
@@ -288,14 +294,19 @@ then proceed independently once their common reference is fixed.
 
 | Stage | Deliverable | Acceptance gate | Risk |
 | --- | --- | --- | --- |
-| M0: reference baseline | Windows source build, pinned companion assets, templates/bins and version manifest | Create a character, enter Atlas Park, fight, enter/exit an ordinary mission, restart and reload saved state using MSSQL | Medium; content/toolchain unknowns |
+| M0: reference baseline | Windows source build, pinned companion assets, templates/bins and version manifest | CI builds and headless character/map/persistence checks pass using MSSQL; retain fixtures and complete visual/combat/mission validation on the Thor diagnostic client | Medium; content/toolchain unknowns |
 | M1: portable persistence | Repaired PostgreSQL DBServer path and minimum account/auth behavior | Same reference gameplay with SQL Server stopped; CRUD, schema upgrade, rollback, reconnect and crash-recovery checks pass | High; major correctness gate |
 | M2: diagnostic Android APK | PostgreSQL, process supervisor, Wine/translator, Win32 ODBC test, logs | On the Thor under app identity: initialize DB, transaction round trip, restart, launch x86 process/DLL, cleanly stop without Termux/root | High; runtime packaging gate |
-| M3: Android server | Minimum required services and managed MapServer lifecycle | PC client plays against Thor; ordinary mission transfer and post-restart character persistence work; peak memory recorded | High; first playable server |
+| M3: Android server | Minimum required services and managed MapServer lifecycle | Headless client checks pass, then the Thor diagnostic client plays locally; ordinary mission transfer and post-restart persistence work; peak memory recorded | High; first playable server |
 | M4: integrated client | OpenGL/Cg hardware path, audio, controller, Android surface | Character creator/world/effects render correctly; movement, power trays and text work; local server and client run together | High; graphics/resource gate |
 | M5: usable offline app | Guided imports, profiles, version validation, backup/restore, recovery | Fresh install through play without a shell; airplane-mode operation; restore into clean profile; repeated transfers and two-hour session | Medium after research gates |
 | M6: broader services | Selected chat/mail, auction, bases, Architect, arena features | Each enabled feature passes gameplay, persistence and multi-service restart consistency tests | Variable |
 | M7: native conversion | Incremental ARM64 platform/backend replacements | Behavior matches reference and measured memory/CPU/thermal benefit justifies migration | Very high; long-term |
+
+Add a basic Thor client-runtime probe alongside M2 so M3 gameplay testing does
+not depend on a Windows PC. CI TestClient coverage must be audited and expanded
+where needed; a headless connection test alone does not establish combat, mission
+or graphical correctness. GitHub-hosted CI is not a persistent public game server.
 
 M2 may yield an APK before the game is playable. Name and document such a build as
 a diagnostic APK, with narrow test instructions. Do not equate reaching login,
