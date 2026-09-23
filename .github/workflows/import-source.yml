@@ -1,0 +1,38 @@
+name: Import pinned OuroDev-derived source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/import-source.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-pinned-source
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out destination
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+      - name: Import and verify locked source
+        run: |
+          git config core.autocrlf false
+          python3 tools/import_source.py
+      - name: Commit verified source snapshot
+        run: |
+          if git diff --cached --quiet; then
+            echo 'Pinned source is already present and verified.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Import complete pinned OuroDev-derived source snapshot'
+          git push origin HEAD:main

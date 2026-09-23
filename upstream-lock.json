@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "imported_at": "2026-09-23",
+  "destination": "upstream/ouroboros",
+  "upstream_project": "Project Ouroboros / OuroDev",
+  "canonical_source_url": "https://git.ourodev.com/CoX/Source",
+  "acquisition_url": "https://github.com/Thunderspies/CityOfHeroes.git",
+  "acquisition_branch": "master",
+  "commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "provenance": "Public downstream fork; README explicitly states OuroDev ancestry. Not verified byte-identical to canonical OuroDev; contains downstream changes.",
+  "direct_access_result": "OuroDev GitLab and git ls-remote returned HTTP 502; wiki returned HTTP 403.",
+  "files": 5995,
+  "bytes": 173081714,
+  "manifest": "docs/source-manifest.json",
+  "companion_data": {
+    "url": "https://github.com/Thunderspies/i24.git",
+    "commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "status": "referenced, not vendored; binary assets are separate"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "files": 5995,
+  "bytes": 173081714,
+  "directories": {
+    "(root)": {
+      "files": 5,
+      "bytes": 16517
+    },
+    ".github": {
+      "files": 3,
+      "bytes": 10854
+    },
+    "3rdparty": {
+      "files": 1839,
+      "bytes": 102079887
+    },
+    "AccountServer": {
+      "files": 30,
+      "bytes": 260083
+    },
+    "ArenaServer": {
+      "files": 13,
+      "bytes": 195441
+    },
+    "Assets": {
+      "files": 4,
+      "bytes": 56221
+    },
+    "AuctionServer": {
+      "files": 21,
+      "bytes": 161575
+    },
+    "AuthServer": {
+      "files": 84,
+      "bytes": 546279
+    },
+    "ChatAdmin": {
+      "files": 30,
+      "bytes": 170678
+    },
+    "ChatServer": {
+      "files": 28,
+      "bytes": 194236
+    },
+    "CmdRelay": {
+      "files": 10,
+      "bytes": 45003
+    },
+    "Common": {
+      "files": 445,
+      "bytes": 6353073
+    },
+    "DBServer": {
+      "files": 92,
+      "bytes": 1216241
+    },
+    "Game": {
+      "files": 851,
+      "bytes": 15060072
+    },
+    "Launcher": {
+      "files": 10,
+      "bytes": 56856
+    },
+    "MapServer": {
+      "files": 600,
+      "bytes": 11518832
+    },
+    "MissionServer": {
+      "files": 10,
+      "bytes": 337236
+    },
+    "QueueServer": {
+      "files": 8,
+      "bytes": 68160
+    },
+    "RaidServer": {
+      "files": 8,
+      "bytes": 90525
+    },
+    "ServerMonitor": {
+      "files": 46,
+      "bytes": 383818
+    },
+    "ShardMonitor": {
+      "files": 5,
+      "bytes": 16586
+    },
+    "StatServer": {
+      "files": 12,
+      "bytes": 164109
+    },
+    "TurnstileServer": {
+      "files": 10,
+      "bytes": 124737
+    },
+    "Utilities": {
+      "files": 1102,
+      "bytes": 27803080
+    },
+    "cmake": {
+      "files": 39,
+      "bytes": 106791
+    },
+    "data": {
+      "files": 3,
+      "bytes": 14947
+    },
+    "doc": {
+      "files": 1,
+      "bytes": 138
+    },
+    "libs": {
+      "files": 686,
+      "bytes": 6029739
+    }
+  },
+  "extensions": {
+    ".h": 2995,
+    ".c": 1443,
+    ".cpp": 415,
+    ".cs": 181,
+    ".lib": 136,
+    ".txt": 80,
+    ".png": 61,
+    ".php": 59,
+    "": 57,
+    ".resx": 54,
+    ".dll": 48,
+    ".ico": 45,
+    ".bmp": 43,
+    ".cmake": 33,
+    ".dlu": 30,
+    ".hpp": 27,
+    ".rc": 26,
+    ".vcproj": 22,
+    ".sln": 20,
+    ".def": 19,
+    ".sql": 17,
+    ".dlm": 14,
+    ".dle": 12,
+    ".dlo": 12,
+    ".exe": 10,
+    ".cur": 10,
+    ".vcxproj": 8,
+    ".filters": 8,
+    ".gup": 6,
+    ".csproj": 6,
+    ".patch": 6,
+    ".py": 5,
+    ".dlx": 4,
+    ".dlt": 4,
+    ".dli": 4,
+    ".str": 4,
+    ".flt": 4,
+    ".y": 4,
+    ".l": 4,
+    ".settings": 4,
+    ".html": 4,
+    ".reg": 3,
+    ".md": 3,
+    ".rtf": 3,
+    ".cfg": 3,
+    ".yml": 2,
+    ".dlr": 2,
+    ".dlv": 2,
+    ".dls": 2,
+    ".pl": 2,
+    ".css": 2,
+    ".user": 2,
+    ".xaml": 2,
+    ".ps1": 1,
+    ".r": 1,
+    ".dir": 1,
+    ".pdf": 1,
+    ".dat": 1,
+    ".hairy": 1,
+    ".simple": 1,
+    ".sample": 1,
+    ".json": 1,
+    ".log": 1,
+    ".pfx": 1,
+    ".cd": 1,
+    ".manifest": 1,
+    ".gif": 1,
+    ".psd": 1,
+    ".prefs": 1,
+    ".conf": 1,
+    ".exp": 1,
+    ".config": 1,
+    ".rc2": 1,
+    ".bat": 1,
+    ".pyx": 1,
+    ".bak": 1
+  }
+}
