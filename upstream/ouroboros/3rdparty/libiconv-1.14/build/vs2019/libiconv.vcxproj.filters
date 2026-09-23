@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Public Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Private Header Files">
+      <UniqueIdentifier>{98e5eac6-7fe8-4fdd-9930-f10d7fba6849}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\localcharset.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\relocatable.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\iconv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\libiconv\iconv.h">
+      <Filter>Public Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\libiconv\config.h">
+      <Filter>Public Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs4.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs4be.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs4internal.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs4le.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs4swapped.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uhc_1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\uhc_2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf7.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf8.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf16.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf16be.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf16le.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf32.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf32be.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\utf32le.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vietcomb.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\viscii.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_aix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_aix_sysaix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_dos.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_extra.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_osf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_osf1_sysosf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_sysaix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_syshpux.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_sysosf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases_syssolaris.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\aliases2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\armscii_8.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ascii.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\atarist.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5_2003.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5hkscs1999.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5hkscs2001.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5hkscs2004.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\big5hkscs2008.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\c99.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_aix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_aix_sysaix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_dos.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_extra.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_local.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_local_sysaix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_local_syshpux.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_local_sysosf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_local_syssolaris.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_osf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_osf1_sysosf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_sysaix.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_syshpux.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_sysosf1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\canonical_syssolaris.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ces_big5.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ces_gbk.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cjk_variants.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_3.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_4.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_4a.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_4b.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_5.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_6.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_7.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_15.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cns11643_inv.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\converters.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp437.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp737.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp775.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp850.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp852.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp853.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp855.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp856.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp857.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp858.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp860.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp861.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp862.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp863.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp864.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp865.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp866.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp869.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp874.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp922.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp932.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp932ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp936.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp936ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp943.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp949.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp950.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp950ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1046.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1124.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1125.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1129.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1131.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1133.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1161.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1162.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1163.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1250.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1251.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1252.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1253.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1254.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1255.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1256.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1257.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cp1258.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\dec_hanyu.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\dec_kanji.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\euc_cn.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\euc_jisx0213.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\euc_jp.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\euc_kr.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\euc_tw.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\flags.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\flushwc.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb2312.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb12345.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb12345ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb18030.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb18030ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gb18030uni.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gbk.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gbkext_inv.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gbkext1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\gbkext2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\georgian_academy.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\georgian_ps.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hkscs1999.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hkscs2001.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hkscs2004.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hkscs2008.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hp_roman8.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hz.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iconv_open1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iconv_open2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso646_cn.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso646_jp.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_cn.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_cnext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_jp.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_jp1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_jp2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_jp3.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso2022_kr.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_3.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_4.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_5.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_6.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_7.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_8.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_9.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_10.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_11.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_13.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_14.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_15.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\iso8859_16.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\isoir165.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\isoir165ext.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\java.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jisx0201.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jisx0208.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jisx0212.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jisx0213.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\johab.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\johab_hangul.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\koi8_r.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\koi8_ru.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\koi8_t.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\koi8_u.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ksc5601.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\localcharset.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\loop_unicode.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\loop_wchar.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\loops.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_arabic.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_centraleurope.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_croatian.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_cyrillic.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_greek.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_hebrew.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_iceland.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_roman.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_romania.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_thai.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_turkish.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mac_ukraine.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mulelao.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\nextstep.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\pt154.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\relocatable.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\riscos1.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\rk1048.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shift_jisx0213.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sjis.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tcvn.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tds565.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tis620.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\translit.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs2.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs2be.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs2internal.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs2le.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ucs2swapped.h">
+      <Filter>Private Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

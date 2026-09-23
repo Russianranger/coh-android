@@ -1,0 +1,10 @@
+@INCLUDE_PATH = ..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "Game Client"
+
+INPUT += ..\..\Common
+INPUT += ..\..\libs\UtilitiesLib\include
+EXCLUDE_PATTERNS += */Common/*.c \
+                    */Common/**/*.c \
+                    */Common/**/*.cpp

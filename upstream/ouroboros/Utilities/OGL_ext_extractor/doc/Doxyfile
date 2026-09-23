@@ -1,0 +1,4 @@
+@INCLUDE_PATH = ..\..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "OGL_ext_extractor Utility"

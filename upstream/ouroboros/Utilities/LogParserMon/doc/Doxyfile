@@ -1,0 +1,4 @@
+@INCLUDE_PATH = ..\..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "LogParserMon Utility"

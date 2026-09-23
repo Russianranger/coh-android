@@ -1,0 +1,11 @@
+@INCLUDE_PATH = ..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "Login Queue Server"
+
+INPUT += ..\..\Common
+INPUT += ..\..\libs\UtilitiesLib\include
+INPUT += ..\..\libs\ServerLib\include
+EXCLUDE_PATTERNS += */Common/*.c \
+                    */Common/**/*.c \
+                    */Common/**/*.cpp

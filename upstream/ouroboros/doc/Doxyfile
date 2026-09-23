@@ -1,0 +1,7 @@
+@INCLUDE_PATH = ..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "Common Code"
+PROJECT_BRIEF = "Shared code between projects"
+
+INPUT += ..\Common

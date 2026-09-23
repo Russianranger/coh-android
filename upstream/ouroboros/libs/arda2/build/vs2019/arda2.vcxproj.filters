@@ -1,0 +1,818 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{66106890-f926-456a-8b47-80565fabda31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\error">
+      <UniqueIdentifier>{cd9acc6d-afc0-47a5-bc68-f56733131570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\math">
+      <UniqueIdentifier>{9ecfac3f-ebff-4014-8c94-d244d0cdc2ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\memory">
+      <UniqueIdentifier>{6c9d3e8c-4ca8-48c3-b307-f31bcf75b763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\perf">
+      <UniqueIdentifier>{bbd3088f-2343-4a9e-b035-50d665912c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\properties">
+      <UniqueIdentifier>{003bbdc9-89b3-422a-85f8-c7311e19afec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\storage">
+      <UniqueIdentifier>{9265ebc5-ddbe-43bf-b992-4bcfffebb8f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{c22d27df-a2db-473d-b1b6-be47c4683a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thread">
+      <UniqueIdentifier>{22d3353a-f0ad-4bdd-be6f-9ffb019bfa06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\timer">
+      <UniqueIdentifier>{9a533243-a042-4c08-9510-734fa723c19d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{2b129b69-c2f9-4cdc-b0db-e7b421dec87a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Public Header Files\core">
+      <UniqueIdentifier>{a6863f6a-3318-4bd7-8ea7-54db68cc6fa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\error">
+      <UniqueIdentifier>{ea06fed2-ca12-43b4-9e0c-664336e37115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\math">
+      <UniqueIdentifier>{5b666938-0b6f-45e3-ab80-3c59d16be2bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\memory">
+      <UniqueIdentifier>{52cb942b-d78c-4512-870c-d6d3648755b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\util">
+      <UniqueIdentifier>{7a1abcf3-6b6c-42af-9497-89239109ab4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\timer">
+      <UniqueIdentifier>{8e450a18-8434-407e-91fb-35cb4533116e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\thread">
+      <UniqueIdentifier>{31a533d0-277b-496b-b0d6-22910dd96e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\storage">
+      <UniqueIdentifier>{73c5ae7c-46e5-44a8-9e8b-dec647adb002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\properties">
+      <UniqueIdentifier>{53654d2b-e4d8-4d23-a0eb-01b6c1092a70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\perf">
+      <UniqueIdentifier>{d1079024-f7c9-4019-95fa-29f8d01e5bc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Header Files\test">
+      <UniqueIdentifier>{be9213c9-ba18-41ed-9204-47890c8bbf75}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\core\corError.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\corErrorHandler.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\corStlHashFunc.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\corWindows.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\corArgFormatter.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\perf\prfCounter.cpp">
+      <Filter>Source Files\perf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\perf\prfMonitor.cpp">
+      <Filter>Source Files\perf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\perf\prfSizer.cpp">
+      <Filter>Source Files\perf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timer\timSystemTime.cpp">
+      <Filter>Source Files\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timer\timTimer.cpp">
+      <Filter>Source Files\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\error\errErrorHandlerDialog.cpp">
+      <Filter>Source Files\error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\error\errErrorHandlerLogger.cpp">
+      <Filter>Source Files\error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlModule.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlPoint.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlProperty.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlRect.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlRegistry.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlSize.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlStackDbg.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlStringHeap.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlStringTable.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlTokenizer.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlBitArray.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlCmdLineParser.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\utlGenericHash.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proClassRegistry.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proFirst.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObject.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObjectImpl.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObjectReader.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObjectReaderXML.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObjectWriter.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObjectWriterXML.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObserver.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proObserverTree.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proProperty.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proPropertyFunction.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proPropertyNative.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proPropertyOwner.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proStringUtils.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proUndoCmds.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proUndoList.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proValidator.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proXmlParser.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proAdapter.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proChildSort.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proClass.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proClassAdapter.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proClassNative.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\properties\proClassOwner.cpp">
+      <Filter>Source Files\properties</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matColor.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matColorConvert.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matColorInt.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matConstants.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matD3DXMathEmu.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matDistance.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matFarPlane.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matFarPosition.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matFarTransform.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matIntersect.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matIntVector3.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matIntVector4.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matMatrix4x3T.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matMatrix4x4.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matPlane.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matProperty.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matQuaternion.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matRandom.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matTransform.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matUtils.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matVector3.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matVector4.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\math\matAdapters.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memMemory.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memExplicitHeap.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memMemoryDbg.cpp">
+      <Filter>Source Files\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoChunk.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoCompressor.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoConfigFile.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoFile.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoFileMemory.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoFileMemoryMap.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoFileOSFile.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoFileUtils.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoObjectReaderChunk.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoObjectWriterChunk.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoPackOSFile.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoProperty.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\storage\stoPropertyStream.cpp">
+      <Filter>Source Files\storage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\thread\thrKernelEvent.cpp">
+      <Filter>Source Files\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\thread\thrThread.cpp">
+      <Filter>Source Files\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\tstUnit.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\tstFramework.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\arda2\core\corAssert.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corCast.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corCompilerAssert.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corDbgBreak.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corError.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corErrorHandler.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corErrorTypes.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corFirst.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corHashStringCompare.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corPlatform.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corPlatformMacros.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStdPost_P.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStdPre_P.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStdString.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlAlgorithm.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlDeque.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlFunctional.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlHashFunc.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlHashmap.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlHashSet.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlHashTraits.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlList.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlMap.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlQueue.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlSet.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlStack.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlUtility.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corStlVector.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corTypes.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corWindows.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\core\corArgFormatter.h">
+      <Filter>Public Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\timer\timIntervalTimer.h">
+      <Filter>Public Header Files\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\timer\timSystemTime.h">
+      <Filter>Public Header Files\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\timer\timTimer.h">
+      <Filter>Public Header Files\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\perf\prfMonitor.h">
+      <Filter>Public Header Files\perf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\perf\prfSizer.h">
+      <Filter>Public Header Files\perf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\perf\prfCounter.h">
+      <Filter>Public Header Files\perf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\error\errErrorHandlerDialog.h">
+      <Filter>Public Header Files\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\error\errErrorHandlerLogger.h">
+      <Filter>Public Header Files\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlBitFlag.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlBlockAllocator.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlCallback.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlCmdLineParser.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlEnumOperators.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlGenericHash.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlModule.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlPair.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlPoint.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlProperty.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlRect.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlRefCount.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlRefHandle.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlRefSmartPtr.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlRegistry.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlResourceHeap.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlSafeTypeInfo.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlSingleton.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlSize.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlStackDbg.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlStringHeap.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlStringTable.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlTokenizer.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\util\utlBitArray.h">
+      <Filter>Public Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proClass.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proClassAdapter.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proClassNative.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proClassOwner.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proClassRegistry.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proFirst.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObject.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObjectImpl.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObjectReader.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObjectReaderXML.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObjectWriter.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObjectWriterXML.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObserver.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proObserverTree.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proProperty.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyDelegate.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyFunction.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyNative.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyOwner.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proStream.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proStringUtils.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proUndoCmds.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proUndoList.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proValidator.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proXmlParser.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proAdapter.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proAux.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\properties\proChildSort.h">
+      <Filter>Public Header Files\properties</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matD3DXMathEmu.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matDistance.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matFarPlane.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matFarPosition.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matFarTransform.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matFirst.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matIntersect.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matIntVector2.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matIntVector3.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matIntVector4.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x3T.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x4.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x4T.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matPlane.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matProperty.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matQuaternion.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matRandom.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matSerialization.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matSubspace.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matTransform.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matTypes.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matUtils.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matVector2.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matVector3.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matVector4.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matAdapters.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matColor.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matColorConvert.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matColorInt.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\math\matConstants.h">
+      <Filter>Public Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\memory\memMemory.h">
+      <Filter>Public Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\memory\memMemoryDbg.h">
+      <Filter>Public Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\memory\memExplicitHeap.h">
+      <Filter>Public Header Files\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoChunk.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoCompressor.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoConfigFile.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFile.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileBuffer.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileMemory.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileMemoryMap.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileOSFile.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileUtils.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFileView.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFindFile.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoFirst.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectChunk.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectReaderChunk.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectWriterChunk.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoPackOSFile.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoProperty.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoPropertyStream.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoSafeList.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoSerialization.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\storage\stoAbstractUnserializationFactory.h">
+      <Filter>Public Header Files\storage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\thread\thrCritical.h">
+      <Filter>Public Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelEvent.h">
+      <Filter>Public Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelMutex.h">
+      <Filter>Public Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelObject.h">
+      <Filter>Public Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\thread\thrThread.h">
+      <Filter>Public Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\test\tstFramework.h">
+      <Filter>Public Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\arda2\test\tstUnit.h">
+      <Filter>Public Header Files\test</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

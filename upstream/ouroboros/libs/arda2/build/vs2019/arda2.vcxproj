@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{34C02977-76F9-4255-A87E-E0353E9E4A19}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>arda2</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)intermediate\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)intermediate\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)intermediate\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)..\..\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(OutDir)intermediate\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\3rdparty\zlib-1.2.11\include;$(ProjectDir)..\..\..\..\3rdparty\bzip2-1.0.6\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\3rdparty\zlib-1.2.11\include;$(ProjectDir)..\..\..\..\3rdparty\bzip2-1.0.6\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\3rdparty\zlib-1.2.11\include;$(ProjectDir)..\..\..\..\3rdparty\bzip2-1.0.6\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\3rdparty\zlib-1.2.11\include;$(ProjectDir)..\..\..\..\3rdparty\bzip2-1.0.6\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\core\corArgFormatter.cpp" />
+    <ClCompile Include="..\..\src\core\corError.cpp" />
+    <ClCompile Include="..\..\src\core\corErrorHandler.cpp" />
+    <ClCompile Include="..\..\src\core\corStlHashFunc.cpp" />
+    <ClCompile Include="..\..\src\core\corWindows.cpp" />
+    <ClCompile Include="..\..\src\error\errErrorHandlerDialog.cpp" />
+    <ClCompile Include="..\..\src\error\errErrorHandlerLogger.cpp" />
+    <ClCompile Include="..\..\src\math\matAdapters.cpp" />
+    <ClCompile Include="..\..\src\math\matColor.cpp" />
+    <ClCompile Include="..\..\src\math\matColorConvert.cpp" />
+    <ClCompile Include="..\..\src\math\matColorInt.cpp" />
+    <ClCompile Include="..\..\src\math\matConstants.cpp" />
+    <ClCompile Include="..\..\src\math\matD3DXMathEmu.cpp" />
+    <ClCompile Include="..\..\src\math\matDistance.cpp" />
+    <ClCompile Include="..\..\src\math\matFarPlane.cpp" />
+    <ClCompile Include="..\..\src\math\matFarPosition.cpp" />
+    <ClCompile Include="..\..\src\math\matFarTransform.cpp" />
+    <ClCompile Include="..\..\src\math\matIntersect.cpp" />
+    <ClCompile Include="..\..\src\math\matIntVector3.cpp" />
+    <ClCompile Include="..\..\src\math\matIntVector4.cpp" />
+    <ClCompile Include="..\..\src\math\matMatrix4x3T.cpp" />
+    <ClCompile Include="..\..\src\math\matMatrix4x4.cpp" />
+    <ClCompile Include="..\..\src\math\matPlane.cpp" />
+    <ClCompile Include="..\..\src\math\matProperty.cpp" />
+    <ClCompile Include="..\..\src\math\matQuaternion.cpp" />
+    <ClCompile Include="..\..\src\math\matRandom.cpp" />
+    <ClCompile Include="..\..\src\math\matTransform.cpp" />
+    <ClCompile Include="..\..\src\math\matUtils.cpp" />
+    <ClCompile Include="..\..\src\math\matVector3.cpp" />
+    <ClCompile Include="..\..\src\math\matVector4.cpp" />
+    <ClCompile Include="..\..\src\memory\memExplicitHeap.cpp" />
+    <ClCompile Include="..\..\src\memory\memMemory.cpp" />
+    <ClCompile Include="..\..\src\memory\memMemoryDbg.cpp" />
+    <ClCompile Include="..\..\src\perf\prfCounter.cpp" />
+    <ClCompile Include="..\..\src\perf\prfMonitor.cpp" />
+    <ClCompile Include="..\..\src\perf\prfSizer.cpp" />
+    <ClCompile Include="..\..\src\properties\proAdapter.cpp" />
+    <ClCompile Include="..\..\src\properties\proChildSort.cpp" />
+    <ClCompile Include="..\..\src\properties\proClass.cpp" />
+    <ClCompile Include="..\..\src\properties\proClassAdapter.cpp" />
+    <ClCompile Include="..\..\src\properties\proClassNative.cpp" />
+    <ClCompile Include="..\..\src\properties\proClassOwner.cpp" />
+    <ClCompile Include="..\..\src\properties\proClassRegistry.cpp" />
+    <ClCompile Include="..\..\src\properties\proFirst.cpp" />
+    <ClCompile Include="..\..\src\properties\proObject.cpp" />
+    <ClCompile Include="..\..\src\properties\proObjectImpl.cpp" />
+    <ClCompile Include="..\..\src\properties\proObjectReader.cpp" />
+    <ClCompile Include="..\..\src\properties\proObjectReaderXML.cpp" />
+    <ClCompile Include="..\..\src\properties\proObjectWriter.cpp" />
+    <ClCompile Include="..\..\src\properties\proObjectWriterXML.cpp" />
+    <ClCompile Include="..\..\src\properties\proObserver.cpp" />
+    <ClCompile Include="..\..\src\properties\proObserverTree.cpp" />
+    <ClCompile Include="..\..\src\properties\proProperty.cpp" />
+    <ClCompile Include="..\..\src\properties\proPropertyFunction.cpp" />
+    <ClCompile Include="..\..\src\properties\proPropertyNative.cpp" />
+    <ClCompile Include="..\..\src\properties\proPropertyOwner.cpp" />
+    <ClCompile Include="..\..\src\properties\proStringUtils.cpp" />
+    <ClCompile Include="..\..\src\properties\proUndoCmds.cpp" />
+    <ClCompile Include="..\..\src\properties\proUndoList.cpp" />
+    <ClCompile Include="..\..\src\properties\proValidator.cpp" />
+    <ClCompile Include="..\..\src\properties\proXmlParser.cpp" />
+    <ClCompile Include="..\..\src\storage\stoChunk.cpp" />
+    <ClCompile Include="..\..\src\storage\stoCompressor.cpp" />
+    <ClCompile Include="..\..\src\storage\stoConfigFile.cpp" />
+    <ClCompile Include="..\..\src\storage\stoFile.cpp" />
+    <ClCompile Include="..\..\src\storage\stoFileMemory.cpp" />
+    <ClCompile Include="..\..\src\storage\stoFileMemoryMap.cpp" />
+    <ClCompile Include="..\..\src\storage\stoFileOSFile.cpp" />
+    <ClCompile Include="..\..\src\storage\stoFileUtils.cpp" />
+    <ClCompile Include="..\..\src\storage\stoObjectReaderChunk.cpp" />
+    <ClCompile Include="..\..\src\storage\stoObjectWriterChunk.cpp" />
+    <ClCompile Include="..\..\src\storage\stoPackOSFile.cpp" />
+    <ClCompile Include="..\..\src\storage\stoProperty.cpp" />
+    <ClCompile Include="..\..\src\storage\stoPropertyStream.cpp" />
+    <ClCompile Include="..\..\src\test\tstFramework.cpp" />
+    <ClCompile Include="..\..\src\test\tstUnit.cpp" />
+    <ClCompile Include="..\..\src\thread\thrKernelEvent.cpp" />
+    <ClCompile Include="..\..\src\thread\thrThread.cpp" />
+    <ClCompile Include="..\..\src\timer\timSystemTime.cpp" />
+    <ClCompile Include="..\..\src\timer\timTimer.cpp" />
+    <ClCompile Include="..\..\src\util\utlBitArray.cpp" />
+    <ClCompile Include="..\..\src\util\utlCmdLineParser.cpp" />
+    <ClCompile Include="..\..\src\util\utlGenericHash.cpp" />
+    <ClCompile Include="..\..\src\util\utlModule.cpp" />
+    <ClCompile Include="..\..\src\util\utlPoint.cpp" />
+    <ClCompile Include="..\..\src\util\utlProperty.cpp" />
+    <ClCompile Include="..\..\src\util\utlRect.cpp" />
+    <ClCompile Include="..\..\src\util\utlRegistry.cpp" />
+    <ClCompile Include="..\..\src\util\utlSize.cpp" />
+    <ClCompile Include="..\..\src\util\utlStackDbg.cpp" />
+    <ClCompile Include="..\..\src\util\utlStringHeap.cpp" />
+    <ClCompile Include="..\..\src\util\utlStringTable.cpp" />
+    <ClCompile Include="..\..\src\util\utlTokenizer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\arda2\core\corArgFormatter.h" />
+    <ClInclude Include="..\..\include\arda2\core\corAssert.h" />
+    <ClInclude Include="..\..\include\arda2\core\corCast.h" />
+    <ClInclude Include="..\..\include\arda2\core\corCompilerAssert.h" />
+    <ClInclude Include="..\..\include\arda2\core\corDbgBreak.h" />
+    <ClInclude Include="..\..\include\arda2\core\corError.h" />
+    <ClInclude Include="..\..\include\arda2\core\corErrorHandler.h" />
+    <ClInclude Include="..\..\include\arda2\core\corErrorTypes.h" />
+    <ClInclude Include="..\..\include\arda2\core\corFirst.h" />
+    <ClInclude Include="..\..\include\arda2\core\corHashStringCompare.h" />
+    <ClInclude Include="..\..\include\arda2\core\corPlatform.h" />
+    <ClInclude Include="..\..\include\arda2\core\corPlatformMacros.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStdPost_P.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStdPre_P.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStdString.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlAlgorithm.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlDeque.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlFunctional.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlHashFunc.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlHashmap.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlHashSet.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlHashTraits.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlList.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlMap.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlQueue.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlSet.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlStack.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlUtility.h" />
+    <ClInclude Include="..\..\include\arda2\core\corStlVector.h" />
+    <ClInclude Include="..\..\include\arda2\core\corTypes.h" />
+    <ClInclude Include="..\..\include\arda2\core\corWindows.h" />
+    <ClInclude Include="..\..\include\arda2\error\errErrorHandlerDialog.h" />
+    <ClInclude Include="..\..\include\arda2\error\errErrorHandlerLogger.h" />
+    <ClInclude Include="..\..\include\arda2\math\matAdapters.h" />
+    <ClInclude Include="..\..\include\arda2\math\matColor.h" />
+    <ClInclude Include="..\..\include\arda2\math\matColorConvert.h" />
+    <ClInclude Include="..\..\include\arda2\math\matColorInt.h" />
+    <ClInclude Include="..\..\include\arda2\math\matConstants.h" />
+    <ClInclude Include="..\..\include\arda2\math\matD3DXMathEmu.h" />
+    <ClInclude Include="..\..\include\arda2\math\matDistance.h" />
+    <ClInclude Include="..\..\include\arda2\math\matFarPlane.h" />
+    <ClInclude Include="..\..\include\arda2\math\matFarPosition.h" />
+    <ClInclude Include="..\..\include\arda2\math\matFarTransform.h" />
+    <ClInclude Include="..\..\include\arda2\math\matFirst.h" />
+    <ClInclude Include="..\..\include\arda2\math\matIntersect.h" />
+    <ClInclude Include="..\..\include\arda2\math\matIntVector2.h" />
+    <ClInclude Include="..\..\include\arda2\math\matIntVector3.h" />
+    <ClInclude Include="..\..\include\arda2\math\matIntVector4.h" />
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x3T.h" />
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x4.h" />
+    <ClInclude Include="..\..\include\arda2\math\matMatrix4x4T.h" />
+    <ClInclude Include="..\..\include\arda2\math\matPlane.h" />
+    <ClInclude Include="..\..\include\arda2\math\matProperty.h" />
+    <ClInclude Include="..\..\include\arda2\math\matQuaternion.h" />
+    <ClInclude Include="..\..\include\arda2\math\matRandom.h" />
+    <ClInclude Include="..\..\include\arda2\math\matSerialization.h" />
+    <ClInclude Include="..\..\include\arda2\math\matSubspace.h" />
+    <ClInclude Include="..\..\include\arda2\math\matTransform.h" />
+    <ClInclude Include="..\..\include\arda2\math\matTypes.h" />
+    <ClInclude Include="..\..\include\arda2\math\matUtils.h" />
+    <ClInclude Include="..\..\include\arda2\math\matVector2.h" />
+    <ClInclude Include="..\..\include\arda2\math\matVector3.h" />
+    <ClInclude Include="..\..\include\arda2\math\matVector4.h" />
+    <ClInclude Include="..\..\include\arda2\memory\memExplicitHeap.h" />
+    <ClInclude Include="..\..\include\arda2\memory\memMemory.h" />
+    <ClInclude Include="..\..\include\arda2\memory\memMemoryDbg.h" />
+    <ClInclude Include="..\..\include\arda2\perf\prfCounter.h" />
+    <ClInclude Include="..\..\include\arda2\perf\prfMonitor.h" />
+    <ClInclude Include="..\..\include\arda2\perf\prfSizer.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proAdapter.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proAux.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proChildSort.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proClass.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proClassAdapter.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proClassNative.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proClassOwner.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proClassRegistry.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proFirst.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObject.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObjectImpl.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObjectReader.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObjectReaderXML.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObjectWriter.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObjectWriterXML.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObserver.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proObserverTree.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proProperty.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyDelegate.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyFunction.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyNative.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proPropertyOwner.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proStream.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proStringUtils.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proUndoCmds.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proUndoList.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proValidator.h" />
+    <ClInclude Include="..\..\include\arda2\properties\proXmlParser.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoAbstractUnserializationFactory.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoChunk.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoCompressor.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoConfigFile.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFile.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileBuffer.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileMemory.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileMemoryMap.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileOSFile.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileUtils.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFileView.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFindFile.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoFirst.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectChunk.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectReaderChunk.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoObjectWriterChunk.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoPackOSFile.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoProperty.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoPropertyStream.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoSafeList.h" />
+    <ClInclude Include="..\..\include\arda2\storage\stoSerialization.h" />
+    <ClInclude Include="..\..\include\arda2\test\tstFramework.h" />
+    <ClInclude Include="..\..\include\arda2\test\tstUnit.h" />
+    <ClInclude Include="..\..\include\arda2\thread\thrCritical.h" />
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelEvent.h" />
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelMutex.h" />
+    <ClInclude Include="..\..\include\arda2\thread\thrKernelObject.h" />
+    <ClInclude Include="..\..\include\arda2\thread\thrThread.h" />
+    <ClInclude Include="..\..\include\arda2\timer\timIntervalTimer.h" />
+    <ClInclude Include="..\..\include\arda2\timer\timSystemTime.h" />
+    <ClInclude Include="..\..\include\arda2\timer\timTimer.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlBitArray.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlBitFlag.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlBlockAllocator.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlCallback.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlCmdLineParser.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlEnumOperators.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlGenericHash.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlModule.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlPair.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlPoint.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlProperty.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlRect.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlRefCount.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlRefHandle.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlRefSmartPtr.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlRegistry.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlResourceHeap.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlSafeTypeInfo.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlSingleton.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlSize.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlStackDbg.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlStringHeap.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlStringTable.h" />
+    <ClInclude Include="..\..\include\arda2\util\utlTokenizer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

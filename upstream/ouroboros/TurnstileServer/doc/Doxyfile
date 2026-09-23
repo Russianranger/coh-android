@@ -1,0 +1,12 @@
+@INCLUDE_PATH = ..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "Turnstile Server"
+PROJECT_BRIEF = "Provides Looking-for-Group functionality"
+
+INPUT += ..\..\Common
+INPUT += ..\..\libs\UtilitiesLib\include
+INPUT += ..\..\libs\ServerLib\include
+EXCLUDE_PATTERNS += */Common/*.c \
+                    */Common/**/*.c \
+                    */Common/**/*.cpp

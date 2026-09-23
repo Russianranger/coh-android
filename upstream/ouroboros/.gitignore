@@ -1,0 +1,52 @@
+# Crash dumps
+*.mdmp
+*.dmp
+
+# Visual Studio user settings
+*.user
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.suo
+*.cachefile
+*.SPFileList
+*.map
+*.ilk
+*.bsc
+*.VC.db
+*.VC.opendb
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+
+# Visual Studio 2019
+.vs/
+
+# Visual C++ debug database
+*.pdb
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# Ignore generated source files
+AutoGen/
+logs/
+.moc/
+**/doc/html
+
+bin/
+x86/
+x64/
+
+.vscode
+*.dsn
+
+# CMake build output and local presets
+/out/
+/CMakeUserPresets.json

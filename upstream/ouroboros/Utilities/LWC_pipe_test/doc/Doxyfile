@@ -1,0 +1,4 @@
+@INCLUDE_PATH = ..\..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "LWC_pipe_test Utility"

@@ -1,0 +1,9 @@
+@INCLUDE_PATH = ..\..\..\
+@INCLUDE = .doxyfile
+
+PROJECT_NAME = "Utilities Library"
+
+INPUT += ..\include
+EXCLUDE_PATTERNS += */Common/*.c \
+                    */Common/**/*.c \
+                    */Common/**/*.cpp
