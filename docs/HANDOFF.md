@@ -1,87 +1,50 @@
-# City of Heroes Android handoff
+# City of Heroes i25 Android handoff
 
-Updated: 2026-09-23.
+Updated: 2026-09-24.
 
-## Completed in this assessment
+## User direction
 
-- Inspected the empty `Russianranger/coh-android` destination and prior September
-  13 port plan.
-- Attempted direct OuroDev access; GitLab/git requests returned HTTP 502 and wiki
-  requests returned HTTP 403.
-- Imported the complete public OuroDev-derived fork at
-  `0b75ade0c801735e10c5798f641948a45cc50488` into `upstream/ouroboros`.
-- Preserved all 5,995 files, bundled SDKs, config examples, build definitions and
-  notices without edits. Recorded acquisition details and per-file hashes.
-- Audited build restrictions, database providers, service dependencies, physics,
-  rendering, input/audio, shared memory and content requirements.
-- Wrote [the staged Android proposal](ANDROID_PORT_PROPOSAL.md) and verified
-  snapshot identity. No port implementation or APK was created in this assessment.
+- Use **OuroDev i25/SCoRE source**, not Volume 2 or a VM.
+- The user has no Windows PC. Use hosted Windows builds/reference tests and Thor
+  gameplay testing; do not require user-installed MSVC or SQL Server.
+- The user added an Actions repository secret named `odtoken`. Reference it only
+  through Actions; do not print, export or request its value in chat.
 
-## User environment constraint
+## Latest result
 
-The user has no Windows PC. Do not require Windows installation, a local MSVC
-build, SQL Server administration, or a desktop-client gameplay test from the user.
-Use GitHub-hosted Windows runners for build/reference automation and deliver
-artifacts for testing on the AYN Thor. A headless TestClient smoke test on CI is
-not a substitute for visual/gameplay verification; bring forward a Thor client
-runtime probe and test full gameplay there. Cloud build/SQL tooling compatibility
-still needs verification. No paid cloud resources are assumed.
+Canonical source target: `https://git.ourodev.com/score/SCoRE.git`. The indexed
+OuroDev guide names `Lexicon-Project(Co)X`; remote refs and commit are not verified.
+Two Actions probes established that the secret is present but the server TLS
+certificate is expired. Credential validity has not been tested. Expiration:
+**2026-09-23 10:39:54 UTC**. See [acquisition evidence](I25_SOURCE_ACQUISITION.md).
 
-## Next implementation sequence
+No canonical i25 source was imported. Do not interpret TLS failure as an invalid
+token or ask the user to recreate the secret based on this result.
 
-1. **Reference build and data:** set up a Windows build runner matching the
-   imported presets; freeze its toolchain and all dependencies. Obtain the
-   companion data candidate at the lock's revision, inventory external binary
-   assets, generate templates/bins, and create a hashed runtime package. Use
-   headless TestClient/reference fixtures in CI; verify combat, normal mission
-   entry/exit and saves on Thor when the diagnostic client is ready.
-2. **Database prototype:** add an x86 Windows ODBC connection/transaction harness
-   for PostgreSQL. Audit provider-specific SQL and attributes; fix the confirmed
-   `sqlRemoveIndexAsync` PostgreSQL syntax error on a separate port branch. Test
-   schema creation/evolution and game persistence with MSSQL stopped.
-3. **Android diagnostic runtime:** app-owned ARM64 PostgreSQL plus Wine/FEX
-   candidate, Win32 ODBC harness, process supervision and support-log export.
-   Prove app-identity execution, child processes, shutdown and restart on Thor.
-4. **Playable server:** integrate modified DBServer, Launcher/MapServer and any
-   services actually required by the profile. Test with headless TestClient first, then the Thor diagnostic client.
-5. **Integrated client:** evaluate OpenGL/Cg via Wine/Mesa and the selected Vulkan
-   driver; add editable controller mapping, audio, surface and focus handling.
-6. **Product workflow:** imports/profiles, offline operation, backup/restore,
-   update rollback, memory/thermal testing, then additional services.
+## Preserved work
 
-These are work packages and acceptance gates, not already running jobs. The
-current request authorized the source import and assessment/proposal. Subsequent
-implementation should follow the user's next direction.
+The prior Volume 2-derived source remains under `upstream/ouroboros`, with its
+integrity manifest and verifier. Backup branch
+`archive/volume2-assessment-2026-09-23` preserves commit
+`19082428d6dd5484c34c6a7a2913374d79b167be` and its assessment. The old proposal is
+also retained as `docs/VOLUME2_PORT_PROPOSAL.md`.
 
-## Facts that must survive a handoff
+The root README and active proposal now select i25. `upstream-lock.json` identifies
+only the historical import; `source-target.json` records the active target and
+blocked acquisition state.
 
-- The acquired tree is an OuroDev-derived **downstream fork**, not verified
-  identical to canonical OuroDev. It is Issue 24/Volume 2 lineage, not the older
-  Issue 25 SCoRE snapshot used by the initial plan.
-- Main targets are **MSVC Win32**. A MinGW preset exists but does not imply a
-  portable MapServer/Game build. No Android toolchain has been added.
-- PostgreSQL code exists but the shipped config says only MSSQL is supported.
-  There is a confirmed malformed PostgreSQL DROP INDEX statement.
-- Authentication, accounts, auctions and chat have separate persistence paths.
-  Never call the whole server database-independent after testing only DBServer.
-- Rendering is **desktop OpenGL/Cg**. Validate the correct graphics path before
-  applying settings learned from Direct3D games.
-- PhysX is actively linked into the selected MapServer and Game build; the
-  bundled Windows binaries are not native ARM64 dependencies.
-- Minimal fake-auth/local-map smoke tests do not prove ordinary mission transfer,
-  account entitlements, full persistence or multi-map memory behavior.
-- The companion data commit is pinned as a candidate, not a tested match. Full
-  binary assets, generated bins and database templates are not in this repo.
-- No CoH executable, Android APK, database migration or Thor benchmark was run.
+## Next steps
 
-## Verification and source updates
+1. After certificate renewal, manually run `Discover canonical OuroDev i25 source`
+   in Actions. Its public TLS check stops the job before authentication on failure.
+   Alternatively inspect a user-provided canonical i25 ZIP/export.
+2. Verify the documented branch; pin its commit/tree, inspect inventory/notices,
+   submodules and large files, then import under `upstream/i25-score` with any
+   exclusions recorded. Preserve the historical source separately.
+3. Audit exact i25 build graph, bitness, third-party dependencies, rendering,
+   authentication and every database path. Do not assume the previous fork's
+   modern CMake/Win32 setup applies.
+4. Establish a hosted reference build and matched content, then database and Thor
+   runtime probes according to the [active proposal](ANDROID_PORT_PROPOSAL.md).
 
-Run `python3 tools/verify_source.py` from the root before starting patches. Its
-purpose is to verify the unchanged source snapshot, so deliberate source changes
-will require a separate patch strategy or an explicitly updated validation
-contract. Preserve the original import commit for comparison. Do not silently
-regenerate the manifest over port changes and call them unchanged upstream.
-
-Current source metrics and provenance are in `upstream-lock.json` and `docs/`.
-Do not download a moving latest game release and assume protocol, bin or schema
-compatibility with this source lock.
+There is no scheduled retry, running background import, Android build or APK.

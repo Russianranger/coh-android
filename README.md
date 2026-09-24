@@ -1,49 +1,29 @@
-# City of Heroes Android
+# City of Heroes i25 Android
 
-Source preservation and implementation planning for a self-contained City of
-Heroes server and client app, initially targeting the AYN Thor Max (Android 13,
-Snapdragon 8 Gen 2, 16 GB RAM).
+The selected target is **canonical OuroDev i25/SCoRE source**, not Volume 2 or
+a prebuilt VM. The goal is an Android app for a local server and matching client
+on the AYN Thor. The user has no Windows PC: use hosted Windows builds and Thor
+gameplay testing.
 
-**Status: source imported and assessed; no Android port or APK exists yet.**
+**Status, 2026-09-24: i25 acquisition is blocked by OuroDev's expired TLS certificate.**
+The `odtoken` Actions secret is present, but has not been authenticated against
+OuroDev. No canonical i25 source has been imported yet.
 
-The repository contains all **5,995 files / 173,081,714 bytes** from the pinned
-[Thunderspies/CityOfHeroes](https://github.com/Thunderspies/CityOfHeroes/tree/0b75ade0c801735e10c5798f641948a45cc50488)
-source tree, a public downstream fork that explicitly documents its OuroDev
-ancestry. Direct access to OuroDev failed during this import. This is an
-Issue 24/Volume 2 lineage baseline with downstream changes, not a verified copy
-of the current canonical OuroDev branch or an Issue 25/Homecoming checkout.
+- Source: [OuroDev SCoRE](https://git.ourodev.com/score/SCoRE)
+- Documented branch candidate: `Lexicon-Project(Co)X`; remote verification pending
+- [Acquisition findings](docs/I25_SOURCE_ACQUISITION.md)
+- [Active i25 proposal](docs/ANDROID_PORT_PROPOSAL.md)
+- [Handoff](docs/HANDOFF.md)
+- [Current source selection](source-target.json)
 
-- [Android assessment and implementation proposal](docs/ANDROID_PORT_PROPOSAL.md)
-- [Source provenance, contents, and reproduction](docs/SOURCE_PROVENANCE.md)
-- [Next implementation work and handoff](docs/HANDOFF.md)
-- [Validation performed](docs/VALIDATION.md)
-- [Imported source](upstream/ouroboros/README.md)
-- [Pinned source and companion data references](upstream-lock.json)
+## Historical source
 
-## Proposed direction
+`upstream/ouroboros/` contains the earlier **Volume 2-derived public fork** import
+(5,995 files). It is historical reference, not the selected i25 source. Its old
+lock, manifest and `tools/verify_source.py` still describe that snapshot only.
+The complete prior state is also preserved on
+[`archive/volume2-assessment-2026-09-23`](https://github.com/Russianranger/coh-android/tree/archive/volume2-assessment-2026-09-23).
 
-Retain the Windows x86 game processes initially, test an app-owned Wine/FEX
-runtime, and move persistence to a repaired PostgreSQL backend running on ARM64.
-Prove the server with a desktop client, then integrate the matching game client
-using its desktop OpenGL/Cg renderer. Native ARM64 conversion is a later workstream.
-These are proposed choices, not demonstrated CoH compatibility or performance.
-
-The imported tree includes client/server source, tools, CMake definitions,
-configuration examples, and vendored SDK files. It does not include the full
-game content, all dependencies fetched by CMake, or a populated database.
-The companion data revision is recorded separately and still needs compatibility
-testing with this source revision.
-
-## Verify the import
-
-From the repository root, with Python 3:
-
-```sh
-python3 tools/verify_source.py
-```
-
-This checks every imported file, executable bit, and the absence of extra files
-against the committed manifest. It does not test building or running the game.
-The snapshot is intentionally unchanged so future port patches can be reviewed
-separately. Preserve upstream notices; this import does not relicense the source
-or bundled third-party SDKs.
+The [Volume 2 assessment](docs/VOLUME2_PORT_PROPOSAL.md) is retained for comparison.
+Its modern CMake/Win32 findings must not be attributed to canonical i25 without
+inspecting that code. No Android APK or gameplay validation exists yet.

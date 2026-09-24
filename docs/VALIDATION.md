@@ -1,3 +1,6 @@
+> Historical record for the Volume 2-derived snapshot at `upstream/ouroboros`.
+> Current source acquisition target: [canonical i25/SCoRE](I25_SOURCE_ACQUISITION.md).
+
 # Validation record
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "selected_at": "2026-09-24",
+  "lineage": "i25 / SCoRE",
+  "canonical_url": "https://git.ourodev.com/score/SCoRE.git",
+  "documented_branch_candidate": "Lexicon-Project(Co)X",
+  "branch_status": "Documented by OuroDev i25 guide; remote refs not yet read",
+  "source_commit": null,
+  "intended_destination": "upstream/i25-score",
+  "github_actions_secret_name": "odtoken",
+  "status": "blocked_expired_upstream_tls_certificate",
+  "authentication_status": "Secret is present in Actions; credentials not validated against OuroDev",
+  "tls_certificate_not_after_utc": "2026-09-23T10:39:54Z",
+  "previous_snapshot": {
+    "path": "upstream/ouroboros",
+    "role": "historical Volume 2-derived reference only",
+    "preserved_branch": "archive/volume2-assessment-2026-09-23"
+  },
+  "user_windows_pc_available": false
+}

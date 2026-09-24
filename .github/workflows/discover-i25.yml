@@ -2,9 +2,6 @@ name: Discover canonical OuroDev i25 source
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: [.github/workflows/discover-i25.yml]
 
 permissions:
   contents: read
@@ -33,6 +30,8 @@ jobs:
                                      '-issuer', '-dates', '-fingerprint', '-sha256'],
                                     input=leaf, text=True, capture_output=True)
               print(info.stdout)
+          if result.returncode:
+              raise SystemExit('OuroDev TLS verification failed; authentication was not attempted.')
       - name: List authenticated SCoRE source branches
         env:
           OD_TOKEN: ${{ secrets.odtoken }}
