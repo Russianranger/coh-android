@@ -13,10 +13,26 @@ Canonical i25 acquisition is deferred.
 
 PostgreSQL is the selected database alternative. The implementation lives in
 `database/postgresql`, with an immutable-source patch under `patches/postgresql`.
-Live PostgreSQL 16.15 and 18.6 tests pass, including 65 ODBC connections, schema
-changes, bound values, asynchronous-style concurrent writers, rollback, clean
-restart, forced WAL recovery and backup/restore. The actual Win32 DbServer has compiled successfully, and the complete probe
-also passes with 32-bit Windows psqlODBC 18.00.0004 against PostgreSQL 17.11. See
+The actual Win32 DbServer now has an opt-in, asset-independent persistence test
+entry. It exercises the original container parser, writer, SQL FIFO/worker pool,
+reader and template updater with controlled templates and records. PostgreSQL
+saves commit before completion; serialization/deadlock retries replay the whole
+transaction. Permanent or uncertain failures stop without acknowledging the
+failed command. Child/parent deletion is atomic.
+
+All four jobs in [run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993)
+passed at implementation commit `0827ccc992daa7530d9f98d742122238197847df`:
+Linux PostgreSQL 16/18, Windows x86 ODBC/PostgreSQL 17, and the actual Win32
+DbServer. The latter passed 20 check groups across 14 process invocations,
+including connection loss, failed-save rollback, restart/WAL recovery, template
+rebuild and backup/restore. Download `postgresql-win32-development-build` from
+that run; its executable hash matches the executable recorded by the test.
+
+Migration 2 adds transactional table rebuilds preserving sequence high-water,
+indexes and foreign keys, explicit ASCII case-insensitive name equality, and the
+PostgreSQL auction timestamp filter. Stop DbServer, back up and run
+`pg_local.py migrate` for an existing development cluster. See the
+[persistence design and test scope](POSTGRESQL_PERSISTENCE.md),
 [database instructions](../database/postgresql/README.md) and
 [validation record](VALIDATION.md). This is a database development milestone,
 not yet a gameplay-validated server or Android APK.
@@ -95,12 +111,12 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Use the PostgreSQL development backend as the active database path. Validate
-   the actual DbServer container/FIFO save pipeline with generated templates,
-   then character creation, save/reload and map transfer. Resolve the remaining
-   auction SQL filter, name collation rules and retry/rebuild behavior. Account
-   and auxiliary service persistence is a separate gate; fake auth is only the
-   minimal local diagnostic route.
+1. Use the PostgreSQL development backend as the active database path. The
+   controlled DbServer persistence fixtures are implemented; next validate
+   generated game templates, character creation, network save acknowledgements,
+   save/reload and map transfer. Game-level name uniqueness and auxiliary service
+   persistence remain separate gates. Fake auth is only the minimal local
+   diagnostic route; no SQL Server save migration has been attempted.
 2. Tomorrow, resume `coh-asset-index.json` from Thor to locate animations and
    basic textures. Inspect and stage candidate assets separately; retain all
    archive integrity and source-format checks already established.

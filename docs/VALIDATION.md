@@ -127,9 +127,70 @@ Raw redacted reports: [PostgreSQL 16](postgresql-evidence/postgresql-16-linux.js
 [PostgreSQL 18](postgresql-evidence/postgresql-18-linux.json), and
 [Windows x86 ODBC / PostgreSQL 17](postgresql-evidence/postgresql-17-win32.json).
 
-Not yet proven: full DbServer boot with generated templates, the actual container
-FIFO/retry pipeline, character gameplay/save/load, SQL Server data migration,
-auxiliary service database compatibility, or Android execution/packaging. The
-standalone ODBC probe validates the database boundary, not those higher layers.
+At that milestone, full DbServer boot with generated templates, the actual
+container FIFO/retry pipeline, character gameplay/save/load, SQL Server data
+migration, auxiliary services and Android execution remained unproven. The next
+addendum records subsequent tests of the actual persistence pipeline.
 The [database README](../database/postgresql/README.md) contains commands and
 remaining gates. Archive indexing is deferred to the next session.
+
+## 2026-09-24 actual DbServer persistence and compatibility
+
+Tested implementation: `0827ccc992daa7530d9f98d742122238197847df`.
+[Hosted validation run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993).
+This extends the earlier ODBC-only milestone with execution inside the actual
+patched Win32 DbServer. The source snapshot is still verified before staging;
+patches and overlays remain outside the immutable imports.
+
+| Test | Environment | Result |
+| --- | --- | --- |
+| Extended ODBC and schema suite | PostgreSQL 16.15 / psqlODBC 16.00.0000, Linux x86_64 | Passed |
+| Extended ODBC and schema suite | PostgreSQL 18.6 / psqlODBC 18.00.0004, Linux x86_64 | Passed |
+| Extended ODBC and schema suite | PostgreSQL 17.11 / psqlODBC 18.00.0004, Windows x86 client | Passed |
+| Real container/FIFO/template pipeline | Actual OptDebug Win32 DbServer / PostgreSQL 17.11 | Passed: 20 check groups / 14 process invocations |
+
+The opt-in `-pgpersistencetest` entry links the original container parser/merger,
+SQL generator, 64-worker queue, reader and template updater. Controlled templates
+and records replace asset-generated game data. It does not mock those persistence
+components or call the player-session completion callback.
+
+The fixtures cover 512 child rows crossing statement-batch boundaries; sixteen
+independent records; repeated same-record saves; queued read callbacks; an
+8,202-byte UTF-8 value including accented text and an emoji; byte 255; and
+case-insensitive ASCII name lookup through both SQL and the game cache.
+
+Real PostgreSQL triggers inject serialization/deadlock failures late in saves,
+and a deferred trigger fails during commit. Tests check complete-command replay,
+rollback of all batches on permanent failure, the five-attempt limit, and no
+successful completion of rejected commands. A rejected parent deletion restores
+previously deleted children. A terminated database connection must stop the
+process without replaying or acknowledging its in-flight write.
+
+Lifecycle checks reopen saved records through the actual container reader after
+a new process, clean PostgreSQL restart, forced WAL recovery and backup/restore.
+The real template updater changes column order and adds a field while retaining
+data, the reserved high-water value 9000, indexes and inbound foreign keys.
+Failed type conversion and view-dependent replacement preserve the original
+table identity. Migration 2 is idempotent; the upgrade helper refuses a newer
+schema version. Schema functions are also tested independently on all three
+database/ODBC configurations above.
+
+Redacted reports: [actual DbServer](postgresql-evidence/persistence-v2/dbserver-persistence.json),
+[PostgreSQL 16](postgresql-evidence/persistence-v2/postgresql-16-linux.json),
+[PostgreSQL 18](postgresql-evidence/persistence-v2/postgresql-18-linux.json), and
+[Windows ODBC](postgresql-evidence/persistence-v2/postgresql-17-win32.json).
+All five downloaded artifact ZIP digests were checked. The Win32 PE machine type
+is x86, and the downloadable executable's SHA-256 equals the hash recorded by
+the actual persistence test. Patch and all 14 patched-source hashes match local
+verified staging. The new diagnostic overlay has CRLF in the Windows checkout;
+the [build receipt](postgresql-evidence/persistence-v2/win32-build.json) records
+that exact conversion and both hashes. See [artifact provenance](postgresql-evidence/persistence-v2/artifact-provenance.json)
+for per-file hashes. The diagnostic entry is enabled in that development artifact
+and disabled in ordinary builds unless `COH_PG_PERSISTENCE_TESTS=ON` is requested.
+
+These results do not establish character gameplay, network acknowledgement
+delivery, MapServer transfers, production account/auction services, SQL Server
+save migration, or Android/Wine execution. Trigger-raised retryable errors test
+the real error path, not contention performance. Name equality is explicit ASCII
+folding; full Unicode collation and game-level uniqueness remain separate gates.
+See [persistence behavior and upgrade instructions](POSTGRESQL_PERSISTENCE.md).

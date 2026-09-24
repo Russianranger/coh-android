@@ -21,6 +21,7 @@ asset URLs returned HTTP 403 to the hosted availability probe; see the acquisiti
 guide for alternatives and the exact remaining input.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)
+- [Actual DbServer persistence and migration behavior](docs/POSTGRESQL_PERSISTENCE.md)
 - [Content imported, download sources and next steps](docs/CONTENT_ACQUISITION.md)
 - [Local server and client completeness audit](docs/LOCAL_SERVER_CLIENT_COMPLETENESS.md)
 - [Android assessment and implementation proposal](docs/ANDROID_PORT_PROPOSAL.md)

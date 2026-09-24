@@ -1,0 +1,43 @@
+{
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "patch_sha256": "ce4c072f8b975395ac29569a43b9a135aa79b7823f06cc6714d31a0ed49b896c",
+  "overlay_sha256": {
+    "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8",
+    "DBServer/src/pg_persistence_test.c": "dab6e0408f559c543b4de20c2a14090480ce8d3081c52c0c7b158ae17460d1f2"
+  },
+  "patched_sha256": {
+    "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+    "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+    "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+    "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+    "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+    "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+    "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+    "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+    "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+    "DBServer/src/dbdispatch.c": "6ff105bc554944a9b61d1461e1f54126a710c9a0da142cc1d32ec4ffb3c0f18f",
+    "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+    "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+    "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+    "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db"
+  },
+  "overlay_checkout": {
+    "Common/sql/pg_compat.h": {
+      "repository_sha256": "871385ba9f952810320317ec922813b8df7c03b28c95f3691fa1605acd195355",
+      "conversion": "LF to CRLF in Windows checkout"
+    },
+    "DBServer/src/pg_persistence_test.c": {
+      "repository_sha256": "1d3fce8b31ee30c2aa559c65708559a5546918ab5c8f4dda8254373ce9fbca2d",
+      "conversion": "LF to CRLF in Windows checkout"
+    }
+  },
+  "tested_commit": "0827ccc992daa7530d9f98d742122238197847df",
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/35962572993",
+  "dbserver_architecture": "Windows x86 PE32",
+  "dbserver_sha256": "d0daa38489d83850ccfc1489be6f3a375a7d83a77a3d1067e28348dba984b3d8",
+  "configuration": "OptDebug",
+  "cmake_options": [
+    "COH_PG_PERSISTENCE_TESTS=ON"
+  ],
+  "execution": "Actual DbServer controlled persistence fixtures passed; no gameplay or Android execution"
+}

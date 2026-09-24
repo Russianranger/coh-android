@@ -25,6 +25,15 @@ development backend, not yet a validated complete game server.
 - A real ODBC integration probe uses the same SQL dialect header as DbServer.
   CI also compiles the patched Win32 DbServer and runs a Win32 probe using a
   hash-pinned 32-bit psqlODBC installer from PostgreSQL’s official server.
+- PostgreSQL FIFO commands commit before completion, retry complete transactions
+  for serialization/deadlock errors, and stop without acknowledging permanent or
+  uncertain failures. Child/parent deletion is atomic.
+- Migration 2 adds transactional template rebuilds that preserve ID high-water
+  marks, indexes and foreign keys, plus explicit ASCII case-insensitive name
+  equality. DbServer's auction activity query now uses PostgreSQL intervals.
+- An opt-in entry in the actual DbServer exercises its real container parser,
+  writer, worker queues, reader and template updater with controlled fixtures.
+  See [persistence design and migration instructions](../../docs/POSTGRESQL_PERSISTENCE.md).
 
 ## Host / Termux development commands
 
@@ -38,6 +47,7 @@ final application packaging solution; its on-device execution is still untested.
 python3 database/postgresql/pg_local.py init --root "$HOME/coh-pg" --bin /usr/lib/postgresql/16/bin
 python3 database/postgresql/pg_local.py status --root "$HOME/coh-pg"
 python3 database/postgresql/pg_local.py backup --root "$HOME/coh-pg" --file "$HOME/coh-game.backup"
+python3 database/postgresql/pg_local.py migrate --root "$HOME/coh-pg"
 python3 database/postgresql/pg_local.py stop --root "$HOME/coh-pg"
 python3 database/postgresql/pg_local.py start --root "$HOME/coh-pg"
 python3 database/postgresql/pg_local.py restore --root "$HOME/coh-pg" --file "$HOME/coh-game.backup" --database coh_restored
@@ -46,6 +56,8 @@ python3 database/postgresql/pg_local.py restore --root "$HOME/coh-pg" --file "$H
 On Termux, use its PostgreSQL installation’s `--bin "$PREFIX/bin"`. Default port
 is 15432; choose `--port` on init if occupied. Init refuses an existing root.
 Restore refuses an existing database; it does not replace the active database.
+Stop DbServer before backup or compatibility migration; the PostgreSQL cluster
+must remain running for those commands.
 Keep the entire private cluster directory out of Git and public artifacts.
 Do not upload its credentials, connection strings, saves or SQL dumps.
 
@@ -75,24 +87,27 @@ CI uploads only the redacted report and built executables/receipt, never cluster
 files. PostgreSQL **16.15 with psqlODBC 16.00.0000**, and **18.6 with
 psqlODBC 18.00.0004**, pass the full Linux suite. The same suite passes with
 **32-bit Windows psqlODBC 18.00.0004 against PostgreSQL 17.11**. The patched
-Win32 DbServer also compiles successfully. Download
+Win32 DbServer also passes a separate persistence suite using its real container
+and FIFO implementation: 20 check groups across 14 process invocations, including
+failed-save rollback, connection loss, schema rebuild and backup/restore.
+Download
 `postgresql-win32-development-build` from that run’s artifacts for the executable,
 CrashRpt.dll and build receipt; the driver probe is in
 `postgresql-win32-test-evidence`. These are development artifacts, not a complete
 game install. See the
 [validation record](../../docs/VALIDATION.md) and
-[hosted run](https://github.com/Russianranger/coh-android/actions/runs/35948251357).
+[hosted run](https://github.com/Russianranger/coh-android/actions/runs/35962572993).
 
 ## Remaining gates
 
 - Start the actual patched DbServer with generated templates, then create,
   save, reload and transfer a character with MapServer and client. Missing game
-  assets still block the full reference path; the database probe is independent.
-- Exercise DbServer’s actual asynchronous transaction/retry machinery, schema
-  whole-container rollback/retry, ID preservation across table rebuilds,
-  case-insensitive name rules and remaining hard-coded SQL
-  (for example the auction activity DATEADD/GETDATE filter). Integer ISNULL
-  predicates in base lookups and character import have been changed to COALESCE.
+  assets still block the full reference path; controlled persistence fixtures
+  are independent. Network save acknowledgements and map transfers require it.
+- Check game-level name policy and uniqueness using actual account/character
+  templates. The implemented equality covers ASCII case folding, not every
+  SQL Server collation or custom wildcard query. Integer ISNULL predicates in
+  base lookups and character import have been changed to COALESCE.
 - Port or replace SQL Server-specific AccountServer/other auxiliary services;
   the minimal fake-auth diagnostic path does not require a production account
   service. This work does not migrate existing SQL Server databases.

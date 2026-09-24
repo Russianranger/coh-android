@@ -1,0 +1,81 @@
+{
+  "tested_commit": "0827ccc992daa7530d9f98d742122238197847df",
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/35962572993",
+  "artifacts": [
+    {
+      "id": 10793315585,
+      "name": "postgresql-16-test-evidence",
+      "zip_sha256": "6983754f9b8af3ce5d2ccffaa40233f182e5ec524c306dba96512dd8b8bebfdc",
+      "files": [
+        {
+          "path": "postgresql-integration.json",
+          "bytes": 2510,
+          "sha256": "22c81870388f9aea78f9508ed8700f0bd62e731774519c1f4e75c5694a54dfcd"
+        }
+      ]
+    },
+    {
+      "id": 10793022252,
+      "name": "postgresql-18-test-evidence",
+      "zip_sha256": "67498bd7f251c47490c1ddf888704affa240227502d825ed15338863ecfc1578",
+      "files": [
+        {
+          "path": "postgresql-integration.json",
+          "bytes": 2508,
+          "sha256": "904b1eb3feb7b07097d5449e101db7588af3b22a73b29b07d453b9002282f634"
+        }
+      ]
+    },
+    {
+      "id": 10793016383,
+      "name": "postgresql-win32-test-evidence",
+      "zip_sha256": "6414d7cd7f223b694d4a8cbf6762eb261aca9369f9a62f3db33c5f0e45da7c8f",
+      "files": [
+        {
+          "path": "postgresql-win32-integration.json",
+          "bytes": 2486,
+          "sha256": "ae88a8aab804d854f241cca841d4be6de34b02ac90c84f9f48a5c660525279bb"
+        },
+        {
+          "path": "pg-probe-win32/Release/odbc_probe.exe",
+          "bytes": 27136,
+          "sha256": "f51f737a44b696b9dad45636e48b9aa66d5c54b8777ee7d5fd5389125393e444"
+        }
+      ]
+    },
+    {
+      "id": 10792967015,
+      "name": "dbserver-persistence-evidence",
+      "zip_sha256": "2f9271f02c6fc04d2b276ce890311a22d731bf85b8a61b2227d93854ba439c86",
+      "files": [
+        {
+          "path": "dbserver-persistence.json",
+          "bytes": 5460,
+          "sha256": "e8bcf4b79afba866164ace4872940ba0d2d707f0f04708dafb9d99eae1faa98d"
+        }
+      ]
+    },
+    {
+      "id": 10792557886,
+      "name": "postgresql-win32-development-build",
+      "zip_sha256": "5e822cba20e75520a81cd5ce94e27077b92966c6d5de858806744d7d3f4bd29a",
+      "files": [
+        {
+          "path": "out/build/vs2026/bin/OptDebug/CrashRpt.dll",
+          "bytes": 39424,
+          "sha256": "e1fc4790551fef9d959ebe4d08931a260c404a51eed333f29063bfaeaf18601a"
+        },
+        {
+          "path": "out/build/vs2026/bin/OptDebug/DbServer.exe",
+          "bytes": 1667584,
+          "sha256": "d0daa38489d83850ccfc1489be6f3a375a7d83a77a3d1067e28348dba984b3d8"
+        },
+        {
+          "path": "postgresql-build-input.json",
+          "bytes": 1851,
+          "sha256": "2aa95d76bf989a34f840371cf5c98e9bfecf1fc6a5454f49e111e31c98a0aeb9"
+        }
+      ]
+    }
+  ]
+}
