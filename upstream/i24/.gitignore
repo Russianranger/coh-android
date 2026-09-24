@@ -1,0 +1,25 @@
+# Packed binary data
+*.bin
+*.bin.meta
+*.bounds
+
+# These resources should be outside the repo
+*.geo
+*.texture
+*.ogg
+*.anim
+*.tga
+*.ttf
+*.ttc
+
+# This cache should be ignored
+_DevOnly
+
+# Config files
+data/server/db/servers.cfg
+
+# Local setup inputs and downloaded archives
+/*.exe
+/*.dll
+/piggs/
+/piggs_bak/

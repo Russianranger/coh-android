@@ -1,0 +1,557 @@
+
+Zone
+	Location	309, 235
+	TextLocation	322, 245
+	Name		maps/City_Zones/City_01_01/City_01_01.txt
+	Icon		City_01_01_Atlas_Park.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	226, 222
+	TextLocation	237, 233
+	Name		maps/City_Zones/City_01_03/City_01_03.txt
+	Icon		City_01_03_Galaxy_City.tga
+	City		ParagonCity
+	TeamArea	None
+End
+
+Zone
+	Location	230, 258
+	TextLocation	247, 287
+	Name		maps/City_Zones/City_01_02/City_01_02.txt
+	Icon		City_01_02_KingsRow.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+
+Zone
+	Location	270, 176
+	TextLocation	282, 197
+	Name		maps/City_Zones/City_02_01/City_02_01.txt
+	Icon		City_02_01_SteelCanyon.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	294, 273
+	TextLocation	315, 308
+	Name		maps/City_Zones/City_02_02/City_02_02.txt
+	Icon		City_02_02_Skyway_City.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	363, 245
+	TextLocation	394, 325
+	Name		maps/City_Zones/City_03_01/City_03_01.txt
+	Icon		City_03_01_TalosIsland.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	139, 154
+	TextLocation	177, 244
+	Name		maps/City_Zones/City_03_02/City_03_02.txt
+	Icon		City_03_02_IndependencePort.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	380, 367
+	TextLocation	402, 386
+	Name		maps/City_Zones/City_04_01/City_04_01.txt
+	Icon		City_04_01_FoundersFalls.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	224, 326
+	TextLocation	248, 353
+	Name		maps/City_Zones/City_04_02/City_04_02.txt
+	Icon		City_04_02_Brickstown.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	265, 231
+	TextLocation	277, 244
+	Name		maps/City_Zones/Hazard_01_01/Hazard_01_01.txt
+	Icon		Hazard_01_01_PerezPark.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	249, 81
+	TextLocation	282, 107
+	Name		maps/City_Zones/Hazard_02_01/Hazard_02_01.txt
+	Icon		Hazard_02_01_Baumton.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	101, 347
+	TextLocation	159, 376
+	Name		maps/City_Zones/Hazard_04_01/Hazard_04_01.txt
+	Icon		Hazard_04_01_Venice.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	303, 362
+	TextLocation	311, 381
+	Name		maps/City_Zones/City_02_05/City_02_05.txt
+	Icon		Trial_02_01_Overbrook.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	163, 284
+	TextLocation	176, 291
+	Name		maps/City_Zones/Trial_03_01/Trial_03_01.txt
+	Icon		Trial_03_01_TerraVolta.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	329, 395
+	TextLocation	349, 407
+	Name		maps/City_Zones/Trial_04_01/Trial_04_01.txt
+	Icon		Trial_04_01_Woodvale.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	368, 173
+	TextLocation	385, 193
+	Name		maps/City_Zones/City_05_01/City_05_01.txt
+	Icon		City_05_01_PeregrineIsland.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	341, 246
+	TextLocation	352, 264
+	Name		maps/City_Zones/Hazard_01_02/Hazard_01_02.txt
+	Icon		Hazard_01_02_TheHollows.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+Zone
+	Location	436, 71
+	TextLocation	465, 87
+	Name		maps/City_Zones/Hazard_03_02/Hazard_03_02.txt
+	Icon		Hazard_03_02_StrigaIsle.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+
+Zone
+	Location	53, 53
+	TextLocation	85, 79
+	Name		maps/City_Zones/City_03_03/City_03_03.txt
+	Icon		City_03_03_Croatoa.tga
+	City		ParagonCity
+	TeamArea	Heroes
+End
+
+//--------------------------------------------------------------------------------------
+// Villain Maps ////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------------
+
+Zone
+	Location	208, 268
+	TextLocation	245, 308
+	Name		maps/City_Zones/V_City_01_01/V_City_01_01.txt
+	Icon		V_City_01_01_MercyIsland.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	330, 275
+	TextLocation	392, 312    
+	Name		maps/City_Zones/V_City_01_02/V_City_01_02.txt
+	Icon		V_City_01_02_PortOakes.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	264, 215
+	TextLocation	338, 271
+	Name		maps/City_Zones/V_City_02_01/V_City_02_01.txt
+	Icon		V_City_02_01_CapAuDiable.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	138, 261
+	TextLocation	164, 309
+	Name		maps/City_Zones/V_City_03_01/V_City_03_01.txt
+	Icon		V_City_03_01_SharkheadIsle.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	379, 127
+	TextLocation	426, 187
+	Name		maps/City_Zones/V_City_03_02/V_City_03_02.txt
+	Icon		V_City_03_02_NervaArchipelago.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	222, 117
+	TextLocation	279, 160
+	Name		maps/City_Zones/V_City_04_01/V_City_04_01.txt
+	Icon		V_City_04_01_StMartial.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+Zone
+	Location	194, 201
+	TextLocation	219, 224
+	Name		maps/City_Zones/V_City_05_01/V_City_05_01.txt
+	Icon		V_City_05_01_Grandville.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+// The Abyss
+Zone
+	Location	314, 114
+	TextLocation	338, 124
+	Name		maps/City_Zones/V_Trial_04_02/V_Trial_04_02.txt
+	Icon		V_Trial_04_02_Abyss.tga
+	City		RogueIsles
+	TeamArea	Villains
+End
+
+//--------------------------------------------------------------------------------------
+// PVP Maps accessible to heroes and villains, but only show up on one map /////////////
+//--------------------------------------------------------------------------------------
+
+Zone
+	Location	313, 192
+	TextLocation	322, 202
+	Name		maps/City_Zones/V_PvP_03_01/V_PvP_03_01.txt
+	Icon		V_PvP_03_01_SirensCall.tga
+	City		ParagonCity
+	TeamArea	PrimalCommon
+End
+
+Zone
+	Location	39, 319
+	TextLocation	73, 355
+	Name		maps/City_Zones/V_PvP_02_01/V_PvP_02_01.txt
+	Icon		V_PvP_02_01_BloodyBay.tga
+	City		RogueIsles
+	TeamArea	PrimalCommon
+End
+
+Zone
+	Location	81, 263
+	TextLocation	101, 282
+	Name		maps/City_Zones/V_PvP_04_01/V_PvP_04_01.txt
+	Icon		V_PvP_04_01_Warburg.tga
+	City		RogueIsles
+	TeamArea	PrimalCommon
+End
+
+// RV is hidden for both
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/V_PvP_05_01/V_PvP_05_01.txt
+	Icon		white.tga
+	City		None
+	TeamArea	PrimalCommon
+	Hide		1
+End
+
+//--------------------------------------------------------------------------------------
+// Coop maps accessible to heroes and villains, but only show up on one map
+//--------------------------------------------------------------------------------------
+
+// Rikti War Zone
+Zone
+	Location	016, 251
+	TextLocation	049, 346
+	Name		maps/City_Zones/War_05_01/War_05_01.txt
+	Icon		Trial_05_01_WhitePlains.tga
+	City		ParagonCity
+	TeamArea	PrimalCommon
+End
+
+// Dark Astoria
+Zone
+	Location	450, 330
+	TextLocation	474, 347
+	Name		maps/City_Zones/Coop_06_01/Coop_06_01.txt
+	Icon		Hazard_03_01_DarkAstoria.tga
+	City		ParagonCity
+	TeamArea	PrimalCommon
+End
+
+//--------------------------------------------------------------------------------------
+// These are hidden for now and not shown on any city map //////////////////////////////
+//--------------------------------------------------------------------------------------
+
+// Firebase Zulu
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Hazard_06_01/Hazard_06_01.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Cascade Arch
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Hazard_06_02/Hazard_06_02.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// The Chantry
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Hazard_06_03/Hazard_06_03.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Storm Palace
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Trial_06_01/Trial_06_01.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Sewer Network
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Trial_01_02/Trial_01_02.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Abandoned Sewers
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Trial_01_01/Trial_01_01.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Tunnels
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Hazard_01_03/Hazard_01_03.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// The Hive
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/Trial_04_02/Trial_04_02.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Monster Island
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/V_Trial_04_03/V_Trial_04_03.txt
+	Icon		white.tga
+	City		RogueIsles
+	TeamArea	Villains
+	Hide		1
+End
+
+// Ouroboros - Hero
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/City_06_01/City_06_01.txt
+	Icon		white.tga
+	City		ParagonCity
+	TeamArea	Heroes
+	Hide		1
+End
+
+// Ouroboros - Villain
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/V_City_06_01/V_City_06_01.txt
+	Icon		white.tga
+	City		RogueIsles
+	TeamArea	Villains
+	Hide		1
+End
+
+// Cimerora
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/City_03_04/City_03_04.txt
+	Icon		white.tga
+	City		None
+	TeamArea	PrimalCommon
+	Hide		1
+End
+
+// Pocket D
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/City_02_04/City_02_04.txt
+	Icon		white.tga
+	City		None
+	TeamArea	Everybody
+	Hide		1
+End
+
+//--------------------------------------------------------------------------------------
+// Praetorian Maps
+//--------------------------------------------------------------------------------------
+
+// Nova Praetoria
+Zone
+	Location	345, 164
+	TextLocation	399, 248
+	Name		maps/City_Zones/P_City_00_01/P_City_00_01.txt
+	Icon		P_City_00_01_Nova_Praetoria.tga
+	City		Praetoria
+	TeamArea	Everybody
+End
+
+// Imperial City
+Zone
+	Location	221, 132
+	TextLocation	285, 255
+	Name		maps/City_Zones/P_City_00_02/P_City_00_02.txt
+	Icon		P_City_00_02_Imperial_City.tga
+	City		Praetoria
+	TeamArea	Everybody
+End
+
+// Neutropolis
+Zone
+	Location	31, 193
+	TextLocation	130, 267
+	Name		maps/City_Zones/P_City_00_03/P_City_00_03.txt
+	Icon		P_City_00_03_Neutropolis.tga
+	City		Praetoria
+	TeamArea	Everybody
+End
+
+
+// Nova Praetoria Underground
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/P_City_00_06/P_City_00_06.txt
+	Icon		white.tga
+	City		Praetoria
+	TeamArea	Everybody
+	Hide		1
+End
+
+// Imperial City Underground
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/P_City_00_07/P_City_00_07.txt
+	Icon		white.tga
+	City		Praetoria
+	TeamArea	Everybody
+	Hide		1
+End
+
+// Neutropolis Underground
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/P_City_00_08/P_City_00_08.txt
+	Icon		white.tga
+	City		Praetoria
+	TeamArea	Everybody
+	Hide		1
+End
+
+//--------------------------------------------------------------------------------------
+// Non GR Praetorian Maps, available for all players but do not show up on the map
+//--------------------------------------------------------------------------------------
+
+// First Ward
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/P_City_00_04/P_City_00_04.txt
+	Icon		white.tga
+	City		Praetoria
+	TeamArea	Everybody
+	Hide		1
+End
+
+// Night Ward
+Zone
+	Location	0, 0
+	TextLocation	0, 0
+	Name		maps/City_Zones/P_City_00_09/P_City_00_09.txt
+	Icon		white.tga
+	City		Praetoria
+	TeamArea	Everybody
+	Hide		1
+End
