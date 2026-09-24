@@ -62,8 +62,8 @@ jobs:
               $reference = $candidate
             } else {
               $runs = Invoke-RestMethod "$base/workflows/reference-runtime.yml/runs?head_sha=$($schema.head_sha)&per_page=20" -Headers $headers
-              $reference = $runs.workflow_runs | Where-Object { $_.conclusion -eq 'success' } | Select-Object -First 1
-              if (-not $reference -and @($runs.workflow_runs | Where-Object { $_.status -ne 'completed' }).Count -eq 0) { throw 'No successful or running reference build for the schema commit' }
+              $reference = $runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.conclusion -eq 'success' } | Select-Object -First 1
+              if (-not $reference -and @($runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.status -ne 'completed' }).Count -eq 0) { throw 'No successful or running reference build for the schema commit' }
             }
             if (-not $reference) {
               if ((Get-Date) -ge $deadline) { throw 'Timed out waiting for matching reference build' }
