@@ -1,0 +1,187 @@
+--- a/DBServer/src/container_sql.c
++++ b/DBServer/src/container_sql.c
+@@ -3,6 +3,7 @@
+ #include "sql/sqlinclude.h"
+ #include <utilitieslib/utils/utils.h>
+ #include "container_sql.h"
++#include "sql/pg_compat.h"
+ #include "container_diff.h"
+ #include "container_merge.h"
+ #include <utilitieslib/utils/timing.h>
+@@ -203,7 +204,7 @@
+         xcase DBPROV_MSSQL:
+             buf_len = sprintf(buf, "IF NOT EXISTS (SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_name = 'FK_%s_%s_%s') ALTER TABLE dbo.%s ADD CONSTRAINT FK_%s_%s_%s FOREIGN KEY (%s) REFERENCES %s;", table, key, foreign_table, table, table, key, foreign_table, key, foreign_table);
+         xcase DBPROV_POSTGRESQL:
+-            buf_len = sprintf(buf, "DO $$BEGIN IF NOT EXISTS (SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_name = 'fk_%s_%s_%s') THEN ALTER TABLE dbo.%s ADD CONSTRAINT FK_%s_%s_%s FOREIGN KEY (%s) REFERENCES dbo.%s; END IF; END$$;", strlwrdupa(table), strlwrdupa(key), strlwrdupa(foreign_table), table, table, key, foreign_table, key, foreign_table);
++            buf_len = sprintf(buf, COH_PG_ADD_FK, table, table, key, foreign_table, table, table, key, foreign_table, key, foreign_table);
+         DBPROV_XDEFAULT();
+     }
+     sqlExecAsync(buf, buf_len);
+@@ -221,7 +222,7 @@
+         xcase DBPROV_MSSQL:
+             buf_len = sprintf(buf, "IF EXISTS (SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_name = 'FK_%s_%s_%s') ALTER TABLE dbo.%s DROP CONSTRAINT FK_%s_%s_%s;", table, key, foreign_table, table, table, key, foreign_table);
+         xcase DBPROV_POSTGRESQL:
+-            buf_len = sprintf(buf, "DO $$BEGIN IF EXISTS (SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_name = 'fk_%s_%s_%s') THEN ALTER TABLE dbo.%s DROP CONSTRAINT FK_%s_%s_%s; END IF; END$$;", strlwrdupa(table), strlwrdupa(key), strlwrdupa(foreign_table), table, table, key, foreign_table);
++            buf_len = sprintf(buf, COH_PG_DROP_FK, table, table, key, foreign_table);
+         DBPROV_XDEFAULT();
+     }
+     
+@@ -246,7 +247,7 @@
+         xcase DBPROV_MSSQL:
+             buf_len = sprintf(buf, "IF NOT EXISTS (SELECT sys.indexes.name FROM sys.indexes JOIN sys.objects on sys.indexes.object_id=sys.objects.object_id WHERE sys.indexes.name = N'%s' and sys.objects.name=N'%s') CREATE INDEX %s ON dbo.%s (%s);", index, table, index, table, fields);
+         xcase DBPROV_POSTGRESQL:
+-            buf_len = sprintf(buf, "DO $$BEGIN IF NOT EXISTS (SELECT relname FROM pg_catalog.pg_class JOIN pg_catalog.pg_index ON pg_catalog.pg_class.oid = pg_catalog.pg_index.indexrelid WHERE relname = '%s' AND indrelid = '%s'::regclass::oid) THEN CREATE INDEX %s ON dbo.%s (%s); END IF; END$$;", strlwrdupa(index), strlwrdupa(table), index, table, fields);
++            buf_len = sprintf(buf, COH_PG_ADD_INDEX, table, index, table, fields);
+         DBPROV_XDEFAULT();
+     }
+ 
+@@ -269,7 +270,7 @@
+         xcase DBPROV_MSSQL:
+             buf_len = sprintf(buf, "IF EXISTS (SELECT sys.indexes.name FROM sys.indexes JOIN sys.objects on sys.indexes.object_id=sys.objects.object_id WHERE sys.indexes.name = N'%s' and sys.objects.name=N'%s') DROP INDEX %s ON dbo.%s;", index, table, index, table);
+         xcase DBPROV_POSTGRESQL:
+-            buf_len = sprintf(buf, "DO $$BEGIN IF EXISTS (SELECT relname FROM pg_catalog.pg_class JOIN pg_catalog.pg_index ON pg_catalog.pg_class.oid = pg_catalog.pg_index.indexrelid WHERE relname = '%s' AND indrelid = '%s'::regclass::oid) THEN DROP INDEX %s ON dbo.%s; END IF; END$$;", strlwrdupa(index), strlwrdupa(table), index, table);
++            buf_len = sprintf(buf, COH_PG_DROP_INDEX, table, table, index, index);
+         DBPROV_XDEFAULT();
+     }
+ 
+@@ -335,7 +336,7 @@
+                             estrConcatf(estr, "SET IDENTITY_INSERT dbo.%s ON; INSERT INTO dbo.%s (ContainerId) VALUES (?); SET IDENTITY_INSERT dbo.%s OFF;", name, name, name);
+                             bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
+                         xcase DBPROV_POSTGRESQL:
+-                            estrConcatf(estr, "SELECT setval(pg_get_serial_sequence('dbo.%s', 'containerid'), ?); INSERT INTO dbo.%s (ContainerId) VALUES (?);", name, name);
++                            estrConcatf(estr, COH_PG_INSERT_CONTAINER, name, name);
+                             bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
+                             bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
+                         DBPROV_XDEFAULT();
+@@ -1181,6 +1182,30 @@
+         columns[count].num_bytes = buffer_length;
+         columns[count].column_size = 0;
+ 
++        if (gDatabaseProvider == DBPROV_POSTGRESQL)
++        {
++            /* PostgreSQL has no tinyint or separate nvarchar, and SQLColumns
++             * display sizes are not CoH's in-memory buffer sizes. */
++            CohPgKind kind = cohPgColumnType((char *)type_name, column_size,
++                columns[count].data_type_name, sizeof(columns[count].data_type_name));
++            switch (kind) {
++                case COH_PG_SHORT: columns[count].data_type = CFTYPE_SHORT; break;
++                case COH_PG_INT: columns[count].data_type = CFTYPE_INT; break;
++                case COH_PG_FLOAT: columns[count].data_type = CFTYPE_FLOAT; break;
++                case COH_PG_STRING: columns[count].data_type = CFTYPE_UNICODESTRING; break;
++                case COH_PG_TIMESTAMP: columns[count].data_type = CFTYPE_DATETIME; break;
++                case COH_PG_TEXT: columns[count].data_type = CFTYPE_UNICODESTRING_MAX; break;
++                case COH_PG_BINARY: columns[count].data_type = CFTYPE_BINARY_MAX; break;
++                default: FatalErrorf("Unsupported PostgreSQL type %s in %s.%s", type_name, table_name, column_name);
++            }
++            columns[count].num_bytes = g_containerfieldinfo[columns[count].data_type].access_size;
++            if (kind == COH_PG_STRING) {
++                columns[count].column_size = column_size;
++                columns[count].num_bytes = (column_size + 1) * 2;
++            }
++            continue;
++        }
++
+         for (i = 1; i < CFTYPE_COUNT; i++)
+         {
+             if ((g_containerfieldinfo[i].actual_type == data_type) && ((g_containerfieldinfo[i].access_size == -1) == (column_size == 0 || column_size == INT_MAX)))
+--- a/DBServer/src/container.c
++++ b/DBServer/src/container.c
+@@ -17,6 +17,8 @@
+ #include "dblog.h"
+ #include "namecache.h"
+ #include "container_tplt.h"
++#include "sql/pg_compat.h"
++#include <limits.h>
+ #include <utilitieslib/components/EString.h>
+ #include "dbperf.h"
+ #include "dbmsg.h" // for containerBroadcast
+@@ -700,12 +702,14 @@
+                     xcase DBPROV_MSSQL:
+                         cmd_len = sprintf(cmd, "SELECT IDENT_CURRENT('%s');", list->tplt->tables->name);
+                     xcase DBPROV_POSTGRESQL:
+-                        cmd_len = sprintf(cmd, "SELECT setval(pg_get_serial_sequence('dbo.%s', 'containerid'), nextval(pg_get_serial_sequence('dbo.%s', 'containerid')), false);", list->tplt->tables->name, list->tplt->tables->name);
++                        cmd_len = sprintf(cmd, COH_PG_HIGH_WATER, list->tplt->tables->name);
+                     DBPROV_XDEFAULT();
+                 }
+ 
+                 list->max_container_id = sqlGetSingleValue(cmd, cmd_len, NULL, SQLCONN_FOREGROUND);
+             }
++            if (list->max_container_id == INT_MAX)
++                FatalErrorf("Container ID range exhausted for %s", list->tplt->tables->name);
+             idx = ++list->max_container_id;
+         }
+         else
+--- a/DBServer/src/container_tplt.c
++++ b/DBServer/src/container_tplt.c
+@@ -323,7 +323,10 @@
+         if (new_field->data_type == CFTYPE_TEXTBLOB || new_field->data_type == CFTYPE_BLOB)
+             continue;
+ 
+-        assert(new_field->num_bytes >= field->num_bytes);
++        // SQL storage matches above; PG int1/int2 share smallint and ANSI/Unicode
++        // share varchar. Their ODBC buffer sizes cannot validate CoH's buffers.
++        if (gDatabaseProvider != DBPROV_POSTGRESQL)
++            assert(new_field->num_bytes >= field->num_bytes);
+         assert(new_field->column_size == field->column_size);
+     }
+ 
+@@ -490,7 +493,7 @@
+     table.columns[0].reserved_word = 1;
+ 
+     // Mark the SubId as reserved if this table has one
+-    if (strcmp(table.columns[1].name,"SubId")==0)
++    if (stricmp(table.columns[1].name,"SubId")==0)
+     {
+         table.array_count = 1;
+         table.columns[1].reserved_word = 1;
+@@ -549,7 +552,7 @@
+     estrSetLength(&columns, estrLength(&columns)-1);
+     assert(estrLength(&columns));
+ 
+-    if (table->table_type == TT_CONTAINER)
++    if (table->table_type == TT_CONTAINER && gDatabaseProvider == DBPROV_MSSQL)
+     {
+         sprintf(identity_insert_on, " SET IDENTITY_INSERT dbo.%s_tmp ON;", table->name);
+         sprintf(identity_insert_off, " SET IDENTITY_INSERT dbo.%s_tmp OFF;", table->name);
+@@ -568,7 +571,7 @@
+         // Create new table
+         updateTable(table);
+ 
+-        if (table->table_type == TT_CONTAINER)
++        if (table->table_type == TT_CONTAINER && gDatabaseProvider == DBPROV_MSSQL)
+         {
+             sprintf(identity_insert_on, " SET IDENTITY_INSERT dbo.%s ON;", table->name);
+             sprintf(identity_insert_off, " SET IDENTITY_INSERT dbo.%s OFF;", table->name);
+--- a/DBServer/src/container_tplt_utils.c
++++ b/DBServer/src/container_tplt_utils.c
+@@ -382,7 +382,7 @@
+         xcase DBPROV_MSSQL:
+             cmd_len = sprintf(cmd, "SELECT compatibility_level FROM sys.databases WHERE name=db_name();");
+         xcase DBPROV_POSTGRESQL:
+-            cmd_len = sprintf(cmd, "SELECT CAST(CAST(substring(character_value FROM '[[:digit:]]+\\.[[:digit:]]+') AS float)*100 as integer) FROM information_schema.sql_implementation_info WHERE implementation_info_name = 'DBMS VERSION';");
++            cmd_len = sprintf(cmd, "SELECT current_setting('server_version_num')::integer;");
+         DBPROV_XDEFAULT();
+     }
+ 
+--- a/Common/sql/sqlconn.c
++++ b/Common/sql/sqlconn.c
+@@ -747,7 +747,7 @@
+ 
+         if (!SQL_SUCCEEDED(SQLDriverConnectA(sql.connections[i], 0, (SQLCHAR*)conn_str, conn_str_len, NULL, 0, NULL, SQL_DRIVER_NOPROMPT)))
+         {
+-            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect: %s", conn_str);
++            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect failed (connection string withheld)");
+             return false;
+         }
+     }
+--- a/DBServer/src/dbinit.c
++++ b/DBServer/src/dbinit.c
+@@ -1085,6 +1085,8 @@
+     sqlConnSetLogin(server_cfg.sql_login);
+     if (!sqlConnDatabaseConnect(server_cfg.sql_db_name, "DBSERVER"))
+     {
++        if (gDatabaseProvider == DBPROV_POSTGRESQL)
++            FatalErrorf("PostgreSQL connection failed. Initialize the database with database/postgresql/pg_local.py and check SqlLogin/SqlDbName.");
+         sqlCheckDdl(DDL_ADD);
+         if (sqlConnDatabaseConnect(NULL, "DBSERVER_INIT"))
+             sqlExecDdl(DDL_ADD, server_cfg.sql_init, SQL_NTS);

@@ -1,0 +1,88 @@
+name: PostgreSQL backend
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'database/postgresql/**'
+      - 'patches/postgresql/**'
+      - 'tools/prepare_pg_source.py'
+      - '.github/workflows/postgresql.yml'
+  pull_request:
+    paths:
+      - 'database/postgresql/**'
+      - 'patches/postgresql/**'
+      - 'tools/prepare_pg_source.py'
+      - '.github/workflows/postgresql.yml'
+permissions:
+  contents: read
+concurrency:
+  group: postgresql-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  integration:
+    name: PostgreSQL and ODBC integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            database
+            patches
+            tools
+          sparse-checkout-cone-mode: true
+      - name: Install PostgreSQL and Unicode ODBC
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-16 postgresql-client-16 unixodbc-dev odbc-postgresql cmake ninja-build
+      - name: Build shared-dialect ODBC probe
+        run: |
+          cmake -S database/postgresql/tests -B out/pg-probe -G Ninja
+          cmake --build out/pg-probe
+      - name: Persistence and recovery tests
+        run: >-
+          python3 database/postgresql/tests/run_integration.py
+          --bin /usr/lib/postgresql/16/bin --probe out/pg-probe/odbc_probe
+          --root "$RUNNER_TEMP/coh-pg" --report out/postgresql-integration.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: postgresql-test-evidence
+          path: out/postgresql-integration.json
+          if-no-files-found: ignore
+  dbserver:
+    name: Patched Win32 DbServer build
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            upstream/ouroboros
+            database
+            patches
+            tools
+            docs/source-manifest.json
+            upstream-lock.json
+          sparse-checkout-cone-mode: false
+      - name: Verify and stage patched source
+        run: python tools/prepare_pg_source.py --output out/pg-source
+      - name: Configure Win32
+        working-directory: out/pg-source
+        run: cmake --preset vs2026
+      - name: Build DbServer
+        working-directory: out/pg-source
+        run: cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+      - name: Compile Win32 ODBC probe
+        run: |
+          cmake -S database/postgresql/tests -B out/pg-probe-win32 -G "Visual Studio 18 2026" -A Win32
+          cmake --build out/pg-probe-win32 --config Release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-win32-development-build
+          path: |
+            out/pg-source/out/build/vs2026/**/DbServer.exe
+            out/pg-source/out/build/vs2026/**/*.dll
+            out/pg-source/postgresql-build-input.json
+            out/pg-probe-win32/Release/odbc_probe.exe
+          if-no-files-found: error

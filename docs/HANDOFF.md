@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24 after 22 archive inspections and startup asset coverage checks.
+Updated: 2026-09-24. Active work switched to PostgreSQL development at the user’s request.
 
 ## Active direction
 
@@ -8,6 +8,18 @@ Use the original public OuroDev-derived Issue 24/Volume 2 source fork at
 `0b75ade0c801735e10c5798f641948a45cc50488`, under `upstream/ouroboros`. The user has
 no Windows PC: use hosted Windows builds/reference tests and Thor testing.
 Canonical i25 acquisition is deferred.
+
+## Current database work
+
+PostgreSQL is the selected Android-compatible persistence direction. The first
+implementation is in `database/postgresql`, with a reproducible patch under
+`patches/postgresql`. Hosted ODBC integration and Win32 compilation are being
+run; see `database/postgresql/README.md` for scope and commands. This is not yet
+a gameplay-validated server or an Android APK.
+
+**Deferred until tomorrow (2026-09-25 UTC):** resume the Thor archive index and
+missing animation/basic-texture investigation. No more asset uploads or index
+work are needed from the user during this database session.
 
 ## Completed
 
@@ -59,7 +71,7 @@ seven requested basic renderer texture names. This prevents calling the content
 startup-ready. See [current coverage and next-upload instructions](BASE_ASSET_COVERAGE.md)
 and [machine-readable evidence](base-assets-assessment.json).
 
-Next requested input is **`coh-asset-index.json`**, generated on the Thor with the
+Tomorrow’s deferred input is **`coh-asset-index.json`**, generated on the Thor with the
 new standalone `tools/index_piggs.py` against the whole client root. This reads
 only archive tables and identifies which remaining archives contain animations
 and base textures. It is not an integrity verifier. Counts/extensions matched
