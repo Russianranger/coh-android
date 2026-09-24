@@ -63,7 +63,7 @@ jobs:
           path: out/postgresql-integration.json
           if-no-files-found: ignore
   dbserver:
-    name: Patched Win32 DbServer build
+    name: Real DbServer PostgreSQL persistence
     runs-on: windows-2025-vs2026
     timeout-minutes: 40
     steps:
@@ -81,10 +81,29 @@ jobs:
         run: python tools/prepare_pg_source.py --output out/pg-source
       - name: Configure Win32
         working-directory: out/pg-source
-        run: cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe"
+        run: cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=ON
       - name: Build DbServer
         working-directory: out/pg-source
         run: cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+      - name: Install pinned 32-bit psqlODBC
+        run: |
+          $uri = 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest -Uri $uri -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $process = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($process.ExitCode -notin @(0,3010)) { throw "ODBC installation failed: $($process.ExitCode)" }
+      - name: Real container FIFO, retry and schema tests
+        run: |
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw '32-bit PostgreSQL Unicode driver not registered' }
+          python database/postgresql/tests/run_dbserver.py --bin "$env:PGBIN" --dbserver out/pg-source/out/build/vs2026/bin/OptDebug/DbServer.exe --root "$env:RUNNER_TEMP/coh-pg-fifo" --report out/dbserver-persistence.json --driver "$($driver.Name)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbserver-persistence-evidence
+          path: out/dbserver-persistence.json
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: postgresql-win32-development-build

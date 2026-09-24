@@ -1,3 +1,225 @@
+--- a/Common/sql/sqlconn.c
++++ b/Common/sql/sqlconn.c
+@@ -34,6 +34,8 @@
+     HDBC connections[SQLCONN_MAX];
+ 
+     HENV env;
++    bool unit_active[SQLCONN_MAX];
++    char unit_state[SQLCONN_MAX][6];
+ 
+     char database_string[256];
+     char login_string[SHORT_SQL_STRING];
+@@ -42,6 +44,27 @@
+     LONG stmt_allocs;
+ #endif
+ } sql;
++
++void sqlConnBeginUnit(SqlConn conn)
++{
++    assert(!sql.unit_active[conn]);
++    sql.unit_state[conn][0] = 0;
++    sql.unit_active[conn] = true;
++}
++void sqlConnFinishUnit(SqlConn conn) { sql.unit_active[conn] = false; }
++bool sqlConnUnitFailed(SqlConn conn) { return sql.unit_state[conn][0] != 0; }
++const char *sqlConnUnitState(SqlConn conn) { return sql.unit_state[conn]; }
++
++static void sqlRecordUnitError(SQLSMALLINT kind, SQLHANDLE handle, SQLRETURN ret, SqlConn conn)
++{
++    SQLINTEGER native;
++    SQLCHAR state[6] = {0};
++    if (!sql.unit_active[conn] || sqlConnUnitFailed(conn) || ret >= 0)
++        return;
++    SQLGetDiagRecA(kind, handle, 1, state, &native, NULL, 0, NULL);
++    // Preserve the first failure; later 25P02 must not hide a retryable error.
++    strcpy(sql.unit_state[conn], state[0] ? (char *)state : "HY000");
++}
+ 
+ static const char* sqlTypeName(SQLSMALLINT type)
+ {
+@@ -526,6 +549,8 @@
+ {
+     SQLRETURN ret;
+     U32 firstFailTime = 0;
++    if (sql.unit_active[conn] && sqlConnUnitFailed(conn))
++        return SQL_ERROR;
+ 
+     for (;;) {
+         U32 now;
+@@ -536,6 +561,7 @@
+         else
+             ret = _sqlConnStmtExecDirectAscii(stmt, str, str_len, conn);
+ 
++        sqlRecordUnitError(SQL_HANDLE_STMT, stmt, ret, conn);
+         if (SQL_SHOW_ERROR(ret))
+             sqlConnStmtPrintErrorAndGetState(stmt, str, sql_state);
+ 
+@@ -548,6 +574,9 @@
+                 break;
+         }
+ #else
++        // The queue owns complete-transaction retries while a unit is active.
++        if (sql.unit_active[conn])
++            break;
+         // Do not retry on non error conditions or on the foreground thread
+         if (!SQL_NEEDS_RETRY(ret) || SQLSTATE_SKIP_RETRY(sql_state) || (conn == SQLCONN_FOREGROUND))
+             break;
+@@ -586,7 +615,7 @@
+         sqlConnStmtPrintError(stmt, str);
+ 
+     if (next < 0)
+-        ret = next;
++        return next;
+ 
+ #ifdef FULLDEBUG
+     // SQLMoreResults does not function properly if SQL_NEED_DATA was returned
+@@ -594,6 +623,7 @@
+ #endif
+ 
+     while ((next = SQLMoreResults(stmt)) != SQL_NO_DATA) {
++        sqlRecordUnitError(SQL_HANDLE_STMT, stmt, next, conn);
+         if (SQL_SHOW_ERROR(next))
+             sqlConnStmtPrintError(stmt, str);
+         if (next < 0)
+@@ -631,6 +661,7 @@
+ 
+     since_last = timerElapsedAndStart(sql.timers[conn]);
+     ret = SQLExecute(stmt);
++    sqlRecordUnitError(SQL_HANDLE_STMT, stmt, ret, conn);
+     sqlConnTimerAddTime(conn, since_last);
+ 
+     return ret;
+@@ -642,6 +673,7 @@
+ 
+     since_last = timerElapsedAndStart(sql.timers[conn]);
+     ret = SQLFetch(stmt);
++    sqlRecordUnitError(SQL_HANDLE_STMT, stmt, ret, conn);
+     sqlConnTimerAddTime(conn, since_last);
+ 
+     return ret;
+@@ -662,13 +694,15 @@
+ 
+     sqlConnTimerAddTime(conn, since_last);
+ 
++    sqlRecordUnitError(SQL_HANDLE_DBC, sql.connections[conn], ret, conn);
+     if (ret != SQL_SUCCESS)
+         sqlConnPrintError(SQL_HANDLE_DBC, sql.connections[conn], "SQLEndTran", NULL);
+ 
+     if (!SQL_SUCCEEDED(ret))
+     {
+         LOG(LOG_ERROR, LOG_LEVEL_ALERT, LOG_CONSOLE_ALWAYS, "Manual end transaction (commit %d) failed\n", commit);
+-        devassert(0);
++        if (!sql.unit_active[conn])
++            devassert(0);
+     }
+ 
+     return ret;
+@@ -747,7 +781,7 @@
+ 
+         if (!SQL_SUCCEEDED(SQLDriverConnectA(sql.connections[i], 0, (SQLCHAR*)conn_str, conn_str_len, NULL, 0, NULL, SQL_DRIVER_NOPROMPT)))
+         {
+-            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect: %s", conn_str);
++            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect failed (connection string withheld)");
+             return false;
+         }
+     }
+--- a/Common/sql/sqlconn.h
++++ b/Common/sql/sqlconn.h
+@@ -39,6 +39,12 @@
+ bool sqlConnStmtPrintError(HSTMT stmt, const char *original_command);
+ bool sqlConnStmtPrintErrorf(HSTMT stmt, char *fmt, ...);
+ 
++// An atomic unit owns retries; statement-level retries are disabled inside it.
++void sqlConnBeginUnit(SqlConn conn);
++void sqlConnFinishUnit(SqlConn conn);
++bool sqlConnUnitFailed(SqlConn conn);
++const char *sqlConnUnitState(SqlConn conn);
++
+ // transactions
+ bool sqlConnEnableAsynchDBC(bool enable, SqlConn conn);
+ bool sqlConnEnableAutoTransactions(bool enable, SqlConn conn);
+--- a/DBServer/CMakeLists.txt
++++ b/DBServer/CMakeLists.txt
+@@ -163,6 +163,11 @@
+ 
+ add_executable(DbServer
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
++option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
++if(COH_PG_PERSISTENCE_TESTS)
++    target_sources(DbServer PRIVATE src/pg_persistence_test.c)
++    target_compile_definitions(DbServer PRIVATE COH_PG_PERSISTENCE_TESTS)
++endif()
+ source_group(TREE "${PROJECT_SOURCE_DIR}" FILES
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
+ cox_target_defaults(DbServer)
+--- a/DBServer/src/auctionservercomm.c
++++ b/DBServer/src/auctionservercomm.c
+@@ -195,7 +195,10 @@
+             days_active = server_cfg.auction_last_login_delay;
+             auction_state.sqlcb_link = auc_link;
+ 
+-            estrPrintf(&restriction,"WHERE LastActive > DATEADD(d, -%i, GETDATE())", days_active);
++            if (gDatabaseProvider == DBPROV_POSTGRESQL)
++                estrPrintf(&restriction, "WHERE LastActive > LOCALTIMESTAMP - (%i * INTERVAL '1 day')", days_active);
++            else
++                estrPrintf(&restriction,"WHERE LastActive > DATEADD(d, -%i, GETDATE())", days_active);
+             sqlReadColumnsAsync(ent_list->tplt->tables,0,"ContainerId",restriction,sqlAuctionGetActiveCallback,0,pak_out,0);
+ 
+             estrDestroy(&restriction);
+--- a/DBServer/src/clientcomm.c
++++ b/DBServer/src/clientcomm.c
+@@ -2618,7 +2618,10 @@
+         cbData = calloc(1, sizeof(UnlockCharacterCbData));
+         cbData->client = client;
+         cbData->ent_id = ent_id;
+-        sprintf(buf, "WHERE AuthName='%s' AND IsSlotLocked IS NULL", client->account_name); // can't use AuthId in dev environment
++        if (gDatabaseProvider == DBPROV_POSTGRESQL)
++            sprintf(buf, "WHERE dbo.coh_name_key(AuthName)=dbo.coh_name_key('%s') AND IsSlotLocked IS NULL", client->account_name);
++        else
++            sprintf(buf, "WHERE AuthName='%s' AND IsSlotLocked IS NULL", client->account_name); // can't use AuthId in dev environment
+         sqlReadColumnsAsync(ent_list->tplt->tables,0,"ContainerId",buf,s_finishHandleUnlockCharacter,cbData,NULL,0);
+     }
+ }
+--- a/DBServer/src/container.c
++++ b/DBServer/src/container.c
+@@ -17,6 +17,8 @@
+ #include "dblog.h"
+ #include "namecache.h"
+ #include "container_tplt.h"
++#include "sql/pg_compat.h"
++#include <limits.h>
+ #include <utilitieslib/components/EString.h>
+ #include "dbperf.h"
+ #include "dbmsg.h" // for containerBroadcast
+@@ -700,12 +702,14 @@
+                     xcase DBPROV_MSSQL:
+                         cmd_len = sprintf(cmd, "SELECT IDENT_CURRENT('%s');", list->tplt->tables->name);
+                     xcase DBPROV_POSTGRESQL:
+-                        cmd_len = sprintf(cmd, "SELECT setval(pg_get_serial_sequence('dbo.%s', 'containerid'), nextval(pg_get_serial_sequence('dbo.%s', 'containerid')), false);", list->tplt->tables->name, list->tplt->tables->name);
++                        cmd_len = sprintf(cmd, COH_PG_HIGH_WATER, list->tplt->tables->name);
+                     DBPROV_XDEFAULT();
+                 }
+ 
+                 list->max_container_id = sqlGetSingleValue(cmd, cmd_len, NULL, SQLCONN_FOREGROUND);
+             }
++            if (list->max_container_id == INT_MAX)
++                FatalErrorf("Container ID range exhausted for %s", list->tplt->tables->name);
+             idx = ++list->max_container_id;
+         }
+         else
+@@ -1039,7 +1043,11 @@
+     bind_list[0].data_type = CFTYPE_ANSISTRING;
+     bind_list[0].data = value;
+ 
+-    buf_len = sprintf(buf, "SELECT ContainerId FROM dbo.%s WHERE %s = ?;", list->tplt->tables->name, element);
++    if (gDatabaseProvider == DBPROV_POSTGRESQL &&
++        (!stricmp(element, "Name") || !stricmp(element, "AuthName")))
++        buf_len = sprintf(buf, "SELECT ContainerId FROM dbo.%s WHERE dbo.coh_name_key(%s) = dbo.coh_name_key(?);", list->tplt->tables->name, element);
++    else
++        buf_len = sprintf(buf, "SELECT ContainerId FROM dbo.%s WHERE %s = ?;", list->tplt->tables->name, element);
+     return sqlGetSingleValue(buf, buf_len, bind_list, SQLCONN_FOREGROUND);
+ }
+ 
 --- a/DBServer/src/container_sql.c
 +++ b/DBServer/src/container_sql.c
 @@ -3,6 +3,7 @@
@@ -44,7 +266,23 @@
          DBPROV_XDEFAULT();
      }
  
-@@ -335,7 +336,7 @@
+@@ -292,6 +293,15 @@
+ 
+     if (!tplt || tplt->dont_write_to_sql)
+         return;
++
++    if (gDatabaseProvider == DBPROV_POSTGRESQL) {
++        char *cmd = NULL;
++        for (i=tplt->table_count-1; i>=0; --i)
++            estrConcatf(&cmd, "DELETE FROM dbo.%s WHERE ContainerId=%d;", tplt->tables[i].name, container_id);
++        sqlExecAsyncEx(cmd, estrLength(&cmd), container_id, false);
++        estrDestroy(&cmd);
++        return;
++    }
+ 
+     for(i=tplt->table_count-1;i>=0;i--)
+     {
+@@ -335,7 +345,7 @@
                              estrConcatf(estr, "SET IDENTITY_INSERT dbo.%s ON; INSERT INTO dbo.%s (ContainerId) VALUES (?); SET IDENTITY_INSERT dbo.%s OFF;", name, name, name);
                              bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
                          xcase DBPROV_POSTGRESQL:
@@ -53,10 +291,19 @@
                              bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
                              bindInputParameter(stmt, (*bind)++, CFTYPE_INT, container_id, NULL);
                          DBPROV_XDEFAULT();
-@@ -1181,6 +1182,30 @@
+@@ -1050,6 +1060,7 @@
+     if (!SQL_SUCCEEDED(retcode))
+     {
+         *count_ptr = 0;
++        sqlConnStmtFree(stmt);
+         return 0;
+     }
+ 
+@@ -1180,6 +1191,30 @@
+         columns[count].data_type = CFTYPE_NULL;
          columns[count].num_bytes = buffer_length;
          columns[count].column_size = 0;
- 
++
 +        if (gDatabaseProvider == DBPROV_POSTGRESQL)
 +        {
 +            /* PostgreSQL has no tinyint or separate nvarchar, and SQLColumns
@@ -80,37 +327,9 @@
 +            }
 +            continue;
 +        }
-+
+ 
          for (i = 1; i < CFTYPE_COUNT; i++)
          {
-             if ((g_containerfieldinfo[i].actual_type == data_type) && ((g_containerfieldinfo[i].access_size == -1) == (column_size == 0 || column_size == INT_MAX)))
---- a/DBServer/src/container.c
-+++ b/DBServer/src/container.c
-@@ -17,6 +17,8 @@
- #include "dblog.h"
- #include "namecache.h"
- #include "container_tplt.h"
-+#include "sql/pg_compat.h"
-+#include <limits.h>
- #include <utilitieslib/components/EString.h>
- #include "dbperf.h"
- #include "dbmsg.h" // for containerBroadcast
-@@ -700,12 +702,14 @@
-                     xcase DBPROV_MSSQL:
-                         cmd_len = sprintf(cmd, "SELECT IDENT_CURRENT('%s');", list->tplt->tables->name);
-                     xcase DBPROV_POSTGRESQL:
--                        cmd_len = sprintf(cmd, "SELECT setval(pg_get_serial_sequence('dbo.%s', 'containerid'), nextval(pg_get_serial_sequence('dbo.%s', 'containerid')), false);", list->tplt->tables->name, list->tplt->tables->name);
-+                        cmd_len = sprintf(cmd, COH_PG_HIGH_WATER, list->tplt->tables->name);
-                     DBPROV_XDEFAULT();
-                 }
- 
-                 list->max_container_id = sqlGetSingleValue(cmd, cmd_len, NULL, SQLCONN_FOREGROUND);
-             }
-+            if (list->max_container_id == INT_MAX)
-+                FatalErrorf("Container ID range exhausted for %s", list->tplt->tables->name);
-             idx = ++list->max_container_id;
-         }
-         else
 --- a/DBServer/src/container_tplt.c
 +++ b/DBServer/src/container_tplt.c
 @@ -323,7 +323,10 @@
@@ -134,7 +353,74 @@
      {
          table.array_count = 1;
          table.columns[1].reserved_word = 1;
-@@ -549,7 +552,7 @@
+@@ -513,6 +516,56 @@
+     }
+ 
+     return sqlTableReadMulti(tplt, &table, -1, multi_buf_ptr, SQLCONN_FOREGROUND);
++}
++
++static bool postgresNeedsRebuild(TableInfo *table)
++{
++    ColumnInfo *old = NULL;
++    int count = sqlGetTableInfo(table->name, &old), i;
++    bool changed = count && count != table->num_columns;
++    for (i=0; count && i<count && i<table->num_columns && !changed; ++i)
++        changed = stricmp(old[i].name,table->columns[i].name) ||
++                  stricmp(old[i].data_type_name,table->columns[i].data_type_name);
++    free(old);
++    return changed;
++}
++
++static bool rebuildPostgresTable(TableInfo *table)
++{
++    ColumnInfo *old = NULL;
++    char *definition = NULL, *columns = NULL;
++    int count, i, j;
++    bool ok;
++    // Startup-only: finish every queued write/index operation before DDL.
++    sqlFifoBarrier();
++    sqlFifoFinish();
++    count = sqlGetTableInfo(table->name, &old);
++    for (i=0; i<table->num_columns; ++i) {
++        ColumnInfo *field = &table->columns[i];
++        if (i) estrConcatCharString(&definition, ",");
++        if (table->table_type == TT_CONTAINER && !stricmp(field->name, "ContainerId"))
++            estrConcatf(&definition, "%s SERIAL NOT NULL", field->name);
++        else
++            estrConcatf(&definition, "%s %s%s", field->name, field->data_type_name,
++                (!stricmp(field->name,"ContainerId") || !stricmp(field->name,"SubId")) ? " NOT NULL" : "");
++        for (j=0; j<count; ++j) {
++            if (!stricmp(field->name, old[j].name)) {
++                if (estrLength(&columns)) estrConcatCharString(&columns, ",");
++                estrConcatCharString(&columns, field->name);
++                break;
++            }
++        }
++    }
++    estrConcatf(&definition, ",PRIMARY KEY (ContainerId%s)", table->table_type==TT_SUBCONTAINER ? ",SubId" : "");
++    ok = sqlExecDdlf(DDL_REBUILDTABLE,
++        "SELECT dbo.coh_rebuild_table('dbo.%s'::regclass, '%s', '%s', %s);",
++        table->name, definition, columns, table->table_type==TT_CONTAINER ? "true" : "false");
++    free(old);
++    estrDestroy(&definition);
++    estrDestroy(&columns);
++    if (!ok)
++        FatalErrorf("PostgreSQL rebuild of %s failed; original table preserved. Fix the schema before restarting.", table->name);
++    return updateTable(table);
+ }
+ 
+ static bool rebuildTableDataInPlace(ContainerTemplate *tplt, TableInfo *table)
+@@ -526,6 +579,9 @@
+     int old_count;
+     bool ret;
+ 
++    if (gDatabaseProvider == DBPROV_POSTGRESQL)
++        return rebuildPostgresTable(table);
++
+     // Setup the temporary table
+     memcpy(&tmpTable, table, sizeof(TableInfo));
+     strcat(tmpTable.name, "_tmp");
+@@ -549,7 +605,7 @@
      estrSetLength(&columns, estrLength(&columns)-1);
      assert(estrLength(&columns));
  
@@ -143,7 +429,7 @@
      {
          sprintf(identity_insert_on, " SET IDENTITY_INSERT dbo.%s_tmp ON;", table->name);
          sprintf(identity_insert_off, " SET IDENTITY_INSERT dbo.%s_tmp OFF;", table->name);
-@@ -568,7 +571,7 @@
+@@ -568,7 +624,7 @@
          // Create new table
          updateTable(table);
  
@@ -152,6 +438,21 @@
          {
              sprintf(identity_insert_on, " SET IDENTITY_INSERT dbo.%s ON;", table->name);
              sprintf(identity_insert_off, " SET IDENTITY_INSERT dbo.%s OFF;", table->name);
+@@ -674,10 +730,13 @@
+ 
+     for(j=0;j<tplt->table_count;j++)
+     {
+-        if (!updateTable(&tplt->tables[j]))
++        if (!(gDatabaseProvider == DBPROV_POSTGRESQL && postgresNeedsRebuild(&tplt->tables[j])
++              ? rebuildPostgresTable(&tplt->tables[j]) : updateTable(&tplt->tables[j])))
+         {
+             if(!rebuildTableDataInPlace(tplt, &tplt->tables[j]))
+             {
++                if (gDatabaseProvider == DBPROV_POSTGRESQL)
++                    FatalErrorf("PostgreSQL schema verification failed for %s; refusing destructive fallback", tplt->tables[j].name);
+                 static bool s_oktoall = false;
+                 if (!s_oktoall) {
+                     switch(okToAllCancelDialog("Falling back to the old method for rebuilding a table.\r\n\r\n"
 --- a/DBServer/src/container_tplt_utils.c
 +++ b/DBServer/src/container_tplt_utils.c
 @@ -10,6 +10,7 @@
@@ -181,31 +482,21 @@
          DBPROV_XDEFAULT();
      }
  
---- a/Common/sql/sqlconn.c
-+++ b/Common/sql/sqlconn.c
-@@ -747,7 +747,7 @@
- 
-         if (!SQL_SUCCEEDED(SQLDriverConnectA(sql.connections[i], 0, (SQLCHAR*)conn_str, conn_str_len, NULL, 0, NULL, SQL_DRIVER_NOPROMPT)))
-         {
--            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect: %s", conn_str);
-+            sqlConnPrintErrorf(SQL_HANDLE_DBC, sql.connections[i], "SQLDriverConnect failed (connection string withheld)");
-             return false;
-         }
-     }
---- a/DBServer/src/dbinit.c
-+++ b/DBServer/src/dbinit.c
-@@ -1085,6 +1085,8 @@
-     sqlConnSetLogin(server_cfg.sql_login);
-     if (!sqlConnDatabaseConnect(server_cfg.sql_db_name, "DBSERVER"))
-     {
-+        if (gDatabaseProvider == DBPROV_POSTGRESQL)
-+            FatalErrorf("PostgreSQL connection failed. Initialize the database with database/postgresql/pg_local.py and check SqlLogin/SqlDbName.");
-         sqlCheckDdl(DDL_ADD);
-         if (sqlConnDatabaseConnect(NULL, "DBSERVER_INIT"))
-             sqlExecDdl(DDL_ADD, server_cfg.sql_init, SQL_NTS);
 --- a/DBServer/src/dbdispatch.c
 +++ b/DBServer/src/dbdispatch.c
-@@ -2397,7 +2397,7 @@
+@@ -357,7 +357,10 @@
+     if (!findFieldText(str, "AuthName", authName))
+         return 0;
+ 
+-    sprintf(restriction, "WHERE AuthName='%s'", authName);
++    if (gDatabaseProvider == DBPROV_POSTGRESQL)
++        sprintf(restriction, "WHERE dbo.coh_name_key(AuthName)=dbo.coh_name_key('%s')", authName);
++    else
++        sprintf(restriction, "WHERE AuthName='%s'", authName);
+     rows = sqlReadColumnsSlow(ent_list->tplt->tables,0,"ContainerId, Name",restriction, &row_count, field_ptrs);
+     if (!rows)
+         return 1;
+@@ -2397,7 +2400,7 @@
      }
  
      // now destroy the container
@@ -225,3 +516,160 @@
                      sqlConnExecDirect(cmd, SQL_NTS, SQLCONN_FOREGROUND, false);
                      sqlFifoBarrier();
                      sprintf(cmd,"UPDATE dbo.Ents SET Name = N'%s' WHERE ContainerId = %d;", new_name, id);
+--- a/DBServer/src/dbinit.c
++++ b/DBServer/src/dbinit.c
+@@ -1085,6 +1085,8 @@
+     sqlConnSetLogin(server_cfg.sql_login);
+     if (!sqlConnDatabaseConnect(server_cfg.sql_db_name, "DBSERVER"))
+     {
++        if (gDatabaseProvider == DBPROV_POSTGRESQL)
++            FatalErrorf("PostgreSQL connection failed. Initialize the database with database/postgresql/pg_local.py and check SqlLogin/SqlDbName.");
+         sqlCheckDdl(DDL_ADD);
+         if (sqlConnDatabaseConnect(NULL, "DBSERVER_INIT"))
+             sqlExecDdl(DDL_ADD, server_cfg.sql_init, SQL_NTS);
+@@ -1762,6 +1764,12 @@
+     int        i,start_static=0,flat_to_sql=0,is_log_server=0,init_encryption = 1;
+ 
+     memCheckInit();
++#ifdef COH_PG_PERSISTENCE_TESTS
++    if (argc > 1 && !strcmp(argv[1], "-pgpersistencetest")) {
++        extern int pgPersistenceTestMain(int argc, char **argv);
++        return pgPersistenceTestMain(argc, argv);
++    }
++#endif
+ 
+     EXCEPTION_HANDLER_BEGIN
+     
+--- a/DBServer/src/sql_fifo.c
++++ b/DBServer/src/sql_fifo.c
+@@ -1,4 +1,6 @@
+ #include "sql_fifo.h"
++#include "sql/sqlinclude.h"
++#include <process.h>
+ #include <utilitieslib/utils/mathutil.h>
+ #include <utilitieslib/network/netio.h>
+ #include <utilitieslib/utils/error.h>
+@@ -681,23 +683,11 @@
+     worker->using_transactions = sqlfifo.use_transactions;
+ }
+ 
+-static void * runQueueEntry(void * data, void * user)
+-{
+-    SqlQueueEntry * entry = (SqlQueueEntry*)data;
+-    sqlFifoWorker * worker = (sqlFifoWorker*)user;
+-
+-    if(worker->using_transactions != sqlfifo.use_transactions)
+-    {
+-        workerStartUsingManualTransactions(worker);
+-    }
+-
+-    if(worker->transaction_in_progress)
+-    {
+-        // Synchronous wait for end of transaction
+-        sqlConnEndTransaction(true, true, worker->conn);
+-        worker->transaction_in_progress = 0;
+-    }
+-
++static volatile LONG pg_retries;
++int sqlFifoRetryCount(void) { return (int)pg_retries; }
++
++static void runQueueCommand(SqlQueueEntry *entry, sqlFifoWorker *worker)
++{
+     switch(entry->cmd)
+     {
+         case SQLCMD_BARRIER:
+@@ -738,6 +728,84 @@
+             break;
+         }
+     }
++
++}
++
++static void pgQueueFailClosed(SqlQueueEntry *entry, const char *state)
++{
++    // Do not run atexit FIFO flushing from a worker, or acknowledge an uncertain
++    // save. The supervisor/operator must restart after fixing the cause.
++    fprintf(stderr, "PG_FIFO_FAILED command=%d SQLSTATE=%s; save not acknowledged\n", entry->cmd, state);
++    fflush(stderr);
++    _exit(3);
++}
++
++static void *runPostgresQueueEntry(SqlQueueEntry *entry, sqlFifoWorker *worker)
++{
++    unsigned attempt;
++    if (entry->cmd == SQLCMD_BARRIER) {
++        sql_task_worker_barrier();
++        return entry;
++    }
++    if (!worker->using_transactions) {
++        if (!sqlConnEnableAutoTransactions(false, worker->conn))
++            pgQueueFailClosed(entry, "HY000");
++        worker->using_transactions = true;
++    }
++    for (attempt = 0; attempt < 5; ++attempt) {
++        char state[6];
++        bool retry;
++        sqlConnBeginUnit(worker->conn);
++        runQueueCommand(entry, worker);
++        if (!sqlConnUnitFailed(worker->conn))
++            sqlConnEndTransaction(true, true, worker->conn);
++        if (!sqlConnUnitFailed(worker->conn)) {
++            sqlConnFinishUnit(worker->conn);
++            return entry; // Completion becomes visible only after commit.
++        }
++        strcpy(state, sqlConnUnitState(worker->conn));
++        retry = !strcmp(state, "40001") || !strcmp(state, "40P01");
++        if (!SQL_SUCCEEDED(sqlConnEndTransaction(false, true, worker->conn)))
++            retry = false;
++        sqlConnFinishUnit(worker->conn);
++        if (!retry || attempt == 4)
++            pgQueueFailClosed(entry, state);
++        if (entry->cmd == SQLCMD_READCONTAINER) {
++            free(entry->readcontainer.data);
++            entry->readcontainer.data = NULL;
++        } else if (entry->cmd == SQLCMD_READCOLUMNS) {
++            free(entry->readcolumns.cols);
++            entry->readcolumns.cols = NULL;
++            entry->readcolumns.col_count = 0;
++        }
++        InterlockedIncrement(&pg_retries);
++        printf_stderr("PG_FIFO_RETRY command=%d SQLSTATE=%s attempt=%u\n", entry->cmd, state, attempt + 1);
++        Sleep(25 * (attempt + 1));
++    }
++    return NULL; // Unreachable: last failure terminates without acknowledgement.
++}
++
++static void * runQueueEntry(void * data, void * user)
++{
++    SqlQueueEntry * entry = (SqlQueueEntry*)data;
++    sqlFifoWorker * worker = (sqlFifoWorker*)user;
++
++    if (gDatabaseProvider == DBPROV_POSTGRESQL)
++        return runPostgresQueueEntry(entry, worker);
++
++    if(worker->using_transactions != sqlfifo.use_transactions)
++    {
++        workerStartUsingManualTransactions(worker);
++    }
++
++    if(worker->transaction_in_progress)
++    {
++        // Synchronous wait for end of transaction
++        sqlConnEndTransaction(true, true, worker->conn);
++        worker->transaction_in_progress = 0;
++    }
++
++    runQueueCommand(entry, worker);
+ 
+     if(worker->using_transactions)
+     {
+--- a/DBServer/src/sql_fifo.h
++++ b/DBServer/src/sql_fifo.h
+@@ -22,6 +22,7 @@
+ void sqlFifoFinish(void);
+ void sqlFifoBarrier(void);
+ int sqlFifoWorstQueueDepth(void);
++int sqlFifoRetryCount(void);
+ void sqlFifoEnableTransacted(int enable);
+ 
+ // HACK
