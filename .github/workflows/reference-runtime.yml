@@ -1,0 +1,90 @@
+name: Reference Win32 runtime
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reference-runtime.yml'
+      - 'tools/package_reference_runtime.py'
+      - 'tools/test_package_reference_runtime.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reference-runtime-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            upstream/ouroboros
+            database
+            patches
+            tools
+            docs/source-manifest.json
+            upstream-lock.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Validate package checks
+        run: python -m unittest discover -s tools -p test_package_reference_runtime.py -v
+      - name: Verify and stage PostgreSQL source
+        run: python tools/prepare_pg_source.py --output out/reference-source
+      - name: Configure matching Win32 products
+        working-directory: out/reference-source
+        run: >-
+          cmake --preset vs2026
+          "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe"
+          -DCOH_PG_PERSISTENCE_TESTS=OFF
+      - name: Build server, client and content utilities
+        working-directory: out/reference-source
+        run: >-
+          cmake --build out/build/vs2026 --config OptDebug --parallel
+          --target DbServer MapServer Game TestClient pig Launcher
+      - name: Package outputs and dependency evidence
+        shell: pwsh
+        env:
+          BUILD_COMMIT: ${{ github.sha }}
+          BUILD_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          $crt = Get-ChildItem -Path "$installation/VC/Redist/MSVC/*/x86/Microsoft.VC*.CRT" -Directory | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $crt) { throw 'App-local x86 MSVC redistributables were not found' }
+          python tools/package_reference_runtime.py --binary-directory out/reference-source/out/build/vs2026/bin/OptDebug --build-input out/reference-source/postgresql-build-input.json --cmake-cache out/reference-source/out/build/vs2026/CMakeCache.txt --crt-directory "$($crt.FullName)" --output out/reference-package --repository-commit "$env:BUILD_COMMIT" --run-url "$env:BUILD_RUN_URL"
+          if ($LASTEXITCODE -ne 0) { throw 'Reference packaging failed' }
+          $dumpbin = Get-ChildItem -Path "$installation/VC/Tools/MSVC/*/bin/Hostx64/x86/dumpbin.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $dumpbin) { throw 'dumpbin was not found' }
+          $report = 'out/reference-package/dumpbin-dependents.txt'
+          foreach ($file in Get-ChildItem out/reference-package/runtime -File | Where-Object Extension -In '.exe','.dll') {
+            "FILE: $($file.Name)" | Out-File -FilePath $report -Append -Encoding utf8
+            & $dumpbin.FullName /DEPENDENTS "$($file.FullName)" | Out-File -FilePath $report -Append -Encoding utf8
+            if ($LASTEXITCODE -ne 0) { throw "Dependency dump failed: $($file.Name)" }
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: |
+            out/reference-package/coh-reference-win32.zip
+            out/reference-package/SHA256SUMS.txt
+            out/reference-package/build-info.json
+            out/reference-package/dependency-report.json
+            out/reference-package/dumpbin-dependents.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reference-win32-symbols
+          path: out/reference-package/coh-reference-win32-symbols.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
