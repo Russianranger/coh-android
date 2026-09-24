@@ -6,12 +6,14 @@ on:
       - 'database/postgresql/**'
       - 'patches/postgresql/**'
       - 'tools/prepare_pg_source.py'
+      - 'tools/verify_source.py'
       - '.github/workflows/postgresql.yml'
   pull_request:
     paths:
       - 'database/postgresql/**'
       - 'patches/postgresql/**'
       - 'tools/prepare_pg_source.py'
+      - 'tools/verify_source.py'
       - '.github/workflows/postgresql.yml'
 permissions:
   contents: read
@@ -22,6 +24,10 @@ jobs:
   integration:
     name: PostgreSQL and ODBC integration
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: [16, 18]
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -34,7 +40,7 @@ jobs:
       - name: Install PostgreSQL and Unicode ODBC
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y postgresql-16 postgresql-client-16 unixodbc-dev odbc-postgresql cmake ninja-build
+          sudo apt-get install -y postgresql-${{ matrix.postgres }} postgresql-client-${{ matrix.postgres }} unixodbc-dev odbc-postgresql cmake ninja-build
       - name: Build shared-dialect ODBC probe
         run: |
           cmake -S database/postgresql/tests -B out/pg-probe -G Ninja
@@ -42,12 +48,12 @@ jobs:
       - name: Persistence and recovery tests
         run: >-
           python3 database/postgresql/tests/run_integration.py
-          --bin /usr/lib/postgresql/16/bin --probe out/pg-probe/odbc_probe
+          --bin /usr/lib/postgresql/${{ matrix.postgres }}/bin --probe out/pg-probe/odbc_probe
           --root "$RUNNER_TEMP/coh-pg" --report out/postgresql-integration.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: postgresql-test-evidence
+          name: postgresql-${{ matrix.postgres }}-test-evidence
           path: out/postgresql-integration.json
           if-no-files-found: ignore
   dbserver:

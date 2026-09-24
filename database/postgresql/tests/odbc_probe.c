@@ -77,9 +77,9 @@ static void indexes(void) {
     exec("SET search_path = pg_catalog;");
     snprintf(query,sizeof(query),COH_PG_ADD_INDEX,"PgProbe","Name_ind","PgProbe","Name"); exec(query); exec(query);
     snprintf(query,sizeof(query),COH_PG_ADD_INDEX,"PgOther","Name_ind","PgOther","Name"); exec(query);
-    REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='dbo' AND indexname LIKE 'coh_%';")==2);
+    REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='dbo' AND indexname ~ '^coh_[0-9a-f]{32}$';")==2);
     snprintf(query,sizeof(query),COH_PG_DROP_INDEX,"PgProbe","PgProbe","Name_ind","Name_ind"); exec(query); exec(query);
-    REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='dbo' AND indexname LIKE 'coh_%';")==1);
+    REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='dbo' AND indexname ~ '^coh_[0-9a-f]{32}$';")==1);
     REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='decoy';")==1);
     /* Old unqualified indexes are removed only on the intended table. */
     exec("CREATE INDEX Name_ind ON dbo.PgOther(Name);"); exec(query);

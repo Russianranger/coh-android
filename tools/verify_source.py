@@ -27,7 +27,7 @@ def main():
     if sum(entry["size"] for entry in entries) != lock["bytes"]:
         failures.append("Manifest byte total differs from lock")
     actual = {
-        str(path.relative_to(source))
+        path.relative_to(source).as_posix()
         for path in source.rglob("*")
         if path.is_file() or path.is_symlink()
     }
