@@ -11,13 +11,17 @@ Canonical i25 acquisition is deferred.
 
 ## Current database work
 
-PostgreSQL is the selected Android-compatible persistence direction. The first
-implementation is in `database/postgresql`, with a reproducible patch under
-`patches/postgresql`. Hosted ODBC integration and Win32 compilation are being
-run; see `database/postgresql/README.md` for scope and commands. This is not yet
-a gameplay-validated server or an Android APK.
+PostgreSQL is the selected database alternative. The implementation lives in
+`database/postgresql`, with an immutable-source patch under `patches/postgresql`.
+Live PostgreSQL 16.15 and 18.6 tests pass, including 65 ODBC connections, schema
+changes, bound values, asynchronous-style concurrent writers, rollback, clean
+restart, forced WAL recovery and backup/restore. The actual Win32 DbServer has compiled successfully, and the complete probe
+also passes with 32-bit Windows psqlODBC 18.00.0004 against PostgreSQL 17.11. See
+[database instructions](../database/postgresql/README.md) and
+[validation record](VALIDATION.md). This is a database development milestone,
+not yet a gameplay-validated server or Android APK.
 
-**Deferred until tomorrow (2026-09-25 UTC):** resume the Thor archive index and
+**Deferred until tomorrow / the next session:** resume the Thor archive index and
 missing animation/basic-texture investigation. No more asset uploads or index
 work are needed from the user during this database session.
 
@@ -91,21 +95,21 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Locate animations/basic textures through the client's archive index; the inspected
-   set is still a partial donor. Use `inspect_piggs.py` to verify additional
-   PIGGs and isolate candidate assets, then test them against the selected source.
-   `content_assets.py record` establishes observed hashes, not upstream-authenticated
-   integrity. PIGG structure/extraction and source compatibility remain separate gates.
-2. Add a hosted Windows reference build/package workflow for the exact source pin.
-   Retain TestClient and all required service executables/DLLs, not only the minimum
-   three executables. Record `build-info.txt` with the full source commit. The
-   downloadable upstream v2i3 release is older and is not a drop-in locked build.
-3. Extract assets in catalog order into a separate directory; use the runtime
-   stager to overlay the immutable text data and source configs. Generate templates
-   and bins, initialize SQL Server/32-bit ODBC on the hosted reference environment,
-   and test character creation, map connection and save/reload across restarts.
-4. Continue PostgreSQL repairs, Android runtime/client probes and normal map/mission
-   transfers per the [proposal](ANDROID_PORT_PROPOSAL.md).
+1. Use the PostgreSQL development backend as the active database path. Validate
+   the actual DbServer container/FIFO save pipeline with generated templates,
+   then character creation, save/reload and map transfer. Resolve the remaining
+   auction SQL filter, name collation rules and retry/rebuild behavior. Account
+   and auxiliary service persistence is a separate gate; fake auth is only the
+   minimal local diagnostic route.
+2. Tomorrow, resume `coh-asset-index.json` from Thor to locate animations and
+   basic textures. Inspect and stage candidate assets separately; retain all
+   archive integrity and source-format checks already established.
+3. Package exact-pin client, MapServer, TestClient and required DLLs alongside
+   the patched DbServer. The older upstream v2i3 release is not a locked build.
+   Stage data/assets separately and generate source-matching templates and bins.
+4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
+   Android runtime, then package under the APK’s own UID. Measure the stock
+   65-connection pool, memory, suspension/restart and save durability on Thor.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

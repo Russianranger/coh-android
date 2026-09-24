@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "server": "PostgreSQL 16.15 (Ubuntu 16.15-1.pgdg24.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+  "checks": [
+    "shared DbServer dialect via real ODBC",
+    "65 simultaneous ODBC connections",
+    "six concurrent writers",
+    "monotonic sequence reservations",
+    "clean restart",
+    "WAL recovery",
+    "backup and restore to new database",
+    "refuse restore overwrite",
+    "SCRAM credentials and restricted role",
+    "loopback and durable settings"
+  ],
+  "probe_output": [
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\nPASS all 65 stock DbServer ODBC connections coexist\nPASS ID ordering, deleted highest ID, rollback and bulk-import startup state\nPASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup\nPASS foreign keys: add/remove, child rows, orphan rejection\nPASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL\nPASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea\nPASS column migration and connection reopen\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\nPASS persisted fixture after reconnect/restart/restore\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\nPASS persisted fixture after reconnect/restart/restore\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\nPASS persisted fixture after reconnect/restart/restore\n",
+    "psqlODBC 16.00.0000; pointer bits 64; SQLWCHAR bytes 2\nPASS persisted fixture after reconnect/restart/restore\n"
+  ],
+  "limits": [
+    "No complete DbServer boot or character gameplay test",
+    "No Android or Wine runtime test",
+    "No SQL Server data migration"
+  ],
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/35948251357",
+  "tested_commit": "b3c87609dca03a13c47af3c042fcac4c2241b9ca",
+  "artifact_sha256": "9355759cc1e8eb9fc72ed80e3d6f503a329880e7d659527f358f2cd93784923a"
+}

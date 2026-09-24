@@ -16,12 +16,15 @@ development backend, not yet a validated complete game server.
   Startup reads the sequence high-water mark and existing rows without rewinding.
   Exactly **one DbServer writer per shard** remains required.
 - PostgreSQL ODBC metadata normalization for smallint/int, Unicode varchar,
-  timestamp, text and bytea. Windows-specific IDENTITY_INSERT is excluded from
+  timestamp, text and bytea, including explicit unsigned byte conversion for
+  psqlODBC 18. Windows-specific IDENTITY_INSERT is excluded from
   PostgreSQL table rebuilds. Connection strings are withheld from error logs.
 - A private loopback cluster with SCRAM passwords, a non-superuser game role,
   durable writes enabled, generated ODBC/DbServer settings and backup/restore.
+  Migration metadata lives outside dbo so DbServer’s table cleanup preserves it.
 - A real ODBC integration probe uses the same SQL dialect header as DbServer.
-  CI also compiles the patched Win32 DbServer and a Win32 probe.
+  CI also compiles the patched Win32 DbServer and runs a Win32 probe using a
+  hash-pinned 32-bit psqlODBC installer from PostgreSQL’s official server.
 
 ## Host / Termux development commands
 
@@ -65,11 +68,20 @@ python3 database/postgresql/tests/run_integration.py --bin /usr/lib/postgresql/1
 ```
 
 The probe refuses destructive fixture setup unless connected to `coh_test_*`.
-It uses the non-superuser game role. Tests cover DDL, ODBC values, sequence
+It uses the non-superuser game role. Tests cover all 65 stock connections, DDL, ODBC values, sequence
 ordering, rollback, six parallel connections, reopen, clean restart, forced WAL
 recovery, backup/restore and refusal to overwrite an existing restored database.
 CI uploads only the redacted report and built executables/receipt, never cluster
-files. Current run results will be recorded after completion.
+files. PostgreSQL **16.15 with psqlODBC 16.00.0000**, and **18.6 with
+psqlODBC 18.00.0004**, pass the full Linux suite. The same suite passes with
+**32-bit Windows psqlODBC 18.00.0004 against PostgreSQL 17.11**. The patched
+Win32 DbServer also compiles successfully. Download
+`postgresql-win32-development-build` from that run’s artifacts for the executable,
+CrashRpt.dll and build receipt; the driver probe is in
+`postgresql-win32-test-evidence`. These are development artifacts, not a complete
+game install. See the
+[validation record](../../docs/VALIDATION.md) and
+[hosted run](https://github.com/Russianranger/coh-android/actions/runs/35948251357).
 
 ## Remaining gates
 
@@ -77,7 +89,10 @@ files. Current run results will be recorded after completion.
   save, reload and transfer a character with MapServer and client. Missing game
   assets still block the full reference path; the database probe is independent.
 - Exercise DbServer’s actual asynchronous transaction/retry machinery, schema
-  rebuild edge cases, case-insensitive name rules and other hard-coded SQL.
+  whole-container rollback/retry, ID preservation across table rebuilds,
+  case-insensitive name rules and remaining hard-coded SQL
+  (for example the auction activity DATEADD/GETDATE filter). Integer ISNULL
+  predicates in base lookups and character import have been changed to COALESCE.
 - Port or replace SQL Server-specific AccountServer/other auxiliary services;
   the minimal fake-auth diagnostic path does not require a production account
   service. This work does not migrate existing SQL Server databases.

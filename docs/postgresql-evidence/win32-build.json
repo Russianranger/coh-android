@@ -1,0 +1,40 @@
+{
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "patch_sha256": "5d9df89315aa85ee89cad7dc4014cfe9e5669a45ae9fe11fcd3b2cf8300407b3",
+  "overlay_sha256": {
+    "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8"
+  },
+  "patched_sha256": {
+    "DBServer/src/container_sql.c": "47d4459cc1767ada95f7a072c3c19d0812d48d7b48d9bb87fe4913f3e3aa0d84",
+    "DBServer/src/container.c": "be72232e2dfa74d568fe09838d4ba96943755c2788711451bc592bf439c2ad78",
+    "DBServer/src/container_tplt.c": "899f22dcf95b8a26e150d44192ca43dc7174eb9235d2a40a7efdd8c6dd5700d4",
+    "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+    "Common/sql/sqlconn.c": "eceb60c3b64d0d6ae4cbb76e5875135f1db45d5fda670a591ba9062c2372f20e",
+    "DBServer/src/dbinit.c": "4eb45ff4844dba86440041d341694248632a99cde05a2164e0c056fa8246d504",
+    "DBServer/src/dbdispatch.c": "785e51e85a9c6c235b535f38e1e7ac8749fa8202e374f402454fce2bd9fb98a8",
+    "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a"
+  },
+  "workflow_run": "https://github.com/Russianranger/coh-android/actions/runs/35948251357",
+  "tested_commit": "b3c87609dca03a13c47af3c042fcac4c2241b9ca",
+  "artifact_id": 10787473919,
+  "artifact_sha256": "0d4cb405ff150d4e337a55362cd5ba9df811fae7c1754afd542517a2a6297070",
+  "artifacts": [
+    {
+      "path": "out/build/vs2026/bin/OptDebug/CrashRpt.dll",
+      "bytes": 39424,
+      "sha256": "9ae99324f4aaf559797dd1209b1acdcaaf9fd10d953d7319af207cc400d7b547"
+    },
+    {
+      "path": "out/build/vs2026/bin/OptDebug/DbServer.exe",
+      "bytes": 1651712,
+      "sha256": "6ea7e27ad4ee8e5c8b6b5c54a03460a09654883f1987eb9a260fb6ebe58a55fb"
+    },
+    {
+      "path": "postgresql-build-input.json",
+      "bytes": 1132,
+      "sha256": "52a3089fd77724c9e781449329a5f837d6f99e553990ebe000df2c5b51c4a169"
+    }
+  ],
+  "dbserver_architecture": "Windows x86 PE32",
+  "execution": "DbServer compiled; not launched for gameplay"
+}

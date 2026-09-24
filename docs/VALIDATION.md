@@ -30,17 +30,18 @@ git rev-parse TREE:upstream/ouroboros
 
 The result must equal the original tree in `upstream-lock.json`.
 
-## Not performed
+## Not performed at the initial import assessment
 
 - No Windows/MSVC build performed by us. The exact-commit upstream build was later verified; see the 2026-09-24 addendum below.
-- No PostgreSQL integration test or SQL Server migration.
+- PostgreSQL was initially untested. Live PostgreSQL integration has since been added; see the database addendum below. No SQL Server data migration has been performed.
 - No binary game-asset download, template/bin generation or source/data compatibility test. Companion text data was subsequently imported; see the addendum.
 - No Wine/FEX, PhysX, graphics or gameplay execution.
 - No Android APK build, emulator/device run, performance or thermal benchmark.
 
 The source's CMake restrictions were read directly; they were not reported as a
-failed build experiment. Likewise, the PostgreSQL defect was established through
-source inspection against PostgreSQL syntax, not a running database test.
+failed build experiment. The original PostgreSQL defect was identified through source inspection.
+It has since been patched and tested against running databases; see the database
+addendum below.
 
 The imported upstream workflows remain nested in the snapshot and are not enabled
 as workflows in this destination. Successful source checks must not be represented
@@ -79,3 +80,56 @@ six adapted launchers and source-pinned configuration files were checked. Receip
 checks caught modified and missing files. These do not constitute archive
 extraction, SQL startup, template/bin generation, gameplay or Android tests.
 See [content acquisition](CONTENT_ACQUISITION.md).
+
+
+## 2026-09-24 PostgreSQL development addendum
+
+Implementation commit: `b3c87609dca03a13c47af3c042fcac4c2241b9ca`.
+[Hosted validation run](https://github.com/Russianranger/coh-android/actions/runs/35948251357).
+The original source and content imports remain unchanged. Verification was
+corrected to use POSIX manifest paths on Windows; all source bytes still match.
+The build stager copies the verified pin, applies the patch outside the imported
+snapshot and records source/patch/overlay/patched-file hashes.
+
+| Database / driver | Platform | Result |
+| --- | --- | --- |
+| PostgreSQL 16.15 / psqlODBC 16.00.0000 | Linux x86_64 | Passed |
+| PostgreSQL 18.6 / psqlODBC 18.00.0004 | Linux x86_64 | Passed |
+| PostgreSQL 17.11 / psqlODBC 18.00.0004 | Windows, x86 client / x64 server | Passed |
+| Patched DbServer, OptDebug Win32 | MSVC hosted runner | Passed; x86 executable artifact verified |
+
+The development build artifact contains `DbServer.exe` (1,651,712 bytes),
+`CrashRpt.dll` and the build-input receipt. ZIP SHA-256 and executable PE machine
+type were checked; it is Windows x86. See the [build receipt and file hashes](postgresql-evidence/win32-build.json).
+It is a DbServer development build, not a complete server/client distribution.
+
+The integration tests use actual PostgreSQL processes and the non-superuser game
+role, with the same dialect header consumed by the patched DbServer. All three configurations pass:
+65 simultaneous connections; deterministic per-table indexes and legacy cleanup;
+foreign-key enforcement; SQLColumns metadata; integer/byte/float/timestamp and
+UTF-16 values; chunked 32 KiB binary reads; large text and NULL; column alteration;
+out-of-order ID reservations; rollback; deleted-highest-ID behavior; six parallel
+writers; reconnect; clean restart; forced WAL recovery; logical backup/restore;
+and refusal to overwrite a restored database. Credentials remain outside the
+repository and uploaded artifacts. Migration metadata uses `coh_meta`, because
+DbServer prunes unreferenced tables from `dbo`.
+
+Windows cluster setup grants the invoking user an explicit private ACL, because
+PostgreSQL drops administrator group privileges. File-backed subprocess output
+avoids inherited daemon pipes hanging the launcher; this lifecycle path now
+passes the same restart/recovery/restore checks as Linux.
+
+The newer ODBC driver exposed a signed-byte error at value 255. The provider now
+uses SQL_C_UTINYINT explicitly. PostgreSQL versions are tested independently;
+this is not a claim that the entire game supports every version of either driver.
+
+Raw redacted reports: [PostgreSQL 16](postgresql-evidence/postgresql-16-linux.json),
+[PostgreSQL 18](postgresql-evidence/postgresql-18-linux.json), and
+[Windows x86 ODBC / PostgreSQL 17](postgresql-evidence/postgresql-17-win32.json).
+
+Not yet proven: full DbServer boot with generated templates, the actual container
+FIFO/retry pipeline, character gameplay/save/load, SQL Server data migration,
+auxiliary service database compatibility, or Android execution/packaging. The
+standalone ODBC probe validates the database boundary, not those higher layers.
+The [database README](../database/postgresql/README.md) contains commands and
+remaining gates. Archive indexing is deferred to the next session.
