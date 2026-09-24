@@ -81,7 +81,15 @@
          if (SQL_SHOW_ERROR(next))
              sqlConnStmtPrintError(stmt, str);
          if (next < 0)
-@@ -631,6 +661,7 @@
+@@ -616,6 +646,7 @@
+ 
+     since_last = timerElapsedAndStart(sql.timers[conn]);
+     ret = SQLPrepareA(stmt, (char*)str, str_len);
++    sqlRecordUnitError(SQL_HANDLE_STMT, stmt, ret, conn);
+     sqlConnTimerAddTime(conn, since_last);
+ 
+     if (ret != SQL_SUCCESS)
+@@ -631,6 +662,7 @@
  
      since_last = timerElapsedAndStart(sql.timers[conn]);
      ret = SQLExecute(stmt);
@@ -89,7 +97,7 @@
      sqlConnTimerAddTime(conn, since_last);
  
      return ret;
-@@ -642,6 +673,7 @@
+@@ -642,6 +674,7 @@
  
      since_last = timerElapsedAndStart(sql.timers[conn]);
      ret = SQLFetch(stmt);
@@ -97,7 +105,7 @@
      sqlConnTimerAddTime(conn, since_last);
  
      return ret;
-@@ -662,13 +694,15 @@
+@@ -662,13 +695,15 @@
  
      sqlConnTimerAddTime(conn, since_last);
  
@@ -114,7 +122,7 @@
      }
  
      return ret;
-@@ -747,7 +781,7 @@
+@@ -747,7 +782,7 @@
  
          if (!SQL_SUCCEEDED(SQLDriverConnectA(sql.connections[i], 0, (SQLCHAR*)conn_str, conn_str_len, NULL, 0, NULL, SQL_DRIVER_NOPROMPT)))
          {
@@ -123,6 +131,14 @@
              return false;
          }
      }
+@@ -908,6 +943,7 @@
+         assert(avail);
+ 
+         ret = SQLGetData(stmt, param, ctype, sb[conn].buff + sb[conn].idx, avail, &got);
++        sqlRecordUnitError(SQL_HANDLE_STMT, stmt, ret, conn);
+         if (!SQL_SUCCEEDED(ret))
+             break;
+ 
 --- a/Common/sql/sqlconn.h
 +++ b/Common/sql/sqlconn.h
 @@ -39,6 +39,12 @@
@@ -527,7 +543,17 @@
          sqlCheckDdl(DDL_ADD);
          if (sqlConnDatabaseConnect(NULL, "DBSERVER_INIT"))
              sqlExecDdl(DDL_ADD, server_cfg.sql_init, SQL_NTS);
-@@ -1762,6 +1764,12 @@
+@@ -1094,6 +1096,9 @@
+ 
+     odbcInitialSetup();
+     queryDatabaseVersion();
++    if (gDatabaseProvider == DBPROV_POSTGRESQL &&
++        sqlGetSingleValue("SELECT count(*) FROM coh_meta.schema_version WHERE version=2;", SQL_NTS, NULL, SQLCONN_FOREGROUND) != 1)
++        FatalErrorf("PostgreSQL compatibility migration 2 is required. Stop DbServer and run pg_local.py migrate before restarting.");
+ 
+     printf_stderr("%s SQL server %d connected\n", timerGetTimeString(), gDatabaseVersion);
+     sqlFifoInit();
+@@ -1762,6 +1767,12 @@
      int        i,start_static=0,flat_to_sql=0,is_log_server=0,init_encryption = 1;
  
      memCheckInit();

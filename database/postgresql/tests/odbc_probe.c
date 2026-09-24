@@ -172,6 +172,38 @@ static void values(void) {
     REQUIRE(scalar("SELECT (Bio IS NULL)::int FROM dbo.PgProbe WHERE ContainerId=1;")==1);
     puts("PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL");
 }
+static void expect_error(const char *sql,const char *wanted) {
+    SQLHSTMT s=statement(); SQLRETURN rc; SQLCHAR state[6]; SQLINTEGER native; SQLSMALLINT length;
+    rc=SQLExecDirectA(s,(SQLCHAR*)sql,SQL_NTS);
+    REQUIRE(rc==SQL_ERROR);
+    CHECK(SQLGetDiagRecA(SQL_HANDLE_STMT,s,1,state,&native,NULL,0,&length),SQL_HANDLE_STMT,s);
+    REQUIRE(!strcmp((char*)state,wanted)); release(s);
+}
+static void schema_rebuild(void) {
+    int oid;
+    exec("CREATE TABLE dbo.PgRebuild(ContainerId SERIAL PRIMARY KEY, Active integer, Name varchar(64), Score integer);"
+         "CREATE TABLE dbo.PgRebuildChild(ContainerId integer REFERENCES dbo.PgRebuild,SubId integer,PRIMARY KEY(ContainerId,SubId));"
+         "CREATE INDEX rebuild_name ON dbo.PgRebuild(dbo.coh_name_key(Name));"
+         "SELECT dbo.coh_reserve_id('dbo.PgRebuild',40); INSERT INTO dbo.PgRebuild VALUES(40,0,'AlphaHero',42);"
+         "SELECT dbo.coh_reserve_id('dbo.PgRebuild',9000); INSERT INTO dbo.PgRebuildChild VALUES(40,1);");
+    exec("SELECT dbo.coh_rebuild_table('dbo.PgRebuild','ContainerId SERIAL PRIMARY KEY,Active integer,Score integer,Name varchar(64),Added integer','ContainerId,Active,Score,Name',true);");
+    REQUIRE(scalar("SELECT dbo.coh_container_high_water('dbo.PgRebuild');")==9000);
+    REQUIRE(scalar("SELECT Score FROM dbo.PgRebuild WHERE dbo.coh_name_key(Name)=dbo.coh_name_key('aLPHaHeRo');")==42);
+    REQUIRE(scalar("SELECT count(*) FROM pg_indexes WHERE schemaname='dbo' AND indexname='rebuild_name';")==1);
+    expect_error("INSERT INTO dbo.PgRebuildChild VALUES(41,0);","23503");
+    oid=scalar("SELECT 'dbo.PgRebuild'::regclass::oid::integer;");
+    expect_error("SELECT dbo.coh_rebuild_table('dbo.PgRebuild','ContainerId SERIAL PRIMARY KEY,Active integer,Name varchar(1),Score integer','ContainerId,Active,Name,Score',true);","22001");
+    REQUIRE(scalar("SELECT 'dbo.PgRebuild'::regclass::oid::integer;")==oid);
+    exec("CREATE VIEW coh_meta.rebuild_view AS SELECT Name FROM dbo.PgRebuild;");
+    expect_error("SELECT dbo.coh_rebuild_table('dbo.PgRebuild','ContainerId SERIAL PRIMARY KEY,Active integer,Name varchar(64),Score integer','ContainerId,Active,Name,Score',true);","2BP01");
+    REQUIRE(scalar("SELECT 'dbo.PgRebuild'::regclass::oid::integer;")==oid);
+    exec("DROP VIEW coh_meta.rebuild_view;");
+    REQUIRE(scalar("SELECT dbo.coh_container_high_water('dbo.PgRebuild');")==9000);
+    REQUIRE(scalar("SELECT count(*) FROM pg_class WHERE relnamespace='dbo'::regnamespace AND relname LIKE 'coh_rebuild_%';")==0);
+    REQUIRE(scalar("SELECT (dbo.coh_name_key('Hero ')=dbo.coh_name_key('Hero'))::integer;")==0);
+    puts("PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys");
+}
+
 int main(int argc,char **argv) {
     FILE *file; char version[100]; int id;
     REQUIRE(argc>=2); file=fopen(argv[1],"rb"); REQUIRE(file);
@@ -204,7 +236,7 @@ int main(int argc,char **argv) {
         exec("INSERT INTO dbo.PgProbe(ContainerId) VALUES(2000);"); REQUIRE(high_water()==2000);
         exec("DELETE FROM dbo.PgProbe WHERE ContainerId=2000;"); REQUIRE(high_water()==1000);
         puts("PASS ID ordering, deleted highest ID, rollback and bulk-import startup state");
-        indexes(); foreign_keys(); values(); metadata();
+        indexes(); foreign_keys(); values(); metadata(); schema_rebuild();
         exec("ALTER TABLE dbo.PgProbe ALTER COLUMN Name TYPE varchar(96);");
         REQUIRE(scalar("SELECT character_maximum_length FROM information_schema.columns WHERE table_schema='dbo' AND table_name='pgprobe' AND column_name='name';")==96);
         disconnect_db(); connect_db(); REQUIRE(high_water()==1000);

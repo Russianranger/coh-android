@@ -65,7 +65,9 @@ static void writeRecord(ContainerTemplate *t,int id,int score,int last,bool crea
     char *text=NULL;
     LineList lines={0};
     int i;
-    estrPrintf(&text,"Name \"AlphaHero\"\nScore %d\nFlag 255\nNotes \"caf\xc3\xa9 \xf0\x9f\x98\x80\"\n",score);
+    estrPrintf(&text,"Name \"AlphaHero\"\nScore %d\nFlag 255\nNotes \"caf\xc3\xa9 \xf0\x9f\x98\x80",score);
+    for(i=0;i<8192;++i) estrConcatCharString(&text,"X");
+    estrConcatCharString(&text,"\"\n");
     for(i=0;i<rows;++i)
         estrConcatf(&text,"PgFifoItems[%d].ItemValue %d\nPgFifoItems[%d].Label \"slot%d\"\n",i,i==511?last:i+1,i,i);
     CHECK(textToLineList(t,text,&lines,NULL));
@@ -77,6 +79,7 @@ static void writeRecord(ContainerTemplate *t,int id,int score,int last,bool crea
 static void verifyRecord(ContainerTemplate *t)
 {
     char *mem,*text;
+    char notes[9000],expected[9000];
     LineList lines={0};
     CHECK(scalar("SELECT Score FROM dbo.PgFifo WHERE ContainerId=101;")==555);
     CHECK(scalar("SELECT count(*) FROM dbo.PgFifoItems WHERE ContainerId=101;")==512);
@@ -86,6 +89,10 @@ static void verifyRecord(ContainerTemplate *t)
     memToLineList(mem,&lines); text=lineListToText(t,&lines,0);
     CHECK(strstr(text,"AlphaHero")); CHECK(strstr(text,"caf\xc3\xa9"));
     CHECK(strstr(text,"\xf0\x9f\x98\x80")); CHECK(strstr(text,"PgFifoItems[511]"));
+    CHECK(scalar("SELECT octet_length(Notes) FROM dbo.PgFifo WHERE ContainerId=101;")==8202);
+    strcpy(expected,"caf\xc3\xa9 \xf0\x9f\x98\x80");
+    memset(expected+10,'X',8192); expected[8202]=0;
+    CHECK(findFieldText(text,"Notes",notes)); CHECK(!strcmp(notes,expected));
     free(mem); freeLineList(&lines);
 }
 static int callback_count;
@@ -100,7 +107,8 @@ static void tests(ContainerTemplate *t)
     DbList list={0}; list.tplt=t;
     tpltUpdateSqlcolumns(t); drain();
     sqlAddForeignKeyConstraintAsync("PgFifoItems","ContainerId","PgFifo"); drain();
-    writeRecord(t,101,10,512,true,512); drain();
+    writeRecord(t,101,10,512,true,512);
+    sqlFifoTickWhileWritePending(t->dblist_id,101);
     CHECK(!sqlIsAsyncWritePending(t->dblist_id,101));
     CHECK(scalar("SELECT count(*) FROM dbo.PgFifoItems WHERE ContainerId=101;")==512);
     writeRecord(t,101,20,512,false,0);
@@ -154,7 +162,7 @@ int pgPersistenceTestMain(int argc,char **argv)
     FatalErrorfSetCallback(failNow); ErrorfSetCallback(errorNow);
     CHECK(!strncmp(argv[3],"coh_test_",9));
     for(i=0;argv[3][i];++i) CHECK((argv[3][i]>='a'&&argv[3][i]<='z') || (argv[3][i]>='0'&&argv[3][i]<='9') || argv[3][i]=='_');
-    f=(fopen)(argv[2],"rb"); CHECK(f); CHECK(fgets(login,sizeof(login),f)); fclose(f);
+    CHECK(!fopen_s(&f,argv[2],"rb")); CHECK(f); CHECK(fgets(login,sizeof(login),f)); fclose(f);
     login[strcspn(login,"\r\n")]=0;
     gDatabaseProvider=DBPROV_POSTGRESQL;
     CHECK(sqlConnInit(SQLCONN_MAX)); sqlConnSetLogin(login);

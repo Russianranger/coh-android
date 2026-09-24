@@ -95,6 +95,17 @@ class Cluster:
                 f'Database={identifier(database or self.meta["database"])};'
                 'SSLmode=disable;ByteaAsLongVarBinary=0;UseServerSidePrepare=0;')
 
+    def migrate(self, database=None):
+        database = identifier(database or self.meta['database'])
+        exists = self.sql("SELECT to_regclass('coh_meta.schema_version') IS NOT NULL;",
+                          user='coh_game', database=database)
+        if exists == 't':
+            version = int(self.sql('SELECT coalesce(max(version),0) FROM coh_meta.schema_version;',
+                                   user='coh_game', database=database))
+            if version > 2:
+                raise RuntimeError('Refusing to apply older compatibility functions over a newer schema')
+        self.sql((HERE/'001-coh-compat.sql').read_text(), user='coh_game', database=database)
+
     def backup(self, destination):
         destination = Path(destination).resolve()
         # Reserve exclusively; pg_dump replaces contents only of our reserved file.
@@ -113,7 +124,7 @@ class Cluster:
         self.run('pg_restore', '--exit-on-error', '--no-owner', '--no-acl',
                  '--dbname', identifier(name), source, user='coh_game', database=name)
         # Restore as owner and reassert restricted function ACLs omitted by --no-acl.
-        self.sql((HERE/'001-coh-compat.sql').read_text(), user='coh_game', database=name)
+        self.migrate(name)
 
 
 def initialize(root, pg_bin, port, database, driver):
@@ -171,7 +182,7 @@ def initialize(root, pg_bin, port, database, driver):
     try:
         cluster.sql(f"CREATE ROLE coh_game LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION PASSWORD '{passwords['game']}';")
         cluster.create_database(database)
-        cluster.sql((HERE/'001-coh-compat.sql').read_text(), user='coh_game', database=database)
+        cluster.migrate(database)
         connection = cluster.connection_string(driver)
         private_write(root/'odbc-connection.txt', connection+'\n')
         # DbServer appends Database itself; avoid duplicate keywords in SqlLogin.
@@ -188,7 +199,7 @@ def initialize(root, pg_bin, port, database, driver):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'start', 'stop', 'status', 'backup', 'restore'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'status', 'backup', 'restore', 'migrate'])
     parser.add_argument('--root', required=True, type=Path)
     parser.add_argument('--bin', dest='pg_bin')
     parser.add_argument('--port', type=int, default=15432)
@@ -207,6 +218,7 @@ def main():
             elif args.action == 'status':
                 print(cluster.run('pg_ctl', '-D', cluster.root/'data', 'status').stdout.strip())
                 print('PostgreSQL', cluster.sql('SHOW server_version;'))
+            elif args.action == 'migrate': cluster.migrate()
             elif args.action == 'backup':
                 if not args.file: parser.error('backup requires --file')
                 cluster.backup(args.file)

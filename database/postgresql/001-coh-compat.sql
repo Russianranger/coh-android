@@ -114,7 +114,7 @@ BEGIN
       WHERE c.contype='f' AND c.confrelid=target AND c.conrelid<>target;
     SELECT coalesce(jsonb_agg(jsonb_build_object('name',conname,'definition',pg_get_constraintdef(oid,true))
                             ORDER BY (contype='f')), '[]'::jsonb)
-      INTO constraints FROM pg_constraint WHERE conrelid=target AND contype<>'p';
+      INTO constraints FROM pg_constraint WHERE conrelid=target AND contype NOT IN ('p','n');
     SELECT array_agg(pg_get_indexdef(i.indexrelid)) INTO indexes FROM pg_index i
       WHERE i.indrelid=target AND NOT EXISTS (SELECT 1 FROM pg_constraint c WHERE c.conindid=i.indexrelid);
     EXECUTE format('CREATE TABLE dbo.%I (%s)', replacement, definition);
