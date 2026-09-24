@@ -13,6 +13,12 @@ of cloud compute is assumed. [GitHub-hosted runners](https://docs.github.com/en/
 
 ## Updated local server/client validation
 
+The subsequent [content acquisition](CONTENT_ACQUISITION.md) imported all 156,297
+companion files and added portable asset inventory/download and runtime staging
+tools. Staging fixes executable naming and pins source configs. All 72 hosted
+asset HEAD probes returned 403; an accessible baseline asset set remains the
+immediate external input. Source/data gameplay compatibility is not yet proven.
+
 The user returned to this original snapshot on 2026-09-24. Its server and graphical
 client source built successfully in upstream CI at the exact imported commit;
 nine utility/archive/codec tests passed. This is upstream evidence, not our own

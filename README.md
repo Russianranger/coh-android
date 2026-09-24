@@ -11,11 +11,16 @@ with downstream changes: source code, not a VM image.
 built the server and client and passed nine utility, archive and codec tests.
 Gameplay and Android execution have not been validated.
 
-The repository is **not a complete runnable installation**. Matching text data,
-binary game assets, database runtime, generated templates/bins and packaging are
-still needed. The companion setup also has executable-name and version-pinning
-gaps documented in the audit.
+The complete pinned companion data is now imported under `upstream/i24`: **156,297
+files, 1,992,097,492 bytes**, verified against its original Git tree. Runtime
+staging tools preserve both snapshots and fix the companion executable-name gap.
 
+The repository is **not a complete runnable installation**. Binary game assets,
+database runtime, generated templates/bins and packaging are still needed. All 72
+asset URLs returned HTTP 403 to the hosted availability probe; see the acquisition
+guide for alternatives and the exact remaining input.
+
+- [Content imported, download sources and next steps](docs/CONTENT_ACQUISITION.md)
 - [Local server and client completeness audit](docs/LOCAL_SERVER_CLIENT_COMPLETENESS.md)
 - [Android assessment and implementation proposal](docs/ANDROID_PORT_PROPOSAL.md)
 - [Source provenance](docs/SOURCE_PROVENANCE.md) and [validation record](docs/VALIDATION.md)

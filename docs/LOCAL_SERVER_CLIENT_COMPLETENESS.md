@@ -1,5 +1,10 @@
 # Local server and client completeness audit
 
+> Subsequent acquisition, 2026-09-24: the complete 156,297-file companion data
+> is now imported. The audit below records the earlier pre-import state. See
+> [current acquisition status](CONTENT_ACQUISITION.md) for completed work and
+> remaining binary assets, database and runtime requirements.
+
 Checked 2026-09-24. Baseline: `upstream/ouroboros` at
 `0b75ade0c801735e10c5798f641948a45cc50488` from
 [Thunderspies/CityOfHeroes](https://github.com/Thunderspies/CityOfHeroes/tree/0b75ade0c801735e10c5798f641948a45cc50488).

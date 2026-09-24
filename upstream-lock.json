@@ -16,6 +16,8 @@
   "companion_data": {
     "url": "https://github.com/Thunderspies/i24.git",
     "commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
-    "status": "referenced, not vendored; binary assets are separate"
+    "status": "Imported complete and unchanged; binary assets remain external; runtime pairing untested",
+    "destination": "upstream/i24",
+    "lock": "content-lock.json"
   }
 }

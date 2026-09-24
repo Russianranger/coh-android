@@ -10,11 +10,12 @@
   "provenance": "Downstream fork; not verified byte-identical to canonical OuroDev",
   "source_lock": "upstream-lock.json",
   "completeness_report": "docs/LOCAL_SERVER_CLIENT_COMPLETENESS.md",
-  "runtime_status": "Missing matched runtime content/database setup; gameplay and Android unvalidated",
+  "runtime_status": "Source and companion text data imported; binary assets and database setup missing; gameplay and Android unvalidated",
   "user_windows_pc_available": false,
   "deferred_alternative": {
     "lineage": "i25 / SCoRE",
     "status": "not_imported_not_required_for_selected_baseline",
     "findings": "docs/I25_SOURCE_ACQUISITION.md"
-  }
+  },
+  "content_lock": "content-lock.json"
 }

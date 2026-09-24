@@ -34,7 +34,7 @@ The result must equal the original tree in `upstream-lock.json`.
 
 - No Windows/MSVC build performed by us. The exact-commit upstream build was later verified; see the 2026-09-24 addendum below.
 - No PostgreSQL integration test or SQL Server migration.
-- No game-data download, template/bin generation or source/data compatibility test.
+- No binary game-asset download, template/bin generation or source/data compatibility test. Companion text data was subsequently imported; see the addendum.
 - No Wine/FEX, PhysX, graphics or gameplay execution.
 - No Android APK build, emulator/device run, performance or thermal benchmark.
 
@@ -59,3 +59,23 @@ it uses a different source commit. See the
 [completeness audit](LOCAL_SERVER_CLIENT_COMPLETENESS.md) for missing runtime
 content/database setup and concrete companion-script gaps. No gameplay or Android
 execution was performed.
+
+## 2026-09-24 companion content import
+
+[Import run 35940141238](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
+completed successfully. All 156,297 companion files (1,992,097,492 bytes) passed
+SHA-256/Git-blob/mode checks and the staged subtree matched
+`4a9a4e893787b6367e916530235d8818dc32ea8f`. No exclusions or submodules. The original
+source verifier also passed. Reproduce with:
+
+```sh
+python3 tools/verify_source.py
+python3 tools/verify_source.py --lock content-lock.json
+```
+
+The hosted asset probe received HTTP 403 for all 72 catalogued HEAD requests;
+local sample GET access also failed. A full text-only runtime staging run passed;
+six adapted launchers and source-pinned configuration files were checked. Receipt
+checks caught modified and missing files. These do not constitute archive
+extraction, SQL startup, template/bin generation, gameplay or Android tests.
+See [content acquisition](CONTENT_ACQUISITION.md).

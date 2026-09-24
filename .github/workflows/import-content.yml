@@ -2,9 +2,6 @@ name: Import pinned Issue 24 content
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: [.github/workflows/import-content.yml]
 
 permissions:
   contents: write
@@ -35,7 +32,7 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Import complete pinned Issue 24 text data and tools'
+          git commit -q -m 'Import complete pinned Issue 24 text data and tools'
           git push origin HEAD:main
       - name: Check public binary asset availability
         run: python3 tools/content_assets.py probe --output docs/asset-availability.json
@@ -45,5 +42,5 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Record hosted-runner binary asset availability'
+          git commit -q -m 'Record hosted-runner binary asset availability'
           git push origin HEAD:main

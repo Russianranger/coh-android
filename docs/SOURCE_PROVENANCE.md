@@ -64,10 +64,11 @@ instead of replacing it. This workflow does not build or publish game binaries.
 
 ## What is still external
 
-- The complete game data set: text definitions, maps, textures, meshes, sounds,
-  PIGG/HOGG archives and matching generated bins. The [companion data repository](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)
-  is pinned as a candidate, not claimed tested or imported. Its README distinguishes
-  text data from separately downloaded binary assets.
+- Binary game assets (geometry, textures, sounds and archive packages) and
+  matching generated bins. Text definitions, map descriptions and scripts are now imported. The [companion data repository](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)
+  was imported on 2026-09-24 under `upstream/i24`, preserving all 156,297 files.
+  Binary assets and generated bins remain external; runtime pairing is untested.
+  See [content provenance and acquisition](CONTENT_ACQUISITION.md).
 - Dependencies fetched by CPM/CMake. Their existing source pins/URL hashes are
   preserved under `cmake/dependencies`; their downloaded bytes are not in this import.
 - Windows build tools, SQL Server reference environment, PostgreSQL/ODBC packages,

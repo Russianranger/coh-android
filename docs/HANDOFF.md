@@ -1,56 +1,64 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24.
+Updated: 2026-09-24 after companion content acquisition.
 
 ## Active direction
 
-- The user returned to the original imported source and asked whether it contains
-  everything for a local server and client. Use `upstream/ouroboros` at
-  `0b75ade0c801735e10c5798f641948a45cc50488`; i25 acquisition is not a prerequisite.
-- This is a public OuroDev-derived Issue 24/Volume 2 fork with downstream changes,
-  not a VM or a verified identical canonical OuroDev export.
-- The user has no Windows PC. Use hosted Windows builds/reference tests and Thor
-  diagnostic client testing for graphics and gameplay.
+Use the original public OuroDev-derived Issue 24/Volume 2 source fork at
+`0b75ade0c801735e10c5798f641948a45cc50488`, under `upstream/ouroboros`. The user has
+no Windows PC: use hosted Windows builds/reference tests and Thor testing.
+Canonical i25 acquisition is deferred.
 
-## Validation result
+## Completed
 
-The original 5,995 files (173,081,714 bytes) still pass the manifest verifier.
-Upstream run `35934567567`, job `107428594341`, built the exact pinned commit,
-including DbServer, MapServer, CityOfHeroes and auxiliary services. Nine utility,
-archive, development-mode and codec tests passed. We inspected upstream logs;
-we did not run a new Windows build or gameplay test.
+- All 5,995 source files verified; exact-commit upstream Windows build and nine
+  utility/archive/codec tests passed, as previously audited.
+- Imported the entire `Thunderspies/i24` tree at
+  `d51533ec8e6a9cf726b9214968077a05fdcf19f3` under `upstream/i24`: 156,297 files,
+  1,992,097,492 bytes, no exclusions. Local and hosted integrity/tree checks passed.
+  Import commit: `1768775ab3608cdd852ec7119bbf0139a91248c6`.
+- Added `content-lock.json`, data inventory and per-file manifest. The importer
+  and verifier accept `--lock content-lock.json`; existing source defaults remain.
+- Added the exact 72-archive upstream catalog and portable `content_assets.py`
+  probe/fetch/record/verify tool. Receipt checks detect changed/missing bytes.
+- Added `prepare_runtime.py`; full text-only staging passed. It keeps imports
+  immutable, fixes `Game.exe` to `CityOfHeroes.exe` in staged launchers and uses
+  source-pinned configs. It accepts extracted asset data and exact-pin build
+  outputs separately; it does not execute programs or install SQL.
 
-Server and client source are present. A runnable installation still needs
-companion text data, binary assets, generated templates/bins, runtime DLLs and
-a database. Read the [completeness audit](LOCAL_SERVER_CLIENT_COMPLETENESS.md).
-The companion scripts expect `Game.exe`, fetch an older release by default
-and fetch configs from moving `master`. The downloaded release ZIP was checked
-against its published SHA-256 and inspected without executing it.
+## External content result
+
+[Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
+completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
+returned HTTP 403. Local sample GET and the current live manifest also returned
+403. Binary assets were not downloaded. `docs/asset-availability.json` contains
+the complete observations.
+
+[Content acquisition instructions](CONTENT_ACQUISITION.md) identify the canonical
+recipe and OuroDev's base/binning-data archive listings as an unverified fallback.
+The needed input is an accessible compatible archive/mirror/magnet or existing
+asset folder. No Windows VM is required. Do not silently substitute the current
+customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Add a root-level hosted Windows workflow using the imported source directory,
-   retaining executable outputs, TestClient, runtime DLLs and checksums.
-   Nested upstream workflows do not run in this repository automatically.
-2. Acquire companion data at `d51533ec8e6a9cf726b9214968077a05fdcf19f3` and
-   compatible assets. Record content/config/binary hashes in a runtime manifest.
-   Sample asset requests returned HTTP 403 here; full availability and integrity
-   remain unverified.
-3. Adapt launch/bin scripts to `CityOfHeroes.exe`, pin configs to our source,
-   generate templates and use SQL Server/32-bit ODBC in hosted reference tests.
-   Prove character creation, map connection and save/reload with TestClient.
-4. Progress to PostgreSQL repairs and Thor compatibility probes in the
-   [proposal](ANDROID_PORT_PROPOSAL.md). Test mission/map transfers and selected
-   auxiliary services separately from the fixed-map developer smoke test.
+1. Establish a compatible asset source; hash and inspect the resulting package.
+   `content_assets.py record` establishes observed hashes, not upstream-authenticated
+   integrity. PIGG structure/extraction and source compatibility remain separate gates.
+2. Add a hosted Windows reference build/package workflow for the exact source pin.
+   Retain TestClient and all required service executables/DLLs, not only the minimum
+   three executables. Record `build-info.txt` with the full source commit. The
+   downloadable upstream v2i3 release is older and is not a drop-in locked build.
+3. Extract assets in catalog order into a separate directory; use the runtime
+   stager to overlay the immutable text data and source configs. Generate templates
+   and bins, initialize SQL Server/32-bit ODBC on the hosted reference environment,
+   and test character creation, map connection and save/reload across restarts.
+4. Continue PostgreSQL repairs, Android runtime/client probes and normal map/mission
+   transfers per the [proposal](ANDROID_PORT_PROPOSAL.md).
 
-## Preserved alternative investigation
+Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
+a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.
 
-No canonical i25 source was imported. Its manual discovery workflow and
-[findings](I25_SOURCE_ACQUISITION.md) remain for reference. `odtoken` was present,
-but credential validity was not tested because TLS failed. Do not print or
-request the secret value. The selected public snapshot does not need that token.
-
-`archive/volume2-assessment-2026-09-23` preserves the earlier assessment state.
-`docs/VOLUME2_PORT_PROPOSAL.md` is a historical copy; the active proposal is
-`docs/ANDROID_PORT_PROPOSAL.md`. There is no scheduled retry, background import,
-tested gameplay session or Android APK.
+The manual i25 discovery workflow and its prior TLS findings remain historical.
+`odtoken` is not required for current work and must not be printed or sent to the
+asset host. No background import is running. No APK or gameplay validation exists.
