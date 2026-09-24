@@ -29,8 +29,11 @@ def main():
     for name in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE'):
         env.pop(name, None)
     env['GIT_CEILING_DIRECTORIES'] = str(output.parent)
-    subprocess.run(['git', 'apply', '--check', str(patch)], cwd=output, env=env, check=True)
-    subprocess.run(['git', 'apply', str(patch)], cwd=output, env=env, check=True)
+    patch_bytes = patch.read_bytes().replace(b'\r\n', b'\n')
+    subprocess.run(['git', '-c', 'core.autocrlf=false', 'apply', '--check', '-'],
+                   input=patch_bytes, cwd=output, env=env, check=True)
+    subprocess.run(['git', '-c', 'core.autocrlf=false', 'apply', '-'],
+                   input=patch_bytes, cwd=output, env=env, check=True)
     modified = {}
     for line in patch.read_text().splitlines():
         if not line.startswith('+++ b/'):
@@ -52,7 +55,7 @@ def main():
         shutil.copy2(path, target)
         receipts[path.relative_to(overlay).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     (output/'postgresql-build-input.json').write_text(json.dumps({
-        'source_commit': lock['commit'], 'patch_sha256': hashlib.sha256(patch.read_bytes()).hexdigest(),
+        'source_commit': lock['commit'], 'patch_sha256': hashlib.sha256(patch_bytes).hexdigest(),
         'overlay_sha256': receipts, 'patched_sha256': modified}, indent=2)+'\n')
     print('Prepared PostgreSQL source:', output)
 

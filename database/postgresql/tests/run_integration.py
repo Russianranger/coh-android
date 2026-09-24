@@ -20,8 +20,9 @@ def main():
     parser.add_argument('--probe', required=True, type=Path)
     parser.add_argument('--root', required=True, type=Path)
     parser.add_argument('--report', required=True, type=Path)
+    parser.add_argument('--driver', default='PostgreSQL Unicode')
     args = parser.parse_args()
-    cluster = initialize(args.root, args.bin, 15432, 'coh_test_local', 'PostgreSQL Unicode')
+    cluster = initialize(args.root, args.bin, 15432, 'coh_test_local', args.driver)
     connection = cluster.root/'odbc-connection.txt'
     evidence = []
     def probe(*commands, file=connection):
@@ -54,7 +55,7 @@ def main():
         cluster.backup(dump)
         cluster.restore(dump, 'coh_test_restored')
         restored = cluster.root/'restored-connection.txt'
-        private_write(restored, cluster.connection_string(database='coh_test_restored')+'\n')
+        private_write(restored, cluster.connection_string(driver=args.driver, database='coh_test_restored')+'\n')
         probe('verify', file=restored)
         try:
             cluster.restore(dump, 'coh_test_restored')
@@ -67,7 +68,8 @@ def main():
             assert cluster.sql('SHOW '+setting+';')==expected
         assert cluster.sql("SELECT rolcreatedb OR rolsuper OR rolcreaterole FROM pg_roles WHERE rolname='coh_game';")=='f'
         for name in ('credentials.json','pgpass','odbc-connection.txt','dbserver-postgresql.cfg'):
-            assert (cluster.root/name).stat().st_mode & 0o077 == 0
+            if os.name != 'nt':
+                assert (cluster.root/name).stat().st_mode & 0o077 == 0
         version = cluster.sql('SELECT version();')
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps({'status':'passed','server':version,

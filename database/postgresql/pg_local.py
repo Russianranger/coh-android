@@ -108,7 +108,7 @@ def initialize(root, pg_bin, port, database, driver):
     database = identifier(database)
     pg_bin = Path(pg_bin or Path(shutil.which('initdb') or '').parent).resolve()
     for name in ('initdb', 'pg_ctl', 'psql', 'pg_dump', 'pg_restore'):
-        if not (pg_bin/name).is_file():
+        if not (pg_bin/(name + ('.exe' if os.name == 'nt' else ''))).is_file():
             raise ValueError('Missing PostgreSQL tool: ' + str(pg_bin/name))
     root = Path(root).resolve()
     # Unix socket paths are short on Android and Linux; TCP is used by clients.
@@ -132,7 +132,7 @@ def initialize(root, pg_bin, port, database, driver):
         (root/'init-password').unlink()
     # Allow all 65 stock DbServer connections plus maintenance. Memory tuning
     # is provisional; benchmark on Thor before reducing the connection pool.
-    socket_path = str(root/'socket').replace("'", "''").replace('\\', '\\\\')
+    socket_path = ('' if os.name == 'nt' else str(root/'socket')).replace("'", "''").replace('\\', '\\\\')
     with (root/'data/postgresql.conf').open('a') as config:
         config.write(f"\nlisten_addresses = '127.0.0.1'\nport = {port}\n"
                      f"unix_socket_directories = '{socket_path}'\n"

@@ -37,6 +37,12 @@ jobs:
             patches
             tools
           sparse-checkout-cone-mode: true
+      - name: Enable official PostgreSQL packages
+        if: matrix.postgres == 18
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --fail -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list
       - name: Install PostgreSQL and Unicode ODBC
         run: |
           sudo apt-get update -qq
@@ -83,6 +89,19 @@ jobs:
         run: |
           cmake -S database/postgresql/tests -B out/pg-probe-win32 -G "Visual Studio 18 2026" -A Win32
           cmake --build out/pg-probe-win32 --config Release
+      - name: Install pinned 32-bit psqlODBC
+        run: |
+          $uri = 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest -Uri $uri -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $process = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($process.ExitCode -notin @(0,3010)) { throw "ODBC installation failed: $($process.ExitCode)" }
+      - name: Exercise Win32 ODBC against PostgreSQL
+        run: >-
+          python database/postgresql/tests/run_integration.py
+          --bin "$env:PGBIN" --probe out/pg-probe-win32/Release/odbc_probe.exe
+          --root "$env:RUNNER_TEMP/coh-pg" --report out/postgresql-win32-integration.json
       - uses: actions/upload-artifact@v4
         with:
           name: postgresql-win32-development-build
@@ -91,4 +110,5 @@ jobs:
             out/pg-source/out/build/vs2026/**/*.dll
             out/pg-source/postgresql-build-input.json
             out/pg-probe-win32/Release/odbc_probe.exe
+            out/postgresql-win32-integration.json
           if-no-files-found: error
