@@ -1,3 +1,7 @@
+> Deferred alternative as of 2026-09-24: the user returned to the original
+> imported source. The findings below record the earlier i25 investigation;
+> this acquisition is not a prerequisite for the active baseline.
+
 # Canonical i25 source acquisition
 
 Checked 2026-09-24 from GitHub-hosted Ubuntu runners.
@@ -31,5 +35,5 @@ before importing. No token change is needed merely because of certificate expiry
 A user-provided canonical archive can also be inspected; record its URL, branch,
 commit if available and extracted-file hashes rather than claiming a Git checkout.
 
-The historical Volume 2-derived snapshot does not satisfy this acquisition.
-Do not substitute a different lineage or VM image for the requested i25 source.
+The original Volume 2-derived snapshot is a different lineage from this i25
+project. Preserve that distinction if this alternative is revisited.

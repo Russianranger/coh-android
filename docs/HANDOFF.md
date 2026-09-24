@@ -1,50 +1,56 @@
-# City of Heroes i25 Android handoff
+# City of Heroes Android handoff
 
 Updated: 2026-09-24.
 
-## User direction
+## Active direction
 
-- Use **OuroDev i25/SCoRE source**, not Volume 2 or a VM.
+- The user returned to the original imported source and asked whether it contains
+  everything for a local server and client. Use `upstream/ouroboros` at
+  `0b75ade0c801735e10c5798f641948a45cc50488`; i25 acquisition is not a prerequisite.
+- This is a public OuroDev-derived Issue 24/Volume 2 fork with downstream changes,
+  not a VM or a verified identical canonical OuroDev export.
 - The user has no Windows PC. Use hosted Windows builds/reference tests and Thor
-  gameplay testing; do not require user-installed MSVC or SQL Server.
-- The user added an Actions repository secret named `odtoken`. Reference it only
-  through Actions; do not print, export or request its value in chat.
+  diagnostic client testing for graphics and gameplay.
 
-## Latest result
+## Validation result
 
-Canonical source target: `https://git.ourodev.com/score/SCoRE.git`. The indexed
-OuroDev guide names `Lexicon-Project(Co)X`; remote refs and commit are not verified.
-Two Actions probes established that the secret is present but the server TLS
-certificate is expired. Credential validity has not been tested. Expiration:
-**2026-09-23 10:39:54 UTC**. See [acquisition evidence](I25_SOURCE_ACQUISITION.md).
+The original 5,995 files (173,081,714 bytes) still pass the manifest verifier.
+Upstream run `35934567567`, job `107428594341`, built the exact pinned commit,
+including DbServer, MapServer, CityOfHeroes and auxiliary services. Nine utility,
+archive, development-mode and codec tests passed. We inspected upstream logs;
+we did not run a new Windows build or gameplay test.
 
-No canonical i25 source was imported. Do not interpret TLS failure as an invalid
-token or ask the user to recreate the secret based on this result.
+Server and client source are present. A runnable installation still needs
+companion text data, binary assets, generated templates/bins, runtime DLLs and
+a database. Read the [completeness audit](LOCAL_SERVER_CLIENT_COMPLETENESS.md).
+The companion scripts expect `Game.exe`, fetch an older release by default
+and fetch configs from moving `master`. The downloaded release ZIP was checked
+against its published SHA-256 and inspected without executing it.
 
-## Preserved work
+## Next implementation steps
 
-The prior Volume 2-derived source remains under `upstream/ouroboros`, with its
-integrity manifest and verifier. Backup branch
-`archive/volume2-assessment-2026-09-23` preserves commit
-`19082428d6dd5484c34c6a7a2913374d79b167be` and its assessment. The old proposal is
-also retained as `docs/VOLUME2_PORT_PROPOSAL.md`.
+1. Add a root-level hosted Windows workflow using the imported source directory,
+   retaining executable outputs, TestClient, runtime DLLs and checksums.
+   Nested upstream workflows do not run in this repository automatically.
+2. Acquire companion data at `d51533ec8e6a9cf726b9214968077a05fdcf19f3` and
+   compatible assets. Record content/config/binary hashes in a runtime manifest.
+   Sample asset requests returned HTTP 403 here; full availability and integrity
+   remain unverified.
+3. Adapt launch/bin scripts to `CityOfHeroes.exe`, pin configs to our source,
+   generate templates and use SQL Server/32-bit ODBC in hosted reference tests.
+   Prove character creation, map connection and save/reload with TestClient.
+4. Progress to PostgreSQL repairs and Thor compatibility probes in the
+   [proposal](ANDROID_PORT_PROPOSAL.md). Test mission/map transfers and selected
+   auxiliary services separately from the fixed-map developer smoke test.
 
-The root README and active proposal now select i25. `upstream-lock.json` identifies
-only the historical import; `source-target.json` records the active target and
-blocked acquisition state.
+## Preserved alternative investigation
 
-## Next steps
+No canonical i25 source was imported. Its manual discovery workflow and
+[findings](I25_SOURCE_ACQUISITION.md) remain for reference. `odtoken` was present,
+but credential validity was not tested because TLS failed. Do not print or
+request the secret value. The selected public snapshot does not need that token.
 
-1. After certificate renewal, manually run `Discover canonical OuroDev i25 source`
-   in Actions. Its public TLS check stops the job before authentication on failure.
-   Alternatively inspect a user-provided canonical i25 ZIP/export.
-2. Verify the documented branch; pin its commit/tree, inspect inventory/notices,
-   submodules and large files, then import under `upstream/i25-score` with any
-   exclusions recorded. Preserve the historical source separately.
-3. Audit exact i25 build graph, bitness, third-party dependencies, rendering,
-   authentication and every database path. Do not assume the previous fork's
-   modern CMake/Win32 setup applies.
-4. Establish a hosted reference build and matched content, then database and Thor
-   runtime probes according to the [active proposal](ANDROID_PORT_PROPOSAL.md).
-
-There is no scheduled retry, running background import, Android build or APK.
+`archive/volume2-assessment-2026-09-23` preserves the earlier assessment state.
+`docs/VOLUME2_PORT_PROPOSAL.md` is a historical copy; the active proposal is
+`docs/ANDROID_PORT_PROPOSAL.md`. There is no scheduled retry, background import,
+tested gameplay session or Android APK.

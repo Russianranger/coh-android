@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "selected_at": "2026-09-24",
-  "lineage": "i25 / SCoRE",
-  "canonical_url": "https://git.ourodev.com/score/SCoRE.git",
-  "documented_branch_candidate": "Lexicon-Project(Co)X",
-  "branch_status": "Documented by OuroDev i25 guide; remote refs not yet read",
-  "source_commit": null,
-  "intended_destination": "upstream/i25-score",
-  "github_actions_secret_name": "odtoken",
-  "status": "blocked_expired_upstream_tls_certificate",
-  "authentication_status": "Secret is present in Actions; credentials not validated against OuroDev",
-  "tls_certificate_not_after_utc": "2026-09-23T10:39:54Z",
-  "previous_snapshot": {
-    "path": "upstream/ouroboros",
-    "role": "historical Volume 2-derived reference only",
-    "preserved_branch": "archive/volume2-assessment-2026-09-23"
-  },
-  "user_windows_pc_available": false
+  "lineage": "Issue 24 / Volume 2-derived public OuroDev fork",
+  "acquisition_url": "https://github.com/Thunderspies/CityOfHeroes.git",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "destination": "upstream/ouroboros",
+  "status": "imported_source_verified_upstream_win32_build_passed",
+  "provenance": "Downstream fork; not verified byte-identical to canonical OuroDev",
+  "source_lock": "upstream-lock.json",
+  "completeness_report": "docs/LOCAL_SERVER_CLIENT_COMPLETENESS.md",
+  "runtime_status": "Missing matched runtime content/database setup; gameplay and Android unvalidated",
+  "user_windows_pc_available": false,
+  "deferred_alternative": {
+    "lineage": "i25 / SCoRE",
+    "status": "not_imported_not_required_for_selected_baseline",
+    "findings": "docs/I25_SOURCE_ACQUISITION.md"
+  }
 }

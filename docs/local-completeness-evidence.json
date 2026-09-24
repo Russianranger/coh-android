@@ -1,0 +1,130 @@
+{
+  "checked_at": "2026-09-24",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_tree": "f634e21e230009fa8edc91d15429cd4da69eee8c",
+  "source_integrity": {
+    "result": "pass",
+    "files": 5995,
+    "bytes": 173081714,
+    "command": "python3 tools/verify_source.py"
+  },
+  "upstream_ci": {
+    "run_id": 35934567567,
+    "job_id": 107428594341,
+    "url": "https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567/job/107428594341",
+    "conclusion": "success",
+    "completed_at": "2026-09-23T23:51:56Z",
+    "runner_labels": [
+      "windows-2025-vs2026"
+    ],
+    "configuration": "OptDebug",
+    "architecture": "Win32 x86",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v7",
+        "conclusion": "success"
+      },
+      {
+        "name": "Configure",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test utilities and codecs",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v7",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "tests_passed": 9,
+    "tests": [
+      "UtilitiesLibIntegration",
+      "TokenizerLineEndings",
+      "DevelopmentMode_loose",
+      "DevelopmentMode_packaged",
+      "PigUsage",
+      "PigRoundTrip",
+      "PigIncremental",
+      "GameOggIntegration",
+      "GameJpegIntegration"
+    ],
+    "build_log_excerpts": [
+      "2026-09-23T23:43:38.0781468Z   AuthServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\AuthServer.exe",
+      "2026-09-23T23:44:46.1281857Z   ArenaServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\ArenaServer.exe",
+      "2026-09-23T23:44:47.0386305Z   ChatServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\ChatServer.exe",
+      "2026-09-23T23:44:47.8510624Z   RaidServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\RaidServer.exe",
+      "2026-09-23T23:45:06.6524280Z   StatServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\StatServer.exe",
+      "2026-09-23T23:45:13.4824988Z   AccountServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\AccountServer.exe",
+      "2026-09-23T23:45:16.8904685Z   AuctionServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\AuctionServer.exe",
+      "2026-09-23T23:45:17.8444669Z   pig.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\pig.exe",
+      "2026-09-23T23:45:20.5143253Z   Launcher.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\Launcher.exe",
+      "2026-09-23T23:45:50.6084788Z   DbServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\DbServer.exe",
+      "2026-09-23T23:48:05.5022306Z   MissionServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\MissionServer.exe",
+      "2026-09-23T23:48:29.5319040Z   TestClient.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\TestClient.exe",
+      "2026-09-23T23:49:41.4596985Z   TurnstileServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\TurnstileServer.exe",
+      "2026-09-23T23:50:09.2616422Z   QueueServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\QueueServer.exe",
+      "2026-09-23T23:50:27.0744053Z   MapServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\MapServer.exe",
+      "2026-09-23T23:51:11.0806986Z   BeaconServer.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\BeaconServer.exe",
+      "2026-09-23T23:51:47.6544658Z   Game.vcxproj -> D:\\a\\CityOfHeroes\\CityOfHeroes\\out\\build\\vs2026\\bin\\OptDebug\\CityOfHeroes.exe"
+    ]
+  },
+  "companion_data": {
+    "repository": "https://github.com/Thunderspies/i24",
+    "commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "runtime_pair_tested": false
+  },
+  "release_inspection": {
+    "tag": "v2i3",
+    "source_commit": "3724da475a470926b006dbf73e2e21fd0e7ec856",
+    "matches_imported_source": false,
+    "url": "https://github.com/Thunderspies/CityOfHeroes/releases/download/v2i3/CoX-OptDebug-Win32.zip",
+    "bytes": 12326250,
+    "sha256": "443523af489e3c60f2bed352e3b4fab4dd0103338c3e1649000d2109a24c1b74",
+    "matched_published_checksum": true,
+    "executed": false,
+    "files": [
+      "MapServer.exe",
+      "CityOfHeroes.exe",
+      "DbServer.exe",
+      "pig.exe",
+      "CrashRpt.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "NxCharacter.dll",
+      "PhysXCooking.dll",
+      "PhysXCore.dll",
+      "PhysXLoader.dll",
+      "cudart32_30_9.dll",
+      "NxCooking.dll",
+      "physxcudart_20.dll",
+      "PhysXDevice.dll",
+      "build-info.txt"
+    ]
+  },
+  "asset_sample": {
+    "url": "https://dists.thunderspy.org/piggs/fonts.pigg",
+    "head_status": 403,
+    "ranged_get_status": 403,
+    "complete_asset_set_downloaded": false,
+    "scope": "Observed from this workspace only"
+  },
+  "not_performed": [
+    "New Windows build in destination repository",
+    "Database/gameplay integration",
+    "Full asset validation",
+    "Android execution"
+  ]
+}

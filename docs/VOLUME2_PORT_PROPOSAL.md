@@ -1,5 +1,6 @@
-> Historical assessment of the previously imported Volume 2-derived fork.
-> The user selected canonical i25/SCoRE on 2026-09-24. This is not the active source assessment.
+> Historical copy of the 2026-09-23 assessment.
+> The original source is active again. Use [the updated proposal](ANDROID_PORT_PROPOSAL.md)
+> and [completeness audit](LOCAL_SERVER_CLIENT_COMPLETENESS.md) for current findings.
 
 # City of Heroes Android: assessment and implementation proposal
 

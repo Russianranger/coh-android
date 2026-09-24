@@ -1,6 +1,3 @@
-> Historical record for the Volume 2-derived snapshot at `upstream/ouroboros`.
-> Current source acquisition target: [canonical i25/SCoRE](I25_SOURCE_ACQUISITION.md).
-
 # Source provenance and import scope
 
 Assessment/import date: 2026-09-23.

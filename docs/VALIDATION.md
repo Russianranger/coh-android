@@ -1,6 +1,3 @@
-> Historical record for the Volume 2-derived snapshot at `upstream/ouroboros`.
-> Current source acquisition target: [canonical i25/SCoRE](I25_SOURCE_ACQUISITION.md).
-
 # Validation record
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
@@ -35,7 +32,7 @@ The result must equal the original tree in `upstream-lock.json`.
 
 ## Not performed
 
-- No Windows/MSVC build. This workspace has no Windows toolchain or CMake/Ninja.
+- No Windows/MSVC build performed by us. The exact-commit upstream build was later verified; see the 2026-09-24 addendum below.
 - No PostgreSQL integration test or SQL Server migration.
 - No game-data download, template/bin generation or source/data compatibility test.
 - No Wine/FEX, PhysX, graphics or gameplay execution.
@@ -48,3 +45,17 @@ source inspection against PostgreSQL syntax, not a running database test.
 The imported upstream workflows remain nested in the snapshot and are not enabled
 as workflows in this destination. Successful source checks must not be represented
 as a passing Android build.
+
+## 2026-09-24 completeness addendum
+
+Reran the source verifier successfully: all 5,995 files and 173,081,714 bytes
+still match. Inspected successful upstream Windows run
+[35934567567](https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567)
+for the exact source commit. Its server/client builds and nine utility, archive,
+development-mode and codec tests passed. This was an upstream run, not a build
+performed in this repository. Downloaded the v2i3 runtime ZIP, verified its
+published SHA-256, and inspected its file list/build metadata without execution;
+it uses a different source commit. See the
+[completeness audit](LOCAL_SERVER_CLIENT_COMPLETENESS.md) for missing runtime
+content/database setup and concrete companion-script gaps. No gameplay or Android
+execution was performed.
