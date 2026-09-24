@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Explicit unsigned conversion: psqlODBC 18 rejects 255 as signed tinyint. */
+#define COH_PG_BYTE_CTYPE SQL_C_UTINYINT
+
 /* PostgreSQL index names are schema-wide. CoH reuses e.g. Name_ind on many
  * tables. Hash the complete lower-case table/index pair to avoid truncation.
  * Remove pre-patch indexes only when they actually belong to this table. */

@@ -81,7 +81,7 @@ jobs:
         run: python tools/prepare_pg_source.py --output out/pg-source
       - name: Configure Win32
         working-directory: out/pg-source
-        run: cmake --preset vs2026
+        run: cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe"
       - name: Build DbServer
         working-directory: out/pg-source
         run: cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel

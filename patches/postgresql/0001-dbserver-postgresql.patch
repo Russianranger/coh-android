@@ -154,7 +154,25 @@
              sprintf(identity_insert_off, " SET IDENTITY_INSERT dbo.%s OFF;", table->name);
 --- a/DBServer/src/container_tplt_utils.c
 +++ b/DBServer/src/container_tplt_utils.c
-@@ -382,7 +382,7 @@
+@@ -10,6 +10,7 @@
+ #include <utilitieslib/utils/error.h>
+ #include <utilitieslib/utils/wininclude.h>
+ #include "sql/sqlconn.h"
++#include "sql/pg_compat.h"
+ #include <utilitieslib/utils/log.h>
+ #include <utilitieslib/utils/SuperAssert.h>
+ 
+@@ -352,6 +353,9 @@
+ 
+     printf_stderr("SQL_GETDATA_EXTENSIONS = 0x%08x\n", sqlConnGetInfo(SQL_GETDATA_EXTENSIONS, false, SQLCONN_FOREGROUND));
+ 
++    if (gDatabaseProvider == DBPROV_POSTGRESQL)
++        g_containerfieldinfo[CFTYPE_BYTE].access_type = COH_PG_BYTE_CTYPE;
++
+     // Verify connection timeout
+     timeout = sqlConnGetInfo(SQL_ATTR_QUERY_TIMEOUT, false, SQLCONN_FOREGROUND);
+     assertmsgf(!timeout, "SQL server is set to timeout after %d seconds", timeout);
+@@ -382,7 +386,7 @@
          xcase DBPROV_MSSQL:
              cmd_len = sprintf(cmd, "SELECT compatibility_level FROM sys.databases WHERE name=db_name();");
          xcase DBPROV_POSTGRESQL:
@@ -185,3 +203,25 @@
          sqlCheckDdl(DDL_ADD);
          if (sqlConnDatabaseConnect(NULL, "DBSERVER_INIT"))
              sqlExecDdl(DDL_ADD, server_cfg.sql_init, SQL_NTS);
+--- a/DBServer/src/dbdispatch.c
++++ b/DBServer/src/dbdispatch.c
+@@ -2397,7 +2397,7 @@
+     }
+ 
+     // now destroy the container
+-    cmd_len = sprintf(cmd, "SELECT ContainerId FROM Base WHERE ISNULL(SupergroupId,0) = %d AND ISNULL(UserId,0) = %d;", sg_id, user_id);
++    cmd_len = sprintf(cmd, "SELECT ContainerId FROM Base WHERE COALESCE(SupergroupId,0) = %d AND COALESCE(UserId,0) = %d;", sg_id, user_id);
+     container_id = sqlGetSingleValue(cmd, cmd_len, NULL, SQLCONN_FOREGROUND);
+ 
+     container = containerPtr(dbListPtr(CONTAINER_BASE), container_id);
+--- a/DBServer/src/dbimport.c
++++ b/DBServer/src/dbimport.c
+@@ -148,7 +148,7 @@
+                     EntCatalogInfo *entInfo = entCatalogGet( id, false );    assert(entInfo);
+                     authId = ( entInfo ) ? entInfo->authId : 0;
+                     sqlFifoBarrier();
+-                    sprintf(cmd,"UPDATE dbo.Ents SET DbFlags = ISNULL(DbFlags,0) | 4096 WHERE ContainerId = %d;",id); // DBFLAG_RENAMEABLE
++                    sprintf(cmd,"UPDATE dbo.Ents SET DbFlags = COALESCE(DbFlags,0) | 4096 WHERE ContainerId = %d;",id); // DBFLAG_RENAMEABLE
+                     sqlConnExecDirect(cmd, SQL_NTS, SQLCONN_FOREGROUND, false);
+                     sqlFifoBarrier();
+                     sprintf(cmd,"UPDATE dbo.Ents SET Name = N'%s' WHERE ContainerId = %d;", new_name, id);

@@ -144,7 +144,7 @@ static void values(void) {
 #define GET(col,ctype,pointer,bytes) CHECK(SQLGetData(s,col,ctype,pointer,bytes,&n),SQL_HANDLE_STMT,s)
     GET(1,SQL_C_LONG,&out_value,sizeof(out_value)); REQUIRE(out_value==value);
     GET(2,SQL_C_SHORT,&out_small,sizeof(out_small)); REQUIRE(out_small==small);
-    GET(3,SQL_C_TINYINT,&out_tiny,sizeof(out_tiny)); REQUIRE(out_tiny==tiny);
+    GET(3,COH_PG_BYTE_CTYPE,&out_tiny,sizeof(out_tiny)); REQUIRE(out_tiny==tiny);
     GET(4,SQL_C_FLOAT,&out_number,sizeof(out_number)); REQUIRE(out_number==number);
     GET(5,SQL_C_WCHAR,out_wide,sizeof(out_wide)); REQUIRE(n==wide_bytes && !memcmp(out_wide,wide,sizeof(wide)));
     GET(6,SQL_C_TYPE_TIMESTAMP,&out_stamp,sizeof(out_stamp)); REQUIRE(!memcmp(&out_stamp,&stamp,sizeof(stamp)));
