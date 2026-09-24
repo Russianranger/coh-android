@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24. Active work switched to PostgreSQL development at the user’s request.
+Updated: 2026-09-24. PostgreSQL persistence is validated; the Thor archive index has arrived and targeted asset inspection is next.
 
 ## Active direction
 
@@ -37,9 +37,12 @@ PostgreSQL auction timestamp filter. Stop DbServer, back up and run
 [validation record](VALIDATION.md). This is a database development milestone,
 not yet a gameplay-validated server or Android APK.
 
-**Deferred until tomorrow / the next session:** resume the Thor archive index and
-missing animation/basic-texture investigation. No more asset uploads or index
-work are needed from the user during this database session.
+**Thor indexing complete:** the uploaded `coh-asset-index.json` lists 95 archives
+with no reported indexing errors. Request `piggs/stage1a.pigg` (58.5 MiB),
+`piggs/stage1b.pigg` (137.4 MiB), and `piggs/stage1f.pigg` (118.8 MiB) next.
+Their filename tables locate animation tracks and all seven requested startup
+textures. The archive payloads still need inspection before staging or use.
+See [the index assessment](THOR_ASSET_INDEX.md).
 
 ## Completed
 
@@ -91,11 +94,15 @@ seven requested basic renderer texture names. This prevents calling the content
 startup-ready. See [current coverage and next-upload instructions](BASE_ASSET_COVERAGE.md)
 and [machine-readable evidence](base-assets-assessment.json).
 
-Tomorrow’s deferred input is **`coh-asset-index.json`**, generated on the Thor with the
-new standalone `tools/index_piggs.py` against the whole client root. This reads
-only archive tables and identifies which remaining archives contain animations
-and base textures. It is not an integrity verifier. Counts/extensions matched
-full inspection for all 22 available archives; thirteen regression tests pass.
+The subsequent **`coh-asset-index.json`** has now been received from Thor and
+preserved as [thor-asset-index.json](thor-asset-index.json). It reports 73 base
+archives and 22 custom-folder archives, with 96,379 entries across those tables
+(not deduplicated). Base `stage1a.pigg` lists 5,878 animation tracks, including
+MALE/THUMBSUP; `stage1b.pigg` and `stage1f.pigg` list all seven startup texture
+names. This locates candidates on the device; it does not add to the 22
+payload-verified archives or establish source-format/runtime compatibility.
+The indexer previously matched full-inspection counts/extensions for all 22
+available archives; thirteen regression tests passed in that earlier pass.
 
 [Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
 completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
@@ -117,9 +124,10 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    save/reload and map transfer. Game-level name uniqueness and auxiliary service
    persistence remain separate gates. Fake auth is only the minimal local
    diagnostic route; no SQL Server save migration has been attempted.
-2. Tomorrow, resume `coh-asset-index.json` from Thor to locate animations and
-   basic textures. Inspect and stage candidate assets separately; retain all
-   archive integrity and source-format checks already established.
+2. Inspect the next three base archives once uploaded: `piggs/stage1a.pigg`,
+   `piggs/stage1b.pigg`, and `piggs/stage1f.pigg`. Indexing is complete. Validate
+   payload integrity and animation/texture formats, then stage candidates
+   separately from custom variants and generated caches.
 3. Package exact-pin client, MapServer, TestClient and required DLLs alongside
    the patched DbServer. The older upstream v2i3 release is not a locked build.
    Stage data/assets separately and generate source-matching templates and bins.

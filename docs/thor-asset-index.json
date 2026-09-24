@@ -1,0 +1,2324 @@
+{
+  "status": "index_only_not_integrity_verified",
+  "archives": [
+    {
+      "archive": "i26/bin.pigg",
+      "bytes": 33236877,
+      "entry_count": 153,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 153
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/ai_config.bin",
+        "bin/animlists.bin",
+        "bin/arenamaps.bin",
+        "bin/arenaschedule.bin",
+        "bin/attrib_descriptions.bin",
+        "bin/attrib_names.bin",
+        "bin/auctionconfig.bin",
+        "bin/authmsg-en.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_fxinfo.pigg",
+      "bytes": 2912283,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/fxinfo.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_minimap.pigg",
+      "bytes": 2499811,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/minimap.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_particles.pigg",
+      "bytes": 1943405,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/particles.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_powers.pigg",
+      "bytes": 3745789,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/powers.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_sequencers.pigg",
+      "bytes": 4404597,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/sequencers.bin"
+      ]
+    },
+    {
+      "archive": "i26/bin_villaincostume.pigg",
+      "bytes": 1087006,
+      "entry_count": 1,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/villaincostume.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin.pigg",
+      "bytes": 158275451,
+      "entry_count": 8189,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".anim": 5896,
+        ".bin": 25,
+        ".geo": 2268
+      },
+      "animation_count": 5896,
+      "animation_samples": [
+        "player_library/animations/5cw/2hand_cast.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Cripple.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Crush.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Devour.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_HQ.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Infection.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_death_front.anim",
+        "player_library/animations/5cw/Diesel_wakeup.anim",
+        "player_library/animations/5cw/Dismiss.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_Air_Drop.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_Death.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_jump.anim"
+      ],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": true,
+      "sample_entries": [
+        "geobin/maps/Arena/Arena_AbOffice_01/Arena_AbOffice_01.bin",
+        "geobin/maps/Arena/Arena_Atlas_01/arena_atlas_01.bin",
+        "geobin/maps/Arena/Arena_CargoShip_01/Arena_CargoShip_01.bin",
+        "geobin/maps/Arena/Arena_Coliseum/Arena_Coliseum.bin",
+        "geobin/maps/Arena/Arena_Eden_01/Arena_Eden_01.bin",
+        "geobin/maps/Arena/Arena_Graveyard_01/Arena_Graveyard_01.bin",
+        "geobin/maps/Arena/Arena_Industrial_01/Arena_Industrial_01.bin",
+        "geobin/maps/Arena/Arena_Industrial_01/WALLTEST_Arena_Industrial_01.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin_czh.pigg",
+      "bytes": 10520525,
+      "entry_count": 23,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 23
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/City_00_01/city_00_01.bin",
+        "geobin/maps/City_Zones/City_01_01/city_01_01.bin",
+        "geobin/maps/City_Zones/City_01_02/city_01_02.bin",
+        "geobin/maps/City_Zones/City_01_03/city_01_03.bin",
+        "geobin/maps/City_Zones/City_01_04/city_01_04.bin",
+        "geobin/maps/City_Zones/city_01_05/city_01_05.bin",
+        "geobin/maps/City_Zones/City_02_01/city_02_01.bin",
+        "geobin/maps/City_Zones/City_02_02/city_02_02.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin_czn.pigg",
+      "bytes": 6077107,
+      "entry_count": 27,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 27
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/Coop_02_01/Coop_02_01.bin",
+        "geobin/maps/City_Zones/Coop_06_01/coop_06_01.bin",
+        "geobin/maps/City_Zones/N_City_00_01/n_city_00_01.bin",
+        "geobin/maps/City_Zones/P_City_00_01/# Nova Praetoria in this folder.bin",
+        "geobin/maps/City_Zones/P_City_00_01/F_City_00_01.bin",
+        "geobin/maps/City_Zones/P_City_00_01/p_city_00_01.bin",
+        "geobin/maps/City_Zones/P_City_00_02/# Imperial City in this folder.bin",
+        "geobin/maps/City_Zones/P_City_00_02/F_City_00_02.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin_czt.pigg",
+      "bytes": 11588171,
+      "entry_count": 21,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 21
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/Hazard_01_01/hazard_01_01.bin",
+        "geobin/maps/City_Zones/Hazard_01_02/hazard_01_02.bin",
+        "geobin/maps/City_Zones/Hazard_01_03/Hazard_01_03.bin",
+        "geobin/maps/City_Zones/Hazard_02_01/hazard_02_01.bin",
+        "geobin/maps/City_Zones/Hazard_03_01/hazard_03_01.bin",
+        "geobin/maps/City_Zones/Hazard_03_02/hazard_03_02.bin",
+        "geobin/maps/City_Zones/Hazard_04_01/hazard_04_01.bin",
+        "geobin/maps/City_Zones/Hazard_05_01/Hazard_05_01.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin_czv.pigg",
+      "bytes": 10506060,
+      "entry_count": 22,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 22
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/V_City_00_01/v_city_00_01.bin",
+        "geobin/maps/City_Zones/V_City_01_01/PierRamWall_V_City_01_01.bin",
+        "geobin/maps/City_Zones/V_City_01_01/v_city_01_01.bin",
+        "geobin/maps/City_Zones/V_City_01_02/v_city_01_02.bin",
+        "geobin/maps/City_Zones/V_City_02_01/Runway.bin",
+        "geobin/maps/City_Zones/V_City_02_01/v_city_02_01.bin",
+        "geobin/maps/City_Zones/V_City_03_01/Pier3_V_City_03_01.bin",
+        "geobin/maps/City_Zones/V_City_03_01/v_city_03_01.bin"
+      ]
+    },
+    {
+      "archive": "i26/geobin_obj.pigg",
+      "bytes": 36906970,
+      "entry_count": 6557,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 3208,
+        ".bounds": 3208,
+        ".geo": 141
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/Buildings/Elements/balconies/balconies.bin",
+        "geobin/object_library/Buildings/Elements/balconies/balconies.bounds",
+        "geobin/object_library/Buildings/Elements/bldg_lights/bldg_lights.bin",
+        "geobin/object_library/Buildings/Elements/bldg_lights/bldg_lights.bounds",
+        "geobin/object_library/Buildings/Elements/bldg_stains/bldg_stains.bin",
+        "geobin/object_library/Buildings/Elements/bldg_stains/bldg_stains.bounds",
+        "geobin/object_library/Buildings/Elements/Decor_Exterior/Awning/awning.bin",
+        "geobin/object_library/Buildings/Elements/Decor_Exterior/Awning/awning.bounds"
+      ]
+    },
+    {
+      "archive": "i26/kallisti.pigg",
+      "bytes": 27898079,
+      "entry_count": 157,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 157
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/world/city_zones/kallisti_wharf/buildings/special/ppd/kw_ppd_station_seal_b.texture",
+        "texture_library/world/city_zones/kallisti_wharf/buildings/special/smone/smone_lod_b.texture",
+        "texture_library/world/city_zones/kallisti_wharf/buildings/special/smone/smone_marble_01_b.texture",
+        "texture_library/world/city_zones/kallisti_wharf/buildings/special/smone/smone_marble_02.texture",
+        "texture_library/world/city_zones/kallisti_wharf/buildings/special/smone/smone_window_01_b.texture",
+        "texture_library/world/city_zones/kallisti_wharf/christie_square/plaza/cs_brick_pillar.texture",
+        "texture_library/world/city_zones/kallisti_wharf/christie_square/plaza/cs_brick_pillar_ns.texture",
+        "texture_library/world/city_zones/kallisti_wharf/christie_square/plaza/cs_brick_trim.texture"
+      ]
+    },
+    {
+      "archive": "i26/missions.pigg",
+      "bytes": 203971435,
+      "entry_count": 2897,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 2897
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_01.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_02.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_02p.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_03.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_04.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_05.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_05p.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_06.bin"
+      ]
+    },
+    {
+      "archive": "i26/object_library.pigg",
+      "bytes": 452674818,
+      "entry_count": 2593,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".geo": 2593
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "object_library/Buildings/Elements/balconies/balconies.geo",
+        "object_library/Buildings/Elements/bldg_lights/bldg_lights.geo",
+        "object_library/Buildings/Elements/bldg_stains/bldg_stains.geo",
+        "object_library/Buildings/Elements/Decor_Exterior/Awning/awning.geo",
+        "object_library/Buildings/Elements/Doors/Door_Shop01/Door_Shop01.geo",
+        "object_library/Buildings/Elements/Doors/Dummy_Doors/Dummy_Doors.geo",
+        "object_library/Buildings/Elements/roofs/vents_etc/vents_etc.geo",
+        "object_library/Buildings/Elements/roofs/ware_elmnts01/ware_elmnts01.geo"
+      ]
+    },
+    {
+      "archive": "i26/scenes.pigg",
+      "bytes": 2352870,
+      "entry_count": 1282,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        "": 4,
+        ".ch": 1,
+        ".def": 4,
+        ".ko": 1,
+        ".log": 1,
+        ".mnu": 2,
+        ".ms": 104,
+        ".old": 1,
+        ".spec": 2,
+        ".texword": 725,
+        ".txt": 435,
+        ".types": 2
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "scenes/5th_anniversary_freedom_phalanx_base.txt",
+        "scenes/5th_column_flashback_scene.txt",
+        "scenes/5th_column_scene.txt",
+        "scenes/5th_column_warehouse_scene.txt",
+        "scenes/5th_reichsman_base.txt",
+        "scenes/abandonedtech.txt",
+        "scenes/abnd_sewer_scene.txt",
+        "scenes/arachnos_caves_scene.txt"
+      ]
+    },
+    {
+      "archive": "i26/sound.pigg",
+      "bytes": 16386660,
+      "entry_count": 328,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 79,
+        ".txt": 249
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/5th Column/process1_loop.ogg",
+        "sound/Ogg/5th Column/sonor_loop.ogg",
+        "sound/Ogg/frontend/h_menumusic_loop.ogg",
+        "sound/Ogg/frontend/v_menumusic_loop.ogg",
+        "sound/Ogg/incarnate/incarnate_judgementmighty_attack_01.ogg",
+        "sound/Ogg/incarnate/incarnate_judgementmighty_attack_02.ogg",
+        "sound/Ogg/music/rave_ae_loop.ogg",
+        "sound/Ogg/N_UI/Music/N_MenuMusic_loop.ogg"
+      ]
+    },
+    {
+      "archive": "i26/texture_characters.pigg",
+      "bytes": 18383833,
+      "entry_count": 182,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 182
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/naomi/etc/winter_2017_only/winter_2017_wreath.texture",
+        "texture_library/naomi/multipurpose/generic_flat_n.texture",
+        "texture_library/naomi/multipurpose/p_generic_chrome_r.texture",
+        "texture_library/naomi/props/p_arcade/p_arcade_body_01.texture",
+        "texture_library/naomi/props/p_arcade/p_arcade_body_01_cov.texture",
+        "texture_library/naomi/props/p_arcade/p_arcade_body_01_cov_n.texture",
+        "texture_library/naomi/props/p_arcade/p_arcade_body_01_glow_m.texture",
+        "texture_library/naomi/props/p_arcade/p_arcade_body_01_n.texture"
+      ]
+    },
+    {
+      "archive": "i26/texture_gui.pigg",
+      "bytes": 52612179,
+      "entry_count": 4164,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 4164
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfringback_L.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfringback_R.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfring_L.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfring_L_tintable.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfring_R.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_4px_25r_halfring_R_tintable.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_scroll_tab_over.texture",
+        "texture_library/GUI/CREATION/bodytype/bodytype_scroll_tab_over_tintable.texture"
+      ]
+    },
+    {
+      "archive": "i26/texture_library.pigg",
+      "bytes": 120402986,
+      "entry_count": 2648,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".cg": 31,
+        ".cgfx": 2,
+        ".cgh": 12,
+        ".rcp": 9,
+        ".tec": 5,
+        ".texture": 2588,
+        ".txt": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "shaders/addGlow.rcp",
+        "shaders/alphaDetail.rcp",
+        "shaders/bumpmapVertDiffuse.rcp",
+        "shaders/cgfx/addglowfp.cg",
+        "shaders/cgfx/alphadetailfp.cg",
+        "shaders/cgfx/blendmode_common.cgh",
+        "shaders/cgfx/bumpmapcolorblenddualfp.cg",
+        "shaders/cgfx/bumpmapmultiplyfp.cg"
+      ]
+    },
+    {
+      "archive": "i26/texture_world.pigg",
+      "bytes": 7379427,
+      "entry_count": 106,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 106
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/r_world/tim/winter2014/c9bulbblue.texture",
+        "texture_library/r_world/tim/winter2014/c9bulbpink.texture",
+        "texture_library/r_world/tim/winter2014/c9bulbred.texture",
+        "texture_library/r_world/tim/winter2014/c9bulbyellow.texture",
+        "texture_library/r_world/tim/winter2014/colortreelights.texture",
+        "texture_library/r_world/tim/winter2014/forest_background_02_winterforest.texture",
+        "texture_library/r_world/tim/winter2014/forest_conopy_roof_bigfil3_winterforest.texture",
+        "texture_library/r_world/tim/winter2014/forest_conopy_roof_edge_02_winterforest.texture"
+      ]
+    },
+    {
+      "archive": "piggs/bin.pigg",
+      "bytes": 31950331,
+      "entry_count": 103,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 103
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "bin/animlists.bin",
+        "bin/arenamaps.bin",
+        "bin/attrib_descriptions.bin",
+        "bin/attrib_names.bin",
+        "bin/auctionconfig.bin",
+        "bin/authmsg-en.bin",
+        "bin/badges.bin",
+        "bin/baserecipes.bin"
+      ]
+    },
+    {
+      "archive": "piggs/fonts.pigg",
+      "bytes": 20870327,
+      "entry_count": 46,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ttc": 3,
+        ".ttf": 43
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "fonts/111mont_demibold.ttf",
+        "fonts/111redcircl.TTF",
+        "fonts/ARBLI___.TTF",
+        "fonts/arial.ttf",
+        "fonts/arialbd.ttf",
+        "fonts/arialbi.ttf",
+        "fonts/ariali.ttf",
+        "fonts/ariblk.ttf"
+      ]
+    },
+    {
+      "archive": "piggs/geom.pigg",
+      "bytes": 101980407,
+      "entry_count": 1325,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 757,
+        ".geo": 568
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/Doors/Card_Readers/Card_Rdr_A/Card_Rdr_A.bin",
+        "geobin/object_library/Doors/Card_Readers/Card_Rdr_B/Card_Rdr_B.bin",
+        "geobin/object_library/Doors/Card_Readers/Card_Rdr_C/Card_Rdr_C.bin",
+        "geobin/object_library/Doors/City_Doors/Doors_P_City_Unique.bin",
+        "geobin/object_library/Doors/Cot_Door_Slanted/Cot_Door_Slanted.bin",
+        "geobin/object_library/Doors/Helicopter_Door/Helicopter_Door.bin",
+        "geobin/object_library/Doors/Ouroboros_Doors/Ouroboros_Doors.bin",
+        "geobin/object_library/Doors/Portal_stone_door/Portal_stone_door.bin"
+      ]
+    },
+    {
+      "archive": "piggs/geomBC.pigg",
+      "bytes": 167716173,
+      "entry_count": 1232,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 648,
+        ".geo": 584
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/Buildings/Elements/balconies/balconies.bin",
+        "geobin/object_library/Buildings/Elements/Doors/Door_Shop01/Door_Shop01.bin",
+        "geobin/object_library/Buildings/Elements/signs/ads_lg/ads_lg.bin",
+        "geobin/object_library/Buildings/Elements/signs/Alphabet/alphabet_test/alphabet_test.bin",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW.bin",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Bunker/AntiMatterCW_Bunker.bin",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Doors/AntiMatterCW_Doors.bin",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Elements/AntiMatterCW_Decals_01.bin"
+      ]
+    },
+    {
+      "archive": "piggs/geomV1.pigg",
+      "bytes": 2157788,
+      "entry_count": 1687,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 19,
+        ".bounds": 1654,
+        ".geo": 14
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/Buildings/Elements/balconies/balconies.bounds",
+        "geobin/object_library/Buildings/Elements/Doors/Door_Shop01/Door_Shop01.bounds",
+        "geobin/object_library/Buildings/Elements/signs/ads_lg/ads_lg.bounds",
+        "geobin/object_library/Buildings/Elements/signs/Alphabet/alphabet_test/alphabet_test.bounds",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW.bounds",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Bunker/AntiMatterCW_Bunker.bounds",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Doors/AntiMatterCW_Doors.bounds",
+        "geobin/object_library/Buildings/Style/AntiMatterCW/AntiMatterCW_Elements/AntiMatterCW_Decals_01.bounds"
+      ]
+    },
+    {
+      "archive": "piggs/geomV2.pigg",
+      "bytes": 30124982,
+      "entry_count": 381,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 230,
+        ".geo": 151
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/Villain_Lairs/devouredearth/DevouredEarth.bin",
+        "geobin/object_library/Villain_Lairs/devouredearth/DE_SetA.bin",
+        "geobin/object_library/Villain_Lairs/devouredearth/DE_SetB.bin",
+        "geobin/object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Props/Details/p_abndn_ofc_details.bin",
+        "geobin/object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Structural/balconies/balconies.bin",
+        "geobin/object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Structural/balconies/p_abandoned_office_balconies.bin",
+        "geobin/object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Structural/pillars/pillars.bin",
+        "geobin/object_library/Villain_Lairs/First_Ward/Abandoned_Office/Elements/Structural/pillars/p_abandoned_office_pillar.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsCities1.pigg",
+      "bytes": 2318163,
+      "entry_count": 3,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 3
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/City_01_02/City_01_02.bin",
+        "geobin/maps/City_Zones/City_02_01/city_02_01.bin",
+        "geobin/maps/City_Zones/City_02_02/City_02_02.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsCities2.pigg",
+      "bytes": 3539433,
+      "entry_count": 4,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 4
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/City_03_01/City_03_01.bin",
+        "geobin/maps/City_Zones/City_03_02/City_03_02.bin",
+        "geobin/maps/City_Zones/City_04_01/city_04_01.bin",
+        "geobin/maps/City_Zones/City_04_02/City_04_02.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsHazards.pigg",
+      "bytes": 7201017,
+      "entry_count": 11,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 11
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/Hazard_01_01/Hazard_01_01.bin",
+        "geobin/maps/City_Zones/Hazard_01_02/Hazard_01_02.bin",
+        "geobin/maps/City_Zones/Hazard_01_03/Hazard_01_03.bin",
+        "geobin/maps/City_Zones/Hazard_02_01/hazard_02_01.bin",
+        "geobin/maps/City_Zones/Hazard_03_01/hazard_03_01.bin",
+        "geobin/maps/City_Zones/Hazard_03_02/hazard_03_02.bin",
+        "geobin/maps/City_Zones/Hazard_04_01/Hazard_04_01.bin",
+        "geobin/maps/City_Zones/Hazard_05_01/Hazard_05_01.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsMisc.pigg",
+      "bytes": 29030333,
+      "entry_count": 94,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 94
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/Architect/Architect.bin",
+        "geobin/maps/Architect/Architect_Backup.bin",
+        "geobin/maps/Arena/Arena_AbOffice_01/Arena_AbOffice_01.bin",
+        "geobin/maps/Arena/Arena_Atlas_01/Arena_Atlas_01.bin",
+        "geobin/maps/Arena/Arena_CargoShip_01/Arena_CargoShip_01.bin",
+        "geobin/maps/Arena/Arena_Coliseum/Arena_Coliseum.bin",
+        "geobin/maps/Arena/Arena_Eden_01/Arena_Eden_01.bin",
+        "geobin/maps/Arena/Arena_Graveyard_01/Arena_Graveyard_01.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsMissions.pigg",
+      "bytes": 191447729,
+      "entry_count": 2190,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 2190
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_01.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_02.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_02p.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_03.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_04.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_05.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_05p.bin",
+        "geobin/maps/Missions/5th_Column_FlashBack/5th_Column_FlashBack_30/5th_Column_FlashBack_30_Layout_06.bin"
+      ]
+    },
+    {
+      "archive": "piggs/mapsTrials.pigg",
+      "bytes": 5035603,
+      "entry_count": 10,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 10
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/Trial_01_01/trial_01_01.bin",
+        "geobin/maps/City_Zones/Trial_01_02/The_SewerNetwork_is_in_this_dir.bin",
+        "geobin/maps/City_Zones/Trial_01_02/trial_01_02.bin",
+        "geobin/maps/City_Zones/Trial_02_01/Trial_02_01.bin",
+        "geobin/maps/City_Zones/Trial_03_01/Trial_03_01.bin",
+        "geobin/maps/City_Zones/Trial_04_01/Trial_04_01.bin",
+        "geobin/maps/City_Zones/Trial_04_02/Trial_04_02.bin",
+        "geobin/maps/City_Zones/Trial_05_01/Trial_05_01.bin"
+      ]
+    },
+    {
+      "archive": "piggs/misc.pigg",
+      "bytes": 436423,
+      "entry_count": 694,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        "": 4,
+        ".cg": 30,
+        ".cgfx": 2,
+        ".cgh": 12,
+        ".rcp": 9,
+        ".tec": 5,
+        ".txt": 632
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "scenes/5th_Anniversary_Freedom_Phalanx_Base.txt",
+        "scenes/5th_column_flashback_scene.txt",
+        "scenes/5th_column_scene.txt",
+        "scenes/5th_column_warehouse_scene.txt",
+        "scenes/5th_Reichsman_Base.TXT",
+        "scenes/AbandonedTech.txt",
+        "scenes/abnd_sewer_scene.txt",
+        "scenes/Arachnos_Caves_scene.txt"
+      ]
+    },
+    {
+      "archive": "piggs/player.pigg",
+      "bytes": 17547239,
+      "entry_count": 709,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".geo": 709
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "player_library/5cf_Head.geo",
+        "player_library/5cg_Boot.geo",
+        "player_library/5cg_Emblem.geo",
+        "player_library/5cg_Glove.geo",
+        "player_library/5cg_Head.geo",
+        "player_library/5cg_Pants.geo",
+        "player_library/5cg_Shirt.geo",
+        "player_library/5cn_Boot.geo"
+      ]
+    },
+    {
+      "archive": "piggs/sound.pigg",
+      "bytes": 58143974,
+      "entry_count": 84,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 84
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/5th Column/5thColumnPortal_loop.ogg",
+        "sound/Ogg/5th Column/AVBeam.ogg",
+        "sound/Ogg/5th Column/Cadence_loop.ogg",
+        "sound/Ogg/5th Column/EmpowermentMachinePulse1_Loop.ogg",
+        "sound/Ogg/5th Column/EmpowermentMachinePulse2_Loop.ogg",
+        "sound/Ogg/5th Column/EmpowermentMachineSqueak_Loop.ogg",
+        "sound/Ogg/5th Column/EmpowermentMachineSteam_Loop.ogg",
+        "sound/Ogg/5th Column/EmpowermentMachine_Loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound1.pigg",
+      "bytes": 25072754,
+      "entry_count": 198,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 198
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Auto/Boat1_loop.ogg",
+        "sound/Ogg/Auto/Boat2_loop.ogg",
+        "sound/Ogg/Auto/Boat3_loop.ogg",
+        "sound/Ogg/Auto/Boat4_loop.ogg",
+        "sound/Ogg/Backgrounds/Wind_Wintry_Loop.ogg",
+        "sound/Ogg/BoomBox/Propaganda1_loop.ogg",
+        "sound/Ogg/Brickstown/Prison1_loop.ogg",
+        "sound/Ogg/Brickstown/Siren1_loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound2.pigg",
+      "bytes": 79026404,
+      "entry_count": 342,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 342
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Eden/ActiveMold_loop.ogg",
+        "sound/Ogg/Eden/EdenAmb1_loop.ogg",
+        "sound/Ogg/Eden/FogWind_loop.ogg",
+        "sound/Ogg/Eden/ThePit_loop.ogg",
+        "sound/Ogg/Eden/Windtunnel_loop.ogg",
+        "sound/Ogg/Enemies/Abomination_ElecDischarge_Attack_01.ogg",
+        "sound/Ogg/Enemies/Abomination_Howl_01.ogg",
+        "sound/Ogg/Enemies/Abomination_Howl_02.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound3.pigg",
+      "bytes": 68528403,
+      "entry_count": 187,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 187
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Halloween11_Music/Halloween11_Cave1_Music.ogg",
+        "sound/Ogg/Halloween11_Music/Halloween11_DrKaneFinal_Music.ogg",
+        "sound/Ogg/Halloween11_Music/Halloween11_ZombieReveal1_Music.ogg",
+        "sound/Ogg/Haloween11/EncasedGenerator_Arcs1_01.ogg",
+        "sound/Ogg/Haloween11/EncasedGenerator_Arcs1_02.ogg",
+        "sound/Ogg/Haloween11/EncasedGenerator_Arcs1_03.ogg",
+        "sound/Ogg/Haloween11/EncasedGenerator_Arcs1_04.ogg",
+        "sound/Ogg/Haloween11/EncasedGenerator_Arcs1_05.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound4.pigg",
+      "bytes": 71485341,
+      "entry_count": 75,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 75
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/CargoShip/SkyPlatform_loop.ogg",
+        "sound/Ogg/Cascades/Shieldcrank_loop.ogg",
+        "sound/Ogg/Cascades/spacewind_loop.ogg",
+        "sound/Ogg/Cascades/Spooky1_loop.ogg",
+        "sound/Ogg/Cascades/Spooky2_loop.ogg",
+        "sound/Ogg/Cascades/Spooky5_loop.ogg",
+        "sound/Ogg/Cascades/ZuluAmb1_loop.ogg",
+        "sound/Ogg/Cascades/ZuluAmb4_loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound5.pigg",
+      "bytes": 23826933,
+      "entry_count": 25,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 25
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Cimerora/Cimeroa_Coastline2_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimeroa_Coastline3_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_Boat_01_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_Castellum_Quarter_01_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_City_short2_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_Outskirts2_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_Outskirts_short_Loop.ogg",
+        "sound/Ogg/Cimerora/Cimerora_Vespillos_Pass_01_short_Loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound6.pigg",
+      "bytes": 50096207,
+      "entry_count": 109,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 109
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Dark Astoria/Dark1_loop.ogg",
+        "sound/Ogg/Dark Astoria/GhostTown_loop.ogg",
+        "sound/Ogg/Deadly Apocalypse/DeadlyApocalypse.ogg",
+        "sound/Ogg/Deadly Apocalypse/DeadlyApocalypse_Cleanup.ogg",
+        "sound/Ogg/Deadly Apocalypse/Sigil_Destruction.ogg",
+        "sound/Ogg/Deadly Apocalypse/Sigil_Geyser_Damage.ogg",
+        "sound/Ogg/Deadly Apocalypse/Sigil_Geyser_Defense.ogg",
+        "sound/Ogg/Deadly Apocalypse/Sigil_Geyser_Healing.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/sound7.pigg",
+      "bytes": 62118318,
+      "entry_count": 417,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 417
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Praetoria/AlcoveTone_Loop.ogg",
+        "sound/Ogg/Praetoria/AquaductStairwell_Loop.ogg",
+        "sound/Ogg/Praetoria/AquaductWalk_Loop.ogg",
+        "sound/Ogg/Praetoria/Aquaduct_02_Loop.ogg",
+        "sound/Ogg/Praetoria/Aquaduct_05_Loop.ogg",
+        "sound/Ogg/Praetoria/Auto_SemiIdle1a_Loop.ogg",
+        "sound/Ogg/Praetoria/Auto_SemiIdle1_Loop.ogg",
+        "sound/Ogg/Praetoria/Auto_TractorIdle1a_Loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundMusic.pigg",
+      "bytes": 79284728,
+      "entry_count": 108,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 108
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Music/AdevaTowers.ogg",
+        "sound/Ogg/Music/Aftershock.ogg",
+        "sound/Ogg/Music/AquariusMedicalCenter.ogg",
+        "sound/Ogg/Music/Aqueduct.ogg",
+        "sound/Ogg/Music/Arcadia.ogg",
+        "sound/Ogg/Music/Arena/Stats_loop.ogg",
+        "sound/Ogg/Music/ArgoHighway.ogg",
+        "sound/Ogg/Music/ArgosyIndustries.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundMusic1.pigg",
+      "bytes": 105235439,
+      "entry_count": 131,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 131
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Music/5thColumnCastellum.ogg",
+        "sound/Ogg/Music/5thColumnVespillos.ogg",
+        "sound/Ogg/Music/LaGrangeMedicalCenter.ogg",
+        "sound/Ogg/Music/Landofthelost.ogg",
+        "sound/Ogg/Music/LibertyQuay.ogg",
+        "sound/Ogg/Music/LibertyTown.ogg",
+        "sound/Ogg/Music/LittleRoundTop.ogg",
+        "sound/Ogg/Music/LouisForest.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundMusic2.pigg",
+      "bytes": 114928439,
+      "entry_count": 85,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 85
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Praetoria_Music/ImperialCity_Combat01.ogg",
+        "sound/Ogg/Praetoria_Music/ImperialCity_Combat03.ogg",
+        "sound/Ogg/Praetoria_Music/ImperialCity_Combat04.ogg",
+        "sound/Ogg/Praetoria_Music/ImperialCity_Mission.ogg",
+        "sound/Ogg/Praetoria_Music/Missions/Imperial1_C.ogg",
+        "sound/Ogg/Praetoria_Music/Missions/Imperial2_B.ogg",
+        "sound/Ogg/Praetoria_Music/Missions/Imperial3_A.ogg",
+        "sound/Ogg/Praetoria_Music/Missions/Imperial3_B.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundPowers.pigg",
+      "bytes": 18798752,
+      "entry_count": 219,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 219
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Powers/Antimatter_Pulse_01.ogg",
+        "sound/Ogg/Powers/Antimatter_Pulse_Strong_01.ogg",
+        "sound/Ogg/Powers/Apparitions_Emerge_01.ogg",
+        "sound/Ogg/Powers/Apparitions_MergeBoss_Hit_01.ogg",
+        "sound/Ogg/Powers/Apparitions_MergeBoss_Hit_02.ogg",
+        "sound/Ogg/Powers/Apparitions_MergeLieut_Hit_01.ogg",
+        "sound/Ogg/Powers/Apparitions_MergeLieut_Hit_02.ogg",
+        "sound/Ogg/Powers/Apparitions_Merge_01.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundV1.pigg",
+      "bytes": 31974452,
+      "entry_count": 91,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 91
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/V_Arachnos/Hellfire_loop.ogg",
+        "sound/Ogg/V_Arachnos/SubControlRoom_loop.ogg",
+        "sound/Ogg/V_Base/Anger1_loop.ogg",
+        "sound/Ogg/V_Base/BatteryLarge_loop.ogg",
+        "sound/Ogg/V_Base/BatterySmall2_loop.ogg",
+        "sound/Ogg/V_Base/BatterySmall_loop.ogg",
+        "sound/Ogg/V_Base/compAmb2_loop.ogg",
+        "sound/Ogg/V_Base/computerx4_loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundV2.pigg",
+      "bytes": 30690946,
+      "entry_count": 88,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 88
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/V_Mercy/generaldestruction_loop.ogg",
+        "sound/Ogg/V_MissionMusic/Cave2_loop.ogg",
+        "sound/Ogg/V_MissionMusic/Cave4_loop.ogg",
+        "sound/Ogg/V_MissionMusic/JMission5_loop.ogg",
+        "sound/Ogg/V_MissionMusic/smoothcave1_loop.ogg",
+        "sound/Ogg/V_Port Oakes/PortOakes1_loop.ogg",
+        "sound/Ogg/V_Port Oakes/seagullslong_loop.ogg",
+        "sound/Ogg/V_Powers/activate16.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/soundVMusic.pigg",
+      "bytes": 28428809,
+      "entry_count": 18,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 18
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/V_Music/J10_faded.ogg",
+        "sound/Ogg/V_Music/J14_faded.ogg",
+        "sound/Ogg/V_Music/J16_faded.ogg",
+        "sound/Ogg/V_Music/J17_faded.ogg",
+        "sound/Ogg/V_Music/J31_faded.ogg",
+        "sound/Ogg/V_Music/M10_faded.ogg",
+        "sound/Ogg/V_Music/M12_faded.ogg",
+        "sound/Ogg/V_Music/M14_faded.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/stage1.pigg",
+      "bytes": 87459151,
+      "entry_count": 2616,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 564,
+        ".bounds": 564,
+        ".geo": 1434,
+        ".ogg": 54
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/object_library/City_Zones/graves_dirty/graves_dirty.bin",
+        "geobin/object_library/City_Zones/graves_dirty/graves_dirty.bounds",
+        "geobin/object_library/City_Zones/hollows/hollows_elements/hollows_obelisks/hollows_obelisks.bin",
+        "geobin/object_library/City_Zones/hollows/hollows_elements/hollows_obelisks/hollows_obelisks.bounds",
+        "geobin/object_library/City_Zones/Praetoria/Nature/Trees/Praet_Tree_Urban01.bin",
+        "geobin/object_library/City_Zones/Praetoria/Nature/Trees/Praet_Tree_Urban01.bounds",
+        "geobin/object_library/City_Zones/Shadow_Shard/ss_kora_fruit/ss_kora_fruit.bin",
+        "geobin/object_library/City_Zones/Shadow_Shard/ss_kora_fruit/ss_kora_fruit.bounds"
+      ]
+    },
+    {
+      "archive": "piggs/stage1a.pigg",
+      "bytes": 61306611,
+      "entry_count": 5878,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".anim": 5878
+      },
+      "animation_count": 5878,
+      "animation_samples": [
+        "player_library/animations/5cw/2hand_cast.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Cripple.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Crush.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Devour.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_HQ.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_Infection.anim",
+        "player_library/animations/5cw/Avatar_Hamidon_death_front.anim",
+        "player_library/animations/5cw/Diesel_wakeup.anim",
+        "player_library/animations/5cw/Dismiss.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_Air_Drop.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_Death.anim",
+        "player_library/animations/5cw/Goliath_WarWalker_jump.anim"
+      ],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": true,
+      "sample_entries": [
+        "player_library/animations/5cw/2hand_cast.anim",
+        "player_library/animations/5cw/activate.anim",
+        "player_library/animations/5cw/air_blast.anim",
+        "player_library/animations/5cw/air_burst.anim",
+        "player_library/animations/5cw/air_chestcannon.anim",
+        "player_library/animations/5cw/air_flamethrower.anim",
+        "player_library/animations/5cw/air_missile.anim",
+        "player_library/animations/5cw/air_quadguns.anim"
+      ]
+    },
+    {
+      "archive": "piggs/stage1b.pigg",
+      "bytes": 144033704,
+      "entry_count": 7033,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 7033
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [
+        "texture_library/WORLD/Filler/black.texture",
+        "texture_library/WORLD/Filler/grey.texture",
+        "texture_library/WORLD/Filler/white.texture",
+        "texture_library/WORLD/World_fx/PORTAL/invisible.texture"
+      ],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/FX/5th_missile1.texture",
+        "texture_library/FX/5th_missileFrag.texture",
+        "texture_library/FX/AirStreakBreaks_Inverse.texture",
+        "texture_library/FX/AnimTextures/LineBlur_3x3.texture",
+        "texture_library/FX/AnimTextures/Slash_2x2.texture",
+        "texture_library/FX/AnimTextures/Slash_2x2_Blur.texture",
+        "texture_library/FX/AssultRiffleShell2.texture",
+        "texture_library/FX/auras/AuraJunk.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage1c.pigg",
+      "bytes": 201809454,
+      "entry_count": 3938,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 3938
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ITEMS/Healthkit/bomb/item_bomb.texture",
+        "texture_library/ITEMS/Healthkit/bomb/item_bomb_timer.texture",
+        "texture_library/ITEMS/Healthkit/CompactDisk/CompactDisk.texture",
+        "texture_library/ITEMS/Healthkit/Healthkit.texture",
+        "texture_library/ITEMS/Props/binoculars.texture",
+        "texture_library/ITEMS/Props/binoculars_bump.texture",
+        "texture_library/ITEMS/Props/binoculars_RefMask.texture",
+        "texture_library/ITEMS/Props/Blueprint.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage1d.pigg",
+      "bytes": 85976182,
+      "entry_count": 1500,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1500
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_01.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_01_Bump.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_01_Mask.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_01_Reflect.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_02.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_Clockwork_02_Reflect.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_CoThorns_01.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Back/Back_CoThorns_01_Glow.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage1e.pigg",
+      "bytes": 63614423,
+      "entry_count": 964,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 964
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_Battle_Kilt_01.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_Battle_Kilt_01_Bump.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_Battle_Kilt_01_Mask.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_CoThorns_01.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_CoThorns_01_Mask.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_CoThorns_01_Normal.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_Cyclops_01.texture",
+        "texture_library/V_PLAYERS/AVATAR/Super_Shared/Kilts/Skirt_V_Cyclops_01_Bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage1f.pigg",
+      "bytes": 124587057,
+      "entry_count": 1903,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1903
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [
+        "texture_library/btest/buildingLightPattern.texture",
+        "texture_library/btest/dummy_bump.texture",
+        "texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture"
+      ],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/Animals/Lioness/N_Lioness_Head_01.texture",
+        "texture_library/Animals/Lioness/N_Lioness_Head_NM_01.texture",
+        "texture_library/Animals/Lioness/N_Lioness_Hips_01.texture",
+        "texture_library/Animals/Lioness/N_Lioness_Hips_NM_01.texture",
+        "texture_library/Animals/Lioness/N_Lioness_Tail_01.texture",
+        "texture_library/Animals/Lioness/N_Lioness_Tail_NM_01.texture",
+        "texture_library/Animals/Wolf/Wolf_Pet_Belt_01.texture",
+        "texture_library/Animals/Wolf/Wolf_Pet_Chest_01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage2.pigg",
+      "bytes": 88673593,
+      "entry_count": 4135,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 80,
+        ".bounds": 79,
+        ".geo": 290,
+        ".texture": 3686
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/N_City_00_01/N_City_00_01.bin",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/Upgraded_Deco.bin",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/Upgraded_Deco.bounds",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_03.bin",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_03.bounds",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_07.bin",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_07.bounds",
+        "geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_09.bin"
+      ]
+    },
+    {
+      "archive": "piggs/stage2a.pigg",
+      "bytes": 69353816,
+      "entry_count": 1786,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 1786
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Arena/ArenaPowerCoreM_loop.ogg",
+        "sound/Ogg/Arena/ArenaPowerCore_loop.ogg",
+        "sound/Ogg/Arena/BeepWarning.ogg",
+        "sound/Ogg/Arena/BeepWarning_loop.ogg",
+        "sound/Ogg/Arena/Endmatch.ogg",
+        "sound/Ogg/Arena/Matchstart.ogg",
+        "sound/Ogg/Auto/CarTruck1Dist_Loop.ogg",
+        "sound/Ogg/Auto/CarTruck1_Loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/stage2b.pigg",
+      "bytes": 102575394,
+      "entry_count": 1504,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 1504
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/5th Column/AlcoveTerminals1_Loop.ogg",
+        "sound/Ogg/5th Column/AlcoveTerminals2_Loop.ogg",
+        "sound/Ogg/5th Column/AlcoveTerminals3_Loop.ogg",
+        "sound/Ogg/5th Column/AlcoveTerminals4_Loop.ogg",
+        "sound/Ogg/Ouroboros_Destroyed/Fire_Small02_Loop.ogg",
+        "sound/Ogg/Player/clap1.ogg",
+        "sound/Ogg/Player/clap2.ogg",
+        "sound/Ogg/Player/clap3.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/stage2c.pigg",
+      "bytes": 98053608,
+      "entry_count": 784,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 784
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/buildings/Elements/Building_doors/Door_Plain_Dirty_Metal.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/Door_Shop01.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_01.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_01_mask.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_02.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_02_mask.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_03.texture",
+        "texture_library/WORLD/buildings/Elements/Building_doors/new_door_textures/Chest_Door_City_03_mask.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage3.pigg",
+      "bytes": 120838386,
+      "entry_count": 5180,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".bin": 1574,
+        ".bounds": 880,
+        ".geo": 454,
+        ".texture": 2272
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "geobin/maps/City_Zones/City_01_01/City_01_01.bin",
+        "geobin/maps/City_Zones/V_City_01_01/V_City_01_01.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_01.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_02.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_02p.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_03.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_04.bin",
+        "geobin/maps/Missions/5th_column/5th_Column_30/5th_Column_30_Layout_05.bin"
+      ]
+    },
+    {
+      "archive": "piggs/stage3a.pigg",
+      "bytes": 76133806,
+      "entry_count": 428,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 428
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/Dark Astoria/Souls_loop.ogg",
+        "sound/Ogg/Eden/lichen2.ogg",
+        "sound/Ogg/Eden/lichen3.ogg",
+        "sound/Ogg/Eden/lichen4.ogg",
+        "sound/Ogg/Eden/lichen5.ogg",
+        "sound/Ogg/Enemies/BigMetalHit.ogg",
+        "sound/Ogg/Enemies/BigMetalHit3.ogg",
+        "sound/Ogg/Enemies/BlackKnights_NetherBlade_Projectile.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/stage3b.pigg",
+      "bytes": 94288451,
+      "entry_count": 270,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".ogg": 270
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "sound/Ogg/5th Column/AirAmb1_loop.ogg",
+        "sound/Ogg/5th Column/ControlRoom1_loop.ogg",
+        "sound/Ogg/5th Column/Fan3_loop.ogg",
+        "sound/Ogg/5th Column/lights_loop.ogg",
+        "sound/Ogg/5th Column/PowerStation_loop.ogg",
+        "sound/Ogg/5th Column/process2_loop.ogg",
+        "sound/Ogg/5th Column/process3_loop.ogg",
+        "sound/Ogg/5th Column/Process4_loop.ogg"
+      ]
+    },
+    {
+      "archive": "piggs/stage3c.pigg",
+      "bytes": 120989824,
+      "entry_count": 767,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".geo": 767
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "object_library/Buildings/Elements/bldg_lights/bldg_lights.geo",
+        "object_library/Buildings/Elements/bldg_stains/bldg_stains.geo",
+        "object_library/Buildings/Elements/Decor_Exterior/Awning/awning.geo",
+        "object_library/Buildings/Elements/Doors/Dummy_Doors/Dummy_Doors.geo",
+        "object_library/Buildings/Elements/roofs/vents_etc/vents_etc.geo",
+        "object_library/Buildings/Elements/roofs/ware_elmnts01/ware_elmnts01.geo",
+        "object_library/Buildings/Elements/Ruined_Roofs/Ruined_Roofs.geo",
+        "object_library/Buildings/Elements/signs/Neon/Neon.geo"
+      ]
+    },
+    {
+      "archive": "piggs/stage3d.pigg",
+      "bytes": 117707953,
+      "entry_count": 1762,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1762
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_exit_sign#Base.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_exit_sign.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_bathroom_sign#Base.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_bathroom_sign.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_blinds1.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_carpet_fill.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_carpet_small.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_ofc1_carpet_small_90in.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage3e.pigg",
+      "bytes": 103674426,
+      "entry_count": 1563,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1563
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_anatchart01.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_anatchart02.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_bed01.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_bed01a.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_bottles01.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_bottles02.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_bottles03.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Decorative_liquid/baseliquid_Medical/a_med_jars01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage3f.pigg",
+      "bytes": 89617460,
+      "entry_count": 1515,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1515
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/Hospital/Hosp_side01.texture",
+        "texture_library/WORLD/Hospital/Hosp_side02.texture",
+        "texture_library/WORLD/industrial/catwalks/ind_cat_grate.texture",
+        "texture_library/WORLD/industrial/catwalks/ind_cat_rail.texture",
+        "texture_library/WORLD/industrial/ground_variation/ind_grnd_cmnt_patches_01.texture",
+        "texture_library/WORLD/industrial/ground_variation/ind_grnd_cmnt_patches_02.texture",
+        "texture_library/WORLD/industrial/ground_variation/ind_grnd_cmnt_patches_03.texture",
+        "texture_library/WORLD/industrial/ground_variation/ind_grnd_messy_01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/stage3g.pigg",
+      "bytes": 83430571,
+      "entry_count": 1459,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1459
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/buildings/deco/deco1/deco1b_wide.texture",
+        "texture_library/WORLD/buildings/deco/deco1/deco1b_wide_ALPHA.texture",
+        "texture_library/WORLD/buildings/deco/deco1/deco1_window01.texture",
+        "texture_library/WORLD/buildings/deco/deco1/deco1_window01_ALPHA.texture",
+        "texture_library/WORLD/buildings/deco/deco1/deco2.texture",
+        "texture_library/WORLD/buildings/deco/deco11/deco11_brick_plain_A.texture",
+        "texture_library/WORLD/buildings/deco/deco11/deco11_brick_plain_B.texture",
+        "texture_library/WORLD/buildings/deco/deco11/deco11_brick_plain_B_bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texEnemies.pigg",
+      "bytes": 1665779,
+      "entry_count": 33,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 33
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ENEMIES/5thColumn/Night/Chest_5C_Night_Chest_01.texture",
+        "texture_library/ENEMIES/5thColumn/Night/Chest_5C_Night_Chest_01_Bump.texture",
+        "texture_library/ENEMIES/5thColumn/Night/Face_5C_Night_Face_01.texture",
+        "texture_library/ENEMIES/5thColumn/Night/Face_5C_Night_Face_01_Bump.texture",
+        "texture_library/ENEMIES/5thColumn/Ubermunch/Chest_5C_Ubermunch_Chest_01.texture",
+        "texture_library/ENEMIES/5thColumn/Ubermunch/Chest_5C_Ubermunch_Chest_01_Bump.texture",
+        "texture_library/ENEMIES/5thColumn/Ubermunch/Face_5C_Ubermunch_Face_01.texture",
+        "texture_library/ENEMIES/5thColumn/Ubermunch/Face_5C_Ubermunch_Face_01_Bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texEnemies2.pigg",
+      "bytes": 23391597,
+      "entry_count": 426,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 426
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Boot_Carnival_Harlequin_01b.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Boot_Carnival_Mistress.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Boot_Carnival_Mistress_01b.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Boot_Carnival_Mistress_Bump.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Chest_Carnival_Illusionist.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Chest_Carnival_Illusionist_01b.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Chest_Carnival_Illusionist_Bump.texture",
+        "texture_library/ENEMIES/Carnvial_Of_Shadows/Female/Chest_Skin_Carnival_Harlequin.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texEnemies3.pigg",
+      "bytes": 4113262,
+      "entry_count": 85,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 85
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ENEMIES/Crey/Agent/Boot_Crey_Agent_01a.texture",
+        "texture_library/ENEMIES/Crey/Agent/Boot_Skin_Crey_Heel_01a.texture",
+        "texture_library/ENEMIES/Crey/Agent/Boot_Skin_Crey_Heel_01b.texture",
+        "texture_library/ENEMIES/Crey/Agent/Chest_Crey_Agent_01a.texture",
+        "texture_library/ENEMIES/Crey/Agent/Chest_Crey_Agent_01b.texture",
+        "texture_library/ENEMIES/Crey/Agent/Emblem_Crey_Agent_01a.texture",
+        "texture_library/ENEMIES/Crey/Agent/Emblem_Crey_Agent_01b.texture",
+        "texture_library/ENEMIES/Crey/Agent/Face_Skin_Agent_01_01a.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texEnemies4.pigg",
+      "bytes": 4155374,
+      "entry_count": 70,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 70
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Eye_Devoured.texture",
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Eye_Devoured_Mask.texture",
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Eye_Devoured_Normal.texture",
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Hair_Devoured_02.texture",
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Hair_Devoured_Bump.texture",
+        "texture_library/ENEMIES/Devouring_Earth/Devoured/Hair_Devoured_GlowMask.texture",
+        "texture_library/ENEMIES/Nemesis/Drone/Face_Nemesis_Drone.texture",
+        "texture_library/ENEMIES/Nemesis/Drone/Face_Nemesis_Drone_Bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texEnemies5.pigg",
+      "bytes": 5403262,
+      "entry_count": 49,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 49
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/ENEMIES/Rikti/Armour/Boot_Rikti_Armour_01a.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Boot_Rikti_Armour_01a_Bump.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Boot_Rikti_Armour_01b.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Boot_Rikti_Armour_Paint.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Chest_Rikti_Armour_01a.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Chest_Rikti_Armour_01a_Bump.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Chest_Rikti_Armour_01b.texture",
+        "texture_library/ENEMIES/Rikti/Armour/Chest_Rikti_Armour_Paint.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texFxGuiItems.pigg",
+      "bytes": 11929920,
+      "entry_count": 206,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 205,
+        ".tga": 1
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/FX/BeamThin.texture",
+        "texture_library/FX/BurrThorns.texture",
+        "texture_library/FX/ClawScratch.texture",
+        "texture_library/FX/Cloud_FlashPoint2.texture",
+        "texture_library/FX/cold_wave5.texture",
+        "texture_library/FX/Critters/FX_Maw.texture",
+        "texture_library/FX/Critters/FX_Maw_Bump.texture",
+        "texture_library/FX/Critters/FX_Maw_Tintable.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texGui1.pigg",
+      "bytes": 18287717,
+      "entry_count": 37,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".costume": 18,
+        ".texture": 19
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/GUI/CREATION/Login/coh#Base.texture",
+        "texture_library/GUI/CREATION/Login/coh#french.texture",
+        "texture_library/GUI/CREATION/Login/coh#german.texture",
+        "texture_library/GUI/CREATION/Login/coh#uk.texture",
+        "texture_library/GUI/CREATION/Login/coh.texture",
+        "texture_library/GUI/CREATION/Login/cov#Base.texture",
+        "texture_library/GUI/CREATION/Login/cov#french.texture",
+        "texture_library/GUI/CREATION/Login/cov#german.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texMaps.pigg",
+      "bytes": 154907821,
+      "entry_count": 543,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 543
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/MAPS/5th_column/5th_lr_end_03.texture",
+        "texture_library/MAPS/5th_column/5th_lr_end_final.texture",
+        "texture_library/MAPS/5th_column/MM_room_bend_01.texture",
+        "texture_library/MAPS/5th_column/room_robot_final.texture",
+        "texture_library/MAPS/5th_column/room_robot_final_02.texture",
+        "texture_library/MAPS/5th_column/strgint_drophall_90_A.texture",
+        "texture_library/MAPS/5th_column/strgint_drophall_90_B.texture",
+        "texture_library/MAPS/5th_column/strgint_drophall_A.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texMisc.pigg",
+      "bytes": 119931393,
+      "entry_count": 2092,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 2092
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/btest/bumpmap_test.texture",
+        "texture_library/loading_screens/Arena/Arena_Generic.texture",
+        "texture_library/loading_screens/City_Zones/City_00_01.texture",
+        "texture_library/loading_screens/City_Zones/City_01_02.texture",
+        "texture_library/loading_screens/City_Zones/City_01_03.texture",
+        "texture_library/loading_screens/City_Zones/City_01_04.texture",
+        "texture_library/loading_screens/City_Zones/City_02_01.texture",
+        "texture_library/loading_screens/City_Zones/City_02_02.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texPlayersUI.pigg",
+      "bytes": 4542733,
+      "entry_count": 113,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 113
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/PLAYERS/AVATAR/Female/Boots/sf_boot_tights_hi_heel_01b.texture",
+        "texture_library/PLAYERS/AVATAR/Female/Dresses/sf_top_Dress_Taiwan_01.texture",
+        "texture_library/PLAYERS/AVATAR/Female/Dresses/sf_top_Dress_Taiwan_01b.texture",
+        "texture_library/PLAYERS/AVATAR/Female/Dresses/sf_top_Dress_Taiwan_01_bump.texture",
+        "texture_library/PLAYERS/AVATAR/Female/Gloves/sf_glove_skin_kitsung_01.texture",
+        "texture_library/PLAYERS/AVATAR/Female/Gloves/sf_glove_skin_kitsung_01_bump.texture",
+        "texture_library/PLAYERS/AVATAR/FXMotionBlur/FX_Tintable_MotionBlur_Boots_Female.texture",
+        "texture_library/PLAYERS/AVATAR/FXMotionBlur/FX_Tintable_MotionBlur_Boots_Female_Dark.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVEnemies.pigg",
+      "bytes": 11390327,
+      "entry_count": 167,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 167
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/V_ENEMIES/Antimatter_Turret/TurretWeaps_DUST_a.texture",
+        "texture_library/V_ENEMIES/Antimatter_Turret/TurretWeaps_DUST_d.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Belt_Arachnos_Arachnoid.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Belt_Arachnos_Arachnoid_Bump.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Belt_Arachnos_Arachnoid_Mask.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Belt_Arachnos_Widdershin.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Boot_Skin_Arachnos_Arachnoid.texture",
+        "texture_library/V_ENEMIES/Arachnos/Arachnoids/Boot_Skin_Arachnos_Arachnoid_Bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorld.pigg",
+      "bytes": 42464511,
+      "entry_count": 313,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 313
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarnd_flag01.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_cracks.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_cracks2.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_ext_base01.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_ext_base01_drk.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_ext_base03.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_ext_dirt.texture",
+        "texture_library/WORLD/V_COV/Arena_ruin/arenarn_ext_roof_mask.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorld1.pigg",
+      "bytes": 27037480,
+      "entry_count": 425,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 425
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_bunker_gray.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_bunker_gray2.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_bunker_gray4.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_bunker_gray5.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_bunker_mask01.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_crater01.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_crater01_grass.texture",
+        "texture_library/WORLD/V_COV/city_zones/bloody_bay/bldby_crater01_mask.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorld2.pigg",
+      "bytes": 8678429,
+      "entry_count": 201,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 201
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Doors/tvdoorflip01.texture",
+        "texture_library/WORLD/V_COV/Doors/tvdoorflip01_bump.texture",
+        "texture_library/WORLD/V_COV/Doors/tvdoorframe01.texture",
+        "texture_library/WORLD/V_COV/Doors/tvdoorframe01_bump.texture",
+        "texture_library/WORLD/V_COV/Doors/tvdoorframe01_glow.texture",
+        "texture_library/WORLD/V_COV/Doors/tvdoorframe01_mask.texture",
+        "texture_library/WORLD/V_COV/generic_surfaces/walls/covgentx_brick_dark01.texture",
+        "texture_library/WORLD/V_COV/generic_surfaces/walls/v_rooftop_brickwall.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorld3.pigg",
+      "bytes": 21498767,
+      "entry_count": 311,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 311
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Villian_Lairs/abandoned_offices/v_aband_decal_xlrgblackstain_02.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/abandoned_offices/v_aband_ofc1_handrail_bump.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/abandoned_offices/v_aband_ofc1_railing_detail.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/abandoned_offices/v_aband_ofc1_wall_upper_01.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/arachnoid/anoid_cobweb_sheet_01_dirty.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/arachnoid/anoid_cobweb_sheet_02_dirty.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/arachnoid/anoid_webpillar_ball_dirty.texture",
+        "texture_library/WORLD/V_COV/Villian_Lairs/arachnoid/anoid_webpillar_ball_rn.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorldBases1.pigg",
+      "bytes": 54592901,
+      "entry_count": 333,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 333
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_32.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_32_bump.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_32_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_40.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_40_bump.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_40_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_48.texture",
+        "texture_library/WORLD/V_COV/Bases/Bases_Asian01/baseasn_ceiling_48_bump.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texVWorldBases2.pigg",
+      "bytes": 53233917,
+      "entry_count": 655,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 655
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_backdrop.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag01_alpha.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag01_back01.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag01_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag02_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag03_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag04_dual.texture",
+        "texture_library/WORLD/V_COV/Bases/Details/Base_Logo_items/base_logo_flag05_dual.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorld.pigg",
+      "bytes": 41829634,
+      "entry_count": 561,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 561
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/carpet/red_plush.texture",
+        "texture_library/WORLD/city_template/ct_mile_ruler1.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch02/park_picnic1_1B.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch02/park_picnic1_2B.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch03/bar_chair2.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch03/batfan1_1_dirty.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch03/slum_ybarrel_small.texture",
+        "texture_library/WORLD/Common_Decor/Kirk_Batch03/warecrate_3_2_n.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldBC.pigg",
+      "bytes": 66612759,
+      "entry_count": 362,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 362
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BrickFireDMG_m.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BrickRubble_d.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BrickRubble_m.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BrickRubble_m2.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BrickRubble_n.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_Brick_FireDMG_m.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BulletHoles_a.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/First_Ward/Buildings/Brick_MidRises/FW_BulletHoles_d.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldBuildings.pigg",
+      "bytes": 63752042,
+      "entry_count": 900,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 898,
+        ".tga": 2
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/buildings/deco/deco3/deco_reflect_Blue.texture",
+        "texture_library/WORLD/buildings/deco/deco8/deco8_brick_dark.texture",
+        "texture_library/WORLD/buildings/deco/deco_16/deco_16_trim_B.texture",
+        "texture_library/WORLD/buildings/deco/deco_16/deco_16_trim_B_bump.texture",
+        "texture_library/WORLD/buildings/docks/dock_wd_pieces01/bch_sign_spanky01#Base.texture",
+        "texture_library/WORLD/buildings/docks/dock_wd_pieces01/bch_sign_spanky01.texture",
+        "texture_library/WORLD/buildings/docks/dock_wd_pieces01/dock_wd_pieces01_plain4.texture",
+        "texture_library/WORLD/buildings/Elements/Balconies/Balcony_01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldCZ.pigg",
+      "bytes": 184436277,
+      "entry_count": 1238,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 1238
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Doors/Door_Atlas_Generic_Double_D.texture",
+        "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Doors/Door_Atlas_Generic_Double_M.texture",
+        "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Doors/Door_Atlas_Generic_Double_NS.texture",
+        "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_DRYivy_01_b.texture",
+        "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_DRYivy_creepers_01_b.texture",
+        "texture_library/WORLD/City_Zones/carnival_outdoor/crnout_anchors.texture",
+        "texture_library/WORLD/City_Zones/carnival_outdoor/crnout_cable01.texture",
+        "texture_library/WORLD/City_Zones/carnival_outdoor/crnout_flag01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldSW.pigg",
+      "bytes": 99009547,
+      "entry_count": 769,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 769
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Base/P_Imp_Dirt_01_D.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Base/P_Imp_Dirt_01_NS.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Decals/P_Imp_Lillypads_d.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Decals/P_Imp_Lillypads_ns.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Infrastructure/BA_Facility/Elements/Sonic_Pylon/BA_SonicPylon.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Infrastructure/BA_Facility/Elements/Sonic_Pylon/BA_SonicPylon_Glow.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Infrastructure/BA_Facility/Elements/Sonic_Pylon/BA_SonicPylon_NS.texture",
+        "texture_library/WORLD/City_Zones/Praetoria/Imperial/Infrastructure/BA_Facility/Grounds/BAF_Cncrt_Base_01_D.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldV1.pigg",
+      "bytes": 65102337,
+      "entry_count": 536,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 536
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Bridge_D.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Bridge_NS.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Bridge_Z.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Deck_D.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Deck_NS.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Deck_Z.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_EngineVent_D.texture",
+        "texture_library/WORLD/Villains/skyraider/destroyer/DestExt_Hull_D.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texWorldV2.pigg",
+      "bytes": 42660930,
+      "entry_count": 203,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".texture": 203
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texture_library/WORLD/Villain_lairs/abandoned_offices/aband_concrete_broken.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_tech/abndn_tek1_compscreen2.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_tech/abndn_tek1_comp_board2.texture",
+        "texture_library/WORLD/Villain_lairs/abandoned_tech/abndn_tek1_tanktop2.texture",
+        "texture_library/WORLD/Villain_lairs/Caves/caverock02.texture",
+        "texture_library/WORLD/Villain_lairs/Caves/caverock_croatoa.texture",
+        "texture_library/WORLD/Villain_lairs/Caves/caverock_Snow.texture",
+        "texture_library/WORLD/Villain_lairs/Caves_smooth/cvsmth_rune01.texture"
+      ]
+    },
+    {
+      "archive": "piggs/texts.pigg",
+      "bytes": 683463,
+      "entry_count": 745,
+      "integrity_checked": false,
+      "payloads_read": false,
+      "extensions": {
+        ".def": 4,
+        ".mnu": 1,
+        ".ms": 11,
+        ".texword": 725,
+        ".txt": 4
+      },
+      "animation_count": 0,
+      "animation_samples": [],
+      "startup_texture_paths": [],
+      "has_male_thumbsup_animation": false,
+      "sample_entries": [
+        "texts/Base/texture_library/btest/DUMMYLAYOUT.TEXWORD",
+        "texts/Base/texture_library/Dynamic/ARACHNOSSIGN.TEXWORD",
+        "texts/Base/texture_library/Dynamic/ARACHNOSSIGN1TO4.TEXWORD",
+        "texts/Base/texture_library/Dynamic/ARACHNOSSIGN1TO4_MERCY.texword",
+        "texts/Base/texture_library/Dynamic/ARACHNOSSIGN1TO4_SomethingElse.texword",
+        "texts/Base/texture_library/Dynamic/ARACHNOSSIGN_PORTOAKES.texword",
+        "texts/Base/texture_library/Dynamic/ARENAINT_DYN_TEXTA.TEXWORD",
+        "texts/Base/texture_library/Dynamic/ARENAINT_DYN_TEXTB.texword"
+      ]
+    }
+  ],
+  "archive_count": 95,
+  "archives_with_animations": [
+    "i26/geobin.pigg",
+    "piggs/stage1a.pigg"
+  ]
+}

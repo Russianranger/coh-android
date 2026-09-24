@@ -1,5 +1,23 @@
 # Base asset coverage and next upload
 
+## Thor index received: next three uploads
+
+The subsequent device index has been assessed. It reports **95 archives, with
+no indexing errors**. Upload these files from `cityofheroes/piggs/` next:
+
+| Archive | Size | Located contents |
+| --- | ---: | --- |
+| `stage1a.pigg` | 58.5 MiB | 5,878 animation tracks, including MALE/THUMBSUP |
+| `stage1b.pigg` | 137.4 MiB | `white`, `grey`, `black`, `invisible` textures |
+| `stage1f.pigg` | 118.8 MiB | `dummy_bump`, `dummy_dynamic_cubemap_face0`, `buildingLightPattern` textures |
+
+See [the complete index assessment](THOR_ASSET_INDEX.md). These are filename-table
+findings; payload integrity and runtime compatibility remain unverified. The
+assessment below records the earlier 22 payload-inspected archives. Its index
+command remains useful for future scans, but no repeat scan is needed now.
+PostgreSQL persistence has since passed its hosted tests; see
+[the current database handoff](HANDOFF.md#current-database-work).
+
 Assessed 2026-09-24 against the unchanged source and Issue 24 text snapshots.
 The new input is `fonts.pigg`, `player.pigg`, `misc.pigg` and `geom.pigg`.
 Sizes, SHA-256 hashes and detailed counts are in
@@ -76,8 +94,9 @@ Thor. The missing files may already be inside archives that have not been upload
    texture loader requests. It explicitly asserts several of these in developer
    builds. Core UI/world/character texture coverage remains incomplete.
 3. **Runtime preparation:** bins and database templates still need generation
-   from the chosen source/text/asset pair. Matching reference executables, SQL
-   setup and an actual character-create/map-entry/save-reload test remain undone.
+   from the chosen source/text/asset pair. Matching reference executables,
+   database integration with gameplay and an actual character-create/map-entry/save-reload test
+   remain undone. PostgreSQL's controlled persistence tests have since passed.
 
 The source references supporting these checks are:
 
@@ -87,7 +106,7 @@ The source references supporting these checks are:
 - [Startup textures](../upstream/ouroboros/Game/src/render/tex.c), assignments to `white_tex`, `grey_tex` and other defaults
 - [Geometry loader](../upstream/ouroboros/Common/seq/anim.c), `geoLoadStubs()`
 
-## Locate the next archives without uploading them all
+## Index command for future scans
 
 Use [tools/index_piggs.py](../tools/index_piggs.py), a standalone Python 3 script.
 It recursively reads PIGG filename tables and produces a small JSON report of
@@ -96,18 +115,18 @@ It reads no file payloads, extracts nothing and modifies no game files. It needs
 no Windows PC, extra Python packages or access credentials.
 
 On the Thor, save the script in Downloads. In Termux with Python 3 and access to
-the client folder, replace `/path/to/cityofheroes` with the actual root path
-copied from the file manager:
+the client folder, the user's client root is:
 
 ```sh
 python3 ~/storage/downloads/index_piggs.py \
-  --directory "/path/to/cityofheroes" \
+  --directory "/storage/emulated/0/Download/cityofheroes" \
   --output ~/storage/downloads/coh-asset-index.json
 ```
 
-Scan the client root so the report covers both `piggs/` and `i26/`. Upload only
-`coh-asset-index.json` next. It will identify the remaining archive candidates
-containing animations and core textures; then we can request targeted uploads.
+Scan the client root so the report covers both `piggs/` and `i26/`. The current
+`coh-asset-index.json` has already been received and assessed; the next uploads
+are the three archives at the top of this document. Future scans can identify
+new candidates after changes to the installation.
 On another Linux/Python environment, use its accessible client/output paths.
 The output must be new; choose another filename for subsequent scans.
 
@@ -120,9 +139,10 @@ passed, including index-only limitations and bad-table rejection.
 
 ## Implementation sequence
 
-The next content action is the archive index, followed by targeted animation and
-base-texture uploads. A hosted build of the exact pinned source can be prepared
-independently; it need not wait for every cosmetic/audio archive. The gameplay
+The index is now complete. The next content action is the three targeted archive
+uploads listed above, followed by payload and source-format inspection. A hosted
+build of the exact pinned source can be prepared independently; it need not wait
+for every cosmetic/audio archive. The gameplay
 test itself needs the missing startup assets, matching generated data and SQL
 runtime. Keep hosted reference validation before Android runtime integration.
 
