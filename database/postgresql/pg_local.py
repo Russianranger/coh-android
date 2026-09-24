@@ -16,6 +16,7 @@ import secrets
 import shutil
 import subprocess
 import sys
+import tempfile
 
 HERE = Path(__file__).resolve().parent
 
@@ -47,7 +48,20 @@ class Cluster:
         env.update(PGHOST='127.0.0.1', PGPORT=str(self.meta['port']), PGUSER=user,
                    PGDATABASE=database, PGPASSFILE=str(self.root/'pgpass'), PGCONNECT_TIMEOUT='10')
         command = [str(Path(self.meta['bin'])/program), *map(str, args)]
-        result = subprocess.run(command, input=input, env=env, text=True, capture_output=True)
+        # A Windows background postgres process can inherit pg_ctl's pipe handles
+        # and keep communicate() waiting after pg_ctl exits. File-backed output
+        # lets the launcher wait for its direct child without waiting for EOF.
+        lifecycle = program in ('initdb', 'pg_ctl', 'pg_dump', 'pg_restore')
+        if lifecycle:
+            print('Running ' + program, flush=True)
+        with tempfile.TemporaryFile(mode='w+t', encoding='utf-8', errors='replace') as stdout, \
+             tempfile.TemporaryFile(mode='w+t', encoding='utf-8', errors='replace') as stderr:
+            result = subprocess.run(command, input=input, env=env, text=True,
+                                    stdout=stdout, stderr=stderr,
+                                    timeout=900 if program in ('pg_dump', 'pg_restore') else 180)
+            stdout.seek(0); stderr.seek(0)
+            result.stdout, result.stderr = stdout.read(), stderr.read()
+
         if check and result.returncode:
             error = result.stderr + result.stdout
             for value in self.secrets.values():

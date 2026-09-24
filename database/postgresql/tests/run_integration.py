@@ -22,7 +22,9 @@ def main():
     parser.add_argument('--report', required=True, type=Path)
     parser.add_argument('--driver', default='PostgreSQL Unicode')
     args = parser.parse_args()
+    print('Initializing disposable PostgreSQL cluster', flush=True)
     cluster = initialize(args.root, args.bin, 15432, 'coh_test_local', args.driver)
+    print('Cluster initialized; starting ODBC checks', flush=True)
     connection = cluster.root/'odbc-connection.txt'
     evidence = []
     def probe(*commands, file=connection):
