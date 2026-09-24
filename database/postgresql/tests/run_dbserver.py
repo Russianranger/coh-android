@@ -40,8 +40,10 @@ def main():
             print(output[-12000:],flush=True)
             raise RuntimeError('DbServer phase '+mode+' failed')
         if expected==3 and 'PG_FIFO_FAILED' not in output:
+            print(output[-12000:],flush=True)
             raise AssertionError('Expected explicit failed-save termination')
         if expected==2 and 'PG_TEST_FATAL' not in output:
+            print(output[-12000:],flush=True)
             raise AssertionError('Expected refused schema rebuild')
     try:
         sql('CREATE TABLE coh_meta.persistence_test_guard(id integer); INSERT INTO coh_meta.persistence_test_guard VALUES(1);')

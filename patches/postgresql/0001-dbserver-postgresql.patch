@@ -9,18 +9,20 @@
  
      char database_string[256];
      char login_string[SHORT_SQL_STRING];
-@@ -42,6 +44,30 @@
+@@ -42,6 +44,32 @@
      LONG stmt_allocs;
  #endif
  } sql;
 +
 +static __declspec(thread) bool sql_unit_on_thread;
++static __declspec(thread) SqlConn sql_unit_conn;
 +
 +void sqlConnBeginUnit(SqlConn conn)
 +{
 +    assert(!sql.unit_active[conn]);
 +    sql.unit_state[conn][0] = 0;
 +    sql.unit_active[conn] = true;
++    sql_unit_conn = conn;
 +    sql_unit_on_thread = true;
 +}
 +void sqlConnFinishUnit(SqlConn conn) { sql.unit_active[conn] = false; sql_unit_on_thread = false; }
@@ -40,7 +42,7 @@
  
  static const char* sqlTypeName(SQLSMALLINT type)
  {
-@@ -244,10 +270,10 @@
+@@ -244,10 +272,10 @@
          if (rec_num == 1) {
              if (sql_state_out)
                  memcpy(sql_state_out, sql_state, sizeof(sql_state));
@@ -53,7 +55,7 @@
                  sqlConnStmtPrintBinds(handle);                
  
              LOG(LOG_ERROR, LOG_LEVEL_ALERT, LOG_CONSOLE_ALWAYS, "COMMAND: %s\n", original_command);
-@@ -258,9 +284,13 @@
+@@ -258,9 +286,13 @@
  
          LOG(LOG_ERROR, LOG_LEVEL_ALERT, LOG_CONSOLE_ALWAYS, "SQLERROR: %d %s %s\n", error, sql_state, msg);
  
@@ -70,7 +72,29 @@
  
           rec_num++;
      }
-@@ -526,6 +556,8 @@
+@@ -384,11 +416,16 @@
+ 
+ void sqlConnStmtFree(HSTMT stmt)
+ {
+-    // If this asserts we could get data loss on live because MS SQL will not
+-    // necessarily execute the entire command.
+-    onlydevassert(SQLMoreResults(stmt) == SQL_NO_DATA);
+-
+-    assert(SQL_SUCCEEDED(SQLFreeHandle(SQL_HANDLE_STMT, stmt)));
++    if (sql_unit_on_thread && sqlConnUnitFailed(sql_unit_conn)) {
++        // A dead connection can make SQLMoreResults/SQLFreeHandle fail too.
++        // Keep the original error and let the queue roll back/fail closed;
++        // cleanup assertions must not bypass its failure policy.
++        SQLFreeHandle(SQL_HANDLE_STMT, stmt);
++    } else {
++        // Unconsumed results can mean unexecuted statements on SQL Server.
++        onlydevassert(SQLMoreResults(stmt) == SQL_NO_DATA);
++        assert(SQL_SUCCEEDED(SQLFreeHandle(SQL_HANDLE_STMT, stmt)));
++    }
+ 
+ #ifdef FULLDEBUG
+     {
+@@ -526,6 +563,8 @@
  {
      SQLRETURN ret;
      U32 firstFailTime = 0;
@@ -79,7 +103,7 @@
  
      for (;;) {
          U32 now;
-@@ -536,6 +568,7 @@
+@@ -536,6 +575,7 @@
          else
              ret = _sqlConnStmtExecDirectAscii(stmt, str, str_len, conn);
  
@@ -87,7 +111,7 @@
          if (SQL_SHOW_ERROR(ret))
              sqlConnStmtPrintErrorAndGetState(stmt, str, sql_state);
  
-@@ -548,6 +581,9 @@
+@@ -548,6 +588,9 @@
                  break;
          }
  #else
@@ -97,7 +121,7 @@
          // Do not retry on non error conditions or on the foreground thread
          if (!SQL_NEEDS_RETRY(ret) || SQLSTATE_SKIP_RETRY(sql_state) || (conn == SQLCONN_FOREGROUND))
              break;
-@@ -586,7 +622,7 @@
+@@ -586,7 +629,7 @@
          sqlConnStmtPrintError(stmt, str);
  
      if (next < 0)
@@ -106,7 +130,7 @@
  
  #ifdef FULLDEBUG
      // SQLMoreResults does not function properly if SQL_NEED_DATA was returned
-@@ -594,6 +630,7 @@
+@@ -594,6 +637,7 @@
  #endif
  
      while ((next = SQLMoreResults(stmt)) != SQL_NO_DATA) {
@@ -114,7 +138,7 @@
          if (SQL_SHOW_ERROR(next))
              sqlConnStmtPrintError(stmt, str);
          if (next < 0)
-@@ -616,10 +653,11 @@
+@@ -616,10 +660,11 @@
  
      since_last = timerElapsedAndStart(sql.timers[conn]);
      ret = SQLPrepareA(stmt, (char*)str, str_len);
@@ -127,7 +151,7 @@
  
      return ret;
  }
-@@ -631,6 +669,7 @@
+@@ -631,6 +676,7 @@
  
      since_last = timerElapsedAndStart(sql.timers[conn]);
      ret = SQLExecute(stmt);
@@ -135,7 +159,7 @@
      sqlConnTimerAddTime(conn, since_last);
  
      return ret;
-@@ -642,6 +681,7 @@
+@@ -642,6 +688,7 @@
  
      since_last = timerElapsedAndStart(sql.timers[conn]);
      ret = SQLFetch(stmt);
@@ -143,7 +167,7 @@
      sqlConnTimerAddTime(conn, since_last);
  
      return ret;
-@@ -662,13 +702,15 @@
+@@ -662,13 +709,15 @@
  
      sqlConnTimerAddTime(conn, since_last);
  
@@ -160,7 +184,7 @@
      }
  
      return ret;
-@@ -747,7 +789,7 @@
+@@ -747,7 +796,7 @@
  
          if (!SQL_SUCCEEDED(SQLDriverConnectA(sql.connections[i], 0, (SQLCHAR*)conn_str, conn_str_len, NULL, 0, NULL, SQL_DRIVER_NOPROMPT)))
          {
@@ -169,7 +193,7 @@
              return false;
          }
      }
-@@ -908,6 +950,7 @@
+@@ -908,6 +957,7 @@
          assert(avail);
  
          ret = SQLGetData(stmt, param, ctype, sb[conn].buff + sb[conn].idx, avail, &got);
