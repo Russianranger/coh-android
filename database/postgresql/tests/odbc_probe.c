@@ -135,7 +135,7 @@ static void metadata(void) {
 }
 static void values(void) {
     SQLHSTMT s; SQLLEN n,wide_bytes,blob_bytes=32768; int i,offset;
-    SQLINTEGER value=INT_MAX, out_value, tiny_input=255; SQLSMALLINT small=-32768,out_small;
+    SQLINTEGER value=INT_MAX, out_value, tiny_input=255; SQLSMALLINT short_value=-32768,out_small;
     SQLCHAR tiny=255,out_tiny; float number=1.25f,out_number;
     SQLWCHAR wide[]={0x41,0xe9,0x65e5,0xd83d,0xde80,0}; SQLWCHAR out_wide[32];
     SQL_TIMESTAMP_STRUCT stamp={2026,9,24,1,2,3,0},out_stamp;
@@ -144,7 +144,7 @@ static void values(void) {
     wide_bytes=sizeof(wide)-sizeof(SQLWCHAR);
     s=statement();
     CHECK(SQLBindParameter(s,1,SQL_PARAM_INPUT,SQL_C_LONG,SQL_INTEGER,0,0,&value,0,NULL),SQL_HANDLE_STMT,s);
-    CHECK(SQLBindParameter(s,2,SQL_PARAM_INPUT,SQL_C_SHORT,SQL_SMALLINT,0,0,&small,0,NULL),SQL_HANDLE_STMT,s);
+    CHECK(SQLBindParameter(s,2,SQL_PARAM_INPUT,SQL_C_SHORT,SQL_SMALLINT,0,0,&short_value,0,NULL),SQL_HANDLE_STMT,s);
     CHECK(SQLBindParameter(s,3,SQL_PARAM_INPUT,SQL_C_LONG,SQL_INTEGER,0,0,&tiny_input,0,NULL),SQL_HANDLE_STMT,s);
     CHECK(SQLBindParameter(s,4,SQL_PARAM_INPUT,SQL_C_FLOAT,SQL_REAL,0,0,&number,0,NULL),SQL_HANDLE_STMT,s);
     CHECK(SQLBindParameter(s,5,SQL_PARAM_INPUT,SQL_C_WCHAR,SQL_WVARCHAR,0,0,wide,wide_bytes,&wide_bytes),SQL_HANDLE_STMT,s);
@@ -157,7 +157,7 @@ static void values(void) {
     CHECK(SQLFetch(s),SQL_HANDLE_STMT,s);
 #define GET(col,ctype,pointer,bytes) CHECK(SQLGetData(s,col,ctype,pointer,bytes,&n),SQL_HANDLE_STMT,s)
     GET(1,SQL_C_LONG,&out_value,sizeof(out_value)); REQUIRE(out_value==value);
-    GET(2,SQL_C_SHORT,&out_small,sizeof(out_small)); REQUIRE(out_small==small);
+    GET(2,SQL_C_SHORT,&out_small,sizeof(out_small)); REQUIRE(out_small==short_value);
     GET(3,COH_PG_BYTE_CTYPE,&out_tiny,sizeof(out_tiny)); REQUIRE(out_tiny==tiny);
     GET(4,SQL_C_FLOAT,&out_number,sizeof(out_number)); REQUIRE(out_number==number);
     GET(5,SQL_C_WCHAR,out_wide,sizeof(out_wide)); REQUIRE(n==wide_bytes && !memcmp(out_wide,wide,sizeof(wide)));

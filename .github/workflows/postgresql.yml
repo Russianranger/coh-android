@@ -85,6 +85,22 @@ jobs:
       - name: Build DbServer
         working-directory: out/pg-source
         run: cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postgresql-win32-development-build
+          path: |
+            out/pg-source/out/build/vs2026/**/DbServer.exe
+            out/pg-source/out/build/vs2026/**/*.dll
+            out/pg-source/postgresql-build-input.json
+          if-no-files-found: error
+  windows-odbc:
+    name: Win32 PostgreSQL ODBC integration
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: database
       - name: Compile Win32 ODBC probe
         run: |
           cmake -S database/postgresql/tests -B out/pg-probe-win32 -G "Visual Studio 18 2026" -A Win32
@@ -98,17 +114,14 @@ jobs:
           $process = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
           if ($process.ExitCode -notin @(0,3010)) { throw "ODBC installation failed: $($process.ExitCode)" }
       - name: Exercise Win32 ODBC against PostgreSQL
-        run: >-
-          python database/postgresql/tests/run_integration.py
-          --bin "$env:PGBIN" --probe out/pg-probe-win32/Release/odbc_probe.exe
-          --root "$env:RUNNER_TEMP/coh-pg" --report out/postgresql-win32-integration.json
+        run: |
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw '32-bit PostgreSQL Unicode driver not registered' }
+          python database/postgresql/tests/run_integration.py --bin "$env:PGBIN" --probe out/pg-probe-win32/Release/odbc_probe.exe --root "$env:RUNNER_TEMP/coh-pg" --report out/postgresql-win32-integration.json --driver "$($driver.Name)"
       - uses: actions/upload-artifact@v4
         with:
-          name: postgresql-win32-development-build
+          name: postgresql-win32-test-evidence
           path: |
-            out/pg-source/out/build/vs2026/**/DbServer.exe
-            out/pg-source/out/build/vs2026/**/*.dll
-            out/pg-source/postgresql-build-input.json
-            out/pg-probe-win32/Release/odbc_probe.exe
             out/postgresql-win32-integration.json
+            out/pg-probe-win32/Release/odbc_probe.exe
           if-no-files-found: error
