@@ -121,6 +121,26 @@ Only exact known missing-map reads can permit that second pass, and only when
 the maps were absent before and freshly written afterward. Attribute bytes must
 remain identical between passes; other failures continue to block acceptance.
 
+The [two-pass hosted run 36072787971](https://github.com/Russianranger/coh-android/actions/runs/36072787971)
+passed: initialization took 29.406 seconds; the strict reload took 5.125 seconds,
+with zero queued errors, no failure diagnostics and identical bytes for all six
+attribute maps. The accepted archive holds all 51 required files plus five
+newly written dbidmaps; incidental parser caches are excluded.
+
+The exact artifact is preserved as
+[accepted-36072787971.zip](schema-generation-evidence/accepted-36072787971.zip),
+with its [hashes and preflight summary](schema-generation-evidence/accepted-36072787971.json).
+Extract it into a new directory. Its `schema-evidence/` directory contains
+`schema-generation-report.json` and the inner `schema-outputs.zip`; the sibling
+bootstrap directory retains first-pass diagnostics. Keep these exact ID mappings
+with any database initialized from them. This does not establish compatibility
+with an existing shard database or the custom client.
+
+The database driver's local acceptance check passed against the actual archive
+and verified reference package. It derives 99 SQL tables, 5,935 columns and
+58,272 attribute rows (56,411 general, 1,771 badge-stat and 90 pop-help IDs).
+These are expected values until normal DbServer execution checks them.
+
 ## Next real database check
 
 Source inspection identified a bounded normal-DbServer path that can exercise
@@ -132,8 +152,8 @@ DbServer.exe -exportdump C:\fresh-test-output\empty.dump
 
 It invokes `dbInit(-1)`, performs template/attribute/table initialization, exports
 the database and shuts down. The driver and its 11 acceptance tests are now
-implemented in `database/postgresql/tests/run_generated_schema.py`; actual
-database execution still depends on an accepted schema-generation artifact.
+implemented in `database/postgresql/tests/run_generated_schema.py`. The accepted
+artifact has passed local input checks; hosted database execution is underway.
 The companion workflow runs only after successful schema generation on this
 repository's main branch, or an explicit manual run selecting an artifact.
 Use only a fresh disposable PostgreSQL cluster initialized and migrated with

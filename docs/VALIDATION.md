@@ -240,3 +240,25 @@ passed at `7ee6e8233458cc50a0304e5c6d9023ec8e12ed62`: PostgreSQL 16 and 18
 on Linux, x86 Windows ODBC, and the actual DbServer persistence fixture.
 The database patch is unchanged. This refresh does not replace the separate
 normal DbServer startup/reload check using generated game templates.
+
+
+## 2026-09-24 generated game schemas
+
+[Run 36072787971](https://github.com/Russianranger/coh-android/actions/runs/36072787971)
+passed at `adaadac67581bfe6a7798229bb17428a9b3e5732`. A separately identified
+MapServer first initialized the six absent attribute maps, then ran a clean
+strict second pass. Both processes exited zero, the second had zero queued errors
+and no failure diagnostics, and all six attribute maps were byte-identical.
+All 51 required templates/attributes/HTML schemas plus five dbidmaps are archived;
+incidental parser caches are excluded. Asset-complete serializer equivalence and
+gameplay remain untested.
+
+The downloaded artifact's SHA-256 and every eligible file hash were verified.
+The actual archive also passed the normal DbServer driver's acceptance check
+against verified text and the fixture-OFF reference package. Expected database:
+99 tables, 5,935 columns and 58,272 attribute rows. These are preflight expectations,
+not SQL execution results. Exact evidence is preserved in
+[the artifact](schema-generation-evidence/accepted-36072787971.zip) and
+[its summary](schema-generation-evidence/accepted-36072787971.json).
+Local focused tests passed: 18 schema-runner, 12 generation-harness and nine
+schema-source tests. The hosted staging/generation check step also passed.
