@@ -1,0 +1,101 @@
+name: Data-only database schema generation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/schema-generation.yml'
+      - 'patches/schema-generation/**'
+      - 'tools/prepare_schema_source.py'
+      - 'tools/test_prepare_schema_source.py'
+      - 'tools/run_schema_generation.py'
+      - 'tools/test_run_schema_generation.py'
+      - 'tools/generate_runtime_data.py'
+      - 'tools/prepare_runtime.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: schema-generation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate staging and generation checks
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($pattern in @('test_prepare_runtime.py', 'test_generate_runtime_data.py', 'test_prepare_schema_source.py', 'test_run_schema_generation.py')) {
+            python -m unittest discover -s tools -p $pattern -v
+            if ($LASTEXITCODE -ne 0) { throw "Tests failed: $pattern" }
+          }
+      - name: Verify and stage separate schema source
+        run: python tools/prepare_schema_source.py --output out/schema-source
+      - name: Configure Win32 schema generator
+        working-directory: out/schema-source
+        run: >-
+          cmake --preset vs2026
+          "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe"
+          -DCOH_PG_PERSISTENCE_TESTS=OFF
+      - name: Build schema MapServer
+        working-directory: out/schema-source
+        run: cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+      - name: Stage pinned text without binary assets
+        run: python tools/prepare_runtime.py --output out/schema-runtime
+      - name: Record and stage schema generator
+        shell: pwsh
+        env:
+          BUILD_COMMIT: ${{ github.sha }}
+          BUILD_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $binaries = 'out/schema-source/out/build/vs2026/bin/OptDebug'
+          $runtime = 'out/schema-runtime'
+          $digest = (Get-FileHash "$binaries/MapServer.exe" -Algorithm SHA256).Hash.ToLower()
+          Copy-Item "$binaries/MapServer.exe" $runtime
+          Get-ChildItem $binaries -File -Filter '*.dll' | Copy-Item -Destination $runtime
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          $crt = Get-ChildItem -Path "$installation/VC/Redist/MSVC/*/x86/Microsoft.VC*.CRT" -Directory | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $crt) { throw 'App-local x86 MSVC redistributables were not found' }
+          Get-ChildItem $crt.FullName -File -Filter '*.dll' | Copy-Item -Destination $runtime
+          $receipt = Get-Content 'out/schema-source/schema-generation-build-input.json' -Raw | ConvertFrom-Json
+          $record = [ordered]@{
+            purpose = 'Data-only schema generation; not a reference gameplay executable'
+            repository_commit = $env:BUILD_COMMIT
+            run_url = $env:BUILD_RUN_URL
+            executable_sha256 = $digest
+            configuration = 'OptDebug'
+            architecture = 'Win32'
+            schema_source = $receipt
+          }
+          $record | ConvertTo-Json -Depth 20 | Set-Content out/hosted-schema-build.json -Encoding utf8
+          "SCHEMA_EXE_SHA256=$digest" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Generate and validate fresh schemas
+        run: >-
+          python tools/run_schema_generation.py
+          --runtime out/schema-runtime
+          --build-input out/schema-source/schema-generation-build-input.json
+          --executable-sha256 "$env:SCHEMA_EXE_SHA256"
+          --output out/schema-evidence
+          --timeout-seconds 900
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: data-only-schema-evidence
+          path: |
+            out/hosted-schema-build.json
+            out/schema-source/schema-generation-build-input.json
+            out/schema-source/postgresql-build-input.json
+            out/schema-evidence/
+          if-no-files-found: warn
+          retention-days: 30

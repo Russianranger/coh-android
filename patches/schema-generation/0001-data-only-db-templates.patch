@@ -1,0 +1,74 @@
+diff --git a/MapServer/src/cmdparse/cmdserver.h b/MapServer/src/cmdparse/cmdserver.h
+--- a/MapServer/src/cmdparse/cmdserver.h
++++ b/MapServer/src/cmdparse/cmdserver.h
+@@ -39,6 +39,7 @@
+     int        record_coll;
+     int        reloadSequencers; //development mode
+     int        quickLoadAnims; //dev mode only
++    int        dbTemplatesOnly; //offline schema generation; never a gameplay mode
+     int        nofx; //dev mode only
+     int        mission_server_test; //dev mode only
+     int        debug_db_id; // dev mode test;
+diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -434,8 +434,24 @@
+ 
+     if (write_templates)
+     {
+-        playerCreatedStoryArc_GenerateData();
++        // This animation-dependent MA metadata is not read by the DB serializers.
++        // Keep ordinary -templates behavior unchanged for reference generation.
++        if (!server_state.dbTemplatesOnly)
++            playerCreatedStoryArc_GenerateData();
+         containerWriteTemplates(template_dir);
++        if (server_state.dbTemplatesOnly)
++        {
++            char *queued_error;
++            int queued_errors = 0;
++            while ((queued_error = errorGetQueued()) != NULL)
++            {
++                fprintf(stderr, "COH_DB_TEMPLATES_ONLY_DIAGNOSTIC: %s\n", queued_error);
++                ++queued_errors;
++            }
++            printf("COH_DB_TEMPLATES_ONLY_WRITTEN queued_errors=%d\n", queued_errors);
++            // Writing outputs alone is not evidence of error-free definitions.
++            exit(queued_errors ? 1 : 0);
++        }
+         exit(0);
+     }
+ 
+@@ -675,6 +691,18 @@
+         else if (stricmp(argv[i], "-hidetrans")==0)
+         {
+             msSetHideTranslationErrors(1);
++        }
++        else if (strcmp(argv[i],"-dbtemplatesonly")==0)
++        {
++            // Explicit data-only generation: still load every schema definition.
++            // No optional directory argument; write under the active data root.
++            write_templates = 1;
++            server_state.dbTemplatesOnly = 1;
++            server_state.quickLoadAnims = 1;
++            server_state.noEncryption = 1;
++            printf("Data-only DB schema generation; gameplay and equivalence unverified\n");
++            sharedMemorySetMode(SMM_DISABLED);
++            sharedHeapTurnOff("disabled");
+         }
+         else if (strcmp(argv[i],"-templates")==0)
+         {
+diff --git a/Common/seq/tricks.c b/Common/seq/tricks.c
+--- a/Common/seq/tricks.c
++++ b/Common/seq/tricks.c
+@@ -847,6 +847,11 @@
+         trick->tnode.flags2 |= TRICK2_STSCROLL1;
+ 
+ #ifndef OFFLINE
++    // Keep trick text parsing, but do not bind binary texture-animation tracks
++    // in the explicitly separate DB schema generator. Client behavior is intact.
++#ifdef SERVER
++    if (!server_state.dbTemplatesOnly)
++#endif
+     if ( trick->stAnim ) //only ever one st_anim.  Since it's a struct, though, it needs this (TO DO do a Mark's get count thing)
+     {
+         if (shared_memory)
