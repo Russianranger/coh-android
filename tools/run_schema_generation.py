@@ -38,6 +38,7 @@ def require(value, message):
 
 def check_inputs(runtime, build_input, executable_sha256, root):
     require(runtime.is_dir() and not runtime.is_symlink(), 'Runtime must be a real staged directory')
+    runtime = runtime.resolve()
     require(runtime != (root / 'upstream').resolve() and (root / 'upstream').resolve() not in runtime.parents,
             'Cannot generate inside immutable upstream snapshots')
     # Inspect the whole namespace before execution: even an empty symlinked output
@@ -135,6 +136,7 @@ def bounded_process(command, runtime, stdout_path, stderr_path, timeout, log_lim
 
 
 def archive_schema_outputs(runtime, output, records):
+    runtime = Path(runtime).resolve()
     archive_path = output / 'schema-outputs.zip'
     partial = output / 'schema-outputs.zip.partial'
     archived = []

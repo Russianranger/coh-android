@@ -169,6 +169,26 @@ class SchemaRunnerTests(unittest.TestCase):
         self.assertTrue(any('queued data errors' in failure for failure in report['failures']))
         self.assertNotEqual(report['status'], schema.SUCCESS)
 
+    def test_direct_helpers_accept_ancestor_alias_for_same_runtime(self):
+        alias = self.root / 'ancestor-alias'
+        try:
+            alias.symlink_to(self.root, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest('Host does not permit symlink creation')
+        aliased_runtime = alias / 'runtime'
+        inputs, _, _, _ = schema.check_inputs(aliased_runtime, self.receipt_path,
+                                              self.exe_hash, self.root)
+        self.assertEqual(inputs, self.inputs)
+        path = self.runtime / 'data/server/db/templates/ents.template'
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'AuthId int\n')
+        record = generation.file_record(path, aliased_runtime)
+        self.output.mkdir()
+        result = schema.archive_schema_outputs(aliased_runtime, self.output, [record])
+        self.assertEqual(result['files'][0]['path'], 'data/server/db/templates/ents.template')
+        with zipfile.ZipFile(self.output / result['path']) as archive:
+            self.assertEqual(archive.namelist(), ['data/server/db/templates/ents.template'])
+
     def test_timeout_keeps_bounded_failure_evidence(self):
         report = self.invoke('import time\nprint("started", flush=True)\ntime.sleep(30)\n', timeout=0.2)
         self.assertTrue(report['timed_out'])

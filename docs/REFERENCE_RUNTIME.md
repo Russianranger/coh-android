@@ -110,3 +110,33 @@ output archives contain templates, HTML schemas and newly written dbidmaps;
 incidental parser caches are excluded because this mode deliberately lacks
 gameplay assets. Equality with an asset-complete reference `-templates` run
 must still be tested. Never substitute this executable for the reference runtime.
+
+## Next real database check
+
+Source inspection identified a bounded normal-DbServer path that can exercise
+generated game schemas without starting a map or graphical client:
+
+```text
+DbServer.exe -exportdump C:\fresh-test-output\empty.dump
+```
+
+It invokes `dbInit(-1)`, performs template/attribute/table initialization, exports
+the database and shuts down. This is a proposed next check, not a completed run.
+Use only a fresh disposable PostgreSQL cluster initialized and migrated with
+`pg_local.py`, the fixture-OFF reference DbServer and the x86 Windows ODBC driver.
+Replace staged SQL provider/name/login settings with the generated private
+PostgreSQL configuration and remove the MSSQL `SqlInit` statement. Keep fake auth
+enabled and the queue server disabled for this local diagnostic route.
+
+Text-only staging retains the source DB/load-balance configs, `maps.db` and account
+loyalty/product definitions read by this path. `weeklyTF.cfg` and `Doors.db` are
+absent from the current pins; source callers tolerate missing content with
+diagnostics, which must be recorded rather than concealed. No imported saves,
+character dumps or backups are needed for a fresh database.
+
+The acceptance gate should require a fresh dump (possibly empty), successful
+exit, the expected SQL tables/constraints, matching attribute identifiers,
+preserved compatibility migration metadata and no SQL failures. Repeat against
+the same disposable database to test reload. The existing persistence test
+driver uses controlled fixtures and cannot substitute for this normal startup
+check. The long-running `DbServer Ready.` marker is not emitted by `-exportdump`.

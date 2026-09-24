@@ -223,8 +223,8 @@ from the 173,008-file preflight. No imported snapshot or raw asset was published
 or modified by staging. Existing imported snapshots remain preserved; raw binary
 assets remain outside Git.
 
-Local tool suites passed 51 tests: packaging 8, staging 14, reference-generation
-harness 10, schema-source staging 8 and schema-runner 11. Synthetic subprocess
+Local tool suites passed 53 tests: packaging 8, staging 14, reference-generation
+harness 11, schema-source staging 8 and schema-runner 12. Synthetic subprocess
 checks establish failure/freshness/receipt behavior, not game execution.
 Actual local generation is blocked by the environment's wineserver socket
 restriction. The separately patched hosted data-only schema experiment has its

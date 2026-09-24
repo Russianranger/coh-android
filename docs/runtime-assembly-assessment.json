@@ -84,9 +84,9 @@
   "tool_tests": {
     "runtime_packaging": 8,
     "runtime_staging": 14,
-    "reference_generation": 10,
+    "reference_generation": 11,
     "schema_source_staging": 8,
-    "schema_generation_runner": 11
+    "schema_generation_runner": 12
   },
   "next_gate": "Hosted separately identified data-only MapServer schema generation; then asset-complete reference comparison and gameplay checks."
 }

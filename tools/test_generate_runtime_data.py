@@ -138,6 +138,33 @@ class GenerationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'External data roots'):
             generation.check_runtime(self.runtime, ['templates'])
 
+    def test_ancestor_alias_uses_canonical_containment_but_leaf_symlinks_fail(self):
+        alias = self.root / 'ancestor-alias'
+        try:
+            alias.symlink_to(self.root, target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest('Host does not permit symlink creation')
+        relative = 'data/server/db/templates/ents.template'
+        path = self.runtime / relative
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'AuthId int\n')
+        aliased_runtime = alias / 'runtime'
+        expected = generation.file_record(path, self.runtime)
+        self.assertEqual(expected['path'], relative)
+        self.assertEqual(generation.file_record(aliased_runtime / relative, aliased_runtime), expected)
+        self.assertEqual(generation.file_record(path, aliased_runtime), expected)
+        self.assertEqual(generation.file_record(aliased_runtime / relative, self.runtime), expected)
+        self.assertEqual(generation.output_snapshot(aliased_runtime), generation.output_snapshot(self.runtime))
+        self.assertEqual(generation.check_runtime(aliased_runtime, ['templates']), self.inputs)
+        link = self.runtime / 'linked-output'
+        link.symlink_to(path)
+        with self.assertRaisesRegex(ValueError, 'Symlink output'):
+            generation.file_record(aliased_runtime / link.name, aliased_runtime)
+        outside = self.root / 'outside'
+        outside.write_bytes(b'outside runtime')
+        with self.assertRaisesRegex(ValueError, 'Output escaped runtime'):
+            generation.file_record(alias / outside.name, aliased_runtime)
+
     def test_replaced_log_does_not_hide_new_failure_diagnostics(self):
         path = self.runtime / 'run.log'
         path.write_bytes(b'old completed run\n')

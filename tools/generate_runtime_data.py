@@ -67,12 +67,17 @@ def require(value, message):
 
 
 def file_record(path, runtime):
+    path, runtime = Path(path), Path(runtime)
+    # Check the supplied leaf before resolving it: a symlink output must not be
+    # accepted just because its target is inside the runtime. Resolve both sides
+    # afterward so Windows short/long aliases share one containment namespace.
     require(not path.is_symlink(), 'Symlink output is not allowed: ' + str(path))
     require(path.is_file(), 'Expected regular file: ' + str(path))
-    require(runtime in path.resolve().parents, 'Output escaped runtime: ' + str(path))
-    stat = path.stat()
-    return {'path': path.relative_to(runtime).as_posix(), 'bytes': stat.st_size,
-            'sha256': sha256(path), 'mtime_ns': stat.st_mtime_ns}
+    canonical, runtime = path.resolve(), runtime.resolve()
+    require(runtime in canonical.parents, 'Output escaped runtime: ' + str(path))
+    stat = canonical.stat()
+    return {'path': canonical.relative_to(runtime).as_posix(), 'bytes': stat.st_size,
+            'sha256': sha256(canonical), 'mtime_ns': stat.st_mtime_ns}
 
 
 def output_snapshot(runtime):
@@ -233,6 +238,7 @@ def new_log_text(path, previous):
 
 
 def check_runtime(runtime, phases):
+    runtime = Path(runtime).resolve()
     require(runtime.is_dir(), 'Runtime directory does not exist')
     require(not (ROOT / 'upstream').resolve() in runtime.parents,
             'Cannot generate inside immutable upstream snapshots')
