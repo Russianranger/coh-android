@@ -1,0 +1,49 @@
+name: Discover canonical OuroDev i25 source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/discover-i25.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: List authenticated SCoRE source branches
+        env:
+          OD_TOKEN: ${{ secrets.odtoken }}
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess, tempfile
+          token = os.environ.get('OD_TOKEN', '').strip()
+          if not token:
+              raise SystemExit('The odtoken repository secret is missing or empty.')
+          with tempfile.TemporaryDirectory() as tmp:
+              askpass = pathlib.Path(tmp) / 'askpass'
+              askpass.write_text('#!/bin/sh\ncase "$1" in\n*Username*) printf "%s\\n" oauth2 ;;\n*Password*) printf "%s\\n" "$OD_TOKEN" ;;\nesac\n')
+              askpass.chmod(0o700)
+              env = dict(os.environ, OD_TOKEN=token, GIT_ASKPASS=str(askpass),
+                         GIT_TERMINAL_PROMPT='0')
+              url = 'https://git.ourodev.com/score/SCoRE.git'
+              args = ['git', '-c', 'http.followRedirects=false',
+                      '-c', 'credential.helper=', 'ls-remote', '--symref',
+                      url, 'HEAD', 'refs/heads/*']
+              try:
+                  result = subprocess.run(args, env=env, capture_output=True,
+                                          text=True, timeout=90)
+              except subprocess.TimeoutExpired:
+                  raise SystemExit('OuroDev git discovery timed out after 90 seconds.')
+              if result.returncode:
+                  safe_error = result.stderr.replace(token, '[REDACTED]')
+                  print(safe_error[:1500])
+                  raise SystemExit('Could not read the canonical SCoRE source refs.')
+              refs = []
+              for line in result.stdout.splitlines():
+                  value, ref = line.split('\t', 1)
+                  refs.append({'value': value, 'ref': ref})
+              print(json.dumps({'repository': url, 'refs': refs}, indent=2))
