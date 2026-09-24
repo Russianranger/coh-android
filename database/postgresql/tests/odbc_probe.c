@@ -58,6 +58,20 @@ static void disconnect_db(void) {
     CHECK(SQLDisconnect(dbc),SQL_HANDLE_DBC,dbc);
     CHECK(SQLFreeHandle(SQL_HANDLE_DBC,dbc),SQL_HANDLE_DBC,dbc);
 }
+static void connection_pool(void) {
+    SQLHDBC peers[64]; int i;
+    /* Match SQLCONN_MAX = 64 background connections + one foreground. */
+    for (i=0;i<64;i++) {
+        CHECK(SQLAllocHandle(SQL_HANDLE_DBC,env,&peers[i]),SQL_HANDLE_ENV,env);
+        CHECK(SQLDriverConnectA(peers[i],NULL,(SQLCHAR *)login,SQL_NTS,NULL,0,NULL,SQL_DRIVER_NOPROMPT),SQL_HANDLE_DBC,peers[i]);
+    }
+    REQUIRE(scalar("SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND usename=current_user;")>=65);
+    for (i=0;i<64;i++) {
+        CHECK(SQLDisconnect(peers[i]),SQL_HANDLE_DBC,peers[i]);
+        CHECK(SQLFreeHandle(SQL_HANDLE_DBC,peers[i]),SQL_HANDLE_DBC,peers[i]);
+    }
+    puts("PASS all 65 stock DbServer ODBC connections coexist");
+}
 static void reserve_insert(int id) {
     char query[1024]; SQLINTEGER value=id; SQLHSTMT s=statement();
     snprintf(query,sizeof(query),COH_PG_INSERT_CONTAINER,"PgProbe","PgProbe");
@@ -175,6 +189,7 @@ int main(int argc,char **argv) {
         REQUIRE(high_water()>=1000); puts("PASS persisted fixture after reconnect/restart/restore");
     } else {
         REQUIRE(argc==2);
+        connection_pool();
         exec("DROP SCHEMA IF EXISTS decoy CASCADE; DROP TABLE IF EXISTS dbo.PgChild; DROP TABLE IF EXISTS dbo.PgOther; DROP TABLE IF EXISTS dbo.PgProbe;");
         exec("CREATE TABLE dbo.PgProbe(ContainerId SERIAL PRIMARY KEY, Active integer, Name varchar(64), Num integer, Small smallint, Tiny smallint, Amount real, Stamp timestamp, Bio text, Payload bytea);");
         REQUIRE(high_water()==0); reserve_insert(1); reserve_insert(100); reserve_insert(2);

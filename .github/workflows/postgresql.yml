@@ -19,7 +19,7 @@ permissions:
   contents: read
 concurrency:
   group: postgresql-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   integration:
     name: PostgreSQL and ODBC integration

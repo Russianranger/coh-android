@@ -2,7 +2,9 @@
 -- Re-runnable migration; contains no game data and never drops tables.
 BEGIN;
 CREATE SCHEMA IF NOT EXISTS dbo AUTHORIZATION CURRENT_USER;
-CREATE TABLE IF NOT EXISTS dbo.coh_schema_version (
+-- DbServer prunes unreferenced tables in dbo; keep migration metadata separate.
+CREATE SCHEMA IF NOT EXISTS coh_meta AUTHORIZATION CURRENT_USER;
+CREATE TABLE IF NOT EXISTS coh_meta.schema_version (
     version integer PRIMARY KEY, installed_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -56,5 +58,5 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION dbo.coh_reserve_id(regclass, integer) FROM PUBLIC;
 REVOKE ALL ON FUNCTION dbo.coh_container_high_water(regclass) FROM PUBLIC;
-INSERT INTO dbo.coh_schema_version(version) VALUES (1) ON CONFLICT DO NOTHING;
+INSERT INTO coh_meta.schema_version(version) VALUES (1) ON CONFLICT DO NOTHING;
 COMMIT;

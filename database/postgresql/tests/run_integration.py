@@ -38,6 +38,7 @@ def main():
     try:
         # Reapplying the actual migration must preserve objects and data.
         cluster.sql((HERE.parent/'001-coh-compat.sql').read_text(), user='coh_game', database='coh_test_local')
+        assert cluster.sql("SELECT count(*) FROM information_schema.tables WHERE table_schema='coh_meta' AND table_name='schema_version';", user='coh_game', database='coh_test_local')=='1'
         probe()
         with ThreadPoolExecutor(max_workers=6) as pool:
             list(pool.map(lambda value: probe('reserve', str(value)), [3100,1200,2700,1600,2200,3000]))
@@ -73,7 +74,7 @@ def main():
         version = cluster.sql('SELECT version();')
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps({'status':'passed','server':version,
-            'checks':['shared DbServer dialect via real ODBC', 'six concurrent writers',
+            'checks':['shared DbServer dialect via real ODBC', '65 simultaneous ODBC connections', 'six concurrent writers',
                       'monotonic sequence reservations', 'clean restart', 'WAL recovery',
                       'backup and restore to new database', 'refuse restore overwrite',
                       'SCRAM credentials and restricted role', 'loopback and durable settings'],

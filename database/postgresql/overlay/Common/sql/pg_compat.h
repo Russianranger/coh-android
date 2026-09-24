@@ -42,6 +42,7 @@ typedef enum CohPgKind {
     COH_PG_STRING, COH_PG_TIMESTAMP, COH_PG_TEXT, COH_PG_BINARY
 } CohPgKind;
 
+/* Parenthesized snprintf uses the C library, avoiding CoH’s array-only macro. */
 static CohPgKind cohPgColumnType(const char *name, int length,
                                 char *canonical, size_t capacity)
 {
@@ -56,7 +57,7 @@ static CohPgKind cohPgColumnType(const char *name, int length,
     } else if (!strcmp(name, "varchar") || !strcmp(name, "character varying")) {
         if (length <= 0) return COH_PG_UNKNOWN;
         kind = COH_PG_STRING;
-        if (snprintf(canonical, capacity, "varchar(%d)", length) >= (int)capacity)
+        if ((snprintf)(canonical, capacity, "varchar(%d)", length) >= (int)capacity)
             return COH_PG_UNKNOWN;
         return kind;
     } else if (!strcmp(name, "timestamp") || !strcmp(name, "timestamp without time zone")) {
@@ -66,7 +67,7 @@ static CohPgKind cohPgColumnType(const char *name, int length,
     } else if (!strcmp(name, "bytea")) {
         kind = COH_PG_BINARY; type = "bytea";
     }
-    if (type && snprintf(canonical, capacity, "%s", type) >= (int)capacity)
+    if (type && (snprintf)(canonical, capacity, "%s", type) >= (int)capacity)
         return COH_PG_UNKNOWN;
     return kind;
 }
