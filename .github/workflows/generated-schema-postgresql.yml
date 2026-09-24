@@ -7,6 +7,10 @@ on:
         description: Successful data-only schema workflow run ID
         required: true
         type: string
+      reference_run:
+        description: Optional successful matching reference runtime run (otherwise same commit as schemas)
+        required: false
+        type: string
   workflow_run:
     workflows: ['Data-only database schema generation']
     types: [completed]
@@ -21,7 +25,7 @@ concurrency:
 
 env:
   SCHEMA_RUN: ${{ inputs.schema_run || github.event.workflow_run.id }}
-  REFERENCE_RUN: '36069123663'
+  REQUESTED_REFERENCE_RUN: ${{ inputs.reference_run }}
 
 jobs:
   validate:
@@ -31,18 +35,50 @@ jobs:
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: windows-2025-vs2026
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
       - name: Validate driver acceptance checks
         run: python -m unittest discover -s database/postgresql/tests -p test_run_generated_schema.py -v
+      - name: Resolve successful matching reference build
+        id: reference
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
+          $base = "https://api.github.com/repos/${{ github.repository }}/actions"
+          $schema = Invoke-RestMethod "$base/runs/$env:SCHEMA_RUN" -Headers $headers
+          if ($schema.conclusion -ne 'success' -or $schema.path -ne '.github/workflows/schema-generation.yml' -or $schema.head_repository.full_name -ne '${{ github.repository }}') { throw 'A successful schema run from this repository is required' }
+          $reference = $null
+          $deadline = (Get-Date).AddMinutes(15)
+          do {
+            if ($env:REQUESTED_REFERENCE_RUN) {
+              $candidate = Invoke-RestMethod "$base/runs/$env:REQUESTED_REFERENCE_RUN" -Headers $headers
+              if ($candidate.status -ne 'completed' -or $candidate.conclusion -ne 'success') { throw 'Requested reference build has not succeeded' }
+              $reference = $candidate
+            } else {
+              $runs = Invoke-RestMethod "$base/workflows/reference-runtime.yml/runs?head_sha=$($schema.head_sha)&per_page=20" -Headers $headers
+              $reference = $runs.workflow_runs | Where-Object { $_.conclusion -eq 'success' } | Select-Object -First 1
+              if (-not $reference -and @($runs.workflow_runs | Where-Object { $_.status -ne 'completed' }).Count -eq 0) { throw 'No successful or running reference build for the schema commit' }
+            }
+            if (-not $reference) {
+              if ((Get-Date) -ge $deadline) { throw 'Timed out waiting for matching reference build' }
+              Write-Host 'Waiting for matching reference runtime build...'
+              Start-Sleep -Seconds 20
+            }
+          } until ($reference)
+          if ($reference.path -ne '.github/workflows/reference-runtime.yml' -or $reference.head_repository.full_name -ne '${{ github.repository }}') { throw 'Unexpected reference workflow/repository' }
+          "run_id=$($reference.id)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Using reference runtime run $($reference.id)"
       - uses: actions/download-artifact@v4
         with:
           name: reference-win32-runtime
           path: out/reference-artifact
-          run-id: ${{ env.REFERENCE_RUN }}
+          run-id: ${{ steps.reference.outputs.run_id }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:

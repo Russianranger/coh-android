@@ -27,8 +27,9 @@
     "WHERE conrelid='dbo.%s'::regclass AND conname=lower('fk_%s_%s_%s')::name) THEN " \
     "ALTER TABLE dbo.%s ADD CONSTRAINT FK_%s_%s_%s FOREIGN KEY (%s) " \
     "REFERENCES dbo.%s; END IF; END$$;"
+/* dbInit removes disabled membership keys before first-time table creation. */
 #define COH_PG_DROP_FK \
-    "ALTER TABLE dbo.%s DROP CONSTRAINT IF EXISTS FK_%s_%s_%s;"
+    "ALTER TABLE IF EXISTS dbo.%s DROP CONSTRAINT IF EXISTS FK_%s_%s_%s;"
 #define COH_PG_INSERT_CONTAINER \
     "SELECT dbo.coh_reserve_id('dbo.%s'::regclass, ?); " \
     "INSERT INTO dbo.%s (ContainerId) VALUES (?);"

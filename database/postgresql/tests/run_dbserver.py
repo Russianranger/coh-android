@@ -49,6 +49,7 @@ def main():
         sql('CREATE TABLE coh_meta.persistence_test_guard(id integer); INSERT INTO coh_meta.persistence_test_guard VALUES(1);')
         run('initial')
         report['checks']+=['real 64-worker SQL FIFO and container serialization',
+            'foreign-key removal before table creation and when constraint is absent',
             'multi-batch create and update with 512 child rows', 'ordered asynchronous read callback',
             '16 concurrent records and repeated same-record writes', 'Unicode and unsigned byte 255',
             'case-insensitive game cache and SQL name lookup',

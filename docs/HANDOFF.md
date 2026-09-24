@@ -74,7 +74,8 @@ gates. Its incidental caches must not be reused as gameplay caches.
 initialized all six attribute maps, then completed a clean strict second pass with
 identical map bytes and zero queued errors. All 51 required outputs plus five
 dbidmaps are preserved in [the accepted artifact](schema-generation-evidence/accepted-36072787971.zip).
-The normal DbServer PostgreSQL test is now running; its expected schema contains
+The first normal DbServer run exposed a fresh-database FK-removal ordering bug;
+a narrow PostgreSQL correction and regression checks are being validated. The expected schema contains
 99 tables, 5,935 columns and 58,272 attribute rows. Asset-complete reference
 comparison, map loading and gameplay remain unvalidated.
 

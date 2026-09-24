@@ -6,6 +6,10 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/schema-generation.yml'
+      - 'patches/postgresql/**'
+      - 'database/postgresql/overlay/**'
+      - 'tools/prepare_pg_source.py'
+      - 'upstream-lock.json'
       - 'patches/schema-generation/**'
       - 'tools/prepare_schema_source.py'
       - 'tools/test_prepare_schema_source.py'

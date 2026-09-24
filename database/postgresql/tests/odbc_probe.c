@@ -104,16 +104,26 @@ static void indexes(void) {
 }
 static void foreign_keys(void) {
     char query[1024]; SQLHSTMT s; SQLRETURN rc; SQLCHAR state[6]; SQLINTEGER native; SQLSMALLINT length;
+    /* Normal dbInit removes disabled membership keys before creating tables. */
+    REQUIRE(scalar("SELECT (to_regclass('dbo.PgChild') IS NULL)::integer;")==1);
+    snprintf(query,sizeof(query),COH_PG_DROP_FK,"PgChild","PgChild","ContainerId","PgProbe"); exec(query); exec(query);
+    REQUIRE(scalar("SELECT (to_regclass('dbo.PgChild') IS NULL)::integer;")==1);
     exec("CREATE TABLE dbo.PgChild(ContainerId integer, SubId integer, PRIMARY KEY(ContainerId, SubId));");
+    exec(query); exec(query);
+    REQUIRE(scalar("SELECT count(*) FROM pg_constraint WHERE conrelid='dbo.PgChild'::regclass AND contype='f';")==0);
     snprintf(query,sizeof(query),COH_PG_ADD_FK,"PgChild","PgChild","ContainerId","PgProbe","PgChild","PgChild","ContainerId","PgProbe","ContainerId","PgProbe");
     exec(query); exec(query);
+    REQUIRE(scalar("SELECT count(*) FROM pg_constraint WHERE conrelid='dbo.PgChild'::regclass AND conname='fk_pgchild_containerid_pgprobe';")==1);
     exec("INSERT INTO dbo.PgChild VALUES(1,0),(1,1);");
     s=statement(); rc=SQLExecDirectA(s,(SQLCHAR *)"INSERT INTO dbo.PgChild VALUES(999,0);",SQL_NTS);
     REQUIRE(rc==SQL_ERROR);
     CHECK(SQLGetDiagRec(SQL_HANDLE_STMT,s,1,state,&native,NULL,0,&length),SQL_HANDLE_STMT,s);
     REQUIRE(!strcmp((char *)state,"23503")); release(s);
     snprintf(query,sizeof(query),COH_PG_DROP_FK,"PgChild","PgChild","ContainerId","PgProbe"); exec(query); exec(query);
-    puts("PASS foreign keys: add/remove, child rows, orphan rejection");
+    REQUIRE(scalar("SELECT count(*) FROM pg_constraint WHERE conrelid='dbo.PgChild'::regclass AND contype='f';")==0);
+    exec("INSERT INTO dbo.PgChild VALUES(999,0);");
+    REQUIRE(scalar("SELECT count(*) FROM dbo.PgChild WHERE ContainerId=999;")==1);
+    puts("PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection");
 }
 static void metadata(void) {
     SQLHSTMT s=statement(); SQLRETURN rc; SQLLEN len;

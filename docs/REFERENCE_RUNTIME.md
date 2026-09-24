@@ -153,7 +153,11 @@ DbServer.exe -exportdump C:\fresh-test-output\empty.dump
 It invokes `dbInit(-1)`, performs template/attribute/table initialization, exports
 the database and shuts down. The driver and its 11 acceptance tests are now
 implemented in `database/postgresql/tests/run_generated_schema.py`. The accepted
-artifact has passed local input checks; hosted database execution is underway.
+artifact has passed local input checks. The first hosted database run stopped
+with SQLSTATE 42P01 while removing foreign keys before their tables existed.
+The PostgreSQL removal statement now guards both absent tables and absent
+constraints, with ODBC and real DbServer FIFO regressions. New matching runtime
+and schema builds are required because the provider overlay receipt changed.
 The companion workflow runs only after successful schema generation on this
 repository's main branch, or an explicit manual run selecting an artifact.
 Use only a fresh disposable PostgreSQL cluster initialized and migrated with

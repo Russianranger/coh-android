@@ -105,7 +105,15 @@ static void tests(ContainerTemplate *t)
 {
     int i,expected=20;
     DbList list={0}; list.tplt=t;
+    // Reproduce normal dbInit's first-start cleanup before either table exists.
+    CHECK(scalar("SELECT CASE WHEN to_regclass('dbo.PgFifoItems') IS NULL THEN 1 ELSE 0 END;")==1);
+    sqlRemoveForeignKeyConstraintAsync("PgFifoItems","ContainerId","PgFifo");
+    sqlRemoveForeignKeyConstraintAsync("PgFifoItems","ContainerId","PgFifo"); drain();
+    CHECK(scalar("SELECT CASE WHEN to_regclass('dbo.PgFifoItems') IS NULL THEN 1 ELSE 0 END;")==1);
     tpltUpdateSqlcolumns(t); drain();
+    sqlRemoveForeignKeyConstraintAsync("PgFifoItems","ContainerId","PgFifo"); drain();
+    CHECK(scalar("SELECT count(*) FROM pg_constraint WHERE conrelid='dbo.PgFifoItems'::regclass AND contype='f';")==0);
+    printf("PG_TEST_PASS real queue removes missing foreign keys before table creation\n");
     sqlAddForeignKeyConstraintAsync("PgFifoItems","ContainerId","PgFifo"); drain();
     writeRecord(t,101,10,512,true,512);
     sqlFifoTickWhileWritePending(t->dblist_id,101);
