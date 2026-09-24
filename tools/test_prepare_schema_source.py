@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -101,6 +102,45 @@ class SchemaSourceTests(unittest.TestCase):
     def test_preexisting_output_rejected_without_invoking_pg_stager(self):
         with self.assertRaisesRegex(ValueError, 'new directory'):
             schema.prepare(self.source)
+
+    @unittest.skipUnless(shutil.which('cc'), 'Optional narrow C diagnostic probe requires a C compiler')
+    def test_queued_error_branch_uses_stdio_safely_with_filewrapper_macro(self):
+        """Compile the actual patched branch under the conflicting upstream macro.
+
+        This tests only logging/exit behavior; it does not compile or execute CoH.
+        The old fprintf(stderr, ...) produced a FILE*/FileWrapper* mismatch.
+        """
+        schema.apply_schema_overlay(self.source)
+        source = (self.source / 'MapServer/src/svr/svr_init.c').read_text()
+        branch = 'char *queued_error;' + source.split('char *queued_error;', 1)[1].split('        }\n        exit(0);', 1)[0]
+        probe = self.source / 'diagnostic_probe.c'
+        probe.write_text('''#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+typedef struct FileWrapper { int unused; } FileWrapper;
+int x_fprintf(FileWrapper *file, const char *format, ...);
+#define fprintf x_fprintf
+void printf_stderr(const char *format, ...) {
+    va_list args; va_start(args, format); vfprintf(stderr, format, args); va_end(args);
+}
+static int has_error;
+char *errorGetQueued(void) {
+    if (has_error) { has_error = 0; return "synthetic definition error"; }
+    return NULL;
+}
+int main(int argc, char **argv) {
+    has_error = argc > 1;
+''' + branch + '\n}\n')
+        executable = self.source / 'diagnostic_probe'
+        subprocess.run([shutil.which('cc'), '-Werror=incompatible-pointer-types',
+                        str(probe), '-o', str(executable)], check=True, capture_output=True)
+        clean = subprocess.run([str(executable)], capture_output=True, text=True)
+        error = subprocess.run([str(executable), 'error'], capture_output=True, text=True)
+        self.assertEqual(clean.returncode, 0)
+        self.assertIn('queued_errors=0', clean.stdout)
+        self.assertEqual(error.returncode, 1)
+        self.assertIn('queued_errors=1', error.stdout)
+        self.assertIn('COH_DB_TEMPLATES_ONLY_DIAGNOSTIC: synthetic definition error', error.stderr)
 
 
 if __name__ == '__main__':

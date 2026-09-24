@@ -125,6 +125,14 @@ class GenerationTests(unittest.TestCase):
                                              'Removing old bins..\nParserWriteBinaryFile: could not write file')
         self.assertTrue(checks['failures'])
 
+    def test_progress_prefix_does_not_hide_error_diagnostics(self):
+        self.all_template_outputs()
+        line = "loading badges.. ERROR: Can't open server/db/templates/badgestats.attribute"
+        result = generation.validate_outputs('templates', self.runtime, {},
+                                             generation.output_snapshot(self.runtime), line)
+        self.assertEqual(result['failure_diagnostic_lines'], [line])
+        self.assertIn('explicit failure diagnostics appeared in captured output', result['failures'])
+
     def test_nonzero_exit_stops_later_phases(self):
         runner = self.subprocess_fixture('import sys\nsys.exit(7)\n')
         report = generation.run_generation(self.runtime, self.root / 'evidence',

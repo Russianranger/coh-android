@@ -28,7 +28,7 @@ diff --git a/MapServer/src/svr/svr_init.c b/MapServer/src/svr/svr_init.c
 +            int queued_errors = 0;
 +            while ((queued_error = errorGetQueued()) != NULL)
 +            {
-+                fprintf(stderr, "COH_DB_TEMPLATES_ONLY_DIAGNOSTIC: %s\n", queued_error);
++                printf_stderr("COH_DB_TEMPLATES_ONLY_DIAGNOSTIC: %s\n", queued_error);
 +                ++queued_errors;
 +            }
 +            printf("COH_DB_TEMPLATES_ONLY_WRITTEN queued_errors=%d\n", queued_errors);

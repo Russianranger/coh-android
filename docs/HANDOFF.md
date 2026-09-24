@@ -30,6 +30,11 @@ including connection loss, failed-save rollback, restart/WAL recovery, template
 rebuild and backup/restore. Download `postgresql-win32-development-build` from
 that run; its executable hash matches the executable recorded by the test.
 
+A regression refresh at [run 36071558686](https://github.com/Russianranger/coh-android/actions/runs/36071558686)
+also passed all four database jobs. The new normal DbServer driver is gated on
+accepted generated game schemas; it tests schema startup/export and a second
+startup against the same fresh disposable database.
+
 Migration 2 adds transactional table rebuilds preserving sequence high-water,
 indexes and foreign keys, explicit ASCII case-insensitive name equality, and the
 PostgreSQL auction timestamp filter. Stop DbServer, back up and run

@@ -26,6 +26,9 @@ from prepare_schema_source import expected_schema_receipt
 
 ROOT = Path(__file__).resolve().parents[1]
 SUCCESS = 'schema_data_only_outputs_checked_runtime_unvalidated'
+BOOTSTRAP_READY = 'schema_attribute_bootstrap_checked_strict_reload_required'
+ATTRIBUTE_PATHS = tuple('data/server/db/templates/' + name + '.attribute'
+                        for name in generation.ATTRIBUTES)
 COMPLETION = 'COH_DB_TEMPLATES_ONLY_WRITTEN'
 LOG_LIMIT = 16 * 1024 * 1024  # Per stream/internal log; overflow fails the evidence gate.
 WARNING = re.compile(r'\b(?:warn(?:ing)?|queued errors?)\b', re.I)
@@ -163,8 +166,34 @@ def archive_schema_outputs(runtime, output, records):
             'sha256': generation.sha256(archive_path), 'files': archived}
 
 
-def run_schema_generation(runtime, build_input, executable_sha256, output, timeout=900,
-                          root=ROOT, runner=(), log_limit=LOG_LIMIT):
+
+def classify_attribute_bootstrap(before, after, text):
+    """Only the six source-reviewed missing-old-ID diagnostics can initialize IDs."""
+    diagnostics = [line for line in text.splitlines() if generation.ERROR_LINE.search(line)]
+    accepted = {}
+    known = {"ERROR: Can't open " + name.removeprefix('data/'): name for name in ATTRIBUTE_PATHS}
+    # The badge loader emits progress without a newline. Accept precisely that
+    # known prefix, never strip arbitrary text that could hide another error.
+    known["loading badges.. ERROR: Can't open server/db/templates/badgestats.attribute"] = (
+        'data/server/db/templates/badgestats.attribute')
+    for line in diagnostics:
+        name = known.get(line.strip())
+        if name is None:
+            return {'eligible': False, 'reason': 'unrelated or non-exact failure diagnostic',
+                    'classified_diagnostic_lines': []}
+        accepted.setdefault(name, []).append(line)
+    changed = generation.changed_outputs(before, after)
+    eligible = (set(accepted) == set(ATTRIBUTE_PATHS) and
+                all(name not in before and name in changed for name in ATTRIBUTE_PATHS))
+    return {'eligible': eligible,
+            'reason': ('all six absent old attribute maps were freshly initialized' if eligible else
+                       'expected exactly six absent-before, freshly-written attribute maps'),
+            'classified_diagnostic_lines': [line for lines in accepted.values() for line in lines],
+            'attribute_files': {name: after[name] for name in ATTRIBUTE_PATHS if name in after}}
+
+
+def _run_schema_pass(runtime, build_input, executable_sha256, output, timeout=900,
+                     root=ROOT, runner=(), log_limit=LOG_LIMIT, bootstrap=False):
     # runner is used only by synthetic subprocess tests; the CLI executes the
     # Windows build directly and never substitutes a gameplay executable.
     runtime, output = Path(runtime), Path(output)
@@ -200,6 +229,7 @@ def run_schema_generation(runtime, build_input, executable_sha256, output, timeo
     report.update(bounded_process(command, runtime, stdout_path, stderr_path, timeout, log_limit))
     text = stdout_path.read_text(encoding='utf-8', errors='replace') + '\n' + stderr_path.read_text(encoding='utf-8', errors='replace')
     failures, internal_records = [], []
+    after = {}
     try:
         after_logs = generation.internal_log_snapshot(runtime)
         for relative, record in generation.changed_outputs(before_logs, after_logs).items():
@@ -248,7 +278,16 @@ def run_schema_generation(runtime, build_input, executable_sha256, output, timeo
     report['warning_lines'] = warnings[:1000]
     report['warning_summary_truncated'] = len(warnings) > 1000
     report['stdout_sha256'], report['stderr_sha256'] = generation.sha256(stdout_path), generation.sha256(stderr_path)
-    if not failures:
+    if bootstrap:
+        classification = classify_attribute_bootstrap(before, after, text)
+        report['attribute_bootstrap'] = classification
+        # validate_outputs still runs on the complete unfiltered log. No parser,
+        # process, queue, freshness or unrelated error failure may be excused.
+        bootstrap_failures = ['explicit failure diagnostics appeared in captured output']
+        if not failures or (failures == bootstrap_failures and classification['eligible']):
+            report['status'] = BOOTSTRAP_READY
+        report['attribute_sha256'] = {name: after[name]['sha256'] for name in ATTRIBUTE_PATHS if name in after}
+    elif not failures:
         try:
             report['schema_outputs_archive'] = archive_schema_outputs(runtime, output, report['written_outputs'])
             report['status'] = SUCCESS
@@ -260,6 +299,47 @@ def run_schema_generation(runtime, build_input, executable_sha256, output, timeo
     return report
 
 
+
+def run_schema_generation(runtime, build_input, executable_sha256, output, timeout=900,
+                          root=ROOT, runner=(), log_limit=LOG_LIMIT, initialize_attributes=False):
+    if not initialize_attributes:
+        return _run_schema_pass(runtime, build_input, executable_sha256, output,
+                                timeout, root, runner, log_limit)
+    output = Path(output)
+    require(not output.exists() and not output.is_symlink(), 'Evidence output must be a new directory')
+    output = output.resolve()
+    bootstrap_output = output.with_name(output.name + '-bootstrap')
+    first = _run_schema_pass(runtime, build_input, executable_sha256, bootstrap_output,
+                             timeout, root, runner, log_limit, bootstrap=True)
+    bootstrap = {'directory': str(bootstrap_output), 'status': first['status'],
+                 'report_sha256': generation.sha256(bootstrap_output / 'schema-generation-report.json'),
+                 'attribute_sha256': first.get('attribute_sha256', {}),
+                 'classified_diagnostic_lines': first['attribute_bootstrap']['classified_diagnostic_lines']}
+    if first['status'] != BOOTSTRAP_READY:
+        output.mkdir(parents=True)
+        report = {**first, 'bootstrap_evidence': bootstrap, 'strict_reload_executed': False,
+                  'attribute_files_stable': False}
+        report['failures'] = first['failures'] + ['attribute bootstrap was not accepted; strict reload was not run']
+    else:
+        report = _run_schema_pass(runtime, build_input, executable_sha256, output,
+                                  timeout, root, runner, log_limit)
+        report['bootstrap_evidence'] = bootstrap
+        report['strict_reload_executed'] = True
+        fresh = {record['path'].casefold(): record['sha256']
+                 for record in report.get('written_outputs', [])}
+        stable = (set(bootstrap['attribute_sha256']) == set(ATTRIBUTE_PATHS) and
+                  all(fresh.get(name) == digest for name, digest in bootstrap['attribute_sha256'].items()))
+        report['attribute_files_stable'] = stable
+        if not stable:
+            report['status'] = 'schema_data_only_generation_failed'
+            report['failures'].append('attribute file bytes changed or were not freshly rewritten on strict reload')
+            archive = report.pop('schema_outputs_archive', None)
+            if archive:
+                (output / archive['path']).unlink(missing_ok=True)
+    (output / 'schema-generation-report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    return report
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--runtime', type=Path, required=True)
@@ -267,10 +347,13 @@ def main():
     parser.add_argument('--executable-sha256', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--timeout-seconds', type=float, default=900)
+    parser.add_argument('--initialize-attributes', action='store_true',
+                        help='Explicit first-ID bootstrap followed by a strict reload with stable attribute bytes')
     args = parser.parse_args()
     try:
         report = run_schema_generation(args.runtime, args.build_input, args.executable_sha256,
-                                       args.output, args.timeout_seconds)
+                                       args.output, args.timeout_seconds,
+                                       initialize_attributes=args.initialize_attributes)
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         parser.error(str(error))
     print(report['status'] + ': ' + str(args.output / 'schema-generation-report.json'))

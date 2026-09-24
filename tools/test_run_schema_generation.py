@@ -63,10 +63,11 @@ class SchemaRunnerTests(unittest.TestCase):
         path.write_text(body)
         return (sys.executable, str(path))
 
-    def invoke(self, body, timeout=5, log_limit=schema.LOG_LIMIT):
+    def invoke(self, body, timeout=5, log_limit=schema.LOG_LIMIT, initialize_attributes=False):
         return schema.run_schema_generation(self.runtime, self.receipt_path, self.exe_hash,
                                             self.output, timeout=timeout, root=self.root,
-                                            runner=self.runner(body), log_limit=log_limit)
+                                            runner=self.runner(body), log_limit=log_limit,
+                                            initialize_attributes=initialize_attributes)
 
     def output_script(self, completion=True):
         paths = [f'data/server/db/templates/{n}.template' for n in generation.TEMPLATES]
@@ -123,6 +124,80 @@ class SchemaRunnerTests(unittest.TestCase):
         stale = [f for f in report['failures'] if 'not written during' in f]
         self.assertEqual(len(stale), 51)
         self.assertFalse((self.output / 'schema-outputs.zip').exists())
+
+    def bootstrap_script(self, extra_first='', extra_second='', always_missing=False):
+        prelude = ('from pathlib import Path\n'
+                   'had_attributes = Path("data/server/db/templates/vars.attribute").exists()\n'
+                   f'for name in {schema.ATTRIBUTE_PATHS!r}:\n'
+                   f'    if {always_missing!r} or not Path(name).exists():\n'
+                   '        prefix = "loading badges.. " if name.endswith("/badgestats.attribute") else ""\n'
+                   '        print(prefix + "ERROR: Can\'t open " + name.removeprefix("data/"))\n')
+        if extra_first:
+            prelude += 'if not had_attributes:\n    ' + extra_first + '\n'
+        body = prelude + self.output_script()
+        if extra_second:
+            body += 'if had_attributes:\n    ' + extra_second + '\n'
+        return body
+
+    def test_explicit_bootstrap_then_clean_reload_preserves_all_attribute_bytes(self):
+        report = self.invoke(self.bootstrap_script(), initialize_attributes=True)
+        self.assertEqual(report['status'], schema.SUCCESS)
+        self.assertTrue(report['strict_reload_executed'])
+        self.assertTrue(report['attribute_files_stable'])
+        self.assertEqual(len(report['bootstrap_evidence']['attribute_sha256']), 6)
+        self.assertEqual(len(report['bootstrap_evidence']['classified_diagnostic_lines']), 6)
+        self.assertEqual(report['failure_diagnostic_lines'], [])
+        bootstrap = self.output.with_name(self.output.name + '-bootstrap')
+        first = json.loads((bootstrap / 'schema-generation-report.json').read_text())
+        self.assertEqual(first['status'], schema.BOOTSTRAP_READY)
+        self.assertTrue(first['failures'])  # Original strict diagnostics retained.
+        self.assertFalse((bootstrap / 'schema-outputs.zip').exists())
+        self.assertTrue((self.output / 'schema-outputs.zip').exists())
+
+    def test_default_run_never_excuses_first_initialization_errors(self):
+        report = self.invoke(self.bootstrap_script())
+        self.assertNotEqual(report['status'], schema.SUCCESS)
+        self.assertEqual(len(report['failure_diagnostic_lines']), 6)
+        self.assertFalse(self.output.with_name(self.output.name + '-bootstrap').exists())
+
+    def test_bootstrap_does_not_excuse_unreadable_preexisting_map(self):
+        path = self.runtime / schema.ATTRIBUTE_PATHS[0]
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'preexisting map')
+        report = self.invoke(self.bootstrap_script(always_missing=True), initialize_attributes=True)
+        self.assertFalse(report['strict_reload_executed'])
+        self.assertNotEqual(report['status'], schema.SUCCESS)
+        self.assertFalse((self.output / 'schema-outputs.zip').exists())
+
+    def test_bootstrap_rejects_unrelated_errors_and_nonexact_prefixed_line(self):
+        body = self.bootstrap_script(extra_first='print("unrelated ERROR: bad data")')
+        report = self.invoke(body, initialize_attributes=True)
+        self.assertFalse(report['strict_reload_executed'])
+        self.assertNotEqual(report['status'], schema.SUCCESS)
+        self.assertFalse((self.output / 'schema-outputs.zip').exists())
+        before = {}
+        after = {name: {'sha256': 'a', 'bytes': 1, 'mtime_ns': 1} for name in schema.ATTRIBUTE_PATHS}
+        text = "\n".join("ERROR: Can't open " + n.removeprefix('data/') for n in schema.ATTRIBUTE_PATHS)
+        text = text.replace("ERROR: Can't open server/db/templates/vars", "Error: hidden failure; ERROR: Can't open server/db/templates/vars")
+        self.assertFalse(schema.classify_attribute_bootstrap(before, after, text)['eligible'])
+
+    def test_reload_requires_clean_diagnostics(self):
+        body = self.bootstrap_script(extra_second='print("loading badges.. ERROR: unexpected reload failure")')
+        report = self.invoke(body, initialize_attributes=True)
+        self.assertTrue(report['strict_reload_executed'])
+        self.assertTrue(report['attribute_files_stable'])
+        self.assertNotEqual(report['status'], schema.SUCCESS)
+        self.assertFalse((self.output / 'schema-outputs.zip').exists())
+
+    def test_reload_attribute_byte_changes_remove_archive_and_fail(self):
+        change = 'Path("data/server/db/templates/vars.attribute").write_text("changed IDs\\n")'
+        report = self.invoke(self.bootstrap_script(extra_second=change), initialize_attributes=True)
+        self.assertTrue(report['strict_reload_executed'])
+        self.assertFalse(report['attribute_files_stable'])
+        self.assertNotEqual(report['status'], schema.SUCCESS)
+        self.assertTrue(any('attribute file bytes changed' in f for f in report['failures']))
+        self.assertFalse((self.output / 'schema-outputs.zip').exists())
+        self.assertNotIn('schema_outputs_archive', report)
 
     def test_source_receipt_or_executable_hash_mismatch_blocks_launch(self):
         changed = {**self.receipt, 'source_commit': 'wrong'}

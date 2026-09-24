@@ -1,0 +1,74 @@
+{
+  "run_id": 36070840517,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36070840517",
+  "repository_commit": "63ff41e8b85ffb020224da79cdc229325efdc251",
+  "artifact": {
+    "id": 10838452066,
+    "bytes": 31072,
+    "sha256": "43e41bd8377b5be032a81e55cd52b67c40f56b52a3e82e173fe84c0a6e387c80"
+  },
+  "result": "outputs_written_but_rejected_by_diagnostic_gate",
+  "exit_code": 0,
+  "elapsed_seconds": 35.5,
+  "queued_error_counts": [
+    0
+  ],
+  "fresh_outputs": 162,
+  "expected_template_attribute_schema_files_written": 51,
+  "required_remediation": "Known absent prior-ID maps need a bounded first-generation bootstrap followed by a clean strict second pass; fix FileWrapper diagnostic print mismatch.",
+  "all_missing_prior_attribute_files": [
+    "badges",
+    "supergroup_badges",
+    "pophelp",
+    "badgestats",
+    "supergroup_badgestats",
+    "vars"
+  ],
+  "diagnostic_scanner_gap": "badgestats diagnostic was prefixed by progress text; generic scanner must detect ERROR after that prefix.",
+  "database_started": false,
+  "gameplay_validated": false,
+  "schema_build_input": {
+    "schema_version": 1,
+    "build_role": "data_only_db_schema_generation",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "postgresql_build_input_canonical_sha256": "680719233e3fd011ed5742a36344e6a1da4a9cef67128122cf631fd6bd02fd8c",
+    "postgresql_build_input": {
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "patch_sha256": "ce4c072f8b975395ac29569a43b9a135aa79b7823f06cc6714d31a0ed49b896c",
+      "overlay_sha256": {
+        "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8",
+        "DBServer/src/pg_persistence_test.c": "dab6e0408f559c543b4de20c2a14090480ce8d3081c52c0c7b158ae17460d1f2"
+      },
+      "patched_sha256": {
+        "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+        "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+        "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+        "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+        "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+        "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+        "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+        "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+        "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+        "DBServer/src/dbdispatch.c": "6ff105bc554944a9b61d1461e1f54126a710c9a0da142cc1d32ec4ffb3c0f18f",
+        "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+        "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+        "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+        "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db"
+      }
+    },
+    "schema_patch_sha256": "6d0a9aaac3107cf9405a198316c94d7db3104b79436850aa23dc946da0cb7d15",
+    "source_sha256": {
+      "MapServer/src/cmdparse/cmdserver.h": "4c2557a1a1a83e912ce7c8e052faf8fd3795916301c12a9234c9bae93fcb9cae",
+      "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "Common/seq/tricks.c": "5e91da3f103e9f7ecfe614636ce816fb9dae74a37480f59669d3270d1a2ac4d7"
+    },
+    "patched_sha256": {
+      "MapServer/src/cmdparse/cmdserver.h": "3321b150bb7bd74383062391c3d3a8ffcba2c25d556373a74fe21dfd03172e60",
+      "MapServer/src/svr/svr_init.c": "92d1d8e1ee4d3f2b79d7cf9e9193ec243a9292aa6aab4c8f11df85719fd091e3",
+      "Common/seq/tricks.c": "c59b37baa8ef3ce62bffa5201d1d381979f2ed9b4356017a0b215d9ce873dde8"
+    },
+    "command_flag": "-dbtemplatesonly",
+    "serializer_equivalence": "unverified",
+    "runtime_validation": "unverified"
+  }
+}

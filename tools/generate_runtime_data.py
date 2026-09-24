@@ -50,7 +50,7 @@ CACHE_DIRS = ('data/bin', 'data/server/bin', 'data/geobin')
 TRACKED_DIRS = CACHE_DIRS + ('data/server/db/templates', 'data/server/db/schemas')
 ERROR_LINE = re.compile(
     r'\b(?:FatalError|fatal error|assertion failed|ParserWriteBinaryFile: could not|'
-    r'SerializeWriteOpen: failed)\b|^\s*(?:ERROR|Error):', re.I)
+    r'SerializeWriteOpen: failed)\b|\bERROR:', re.I)
 
 
 def sha256(path):

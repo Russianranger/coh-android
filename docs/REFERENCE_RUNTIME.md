@@ -111,6 +111,16 @@ incidental parser caches are excluded because this mode deliberately lacks
 gameplay assets. Equality with an asset-complete reference `-templates` run
 must still be tested. Never substitute this executable for the reference runtime.
 
+The [first engine attempt](schema-generation-evidence/attempt-36070840517.json)
+wrote all 51 required template/attribute/schema files and exited with zero queued
+definition errors. Its strict log gate rejected six messages about absent old
+attribute-ID files. Source review confirmed that the first generation reads these
+optional prior mappings and subsequently writes new ones. A fresh initialization
+therefore needs a bounded bootstrap followed by a clean ordinary second pass.
+Only exact known missing-map reads can permit that second pass, and only when
+the maps were absent before and freshly written afterward. Attribute bytes must
+remain identical between passes; other failures continue to block acceptance.
+
 ## Next real database check
 
 Source inspection identified a bounded normal-DbServer path that can exercise

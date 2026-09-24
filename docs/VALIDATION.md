@@ -231,3 +231,12 @@ restriction. The separately patched hosted data-only schema experiment has its
 own workflow and receipts; it cannot establish asset-complete runtime or
 serializer equivalence by itself. See [runtime instructions](REFERENCE_RUNTIME.md)
 and [assembly evidence](runtime-assembly-assessment.json).
+
+
+## 2026-09-24 compatibility regression refresh
+
+All four jobs in [run 36071558686](https://github.com/Russianranger/coh-android/actions/runs/36071558686)
+passed at `7ee6e8233458cc50a0304e5c6d9023ec8e12ed62`: PostgreSQL 16 and 18
+on Linux, x86 Windows ODBC, and the actual DbServer persistence fixture.
+The database patch is unchanged. This refresh does not replace the separate
+normal DbServer startup/reload check using generated game templates.
