@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24. PostgreSQL persistence is validated; the Thor archive index has arrived and targeted asset inspection is next.
+Updated: 2026-09-24. PostgreSQL controlled persistence and targeted stage1 archive inspection are complete. Matching runtime assembly and cache/template generation are next.
 
 ## Active direction
 
@@ -37,12 +37,14 @@ PostgreSQL auction timestamp filter. Stop DbServer, back up and run
 [validation record](VALIDATION.md). This is a database development milestone,
 not yet a gameplay-validated server or Android APK.
 
-**Thor indexing complete:** the uploaded `coh-asset-index.json` lists 95 archives
-with no reported indexing errors. Request `piggs/stage1a.pigg` (58.5 MiB),
-`piggs/stage1b.pigg` (137.4 MiB), and `piggs/stage1f.pigg` (118.8 MiB) next.
-Their filename tables locate animation tracks and all seven requested startup
-textures. The archive payloads still need inspection before staging or use.
-See [the index assessment](THOR_ASSET_INDEX.md).
+**Stage1 asset inspection complete:** `stage1a.pigg`, `stage1b.pigg` and
+`stage1f.pigg` have been received. All **14,814 entries** passed archive integrity
+and offline structural checks; 5,878 animations and 8,936 textures were staged
+separately. All seven startup texture names and MALE/THUMBSUP are present.
+Every base-animation reference resolves within `stage1a.pigg`. Preserve warnings
+for 216 legacy hierarchy layouts and 193 DDS surplus-byte cases; runtime use
+remains unvalidated. See [the stage1 assessment](STAGE1_ASSET_ASSESSMENT.md).
+No repeat index run, repeat upload or custom `i26/geobin.pigg` upload is needed.
 
 ## Completed
 
@@ -89,9 +91,9 @@ passed: **2,774 additional entries**. Cumulative result is now **22 archives /
 custom/base geometry variants kept separately. All 46 fonts are staged, including
 TTC collections; every one of the 16 startup font filenames is present. All
 1,277 new geometry headers passed. `misc.pigg` mostly duplicates the pinned text.
-There are still **zero skeletal .anim tracks** in the supplied set and none of
-seven requested basic renderer texture names. This prevents calling the content
-startup-ready. See [current coverage and next-upload instructions](BASE_ASSET_COVERAGE.md)
+At that earlier stage there were **zero skeletal .anim tracks** in the supplied
+set and none of seven requested basic renderer texture names. The subsequent
+stage1 uploads below supply those candidates; runtime startup remains untested. See [asset coverage history](BASE_ASSET_COVERAGE.md)
 and [machine-readable evidence](base-assets-assessment.json).
 
 The subsequent **`coh-asset-index.json`** has now been received from Thor and
@@ -104,6 +106,18 @@ payload-verified archives or establish source-format/runtime compatibility.
 The indexer previously matched full-inspection counts/extensions for all 22
 available archives; thirteen regression tests passed in that earlier pass.
 
+The three selected **stage1 archives** then passed integrity and offline format
+checks. Cumulative payload-inspected count: **25 archives / 27,684 entries**.
+New staging contains 14,814 distinct paths within the batch and 654,699,284 bytes;
+its overlaps with earlier custom assets have not been recomputed. The 20 new
+format/staging tests passed. All animation base references resolve, including
+the fallback, and all seven startup textures pass structural checks. Native
+ARM64 needs explicit decoding of 32-bit animation records; the renderer must
+handle the observed DDS formats. Runtime compatibility remains untested. See
+[stage1 evidence](stage1-assets-assessment.json) and the
+[reproducible checks](STAGE1_ASSET_ASSESSMENT.md#reproduce-without-windows).
+
+
 [Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
 completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
 returned HTTP 403. Local sample GET and the current live manifest also returned
@@ -112,8 +126,9 @@ the complete observations.
 
 [Content acquisition instructions](CONTENT_ACQUISITION.md) identify the canonical
 recipe and OuroDev's base/binning-data archive listings as an unverified fallback.
-The needed input is an accessible compatible archive/mirror/magnet or existing
-asset folder. No Windows VM is required. Do not silently substitute the current
+The original fallback was an accessible compatible archive/mirror/magnet or
+existing asset folder; the user has since supplied the targeted assets above.
+No additional broad asset upload or Windows VM is required for this assessment. Do not silently substitute the current
 customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
@@ -124,13 +139,15 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    save/reload and map transfer. Game-level name uniqueness and auxiliary service
    persistence remain separate gates. Fake auth is only the minimal local
    diagnostic route; no SQL Server save migration has been attempted.
-2. Inspect the next three base archives once uploaded: `piggs/stage1a.pigg`,
-   `piggs/stage1b.pigg`, and `piggs/stage1f.pigg`. Indexing is complete. Validate
-   payload integrity and animation/texture formats, then stage candidates
-   separately from custom variants and generated caches.
+2. Assemble a coherent base asset set from the verified donors, keeping custom
+   variants separate. Stage1 archive integrity and offline format checks are
+   complete. Resolve legacy hierarchy/DDS warnings through reference runtime
+   tests and compare duplicate paths before allowing any overlay.
 3. Package exact-pin client, MapServer, TestClient and required DLLs alongside
    the patched DbServer. The older upstream v2i3 release is not a locked build.
    Stage data/assets separately and generate source-matching templates and bins.
+   Do not request further archives until dependency/runtime evidence identifies
+   a concrete missing input.
 4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
    Android runtime, then package under the APK’s own UID. Measure the stock
    65-connection pool, memory, suspension/restart and save durability on Thor.

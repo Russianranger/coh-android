@@ -1,22 +1,19 @@
 # Base asset coverage and next upload
 
-## Thor index received: next three uploads
+## Update: selected stage1 archives received
 
-The subsequent device index has been assessed. It reports **95 archives, with
-no indexing errors**. Upload these files from `cityofheroes/piggs/` next:
+`stage1a.pigg`, `stage1b.pigg` and `stage1f.pigg` have now been uploaded and
+inspected: **14,814 entries passed archive integrity checks**, adding 5,878
+animation tracks and 8,936 textures to separate candidate staging. All seven
+startup texture names and the MALE/THUMBSUP fallback are present. See the
+[stage1 assessment](STAGE1_ASSET_ASSESSMENT.md) for offline format checks,
+legacy-layout caveats and remaining runtime work.
 
-| Archive | Size | Located contents |
-| --- | ---: | --- |
-| `stage1a.pigg` | 58.5 MiB | 5,878 animation tracks, including MALE/THUMBSUP |
-| `stage1b.pigg` | 137.4 MiB | `white`, `grey`, `black`, `invisible` textures |
-| `stage1f.pigg` | 118.8 MiB | `dummy_bump`, `dummy_dynamic_cubemap_face0`, `buildingLightPattern` textures |
-
-See [the complete index assessment](THOR_ASSET_INDEX.md). These are filename-table
-findings; payload integrity and runtime compatibility remain unverified. The
-assessment below records the earlier 22 payload-inspected archives. Its index
-command remains useful for future scans, but no repeat scan is needed now.
-PostgreSQL persistence has since passed its hosted tests; see
-[the current database handoff](HANDOFF.md#current-database-work).
+The assessment below records the earlier 22 archives. Its missing-file counts
+are historical; the cumulative payload-inspected total is now **25 archives /
+27,684 entries**. No repeat index run or repeat upload is needed. PostgreSQL
+controlled persistence tests have also passed; see the
+[current database handoff](HANDOFF.md#current-database-work).
 
 Assessed 2026-09-24 against the unchanged source and Issue 24 text snapshots.
 The new input is `fonts.pigg`, `player.pigg`, `misc.pigg` and `geom.pigg`.
@@ -78,17 +75,18 @@ Raw assets are staged locally under `imports/base-fonts-complete-candidate-asset
 Their SHA-256 hashes match the verified archive inventories. No raw asset payloads
 were added to Git; the uploads, hashes and tools reproduce this staging.
 
-## Concrete remaining startup gaps
+## Historical gaps before stage1 inspection
 
-These findings concern the **uploaded archives**, not every file on the user's
-Thor. The missing files may already be inside archives that have not been uploaded.
+These findings concern the **earlier 22 uploaded archives**. The stage1 uploads
+have since resolved the animation/fallback and seven startup texture presence
+gaps in items 1–2. Full dependency and runtime validation remains open.
 
-1. **Skeletal animation tracks:** there are zero `.anim` files in all 22 archives.
+1. **Skeletal animation tracks:** there were zero `.anim` files in those 22 archives.
    The engine constructs paths under `player_library/animations/` and returns an
    error when a requested track is missing. Its fallback `MALE/THUMBSUP` is also
-   unavailable in the uploaded set. `bin/sequencers.bin` describes animation
+   unavailable in that earlier uploaded set. `bin/sequencers.bin` describes animation
    sequencing; it does not replace the track files themselves.
-2. **Basic renderer textures:** none of the uploaded texture basenames matches
+2. **Basic renderer textures:** none of those uploaded texture basenames matched
    `white`, `grey`, `invisible`, `black`, `dummy_bump`,
    `dummy_dynamic_cubemap_face0`, or `buildingLightPattern`, which the startup
    texture loader requests. It explicitly asserts several of these in developer
@@ -124,8 +122,8 @@ python3 ~/storage/downloads/index_piggs.py \
 ```
 
 Scan the client root so the report covers both `piggs/` and `i26/`. The current
-`coh-asset-index.json` has already been received and assessed; the next uploads
-are the three archives at the top of this document. Future scans can identify
+`coh-asset-index.json` has already been assessed, and all three selected archives
+have been received and inspected. Future scans can identify
 new candidates after changes to the installation.
 On another Linux/Python environment, use its accessible client/output paths.
 The output must be new; choose another filename for subsequent scans.
@@ -139,11 +137,10 @@ passed, including index-only limitations and bad-table rejection.
 
 ## Implementation sequence
 
-The index is now complete. The next content action is the three targeted archive
-uploads listed above, followed by payload and source-format inspection. A hosted
-build of the exact pinned source can be prepared independently; it need not wait
-for every cosmetic/audio archive. The gameplay
-test itself needs the missing startup assets, matching generated data and SQL
-runtime. Keep hosted reference validation before Android runtime integration.
+Indexing and targeted archive inspection are complete. The next runtime step
+is to package matching reference executables with a coherent base asset set,
+regenerate source-matching data/templates, and validate gameplay persistence.
+Use the stage1 assessment for format caveats and the handoff for the database
+status. Keep hosted reference validation before Android runtime integration.
 
 No APK or successful server/client startup is claimed by this assessment.

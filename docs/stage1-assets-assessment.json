@@ -1,0 +1,223 @@
+{
+  "assessed_utc_date": "2026-09-24",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "new_archives": [
+    {
+      "archive": "stage1a.pigg",
+      "bytes": 61306611,
+      "sha256": "0d29dd1a03993f2c2eacee387c063f4ef3e3c83979a990be6d72b0f9c5459745",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 5878,
+      "uncompressed_bytes": 88380730,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 5878
+      },
+      "extensions": {
+        ".anim": 5878
+      },
+      "baseline_comparisons": {
+        "not_compared": 5878
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "stage1b.pigg",
+      "bytes": 144033704,
+      "sha256": "8729ef0596885674876551a8b2db0f80be1ebac9d18417007a92224381aea3e5",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 7033,
+      "uncompressed_bytes": 372809865,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 7033
+      },
+      "extensions": {
+        ".texture": 7033
+      },
+      "baseline_comparisons": {
+        "not_compared": 7033
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "stage1f.pigg",
+      "bytes": 124587057,
+      "sha256": "5cf9e3827c76d8c978e99c06c7cea08675bed521f197131f1ceb18d46dea24bd",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1903,
+      "uncompressed_bytes": 193508689,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 1903
+      },
+      "extensions": {
+        ".texture": 1903
+      },
+      "baseline_comparisons": {
+        "not_compared": 1903
+      },
+      "serialized_signatures": {}
+    }
+  ],
+  "new_entries_verified": 14814,
+  "new_candidate_assets_staged": 14814,
+  "new_candidate_bytes": 654699284,
+  "new_batch_duplicate_paths": 0,
+  "cumulative_archives": 25,
+  "cumulative_verified_entries": 27684,
+  "cumulative_distinct_asset_paths": "not_recomputed_against_prior_custom_assets",
+  "structural_status_counts": {
+    "structural_checks_passed": 14814
+  },
+  "animation": {
+    "count": 5878,
+    "bone_tracks": 207137,
+    "rotation_keys": 11894088,
+    "position_keys": 2083384,
+    "hierarchy_capacity_counts": {
+      "0": 5493,
+      "70": 135,
+      "75": 3,
+      "85": 12,
+      "96": 28,
+      "97": 38,
+      "100": 169
+    },
+    "legacy_hierarchy_warning_files": 216,
+    "dependency_report": {
+      "runtime_compatibility": "unverified",
+      "validated_track_count": 5878,
+      "invalid_header_names": [],
+      "duplicate_casefolded_names": [],
+      "missing_base_names": [],
+      "nonterminal_cycles": [],
+      "terminal_bases_without_hierarchy": [],
+      "terminal_base_count": 385,
+      "scope": "base_anim_name references within the inspected set only",
+      "male_thumbsup_present": true,
+      "name_path_mismatches": []
+    },
+    "thumbsup_base_chain": [
+      "male/thumbsup",
+      "male/skel_ready2"
+    ],
+    "native_arm64_requirement": "Decode explicit 32-bit disk offsets into native structures; do not cast pointer-bearing Win32 disk structs."
+  },
+  "textures": {
+    "count": 8936,
+    "containers": {
+      "TX2": 8936
+    },
+    "payload_formats": {
+      "DXT1": 2097,
+      "DXT5": 2736,
+      "ARGB8888": 4077,
+      "RGB888": 26
+    },
+    "cached_mip_suffixes_verified": 4884,
+    "dds_surplus_byte_warning_files": 193,
+    "power_of_two_padded_logical_dimensions": 1238,
+    "canvas_mismatches": 0,
+    "baseline_dimension_limit_exceeded": 0,
+    "image_pixels_decoded": false,
+    "startup_textures": [
+      {
+        "name": "black",
+        "archive": "stage1b.pigg",
+        "path": "texture_library/WORLD/Filler/black.texture",
+        "bytes": 327,
+        "sha256": "62c947f06b7ca5c08e0e9bda98d4ae3d72aa5c7dab4557ae87ff4b48f1764f5a",
+        "width": 8,
+        "height": 8,
+        "format": "DXT1",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "buildinglightpattern",
+        "archive": "stage1f.pigg",
+        "path": "texture_library/btest/buildingLightPattern.texture",
+        "bytes": 8399,
+        "sha256": "c2996a5d0b402dba4ee2722797fdc486e48bc773e99761b659b0c1219aecaa06",
+        "width": 128,
+        "height": 128,
+        "format": "DXT1",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "dummy_bump",
+        "archive": "stage1f.pigg",
+        "path": "texture_library/btest/dummy_bump.texture",
+        "bytes": 437,
+        "sha256": "021f8a4ccfdb334f9ec336a8275b336890440bf8700ef593b7cd9d4ca374ee3d",
+        "width": 8,
+        "height": 8,
+        "format": "DXT5",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "dummy_dynamic_cubemap_face0",
+        "archive": "stage1f.pigg",
+        "path": "texture_library/static_cubemaps/dummy_dynamic/dummy_dynamic_cubemap_face0.texture",
+        "bytes": 302,
+        "sha256": "cd06cf02ffa62c7e5a35d39e5d5d06632c970382640645304584c19ddb70b4f6",
+        "width": 4,
+        "height": 4,
+        "format": "DXT1",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "grey",
+        "archive": "stage1b.pigg",
+        "path": "texture_library/WORLD/Filler/grey.texture",
+        "bytes": 894,
+        "sha256": "b628966e91a864f9edcb0634605823a7ef3d8e2305f36d1a9f6e9834b018a013",
+        "width": 8,
+        "height": 8,
+        "format": "ARGB8888",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "invisible",
+        "archive": "stage1b.pigg",
+        "path": "texture_library/WORLD/World_fx/PORTAL/invisible.texture",
+        "bytes": 5828,
+        "sha256": "7a0e37f76eba451debca99f50f2907e556dba55dbb45468a415d55b480b103df",
+        "width": 64,
+        "height": 64,
+        "format": "DXT5",
+        "validation_status": "structural_checks_passed"
+      },
+      {
+        "name": "white",
+        "archive": "stage1b.pigg",
+        "path": "texture_library/WORLD/Filler/white.texture",
+        "bytes": 327,
+        "sha256": "682b26a6f55fcf2d9ebc47cde781f64fc18ee50c78f25720f0857e6ca1fca7f9",
+        "width": 8,
+        "height": 8,
+        "format": "DXT1",
+        "validation_status": "structural_checks_passed"
+      }
+    ]
+  },
+  "validation": {
+    "new_format_and_staging_tests_passed": 20,
+    "full_inventory_sha256": "90b18e96956974860e627907cc2a3242b7ec8410262b9a576fd2d4be7fd9466b",
+    "full_format_report_sha256": "713a2fb1e4f5f6bb1424c7b5bf9cb6eef7c3e5fc40d105287e9fce7e7c827ae5",
+    "tools_sha256": {
+      "tools/inspect_piggs.py": "fca2456dc33181f9afeac094dc0f820eff5769a4ce5d226f8ae3ec807ab2778a",
+      "tools/inspect_asset_formats.py": "74979934ed24394c4f54ab8bc3a397a238d9e363f5391b1b48b4aeedb005ea9b",
+      "tools/animation_format.py": "b834d26a4bac4690ac0d5ff1a1ab5dac672efd15c8b855631e4821bc31c794dc",
+      "tools/texture_format.py": "bdb6d5a4eb8681ed956e38c21a4173c9cca711aaf48ceb7a4f7bc1f95b966a78"
+    }
+  },
+  "runtime_compatibility": "untested",
+  "raw_assets_published": false,
+  "staging": "imports/base-stage1-candidate-assets; base only, no custom overlay",
+  "compiled_caches_reused": false
+}

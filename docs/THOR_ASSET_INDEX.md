@@ -1,8 +1,10 @@
 # Thor asset index assessment
 
-Assessed 2026-09-24. The device index locates candidates for the previously
-missing animation tracks and all seven startup texture names. The next step is
-to inspect three targeted base archives; no repeat index run is needed.
+Assessed 2026-09-24. The device index located candidates for the previously missing animation
+tracks and all seven startup texture names. All three targeted archives have
+now been uploaded and their payload integrity verified. See the subsequent
+[stage1 archive assessment](STAGE1_ASSET_ASSESSMENT.md) for format checks and
+remaining work. No repeat index run or repeat upload is needed.
 
 ## Input and limits
 
@@ -22,12 +24,13 @@ archives with animations are internally consistent.
 Its status is `index_only_not_integrity_verified`. Every archive has
 `integrity_checked: false` and `payloads_read: false`. Filename-table success
 does not establish payload integrity, source-format compatibility, dependency
-completeness or runtime usability. The earlier payload-verified total remains
-22 archives; see [base asset coverage](BASE_ASSET_COVERAGE.md).
+completeness or runtime usability. Indexing itself did not increase the prior
+22 payload-verified archives. Subsequent stage1 payload inspection brings the
+total to 25; see [the stage1 assessment](STAGE1_ASSET_ASSESSMENT.md).
 
-## Next uploads
+## Selected archives (now received)
 
-Upload these files from the Thor directory:
+These files were selected from the Thor directory:
 
 ```text
 /storage/emulated/0/Download/cityofheroes/piggs/
@@ -39,9 +42,9 @@ Upload these files from the Thor directory:
 | `stage1b.pigg` | 144,033,704 | 137.4 MiB | 7,033 `.texture` entries, including four startup texture names |
 | `stage1f.pigg` | 124,587,057 | 118.8 MiB | 1,903 `.texture` entries, including the remaining three startup texture names |
 
-Together these are 329,927,372 bytes (314.6 MiB). Start with `stage1a.pigg`,
-then upload `stage1b.pigg` and `stage1f.pigg`. No additional font archive is
-needed for the current startup-font check.
+Together these are 329,927,372 bytes (314.6 MiB). All three have now been
+received and inspected; do not upload them again. No additional font archive
+is needed for the current startup-font check.
 
 ### Located startup texture paths
 
@@ -73,14 +76,18 @@ prove 18 unique added animations: the index lacks complete animation path lists
 and payload hashes. Compare full inventories and bytes before selecting any
 custom overrides. Keep the accepted Issue 24/Volume 2 source baseline unchanged.
 
-## Validation after upload
+## Validation sequence
 
-1. Inspect archive bounds, decompression, entry sizes and checksums. Record
-   complete inventories and archive hashes without running supplied executables.
-2. Check animation and texture formats against the pinned source, including
-   fallback animation loading and the seven startup defaults.
-3. Stage verified base assets separately from custom variants. Regenerate
-   matching compiled caches and database templates from the chosen baseline;
+The archive and offline format checks are recorded in the subsequent
+[stage1 assessment](STAGE1_ASSET_ASSESSMENT.md). Runtime gates remain open.
+
+1. **Completed:** inspect archive bounds, decompression, entry sizes and
+   checksums; record inventories/hashes without running supplied executables.
+2. **Completed offline:** inspect animation/texture structures, the fallback
+   dependency chain and seven startup defaults. Actual engine loading remains
+   open; preserve the legacy-layout warnings in the stage1 assessment.
+3. **Staging completed; generation pending:** keep base assets separate from
+   custom variants. Regenerate matching compiled caches and database templates;
    custom Parse7 caches remain incompatible with the source's Parse6 loader.
 4. Validate a matching reference runtime through character creation, map entry,
    saving and reloading before Android runtime integration.
