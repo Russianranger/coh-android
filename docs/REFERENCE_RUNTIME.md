@@ -121,7 +121,11 @@ DbServer.exe -exportdump C:\fresh-test-output\empty.dump
 ```
 
 It invokes `dbInit(-1)`, performs template/attribute/table initialization, exports
-the database and shuts down. This is a proposed next check, not a completed run.
+the database and shuts down. The driver and its 11 acceptance tests are now
+implemented in `database/postgresql/tests/run_generated_schema.py`; actual
+database execution still depends on an accepted schema-generation artifact.
+The companion workflow runs only after successful schema generation on this
+repository's main branch, or an explicit manual run selecting an artifact.
 Use only a fresh disposable PostgreSQL cluster initialized and migrated with
 `pg_local.py`, the fixture-OFF reference DbServer and the x86 Windows ODBC driver.
 Replace staged SQL provider/name/login settings with the generated private
@@ -134,9 +138,11 @@ absent from the current pins; source callers tolerate missing content with
 diagnostics, which must be recorded rather than concealed. No imported saves,
 character dumps or backups are needed for a fresh database.
 
-The acceptance gate should require a fresh dump (possibly empty), successful
-exit, the expected SQL tables/constraints, matching attribute identifiers,
-preserved compatibility migration metadata and no SQL failures. Repeat against
-the same disposable database to test reload. The existing persistence test
+The driver requires a fresh empty dump, successful exit, the expected SQL table
+and column names/order, matching attribute identifiers, preserved compatibility
+migration metadata and no captured SQL failures. It repeats against the same
+disposable database and compares the column/index/constraint catalog and
+attribute mappings for stability. It does not independently model every field
+type or constraint's semantics. The existing persistence test
 driver uses controlled fixtures and cannot substitute for this normal startup
 check. The long-running `DbServer Ready.` marker is not emitted by `-exportdump`.
