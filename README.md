@@ -15,10 +15,15 @@ The complete pinned companion data is now imported under `upstream/i24`: **156,2
 files, 1,992,097,492 bytes**, verified against its original Git tree. Runtime
 staging tools preserve both snapshots and fix the companion executable-name gap.
 
-The repository is **not a complete runnable installation**. Binary game assets,
-database runtime, generated templates/bins and packaging are still needed. All 72
-asset URLs returned HTTP 403 to the hosted availability probe; see the acquisition
-guide for alternatives and the exact remaining input.
+The matching Windows client/server package now passes its hosted build and
+dependency checks. The supplied base assets have been assembled with the pinned
+text: **173,011 data files**, including **16,721 binary assets**. See the
+[reference runtime and downloads](docs/REFERENCE_RUNTIME.md).
+
+The repository is **not a complete runnable installation**. Database deployment,
+runtime cache/template generation and gameplay validation remain open. Supplied
+asset archives are staged separately from Git; their offline checks do not
+establish that every runtime dependency is present.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)
 - [Actual DbServer persistence and migration behavior](docs/POSTGRESQL_PERSISTENCE.md)

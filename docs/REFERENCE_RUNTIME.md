@@ -52,6 +52,16 @@ stage1a/stage1b/stage1f. Custom `i26` data and precompiled Parse7 caches are not
 part of this assembly. Their original supplied archives remain the inputs for
 reproducing extraction.
 
+This assembly completed with **173,011 data files / 2,977,730,517 bytes**:
+156,290 text/configuration files and 16,721 selected binary assets, with no
+conflicting paths or duplicate donor files. The binary assets comprise 5,878
+animations, 1,861 geometry files, 8,936 textures and 46 fonts. Three source DB
+configuration files account for the increase over the 173,008-file preflight.
+See [the assembly record](runtime-assembly-assessment.json). The stock staged
+SQL settings still require the separately generated private PostgreSQL
+configuration before DbServer can run; staging does not create credentials,
+install a driver or start a database.
+
 ## Reference generation
 
 On Windows with a staged runtime, the bounded harness can run:

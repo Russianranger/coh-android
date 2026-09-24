@@ -1,0 +1,92 @@
+{
+  "assessed_utc_date": "2026-09-24",
+  "status": "reference_runtime_assembled_execution_unvalidated",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "build_repository_commit": "7524c9d894bd49bc83d64c3dbfac0f8d24e57eba",
+  "build_run_url": "https://github.com/Russianranger/coh-android/actions/runs/36069123663",
+  "runtime_artifact": {
+    "id": 10837662443,
+    "bytes": 14555591,
+    "sha256": "1f971f3f86579d7dc4da68b471c75039f57e9417b5f33ac8036e5c3e30378c24"
+  },
+  "inner_runtime_zip_sha256": "23b6b5adf48afc571f5863e3339ae159a734cae19b5234f876fe279aebf52c6b",
+  "runtime_input_manifest_sha256": "4998b4cc3c035a2f654952b49e3522b3b20051c94f8b65c0be73b7209e70c4da",
+  "data_files": 173011,
+  "data_bytes": 2977730517,
+  "base_binary_asset_files": 16721,
+  "base_binary_asset_bytes": 985644857,
+  "base_binary_extensions": {
+    ".anim": 5878,
+    ".geo": 1861,
+    ".texture": 8936,
+    ".ttc": 3,
+    ".ttf": 43
+  },
+  "base_donors": [
+    {
+      "archives": [
+        "fonts.pigg",
+        "player.pigg",
+        "geom.pigg",
+        "geomBC.pigg"
+      ],
+      "files": 1907,
+      "bytes": 330945573
+    },
+    {
+      "archives": [
+        "stage1a.pigg",
+        "stage1b.pigg",
+        "stage1f.pigg"
+      ],
+      "files": 14814,
+      "bytes": 654699284
+    }
+  ],
+  "conflicting_paths": 0,
+  "identical_donor_repeats": 0,
+  "source_asset_collisions": 0,
+  "new_source_db_configs_over_companion": 3,
+  "binary_package_files_with_verified_hashes": 29,
+  "postgresql_build_receipt": {
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "patch_sha256": "ce4c072f8b975395ac29569a43b9a135aa79b7823f06cc6714d31a0ed49b896c",
+    "overlay_sha256": {
+      "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8",
+      "DBServer/src/pg_persistence_test.c": "dab6e0408f559c543b4de20c2a14090480ce8d3081c52c0c7b158ae17460d1f2"
+    },
+    "patched_sha256": {
+      "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+      "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+      "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+      "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+      "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+      "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+      "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+      "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+      "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+      "DBServer/src/dbdispatch.c": "6ff105bc554944a9b61d1461e1f54126a710c9a0da142cc1d32ec4ffb3c0f18f",
+      "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+      "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+      "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+      "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db"
+    }
+  },
+  "line_ending_receipt_validation": "Source and patched-file hashes exact; overlay hashes match explicitly reconstructed Windows CRLF variants of repository C sources.",
+  "templates_and_bins_generated": false,
+  "database_started": false,
+  "gameplay_validated": false,
+  "android_validated": false,
+  "raw_assets_published": false,
+  "immutable_upstream_tree": "b343713b3067b4921165323858cd6553cb4301cf",
+  "local_execution_blocker": "Wine startup rejected by environment IPC restriction: wineserver: socket: Operation not permitted; no game generation completed.",
+  "tool_tests": {
+    "runtime_packaging": 8,
+    "runtime_staging": 14,
+    "reference_generation": 10,
+    "schema_source_staging": 8,
+    "schema_generation_runner": 11
+  },
+  "next_gate": "Hosted separately identified data-only MapServer schema generation; then asset-complete reference comparison and gameplay checks."
+}

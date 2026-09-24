@@ -118,8 +118,14 @@ class RuntimeStagingTests(unittest.TestCase):
         result = runtime.stage(self.output, (self.donor1, self.donor2), root=self.root)
         self.assertEqual(len(result['binary_asset_files']), 2)
         self.assertEqual(result['asset_donors'][1]['identical_duplicate_files'], 1)
-        self.assertEqual(len(list((self.output / 'data/Player_Library/male').iterdir())), 2)
-        self.assertFalse((self.output / 'data/player_library').exists())
+        # Enumerate stored names: on Windows a differently cased lookup still
+        # exists, even though only one directory was created.
+        player_dirs = [path for path in (self.output / 'data').iterdir()
+                       if path.name.casefold() == 'player_library']
+        self.assertEqual([path.name for path in player_dirs], ['Player_Library'])
+        self.assertEqual([path.name for path in player_dirs[0].iterdir()], ['male'])
+        self.assertEqual(sorted(path.name for path in (player_dirs[0] / 'male').iterdir()),
+                         ['other.anim', 'test.anim'])
         self.assertEqual(self.before, self.snapshot())
 
     def test_differing_casefold_assets_fail_before_output_exists(self):

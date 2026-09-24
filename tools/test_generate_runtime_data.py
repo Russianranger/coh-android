@@ -140,11 +140,11 @@ class GenerationTests(unittest.TestCase):
 
     def test_replaced_log_does_not_hide_new_failure_diagnostics(self):
         path = self.runtime / 'run.log'
-        path.write_text('old completed run\n')
+        path.write_bytes(b'old completed run\n')
         previous = generation.file_record(path, self.runtime)
-        path.write_text('old completed run\nnew output\n')
+        path.write_bytes(b'old completed run\nnew output\n')
         self.assertEqual(generation.new_log_text(path, previous), 'new output\n')
-        path.write_text('Error: replacement log contains a failure\n')
+        path.write_bytes(b'Error: replacement log contains a failure\n')
         self.assertIn('Error: replacement', generation.new_log_text(path, previous))
 
 

@@ -12,7 +12,9 @@ on:
       - 'tools/run_schema_generation.py'
       - 'tools/test_run_schema_generation.py'
       - 'tools/generate_runtime_data.py'
+      - 'tools/test_generate_runtime_data.py'
       - 'tools/prepare_runtime.py'
+      - 'tools/test_prepare_runtime.py'
 
 permissions:
   contents: read

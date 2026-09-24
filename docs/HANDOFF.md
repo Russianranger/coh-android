@@ -1,6 +1,8 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24. PostgreSQL controlled persistence and targeted stage1 archive inspection are complete. Matching runtime assembly and cache/template generation are next.
+Updated: 2026-09-24. PostgreSQL controlled persistence, targeted stage1 inspection,
+matching Windows packaging and base runtime assembly are complete. Runtime
+generation and game-level persistence remain the next validation gates.
 
 ## Active direction
 
@@ -45,6 +47,22 @@ Every base-animation reference resolves within `stage1a.pigg`. Preserve warnings
 for 216 legacy hierarchy layouts and 193 DDS surplus-byte cases; runtime use
 remains unvalidated. See [the stage1 assessment](STAGE1_ASSET_ASSESSMENT.md).
 No repeat index run, repeat upload or custom `i26/geobin.pigg` upload is needed.
+
+**Reference runtime assembled:** [run 36069123663](https://github.com/Russianranger/coh-android/actions/runs/36069123663)
+builds the exact source pin with the PostgreSQL patch and fixture mode OFF.
+Client, MapServer, DbServer, TestClient, pig and Launcher are packaged with
+required supplied DLLs and app-local x86 MSVC runtime libraries. The downloaded
+package passed hash, PE and dependency checks, and was staged with the verified
+base donors: 173,011 data files / 2,977,730,517 bytes. No conflicting donor paths.
+The preflight's earlier 173,008 count excluded three additional source-pinned DB
+config files added by final assembly. See [assembly evidence](runtime-assembly-assessment.json)
+and [reproduction/build instructions](REFERENCE_RUNTIME.md).
+
+Local game execution is blocked by this environment's wineserver IPC restriction.
+Use hosted Windows for the separate data-only schema experiment; do not claim
+the standard asset-complete generation or gameplay path has passed. The new
+schema patch is isolated from the reference package and retains error/output
+gates. Its incidental caches must not be reused as gameplay caches.
 
 ## Completed
 
@@ -139,15 +157,15 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    save/reload and map transfer. Game-level name uniqueness and auxiliary service
    persistence remain separate gates. Fake auth is only the minimal local
    diagnostic route; no SQL Server save migration has been attempted.
-2. Assemble a coherent base asset set from the verified donors, keeping custom
-   variants separate. Stage1 archive integrity and offline format checks are
-   complete. Resolve legacy hierarchy/DDS warnings through reference runtime
-   tests and compare duplicate paths before allowing any overlay.
-3. Package exact-pin client, MapServer, TestClient and required DLLs alongside
-   the patched DbServer. The older upstream v2i3 release is not a locked build.
-   Stage data/assets separately and generate source-matching templates and bins.
-   Do not request further archives until dependency/runtime evidence identifies
-   a concrete missing input.
+2. Run schema generation on hosted Windows, then compare accepted outputs with
+   asset-complete `MapServer -templates`. The reference package and coherent
+   base assembly are now ready. Generate server/client caches with the bounded
+   harness when the execution environment has the staged assets and graphics.
+3. Resolve legacy animation hierarchy/DDS warnings through reference runtime
+   use, then test actual character creation/save/reload and map transfer.
+   Keep custom variants separate. Do not request further archives until
+   runtime evidence identifies a concrete missing input. The older upstream
+   v2i3 release is not the locked build; use the new reference artifact.
 4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
    Android runtime, then package under the APK’s own UID. Measure the stock
    65-connection pool, memory, suspension/restart and save durability on Thor.

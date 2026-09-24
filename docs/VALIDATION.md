@@ -2,6 +2,10 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
+Latest milestone, 2026-09-24: [matching runtime build and assembly](REFERENCE_RUNTIME.md).
+Earlier sections remain historical records; they do not describe the newest
+build status.
+
 | Check | Result |
 | --- | --- |
 | Source snapshot byte count | 173,081,714 bytes across 5,995 tracked regular files |
@@ -194,3 +198,36 @@ save migration, or Android/Wine execution. Trigger-raised retryable errors test
 the real error path, not contention performance. Name equality is explicit ASCII
 folding; full Unicode collation and game-level uniqueness remain separate gates.
 See [persistence behavior and upgrade instructions](POSTGRESQL_PERSISTENCE.md).
+
+
+## 2026-09-24 matching runtime assembly
+
+[Reference build 36069123663](https://github.com/Russianranger/coh-android/actions/runs/36069123663)
+passed at `7524c9d894bd49bc83d64c3dbfac0f8d24e57eba`. It compiled and packaged
+DbServer, MapServer, CityOfHeroes, TestClient, pig and Launcher with PostgreSQL
+fixture mode OFF. The package's eight tests, PE32/x86 checks, import closure and
+artifact uploads passed. Runtime/symbol artifacts have separate hashes.
+
+The downloaded runtime ZIP digest matched GitHub's artifact digest, the inner
+ZIP matched SHA256SUMS, and every packaged payload hash passed the stager.
+Source/patch/patched-source receipts match; the two PostgreSQL overlay hashes
+match the exact, explicitly reconstructed Windows CRLF versions of the repository
+C sources. Unrecognized content changes remain rejected.
+
+Both original snapshots passed full integrity verification again. Assembly of
+pinned text/configs, fonts/player/geom/geomBC and stage1a/b/f completed with
+173,011 data files / 2,977,730,517 bytes and 29 verified package files.
+There are 16,721 binary asset files / 985,644,857 bytes, no conflicting paths and
+no duplicate donor paths. Three source-pinned DB configs explain the increase
+from the 173,008-file preflight. No imported snapshot or raw asset was published
+or modified by staging. Existing imported snapshots remain preserved; raw binary
+assets remain outside Git.
+
+Local tool suites passed 51 tests: packaging 8, staging 14, reference-generation
+harness 10, schema-source staging 8 and schema-runner 11. Synthetic subprocess
+checks establish failure/freshness/receipt behavior, not game execution.
+Actual local generation is blocked by the environment's wineserver socket
+restriction. The separately patched hosted data-only schema experiment has its
+own workflow and receipts; it cannot establish asset-complete runtime or
+serializer equivalence by itself. See [runtime instructions](REFERENCE_RUNTIME.md)
+and [assembly evidence](runtime-assembly-assessment.json).
