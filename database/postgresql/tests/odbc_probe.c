@@ -199,7 +199,8 @@ static void schema_rebuild(void) {
     REQUIRE(scalar("SELECT 'dbo.PgRebuild'::regclass::oid::integer;")==oid);
     exec("DROP VIEW coh_meta.rebuild_view;");
     REQUIRE(scalar("SELECT dbo.coh_container_high_water('dbo.PgRebuild');")==9000);
-    REQUIRE(scalar("SELECT count(*) FROM pg_class WHERE relnamespace='dbo'::regnamespace AND relname LIKE 'coh_rebuild_%';")==0);
+    /* A renamed table's owned sequence/index can retain their generated names. */
+    REQUIRE(scalar("SELECT count(*) FROM pg_class WHERE relnamespace='dbo'::regnamespace AND relkind='r' AND relname LIKE 'coh_rebuild_%';")==0);
     REQUIRE(scalar("SELECT (dbo.coh_name_key('Hero ')=dbo.coh_name_key('Hero'))::integer;")==0);
     puts("PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys");
 }

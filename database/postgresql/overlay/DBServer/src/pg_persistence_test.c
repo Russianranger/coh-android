@@ -178,6 +178,9 @@ int pgPersistenceTestMain(int argc,char **argv)
     } else if(!strcmp(mode,"fail") || !strcmp(mode,"exhaust")) {
         writeRecord(t,103,90,9999,true,512); drain();
         CHECK(!"Failed save must terminate without completion");
+    } else if(!strcmp(mode,"disconnect")) {
+        sqlExecAsyncEx("UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());",SQL_NTS,101,false);
+        drain(); CHECK(!"Lost connection must not acknowledge the write");
     } else if(!strcmp(mode,"delete-fail")) {
         sqlDeleteContainer(t,101); drain(); CHECK(!"Failed delete must terminate");
     } else if(!strcmp(mode,"rebuild-fail") || !strcmp(mode,"rebuild-fail-view")) {

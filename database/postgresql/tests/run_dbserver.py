@@ -71,6 +71,9 @@ def main():
         sql('DROP TRIGGER fifo_reject_delete ON dbo.PgFifo;')
         report['checks']+=['permanent failure rolls back all save batches', 'five-attempt retry limit without acknowledgement',
                           'failed delete restores previously deleted child rows']
+        run('disconnect',3)
+        assert sql('SELECT Score FROM dbo.PgFifo WHERE ContainerId=101;')=='555'
+        report['checks']+=['connection loss stops without replay or acknowledgement; in-flight write rolled back']
         run('verify')
         cluster.stop(); cluster.start(); run('verify')
         cluster.stop(immediate=True); cluster.start(); run('verify')
@@ -84,7 +87,8 @@ def main():
         run('rebuild-fail-view',2)
         assert sql("SELECT 'dbo.PgFifo'::regclass::oid;")==original_oid
         sql('DROP VIEW coh_meta.schema_guard;')
-        assert sql("SELECT count(*) FROM pg_class WHERE relnamespace='dbo'::regnamespace AND relname LIKE 'coh_rebuild_%';")=='0'
+        # Owned sequences/indexes retain their generated names after table rename.
+        assert sql("SELECT count(*) FROM pg_class WHERE relnamespace='dbo'::regnamespace AND relkind='r' AND relname LIKE 'coh_rebuild_%';")=='0'
         run('verify-rebuilt')
         report['checks']+=['real template reorder/add-column rebuild preserves high-water 9000',
             'inbound foreign keys and indexes survive table replacement',
