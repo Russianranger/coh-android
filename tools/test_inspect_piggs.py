@@ -1,0 +1,83 @@
+"""Regression cases for corrupt/untrusted archives and selective staging."""
+import hashlib
+from pathlib import Path
+import struct
+import tempfile
+import unittest
+import zlib
+
+from inspect_piggs import inspect
+
+
+def archive(entries, cached_header=None):
+    def pool(flag, items):
+        data = b''.join(struct.pack('<I', len(x)) + x for x in items)
+        return struct.pack('<III', flag, len(items), len(data)) + data
+    names = pool(0x6789, [name.encode() + b'\0' for name, body in entries])
+    headers = pool(0x9ABC, [] if cached_header is None else [cached_header])
+    offset = 16 + 48 * len(entries) + len(names) + len(headers)
+    table, payloads = [], []
+    for i, (name, body) in enumerate(entries):
+        payload = zlib.compress(body)
+        digest = hashlib.md5(body).digest() if body else bytes(16)
+        table.append(struct.pack('<IiIIIIi16sI', 0x3456, i, len(body), 0, offset, 0,
+                                 -1 if cached_header is None else 0, digest, len(payload)))
+        payloads.append(payload)
+        offset += len(payload)
+    return (struct.pack('<IHHHHI', 0x123, 2, 2, 16, 48, len(entries)) +
+            b''.join(table) + names + headers + b''.join(payloads))
+
+
+class ArchiveTests(unittest.TestCase):
+    def run_archive(self, data, *, stage=False, limit=1024):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'sample.pigg'
+            source.write_bytes(data)
+            target = root / 'assets' if stage else None
+            report = inspect(source, None, limit, [8192], target, set())
+            files = sorted(str(x.relative_to(target)) for x in target.rglob('*') if x.is_file()) if stage else []
+            return report, files
+
+    def test_selective_staging_excludes_generated_and_text_files(self):
+        report, files = self.run_archive(archive([
+            ('Texture_Library/sample.texture', b'texture'),
+            ('bin/powers.bin', b'compiled'), ('defs/example.def', b'definition')]), stage=True)
+        self.assertEqual(files, ['texture_library/sample.texture'])
+        self.assertEqual(report['entry_count'], 3)
+
+    def test_checksum_corruption_rejected(self):
+        data = bytearray(archive([('sample.txt', b'content')]))
+        data[16 + 28] ^= 1
+        with self.assertRaisesRegex(ValueError, 'MD5 mismatch'):
+            self.run_archive(data)
+
+    def test_truncated_archive_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'out-of-bounds'):
+            self.run_archive(archive([('sample.txt', b'content')])[:-2])
+
+    def test_path_traversal_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Unsafe archive path'):
+            self.run_archive(archive([('../escape.texture', b'content')]), stage=True)
+
+    def test_case_collisions_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'case-colliding'):
+            self.run_archive(archive([('A.txt', b'a'), ('a.txt', b'b')]))
+
+    def test_inflation_limit_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'limit exceeded'):
+            self.run_archive(archive([('sample.txt', b'x' * 128)]), limit=64)
+
+    def test_mismatching_cached_header_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Cached header differs'):
+            self.run_archive(archive([('sample.texture', b'content')], cached_header=b'wrong'))
+
+    def test_future_reader_version_rejected(self):
+        data = bytearray(archive([('sample.txt', b'content')]))
+        struct.pack_into('<H', data, 6, 3)
+        with self.assertRaisesRegex(ValueError, 'Unsupported PIGG'):
+            self.run_archive(data)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -3,6 +3,13 @@
 Updated 2026-09-24. Source baseline remains
 `0b75ade0c801735e10c5798f641948a45cc50488`.
 
+**New user-supplied content:** [17 custom client PIGGs inspected](CLIENT_CONTENT_ASSESSMENT.md),
+8,864 entries verified and 665 candidate binary assets staged separately.
+549 compiled files use Parse7 while this source expects Parse6; regenerate those
+caches. Base-asset acquisition and runtime compatibility remain incomplete.
+The portable `tools/inspect_piggs.py` now performs PIGG integrity checks and
+selective candidate extraction; the older host probe results below are unchanged.
+
 ## Imported successfully
 
 The entire companion [Thunderspies/i24 repository](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)

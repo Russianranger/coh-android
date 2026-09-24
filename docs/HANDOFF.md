@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24 after companion content acquisition.
+Updated: 2026-09-24 after inspection of the user's 17 custom client archives.
 
 ## Active direction
 
@@ -28,10 +28,23 @@ Canonical i25 acquisition is deferred.
 
 ## External content result
 
+The user's `small_i26_piggs.zip` has now been inspected: all **17 archives /
+8,864 entries** passed size, decompression, MD5 and cached-header checks.
+**549 compiled files use Parse7; the pinned source expects Parse6**, so these
+caches cannot be reused unchanged. Staged **665 candidate binary assets**
+(141 geometry, 445 textures, 79 audio files; 152,755,341 bytes) separately,
+with runtime compatibility still unverified. No raw client binaries/assets were
+published. The original ZIP plus the new portable inspector reproduce staging.
+See [client content assessment](CLIENT_CONTENT_ASSESSMENT.md) and its
+[per-archive hashes/counts](client-content-assessment.json). Eight inspector
+regression tests passed. Next requested input is base `piggs/geom.pigg` or
+`piggs/geomBC.pigg`, followed by selected base archives; more generated patch
+caches are lower priority.
+
 [Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
 completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
 returned HTTP 403. Local sample GET and the current live manifest also returned
-403. Binary assets were not downloaded. `docs/asset-availability.json` contains
+403. Binary assets were not downloaded from that host. `docs/asset-availability.json` contains
 the complete observations.
 
 [Content acquisition instructions](CONTENT_ACQUISITION.md) identify the canonical
@@ -42,7 +55,9 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Establish a compatible asset source; hash and inspect the resulting package.
+1. Complete base-asset acquisition and compatibility checks; the inspected custom
+   patch set is only a partial donor. Use `inspect_piggs.py` to verify additional
+   PIGGs and isolate candidate assets, then test them against the selected source.
    `content_assets.py record` establishes observed hashes, not upstream-authenticated
    integrity. PIGG structure/extraction and source compatibility remain separate gates.
 2. Add a hosted Windows reference build/package workflow for the exact source pin.

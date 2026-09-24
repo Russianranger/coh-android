@@ -1,0 +1,434 @@
+{
+  "assessed_utc_date": "2026-09-24",
+  "input_archive": {
+    "name": "small_i26_piggs.zip",
+    "bytes": 191014597,
+    "sha256": "1c22403a84f1a4115645db3d42c1a57cc11da42dfc7e19cc221ebdb5e5f3505f"
+  },
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "archive_integrity": "17 archives; every entry size, zlib stream, MD5 and cached header verified",
+  "authenticity": "user_supplied_no_trusted_external_checksums",
+  "entry_count": 8864,
+  "uncompressed_bytes": 1078434148,
+  "categories": {
+    "generated_cache": 6668,
+    "candidate_binary_asset": 665,
+    "other_content": 1531
+  },
+  "serialized_signatures": {
+    "Parse6": 6112,
+    "Parse7": 549
+  },
+  "baseline_parser_signature": "Parse6",
+  "candidate_asset_count": 665,
+  "candidate_asset_bytes": 152755341,
+  "candidate_asset_extensions": {
+    ".geo": 141,
+    ".texture": 445,
+    ".ogg": 79
+  },
+  "candidate_asset_runtime_compatibility": "unverified",
+  "candidate_assets_published": false,
+  "text_byte_comparison": {
+    "different": 1474,
+    "absent": 56,
+    "identical": 1
+  },
+  "text_normalized_comparison": {
+    "line_endings_only": 1439,
+    "different_beyond_line_endings": 35
+  },
+  "parse6_unique_dependency_paths_absent_from_baseline": 1230,
+  "archives": [
+    {
+      "archive": "bin.pigg",
+      "bytes": 33236877,
+      "sha256": "564d57f0a176d68250eac4ecaabfdb7a981fa2879c4624bd79e9091dff3ad07e",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 153,
+      "uncompressed_bytes": 398257264,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 153
+      },
+      "extensions": {
+        ".bin": 153
+      },
+      "baseline_comparisons": {
+        "absent": 153
+      },
+      "serialized_signatures": {
+        "Parse6": 51,
+        "Parse7": 95
+      }
+    },
+    {
+      "archive": "bin_fxinfo.pigg",
+      "bytes": 2912283,
+      "sha256": "8f3432ee8269ad3b136cd406c40517da0696ecf7a544a37025dc129bb810c35f",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 55178700,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "bin_minimap.pigg",
+      "bytes": 2499811,
+      "sha256": "e9490d0b5e38f905eaef03c13d1c43400511a0f07cca22a0187f190da3052f5f",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 14865332,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "bin_particles.pigg",
+      "bytes": 1943405,
+      "sha256": "ce0d322f458bc71532878f725c2a7843e65a89e0f25637863aab06c9a7b70d81",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 23998636,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "bin_powers.pigg",
+      "bytes": 3745789,
+      "sha256": "bbcc760ee8b5c951c21390fb161d181e550cd4bdd7a123fea418b8c92582a61d",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 37981064,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "bin_sequencers.pigg",
+      "bytes": 4404597,
+      "sha256": "09faeaf7324d758f96e8006966df0d35ed363a24352caf15fd9a28e309a26a90",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 55067364,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "bin_villaincostume.pigg",
+      "bytes": 1087006,
+      "sha256": "c260937b5f589d1a7d377d2b822016af9ce97fdbdb9a6f0f7b7457f7201ae822",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1,
+      "uncompressed_bytes": 16657436,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 1
+      },
+      "extensions": {
+        ".bin": 1
+      },
+      "baseline_comparisons": {
+        "absent": 1
+      },
+      "serialized_signatures": {
+        "Parse7": 1
+      }
+    },
+    {
+      "archive": "geobin_czh.pigg",
+      "bytes": 10520525,
+      "sha256": "765f2541a3941cb6169333d62de6db1a818627baf2b3a9c72797aef5b8f02e32",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 23,
+      "uncompressed_bytes": 50048176,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 23
+      },
+      "extensions": {
+        ".bin": 23
+      },
+      "baseline_comparisons": {
+        "absent": 23
+      },
+      "serialized_signatures": {
+        "Parse7": 14,
+        "Parse6": 9
+      }
+    },
+    {
+      "archive": "geobin_czn.pigg",
+      "bytes": 6077107,
+      "sha256": "485a9c8cff80bd9b306145fca25d2a7ebf06fbd445d6345b888c8441dc3f2d96",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 27,
+      "uncompressed_bytes": 31258668,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 27
+      },
+      "extensions": {
+        ".bin": 27
+      },
+      "baseline_comparisons": {
+        "absent": 27
+      },
+      "serialized_signatures": {
+        "Parse6": 16,
+        "Parse7": 11
+      }
+    },
+    {
+      "archive": "geobin_czt.pigg",
+      "bytes": 11588171,
+      "sha256": "06da167aa3587ddee7fec32a0d4d2a906b1000fa8983a5f56ba6835fe9e25ca5",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 21,
+      "uncompressed_bytes": 55336540,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 21
+      },
+      "extensions": {
+        ".bin": 21
+      },
+      "baseline_comparisons": {
+        "absent": 21
+      },
+      "serialized_signatures": {
+        "Parse7": 3,
+        "Parse6": 18
+      }
+    },
+    {
+      "archive": "geobin_czv.pigg",
+      "bytes": 10506060,
+      "sha256": "5ae52e774240e599f91cb7aa850c55c41ceda47db68b31d157dec9b12db9f9d7",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 22,
+      "uncompressed_bytes": 46394112,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 22
+      },
+      "extensions": {
+        ".bin": 22
+      },
+      "baseline_comparisons": {
+        "absent": 22
+      },
+      "serialized_signatures": {
+        "Parse7": 10,
+        "Parse6": 12
+      }
+    },
+    {
+      "archive": "geobin_obj.pigg",
+      "bytes": 36906970,
+      "sha256": "345223bdd070b27ef5aa2d1ae77da49d7667e917518c102db5ac36e459b6aabc",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 6557,
+      "uncompressed_bytes": 150816772,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 6416,
+        "candidate_binary_asset": 141
+      },
+      "extensions": {
+        ".bin": 3208,
+        ".bounds": 3208,
+        ".geo": 141
+      },
+      "baseline_comparisons": {
+        "absent": 6557
+      },
+      "serialized_signatures": {
+        "Parse6": 6006,
+        "Parse7": 410
+      }
+    },
+    {
+      "archive": "kallisti.pigg",
+      "bytes": 27898079,
+      "sha256": "16b433d118420dee8ac85303b64b414f10ba761111880dd6e3ea247292ede1b2",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 157,
+      "uncompressed_bytes": 48218123,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 157
+      },
+      "extensions": {
+        ".texture": 157
+      },
+      "baseline_comparisons": {
+        "absent": 157
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "scenes.pigg",
+      "bytes": 2352870,
+      "sha256": "15503831401b4972603f0e55d1b75a694d9c9cf04b8cf07f2016dd80c02cd6e8",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1282,
+      "uncompressed_bytes": 10260296,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "other_content": 1282
+      },
+      "extensions": {
+        ".txt": 435,
+        "": 4,
+        ".log": 1,
+        ".texword": 725,
+        ".ms": 104,
+        ".types": 2,
+        ".def": 4,
+        ".mnu": 2,
+        ".spec": 2,
+        ".ch": 1,
+        ".ko": 1,
+        ".old": 1
+      },
+      "baseline_comparisons": {
+        "different": 1225,
+        "absent": 56,
+        "identical": 1
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "sound.pigg",
+      "bytes": 16386660,
+      "sha256": "211f11ea9afa864b27986436afbee8b077d2f6aa7f270198e4ad14103263d796",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 328,
+      "uncompressed_bytes": 16482241,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 79,
+        "other_content": 249
+      },
+      "extensions": {
+        ".ogg": 79,
+        ".txt": 249
+      },
+      "baseline_comparisons": {
+        "absent": 79,
+        "different": 249
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "texture_characters.pigg",
+      "bytes": 18383833,
+      "sha256": "c68c697352d2d6f2a970821eb3bbffb639f4ca23477a4a81cce9bf0d765c863e",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 182,
+      "uncompressed_bytes": 45123203,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 182
+      },
+      "extensions": {
+        ".texture": 182
+      },
+      "baseline_comparisons": {
+        "absent": 182
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "texture_world.pigg",
+      "bytes": 7379427,
+      "sha256": "1a74423f1df543bf2a729f57281caa1855c364780ef825c0b58ceaaeba7aae05",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 106,
+      "uncompressed_bytes": 22490221,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 106
+      },
+      "extensions": {
+        ".texture": 106
+      },
+      "baseline_comparisons": {
+        "absent": 106
+      },
+      "serialized_signatures": {}
+    }
+  ]
+}
