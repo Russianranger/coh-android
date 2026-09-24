@@ -6,6 +6,8 @@ init requires a NEW directory; restore requires a NEW database. Never deletes a
 cluster or existing database. Requires initdb/pg_ctl/psql/pg_dump/pg_restore.
 """
 import argparse
+import csv
+import io
 import json
 import os
 from pathlib import Path
@@ -115,6 +117,18 @@ def initialize(root, pg_bin, port, database, driver):
     if len(os.fsencode(root/'socket')) > 85:
         raise ValueError('Choose a shorter cluster path for the Unix socket')
     root.mkdir(mode=0o700, parents=False, exist_ok=False)
+    if os.name == 'nt':
+        # PostgreSQL drops administrator group rights on Windows. An inherited
+        # Administrators-only DACL can deny even this user's password file.
+        # Grant only this user's SID and SYSTEM on our newly created directory.
+        identity = subprocess.run(['whoami', '/user', '/fo', 'csv', '/nh'],
+                                  check=True, capture_output=True, text=True).stdout
+        sid = next(csv.reader(io.StringIO(identity.strip())))[1]
+        if not re.fullmatch(r'S-1-[0-9-]+', sid):
+            raise ValueError('Cannot resolve the current Windows user SID')
+        subprocess.run(['icacls', str(root), '/inheritance:r', '/grant:r',
+                        f'*{sid}:(OI)(CI)F', '*S-1-5-18:(OI)(CI)F'],
+                       check=True, capture_output=True, text=True)
     (root/'socket').mkdir(mode=0o700)
     passwords = {'admin': secrets.token_hex(24), 'game': secrets.token_hex(24)}
     private_write(root/'cluster.json', json.dumps({'bin': str(pg_bin), 'port': port,
