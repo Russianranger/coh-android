@@ -1,0 +1,440 @@
+{
+  "checked_at": "2026-09-24T00:52:26.487198+00:00",
+  "catalog_sha256": "6bdfe06a4644b98a07482522fc1aa7f0e209926564942b51a8de03e3683bf6d5",
+  "method": "HEAD",
+  "results": [
+    {
+      "name": "fonts.pigg",
+      "url": "https://dists.thunderspy.org/piggs/fonts.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "geom.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geom.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "geomBC.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomBC.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "geomV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomV1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "geomV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomV2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsCities1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsCities1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsCities2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsCities2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsHazards.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsHazards.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsMisc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsMisc.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsMissions.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsMissions.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "mapsTrials.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsTrials.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "misc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/misc.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "player.pigg",
+      "url": "https://dists.thunderspy.org/piggs/player.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound3.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound4.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound4.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound5.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound5.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound6.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound6.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "sound7.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound7.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundMusic.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundMusic1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundMusic2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundPowers.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundPowers.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundV1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundV2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "soundVMusic.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundVMusic.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1a.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1b.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1d.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1d.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1e.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1e.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage1f.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1f.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage2a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2a.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage2b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2b.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage2c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3a.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3b.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3d.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3d.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3e.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3e.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3f.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3f.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "stage3g.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texEnemies.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texEnemies2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texEnemies3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies3.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texEnemies4.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies4.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texEnemies5.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies5.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texFxGuiItems.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texFxGuiItems.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texGui1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texGui1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texMaps.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texMaps.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texMisc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texMisc.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texPlayersUI.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texPlayersUI.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texts.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texts.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVEnemies.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVEnemies.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorld.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorld1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorld2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorld3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld3.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorldBases1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorldBases1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texVWorldBases2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorldBases2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorld.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorld.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldBC.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldBC.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldBuildings.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldBuildings.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldCZ.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldCZ.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldSW.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldSW.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldV1.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "texWorldV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldV2.pigg",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden"
+    }
+  ],
+  "note": "HTTP reachability only; no content or gameplay validation"
+}
