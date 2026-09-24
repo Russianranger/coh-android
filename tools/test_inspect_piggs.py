@@ -7,6 +7,7 @@ import unittest
 import zlib
 
 from inspect_piggs import geometry_header, inspect
+from index_piggs import index_archive
 
 
 def archive(entries, cached_header=None):
@@ -42,9 +43,10 @@ class ArchiveTests(unittest.TestCase):
     def test_selective_staging_excludes_generated_and_text_files(self):
         report, files = self.run_archive(archive([
             ('Texture_Library/sample.texture', b'texture'),
+            ('fonts/fallback.ttc', b'font collection'),
             ('bin/powers.bin', b'compiled'), ('defs/example.def', b'definition')]), stage=True)
-        self.assertEqual(files, ['texture_library/sample.texture'])
-        self.assertEqual(report['entry_count'], 3)
+        self.assertEqual(files, ['fonts/fallback.ttc', 'texture_library/sample.texture'])
+        self.assertEqual(report['entry_count'], 4)
 
     def test_checksum_corruption_rejected(self):
         data = bytearray(archive([('sample.txt', b'content')]))
@@ -102,6 +104,29 @@ class ArchiveTests(unittest.TestCase):
             result = geometry_header(struct.pack('<IIII', 20, 0, version, 64))
             self.assertFalse(result['baseline_loader_accepts_version'])
             self.assertNotIn('header_decompression_verified', result)
+
+    def test_index_reads_tables_without_claiming_payload_integrity(self):
+        data = archive([('player_library/animations/male/thumbsup.anim', b'animation'),
+                        ('texture_library/system/white.texture', b'texture')])
+        # A missing payload is intentionally not detected by the index-only tool.
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'index-only.pigg'
+            path.write_bytes(data[:-4])
+            result = index_archive(path)
+        self.assertEqual(result['animation_count'], 1)
+        self.assertTrue(result['has_male_thumbsup_animation'])
+        self.assertEqual(result['startup_texture_paths'], ['texture_library/system/white.texture'])
+        self.assertFalse(result['integrity_checked'])
+        self.assertFalse(result['payloads_read'])
+
+    def test_index_rejects_bad_filename_table(self):
+        data = bytearray(archive([('sample.txt', b'content')]))
+        struct.pack_into('<I', data, 16 + 48, 0)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'bad-table.pigg'
+            path.write_bytes(data)
+            with self.assertRaisesRegex(ValueError, 'Invalid filename table'):
+                index_archive(path)
 
 
 if __name__ == '__main__':

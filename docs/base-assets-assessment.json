@@ -1,0 +1,188 @@
+{
+  "assessed_utc_date": "2026-09-24",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "new_archives": [
+    {
+      "archive": "fonts.pigg",
+      "bytes": 20870327,
+      "sha256": "a2777e5a4ad0ee342127963940f063370dcca4478147f8672581bbe7a7ecb87f",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 46,
+      "uncompressed_bytes": 41257184,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 46
+      },
+      "extensions": {
+        ".ttf": 43,
+        ".ttc": 3
+      },
+      "baseline_comparisons": {
+        "absent": 46
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "player.pigg",
+      "bytes": 17547239,
+      "sha256": "574fd57ec2b456ab2b40fbe8fd2ce11fef233f1652cdbfa35a9464ac0158d22c",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 709,
+      "uncompressed_bytes": 22102430,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "candidate_binary_asset": 709
+      },
+      "extensions": {
+        ".geo": 709
+      },
+      "baseline_comparisons": {
+        "absent": 709
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "misc.pigg",
+      "bytes": 436423,
+      "sha256": "4d7e56bfee88d3dead50178957ff2288f7b95768cb9c6d733024aedaf51ef684",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 694,
+      "uncompressed_bytes": 1734388,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "other_content": 694
+      },
+      "extensions": {
+        ".txt": 632,
+        "": 4,
+        ".rcp": 9,
+        ".cg": 30,
+        ".cgh": 12,
+        ".cgfx": 2,
+        ".tec": 5
+      },
+      "baseline_comparisons": {
+        "different": 692,
+        "absent": 2
+      },
+      "serialized_signatures": {}
+    },
+    {
+      "archive": "geom.pigg",
+      "bytes": 101980407,
+      "sha256": "3fa1cf7df601f364f500a7518f7924c777e958e742c4cbe944fdd1dde49368f5",
+      "creator_version": 2,
+      "required_reader_version": 2,
+      "entry_count": 1325,
+      "uncompressed_bytes": 124181990,
+      "integrity": "all_entry_sizes_zlib_and_md5_passed",
+      "categories": {
+        "generated_cache": 757,
+        "candidate_binary_asset": 568
+      },
+      "extensions": {
+        ".bin": 757,
+        ".geo": 568
+      },
+      "baseline_comparisons": {
+        "absent": 1325
+      },
+      "serialized_signatures": {
+        "Parse6": 757
+      }
+    }
+  ],
+  "new_entries_verified": 2774,
+  "new_candidate_asset_occurrences": 1323,
+  "new_geometry_count": 1277,
+  "new_geometry_supported_versions": {
+    "2": 230,
+    "5": 72,
+    "7": 242,
+    "8": 329,
+    "3": 170,
+    "4": 112,
+    "0": 122
+  },
+  "new_geometry_headers_verified": 1277,
+  "cumulative_archives": 22,
+  "cumulative_verified_entries": 12870,
+  "cumulative_distinct_asset_paths": 2487,
+  "cumulative_distinct_path_hash_variants": 2489,
+  "cumulative_distinct_variant_bytes": 472691118,
+  "cumulative_distinct_path_extensions": {
+    ".geo": 1917,
+    ".texture": 445,
+    ".ogg": 79,
+    ".ttf": 43,
+    ".ttc": 3
+  },
+  "same_path_asset_repeats": 85,
+  "byte_identical_repeats": 83,
+  "conflicting_asset_paths": [
+    {
+      "path": "object_library/v_cov/bases/details/functional/base_telemed_aux/base_telemed_aux.geo",
+      "first_archive": "geobin_obj.pigg",
+      "second_archive": "geom.pigg",
+      "identical": false,
+      "first_bytes": 13410,
+      "second_bytes": 12760
+    },
+    {
+      "path": "object_library/v_cov/bases/details/functional/base_teleporter_arc_aux/base_teleporter_arc_aux.geo",
+      "first_archive": "geobin_obj.pigg",
+      "second_archive": "geom.pigg",
+      "identical": false,
+      "first_bytes": 58733,
+      "second_bytes": 51967
+    }
+  ],
+  "fonts": {
+    "ttf": 43,
+    "ttc": 3,
+    "startup_referenced_names": [
+      "asiapfb.ttf",
+      "cour.ttf",
+      "digitalb.ttf",
+      "gothic.ttf",
+      "gothicb.ttf",
+      "gulim.ttc",
+      "mont_demibold.ttf",
+      "mont_hvbold.ttf",
+      "msgothic.ttc",
+      "redcircl.ttf",
+      "slkscr.ttf",
+      "tahoma.ttf",
+      "tahomabd.ttf",
+      "verdana.ttf",
+      "verdanab.ttf",
+      "ygo230.ttf"
+    ],
+    "missing_startup_referenced_names": []
+  },
+  "misc_text_comparison": {
+    "line_endings_only": 692,
+    "absent_from_baseline": 2
+  },
+  "unresolved_startup_assets": {
+    "animation_count_in_inspected_archives": 0,
+    "missing_startup_texture_basenames": [
+      "white",
+      "grey",
+      "invisible",
+      "black",
+      "dummy_bump",
+      "dummy_dynamic_cubemap_face0",
+      "buildinglightpattern"
+    ],
+    "scope": "uploaded archives only; these may exist elsewhere on the user device"
+  },
+  "runtime_compatibility": "untested",
+  "raw_assets_published": false,
+  "candidate_staging": "separate per donor; no automatic overlay of conflicts",
+  "indexer_validation": "counts and extensions agree with full inspection for all 22 archives; indexer does not verify payloads"
+}

@@ -18,7 +18,7 @@ import zlib
 ROOT = Path(__file__).resolve().parents[1]
 HEADER = struct.Struct('<IHHHHI')
 ENTRY = struct.Struct('<IiIIIIi16sI')
-ASSET_SUFFIXES = {'.geo', '.texture', '.ogg', '.wav', '.anim', '.ttf', '.otf'}
+ASSET_SUFFIXES = {'.geo', '.texture', '.ogg', '.wav', '.anim', '.ttf', '.ttc', '.otf'}
 
 
 def require(condition, message):

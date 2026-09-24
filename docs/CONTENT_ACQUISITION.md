@@ -16,6 +16,14 @@ Parse6 caches. Cumulative inspection is 18 archives / 10,096 entries and 1,249
 distinct candidate assets. See [geometry evidence](base-geometry-assessment.json).
 Runtime compatibility and completeness are still unverified.
 
+**Current coverage:** the later fonts/player/misc/geom batch brings inspection to
+22 archives / 12,870 entries / 2,487 distinct candidate asset paths. Startup font
+filenames are covered, but supplied archives contain no `.anim` tracks and lack
+several basic renderer textures. The next input should be a compact archive index
+from the Thor using `tools/index_piggs.py`; see
+[base asset coverage](BASE_ASSET_COVERAGE.md). No more uploads need to be chosen
+solely from archive names.
+
 ## Imported successfully
 
 The entire companion [Thunderspies/i24 repository](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)

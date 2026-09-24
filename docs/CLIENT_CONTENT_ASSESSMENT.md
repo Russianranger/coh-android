@@ -8,6 +8,11 @@ Follow-up: `geomBC.pigg` has also been received and verified; see the
 [base geometry result](#base-geometry-follow-up) below and
 [base-geometry-assessment.json](base-geometry-assessment.json).
 
+The subsequent fonts/player/misc/geom batch is covered in the
+[current base asset assessment](BASE_ASSET_COVERAGE.md). Current totals are
+22 archives / 12,870 verified entries / 2,487 distinct candidate asset paths.
+That report supersedes the next-upload suggestions in this earlier assessment.
+
 ## Result
 
 All **8,864 entries** passed bounds, decompression, uncompressed-size and MD5

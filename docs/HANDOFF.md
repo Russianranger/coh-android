@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24 after inspection of 17 custom client archives and base geomBC.pigg.
+Updated: 2026-09-24 after 22 archive inspections and startup asset coverage checks.
 
 ## Active direction
 
@@ -46,9 +46,24 @@ and runtime loading are untested. Staged geometry separately under
 `imports/base-geomBC-candidate-assets`. Cumulative result: **18 archives,
 10,096 verified entries, 1,249 distinct candidate assets / 318,908,734 bytes**.
 The inspector now records geometry header checks; eleven regression tests pass.
-See [base geometry evidence](base-geometry-assessment.json). Next useful batch:
-base `player.pigg`, `misc.pigg`, `fonts.pigg`; `geom.pigg` remains a priority for
-additional geometry. A filename/size inventory can guide further batches.
+See [base geometry evidence](base-geometry-assessment.json).
+
+The later `fonts.pigg`, `player.pigg`, `misc.pigg` and `geom.pigg` batch also
+passed: **2,774 additional entries**. Cumulative result is now **22 archives /
+12,870 entries / 2,487 distinct candidate asset paths**, with two conflicting
+custom/base geometry variants kept separately. All 46 fonts are staged, including
+TTC collections; every one of the 16 startup font filenames is present. All
+1,277 new geometry headers passed. `misc.pigg` mostly duplicates the pinned text.
+There are still **zero skeletal .anim tracks** in the supplied set and none of
+seven requested basic renderer texture names. This prevents calling the content
+startup-ready. See [current coverage and next-upload instructions](BASE_ASSET_COVERAGE.md)
+and [machine-readable evidence](base-assets-assessment.json).
+
+Next requested input is **`coh-asset-index.json`**, generated on the Thor with the
+new standalone `tools/index_piggs.py` against the whole client root. This reads
+only archive tables and identifies which remaining archives contain animations
+and base textures. It is not an integrity verifier. Counts/extensions matched
+full inspection for all 22 available archives; thirteen regression tests pass.
 
 [Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
 completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
@@ -64,8 +79,8 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Complete base-asset acquisition and compatibility checks; the inspected custom
-   patch set and geomBC are partial donors. Use `inspect_piggs.py` to verify additional
+1. Locate animations/basic textures through the client's archive index; the inspected
+   set is still a partial donor. Use `inspect_piggs.py` to verify additional
    PIGGs and isolate candidate assets, then test them against the selected source.
    `content_assets.py record` establishes observed hashes, not upstream-authenticated
    integrity. PIGG structure/extraction and source compatibility remain separate gates.
