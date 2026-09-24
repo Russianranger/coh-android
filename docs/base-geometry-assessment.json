@@ -1,0 +1,56 @@
+{
+  "assessed_utc_date": "2026-09-24",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "archive": {
+    "archive": "geomBC.pigg",
+    "bytes": 167716173,
+    "sha256": "9f99e94820f3891d12a5f5a379a2187ac08f31f7ce3cbab5b890639c8a8d5e83",
+    "creator_version": 2,
+    "required_reader_version": 2,
+    "entry_count": 1232,
+    "uncompressed_bytes": 173389797,
+    "integrity": "all_entry_sizes_zlib_and_md5_passed",
+    "categories": {
+      "generated_cache": 648,
+      "candidate_binary_asset": 584
+    },
+    "extensions": {
+      ".bin": 648,
+      ".geo": 584
+    },
+    "baseline_comparisons": {
+      "absent": 1232
+    },
+    "serialized_signatures": {
+      "Parse6": 648
+    }
+  },
+  "geometry_assessment": {
+    "source_loader": "Common/seq/anim.c:geoLoadStubs",
+    "geometry_count": 584,
+    "geometry_bytes": 166153393,
+    "version_counts": {
+      "8": 452,
+      "0": 91,
+      "7": 38,
+      "5": 1,
+      "4": 2
+    },
+    "header_decompression_checks_passed": 584,
+    "issues": [],
+    "same_stem_baseline_text_paths": 217,
+    "runtime_compatibility": "not_tested",
+    "overlapping_patch_asset_paths": 0,
+    "identical_overlapping_patch_assets": 0,
+    "data_block_bounds_checks_passed": 584,
+    "baseline_loader_version_accepted_count": 584
+  },
+  "authenticity": "user_supplied_no_trusted_external_checksum",
+  "candidate_assets_published": false,
+  "raw_assets_staged_separately": true,
+  "cumulative_inspected_archives": 18,
+  "cumulative_verified_entries": 10096,
+  "cumulative_distinct_candidate_assets": 1249,
+  "cumulative_candidate_asset_bytes": 318908734
+}

@@ -6,7 +6,7 @@ import tempfile
 import unittest
 import zlib
 
-from inspect_piggs import inspect
+from inspect_piggs import geometry_header, inspect
 
 
 def archive(entries, cached_header=None):
@@ -77,6 +77,31 @@ class ArchiveTests(unittest.TestCase):
         struct.pack_into('<H', data, 6, 3)
         with self.assertRaisesRegex(ValueError, 'Unsupported PIGG'):
             self.run_archive(data)
+
+    def test_geometry_version_and_header_envelope(self):
+        header = struct.pack('<IIII', 3, 0, 0, 0)
+        packed = zlib.compress(header)
+        data = struct.pack('<IIII', len(packed) + 12, 0, 8, len(header)) + packed + b'abc'
+        result = geometry_header(data)
+        self.assertEqual(result['version'], 8)
+        self.assertTrue(result['header_decompression_verified'])
+        self.assertEqual(result['runtime_compatibility'], 'unverified')
+        with self.assertRaisesRegex(ValueError, 'out-of-bounds'):
+            geometry_header(data[:-1])
+
+    def test_geometry_legacy_offset(self):
+        header = struct.pack('<IIII', 3, 0, 0, 0)
+        packed = zlib.compress(header)
+        data = struct.pack('<II', len(packed) + 4, len(header)) + packed + b'\0' * 4 + b'abc'
+        self.assertTrue(geometry_header(data)['data_block_bounds_verified'])
+        with self.assertRaisesRegex(ValueError, 'out-of-bounds'):
+            geometry_header(data[:-1])
+
+    def test_unsupported_geometry_reported_without_claiming_compatibility(self):
+        for version in (1, 6, 9):
+            result = geometry_header(struct.pack('<IIII', 20, 0, version, 64))
+            self.assertFalse(result['baseline_loader_accepts_version'])
+            self.assertNotIn('header_decompression_verified', result)
 
 
 if __name__ == '__main__':

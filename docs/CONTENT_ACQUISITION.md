@@ -10,6 +10,12 @@ caches. Base-asset acquisition and runtime compatibility remain incomplete.
 The portable `tools/inspect_piggs.py` now performs PIGG integrity checks and
 selective candidate extraction; the older host probe results below are unchanged.
 
+**Base geometry follow-up:** `geomBC.pigg` supplied another 584 geometry files,
+all using source-supported versions and passing header/bounds checks, plus 648
+Parse6 caches. Cumulative inspection is 18 archives / 10,096 entries and 1,249
+distinct candidate assets. See [geometry evidence](base-geometry-assessment.json).
+Runtime compatibility and completeness are still unverified.
+
 ## Imported successfully
 
 The entire companion [Thunderspies/i24 repository](https://github.com/Thunderspies/i24/tree/d51533ec8e6a9cf726b9214968077a05fdcf19f3)

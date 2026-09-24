@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24 after inspection of the user's 17 custom client archives.
+Updated: 2026-09-24 after inspection of 17 custom client archives and base geomBC.pigg.
 
 ## Active direction
 
@@ -37,9 +37,18 @@ with runtime compatibility still unverified. No raw client binaries/assets were
 published. The original ZIP plus the new portable inspector reproduce staging.
 See [client content assessment](CLIENT_CONTENT_ASSESSMENT.md) and its
 [per-archive hashes/counts](client-content-assessment.json). Eight inspector
-regression tests passed. Next requested input is base `piggs/geom.pigg` or
-`piggs/geomBC.pigg`, followed by selected base archives; more generated patch
-caches are lower priority.
+regression tests passed in that initial pass.
+
+The subsequent **`geomBC.pigg`** also passed: 1,232 entries, comprising 584
+geometry files and 648 Parse6 caches. All geometry files use versions accepted
+by the source and passed compressed-header/data-bounds checks; meshes/collision
+and runtime loading are untested. Staged geometry separately under
+`imports/base-geomBC-candidate-assets`. Cumulative result: **18 archives,
+10,096 verified entries, 1,249 distinct candidate assets / 318,908,734 bytes**.
+The inspector now records geometry header checks; eleven regression tests pass.
+See [base geometry evidence](base-geometry-assessment.json). Next useful batch:
+base `player.pigg`, `misc.pigg`, `fonts.pigg`; `geom.pigg` remains a priority for
+additional geometry. A filename/size inventory can guide further batches.
 
 [Hosted import/probe run](https://github.com/Russianranger/coh-android/actions/runs/35940141238)
 completed successfully. All 72 archive HEAD requests to `dists.thunderspy.org`
@@ -56,7 +65,7 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 ## Next implementation steps
 
 1. Complete base-asset acquisition and compatibility checks; the inspected custom
-   patch set is only a partial donor. Use `inspect_piggs.py` to verify additional
+   patch set and geomBC are partial donors. Use `inspect_piggs.py` to verify additional
    PIGGs and isolate candidate assets, then test them against the selected source.
    `content_assets.py record` establishes observed hashes, not upstream-authenticated
    integrity. PIGG structure/extraction and source compatibility remain separate gates.

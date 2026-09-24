@@ -105,6 +105,39 @@ def category(name):
     return 'other_content'
 
 
+def geometry_header(data):
+    """Check the header envelope accepted by Common/seq/anim.c:geoLoadStubs.
+
+    This does not decode meshes, collision grids, models or texture references.
+    Unsupported versions are reported separately from archive integrity.
+    """
+    biased_size, unpacked_size = struct.unpack('<II', region(data, 0, 8))
+    if unpacked_size == 0:
+        version, unpacked_size = struct.unpack('<II', region(data, 8, 8))
+        start, packed_size, data_offset = 16, biased_size - 12, biased_size + 4
+        supported = 2 <= version <= 8 and version != 6
+    else:
+        version = 0  # Legacy unversioned layout in the source reader.
+        start, packed_size, data_offset = 8, biased_size - 4, biased_size + 8
+        supported = True
+    result = {'version': version, 'baseline_loader_accepts_version': supported,
+              'runtime_compatibility': 'unverified'}
+    if not supported:
+        return result
+    require(16 <= unpacked_size <= 128 * 1024**2 and packed_size > 0,
+            'Invalid/oversized geometry header')
+    packed = region(data, start, packed_size)
+    decoder = zlib.decompressobj()
+    header = decoder.decompress(packed, unpacked_size + 1)
+    require(decoder.eof and not decoder.unused_data and not decoder.unconsumed_tail and
+            len(header) == unpacked_size, 'Geometry header decompression mismatch')
+    data_size, = struct.unpack('<I', region(header, 0, 4))
+    region(data, data_offset, data_size)
+    result.update({'header_uncompressed_bytes': unpacked_size,
+                   'header_decompression_verified': True, 'data_block_bounds_verified': True})
+    return result
+
+
 def inspect(path, baseline, max_entry, budget, stage, staged):
     require(not path.is_symlink() and path.is_file(), 'Input must be a regular file')
     require(path.stat().st_size <= 2 * 1024**3, 'Archive exceeds 2 GiB inspection limit')
@@ -152,6 +185,8 @@ def inspect(path, baseline, max_entry, budget, stage, staged):
         header = serialized_header(body, baseline)
         if header:
             entry['serialized_header'] = header
+        if PurePosixPath(key).suffix == '.geo':
+            entry['geometry_header'] = geometry_header(body)
         if baseline is not None:
             original = baseline.get('data/' + key)
             entry['baseline_comparison'] = ('identical' if original == sha else 'different') if original else 'absent'

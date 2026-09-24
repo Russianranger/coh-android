@@ -4,6 +4,10 @@ Assessed 2026-09-24. Input: `small_i26_piggs.zip`, 17 PIGG archives,
 191,014,597 ZIP bytes. Exact archive sizes, SHA-256 hashes and counts are in
 [client-content-assessment.json](client-content-assessment.json).
 
+Follow-up: `geomBC.pigg` has also been received and verified; see the
+[base geometry result](#base-geometry-follow-up) below and
+[base-geometry-assessment.json](base-geometry-assessment.json).
+
 ## Result
 
 All **8,864 entries** passed bounds, decompression, uncompressed-size and MD5
@@ -89,11 +93,11 @@ compiled data exists inside the PIGGs despite the empty loose bin directory.
 
 ## Next content and implementation steps
 
-1. Inspect base assets from **`piggs/`**, starting with `geom.pigg`, or the
-   previously shown `geomBC.pigg` if that is easier to upload. These are
-   candidates for the missing base geometry; filenames alone do not prove their
-   contents or completeness. Then inspect `player.pigg`, `misc.pigg`, and
-   `fonts.pigg` if present. A full base-folder file/size inventory will let us
+1. Continue inspecting base assets from **`piggs/`**. `geomBC.pigg` is now verified
+   and staged separately. The next useful batch is `player.pigg`, `misc.pigg`,
+   and `fonts.pigg` if present; `geom.pigg` remains a priority for further base
+   geometry. Their names are upload priorities, not a verified inventory of
+   their contents. A full base-folder file/size inventory will let us
    choose subsequent batches without repeated screenshots.
 2. Keep this custom `i26` patch set separate from the base set. Extract verified
    candidate assets into isolated staging, retaining hashes and provenance.
@@ -110,6 +114,38 @@ compiled data exists inside the PIGGs despite the empty loose bin directory.
 Recreating this customized shard exactly would additionally require its matching
 server source/definitions or a known-compatible server package. That is a
 separate compatibility target; it is not required to pursue our selected baseline.
+
+## Base geometry follow-up
+
+The supplied `geomBC.pigg` is 167,716,173 bytes and contains **1,232 entries**:
+584 `.geo` files and 648 generated `.bin` files. Every archive entry passed
+decompression, length, MD5 and cached-header checks. All 648 serialized caches
+have `Parse6` signatures; this is not enough to establish matching schemas or
+content, so regenerate caches for the selected baseline.
+
+All **584 geometry files** also passed the geometry header checks derived from
+`Common/seq/anim.c:geoLoadStubs`: supported format version, header decompression,
+declared header length and data-block bounds. Versions are 452 version-8 files,
+91 legacy files, 38 version-7 files, one version-5 file and two version-4 files.
+These geometry version numbers are separate from `Parse6`/`Parse7` cache tags.
+Meshes, collision grids, model records, texture dependencies and runtime loading
+have not been validated. In particular, this does not prove that Atlas Park or
+any other map is complete or playable.
+
+Geometry files total **166,153,393 bytes** and are staged under
+`imports/base-geomBC-candidate-assets`, separately from the custom patch donor.
+There are no duplicate geometry paths with the earlier 665 candidate assets.
+217 geometry paths have same-stem baseline text paths; path matches are only
+an indicator and do not measure runtime coverage.
+
+Across both uploads, **18 archives / 10,096 entries** have been verified, with
+**1,249 distinct candidate binary assets / 318,908,734 bytes** staged. The upload
+and per-archive hashes plus the inspector reproduce these results without
+Windows. Raw assets remain outside Git and are not yet an active runtime.
+
+The inspector now records `.geo` header checks automatically. Eleven regression
+tests pass, including versioned/legacy geometry bounds and unsupported geometry
+versions. The original eight archive tests are retained.
 
 ## Reproducible inspection without Windows
 
@@ -132,6 +168,9 @@ It imposes archive/entry/total size limits, rejects unsafe paths and case
 collisions, and only stages an allowlist of binary asset extensions. Staged
 paths are lowercased for the baseline's file naming convention. Duplicate
 candidate paths across archives are rejected instead of choosing an overlay.
+For `.geo` files, it additionally records source-supported versions and checks
+compressed header lengths/data bounds. Unsupported geometry versions are reported
+without claiming runtime compatibility; archive integrity remains a separate test.
 
 An interrupted/failed staging directory retains `.inspection-incomplete` and
 must not be used. Successful staging still does not establish runtime
@@ -147,6 +186,7 @@ Primary format evidence is in the preserved source:
 - [Expected parser signature](../upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/textparser.h)
 - [Serialized signature/CRC checks](../upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c)
 - [Bin reader and parse-table CRC](../upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c)
+- [Geometry header reader and supported versions](../upstream/ouroboros/Common/seq/anim.c)
 
 No Android APK, server runtime or gameplay validation was produced by this
 inspection. Both imported source/data snapshots remain unchanged.
