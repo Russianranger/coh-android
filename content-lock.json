@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "imported_at": "2026-09-24",
+  "destination": "upstream/i24",
+  "acquisition_url": "https://github.com/Thunderspies/i24.git",
+  "acquisition_branch": "master",
+  "commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "tree": "4a9a4e893787b6367e916530235d8818dc32ea8f",
+  "files": 156297,
+  "bytes": 1992097492,
+  "manifest": "docs/data-manifest.json",
+  "inventory": "docs/data-inventory.json",
+  "scope": "Entire tracked companion repository, unchanged; large binary assets are separate",
+  "source_pair": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "runtime_pair_status": "Not gameplay tested",
+  "binary_asset_catalog": "assets/catalog.json"
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify the immutable imported snapshot; exit nonzero on any discrepancy."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -9,8 +10,11 @@ import sys
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--lock', default='upstream-lock.json')
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    lock = json.loads((root / "upstream-lock.json").read_text())
+    lock = json.loads((root / args.lock).read_text())
     manifest = json.loads((root / lock["manifest"]).read_text())
     source = root / lock["destination"]
     failures = []

@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/Thunderspies/i24",
+  "source_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "source_path": "tools/fetch_data.ps1",
+  "extraction_order": "case-insensitive alphabetical, matching upstream",
+  "integrity_note": "Upstream recipe provides no cryptographic checksums. SHA-256 values recorded after acquisition identify local bytes, not an independently authenticated baseline.",
+  "archives": [
+    {
+      "name": "fonts.pigg",
+      "url": "https://dists.thunderspy.org/piggs/fonts.pigg",
+      "sha256": null
+    },
+    {
+      "name": "geom.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geom.pigg",
+      "sha256": null
+    },
+    {
+      "name": "geomBC.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomBC.pigg",
+      "sha256": null
+    },
+    {
+      "name": "geomV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomV1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "geomV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/geomV2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsCities1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsCities1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsCities2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsCities2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsHazards.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsHazards.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsMisc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsMisc.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsMissions.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsMissions.pigg",
+      "sha256": null
+    },
+    {
+      "name": "mapsTrials.pigg",
+      "url": "https://dists.thunderspy.org/piggs/mapsTrials.pigg",
+      "sha256": null
+    },
+    {
+      "name": "misc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/misc.pigg",
+      "sha256": null
+    },
+    {
+      "name": "player.pigg",
+      "url": "https://dists.thunderspy.org/piggs/player.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound3.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound4.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound4.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound5.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound5.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound6.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound6.pigg",
+      "sha256": null
+    },
+    {
+      "name": "sound7.pigg",
+      "url": "https://dists.thunderspy.org/piggs/sound7.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundMusic.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundMusic1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundMusic2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundMusic2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundPowers.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundPowers.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundV1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundV2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "soundVMusic.pigg",
+      "url": "https://dists.thunderspy.org/piggs/soundVMusic.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1a.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1b.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1d.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1d.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1e.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1e.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage1f.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage1f.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage2a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2a.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage2b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2b.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage2c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3a.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3a.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3b.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3b.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3c.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3c.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3d.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3d.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3e.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3e.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3f.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3f.pigg",
+      "sha256": null
+    },
+    {
+      "name": "stage3g.pigg",
+      "url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texEnemies.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texEnemies2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texEnemies3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies3.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texEnemies4.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies4.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texEnemies5.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texEnemies5.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texFxGuiItems.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texFxGuiItems.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texGui1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texGui1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texMaps.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texMaps.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texMisc.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texMisc.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texPlayersUI.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texPlayersUI.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texts.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texts.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVEnemies.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVEnemies.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorld.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorld1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorld2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorld3.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorld3.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorldBases1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorldBases1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texVWorldBases2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texVWorldBases2.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorld.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorld.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldBC.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldBC.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldBuildings.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldBuildings.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldCZ.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldCZ.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldSW.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldSW.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldV1.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldV1.pigg",
+      "sha256": null
+    },
+    {
+      "name": "texWorldV2.pigg",
+      "url": "https://dists.thunderspy.org/piggs/texWorldV2.pigg",
+      "sha256": null
+    }
+  ]
+}

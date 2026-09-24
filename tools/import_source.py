@@ -6,11 +6,13 @@ stages the result only after checking the original Git tree identity. An existin
 snapshot is verified instead of overwritten. Run from a clean repository.
 """
 
+import argparse
 import collections
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import subprocess
+import sys
 import tarfile
 import tempfile
 
@@ -20,23 +22,31 @@ def git(directory, *args):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--lock', default='upstream-lock.json')
+    parser.add_argument('--source-repo', type=Path,
+                        help='Existing local Git repository containing the pinned commit')
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    lock = json.loads((root / "upstream-lock.json").read_text())
+    lock = json.loads((root / args.lock).read_text())
+    inventory_path = lock.get('inventory', 'docs/source-inventory.json')
     destination = root / lock["destination"]
     if destination.exists():
-        subprocess.run(["python3", str(root / "tools/verify_source.py")],
+        subprocess.run([sys.executable, str(root / "tools/verify_source.py"),
+                        '--lock', args.lock],
                        check=True)
         return
     if git(root, "status", "--porcelain").strip():
         raise SystemExit("Commit or stash local changes before importing")
     with tempfile.TemporaryDirectory(prefix="coh-source-") as directory:
         scratch = Path(directory)
-        source = scratch / "source"
-        source.mkdir()
-        git(source, "init", "--quiet")
-        git(source, "remote", "add", "origin", lock["acquisition_url"])
-        git(source, "fetch", "--quiet", "--depth=1", "origin", lock["commit"])
-        actual_tree = git(source, "rev-parse", "FETCH_HEAD^{tree}")
+        source = args.source_repo.resolve() if args.source_repo else scratch / "source"
+        if not args.source_repo:
+            source.mkdir()
+            git(source, "init", "--quiet")
+            git(source, "remote", "add", "origin", lock["acquisition_url"])
+            git(source, "fetch", "--quiet", "--depth=1", "origin", lock["commit"])
+        actual_tree = git(source, "rev-parse", lock["commit"] + "^{tree}")
         if actual_tree.decode().strip() != lock["tree"]:
             raise SystemExit("Fetched source tree differs from lock")
         archive = scratch / "source.tar"
@@ -89,16 +99,17 @@ def main():
                      "bytes": lock["bytes"],
                      "directories": dict(sorted(groups.items())),
                      "extensions": dict(extensions.most_common())}
-        (root / "docs/source-inventory.json").write_text(
+        (root / inventory_path).write_text(
             json.dumps(inventory, indent=2) + "\n")
-        subprocess.run(["python3", str(root / "tools/verify_source.py")],
+        subprocess.run([sys.executable, str(root / "tools/verify_source.py"),
+                        '--lock', args.lock],
                        check=True)
         git(root, "add", "-f", lock["destination"])
         staged = git(root, "write-tree").decode().strip()
         imported = git(root, "rev-parse", staged + ":" + lock["destination"])
         if imported.decode().strip() != lock["tree"]:
             raise SystemExit("Staged source tree differs from lock")
-        git(root, "add", lock["manifest"], "docs/source-inventory.json")
+        git(root, "add", lock["manifest"], inventory_path)
         print("PASS: source imported and staged with exact upstream tree")
 
 
