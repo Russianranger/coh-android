@@ -43,6 +43,14 @@ class NetworkAckTests(unittest.TestCase):
             with self.subTest(text=text), self.assertRaises(ValueError):
                 driver.require_batch_ack(text, 0, (42, 43))
 
+    def test_actual_odbc_error_prefix_rejects_otherwise_valid_ack(self):
+        diagnostic = 'SQLERROR: 0 42501 permission denied\n'
+        self.assertIsNotNone(driver.FAILURE.search(diagnostic))
+        with self.assertRaisesRegex(ValueError, 'failure diagnostics'):
+            driver.require_ack(marker() + diagnostic, 0, 42)
+        with self.assertRaisesRegex(ValueError, 'failure diagnostics'):
+            driver.require_batch_ack(marker(42, count=2) + marker(43, count=2) + diagnostic, 0, (42, 43))
+
     def test_premature_or_failed_write_rejects_even_malformed_ack_marker(self):
         driver.require_no_ack('SQLSTATE=42501; save not acknowledged')
         for value in (marker(), 'COH_DBQUERY_CONTAINER_ACK truncated'):

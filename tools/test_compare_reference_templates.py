@@ -121,6 +121,9 @@ class ReferenceComparisonTests(unittest.TestCase):
         self.assertFalse(report['asset_coverage_complete'])
         self.assertIsNone(report['queued_error_count'])
         self.assertFalse(report['nonfatal_queued_errors_reviewed'])
+        saved_inputs = self.output / 'comparison-runtime-inputs.json'
+        self.assertEqual(saved_inputs.read_bytes(), (self.runtime / 'runtime-inputs.json').read_bytes())
+        self.assertEqual(generation.sha256(saved_inputs), report['runtime_inputs_sha256'])
         self.assertEqual((self.runtime / 'data/defs/dbidmaps/invconcept.dbidmap').read_bytes(), self.text['data/defs/dbidmaps/invconcept.dbidmap'])
         with zipfile.ZipFile(self.output / 'schema-outputs.zip') as archive:
             self.assertEqual(set(n.casefold() for n in archive.namelist()), compare.EXPECTED)

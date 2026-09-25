@@ -41,7 +41,7 @@ SUPPLEMENTAL = (
 )
 OPTIONAL = ('data/server/db/weeklyTF.cfg', 'data/server/db/Doors.db')
 IDENTIFIER = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
-FAILURE = re.compile(r'\b(?:fatal|assertion failed|SQL_ERROR|PG_FIFO_FAILED|'
+FAILURE = re.compile(r'\b(?:fatal|assertion failed|SQL_ERROR|SQLERROR|PG_FIFO_FAILED|'
                      r'INVALID PARAMETER|Giving up|Bad output file|Error binding|'
                      r'SQLSTATE|ODBC error|SQL error)\b|^\s*ERROR[:\s]', re.I)
 LOG_LIMIT = 16 * 1024 * 1024

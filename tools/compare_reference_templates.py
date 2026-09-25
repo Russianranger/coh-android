@@ -239,6 +239,9 @@ def run(runtime, reference, schema_report, output, timeout=900, root=ROOT,
         'serializer_equivalence': 'unverified', 'failures': [], 'internal_logs': [],
     }
     try:
+        # Preserve the exact checked manifest so later map tests can bind their
+        # fresh stage to the assets used in this comparison, not just its count.
+        (output / 'comparison-runtime-inputs.json').write_bytes((runtime / 'runtime-inputs.json').read_bytes())
         (runtime / USED_MARKER).write_text('Disposable comparison runtime; do not reuse for validation.\n')
         report['seeded_identifier_sha256'] = seed_identifiers(runtime, payloads)
         before, before_logs = generation.output_snapshot(runtime), generation.internal_log_snapshot(runtime)
