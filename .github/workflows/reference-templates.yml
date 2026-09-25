@@ -62,6 +62,12 @@ jobs:
   compare:
     if: github.event_name == 'workflow_dispatch'
     needs: tooling
+    # GitHub hides unpublished draft releases from read-only installation
+    # tokens. Scope push-capable draft access to this manual validation job;
+    # tooling stays read-only and checkout never persists the credential.
+    permissions:
+      contents: write
+      actions: read
     runs-on: windows-2025-vs2026
     timeout-minutes: 90
     steps:

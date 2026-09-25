@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -29,6 +30,15 @@ class HTTPSRedirect(urllib.request.HTTPRedirectHandler):
         https_url(newurl)
         # Authorization is an unredirected header on the initial GitHub request.
         return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+class AssetHTTPError(RuntimeError):
+    """Only a numeric status and a fixed stage label may reach the CLI."""
+
+    def __init__(self, status, github_api):
+        self.status = status if type(status) is int and 100 <= status <= 599 else 'unknown'
+        self.stage = 'GitHub API' if github_api else 'download host'
+        super().__init__(f'HTTP status {self.status}; stage: {self.stage}')
 
 
 def fetch(receipt, output, release_asset_id=None, environment=None, opener=None):
@@ -75,9 +85,16 @@ def fetch(receipt, output, release_asset_id=None, environment=None, opener=None)
         if output.exists():
             raise ValueError('Download destination appeared during transfer')
         temporary.rename(output)
-    except Exception:
+    except Exception as error:
         if temporary.exists():
             temporary.unlink()
+        if isinstance(error, urllib.error.HTTPError):
+            # Comparing to our initial API URL distinguishes a GitHub access
+            # failure from an expired/denied download after a redirect. Neither
+            # URL, server reason, headers nor response body is safe to print.
+            diagnostic = AssetHTTPError(error.code, bool(release_asset_id) and error.url == url)
+            error.close()
+            raise diagnostic from None
         raise
     return {'bytes': received, 'sha256': digest}
 
@@ -92,7 +109,8 @@ def main():
         print(json.dumps(fetch(args.receipt, args.output, args.release_asset_id), sort_keys=True))
     except Exception as error:
         # urllib exceptions can include signed URLs. Never print their text.
-        print('Asset download failed (' + type(error).__name__ + '); check access, expiry and the pinned receipt.', file=sys.stderr)
+        detail = str(error) if isinstance(error, AssetHTTPError) else type(error).__name__
+        print('Asset download failed (' + detail + '); check access, expiry and the pinned receipt.', file=sys.stderr)
         return 1
     return 0
 
