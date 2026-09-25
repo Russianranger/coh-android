@@ -15,6 +15,11 @@ on:
         description: Optional successful matching reference runtime run (otherwise same commit as schemas)
         required: false
         type: string
+      run_one_map:
+        description: After matching templates, test Atlas Park readiness on disposable PostgreSQL
+        required: false
+        type: boolean
+        default: true
   push:
     branches: [main]
     paths:
@@ -26,6 +31,8 @@ on:
       - 'tools/fetch_runtime_asset_bundle.py'
       - 'tools/test_fetch_runtime_asset_bundle.py'
       - 'assets/reference-inputs-*.json'
+      - 'database/postgresql/tests/run_one_map.py'
+      - 'database/postgresql/tests/test_run_one_map.py'
 
 permissions:
   contents: read
@@ -51,11 +58,12 @@ jobs:
           python -m unittest discover -s tools -p test_runtime_asset_bundle.py -v
           python -m unittest discover -s tools -p test_compare_reference_templates.py -v
           python -m unittest discover -s tools -p test_fetch_runtime_asset_bundle.py -v
+          python -m unittest discover -s database/postgresql/tests -p test_run_one_map.py -v
   compare:
     if: github.event_name == 'workflow_dispatch'
     needs: tooling
     runs-on: windows-2025-vs2026
-    timeout-minutes: 50
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -133,10 +141,42 @@ jobs:
         run: |
           python tools/compare_reference_templates.py --runtime out/reference-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --output out/reference-template-evidence --timeout-seconds 900
           if ($LASTEXITCODE -ne 0) { throw 'Normal reference template comparison failed' }
+      - name: Stage a fresh runtime for Atlas Park validation
+        if: inputs.run_one_map
+        shell: pwsh
+        run: |
+          python tools/prepare_runtime.py --output out/one-map-runtime --asset-data out/reviewed-assets --binaries out/reference-binaries
+          if ($LASTEXITCODE -ne 0) { throw 'Fresh one-map runtime staging failed' }
+      - name: Install pinned x86 PostgreSQL ODBC for map validation
+        if: inputs.run_one_map
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $result = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($result.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($result.ExitCode)" }
+      - name: Require Atlas Park ready-for-players status and sustained activity
+        if: inputs.run_one_map
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw 'x86 Unicode PostgreSQL ODBC driver not found' }
+          python database/postgresql/tests/run_one_map.py --runtime out/one-map-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --comparison-report out/reference-template-evidence/reference-template-comparison-report.json --comparison-inputs out/reference-template-evidence/comparison-runtime-inputs.json --bin "$env:PGBIN" --driver "$($driver.Name)" --work "$env:RUNNER_TEMP/coh-one-map" --output out/one-map-evidence --timeout-seconds 900 --hold-seconds 60
+          if ($LASTEXITCODE -ne 0) { throw 'Atlas Park protocol readiness validation failed' }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reference-template-comparison-evidence
           path: out/reference-template-evidence/
+          if-no-files-found: warn
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.run_one_map
+        with:
+          name: postgresql-one-map-evidence
+          path: out/one-map-evidence/
           if-no-files-found: warn
           retention-days: 30

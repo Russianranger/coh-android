@@ -45,6 +45,11 @@ Credentials, raw configuration and private work stay outside uploaded evidence.
 These diagnostics do not create a game character or prove gameplay persistence.
 Hosted result links are added after execution, not inferred from unit tests.
 
+The source patch passed the [PostgreSQL regression run 36088012670](https://github.com/Russianranger/coh-android/actions/runs/36088012670)
+at `775a0dd770adac045484805dbbb5f68054c7a354`: all four jobs, including 21
+real-DbServer check groups across 14 processes. The [persistence report](postgresql-evidence/network-ack-build/dbserver-persistence-36088012670.json)
+is retained. That controlled fixture remains separate from the new network test.
+
 ## Asset-backed template comparison
 
 `tools/runtime_asset_bundle.py` reconstructs the reviewed input package from
@@ -94,6 +99,8 @@ rewritten and byte-identical** to the accepted data-only outputs. Only verified
 schema outputs and diagnostics are archived; incidental caches stay unapproved.
 The unmodified reference does not report its queued error count before exiting,
 so file equality does not establish absence of queued errors or complete assets.
+The evidence includes the exact `comparison-runtime-inputs.json` so the following
+map test can verify that its fresh stage uses the same binary assets.
 
 The GitHub connector currently has no large-file upload capability. The available
 browser is signed out of GitHub. The package and workflow are prepared, but
@@ -103,17 +110,27 @@ above. Existing supplied PIGGs do not need to be uploaded again.
 
 ## Following the comparison
 
+The workflow's `run_one_map` option runs `database/postgresql/tests/run_one_map.py`
+after a successful comparison. It requires a separate fresh full runtime stage,
+matching comparison evidence and the accepted schema archive. It copies those
+inputs into private disposable work, starts PostgreSQL and DbServer, and seeds
+only the 56 verified generated files. Comparison caches are not carried forward.
+
 Source-supported one-map commands are:
 
 ```text
 DbServer.exe -start 0
-MapServer.exe -nogui -nosharedmemory -db 127.0.0.1 -map_id 1 -udp 7001
+MapServer.exe -nogui -nosharedmemory -db 127.0.0.1 -map_id 1 -udp 7001 -tcp 0
 ```
 
-Map 1 is Atlas Park. A valid map test must establish registration, map load and
-`Server ready.` after the ready-for-players protocol exchange; an open port or
-SQL row alone does not prove readiness. Let actual bounded runtime failures name
-missing assets before requesting more archives.
+Map 1 is Atlas Park. Independent stock `-dbquery -getstatus 1 1` requests must
+observe the initial not-started state, then the map's registered endpoint and
+ready state. In the pinned source, DbServer clears the starting flag only upon
+the ready-for-players packet after map setup. The test keeps both services alive
+for 60 seconds and requires continuing server-status updates. An open port or
+SQL row alone does not prove readiness. The evidence records bounded redacted
+logs and failure diagnostics, with no game-character claim. Let actual runtime
+failures name missing assets before requesting more archives.
 
 The pinned TestClient supports fake-auth creation and exact-name resume without
 a graphical client. Default creation is Primal Hero, which targets Atlas Park.
