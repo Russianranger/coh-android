@@ -1,0 +1,142 @@
+name: Asset-backed reference templates
+
+on:
+  workflow_dispatch:
+    inputs:
+      schema_run:
+        description: Successful data-only schema workflow run ID
+        required: true
+        type: string
+      release_asset_id:
+        description: Optional repository release asset ID for the reviewed bundle; otherwise use COH_ASSET_BUNDLE_URL secret
+        required: false
+        type: string
+      reference_run:
+        description: Optional successful matching reference runtime run (otherwise same commit as schemas)
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reference-templates.yml'
+      - 'tools/runtime_asset_bundle.py'
+      - 'tools/test_runtime_asset_bundle.py'
+      - 'tools/compare_reference_templates.py'
+      - 'tools/test_compare_reference_templates.py'
+      - 'tools/fetch_runtime_asset_bundle.py'
+      - 'tools/test_fetch_runtime_asset_bundle.py'
+      - 'assets/reference-inputs-*.json'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: reference-templates-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SCHEMA_RUN: ${{ inputs.schema_run }}
+  REQUESTED_REFERENCE_RUN: ${{ inputs.reference_run }}
+
+jobs:
+  tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate asset and comparison acceptance gates
+        run: |
+          python -m unittest discover -s tools -p test_runtime_asset_bundle.py -v
+          python -m unittest discover -s tools -p test_compare_reference_templates.py -v
+          python -m unittest discover -s tools -p test_fetch_runtime_asset_bundle.py -v
+  compare:
+    if: github.event_name == 'workflow_dispatch'
+    needs: tooling
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Resolve successful matching reference build
+        id: reference
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
+          $base = "https://api.github.com/repos/${{ github.repository }}/actions"
+          $schema = Invoke-RestMethod "$base/runs/$env:SCHEMA_RUN" -Headers $headers
+          if ($schema.conclusion -ne 'success' -or $schema.path -ne '.github/workflows/schema-generation.yml' -or $schema.head_repository.full_name -ne '${{ github.repository }}') { throw 'A successful schema run from this repository is required' }
+          $reference = $null
+          $deadline = (Get-Date).AddMinutes(15)
+          do {
+            if ($env:REQUESTED_REFERENCE_RUN) {
+              $candidate = Invoke-RestMethod "$base/runs/$env:REQUESTED_REFERENCE_RUN" -Headers $headers
+              if ($candidate.status -ne 'completed' -or $candidate.conclusion -ne 'success') { throw 'Requested reference build has not succeeded' }
+              $reference = $candidate
+            } else {
+              $runs = Invoke-RestMethod "$base/workflows/reference-runtime.yml/runs?head_sha=$($schema.head_sha)&per_page=20" -Headers $headers
+              $reference = $runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.conclusion -eq 'success' } | Select-Object -First 1
+              if (-not $reference -and @($runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.status -ne 'completed' }).Count -eq 0) { throw 'No successful or running reference build for the schema commit' }
+            }
+            if (-not $reference) {
+              if ((Get-Date) -ge $deadline) { throw 'Timed out waiting for matching reference build' }
+              Write-Host 'Waiting for matching reference runtime build...'
+              Start-Sleep -Seconds 20
+            }
+          } until ($reference)
+          if ($reference.path -ne '.github/workflows/reference-runtime.yml' -or $reference.head_repository.full_name -ne '${{ github.repository }}') { throw 'Unexpected reference workflow/repository' }
+          "run_id=$($reference.id)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Using reference runtime run $($reference.id)"
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/reference-artifact
+          run-id: ${{ steps.reference.outputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: data-only-schema-evidence
+          path: out/accepted-schemas
+          run-id: ${{ env.SCHEMA_RUN }}
+          github-token: ${{ github.token }}
+      - name: Download reviewed binary-asset bundle
+        env:
+          COH_ASSET_BUNDLE_URL: ${{ secrets.COH_ASSET_BUNDLE_URL }}
+          GH_TOKEN: ${{ github.token }}
+          ASSET_ID: ${{ inputs.release_asset_id }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $arguments = @('tools/fetch_runtime_asset_bundle.py', '--receipt', 'assets/reference-inputs-receipt.json', '--output', 'out/asset-inputs.zip')
+          if ($env:ASSET_ID) { $arguments += @('--release-asset-id', $env:ASSET_ID) }
+          python @arguments
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed asset bundle download failed' }
+      - name: Extract verified package and assets, then stage fresh runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = 'out/reference-artifact/coh-reference-win32.zip'
+          $expected = (Get-Content out/reference-artifact/SHA256SUMS.txt | Where-Object { $_ -match '  coh-reference-win32\.zip$' }).Split(' ')[0]
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -ne $expected) { throw 'Inner runtime archive hash mismatch' }
+          Expand-Archive $zip out/reference-binaries
+          python tools/runtime_asset_bundle.py stage --archive out/asset-inputs.zip --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+          if ($LASTEXITCODE -ne 0) { throw 'Asset integrity or extraction failed' }
+          python tools/prepare_runtime.py --output out/reference-runtime --asset-data out/reviewed-assets --binaries out/reference-binaries
+          if ($LASTEXITCODE -ne 0) { throw 'Runtime staging failed' }
+      - name: Compare normal MapServer templates against accepted schemas
+        shell: pwsh
+        run: |
+          python tools/compare_reference_templates.py --runtime out/reference-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --output out/reference-template-evidence --timeout-seconds 900
+          if ($LASTEXITCODE -ne 0) { throw 'Normal reference template comparison failed' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reference-template-comparison-evidence
+          path: out/reference-template-evidence/
+          if-no-files-found: warn
+          retention-days: 30

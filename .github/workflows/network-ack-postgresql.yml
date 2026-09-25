@@ -1,0 +1,122 @@
+name: PostgreSQL network save acknowledgements
+
+on:
+  workflow_dispatch:
+    inputs:
+      schema_run:
+        description: Successful data-only schema workflow run ID
+        required: true
+        type: string
+      reference_run:
+        description: Optional successful matching reference runtime run (otherwise same commit as schemas)
+        required: false
+        type: string
+  workflow_run:
+    workflows: ['Data-only database schema generation']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: network-ack-postgresql-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SCHEMA_RUN: ${{ inputs.schema_run || github.event.workflow_run.id }}
+  REQUESTED_REFERENCE_RUN: ${{ inputs.reference_run }}
+
+jobs:
+  validate:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate driver acceptance checks
+        run: python -m unittest discover -s database/postgresql/tests -p test_run_network_ack.py -v
+      - name: Resolve successful matching reference build
+        id: reference
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
+          $base = "https://api.github.com/repos/${{ github.repository }}/actions"
+          $schema = Invoke-RestMethod "$base/runs/$env:SCHEMA_RUN" -Headers $headers
+          if ($schema.conclusion -ne 'success' -or $schema.path -ne '.github/workflows/schema-generation.yml' -or $schema.head_repository.full_name -ne '${{ github.repository }}') { throw 'A successful schema run from this repository is required' }
+          $reference = $null
+          $deadline = (Get-Date).AddMinutes(15)
+          do {
+            if ($env:REQUESTED_REFERENCE_RUN) {
+              $candidate = Invoke-RestMethod "$base/runs/$env:REQUESTED_REFERENCE_RUN" -Headers $headers
+              if ($candidate.status -ne 'completed' -or $candidate.conclusion -ne 'success') { throw 'Requested reference build has not succeeded' }
+              $reference = $candidate
+            } else {
+              $runs = Invoke-RestMethod "$base/workflows/reference-runtime.yml/runs?head_sha=$($schema.head_sha)&per_page=20" -Headers $headers
+              $reference = $runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.conclusion -eq 'success' } | Select-Object -First 1
+              if (-not $reference -and @($runs.workflow_runs | Where-Object { $_.head_sha -eq $schema.head_sha -and $_.status -ne 'completed' }).Count -eq 0) { throw 'No successful or running reference build for the schema commit' }
+            }
+            if (-not $reference) {
+              if ((Get-Date) -ge $deadline) { throw 'Timed out waiting for matching reference build' }
+              Write-Host 'Waiting for matching reference runtime build...'
+              Start-Sleep -Seconds 20
+            }
+          } until ($reference)
+          if ($reference.path -ne '.github/workflows/reference-runtime.yml' -or $reference.head_repository.full_name -ne '${{ github.repository }}') { throw 'Unexpected reference workflow/repository' }
+          "run_id=$($reference.id)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Using reference runtime run $($reference.id)"
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/reference-artifact
+          run-id: ${{ steps.reference.outputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: data-only-schema-evidence
+          path: out/accepted-schemas
+          run-id: ${{ env.SCHEMA_RUN }}
+          github-token: ${{ github.token }}
+      - name: Extract reference package and stage pinned text
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = 'out/reference-artifact/coh-reference-win32.zip'
+          $expected = (Get-Content out/reference-artifact/SHA256SUMS.txt | Where-Object { $_ -match '  coh-reference-win32\.zip$' }).Split(' ')[0]
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -ne $expected) { throw 'Inner runtime archive hash mismatch' }
+          Expand-Archive $zip out/reference-binaries
+          python tools/prepare_runtime.py --output out/schema-text
+          if ($LASTEXITCODE -ne 0) { throw 'Text staging failed' }
+      - name: Install pinned x86 PostgreSQL ODBC
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $result = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($result.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($result.ExitCode)" }
+      - name: Verify network acknowledgements follow PostgreSQL commit
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw 'x86 Unicode PostgreSQL ODBC driver not found' }
+          python database/postgresql/tests/run_network_ack.py --runtime out/schema-text --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --reference-binaries out/reference-binaries --bin "$env:PGBIN" --driver "$($driver.Name)" --work "$env:RUNNER_TEMP/coh-network-ack" --output out/network-ack-evidence --timeout-seconds 600
+          if ($LASTEXITCODE -ne 0) { throw 'Network acknowledgement validation failed' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: postgresql-network-ack-evidence
+          path: out/network-ack-evidence/
+          if-no-files-found: warn
+          retention-days: 30

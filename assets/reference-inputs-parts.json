@@ -1,0 +1,22 @@
+{
+  "archive_name": "coh-reference-assets.zip",
+  "archive_bytes": 615541018,
+  "archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "parts": [
+    {
+      "name": "coh-reference-assets.zip.part01",
+      "bytes": 262144000,
+      "sha256": "8b5161cd0753dc1a8eaafe3a7c8e4af772b6ce0cff7a0803b98867d7157f918e"
+    },
+    {
+      "name": "coh-reference-assets.zip.part02",
+      "bytes": 262144000,
+      "sha256": "3f9b36cbd01cb1c062b2e81c96506f185697ccbaaeccd5c968a32e203c8725cc"
+    },
+    {
+      "name": "coh-reference-assets.zip.part03",
+      "bytes": 91253018,
+      "sha256": "e28b2d9c3bbba09b329e1206b38d5d494d9ddbb9562dfa1acb1a4afb0080e6ce"
+    }
+  ]
+}

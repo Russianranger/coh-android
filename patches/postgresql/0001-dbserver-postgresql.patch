@@ -965,7 +965,7 @@
 +                !dbQueryPositiveId(argv[i+1], &batch_list) || !CONTAINER_IS_VALID(batch_list) ||
 +                !dbQueryPositiveId(argv[i+2], &ids[0]) ||
 +                !dbQueryPositiveId(argv[i+4], &ids[1]) || ids[0] == ids[1])
-+                return "Usage: [-timeout seconds] -setbatch list id1 file1 id2 file2 (distinct positive IDs).";
++                return "Usage: [-timeout milliseconds] -setbatch list id1 file1 id2 file2 (distinct positive IDs).";
 +
 +            for (j=0;j<2;j++)
 +            {
