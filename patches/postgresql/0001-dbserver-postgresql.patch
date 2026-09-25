@@ -562,7 +562,37 @@
  
 --- a/DBServer/src/dbdispatch.c
 +++ b/DBServer/src/dbdispatch.c
-@@ -357,7 +357,10 @@
+@@ -266,7 +266,9 @@
+ {
+     Packet    *pak_out;
+     int        i;
+-
++    U32 link_uid = link->UID;
++
++    // Build the packet before draining callbacks so ACK IDs are a snapshot.
+     pak_out = pktCreateEx(link,DBSERVER_CONTAINER_ACK);
+     pktSendBitsPack(pak_out,1,list_id);
+     pktSendBitsPack(pak_out,1,callback_id);
+@@ -275,6 +277,18 @@
+     {
+         pktSendBitsPack(pak_out,1,ack_list[i]);
+     }
++    if (gDatabaseProvider == DBPROV_POSTGRESQL)
++    {
++        // A FIFO ordering barrier is not a completion wait. PostgreSQL workers
++        // return completed commands only after COMMIT; failed saves exit without
++        // returning here. Drain all writes, including related-container changes.
++        sqlFifoFinish();
++        if (mpReclaimed(link) || link->UID != link_uid)
++        {
++            pktFree(pak_out);
++            return;
++        }
++    }
+     pktSend(&pak_out,link);
+ }
+ 
+@@ -357,7 +371,10 @@
      if (!findFieldText(str, "AuthName", authName))
          return 0;
  
@@ -574,7 +604,120 @@
      rows = sqlReadColumnsSlow(ent_list->tplt->tables,0,"ContainerId, Name",restriction, &row_count, field_ptrs);
      if (!rows)
          return 1;
-@@ -2397,7 +2400,7 @@
+@@ -558,6 +575,8 @@
+     DbContainer    *container;
+     static        int    *ack_list,ack_max;
+     static        char tpltSortDiffErrorMessage[1024];
++    int pg_defer_acks, pg_ack_count = 0, pg_ack_max = 0;
++    int *pg_ack_list = NULL;
+ 
+     list_id        = pktGetBitsPack(pak,1);
+     cmd            = pktGetBitsPack(pak,1);
+@@ -565,6 +584,10 @@
+     count        = pktGetBitsPack(pak,1);
+     if (!count)
+         return;
++    pg_defer_acks = gDatabaseProvider == DBPROV_POSTGRESQL &&
++        dbListPtr(list_id)->tplt && !dbListPtr(list_id)->tplt->dont_write_to_sql;
++    if (pg_defer_acks)
++        dynArrayFit(&pg_ack_list,sizeof(pg_ack_list[0]),&pg_ack_max,count);
+     dynArrayFit(&ack_list,sizeof(ack_list[0]),&ack_max,count);
+     for(i=0;i<count;i++)
+     {
+@@ -577,7 +600,7 @@
+             (id != -1 && cmd == CONTAINER_CMD_CREATE))
+         {
+             sendFail(link,1,CONTAINER_ERR_DOESNT_EXIST,"handleContainerSet: %d.%d invalid set command: %d",list_id,id,cmd);
+-            return;
++            goto cleanup;
+         }
+         notdiff = pktGetBits(pak,1);
+         debugdiff = pktGetBits(pak,1);
+@@ -596,13 +619,13 @@
+             if (tplt && !textToLineList(tplt,str,&line_list,dbquery_insert_player ? 0 : tpltSortDiffErrorMessage)) {
+                 // Probably garbage data
+                 sendFail(link,1,CONTAINER_ERR_CANT_COMPLETE_SERIOUS,"handleContainerSet: %d.%d tpltSortDiff failed, bad data sent to DbServer (%s)",list_id,id,tpltSortDiffErrorMessage);
+-                return;
++                goto cleanup;
+             }
+         }
+         if (str[0] && !strEndsWith(str, "\n")) {
+             // Bad formatted data!
+             sendFail(link,1,CONTAINER_ERR_CANT_COMPLETE_SERIOUS,"handleContainerSet: %d.%d bad data sent to DbServer, doesn't end in \\n",list_id,id);
+-            return;
++            goto cleanup;
+         }
+ 
+         if (list_id == CONTAINER_MAPS)
+@@ -643,13 +666,13 @@
+                 if (!putCharacterVerifyFreeSlot(str))
+                 {
+                     sendFail(link,0,CONTAINER_ERR_CANT_COMPLETE,"handleContainerSet: Account already has too many characters or data missing AuthName field");
+-                    return;
++                    goto cleanup;
+                 }
+                 // Get the name, make sure it's valid
+                 str = putCharacterVerifyUniqueName(str);
+                 if (!str) {
+                     sendFail(link,1,CONTAINER_ERR_CANT_COMPLETE,"handleContainerSet: error parsing character name from data");
+-                    return;
++                    goto cleanup;
+                 }
+                 new_character = 1;
+             }
+@@ -659,12 +682,12 @@
+                 if (container->locked && container->lock_id != dbLockIdFromLink(link))
+                 {
+                     sendFail(link,1,CONTAINER_ERR_ALREADY_LOCKED,"handleContainerSet: %d.%d locked by different owner",list_id,id);
+-                    return;
++                    goto cleanup;
+                 }
+                 if (!container->locked && cmd != CONTAINER_CMD_CREATE_MODIFY)
+                 {
+                     sendFail(link,1,CONTAINER_ERR_NOT_LOCKED,"handleContainerSet: %d.%d not locked",list_id,id);
+-                    return;
++                    goto cleanup;
+                 }
+             }
+             if (cmd == CONTAINER_CMD_TEMPLOAD)
+@@ -706,7 +729,7 @@
+         if (!container)
+         {
+             sendFail(link,1,CONTAINER_ERR_DOESNT_EXIST,"handleContainerSet: %d.%d container does not exist",list_id,id);
+-            return;
++            goto cleanup;
+         }
+         ack_list[i] = container->id;
+         if (cmd == CONTAINER_CMD_UNLOCK || cmd == CONTAINER_CMD_UNLOCK_NOMODIFY)
+@@ -761,7 +784,10 @@
+         }
+         else
+         {
+-            sendContainerAcks(link,list_id,callback_id,count,ack_list);
++            if (pg_defer_acks)
++                pg_ack_list[pg_ack_count++] = ack_list[i];
++            else
++                sendContainerAcks(link,list_id,callback_id,count,ack_list);
+         }
+ 
+         if (container && container->is_deleting)
+@@ -781,6 +807,15 @@
+             containerUnload(dbListPtr(list_id),container->id);
+ 
+     } // end for(i=0;i<count;i++)
++
++    // The legacy loop ACKs the entire array while later IDs are uninitialized.
++    // For PostgreSQL SQL-backed lists, publish only the explicit ACK branch's
++    // IDs, once the whole request (including deletes/unloads) has been handled.
++    // Group/autocommand broadcasts retain their separate legacy semantics.
++    if (pg_ack_count)
++        sendContainerAcks(link,list_id,callback_id,pg_ack_count,pg_ack_list);
++cleanup:
++    free(pg_ack_list);
+ }
+ 
+ void containerSendReceipt(NetLink* link, U32 cmd, U32 listid, U32 cid, U32 user_cmd, U32 user_data, U32 err, char* str)
+@@ -2397,7 +2432,7 @@
      }
  
      // now destroy the container
@@ -761,3 +904,94 @@
  void sqlFifoEnableTransacted(int enable);
  
  // HACK
+--- a/MapServer/src/dbcomm/dbcontainer.c
++++ b/MapServer/src/dbcomm/dbcontainer.c
+@@ -843,6 +843,12 @@
+     for(i=0;i<count;i++)
+     {
+         id = pktGetBitsPack(pak,1);
++        if (db_state.query_mode)
++        {
++            printf_stderr("COH_DBQUERY_CONTAINER_ACK list=%d callback=%d count=%d id=%d\n",
++                list_id, callback_id, count, id);
++            fflush(fileWrap(stderr));
++        }
+         db_state.last_id_acked = id;
+         switch (list_id)
+         {
+--- a/MapServer/src/dbcomm/dbquery.c
++++ b/MapServer/src/dbcomm/dbquery.c
+@@ -1,3 +1,5 @@
++#include <errno.h>
++#include <limits.h>
+ #include <utilitieslib/network/netio.h>
+ #include <utilitieslib/components/EString.h>
+ #include "dbcomm.h"
+@@ -252,6 +254,18 @@
+ }
+ 
+ 
++static int dbQueryPositiveId(const char *text, int *value)
++{
++    char *end;
++    long parsed;
++    errno = 0;
++    parsed = strtol(text, &end, 10);
++    if (!text[0] || *end || errno == ERANGE || parsed <= 0 || parsed > INT_MAX)
++        return 0;
++    *value = (int)parsed;
++    return 1;
++}
++
+ char *dbQuery(char *query_cmd)
+ {
+     int        i,map_id=0,map_xfer=0,get_status=0,set_container=0,get_container=0,list_id,container_id,find_element=0;
+@@ -275,6 +289,40 @@
+         if (stricmp(argv[i], "-timeout")==0 && argc - i >= 2)
+         {
+             timeout = atoi(argv[i+1]);
++        }
++        if (stricmp(argv[i],"-setbatch")==0)
++        {
++            static PerformanceInfo* perfInfo;
++            StuffBuff inputs[2];
++            char *data[2];
++            int ids[2], batch_list, j;
++
++            // An explicit two-container diagnostic using the ordinary save
++            // protocol. Each SQL write remains its own transaction. Put any
++            // -timeout option before -setbatch; no stdin or implicit creation.
++            if (argc - i != 6 ||
++                !dbQueryPositiveId(argv[i+1], &batch_list) || !CONTAINER_IS_VALID(batch_list) ||
++                !dbQueryPositiveId(argv[i+2], &ids[0]) ||
++                !dbQueryPositiveId(argv[i+4], &ids[1]) || ids[0] == ids[1])
++                return "Usage: [-timeout seconds] -setbatch list id1 file1 id2 file2 (distinct positive IDs).";
++
++            for (j=0;j<2;j++)
++            {
++                if (!getFileOrStdin(&inputs[j], argv[i+3+j*2]))
++                {
++                    int k;
++                    for (k=0;k<=j;k++)
++                        freeStuffBuff(&inputs[k]);
++                    return "Batch input file not found.";
++                }
++                data[j] = inputs[j].buff;
++            }
++            dbContainerSendList(batch_list, data, ids, 2, CONTAINER_CMD_TEMPLOAD);
++            for (j=0;j<2;j++)
++                freeStuffBuff(&inputs[j]);
++            if (!dbMessageScanUntilTimeout("CONTAINER_CMD_TEMPLOAD_BATCH", &perfInfo, timeout))
++                return last_db_error;
++            return query_buf.buff;
+         }
+         if (stricmp(argv[i],"-get")==0 && argc - i >= 3)
+         {
+@@ -473,6 +521,7 @@
+         addStringToStuffBuff(&query_buf,"\n");
+         addStringToStuffBuff(&query_buf,"-get <list id> <container id>\n");
+         addStringToStuffBuff(&query_buf,"-set <list id> <container id> [file] | < file\n");
++        addStringToStuffBuff(&query_buf,"-setbatch <list id> <id1> <file1> <id2> <file2>\n");
+         addStringToStuffBuff(&query_buf,"-getbase <supergroup id>\n");
+         addStringToStuffBuff(&query_buf,"-setbase <supergroup id> [file] | < file\n");
+         addStringToStuffBuff(&query_buf,"-getstatus <list id> <container id>\n");
