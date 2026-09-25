@@ -262,3 +262,64 @@ not SQL execution results. Exact evidence is preserved in
 [its summary](schema-generation-evidence/accepted-36072787971.json).
 Local focused tests passed: 18 schema-runner, 12 generation-harness and nine
 schema-source tests. The hosted staging/generation check step also passed.
+
+
+## 2026-09-25 fresh-database startup correction and rebuilds
+
+The first normal DbServer check, [run 36073664472](https://github.com/Russianranger/coh-android/actions/runs/36073664472),
+failed with SQLSTATE 42P01: startup removes optional foreign keys before their
+tables exist. `DROP CONSTRAINT IF EXISTS` alone does not guard an absent table.
+The PostgreSQL statement now also uses `ALTER TABLE IF EXISTS`. The original
+failure remains in [its evidence record](postgresql-evidence/generated-schema-attempt-36073664472.json).
+
+[Regression run 36074139842](https://github.com/Russianranger/coh-android/actions/runs/36074139842)
+passed all four jobs: Linux PostgreSQL 16/18, Windows x86 ODBC, and the actual
+Win32 DbServer persistence fixture. The latter passed 21 check groups across
+14 process invocations, including removal through the real FIFO before table
+creation and removal of an absent constraint. The ODBC regression also verifies
+that an existing foreign key enforces its relationship before removal.
+See [the DbServer report](postgresql-evidence/fk-cold-start/dbserver-persistence.json).
+
+The updated [reference package 36074139984](https://github.com/Russianranger/coh-android/actions/runs/36074139984)
+and [data-only schema run 36074139889](https://github.com/Russianranger/coh-android/actions/runs/36074139889)
+both passed at `0f37414d1b42498e65738c78995e160fceb29ca8`. The normal package keeps
+persistence fixture mode OFF. Schema initialization took 32.062 seconds and its
+strict second pass took 5.907 seconds. All six attribute maps were stable, the
+strict pass had zero queued errors and no failure diagnostics, and all 56
+archived payloads are byte-identical to the earlier accepted schema run.
+Their new receipts bind them to the corrected PostgreSQL overlay. Downloaded
+artifact, inner archive and payload hashes passed verification. The current
+[accepted schema artifact](schema-generation-evidence/accepted-36074139889.zip)
+and [summary](schema-generation-evidence/accepted-36074139889.json) are preserved.
+
+
+## 2026-09-25 normal DbServer generated-schema startup and reload
+
+[Run 36075137920](https://github.com/Russianranger/coh-android/actions/runs/36075137920)
+passed at workflow commit `21757aa5284851bd23d4e100b8fd96a0d0d7304d`, using the
+matching reference and schema builds at `0f37414d1b42498e65738c78995e160fceb29ca8`.
+The fixture-OFF DbServer performed its normal `dbInit(-1)` through `-exportdump`
+on a fresh migrated PostgreSQL cluster, then repeated against that database.
+Initial startup/export took 11.718 seconds; reload/export took 5.578 seconds.
+Both exited zero within bounds, with fresh empty dumps and no failure diagnostics.
+
+Independent downloaded-evidence verification confirmed all 99 tables and 5,935
+ordered columns against the accepted generated templates. All 58,272 attribute
+IDs and names match their generated files. The two snapshots contain 119 indexes
+and 734 constraints (99 primary keys and 635 foreign keys); their catalog and
+attribute JSON files are byte-identical. Compatibility migration metadata stayed
+unchanged. All recorded input and log hashes match. This checks catalog stability
+and names/order, not an independent model of every column type or constraint.
+
+The legacy `SQLERROR:` log label also carries success-with-info diagnostics.
+Every such entry in this run is an expected PostgreSQL NOTICE for optional
+absent-object cleanup or existing indexes. No unexpected SQL execution error was
+found. Console setup, omitted auxiliary launchers and initial parser cache misses
+with text fallback remain visible in the redacted logs.
+
+The full [redacted evidence archive](postgresql-evidence/generated-schema-36075137920.zip)
+and [summary with original report](postgresql-evidence/generated-schema-36075137920.json)
+are preserved in Git. This completes the generated-schema database initialization
+and reload gate. It does not test character creation/save/reload with those
+templates, network acknowledgements, map transfer, auxiliary services, an
+asset-complete serializer comparison, the custom client or Android execution.

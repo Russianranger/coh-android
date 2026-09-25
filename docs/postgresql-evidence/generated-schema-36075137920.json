@@ -1,0 +1,201 @@
+{
+  "run_id": 36075137920,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36075137920",
+  "workflow_repository_commit": "21757aa5284851bd23d4e100b8fd96a0d0d7304d",
+  "reference_run_id": 36074139984,
+  "schema_run_id": 36074139889,
+  "artifact": {
+    "id": 10839538513,
+    "path": "generated-schema-36075137920.zip",
+    "bytes": 1081623,
+    "sha256": "8bf6b4ea3f6da7ef9f087c7641140e71869ff26758dda7819d7e3869d5c10000"
+  },
+  "validation": {
+    "tables": 99,
+    "columns": 5935,
+    "indexes": 119,
+    "constraints": 734,
+    "attribute_rows": 58272,
+    "catalogs_byte_identical": true,
+    "input_hashes_match_accepted_schema_and_pins": true,
+    "redacted_logs_hashes_verified": true
+  },
+  "report": {
+    "status": "generated_schema_startup_and_reload_passed_gameplay_unvalidated",
+    "scope": "fixture-OFF normal DbServer schema startup/export/reload on disposable PostgreSQL",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "schema_report_sha256": "35890fe65228327b9fe8522cb21599c72b65509851fba04531cbd7920e91ba3e",
+    "reference_repository_commit": "0f37414d1b42498e65738c78995e160fceb29ca8",
+    "dbserver_sha256": "e5f02c46523873590fa7a4a63413a3667359254962b46c75c426a8d9f07dc8e9",
+    "input_sha256": {
+      "data/defs/dbidmaps/invbasedetail.dbidmap": "c2e85bca875e244b5ce54a6aa7e723047309cfc6c4fd2df83dba116fa9be874a",
+      "data/defs/dbidmaps/invrecipe.dbidmap": "1abfdc27ba3aba3a0a959266d02fc9db07e506ad91fe6ce40de42fe8ccb42c98",
+      "data/defs/dbidmaps/invsalvage.dbidmap": "89cffb462496920daef0b43aaeb9b3e9528ab2852965946ab0fdf478ef603060",
+      "data/defs/dbidmaps/invstoredsalvage.dbidmap": "30fd4951bf3c73f191a701d836a95892a2204181695af07e425fb2ec83e907ad",
+      "data/defs/proficiencyids.dbidmap": "cef52f3d5e2441638a314599861e544e085258792b596fc61033a2400865fa85",
+      "data/server/db/schemas/arenaevents.schema.html": "f028cb642384bf2731084bd1a5f8866efb40f048c292151e2e1136b1cf322097",
+      "data/server/db/schemas/arenaplayers.schema.html": "b2546884eca05924265968f2dba3f355c454e9efa4bc874dd9b252f44e14de82",
+      "data/server/db/schemas/autocommands.schema.html": "d07b2749e211e693f8ced6e2e026df409bca3b84f90ab7b8055150b9ecb5e80f",
+      "data/server/db/schemas/base.schema.html": "da23628c5ca2a5440c6e845f3f0e559b833fb4e49aa81fbec9c1999ae6757912",
+      "data/server/db/schemas/baseraids.schema.html": "eae2323c44f91e443a40f1b0497b163e8408c8b0aacbdb99ee01be2aded68f38",
+      "data/server/db/schemas/email.schema.html": "5144dc321af4b1254f0d030aea55cd8bdbc13cd15bb275df421a10ff39e0cfc4",
+      "data/server/db/schemas/ents.schema.html": "45ff4768d29beda2130c2fbcad3a9fc29a3fe647be7e09cb2f52397f32289903",
+      "data/server/db/schemas/eventhistory.schema.html": "e2b875f95a94de59800cdcc8210fdadd2b5289d05e78970906e2ec357ea79cac",
+      "data/server/db/schemas/itemofpowergames.schema.html": "75056a653f2fdfc1a4024efd16d7fbe6d64e1f101f82adc3736fb507fbda1c94",
+      "data/server/db/schemas/itemsofpower.schema.html": "2f74c08fb12ccad248bc79bdff15a2d0d7540aeab5e13e725bf8e1f971747f39",
+      "data/server/db/schemas/leagues.schema.html": "223e2e670bfc7d8db5f328c318facbfb32f990617c45be0cde3b815dbbca1aa2",
+      "data/server/db/schemas/levelingpacts.schema.html": "5309a01b56a09c0be35453cdb7a9b804d1a7730d8f757376c1465289317f6bcb",
+      "data/server/db/schemas/mapgroups.schema.html": "24953f199c18d171acd8ff911f72c1b7de32e07044c0b34a2149b558c2443314",
+      "data/server/db/schemas/miningaccumulator.schema.html": "4ed5e8b7eb04924329e9c368009997685f36d7cf69956d7d3f33b384f193dbf6",
+      "data/server/db/schemas/offline.schema.html": "360559f24f260fce881ac73224297954cf4a2c6ba224d3731e6ee725f15eceae",
+      "data/server/db/schemas/petitions.schema.html": "5aa34925218aa1cf04396418fb82ab7b9a210c42fa9c2af31ecc4ac0ffbb9371",
+      "data/server/db/schemas/sgraidinfos.schema.html": "5c62468d70c12d307af10156f8330eb7f995f75d9fb29d5af53d46b9318f49b8",
+      "data/server/db/schemas/shardaccounts.schema.html": "9e3414e061f64fc7757c02380256123932da58d40c21f31d62fb95a1b9b5f34a",
+      "data/server/db/schemas/supergroups.schema.html": "37356f778dc9d7874ba7a5d24df127dfa83f9be41d10436fe564f5392cc84487",
+      "data/server/db/schemas/taskforces.schema.html": "e1fca83efbd2741b3b3e3a0858d59628a8967094204819061f14008dd05f6bf9",
+      "data/server/db/schemas/teamups.schema.html": "ee7d2e5958861206dcf03659d7eb150d9bcca57397226613e0454f75d8b1c7a1",
+      "data/server/db/schemas/testdatabasetypes.schema.html": "a1439c7f7e333c81c170e9c555497664006dd4510c0dea9db09f8874837c8e1b",
+      "data/server/db/templates/arenaevents.template": "952f7404eccc9cf8726e65aa3fa4451784cf4f99224ba2b4cf9e4505af35560e",
+      "data/server/db/templates/arenaplayers.template": "9c0a9347b2da737717954be9aa5614d43e666139cb7c44da0387880838bd2f40",
+      "data/server/db/templates/autocommands.template": "a6c9aeb57a944e1de4a239f9e1844dda71284a5b6c4667862b5f0ac017b967cc",
+      "data/server/db/templates/badges.attribute": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea",
+      "data/server/db/templates/badgestats.attribute": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2",
+      "data/server/db/templates/base.template": "32fa8e9a1f6f1bc72a4acfcc1d405d4b44412d7cda41fbceeb019dfde2a170c9",
+      "data/server/db/templates/baseraids.template": "644bd30dade4d7e958c2c35fd4251b9f5a67976510a6ef9eef310d7e311985b0",
+      "data/server/db/templates/email.template": "3966878019f3af7ac652640746d80bd5c22b85dcfd1bd1033288b853e75ac6fb",
+      "data/server/db/templates/ents.template": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913",
+      "data/server/db/templates/eventhistory.template": "f535b56670e5b19b0a4d983d9eba021b00441474b27b65f3ea46ee73f1645f87",
+      "data/server/db/templates/itemofpowergames.template": "0e7b59085ee4b7f7ed5495a80dd06fb91b35ee338b9c9d09cce2390560309aca",
+      "data/server/db/templates/itemsofpower.template": "16befccbbad58e87d75455af8d240da5f299eaa08689cfc7b85e5e2ebb60434c",
+      "data/server/db/templates/leagues.template": "2f1018974bed27a271cc5c87e673356db2df7c5a6c9c7a3bf0b6a5c22b67536b",
+      "data/server/db/templates/levelingpacts.template": "4fd6076ba33e8aebebe516dbde74d324721f3984047895bc2f6b3a1a7517b365",
+      "data/server/db/templates/mapgroups.template": "18a9bcbf1a566d3986b9fd2e31597093e4fe0f1dbd1f7142d573fc39bc496838",
+      "data/server/db/templates/miningaccumulator.template": "9e4646316ec1f4ef1cd0db486d3e2a68d2e17caaf84541dcdc837f46c349edeb",
+      "data/server/db/templates/offline.template": "1e55bf16fd0749d042c3481c2fdd28f339a17bd8eebec9d27f458f2f6265a67b",
+      "data/server/db/templates/petitions.template": "c28117e1efa5a2a487b330664d4349b524bf4482d862917ef1f469864895b045",
+      "data/server/db/templates/pophelp.attribute": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1",
+      "data/server/db/templates/sgraidinfos.template": "7bda51ccf348242d5bf8399a03381a480d6555a75c5aa0038b615afa611ae353",
+      "data/server/db/templates/shardaccounts.template": "388571567e563cfb3943d0e1c428e23b6f3d24c9a12f9bc0262b48972f964619",
+      "data/server/db/templates/statserver_supergroupstats.template": "568f516d0b7f48b26de768d16442a7541ed280889ff8bcfb195c305343f098bd",
+      "data/server/db/templates/supergroup_badges.attribute": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e",
+      "data/server/db/templates/supergroup_badgestats.attribute": "f67e5677a244b919f674d545c990339caa674d1f8c299b8e0540dc2c8d65a6e9",
+      "data/server/db/templates/supergroups.template": "a79ed03f51c0a2e7d33b9d4fd784c14970c42d63a53be7ac69d026fd80b73c78",
+      "data/server/db/templates/taskforces.template": "47c405e582165df6d688b15b526cd9c70d0cf3c0ae005683dcd48c50526dffae",
+      "data/server/db/templates/teamups.template": "ed2a5378f13d0503db0e38f03132e7888f150943de3a674eb5ef5a4977dc9ffc",
+      "data/server/db/templates/testdatabasetypes.template": "76e538c71248157120260f77bc21d84c940eecaed0cb5d69d958e5a689e642f1",
+      "data/server/db/templates/vars.attribute": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb",
+      "data/server/db/servers.cfg": "539933dabd369fe57fde2c833f44317105faa77df4a7ff04ada32dfea3c8851d",
+      "data/server/db/loadBalanceDefault.cfg": "d25a94745bdfbf4d4e90509e570318cb03fa53172a1290c78e3f3344e30f4649",
+      "data/server/db/loadBalanceShardSpecific.cfg": "d104dd8b95a08277fffac03af6211d9989aa50068bb0109a6e9dbf9fa0c884e1",
+      "data/server/db/maps.db": "2eced612b0626a9d855a344441b57fe543d456b710cfda9c21a5c9628378a529",
+      "data/defs/account/loyaltyrewardtree.def": "8b7c96accd8448a235dfa744ff775a3df40bc9e7968b8c192ff53a5de7065d43",
+      "data/defs/account/product_catalog.def": "5e5375b3aa430b88fbcdada0ac87629fa35d5826ab817d9a9abd65baa677f300"
+    },
+    "optional_inputs": [
+      {
+        "path": "data/server/db/weeklyTF.cfg",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      },
+      {
+        "path": "data/server/db/Doors.db",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      }
+    ],
+    "phases": [
+      {
+        "exit_code": 0,
+        "timed_out": false,
+        "log_limit_exceeded": false,
+        "log_limit_bytes_per_stream": 16777216,
+        "elapsed_seconds": 11.718,
+        "number": 1,
+        "optional_diagnostic_lines": [
+          "Loading server/db/weeklyTF.cfg",
+          "[2026-09-25 00:00:52.240] [DEBUG] \tSet folder cache callback for server/db/WeeklyTF.cfg"
+        ],
+        "failure_diagnostic_lines": [],
+        "dump_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "catalog_sha256": "df49509c77457e17ada4f65ed84d77b8a7174675f4e0cba5c9c3a6d2d6b8f340",
+        "table_count": 99,
+        "attribute_counts": {
+          "attributes": 56411,
+          "badgestatsattributes": 1771,
+          "pophelpattributes": 90
+        },
+        "checks": "template table/column names, exact attribute IDs, stable migration and SQL catalog"
+      },
+      {
+        "exit_code": 0,
+        "timed_out": false,
+        "log_limit_exceeded": false,
+        "log_limit_bytes_per_stream": 16777216,
+        "elapsed_seconds": 5.578,
+        "number": 2,
+        "optional_diagnostic_lines": [
+          "Loading server/db/weeklyTF.cfg",
+          "[2026-09-25 00:00:52.240] [DEBUG] \tSet folder cache callback for server/db/WeeklyTF.cfg",
+          "Loading server/db/weeklyTF.cfg",
+          "[2026-09-25 00:01:04.768] [DEBUG] \tSet folder cache callback for server/db/WeeklyTF.cfg"
+        ],
+        "failure_diagnostic_lines": [],
+        "dump_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "catalog_sha256": "df49509c77457e17ada4f65ed84d77b8a7174675f4e0cba5c9c3a6d2d6b8f340",
+        "table_count": 99,
+        "attribute_counts": {
+          "attributes": 56411,
+          "badgestatsattributes": 1771,
+          "pophelpattributes": 90
+        },
+        "checks": "template table/column names, exact attribute IDs, stable migration and SQL catalog"
+      }
+    ],
+    "failures": [],
+    "console_capture_limit": "Legacy DbServer may reopen CONOUT$; engine logs, SQL state and fresh export are checked independently",
+    "character_persistence_validated": false,
+    "gameplay_validated": false,
+    "serializer_equivalence": "unverified",
+    "started_utc": "2026-09-25T00:00:46.440203+00:00",
+    "redacted_logs": [
+      {
+        "file": "log-000.txt",
+        "source": "raw-logs/1-stderr.log",
+        "sha256": "ecc0d14454aceaddda4fe4409d44148934fdadc92d92ac7a4451f82fef3dac10",
+        "bytes": 1156
+      },
+      {
+        "file": "log-001.txt",
+        "source": "raw-logs/1-stdout.log",
+        "sha256": "16c241c6032e9291f8b09ef6afa7a19122773af951ad7afc0a8f69f1d6055a5b",
+        "bytes": 1798
+      },
+      {
+        "file": "log-002.txt",
+        "source": "raw-logs/2-stderr.log",
+        "sha256": "6bea88a31e972bc8e7f4688e7058464ab44ff3325103383a0aa944d310bb6a98",
+        "bytes": 12988
+      },
+      {
+        "file": "log-003.txt",
+        "source": "raw-logs/2-stdout.log",
+        "sha256": "27af64928030d5b719979a77daa0978f999f6d98258380c5742056bc2b9eb267",
+        "bytes": 1640
+      },
+      {
+        "file": "log-004.txt",
+        "source": "runtime/logs/dbserver/error_2026-09-25-00-00-00.log",
+        "sha256": "ffa3160578414a406a78c9127e6d5b9492ed5fa8f5004c50b38a24c76afb7d37",
+        "bytes": 810
+      },
+      {
+        "file": "log-005.txt",
+        "source": "runtime/logs/dbserver/error_2026-09-25-00-01-08.log",
+        "sha256": "6fb1a7d5d986f6c8770e1db1262bbcf5198426cac3325885253d565cfa08ab9e",
+        "bytes": 14162
+      }
+    ],
+    "finished_utc": "2026-09-25T00:01:11.378554+00:00"
+  }
+}

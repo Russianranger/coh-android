@@ -2,17 +2,17 @@
   "schema_version": 1,
   "status": "reference_build_packaged_runtime_unverified",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
-  "repository_commit": "7524c9d894bd49bc83d64c3dbfac0f8d24e57eba",
+  "repository_commit": "0f37414d1b42498e65738c78995e160fceb29ca8",
   "configuration": "OptDebug",
   "architecture": "Win32",
-  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36069123663",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36074139984",
   "postgresql_persistence_fixture": false,
   "postgresql_build_input": {
     "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
     "patch_sha256": "ce4c072f8b975395ac29569a43b9a135aa79b7823f06cc6714d31a0ed49b896c",
     "overlay_sha256": {
-      "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8",
-      "DBServer/src/pg_persistence_test.c": "dab6e0408f559c543b4de20c2a14090480ce8d3081c52c0c7b158ae17460d1f2"
+      "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+      "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
     },
     "patched_sha256": {
       "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
@@ -33,7 +33,7 @@
   },
   "files": {
     "DbServer.exe": {
-      "sha256": "50790b2cbbf960bb04568723e72f3a874f2513b7b54a062e240789d5ac77840a",
+      "sha256": "e5f02c46523873590fa7a4a63413a3667359254962b46c75c426a8d9f07dc8e9",
       "size": 1656832,
       "pe_machine": 332,
       "imports": [
@@ -49,7 +49,7 @@
       "delay_imports": []
     },
     "MapServer.exe": {
-      "sha256": "f064947d3a8650969762f1774ea775e3fbf9b540c3b93066d18f3d34e0359d4b",
+      "sha256": "a0d65535039edff44a36fdc616573fbd4936f6fa43555d977fa529ade23f6e49",
       "size": 6903808,
       "pe_machine": 332,
       "imports": [
@@ -68,7 +68,7 @@
       "delay_imports": []
     },
     "CityOfHeroes.exe": {
-      "sha256": "bde97d5e53f473fa6bc579c50c42c464380f7b3ac006bf5907fb05b4b3c541f4",
+      "sha256": "1a9b2ceef3ad6a64b1fe77e007dacaaec6814fb27d459df633234422150c6f12",
       "size": 9432576,
       "pe_machine": 332,
       "imports": [
@@ -97,7 +97,7 @@
       "delay_imports": []
     },
     "TestClient.exe": {
-      "sha256": "34670b8bbd4a4dbca681b26ef9bcc9ba14f0fce8e56dcf60e15f5bcd5756a8a8",
+      "sha256": "78392632760f0df85958cb4f4769af72358b8d04359ef1701e94d096dda98fd1",
       "size": 3141632,
       "pe_machine": 332,
       "imports": [
@@ -112,7 +112,7 @@
       "delay_imports": []
     },
     "pig.exe": {
-      "sha256": "ae6223b26957eacd2b095c7840069230eda499a0645692cd28d165c6fef5a53c",
+      "sha256": "1ea58d1634bd152309b6dff7964e2ef2a7ea6df8be133125f1769b13bc6b483f",
       "size": 842752,
       "pe_machine": 332,
       "imports": [
@@ -128,7 +128,7 @@
       "delay_imports": []
     },
     "Launcher.exe": {
-      "sha256": "e954fe3daace6866d6cdbc22b75754cf1063105c9303c2a7560b68dce85e4c8b",
+      "sha256": "c121487802e57b9c4845168e06381b14216f678abe3fa3cf7b7633b1797e56fd",
       "size": 1168896,
       "pe_machine": 332,
       "imports": [
@@ -144,7 +144,7 @@
       "delay_imports": []
     },
     "CrashRpt.dll": {
-      "sha256": "e29cab1d35190da8d073a28c312a0eee3c3b08f908e23befbb591dc1093d0d1c",
+      "sha256": "65f53618182e1e8caa7b8079205edcb33a3b9653ecc33253f697ed2ba3521182",
       "size": 39424,
       "pe_machine": 332,
       "imports": [
@@ -403,37 +403,37 @@
       "delay_imports": []
     },
     "postgresql-build-input.json": {
-      "sha256": "2aa95d76bf989a34f840371cf5c98e9bfecf1fc6a5454f49e111e31c98a0aeb9",
+      "sha256": "64e16c62af4ea4ae8a35203baecf0285da064c584b4b7c8389387d7c2a5fe0cc",
       "size": 1851
     }
   },
   "symbols": {
     "DbServer.pdb": {
-      "sha256": "4cc934f69eba27c49ef397ac4117c71eb34d21a37d4c5f260f402e547d3f917a",
+      "sha256": "d00b89db1616923e408f7781d5d37592383319c138b4bfdbd43ac20ac299dbbd",
       "size": 18690048
     },
     "MapServer.pdb": {
-      "sha256": "7b49c96ec09374231676f829aef175964b075e7428fe614162a2cc461a25ef8d",
+      "sha256": "93e7dea1226df06ba5caf98bce44267d15b242824ca1044215f7460f5de390ec",
       "size": 39956480
     },
     "CityOfHeroes.pdb": {
-      "sha256": "62dc5e78149dc546f503ca0ecdbe13ea297f80c34c8253cc1976b7f59995bdf8",
+      "sha256": "526d9727e83051b827cefa2cce517079973dc2e88cda6b88224de8abd66e0142",
       "size": 47722496
     },
     "TestClient.pdb": {
-      "sha256": "66c4e61f02c777dfb684a0df86e3ad53a7cb8617ad70db092b8bf4878ab52b38",
+      "sha256": "4f6be0140324b781416698be77baab6815234a3dbe7cb2412f5b9c4a781b915d",
       "size": 26382336
     },
     "pig.pdb": {
-      "sha256": "7abb224e46efc0a6b6035605d8c9304163e3b989500380cbe12d144812bcbcb7",
+      "sha256": "359d35ed0d54ed63507ac59971e4b1f734c5861727b99cddeee0e00bdd3aff22",
       "size": 14241792
     },
     "Launcher.pdb": {
-      "sha256": "c86c8af48123c6e02da9bbf728e0def9b3282e01fa66a89a6ea354ad2b2dc922",
+      "sha256": "fe171b4d04df3d987706897e8a372d06642628e95f00089247a303b9e1e3e96f",
       "size": 15773696
     },
     "CrashRpt.pdb": {
-      "sha256": "7a6f9d227c1e6e2a62ca154913a938c1d538a37eefb2e445a50267b371e8b10f",
+      "sha256": "1cd51876dc1d3cf60fc7b9bb9a734dbf67bcb5378dfc4e84aee8c928f1387b3b",
       "size": 1478656
     }
   },

@@ -1,0 +1,157 @@
+{
+  "status": "passed",
+  "executable_sha256": "38f32d09e9884d8ca003baa991c3dfe15dda6fe0c6cfa88f7f9d1f9d9cd94a1b",
+  "checks": [
+    "real 64-worker SQL FIFO and container serialization",
+    "foreign-key removal before table creation and when constraint is absent",
+    "multi-batch create and update with 512 child rows",
+    "ordered asynchronous read callback",
+    "16 concurrent records and repeated same-record writes",
+    "Unicode and unsigned byte 255",
+    "case-insensitive game cache and SQL name lookup",
+    "whole-save retry for 40001 and 40P01",
+    "commit-time retry before acknowledgement",
+    "atomic parent/child deletion",
+    "permanent failure rolls back all save batches",
+    "five-attempt retry limit without acknowledgement",
+    "failed delete restores previously deleted child rows",
+    "connection loss stops without replay or acknowledgement; in-flight write rolled back",
+    "new-process container reload",
+    "clean PostgreSQL restart",
+    "WAL recovery of real saved containers",
+    "real template reorder/add-column rebuild preserves high-water 9000",
+    "inbound foreign keys and indexes survive table replacement",
+    "failed data conversion and dependent-view rebuild preserve original table",
+    "backup/restore reload through actual DbServer container reader"
+  ],
+  "output": [
+    {
+      "phase": "initial",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS real queue removes missing foreign keys before table creation",
+        "PG_TEST_PASS real queue: multi-batch create/update/read/delete, ordering, 16 writers, SQLSTATE 40001/40P01 and commit retry, UTF-8, case lookup",
+        "PG_TEST_COMPLETE initial",
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40P01 attempt=1",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1"
+      ]
+    },
+    {
+      "phase": "fail",
+      "exit_code": 3,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_FIFO_FAILED command=2 SQLSTATE=23514; save not acknowledged"
+      ]
+    },
+    {
+      "phase": "exhaust",
+      "exit_code": 3,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=1",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=2",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=3",
+        "PG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=4",
+        "PG_FIFO_FAILED command=2 SQLSTATE=40001; save not acknowledged"
+      ]
+    },
+    {
+      "phase": "delete-fail",
+      "exit_code": 3,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_FIFO_FAILED command=6 SQLSTATE=23503; save not acknowledged"
+      ]
+    },
+    {
+      "phase": "disconnect",
+      "exit_code": 3,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_FIFO_FAILED command=6 SQLSTATE=57P01; save not acknowledged"
+      ]
+    },
+    {
+      "phase": "verify",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify"
+      ]
+    },
+    {
+      "phase": "verify",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify"
+      ]
+    },
+    {
+      "phase": "verify",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify"
+      ]
+    },
+    {
+      "phase": "rebuild",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS real schema rebuild preserves rows, high-water and foreign key",
+        "PG_TEST_COMPLETE rebuild",
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir"
+      ]
+    },
+    {
+      "phase": "verify-rebuilt",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify-rebuilt"
+      ]
+    },
+    {
+      "phase": "rebuild-fail",
+      "exit_code": 2,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting."
+      ]
+    },
+    {
+      "phase": "rebuild-fail-view",
+      "exit_code": 2,
+      "markers": [
+        "PG_TEST_DIAGNOSTIC: Could not find appropriate game data dir",
+        "PG_TEST_FATAL: PostgreSQL rebuild of PgFifo failed; original table preserved. Fix the schema before restarting."
+      ]
+    },
+    {
+      "phase": "verify-rebuilt",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify-rebuilt"
+      ]
+    },
+    {
+      "phase": "verify-rebuilt",
+      "exit_code": 0,
+      "markers": [
+        "PG_TEST_PASS reload through real container reader",
+        "PG_TEST_COMPLETE verify-rebuilt"
+      ]
+    }
+  ],
+  "limits": [
+    "Controlled templates, not asset-generated character templates",
+    "No MapServer, gameplay, account services or Android runtime test",
+    "Serialization/deadlock SQLSTATEs injected by real server triggers; not a load benchmark"
+  ],
+  "server": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit"
+}

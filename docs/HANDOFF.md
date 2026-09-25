@@ -1,9 +1,12 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-24. PostgreSQL controlled persistence, targeted stage1 inspection,
+Updated: 2026-09-25. PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
-generation are complete. Normal DbServer initialization and game-level persistence
-remain validation gates.
+generation have passed their current checks. Normal fixture-OFF DbServer schema
+initialization/export/reload has also passed against a fresh PostgreSQL cluster.
+The refreshed runtime and schema artifacts share repository commit
+`0f37414d1b42498e65738c78995e160fceb29ca8`. Game-level persistence, asset-complete
+reference comparison and Android execution remain validation gates.
 
 ## Active direction
 
@@ -23,18 +26,23 @@ saves commit before completion; serialization/deadlock retries replay the whole
 transaction. Permanent or uncertain failures stop without acknowledging the
 failed command. Child/parent deletion is atomic.
 
-All four jobs in [run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993)
-passed at implementation commit `0827ccc992daa7530d9f98d742122238197847df`:
+All four jobs in the current [regression run 36074139842](https://github.com/Russianranger/coh-android/actions/runs/36074139842)
+passed at repository commit `0f37414d1b42498e65738c78995e160fceb29ca8`:
 Linux PostgreSQL 16/18, Windows x86 ODBC/PostgreSQL 17, and the actual Win32
-DbServer. The latter passed 20 check groups across 14 process invocations,
+DbServer. The latter passed 21 check groups across 14 process invocations,
 including connection loss, failed-save rollback, restart/WAL recovery, template
-rebuild and backup/restore. Download `postgresql-win32-development-build` from
-that run; its executable hash matches the executable recorded by the test.
+rebuild, backup/restore and foreign-key removal against absent tables. The
+narrow PostgreSQL guard fixes the fresh-database initialization failure without
+changing the preserved source snapshot.
 
-A regression refresh at [run 36071558686](https://github.com/Russianranger/coh-android/actions/runs/36071558686)
-also passed all four database jobs. The new normal DbServer driver is gated on
-accepted generated game schemas; it tests schema startup/export and a second
-startup against the same fresh disposable database.
+The earlier [20-group implementation run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993)
+at `0827ccc992daa7530d9f98d742122238197847df` and
+[regression refresh 36071558686](https://github.com/Russianranger/coh-android/actions/runs/36071558686)
+remain historical evidence. The separate normal fixture-OFF DbServer
+[startup/export/reload run 36075137920](https://github.com/Russianranger/coh-android/actions/runs/36075137920)
+also passed using the accepted schema/runtime pair and a fresh disposable
+PostgreSQL database. This exercises normal game-schema initialization in addition
+to the controlled persistence fixtures; it does not create or save characters.
 
 Migration 2 adds transactional table rebuilds preserving sequence high-water,
 indexes and foreign keys, explicit ASCII case-insensitive name equality, and the
@@ -54,30 +62,50 @@ for 216 legacy hierarchy layouts and 193 DDS surplus-byte cases; runtime use
 remains unvalidated. See [the stage1 assessment](STAGE1_ASSET_ASSESSMENT.md).
 No repeat index run, repeat upload or custom `i26/geobin.pigg` upload is needed.
 
-**Reference runtime assembled:** [run 36069123663](https://github.com/Russianranger/coh-android/actions/runs/36069123663)
-builds the exact source pin with the PostgreSQL patch and fixture mode OFF.
+**Reference runtime refreshed:** [run 36074139984](https://github.com/Russianranger/coh-android/actions/runs/36074139984)
+passed with the exact source pin, PostgreSQL patch and fixture mode OFF at
+repository commit `0f37414d1b42498e65738c78995e160fceb29ca8`.
+Download `reference-win32-runtime` (artifact `10839214575`) from this run;
+it supersedes [the earlier package 36069123663](https://github.com/Russianranger/coh-android/actions/runs/36069123663).
 Client, MapServer, DbServer, TestClient, pig and Launcher are packaged with
-required supplied DLLs and app-local x86 MSVC runtime libraries. The downloaded
-package passed hash, PE and dependency checks, and was staged with the verified
-base donors: 173,011 data files / 2,977,730,517 bytes. No conflicting donor paths.
+required supplied DLLs and app-local x86 MSVC runtime libraries. The package
+passed hash, PE and dependency checks. The verified base assembly contains
+173,011 data files / 2,977,730,517 bytes, with no conflicting donor paths.
 The preflight's earlier 173,008 count excluded three additional source-pinned DB
 config files added by final assembly. See [assembly evidence](runtime-assembly-assessment.json)
 and [reproduction/build instructions](REFERENCE_RUNTIME.md).
 
 Local game execution is blocked by this environment's wineserver IPC restriction.
-Use hosted Windows for the separate data-only schema experiment; do not claim
-the standard asset-complete generation or gameplay path has passed. The new
-schema patch is isolated from the reference package and retains error/output
+Use hosted Windows for further runtime validation. The separate data-only schema
+patch remains isolated from the reference package and retains error/output
 gates. Its incidental caches must not be reused as gameplay caches.
 
-**Data-only schema generation passed:** [run 36072787971](https://github.com/Russianranger/coh-android/actions/runs/36072787971)
-initialized all six attribute maps, then completed a clean strict second pass with
-identical map bytes and zero queued errors. All 51 required outputs plus five
-dbidmaps are preserved in [the accepted artifact](schema-generation-evidence/accepted-36072787971.zip).
-The first normal DbServer run exposed a fresh-database FK-removal ordering bug;
-a narrow PostgreSQL correction and regression checks are being validated. The expected schema contains
-99 tables, 5,935 columns and 58,272 attribute rows. Asset-complete reference
-comparison, map loading and gameplay remain unvalidated.
+**Data-only schema generation refreshed:** [run 36074139889](https://github.com/Russianranger/coh-android/actions/runs/36074139889)
+passed at the same repository commit as the current reference package. Bootstrap
+took 32.062 seconds and strict reload 5.907 seconds, with zero queued errors and
+identical bytes for all six attribute maps. All 51 required outputs plus five
+dbidmaps are preserved in [the current accepted artifact](schema-generation-evidence/accepted-36074139889.zip).
+Every one of these 56 generated payloads is byte-identical to the
+[earlier accepted run 36072787971](schema-generation-evidence/accepted-36072787971.zip),
+which remains historical evidence. Keep the accepted attribute-ID mappings with
+any database initialized from them.
+
+**Normal DbServer schema startup/reload passed:** the first hosted attempt
+exposed a fresh-database FK-removal ordering bug. The narrow correction passed
+its regression suite and is included in both current artifacts. With that pair,
+[run 36075137920](https://github.com/Russianranger/coh-android/actions/runs/36075137920)
+completed fresh initialization/export in 11.718 seconds and a second pass in
+5.578 seconds. Both exited successfully with no failure diagnostics and produced
+fresh empty dumps. Both passes found 99 tables and 58,272 attribute rows
+(56,411 general, 1,771 badge-stat and 90 pop-help IDs), with identical catalog
+hashes and attribute mappings. Both catalogs contain the verified 5,935 columns,
+119 indexes and 734 constraints.
+The tested DbServer has persistence fixture mode OFF; its executable SHA-256 is
+`e5f02c46523873590fa7a4a63413a3667359254962b46c75c426a8d9f07dc8e9`.
+See the [downloaded evidence](postgresql-evidence/generated-schema-36075137920.zip)
+and [summary](postgresql-evidence/generated-schema-36075137920.json).
+Equality with an asset-complete `MapServer -templates` reference, complete
+serializer semantics, map loading and gameplay remain unvalidated.
 
 ## Completed
 
@@ -166,21 +194,22 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Use the PostgreSQL development backend as the active database path. The
-   controlled DbServer persistence fixtures are implemented; next validate
-   generated game templates, character creation, network save acknowledgements,
-   save/reload and map transfer. Game-level name uniqueness and auxiliary service
-   persistence remain separate gates. Fake auth is only the minimal local
-   diagnostic route; no SQL Server save migration has been attempted.
-2. Run schema generation on hosted Windows, then compare accepted outputs with
-   asset-complete `MapServer -templates`. The reference package and coherent
-   base assembly are now ready. Generate server/client caches with the bounded
-   harness when the execution environment has the staged assets and graphics.
-3. Resolve legacy animation hierarchy/DDS warnings through reference runtime
-   use, then test actual character creation/save/reload and map transfer.
-   Keep custom variants separate. Do not request further archives until
-   runtime evidence identifies a concrete missing input. The older upstream
-   v2i3 release is not the locked build; use the new reference artifact.
+1. Compare the accepted data-only outputs with asset-complete
+   `MapServer -templates`. The matching reference package and coherent base
+   assembly are ready. Preserve the accepted attribute-ID mappings; do not
+   substitute the separate schema executable or its incidental caches for the
+   reference runtime.
+2. Generate server/client caches with the bounded harness when the execution
+   environment has the staged assets and graphics, then attempt normal map
+   startup. Resolve legacy animation hierarchy/DDS warnings through reference
+   runtime use. Keep custom variants separate and request further archives only
+   when runtime evidence identifies a concrete missing input. The older upstream
+   v2i3 release is not the locked build; use the current reference artifact.
+3. Test actual character creation/save/reload and map transfer, including network
+   save acknowledgements, game-level name uniqueness and auxiliary service
+   persistence. Fake auth is only the minimal local diagnostic route; no SQL
+   Server save migration has been attempted. Empty-database startup/export and
+   controlled persistence fixtures do not establish these gameplay behaviors.
 4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
    Android runtime, then package under the APK’s own UID. Measure the stock
    65-connection pool, memory, suspension/restart and save durability on Thor.

@@ -1,0 +1,26 @@
+{
+  "observed_utc": "2026-09-25T00:02:56.665862+00:00",
+  "condition": "Staging CLI exited zero and final manifest exists, but incomplete marker remained.",
+  "marker_content": "Do not execute this incomplete runtime.\n",
+  "marker_mtime_ns": 1790294163084152844,
+  "marker_ctime_ns": 1790294204017803048,
+  "manifest_mtime_ns": 1790294199408806264,
+  "cause": "unproven; isolated create/unlink probes did not reproduce persistence",
+  "independent_recovery_audit": {
+    "data_files": 173011,
+    "data_bytes": 2977730517,
+    "pinned_text_files": 156290,
+    "binary_assets": 16721,
+    "verified_build_files": 29,
+    "verified_launchers": 6,
+    "unexpected_files": 0,
+    "checks": "All staged text/config hashes matched immutable manifests, assets matched recorded hashes, build files matched package receipts, and launchers matched pinned transformations."
+  },
+  "runtime_inputs_sha256": "d18d0dec1144909e7cf43b89662416a50fced9e1362b229f4281c1d12ea8d14b",
+  "recovery": "Remove only the stale marker after complete independent file audit; verify absence in separate subsequent call.",
+  "recovery_first_result": "Marker absent immediately after unlink and directory fsync, but present again on subsequent call.",
+  "reobserved_marker_ctime_ns": 1790294582247674173,
+  "separate_call_absence_verified": true,
+  "separate_call_checked_utc": "2026-09-25T00:03:54.526093+00:00",
+  "execution_policy": "Do not execute any staged directory while an incomplete marker exists; hosted DbServer evidence is independent of this local assembly."
+}

@@ -1,17 +1,17 @@
 {
-  "assessed_utc_date": "2026-09-24",
+  "assessed_utc_date": "2026-09-25",
   "status": "reference_runtime_assembled_execution_unvalidated",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
   "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
-  "build_repository_commit": "7524c9d894bd49bc83d64c3dbfac0f8d24e57eba",
-  "build_run_url": "https://github.com/Russianranger/coh-android/actions/runs/36069123663",
+  "build_repository_commit": "0f37414d1b42498e65738c78995e160fceb29ca8",
+  "build_run_url": "https://github.com/Russianranger/coh-android/actions/runs/36074139984",
   "runtime_artifact": {
-    "id": 10837662443,
-    "bytes": 14555591,
-    "sha256": "1f971f3f86579d7dc4da68b471c75039f57e9417b5f33ac8036e5c3e30378c24"
+    "id": 10839214575,
+    "bytes": 14555555,
+    "sha256": "4d0afbef6b2e84b973d5e6081b7453d92448c3d71dbaf05e4680a4e231b83b93"
   },
-  "inner_runtime_zip_sha256": "23b6b5adf48afc571f5863e3339ae159a734cae19b5234f876fe279aebf52c6b",
-  "runtime_input_manifest_sha256": "4998b4cc3c035a2f654952b49e3522b3b20051c94f8b65c0be73b7209e70c4da",
+  "inner_runtime_zip_sha256": "52a771bbd149c4daa1a4f15f786db9e4b070d706692629ae72ed00b2a32513e1",
+  "runtime_input_manifest_sha256": "d18d0dec1144909e7cf43b89662416a50fced9e1362b229f4281c1d12ea8d14b",
   "data_files": 173011,
   "data_bytes": 2977730517,
   "base_binary_asset_files": 16721,
@@ -53,8 +53,8 @@
     "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
     "patch_sha256": "ce4c072f8b975395ac29569a43b9a135aa79b7823f06cc6714d31a0ed49b896c",
     "overlay_sha256": {
-      "Common/sql/pg_compat.h": "6c351f6f621b827d223ce12f1ae57ee735df7b0d57059fa6b8091763236282f8",
-      "DBServer/src/pg_persistence_test.c": "dab6e0408f559c543b4de20c2a14090480ce8d3081c52c0c7b158ae17460d1f2"
+      "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+      "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
     },
     "patched_sha256": {
       "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
@@ -84,9 +84,21 @@
   "tool_tests": {
     "runtime_packaging": 8,
     "runtime_staging": 14,
-    "reference_generation": 11,
-    "schema_source_staging": 8,
-    "schema_generation_runner": 12
+    "reference_generation": 12,
+    "schema_source_staging": 9,
+    "schema_generation_runner": 18,
+    "generated_schema_db_driver": 11
   },
-  "next_gate": "Hosted separately identified data-only MapServer schema generation; then asset-complete reference comparison and gameplay checks."
+  "next_gate": "Asset-complete MapServer template comparison, cache generation and MapServer/character persistence checks. Separate data-only schemas and normal DbServer schema startup/reload have passed.",
+  "staging_recovery_record": "runtime-staging-recovery.json",
+  "completion_marker_absent": true,
+  "separate_hosted_database_check": {
+    "run_id": 36075137920,
+    "scope": "Normal fixture-OFF DbServer startup/export/reload with accepted data-only generated schemas; not execution of this full asset assembly",
+    "status": "passed",
+    "tables": 99,
+    "columns": 5935,
+    "attribute_rows": 58272,
+    "gameplay_validated": false
+  }
 }
