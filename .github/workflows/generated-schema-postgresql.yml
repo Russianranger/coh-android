@@ -11,6 +11,12 @@ on:
         description: Optional successful matching reference runtime run (otherwise same commit as schemas)
         required: false
         type: string
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/generated-schema-postgresql.yml'
+      - 'database/postgresql/tests/run_generated_schema.py'
+      - 'database/postgresql/tests/test_run_generated_schema.py'
   workflow_run:
     workflows: ['Data-only database schema generation']
     types: [completed]
@@ -30,7 +36,7 @@ env:
 jobs:
   validate:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'workflow_dispatch' || github.event_name == 'push' ||
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
@@ -51,7 +57,15 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
           $base = "https://api.github.com/repos/${{ github.repository }}/actions"
-          $schema = Invoke-RestMethod "$base/runs/$env:SCHEMA_RUN" -Headers $headers
+          if ($env:SCHEMA_RUN) {
+            $schema = Invoke-RestMethod "$base/runs/$env:SCHEMA_RUN" -Headers $headers
+          } else {
+            # Driver-only changes can reuse the latest accepted build pair.
+            # Python preflight still requires the exact current source receipts.
+            $runs = Invoke-RestMethod "$base/workflows/schema-generation.yml/runs?branch=main&status=success&per_page=20" -Headers $headers
+            $schema = $runs.workflow_runs | Where-Object { $_.head_branch -eq 'main' -and $_.head_repository.full_name -eq '${{ github.repository }}' -and $_.conclusion -eq 'success' } | Sort-Object created_at -Descending | Select-Object -First 1
+            if (-not $schema) { throw 'No successful main-branch schema run is available' }
+          }
           if ($schema.conclusion -ne 'success' -or $schema.path -ne '.github/workflows/schema-generation.yml' -or $schema.head_repository.full_name -ne '${{ github.repository }}') { throw 'A successful schema run from this repository is required' }
           $reference = $null
           $deadline = (Get-Date).AddMinutes(15)
@@ -73,6 +87,8 @@ jobs:
           } until ($reference)
           if ($reference.path -ne '.github/workflows/reference-runtime.yml' -or $reference.head_repository.full_name -ne '${{ github.repository }}') { throw 'Unexpected reference workflow/repository' }
           "run_id=$($reference.id)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "schema_run_id=$($schema.id)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Using accepted schema run $($schema.id)"
           Write-Host "Using reference runtime run $($reference.id)"
       - uses: actions/download-artifact@v4
         with:
@@ -84,7 +100,7 @@ jobs:
         with:
           name: data-only-schema-evidence
           path: out/accepted-schemas
-          run-id: ${{ env.SCHEMA_RUN }}
+          run-id: ${{ steps.reference.outputs.schema_run_id }}
           github-token: ${{ github.token }}
       - name: Extract reference package and stage pinned text
         shell: pwsh

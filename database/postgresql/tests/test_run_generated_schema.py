@@ -16,6 +16,51 @@ class GeneratedSchemaDriverTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
 
+    def test_observed_catalog_notices_are_retained_without_failing(self):
+        observed = [
+            'SQLERROR: -1 00000 NOTICE: relation "ents" does not exist, skipping',
+            'SQLERROR: -1 00000 NOTICE: relation "ents2" does not exist, skipping',
+            'SQLERROR: -1 00000 NOTICE: constraint "fk_ents2_leaguesid_leagues" of relation "ents2" does not exist, skipping',
+            'SQLERROR: -1 00000 NOTICE: constraint "fk_ents_teamupsid_teamups" of relation "ents" does not exist, skipping',
+            'SQLERROR: -1 42P07 NOTICE: relation "coh_d35a94bbfd5046f3ddf63660566de5b1" already exists, skipping',
+        ]
+        lines = observed + ['260925 03:18:59 -1 ' + line for line in observed]
+        for line in lines:
+            with self.subTest(line=line):
+                self.assertFalse(driver.is_failure_line(line))
+        captured = driver.benign_catalog_notices('\n'.join(lines + ['ordinary progress']))
+        self.assertEqual(captured['count'], len(lines))
+        self.assertEqual(captured['lines'], lines)
+
+    def test_catalog_notice_exceptions_do_not_hide_real_or_unreviewed_errors(self):
+        known = 'SQLERROR: -1 42P07 NOTICE: relation "coh_d35a94bbfd5046f3ddf63660566de5b1" already exists, skipping'
+        cases = [
+            'SQLERROR: 0 42501 permission denied',
+            'SQLERROR: -1 00000 unexpected database failure',
+            'SQLERROR: -1 42P07 ERROR: relation "coh_d35a94bbfd5046f3ddf63660566de5b1" already exists',
+            'SQLERROR: -1 00000 NOTICE: unreviewed server condition',
+            'SQLERROR: -1 00000 NOTICE: relation "miningaccumulator" does not exist, skipping',
+            'SQLERROR: -1 00000 NOTICE: constraint "unknown" of relation "ents" does not exist, skipping',
+            'SQLERROR: -1 00000 NOTICE: constraint "fk_ents_teamupsid_teamups" of relation "ents2" does not exist, skipping',
+            known.replace('coh_d35a94bbfd5046f3ddf63660566de5b1', 'ents'),
+            known.replace('coh_d35a94bbfd5046f3ddf63660566de5b1', 'coh_bad'),
+            known.replace('42P07', '42501'), known.replace('42P07', '00000'),
+            known + '; ERROR: permission denied', 'PG_FIFO_FAILED ' + known,
+            'SQLSTATE=42501', 'FATAL: shutting down', 'assertion failed',
+        ]
+        for line in cases:
+            with self.subTest(line=line):
+                self.assertTrue(driver.is_failure_line(line))
+                self.assertEqual(driver.benign_catalog_notices(line)['count'], 0)
+        self.assertEqual([line for line in (known + '\nSQLERROR: 0 42501 permission denied').splitlines()
+                          if driver.is_failure_line(line)], ['SQLERROR: 0 42501 permission denied'])
+
+    def test_notice_report_is_bounded_and_keeps_total_count(self):
+        line = 'SQLERROR: -1 00000 NOTICE: relation "ents2" does not exist, skipping'
+        captured = driver.benign_catalog_notices((line + '\n') * 101)
+        self.assertEqual(captured['count'], 101)
+        self.assertEqual(captured['lines'], [line] * 100)
+
     def archive(self, members):
         path = self.root / 'schema.zip'
         records = []

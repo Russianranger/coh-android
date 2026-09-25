@@ -126,6 +126,15 @@ class OneMapTests(unittest.TestCase):
                 self.assertEqual(driver.diagnostic_failures(message), [message])
         self.assertEqual(driver.diagnostic_failures('No zone launchers connected.'), [])
 
+    def test_status_and_runtime_scans_share_narrow_catalog_notice_handling(self):
+        notice = 'SQLERROR: -1 00000 NOTICE: relation "ents" does not exist, skipping\n'
+        self.assertTrue(driver.parse_status(READY + notice)['ready'])
+        self.assertEqual(driver.diagnostic_failures(notice), [])
+        failure = 'SQLERROR: -1 42501 permission denied'
+        self.assertEqual(driver.diagnostic_failures(notice + failure), [failure])
+        with self.assertRaisesRegex(ValueError, 'failure diagnostics'):
+            driver.parse_status(READY + notice + failure)
+
     def test_occupied_map_udp_port_rejected(self):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as occupied, \
              socket.socket(socket.AF_INET, socket.SOCK_STREAM) as unused:

@@ -21,7 +21,7 @@ import subprocess
 
 import run_generated_schema as schema
 import run_network_ack as network
-from run_generated_schema import (ROOT, LOG_LIMIT, FAILURE, require, sha256, redact,
+from run_generated_schema import (ROOT, LOG_LIMIT, is_failure_line, benign_catalog_notices, require, sha256, redact,
     initialize, make_private_directory, private_write, collect_logs, catalog_snapshot,
     validate_catalog, payload)
 sys.path.insert(0, str(ROOT / 'tools'))
@@ -57,7 +57,7 @@ def source_map_contract(root=ROOT):
 
 def parse_status(text, allow_missing=False):
     """Accept only an explicit, unambiguous map1 response from stock dbquery."""
-    require(not any(FAILURE.search(line) for line in text.splitlines()), 'Status query emitted failure diagnostics')
+    require(not any(is_failure_line(line) for line in text.splitlines()), 'Status query emitted failure diagnostics')
     missing = [line.strip() for line in text.splitlines() if line.strip() == 'invalid container request']
     require(not missing or allow_missing, 'Requested Atlas Park container is missing')
     matches = re.findall(r'^\s*1\s+(\S+)\s+([^\r\n]+)\r?$', text, re.M)
@@ -155,7 +155,7 @@ def preflight_ports(pg_port):
 
 
 def diagnostic_failures(text):
-    return [line[:2000] for line in text.splitlines() if FAILURE.search(line) or CRITICAL_ASSET.search(line)]
+    return [line[:2000] for line in text.splitlines() if is_failure_line(line) or CRITICAL_ASSET.search(line)]
 
 
 def database_query_possible(cluster, tables):
@@ -219,6 +219,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
     def logs_clean():
         text, records = collect_logs(isolated, logs, output, secrets)
         report['redacted_logs'] = records
+        report['benign_catalog_notices'] = benign_catalog_notices(text)
         errors = diagnostic_failures(text)
         require(not errors, 'Observed startup/runtime failure diagnostics:\n' + '\n'.join(errors[:30]))
         return text
@@ -314,8 +315,9 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             except Exception as error:
                 report['failures'].append('Cluster shutdown: ' + redact(str(error), secrets))
         try:
-            _, records = collect_logs(isolated, logs, output, secrets)
+            text, records = collect_logs(isolated, logs, output, secrets)
             report['redacted_logs'] = records
+            report['benign_catalog_notices'] = benign_catalog_notices(text)
         except Exception as error:
             report['failures'].append('Log capture: ' + redact(str(error), secrets))
         if report['failures']:

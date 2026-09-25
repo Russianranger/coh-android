@@ -44,7 +44,29 @@ IDENTIFIER = re.compile(r'[A-Za-z_][A-Za-z0-9_]*\Z')
 FAILURE = re.compile(r'\b(?:fatal|assertion failed|SQL_ERROR|SQLERROR|PG_FIFO_FAILED|'
                      r'INVALID PARAMETER|Giving up|Bad output file|Error binding|'
                      r'SQLSTATE|ODBC error|SQL error)\b|^\s*ERROR[:\s]', re.I)
+# sqlConnPrintError labels every ODBC diagnostic SQLERROR, including NOTICEs.
+# These exact catalog-maintenance notices were observed in hosted runs
+# 36089560076/36089560078. dbInit removes the two optional group FKs and
+# COH_PG_CREATE_INDEX uses CREATE INDEX IF NOT EXISTS with an MD5-derived name.
+# Match the entire line (including only the engine's optional log prefix),
+# never all NOTICEs or all diagnostics with these SQLSTATEs.
+BENIGN_CATALOG_NOTICE = re.compile(
+    r'(?:\d{6} \d{2}:\d{2}:\d{2} -?\d+ )?SQLERROR: -1 (?:'
+    r'00000 NOTICE: (?:relation "(?:ents|ents2)" does not exist, skipping|'
+    r'constraint "fk_ents2_leaguesid_leagues" of relation "ents2" does not exist, skipping|'
+    r'constraint "fk_ents_teamupsid_teamups" of relation "ents" does not exist, skipping)|'
+    r'42P07 NOTICE: relation "coh_[0-9a-f]{32}" already exists, skipping)')
 LOG_LIMIT = 16 * 1024 * 1024
+
+
+def is_failure_line(line):
+    return bool(FAILURE.search(line)) and BENIGN_CATALOG_NOTICE.fullmatch(line.strip()) is None
+
+
+def benign_catalog_notices(text):
+    """Retain recognized notices in reports as well as the complete raw logs."""
+    lines = [line for line in text.splitlines() if BENIGN_CATALOG_NOTICE.fullmatch(line.strip())]
+    return {'count': len(lines), 'lines': lines[:100], 'line_limit': 100}
 
 
 def ascii_lower(value):
@@ -344,7 +366,8 @@ def run(runtime, schema_report, reference, work, output, pg_bin, driver,
             report['redacted_logs'] = logs
             phase['optional_diagnostic_lines'] = [line[:1500] for line in text.splitlines()
                 if re.search(r'weeklytf\.cfg|(?:server[/\\]db[/\\])?doors\.db', line, re.I)]
-            errors = [line[:1500] for line in text.splitlines() if FAILURE.search(line)]
+            phase['benign_catalog_notices'] = benign_catalog_notices(text)
+            errors = [line[:1500] for line in text.splitlines() if is_failure_line(line)]
             phase['failure_diagnostic_lines'] = errors[:100]
             require(phase.get('exit_code') == 0 and not phase.get('timed_out') and
                     not phase.get('log_limit_exceeded') and not phase.get('capture_error'),

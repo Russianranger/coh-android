@@ -45,11 +45,19 @@ class NetworkAckTests(unittest.TestCase):
 
     def test_actual_odbc_error_prefix_rejects_otherwise_valid_ack(self):
         diagnostic = 'SQLERROR: 0 42501 permission denied\n'
-        self.assertIsNotNone(driver.FAILURE.search(diagnostic))
+        self.assertTrue(driver.is_failure_line(diagnostic))
         with self.assertRaisesRegex(ValueError, 'failure diagnostics'):
             driver.require_ack(marker() + diagnostic, 0, 42)
         with self.assertRaisesRegex(ValueError, 'failure diagnostics'):
             driver.require_batch_ack(marker(42, count=2) + marker(43, count=2) + diagnostic, 0, (42, 43))
+
+    def test_received_ack_allows_only_reviewed_catalog_notices(self):
+        notice = 'SQLERROR: -1 00000 NOTICE: relation "ents2" does not exist, skipping\n'
+        self.assertEqual(driver.require_ack(marker() + notice, 0, 42)['id'], 42)
+        self.assertEqual(len(driver.require_batch_ack(marker(42, count=2) + marker(43, count=2) + notice, 0, (42, 43))), 2)
+        for diagnostic in (notice.replace('NOTICE:', 'ERROR:'), notice + 'SQLERROR: 0 42501 permission denied\n'):
+            with self.subTest(diagnostic=diagnostic), self.assertRaisesRegex(ValueError, 'failure diagnostics'):
+                driver.require_ack(marker() + diagnostic, 0, 42)
 
     def test_premature_or_failed_write_rejects_even_malformed_ack_marker(self):
         driver.require_no_ack('SQLSTATE=42501; save not acknowledged')

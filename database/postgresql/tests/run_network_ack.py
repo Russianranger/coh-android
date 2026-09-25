@@ -24,7 +24,8 @@ import run_generated_schema as schema
 from run_generated_schema import (ROOT, accepted_inputs, catalog_snapshot, collect_logs,
                                   initialize, make_private_directory, payload, payload_hash,
                                   private_config, private_write, query_json, redact, require,
-                                  sha256, validate_catalog, LOG_LIMIT, FAILURE)
+                                  sha256, validate_catalog, LOG_LIMIT, is_failure_line,
+                                  benign_catalog_notices)
 
 SUCCESS = 'normal_network_ack_commit_order_passed_gameplay_unvalidated'
 MARKER = 'COH_DBQUERY_CONTAINER_ACK'
@@ -45,7 +46,7 @@ def require_ack(text, exit_code, expected_id=None):
     require(value['list'] == LIST_ID and value['callback'] == 0 and value['count'] == 1 and value['id'] > 0,
             'Received ACK has wrong list, callback, count or ID')
     require(expected_id is None or value['id'] == expected_id, 'Received ACK ID differs from request')
-    require(not any(FAILURE.search(line) for line in text.splitlines()), 'Successful query emitted failure diagnostics')
+    require(not any(is_failure_line(line) for line in text.splitlines()), 'Successful query emitted failure diagnostics')
     return value
 
 
@@ -55,7 +56,7 @@ def require_batch_ack(text, exit_code, identifiers):
             'Batch query must exit cleanly with exactly two received ACK records')
     require(all(v['list'] == LIST_ID and v['callback'] == 0 and v['count'] == 2 for v in values) and
             sorted(v['id'] for v in values) == sorted(identifiers), 'Batch ACK count/IDs differ from request')
-    require(not any(FAILURE.search(line) for line in text.splitlines()), 'Batch query emitted failure diagnostics')
+    require(not any(is_failure_line(line) for line in text.splitlines()), 'Batch query emitted failure diagnostics')
     return values
 
 
@@ -403,7 +404,8 @@ def run(runtime, schema_report, reference, work, output, pg_bin, driver,
         report['multi_container_batch_validated'] = True
 
         positive_text, _ = collect_logs(isolated, logs, output, secrets)
-        positive_errors = [line[:1500] for line in positive_text.splitlines() if FAILURE.search(line)]
+        report['pre_injection_benign_catalog_notices'] = benign_catalog_notices(positive_text)
+        positive_errors = [line[:1500] for line in positive_text.splitlines() if is_failure_line(line)]
         require(not positive_errors, 'Unexpected pre-injection failure diagnostics: ' + '\n'.join(positive_errors[:20]))
         cluster.sql(failure_trigger_sql(), user='coh_game', database=cluster.meta['database'])
         rejected = client('deferred-commit-failure', identifier, 'network_commit_failure')
@@ -446,6 +448,7 @@ def run(runtime, schema_report, reference, work, output, pg_bin, driver,
         try:
             text, records = collect_logs(isolated, logs, output, secrets)
             report['redacted_logs'] = records
+            report['benign_catalog_notices'] = benign_catalog_notices(text)
         except Exception as error:
             report['failures'].append('Log capture: ' + redact(str(error), secrets))
         if report['failures']:
