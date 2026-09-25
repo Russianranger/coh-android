@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "hosted_staging_passed_template_comparison_in_progress",
+  "release_id": 396839391,
+  "draft": true,
+  "asset_id": 588984151,
+  "name": "coh-reference-assets.zip",
+  "bytes": 615541018,
+  "sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "ignored_incomplete_asset_id": 588979946,
+  "failed_download_run": 36174562963,
+  "fix_commit": "5f37d7c674c9d1205138f6e7dbfc04a6ff2b9ea8",
+  "validation_run": 36176806895,
+  "reference_run": 36088012664,
+  "schema_run": 36088012666,
+  "run_one_map": true,
+  "limitations": [
+    "Original run 36174562963 failed at HTTP download before game execution.",
+    "Run 36175960917 verified the exact hosted asset download, then failed canonical manifest validation before game execution.",
+    "Run 36176806895 passed full runtime staging; template comparison is in progress and Atlas Park readiness is pending.",
+    "Character persistence and Android gameplay remain unvalidated."
+  ],
+  "validation_commit": "fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687",
+  "verified_download_run": 36175960917,
+  "verified_download_commit": "5f37d7c674c9d1205138f6e7dbfc04a6ff2b9ea8",
+  "hosted_download_bytes": 615541018,
+  "hosted_download_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "hosted_draft_access_verified": true,
+  "canonical_manifest_failure": {
+    "run": 36175960917,
+    "error": "Manifest must use canonical JSON",
+    "before_game_execution": true,
+    "cause": "Git Windows checkout converted LF to CRLF.",
+    "accepted": {
+      "bytes": 3832869,
+      "crlf_count": 0,
+      "sha256": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f"
+    },
+    "rejected_checkout": {
+      "bytes": 3933249,
+      "crlf_count": 100380,
+      "sha256": "d1b3a48a283b9c103191e13f71328026e85bc604e12ff3ffb3b7567e4d3c315c"
+    }
+  },
+  "canonical_checkout_fix": {
+    "commit": "fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687",
+    "gitattributes_rule": "assets/reference-inputs-*.json -text",
+    "core_autocrlf_true_checkout_verified": true,
+    "accepted_manifest_hash_unchanged": true,
+    "tooling_run": 36176404244,
+    "tooling_conclusion": "success"
+  },
+  "character_persistence_design": "../CHARACTER_PERSISTENCE_VALIDATION.md",
+  "character_persistence_status": "design_only_not_implemented_or_executed",
+  "hosted_asset_extraction": {
+    "run": 36176806895,
+    "asset_count": 16721,
+    "asset_bytes": 985644857,
+    "manifest_sha256": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f",
+    "full_runtime_staging": "passed"
+  }
+}

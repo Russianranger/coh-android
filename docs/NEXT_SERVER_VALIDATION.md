@@ -2,7 +2,10 @@
 
 Updated: 2026-09-25. Normal DbServer startup/reload and real network save
 acknowledgements have passed. Asset-backed template comparison and Atlas Park
-readiness are implemented but await transfer of the reviewed asset package.
+readiness are implemented. The hosted runner downloaded and verified the draft
+release asset, then stopped on Windows manifest line endings before game
+execution. The byte-preserving checkout fix is applied and full staging passed in run 36176806895.
+The normal template comparison is in progress; Atlas Park readiness is pending.
 
 ## PostgreSQL network acknowledgement correction
 
@@ -88,6 +91,12 @@ metadata/decompression bounds, Windows path/case checks and an incomplete marker
 Both stored and compressed versions were independently extracted and verified.
 Only metadata and tools are committed; binary assets remain outside Git.
 
+The exact reviewed ZIP is uploaded to unpublished draft release **396839391**
+as asset **588984151**, with the size and SHA-256 above independently confirmed
+through GitHub's asset metadata. Earlier incomplete asset **588979946** is not
+an accepted input and must be ignored. No new upload or original PIGG transfer
+is required.
+
 The downloadable package is also preserved as three byte parts. Place them in
 the same Android Download directory and reconstruct without a Windows PC:
 
@@ -110,8 +119,8 @@ credentials to redirected hosts. Private URLs are never placed in commits or
 printed in diagnostics.
 
 Run the workflow manually with `schema_run=36088012666`,
-`reference_run=36088012664` and `run_one_map=true`. Supply the uploaded draft
-release asset ID, or configure the download URL secret. It stages a new runtime,
+`reference_run=36088012664`, `release_asset_id=588984151` and
+`run_one_map=true`. It stages a new runtime,
 verifies all pinned text/binary inputs,
 seeds six accepted attribute files plus five generated ID maps, and runs ordinary
 `MapServer.exe -nogui -templates`. Acceptance requires all **56 outputs freshly
@@ -122,19 +131,57 @@ so file equality does not establish absence of queued errors or complete assets.
 The evidence includes the exact `comparison-runtime-inputs.json` so the following
 map test can verify that its fresh stage uses the same binary assets.
 
-The GitHub connector currently has no large-file upload capability. Browser
-upload remains blocked by an unresponsive browser connection; no sign-in or
-upload was confirmed. The package and workflow are prepared, but
-hosted asset execution needs an authenticated upload of this exact ZIP to the
-repository (a draft release is sufficient), or an accessible URL in the secret
-above. Existing supplied PIGGs do not need to be uploaded again.
+The browser connection recovered and the upload completed. The first manual
+[run 36174562963](https://github.com/Russianranger/coh-android/actions/runs/36174562963)
+passed tooling checks but stopped at the asset download with an HTTP error,
+before extraction or any game process. Its read-only job token is the suspected
+cause: draft releases require push access, although public release assets can
+be read with a read-only token. The original downloader suppressed the numeric
+HTTP status, so the exact rejection was not recorded.
+
+[Fix 5f37d7c](https://github.com/Russianranger/coh-android/commit/5f37d7c)
+grants `contents: write` only to the manually invoked comparison job; global and
+tooling permissions remain read-only. This permits draft access without
+publishing the release or copying raw assets into Actions artifacts. Download
+failures now report only numeric HTTP status and a fixed API/download-stage
+label; URLs and server response details remain suppressed. All 12 downloader
+tests passed, including six diagnostic/privacy regressions, and the subsequent
+[tooling run 36175800522](https://github.com/Russianranger/coh-android/actions/runs/36175800522)
+passed.
+
+The corrected manual [run 36175960917](https://github.com/Russianranger/coh-android/actions/runs/36175960917)
+at `5f37d7c674c9d1205138f6e7dbfc04a6ff2b9ea8` downloaded the exact
+615,541,018-byte ZIP and verified the accepted SHA-256. Hosted draft access is
+therefore working. The next stage stopped with `Manifest must use canonical JSON`
+before any game process. Windows Git checkout converted the canonical manifest's
+LF line endings to CRLF:
+
+| Manifest bytes | Size | CRLF count | SHA-256 |
+| --- | --- | --- | --- |
+| Accepted canonical input | 3,832,869 | 0 | `cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f` |
+| Rejected Windows checkout | 3,933,249 | 100,380 | `d1b3a48a283b9c103191e13f71328026e85bc604e12ff3ffb3b7567e4d3c315c` |
+
+[Fix fe98dd5](https://github.com/Russianranger/coh-android/commit/fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687)
+adds `assets/reference-inputs-*.json -text` to preserve the reviewed metadata
+bytes during checkout. The manifest verifier and accepted hashes are unchanged.
+A temporary Git checkout with `core.autocrlf=true` reproduced the exact accepted
+canonical bytes; [push tooling run 36176404244](https://github.com/Russianranger/coh-android/actions/runs/36176404244)
+passed. This is a checkout correction, not an asset or game-code modification.
+
+Manual [run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+uses `fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687` and the same accepted inputs
+with Atlas Park enabled. Asset extraction verified all 16,721 files and the
+exact canonical manifest hash; both source/data snapshots and full runtime
+staging passed. Normal template comparison is in progress and Atlas Park is
+pending. Do not treat staging as a comparison/map pass. See
+[transfer/setup evidence](reference-runtime-evidence/asset-transfer-20260925.json).
 
 After workspace maintenance, the saved three parts were restored and the joined
 ZIP hash reverified. All 16,721 asset payloads passed extraction checks again.
 The current 29-file reference package was assembled with the pinned source/data
-and those assets. Offline assembly does not execute MapServer. The hosted
-tooling job passed; its actual comparison job remains skipped until a manual
-asset-backed invocation.
+and those assets. Offline assembly does not execute MapServer. Earlier push
+workflow runs correctly skipped the manual-only comparison job; the current
+manual run is the attempt to execute it.
 
 ## Following the comparison
 
@@ -160,10 +207,16 @@ SQL row alone does not prove readiness. The evidence records bounded redacted
 logs and failure diagnostics, with no game-character claim. Let actual runtime
 failures name missing assets before requesting more archives.
 
-The pinned TestClient supports fake-auth creation and exact-name resume without
-a graphical client. Default creation is Primal Hero, which targets Atlas Park.
-Use a disposable account, record its actual character ID/name, wait for logout
-save, restart the services, and resume that exact character with CREATE fallback
-disabled. Verify stable character and child-table fields, not volatile timestamps.
-Account services, transfers, the customized client and Android execution remain
-separate checks. These map/character steps have not been executed yet.
+The next [character persistence validation design](CHARACTER_PERSISTENCE_VALIDATION.md)
+uses stock TestClient fake-auth creation, named-pipe control of a currency change
+and protocol logout, independently committed SQL snapshots, service restart and
+exact-name resume. It is **design-only, not implemented or executed**. Default
+creation is Primal Hero, which targets Atlas Park. Preserve the actual account,
+character ID/name and stable parent/child fields rather than volatile timestamps.
+
+Stock `-justlogin -character NAME` disables CREATE fallback but also exits after
+the scene exchange; it provides a short resume probe, not a second sustained
+session. The design records this limitation and a minimal future TestClient
+option requiring a new reference build. Account services, transfers, the
+customized client and Android execution remain separate checks. These
+map/character steps have not been executed yet.

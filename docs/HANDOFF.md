@@ -8,6 +8,11 @@ have also passed against fresh PostgreSQL clusters.
 The refreshed runtime and schema artifacts share repository commit
 `775a0dd770adac045484805dbbb5f68054c7a354`. Game-level persistence, asset-complete
 reference comparison and Android execution remain validation gates.
+The reviewed asset ZIP has been uploaded to a draft release and downloaded by
+the hosted runner with its exact size/hash verified. That attempt then stopped
+on Windows manifest line endings before game execution. The byte-preserving
+checkout fix is applied and full hosted staging passed in run 36176806895.
+The normal template comparison is in progress; Atlas Park readiness is pending.
 
 ## Active direction
 
@@ -208,13 +213,32 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Transfer the reviewed asset ZIP to a repository draft release or supply its
-   HTTPS download URL in `COH_ASSET_BUNDLE_URL`. The browser upload connection
-   is not responding; no upload was confirmed. The three saved transfer parts
-   were restored and their joined ZIP reverified, so original PIGGs need no
-   repeat upload. See [the concrete handoff](NEXT_SERVER_VALIDATION.md).
-   Run the asset workflow with schema run `36088012666`, reference run
-   `36088012664` and `run_one_map=true` to compare ordinary `MapServer -templates`.
+1. Follow the corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895),
+   currently comparing templates after successful full staging, with schema run `36088012666`, reference run
+   `36088012664`, asset `588984151` and `run_one_map=true` to compare ordinary
+   `MapServer -templates`. Upload is complete: unpublished draft release
+   `396839391` contains the accepted **615,541,018-byte** ZIP, SHA-256
+   `28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07`.
+   Ignore incomplete asset `588979946`. No repeat PIGG or ZIP upload is needed.
+   The initial manual [run 36174562963](https://github.com/Russianranger/coh-android/actions/runs/36174562963)
+   failed during download before any game process, suspected to be the draft
+   release's rejection of the read-only token. Its HTTP status was not logged.
+   [Fix 5f37d7c](https://github.com/Russianranger/coh-android/commit/5f37d7c)
+   scopes `contents: write` to the manual comparison job; global/tooling tokens
+   stay read-only. It also adds safe numeric HTTP status and stage diagnostics;
+   all 12 downloader tests and [tooling run 36175800522](https://github.com/Russianranger/coh-android/actions/runs/36175800522)
+   passed. [Run 36175960917](https://github.com/Russianranger/coh-android/actions/runs/36175960917)
+   then successfully downloaded and verified the exact ZIP, confirming hosted
+   draft access. It failed `Manifest must use canonical JSON` before game
+   execution: Windows checkout changed the manifest's LF bytes to CRLF.
+   [Fix fe98dd5](https://github.com/Russianranger/coh-android/commit/fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687)
+   marks `assets/reference-inputs-*.json -text`; a temporary Git checkout with
+   `core.autocrlf=true` reproduced the accepted canonical bytes, and
+   [tooling run 36176404244](https://github.com/Russianranger/coh-android/actions/runs/36176404244)
+   passed. The current manual run uses that fix. The release remains unpublished
+   and raw assets are not uploaded as Actions artifacts. See the
+   [concrete handoff](NEXT_SERVER_VALIDATION.md) and
+   [transfer evidence](reference-runtime-evidence/asset-transfer-20260925.json).
    The matching reference package and coherent base assembly are ready. Preserve the accepted attribute-ID mappings; do not
    substitute the separate schema executable or its incidental caches for the
    reference runtime.
@@ -225,9 +249,15 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    runtime use. Keep custom variants separate and request further archives only
    when runtime evidence identifies a concrete missing input. The older upstream
    v2i3 release is not the locked build; use the current reference artifact.
-3. Test actual character creation/save/reload and map transfer, including the
-   player-session completion callback, game-level name uniqueness and auxiliary
-   service persistence. Generic-container network ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL
+3. Implement the [character persistence validation design](CHARACTER_PERSISTENCE_VALIDATION.md)
+   after the map gate: fake-auth creation, a normal-protocol currency change,
+   explicit logout, committed SQL verification, service restart and exact-name
+   resume. This is design-only, not an implemented or executed test. Stock
+   no-fallback resume is a short scene probe; a sustained second session needs
+   the separately proposed TestClient option and a new reference build.
+   Follow with map transfer, player-session completion callbacks, game-level
+   name uniqueness and auxiliary-service persistence. Generic-container network
+   ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL
    Server save migration has been attempted. Empty-database startup/export and
    controlled persistence fixtures do not establish these gameplay behaviors.
 4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
