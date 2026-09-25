@@ -23,6 +23,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.gitattributes'
       - '.github/workflows/reference-templates.yml'
       - 'tools/runtime_asset_bundle.py'
       - 'tools/test_runtime_asset_bundle.py'

@@ -1,2 +1,3 @@
 upstream/ouroboros/** -text
 upstream/i24/** -text
+assets/reference-inputs-*.json -text
