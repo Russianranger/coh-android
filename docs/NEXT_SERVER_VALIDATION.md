@@ -1,8 +1,8 @@
 # Next server validation
 
-Updated: 2026-09-25. The previous normal DbServer generated-schema startup/reload
-milestone remains recorded in `REFERENCE_RUNTIME.md`. This page separates newly
-implemented checks from actual hosted results.
+Updated: 2026-09-25. Normal DbServer startup/reload and real network save
+acknowledgements have passed. Asset-backed template comparison and Atlas Park
+readiness are implemented but await transfer of the reviewed asset package.
 
 ## PostgreSQL network acknowledgement correction
 
@@ -43,7 +43,25 @@ schema run and its matching fixture-OFF reference package. Its driver:
 
 Credentials, raw configuration and private work stay outside uploaded evidence.
 These diagnostics do not create a game character or prove gameplay persistence.
-Hosted result links are added after execution, not inferred from unit tests.
+
+[Network run 36125829311](https://github.com/Russianranger/coh-android/actions/runs/36125829311)
+passed at `a0ae66d72648d33a7f70b3116d1e1800d9164184`, using reference run
+36088012664 and schema run 36088012666 (both built at `775a0dd...`). It verified
+creation, a modified saved container after restart, and the two-container batch.
+The actual SQL writer remained blocked for **2.078 seconds without an ACK**;
+after release, both rows were independently confirmed committed. A deferred
+COMMIT failure with SQLSTATE `42501` produced **zero ACKs**, preserved the prior
+row, and stopped DbServer with exit 3. The report has no failures. Preserve the
+[summary/report](postgresql-evidence/network-ack-36125829311.json) and
+[complete redacted evidence](postgresql-evidence/network-ack-36125829311.zip).
+
+The refreshed [normal schema startup/reload run 36125829298](https://github.com/Russianranger/coh-android/actions/runs/36125829298)
+also passed. Earlier runs 36089560076/36089560078 stopped because the C logger
+labels expected PostgreSQL NOTICE messages as `SQLERROR`. The driver now
+recognizes only the exact observed catalog-maintenance notices, retains them in
+the report, and still rejects all other SQL errors. Forty-four driver acceptance
+tests passed. Driver-only pushes can reuse an accepted schema/reference pair;
+the exact source receipt checks remain mandatory.
 
 The source patch passed the [PostgreSQL regression run 36088012670](https://github.com/Russianranger/coh-android/actions/runs/36088012670)
 at `775a0dd770adac045484805dbbb5f68054c7a354`: all four jobs, including 21
@@ -91,8 +109,10 @@ archive size/hash, rejects insecure redirects, and does not forward GitHub
 credentials to redirected hosts. Private URLs are never placed in commits or
 printed in diagnostics.
 
-Run the workflow manually with a successful schema run ID and its matching
-reference run. It stages a new runtime, verifies all pinned text/binary inputs,
+Run the workflow manually with `schema_run=36088012666`,
+`reference_run=36088012664` and `run_one_map=true`. Supply the uploaded draft
+release asset ID, or configure the download URL secret. It stages a new runtime,
+verifies all pinned text/binary inputs,
 seeds six accepted attribute files plus five generated ID maps, and runs ordinary
 `MapServer.exe -nogui -templates`. Acceptance requires all **56 outputs freshly
 rewritten and byte-identical** to the accepted data-only outputs. Only verified
@@ -102,11 +122,19 @@ so file equality does not establish absence of queued errors or complete assets.
 The evidence includes the exact `comparison-runtime-inputs.json` so the following
 map test can verify that its fresh stage uses the same binary assets.
 
-The GitHub connector currently has no large-file upload capability. The available
-browser is signed out of GitHub. The package and workflow are prepared, but
+The GitHub connector currently has no large-file upload capability. Browser
+upload remains blocked by an unresponsive browser connection; no sign-in or
+upload was confirmed. The package and workflow are prepared, but
 hosted asset execution needs an authenticated upload of this exact ZIP to the
 repository (a draft release is sufficient), or an accessible URL in the secret
 above. Existing supplied PIGGs do not need to be uploaded again.
+
+After workspace maintenance, the saved three parts were restored and the joined
+ZIP hash reverified. All 16,721 asset payloads passed extraction checks again.
+The current 29-file reference package was assembled with the pinned source/data
+and those assets. Offline assembly does not execute MapServer. The hosted
+tooling job passed; its actual comparison job remains skipped until a manual
+asset-backed invocation.
 
 ## Following the comparison
 

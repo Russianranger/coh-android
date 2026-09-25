@@ -1,0 +1,43 @@
+{
+  "run_id": 36088012666,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36088012666",
+  "repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "text_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "postgresql_patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+  "artifact": {
+    "id": 10845505221,
+    "path": "accepted-36088012666.zip",
+    "bytes": 665051,
+    "sha256": "62da453ef5673238e11b4b418692117ea7692597a079119b3aaf72504a2502ae"
+  },
+  "schema_status": "schema_data_only_outputs_checked_runtime_unvalidated",
+  "first_seconds": 31.468,
+  "second_seconds": 5.75,
+  "strict_reload_executed": true,
+  "strict_failures": [],
+  "strict_queued_errors": [
+    0
+  ],
+  "stable_attribute_files": 6,
+  "archive": {
+    "path": "schema-outputs.zip",
+    "bytes": 682745,
+    "sha256": "a7bb94cd936198850f1a35ac58df925b3638caae29c02f47dca1cb3e21dbc132"
+  },
+  "archived_files": 56,
+  "expected_tables": 99,
+  "expected_columns": 5935,
+  "expected_attribute_rows": {
+    "attributes": 56411,
+    "badgestatsattributes": 1771,
+    "pophelpattributes": 90
+  },
+  "compared_previous_schema_run": 36074139889,
+  "changed_outputs_from_previous_schema_run": [],
+  "required_schema_files": 51,
+  "generated_dbidmaps": 5,
+  "local_receipt_payload_and_contract_verification": true,
+  "gameplay_validated": false,
+  "serializer_equivalence": "unverified"
+}

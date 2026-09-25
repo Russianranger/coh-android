@@ -1,0 +1,24 @@
+{
+  "run_id": 36088012664,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36088012664",
+  "repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "artifact": {
+    "id": 10843979104,
+    "name": "reference-win32-runtime",
+    "bytes": 14556607,
+    "sha256": "b5453b47a2cc4d4059f9f48a7bf4622272a447ea648040e587e5796c71a2c853"
+  },
+  "inner_archive": {
+    "path": "coh-reference-win32.zip",
+    "bytes": 14495500,
+    "sha256": "dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa"
+  },
+  "build_receipt": "build-36088012664.json",
+  "local_binary_receipt_and_pe_import_verification": true,
+  "verified_package_files": 29,
+  "fixture_enabled": false,
+  "asset_backed_runtime_assembled": true,
+  "gameplay_validated": false,
+  "android_validated": false,
+  "assembly_record": "assembly-775.json"
+}

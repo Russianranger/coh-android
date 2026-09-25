@@ -1,0 +1,644 @@
+{
+  "run_id": 36125829311,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36125829311",
+  "workflow_repository_commit": "a0ae66d72648d33a7f70b3116d1e1800d9164184",
+  "reference_run": 36088012664,
+  "schema_run": 36088012666,
+  "artifact": {
+    "id": 10859184988,
+    "path": "network-ack-36125829311.zip",
+    "bytes": 15499,
+    "sha256": "104da9eae9794d9ff0c0aca8ace0fb09c3abba7b51ebe03cdf22dc4b8925a59c"
+  },
+  "status": "normal_network_ack_commit_order_passed_gameplay_unvalidated",
+  "report": {
+    "status": "normal_network_ack_commit_order_passed_gameplay_unvalidated",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "schema_report_sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf",
+    "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+    "dbserver_sha256": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "mapserver_sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "scope": "Normal fixture-OFF DbServer and MapServer dbquery over loopback, disposable PostgreSQL",
+    "contract": {
+      "list_id": 23,
+      "table": "miningaccumulator",
+      "field": "name",
+      "containers_per_single_request": 1,
+      "containers_per_batch_request": 2
+    },
+    "phases": [
+      {
+        "name": "dbserver-initial_startup_gate",
+        "captured_ready_diagnostic": false,
+        "listening_loopback_port": 6997,
+        "generated_schema_matches": true,
+        "protocol_readiness_proof": "Requires subsequent received CONTAINER_ACK; socket/schema alone do not prove readiness"
+      },
+      {
+        "name": "create",
+        "ack": {
+          "list": 23,
+          "callback": 0,
+          "count": 1,
+          "id": 1
+        },
+        "committed_row": {
+          "containerid": 1,
+          "name": "network_initial"
+        },
+        "sql_check_after_ack_observation_seconds": 0.047,
+        "process": {
+          "label": "create",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 0.219
+        }
+      },
+      {
+        "name": "create-second",
+        "ack": {
+          "list": 23,
+          "callback": 0,
+          "count": 1,
+          "id": 2
+        },
+        "committed_row": {
+          "containerid": 2,
+          "name": "network_second"
+        },
+        "sql_check_after_ack_observation_seconds": 0.156,
+        "process": {
+          "label": "create-second",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 0.203
+        }
+      },
+      {
+        "name": "intentional_service_restart_after_commit",
+        "process": {
+          "label": "dbserver-initial",
+          "exit_code": 1,
+          "forced_stop": true,
+          "elapsed_seconds": 10.046
+        },
+        "reason": "Clear stock generic container cache before TEMPLOAD modify"
+      },
+      {
+        "name": "dbserver-restarted_startup_gate",
+        "captured_ready_diagnostic": false,
+        "listening_loopback_port": 6997,
+        "generated_schema_matches": true,
+        "protocol_readiness_proof": "Requires subsequent received CONTAINER_ACK; socket/schema alone do not prove readiness"
+      },
+      {
+        "name": "modify",
+        "ack": {
+          "list": 23,
+          "callback": 0,
+          "count": 1,
+          "id": 1
+        },
+        "committed_row": {
+          "containerid": 1,
+          "name": "network_modified"
+        },
+        "sql_check_after_ack_observation_seconds": 0.047,
+        "process": {
+          "label": "modify",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 3.985
+        }
+      },
+      {
+        "name": "batch_ack_waits_for_all_commits",
+        "acks": [
+          {
+            "list": 23,
+            "callback": 0,
+            "count": 2,
+            "id": 1
+          },
+          {
+            "list": 23,
+            "callback": 0,
+            "count": 2,
+            "id": 2
+          }
+        ],
+        "committed_rows": [
+          {
+            "containerid": 1,
+            "name": "network_batch_first"
+          },
+          {
+            "containerid": 2,
+            "name": "network_batch_second"
+          }
+        ],
+        "observed_waiting_writers": [
+          {
+            "pid": 7032,
+            "wait_event_type": "Lock",
+            "wait_event": "transactionid",
+            "state": "active",
+            "query": "BEGIN;UPDATE dbo.MiningAccumulator SET Active=1,Name='network_batch_second' WHERE ContainerId=2;"
+          }
+        ],
+        "no_ack_while_write_blocked_seconds": 2.078,
+        "sql_check_after_ack_observation_seconds": 0.094,
+        "process": {
+          "label": "blocked-batch",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 2.469
+        },
+        "lock_holder": {
+          "label": "lock-holder",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 2.562
+        }
+      },
+      {
+        "name": "failed_commit_no_ack_and_rollback",
+        "sqlstate": "42501",
+        "trigger": "DEFERRABLE INITIALLY DEFERRED AFTER UPDATE",
+        "committed_row": {
+          "containerid": 1,
+          "name": "network_batch_first"
+        },
+        "received_ack_count": 0,
+        "client": {
+          "label": "deferred-commit-failure",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 0.172
+        },
+        "service": {
+          "label": "dbserver-restarted",
+          "exit_code": 3,
+          "forced_stop": false,
+          "elapsed_seconds": 7.454
+        }
+      }
+    ],
+    "failures": [],
+    "input_sha256": {
+      "data/defs/dbidmaps/invbasedetail.dbidmap": "c2e85bca875e244b5ce54a6aa7e723047309cfc6c4fd2df83dba116fa9be874a",
+      "data/defs/dbidmaps/invrecipe.dbidmap": "1abfdc27ba3aba3a0a959266d02fc9db07e506ad91fe6ce40de42fe8ccb42c98",
+      "data/defs/dbidmaps/invsalvage.dbidmap": "89cffb462496920daef0b43aaeb9b3e9528ab2852965946ab0fdf478ef603060",
+      "data/defs/dbidmaps/invstoredsalvage.dbidmap": "30fd4951bf3c73f191a701d836a95892a2204181695af07e425fb2ec83e907ad",
+      "data/defs/proficiencyids.dbidmap": "cef52f3d5e2441638a314599861e544e085258792b596fc61033a2400865fa85",
+      "data/server/db/schemas/arenaevents.schema.html": "f028cb642384bf2731084bd1a5f8866efb40f048c292151e2e1136b1cf322097",
+      "data/server/db/schemas/arenaplayers.schema.html": "b2546884eca05924265968f2dba3f355c454e9efa4bc874dd9b252f44e14de82",
+      "data/server/db/schemas/autocommands.schema.html": "d07b2749e211e693f8ced6e2e026df409bca3b84f90ab7b8055150b9ecb5e80f",
+      "data/server/db/schemas/base.schema.html": "da23628c5ca2a5440c6e845f3f0e559b833fb4e49aa81fbec9c1999ae6757912",
+      "data/server/db/schemas/baseraids.schema.html": "eae2323c44f91e443a40f1b0497b163e8408c8b0aacbdb99ee01be2aded68f38",
+      "data/server/db/schemas/email.schema.html": "5144dc321af4b1254f0d030aea55cd8bdbc13cd15bb275df421a10ff39e0cfc4",
+      "data/server/db/schemas/ents.schema.html": "45ff4768d29beda2130c2fbcad3a9fc29a3fe647be7e09cb2f52397f32289903",
+      "data/server/db/schemas/eventhistory.schema.html": "e2b875f95a94de59800cdcc8210fdadd2b5289d05e78970906e2ec357ea79cac",
+      "data/server/db/schemas/itemofpowergames.schema.html": "75056a653f2fdfc1a4024efd16d7fbe6d64e1f101f82adc3736fb507fbda1c94",
+      "data/server/db/schemas/itemsofpower.schema.html": "2f74c08fb12ccad248bc79bdff15a2d0d7540aeab5e13e725bf8e1f971747f39",
+      "data/server/db/schemas/leagues.schema.html": "223e2e670bfc7d8db5f328c318facbfb32f990617c45be0cde3b815dbbca1aa2",
+      "data/server/db/schemas/levelingpacts.schema.html": "5309a01b56a09c0be35453cdb7a9b804d1a7730d8f757376c1465289317f6bcb",
+      "data/server/db/schemas/mapgroups.schema.html": "24953f199c18d171acd8ff911f72c1b7de32e07044c0b34a2149b558c2443314",
+      "data/server/db/schemas/miningaccumulator.schema.html": "4ed5e8b7eb04924329e9c368009997685f36d7cf69956d7d3f33b384f193dbf6",
+      "data/server/db/schemas/offline.schema.html": "360559f24f260fce881ac73224297954cf4a2c6ba224d3731e6ee725f15eceae",
+      "data/server/db/schemas/petitions.schema.html": "5aa34925218aa1cf04396418fb82ab7b9a210c42fa9c2af31ecc4ac0ffbb9371",
+      "data/server/db/schemas/sgraidinfos.schema.html": "5c62468d70c12d307af10156f8330eb7f995f75d9fb29d5af53d46b9318f49b8",
+      "data/server/db/schemas/shardaccounts.schema.html": "9e3414e061f64fc7757c02380256123932da58d40c21f31d62fb95a1b9b5f34a",
+      "data/server/db/schemas/supergroups.schema.html": "37356f778dc9d7874ba7a5d24df127dfa83f9be41d10436fe564f5392cc84487",
+      "data/server/db/schemas/taskforces.schema.html": "e1fca83efbd2741b3b3e3a0858d59628a8967094204819061f14008dd05f6bf9",
+      "data/server/db/schemas/teamups.schema.html": "ee7d2e5958861206dcf03659d7eb150d9bcca57397226613e0454f75d8b1c7a1",
+      "data/server/db/schemas/testdatabasetypes.schema.html": "a1439c7f7e333c81c170e9c555497664006dd4510c0dea9db09f8874837c8e1b",
+      "data/server/db/templates/arenaevents.template": "952f7404eccc9cf8726e65aa3fa4451784cf4f99224ba2b4cf9e4505af35560e",
+      "data/server/db/templates/arenaplayers.template": "9c0a9347b2da737717954be9aa5614d43e666139cb7c44da0387880838bd2f40",
+      "data/server/db/templates/autocommands.template": "a6c9aeb57a944e1de4a239f9e1844dda71284a5b6c4667862b5f0ac017b967cc",
+      "data/server/db/templates/badges.attribute": "789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea",
+      "data/server/db/templates/badgestats.attribute": "ec57e497c6c044269d8d7e207b0869400ceeb18a03b94bda1a9d00a9d99cced2",
+      "data/server/db/templates/base.template": "32fa8e9a1f6f1bc72a4acfcc1d405d4b44412d7cda41fbceeb019dfde2a170c9",
+      "data/server/db/templates/baseraids.template": "644bd30dade4d7e958c2c35fd4251b9f5a67976510a6ef9eef310d7e311985b0",
+      "data/server/db/templates/email.template": "3966878019f3af7ac652640746d80bd5c22b85dcfd1bd1033288b853e75ac6fb",
+      "data/server/db/templates/ents.template": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913",
+      "data/server/db/templates/eventhistory.template": "f535b56670e5b19b0a4d983d9eba021b00441474b27b65f3ea46ee73f1645f87",
+      "data/server/db/templates/itemofpowergames.template": "0e7b59085ee4b7f7ed5495a80dd06fb91b35ee338b9c9d09cce2390560309aca",
+      "data/server/db/templates/itemsofpower.template": "16befccbbad58e87d75455af8d240da5f299eaa08689cfc7b85e5e2ebb60434c",
+      "data/server/db/templates/leagues.template": "2f1018974bed27a271cc5c87e673356db2df7c5a6c9c7a3bf0b6a5c22b67536b",
+      "data/server/db/templates/levelingpacts.template": "4fd6076ba33e8aebebe516dbde74d324721f3984047895bc2f6b3a1a7517b365",
+      "data/server/db/templates/mapgroups.template": "18a9bcbf1a566d3986b9fd2e31597093e4fe0f1dbd1f7142d573fc39bc496838",
+      "data/server/db/templates/miningaccumulator.template": "9e4646316ec1f4ef1cd0db486d3e2a68d2e17caaf84541dcdc837f46c349edeb",
+      "data/server/db/templates/offline.template": "1e55bf16fd0749d042c3481c2fdd28f339a17bd8eebec9d27f458f2f6265a67b",
+      "data/server/db/templates/petitions.template": "c28117e1efa5a2a487b330664d4349b524bf4482d862917ef1f469864895b045",
+      "data/server/db/templates/pophelp.attribute": "34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1",
+      "data/server/db/templates/sgraidinfos.template": "7bda51ccf348242d5bf8399a03381a480d6555a75c5aa0038b615afa611ae353",
+      "data/server/db/templates/shardaccounts.template": "388571567e563cfb3943d0e1c428e23b6f3d24c9a12f9bc0262b48972f964619",
+      "data/server/db/templates/statserver_supergroupstats.template": "568f516d0b7f48b26de768d16442a7541ed280889ff8bcfb195c305343f098bd",
+      "data/server/db/templates/supergroup_badges.attribute": "d63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e",
+      "data/server/db/templates/supergroup_badgestats.attribute": "f67e5677a244b919f674d545c990339caa674d1f8c299b8e0540dc2c8d65a6e9",
+      "data/server/db/templates/supergroups.template": "a79ed03f51c0a2e7d33b9d4fd784c14970c42d63a53be7ac69d026fd80b73c78",
+      "data/server/db/templates/taskforces.template": "47c405e582165df6d688b15b526cd9c70d0cf3c0ae005683dcd48c50526dffae",
+      "data/server/db/templates/teamups.template": "ed2a5378f13d0503db0e38f03132e7888f150943de3a674eb5ef5a4977dc9ffc",
+      "data/server/db/templates/testdatabasetypes.template": "76e538c71248157120260f77bc21d84c940eecaed0cb5d69d958e5a689e642f1",
+      "data/server/db/templates/vars.attribute": "26c5f2bba77ab66ef7619c995f343633dc1748297dc9963605734ef3aa1053bb",
+      "data/server/db/servers.cfg": "539933dabd369fe57fde2c833f44317105faa77df4a7ff04ada32dfea3c8851d",
+      "data/server/db/loadBalanceDefault.cfg": "d25a94745bdfbf4d4e90509e570318cb03fa53172a1290c78e3f3344e30f4649",
+      "data/server/db/loadBalanceShardSpecific.cfg": "d104dd8b95a08277fffac03af6211d9989aa50068bb0109a6e9dbf9fa0c884e1",
+      "data/server/db/maps.db": "2eced612b0626a9d855a344441b57fe543d456b710cfda9c21a5c9628378a529",
+      "data/defs/account/loyaltyrewardtree.def": "8b7c96accd8448a235dfa744ff775a3df40bc9e7968b8c192ff53a5de7065d43",
+      "data/defs/account/product_catalog.def": "5e5375b3aa430b88fbcdada0ac87629fa35d5826ab817d9a9abd65baa677f300"
+    },
+    "optional_inputs": [
+      {
+        "path": "data/server/db/weeklyTF.cfg",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      },
+      {
+        "path": "data/server/db/Doors.db",
+        "status": "absent_in_pinned_data",
+        "handling": "left absent; missing-file diagnostics captured explicitly"
+      }
+    ],
+    "multi_container_batch_validated": true,
+    "batch_atomicity": "not promised; individual container writes use separate transactions",
+    "character_persistence_validated": false,
+    "gameplay_validated": false,
+    "asset_complete_mapserver_startup_validated": false,
+    "console_capture_limit": "DbServer may reopen CONOUT$; require client receive diagnostics plus independent SQL, lock and fatal-worker evidence",
+    "started_utc": "2026-09-25T10:50:27.928324+00:00",
+    "pre_injection_benign_catalog_notices": {
+      "count": 96,
+      "lines": [
+        "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping"
+      ],
+      "line_limit": 100
+    },
+    "redacted_logs": [
+      {
+        "file": "log-000.txt",
+        "source": "raw-logs/blocked-batch-stderr.log",
+        "sha256": "ffcc3919326edfc01903e960d5a12797ab3bebd9c612778ba1d1885d78517f5d",
+        "bytes": 413
+      },
+      {
+        "file": "log-001.txt",
+        "source": "raw-logs/blocked-batch-stdout.log",
+        "sha256": "60a4a01fe56cf0a58358ad48060123f60148b116e013df8b0304148a6a6fdf80",
+        "bytes": 93
+      },
+      {
+        "file": "log-002.txt",
+        "source": "raw-logs/create-second-stderr.log",
+        "sha256": "7c27a1bbd8ae1afdc177bb7ad028420d43dbdb576b847257e0b169158ff6e20d",
+        "bytes": 315
+      },
+      {
+        "file": "log-003.txt",
+        "source": "raw-logs/create-second-stdout.log",
+        "sha256": "0359bd634d85e329b28cb3954f71bb3050a07f843cf0bbe06c96b1731a067b26",
+        "bytes": 93
+      },
+      {
+        "file": "log-004.txt",
+        "source": "raw-logs/create-stderr.log",
+        "sha256": "c7064958d850f6efaac2d4218589d651401277a619cc5027726cdafc667cb795",
+        "bytes": 308
+      },
+      {
+        "file": "log-005.txt",
+        "source": "raw-logs/create-stdout.log",
+        "sha256": "aaac737b17b45e78e6ddd891762c25ca998646d7cd65da718c97304492ad4a8a",
+        "bytes": 93
+      },
+      {
+        "file": "log-006.txt",
+        "source": "raw-logs/dbserver-initial-stderr.log",
+        "sha256": "98519548260f4e2f58a18f0701c05057caf9b7dbc57070561e29fee8fc3886b6",
+        "bytes": 1122
+      },
+      {
+        "file": "log-007.txt",
+        "source": "raw-logs/dbserver-initial-stdout.log",
+        "sha256": "275ba6290be277dc49094979fcf4f0ade3451b255f6dc3ea3fa021dfa65145b3",
+        "bytes": 1246
+      },
+      {
+        "file": "log-008.txt",
+        "source": "raw-logs/dbserver-restarted-stderr.log",
+        "sha256": "07db8acac18fb8947ea5a968f9ea9843508205a6f93ffd09f14649bcba9e175f",
+        "bytes": 13149
+      },
+      {
+        "file": "log-009.txt",
+        "source": "raw-logs/dbserver-restarted-stdout.log",
+        "sha256": "813dcca1fc88c6d9ffba42513f0a8b79c6aa3ae6b02facd3c0a4bf0cddc85e9d",
+        "bytes": 1246
+      },
+      {
+        "file": "log-010.txt",
+        "source": "raw-logs/deferred-commit-failure-stderr.log",
+        "sha256": "cd9467a40432cdf8c62064663c2690e1552cccc7fcc36c895357597856ba6e0c",
+        "bytes": 265
+      },
+      {
+        "file": "log-011.txt",
+        "source": "raw-logs/deferred-commit-failure-stdout.log",
+        "sha256": "8414b9b9c511ce1fe4567add046cf1789484f789f3c308ef09688bc2fbb22e4e",
+        "bytes": 93
+      },
+      {
+        "file": "log-012.txt",
+        "source": "raw-logs/lock-holder-stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "file": "log-013.txt",
+        "source": "raw-logs/lock-holder-stdout.log",
+        "sha256": "f7e2f2882a29f687b1f40c07e3f5a646315c9532d47ac739fa4e7c7022d4394c",
+        "bytes": 22
+      },
+      {
+        "file": "log-014.txt",
+        "source": "raw-logs/modify-stderr.log",
+        "sha256": "b8267b44df9b3161cded0481988aef1c95951097bcdc7fe7cc313a2f842e2470",
+        "bytes": 307
+      },
+      {
+        "file": "log-015.txt",
+        "source": "raw-logs/modify-stdout.log",
+        "sha256": "5a30005ad7680eaf9e53492854c856873c251821dff9abe05963080626a65f30",
+        "bytes": 93
+      },
+      {
+        "file": "log-016.txt",
+        "source": "runtime/logs/dbserver/error_2026-09-25-10-00-00.log",
+        "sha256": "f372653be0f40709e8a9bafa94719017836a77e052afaa842cc244bb412731c1",
+        "bytes": 810
+      },
+      {
+        "file": "log-017.txt",
+        "source": "runtime/logs/dbserver/error_2026-09-25-10-50-51.log",
+        "sha256": "1a60dcc7307ce82d323f0e5c55c3f3906ff9e7eef8d68d052f98b7d04c666c8d",
+        "bytes": 14162
+      },
+      {
+        "file": "log-018.txt",
+        "source": "runtime/logs/mapserver/error.log",
+        "sha256": "3eb7fcfd12b0ec3935a26ab8a09e440b7f2ebea547ed1be445ded47f241d44d6",
+        "bytes": 300
+      }
+    ],
+    "benign_catalog_notices": {
+      "count": 96,
+      "lines": [
+        "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+        "260925 10:50:41 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+        "260925 10:50:51 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping"
+      ],
+      "line_limit": 100
+    },
+    "processes": [
+      {
+        "label": "dbserver-initial",
+        "exit_code": 1,
+        "forced_stop": true,
+        "elapsed_seconds": 17.734
+      },
+      {
+        "label": "create",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 8.25
+      },
+      {
+        "label": "create-second",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 8.031
+      },
+      {
+        "label": "dbserver-restarted",
+        "exit_code": 3,
+        "forced_stop": false,
+        "elapsed_seconds": 7.688
+      },
+      {
+        "label": "modify",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 7.016
+      },
+      {
+        "label": "lock-holder",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 3.031
+      },
+      {
+        "label": "blocked-batch",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 2.938
+      },
+      {
+        "label": "deferred-commit-failure",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 0.406
+      }
+    ],
+    "finished_utc": "2026-09-25T10:50:54.909653+00:00"
+  }
+}

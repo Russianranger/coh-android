@@ -15,21 +15,27 @@ The complete pinned companion data is now imported under `upstream/i24`: **156,2
 files, 1,992,097,492 bytes**, verified against its original Git tree. Runtime
 staging tools preserve both snapshots and fix the companion executable-name gap.
 
-The current [matching Windows client/server package](https://github.com/Russianranger/coh-android/actions/runs/36074139984)
+The current [matching Windows client/server package](https://github.com/Russianranger/coh-android/actions/runs/36088012664)
 passes its hosted build and dependency checks. The supplied base assets have been
 assembled with the pinned text: **173,011 data files**, including **16,721 binary
 assets**. See the [reference runtime and downloads](docs/REFERENCE_RUNTIME.md).
 
-The current [data-only schema generation](https://github.com/Russianranger/coh-android/actions/runs/36074139889)
+The current [data-only schema generation](https://github.com/Russianranger/coh-android/actions/runs/36088012666)
 also passed, producing all 56 expected files with stable attribute mappings and
 zero queued errors. It shares repository commit
-`0f37414d1b42498e65738c78995e160fceb29ca8` with the reference package.
-The [PostgreSQL regression suite](https://github.com/Russianranger/coh-android/actions/runs/36074139842)
+`775a0dd770adac045484805dbbb5f68054c7a354` with the reference package.
+The [PostgreSQL regression suite](https://github.com/Russianranger/coh-android/actions/runs/36088012670)
 passed all four jobs, including 21 real-DbServer persistence check groups.
-The [normal fixture-OFF DbServer startup/export/reload check](https://github.com/Russianranger/coh-android/actions/runs/36075137920)
+The [normal fixture-OFF DbServer startup/export/reload check](https://github.com/Russianranger/coh-android/actions/runs/36125829298)
 also passed with generated game schemas: 99 tables, 5,935 columns, 58,272 attribute rows,
 stable catalog and identifier mappings, and no failure diagnostics across both
 passes against a fresh disposable PostgreSQL database.
+
+The [real network save test](https://github.com/Russianranger/coh-android/actions/runs/36125829311)
+also passed: normal DbServer/MapServer requests, acknowledgements held until a
+blocked two-container save committed, and no acknowledgement after an injected
+commit failure. The failed save preserved the previous row and stopped DbServer.
+This exercises generic containers; character persistence remains a separate gate.
 
 The repository is **not a complete runnable installation**. Comparison with
 asset-complete template generation, runtime cache generation, map startup and
@@ -44,6 +50,7 @@ equivalence remain unvalidated.
 - [Local server and client completeness audit](docs/LOCAL_SERVER_CLIENT_COMPLETENESS.md)
 - [Android assessment and implementation proposal](docs/ANDROID_PORT_PROPOSAL.md)
 - [Source provenance](docs/SOURCE_PROVENANCE.md) and [validation record](docs/VALIDATION.md)
+- [Current server validation and asset-transfer handoff](docs/NEXT_SERVER_VALIDATION.md)
 - [Handoff and next implementation steps](docs/HANDOFF.md)
 - [Active source selection](source-target.json) and [immutable import lock](upstream-lock.json)
 

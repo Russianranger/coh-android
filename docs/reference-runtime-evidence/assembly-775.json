@@ -1,0 +1,16 @@
+{
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "postgresql_patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+  "data_file_count": 173011,
+  "data_bytes": 2977730517,
+  "binary_asset_files": 16721,
+  "binary_asset_bytes": 985644857,
+  "build_files": 29,
+  "runtime_inputs_sha256": "b1b5c647e7f5c7ce01b58ce3e8d4efcd644e18ac03d0de83db644b29ae13a1f1",
+  "asset_archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "verification": "prepare_runtime completed full immutable-source/companion validation, per-asset hashes and reference package receipt/PE/dependency checks",
+  "execution_performed": false,
+  "gameplay_validated": false
+}

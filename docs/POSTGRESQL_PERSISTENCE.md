@@ -1,17 +1,26 @@
 # DbServer PostgreSQL persistence
 
-This pass targets the actual DbServer persistence implementation before asset
-indexing. The diagnostic entry links the real `sql_fifo.c`, SQL worker pool,
-container parser/merger, SQL generator, container reader and template updater.
-Only the templates and record contents are controlled fixtures. It does not
-start MapServer or create a playable character.
+The actual DbServer persistence implementation is validated in two complementary
+ways: controlled fixtures exercise its container parser, SQL generator, worker
+queues, reader and template updater; ordinary fixture-OFF DbServer and MapServer
+processes exercise network save acknowledgements against generated game schemas.
+Neither test creates a playable character or starts a game map.
 
-Validated at `0827ccc992daa7530d9f98d742122238197847df` in
-[hosted run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993).
-All four jobs passed. The actual DbServer test passed 20 check groups across 14
-process invocations; [the report](postgresql-evidence/persistence-v2/dbserver-persistence.json)
-and [build receipt](postgresql-evidence/persistence-v2/win32-build.json) preserve
-the result and executable identity.
+The [21-group fixture regression](https://github.com/Russianranger/coh-android/actions/runs/36074139842)
+passed across 14 process invocations, including the first-start foreign-key cleanup
+case. Its [report](postgresql-evidence/fk-cold-start/dbserver-persistence.json)
+preserves the result. The earlier validation at
+`0827ccc992daa7530d9f98d742122238197847df`,
+[run 35962572993](https://github.com/Russianranger/coh-android/actions/runs/35962572993),
+passed all four jobs and 20 fixture groups; its
+[report](postgresql-evidence/persistence-v2/dbserver-persistence.json) and
+[build receipt](postgresql-evidence/persistence-v2/win32-build.json) remain historical.
+
+The [normal schema run 36125829298](https://github.com/Russianranger/coh-android/actions/runs/36125829298)
+and [network acknowledgement run 36125829311](https://github.com/Russianranger/coh-android/actions/runs/36125829311)
+passed using the matching fixture-OFF reference build 36088012664 and accepted
+schema build 36088012666. See [the matching runtime](REFERENCE_RUNTIME.md) for
+those exact input receipts and the [network evidence summary](postgresql-evidence/network-ack-36125829311.json).
 
 ## Transaction behavior
 
@@ -28,6 +37,16 @@ unknown failures and exhausted retries stop the process without acknowledging
 the failed command. Automatic reconnect/replay after an uncertain connection
 loss is deliberately absent: the application cannot assume whether that commit
 reached the database. The supervisor/operator must resolve and restart it.
+
+For explicit PostgreSQL network save acknowledgements, DbServer now drains
+pending SQL work before sending the reply. It snapshots the reply and container
+IDs before running completion callbacks, then rechecks the link identity before
+sending. SQL-backed multi-container requests defer a single acknowledgement
+batch until the whole request has been processed. The drain is synchronous and
+can block the main thread; this is a correctness change, not a throughput result.
+Each queued save keeps its own transaction. An earlier save in a batch can commit
+before a later one fails, even though no batch acknowledgement is sent. This does
+not make the batch atomic or extend the claim to every broadcast/session callback.
 
 The previous SQL Server path retains its existing transaction behavior. The
 PostgreSQL worker always uses transactions, including when the legacy runtime
@@ -103,11 +122,42 @@ during these fixtures. That is expected here: the diagnostic entry intentionally
 does not load game assets. Pass/fail is checked against the database contents,
 required completion markers and exact process exit statuses.
 
+## Normal network acknowledgement validation
+
+`database/postgresql/tests/run_network_ack.py` starts ordinary fixture-OFF
+DbServer and MapServer processes in a fresh disposable PostgreSQL cluster.
+MapServer's `-dbquery` path sends normal container protocol requests for list 23
+(`MiningAccumulator`), a SQL-backed generic container in the accepted generated
+schemas. It does not require game asset archives. The driver checks receipts,
+actual SQL catalogs, flushed network reply markers and independent SQL reads;
+process exit alone cannot satisfy its acknowledgement checks.
+
+[Run 36125829311](https://github.com/Russianranger/coh-android/actions/runs/36125829311)
+passed with no reported failures:
+
+- Created generic containers 1 and 2, then modified an existing container after
+  restarting DbServer to clear cached container state.
+- Held a real PostgreSQL row lock on the second item of a two-container request.
+  The writer was observed waiting for that lock, and no acknowledgement arrived
+  during a 2.078-second blocked interval. Releasing the lock allowed the reply;
+  independent SQL reads confirmed both new row values within 0.094 seconds of
+  observing the acknowledgement.
+- Forced an update to fail at commit with a deferred constraint trigger raising
+  SQLSTATE `42501`. DbServer exited 3, the client received no acknowledgement and
+  the previously committed row remained unchanged.
+
+The [summary](postgresql-evidence/network-ack-36125829311.json) and
+[complete redacted evidence](postgresql-evidence/network-ack-36125829311.zip)
+preserve the exact inputs, observations and logs. Startup's known catalog
+maintenance notices are retained and narrowly classified; SQL failures remain
+blocking outside the deliberately injected failure phase.
+
 ## Remaining game validation
 
-Asset-generated templates, actual character/account creation, network save
-acknowledgements, map transfers, auxiliary services, SQL Server data migration,
-and Thor/Wine/Android behavior still need separate validation. The fixture does
-not call the player-session completion callback or test a disconnected game
-client. Template customization outside the supported generated-table shape is
-not an automatic migration path.
+Ordinary asset-backed template comparison, actual character/account creation,
+player-session save/logout, map transfers, auxiliary services, SQL Server data
+migration and Thor/Wine/Android behavior still need separate validation. The
+network diagnostic covers generic container acknowledgements; it does not call
+the player-session completion callback or test a disconnected game client.
+Template customization outside the supported generated-table shape is not an
+automatic migration path.

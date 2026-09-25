@@ -27,7 +27,10 @@ development backend, not yet a validated complete game server.
   hash-pinned 32-bit psqlODBC installer from PostgreSQL’s official server.
 - PostgreSQL FIFO commands commit before completion, retry complete transactions
   for serialization/deadlock errors, and stop without acknowledging permanent or
-  uncertain failures. Child/parent deletion is atomic.
+  uncertain failures. Child/parent deletion is atomic. Explicit network save
+  acknowledgements wait for pending SQL work to finish, with one acknowledgement
+  batch after all requested containers are processed. A multi-container request
+  still consists of separate save transactions; it is not an atomic batch.
 - Migration 2 adds transactional template rebuilds that preserve ID high-water
   marks, indexes and foreign keys, plus explicit ASCII case-insensitive name
   equality. DbServer's auction activity query now uses PostgreSQL intervals.
@@ -88,22 +91,44 @@ files. PostgreSQL **16.15 with psqlODBC 16.00.0000**, and **18.6 with
 psqlODBC 18.00.0004**, pass the full Linux suite. The same suite passes with
 **32-bit Windows psqlODBC 18.00.0004 against PostgreSQL 17.11**. The patched
 Win32 DbServer also passes a separate persistence suite using its real container
-and FIFO implementation: 20 check groups across 14 process invocations, including
-failed-save rollback, connection loss, schema rebuild and backup/restore.
+and FIFO implementation: **21 check groups across 14 process invocations**, including
+failed-save rollback, connection loss, schema rebuild, backup/restore and foreign-key
+cleanup before tables exist. The earlier 20-group result remains historical evidence.
 Download
 `postgresql-win32-development-build` from that run’s artifacts for the executable,
 CrashRpt.dll and build receipt; the driver probe is in
 `postgresql-win32-test-evidence`. These are development artifacts, not a complete
 game install. See the
 [validation record](../../docs/VALIDATION.md) and
-[hosted run](https://github.com/Russianranger/coh-android/actions/runs/35962572993).
+[21-group hosted regression](https://github.com/Russianranger/coh-android/actions/runs/36074139842).
+
+## Normal server and network validation
+
+The fixture-OFF reference binaries and accepted generated game schemas now pass
+[normal DbServer startup/reload](https://github.com/Russianranger/coh-android/actions/runs/36125829298)
+and [actual network save acknowledgements](https://github.com/Russianranger/coh-android/actions/runs/36125829311).
+These runs use reference build 36088012664 and schema build 36088012666; their
+source/patch receipts are checked before database creation. The network driver
+runs ordinary DbServer and MapServer `-dbquery` processes against a disposable
+PostgreSQL database. It exercises a SQL-backed generic container, without loading
+a map or starting a graphical client.
+
+The network test verified creation and update after a DbServer restart, withheld
+a two-container acknowledgement while a real SQL row lock blocked the second
+save, then checked both committed rows immediately upon receipt. A deferred
+commit failure produced SQLSTATE `42501`, DbServer exit 3, no acknowledgement and
+an unchanged prior row. See the [network evidence summary](../../docs/postgresql-evidence/network-ack-36125829311.json)
+and [complete redacted evidence](../../docs/postgresql-evidence/network-ack-36125829311.zip).
+This establishes the tested generic network persistence path, not character
+sessions, map transfers or gameplay. The asset archives are not required for
+this diagnostic path.
 
 ## Remaining gates
 
-- Start the actual patched DbServer with generated templates, then create,
-  save, reload and transfer a character with MapServer and client. Missing game
-  assets still block the full reference path; controlled persistence fixtures
-  are independent. Network save acknowledgements and map transfers require it.
+- Compare the accepted data-only schemas with ordinary asset-backed
+  `MapServer -templates`, then start a normal map and create, save, reload and
+  transfer a character with the client. A verified asset bundle and matching
+  local runtime are prepared; hosted asset-backed execution is still pending.
 - Check game-level name policy and uniqueness using actual account/character
   templates. The implemented equality covers ASCII case folding, not every
   SQL Server collation or custom wildcard query. Integer ISNULL predicates in

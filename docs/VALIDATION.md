@@ -323,3 +323,50 @@ are preserved in Git. This completes the generated-schema database initializatio
 and reload gate. It does not test character creation/save/reload with those
 templates, network acknowledgements, map transfer, auxiliary services, an
 asset-complete serializer comparison, the custom client or Android execution.
+
+## 2026-09-25 network acknowledgement and current build validation
+
+The current [reference build 36088012664](https://github.com/Russianranger/coh-android/actions/runs/36088012664)
+and [strict schema run 36088012666](https://github.com/Russianranger/coh-android/actions/runs/36088012666)
+passed at `775a0dd770adac045484805dbbb5f68054c7a354`. Their receipts include the
+PostgreSQL network ACK correction. All 56 schema payloads remain byte-identical
+to the previous accepted schema. The current package and reviewed assets were
+assembled again after workspace recovery: 173,011 data files / 2,977,730,517 bytes
+and 29 build files; [assembly record](reference-runtime-evidence/assembly-775.json).
+
+[Normal schema run 36125829298](https://github.com/Russianranger/coh-android/actions/runs/36125829298)
+passed with the current fixture-OFF reference package. Fresh initialization took
+13.219 seconds and reload 5.718 seconds. Both exited zero and produced empty
+dumps, identical 99-table/5,935-column catalogs, 119 indexes, 734 constraints and
+58,272 matching attribute rows. [Summary](postgresql-evidence/generated-schema-36125829298.json)
+and [full redacted evidence](postgresql-evidence/generated-schema-36125829298.zip)
+are retained.
+
+[Network run 36125829311](https://github.com/Russianranger/coh-android/actions/runs/36125829311)
+passed at workflow commit `a0ae66d72648d33a7f70b3116d1e1800d9164184` using the
+same accepted schema/reference pair. Normal MapServer `-dbquery` created two
+MiningAccumulator containers and modified one after a DbServer restart. Actual
+received ACK packet fields matched the request, and independent SQL reads
+confirmed committed values. A two-container batch was blocked by a real SQL
+row lock for 2.078 seconds without any received ACK. After release, one two-ID
+ACK batch arrived and both updated values were visible. A deferred constraint
+trigger failed COMMIT with SQLSTATE `42501`: the client received zero ACKs,
+DbServer exited 3, the expected fatal-worker diagnostic appeared, and the prior
+committed row remained unchanged. The report has no failures.
+[Summary/report](postgresql-evidence/network-ack-36125829311.json) and
+[full redacted evidence](postgresql-evidence/network-ack-36125829311.zip) are retained.
+
+The first current-package attempts stopped on benign PostgreSQL NOTICE messages
+carried under the legacy `SQLERROR:` label. The drivers now recognize only the
+specific observed missing-object/existing-index notices and retain them in the
+reports; real errors and unknown notices still fail. All 44 driver tests passed.
+The asset packaging/comparison/map-tooling workflow passed 57 tests, but its
+actual template-comparison job was skipped because the reviewed ZIP has not
+reached the hosted runner. The asset ZIP was restored from saved parts and its
+615,541,018 bytes and SHA-256 verified before re-extraction.
+
+This establishes normal generic-container network ACK ordering, including
+failure behavior. It does not establish batch atomicity, throughput under load,
+character session persistence, asset-complete templates, Atlas Park gameplay,
+the customized client, or Android execution. The prepared Atlas Park status
+test also remains unexecuted until the asset-backed comparison passes.
