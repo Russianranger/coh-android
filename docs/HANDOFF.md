@@ -1,18 +1,50 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-25. PostgreSQL controlled persistence, targeted stage1 inspection,
+Updated: 2026-09-26. PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
 generation have passed their current checks. Normal fixture-OFF DbServer schema
 initialization/export/reload and normal MapServer network save acknowledgements
 have also passed against fresh PostgreSQL clusters.
 The refreshed runtime and schema artifacts share repository commit
-`775a0dd770adac045484805dbbb5f68054c7a354`. Game-level persistence, asset-complete
-reference comparison and Android execution remain validation gates.
+`775a0dd770adac045484805dbbb5f68054c7a354`. Ordinary asset-backed reference
+comparison and Atlas Park protocol readiness have now passed. Game-level
+persistence and Android execution remain validation gates.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
-checkout fix is applied and full hosted staging passed in run 36176806895.
-The normal template comparison is in progress; Atlas Park readiness is pending.
+checkout fix is applied and run 36176806895 completed successfully: all 56 fresh
+template outputs matched, then Atlas Park remained ready for 62.235 seconds.
+The first hosted character attempt reached creation, then stopped on a harness
+status-parser bug before currency, logout, save or restart acceptance.
+
+Continuation on 2026-09-26 recovered the completed 2026-09-25 run after this
+handoff had retained an in-progress status. At recovery, GitHub showed no queued
+or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43680d5ba`
+(2026-09-25 19:05:39 UTC). The workflow finished at 19:16:38 UTC. These observations
+do not reveal the internal status of the other Codex session.
+
+## Continuation validation checkpoint
+
+The recovered evidence and new character harness are on
+[`codex/character-persistence-continuation`](https://github.com/Russianranger/coh-android/pull/1)
+in draft PR #1. Implementation commit: `3d61ca929dc825ba9424279553797b66498df418`.
+[Hosted run 36269025801](https://github.com/Russianranger/coh-android/actions/runs/36269025801)
+passed both tooling jobs: all 55 Windows checks, including three live named-pipe
+checks; Linux passed 52 with those three platform checks skipped. The game
+experiment failed with `Unknown character status flags`: a multiline whitespace
+match consumed process output after a valid status line. Character ID 1 and its
+name agreed between TestClient, stock `-find` and independent SQL, but no save or
+restart pass was reached. The [full failed attempt](postgresql-evidence/character-persistence-36269025801.zip)
+and [report](postgresql-evidence/character-persistence-36269025801.json) are preserved.
+The status parser is corrected at `cc3c82a87e2c3eabe1478b13ea031e3923423b10`,
+without relaxing identity or flag checks. The reproducing regression passed;
+all 40 portable character checks passed, with three Windows transport checks
+skipped locally. [Fresh retry 36270565732](https://github.com/Russianranger/coh-android/actions/runs/36270565732)
+is running on that commit. Inspect its current status and downloaded artifact
+before retrying or claiming a persistence pass. A quiet staging step can take
+several minutes and does not itself show a stalled agent.
+All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
+also passed on the implementation commit.
 
 ## Active direction
 
@@ -123,8 +155,25 @@ The tested DbServer has persistence fixture mode OFF; its executable SHA-256 is
 `fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8`.
 See the [downloaded evidence](postgresql-evidence/generated-schema-36125829298.zip)
 and [summary](postgresql-evidence/generated-schema-36125829298.json).
-Equality with an asset-complete `MapServer -templates` reference, complete
-serializer semantics, map loading and gameplay remain unvalidated.
+The later asset-backed comparison and Atlas Park gate below passed. Complete
+serializer semantics, complete asset coverage and character gameplay remain
+unvalidated.
+
+**Normal templates and Atlas Park readiness passed:**
+[run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+used the accepted reference/schema pair and all 16,721 reviewed binary assets.
+Ordinary `MapServer -templates` freshly reproduced **56/56** accepted files
+byte-for-byte in **25.89 seconds**. A separate fresh runtime, without comparison
+caches, then started normal DbServer and Atlas Park against PostgreSQL. Independent
+DbServer status queries confirmed the initial not-started state and subsequent
+ready state with continuing updates for **62.235 seconds**. Both reports have
+empty failure lists. Preserve the [comparison report](reference-runtime-evidence/reference-template-comparison-36176806895.json),
+[comparison artifact](reference-runtime-evidence/reference-template-comparison-36176806895.zip),
+[map report](postgresql-evidence/one-map-36176806895.json),
+[map artifact](postgresql-evidence/postgresql-one-map-36176806895.zip) and
+[accepted gate identities/hashes](reference-runtime-evidence/accepted-gates-36176806895.json).
+The normal executable does not report queued startup error counts; these gates
+do not establish complete assets, character login/persistence or gameplay.
 
 ## Completed
 
@@ -213,10 +262,11 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation steps
 
-1. Follow the corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895),
-   currently comparing templates after successful full staging, with schema run `36088012666`, reference run
-   `36088012664`, asset `588984151` and `run_one_map=true` to compare ordinary
-   `MapServer -templates`. Upload is complete: unpublished draft release
+1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
+   It passed ordinary template comparison and Atlas Park readiness with schema
+   run `36088012666`, reference run `36088012664`, asset `588984151` and
+   `run_one_map=true`. No rerun is needed to establish those completed gates.
+   Upload is complete: unpublished draft release
    `396839391` contains the accepted **615,541,018-byte** ZIP, SHA-256
    `28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07`.
    Ignore incomplete asset `588979946`. No repeat PIGG or ZIP upload is needed.
@@ -235,24 +285,18 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    marks `assets/reference-inputs-*.json -text`; a temporary Git checkout with
    `core.autocrlf=true` reproduced the accepted canonical bytes, and
    [tooling run 36176404244](https://github.com/Russianranger/coh-android/actions/runs/36176404244)
-   passed. The current manual run uses that fix. The release remains unpublished
+   passed. The successful manual run used that fix. The release remains unpublished
    and raw assets are not uploaded as Actions artifacts. See the
    [concrete handoff](NEXT_SERVER_VALIDATION.md) and
    [transfer evidence](reference-runtime-evidence/asset-transfer-20260925.json).
    The matching reference package and coherent base assembly are ready. Preserve the accepted attribute-ID mappings; do not
    substitute the separate schema executable or its incidental caches for the
    reference runtime.
-2. After comparison succeeds, the prepared one-map driver stages a fresh copy
-   and checks Atlas Park through independent DbServer status queries for a
-   60-second readiness window. This has not run yet. Generate further server/client
-   caches with the bounded harness when the runtime has the required graphics. Resolve legacy animation hierarchy/DDS warnings through reference
-   runtime use. Keep custom variants separate and request further archives only
-   when runtime evidence identifies a concrete missing input. The older upstream
-   v2i3 release is not the locked build; use the current reference artifact.
-3. Implement the [character persistence validation design](CHARACTER_PERSISTENCE_VALIDATION.md)
-   after the map gate: fake-auth creation, a normal-protocol currency change,
+2. Execute the new [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
+   on hosted Windows using the passed map/comparison evidence: fake-auth creation,
+   a normal-protocol currency change,
    explicit logout, committed SQL verification, service restart and exact-name
-   resume. This is design-only, not an implemented or executed test. Stock
+   resume. The harness awaits hosted execution; no character pass is claimed. Stock
    no-fallback resume is a short scene probe; a sustained second session needs
    the separately proposed TestClient option and a new reference build.
    Follow with map transfer, player-session completion callbacks, game-level
@@ -260,6 +304,12 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL
    Server save migration has been attempted. Empty-database startup/export and
    controlled persistence fixtures do not establish these gameplay behaviors.
+3. Generate further server/client caches with the bounded harness when the runtime
+   has the required graphics. Resolve legacy animation hierarchy/DDS warnings
+   through reference runtime use. Keep custom variants separate and request
+   further archives only when runtime evidence identifies a concrete missing
+   input. The older upstream v2i3 release is not the locked build; use the current
+   reference artifact.
 4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
    Android runtime, then package under the APK’s own UID. Measure the stock
    65-connection pool, memory, suspension/restart and save durability on Thor.

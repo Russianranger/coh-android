@@ -1,8 +1,10 @@
 # Matching reference runtime
 
-Updated: 2026-09-25. The exact-pin Windows client/server package now builds in
-this repository. It is a reference for the Android work, not an Android app or
-a gameplay-validated server.
+Updated: 2026-09-26. The exact-pin Windows client/server package builds in this
+repository. Ordinary asset-backed template generation and Atlas Park protocol
+readiness have now passed using this package. Character persistence remains under
+hosted validation; this is not an Android app or a
+gameplay-validated server.
 
 ## Build and downloads
 
@@ -80,9 +82,10 @@ has now fully verified both immutable imports and successfully staged the run
 36088012664 package with the restored, verified 16,721 binary assets. The current
 [assembly record](reference-runtime-evidence/assembly-775.json) confirms 173,011
 data files / 2,977,730,517 bytes and 29 verified build-package files. Ordinary
-asset-backed generation has not yet executed. See
-[the next validation steps](NEXT_SERVER_VALIDATION.md) for the prepared asset
-bundle and hosted comparison workflow.
+asset-backed generation and the separate Atlas Park readiness check subsequently
+passed in [run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
+See [the current validation steps](NEXT_SERVER_VALIDATION.md) for the accepted
+asset bundle, recovered evidence and character persistence gate.
 
 ## Reference generation
 
@@ -130,8 +133,9 @@ The wrapper requires the exact source/patch receipt, the captured executable
 hash, its completion marker and all freshly written schema outputs. Successful
 output archives contain templates, HTML schemas and newly written dbidmaps;
 incidental parser caches are excluded because this mode deliberately lacks
-gameplay assets. Equality with an asset-complete reference `-templates` run
-must still be tested. Never substitute this executable for the reference runtime.
+gameplay assets. The later ordinary asset-backed `-templates` run reproduced
+all 56 accepted files byte-for-byte for the reviewed inputs; complete asset
+coverage remains unproven. Never substitute this executable for the reference runtime.
 
 The [first engine attempt](schema-generation-evidence/attempt-36070840517.json)
 wrote all 51 required template/attribute/schema files and exited with zero queued
@@ -256,7 +260,34 @@ no acknowledgement and an unchanged prior row. See the
 This diagnostic does not load a map or graphical client and requires no binary
 asset archives. It validates the generic container acknowledgement path; each
 save still has its own transaction, so a multi-container request is not atomic.
-The next gates are comparison with ordinary asset-backed `MapServer -templates`,
-normal MapServer map startup and real character creation/save/logout/reload.
-These results do not establish playable character sessions, map transfers,
-auxiliary services, compatibility with the custom client or Android execution.
+The subsequent template and Atlas Park gates below passed. The next gate is
+real character creation/save/logout/reload through the new harness. Its first
+hosted attempt reached a fresh character but stopped on a harness parser bug. These results do not establish playable character sessions,
+map transfers, auxiliary services, compatibility with the custom client or
+Android execution.
+
+## Asset-backed templates and Atlas Park readiness
+
+[Run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+completed successfully on 2026-09-25 at 19:16:38 UTC, using workflow commit
+`fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687` and the same accepted reference/schema
+pair. Ordinary `MapServer -templates` freshly rewrote all **56** expected files
+byte-identically in **25.89 seconds**, with zero output differences and no
+reported failures. The [comparison report](reference-runtime-evidence/reference-template-comparison-36176806895.json)
+and [complete artifact](reference-runtime-evidence/reference-template-comparison-36176806895.zip)
+are preserved.
+
+A separate fresh runtime, without comparison caches, started DbServer and
+Atlas Park against disposable PostgreSQL. Independent map-status queries
+observed the not-started state followed by a registered, ready map with ongoing
+status updates for **62.235 seconds**, exceeding the requested 60 seconds.
+The [map report](postgresql-evidence/one-map-36176806895.json) and
+[complete artifact](postgresql-evidence/postgresql-one-map-36176806895.zip) are
+preserved with [archive hashes and shared build identity](reference-runtime-evidence/accepted-gates-36176806895.json).
+
+These checks establish the reported schema equivalence for the reviewed inputs
+and bounded map readiness. The normal executable does not expose its queued
+startup error count; complete assets, character login/persistence and gameplay
+are not established. Continuation on 2026-09-26 recovered these completed
+results from GitHub after the earlier handoff had stopped at an in-progress
+status. Repository activity cannot establish another Codex session's internal state.

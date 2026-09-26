@@ -6,7 +6,7 @@ The selected baseline is the **original OuroDev-derived source import** from
 the graphical client and development tools. It is Issue 24/Volume 2 lineage
 with downstream changes: source code, not a VM image.
 
-**Validation, 2026-09-25:** all 5,995 imported files pass integrity checks. An
+**Validation, 2026-09-26:** all 5,995 imported files pass integrity checks. An
 [upstream Windows build of this exact commit](https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567)
 built the server and client and passed nine utility, archive and codec tests.
 Gameplay and Android execution have not been validated.
@@ -37,12 +37,19 @@ blocked two-container save committed, and no acknowledgement after an injected
 commit failure. The failed save preserved the previous row and stopped DbServer.
 This exercises generic containers; character persistence remains a separate gate.
 
-The repository is **not a complete runnable installation**. Comparison with
-asset-complete template generation, runtime cache generation, map startup and
-character creation/save/reload remain open. Supplied asset archives are staged
-separately from Git; their offline checks do not establish that every runtime
-dependency is present. Gameplay, Android execution and complete serializer
-equivalence remain unvalidated.
+The [asset-backed reference run](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+also passed: ordinary MapServer template generation freshly reproduced all 56
+accepted files byte-for-byte in 25.89 seconds. A separate fresh runtime then
+kept Atlas Park ready for players, confirmed through DbServer status queries,
+for 62.235 seconds. The [recovered reports and archive hashes](docs/reference-runtime-evidence/accepted-gates-36176806895.json)
+record those completed gates.
+
+The repository is **not a complete runnable installation**. The next gate is
+the new character persistence harness, under hosted validation: creation,
+currency change, protocol logout, committed SQL verification and exact-name
+resume after service restart. Runtime cache generation beyond the exercised
+paths, complete asset coverage, gameplay, Android execution and complete
+serializer equivalence remain unvalidated. Supplied binary assets stay outside Git.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)
 - [Actual DbServer persistence and migration behavior](docs/POSTGRESQL_PERSISTENCE.md)
