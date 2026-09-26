@@ -36,7 +36,13 @@ match consumed process output after a valid status line. Character ID 1 and its
 name agreed between TestClient, stock `-find` and independent SQL, but no save or
 restart pass was reached. The [full failed attempt](postgresql-evidence/character-persistence-36269025801.zip)
 and [report](postgresql-evidence/character-persistence-36269025801.json) are preserved.
-The status parser is being corrected without relaxing identity or flag checks.
+The status parser is corrected at `cc3c82a87e2c3eabe1478b13ea031e3923423b10`,
+without relaxing identity or flag checks. The reproducing regression passed;
+all 40 portable character checks passed, with three Windows transport checks
+skipped locally. [Fresh retry 36270565732](https://github.com/Russianranger/coh-android/actions/runs/36270565732)
+is running on that commit. Inspect its current status and downloaded artifact
+before retrying or claiming a persistence pass. A quiet staging step can take
+several minutes and does not itself show a stalled agent.
 All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
 also passed on the implementation commit.
 

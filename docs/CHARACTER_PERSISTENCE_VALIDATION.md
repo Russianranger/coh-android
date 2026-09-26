@@ -1,7 +1,8 @@
 # Character persistence validation
 
-Status: **first hosted attempt failed on a harness status-parser bug; character
-persistence remains unvalidated**. The prerequisite
+Status: **first hosted attempt failed on a harness status-parser bug; the fix
+is pushed and a fresh hosted retry is running. Character persistence remains
+unvalidated**. The prerequisite
 [asset-backed template and Atlas Park run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
 passed: all 56 generated outputs matched, followed by 62.235 seconds of
 DB-confirmed map readiness. The existing generic-container tests and map
@@ -32,6 +33,12 @@ and [report](postgresql-evidence/character-persistence-36269025801.json).
 Artifact `10914634985`, 3,908 bytes, SHA-256
 `99ca2a984344d479f5843f7ce0900d9fd8ee69e8162ed1b2d83b432ee1ce3a04`.
 This attempt is failure evidence, not accepted persistence proof.
+
+The correction is commit `cc3c82a87e2c3eabe1478b13ea031e3923423b10`. All 40
+portable character tests passed locally; three Windows transport checks were
+skipped. [Retry 36270565732](https://github.com/Russianranger/coh-android/actions/runs/36270565732)
+uses a fresh runtime and disposable database. Check that run before restarting
+work; the outcome is pending at this checkpoint.
 
 ## Run and inspect the harness
 
