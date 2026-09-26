@@ -1,9 +1,17 @@
-# Proposed character persistence validation
+# Character persistence validation
 
-Status: **design only; not implemented or executed**. This follows successful
-asset-backed template comparison and Atlas Park readiness. Those gates must pass
-before a character result is claimed. The existing generic-container tests do not
-establish game-character persistence.
+Status: **implementation awaiting hosted execution**. The prerequisite
+[asset-backed template and Atlas Park run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+passed: all 56 generated outputs matched, followed by 62.235 seconds of
+DB-confirmed map readiness. The existing generic-container tests and map
+readiness do not establish game-character persistence.
+
+The `Character persistence` workflow reuses those accepted comparison/map
+reports and the matching reference/schema packages, stages a fresh runtime,
+and runs `database/postgresql/tests/run_character_persistence.py`. It runs
+on the continuation branch and relevant main pushes, or manually with explicit
+input run IDs. Pull requests run tooling checks only. Credentials, full private
+containers and the disposable database remain outside uploaded evidence.
 
 Use the same fixture-OFF reference binaries, accepted schema/attribute mappings,
 reviewed assets and private disposable PostgreSQL database as the one-map test.
@@ -73,15 +81,22 @@ prerequisites for this narrow route; their actual functionality remains untested
    Require `-getstatus 3 ID` to identify that character on `MapId 1`, without
    `NoConnect` or `InMapXfer`, before requesting logout.
 5. Send `CMD influence 12345` over the pipe. This becomes an ordinary MapServer
-   command. Wait for evidence that the live character received the change
-   (a bounded read of its container can supplement the client/server logs).
-   Do not write the currency directly in SQL.
+   command. Request `CMD debug RECORDED_CHARACTER_NAME` and require the server's
+   live character report to identify the player/account and show `Current cash:
+   12345 (Influence)`. A DbServer container may be stale until a save; its value
+   alone is not evidence of the live change. Do not write the currency directly
+   in SQL or force a pre-logout save to satisfy this gate.
 6. Send `CMD quit`. The client calls `commSendQuitGame(0)` and reports
    `QuitNow:`. **That message only confirms the request; it is not a save ACK.**
    Keep the map and database services alive until server logout/unload evidence
    and independent committed SQL reads confirm the saved character, currency
    and child rows. A forced TestClient termination is a disconnect test, not a
    successful protocol-logout test.
+   The stock TestClient's disconnect path can call `quitToLogin`, then
+   `FatalErrorf("Booted back to login screen")`; its `windowExit` also reports
+   `Status: ERROR` and exits -1. Any exception for this exact client shutdown
+   path must be limited to after the recorded quit request. Unrelated failures,
+   service errors, missing SQL persistence, or earlier client errors still fail.
 7. Once persistence is observed, capture the first SQL snapshot and stop only
    the owned test processes. Restart DbServer and Atlas Park against the same
    database, without reseeding, importing a dump, or replacing attribute maps.

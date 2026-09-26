@@ -1,11 +1,15 @@
 # Next server validation
 
-Updated: 2026-09-25. Normal DbServer startup/reload and real network save
-acknowledgements have passed. Asset-backed template comparison and Atlas Park
-readiness are implemented. The hosted runner downloaded and verified the draft
-release asset, then stopped on Windows manifest line endings before game
-execution. The byte-preserving checkout fix is applied and full staging passed in run 36176806895.
-The normal template comparison is in progress; Atlas Park readiness is pending.
+Updated: 2026-09-26. Normal DbServer startup/reload, real network save
+acknowledgements, asset-backed template comparison and Atlas Park readiness
+have passed. The corrected hosted run 36176806895 freshly matched all 56
+template outputs and observed Atlas Park ready for 62.235 seconds. The next
+gate is the new character persistence harness, awaiting hosted execution.
+
+Continuation on 2026-09-26 recovered the run that had completed on 2026-09-25
+at 19:16:38 UTC while the committed handoff still said it was running. No queued
+or running GitHub workflow was found at recovery. This establishes the repository
+and workflow state, not another Codex session's internal status.
 
 ## PostgreSQL network acknowledgement correction
 
@@ -169,21 +173,25 @@ canonical bytes; [push tooling run 36176404244](https://github.com/Russianranger
 passed. This is a checkout correction, not an asset or game-code modification.
 
 Manual [run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
-uses `fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687` and the same accepted inputs
+used `fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687` and the same accepted inputs
 with Atlas Park enabled. Asset extraction verified all 16,721 files and the
 exact canonical manifest hash; both source/data snapshots and full runtime
-staging passed. Normal template comparison is in progress and Atlas Park is
-pending. Do not treat staging as a comparison/map pass. See
-[transfer/setup evidence](reference-runtime-evidence/asset-transfer-20260925.json).
+staging passed. The ordinary template comparison then freshly matched all
+**56 expected files** in **25.89 seconds**, with no output differences or
+reported failures. Its report finished at 2026-09-25 19:06:09 UTC. Atlas Park
+subsequently passed the independent readiness gate below. See the historical
+[transfer/setup evidence](reference-runtime-evidence/asset-transfer-20260925.json),
+the recovered [comparison report](reference-runtime-evidence/reference-template-comparison-36176806895.json)
+and [complete comparison artifact](reference-runtime-evidence/reference-template-comparison-36176806895.zip).
 
 After workspace maintenance, the saved three parts were restored and the joined
 ZIP hash reverified. All 16,721 asset payloads passed extraction checks again.
 The current 29-file reference package was assembled with the pinned source/data
 and those assets. Offline assembly does not execute MapServer. Earlier push
-workflow runs correctly skipped the manual-only comparison job; the current
-manual run is the attempt to execute it.
+workflow runs correctly skipped the manual-only comparison job; the successful
+manual run executed both comparison and one-map validation.
 
-## Following the comparison
+## Passed Atlas Park readiness gate
 
 The workflow's `run_one_map` option runs `database/postgresql/tests/run_one_map.py`
 after a successful comparison. It requires a separate fresh full runtime stage,
@@ -195,7 +203,7 @@ Source-supported one-map commands are:
 
 ```text
 DbServer.exe -start 0
-MapServer.exe -nogui -nosharedmemory -db 127.0.0.1 -map_id 1 -udp 7001 -tcp 0
+MapServer.exe -nogui -nosharedmemory -nostats -db 127.0.0.1 -map_id 1 -udp 7001 -tcp 0
 ```
 
 Map 1 is Atlas Park. Independent stock `-dbquery -getstatus 1 1` requests must
@@ -207,10 +215,23 @@ SQL row alone does not prove readiness. The evidence records bounded redacted
 logs and failure diagnostics, with no game-character claim. Let actual runtime
 failures name missing assets before requesting more archives.
 
-The next [character persistence validation design](CHARACTER_PERSISTENCE_VALIDATION.md)
+Run 36176806895 observed **62.235 seconds** of ready status with continuing
+updates, exceeding the requested 60 seconds. Its map report finished at
+2026-09-25 19:16:14 UTC and contains no failures. It used a separate fresh
+runtime and the same accepted identifiers, without reusing comparison caches.
+The [map report](postgresql-evidence/one-map-36176806895.json),
+[complete map artifact](postgresql-evidence/postgresql-one-map-36176806895.zip)
+and [accepted gate identities and archive hashes](reference-runtime-evidence/accepted-gates-36176806895.json)
+are preserved. This proves the bounded readiness observation, not complete
+asset coverage or a character session. Normal executables do not expose their
+queued startup error count.
+
+## Next: character persistence
+
+The new [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
 uses stock TestClient fake-auth creation, named-pipe control of a currency change
 and protocol logout, independently committed SQL snapshots, service restart and
-exact-name resume. It is **design-only, not implemented or executed**. Default
+exact-name resume. It **awaits hosted execution; no character pass is claimed**. Default
 creation is Primal Hero, which targets Atlas Park. Preserve the actual account,
 character ID/name and stable parent/child fields rather than volatile timestamps.
 
@@ -218,5 +239,5 @@ Stock `-justlogin -character NAME` disables CREATE fallback but also exits after
 the scene exchange; it provides a short resume probe, not a second sustained
 session. The design records this limitation and a minimal future TestClient
 option requiring a new reference build. Account services, transfers, the
-customized client and Android execution remain separate checks. These
-map/character steps have not been executed yet.
+customized client and Android execution remain separate checks. Character
+creation, protocol logout persistence and resume have not passed a hosted test.

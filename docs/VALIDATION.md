@@ -2,7 +2,10 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, 2026-09-24: [matching runtime build and assembly](REFERENCE_RUNTIME.md).
+Latest milestone, recovered 2026-09-26: [ordinary template comparison and Atlas
+Park readiness](#2026-09-26-continuation-completed-reference-comparison-and-atlas-park)
+passed in the completed 2026-09-25 hosted run. Character persistence awaits
+hosted execution of its new harness.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -360,13 +363,56 @@ The first current-package attempts stopped on benign PostgreSQL NOTICE messages
 carried under the legacy `SQLERROR:` label. The drivers now recognize only the
 specific observed missing-object/existing-index notices and retain them in the
 reports; real errors and unknown notices still fail. All 44 driver tests passed.
-The asset packaging/comparison/map-tooling workflow passed 57 tests, but its
-actual template-comparison job was skipped because the reviewed ZIP has not
-reached the hosted runner. The asset ZIP was restored from saved parts and its
+At this earlier checkpoint, the asset packaging/comparison/map-tooling workflow
+passed 57 tests, but its actual template-comparison job was skipped because the
+reviewed ZIP had not reached the hosted runner. The asset ZIP was restored from saved parts and its
 615,541,018 bytes and SHA-256 verified before re-extraction.
 
 This establishes normal generic-container network ACK ordering, including
 failure behavior. It does not establish batch atomicity, throughput under load,
 character session persistence, asset-complete templates, Atlas Park gameplay,
-the customized client, or Android execution. The prepared Atlas Park status
-test also remains unexecuted until the asset-backed comparison passes.
+the customized client, or Android execution. Atlas Park readiness was then
+unexecuted; the subsequent completed gates are recorded below.
+
+## 2026-09-26 continuation: completed reference comparison and Atlas Park
+
+Continuation recovered [run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895),
+which had completed successfully on **2026-09-25 at 19:16:38 UTC**. The prior
+handoff at commit `04d62616e2e1b41b10f35a04d4c798e43680d5ba` still described
+comparison as in progress and Atlas Park as pending. There were no queued or
+running GitHub workflows at recovery. These observations establish repository
+activity only; the other Codex session's internal state is not available.
+
+The run used workflow commit `fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687`, the
+reference package from run `36088012664`, schemas from run `36088012666` and
+reviewed release asset `588984151`. Both reference and schema packages share
+repository commit `775a0dd770adac045484805dbbb5f68054c7a354`.
+
+The earlier manual attempts remain historical: run `36174562963` stopped at
+download; run `36175960917` verified the exact asset ZIP but failed canonical
+manifest checking after Windows line-ending conversion. Commit `fe98dd5` fixed
+checkout byte preservation; the accepted run then passed extraction of all
+16,721 reviewed binary assets and full runtime staging.
+
+Ordinary `MapServer -templates` freshly rewrote **56/56** required outputs in
+**25.89 seconds**; every payload matched the accepted data-only output bytes,
+with no differences, timeout or reported failure. Preserve the
+[comparison report](reference-runtime-evidence/reference-template-comparison-36176806895.json)
+and [complete recovered artifact](reference-runtime-evidence/reference-template-comparison-36176806895.zip).
+
+A separate fresh runtime started normal DbServer and Atlas Park against
+disposable PostgreSQL, reusing only the verified generated outputs and accepted
+identifier mappings. Comparison caches were not carried forward. Independent
+DbServer status queries observed the initial not-started state followed by
+registered ready status and continuing updates for **62.235 seconds**, exceeding
+the requested 60 seconds. The map report contains no failures. Preserve the
+[map report](postgresql-evidence/one-map-36176806895.json),
+[complete recovered artifact](postgresql-evidence/postgresql-one-map-36176806895.zip)
+and [shared identities/archive hashes](reference-runtime-evidence/accepted-gates-36176806895.json).
+
+This establishes equality of the 56 generated files for the reviewed inputs
+and a bounded Atlas Park readiness observation. Normal executables do not
+report their queued startup error count; complete asset coverage, complete
+serializer semantics, character sessions and gameplay remain unvalidated.
+The next gate is the new character persistence harness, awaiting hosted
+execution. No character persistence or Android pass is claimed.
