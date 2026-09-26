@@ -1,8 +1,7 @@
 # Character persistence validation
 
-Status: **first hosted attempt failed on a harness status-parser bug; the fix
-is pushed and a fresh hosted retry is running. Character persistence remains
-unvalidated**. The prerequisite
+Status: **two hosted attempts exposed harness issues: status parsing, then
+TestClient console capture. Character persistence remains unvalidated**. The prerequisite
 [asset-backed template and Atlas Park run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
 passed: all 56 generated outputs matched, followed by 62.235 seconds of
 DB-confirmed map readiness. The existing generic-container tests and map
@@ -37,8 +36,22 @@ This attempt is failure evidence, not accepted persistence proof.
 The correction is commit `cc3c82a87e2c3eabe1478b13ea031e3923423b10`. All 40
 portable character tests passed locally; three Windows transport checks were
 skipped. [Retry 36270565732](https://github.com/Russianranger/coh-android/actions/runs/36270565732)
-uses a fresh runtime and disposable database. Check that run before restarting
-work; the outcome is pending at this checkpoint.
+used a fresh runtime and disposable database. It reached an independently
+confirmed connected character on Atlas Park, proving the status-parser fix,
+then failed because the creation branch text was missing from captured stdout.
+
+TestClient is a GUI executable whose `WinMain` calls `newConsoleWindow`. If
+`AllocConsole` succeeds, the preserved utility code reopens stdout/stderr to
+`CONOUT$`, bypassing harness redirection. The correction preallocates a console
+for TestClient so that the reopen branch is skipped; redirected logs and the
+exact creation/resume assertions are retained. It adds a Windows GUI capture
+regression before the full runtime job.
+
+Preserved retry: [artifact ZIP](postgresql-evidence/character-persistence-36270565732.zip)
+and [report](postgresql-evidence/character-persistence-36270565732.json). Artifact
+`10915916224`, 4,136 bytes, SHA-256
+`676ad69d27d588844cbd92a2f989d092b585a7ff0b0db0e5d9880e04985b648f`.
+It did not reach currency, logout, saved-state, restart or resume acceptance.
 
 ## Run and inspect the harness
 

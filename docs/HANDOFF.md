@@ -40,9 +40,14 @@ The status parser is corrected at `cc3c82a87e2c3eabe1478b13ea031e3923423b10`,
 without relaxing identity or flag checks. The reproducing regression passed;
 all 40 portable character checks passed, with three Windows transport checks
 skipped locally. [Fresh retry 36270565732](https://github.com/Russianranger/coh-android/actions/runs/36270565732)
-is running on that commit. Inspect its current status and downloaded artifact
-before retrying or claiming a persistence pass. A quiet staging step can take
-several minutes and does not itself show a stalled agent.
+failed after the status fix worked: character ID 1/`TEST-43027` was connected on
+Atlas Park, but TestClient's GUI entry allocated its own console and reopened
+stdout/stderr to `CONOUT$`. The harness could not see the required creation
+branch text. The [artifact](postgresql-evidence/character-persistence-36270565732.zip)
+and [report](postgresql-evidence/character-persistence-36270565732.json) are preserved.
+The next correction preallocates the client console while retaining redirected
+logs; exact creation/resume acceptance is retained. Currency, logout/save and
+restart/resume have not yet been exercised.
 All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
 also passed on the implementation commit.
 

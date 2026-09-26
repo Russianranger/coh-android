@@ -47,6 +47,12 @@ def utc():
     return datetime.now(timezone.utc).isoformat()
 
 
+def announce(phase, status='started', **details):
+    """Small flushed records make long verification/copy phases observable."""
+    print('COH_CHARACTER_PROGRESS ' + json.dumps({'time_utc': utc(), 'phase': phase,
+                                                  'status': status, **details}), flush=True)
+
+
 def source_contract(root=ROOT):
     base = root / 'upstream/ouroboros'
     paths = {
@@ -58,6 +64,8 @@ def source_contract(root=ROOT):
         'logout': 'Utilities/TestClient/src/externs.c',
         'debug': 'MapServer/src/cmdparse/cmdservercsr.c',
         'chat': 'Utilities/TestClient/src/chatter.c',
+        'windows_entry': 'Utilities/TestClient/src/win_init.c',
+        'console': 'libs/UtilitiesLib/src/utils/utils.c',
     }
     sources = {key: (base / path).read_text() for key, path in paths.items()}
     expected = {
@@ -74,6 +82,8 @@ def source_contract(root=ROOT):
         'debug': ('char * csrPlayerInfo(', 'localizedPrintf(e,"CSRInfo1")',
                   'localizedPrintf(e,"CSRInfo2")', 'localizedPrintf(e,"CSRInfo8a")', 'e->pchar->iInfluencePoints'),
         'chat': ('PipeClientSendMessage(pc,"ChatText:%s",str);',),
+        'windows_entry': ('int APIENTRY _tWinMain(', 'newConsoleWindow();', 'return main(argc,argv);'),
+        'console': ('if (AllocConsole())', 'freopen("CONOUT$", "w", stdout);', 'setvbuf( stdout, NULL, _IONBF, 0 );'),
     }
     for key, fragments in expected.items():
         require(all(fragment in sources[key] for fragment in fragments), 'Reviewed character source contract changed: ' + key)
@@ -260,6 +270,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
     runtime, reference, work, output = [Path(p).resolve() for p in (runtime, reference, work, output)]
     network.new_paths(runtime, reference, work, output, root)
     require(60 <= timeout <= 1800 and 30 <= phase_timeout <= 900, 'Timeouts must be startup60..1800 and phase30..900 seconds')
+    announce('input_verification')
     context, outputs, tables, map_contract = one_map.preflight(runtime, reference, Path(schema_report),
         Path(comparison_report), Path(comparison_inputs), Path(schema_archive) if schema_archive else None,
         Path(comparison_archive) if comparison_archive else None, root)
@@ -267,6 +278,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                    sha256(Path(comparison_report)), sha256(Path(comparison_inputs)))
     contract = source_contract(root)
     selection = snapshots.selected_contract(tables)
+    announce('input_verification', 'passed')
     require(os.name == 'nt', 'This stock named-pipe harness requires the Windows reference host')
     version_source = 'explicit diagnostic override' if diagnostic_version else 'reference package'
     version = diagnostic_version or context['package'].get('client_version') or context['package'].get('patch_version')
@@ -288,6 +300,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         'source_contract': contract, 'selected_sql_contract': selection, 'port_preflight': port_checks,
         'diagnostic_version': version, 'diagnostic_version_source': version_source,
         'version_compatibility_validated': False, 'no_version_check': True,
+        'testclient_console_capture': 'CREATE_NEW_CONSOLE before WinMain; stock AllocConsole cannot replace redirected stdout/stderr',
         'character_persistence_validated': False, 'gameplay_validated': False, 'android_execution_validated': False,
         'scope': 'Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume',
         'network_scope': 'Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host',
@@ -297,8 +310,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
     account = 'CohP' + random_secrets.token_hex(5)
     report['account'] = account
 
-    def start(command, label, private=False):
-        process = network.Process(command, isolated, query_logs if private else logs, label)
+    def start(command, label, private=False, new_console=False):
+        process = network.Process(command, isolated, query_logs if private else logs, label, new_console=new_console)
         processes.append(process)
         return process
 
@@ -338,15 +351,21 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         return text
 
     def wait(predicate, seconds, label, client=None):
-        deadline = time.monotonic() + seconds
+        started = time.monotonic()
+        deadline, progress_at = started + seconds, started + 30
+        announce(label)
         while True:
             health()
             result = predicate()
             if result:
+                announce(label, 'observed', elapsed_seconds=round(time.monotonic() - started, 1))
                 return result
             if client is not None:
                 require(client.poll() is None, 'TestClient exited before ' + label)
             require(time.monotonic() < deadline, 'Timed out waiting for ' + label)
+            if time.monotonic() >= progress_at:
+                announce(label, 'waiting', elapsed_seconds=round(time.monotonic() - started, 1))
+                progress_at = time.monotonic() + 30
             time.sleep(0.2)
 
     def map_status(label, allow_missing=False):
@@ -356,6 +375,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         return sample
 
     def start_services(phase):
+        announce(phase + '_services')
         database = start([str(isolated / 'DbServer.exe'), '-start', '0'], phase + '-dbserver')
         services.append(database)
         wait(lambda: one_map.database_query_possible(cluster, tables), min(timeout, 300), 'DbServer schema/listener')
@@ -382,6 +402,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             time.sleep(2)
         logs_clean()
         report['phases'].append({'phase': phase + '_services_ready', 'time_utc': utc(), 'status': 'passed'})
+        announce(phase + '_services_ready', 'passed')
 
     def char_status(identifier, name, phase, allow_missing=False):
         index = len(report['character_status_samples'])
@@ -396,10 +417,13 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         return snapshots.attribute_snapshot(cluster, tables, expected=expected)
 
     try:
-        for name, path in input_files(runtime):
+        announce('private_runtime_copy')
+        for copied, (name, path) in enumerate(input_files(runtime), 1):
             target = isolated / name
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
+            if copied % 20000 == 0:
+                announce('private_runtime_copy', 'copying', file_count=copied)
         existing = {name.casefold(): path for name, path in input_files(isolated)}
         for name, data in outputs.items():
             target = existing.get(name, isolated / name)
@@ -411,6 +435,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         cluster = initialize(work / 'pg', pg_bin, port, 'coh_character_persistence', driver)
         secrets = list(cluster.secrets.values())
         private_write(config, character_config(original, (cluster.root / 'dbserver-postgresql.cfg').read_text()))
+        announce('private_runtime_and_database', 'prepared')
         require(not catalog_snapshot(cluster)['columns'], 'Disposable SQL schema was not initially empty')
         start_services('first')
         attr_before = attributes()
@@ -421,7 +446,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         pipe = TestClientPipe(version)
         pipe.__enter__()
         pipes.append(pipe)
-        client = start(client_command(isolated, account), 'create-client')
+        client = start(client_command(isolated, account), 'create-client', new_console=True)
         pipe.bind_process(client.child.pid)
         name = wait(lambda: pipe_identity(pipe.snapshot(), client.child.pid, account), phase_timeout,
                     'fresh character launcher identity', client)
@@ -436,6 +461,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         require('simulateCharacterCreate()' in client.text(), 'Fresh client did not report creation branch')
         logs_clean()
         report['phases'].append({'phase': 'created_connected', 'time_utc': utc(), 'status': 'passed'})
+        announce('created_connected', 'passed')
         before_currency = pipe.snapshot()['events']
         currency_sequence = before_currency[-1]['sequence'] if before_currency else -1
         pipe.send('CMD influence ' + str(INFLUENCE))
@@ -490,6 +516,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['first_session_pipe'] = selected_pipe_record(state)
         report['phases'].append({'phase': 'protocol_logout_committed', 'time_utc': utc(), 'status': 'passed',
                                 'quitnow_is_save_ack': False, 'client_forced_stop_before_commit': client.forced_stop})
+        announce('protocol_logout_committed', 'passed')
         require(not client.forced_stop, 'Forced disconnect cannot establish protocol logout')
         logs_clean()
         client.stop()  # Cleanup occurs only after independently proven logout/save.
@@ -506,11 +533,12 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['snapshots']['after_service_restart'] = after_restart
         snapshots.compare_attributes(attr_before, attributes())
         report['phases'].append({'phase': 'restart_saved_state', 'time_utc': utc(), 'status': 'passed'})
+        announce('restart_saved_state', 'passed')
 
         resume_pipe = TestClientPipe(version)
         resume_pipe.__enter__()
         pipes.append(resume_pipe)
-        resume = start(client_command(isolated, account, name), 'resume-client')
+        resume = start(client_command(isolated, account, name), 'resume-client', new_console=True)
         resume_pipe.bind_process(resume.child.pid)
         wait(lambda: resume.poll() is not None, phase_timeout, 'short resume probe process completion')
         wait(lambda: pipe_identity(resume_pipe.snapshot(), resume.child.pid, account, name), 5,
@@ -543,10 +571,12 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 'Map lost readiness/current heartbeat after short resume')
         logs_clean()
         report['phases'].append({'phase': 'short_resume_and_committed_state', 'time_utc': utc(), 'status': 'passed'})
+        announce('short_resume_and_committed_state', 'passed')
         report['character_persistence_validated'] = True
         report['status'] = SUCCESS
     except (OSError, ValueError, RuntimeError, AssertionError, subprocess.SubprocessError) as error:
         report['failures'].append(redact(str(error), secrets))
+        announce('character_persistence', 'failed', diagnostic=redact(str(error), secrets))
     finally:
         for process in reversed(processes):
             try:
@@ -581,6 +611,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['shutdown_scope'] = 'Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated'
         report['finished_utc'] = utc()
         (output / 'character-persistence-report.json').write_text(redact(json.dumps(report, indent=2) + '\n', secrets), encoding='utf-8')
+        announce('cleanup_and_evidence', 'complete', result=report['status'], failure_count=len(report['failures']))
     return report
 
 
