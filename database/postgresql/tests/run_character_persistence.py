@@ -139,8 +139,12 @@ def parse_character_status(text, identifier, name, account, allow_missing=False)
     require(type(identifier) is int and identifier > 0, 'Invalid character ID')
     require(not diagnostic_failures(text), 'Character status query emitted failure diagnostics')
     missing = [line for line in text.splitlines() if line.strip() == 'invalid container request']
-    matches = re.findall(r'^\s*(\d+)\s+Name\s+(.+?)\s+Auth\s+(\S+)\s+Ip\s+(\S+)\s+'
-                         r'MapId\s+(\d+)\s+SmapId\s+(\d+)\s*(.*?)\s*$', text, re.M)
+    # Stock query stdout can contain normal shutdown diagnostics after the
+    # response. Parse one physical line at a time: multiline \s* may cross its
+    # CRLF and misclassify the next diagnostic as character status flags.
+    pattern = re.compile(r'\s*(\d+)\s+Name\s+(.+?)\s+Auth\s+(\S+)\s+Ip\s+(\S+)\s+'
+                         r'MapId\s+(\d+)\s+SmapId\s+(\d+)\s*(.*?)\s*')
+    matches = [match.groups() for line in text.splitlines() if (match := pattern.fullmatch(line))]
     if missing:
         require(allow_missing and len(missing) == 1 and not matches, 'Unexpected/ambiguous missing character status')
         return {'loaded': False, 'connected': False, 'in_map_transfer': False, 'sampled_utc': utc()}
@@ -556,7 +560,9 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 report['failures'].append('Pipe cleanup: ' + redact(str(error), secrets))
         for index, pipe in enumerate(pipes):
             try:
-                private_write(work / f'launcher-session-{index}.json', json.dumps(pipe.snapshot(), indent=2) + '\n')
+                state = pipe.snapshot()
+                private_write(work / f'launcher-session-{index}.json', json.dumps(state, indent=2) + '\n')
+                report.setdefault('launcher_sessions', []).append(selected_pipe_record(state))
             except Exception as error:
                 report['failures'].append('Private pipe evidence: ' + redact(str(error), secrets))
         if cluster is not None:

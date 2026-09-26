@@ -14,13 +14,31 @@ the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
 checkout fix is applied and run 36176806895 completed successfully: all 56 fresh
 template outputs matched, then Atlas Park remained ready for 62.235 seconds.
-The new character persistence harness awaits hosted execution.
+The first hosted character attempt reached creation, then stopped on a harness
+status-parser bug before currency, logout, save or restart acceptance.
 
 Continuation on 2026-09-26 recovered the completed 2026-09-25 run after this
 handoff had retained an in-progress status. At recovery, GitHub showed no queued
 or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43680d5ba`
 (2026-09-25 19:05:39 UTC). The workflow finished at 19:16:38 UTC. These observations
 do not reveal the internal status of the other Codex session.
+
+## Continuation validation checkpoint
+
+The recovered evidence and new character harness are on
+[`codex/character-persistence-continuation`](https://github.com/Russianranger/coh-android/pull/1)
+in draft PR #1. Implementation commit: `3d61ca929dc825ba9424279553797b66498df418`.
+[Hosted run 36269025801](https://github.com/Russianranger/coh-android/actions/runs/36269025801)
+passed both tooling jobs: all 55 Windows checks, including three live named-pipe
+checks; Linux passed 52 with those three platform checks skipped. The game
+experiment failed with `Unknown character status flags`: a multiline whitespace
+match consumed process output after a valid status line. Character ID 1 and its
+name agreed between TestClient, stock `-find` and independent SQL, but no save or
+restart pass was reached. The [full failed attempt](postgresql-evidence/character-persistence-36269025801.zip)
+and [report](postgresql-evidence/character-persistence-36269025801.json) are preserved.
+The status parser is being corrected without relaxing identity or flag checks.
+All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
+also passed on the implementation commit.
 
 ## Active direction
 

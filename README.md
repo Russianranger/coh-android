@@ -45,7 +45,7 @@ for 62.235 seconds. The [recovered reports and archive hashes](docs/reference-ru
 record those completed gates.
 
 The repository is **not a complete runnable installation**. The next gate is
-the new character persistence harness, awaiting hosted execution: creation,
+the new character persistence harness, under hosted validation: creation,
 currency change, protocol logout, committed SQL verification and exact-name
 resume after service restart. Runtime cache generation beyond the exercised
 paths, complete asset coverage, gameplay, Android execution and complete

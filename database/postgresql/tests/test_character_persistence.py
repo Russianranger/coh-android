@@ -78,6 +78,21 @@ class CharacterProtocolTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             driver.parse_character_status('invalid container request\n', 9, NAME, ACCOUNT)
 
+    def test_status_flags_cannot_consume_following_process_diagnostics(self):
+        # Run36269025801 returned a valid connected status with no flags, then
+        # the original multiline whitespace pattern read past the response.
+        windows_line = ('    1 Name TEST14081        Auth CohPfba5e64b23   '
+                        'Ip 127.0.0.1        MapId 1 SmapId 1  \r\n')
+        for suffix in ('\r\nDisconnecting...\r\n', 'Total time: 0.3\r\n', '\n'):
+            text = 'Query startup diagnostic\r\n' + windows_line + suffix
+            state = driver.parse_character_status(text, 1, 'TEST14081', 'CohPfba5e64b23')
+            self.assertTrue(driver.connected_on_atlas(state))
+        disconnected = windows_line.rstrip() + ' NoConnect\r\nDisconnecting...\r\n'
+        self.assertFalse(driver.parse_character_status(disconnected, 1, 'TEST14081', 'CohPfba5e64b23')['connected'])
+        with self.assertRaisesRegex(ValueError, 'Unknown character status flags'):
+            driver.parse_character_status(windows_line.rstrip() + ' Unexpected\r\n', 1,
+                                          'TEST14081', 'CohPfba5e64b23')
+
     def test_pipe_identity_requires_child_pid_version_player_map_and_running(self):
         state = pipe_state()
         self.assertEqual(driver.pipe_identity(state, 55, ACCOUNT), NAME)

@@ -4,7 +4,7 @@ Updated: 2026-09-26. Normal DbServer startup/reload, real network save
 acknowledgements, asset-backed template comparison and Atlas Park readiness
 have passed. The corrected hosted run 36176806895 freshly matched all 56
 template outputs and observed Atlas Park ready for 62.235 seconds. The next
-gate is the new character persistence harness, awaiting hosted execution.
+gate is the new character persistence harness, under hosted validation.
 
 Continuation on 2026-09-26 recovered the run that had completed on 2026-09-25
 at 19:16:38 UTC while the committed handoff still said it was running. No queued
@@ -231,7 +231,8 @@ queued startup error count.
 The new [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
 uses stock TestClient fake-auth creation, named-pipe control of a currency change
 and protocol logout, independently committed SQL snapshots, service restart and
-exact-name resume. It **awaits hosted execution; no character pass is claimed**. Default
+exact-name resume. Its first hosted attempt exposed a status-parser bug; **no character persistence
+pass is claimed**. Default
 creation is Primal Hero, which targets Atlas Park. Preserve the actual account,
 character ID/name and stable parent/child fields rather than volatile timestamps.
 

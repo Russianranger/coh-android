@@ -1,6 +1,7 @@
 # Character persistence validation
 
-Status: **implementation awaiting hosted execution**. The prerequisite
+Status: **first hosted attempt failed on a harness status-parser bug; character
+persistence remains unvalidated**. The prerequisite
 [asset-backed template and Atlas Park run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
 passed: all 56 generated outputs matched, followed by 62.235 seconds of
 DB-confirmed map readiness. The existing generic-container tests and map
@@ -12,6 +13,50 @@ and runs `database/postgresql/tests/run_character_persistence.py`. It runs
 on the continuation branch and relevant main pushes, or manually with explicit
 input run IDs. Pull requests run tooling checks only. Credentials, full private
 containers and the disposable database remain outside uploaded evidence.
+
+## First hosted attempt: 36269025801
+
+[Run 36269025801](https://github.com/Russianranger/coh-android/actions/runs/36269025801)
+at `3d61ca929dc825ba9424279553797b66498df418` passed 55 Windows tooling checks
+and 52 Linux checks (three Windows-only skips). Its runtime job reached fresh
+DbServer/Atlas Park readiness, an empty diagnostic account, TestClient launcher
+identity and a newly created character matching stock `-find` and independent
+SQL. It then failed with `Unknown character status flags` before the currency,
+protocol logout, saved-state or restart/resume phases.
+
+The status line itself had no flags. The parser's multiline `\s*` could consume
+its line ending and capture subsequent process output as flags. The correction
+bounds matching to one line; unknown flags and mismatched identities still fail.
+Preserved evidence: [artifact ZIP](postgresql-evidence/character-persistence-36269025801.zip)
+and [report](postgresql-evidence/character-persistence-36269025801.json).
+Artifact `10914634985`, 3,908 bytes, SHA-256
+`99ca2a984344d479f5843f7ce0900d9fd8ee69e8162ed1b2d83b432ee1ce3a04`.
+This attempt is failure evidence, not accepted persistence proof.
+
+## Run and inspect the harness
+
+Use the `Character persistence` Actions workflow. Its reviewed default inputs
+are schema run `36088012666`, reference run `36088012664`, gate run
+`36176806895` and release asset `588984151`. It first runs the acceptance tests
+on Linux and Windows, including three real Windows named-pipe transport checks.
+The runtime job verifies the input workflows and artifact provenance before
+creating its disposable database. Both the runtime staging and the driver's
+private-copy verification inspect the full data set and can take several minutes.
+
+Inspect `character-persistence-report.json` and `selected-diagnostics.txt` in
+the `character-persistence-evidence` artifact. A pass requires status
+`fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated`,
+an empty failure list, all recorded phases, unchanged selected parent/child
+fields across restart/resume, and the expected `LoginCount` progression.
+The report preserves runtime/schema/gate hashes, selected pipe events and SQL
+snapshots. The original game source and reference executables remain unchanged.
+
+The harness restarts PostgreSQL itself as well as DbServer and MapServer, using
+the same cluster without reseeding or dump import. Its final process cleanup
+is separate from the already-observed protocol logout. It does not validate
+graceful whole-server shutdown or a sustained second player session.
+
+## Protocol and acceptance contract
 
 Use the same fixture-OFF reference binaries, accepted schema/attribute mappings,
 reviewed assets and private disposable PostgreSQL database as the one-map test.

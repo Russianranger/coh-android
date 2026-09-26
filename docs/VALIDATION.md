@@ -4,8 +4,8 @@ Date: 2026-09-23. This record covers source preservation and assessment accuracy
 
 Latest milestone, recovered 2026-09-26: [ordinary template comparison and Atlas
 Park readiness](#2026-09-26-continuation-completed-reference-comparison-and-atlas-park)
-passed in the completed 2026-09-25 hosted run. Character persistence awaits
-hosted execution of its new harness.
+passed in the completed 2026-09-25 hosted run. The first hosted character attempt reached creation but exposed a status-parser
+bug in the harness; character persistence remains unvalidated.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -414,5 +414,7 @@ This establishes equality of the 56 generated files for the reviewed inputs
 and a bounded Atlas Park readiness observation. Normal executables do not
 report their queued startup error count; complete asset coverage, complete
 serializer semantics, character sessions and gameplay remain unvalidated.
-The next gate is the new character persistence harness, awaiting hosted
-execution. No character persistence or Android pass is claimed.
+The next gate is the new character persistence harness. Its first hosted run
+reached a fresh character, then failed the harness status parser before currency,
+logout or restart checks. See [the attempt record](CHARACTER_PERSISTENCE_VALIDATION.md).
+No character persistence or Android pass is claimed.

@@ -2,8 +2,8 @@
 
 Updated: 2026-09-26. The exact-pin Windows client/server package builds in this
 repository. Ordinary asset-backed template generation and Atlas Park protocol
-readiness have now passed using this package. Character persistence awaits
-hosted execution of the new harness; this is not an Android app or a
+readiness have now passed using this package. Character persistence remains under
+hosted validation; this is not an Android app or a
 gameplay-validated server.
 
 ## Build and downloads
@@ -261,8 +261,8 @@ This diagnostic does not load a map or graphical client and requires no binary
 asset archives. It validates the generic container acknowledgement path; each
 save still has its own transaction, so a multi-container request is not atomic.
 The subsequent template and Atlas Park gates below passed. The next gate is
-real character creation/save/logout/reload through the new harness, awaiting
-hosted execution. These results do not establish playable character sessions,
+real character creation/save/logout/reload through the new harness. Its first
+hosted attempt reached a fresh character but stopped on a harness parser bug. These results do not establish playable character sessions,
 map transfers, auxiliary services, compatibility with the custom client or
 Android execution.
 
