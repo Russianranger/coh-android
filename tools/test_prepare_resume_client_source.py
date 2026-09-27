@@ -1,5 +1,6 @@
 """Verify overlay provenance and execute its real C mode/selection/packet guards."""
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -110,7 +111,12 @@ class ResumeBehaviorTests(unittest.TestCase):
 #include <strings.h>
 #include <stdint.h>
 #include <limits.h>
+#ifdef _WIN32
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 #define stricmp strcasecmp
 ''' + enum + r'''
 typedef uint32_t U32;
@@ -172,6 +178,10 @@ static void runTransferStep(void) {
 int main(int argc, char **argv) {
     int i, firstEmptySlot = 0;
     const char *transfer_case=NULL;
+#ifdef _WIN32
+    WSADATA winsock;
+    if(WSAStartup(MAKEWORD(2,2), &winsock) != 0) return 99;
+#endif
     db_info.mapserver.ip=inet_addr("127.0.0.1");
     comm_link.addr.sin_addr.s_addr=db_info.mapserver.ip;
     comm_link.addr.sin_port=htons(7001);
@@ -218,9 +228,15 @@ int main(int argc, char **argv) {
     return 0;
 }
 ''')
-        cls.executable = root / 'probe'
-        subprocess.run([shutil.which('cc'), '-std=c99', '-Wall', '-Werror', str(probe),
-                        '-o', str(cls.executable)], check=True, capture_output=True)
+        cls.executable = root / ('probe.exe' if os.name == 'nt' else 'probe')
+        command = [shutil.which('cc'), '-std=c99', '-Wall', '-Werror', str(probe),
+                   '-o', str(cls.executable)]
+        if os.name == 'nt':
+            command.append('-lws2_32')
+        compiled = subprocess.run(command, capture_output=True, text=True)
+        if compiled.returncode:
+            raise RuntimeError('C behavior probe compilation failed:\n' +
+                               compiled.stdout + compiled.stderr)
 
     def run_probe(self, *args):
         return subprocess.run([str(self.executable), *args], capture_output=True, text=True)

@@ -89,6 +89,10 @@ the same resumed character must move map 1 → clone 101 → map 1,
 prove each destination independently and complete the final protocol save.
 Hosted transfer acceptance is pending. The workflow will also rerun the accepted
 sustained-session experiment against the same newly built diagnostic client.
+The first transfer attempt stopped before the build on a Windows C-test fixture
+portability error. The fixture now uses Winsock on Windows; client and server
+code are unchanged by that correction. The [tooling failure record](postgresql-evidence/character-transfer-tooling-36297326622.json)
+is preserved, and hosted acceptance will use a fresh retry.
 
 ### Earlier attempts and corrections
 

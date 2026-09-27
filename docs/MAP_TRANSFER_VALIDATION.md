@@ -84,6 +84,24 @@ checks await the hosted runner) and all 38 diagnostic source/package checks.
 The latter exercise the actual patched C selection, transfer and update helpers.
 These checks do not replace the hosted round-trip acceptance.
 
+## First hosted attempt: tooling correction
+
+[Run 36297326622](https://github.com/Russianranger/coh-android/actions/runs/36297326622)
+at `3848133e5e644f4c166cc9e7f3e027288d06c2fd` stopped in Windows tooling.
+All 68 character checks and 13 map checks passed there, as did the package and
+noncompiled source checks. The actual-C behavior fixture failed to compile with
+the runner's MinGW compiler; source inspection found an unconditional POSIX
+`arpa/inet.h` include. Linux passed all 114 applicable checks, with five
+Windows-only skips.
+
+The fixture now uses Winsock headers, initialization and linking on Windows,
+retains POSIX networking on Linux, and includes captured compiler diagnostics in
+future failures. All 38 diagnostic checks still pass locally. This correction
+does not change the client overlay, server runtime or transfer harness. The
+[failed tooling record](postgresql-evidence/character-transfer-tooling-36297326622.json)
+is preserved. The diagnostic build and both runtime experiments were skipped;
+this attempt provides no transfer or sustained runtime acceptance.
+
 A pass would establish this round trip between two prestarted Atlas instances.
 It would not establish new-zone asset coverage, mission transfers, automatic
 Launcher startup, combat, rendering/custom-client compatibility, auxiliary
