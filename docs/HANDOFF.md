@@ -17,12 +17,14 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The current [0.1.3 cold initialization retry](ANDROID_WINE_INITIALIZATION.md)
-passed all five hosted jobs, including fresh and repeat database/client runs, in
-[run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676).
-The 0.1.2 Thor report proved wineboot was still running at 150.040 seconds;
-complete device diagnostics, combat, movement and rendered gameplay remain
-unvalidated. The next step is a physical 0.1.3 retry.
+The [0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
+passed all eleven database/Windows functional stages, including 65 ODBC sessions
+and durable restart. Only wineboot output-capture closure failed after prefix
+shutdown. The current [0.1.4 helper cleanup retry](ANDROID_WINE_CLEANUP.md)
+passed all five hosted jobs, including fresh/repeat diagnostics and detached-helper
+cleanup, in [run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176).
+The next step is physical 0.1.4 testing. Full device cleanup and client/game
+rendering remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -209,7 +211,7 @@ wait path was exercised, not that inherited output caused the Thor failures.
 The subsequent Thor retry failed; the inherited-output correction alone did not
 resolve device initialization.
 
-### Current 0.1.3 cold initialization retry
+### Historical 0.1.3 cold initialization qualification
 
 [The 0.1.2 device report](android-evidence/thor-initializer-timeout-20260927.json)
 records wineboot still running at 150.040 seconds before cleanup signals. Four
@@ -238,11 +240,55 @@ registration passes. These timings describe the hosted environment. The
 also passed. The [acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json)
 binds the verified APK, payload hashes and runtime evidence.
 
-Install `COH-Diagnostic-0.1.3.apk` from the
-[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36354263676/artifacts/10942919938),
+The subsequent device run passed initialization and all eleven functional stages;
+its remaining cleanup failure is recorded below. Preserve the 0.1.3 artifact and
+receipt as historical evidence.
+
+### Current 0.1.4 Wine helper cleanup retry
+
+[The 0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
+completed initialization in 90.927 seconds with one registration pass, then passed
+native PostgreSQL, real PE32 DLL loading, all 65 ODBC sessions, SQL/value/metadata
+checks and durable same-cluster restart verification. The sole recorded failure
+was `Owned process input/output capture did not close: wineboot`. The Wine prefix
+lock and socket were inactive, and PostgreSQL shut down cleanly; that does not
+prove every detached Unix helper exited. The remaining pipe writer is unidentified.
+Client graphics were not requested.
+
+Accepted source `83f132ddb8077c9d5175ae7cd039e0754b70074e` applies the
+[0.1.4 cleanup correction](ANDROID_WINE_CLEANUP.md). Wine helpers carry an exact
+per-run ownership token; bounded cleanup verifies the real UID and PID identity
+before signaling. Output captures must actually reach EOF, and unrelated processes
+must survive. The menu-helper override is corrected to `winemenubuilder.exe`;
+its earlier launch does not prove it caused the retained pipe.
+
+The initial [hosted attempt 36356073708](https://github.com/Russianranger/coh-android/actions/runs/36356073708)
+stopped on ownership inspection of an unreadable, unrelated same-UID CI process.
+The accepted correction safely excludes processes strictly older than diagnostic
+startup, which cannot inherit the new child-only token; current or newer processes
+still require inspection.
+
+[Run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176)
+passed all five jobs on 2026-09-27 22:50:49 UTC. All 116 tests passed in 11.510 seconds
+without skips. Database fresh/repeat runs passed all eleven stages; client
+fresh/repeat runs passed all twelve. Every owned input/output capture closed,
+ownership cleanup completed and no helpers remained. Cold initialization took
+39.397 seconds in database mode and 37.973 seconds in client mode; warm runs took
+4.276 and 4.126 seconds respectively. These are hosted timings.
+
+Both detached-helper fixtures exercised one TERM and one KILL through two pidfd
+signals, with zero remaining helpers or inspection failures. The unrelated
+sentinel survived and the capture reached genuine EOF. All twelve embedded APK
+assets and all six hosted reports were hash-verified. The
+[same-source PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36356285898)
+also passed. The [acceptance receipt](android-evidence/accepted-wine-cleanup-36356283176.json)
+preserves the build identity, payload hashes and reports.
+
+Install `COH-Diagnostic-0.1.4.apk` (version code 5) from the
+[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36356283176/artifacts/10943554283),
 run diagnostics and export its report. If it fails, stop further checks. Only
-after a pass, run and export the client probe, then test repeat operation and Stop
-on Thor. Physical device acceptance remains pending.
+after a complete pass, run and export the client probe, then test repeat operation
+and Stop. Complete M2 device acceptance remains pending.
 
 ### Earlier attempts and corrections
 
@@ -504,9 +550,9 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.3**
-cold initialization retry above. The 0.1.1 and 0.1.2 device runs stopped at
-wineboot. The following items preserve completed reference gates and describe
+**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.4**
+helper cleanup retry above. The 0.1.3 device run passed every functional
+stage; complete owned cleanup is the remaining database diagnostic failure. The following items preserve completed reference gates and describe
 additional work; their order does not place further Windows server
 experiments ahead of the device gate.
 
@@ -561,10 +607,11 @@ experiments ahead of the device gate.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Run the accepted 0.1.3 diagnostic under its own UID on Thor and export its
-   report. Run the client probe only if diagnostics passes. Confirm
-   the 65-connection pool, durable restart, repeat-run and Stop behavior on the
-   physical device; memory and suspension behavior remain device measurements.
+4. Run the accepted 0.1.4 diagnostic under its own UID on Thor and export its
+   report. Run the client probe only if diagnostics fully passes.
+   Confirm complete owned cleanup, then repeat-run and Stop behavior. The prior
+   functional database pass is preserved; memory and suspension behavior remain
+   device measurements.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

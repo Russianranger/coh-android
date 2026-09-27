@@ -1,23 +1,31 @@
 # Basic Win32 client capability probe
 
-The current **0.1.3** diagnostic retry retains **Run client probe**, introduced in
+The current **0.1.4** diagnostic retry retains **Run client probe**, introduced in
 0.1.1, alongside the database diagnostics. It includes the complete database,
 restart and shutdown test plus a PE32 graphics/input fixture in the same private
-Wine/FEX session. The [cold initialization retry](ANDROID_WINE_INITIALIZATION.md)
-passed all five hosted jobs in
-[run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
-at source `49c1626c10636e46a38493047f34ab61a9a5d5ca` on 2026-09-27 22:16:35 UTC.
-All 109 tests passed without skips. Both fresh and repeat runs passed eleven
-database stages and twelve client stages each, with complete cleanup. See the
-[acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json).
-Physical 0.1.3 acceptance remains pending.
+Wine/FEX session. The [Wine helper cleanup retry](ANDROID_WINE_CLEANUP.md)
+passed all five jobs in
+[run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176)
+at source `83f132ddb8077c9d5175ae7cd039e0754b70074e` on 2026-09-27 22:50:49 UTC.
+All 116 tests passed without skips. Fresh and repeat database/client runs passed
+with complete input/output closure and no owned helpers remaining. Both detached
+helper fixtures proved genuine EOF while an unrelated process survived. See the
+[acceptance receipt](android-evidence/accepted-wine-cleanup-36356283176.json).
+Physical 0.1.4 cleanup and client acceptance remain pending.
 
-The [0.1.2 Thor report](android-evidence/thor-initializer-timeout-20260927.json)
-confirmed the initializer was still running at 150.040 seconds after four early
-database stages; graphics was not reached. An open capture also prevented complete
-cleanup. Version 0.1.3 removes forced duplicate registration, invalidates the
-timestamp of an unready prefix, allows up to 600 seconds with five-second
-progress, and marks readiness only after the PE32 fixture passes.
+The [0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
+passed all eleven functional database/Windows stages, including all 65 ODBC
+sessions and restart verification. Its only failure was an open wineboot output
+capture after prefix shutdown. It did not request graphics. Version 0.1.4 adds
+helper cleanup using an exact run token, matching UID and verified PID identity,
+requires genuine output EOF, and corrects the `winemenubuilder.exe` override.
+The report does not identify which helper retained the pipe.
+
+The historical [0.1.3 hosted receipt](android-evidence/accepted-wine-initialization-36354263676.json)
+records all five jobs passing at source `49c1626c10636e46a38493047f34ab61a9a5d5ca`
+on 2026-09-27 22:16:35 UTC: 109 tests without skips, plus fresh and repeat runs
+with eleven database or twelve client stages each and complete cleanup. The
+[cold initialization fix](ANDROID_WINE_INITIALIZATION.md) remains in 0.1.4.
 
 The earlier [0.1.2 hosted receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
 remains historical: all five jobs, 99 tests without skips, eleven database stages,
@@ -53,8 +61,8 @@ and game rendering unvalidated.
 
 ## Device test
 
-Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36354263676/artifacts/10942919938) and install
-`COH-Diagnostic-0.1.3.apk`. Choose **Setup runtime**, then **Run diagnostics** and
+Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36356283176/artifacts/10943554283) and install
+`COH-Diagnostic-0.1.4.apk`. Choose **Setup runtime**, then **Run diagnostics** and
 export the report. Cold Windows initialization may take several minutes; progress
 should update every five seconds. If diagnostics fails, stop further checks and
 share that single report for diagnosis. Only after it passes, choose **Run client
@@ -71,9 +79,11 @@ diagnostic app contains no game saves.
 ## Validation
 
 The workflow runs the database-only and client-probe modes in separate ARM64
-workspaces. Version 0.1.3 requires a fresh run and a successful repeat in each
+workspaces. Version 0.1.4 requires a fresh run and a successful repeat in each
 workspace, including correct cold/warm prefix readiness and complete cleanup.
-Reports bind the requested mode, hashed PE32 asset and observed pixels/input to successful owned cleanup. Native C tests reject corrupted pixels,
+A separate detached-helper check must prove output EOF while preserving an
+unrelated same-UID process. Reports bind the requested mode, hashed PE32 asset
+and observed pixels/input to successful owned cleanup. Native C tests reject corrupted pixels,
 handle driver-string JSON escaping and distinguish complete extension names.
 Python tests reject missing, duplicate, contradictory and out-of-scope evidence,
 as well as modified or non-PE32 probe payloads. APK verification checks version,

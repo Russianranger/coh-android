@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "status": "passed",
+  "passed": true,
+  "scope": "synthetic_owned_process_cleanup_under_proot",
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "detached_helper_retained_output": true,
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 1986,
+    "candidates": 1,
+    "term_signals": 1,
+    "kill_signals": 1,
+    "pidfd_signals": 2,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "detached_helper_reaped": true,
+  "output_eof_observed": true,
+  "unrelated_sentinel_survived": true,
+  "same_prefix_different_token_preserved": true,
+  "processes": [
+    {
+      "label": "detached-wine-initializer",
+      "elapsed_seconds": 0.306,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "OWNED_HELPER_READY\n",
+      "completion": {
+        "policy": "leader_exit_with_owned_background_output",
+        "leader_exit_code": 0,
+        "output_capture_open": true,
+        "elapsed_seconds": 0.306
+      }
+    }
+  ]
+}

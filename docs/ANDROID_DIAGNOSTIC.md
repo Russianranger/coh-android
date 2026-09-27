@@ -1,19 +1,23 @@
 # Thor diagnostic APK (M2)
 
-Status: **0.1.3 passed hosted acceptance and is ready for a Thor retry**.
-[Run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
-passed all five jobs at source `49c1626c10636e46a38493047f34ab61a9a5d5ca` on
-2026-09-27 22:16:35 UTC. All 109 tests passed without skips. Fresh and repeat runs
-passed eleven database stages and twelve client stages each, with complete
-cleanup. The [acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json)
-binds the verified APK, packaged payloads and runtime evidence.
+Status: **0.1.4 passed hosted acceptance and is ready for a Thor retry**.
+[Run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176)
+passed all five jobs at source `83f132ddb8077c9d5175ae7cd039e0754b70074e` on
+2026-09-27 22:50:49 UTC. All 116 tests passed without skips. Fresh and repeat
+database/client diagnostics and both detached-helper cleanup fixtures passed,
+with every input/output capture closed and no remaining owned helpers. The
+[same-source PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36356285898)
+also passed. The [acceptance receipt](android-evidence/accepted-wine-cleanup-36356283176.json)
+binds the APK, all twelve embedded assets and all six hosted reports.
 
 **M2 physical-device acceptance remains pending.** The
-[0.1.2 Thor report](android-evidence/thor-initializer-timeout-20260927.json) confirms
-wineboot was still running at 150.040 seconds. Four early native database stages
-passed, but Windows ODBC and graphics were not reached. Output capture remained
-open after prefix shutdown, so complete cleanup was not proved. The accepted
-[Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) retains its Windows scope.
+[0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
+passed all eleven functional stages, including real Win32 DLL loading, 65 ODBC
+sessions and durable same-cluster restart. Initialization took 90.927 seconds
+with one registration pass. The sole failure was wineboot output capture staying
+open after prefix shutdown. Complete cleanup was not proved; client graphics
+were not requested. The accepted [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md)
+retains its Windows scope.
 
 This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
 AYN Thor (Android 13, ARM64). It exercises the platform needed by the future CoH
@@ -21,15 +25,33 @@ launcher. It contains no game binaries or game assets and cannot launch the game
 
 ## Current retry APK
 
-Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36354263676/artifacts/10942919938) and install
-`COH-Diagnostic-0.1.3.apk`. The [cold initialization correction](ANDROID_WINE_INITIALIZATION.md)
-uses `wineboot -i` for one registration pass, removes the timestamp from an unready
-prefix, allows up to 600 seconds, and reports progress every five seconds. It
-marks the prefix ready only after the PE32 fixture passes. Both fresh and repeat
-hosted runs completed the database, client and cleanup checks. Cold initialization
-took 39.911 seconds in database mode and 40.305 seconds in client mode, with one
+Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36356283176/artifacts/10943554283) and install
+`COH-Diagnostic-0.1.4.apk` (version code 5). The [cleanup correction](ANDROID_WINE_CLEANUP.md)
+identifies Wine helpers by an exact per-run token, matching real UID and verified
+PID identity before bounded cleanup. Every owned output capture must reach EOF;
+closing its reader does not count as success. The disabled menu-helper override
+is corrected to `winemenubuilder.exe`, although the device report does not identify
+that helper as the remaining pipe writer.
+
+The fresh/repeat database and client gates passed, as did both detached-helper
+fixtures. Each fixture proved genuine EOF after bounded cleanup and preserved
+an unrelated same-UID process. The prior cold initialization policy, ten-minute
+allowance, progress updates and PE32 readiness check remain.
+
+## Historical 0.1.3 result
+
+[Run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
+passed all five jobs at source `49c1626c10636e46a38493047f34ab61a9a5d5ca` on
+2026-09-27 22:16:35 UTC. All 109 tests passed without skips. Fresh and repeat runs
+passed eleven database stages and twelve client stages each, with complete
+cleanup. Its [acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json)
+preserves the verified APK, packaged payloads and runtime evidence.
+
+The [cold initialization correction](ANDROID_WINE_INITIALIZATION.md) took 39.911
+seconds in hosted database mode and 40.305 seconds in client mode, with one
 registration pass each. Both warm runs took 4.629 seconds with no registration
-passes. These hosted times do not predict Thor timing.
+passes. The subsequent Thor run completed initialization and all database/Windows
+fixtures, but exposed the remaining output-capture cleanup failure described above.
 
 ## Historical 0.1.2 result
 
@@ -177,7 +199,7 @@ snapshots and all previously accepted Windows reference inputs remain untouched.
 
 ## Thor acceptance steps
 
-1. Install the accepted `COH-Diagnostic-0.1.3.apk` above. If Android
+1. Install the accepted `COH-Diagnostic-0.1.4.apk` above. If Android
    reports a signing conflict, export old reports before uninstalling **COH Diagnostic**.
    Open **COH Diagnostic**
    and choose **Setup runtime** with a reliable connection and at least 5 GiB free.

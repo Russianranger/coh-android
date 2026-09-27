@@ -1,15 +1,20 @@
 # City of Heroes Android
 
-The latest [diagnostic retry, 0.1.3](docs/ANDROID_WINE_INITIALIZATION.md), corrects
-cold Wine initialization after the [0.1.2 Thor report](docs/android-evidence/thor-initializer-timeout-20260927.json)
-confirmed its initializer was still running at 150.040 seconds. The retry removes
-a forced second initialization pass, allows up to ten minutes with progress
-updates, and verifies readiness with a real PE32 fixture. All five jobs in
-[run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
-passed: 109 tests without skips, plus fresh and repeat database/client runs with
-complete cleanup. See the [acceptance receipt](docs/android-evidence/accepted-wine-initialization-36354263676.json).
-A new physical Thor retry is required. The diagnostic does not launch City of Heroes. Full device acceptance, game
-rendering and hardware acceleration remain pending.
+The latest [diagnostic retry, 0.1.4](docs/ANDROID_WINE_CLEANUP.md), targets the
+remaining Wine helper cleanup failure. The [0.1.3 Thor report](docs/android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
+passed all eleven functional stages, including native PostgreSQL, real Win32 DLL
+loading, all 65 ODBC sessions and durable database restart. Its sole failure was
+an inherited wineboot output pipe remaining open after prefix shutdown.
+
+Version 0.1.4 adds exact process ownership checks and requires output EOF after
+helper cleanup. All five jobs in
+[run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176)
+passed: 116 tests without skips, fresh/repeat database and client diagnostics,
+and detached-helper cleanup with unrelated processes preserved. The verified
+[acceptance receipt](docs/android-evidence/accepted-wine-cleanup-36356283176.json)
+records complete capture closure and no remaining owned helpers.
+The diagnostic does not launch City of Heroes. Complete device cleanup, client
+graphics, hardware acceleration and gameplay remain unvalidated.
 
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
@@ -96,13 +101,13 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M2 device acceptance remains pending.** Install the accepted hosted **0.1.3**
+**M2 device acceptance remains pending.** Install the accepted hosted **0.1.4**
 retry, use **Setup runtime**, then **Run diagnostics** and export its
-report. Cold Windows setup may take several minutes with progress updates. If it
-fails, stop further checks and share that report for diagnosis. Only after a pass,
-run **Run client probe** and export separately, then check repeat runs and Stop on
-Thor. Early native database stages passed on-device, but full Wine/client
-execution, foreground-service lifecycle and performance remain unvalidated. The
+report. If it fails, stop further checks and share that report for diagnosis.
+Only after a complete pass, run **Run client probe** and export separately, then
+check repeat runs and Stop on Thor. The device database and Windows fixtures now
+have a functional pass; owned cleanup, client graphics, foreground-service
+lifecycle and performance still need device validation. The
 app includes no game binaries or assets. New-zone assets, missions, automatic
 map startup, combat and graphics remain separate unfinished work. The repository
 is **not a complete runnable game installation**. Complete asset coverage and

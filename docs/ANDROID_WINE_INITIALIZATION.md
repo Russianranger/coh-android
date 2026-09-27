@@ -1,5 +1,10 @@
 # Thor cold Wine initialization retry (0.1.3)
 
+Historical 0.1.3 qualification. The subsequent Thor run passed all eleven
+functional database/Windows stages and exposed a final output-capture cleanup
+failure. See the [0.1.4 cleanup retry](ANDROID_WINE_CLEANUP.md) for the current
+build and device steps.
+
 The [0.1.2 Thor report](android-evidence/thor-initializer-timeout-20260927.json)
 establishes that the initializer was still running at 150.040 seconds, before
 any cleanup signal. The inherited-output correction did not resolve that device
