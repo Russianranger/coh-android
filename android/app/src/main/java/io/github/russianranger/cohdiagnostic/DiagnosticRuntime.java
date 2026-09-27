@@ -109,7 +109,7 @@ public final class DiagnosticRuntime {
                 check(); if(!url.getProtocol().equals("https"))throw new IOException("Runtime requires HTTPS");
                 HttpURLConnection c=(HttpURLConnection)url.openConnection();connection=c;
                 c.setConnectTimeout(15000);c.setReadTimeout(15000);c.setInstanceFollowRedirects(false);
-                c.setRequestProperty("User-Agent","COH-Diagnostic/0.1.3");
+                c.setRequestProperty("User-Agent","COH-Diagnostic/0.1.4");
                 int code=c.getResponseCode();
                 if(code>=300&&code<400){String location=c.getHeaderField("Location");c.disconnect();if(location==null)throw new IOException("Missing download redirect");url=new URL(url,location);continue;}
                 if(code!=200)throw new IOException("Runtime download failed (HTTP "+code+")");
@@ -284,7 +284,7 @@ public final class DiagnosticRuntime {
         try {
             home.mkdirs();
             JSONObject wrapper=new JSONObject().put("format",1).put("recorded_utc",new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX",Locale.ROOT).format(new Date()))
-                .put("app_id",context.getPackageName()).put("app_version","0.1.3").put("android_uid",android.os.Process.myUid()).put("android_sdk",Build.VERSION.SDK_INT)
+                .put("app_id",context.getPackageName()).put("app_version","0.1.4").put("android_uid",android.os.Process.myUid()).put("android_sdk",Build.VERSION.SDK_INT)
                 .put("device",Build.MANUFACTURER+" "+Build.MODEL).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS))).put("runtime_manifest_sha256",manifestHash)
                 .put("android_diagnostic_passed",passed).put("client_probe_requested",clientProbeRequested).put("gameplay_validated",false).put("guest",report);
             File part=new File(home,"latest-support.zip.part");

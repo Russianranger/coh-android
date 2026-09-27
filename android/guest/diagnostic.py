@@ -295,6 +295,186 @@ class OwnedProcess:
         self.writer.join(timeout=1)
 
 
+class WineProcessOwner:
+    """Reap only this run's Wine descendants, including new sessions.
+
+    PRoot changes getuid(), not the text of /proc/*/status. A private environment
+    token and the real UID identify our Wine tree; names and WINEPREFIX do not.
+    PID start times are rechecked around signaling and pidfds are preferred.
+    """
+    ENV_KEY = "COH_WINE_SESSION"
+
+    def __init__(self, context, proc_root=Path("/proc")):
+        self.context, self.proc_root = context, Path(proc_root)
+        token = secrets.token_hex(32)
+        context.secrets.append(token)
+        self.environment = {self.ENV_KEY: token}
+        self.needle = (self.ENV_KEY + "=" + token).encode()
+        self.initialized = False
+        self.receipt = {"policy": "same_real_uid_and_run_token", "scanned_processes": 0,
+                        "candidates": 0, "term_signals": 0, "kill_signals": 0,
+                        "pidfd_signals": 0, "identity_checked_signals": 0,
+                        "inspection_failures": 0, "remaining": None, "complete": False}
+
+    @staticmethod
+    def status(path):
+        lines = (path / "status").read_text().splitlines()
+        fields = {line.split(":", 1)[0]: line.split(":", 1)[1].split()
+                  for line in lines if ":" in line}
+        return {"uid": int(fields["Uid"][0]), "pid": int(fields["Pid"][0]),
+                "namespace_pids": [int(value) for value in fields.get("NSpid", [])]}
+
+    @staticmethod
+    def process_stat(path):
+        value = (path / "stat").read_text()
+        fields = value.rsplit(") ", 1)[1].split()
+        return {"pid": int(value.split(" (", 1)[0]), "state": fields[0],
+                "parent": int(fields[1]), "starttime": int(fields[19])}
+
+    def initialize(self):
+        own = self.proc_root / "self"
+        status, identity = self.status(own), self.process_stat(own)
+        require(status["pid"] == identity["pid"], "Cannot verify diagnostic process identity")
+        self.real_uid = status["uid"]
+        self.direct_pid_view = identity["pid"] == os.getpid()
+        self.namespace_depth = len(status["namespace_pids"])
+        self.namespace = None if self.direct_pid_view else os.readlink(own / "ns/pid")
+        require(self.direct_pid_view or (status["namespace_pids"]
+                and status["namespace_pids"][-1] == os.getpid()), "Cannot map diagnostic PID namespace")
+        self.excluded = {identity["pid"]}
+        parent = identity["parent"]
+        # Android's app/PRoot ancestors can be non-dumpable. They never receive
+        # our child-only token and must not make their children's cleanup fail.
+        for _ in range(64):
+            if not parent or parent in self.excluded:
+                break
+            self.excluded.add(parent)
+            try:
+                parent = self.process_stat(self.proc_root / str(parent))["parent"]
+            except (OSError, ValueError, IndexError):
+                break
+        self.initialized = True
+
+    def inspect(self, proc_pid):
+        path = self.proc_root / str(proc_pid)
+        try:
+            status = self.status(path)
+        except FileNotFoundError:
+            return None
+        if status["uid"] != self.real_uid or proc_pid in self.excluded:
+            return None
+        if not self.direct_pid_view:
+            if len(status["namespace_pids"]) != self.namespace_depth:
+                return None
+            try:
+                if os.readlink(path / "ns/pid") != self.namespace:
+                    return None
+            except FileNotFoundError:
+                return None
+        try:
+            identity = self.process_stat(path)
+            require(identity["pid"] == proc_pid == status["pid"], "Wine cleanup PID view changed")
+            if identity["state"] == "Z":
+                return None  # A zombie cannot execute or retain open descriptors.
+            with (path / "environ").open("rb") as source:
+                environment = source.read(1024 * 1024 + 1)
+            require(len(environment) <= 1024 * 1024, "Wine ownership environment exceeds bound")
+        except FileNotFoundError:
+            return None
+        if self.needle not in environment.split(b"\0"):
+            return None
+        pid = proc_pid if self.direct_pid_view else status["namespace_pids"][-1]
+        require(pid > 0 and pid != os.getpid(), "Invalid owned Wine PID")
+        return {"proc_pid": proc_pid, "pid": pid, "starttime": identity["starttime"]}
+
+    def scan(self, deadline):
+        if not self.initialized:
+            self.initialize()
+        owned = []
+        for path in self.proc_root.iterdir():
+            if not path.name.isdecimal() or int(path.name) in self.excluded:
+                continue
+            require(time.monotonic() < deadline, "Wine ownership inspection timed out")
+            self.receipt["scanned_processes"] += 1
+            try:
+                candidate = self.inspect(int(path.name))
+            except PermissionError:
+                # Hidden processes belonging to other UIDs cannot be identified
+                # from status. A known same-UID unreadable environment is unsafe.
+                try:
+                    same_uid = self.status(path)["uid"] == self.real_uid
+                except (FileNotFoundError, PermissionError):
+                    same_uid = False
+                if same_uid:
+                    self.receipt["inspection_failures"] += 1
+                    raise DiagnosticError("Cannot inspect same-UID Wine ownership")
+                continue
+            except (OSError, ValueError, KeyError, IndexError) as exc:
+                self.receipt["inspection_failures"] += 1
+                raise DiagnosticError("Cannot verify Wine descendant ownership") from exc
+            if candidate is not None:
+                owned.append(candidate)
+        return owned
+
+    def signal_owned(self, identity, sig):
+        pidfd = None
+        try:
+            if hasattr(os, "pidfd_open") and hasattr(signal, "pidfd_send_signal"):
+                try:
+                    pidfd = os.pidfd_open(identity["pid"], 0)
+                except ProcessLookupError:
+                    return
+                except OSError as exc:
+                    require(exc.errno in (errno.ENOSYS, errno.EINVAL, errno.EPERM, errno.EACCES),
+                            "Cannot open owned Wine process handle")
+            current = self.inspect(identity["proc_pid"])
+            if current is None:
+                # A vanished process is benign; a still-live replaced PID is not.
+                try:
+                    changed = self.process_stat(self.proc_root / str(identity["proc_pid"]))
+                except FileNotFoundError:
+                    return
+                if changed["state"] == "Z":
+                    return
+                raise DiagnosticError("Owned Wine process identity changed before signal")
+            require(current == identity, "Owned Wine process identity changed before signal")
+            if pidfd is not None:
+                signal.pidfd_send_signal(pidfd, sig, None, 0)
+                self.receipt["pidfd_signals"] += 1
+            else:
+                os.kill(identity["pid"], sig)
+                self.receipt["identity_checked_signals"] += 1
+            self.receipt["term_signals" if sig == signal.SIGTERM else "kill_signals"] += 1
+        except ProcessLookupError:
+            pass
+        finally:
+            if pidfd is not None:
+                os.close(pidfd)
+
+    def cleanup(self, deadline):
+        self.context.report["wine_process_cleanup"] = self.receipt
+        deadline = min(deadline, time.monotonic() + 6)
+        try:
+            owned = self.scan(deadline)
+            self.receipt["candidates"] = len(owned)
+            for sig, grace in ((signal.SIGTERM, 1), (signal.SIGKILL, 1)):
+                for identity in owned:
+                    require(time.monotonic() < deadline, "Wine ownership cleanup timed out")
+                    self.signal_owned(identity, sig)
+                until = min(deadline, time.monotonic() + grace)
+                while owned and time.monotonic() < until:
+                    time.sleep(0.05)
+                    owned = self.scan(deadline)
+            owned = self.scan(deadline)
+            self.receipt["remaining"] = len(owned)
+            require(not owned, "Owned Wine descendants remain after shutdown")
+            self.receipt["complete"] = True
+            return self.receipt
+        except Exception:
+            self.receipt["complete"] = False
+            raise
+
+
 class Context:
     def __init__(self, state, total_timeout=900):
         self.state = Path(state)
@@ -552,9 +732,11 @@ class Diagnostic:
         self.base_env = os.environ.copy()
         self.base_env.update(HOME=str(args.state), LANG="C", LC_ALL="C", TZ="UTC")
         self.wine_env = self.base_env.copy()
+        self.wine_owner = WineProcessOwner(self.ctx)
+        self.wine_env.update(self.wine_owner.environment)
         self.wine_env.update(WINEPREFIX=str(self.wineprefix), WINEARCH="win64",
                              WINEDEBUG="-all,err+module,err+environ,trace+wineboot",
-                             WINEDLLOVERRIDES="winemenubuilder,mshtml,mscoree=;winedbg.exe=",
+                             WINEDLLOVERRIDES="winemenubuilder.exe,mshtml,mscoree=;winedbg.exe=",
                              XDG_RUNTIME_DIR=str(private_dir(self.root / "runtime")))
         self.port = None
         self.credentials = None
@@ -912,6 +1094,10 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
                 self.cleanup_status["wine_prefix_stopped"] = True
             except Exception as exc:
                 failures.append("Wine cleanup: " + str(exc))
+            try:
+                self.wine_owner.cleanup(self.ctx.cleanup_deadline)
+            except Exception as exc:
+                failures.append("Wine descendant cleanup: " + str(exc))
         if self.pg is not None:
             if self.database_created and self.pg.process.poll() is None:
                 try:
@@ -935,7 +1121,7 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
                 failures.append("Owned process input/output capture did not close: " + child.label)
         self.cleanup_status["owned_processes_reaped"] = all(
             c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
-            for c in self.ctx.children)
+            for c in self.ctx.children) and (not self.wine_started or self.wine_owner.receipt["complete"])
         (self.root / "odbc-connection.txt").unlink(missing_ok=True)
         self.lock.close()
         return failures

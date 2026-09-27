@@ -34,7 +34,7 @@ class BadgingTests(unittest.TestCase):
             verify_badging(self.sample(app_id='com.example.other'))
 
     def test_previous_apk_version_fails(self):
-        for old_code, old_name in ((1, '0.1.0'), (2, '0.1.1'), (3, '0.1.2')):
+        for old_code, old_name in ((1, '0.1.0'), (2, '0.1.1'), (3, '0.1.2'), (4, '0.1.3')):
             for code, name in ((old_code, old_name), (old_code, VERSION_NAME),
                                (VERSION_CODE, old_name)):
                 with self.subTest(code=code, name=name), self.assertRaisesRegex(ValueError, 'package/version'):

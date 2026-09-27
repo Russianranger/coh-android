@@ -508,6 +508,117 @@ class DiagnosticProcessTests(unittest.TestCase):
         self.assert_stopped(int(identity.read_text()))
 
 
+class WineProcessOwnerTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.context = diagnostic.Context(self.root)
+        self.owner = diagnostic.WineProcessOwner(self.context)
+
+    @staticmethod
+    def stop_process(process):
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=3)
+
+    def test_detached_wine_descendant_closes_inherited_output_and_preserves_unrelated_process(self):
+        sentinel = subprocess.Popen([sys.executable, '-c', 'import time;time.sleep(60)'],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.addCleanup(self.stop_process, sentinel)
+        identity = self.root / 'detached.pid'
+        source = ('import os,signal,time\nfrom pathlib import Path\n'
+                  'signal.signal(signal.SIGTERM,signal.SIG_IGN)\n'
+                  f'Path({str(identity)!r}).write_text(str(os.getpid()))\n'
+                  'print("detached ready",flush=True)\ntime.sleep(60)\n')
+        parent = ('import subprocess,sys,time\nfrom pathlib import Path\n'
+                  f'subprocess.Popen([sys.executable,"-u","-c",{source!r}],start_new_session=True)\n'
+                  f'while not Path({str(identity)!r}).exists():time.sleep(.01)\n'
+                  'print("initializer done",flush=True)\n')
+        def force_cleanup():
+            if identity.exists():
+                try:
+                    os.kill(int(identity.read_text()), signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        self.addCleanup(force_cleanup)
+        env = dict(os.environ, **self.owner.environment)
+        self.context.run('wineboot', [sys.executable, '-u', '-c', parent], env=env,
+                         timeout=3, allow_background_output=True)
+        child = self.context.children[-1]
+        self.addCleanup(child.stop)
+        self.assertTrue(child.reader.is_alive())
+        start = time.monotonic()
+        receipt = self.owner.cleanup(start + 5)
+        child.reader.join(timeout=1)
+        self.assertTrue(receipt['complete'])
+        self.assertEqual(receipt['candidates'], 1)
+        self.assertEqual(receipt['remaining'], 0)
+        self.assertEqual(receipt['term_signals'], 1)
+        self.assertEqual(receipt['kill_signals'], 1)
+        self.assertFalse(child.reader.is_alive(), 'Detached Wine stdout holder survived cleanup')
+        self.assertIsNone(sentinel.poll(), 'Unrelated same-UID process must survive')
+        self.assertLess(time.monotonic() - start, 5)
+        for token in self.owner.environment.values():
+            self.assertNotIn(token, json.dumps(diagnostic.redacted_value(self.context.report, self.context.secrets)))
+
+    def test_identity_change_prevents_signal(self):
+        candidate = {'proc_pid': 123, 'pid': 456, 'starttime': 20}
+        changed = {**candidate, 'starttime': 21}
+        with patch.object(diagnostic.os, 'pidfd_open', side_effect=OSError(diagnostic.errno.ENOSYS, 'unsupported')), \
+             patch.object(self.owner, 'inspect', return_value=changed), \
+             patch.object(diagnostic.os, 'kill') as kill:
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'identity changed'):
+                self.owner.signal_owned(candidate, signal.SIGTERM)
+        kill.assert_not_called()
+
+    def test_same_uid_unreadable_environment_is_not_accepted_as_clean(self):
+        proc = self.root / 'proc'
+        proc.mkdir()
+        (proc / '123').mkdir()
+        self.owner.proc_root = proc
+        self.owner.initialized = True
+        self.owner.real_uid = 42
+        self.owner.excluded = set()
+        with patch.object(self.owner, 'inspect', side_effect=PermissionError('not dumpable')), \
+             patch.object(self.owner, 'status', return_value={'uid': 42}):
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'Cannot inspect same-UID'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+
+    def test_ancestor_is_excluded_before_environment_inspection(self):
+        proc = self.root / 'proc'
+        proc.mkdir()
+        (proc / '123').mkdir()
+        self.owner.proc_root = proc
+        self.owner.initialized = True
+        self.owner.excluded = {123}
+        with patch.object(self.owner, 'inspect', side_effect=AssertionError('ancestor inspected')):
+            self.assertEqual(self.owner.scan(time.monotonic() + 1), [])
+
+    def test_foreign_namespace_depth_is_excluded_without_reading_environment_or_namespace(self):
+        self.owner.real_uid = 42
+        self.owner.excluded = set()
+        self.owner.direct_pid_view = False
+        self.owner.namespace_depth = 2
+        with patch.object(self.owner, 'status', return_value={'uid': 42, 'namespace_pids': [123]}), \
+             patch.object(diagnostic.os, 'readlink', side_effect=AssertionError('foreign namespace inspected')):
+            self.assertIsNone(self.owner.inspect(123))
+
+    def test_pidfd_signal_failure_is_fail_closed_without_pid_fallback(self):
+        candidate = {'proc_pid': 123, 'pid': 456, 'starttime': 20}
+        with patch.object(diagnostic.os, 'pidfd_open', return_value=19), \
+             patch.object(self.owner, 'inspect', return_value=candidate), \
+             patch.object(diagnostic.signal, 'pidfd_send_signal', side_effect=PermissionError('denied')), \
+             patch.object(diagnostic.os, 'close') as close, \
+             patch.object(diagnostic.os, 'kill') as kill:
+            with self.assertRaises(PermissionError):
+                self.owner.signal_owned(candidate, signal.SIGTERM)
+        close.assert_called_once_with(19)
+        kill.assert_not_called()
+
+
 class WineInitializationTests(unittest.TestCase):
     REGISTRATION_TRACE = ('002c:trace:wineboot:start_rundll32 machine 1 starting L"C:\\windows\\system32\\rundll32.exe"\n'
                           '002c:trace:wineboot:start_rundll32 machine 1 starting L"C:\\windows\\system32\\rundll32.exe"\n'

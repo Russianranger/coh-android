@@ -13,8 +13,8 @@ import zipfile
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = "io.github.russianranger.cohdiagnostic"
-VERSION_NAME = "0.1.3"
-VERSION_CODE = 4
+VERSION_NAME = "0.1.4"
+VERSION_CODE = 5
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 
 def digest(path):

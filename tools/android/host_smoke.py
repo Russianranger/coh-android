@@ -75,6 +75,43 @@ def run_guest(command, env, state, evidence, *, repeat, client_probe, runtime_lo
         raise
     return report
 
+def run_owned_wine_fixture(command, env, state, evidence):
+    guest_index=command.index('/usr/bin/python3')
+    fixture_command=command[:guest_index]+[
+        '/usr/bin/python3','/opt/coh-host-tools/owned_wine_smoke.py',
+        '--diagnostic','/opt/coh/diagnostic.py','--state','/state/owned-wine-smoke']
+    bind_index=fixture_command.index('-w')
+    fixture_command[bind_index:bind_index]=['-b',str(ROOT/'tools/android')+':/opt/coh-host-tools']
+    source_report=state/'owned-wine-smoke/report.json'
+    report_path=evidence/'owned-wine-cleanup-report.json'
+    log_path=evidence/'host-owned-wine.log'
+    report_path.unlink(missing_ok=True)
+    with log_path.open('w') as log:
+        process=subprocess.Popen(fixture_command,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+        try:
+            code=process.wait(timeout=60)
+        except subprocess.TimeoutExpired:
+            # The pinned PRoot SIGQUIT handler kills its tracked tracees and
+            # drains their wait events, including detached session leaders.
+            process.send_signal(signal.SIGQUIT)
+            try:process.wait(timeout=5)
+            except subprocess.TimeoutExpired:process.kill();process.wait(timeout=5)
+            raise RuntimeError('Owned Wine cleanup fixture exceeded its time limit')
+        finally:
+            if source_report.is_file():shutil.copyfile(source_report,report_path)
+    if code!=0 or not report_path.is_file():
+        print(log_path.read_text()[-24000:])
+        raise RuntimeError('Owned Wine cleanup fixture did not complete successfully')
+    report=json.loads(report_path.read_text())
+    required=('passed','detached_helper_retained_output','detached_helper_reaped',
+              'output_eof_observed','unrelated_sentinel_survived','same_prefix_different_token_preserved')
+    if (report.get('scope')!='synthetic_owned_process_cleanup_under_proot'
+            or not all(report.get(name) is True for name in required)
+            or report.get('android_execution_validated') is not False
+            or report.get('wine_process_cleanup',{}).get('complete') is not True):
+        raise RuntimeError('Owned Wine cleanup fixture did not prove detached cleanup and sentinel preservation')
+    return report
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--assets',type=Path,default=ROOT/'out/android/assets/runtime')
@@ -98,7 +135,7 @@ def main():
     state.mkdir(mode=0o700);tmp.mkdir(mode=0o700)
     (a.work/'passwd').write_text('root:x:0:0:root:/root:/bin/sh\ncoh:x:1000:1000:COH:/state:/bin/sh\nnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin\n')
     (a.work/'group').write_text('root:x:0:\ncoh:x:1000:\nnogroup:x:65534:\n')
-    for directory in ['opt/coh','opt/coh/pgsql','opt/wine','state','tmp']:(root/directory).mkdir(parents=True,exist_ok=True)
+    for directory in ['opt/coh','opt/coh/pgsql','opt/coh-host-tools','opt/wine','state','tmp']:(root/directory).mkdir(parents=True,exist_ok=True)
     proot=a.proot.resolve()
     for name in ['proot','proot-loader']:(proot/name).chmod(0o755)
     command=[str(proot/'proot'),'--link2symlink','--kill-on-exit','--sysvipc','-i','1000:1000','-r',str(root.resolve())]
@@ -109,8 +146,10 @@ def main():
     if a.client_probe:command+=['--client-probe']
     env=os.environ.copy();env.update(PROOT_LOADER=str(proot/'proot-loader'),PROOT_TMP_DIR=str(tmp.resolve()),PROOT_NO_SECCOMP='1')
     evidence=a.evidence;evidence.mkdir(parents=True,exist_ok=True)
-    for name in ('runtime-smoke-report.json','runtime-repeat-report.json','host-diagnostic.log','host-repeat.log'):
+    for name in ('runtime-smoke-report.json','runtime-repeat-report.json','host-diagnostic.log','host-repeat.log',
+                 'owned-wine-cleanup-report.json','host-owned-wine.log'):
         (evidence/name).unlink(missing_ok=True)
+    run_owned_wine_fixture(command,env,state,evidence)
     runtime_lock_sha256=digest(a.assets/'runtime-lock.json')
     # Keep the first run's accepted evidence stable and use the exact same
     # command/runtime/workspace again only after its owned shutdown passed.
@@ -123,6 +162,7 @@ def main():
                       'repeat_report':str(evidence/'runtime-repeat-report.json'),
                       'stages':len(reports[0].get('stages',[])),
                       'repeat_stages':len(reports[1].get('stages',[])),
-                      'client_probe':a.client_probe,'warm_repeat_validated':True}))
+                      'client_probe':a.client_probe,'warm_repeat_validated':True,
+                      'owned_wine_cleanup_fixture':str(evidence/'owned-wine-cleanup-report.json')}))
 
 if __name__=='__main__':main()
