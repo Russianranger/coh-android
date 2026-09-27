@@ -79,6 +79,54 @@ class DiagnosticAcceptanceTests(unittest.TestCase):
         self.assertEqual(diagnostic.redact('No credentials here', []), 'No credentials here')
 
 
+class OdbcDriverAcceptanceTests(unittest.TestCase):
+    DRIVER_PATH = r'C:\Program Files (x86)\psqlODBC\1700\bin\psqlodbc35w.dll'
+
+    def driver_output(self, name='PostgreSQL Unicode', path=None):
+        return '\n'.join(('COH_ODBC_DRIVER_V1 NAME ' + name,
+                          'COH_ODBC_DRIVER_V1 DLL ' + (self.DRIVER_PATH if path is None else path),
+                          'COH_ODBC_DRIVER_V1 PASS bits=32')) + '\n'
+
+    def test_registered_unicode_driver_evidence_accepts_both_names_and_registry_diagnostics(self):
+        for name in ('PostgreSQL Unicode', 'PostgreSQL Unicode(x86)'):
+            with self.subTest(name=name):
+                output = ('COH_ODBC_DRIVER_V1 REG view=32 status=0\n' + self.driver_output(name)).replace('\n', '\r\n')
+                result = diagnostic.validate_odbc_driver(output)
+                self.assertEqual(result['driver_name'], name)
+                self.assertEqual(result['driver_path'], self.DRIVER_PATH)
+                self.assertEqual(result['pointer_bits'], 32)
+                self.assertEqual(result['registry_view'], 32)
+                self.assertIs(result['driver_dll_loaded'], True)
+
+    def test_driver_probe_requires_one_of_each_marker(self):
+        output = self.driver_output()
+        for line in output.splitlines():
+            with self.subTest(missing=line), self.assertRaises(diagnostic.DiagnosticError):
+                diagnostic.validate_odbc_driver(output.replace(line + '\n', ''))
+            with self.subTest(duplicated=line), self.assertRaises(diagnostic.DiagnosticError):
+                diagnostic.validate_odbc_driver(output + line + '\n')
+
+    def test_driver_probe_rejects_wrong_architecture_malformed_pass_and_failure_output(self):
+        output = self.driver_output()
+        invalid = (output.replace('PASS bits=32', 'PASS bits=64'),
+                   output.replace('PASS bits=32', 'PASS bits=32 trailing'),
+                   output.replace('COH_ODBC_DRIVER_V1 DLL ', 'COH_ODBC_DRIVER_V1 DLL'),
+                   output + 'FAIL driver DLL export is missing\n',
+                   output + 'COH_ODBC_DRIVER_V1 FAIL win32=126\n')
+        for text in invalid:
+            with self.subTest(output=text), self.assertRaises(diagnostic.DiagnosticError):
+                diagnostic.validate_odbc_driver(text)
+
+    def test_driver_name_injection_and_nonabsolute_windows_dll_paths_are_refused(self):
+        for name in ('PostgreSQL ANSI', 'PostgreSQL Unicode};Password=injected',
+                     'PostgreSQL Unicode;Servername=elsewhere', ''):
+            with self.subTest(name=name), self.assertRaises(diagnostic.DiagnosticError):
+                diagnostic.validate_odbc_driver(self.driver_output(name))
+        for path in ('psqlodbc35w.dll', r'C:relative\psqlodbc35w.dll', '/usr/lib/psqlodbc35w.dll', ''):
+            with self.subTest(path=path), self.assertRaises(diagnostic.DiagnosticError):
+                diagnostic.validate_odbc_driver(self.driver_output(path=path))
+
+
 class OwnedWorkspaceTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()

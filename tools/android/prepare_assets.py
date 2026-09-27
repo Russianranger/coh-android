@@ -79,7 +79,7 @@ def main():
     lock = json.loads((ROOT/'android/runtime-lock.json').read_text())
     shutil.copyfile(fetch(lock['odbc'], ROOT/'out/android/cache/psqlodbc_x86.msi'), out/'psqlodbc_x86.msi')
     cmds = [
-        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-o', str(out/'runtime-probe.exe')],
+        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-ladvapi32', '-o', str(out/'runtime-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-shared', '-static-libgcc', '-Wl,--kill-at', str(ROOT/'android/native/probe.c'), '-o', str(out/'probe.dll')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc',
          *['-D'+alias+'='+name for alias,name in ODBC_ANSI_ALIASES.items()],

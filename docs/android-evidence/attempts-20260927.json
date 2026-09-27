@@ -52,7 +52,34 @@
       "guest_postgresql_durable_restart_executed": false,
       "android_device_validated": false,
       "source_of_compatibility_correction": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
-      "raw_report": "runtime-smoke-report-36331879591.json"
+      "raw_report": "runtime-smoke-report-36331879591.json",
+      "correction_commit": "76f0302d65224812e220006b38fbbd500a59d3ea"
+    },
+    {
+      "run_id": 36332802885,
+      "repository_commit": "76f0302d65224812e220006b38fbbd500a59d3ea",
+      "result": "failed",
+      "tooling_tests_passed": 69,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108658623477,
+      "stage": "odbc_fixture",
+      "reason": "SQLDriverConnect returned SQL_ERROR before any driver diagnostic record; no unimplemented-export failure remained",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "wine_shutdown": {
+        "stop_exit_code": 1,
+        "wait_exit_code": 0,
+        "prefix_lock_free": true,
+        "server_socket_inactive": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36332802885.json",
+      "next_diagnostic": "Explicit PE32 SysWOW64 MSI installer plus measured HKLM32 registration and native driver DLL load preflight"
     }
   ],
   "android_device_validated": false,

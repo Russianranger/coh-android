@@ -145,6 +145,27 @@ def validate_runtime_probe(output):
     return {"pointer_bits": 32, "dll_export_verified": True, "odbc_manager_loaded": True}
 
 
+def validate_odbc_driver(output):
+    """Require observed PE32 registration plus a loaded native driver DLL."""
+    lines = output.splitlines()
+    names = [line.removeprefix("COH_ODBC_DRIVER_V1 NAME ") for line in lines
+             if line.startswith("COH_ODBC_DRIVER_V1 NAME ")]
+    paths = [line.removeprefix("COH_ODBC_DRIVER_V1 DLL ") for line in lines
+             if line.startswith("COH_ODBC_DRIVER_V1 DLL ")]
+    require(len(names) == 1 and names[0] in ("PostgreSQL Unicode", "PostgreSQL Unicode(x86)"),
+            "ODBC driver preflight did not identify one supported registration")
+    require(len(paths) == 1 and len(paths[0]) <= 1024
+            and re.fullmatch(r"[A-Za-z]:\\[^\x00-\x1f\x7f]+\.dll", paths[0], re.IGNORECASE),
+            "ODBC driver preflight did not identify an absolute DLL path")
+    require([line for line in lines if line.startswith("COH_ODBC_DRIVER_V1 PASS")]
+            == ["COH_ODBC_DRIVER_V1 PASS bits=32"]
+            and not any(line.startswith("COH_ODBC_DRIVER_V1 FAIL") for line in lines)
+            and not re.search(r"(?m)^FAIL\b", output),
+            "ODBC driver preflight did not prove PE32 DLL loading")
+    return {"driver_name": names[0], "driver_path": paths[0], "pointer_bits": 32,
+            "registry_view": 32, "driver_dll_loaded": True}
+
+
 class OwnedProcess:
     """One new session/process group; never signal a process found by name."""
     def __init__(self, label, argv, env, input_text=None):
@@ -304,6 +325,17 @@ def file_hash(path):
     return digest.hexdigest()
 
 
+def verify_pe32(path):
+    with path.open("rb") as handle:
+        data = handle.read(65536)
+    require(data[:2] == b"MZ" and len(data) >= 64, "Missing PE header: " + path.name)
+    offset = struct.unpack_from("<I", data, 60)[0]
+    require(offset + 26 <= len(data) and data[offset:offset+4] == b"PE\0\0"
+            and struct.unpack_from("<H", data, offset+4)[0] == 0x14c
+            and struct.unpack_from("<H", data, offset+24)[0] == 0x10b,
+            "Expected PE32 i386: " + path.name)
+
+
 def verify_assets(assets):
     manifest = json.loads((assets / "runtime-manifest.json").read_text())
     require(manifest.get("format") == 1, "Unsupported runtime asset manifest")
@@ -321,14 +353,7 @@ def verify_assets(assets):
     expected_probe = {"executable": "runtime-probe.exe", "marker": RUNTIME_MARKER, "dll": "probe.dll"}
     require(manifest.get("runtime_probe") == expected_probe, "Runtime probe manifest contract differs")
     for name in ("runtime-probe.exe", "probe.dll", "odbc_probe.exe"):
-        with (assets / name).open("rb") as handle:
-            data = handle.read(65536)
-        require(data[:2] == b"MZ" and len(data) >= 64, "Missing PE header: " + name)
-        offset = struct.unpack_from("<I", data, 60)[0]
-        require(offset + 26 <= len(data) and data[offset:offset+4] == b"PE\0\0"
-                and struct.unpack_from("<H", data, offset+4)[0] == 0x14c
-                and struct.unpack_from("<H", data, offset+24)[0] == 0x10b,
-                "Asset must be PE32 i386: " + name)
+        verify_pe32(assets / name)
     return hashes
 
 
@@ -405,7 +430,7 @@ class Diagnostic:
         self.base_env = os.environ.copy()
         self.base_env.update(HOME=str(args.state), LANG="C", LC_ALL="C", TZ="UTC")
         self.wine_env = self.base_env.copy()
-        self.wine_env.update(WINEPREFIX=str(self.wineprefix), WINEARCH="win64", WINEDEBUG="-all",
+        self.wine_env.update(WINEPREFIX=str(self.wineprefix), WINEARCH="win64", WINEDEBUG="-all,err+module",
                              WINEDLLOVERRIDES="winemenubuilder,mshtml,mscoree=;winedbg.exe=",
                              XDG_RUNTIME_DIR=str(private_dir(self.root / "runtime")))
         self.port = None
@@ -543,11 +568,6 @@ class Diagnostic:
         self.sql((self.args.assets / "001-coh-compat.sql").read_text(), game=True)
         self.sql((self.args.assets / "001-coh-compat.sql").read_text(), game=True)
         require(self.sql("SELECT current_user || '|' || max(version) FROM coh_meta.schema_version;", game=True) == "cohtest|2", "Compatibility migration identity/version differs")
-        connection = ("Driver={PostgreSQL Unicode};Servername=127.0.0.1;Port=" + str(self.port)
-                      + ";Database=" + self.database + ";Username=cohtest;Password=" + self.credentials["cohtest"]
-                      + ";SSLmode=disable;ByteaAsLongVarBinary=0;UseServerSidePrepare=0;\n")
-        self.connection = self.root / "odbc-connection.txt"
-        private_write(self.connection, connection)
         self.ctx.passed(database=self.database, role="cohtest", migration_version=2, reapplied=True)
 
     def start_wine(self):
@@ -572,10 +592,29 @@ class Diagnostic:
             time.sleep(0.1)
         self.wine_started = True
         self.ctx.run("wineboot", [self.args.wine, "wineboot", "-u"], timeout=150, env=self.wine_env)
-        self.ctx.run("install-x86-psqlodbc", [self.args.wine, "msiexec", "/i",
+        # Wine's MSI ODBC action writes the caller's registry view. Execute the
+        # actual PE32 installer so its registration matches the PE32 ODBC client.
+        installer = self.wineprefix / "drive_c" / "windows" / "syswow64" / "msiexec.exe"
+        verify_pe32(installer)
+        self.ctx.report["odbc_installer"] = {"path": r"C:\windows\syswow64\msiexec.exe",
+                                              "pointer_bits": 32, "sha256": file_hash(installer)}
+        self.ctx.run("install-x86-psqlodbc", [self.args.wine, r"C:\windows\syswow64\msiexec.exe", "/i",
                      windows_path(self.args.assets / "psqlodbc_x86.msi"), "/qn", "/norestart"],
                      timeout=150, env=self.wine_env)
-        self.ctx.passed(prefix_owned=True, architecture="win64 with PE32 WoW64/FEX", x_tcp=False, rfb_tcp=False)
+        self.ctx.passed(prefix_owned=True, architecture="win64 with PE32 WoW64/FEX", x_tcp=False, rfb_tcp=False,
+                        installer=self.ctx.report["odbc_installer"])
+        self.ctx.stage("win32_odbc_driver")
+        result = self.ctx.run("odbc-driver-preflight", [self.args.wine,
+                              windows_path(self.args.assets / "runtime-probe.exe"), "--odbc-driver"],
+                              timeout=60, env=self.wine_env)
+        evidence = validate_odbc_driver(result["output"])
+        self.ctx.report["odbc_driver"] = evidence
+        connection = ("Driver={" + evidence["driver_name"] + "};Servername=127.0.0.1;Port=" + str(self.port)
+                      + ";Database=" + self.database + ";Username=cohtest;Password=" + self.credentials["cohtest"]
+                      + ";SSLmode=disable;ByteaAsLongVarBinary=0;UseServerSidePrepare=0;\n")
+        self.connection = self.root / "odbc-connection.txt"
+        private_write(self.connection, connection)
+        self.ctx.passed(**evidence)
 
     def probe(self, *, verify=False):
         self.ctx.stage("odbc_after_restart" if verify else "odbc_fixture")

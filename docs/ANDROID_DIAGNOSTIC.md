@@ -53,6 +53,13 @@ actual PE imports and records them in the runtime manifest. The fixture's SQL,
 See the [pinned export source](https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec)
 and the [failed runtime evidence](android-evidence/runtime-smoke-report-36331879591.json).
 
+The x86 MSI is installed through the verified PE32 `syswow64/msiexec.exe`.
+Wine's ODBC installer writes the process's registry view, so the installer must
+match the 32-bit probe. A separate Win32 preflight reads the actual HKLM32
+registration, loads its driver DLL with dependency search enabled, and checks
+the driver's exports. The connection uses that observed registered name. A
+registry or DLL failure is reported with its Win32 error before an ODBC call.
+
 Passwords remain in private state, are removed from emitted diagnostics, and are
 not part of the exported ZIP. Export contains the bounded report, recent log and
 build manifest; it does not export a populated database or game save files.
