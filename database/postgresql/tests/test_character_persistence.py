@@ -28,6 +28,19 @@ def resume_text():
     return f'Found character {NAME} in slot 2\nResuming character in slot 2...done\ncommReqScene()...done\n'
 
 
+def sustained_text():
+    return (resume_text() + f'COH_RESUME_ONLY_SELECTED id=9 slot=2 name={NAME}\n'
+            f'COH_RESUME_ONLY_SERVER_UPDATE id=9 name={NAME}\n')
+
+
+def missing_state():
+    state = pipe_state()
+    state.update(player=None, map_name=None, status='ERROR', disconnected=True)
+    state['events'] = [event for event in state['events'] if event['kind'] in ('PID', 'AuthName', 'VersionRequest')]
+    state['events'].append({'kind': 'Status', 'value': 'ERROR', 'sequence': 3})
+    return state
+
+
 class CharacterProtocolTests(unittest.TestCase):
     def test_current_immutable_sources_match_protocol_assumptions(self):
         self.assertEqual(driver.source_contract()['list_id'], 3)
@@ -43,6 +56,12 @@ class CharacterProtocolTests(unittest.TestCase):
         second = driver.client_command(root, ACCOUNT, NAME)
         self.assertEqual(second[-3:], ['-justlogin', '-character', NAME])
         self.assertNotIn('-CREATE', second)
+        sustained = driver.client_command(root, ACCOUNT, NAME, resume_only=True)
+        self.assertEqual(Path(sustained[0]).name, 'TestClientResume.exe')
+        self.assertEqual(sustained[-3:], ['-resumeonly', '-character', NAME])
+        self.assertNotIn('-justlogin', sustained)
+        with self.assertRaises(ValueError):
+            driver.client_command(root, ACCOUNT, resume_only=True)
 
     def test_private_configuration_retains_required_provider_and_disables_auxiliaries(self):
         text = driver.character_config('SqlInit "old MSSQL init"\nSqlDbProvider MSSQL\n'
@@ -134,6 +153,68 @@ class CharacterProtocolTests(unittest.TestCase):
                     event['raw'].replace('Current cash:', 'Wrong currency:')):
             with self.subTest(raw=raw), self.assertRaises(ValueError):
                 driver.live_currency_evidence([dict(event, raw=raw)], NAME, ACCOUNT, 8)
+        second = dict(event, raw=event['raw'].replace('12345 (Influence)', '23456 (Influence)'))
+        self.assertFalse(driver.live_currency_evidence([second], NAME, ACCOUNT, 8))
+        self.assertEqual(driver.live_currency_evidence([second], NAME, ACCOUNT, 8, 23456)['influence'], 23456)
+        self.assertFalse(driver.live_currency_evidence([event], NAME, ACCOUNT, 8, 23456))
+
+    def test_sustained_resume_requires_processed_update_same_database_id_and_live_pipe(self):
+        result = driver.accept_sustained_resume(sustained_text(), pipe_state(), 55, ACCOUNT, NAME, 9, None)
+        self.assertTrue(result['processed_server_update_for_original_player'])
+        self.assertFalse(result['active_gameplay_confirmed'])
+        for text in (resume_text(), sustained_text().replace('id=9', 'id=8'),
+                     sustained_text().replace('slot=2', 'slot=3'),
+                     sustained_text().replace('name=' + NAME, 'name=OTHER'),
+                     sustained_text() + f'COH_RESUME_ONLY_SERVER_UPDATE id=9 name={NAME}\n',
+                     sustained_text().replace('COH_RESUME_ONLY_SERVER_UPDATE', 'NOT_A_SERVER_UPDATE'),
+                     sustained_text() + 'Fatal Error: Booted back to login screen\n',
+                     sustained_text() + 'simulateCharacterCreate()\n'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                driver.accept_sustained_resume(text, pipe_state(), 55, ACCOUNT, NAME, 9, None)
+        for changes in ({'disconnected': True}, {'quit_now': True}, {'pid_verified': False}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                driver.accept_sustained_resume(sustained_text(), dict(pipe_state(), **changes), 55, ACCOUNT, NAME, 9, None)
+        for code in (0, 1):
+            with self.assertRaises(ValueError):
+                driver.accept_sustained_resume(sustained_text(), pipe_state(), 55, ACCOUNT, NAME, 9, code)
+
+    def test_missing_name_refusal_cannot_count_a_login_or_allow_fallback_creation(self):
+        text = 'COH_RESUME_ONLY_MISSING name=CohAbsent12345\n'
+        result = driver.accept_missing_name(text, missing_state(), 55, ACCOUNT, 'CohAbsent12345', 3)
+        self.assertFalse(result['counts_as_login_or_save'])
+        for bad in ('', text * 2, text.replace('12345', '99999'), text + resume_text(),
+                    text + 'simulateCharacterCreate()\n', text + 'Unable to locate character CohAbsent12345\n',
+                    text + f'COH_RESUME_ONLY_SERVER_UPDATE id=9 name={NAME}\n', text + 'SQLERROR: broken\n'):
+            with self.subTest(text=bad), self.assertRaises(ValueError):
+                driver.accept_missing_name(bad, missing_state(), 55, ACCOUNT, 'CohAbsent12345', 3)
+        for code in (None, 0, 1, 4):
+            with self.assertRaises(ValueError):
+                driver.accept_missing_name(text, missing_state(), 55, ACCOUNT, 'CohAbsent12345', code)
+        for kind, value in (('Player', NAME), ('MapName', driver.one_map.MAP_PATH), ('QuitNow', ''),
+                            ('Status', 'Running'), ('Status', 'CRASH'), ('Status', 'ERROR')):
+            state = missing_state()
+            state['events'].append({'kind': kind, 'value': value, 'sequence': 4})
+            with self.subTest(kind=kind, value=value), self.assertRaises(ValueError):
+                driver.accept_missing_name(text, state, 55, ACCOUNT, 'CohAbsent12345', 3)
+
+    def test_sustained_observation_rejects_short_gapped_stale_or_disconnected_samples(self):
+        samples = [{'elapsed_seconds': second,
+                    'map': {'ready': True, 'port': 7001, 'network_age_seconds': 1, 'stats_age_seconds': 1},
+                    'character': {'loaded': True, 'connected': True, 'in_map_transfer': False, 'map_id': 1}}
+                   for second in range(0, 61, 10)]
+        self.assertEqual(driver.accept_session_samples(samples, 60)['observed_seconds'], 60)
+        variants = [samples[:-1], samples[::3], samples[:1]]
+        for key, value in (('ready', False), ('network_age_seconds', 21), ('stats_age_seconds', 21), ('port', 7002)):
+            changed = copy.deepcopy(samples)
+            changed[2]['map'][key] = value
+            variants.append(changed)
+        for key, value in (('connected', False), ('in_map_transfer', True), ('map_id', 2)):
+            changed = copy.deepcopy(samples)
+            changed[2]['character'][key] = value
+            variants.append(changed)
+        for changed in variants:
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                driver.accept_session_samples(changed, 60)
 
     def test_only_exact_known_fatal_after_quit_may_be_classified_as_logout(self):
         expected = 'Fatal Error: Booted back to login screen'

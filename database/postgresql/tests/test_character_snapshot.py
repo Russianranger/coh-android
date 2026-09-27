@@ -191,6 +191,46 @@ class SnapshotTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'rows changed'):
             snapshot.compare(before, after, 'restart')
 
+    def test_missing_name_probe_cannot_modify_rows_or_count_as_a_login(self):
+        before = self.capture()
+        self.assertTrue(snapshot.compare(before, copy.deepcopy(before), 'missing_name')['selected_rows_unchanged'])
+        after = copy.deepcopy(before)
+        after['login_count'] = 2
+        with self.assertRaisesRegex(ValueError, 'LoginCount'):
+            snapshot.compare(before, after, 'missing_name')
+        after = copy.deepcopy(before)
+        after['rows']['ents'][0]['influencepoints'] = 23456
+        with self.assertRaisesRegex(ValueError, 'rows changed'):
+            snapshot.compare(before, after, 'missing_name')
+
+    def test_second_save_changes_only_expected_currency_and_exactly_one_login(self):
+        before = self.capture()
+        self.records['ents'][0].update(influencepoints=23456, logincount=2)
+        self.accounts[0]['logincount'] = 2
+        after = self.capture(expected_influence=23456)
+        result = snapshot.compare(before, after, 'second_logout')
+        self.assertTrue(result['only_expected_influence_change'])
+        self.assertFalse(result['selected_rows_unchanged'])
+        self.assertEqual((result['login_count_before'], result['login_count_after']), (1, 2))
+        for changed in (dict(after, login_count=1), dict(after, login_count=3), before):
+            with self.assertRaises(ValueError):
+                snapshot.compare(before, changed, 'second_logout')
+        for table, column in (('ents', 'name'), ('ents', 'experiencepoints'), ('ents2', 'curbuild'),
+                              ('powers', 'powername'), ('costumeparts', 'tex1')):
+            changed = copy.deepcopy(after)
+            changed['rows'][table][0][column] = 'changed'
+            with self.subTest(table=table, column=column), self.assertRaisesRegex(ValueError, 'rows changed'):
+                snapshot.compare(before, changed, 'second_logout')
+
+    def test_inventory_includes_other_accounts_for_negative_probe_no_creation_check(self):
+        records = self.accounts + [dict(self.accounts[0], authname='OtherAccount', authid=88, containerid=43)]
+        with patch.object(snapshot, 'query_json', return_value=records) as query:
+            self.assertEqual(snapshot.character_inventory(None, self.tables), records)
+        sql = query.call_args.args[1]
+        self.assertIn('WHERE TRUE', sql)
+        self.assertNotIn('lower(authname)', sql)
+        self.assertNotIn('SELECT *', sql)
+
     def test_attribute_snapshot_requires_exact_accepted_mapping_and_stable_reload(self):
         with patch.object(snapshot, 'query_json', side_effect=self.query):
             actual = snapshot.attribute_snapshot(None, self.tables, expected=self.attributes)

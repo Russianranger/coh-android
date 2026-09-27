@@ -44,6 +44,16 @@ Windows-only skips. All four same-commit
 [PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
 passed. The short resume does not establish sustained gameplay or Android execution.
 
+### Active next milestone: sustained second session
+
+The [sustained-session implementation](SUSTAINED_SESSION_VALIDATION.md) adds a
+separately identified diagnostic TestClient with creation disabled and a normal
+connected command loop. The next hosted gate requires missing-name refusal with
+zero created rows, live restored currency, 60 seconds of connected observation,
+a second currency change and a second protocol logout/committed save. The accepted
+stock TestClient and server reference binaries remain unchanged. Implementation
+is complete and hosted validation is next; a sustained-session pass is not yet claimed.
+
 ### Earlier attempts and corrections
 
 The recovered evidence and new character harness are on

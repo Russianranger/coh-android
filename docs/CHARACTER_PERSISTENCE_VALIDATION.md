@@ -293,11 +293,13 @@ Acceptance for the short probe requires all of the following:
   field. Require server-side evidence before claiming active gameplay: the
   short probe can exit before a queued `CLIENT_READY` packet is processed.
 
-For a later complete second session, add a small TestClient-only `-resumeonly`
-option that clears CREATE while preserving STAY_CONNECTED, fails explicitly if
-the exact requested character is absent, and reports the actual server-provided
-character ID. That would require a newly identified reference build and its
-normal regression gates. Do not patch the current reference binaries in place.
+The next [sustained-session validation](SUSTAINED_SESSION_VALIDATION.md) adds a
+small TestClient-only `-resumeonly` option that disables CREATE while retaining
+STAY_CONNECTED, fails explicitly if the exact requested character is absent,
+and reports the actual server-provided character ID. It builds a separately
+identified diagnostic client and validates it against the accepted server runtime;
+the current reference package is not modified in place. Hosted acceptance of
+that sustained-session gate is pending.
 
 ## SQL evidence and scope
 

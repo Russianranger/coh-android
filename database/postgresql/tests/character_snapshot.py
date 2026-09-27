@@ -12,6 +12,7 @@ from run_generated_schema import query_json, require, sql_name
 
 
 INFLUENCE = 12345
+SECOND_INFLUENCE = 23456
 IDENTITY_FIELDS = ('containerid', 'authid', 'authname', 'name')
 SELECTED = {
     'ents': IDENTITY_FIELDS + ('class', 'origin', 'level', 'experiencepoints',
@@ -89,6 +90,12 @@ def account_rows(cluster, account, tables, auth_id=None):
                  ROW_KEYS['ents'], where)
 
 
+def character_inventory(cluster, tables):
+    """All disposable-database character identities, including other accounts."""
+    selected_contract(tables)
+    return _rows(cluster, 'ents', IDENTITY_FIELDS + ('logincount',), ROW_KEYS['ents'])
+
+
 def capture(cluster, tables, account, identifier, name, expected_influence=INFLUENCE):
     """Read one existing character and its required child rows without mutation."""
     selected_contract(tables)
@@ -96,8 +103,8 @@ def capture(cluster, tables, account, identifier, name, expected_influence=INFLU
     _identifier(identifier)
     require(isinstance(name, str) and bool(name.strip()) and len(name) <= 128 and
             not any(ord(c) < 32 for c in name), 'Invalid recorded character name')
-    require(type(expected_influence) is int and expected_influence == INFLUENCE,
-            'Character persistence experiment requires influence 12345')
+    require(type(expected_influence) is int and expected_influence in (INFLUENCE, SECOND_INFLUENCE),
+            'Character persistence experiment requires influence 12345 or 23456')
     rows = {}
     for table, fields in SELECTED.items():
         columns = fields + (('logincount',) if table == 'ents' else ())
@@ -133,16 +140,24 @@ def capture(cluster, tables, account, identifier, name, expected_influence=INFLU
 
 def compare(before, after, phase):
     """Stable field equality plus the separately reviewed LoginCount transition."""
-    require(phase in ('restart', 'resume'), 'Unknown character comparison phase')
+    require(phase in ('restart', 'resume', 'missing_name', 'second_logout'), 'Unknown character comparison phase')
     require(before['identity'] == after['identity'], 'Character identity changed after ' + phase)
     for table in SELECTED:
-        require(before['rows'][table] == after['rows'][table],
+        expected = before['rows'][table]
+        if phase == 'second_logout' and table == 'ents':
+            require(len(expected) == 1 and expected[0]['influencepoints'] == INFLUENCE,
+                    'Second session must start from the first committed influence value')
+            expected = [dict(expected[0], influencepoints=SECOND_INFLUENCE)]
+        require(expected == after['rows'][table],
                 'Selected character rows changed after ' + phase + ': ' + table)
     first, second = before['login_count'], after['login_count']
     require(type(first) is int and type(second) is int and first > 0 and
-            second == first + (1 if phase == 'resume' else 0),
+            second == first + (1 if phase in ('resume', 'second_logout') else 0),
             'Unexpected LoginCount progression after ' + phase)
-    return {'phase': phase, 'identity_unchanged': True, 'selected_rows_unchanged': True,
+    if phase == 'second_logout':
+        require((first, second) == (1, 2), 'Sustained session requires exactly LoginCount 1 to 2')
+    return {'phase': phase, 'identity_unchanged': True, 'selected_rows_unchanged': phase != 'second_logout',
+            'only_expected_influence_change': phase == 'second_logout',
             'login_count_before': first, 'login_count_after': second,
             'row_counts': {table: len(after['rows'][table]) for table in SELECTED}}
 

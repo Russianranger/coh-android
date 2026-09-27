@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise a fresh stock fake-auth character, protocol logout and short resume.
+"""Exercise fresh fake-auth character persistence and opt-in sustained resume.
 
 Windows reference harness; not Android/gameplay validation. Only --output is
 publishable. Credentials, full containers and raw logs remain in private --work.
@@ -31,8 +31,10 @@ from run_generated_schema import (ROOT, require, sha256, redact, initialize,
 from prepare_runtime import input_files
 
 SUCCESS = 'fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated'
+SESSION_SUCCESS = 'fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated'
 FAILED = 'character_persistence_validation_failed'
 INFLUENCE = 12345
+SECOND_INFLUENCE = 23456
 CLIENT_FAILURE = re.compile(
     r'\b(?:CRASH|Exception caught|CRT Error|Errorf|Unable to locate character|'
     r'Character creation did not reach|Error logging on|Error connecting to MapServer|'
@@ -41,7 +43,7 @@ CLIENT_FAILURE = re.compile(
 EXPECTED_LOGOUT = re.compile(r'^\s*Fatal Error: Booted back to login screen\s*$')
 PUBLIC_LINE = re.compile(r'DbServer Ready\.|container_id = |\bName .+ Auth .+ MapId |'
     r'Found character |Resuming character in slot |simulateCharacterCreate\(\)|'
-    r'commReqScene\(\)|^Map: |MESSAGE FROM LAUNCHER: CMD (?:quit|influence 12345)$')
+    r'commReqScene\(\)|^COH_RESUME_ONLY_|^Map: |MESSAGE FROM LAUNCHER: CMD (?:quit|influence (?:12345|23456))$')
 
 
 def utc():
@@ -61,6 +63,7 @@ def source_contract(root=ROOT):
         'commands': 'Utilities/TestClient/src/testClientCmdParse.c',
         'status': 'DBServer/src/status.c',
         'scene': 'Game/src/clientcomm/clientcomm.c',
+        'server_ready': 'MapServer/src/svr/svr_tick.c',
         'server_commands': 'MapServer/src/cmdparse/cmdserver.c',
         'logout': 'Utilities/TestClient/src/externs.c',
         'debug': 'MapServer/src/cmdparse/cmdservercsr.c',
@@ -77,7 +80,10 @@ def source_contract(root=ROOT):
                  'if (err || !(g_testMode & TEST_STAY_CONNECTED))', 'Fatal Error: %s'),
         'commands': ('commSendQuitGame(0);', 'sendMessageToLauncher("QuitNow:");'),
         'status': ('MapId %d SmapId %d', '"NoConnect "', '"InMapXfer "'),
-        'scene': ('CLIENT_REQSCENE', 'commCheck(SERVER_GROUPS)', 'commCheck(SERVER_ALLENTS)', 'CLIENT_READY'),
+        'scene': ('CLIENT_REQSCENE', 'commCheck(SERVER_GROUPS)', 'commCheck(SERVER_ALLENTS)', 'CLIENT_READY',
+                  'case SERVER_UPDATE:', 'entReceiveUpdate(pak,cmd==SERVER_ALLENTS);'),
+        'server_ready': ('xcase CLIENT_READY:', 'client->ready = CLIENTSTATE_ENTERING_GAME;',
+                         'client->ready=CLIENTSTATE_IN_GAME;', 'entSendUpdate('),
         'server_commands': ('xcase SCMD_INFLUENCE:', 'ent_SetInfluence(e, tmp_int);'),
         'logout': ('FatalErrorf("Booted back to login screen");',),
         'debug': ('char * csrPlayerInfo(', 'localizedPrintf(e,"CSRInfo1")',
@@ -175,13 +181,14 @@ def connected_on_atlas(status):
     return status['loaded'] and status['connected'] and not status['in_map_transfer'] and status['map_id'] == one_map.MAP_ID
 
 
-def live_currency_evidence(events, name, account, after_sequence):
+def live_currency_evidence(events, name, account, after_sequence, expected=INFLUENCE):
     """Only the stock server's conPrintf response identifies the live entity.
 
     Ordinary player chat containing these words cannot satisfy the diagnostic.
     The CMD debug reply reads the MapServer entity; no SQL write/forced save is
     used to make the currency visible before protocol logout.
     """
+    require(type(expected) is int and expected in (INFLUENCE, SECOND_INFLUENCE), 'Unreviewed live currency target')
     accepted = []
     for event in events:
         if event['sequence'] <= after_sequence or not event['raw'].startswith('ChatText:conPrintf:0:'):
@@ -194,19 +201,23 @@ def live_currency_evidence(events, name, account, after_sequence):
             continue
         require(len(players) == len(accounts) == len(values) == 1, 'Malformed/ambiguous live currency diagnostic')
         require(players[0] == name and accounts[0] == account, 'Live currency diagnostic identifies another character/account')
-        if int(values[0]) == INFLUENCE:
-            accepted.append({'player': name, 'account': account, 'influence': INFLUENCE,
+        if int(values[0]) == expected:
+            accepted.append({'player': name, 'account': account, 'influence': expected,
                              'time_utc': event['time_utc'], 'sequence': event['sequence']})
     return accepted[-1] if accepted else False
 
 
-def client_command(runtime, account, name=None):
+def client_command(runtime, account, name=None, resume_only=False):
     require(re.fullmatch(r'[A-Za-z][A-Za-z0-9]{1,19}', account), 'Unsafe diagnostic account name')
-    command = [str(runtime / 'TestClient.exe'), '-db', '127.0.0.1', '-fakeauth', '-authname', account,
+    require(not resume_only or name is not None, 'Resume-only requires an explicit recorded name')
+    command = [str(runtime / ('TestClientResume.exe' if resume_only else 'TestClient.exe')),
+               '-db', '127.0.0.1', '-fakeauth', '-authname', account,
                '-dontpause', '-nosharedmemory']
     if name is None:
         return command + ['-nolevel', '-TEAMACCEPT', '-FOLLOW', '-SUPERGROUPACCEPT', '-LEAGUEACCEPT']
     require(name and len(name) <= 128 and not any(ord(c) < 32 for c in name), 'Invalid recorded character name')
+    if resume_only:
+        return command + ['-resumeonly', '-character', name]
     return command + ['-justlogin', '-character', name]
 
 
@@ -242,9 +253,8 @@ def pipe_identity(state, pid, account, expected_name=None, allow_logout_error=Fa
     return name
 
 
-def accept_resume(text, state, pid, account, name, exit_code):
-    require(exit_code == 0, 'Short resume probe did not exit cleanly')
-    require(not diagnostic_failures(text), 'Short resume probe emitted failure diagnostics')
+def resume_branch(text, name):
+    require(not diagnostic_failures(text), 'Resume probe emitted failure diagnostics')
     require('simulateCharacterCreate' not in text and not re.search(r'Character creation|Create a new character', text, re.I),
             'Short resume attempted character creation')
     matches = re.findall(r'^Found character (.+) in slot (\d+)\s*$', text, re.M)
@@ -252,9 +262,89 @@ def accept_resume(text, state, pid, account, name, exit_code):
     slot = int(matches[0][1])
     require(re.search(r'Resuming character in slot ' + str(slot) + r'\.\.\.', text) and 'commReqScene()' in text,
             'Resume branch/scene exchange diagnostic is missing')
+    return slot
+
+
+def accept_resume(text, state, pid, account, name, exit_code):
+    require(exit_code == 0, 'Short resume probe did not exit cleanly')
+    slot = resume_branch(text, name)
     require(pipe_identity(state, pid, account, name) == name, 'Resume lacks returned player/map identity')
     return {'slot': slot, 'scene_exchange_observed': True, 'creation_disabled': True,
             'active_gameplay_confirmed': False, 'scope': 'Short resume/scene probe; queued CLIENT_READY processing is unproven'}
+
+
+def active_pipe_identity(state, pid, account, name):
+    require(not state.get('disconnected') and not state.get('quit_now'), 'Sustained client pipe disconnected or requested quit')
+    require(not any(event['kind'] == 'QuitNow' for event in state.get('events', [])), 'Premature sustained session logout')
+    return pipe_identity(state, pid, account, name)
+
+
+def accept_sustained_resume(text, state, pid, account, name, identifier, exit_code):
+    require(exit_code is None, 'Sustained resume client exited before session observation')
+    slot = resume_branch(text, name)
+    matches = [match.groups() for line in text.splitlines() if
+               (match := re.fullmatch(r'COH_RESUME_ONLY_SELECTED id=(\d+) slot=(\d+) name=(.+)', line))]
+    require(len(matches) == 1 and int(matches[0][0]) == identifier and identifier > 0 and
+            int(matches[0][1]) == slot and matches[0][2] == name,
+            'Resume-only selection lacks the original positive database ID, exact name and slot')
+    require('COH_RESUME_ONLY_MISSING' not in text, 'Positive resume reported a missing character')
+    updates = [line for line in text.splitlines() if line.startswith('COH_RESUME_ONLY_SERVER_UPDATE')]
+    require(updates == [f'COH_RESUME_ONLY_SERVER_UPDATE id={identifier} name={name}'],
+            'Resume lacks one processed server update for the original player database ID/name')
+    require(active_pipe_identity(state, pid, account, name) == name, 'Sustained resume lacks live player/map pipe identity')
+    return {'slot': slot, 'database_id': identifier, 'exact_name': name, 'creation_disabled': True,
+            'scene_exchange_observed': True, 'processed_server_update_for_original_player': True,
+            'active_gameplay_confirmed': False,
+            'scope': 'Connected existing-character session; combat, movement and rendered gameplay unvalidated'}
+
+
+def accept_missing_name(text, state, pid, account, name, exit_code):
+    require(exit_code == 3, 'Missing-name probe did not take the explicit resume-only refusal exit')
+    require(not diagnostic_failures(text), 'Missing-name probe emitted unexpected failure diagnostics')
+    require([line for line in text.splitlines() if line.startswith('COH_RESUME_ONLY_MISSING')] ==
+            ['COH_RESUME_ONLY_MISSING name=' + name], 'Missing-name refusal does not identify exactly the requested name')
+    require(not any(fragment in text for fragment in
+                    ('COH_RESUME_ONLY_SELECTED', 'Found character', 'Resuming character',
+                     'COH_RESUME_ONLY_SERVER_UPDATE', 'simulateCharacterCreate', 'commReqScene()')) and
+            not re.search(r'Character creation|Create a new character', text, re.I),
+            'Missing-name probe attempted creation, selection or scene exchange')
+    require(not state.get('error') and state.get('pid_verified') and state.get('client_pid') == pid and
+            state.get('version_requests') == 1, 'Missing-name probe lacks verified launcher transport')
+    require(not state.get('player') and not state.get('map_name') and not state.get('quit_now'),
+            'Missing-name probe entered a character session')
+    for event in state.get('events', []):
+        require(event['kind'] not in ('Player', 'MapName', 'QuitNow') and
+                not (event['kind'] == 'Status' and event['value'] in ('Running', 'CRASH')),
+                'Missing-name probe emitted session or failure events')
+        if event['kind'] == 'AuthName':
+            require(event['value'] == account, 'Missing-name account identity differs')
+    require(sum(event['kind'] == 'Status' and event['value'] == 'ERROR' for event in state.get('events', [])) == 1,
+            'Missing-name refusal must carry exactly its explicit ERROR status')
+    return {'requested_name': name, 'exit_code': exit_code, 'explicit_refusal': True,
+            'creation_or_scene_observed': False, 'counts_as_login_or_save': False}
+
+
+def accept_session_samples(samples, seconds):
+    require(30 <= seconds <= 300 and len(samples) >= 3, 'Sustained session observation is incomplete')
+    previous = None
+    for sample in samples:
+        elapsed = sample['elapsed_seconds']
+        require(type(elapsed) in (int, float) and elapsed >= 0, 'Invalid sustained session timing')
+        if previous is not None:
+            require(0 < elapsed - previous <= 20, 'Sustained session sampling has an excessive gap')
+        previous = elapsed
+        map_sample = sample['map']
+        require(map_sample.get('ready') is True and map_sample.get('port') == one_map.MAP_UDP_PORT and
+                all(type(map_sample.get(key)) is int and 0 <= map_sample[key] <= 20
+                    for key in ('network_age_seconds', 'stats_age_seconds')),
+                'Sustained session map heartbeat/readiness is stale')
+        require(connected_on_atlas(sample['character']), 'Sustained character disconnected or left Atlas Park')
+    observed = samples[-1]['elapsed_seconds'] - samples[0]['elapsed_seconds']
+    require(observed >= seconds, 'Sustained session duration was shorter than requested')
+    return {'required_seconds': seconds, 'observed_seconds': observed, 'sample_count': len(samples),
+            'maximum_sample_gap_seconds': max(b['elapsed_seconds'] - a['elapsed_seconds']
+                                            for a, b in zip(samples, samples[1:])),
+            'connected_map_id': one_map.MAP_ID, 'current_server_heartbeats': True}
 
 
 def selected_pipe_record(state):
@@ -267,10 +357,14 @@ def selected_pipe_record(state):
 
 def run(runtime, reference, schema_report, comparison_report, comparison_inputs, one_map_report,
         work, output, pg_bin, driver, port=15437, timeout=900, phase_timeout=300,
-        schema_archive=None, comparison_archive=None, diagnostic_version=None, root=ROOT):
+        schema_archive=None, comparison_archive=None, diagnostic_version=None, root=ROOT,
+        resume_client_package=None, expected_resume_repository_commit=None, session_seconds=60):
     runtime, reference, work, output = [Path(p).resolve() for p in (runtime, reference, work, output)]
     network.new_paths(runtime, reference, work, output, root)
     require(60 <= timeout <= 1800 and 30 <= phase_timeout <= 900, 'Timeouts must be startup60..1800 and phase30..900 seconds')
+    require(30 <= session_seconds <= 300, 'Sustained observation must be30..300seconds')
+    require(bool(resume_client_package) == bool(expected_resume_repository_commit),
+            'Resume client package and expected repository commit must be supplied together')
     announce('input_verification')
     context, outputs, tables, map_contract = one_map.preflight(runtime, reference, Path(schema_report),
         Path(comparison_report), Path(comparison_inputs), Path(schema_archive) if schema_archive else None,
@@ -279,6 +373,11 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                    sha256(Path(comparison_report)), sha256(Path(comparison_inputs)))
     contract = source_contract(root)
     selection = snapshots.selected_contract(tables)
+    resume_executable, resume_manifest = None, None
+    if resume_client_package:
+        from package_resume_client import verify_resume_client_package
+        resume_executable, resume_manifest = verify_resume_client_package(
+            Path(resume_client_package), expected_resume_repository_commit, context['package'], root=root)
     announce('input_verification', 'passed')
     require(os.name == 'nt', 'This stock named-pipe harness requires the Windows reference host')
     version_source = 'explicit diagnostic override' if diagnostic_version else 'reference package'
@@ -306,8 +405,13 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         'scope': 'Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume',
         'network_scope': 'Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host',
         'raw_evidence_private': True, 'status_samples': [], 'character_status_samples': [], 'snapshots': {}}
+    if resume_manifest:
+        report.update(resume_client_package=resume_manifest, sustained_session_validated=False,
+            scope='Fresh stock-client create/save, service restart, diagnostic-client missing-name refusal, sustained exact-name resume and second protocol save',
+            sustained_observation_required_seconds=session_seconds)
     cluster, processes, pipes, consoles, services, secrets = None, [], [], [], [], []
     requested_logout = False
+    active_client_logs = {'console': None, 'logout_requested': False}
     account = 'CohP' + random_secrets.token_hex(5)
     report['account'] = account
 
@@ -350,6 +454,12 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['redacted_logs'] = [{'file': target.name, 'sha256': sha256(target), 'bytes': target.stat().st_size,
                                     'scope': 'Selected diagnostics; complete raw logs and container payloads remain private'}]
         report['benign_catalog_notices'] = schema.benign_catalog_notices(text)
+        # Aggregate logs retain the first client's accepted post-quit records.
+        # Its exception must never apply to a later, still-connected client.
+        if active_client_logs['console'] is not None:
+            require(not diagnostic_failures(active_client_logs['console'].text(),
+                    allow_requested_logout=active_client_logs['logout_requested']),
+                    'Active client emitted failure diagnostics outside its own requested logout')
         require(not errors, 'Observed failure diagnostics:\n' + '\n'.join(errors[:30]))
         return text
 
@@ -419,6 +529,192 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         expected = {table: schema.attribute_rows(outputs[path].decode('utf-8')) for table, path in attrs.items()}
         return snapshots.attribute_snapshot(cluster, tables, expected=expected)
 
+    def sustained_session(identifier, name, before, attr_before):
+        nonlocal requested_logout
+        require(before['login_count'] == 1, 'Fresh stock session must have exactly one committed login')
+        inventory = snapshots.character_inventory(cluster, tables)
+        require(inventory == [dict(before['identity'], logincount=1)],
+                'Disposable database must contain exactly the one recorded character')
+        # Diagnostic executable is additional; accepted stock bytes are never
+        # overwritten, and only this opt-in branch can execute it.
+        diagnostic_client = isolated / 'TestClientResume.exe'
+        require(not diagnostic_client.exists(), 'Unexpected diagnostic client already exists in accepted runtime')
+        shutil.copy2(resume_executable, diagnostic_client)
+        require(sha256(diagnostic_client) == sha256(resume_executable) ==
+                resume_manifest['files']['TestClient.exe']['sha256'],
+                'Staged diagnostic executable differs from the verified build receipt')
+        report['diagnostic_testclient_sha256'] = sha256(diagnostic_client)
+        missing_name = 'CohAbsent' + random_secrets.token_hex(6)
+        require(missing_name != name, 'Negative probe name unexpectedly equals the saved character')
+        negative_pipe = TestClientPipe(version)
+        negative_pipe.__enter__()
+        pipes.append(negative_pipe)
+        negative = start(client_command(isolated, account, missing_name, resume_only=True), 'missing-name-client')
+        negative_console = ConsoleCapture(negative.child.pid, logs, 'missing-name-client')
+        consoles.append(negative_console)
+        negative_console.start(timeout=10)
+        negative_pipe.bind_process(negative.child.pid)
+        wait(lambda: negative.poll() is not None, phase_timeout, 'missing-name refusal process completion')
+        negative_console.stop()
+        wait(lambda: negative_pipe.snapshot().get('disconnected'), 5, 'missing-name pipe drain')
+        negative_state = negative_pipe.snapshot()
+        report['missing_name_probe'] = accept_missing_name(negative_console.text(), negative_state,
+            negative.child.pid, account, missing_name, negative.child.returncode)
+        require(not negative.forced_stop, 'Forced termination cannot establish missing-name refusal')
+        after_negative = snapshots.capture(cluster, tables, account, identifier, name, expected_influence=INFLUENCE)
+        report['missing_name_comparison'] = snapshots.compare(before, after_negative, phase='missing_name')
+        snapshots.validate_attribute_references(after_negative, attr_before)
+        snapshots.compare_attributes(attr_before, attributes())
+        after_inventory = snapshots.character_inventory(cluster, tables)
+        require(after_inventory == inventory, 'Missing-name probe changed the database character inventory')
+        require(not char_status(identifier, name, 'missing_name', allow_missing=True)['connected'],
+                'Missing-name probe connected the existing character')
+        report['missing_name_probe'].update(character_count_before=len(inventory),
+                                           character_count_after=len(after_inventory),
+                                           independent_sql_unchanged=True)
+        report['snapshots']['after_missing_name_refusal'] = after_negative
+        report['missing_name_session_pipe'] = selected_pipe_record(negative_state)
+        negative.stop()
+        negative_pipe.close()
+        logs_clean()
+        report['phases'].append({'phase': 'missing_name_refused_without_mutation', 'time_utc': utc(), 'status': 'passed'})
+        announce('missing_name_refused_without_mutation', 'passed')
+
+        sustained_pipe = TestClientPipe(version)
+        sustained_pipe.__enter__()
+        pipes.append(sustained_pipe)
+        resumed = start(client_command(isolated, account, name, resume_only=True), 'sustained-resume-client')
+        resumed_console = ConsoleCapture(resumed.child.pid, logs, 'sustained-resume-client')
+        consoles.append(resumed_console)
+        resumed_console.start(timeout=10)
+        active_client_logs.update(console=resumed_console, logout_requested=False)
+        sustained_pipe.bind_process(resumed.child.pid)
+        wait(lambda: active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid, account, name),
+             phase_timeout, 'sustained resume launcher identity', resumed)
+        wait(lambda: 'COH_RESUME_ONLY_SELECTED' in resumed_console.text() and
+             'COH_RESUME_ONLY_SERVER_UPDATE' in resumed_console.text(), phase_timeout,
+             'captured sustained resume and processed server update', resumed)
+        report['resume_probe'] = accept_sustained_resume(resumed_console.text(), sustained_pipe.snapshot(),
+            resumed.child.pid, account, name, identifier, resumed.poll())
+        wait(lambda: connected_on_atlas(char_status(identifier, name, 'resumed')), phase_timeout,
+             'resumed original character connected on Atlas Park', resumed)
+
+        def observe_currency(expected, label):
+            current_events = sustained_pipe.snapshot()['events']
+            sequence = current_events[-1]['sequence'] if current_events else -1
+            next_debug = 0
+
+            def response():
+                nonlocal next_debug
+                state = sustained_pipe.snapshot()
+                require(active_pipe_identity(state, resumed.child.pid, account, name) == name,
+                        'Resumed character pipe identity was lost')
+                require(not diagnostic_failures(resumed_console.text()), 'Resumed client emitted failure diagnostics')
+                evidence = live_currency_evidence(state['events'], name, account, sequence, expected)
+                if evidence:
+                    require(connected_on_atlas(char_status(identifier, name, label)),
+                            'Resumed character disconnected before live currency response')
+                    require(resumed.poll() is None, 'Resumed client exited before live currency response')
+                    return evidence
+                if time.monotonic() >= next_debug:
+                    sustained_pipe.send('CMD debug "' + name + '"')
+                    next_debug = time.monotonic() + 3
+                return False
+
+            return wait(response, phase_timeout, label, resumed)
+
+        report['restored_live_currency_evidence'] = observe_currency(INFLUENCE, 'restored live currency')
+        report['phases'].append({'phase': 'restored_currency_while_connected', 'time_utc': utc(),
+                                'status': 'passed', 'value': INFLUENCE})
+        samples = report['sustained_session_samples'] = []
+        observation_start = time.monotonic()
+        announce('sustained_connected_observation', required_seconds=session_seconds)
+        while True:
+            health()
+            require(resumed.poll() is None, 'Resumed client exited during sustained observation')
+            require(active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid, account, name) == name,
+                    'Resumed character lost launcher identity during observation')
+            require(not diagnostic_failures(resumed_console.text()), 'Resumed client failed during sustained observation')
+            map_sample = map_status('sustained-map-' + str(len(samples)))
+            character_sample = char_status(identifier, name, 'sustained')
+            elapsed = time.monotonic() - observation_start
+            samples.append({'sampled_utc': utc(), 'elapsed_seconds': elapsed,
+                            'map': map_sample, 'character': character_sample})
+            require(resumed.poll() is None, 'Resumed client exited during status sampling')
+            require(map_sample.get('ready') and map_sample.get('port') == one_map.MAP_UDP_PORT and
+                    map_sample['network_age_seconds'] <= 20 and map_sample['stats_age_seconds'] <= 20 and
+                    connected_on_atlas(character_sample), 'Resumed character or current map heartbeat was lost')
+            require(elapsed <= session_seconds + 30, 'Sustained session observation exceeded its bound')
+            if elapsed - samples[0]['elapsed_seconds'] >= session_seconds:
+                break
+            if len(samples) % 5 == 0:
+                announce('sustained_connected_observation', 'observing', elapsed_seconds=round(elapsed, 1))
+            time.sleep(3)
+        report['sustained_observation'] = accept_session_samples(samples, session_seconds)
+        report['restored_live_currency_after_observation'] = observe_currency(INFLUENCE, 'restored currency after observation')
+        report['phases'].append({'phase': 'sustained_connected_observation', 'time_utc': utc(), 'status': 'passed',
+                                **report['sustained_observation']})
+        announce('sustained_connected_observation', 'passed', **report['sustained_observation'])
+        sustained_pipe.send('CMD influence ' + str(SECOND_INFLUENCE))
+        report['second_influence_requested_utc'] = utc()
+        report['second_live_currency_evidence'] = observe_currency(SECOND_INFLUENCE, 'second live currency')
+        report['phases'].append({'phase': 'second_influence_observed_while_connected', 'time_utc': utc(),
+                                'status': 'passed', 'value': SECOND_INFLUENCE})
+        logs_clean()
+        require(not diagnostic_failures(resumed_console.text()), 'Resumed client failed before second protocol quit')
+        requested_logout = True
+        active_client_logs['logout_requested'] = True
+        report['second_quit_requested_utc'] = utc()
+        sustained_pipe.send('CMD quit')
+        wait(lambda: sustained_pipe.snapshot().get('quit_now'), 15, 'second QuitNow request confirmation')
+
+        def second_saved():
+            state = sustained_pipe.snapshot()
+            pipe_identity(state, resumed.child.pid, account, name, allow_logout_error=True)
+            status = char_status(identifier, name, 'second_logout', allow_missing=True)
+            if status['connected'] or status['in_map_transfer']:
+                time.sleep(1)
+                return False
+            try:
+                current = snapshots.capture(cluster, tables, account, identifier, name, expected_influence=SECOND_INFLUENCE)
+                comparison = snapshots.compare(before, current, phase='second_logout')
+                return current, comparison
+            except ValueError as error:
+                report['last_pending_second_save'] = redact(str(error), secrets)
+                return False
+
+        final, comparison = wait(second_saved, phase_timeout, 'second protocol logout and committed SQL')
+        require(not resumed.forced_stop, 'Forced disconnect cannot establish second protocol logout')
+        state = sustained_pipe.snapshot()
+        if any(e['kind'] == 'Status' and e['value'] == 'ERROR' for e in state['events']):
+            require(any(EXPECTED_LOGOUT.fullmatch(line) for line in resumed_console.text().splitlines()),
+                    'Second post-quit ERROR lacks exact stock logout diagnostic')
+        require(not diagnostic_failures(resumed_console.text(), allow_requested_logout=True),
+                'Resumed client emitted unexpected post-quit failure diagnostics')
+        snapshots.validate_attribute_references(final, attr_before)
+        snapshots.compare_attributes(attr_before, attributes())
+        require(snapshots.character_inventory(cluster, tables) == [dict(final['identity'], logincount=2)],
+                'Second session created or changed an unexpected character')
+        report['snapshots']['after_second_protocol_logout'] = final
+        report['second_logout_comparison'] = comparison
+        report['resume_session_pipe'] = selected_pipe_record(state)
+        report['phases'].append({'phase': 'second_protocol_logout_committed', 'time_utc': utc(), 'status': 'passed',
+                                'quitnow_is_save_ack': False, 'client_forced_stop_before_commit': resumed.forced_stop})
+        logs_clean()
+        resumed_console.stop()
+        resumed_console.check_bounds()
+        resumed.stop()
+        active_client_logs['console'] = None
+        sustained_pipe.close()
+        validate_catalog(catalog_snapshot(cluster), tables)
+        final_map = map_status('final-sustained-map-status')
+        require(final_map['ready'] and final_map['network_age_seconds'] <= 20 and final_map['stats_age_seconds'] <= 20,
+                'Map lost readiness/current heartbeat after second protocol save')
+        report['sustained_session_validated'] = True
+        report['character_persistence_validated'] = True
+        report['status'] = SESSION_SUCCESS
+        announce('second_protocol_logout_committed', 'passed')
+
     try:
         announce('private_runtime_copy')
         for copied, (name, path) in enumerate(input_files(runtime), 1):
@@ -453,6 +749,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         console = ConsoleCapture(client.child.pid, logs, 'create-client')
         consoles.append(console)
         console.start(timeout=10)
+        active_client_logs.update(console=console, logout_requested=False)
         # The stock client blocks waiting for the launcher version. The pipe
         # drains only after this PID bind, so its console is owned/captured
         # before creation diagnostics or a short resume can complete.
@@ -496,6 +793,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             'value': INFLUENCE, 'scope': 'CMD debug live entity conPrintf response plus connected MapId1 status; no forced save'})
         logs_clean()  # Fatal diagnostics before the protocol quit are never tolerated.
         requested_logout = True
+        active_client_logs['logout_requested'] = True
         report['quit_requested_utc'] = utc()
         pipe.send('CMD quit')
         wait(lambda: pipe.snapshot().get('quit_now'), 15, 'QuitNow request confirmation')
@@ -533,6 +831,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         console.stop()
         console.check_bounds()
         client.stop()  # Cleanup occurs only after independently proven logout/save.
+        active_client_logs['console'] = None
         pipe.close()
         for service in reversed(services):
             service.stop()
@@ -548,49 +847,52 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['phases'].append({'phase': 'restart_saved_state', 'time_utc': utc(), 'status': 'passed'})
         announce('restart_saved_state', 'passed')
 
-        resume_pipe = TestClientPipe(version)
-        resume_pipe.__enter__()
-        pipes.append(resume_pipe)
-        resume = start(client_command(isolated, account, name), 'resume-client')
-        resume_console = ConsoleCapture(resume.child.pid, logs, 'resume-client')
-        consoles.append(resume_console)
-        resume_console.start(timeout=10)
-        resume_pipe.bind_process(resume.child.pid)
-        wait(lambda: resume.poll() is not None, phase_timeout, 'short resume probe process completion')
-        resume_console.stop()  # Captures the retained console once more after child exit.
-        wait(lambda: pipe_identity(resume_pipe.snapshot(), resume.child.pid, account, name), 5,
-             'short resume pipe drain')
-        report['resume_probe'] = accept_resume(resume_console.text(), resume_pipe.snapshot(), resume.child.pid,
-                                                account, name, resume.child.returncode)
-        report['resume_session_pipe'] = selected_pipe_record(resume_pipe.snapshot())
+        if resume_manifest:
+            sustained_session(identifier, name, before, attr_before)
+        else:
+            resume_pipe = TestClientPipe(version)
+            resume_pipe.__enter__()
+            pipes.append(resume_pipe)
+            resume = start(client_command(isolated, account, name), 'resume-client')
+            resume_console = ConsoleCapture(resume.child.pid, logs, 'resume-client')
+            consoles.append(resume_console)
+            resume_console.start(timeout=10)
+            resume_pipe.bind_process(resume.child.pid)
+            wait(lambda: resume.poll() is not None, phase_timeout, 'short resume probe process completion')
+            resume_console.stop()  # Captures the retained console once more after child exit.
+            wait(lambda: pipe_identity(resume_pipe.snapshot(), resume.child.pid, account, name), 5,
+                 'short resume pipe drain')
+            report['resume_probe'] = accept_resume(resume_console.text(), resume_pipe.snapshot(), resume.child.pid,
+                                                    account, name, resume.child.returncode)
+            report['resume_session_pipe'] = selected_pipe_record(resume_pipe.snapshot())
 
-        def saved_after_resume():
-            state = char_status(identifier, name, 'resume_disconnect', allow_missing=True)
-            if state['connected'] or state['in_map_transfer']:
-                time.sleep(1)
-                return False
-            try:
-                current = snapshots.capture(cluster, tables, account, identifier, name, expected_influence=INFLUENCE)
-                comparison = snapshots.compare(before, current, phase='resume')
-                return current, comparison
-            except ValueError as error:
-                report['last_pending_resume_save'] = redact(str(error), secrets)
-                return False
+            def saved_after_resume():
+                state = char_status(identifier, name, 'resume_disconnect', allow_missing=True)
+                if state['connected'] or state['in_map_transfer']:
+                    time.sleep(1)
+                    return False
+                try:
+                    current = snapshots.capture(cluster, tables, account, identifier, name, expected_influence=INFLUENCE)
+                    comparison = snapshots.compare(before, current, phase='resume')
+                    return current, comparison
+                except ValueError as error:
+                    report['last_pending_resume_save'] = redact(str(error), secrets)
+                    return False
 
-        final, resume_comparison = wait(saved_after_resume, phase_timeout, 'resume disconnect save and LoginCount progression')
-        report['snapshots']['after_short_resume'] = final
-        snapshots.validate_attribute_references(final, attr_before)
-        report['resume_comparison'] = resume_comparison
-        snapshots.compare_attributes(attr_before, attributes())
-        validate_catalog(catalog_snapshot(cluster), tables)
-        final_map = map_status('final-map-status')
-        require(final_map['ready'] and final_map['network_age_seconds'] <= 20 and final_map['stats_age_seconds'] <= 20,
-                'Map lost readiness/current heartbeat after short resume')
-        logs_clean()
-        report['phases'].append({'phase': 'short_resume_and_committed_state', 'time_utc': utc(), 'status': 'passed'})
-        announce('short_resume_and_committed_state', 'passed')
-        report['character_persistence_validated'] = True
-        report['status'] = SUCCESS
+            final, resume_comparison = wait(saved_after_resume, phase_timeout, 'resume disconnect save and LoginCount progression')
+            report['snapshots']['after_short_resume'] = final
+            snapshots.validate_attribute_references(final, attr_before)
+            report['resume_comparison'] = resume_comparison
+            snapshots.compare_attributes(attr_before, attributes())
+            validate_catalog(catalog_snapshot(cluster), tables)
+            final_map = map_status('final-map-status')
+            require(final_map['ready'] and final_map['network_age_seconds'] <= 20 and final_map['stats_age_seconds'] <= 20,
+                    'Map lost readiness/current heartbeat after short resume')
+            logs_clean()
+            report['phases'].append({'phase': 'short_resume_and_committed_state', 'time_utc': utc(), 'status': 'passed'})
+            announce('short_resume_and_committed_state', 'passed')
+            report['character_persistence_validated'] = True
+            report['status'] = SUCCESS
     except (OSError, ValueError, RuntimeError, AssertionError, subprocess.SubprocessError) as error:
         report['failures'].append(redact(str(error), secrets))
         announce('character_persistence', 'failed', diagnostic=redact(str(error), secrets))
@@ -632,6 +934,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         if report['failures']:
             report['status'] = FAILED
             report['character_persistence_validated'] = False
+            if resume_manifest:
+                report['sustained_session_validated'] = False
         report['processes'] = [process.record() for process in processes]
         report['console_observers'] = [console.report() for console in consoles]
         report['shutdown_scope'] = 'Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated'
@@ -654,13 +958,19 @@ def main():
     parser.add_argument('--timeout-seconds', type=float, default=900)
     parser.add_argument('--phase-timeout-seconds', type=float, default=300)
     parser.add_argument('--diagnostic-version')
+    parser.add_argument('--resume-client-package', type=Path)
+    parser.add_argument('--expected-resume-repository-commit')
+    parser.add_argument('--session-seconds', type=float, default=60)
     args = parser.parse_args()
     result = run(args.runtime, args.reference_binaries, args.schema_report, args.comparison_report,
                  args.comparison_inputs, args.one_map_report, args.work, args.output, args.bin, args.driver,
                  args.port, args.timeout_seconds, args.phase_timeout_seconds, args.schema_archive,
-                 args.comparison_archive, args.diagnostic_version)
+                 args.comparison_archive, args.diagnostic_version,
+                 resume_client_package=args.resume_client_package,
+                 expected_resume_repository_commit=args.expected_resume_repository_commit,
+                 session_seconds=args.session_seconds)
     print(result['status'])
-    return 0 if result['status'] == SUCCESS else 1
+    return 0 if result['status'] in (SUCCESS, SESSION_SUCCESS) else 1
 
 
 if __name__ == '__main__':
