@@ -75,15 +75,23 @@ forced cleanup. See the [accepted evidence](docs/postgresql-evidence/accepted-ch
 and [transfer scope](docs/MAP_TRANSFER_VALIDATION.md). All five workflow jobs
 passed, including the separate sustained-session regression.
 
-The active milestone is **M2: a Thor diagnostic APK**, running app-owned ARM64
-PostgreSQL and the Win32 ODBC probe under Wine/FEX. The Android shell, owned
-process supervisor, pinned runtime builders and hosted validation workflow are
-implemented; see [the diagnostic build and Thor acceptance instructions](docs/ANDROID_DIAGNOSTIC.md)
-for current evidence. Device acceptance must prove database initialization,
-transactions, durable restart and owned-process shutdown without Termux or root. New-zone assets,
-missions, automatic map startup, combat and graphics remain separate unfinished
-work; they need not delay this platform diagnostic. The repository is **not a
-complete runnable installation**. Android execution, complete asset coverage and
+The **M2 diagnostic APK is ready for Thor testing**. All four jobs in
+[hosted run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
+passed at source `0b61d7455f40f05709f912338cd5de8b1d72d750`. Its exact guest
+assets passed all eleven stages on Linux ARM64: native PostgreSQL, Wine/FEX Win32
+DLL loading, all 65 ODBC connections, SQL/value/metadata checks, durable database
+restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
+`80e53b03d95ec851623b8b743b067e87642e392a387d24679adcd81d119d38ac`.
+See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
+and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
+
+**M2 device acceptance remains pending.** Install the diagnostic, use **Setup
+runtime**, **Run diagnostics** and **Export latest report**, then check repeat
+runs and Stop on Thor. Physical Android execution, foreground-service lifecycle
+and performance are unvalidated; the hosted pass does not establish them. The
+app includes no game binaries or assets. New-zone assets, missions, automatic
+map startup, combat and graphics remain separate unfinished work. The repository
+is **not a complete runnable game installation**. Complete asset coverage and
 serializer equivalence remain unvalidated. Supplied binary assets stay outside Git.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)

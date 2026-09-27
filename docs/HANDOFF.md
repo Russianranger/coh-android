@@ -17,8 +17,10 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The active implementation is the [M2 Thor diagnostic Android APK](ANDROID_DIAGNOSTIC.md).
-Combat, movement, rendered gameplay and Android execution remain unvalidated.
+The [M2 Thor diagnostic APK](ANDROID_DIAGNOSTIC.md) is built and its hosted
+ARM64 guest gate passed in [run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450).
+The next acceptance step is physical Thor testing. Combat, movement, rendered
+gameplay and Android device execution remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -115,23 +117,35 @@ portability error. The fixture now uses Winsock on Windows; client and server
 code are unchanged by that correction. The [tooling failure record](postgresql-evidence/character-transfer-tooling-36297326622.json)
 is preserved separately from the successful retry.
 
-### Active gate: M2 Thor diagnostic Android APK
+### Accepted hosted M2 gate; Thor device gate pending
 
-The app-owned ARM64 PostgreSQL and Win32 runtime experiment is implemented under
-`android/` and `tools/android/`, with its own hosted build/runtime workflow.
-The native Java app provides setup, run, stop and report export. Its pinned
-Bookworm environment and Wine 10/FEX stack come from the existing LSB runtime;
-PostgreSQL is independently built from official pinned source. One owned PRoot
-session runs the real Win32/DLL and ODBC probes, PostgreSQL transaction/restart
-checks, and bounded cleanup. This is a diagnostic app without game binaries.
+[Run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
+passed all four jobs at source `0b61d7455f40f05709f912338cd5de8b1d72d750`,
+completing 2026-09-27 17:29:16 UTC. All 80 tooling tests passed without skips.
+The APK's exact guest assets passed eleven stages on Linux ARM64, including
+real PE32 DLL/driver loading, all 65 stock ODBC connections, transactions,
+rollback, UTF-16/binary values, column metadata, schema rebuild/reopen, graceful
+same-cluster restart and a second Win32 verification of persisted data. All
+three cleanup checks passed. The same-source [PostgreSQL regression run](https://github.com/Russianranger/coh-android/actions/runs/36336644454)
+also passed all four jobs. Preserve the [acceptance receipt](android-evidence/accepted-hosted-36336644450.json)
+and [raw guest report](android-evidence/runtime-smoke-report-36336644450.json).
 
-Current build evidence and remaining physical Thor acceptance are recorded in
-[ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md). Preserve that distinction:
-hosted Linux ARM64 execution cannot establish Android device behavior. The next
-device step is setup, diagnostic run and report export, followed by repeat-run
-and Stop checks. A basic client-runtime probe can proceed alongside M2.
-Mission/new-zone transfers, automatic Launcher startup and combat remain
-separate unfinished scope.
+`COH-Diagnostic-0.1.0.apk` is 13,309,477 bytes, SHA-256
+`80e53b03d95ec851623b8b743b067e87642e392a387d24679adcd81d119d38ac`.
+Download the `coh-diagnostic-apk` artifact from the accepted run. It contains
+no game binaries or assets. The native Java app and owned PRoot session combine
+pinned Bookworm/Wine 10/FEX inputs with PostgreSQL built from official pinned
+source; its ephemeral CI signing certificate is not a stable update identity.
+
+**M2 remains incomplete until physical Thor acceptance.** Follow
+[the device steps](ANDROID_DIAGNOSTIC.md#thor-acceptance-steps): **Setup runtime**,
+**Run diagnostics**, **Export latest report**, then repeat after reopening and
+exercise **Stop**. If cleanup fails, export first, then use Android **Settings →
+Apps → COH Diagnostic → Force stop** and reopen; closing the activity does not
+clear the cleanup block. Hosted Linux execution does not prove Android SELinux,
+foreground-service lifecycle, device shutdown, performance or gameplay. A basic
+client-runtime probe can proceed alongside the device gate. Mission/new-zone
+transfers, automatic Launcher startup and combat remain separate unfinished scope.
 
 ### Earlier attempts and corrections
 
@@ -232,8 +246,8 @@ PostgreSQL auction timestamp filter. Stop DbServer, back up and run
 `pg_local.py migrate` for an existing development cluster. See the
 [persistence design and test scope](POSTGRESQL_PERSISTENCE.md),
 [database instructions](../database/postgresql/README.md) and
-[validation record](VALIDATION.md). This is a database development milestone,
-not yet a gameplay-validated server or Android APK.
+[validation record](VALIDATION.md). This database milestone does not establish
+gameplay; the separate diagnostic APK's current acceptance is recorded above.
 
 **Stage1 asset inspection complete:** `stage1a.pigg`, `stage1b.pigg` and
 `stage1f.pigg` have been received. All **14,814 entries** passed archive integrity
@@ -393,9 +407,10 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 hosted and Thor acceptance**, as specified above. The following
-items preserve completed reference gates and describe additional work; their
-order does not place further Windows server experiments ahead of M2.
+**Complete M2 physical Thor acceptance** using the accepted APK above; the
+hosted gate has passed. The following items preserve completed reference gates
+and describe additional work; their order does not place further Windows server
+experiments ahead of the device gate.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
    It passed ordinary template comparison and Atlas Park readiness with schema
@@ -448,9 +463,10 @@ order does not place further Windows server experiments ahead of M2.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Bring up native ARM64 PostgreSQL plus Win32 psqlODBC under the selected
-   Android runtime, then package under the APK’s own UID. Measure the stock
-   65-connection pool, memory, suspension/restart and save durability on Thor.
+4. Run the accepted diagnostic APK under its own UID on Thor and export the
+   report. Confirm the 65-connection pool, durable restart, repeat-run and Stop
+   behavior on the physical device; memory and suspension behavior remain
+   device measurements. The hosted ARM64 runtime and APK packaging already passed.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

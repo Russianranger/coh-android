@@ -2,12 +2,12 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, 2026-09-27: the [Atlas instance round-trip job](#2026-09-27-atlas-instance-round-trip-and-final-protocol-save)
-passed all fifteen phases on hosted Windows, including exact destination proof
-for map 1 → 101 → 1 and a final protocol save. All five workflow jobs passed,
-including the separate sustained-session regression. The next milestone is the M2
-Thor diagnostic APK; missions, automatic map startup, combat, graphical gameplay
-and Android execution remain unvalidated.
+Latest milestone, 2026-09-27: the [M2 diagnostic APK and hosted ARM64 guest gate](#2026-09-27-m2-diagnostic-apk-and-hosted-arm64-guest-acceptance)
+passed all four jobs, 80 tooling tests and eleven guest stages in run
+`36336644450`. The APK is ready for physical Thor acceptance, which remains
+pending. The earlier [Atlas instance round trip](#2026-09-27-atlas-instance-round-trip-and-final-protocol-save)
+retains its accepted Windows scope. Missions, automatic map startup, combat,
+graphical gameplay and Android device execution remain unvalidated.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -45,7 +45,9 @@ The result must equal the original tree in `upstream-lock.json`.
 - PostgreSQL was initially untested. Live PostgreSQL integration has since been added; see the database addendum below. No SQL Server data migration has been performed.
 - No binary game-asset download, template/bin generation or source/data compatibility test. Companion text data was subsequently imported; see the addendum.
 - No Wine/FEX, PhysX, graphics or gameplay execution.
-- No Android APK build, emulator/device run, performance or thermal benchmark.
+- No Android APK build at this initial assessment; the diagnostic build and hosted
+  ARM64 gate passed later, as recorded below. Emulator/device runs, performance
+  and thermal benchmarks remain unvalidated.
 
 The source's CMake restrictions were read directly; they were not reported as a
 failed build experiment. The original PostgreSQL defect was identified through source inspection.
@@ -555,11 +557,53 @@ passed at `3848133e5e644f4c166cc9e7f3e027288d06c2fd`; the accepted retry changed
 only test fixtures and documentation, preserving that runtime implementation.
 See the [transfer acceptance and attempt record](MAP_TRANSFER_VALIDATION.md).
 
-The next milestone is [M2's Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria):
-app-owned ARM64 PostgreSQL, Wine/translation and the existing Win32 ODBC probe,
-with initialization, transactions, restart durability and owned-process shutdown.
-The Android shell and runtime packaging are still unimplemented. New-zone and
-mission transfers, automatic Launcher startup, combat, graphics, auxiliary
-services and complete asset coverage remain separate unfinished scope; they
-are not prerequisites for this diagnostic. No APK, Android execution or device
-performance result is claimed.
+At this checkpoint the next milestone was [M2's Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria).
+Its subsequent hosted acceptance is recorded below. New-zone and mission
+transfers, automatic Launcher startup, combat, graphics, auxiliary services and
+complete asset coverage remain separate unfinished scope.
+
+## 2026-09-27 M2 diagnostic APK and hosted ARM64 guest acceptance
+
+[Run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
+passed all four jobs at source `0b61d7455f40f05709f912338cd5de8b1d72d750`,
+with workflow completion at **17:29:16 UTC**. All **80 tooling tests** passed
+without skips. Native ARM64 PostgreSQL build/dependency and transaction/restart
+checks passed; the APK passed compilation, signing, package/ABI, payload and
+compiled ODBC import verification. The same-source
+[PostgreSQL regression run 36336644454](https://github.com/Russianranger/coh-android/actions/runs/36336644454)
+also passed all four jobs.
+
+The APK is `COH-Diagnostic-0.1.0.apk`, **13,309,477 bytes**, SHA-256
+`80e53b03d95ec851623b8b743b067e87642e392a387d24679adcd81d119d38ac`.
+Its embedded runtime manifest SHA-256 is
+`ace8964c905d4affbf9c28ee26e5922b6e4fc3fef3b0c88b7df5d8a806aaa14f`.
+The [build report](android-evidence/apk-build-36336644450.json),
+[raw guest report](android-evidence/runtime-smoke-report-36336644450.json) and
+[acceptance/provenance receipt](android-evidence/accepted-hosted-36336644450.json)
+are preserved; the workflow's `coh-diagnostic-apk` artifact supplies the APK.
+
+The exact packaged guest assets ran under native Linux ARM64 PRoot from
+**17:27:01.526 to 17:29:12.850 UTC**. All **eleven stages** passed with no
+failures. The real 32-bit registered Windows psqlODBC driver loaded; the PE32
+fixture DLL and Windows ODBC manager also loaded. The ODBC fixture reported
+version **18.00.0004**, 32-bit pointers and two-byte SQLWCHAR, and passed all
+eight required check groups: 65 concurrent stock connections; ID ordering,
+rollback and import state; indexes; foreign keys; bound UTF-16/binary and other
+values; canonical column metadata; atomic schema rebuild; and column migration
+with connection reopen. Graceful PostgreSQL shutdown and restart used the same
+cluster, followed by a fresh Win32 ODBC pass verifying persisted fixture data.
+
+Cleanup proved graceful final PostgreSQL shutdown, stopped prefix-owned Wine
+and reaped owned processes. Wine's stop request exited 1, but its wait exited 0
+and independent checks proved the prefix lock free and server socket inactive;
+the request exit code alone was not treated as shutdown proof. All cleanup
+flags were true. This hosted run used the source-documented ANSI aliases and
+Unicode metadata workarounds in [ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md),
+without weakening the fixture SQL or acceptance markers. Earlier failed attempts
+remain in the [attempt record](android-evidence/attempts-20260927.json).
+
+**Physical Android execution and gameplay remain unvalidated.** The accepted
+APK contains no game binaries or assets. Hosted Linux ARM64 success cannot
+establish Android SELinux, foreground-service lifecycle, device cleanup,
+performance or rendering. M2's remaining device gate is [Thor setup, diagnostic
+run, report export, repeat-run and Stop checks](ANDROID_DIAGNOSTIC.md#thor-acceptance-steps).

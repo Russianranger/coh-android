@@ -173,9 +173,18 @@
       "guest_postgresql_durable_restart_executed": false,
       "android_device_validated": false,
       "raw_report": "runtime-smoke-report-36335852159.json",
-      "next_correction": "SQLColumnsW with the same NULL catalog/column filters and dbo/pgprobe names; retain all row-count and canonical-type assertions"
+      "next_correction": "SQLColumnsW with the same NULL catalog/column filters and dbo/pgprobe names; retain all row-count and canonical-type assertions",
+      "correction_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750"
     }
   ],
   "android_device_validated": false,
-  "gameplay_validated": false
+  "gameplay_validated": false,
+  "accepted_hosted": {
+    "run_id": 36336644450,
+    "repository_commit": "0b61d7455f40f05709f912338cd5de8b1d72d750",
+    "status": "hosted_qualified_device_pending",
+    "receipt": "accepted-hosted-36336644450.json",
+    "android_device_validated": false,
+    "gameplay_validated": false
+  }
 }
