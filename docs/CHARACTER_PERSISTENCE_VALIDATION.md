@@ -53,7 +53,12 @@ The replacement captures the actual TestClient console using an observer
 attached to the owned client PID before releasing the launcher version exchange.
 It holds the console across the short client exit and writes bounded private
 snapshots. Creation/resume assertions and failure diagnostics remain required;
-console overflow or loss must fail the experiment.
+console overflow or loss must fail the experiment. Its first hosted Windows
+regression ([36281169823](https://github.com/Russianranger/coh-android/actions/runs/36281169823))
+stopped at observer startup with `WinError 5`; the game experiment was skipped.
+The follow-up adds exact Windows API failure labels and opens the owned buffer
+with read/write access for sizing. No console characters are written by the
+observer. [Regression record](postgresql-evidence/character-console-36281169823.json).
 
 Preserved retry: [artifact ZIP](postgresql-evidence/character-persistence-36270565732.zip)
 and [report](postgresql-evidence/character-persistence-36270565732.json). Artifact

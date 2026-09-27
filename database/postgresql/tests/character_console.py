@@ -215,24 +215,28 @@ class _WindowsConsole:
             function.argtypes, function.restype = args, result
         try:
             # Never detach the harness itself; this runs in a separate helper.
-            self.api.FreeConsole()
+            if not self.api.FreeConsole():
+                self._raise_api('FreeConsole')
             deadline = time.monotonic() + timeout
             while not self.api.AttachConsole(pid):
                 error = ctypes.get_last_error()
                 if error != 6 or time.monotonic() >= deadline:  # ERROR_INVALID_HANDLE: no console yet.
-                    raise ctypes.WinError(error)
+                    self._raise_api('AttachConsole', error)
                 time.sleep(POLL_SECONDS)
             self.attached = True
             peers = (w.DWORD * 32)()
             count = self.api.GetConsoleProcessList(peers, len(peers))
+            if count == 0:
+                self._raise_api('GetConsoleProcessList')
             require(0 < count <= len(peers), 'Console process list exceeded verification bound')
             require({pid, os.getpid()}.issubset(set(peers[:count])), 'Console is not attached to expected client PID')
-            # GENERIC_READ only: even buffer resizing requires no character
-            # write access. Explicit CONOUT$ avoids inherited redirected handles.
-            self.handle = self.api.CreateFileW('CONOUT$', 0x80000000, 0x1 | 0x2, None, 3, 0, None)
+            # Request both access rights for the bounded screen-buffer resize.
+            # No console-character write API is called. Explicit CONOUT$ avoids
+            # inherited redirected handles (the observed GUI capture failure).
+            self.handle = self.api.CreateFileW('CONOUT$', 0x80000000 | 0x40000000, 0x1 | 0x2, None, 3, 0, None)
             if self.handle == ctypes.c_void_p(-1).value:
                 self.handle = None
-                raise ctypes.WinError(ctypes.get_last_error())
+                self._raise_api('CreateFileW(CONOUT$)')
             before = self.info()
             require(0 < before.dwSize.X <= MAX_WIDTH and
                     before.dwCursorPosition.Y < before.dwSize.Y - 1,
@@ -240,7 +244,7 @@ class _WindowsConsole:
             self.width = max(MIN_WIDTH, before.dwSize.X)
             require(before.dwSize.Y <= BUFFER_ROWS, 'Initial console height exceeds capture bound')
             if not self.api.SetConsoleScreenBufferSize(self.handle, Coord(self.width, BUFFER_ROWS)):
-                raise ctypes.WinError(ctypes.get_last_error())
+                self._raise_api('SetConsoleScreenBufferSize')
             self.last_y = 0
         except Exception:
             self.close()
@@ -249,8 +253,12 @@ class _WindowsConsole:
     def info(self):
         info = self.Info()
         if not self.api.GetConsoleScreenBufferInfo(self.handle, self.c.byref(info)):
-            raise self.c.WinError(self.c.get_last_error())
+            self._raise_api('GetConsoleScreenBufferInfo')
         return info
+
+    def _raise_api(self, operation, error=None):
+        code = self.c.get_last_error() if error is None else error
+        raise OSError(f'{operation} failed: {self.c.WinError(code)}')
 
     def _validate(self, info):
         require((info.dwSize.X, info.dwSize.Y) == (self.width, BUFFER_ROWS),
@@ -269,7 +277,7 @@ class _WindowsConsole:
             read = self.w.DWORD()
             if not self.api.ReadConsoleOutputCharacterW(self.handle, buffer, length, self.Coord(0, 0),
                                                          self.c.byref(read)):
-                raise self.c.WinError(self.c.get_last_error())
+                self._raise_api('ReadConsoleOutputCharacterW')
             require(read.value == length, 'Console snapshot read was incomplete')
             after = self.info()
             after_cursor = self._validate(after)

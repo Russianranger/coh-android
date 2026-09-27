@@ -95,6 +95,13 @@ class ConsoleSnapshotTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 observer._validate(value)
 
+    def test_windows_errors_identify_the_failing_api(self):
+        from types import SimpleNamespace
+        observer = console._WindowsConsole.__new__(console._WindowsConsole)
+        observer.c = SimpleNamespace(get_last_error=lambda: 5, WinError=lambda code: f'WinError {code}')
+        with self.assertRaisesRegex(OSError, 'SetConsoleScreenBufferSize failed: WinError 5'):
+            observer._raise_api('SetConsoleScreenBufferSize')
+
 
 GUI_FIXTURE = r'''
 import ctypes
