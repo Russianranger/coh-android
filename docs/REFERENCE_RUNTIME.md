@@ -5,7 +5,8 @@ repository. Ordinary asset-backed template generation and Atlas Park protocol
 readiness have passed using this package, followed by fresh fake-auth character
 persistence through logout, service restart and a short exact-name scene resume.
 A separately packaged opt-in TestClient has also passed a sustained resumed
-session and second protocol save against the same accepted server package.
+session and an Atlas map 1 → 101 → 1 round trip with final protocol save against
+the same accepted server package. The M2 Thor diagnostic APK is next.
 This is not an Android app or a gameplay-validated server.
 
 ## Build and downloads
@@ -349,9 +350,45 @@ The [report](postgresql-evidence/character-session-36295176484.json),
 are preserved. The [sustained-session design and attempt history](SUSTAINED_SESSION_VALIDATION.md)
 describe the diagnostic's limits.
 
-The next proposed transfer test uses two prestarted Atlas instances, map 1 → 101
-→ 1, with the existing assets. It is unvalidated and would not establish new-zone,
-mission or automatic map-start coverage. Combat, auxiliary services and
-graphical/custom-client compatibility remain separate gates. The Android
-diagnostic APK must still prove app-owned ARM64 PostgreSQL and Win32 ODBC under
-Wine/translation on Thor; no Android execution or performance result is claimed.
+## Separate diagnostic client: Atlas instance round trip
+
+The [transfer job in run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197056)
+passed all fifteen runtime phases without failures at commit
+`5f2c561058a186de59d3f27301eea210bd4bb66d`. All five workflow jobs passed,
+including the separate sustained-session regression. This run's
+`resume-testclient-win32` artifact adds transfer epochs and processed destination
+updates; it is separate from the
+earlier sustained-only diagnostic. Its executable SHA-256 is
+`94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856`.
+The stock reference package, DbServer, MapServer, schemas, assets and imported
+source snapshots remain unchanged.
+
+After fresh creation/save, restart, missing-name refusal and 64.953 seconds
+connected, the same `TEST59440` (ID 1) moved from Atlas map 1 to its owned,
+prestarted clone 101 and back. The clone advanced from unstarted to ready on UDP
+7002. Each successful handoff produced a new epoch followed by a processed player
+update with the original ID/name and actual peer. These peers matched independent
+DbServer MapId/SmapId status: 101 at 127.0.0.1:7002, then 1 at :7001. Both arrivals
+were connected without `InMapXfer`, with current heartbeats and live influence
+12345. Received base-map 1 and instance numbers 2/1 were retained as metadata,
+not substituted for the database map IDs.
+
+Independent SQL reads after each leg showed unchanged committed selected state
+and LoginCount 2; they do not establish fresh identical transfer writes or
+transfer-save acknowledgements. The final distinct change to influence 23456 was
+observed live and committed after protocol logout before forced cleanup. The
+same one-character inventory remained, with ten selected power and thirteen
+costume-part rows. All three console observers finalized cleanly. The
+[report](postgresql-evidence/character-transfer-36297542986.json),
+[redacted archive](postgresql-evidence/character-transfer-36297542986.zip),
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-transfer-36297542986.json)
+and [transfer scope](MAP_TRANSFER_VALIDATION.md) preserve the evidence.
+
+The next milestone is the [M2 Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria):
+package app-owned ARM64 PostgreSQL and a verified Wine/translation runtime, then
+run the existing Win32 ODBC probe to establish initialization, transactions,
+durable restart and owned-process shutdown. No Android shell or packaged runtime
+exists here yet. New-zone/mission transfers, automatic map startup, combat,
+auxiliary services and graphical/custom-client compatibility remain separate
+unfinished scope and need not delay that diagnostic. No APK, Android execution
+or performance result is claimed.

@@ -2,10 +2,12 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, 2026-09-27: [sustained character session and second protocol save](#2026-09-27-sustained-character-session-and-second-protocol-save)
-passed all twelve phases on hosted Windows, including missing-name refusal without
-SQL mutation and 66.953 seconds connected after resume. Combat, map transfers,
-graphical gameplay and Android execution remain unvalidated.
+Latest milestone, 2026-09-27: the [Atlas instance round-trip job](#2026-09-27-atlas-instance-round-trip-and-final-protocol-save)
+passed all fifteen phases on hosted Windows, including exact destination proof
+for map 1 → 101 → 1 and a final protocol save. All five workflow jobs passed,
+including the separate sustained-session regression. The next milestone is the M2
+Thor diagnostic APK; missions, automatic map startup, combat, graphical gameplay
+and Android execution remain unvalidated.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -499,10 +501,65 @@ and [PostgreSQL regressions](https://github.com/Russianranger/coh-android/action
 also passed. The [sustained-session record](SUSTAINED_SESSION_VALIDATION.md)
 retains the diagnostic-client contract and earlier attempt history.
 
-The next proposed server gate is a round trip between owned, prestarted Atlas Park
-map 1 and its pinned clone 101, with destination ownership, fresh player updates,
-live state and final protocol-save checks. It remains unvalidated and would not
-establish new-zone, mission or automatic Launcher startup coverage. Android's
-app-owned PostgreSQL/Win32 ODBC diagnostic APK remains a separate gate. Combat,
-graphical/custom-client compatibility, auxiliary services, complete asset coverage,
-Android execution and performance remain unvalidated.
+At this checkpoint the next proposed server gate was a round trip between owned,
+prestarted Atlas Park map 1 and its pinned clone 101. Its subsequent result is
+recorded below; this sustained-only result retains its original scope.
+
+## 2026-09-27 Atlas instance round trip and final protocol save
+
+The [transfer job in run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197056)
+passed at commit `5f2c561058a186de59d3f27301eea210bd4bb66d`. All fifteen runtime
+phases passed with no failures and status
+`fresh_fakeauth_character_map_roundtrip_second_save_passed_gameplay_unvalidated`.
+The [full workflow](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
+completed successfully, with its terminal status updated at **05:56:06 UTC**.
+All five jobs passed, including
+the [separate sustained-session regression](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197117).
+The accepted stock server/client package, schemas, assets and immutable upstream
+snapshots remained unchanged; a separate diagnostic client supplied the new
+transfer evidence.
+
+Fresh creation, first protocol save, service restart and missing-name refusal
+preserved `TEST59440` (ID 1). Exact-name resume stayed connected on Atlas Park for
+**64.953 seconds** across twelve samples, with a maximum gap of **6.234 seconds**
+and current heartbeats. The owned clone 101 then advanced from an independently
+observed unstarted state to ready on UDP 7002. The same client completed both
+requested legs with fresh processed player updates:
+
+| Transfer epoch | Independent MapId / SmapId | Actual client peer | Received base map / instance | Player ID |
+| --- | --- | --- | --- | --- |
+| 1, outbound | 101 / 101 | 127.0.0.1:7002 | 1 / 2 | 1 |
+| 2, return | 1 / 1 | 127.0.0.1:7001 | 1 / 1 | 1 |
+
+Each arrival was connected without `InMapXfer`, with current destination
+heartbeats and a fresh live reply showing influence 12345. Independent SQL reads
+showed unchanged committed selected state and LoginCount 2. These are state
+checks, not acknowledgements or timestamps of newly committed identical transfer
+writes. The final distinct change to influence 23456 was observed live and
+committed after requested protocol logout, before any forced client cleanup.
+LoginCount across first save, restart, missing-name refusal, outbound arrival,
+return and final save was **1 → 1 → 1 → 2 → 2 → 2**. The original identity and
+selected rows remained unchanged except for final currency: one `ents`, one
+`ents2`, ten power and thirteen costume-part rows. All three console observers
+retained final snapshots and exited zero without forced stop.
+
+The [redacted evidence ZIP](postgresql-evidence/character-transfer-36297542986.zip)
+is 15,804 bytes with SHA-256
+`260589aa765e330a891f8769fe33108c22769c829d122110e4b2098041a5ce42`.
+The [raw report](postgresql-evidence/character-transfer-36297542986.json) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-transfer-36297542986.json)
+are preserved. Windows passed all 119 tooling checks; Linux passed 114 with five
+Windows-only skips. The [legacy character regression](https://github.com/Russianranger/coh-android/actions/runs/36297326643)
+and all four [PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36297326629)
+passed at `3848133e5e644f4c166cc9e7f3e027288d06c2fd`; the accepted retry changed
+only test fixtures and documentation, preserving that runtime implementation.
+See the [transfer acceptance and attempt record](MAP_TRANSFER_VALIDATION.md).
+
+The next milestone is [M2's Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria):
+app-owned ARM64 PostgreSQL, Wine/translation and the existing Win32 ODBC probe,
+with initialization, transactions, restart durability and owned-process shutdown.
+The Android shell and runtime packaging are still unimplemented. New-zone and
+mission transfers, automatic Launcher startup, combat, graphics, auxiliary
+services and complete asset coverage remain separate unfinished scope; they
+are not prerequisites for this diagnostic. No APK, Android execution or device
+performance result is claimed.

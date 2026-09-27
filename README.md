@@ -63,14 +63,26 @@ The stock reference package is unchanged. See the
 [accepted evidence](docs/postgresql-evidence/accepted-character-session-36295176484.json)
 and [sustained-session scope](docs/SUSTAINED_SESSION_VALIDATION.md).
 
-The repository is **not a complete runnable installation**. The next server gate
-is a proposed transfer between two prestarted Atlas Park instances, map 1 → 101
-→ 1; it has not been validated. New-zone and automatic map-start coverage remain
-separate. The Android gate is a diagnostic APK running app-owned
-ARM64 PostgreSQL and the Win32 ODBC probe under Wine/translation on Thor. Runtime
-cache generation beyond the exercised paths, complete asset coverage, gameplay,
-Android execution and complete serializer equivalence remain unvalidated.
-Supplied binary assets stay outside Git.
+The [Atlas transfer job](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197056)
+has now passed all fifteen phases at `5f2c561058a186de59d3f27301eea210bd4bb66d`.
+After 64.953 seconds connected, the same character moved from map 1 to its
+prestarted clone 101 and back. Fresh player updates, actual peer ports and
+independent MapId/SmapId status proved both destinations. Live influence stayed
+12345, and each arrival's committed selected SQL state remained unchanged with
+LoginCount 2. These state checks do not acknowledge new identical transfer writes.
+A final change to 23456 and protocol logout proved the fresh final save before
+forced cleanup. See the [accepted evidence](docs/postgresql-evidence/accepted-character-transfer-36297542986.json)
+and [transfer scope](docs/MAP_TRANSFER_VALIDATION.md). All five workflow jobs
+passed, including the separate sustained-session regression.
+
+The next milestone is **M2: a Thor diagnostic APK**, running app-owned ARM64
+PostgreSQL and the Win32 ODBC probe under Wine/translation. It must prove database
+initialization, transactions, durable restart and owned-process shutdown without
+Termux or root. No Android shell or packaged runtime exists yet. New-zone assets,
+missions, automatic map startup, combat and graphics remain separate unfinished
+work; they need not delay this platform diagnostic. The repository is **not a
+complete runnable installation**. Android execution, complete asset coverage and
+serializer equivalence remain unvalidated. Supplied binary assets stay outside Git.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)
 - [Actual DbServer persistence and migration behavior](docs/POSTGRESQL_PERSISTENCE.md)

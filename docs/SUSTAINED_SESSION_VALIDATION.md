@@ -4,7 +4,14 @@ Status: **passed** in [run 36295176484](https://github.com/Russianranger/coh-and
 at `4e8058c3ffe20acda61b55023202d409ed1d0df1`, completed 2026-09-27
 05:08:11 UTC. All 12 phases passed with no failures. This establishes the
 exercised sustained connection and second save; combat, movement, rendering,
-transfers and Android execution remain unvalidated.
+transfers and Android execution were outside this run's scope.
+The later [Atlas round-trip gate](MAP_TRANSFER_VALIDATION.md#accepted-hosted-validation-36297542986)
+passed in run `36297542986`, which also reran this sustained-only experiment
+successfully with the updated diagnostic client. That regression passed all
+12 phases and held its connection for 62.532 seconds over 10 samples; its
+[report](postgresql-evidence/character-session-36297542986.json) and
+[artifact](postgresql-evidence/character-session-36297542986.zip) are preserved.
+Android execution and rendered gameplay remain unvalidated.
 The accepted [short resume run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
 proved creation, a live currency change, protocol logout/save, same-database
 restart and an exact-name scene probe. This follow-on gate kept the resumed

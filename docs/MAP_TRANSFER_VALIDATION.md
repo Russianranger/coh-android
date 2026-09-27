@@ -1,10 +1,13 @@
 # Atlas instance transfer validation
 
-Status: implementation complete; hosted acceptance is pending. The accepted
+Status: **passed** in [run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
+at `5f2c561058a186de59d3f27301eea210bd4bb66d`; terminal success was recorded
+2026-09-27 05:56:06 UTC. All 15 transfer phases and the separate sustained regression passed.
+The earlier accepted
 [sustained-session baseline](SUSTAINED_SESSION_VALIDATION.md#accepted-hosted-validation-36295176484)
 is run `36295176484` at `4e8058c3ffe20acda61b55023202d409ed1d0df1`.
 It proved exact-name resume, missing-name refusal, restored live state, 66.953
-seconds connected and a second protocol save. This next gate adds a round trip
+seconds connected and a second protocol save. This gate adds a round trip
 between two owned, prestarted Atlas instances before that final save.
 
 ## Scope and map identity
@@ -64,6 +67,10 @@ The ordinary transfer sends a save without a commit acknowledgement. Independent
 SQL polling is therefore required on each leg. The resumed login can first reach
 committed SQL during the outbound transfer; a pre-transfer SQL count of 1 alone
 does not indicate another login is needed.
+These per-leg queries establish the currently committed selected state. They do
+not acknowledge or timestamp a new identical transfer write. The later distinct
+change to 23,456, followed by protocol logout and independent SQL before cleanup,
+provides the fresh final-save evidence.
 
 ## Hosted execution and provenance
 
@@ -79,10 +86,56 @@ retains `character-session-evidence`. Only selected redacted diagnostics and
 reports are published. Raw runtime data, credentials and full container payloads
 stay in the disposable private test directory.
 
-Local focused verification passed 63 portable character checks (five Windows-only
-checks await the hosted runner) and all 38 diagnostic source/package checks.
-The latter exercise the actual patched C selection, transfer and update helpers.
-These checks do not replace the hosted round-trip acceptance.
+Hosted tooling passed all 119 checks on Windows and 114 on Linux, with five
+Windows-only skips on Linux. This includes 68 Windows character checks, 13 map
+checks and 38 diagnostic source/package checks. The latter exercise the actual
+patched C selection, transfer and update helpers on both platforms.
+
+## Accepted hosted validation: 36297542986
+
+`TEST59440`, container ID 1, remained in the same resumed client process for
+both transfers. Before transfer, 12 connected samples covered 64.953 seconds,
+with a maximum gap of 6.234 seconds. Clone 101 was independently observed
+unstarted, then ready on its assigned port before the first transfer.
+
+| Leg | Fresh epoch | Connected peer | Independent MapId / SmapId | Live influence |
+| --- | ---: | --- | --- | ---: |
+| Atlas 1 → clone 101 | 1 | 127.0.0.1:7002 | 101 / 101 | 12,345 |
+| Clone 101 → Atlas 1 | 2 | 127.0.0.1:7001 | 1 / 1 | 12,345 |
+
+Each processed player update carried the original ID/name and a newly connected
+peer. Both maps had current heartbeats, and independent arrival and settled
+character status showed the requested destination without `InMapXfer`. The
+received base map was 1 on both legs; instance numbers 2 and 1 were recorded
+separately from the database map IDs.
+
+Selected committed identity and parent/child rows stayed unchanged: one `ents`,
+one `ents2`, 10 powers and 13 costume parts. LoginCount progressed
+1 → 1 → 1 → 2 → 2 → 2 across first save, restart, missing-name refusal,
+outbound arrival, return arrival and final save. Both arrival snapshots were
+identical. After return, a fresh live command changed influence to 23,456;
+protocol logout then committed that sole selected-data change before forced
+cleanup. All three console observers finalized successfully and both maps
+remained ready before cleanup.
+
+The [raw report](postgresql-evidence/character-transfer-36297542986.json),
+[complete artifact](postgresql-evidence/character-transfer-36297542986.zip) and
+[acceptance/provenance record](postgresql-evidence/accepted-character-transfer-36297542986.json)
+are preserved. Artifact `10924242591` is 15,804 bytes, SHA-256
+`260589aa765e330a891f8769fe33108c22769c829d122110e4b2098041a5ce42`.
+The [build manifest](postgresql-evidence/resume-testclient-build-36297542986.json)
+and [source receipt](postgresql-evidence/resume-testclient-source-36297542986.json)
+identify the separate diagnostic executable, SHA-256
+`94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856`.
+
+The same workflow passed the separate sustained-session regression using those
+same diagnostic bytes; its [report](postgresql-evidence/character-session-36297542986.json)
+and [artifact](postgresql-evidence/character-session-36297542986.zip) are preserved.
+The [stock-client regression 36297326643](https://github.com/Russianranger/coh-android/actions/runs/36297326643)
+and all four [PostgreSQL jobs 36297326629](https://github.com/Russianranger/coh-android/actions/runs/36297326629)
+also passed at implementation commit `3848133e5e644f4c166cc9e7f3e027288d06c2fd`.
+The successful transfer retry only corrected the Windows test fixture and
+recorded its failure; runtime code was identical between these two commits.
 
 ## First hosted attempt: tooling correction
 
@@ -102,11 +155,13 @@ does not change the client overlay, server runtime or transfer harness. The
 is preserved. The diagnostic build and both runtime experiments were skipped;
 this attempt provides no transfer or sustained runtime acceptance.
 
-A pass would establish this round trip between two prestarted Atlas instances.
-It would not establish new-zone asset coverage, mission transfers, automatic
+This pass establishes the round trip between two prestarted Atlas instances.
+It does not establish new-zone asset coverage, mission transfers, automatic
 Launcher startup, combat, rendering/custom-client compatibility, auxiliary
 services, graceful whole-server shutdown or Android execution. No APK result is
-claimed.
+claimed. The next implementation priority is the
+[M2 Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md); these remaining server and
+gameplay scopes are separate work, not prerequisites for that diagnostic APK.
 
 ## Source basis
 

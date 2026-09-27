@@ -14,7 +14,11 @@ game-service restart, and exact-name short resume also passed in
 The follow-on [sustained-session run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
 also passed: exact-name resume, missing-name refusal without mutation, 66.953
 seconds connected, restored live currency and a second protocol save.
-Combat, movement, rendered gameplay, transfers and Android execution remain gates.
+The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
+also passed: the same character moved map 1 → prestarted clone 101 → map 1,
+preserved committed state at each arrival and completed the final protocol save.
+The next implementation priority is the M2 Thor diagnostic Android APK.
+Combat, movement, rendered gameplay and Android execution remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -82,17 +86,47 @@ The [failed evidence](postgresql-evidence/character-session-36293644180.json) is
 preserved. The corrected retry above proves the sustained resume and second save;
 the failed attempt remains identified as a failure.
 
-### Active gate: Atlas instance transfer
+### Accepted next milestone: Atlas instance transfer
 
-The next [Atlas instance transfer gate](MAP_TRANSFER_VALIDATION.md) is implemented:
-the same resumed character must move map 1 → clone 101 → map 1,
-prove each destination independently and complete the final protocol save.
-Hosted transfer acceptance is pending. The workflow will also rerun the accepted
-sustained-session experiment against the same newly built diagnostic client.
+The [Atlas instance transfer gate](MAP_TRANSFER_VALIDATION.md#accepted-hosted-validation-36297542986)
+passed all 15 phases in run `36297542986`, tested commit
+`5f2c561058a186de59d3f27301eea210bd4bb66d`; terminal success was recorded
+2026-09-27 05:56:06 UTC. `TEST59440` / ID 1 stayed in the same client process
+for map 1 → clone 101 → map 1. Fresh player updates carried transfer epochs 1
+and 2 on ports 7002 and 7001, while independent character status confirmed
+MapId/SmapId 101 then 1. Each arrival had current heartbeats, live influence
+12,345 and unchanged committed selected state. Per-leg SQL reads establish that
+state, not a fresh identical-write acknowledgement. The subsequent live change
+to 23,456 and protocol logout supplied a fresh final-save proof before cleanup.
+LoginCount stayed 2 across both transfers and final logout; no extra character
+was created. All three console observers finalized successfully.
+
+The [raw report](postgresql-evidence/character-transfer-36297542986.json),
+[artifact](postgresql-evidence/character-transfer-36297542986.zip) and
+[acceptance record](postgresql-evidence/accepted-character-transfer-36297542986.json)
+are preserved. Windows passed all 119 tooling checks; Linux passed 114 with
+five Windows-only skips. The same workflow passed the 12-phase sustained
+regression using the same diagnostic bytes (62.532 seconds over 10 samples).
+The stock-client and all four PostgreSQL regression jobs also passed at
+`3848133e5e644f4c166cc9e7f3e027288d06c2fd`, with identical runtime code;
+the retry changed only the test fixture and documentation.
 The first transfer attempt stopped before the build on a Windows C-test fixture
 portability error. The fixture now uses Winsock on Windows; client and server
 code are unchanged by that correction. The [tooling failure record](postgresql-evidence/character-transfer-tooling-36297326622.json)
-is preserved, and hosted acceptance will use a fresh retry.
+is preserved separately from the successful retry.
+
+### Next gate: M2 Thor diagnostic Android APK
+
+Begin the app-owned ARM64 PostgreSQL and Win32 runtime experiment described in
+the [Android proposal](ANDROID_PORT_PROPOSAL.md). Its acceptance target is a
+database transaction and durable restart, Win32 executable/DLL launch and the
+existing ODBC probe, owned process shutdown and redacted diagnostics on Thor
+(Android 13, ARM64), without Termux or root. A basic client-runtime probe can
+proceed alongside it. No Android application shell or verified packaged
+PostgreSQL/Wine/translation stack exists in this repository yet; select and pin
+those inputs before claiming an installable diagnostic build. Mission/new-zone
+transfers, automatic Launcher startup and combat remain separate unfinished
+scope, not prerequisites for this diagnostic milestone.
 
 ### Earlier attempts and corrections
 
@@ -352,7 +386,11 @@ existing asset folder; the user has since supplied the targeted assets above.
 No additional broad asset upload or Windows VM is required for this assessment. Do not silently substitute the current
 customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
-## Next implementation steps
+## Next implementation priority and remaining scope
+
+**Implement the M2 Thor diagnostic APK next**, as specified above. The following
+items preserve completed reference gates and describe additional work; their
+order does not place further Windows server experiments ahead of M2.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
    It passed ordinary template comparison and Atlas Park readiness with schema
@@ -390,13 +428,11 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    The [sustained resume and second-save result](SUSTAINED_SESSION_VALIDATION.md#accepted-hosted-validation-36295176484)
    has also passed, including missing-name refusal without mutation. Preserve
    the separate diagnostic TestClient receipts alongside the stock reference.
-   The next proposed transfer gate is Atlas map 1 → prestarted Atlas clone 101
-   → map 1, using reviewed assets and distinct owned MapServer ports. Require
-   each destination's MapId, connected status, fresh same-character server update,
-   current heartbeats and live currency, then committed protocol logout with no
-   extra character or login. This remains unvalidated; it would not establish
-   new-zone assets, mission transfers or automatic Launcher startup.
-   Follow with player-session completion callbacks, game-level
+   The [Atlas round trip](MAP_TRANSFER_VALIDATION.md) has also passed with
+   independent destination identity, fresh player updates, current heartbeats,
+   live currency and a final committed protocol save. New-zone assets, mission
+   transfers and automatic Launcher startup remain unvalidated.
+   Separate remaining server work includes player-session completion callbacks, game-level
    name uniqueness and auxiliary-service persistence. Generic-container network
    ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL
    Server save migration has been attempted. Empty-database startup/export and

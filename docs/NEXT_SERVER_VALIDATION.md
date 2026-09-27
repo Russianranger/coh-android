@@ -7,8 +7,11 @@ template outputs and observed Atlas Park ready for 62.235 seconds. Character
 run 36282414135 passed fresh fake-auth creation, live currency change,
 protocol logout/save, service restart and exact-name short scene resume.
 Sustained-session run 36295176484 then passed missing-name refusal, 66.953 seconds
-connected after exact-name resume and a second protocol save. The next proposed
-server gate is a transfer round trip between two prestarted Atlas Park instances.
+connected after exact-name resume and a second protocol save. The transfer job in
+run 36297542986 now passed the Atlas map 1 → 101 → 1 round trip and final save;
+all five workflow jobs passed, including the sustained regression. The next
+milestone is the M2 Thor diagnostic APK, with remaining gameplay/server scope
+kept separate.
 
 Continuation on 2026-09-26 recovered the run that had completed on 2026-09-25
 at 19:16:38 UTC while the committed handoff still said it was running. No queued
@@ -267,28 +270,45 @@ See the [report](postgresql-evidence/character-session-36295176484.json),
 [acceptance receipt](postgresql-evidence/accepted-character-session-36295176484.json)
 and [scope/attempt record](SUSTAINED_SESSION_VALIDATION.md).
 
-## Proposed Atlas instance transfer and separate Android gate
+## Passed Atlas instance round trip
 
-The next bounded experiment will start two owned MapServers for Atlas Park map 1
-and its pinned clone 101 on distinct ports, then move the same connected character
-1 → 101 → 1 through `CMD mapmove`. Pinned `maps.db` defines 101 with `BaseMapID 1`,
-so this uses the reviewed Atlas assets. Each leg must show the expected DbServer
-MapId, connected status without `InMapXfer`, a fresh destination `SERVER_UPDATE`
-identifying the same character, current map heartbeats and a live currency reply.
-Both instances share MapName, so that text alone cannot identify the destination.
-The current one-shot resume-update diagnostic needs a transfer-specific renewal
-before it can establish a fresh update on each leg.
+The [transfer job in run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197056)
+passed all fifteen phases at `5f2c561058a186de59d3f27301eea210bd4bb66d`, with no
+failures. The full workflow and its separate sustained-session regression passed.
+After 64.953 seconds of connected observation, `TEST59440` (ID 1) moved through
+`CMD mapmove 101` and `CMD mapmove 1` between two owned, prestarted Atlas instances.
+The clone's unstarted baseline and readiness on UDP 7002 were independently
+observed. Fresh transfer epochs bound the received original player identity to
+the actual destination peers, 127.0.0.1:7002 and :7001. Independent status showed
+connected MapId/SmapId 101 and then 1 without `InMapXfer`, with current heartbeats.
+The shared MapName was not used as destination proof.
 
-Final protocol logout must commit the expected currency and unchanged selected
-identity/power/costume rows, without another login or character. This is proposed
-and unvalidated: it would exercise handoff between two prestarted Atlas instances,
-not new-zone assets, mission transfers or automatic Launcher startup. Broader
-player-session callbacks and auxiliary services remain separate checks.
+Live influence remained 12345 on both arrivals. Independent SQL confirmed the
+unchanged committed selected state and LoginCount 2 after each leg; it does not
+prove a fresh identical write or a transfer-save acknowledgement. A final normal
+command changed influence to 23456, verified live and committed after protocol
+logout before forced cleanup. No extra character or login appeared. Preserve the
+[report](postgresql-evidence/character-transfer-36297542986.json),
+[redacted archive](postgresql-evidence/character-transfer-36297542986.zip),
+[acceptance receipt](postgresql-evidence/accepted-character-transfer-36297542986.json)
+and [scope/attempt record](MAP_TRANSFER_VALIDATION.md). The accepted stock package
+and imported source snapshots remain unchanged.
 
-The separate [Android milestone](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria)
-is a diagnostic APK running ARM64 PostgreSQL under its own UID and the existing
-Win32 ODBC probe through Wine/translation. It must prove initialization,
-transaction round trips, restart and owned-process shutdown on Thor without
-Termux or root. No Android shell or verified runtime is implemented here yet.
-Graphical/custom-client compatibility, gameplay and Android execution remain
-unvalidated.
+## Next milestone: M2 Thor diagnostic APK
+
+Proceed with the recorded [Android milestone](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria):
+an app-owned ARM64 PostgreSQL process and the existing Win32 ODBC probe through
+Wine/translation. Create the missing Android shell and reproducible runtime
+packaging, then prove initialization, transaction round trips, retained data after
+restart and owned-process shutdown on Thor without Termux or root. Use app-private
+database storage, a verified executable layout and bounded redacted diagnostics.
+The existing SQL probe and host lifecycle checks provide fixtures and acceptance
+logic; they do not constitute an Android runtime. Bring the basic Thor
+client-runtime probe alongside this work so later gameplay checks require no
+Windows PC.
+
+The accepted transfer covers only the two prestarted Atlas instances. New-zone
+assets, missions, automatic Launcher startup, broader player-session callbacks,
+combat, graphical/custom-client compatibility and auxiliary services remain
+separate unfinished scope, not prerequisites for M2. No Android shell, packaged
+runtime, APK execution or device performance result exists yet.
