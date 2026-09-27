@@ -528,8 +528,11 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         announce('protocol_logout_committed', 'passed')
         require(not client.forced_stop, 'Forced disconnect cannot establish protocol logout')
         logs_clean()
-        client.stop()  # Cleanup occurs only after independently proven logout/save.
+        # taskkill /T can also end the GUI child's conhost. Take the final
+        # owned-console snapshot before that cleanup, after logout/save proof.
         console.stop()
+        console.check_bounds()
+        client.stop()  # Cleanup occurs only after independently proven logout/save.
         pipe.close()
         for service in reversed(services):
             service.stop()
@@ -592,16 +595,19 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['failures'].append(redact(str(error), secrets))
         announce('character_persistence', 'failed', diagnostic=redact(str(error), secrets))
     finally:
+        # Final snapshots must precede forced client-tree cleanup. The normal
+        # short resume explicitly captures after its unforced exit above.
+        for console in reversed(consoles):
+            try:
+                console.stop()
+                console.check_bounds()
+            except Exception as error:
+                report['failures'].append('Console cleanup: ' + redact(str(error), secrets))
         for process in reversed(processes):
             try:
                 process.stop()
             except Exception as error:
                 report['failures'].append('Process cleanup: ' + redact(str(error), secrets))
-        for console in reversed(consoles):
-            try:
-                console.stop()
-            except Exception as error:
-                report['failures'].append('Console cleanup: ' + redact(str(error), secrets))
         for pipe in reversed(pipes):
             try:
                 pipe.close()

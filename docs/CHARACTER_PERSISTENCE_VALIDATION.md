@@ -66,6 +66,28 @@ and [report](postgresql-evidence/character-persistence-36270565732.json). Artifa
 `676ad69d27d588844cbd92a2f989d092b585a7ff0b0db0e5d9880e04985b648f`.
 It did not reach currency, logout, saved-state, restart or resume acceptance.
 
+## Current hosted validation
+
+[Run 36281372316](https://github.com/Russianranger/coh-android/actions/runs/36281372316)
+uses commit `5d98c4dfaa4ce3a828e6359cf3fafefcb0f0d675`. Its Windows tooling passed
+all 53 character checks, including the retained-console rapid-exit regression
+and three actual named-pipe checks, plus 13 existing map checks. Linux passed
+49 character checks and 13 map checks, with four Windows checks skipped.
+The full runtime created and connected a fresh character, observed influence
+12345 via the live server, requested protocol logout and verified committed SQL:
+one parent, one `ents2`, seven powers and twelve costume parts, with `LoginCount`
+1 and valid attribute references. It then failed during restart because forced
+client-tree cleanup destroyed the console before the observer's final capture
+(`GetConsoleScreenBufferInfo`, `WinError 233`). The observer is now finalized
+before forced cleanup, after the independent logout/save proof. The short resume
+observer still stays attached until its client exits naturally.
+
+Preserved [full artifact](postgresql-evidence/character-persistence-36281372316.zip)
+and [report](postgresql-evidence/character-persistence-36281372316.json): artifact
+`10919515668`, 5,969 bytes, SHA-256
+`e3bdcdf7b8e4f87a15048d0582db703d743b102e50fe19e2d769831c57ecbb51`.
+The committed first-session save is observed; restart/resume remains unvalidated.
+
 ## Run and inspect the harness
 
 Use the `Character persistence` Actions workflow. Its reviewed default inputs

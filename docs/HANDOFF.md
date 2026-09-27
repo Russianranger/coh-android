@@ -50,10 +50,30 @@ regression in [run 36280623154](https://github.com/Russianranger/coh-android/act
 `AllocConsole` still succeeded, so the runtime job was skipped. The replacement
 uses a bounded observer attached to the actual TestClient console before the
 launcher version exchange, preserving the console across the short client exit.
-Exact creation/resume acceptance is retained. Currency, logout/save and
-restart/resume have not yet been exercised.
+[Run 36281372316](https://github.com/Russianranger/coh-android/actions/runs/36281372316)
+then passed all 66 Windows tooling/map checks and reached real character creation,
+live currency 12345, protocol logout and independently committed SQL. The first
+saved snapshot contains one parent, one secondary row, seven powers and twelve
+costume parts. It failed on observer cleanup before restart acceptance: forced
+client-tree termination closed the console before its final snapshot. The
+[artifact](postgresql-evidence/character-persistence-36281372316.zip) and
+[report](postgresql-evidence/character-persistence-36281372316.json) are preserved.
+The follow-up finalizes the observer after proven logout/save but before residual
+client cleanup; exact resume acceptance remains required.
 All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
 also passed on the implementation commit.
+
+Latest runtime attempt [36281372316](https://github.com/Russianranger/coh-android/actions/runs/36281372316)
+passed fresh character creation, connected Atlas Park status, live influence 12345,
+protocol logout and independently committed parent/child SQL (`LoginCount` 1;
+1 parent, 1 ents2, 7 powers, 12 costume parts). It stopped during restart because
+forced client-tree cleanup closed the observer console before its final snapshot.
+The [report](postgresql-evidence/character-persistence-36281372316.json) and
+[artifact](postgresql-evidence/character-persistence-36281372316.zip) are preserved.
+Finalize the observer after proven logout/save and before forced client cleanup;
+retain post-exit capture for the naturally exiting short resume. All 66 Windows
+checks and all four PostgreSQL regression jobs passed on `5d98c4df...`.
+Restart/resume is still the active unfinished gate.
 
 ## Active direction
 
@@ -305,7 +325,7 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    on hosted Windows using the passed map/comparison evidence: fake-auth creation,
    a normal-protocol currency change,
    explicit logout, committed SQL verification, service restart and exact-name
-   resume. The harness awaits hosted execution; no character pass is claimed. Stock
+   resume. The current attempts and remaining gate are recorded above. Stock
    no-fallback resume is a short scene probe; a sustained second session needs
    the separately proposed TestClient option and a new reference build.
    Follow with map transfer, player-session completion callbacks, game-level

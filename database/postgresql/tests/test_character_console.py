@@ -155,6 +155,43 @@ api.CloseHandle(handle)
 
 @unittest.skipUnless(os.name == 'nt', 'Retained stock GUI console acceptance requires Windows')
 class WindowsConsoleTests(unittest.TestCase):
+    def test_final_console_snapshot_survives_later_forced_client_tree_cleanup(self):
+        pythonw = Path(sys.executable).with_name('pythonw.exe')
+        self.assertTrue(pythonw.is_file())
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entered, release = root / 'entered.json', root / 'release'
+            script = GUI_FIXTURE + '\nwhile True: time.sleep(0.1)\n'
+            child = network.Process([str(pythonw), '-c', script, str(entered), str(release)],
+                                    root, root, 'persistent-gui')
+            capture = console.ConsoleCapture(child.child.pid, root, 'persistent-gui')
+            try:
+                deadline = time.monotonic() + 10
+                while not entered.exists():
+                    self.assertIsNone(child.poll())
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(0.02)
+                capture.start()
+                release.touch()
+                deadline = time.monotonic() + 10
+                while 'commReqScene() AFTER_RELEASE\n' not in capture.text():
+                    self.assertIsNone(child.poll())
+                    self.assertLess(time.monotonic(), deadline)
+                    time.sleep(0.02)
+                self.assertIsNone(child.poll())
+                capture.stop()  # Final capture precedes taskkill /T of the GUI/conhost tree.
+                capture.check_bounds()
+                saved = capture.text()
+                child.stop()
+                self.assertTrue(child.forced_stop)
+                capture.check_bounds()  # Later restart health checks must still pass.
+                self.assertEqual(capture.text(), saved)
+                self.assertTrue(capture.report()['final_snapshot'])
+                self.assertFalse(capture.report()['observer']['forced_stop'])
+            finally:
+                capture.stop()
+                child.stop()
+
     def test_console_ready_before_release_and_final_diagnostics_retained_after_exit(self):
         pythonw = Path(sys.executable).with_name('pythonw.exe')
         self.assertTrue(pythonw.is_file(), 'Windows acceptance needs GUI-subsystem pythonw.exe')
