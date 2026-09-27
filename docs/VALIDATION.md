@@ -2,10 +2,10 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, recovered 2026-09-26: [ordinary template comparison and Atlas
-Park readiness](#2026-09-26-continuation-completed-reference-comparison-and-atlas-park)
-passed in the completed 2026-09-25 hosted run. The first hosted character attempt reached creation but exposed a status-parser
-bug in the harness; character persistence remains unvalidated.
+Latest milestone, 2026-09-27: [fresh character persistence and short resume](#2026-09-27-fresh-character-persistence-and-short-resume)
+passed all eight phases on hosted Windows. This follows the accepted ordinary
+template comparison and Atlas Park readiness checks. Sustained second-session
+gameplay and Android execution remain unvalidated.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -410,11 +410,50 @@ the requested 60 seconds. The map report contains no failures. Preserve the
 [complete recovered artifact](postgresql-evidence/postgresql-one-map-36176806895.zip)
 and [shared identities/archive hashes](reference-runtime-evidence/accepted-gates-36176806895.json).
 
-This establishes equality of the 56 generated files for the reviewed inputs
-and a bounded Atlas Park readiness observation. Normal executables do not
-report their queued startup error count; complete asset coverage, complete
-serializer semantics, character sessions and gameplay remain unvalidated.
-The next gate is the new character persistence harness. Its first hosted run
-reached a fresh character, then failed the harness status parser before currency,
-logout or restart checks. See [the attempt record](CHARACTER_PERSISTENCE_VALIDATION.md).
-No character persistence or Android pass is claimed.
+These checks establish equality of the 56 generated files for the reviewed inputs
+and a bounded Atlas Park readiness observation. They did not exercise a character
+session. Normal executables do not report their queued startup error count;
+complete asset coverage, complete serializer semantics and gameplay remain
+unvalidated. The first subsequent character run reached a fresh character, then
+failed the harness status parser before currency, logout or restart checks.
+That attempt and the later console-capture corrections remain in the
+[character validation record](CHARACTER_PERSISTENCE_VALIDATION.md).
+
+## 2026-09-27 fresh character persistence and short resume
+
+[Run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+passed at harness commit `86e512e85c8350714bc7b58668bf11443dc164f8`, using the
+accepted reference/schema pair and asset inputs above. The final report has
+eight passed phases, no failures and status
+`fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated`.
+
+The stock TestClient created `TEST20636`, character ID 1, through fresh fake auth
+on Atlas Park. Its live MapServer diagnostic identified the same character and
+account and observed influence 12345 while connected. Protocol logout was followed
+by independently committed SQL verification; `QuitNow` alone was not treated as
+a save acknowledgement. The selected snapshot contained one `ents` row, one
+`ents2` row, seven power rows and thirteen costume-part rows.
+
+After DbServer, MapServer and PostgreSQL restarted against the same database,
+selected rows and identity were unchanged and LoginCount remained 1. Exact-name
+resume selected slot 0 with creation disabled and completed the scene exchange.
+After its disconnect/save, the selected rows remained unchanged and LoginCount
+was 2. This short stock probe does not establish a sustained second session or
+active gameplay. Both owned console observers retained a final snapshot, exited
+zero and were not forcibly stopped.
+
+The downloaded [redacted evidence archive](postgresql-evidence/character-persistence-36282414135.zip)
+is 7,936 bytes with SHA-256
+`0dafdeb556326fb743d49ffd4d4075fe989aee2975eec31857256fc5b424db99`.
+The [report](postgresql-evidence/character-persistence-36282414135.json) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-persistence-36282414135.json)
+are preserved. At this commit, Windows passed all 67 tooling tests, including
+two GUI-console and three named-pipe smoke tests; Linux passed 62 with five
+Windows-only skips. [PostgreSQL regression run 36282414187](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
+passed all four jobs. The imported source snapshots were not modified.
+
+The next server gate is a sustained exact-name second session without creation
+fallback, then map transfers and player-session completion checks. The separate
+Android gate is an app-owned ARM64 PostgreSQL plus Win32 ODBC diagnostic APK on
+Thor. Combat, graphical/custom-client compatibility, auxiliary services, complete
+asset coverage, Android execution and performance remain unvalidated.

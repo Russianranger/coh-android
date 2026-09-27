@@ -1,11 +1,13 @@
 # Character persistence validation
 
-Status: **two hosted attempts exposed harness issues: status parsing, then
-TestClient console capture. Character persistence remains unvalidated**. The prerequisite
+Status, 2026-09-27: **fresh fake-auth character creation, protocol logout/save,
+PostgreSQL/game-service restart and exact-name short resume passed** in
+[run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135).
+Sustained gameplay and Android execution remain unvalidated. The prerequisite
 [asset-backed template and Atlas Park run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
 passed: all 56 generated outputs matched, followed by 62.235 seconds of
 DB-confirmed map readiness. The existing generic-container tests and map
-readiness do not establish game-character persistence.
+readiness alone do not establish game-character persistence.
 
 The `Character persistence` workflow reuses those accepted comparison/map
 reports and the matching reference/schema packages, stages a fresh runtime,
@@ -66,7 +68,7 @@ and [report](postgresql-evidence/character-persistence-36270565732.json). Artifa
 `676ad69d27d588844cbd92a2f989d092b585a7ff0b0db0e5d9880e04985b648f`.
 It did not reach currency, logout, saved-state, restart or resume acceptance.
 
-## Current hosted validation
+## First committed save and cleanup correction
 
 [Run 36281372316](https://github.com/Russianranger/coh-android/actions/runs/36281372316)
 uses commit `5d98c4dfaa4ce3a828e6359cf3fafefcb0f0d675`. Its Windows tooling passed
@@ -86,7 +88,44 @@ Preserved [full artifact](postgresql-evidence/character-persistence-36281372316.
 and [report](postgresql-evidence/character-persistence-36281372316.json): artifact
 `10919515668`, 5,969 bytes, SHA-256
 `e3bdcdf7b8e4f87a15048d0582db703d743b102e50fe19e2d769831c57ecbb51`.
-The committed first-session save is observed; restart/resume remains unvalidated.
+That attempt observed the committed first-session save but did not validate
+restart/resume. The corrected run below completed both remaining phases.
+
+## Accepted hosted validation: 36282414135
+
+[Run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+completed successfully on 2026-09-27 at 00:40:07 UTC using commit
+`86e512e85c8350714bc7b58668bf11443dc164f8`. All eight recorded phases passed,
+with an empty failure list and status
+`fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated`.
+
+The fresh account created `TEST20636`, container ID 1, and connected to Atlas
+Park. A normal command changed live influence to 12,345. Protocol logout was
+independently confirmed in committed SQL before any forced client cleanup.
+PostgreSQL, DbServer and MapServer restarted against the same database without
+reseed/import. Selected parent and child rows and identity remained unchanged:
+one `ents`, one `ents2`, seven powers and thirteen costume parts. Attribute
+references and mappings also passed their checks.
+
+The exact-name resume selected slot 0 with creation disabled, reached the scene
+exchange and exited naturally with code 0. Selected rows remained identical;
+`LoginCount` progressed **1 → 1 → 2** across logout, restart and resume. Both
+console observers took final snapshots and exited 0 without forced termination.
+The second connection is a short scene probe: processing of queued `CLIENT_READY`,
+sustained gameplay and graceful whole-server shutdown are not established.
+
+Windows passed all 54 character checks (including three real named-pipe and two
+GUI-console checks) plus 13 map checks. Linux passed 49 character and 13 map
+checks, skipping five Windows-only checks. All four jobs in the same-commit
+[PostgreSQL regression run 36282414187](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
+also passed.
+
+Preserved [complete artifact](postgresql-evidence/character-persistence-36282414135.zip),
+[report](postgresql-evidence/character-persistence-36282414135.json) and
+[acceptance/provenance record](postgresql-evidence/accepted-character-persistence-36282414135.json).
+Artifact `10918974991`, 7,936 bytes, SHA-256
+`0dafdeb556326fb743d49ffd4d4075fe989aee2975eec31857256fc5b424db99`.
+The original source snapshot and accepted reference executables are unchanged.
 
 ## Run and inspect the harness
 

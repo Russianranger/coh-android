@@ -6,7 +6,7 @@ The selected baseline is the **original OuroDev-derived source import** from
 the graphical client and development tools. It is Issue 24/Volume 2 lineage
 with downstream changes: source code, not a VM image.
 
-**Validation, 2026-09-26:** all 5,995 imported files pass integrity checks. An
+**Validation, 2026-09-27:** all 5,995 imported files pass integrity checks. An
 [upstream Windows build of this exact commit](https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567)
 built the server and client and passed nine utility, archive and codec tests.
 Gameplay and Android execution have not been validated.
@@ -35,7 +35,7 @@ The [real network save test](https://github.com/Russianranger/coh-android/action
 also passed: normal DbServer/MapServer requests, acknowledgements held until a
 blocked two-container save committed, and no acknowledgement after an injected
 commit failure. The failed save preserved the previous row and stopped DbServer.
-This exercises generic containers; character persistence remains a separate gate.
+This exercises generic containers; the separate character result is recorded below.
 
 The [asset-backed reference run](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
 also passed: ordinary MapServer template generation freshly reproduced all 56
@@ -44,12 +44,21 @@ kept Atlas Park ready for players, confirmed through DbServer status queries,
 for 62.235 seconds. The [recovered reports and archive hashes](docs/reference-runtime-evidence/accepted-gates-36176806895.json)
 record those completed gates.
 
-The repository is **not a complete runnable installation**. The next gate is
-the new character persistence harness, under hosted validation: creation,
-currency change, protocol logout, committed SQL verification and exact-name
-resume after service restart. Runtime cache generation beyond the exercised
-paths, complete asset coverage, gameplay, Android execution and complete
-serializer equivalence remain unvalidated. Supplied binary assets stay outside Git.
+The [character persistence run](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+passed all eight phases: fresh fake-auth creation, live currency change to 12345,
+protocol logout and committed SQL verification, service restart and exact-name
+short scene resume. Selected character, power and costume rows remained unchanged;
+LoginCount advanced from 1 to 2 only after resume. See the
+[accepted evidence](docs/postgresql-evidence/accepted-character-persistence-36282414135.json)
+and [scope of the test](docs/CHARACTER_PERSISTENCE_VALIDATION.md).
+
+The repository is **not a complete runnable installation**. The next server gate
+is a sustained second session with creation fallback disabled, followed by map
+transfer checks. The separate Android gate is a diagnostic APK running app-owned
+ARM64 PostgreSQL and the Win32 ODBC probe under Wine/translation on Thor. Runtime
+cache generation beyond the exercised paths, complete asset coverage, gameplay,
+Android execution and complete serializer equivalence remain unvalidated.
+Supplied binary assets stay outside Git.
 
 - [PostgreSQL backend implementation and test instructions](database/postgresql/README.md)
 - [Actual DbServer persistence and migration behavior](docs/POSTGRESQL_PERSISTENCE.md)

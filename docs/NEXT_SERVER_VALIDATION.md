@@ -1,10 +1,12 @@
 # Next server validation
 
-Updated: 2026-09-26. Normal DbServer startup/reload, real network save
+Updated: 2026-09-27. Normal DbServer startup/reload, real network save
 acknowledgements, asset-backed template comparison and Atlas Park readiness
 have passed. The corrected hosted run 36176806895 freshly matched all 56
-template outputs and observed Atlas Park ready for 62.235 seconds. The next
-gate is the new character persistence harness, under hosted validation.
+template outputs and observed Atlas Park ready for 62.235 seconds. Character
+run 36282414135 has now passed fresh fake-auth creation, live currency change,
+protocol logout/save, service restart and exact-name short scene resume. The next
+server gate is a sustained second session with creation fallback disabled.
 
 Continuation on 2026-09-26 recovered the run that had completed on 2026-09-25
 at 19:16:38 UTC while the committed handoff still said it was running. No queued
@@ -226,19 +228,35 @@ are preserved. This proves the bounded readiness observation, not complete
 asset coverage or a character session. Normal executables do not expose their
 queued startup error count.
 
-## Next: character persistence
+## Passed character persistence; next session and Android gates
 
-The new [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
-uses stock TestClient fake-auth creation, named-pipe control of a currency change
-and protocol logout, independently committed SQL snapshots, service restart and
-exact-name resume. Its first hosted attempt exposed a status-parser bug; **no character persistence
-pass is claimed**. Default
-creation is Primal Hero, which targets Atlas Park. Preserve the actual account,
-character ID/name and stable parent/child fields rather than volatile timestamps.
+The [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
+passed all eight phases in [run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+at `86e512e85c8350714bc7b58668bf11443dc164f8`, with no failures. Stock TestClient
+created `TEST20636` (ID 1) on Atlas Park, observed influence 12345 through the live
+MapServer response, requested protocol logout and verified committed selected
+SQL rows. Service restart preserved those rows and LoginCount 1; the exact-name
+short resume preserved them again and advanced LoginCount to 2. The selected
+snapshot contains one `ents`, one `ents2`, seven power and thirteen costume-part
+rows. Preserve the [report](postgresql-evidence/character-persistence-36282414135.json),
+[redacted archive](postgresql-evidence/character-persistence-36282414135.zip) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-persistence-36282414135.json).
+Earlier status-parser and console-capture attempts remain historical in the
+character validation record.
 
 Stock `-justlogin -character NAME` disables CREATE fallback but also exits after
 the scene exchange; it provides a short resume probe, not a second sustained
-session. The design records this limitation and a minimal future TestClient
-option requiring a new reference build. Account services, transfers, the
-customized client and Android execution remain separate checks. Character
-creation, protocol logout persistence and resume have not passed a hosted test.
+session. The next server test needs the proposed TestClient-only `-resumeonly`
+option and a new reference build: preserve STAY_CONNECTED, disable CREATE, fail
+explicitly for a missing requested name, then verify live restored state and a
+second protocol logout/save. A missing-name negative case must create no character.
+Map transfers, player-session completion callbacks and auxiliary services follow
+as separate checks.
+
+The separate [Android milestone](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria)
+is a diagnostic APK running ARM64 PostgreSQL under its own UID and the existing
+Win32 ODBC probe through Wine/translation. It must prove initialization,
+transaction round trips, restart and owned-process shutdown on Thor without
+Termux or root. No Android shell or verified runtime is implemented here yet.
+Graphical/custom-client compatibility, gameplay and Android execution remain
+unvalidated.

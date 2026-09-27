@@ -1,21 +1,24 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-26. PostgreSQL controlled persistence, targeted stage1 inspection,
+Updated: 2026-09-27. PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
 generation have passed their current checks. Normal fixture-OFF DbServer schema
 initialization/export/reload and normal MapServer network save acknowledgements
 have also passed against fresh PostgreSQL clusters.
 The refreshed runtime and schema artifacts share repository commit
 `775a0dd770adac045484805dbbb5f68054c7a354`. Ordinary asset-backed reference
-comparison and Atlas Park protocol readiness have now passed. Game-level
-persistence and Android execution remain validation gates.
+comparison and Atlas Park protocol readiness have now passed. Fresh fake-auth
+character creation, live currency change, protocol logout/save, database and
+game-service restart, and exact-name short resume also passed in
+[run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135).
+Sustained gameplay and Android execution remain validation gates.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
 checkout fix is applied and run 36176806895 completed successfully: all 56 fresh
 template outputs matched, then Atlas Park remained ready for 62.235 seconds.
-The first hosted character attempt reached creation, then stopped on a harness
-status-parser bug before currency, logout, save or restart acceptance.
+Earlier character attempts exposed harness status parsing and console capture
+issues; the final corrected run completed all eight phases with no failures.
 
 Continuation on 2026-09-26 recovered the completed 2026-09-25 run after this
 handoff had retained an in-progress status. At recovery, GitHub showed no queued
@@ -24,6 +27,24 @@ or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43
 do not reveal the internal status of the other Codex session.
 
 ## Continuation validation checkpoint
+
+The accepted character run is **36282414135**, tested commit
+`86e512e85c8350714bc7b58668bf11443dc164f8`, completed 2026-09-27 00:40:07 UTC.
+It verified `TEST20636` / container ID 1 with live influence 12,345, committed
+protocol logout before forced cleanup, restart of the same PostgreSQL cluster
+and game services, and exact-name short scene resume with creation disabled.
+Selected identity/rows remained unchanged (1 parent, 1 `ents2`, 7 powers,
+13 costume parts); `LoginCount` progressed 1 → 1 → 2. The resume exited
+naturally with code 0 and both console observers finalized successfully.
+The [report](postgresql-evidence/character-persistence-36282414135.json),
+[complete artifact](postgresql-evidence/character-persistence-36282414135.zip) and
+[acceptance/provenance record](postgresql-evidence/accepted-character-persistence-36282414135.json)
+are preserved. Windows passed 67 tooling/map checks; Linux passed 62 with five
+Windows-only skips. All four same-commit
+[PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
+passed. The short resume does not establish sustained gameplay or Android execution.
+
+### Earlier attempts and corrections
 
 The recovered evidence and new character harness are on
 [`codex/character-persistence-continuation`](https://github.com/Russianranger/coh-android/pull/1)
@@ -63,17 +84,9 @@ client cleanup; exact resume acceptance remains required.
 All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
 also passed on the implementation commit.
 
-Latest runtime attempt [36281372316](https://github.com/Russianranger/coh-android/actions/runs/36281372316)
-passed fresh character creation, connected Atlas Park status, live influence 12345,
-protocol logout and independently committed parent/child SQL (`LoginCount` 1;
-1 parent, 1 ents2, 7 powers, 12 costume parts). It stopped during restart because
-forced client-tree cleanup closed the observer console before its final snapshot.
-The [report](postgresql-evidence/character-persistence-36281372316.json) and
-[artifact](postgresql-evidence/character-persistence-36281372316.zip) are preserved.
-Finalize the observer after proven logout/save and before forced client cleanup;
-retain post-exit capture for the naturally exiting short resume. All 66 Windows
-checks and all four PostgreSQL regression jobs passed on `5d98c4df...`.
-Restart/resume is still the active unfinished gate.
+The final cleanup-order correction in `86e512e8` completed the restart/resume
+gate. Its accepted evidence and remaining scope are recorded above; earlier
+failed attempts remain as diagnostic history.
 
 ## Active direction
 
@@ -321,13 +334,14 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
    The matching reference package and coherent base assembly are ready. Preserve the accepted attribute-ID mappings; do not
    substitute the separate schema executable or its incidental caches for the
    reference runtime.
-2. Execute the new [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
-   on hosted Windows using the passed map/comparison evidence: fake-auth creation,
-   a normal-protocol currency change,
-   explicit logout, committed SQL verification, service restart and exact-name
-   resume. The current attempts and remaining gate are recorded above. Stock
-   no-fallback resume is a short scene probe; a sustained second session needs
-   the separately proposed TestClient option and a new reference build.
+2. Preserve the accepted [character persistence result](CHARACTER_PERSISTENCE_VALIDATION.md#accepted-hosted-validation-36282414135).
+   Fake-auth creation, live currency change, explicit logout, committed SQL,
+   same-cluster/service restart and exact-name short resume have passed.
+   The next session gate is sustained resume with creation disabled, restored
+   live currency and a second protocol logout/save. Stock no-fallback resume
+   is a short scene probe; a sustained second session needs the separately
+   proposed TestClient option and a new reference build. Include a missing-name
+   negative check proving zero fallback creations.
    Follow with map transfer, player-session completion callbacks, game-level
    name uniqueness and auxiliary-service persistence. Generic-container network
    ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL

@@ -1,10 +1,10 @@
 # Matching reference runtime
 
-Updated: 2026-09-26. The exact-pin Windows client/server package builds in this
+Updated: 2026-09-27. The exact-pin Windows client/server package builds in this
 repository. Ordinary asset-backed template generation and Atlas Park protocol
-readiness have now passed using this package. Character persistence remains under
-hosted validation; this is not an Android app or a
-gameplay-validated server.
+readiness have passed using this package, followed by fresh fake-auth character
+persistence through logout, service restart and a short exact-name scene resume.
+This is not an Android app or a gameplay-validated server.
 
 ## Build and downloads
 
@@ -260,11 +260,10 @@ no acknowledgement and an unchanged prior row. See the
 This diagnostic does not load a map or graphical client and requires no binary
 asset archives. It validates the generic container acknowledgement path; each
 save still has its own transaction, so a multi-container request is not atomic.
-The subsequent template and Atlas Park gates below passed. The next gate is
-real character creation/save/logout/reload through the new harness. Its first
-hosted attempt reached a fresh character but stopped on a harness parser bug. These results do not establish playable character sessions,
-map transfers, auxiliary services, compatibility with the custom client or
-Android execution.
+The subsequent template, Atlas Park and fresh-character persistence gates below
+passed. Generic network acknowledgement evidence alone does not establish playable
+character sessions, map transfers, auxiliary services, compatibility with the
+custom client or Android execution.
 
 ## Asset-backed templates and Atlas Park readiness
 
@@ -287,7 +286,36 @@ preserved with [archive hashes and shared build identity](reference-runtime-evid
 
 These checks establish the reported schema equivalence for the reviewed inputs
 and bounded map readiness. The normal executable does not expose its queued
-startup error count; complete assets, character login/persistence and gameplay
-are not established. Continuation on 2026-09-26 recovered these completed
-results from GitHub after the earlier handoff had stopped at an in-progress
+startup error count; these template/map checks alone do not establish complete
+assets, character login/persistence or gameplay. Continuation on 2026-09-26
+recovered these completed results from GitHub after the earlier handoff had stopped at an in-progress
 status. Repository activity cannot establish another Codex session's internal state.
+
+## Fresh character persistence and short resume
+
+[Run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+passed all eight phases with no failures at harness commit
+`86e512e85c8350714bc7b58668bf11443dc164f8`, using this same accepted reference
+package, generated schemas and reviewed assets. Stock TestClient created
+`TEST20636` (ID 1), observed a normal-protocol currency change to 12345 on the
+connected MapServer, then logged out and verified committed SQL state. Selected
+character, power and costume rows survived service restart and exact-name short
+scene resume unchanged. LoginCount remained 1 across restart and advanced to 2
+after resume. Creation fallback was disabled for the resume probe.
+
+The [report](postgresql-evidence/character-persistence-36282414135.json),
+[redacted evidence archive](postgresql-evidence/character-persistence-36282414135.zip)
+and [acceptance/provenance receipt](postgresql-evidence/accepted-character-persistence-36282414135.json)
+preserve the result. The console observers captured creation and resume
+diagnostics. The first finalized after committed logout and before residual-client
+cleanup; the second finalized after the client's natural exit. Both retained final
+snapshots and exited zero without forced stop. The underlying TestClient binary
+and imported snapshots were unchanged.
+
+The stock short resume exits after scene exchange; active gameplay and a sustained
+second session remain unproven. A proposed TestClient-only `-resumeonly` option
+requires a new reference build before testing that second session and logout.
+Map transfers, auxiliary services and graphical/custom-client compatibility remain
+separate gates. The Android diagnostic APK must still prove app-owned ARM64
+PostgreSQL and Win32 ODBC under Wine/translation on Thor; no Android execution or
+performance result is claimed.
