@@ -1,10 +1,10 @@
 # Thor diagnostic APK (M2)
 
 Status: the diagnostic APK builds, signs and verifies successfully. Hosted guest
-qualification is still in progress: run `36334034143` passed driver registration,
-DLL loading and PE32 execution, then timed out in the ODBC fixture. Its
-[failed report](android-evidence/runtime-smoke-report-36334034143.json) and
-[attempt history](android-evidence/attempts-20260927.json) are preserved.
+qualification is still in progress. Run `36334953501` established the first
+ODBC connection and two SQL queries, then localized a pinned Wine ANSI metadata
+wrapper bug. Its [failed report](android-evidence/runtime-smoke-report-36334953501.json)
+and [attempt history](android-evidence/attempts-20260927.json) are preserved.
 No hosted guest or on-device pass is claimed. The accepted
 [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) remains unchanged.
 
@@ -47,15 +47,24 @@ The guest requires:
 6. Prefix-scoped Wine shutdown, graceful final database shutdown and reaping of
    owned processes. A failed cleanup cannot count as a pass.
 
-The diagnostic compiles the existing ODBC fixture with four ANSI import aliases:
-`SQLDriverConnectA`, `SQLExecDirectA`, `SQLColumnsA` and `SQLGetInfoA` use their
+The diagnostic compiles the existing ODBC fixture with three ANSI import aliases:
+`SQLDriverConnectA`, `SQLExecDirectA` and `SQLColumnsA` use their
 equivalent unsuffixed ANSI exports. The pinned Wine 10 export table stubs those
-four `A` names. Its implemented ANSI functions load the registered Windows
+`A` names. Its implemented ANSI functions load the registered Windows
 psqlODBC DLL; no Unix ODBC substitute is used. Build-time inspection verifies the
 actual PE imports and records them in the runtime manifest. The fixture's SQL,
 65-connection test, Unicode checks and acceptance markers remain unchanged.
 See the [pinned export source](https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec)
 and the [failed runtime evidence](android-evidence/runtime-smoke-report-36331879591.json).
+
+The version query uses `SQLGetInfoW` with the actual manager handle and validates
+its bounded UTF-16 result before emitting the same version header. The pinned
+Wine ANSI fallback incorrectly calls its public Unicode wrapper with a
+driver-private handle; this hung after successful connection and SQL queries.
+The [exact source line](https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975)
+and traced failure above identify the cause. Import verification rejects both
+ANSI version-query names and requires the working Unicode entry point. The
+fixture's SQL assertions and acceptance markers are unchanged.
 
 The x86 MSI is installed through the verified PE32 `syswow64/msiexec.exe`.
 Wine's ODBC installer writes the process's registry view, so the installer must

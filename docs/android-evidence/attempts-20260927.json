@@ -120,7 +120,30 @@
       "guest_postgresql_durable_restart_executed": false,
       "android_device_validated": false,
       "raw_report": "runtime-smoke-report-36334034143.json",
-      "next_diagnostic": "Unbuffered credential-free ODBC call progress and bounded pre-termination database wait-state snapshot; preserve 65 connections and all SQL assertions"
+      "next_diagnostic": "Unbuffered credential-free ODBC call progress and bounded pre-termination database wait-state snapshot; preserve 65 connections and all SQL assertions",
+      "correction_commit": "6580506e33e66ffb39b59badff7f0c870edc5ab0"
+    },
+    {
+      "run_id": 36334953501,
+      "repository_commit": "6580506e33e66ffb39b59badff7f0c870edc5ab0",
+      "result": "failed",
+      "tooling_tests_passed": 76,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108664625266,
+      "stage": "odbc_fixture",
+      "reason": "Trace completed first connection and two SQL scalar checks, then stopped at CALL:234 (SQLGetInfo for SQL_DRIVER_VER); PostgreSQL had one idle ClientRead session for 176 seconds",
+      "root_cause": "Pinned Wine ANSI get_info_win32_a calls public SQLGetInfoW with a driver-private HDBC rather than dispatching its driver function pointer",
+      "source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36334953501.json",
+      "next_correction": "Query the same driver version with SQLGetInfoW using the manager HDBC, validate bounded UTF-16 result and preserve all SQL assertions and 65-connection checks"
     }
   ],
   "android_device_validated": false,

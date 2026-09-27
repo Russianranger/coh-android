@@ -12,9 +12,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 # Wine 10 implements the original ANSI ODBC names but stubs these A aliases.
-# Only this diagnostic compilation changes imports; fixture operations are intact.
+# Only this diagnostic compilation changes imports; fixture SQL and markers are intact.
 ODBC_ANSI_ALIASES = {name+'A': name for name in
-                     ('SQLDriverConnect', 'SQLExecDirect', 'SQLColumns', 'SQLGetInfo')}
+                     ('SQLDriverConnect', 'SQLExecDirect', 'SQLColumns')}
+ODBC_REQUIRED_IMPORTS = {*ODBC_ANSI_ALIASES.values(), 'SQLGetDiagRecA', 'SQLGetInfoW'}
+ODBC_FORBIDDEN_IMPORTS = {*ODBC_ANSI_ALIASES, 'SQLGetInfoA', 'SQLGetInfo'}
+WINE_ODBC_INFO_SOURCE = 'https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975'
 WINE_ODBC_SPEC = 'https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec'
 
 def verify_odbc_imports(dump):
@@ -23,9 +26,9 @@ def verify_odbc_imports(dump):
     if len(sections) != 1:
         raise ValueError('Expected exactly one Windows ODBC manager import table')
     imports = set(re.findall(r'^\s*[0-9a-fA-F]+\s+\d+\s+(SQL[A-Za-z0-9_]+)\s*$', sections[0], re.M))
-    if imports.intersection(ODBC_ANSI_ALIASES):
-        raise ValueError('Diagnostic imports an unimplemented Wine ANSI alias')
-    if not set(ODBC_ANSI_ALIASES.values()).issubset(imports) or 'SQLGetDiagRecA' not in imports:
+    if imports.intersection(ODBC_FORBIDDEN_IMPORTS):
+        raise ValueError('Diagnostic imports a stubbed or broken Wine ODBC entry point')
+    if not ODBC_REQUIRED_IMPORTS.issubset(imports):
         raise ValueError('Diagnostic lacks required real ODBC operations')
     return sorted(imports)
 
@@ -81,7 +84,7 @@ def main():
     cmds = [
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-ladvapi32', '-o', str(out/'runtime-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-shared', '-static-libgcc', '-Wl,--kill-at', str(ROOT/'android/native/probe.c'), '-o', str(out/'probe.dll')],
-        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', '-DCOH_ODBC_TRACE=1',
+        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', '-DCOH_ODBC_TRACE=1', '-DCOH_ODBC_WIDE_INFO=1',
          *['-D'+alias+'='+name for alias,name in ODBC_ANSI_ALIASES.items()],
          '-I'+str(ROOT/'database/postgresql/overlay/Common/sql'), str(ROOT/'database/postgresql/tests/odbc_probe.c'), '-lodbc32', '-o', str(out/'odbc_probe.exe')],
     ]
@@ -106,7 +109,12 @@ def main():
         'runtime_probe':{'executable':'runtime-probe.exe','marker':'COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified','dll':'probe.dll'},
         'compiler':subprocess.check_output([a.cc,'--version'], text=True).splitlines()[0],
         'odbc_ansi_compatibility':{'wine_export_source':WINE_ODBC_SPEC, 'compile_aliases':ODBC_ANSI_ALIASES,
-                                  'verified_windows_manager_imports':odbc_imports, 'fixture_operations_changed':False,
+                                  'verified_windows_manager_imports':odbc_imports, 'fixture_sql_and_acceptance_markers_changed':False,
+                                  'wide_driver_version_workaround': {
+                                      'compile_define':'COH_ODBC_WIDE_INFO=1', 'api':'SQLGetInfoW',
+                                      'result_encoding':'UTF-16 with strict ASCII conversion',
+                                      'wine_source':WINE_ODBC_INFO_SOURCE,
+                                      'reason':'Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle'},
                                   'diagnostic_progress':'unbuffered output and credential-free ODBC call line numbers'},
         'scope':'APK build inputs; not proof of Android execution or gameplay'}
     (out/'runtime-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

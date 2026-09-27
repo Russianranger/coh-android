@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     odbc = LoadLibraryA("odbc32.dll");
     if (!odbc || !GetProcAddress(odbc, "SQLDriverConnect") ||
         !GetProcAddress(odbc, "SQLExecDirect") || !GetProcAddress(odbc, "SQLColumns") ||
-        !GetProcAddress(odbc, "SQLGetInfo") || !GetProcAddress(odbc, "SQLGetDiagRecA")) {
+        !GetProcAddress(odbc, "SQLGetInfoW") || !GetProcAddress(odbc, "SQLGetDiagRecA")) {
         if (odbc) FreeLibrary(odbc);
         FreeLibrary(fixture);
         return 5;
