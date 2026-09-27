@@ -75,10 +75,12 @@ forced cleanup. See the [accepted evidence](docs/postgresql-evidence/accepted-ch
 and [transfer scope](docs/MAP_TRANSFER_VALIDATION.md). All five workflow jobs
 passed, including the separate sustained-session regression.
 
-The next milestone is **M2: a Thor diagnostic APK**, running app-owned ARM64
-PostgreSQL and the Win32 ODBC probe under Wine/translation. It must prove database
-initialization, transactions, durable restart and owned-process shutdown without
-Termux or root. No Android shell or packaged runtime exists yet. New-zone assets,
+The active milestone is **M2: a Thor diagnostic APK**, running app-owned ARM64
+PostgreSQL and the Win32 ODBC probe under Wine/FEX. The Android shell, owned
+process supervisor, pinned runtime builders and hosted validation workflow are
+implemented; see [the diagnostic build and Thor acceptance instructions](docs/ANDROID_DIAGNOSTIC.md)
+for current evidence. Device acceptance must prove database initialization,
+transactions, durable restart and owned-process shutdown without Termux or root. New-zone assets,
 missions, automatic map startup, combat and graphics remain separate unfinished
 work; they need not delay this platform diagnostic. The repository is **not a
 complete runnable installation**. Android execution, complete asset coverage and

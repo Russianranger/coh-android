@@ -163,8 +163,8 @@ public final class MainActivity extends Activity {
 
     private void render(DiagnosticService.State current) {
         state = current;
-        setup.setEnabled(!current.busy);
-        run.setEnabled(!current.busy && current.setupComplete);
+        setup.setEnabled(!current.busy && !current.blocked);
+        run.setEnabled(!current.busy && !current.blocked && current.setupComplete);
         stop.setEnabled(current.busy && !current.stopping);
         stop.setText(current.stopping ? "Stopping…" : "Stop");
         export.setEnabled(!exporting && current.report != null && current.report.isFile());

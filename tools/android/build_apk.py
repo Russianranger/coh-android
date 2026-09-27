@@ -30,7 +30,10 @@ def verify_badging(text):
     package = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", text, re.M)
     if not package or package.groups() != (APP_ID, "1", "0.1.0"):
         raise ValueError("APK package/version mismatch")
-    if not re.search(r"^sdkVersion:'26'$", text, re.M) or not re.search(r"^targetSdkVersion:'35'$", text, re.M):
+    # SDK 35 aapt2 uses minSdkVersion; older aapt2 called it sdkVersion.
+    minimum = re.findall(r"^(?:minSdkVersion|sdkVersion):'([^']+)'$", text, re.M)
+    target = re.findall(r"^targetSdkVersion:'([^']+)'$", text, re.M)
+    if not minimum or set(minimum) != {"26"} or target != ["35"]:
         raise ValueError("APK SDK mismatch")
     native = re.search(r"^native-code:\s*(.*)$", text, re.M)
     if not native or native.group(1).strip() != "'arm64-v8a'":

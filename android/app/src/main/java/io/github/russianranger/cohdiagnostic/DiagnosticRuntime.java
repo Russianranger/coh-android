@@ -127,6 +127,7 @@ public final class DiagnosticRuntime {
         if(!new File(root,name).isFile())throw new IOException("Incomplete runtime: "+name);
     }
     public void setupRuntime() throws Exception {
+        CleanupGuard.requireClear();
         JSONObject report=new JSONObject();
         try {
             loadManifest();check();
@@ -181,6 +182,7 @@ public final class DiagnosticRuntime {
         for(Iterator<String> it=files.keys();it.hasNext();){String name=it.next();verify(new File(generation,"assets/"+name),files.getJSONObject(name));}
     }
     public Result runDiagnostics() throws Exception {
+        CleanupGuard.requireClear();
         JSONObject report=new JSONObject();boolean passed=false;
         Thread reader=null;
         try {
@@ -237,8 +239,11 @@ public final class DiagnosticRuntime {
             if(process!=null && process.isAlive()) {
                 try {process.waitFor(5,TimeUnit.SECONDS);} catch(InterruptedException ignored) {}
                 if(process.isAlive()) {
-                    report.put("passed",false).put("status","cleanup_failed"); support(report,false);
-                    throw new IOException("Owned runtime did not finish stopping; close the app before another run");
+                    final JSONObject failedReport=report;
+                    throw CleanupGuard.block(()->{
+                        failedReport.put("passed",false).put("status","cleanup_failed");
+                        support(failedReport,false);
+                    });
                 }
             }
             if(reader!=null)try{reader.join(2000);}catch(InterruptedException ignored){}

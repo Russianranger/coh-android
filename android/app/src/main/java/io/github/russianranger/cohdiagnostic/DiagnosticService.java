@@ -37,14 +37,15 @@ public final class DiagnosticService extends Service {
     public interface Listener { void onState(State state); }
 
     public static final class State {
-        public final boolean busy, stopping, setupComplete;
+        public final boolean busy, stopping, setupComplete, blocked;
         public final String stage, detail, log;
         public final File report;
-        private State(boolean busy, boolean stopping, boolean setupComplete,
+        private State(boolean busy, boolean stopping, boolean setupComplete, boolean blocked,
                       String stage, String detail, String log, File report) {
             this.busy = busy;
             this.stopping = stopping;
             this.setupComplete = setupComplete;
+            this.blocked = blocked;
             this.stage = stage;
             this.detail = detail;
             this.log = log;
@@ -99,6 +100,15 @@ public final class DiagnosticService extends Service {
             detail = "Run diagnostics again, or export the last available report.";
             preferences.edit().putBoolean("busy", false).apply();
         }
+        if (CleanupGuard.isBlocked()) {
+            stage = "Cleanup failed";
+            detail = CleanupGuard.reason();
+        } else if (preferences.getBoolean("cleanup_blocked", false)) {
+            // A new app process has no surviving process-wide guard.
+            stage = "Ready after app restart";
+            detail = "Previous cleanup failed. You can retry or export the last available report.";
+            preferences.edit().putBoolean("cleanup_blocked", false).apply();
+        }
         NotificationChannel channel = new NotificationChannel(CHANNEL, "Runtime diagnostics", NotificationManager.IMPORTANCE_LOW);
         channel.setDescription("Progress and Stop control for user-started runtime diagnostics");
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
@@ -119,7 +129,7 @@ public final class DiagnosticService extends Service {
     }
 
     public State snapshot() {
-        return new State(busy, stopping, setupComplete, stage, detail, log.toString(), latestReport);
+        return new State(busy, stopping, setupComplete, CleanupGuard.isBlocked(), stage, detail, log.toString(), latestReport);
     }
 
     public void addListener(Listener listener) {
@@ -130,6 +140,15 @@ public final class DiagnosticService extends Service {
     public void removeListener(Listener listener) { listeners.remove(listener); }
 
     private void begin(boolean setup) {
+        if (CleanupGuard.isBlocked()) {
+            stage = "Cleanup failed";
+            detail = CleanupGuard.reason();
+            notifyState();
+            foreground();
+            stopForeground(STOP_FOREGROUND_REMOVE);
+            stopSelf();
+            return;
+        }
         if (!setup && !setupComplete) {
             stage = "Setup needed";
             detail = "Choose Setup runtime before running diagnostics.";
@@ -171,7 +190,7 @@ public final class DiagnosticService extends Service {
             runtime = new DiagnosticRuntime(getApplicationContext(), new DiagnosticRuntime.Listener() {
                 @Override public void onStage(String nextStage, String nextDetail) {
                     main.post(() -> {
-                        if (currentOperation != operation || destroyed) return;
+                        if (currentOperation != operation || destroyed || !busy || CleanupGuard.isBlocked()) return;
                         if (!stopping) { stage = bounded(nextStage, 120); detail = bounded(nextDetail, 600); }
                         notifyState();
                     });
@@ -198,7 +217,7 @@ public final class DiagnosticService extends Service {
                 if (result.report != null) report = result.report;
             }
         } catch (Exception failure) {
-            summary = operation.stop.get() || failure instanceof InterruptedException
+            summary = CleanupGuard.isBlocked() ? CleanupGuard.reason() : operation.stop.get() || failure instanceof InterruptedException
                     ? "Operation stopped. Export the latest report if one is available."
                     : bounded(failure.getMessage() == null ? failure.getClass().getSimpleName() : failure.getMessage(), 600);
             final String message = summary;
@@ -230,11 +249,12 @@ public final class DiagnosticService extends Service {
         busy = false;
         stopping = false;
         if (setup) setupComplete = passed;
-        stage = cancelled ? "Stopped" : setup ? (passed ? "Runtime ready" : "Setup failed")
+        boolean blocked = CleanupGuard.isBlocked();
+        stage = blocked ? "Cleanup failed" : cancelled ? "Stopped" : setup ? (passed ? "Runtime ready" : "Setup failed")
                                              : (passed ? "Diagnostics passed" : "Diagnostics failed");
-        detail = cancelled ? "Owned work has stopped. Export the latest report for details." : bounded(summary, 600);
+        detail = blocked ? CleanupGuard.reason() : cancelled ? "Owned work has stopped. Export the latest report for details." : bounded(summary, 600);
         if (report != null && report.isFile()) latestReport = report;
-        preferences.edit().putBoolean("busy", false).putBoolean("setup_complete", setupComplete)
+        preferences.edit().putBoolean("busy", false).putBoolean("setup_complete", setupComplete).putBoolean("cleanup_blocked", blocked)
                 .putString("stage", stage).putString("detail", detail)
                 .putString("report", latestReport == null ? "" : latestReport.getAbsolutePath()).apply();
         if (!destroyed) notifyState();

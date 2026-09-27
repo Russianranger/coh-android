@@ -17,7 +17,7 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The next implementation priority is the M2 Thor diagnostic Android APK.
+The active implementation is the [M2 Thor diagnostic Android APK](ANDROID_DIAGNOSTIC.md).
 Combat, movement, rendered gameplay and Android execution remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
@@ -115,18 +115,23 @@ portability error. The fixture now uses Winsock on Windows; client and server
 code are unchanged by that correction. The [tooling failure record](postgresql-evidence/character-transfer-tooling-36297326622.json)
 is preserved separately from the successful retry.
 
-### Next gate: M2 Thor diagnostic Android APK
+### Active gate: M2 Thor diagnostic Android APK
 
-Begin the app-owned ARM64 PostgreSQL and Win32 runtime experiment described in
-the [Android proposal](ANDROID_PORT_PROPOSAL.md). Its acceptance target is a
-database transaction and durable restart, Win32 executable/DLL launch and the
-existing ODBC probe, owned process shutdown and redacted diagnostics on Thor
-(Android 13, ARM64), without Termux or root. A basic client-runtime probe can
-proceed alongside it. No Android application shell or verified packaged
-PostgreSQL/Wine/translation stack exists in this repository yet; select and pin
-those inputs before claiming an installable diagnostic build. Mission/new-zone
-transfers, automatic Launcher startup and combat remain separate unfinished
-scope, not prerequisites for this diagnostic milestone.
+The app-owned ARM64 PostgreSQL and Win32 runtime experiment is implemented under
+`android/` and `tools/android/`, with its own hosted build/runtime workflow.
+The native Java app provides setup, run, stop and report export. Its pinned
+Bookworm environment and Wine 10/FEX stack come from the existing LSB runtime;
+PostgreSQL is independently built from official pinned source. One owned PRoot
+session runs the real Win32/DLL and ODBC probes, PostgreSQL transaction/restart
+checks, and bounded cleanup. This is a diagnostic app without game binaries.
+
+Current build evidence and remaining physical Thor acceptance are recorded in
+[ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md). Preserve that distinction:
+hosted Linux ARM64 execution cannot establish Android device behavior. The next
+device step is setup, diagnostic run and report export, followed by repeat-run
+and Stop checks. A basic client-runtime probe can proceed alongside M2.
+Mission/new-zone transfers, automatic Launcher startup and combat remain
+separate unfinished scope.
 
 ### Earlier attempts and corrections
 
@@ -388,7 +393,7 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Implement the M2 Thor diagnostic APK next**, as specified above. The following
+**Complete M2 hosted and Thor acceptance**, as specified above. The following
 items preserve completed reference gates and describe additional work; their
 order does not place further Windows server experiments ahead of M2.
 
@@ -452,4 +457,5 @@ a standalone Git checkout. Never modify the preserved snapshot to fix a launcher
 
 The manual i25 discovery workflow and its prior TLS findings remain historical.
 `odtoken` is not required for current work and must not be printed or sent to the
-asset host. No background import is running. No APK or gameplay validation exists.
+asset host. No background import is running. The current APK status is recorded
+in [ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md); gameplay remains unvalidated.
