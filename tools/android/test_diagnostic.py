@@ -587,6 +587,27 @@ class WineProcessOwnerTests(unittest.TestCase):
         self.assertFalse(self.owner.receipt['complete'])
         self.assertEqual(self.owner.receipt['inspection_failures'], 1)
 
+    def test_preexisting_same_uid_process_is_excluded_before_unreadable_environment(self):
+        self.owner.real_uid = 42
+        self.owner.excluded = set()
+        self.owner.direct_pid_view = True
+        self.owner.diagnostic_starttime = 100
+        status = {'uid': 42, 'pid': 123, 'namespace_pids': [123]}
+        identity = {'pid': 123, 'state': 'S', 'parent': 1, 'starttime': 99}
+        with patch.object(self.owner, 'status', return_value=status), \
+             patch.object(self.owner, 'process_stat', return_value=identity), \
+             patch.object(Path, 'open', side_effect=PermissionError('non-dumpable')) as read:
+            self.assertIsNone(self.owner.inspect(123))
+        read.assert_not_called()
+        for starttime in (100, 101):
+            with self.subTest(starttime=starttime), \
+                 patch.object(self.owner, 'status', return_value=status), \
+                 patch.object(self.owner, 'process_stat', return_value={**identity, 'starttime': starttime}), \
+                 patch.object(Path, 'open', side_effect=PermissionError('non-dumpable')) as read:
+                with self.assertRaises(PermissionError):
+                    self.owner.inspect(123)
+                read.assert_called_once()
+
     def test_ancestor_is_excluded_before_environment_inspection(self):
         proc = self.root / 'proc'
         proc.mkdir()

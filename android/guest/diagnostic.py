@@ -336,6 +336,7 @@ class WineProcessOwner:
         status, identity = self.status(own), self.process_stat(own)
         require(status["pid"] == identity["pid"], "Cannot verify diagnostic process identity")
         self.real_uid = status["uid"]
+        self.diagnostic_starttime = identity["starttime"]
         self.direct_pid_view = identity["pid"] == os.getpid()
         self.namespace_depth = len(status["namespace_pids"])
         self.namespace = None if self.direct_pid_view else os.readlink(own / "ns/pid")
@@ -366,16 +367,20 @@ class WineProcessOwner:
         if not self.direct_pid_view:
             if len(status["namespace_pids"]) != self.namespace_depth:
                 return None
-            try:
-                if os.readlink(path / "ns/pid") != self.namespace:
-                    return None
-            except FileNotFoundError:
-                return None
         try:
             identity = self.process_stat(path)
             require(identity["pid"] == proc_pid == status["pid"], "Wine cleanup PID view changed")
+            # The random ownership token is created by this diagnostic and is
+            # injected only into subsequently spawned Wine children. An older
+            # process cannot own it; do not inspect unrelated runner/app service
+            # environments, which can legitimately be non-dumpable. Equal-tick
+            # or newer processes still require the full ownership inspection.
+            if identity["starttime"] < self.diagnostic_starttime:
+                return None
             if identity["state"] == "Z":
                 return None  # A zombie cannot execute or retain open descriptors.
+            if not self.direct_pid_view and os.readlink(path / "ns/pid") != self.namespace:
+                return None
             with (path / "environ").open("rb") as source:
                 environment = source.read(1024 * 1024 + 1)
             require(len(environment) <= 1024 * 1024, "Wine ownership environment exceeds bound")
