@@ -9,6 +9,7 @@ import struct
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 
 import build_pg_runtime as build
 import prepare_pg_runtime as prepare
@@ -107,6 +108,38 @@ class RuntimePackageTests(unittest.TestCase):
                 receipt = {'archive': {'sha256': build.digest(archive), 'bytes': archive.stat().st_size}, 'files': {}}
                 with self.assertRaisesRegex(ValueError, 'unsafe'):
                     build.verify_overlay(archive, receipt)
+
+
+class DependencyTests(unittest.TestCase):
+    def inspect(self, needed, bundled=(), glibc='2.36'):
+        record = {'elf': {'class': 64, 'machine': 'AArch64', 'endian': 'little'}}
+        files = {'opt/coh/pgsql/bin/psql': (record, arm64_elf())}
+        for name in bundled:
+            files['opt/coh/pgsql/lib/' + name] = (record, arm64_elf())
+        def output(command, **kwargs):
+            if command[1] == '-d':
+                return '\n'.join('(NEEDED) Shared library: [' + name + ']' for name in needed)
+            return 'Name: GLIBC_' + glibc
+        with mock.patch.object(build.subprocess, 'check_output', side_effect=output), mock.patch.object(
+                build.subprocess, 'run', return_value=mock.Mock(returncode=0, stdout='resolved', stderr='')):
+            return build.inspect_dependencies(Path('/opt/coh/pgsql'), files)
+
+    def test_postgresql_libraries_are_allowed_only_when_bundled(self):
+        result = self.inspect(['libpgtypes.so.3', 'libpq.so.5', 'libc.so.6'],
+                              bundled=['libpgtypes.so.3', 'libpq.so.5'])
+        self.assertEqual(result['opt/coh/pgsql/bin/psql']['needed'][0], 'libpgtypes.so.3')
+
+    def test_missing_postgresql_library_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Unqualified shared dependency'):
+            self.inspect(['libpgtypes.so.3', 'libpq.so.5'], bundled=['libpq.so.5'])
+
+    def test_unqualified_external_library_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'Unqualified shared dependency'):
+            self.inspect(['libssl.so.3'])
+
+    def test_bundled_library_does_not_bypass_glibc_floor(self):
+        with self.assertRaisesRegex(ValueError, 'glibc newer'):
+            self.inspect(['libpgtypes.so.3'], bundled=['libpgtypes.so.3'], glibc='2.38')
 
 
 class InputTests(unittest.TestCase):

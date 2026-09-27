@@ -117,14 +117,16 @@ def verify_overlay(path, receipt):
 
 def inspect_dependencies(prefix, files):
     result = {}
-    allowed = {'libc.so.6', 'libm.so.6', 'libgcc_s.so.1', 'libpq.so.5', 'libpthread.so.0', 'libdl.so.2', 'librt.so.1'}
+    allowed = {'libc.so.6', 'libm.so.6', 'libgcc_s.so.1', 'libpthread.so.0', 'libdl.so.2', 'librt.so.1'}
+    bundled = {PurePosixPath(name).name for name, (record, _) in files.items()
+               if PurePosixPath(name).parent == PurePosixPath('opt/coh/pgsql/lib') and 'elf' in record}
     for name, (record, _) in files.items():
         if 'elf' not in record:
             continue
         path = prefix / PurePosixPath(name).relative_to('opt/coh/pgsql')
         dynamic = subprocess.check_output(['readelf', '-d', str(path)], text=True)
         needed = re.findall(r'\(NEEDED\).*?\[(.*?)\]', dynamic)
-        if set(needed) - allowed:
+        if set(needed) - allowed - bundled:
             raise ValueError('Unqualified shared dependency for ' + name + ': ' + repr(needed))
         versions = subprocess.check_output(['readelf', '--version-info', str(path)], text=True)
         glibc = sorted(set(re.findall(r'\bGLIBC_(\d+\.\d+)', versions)), key=lambda s: tuple(map(int, s.split('.'))))
