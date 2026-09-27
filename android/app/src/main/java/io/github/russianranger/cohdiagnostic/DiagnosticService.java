@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class DiagnosticService extends Service {
     public static final String ACTION_SETUP = "io.github.russianranger.cohdiagnostic.SETUP";
     public static final String ACTION_RUN = "io.github.russianranger.cohdiagnostic.RUN";
+    public static final String ACTION_CLIENT_PROBE = "io.github.russianranger.cohdiagnostic.CLIENT_PROBE";
     public static final String ACTION_STOP = "io.github.russianranger.cohdiagnostic.STOP";
     private static final String CHANNEL = "diagnostic_progress";
     private static final int NOTIFICATION_ID = 1;
@@ -121,8 +122,8 @@ public final class DiagnosticService extends Service {
         if (ACTION_STOP.equals(action)) {
             requestStop("Stop requested. Waiting for owned processes to finish.");
             if (!busy) stopSelf();
-        } else if (ACTION_SETUP.equals(action) || ACTION_RUN.equals(action)) {
-            if (!busy) begin(ACTION_SETUP.equals(action));
+        } else if (ACTION_SETUP.equals(action) || ACTION_RUN.equals(action) || ACTION_CLIENT_PROBE.equals(action)) {
+            if (!busy) begin(ACTION_SETUP.equals(action), ACTION_CLIENT_PROBE.equals(action));
         }
         // A killed process must never silently restart an interrupted test.
         return START_NOT_STICKY;
@@ -139,7 +140,7 @@ public final class DiagnosticService extends Service {
 
     public void removeListener(Listener listener) { listeners.remove(listener); }
 
-    private void begin(boolean setup) {
+    private void begin(boolean setup, boolean clientProbe) {
         if (CleanupGuard.isBlocked()) {
             stage = "Cleanup failed";
             detail = CleanupGuard.reason();
@@ -161,7 +162,7 @@ public final class DiagnosticService extends Service {
         }
         busy = true;
         stopping = false;
-        stage = setup ? "Setting up runtime" : "Running diagnostics";
+        stage = setup ? "Setting up runtime" : clientProbe ? "Running client probe" : "Running diagnostics";
         detail = "You can leave this screen. Use Stop to cancel.";
         log.setLength(0);
         final Operation operation = new Operation(latestReport);
@@ -177,10 +178,10 @@ public final class DiagnosticService extends Service {
         };
         main.postDelayed(deadline, limit);
         notifyState();
-        worker.execute(() -> execute(setup, operation));
+        worker.execute(() -> execute(setup, clientProbe, operation));
     }
 
-    private void execute(boolean setup, Operation operation) {
+    private void execute(boolean setup, boolean clientProbe, Operation operation) {
         synchronized (operation) { operation.thread = Thread.currentThread(); }
         DiagnosticRuntime runtime = null;
         File report = operation.previousReport;
@@ -210,7 +211,7 @@ public final class DiagnosticService extends Service {
                 passed = true;
                 summary = "Runtime setup finished. You can now run diagnostics.";
             } else {
-                DiagnosticRuntime.Result result = runtime.runDiagnostics();
+                DiagnosticRuntime.Result result = clientProbe ? runtime.runClientProbe() : runtime.runDiagnostics();
                 if (result == null) throw new IllegalStateException("Runtime returned no diagnostic result");
                 passed = result.passed;
                 summary = bounded(result.summary, 600);
@@ -238,11 +239,11 @@ public final class DiagnosticService extends Service {
             final boolean completed = passed && !operation.stop.get();
             final String outcome = summary;
             final File completedReport = report;
-            main.post(() -> finish(setup, operation, operation.stop.get(), completed, outcome, completedReport));
+            main.post(() -> finish(setup, clientProbe, operation, operation.stop.get(), completed, outcome, completedReport));
         }
     }
 
-    private void finish(boolean setup, Operation operation, boolean cancelled, boolean passed, String summary, File report) {
+    private void finish(boolean setup, boolean clientProbe, Operation operation, boolean cancelled, boolean passed, String summary, File report) {
         if (currentOperation != operation) return;
         if (deadline != null) main.removeCallbacks(deadline);
         releaseWakeLock();
@@ -251,6 +252,7 @@ public final class DiagnosticService extends Service {
         if (setup) setupComplete = passed;
         boolean blocked = CleanupGuard.isBlocked();
         stage = blocked ? "Cleanup failed" : cancelled ? "Stopped" : setup ? (passed ? "Runtime ready" : "Setup failed")
+                                             : clientProbe ? (passed ? "Client probe passed" : "Client probe failed")
                                              : (passed ? "Diagnostics passed" : "Diagnostics failed");
         detail = blocked ? CleanupGuard.reason() : cancelled ? "Owned work has stopped. Export the latest report for details." : bounded(summary, 600);
         if (report != null && report.isFile()) latestReport = report;

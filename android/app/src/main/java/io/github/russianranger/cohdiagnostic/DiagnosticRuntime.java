@@ -39,6 +39,7 @@ public final class DiagnosticRuntime {
     private JSONObject manifest;
     private String manifestHash;
     private File generation;
+    private boolean clientProbeRequested;
 
     public DiagnosticRuntime(Context context, Listener listener) {
         this.context=context.getApplicationContext(); this.listener=listener;
@@ -108,7 +109,7 @@ public final class DiagnosticRuntime {
                 check(); if(!url.getProtocol().equals("https"))throw new IOException("Runtime requires HTTPS");
                 HttpURLConnection c=(HttpURLConnection)url.openConnection();connection=c;
                 c.setConnectTimeout(15000);c.setReadTimeout(15000);c.setInstanceFollowRedirects(false);
-                c.setRequestProperty("User-Agent","COH-Diagnostic/0.1.0");
+                c.setRequestProperty("User-Agent","COH-Diagnostic/0.1.1");
                 int code=c.getResponseCode();
                 if(code>=300&&code<400){String location=c.getHeaderField("Location");c.disconnect();if(location==null)throw new IOException("Missing download redirect");url=new URL(url,location);continue;}
                 if(code!=200)throw new IOException("Runtime download failed (HTTP "+code+")");
@@ -182,7 +183,14 @@ public final class DiagnosticRuntime {
         for(Iterator<String> it=files.keys();it.hasNext();){String name=it.next();verify(new File(generation,"assets/"+name),files.getJSONObject(name));}
     }
     public Result runDiagnostics() throws Exception {
+        return runDiagnostics(false);
+    }
+    public Result runClientProbe() throws Exception {
+        return runDiagnostics(true);
+    }
+    private Result runDiagnostics(boolean clientProbe) throws Exception {
         CleanupGuard.requireClear();
+        clientProbeRequested=clientProbe;
         JSONObject report=new JSONObject();boolean passed=false;
         Thread reader=null;
         try {
@@ -201,9 +209,12 @@ public final class DiagnosticRuntime {
                 "-b",new File(generation,"wine").getPath()+":/opt/wine","-b",new File(generation,"passwd").getPath()+":/etc/passwd","-b",new File(generation,"group").getPath()+":/etc/group",
                 "-w","/state","/usr/bin/env","-i","HOME=/state","USER=coh","LOGNAME=coh","PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin","LANG=C.UTF-8","TZ=UTC","TMPDIR=/tmp","PYTHONUNBUFFERED=1",
                 "/usr/bin/python3","/opt/coh/diagnostic.py","--state","/state","--assets","/opt/coh","--pg-bin","/opt/coh/pgsql/bin","--wine","/opt/wine/bin/wine","--wineserver","/opt/wine/bin/wineserver","--execution-platform","android"));
+            if(clientProbe)command.add("--client-probe");
             ProcessBuilder builder=new ProcessBuilder(command);builder.redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER",loader.getPath());builder.environment().put("PROOT_TMP_DIR",tmp.getPath());builder.environment().put("PROOT_NO_SECCOMP","1");
-            stage("Starting diagnostics","Database and Windows checks run in this app's private environment");
+            stage(clientProbe?"Starting client probe":"Starting diagnostics",clientProbe
+                ?"Database, synthetic Windows graphics and input checks run in the private virtual display"
+                :"Database and Windows checks run in this app's private environment");
             child=builder.start();final Process process=child;
             reader=new Thread(()->{
                 try(BufferedReader in=new BufferedReader(new InputStreamReader(process.getInputStream(),StandardCharsets.UTF_8))) {
@@ -221,11 +232,23 @@ public final class DiagnosticRuntime {
             reader.join(2000);check();
             report=new JSONObject(new String(read(new File(state,"latest-report.json"),MAX_REPORT),StandardCharsets.UTF_8));
             JSONObject cleanup=report.optJSONObject("cleanup");
+            JSONObject probe=report.optJSONObject("client_probe");
+            boolean modeMatches=report.optString("diagnostic_mode").equals(clientProbe?"database_and_client":"database");
+            boolean probePassed=!clientProbe||(probe!=null&&probe.optString("status").equals("passed")
+                &&probe.optString("scope").equals("headless_wgl_client_capabilities")
+                &&Boolean.FALSE.equals(probe.opt("game_rendering_validated"))
+                &&Boolean.FALSE.equals(probe.opt("android_surface_validated"))
+                &&Boolean.FALSE.equals(probe.opt("hardware_acceleration_validated")));
             passed=process.exitValue()==0&&report.optBoolean("passed",false)&&report.optJSONArray("failures")!=null&&report.getJSONArray("failures").length()==0
+                &&modeMatches&&probePassed
                 &&cleanup!=null&&cleanup.optBoolean("postgres_graceful")&&cleanup.optBoolean("wine_prefix_stopped")&&cleanup.optBoolean("owned_processes_reaped");
             if(!passed)throw new IOException("A diagnostic check failed. Export the report for review.");
-            stage("Diagnostics passed","Database, restart, Win32 and shutdown checks passed on this device");
-            return new Result(true,getLatestReport(),"Diagnostic checks passed. Game execution remains untested.");
+            stage(clientProbe?"Client probe passed":"Diagnostics passed",clientProbe
+                ?"Database and synthetic graphics/input checks passed in the virtual display"
+                :"Database, restart, Win32 and shutdown checks passed on this device");
+            return new Result(true,getLatestReport(),clientProbe
+                ?"Client probe checks passed. Game rendering, hardware acceleration and controller input remain untested."
+                :"Diagnostic checks passed. Game execution remains untested.");
         } catch(Exception e) {
             if(cancelled||e instanceof InterruptedException||e instanceof InterruptedIOException)cancelled=true;
             report.put("passed",false).put("status",cancelled?"cancelled":"failed").put("app_error",clean(String.valueOf(e.getMessage())));throw e;
@@ -261,9 +284,9 @@ public final class DiagnosticRuntime {
         try {
             home.mkdirs();
             JSONObject wrapper=new JSONObject().put("format",1).put("recorded_utc",new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX",Locale.ROOT).format(new Date()))
-                .put("app_id",context.getPackageName()).put("app_version","0.1.0").put("android_uid",android.os.Process.myUid()).put("android_sdk",Build.VERSION.SDK_INT)
+                .put("app_id",context.getPackageName()).put("app_version","0.1.1").put("android_uid",android.os.Process.myUid()).put("android_sdk",Build.VERSION.SDK_INT)
                 .put("device",Build.MANUFACTURER+" "+Build.MODEL).put("abis",new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS))).put("runtime_manifest_sha256",manifestHash)
-                .put("android_diagnostic_passed",passed).put("gameplay_validated",false).put("guest",report);
+                .put("android_diagnostic_passed",passed).put("client_probe_requested",clientProbeRequested).put("gameplay_validated",false).put("guest",report);
             File part=new File(home,"latest-support.zip.part");
             try(ZipOutputStream out=new ZipOutputStream(new FileOutputStream(part))) {
                 out.putNextEntry(new ZipEntry("android-diagnostic-report.json"));out.write(((JSONObject)sanitized(wrapper)).toString(2).getBytes(StandardCharsets.UTF_8));out.closeEntry();

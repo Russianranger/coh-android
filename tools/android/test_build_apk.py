@@ -1,12 +1,13 @@
 """Validate real aapt2 badging dialects without relaxing APK identity checks."""
 import unittest
-from build_apk import APP_ID, verify_badging
+from build_apk import APP_ID, VERSION_CODE, VERSION_NAME, verify_badging
 
 
 class BadgingTests(unittest.TestCase):
     def sample(self, minimum="minSdkVersion:'26'", target="targetSdkVersion:'35'",
-               native="native-code: 'arm64-v8a'", app_id=APP_ID):
-        return (f"package: name='{app_id}' versionCode='1' versionName='0.1.0' "
+               native="native-code: 'arm64-v8a'", app_id=APP_ID,
+               version_code=VERSION_CODE, version_name=VERSION_NAME):
+        return (f"package: name='{app_id}' versionCode='{version_code}' versionName='{version_name}' "
                 "platformBuildVersionName='15' platformBuildVersionCode='35'\n"
                 f"{minimum}\n{target}\n{native}\n"
                 f"launchable-activity: name='{APP_ID}.MainActivity' label='' icon=''\n")
@@ -31,6 +32,11 @@ class BadgingTests(unittest.TestCase):
     def test_wrong_identity_fails(self):
         with self.assertRaisesRegex(ValueError, 'package/version'):
             verify_badging(self.sample(app_id='com.example.other'))
+
+    def test_previous_apk_version_fails(self):
+        for code, name in ((1, '0.1.0'), (1, VERSION_NAME), (VERSION_CODE, '0.1.0')):
+            with self.subTest(code=code, name=name), self.assertRaisesRegex(ValueError, 'package/version'):
+                verify_badging(self.sample(version_code=code, version_name=name))
 
     def test_extra_architecture_fails(self):
         with self.assertRaisesRegex(ValueError, 'only ARM64'):

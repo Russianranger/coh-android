@@ -145,6 +145,68 @@ def validate_runtime_probe(output):
     return {"pointer_bits": 32, "dll_export_verified": True, "odbc_manager_loaded": True}
 
 
+def validate_client_probe(output, *, require_pass=True):
+    """Accept observed pixels/input only; extension presence is inventory, not proof."""
+    prefix = "COH_CLIENT_PROBE_V1 "
+    lines = [line for line in output.splitlines() if line.startswith("COH_CLIENT_PROBE_V1")]
+    require(len(lines) == 1 and lines[0].startswith(prefix) and len(lines[0]) <= 16384,
+            "Client probe needs one bounded result")
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "Client probe contains duplicate JSON keys")
+            result[key] = value
+        return result
+    try:
+        result = json.loads(lines[0][len(prefix):], object_pairs_hook=unique_object)
+    except ValueError as exc:
+        raise DiagnosticError("Client probe result is not JSON") from exc
+    require(isinstance(result, dict) and type(result.get("format")) is int
+            and result["format"] == 1 and result.get("pointer_bits") == 32
+            and result.get("scope") == "headless_wgl_client_capabilities"
+            and result.get("status") in ("passed", "failed"), "Client probe contract differs")
+    for key in ("cg_shaders_validated", "game_rendering_validated", "android_surface_validated",
+                "hardware_acceleration_validated"):
+        require(result.get(key) is False, "Client fixture cannot validate " + key)
+    gl, render, inputs, audio = (result.get(key) for key in ("gl", "render", "input", "audio"))
+    require(all(isinstance(item, dict) for item in (gl, render, inputs, audio)),
+            "Client capability evidence missing")
+    require(inputs.get("scope") == "synthetic_own_window_and_device_creation_only"
+            and inputs.get("physical_input_validated") is False
+            and audio.get("scope") == "device_enumeration_only"
+            and audio.get("playback_validated") is False
+            and gl.get("pbuffer_exercised") is False, "Client probe exceeds its exercised scope")
+    require(isinstance(result.get("failure_stage"), str) and len(result["failure_stage"]) <= 128,
+            "Client failure stage missing")
+    if result["status"] == "passed":
+        require(result["failure_stage"] == "", "Successful client probe reports a failure")
+        for key in ("vendor", "renderer", "version"):
+            require(isinstance(gl.get(key), str) and 0 < len(gl[key]) <= 512,
+                    "Missing observed OpenGL " + key)
+        require(gl.get("renderer_class") in ("software", "unclassified"),
+                "Client fixture cannot classify hardware acceleration")
+        require(render.get("textured_quad_verified") is True and render.get("swap_buffers") is True
+                and type(render.get("samples_verified")) is int and render["samples_verified"] == 4,
+                "Client probe did not verify textured rendering and buffer swap")
+        pixels = render.get("rgb_samples")
+        require(isinstance(pixels, list) and len(pixels) == 4, "Client pixel readback missing")
+        expected = ((255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255))
+        for pixel, target in zip(pixels, expected):
+            require(isinstance(pixel, list) and len(pixel) == 3
+                    and all(type(value) is int and 0 <= value <= 255 and abs(value - wanted) <= 3
+                            for value, wanted in zip(pixel, target)), "Client pixel readback differs")
+        require(inputs.get("window_messages_verified") is True
+                and inputs.get("keyboard_message_mask") == 3 and inputs.get("mouse_message_mask") == 7
+                and inputs.get("directinput_devices_created") is True
+                and type(inputs.get("directinput_hresult")) is int and inputs["directinput_hresult"] == 0,
+                "Client probe did not exercise required Windows input plumbing")
+    else:
+        require(bool(result["failure_stage"]), "Failed client probe needs a failure stage")
+    if require_pass:
+        require(result["status"] == "passed", "Client capability fixture failed: " + result["failure_stage"])
+    return result
+
+
 def validate_odbc_driver(output):
     """Require observed PE32 registration plus a loaded native driver DLL."""
     lines = output.splitlines()
@@ -346,11 +408,11 @@ def verify_pe32(path):
             "Expected PE32 i386: " + path.name)
 
 
-def verify_assets(assets):
+def verify_assets(assets, *, client_probe=False):
     manifest = json.loads((assets / "runtime-manifest.json").read_text())
     require(manifest.get("format") == 1, "Unsupported runtime asset manifest")
     hashes = {}
-    for name in REQUIRED_ASSETS:
+    for name in REQUIRED_ASSETS + (("client-probe.exe",) if client_probe else ()):
         path = assets / name
         require(path.is_file() and not path.is_symlink(), "Missing or linked asset: " + name)
         expected = manifest.get("files", {}).get(name)
@@ -364,6 +426,12 @@ def verify_assets(assets):
     require(manifest.get("runtime_probe") == expected_probe, "Runtime probe manifest contract differs")
     for name in ("runtime-probe.exe", "probe.dll", "odbc_probe.exe"):
         verify_pe32(assets / name)
+    if client_probe:
+        require(manifest.get("client_probe") == {
+            "executable": "client-probe.exe", "marker": "COH_CLIENT_PROBE_V1 ",
+            "scope": "headless_wgl_client_capabilities", "optional": True},
+            "Client probe manifest contract differs")
+        verify_pe32(assets / "client-probe.exe")
     return hashes
 
 
@@ -468,7 +536,7 @@ class Diagnostic:
         self.ctx.stage("assets_and_architecture")
         require(platform.machine().lower() in ("aarch64", "arm64"), "Guest must execute on ARM64")
         require(os.geteuid() == 1000, "Guest requires PRoot -i 1000:1000")
-        self.ctx.report["asset_sha256"] = verify_assets(self.args.assets)
+        self.ctx.report["asset_sha256"] = verify_assets(self.args.assets, client_probe=self.args.client_probe)
         for name in ("initdb", "postgres", "pg_ctl", "psql"):
             arm64_elf(self.args.pg_bin / name)
         arm64_elf(self.args.wine)
@@ -692,6 +760,16 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
         result = self.ctx.run("runtime-probe", [self.args.wine, windows_path(self.args.assets / "runtime-probe.exe")],
                               timeout=60, env=self.wine_env)
         self.ctx.passed(**validate_runtime_probe(result["output"]))
+        if self.args.client_probe:
+            self.ctx.stage("win32_client_capabilities")
+            result = self.ctx.run("client-probe", [self.args.wine,
+                windows_path(self.args.assets / "client-probe.exe")], timeout=90,
+                env=self.wine_env, check=False)
+            evidence = validate_client_probe(result["output"], require_pass=False)
+            self.ctx.report["client_probe"] = evidence
+            require(result["exit_code"] == 0 and evidence["status"] == "passed",
+                    "Client capability fixture failed: " + evidence.get("failure_stage", "unknown"))
+            self.ctx.passed(client_probe=evidence)
         self.probe()
         self.ctx.stage("postgres_clean_restart")
         self.stop_postgres()
@@ -750,10 +828,15 @@ def main(argv=None):
     parser.add_argument("--timeout-seconds", type=int, default=900)
     parser.add_argument("--execution-platform", choices=("android", "host"), default="host")
     parser.add_argument("--android-metadata", type=Path)
+    parser.add_argument("--client-probe", action="store_true",
+                        help="Also exercise headless Win32 WGL and synthetic input; no gameplay claim")
     args = parser.parse_args(argv)
     os.umask(0o077)
     context = Context(args.state, args.timeout_seconds)
     context.report["execution_platform_requested"] = args.execution_platform
+    context.report["diagnostic_mode"] = "database_and_client" if args.client_probe else "database"
+    if args.client_probe:
+        context.report["scope"] += "; headless WGL rendering and synthetic input fixture"
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda _sig, _frame: setattr(context, "cancel_requested", True))
     diagnostic = None

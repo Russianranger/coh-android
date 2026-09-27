@@ -78,8 +78,8 @@ jobs:
         with:
           name: coh-diagnostic-apk
           path: |
-            out/android/COH-Diagnostic-0.1.0.apk
-            out/android/COH-Diagnostic-0.1.0.apk.sha256
+            out/android/COH-Diagnostic-0.1.1.apk
+            out/android/COH-Diagnostic-0.1.1.apk.sha256
             out/android/apk-build-report.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
@@ -94,6 +94,10 @@ jobs:
           if-no-files-found: error
   runtime:
     needs: apk
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [database, client]
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     steps:
@@ -112,12 +116,19 @@ jobs:
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
       - name: Build matching native ARM64 PRoot
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
-      - name: Prove Win32 ODBC, database restart and owned shutdown through PRoot
-        run: python3 tools/android/host_smoke.py
+      - name: Prove requested Win32 fixtures, database restart and owned shutdown through PRoot
+        env:
+          DIAGNOSTIC_MODE: ${{ matrix.mode }}
+        run: |
+          if [ "$DIAGNOSTIC_MODE" = client ]; then
+            python3 tools/android/host_smoke.py --client-probe
+          else
+            python3 tools/android/host_smoke.py
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coh-diagnostic-host-evidence
+          name: coh-diagnostic-host-evidence-${{ matrix.mode }}
           path: |
             out/android/host-evidence/
             out/android/native/linux-arm64/proot-build-receipt.json

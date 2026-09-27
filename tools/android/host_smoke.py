@@ -18,6 +18,8 @@ def main():
     p.add_argument('--assets',type=Path,default=ROOT/'out/android/assets/runtime')
     p.add_argument('--proot',type=Path,default=ROOT/'out/android/native/linux-arm64')
     p.add_argument('--work',type=Path,default=ROOT/'out/android/host-smoke')
+    p.add_argument('--client-probe',action='store_true',help='Also require the PE32 WGL/input fixture')
+    p.add_argument('--evidence',type=Path,default=ROOT/'out/android/host-evidence')
     a=p.parse_args()
     if platform.machine().lower() not in ('aarch64','arm64'):raise RuntimeError('Native ARM64 Linux is required')
     if a.work.exists():raise RuntimeError('Use a fresh owned smoke directory')
@@ -42,8 +44,10 @@ def main():
     for source,dest in binds:command+=['-b',str(Path(source).resolve())+':'+dest]
     command+=['-w','/state','/usr/bin/env','-i','HOME=/state','USER=coh','LOGNAME=coh','PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin','LANG=C.UTF-8','TZ=UTC','TMPDIR=/tmp','PYTHONUNBUFFERED=1',
         '/usr/bin/python3','/opt/coh/diagnostic.py','--state','/state','--assets','/opt/coh','--pg-bin','/opt/coh/pgsql/bin','--wine','/opt/wine/bin/wine','--wineserver','/opt/wine/bin/wineserver','--execution-platform','host']
+    if a.client_probe:command+=['--client-probe']
     env=os.environ.copy();env.update(PROOT_LOADER=str(proot/'proot-loader'),PROOT_TMP_DIR=str(tmp.resolve()),PROOT_NO_SECCOMP='1')
-    evidence=ROOT/'out/android/host-evidence';evidence.mkdir(parents=True,exist_ok=True)
+    evidence=a.evidence;evidence.mkdir(parents=True,exist_ok=True)
+    (evidence/'runtime-smoke-report.json').unlink(missing_ok=True)
     with (evidence/'host-diagnostic.log').open('w') as log:
         process=subprocess.Popen(command,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
         try:
@@ -63,6 +67,14 @@ def main():
     if code!=0 or report.get('passed') is not True or report.get('failures')!=[] or not all(report.get('cleanup',{}).get(k) is True for k in ('postgres_graceful','wine_prefix_stopped','owned_processes_reaped')):
         print((evidence/'host-diagnostic.log').read_text()[-24000:]);raise RuntimeError('Native ARM64 PRoot runtime gate failed')
     if report.get('android_execution_validated') is not False:raise RuntimeError('Host smoke cannot claim Android acceptance')
-    print(json.dumps({'status':'native_arm64_proot_runtime_passed_android_unvalidated','report':str(evidence/'runtime-smoke-report.json'),'phases':len(report.get('phases',[]))}))
+    if report.get('diagnostic_mode') != ('database_and_client' if a.client_probe else 'database'):
+        raise RuntimeError('Host report did not exercise the requested diagnostic mode')
+    if a.client_probe:
+        client=report.get('client_probe',{})
+        if client.get('status') != 'passed' or client.get('scope') != 'headless_wgl_client_capabilities':
+            raise RuntimeError('Client runtime probe was not passed')
+        if any(client.get(key) is not False for key in ('game_rendering_validated','android_surface_validated','hardware_acceleration_validated')):
+            raise RuntimeError('Client fixture cannot claim Android rendering or hardware acceleration')
+    print(json.dumps({'status':'native_arm64_proot_runtime_passed_android_unvalidated','report':str(evidence/'runtime-smoke-report.json'),'stages':len(report.get('stages',[])),'client_probe':a.client_probe}))
 
 if __name__=='__main__':main()

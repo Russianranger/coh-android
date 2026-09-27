@@ -13,6 +13,8 @@ import zipfile
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 APP_ID = "io.github.russianranger.cohdiagnostic"
+VERSION_NAME = "0.1.1"
+VERSION_CODE = 2
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 
 def digest(path):
@@ -28,7 +30,7 @@ def run(*command):
 
 def verify_badging(text):
     package = re.search(r"^package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", text, re.M)
-    if not package or package.groups() != (APP_ID, "1", "0.1.0"):
+    if not package or package.groups() != (APP_ID, str(VERSION_CODE), VERSION_NAME):
         raise ValueError("APK package/version mismatch")
     # SDK 35 aapt2 uses minSdkVersion; older aapt2 called it sdkVersion.
     minimum = re.findall(r"^(?:minSdkVersion|sdkVersion):'([^']+)'$", text, re.M)
@@ -70,7 +72,7 @@ def main():
     parser.add_argument("--build-tools", type=Path, required=True)
     parser.add_argument("--keystore", type=Path, required=True)
     parser.add_argument("--alias", default="coh-diagnostic")
-    parser.add_argument("--output", type=Path, default=ROOT / "out/android/COH-Diagnostic-0.1.0.apk")
+    parser.add_argument("--output", type=Path, default=ROOT / f"out/android/COH-Diagnostic-{VERSION_NAME}.apk")
     args = parser.parse_args()
     for key in ("android_jar", "build_tools", "keystore", "output"):
         setattr(args, key, getattr(args, key).resolve())
@@ -78,7 +80,8 @@ def main():
     assets, native = ROOT / "out/android/assets", ROOT / "out/android/native"
     manifest, members = payloads(assets, native)
     xml = ET.parse(main_dir / "AndroidManifest.xml").getroot()
-    if xml.get("package") != APP_ID or xml.get(ANDROID + "versionName") != "0.1.0":
+    if (xml.get("package") != APP_ID or xml.get(ANDROID + "versionName") != VERSION_NAME
+            or xml.get(ANDROID + "versionCode") != str(VERSION_CODE)):
         raise ValueError("Source manifest identity mismatch")
     if xml.find("application").get(ANDROID + "extractNativeLibs") != "true":
         raise ValueError("PRoot requires native extraction")
@@ -132,7 +135,7 @@ def main():
         shutil.copyfile(signed, args.output)
         report = {
             "format": 1, "apk": args.output.name, "bytes": args.output.stat().st_size, "sha256": digest(args.output),
-            "application_id": APP_ID, "version_name": "0.1.0", "version_code": 1,
+            "application_id": APP_ID, "version_name": VERSION_NAME, "version_code": VERSION_CODE,
             "min_sdk": 26, "target_sdk": 35, "abi": "arm64-v8a",
             "repository_commit": manifest["repository_commit"], "runtime_manifest_sha256": digest(assets / "runtime/runtime-manifest.json"),
             "signature_verified": True, "signer_certificate_sha256": certificate.group(1).lower(),

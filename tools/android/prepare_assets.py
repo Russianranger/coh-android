@@ -83,6 +83,8 @@ def main():
     lock = json.loads((ROOT/'android/runtime-lock.json').read_text())
     shutil.copyfile(fetch(lock['odbc'], ROOT/'out/android/cache/psqlodbc_x86.msi'), out/'psqlodbc_x86.msi')
     cmds = [
+        [a.cc, '-std=c99', '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/client-probe.c'),
+         '-lopengl32', '-lgdi32', '-luser32', '-ldinput8', '-ldxguid', '-o', str(out/'client-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-ladvapi32', '-o', str(out/'runtime-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-shared', '-static-libgcc', '-Wl,--kill-at', str(ROOT/'android/native/probe.c'), '-o', str(out/'probe.dll')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', '-DCOH_ODBC_TRACE=1', '-DCOH_ODBC_WIDE_INFO=1', '-DCOH_ODBC_WIDE_COLUMNS=1',
@@ -91,9 +93,13 @@ def main():
     ]
     for cmd in cmds:
         subprocess.run(cmd, check=True)
-    for name in ['runtime-probe.exe', 'probe.dll', 'odbc_probe.exe']:
+    for name in ['runtime-probe.exe', 'probe.dll', 'odbc_probe.exe', 'client-probe.exe']:
         pe32(out/name)
     odbc_imports = verify_odbc_imports(subprocess.check_output([a.objdump, '-p', str(out/'odbc_probe.exe')], text=True))
+    client_dump = subprocess.check_output([a.objdump, '-p', str(out/'client-probe.exe')], text=True)
+    client_libraries = sorted(set(re.findall(r'DLL Name:\s*(\S+)', client_dump)))
+    if not {'opengl32.dll','gdi32.dll','user32.dll','dinput8.dll'}.issubset({name.lower() for name in client_libraries}):
+        raise ValueError('Client probe lacks real Windows graphics/input imports')
     inputs = {
         'diagnostic.py': ROOT/'android/guest/diagnostic.py',
         '001-coh-compat.sql': ROOT/'database/postgresql/001-coh-compat.sql',
@@ -108,6 +114,9 @@ def main():
     files = {f.name: {'bytes':f.stat().st_size, 'sha256':digest(f)} for f in sorted(out.iterdir()) if f.is_file() and f.name != 'runtime-manifest.json'}
     manifest = {'format':1, 'repository_commit':a.repository_commit, 'candidate':lock['candidate'], 'files':files,
         'runtime_probe':{'executable':'runtime-probe.exe','marker':'COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified','dll':'probe.dll'},
+        'client_probe':{'executable':'client-probe.exe','marker':'COH_CLIENT_PROBE_V1 ',
+                        'scope':'headless_wgl_client_capabilities','optional':True},
+        'client_probe_windows_libraries':client_libraries,
         'compiler':subprocess.check_output([a.cc,'--version'], text=True).splitlines()[0],
         'odbc_ansi_compatibility':{'wine_export_source':WINE_ODBC_SPEC, 'compile_aliases':ODBC_ANSI_ALIASES,
                                   'verified_windows_manager_imports':odbc_imports, 'fixture_sql_and_acceptance_markers_changed':False,

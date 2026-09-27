@@ -42,7 +42,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService exporter = Executors.newSingleThreadExecutor();
     private DiagnosticService service;
     private boolean bound, exporting;
-    private Button setup, run, stop, export;
+    private Button setup, run, clientProbe, stop, export;
     private TextView stage, detail, logs;
     private ProgressBar progress;
     private ScrollView logScroll;
@@ -58,7 +58,7 @@ public final class MainActivity extends Activity {
             service = null;
             stage.setText("Service disconnected");
             detail.setText("Reopen this screen to reconnect. Interrupted tests do not restart automatically.");
-            setup.setEnabled(false); run.setEnabled(false); stop.setEnabled(false);
+            setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); stop.setEnabled(false);
         }
     };
 
@@ -82,12 +82,17 @@ public final class MainActivity extends Activity {
             view.setPadding(pad + left, pad + top, pad + right, pad + bottom);
             return insets;
         });
-        setContentView(root);
+        // Keep controls reachable on the Thor's short landscape viewport and
+        // with larger Android font sizes. The log retains its own bounded area.
+        ScrollView screen = new ScrollView(this);
+        screen.setFillViewport(true);
+        screen.addView(root, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        setContentView(screen);
 
         TextView title = text("COH Diagnostic", 27, INK);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         root.addView(title, full());
-        TextView scope = text("Runtime and database checks for AYN Thor. City of Heroes server, client and gameplay are not included yet.", 14, MUTED);
+        TextView scope = text("Runtime and database checks for AYN Thor. The optional client probe adds synthetic graphics and input checks. City of Heroes gameplay is not included.", 14, MUTED);
         scope.setPadding(0, dp(5), 0, dp(12));
         root.addView(scope, full());
 
@@ -102,9 +107,14 @@ public final class MainActivity extends Activity {
         stopSize.setMarginStart(dp(8));
         actions.addView(stop, stopSize);
         root.addView(actions, full());
+        clientProbe = button("Run client probe", () -> startOperation(DiagnosticService.ACTION_CLIENT_PROBE));
+        root.addView(clientProbe, full());
+        TextView probeScope = text("Includes diagnostics plus a test Windows window, OpenGL and input messages in a virtual display. Does not validate game rendering or controller input.", 12, MUTED);
+        probeScope.setPadding(0, dp(2), 0, dp(6));
+        root.addView(probeScope, full());
         export = button("Export latest report", this::chooseExport);
         root.addView(export, full());
-        setup.setEnabled(false); run.setEnabled(false); stop.setEnabled(false); export.setEnabled(false);
+        setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); stop.setEnabled(false); export.setEnabled(false);
 
         LinearLayout status = new LinearLayout(this);
         status.setGravity(Gravity.CENTER_VERTICAL);
@@ -129,8 +139,8 @@ public final class MainActivity extends Activity {
         logs.setTextIsSelectable(true);
         logs.setPadding(dp(12), dp(12), dp(12), dp(12));
         logScroll.addView(logs, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
-        root.addView(logScroll, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-        TextView version = text("M2 · v0.1.0 · Android " + Build.VERSION.RELEASE + " · "
+        root.addView(logScroll, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(180), 1));
+        TextView version = text("M2 + client probe · v0.1.1 · Android " + Build.VERSION.RELEASE + " · "
                 + (Build.SUPPORTED_ABIS.length == 0 ? "unknown ABI" : Build.SUPPORTED_ABIS[0]), 11, MUTED);
         version.setPadding(0, dp(8), 0, 0);
         root.addView(version, full());
@@ -165,6 +175,7 @@ public final class MainActivity extends Activity {
         state = current;
         setup.setEnabled(!current.busy && !current.blocked);
         run.setEnabled(!current.busy && !current.blocked && current.setupComplete);
+        clientProbe.setEnabled(!current.busy && !current.blocked && current.setupComplete);
         stop.setEnabled(current.busy && !current.stopping);
         stop.setText(current.stopping ? "Stopping…" : "Stop");
         export.setEnabled(!exporting && current.report != null && current.report.isFile());
