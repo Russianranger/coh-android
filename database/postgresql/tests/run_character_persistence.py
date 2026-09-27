@@ -63,6 +63,8 @@ def source_contract(root=ROOT):
         'commands': 'Utilities/TestClient/src/testClientCmdParse.c',
         'status': 'DBServer/src/status.c',
         'scene': 'Game/src/clientcomm/clientcomm.c',
+        'character_list': 'Game/src/clientcomm/dbclient.c',
+        'entity_receive': 'Game/src/entity/entrecv.c',
         'server_ready': 'MapServer/src/svr/svr_tick.c',
         'server_commands': 'MapServer/src/cmdparse/cmdserver.c',
         'logout': 'Utilities/TestClient/src/externs.c',
@@ -84,6 +86,9 @@ def source_contract(root=ROOT):
                   'case SERVER_UPDATE:', 'entReceiveUpdate(pak,cmd==SERVER_ALLENTS);'),
         'server_ready': ('xcase CLIENT_READY:', 'client->ready = CLIENTSTATE_ENTERING_GAME;',
                          'client->ready=CLIENTSTATE_IN_GAME;', 'entSendUpdate('),
+        'character_list': ('db_info.players = calloc(db_info.max_slots,sizeof(db_info.players[0]));',
+                           'Strncpyt(db_info.players[i].name,pktGetString(pak));'),
+        'entity_receive': ('db_id = pktGetBitsPack(pak,PKT_BITS_TO_REP_DB_ID);',),
         'server_commands': ('xcase SCMD_INFLUENCE:', 'ent_SetInfluence(e, tmp_int);'),
         'logout': ('FatalErrorf("Booted back to login screen");',),
         'debug': ('char * csrPlayerInfo(', 'localizedPrintf(e,"CSRInfo1")',
@@ -282,17 +287,20 @@ def active_pipe_identity(state, pid, account, name):
 def accept_sustained_resume(text, state, pid, account, name, identifier, exit_code):
     require(exit_code is None, 'Sustained resume client exited before session observation')
     slot = resume_branch(text, name)
+    # Character-list packets contain name/slot, not db_id. The latter remains
+    # zero in DbPlayer; the actual ID is received in the map entity update.
     matches = [match.groups() for line in text.splitlines() if
-               (match := re.fullmatch(r'COH_RESUME_ONLY_SELECTED id=(\d+) slot=(\d+) name=(.+)', line))]
-    require(len(matches) == 1 and int(matches[0][0]) == identifier and identifier > 0 and
-            int(matches[0][1]) == slot and matches[0][2] == name,
-            'Resume-only selection lacks the original positive database ID, exact name and slot')
+               (match := re.fullmatch(r'COH_RESUME_ONLY_SELECTED slot=(\d+) name=(.+)', line))]
+    require(len(matches) == 1 and int(matches[0][0]) == slot and matches[0][1] == name,
+            'Resume-only selection lacks the exact name and slot')
     require('COH_RESUME_ONLY_MISSING' not in text, 'Positive resume reported a missing character')
     updates = [line for line in text.splitlines() if line.startswith('COH_RESUME_ONLY_SERVER_UPDATE')]
-    require(updates == [f'COH_RESUME_ONLY_SERVER_UPDATE id={identifier} name={name}'],
+    require(type(identifier) is int and identifier > 0 and
+            updates == [f'COH_RESUME_ONLY_SERVER_UPDATE id={identifier} name={name}'],
             'Resume lacks one processed server update for the original player database ID/name')
     require(active_pipe_identity(state, pid, account, name) == name, 'Sustained resume lacks live player/map pipe identity')
-    return {'slot': slot, 'database_id': identifier, 'exact_name': name, 'creation_disabled': True,
+    return {'slot': slot, 'database_id': identifier, 'database_id_source': 'processed MapServer player entity update',
+            'exact_name': name, 'creation_disabled': True,
             'scene_exchange_observed': True, 'processed_server_update_for_original_player': True,
             'active_gameplay_confirmed': False,
             'scope': 'Connected existing-character session; combat, movement and rendered gameplay unvalidated'}

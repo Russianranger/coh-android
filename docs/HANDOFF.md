@@ -52,7 +52,16 @@ connected command loop. The next hosted gate requires missing-name refusal with
 zero created rows, live restored currency, 60 seconds of connected observation,
 a second currency change and a second protocol logout/committed save. The accepted
 stock TestClient and server reference binaries remain unchanged. Implementation
-is complete and hosted validation is next; a sustained-session pass is not yet claimed.
+is complete. The first hosted attempt
+[36293644180](https://github.com/Russianranger/coh-android/actions/runs/36293644180)
+passed stock creation/save/restart and missing-name refusal without mutation,
+then rejected the positive selection because the character-list packet does not
+populate its `db_id` field. The correction checks exact name/slot there and binds
+the actual MapServer entity ID after the processed update to independent SQL.
+The [failed evidence](postgresql-evidence/character-session-36293644180.json) is
+preserved; sustained resume and second-save acceptance remain pending. The
+same-commit [stock regression](https://github.com/Russianranger/coh-android/actions/runs/36293644040)
+and all four PostgreSQL regression jobs passed.
 
 ### Earlier attempts and corrections
 

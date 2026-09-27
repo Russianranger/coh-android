@@ -10,20 +10,28 @@ The opt-in invocation is `-resumeonly -character NAME`. Argument validation runs
 before the legacy parser, requires one bounded name, and rejects interactive
 selection. After all arguments, it sets exactly `TEST_LOGIN | TEST_RESUME_CHAR |
 TEST_STAY_CONNECTED`, with all secondary automatic test groups disabled. The
-name comparison is case sensitive, including when earlier character slots are
-empty. Without `-resumeonly`, stock defaults and packet handling are preserved.
+name comparison is case sensitive. Opt-in search scans all `max_slots` entries
+so occupied slots after empty slots are included (`player_count` only counts
+occupied entries). Without `-resumeonly`, stock defaults and packet handling are preserved.
 
 Diagnostic lines and outcomes:
 
-- `COH_RESUME_ONLY_SELECTED id=N slot=N name=NAME` records the positive ID and
-  zero-based slot supplied by DbServer's character list.
+- `COH_RESUME_ONLY_SELECTED slot=N name=NAME` records the exact name and
+  zero-based slot supplied by DbServer's character list. That packet does not
+  transmit the character database ID; its unused client field remains zero.
 - `COH_RESUME_ONLY_MISSING name=NAME` disconnects from DbServer and returns exit
   code 3 before choosing, creating, or entering a map.
 - `COH_RESUME_ONLY_SERVER_UPDATE id=N name=NAME` records a processed steady
-  `SERVER_UPDATE` after scene loading. It verifies the received entity's ID and
-  exact name against the selected identity. The marker is emitted once.
+  `SERVER_UPDATE` after scene loading. It requires a positive received entity ID and
+  exact selected name. The independent harness must bind this ID to the original
+  SQL/find identity. The marker is emitted once.
 - Invalid arguments return 2. Invalid selected identity or received entity
   identity mismatch returns 4. These paths do not fall back to creation.
+
+The character-list contract is `DBServer/src/clientcomm.c:sqlGetPlayersCallback`
+and `Game/src/clientcomm/dbclient.c:receivePlayersCommon`; IDs stay in the
+server-side slot table. The actual player entity ID is decoded and stored in
+`Game/src/entity/entrecv.c`, then reported after a successful steady update.
 
 The update marker relies on pinned source behavior: `commReqScene` in
 `Game/src/clientcomm/clientcomm.c` receives `SERVER_ALLENTS` before sending

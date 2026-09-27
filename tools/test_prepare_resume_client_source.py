@@ -108,7 +108,7 @@ class ResumeBehaviorTests(unittest.TestCase):
 #include <strings.h>
 #define stricmp strcasecmp
 ''' + enum + r'''
-static int resume_only, resume_only_db_id, resume_only_update_seen;
+static int resume_only, resume_only_update_seen;
 static char resume_only_name[64], character_name[256];
 static int ask_user, gPlayerNumber, err;
 static TestMode g_testMode = TEST_RESUME_CHAR | TEST_CREATE_CHAR | TEST_STAY_CONNECTED | TEST_LEVELUP;
@@ -116,8 +116,10 @@ static TestMode2 g_testMode2 = TEST2_LEAGUE_ACCEPT;
 static MissionServerTestMode g_testModeMission = TEST_MISSIONSEARCH;
 static AccountServerTestMode g_testModeAccount = TEST_ACCOUNTSERVER;
 typedef struct { char name[64]; int db_id; } PlayerSlot;
-static PlayerSlot slots[] = {{"empty",0}, {"TESTHero",42}, {"Invalid",0}};
-static struct { PlayerSlot *players; int player_count; } db_info = { slots, 3 };
+// receivePlayersCommon calloc leaves db_id zero and player_count counts only
+// occupied slots, whereas max_slots gives the allocated array length.
+static PlayerSlot slots[] = {{"empty",0}, {"empty",0}, {"TESTHero",0}};
+static struct { PlayerSlot *players; int player_count, max_slots; } db_info = { slots, 1, 3 };
 typedef struct { char name[64]; int db_id; } Entity;
 static Entity entity = { "TESTHero",42 };
 static Entity *playerPtr(void) { return &entity; }
@@ -139,9 +141,10 @@ int main(int argc, char **argv) {
         if(strcmp(argv[i],"-disconnect")==0) g_testMode &= ~TEST_STAY_CONNECTED;
         if(strcmp(argv[i],"-askuser")==0) ask_user=1;
         if(strcmp(argv[i],"-character")==0 && i+1<argc) strcpy(character_name,argv[++i]);
-        if(strcmp(argv[i],"-no-slots")==0) { db_info.players=NULL; db_info.player_count=0; }
+        if(strcmp(argv[i],"-no-slots")==0) { db_info.players=NULL; db_info.player_count=0; db_info.max_slots=0; }
         if(strcmp(argv[i],"-packet")==0 && i+1<argc) simulated_packet_result=atoi(argv[++i]);
-        if(strcmp(argv[i],"-wrong-entity")==0) entity.db_id=7;
+        if(strcmp(argv[i],"-wrong-entity")==0) strcpy(entity.name,"OtherHero");
+        if(strcmp(argv[i],"-entity-id")==0 && i+1<argc) entity.db_id=atoi(argv[++i]);
     }
     finalizeResumeOnlyMode();
     printf("MODES:%d,%d,%d,%d\n",g_testMode,g_testMode2,g_testModeMission,g_testModeAccount);
@@ -158,14 +161,14 @@ int main(int argc, char **argv) {
     def run_probe(self, *args):
         return subprocess.run([str(self.executable), *args], capture_output=True, text=True)
 
-    def test_existing_name_after_empty_slot_binds_real_id_and_preserves_connection(self):
+    def test_existing_name_after_empty_slots_with_zero_list_id_preserves_connection(self):
         for flags in (('-resumeonly', '-character', 'TESTHero', '-justlogin', '-CREATE_CHAR', '-disconnect'),
                       ('-disconnect', '-justlogin', '-character', 'TESTHero', '-resumeonly')):
             with self.subTest(flags=flags):
                 result = self.run_probe(*flags)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertIn('MODES:5,0,0,0', result.stdout)
-                self.assertIn('COH_RESUME_ONLY_SELECTED id=42 slot=1 name=TESTHero', result.stdout)
+                self.assertIn('COH_RESUME_ONLY_SELECTED slot=2 name=TESTHero', result.stdout)
                 self.assertIn('RESUME_BRANCH', result.stdout)
 
     def test_missing_or_wrong_case_name_exits_before_scene_or_creation(self):
@@ -193,11 +196,19 @@ int main(int argc, char **argv) {
                 self.assertIn('COH_RESUME_ONLY_INVALID_ARGUMENTS', result.stdout)
                 self.assertNotIn('COMM_CHECK', result.stdout)
 
-    def test_nonpositive_server_id_is_rejected(self):
-        result = self.run_probe('-resumeonly', '-character', 'Invalid')
-        self.assertEqual(result.returncode, 4)
-        self.assertIn('COH_RESUME_ONLY_INVALID_SELECTION', result.stdout)
-        self.assertNotIn('RESUME_BRANCH', result.stdout)
+    def test_nonpositive_received_entity_id_is_rejected(self):
+        for dbid in ('0', '-7'):
+            with self.subTest(dbid=dbid):
+                result = self.run_probe('-resumeonly','-character','TESTHero',
+                                        '-packet','1','-entity-id',dbid)
+                self.assertEqual(result.returncode, 4)
+                self.assertIn('COH_RESUME_ONLY_IDENTITY_MISMATCH', result.stdout)
+                self.assertNotIn('COH_RESUME_ONLY_SERVER_UPDATE', result.stdout)
+
+    def test_actual_received_positive_id_is_reported_for_independent_sql_binding(self):
+        result = self.run_probe('-resumeonly','-character','TESTHero','-packet','1','-entity-id','987')
+        self.assertEqual(result.returncode, 0)
+        self.assertIn('COH_RESUME_ONLY_SERVER_UPDATE id=987 name=TESTHero', result.stdout)
 
     def test_only_successfully_processed_update_emits_actual_entity_identity(self):
         for packet_result in (1, 0, -1):

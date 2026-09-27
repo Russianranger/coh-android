@@ -1,6 +1,9 @@
 # Sustained character session validation
 
-Status: implemented and ready for hosted validation; no sustained-session pass yet.
+Status: the first hosted run passed creation/save/restart and missing-name
+refusal, then exposed a diagnostic character-list ID assumption. The correction
+requires the actual MapServer entity ID at the proper protocol stage; a full
+sustained-session pass is still pending.
 The accepted [short resume run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
 proved creation, a live currency change, protocol logout/save, same-database
 restart and an exact-name scene probe. The next gate keeps the resumed client
@@ -21,6 +24,45 @@ accepted runtime dependencies before using it in the owned disposable runtime.
 The accepted DbServer, MapServer, schema, template and prior map-readiness hashes
 remain required. This experiment does not replace or relabel the accepted stock
 reference package.
+
+The character-list packet supplies the selected name and slot, but does not
+populate `db_info.players[slot].db_id`. Selection is therefore checked by exact
+name/slot. The later processed MapServer player update supplies the real positive
+ID, which the harness must match to the original SQL and stock-query identity.
+The diagnostic search uses the allocated slot count, so an empty earlier slot
+cannot hide a later exact-name character.
+
+## First hosted attempt: 36293644180
+
+[Run 36293644180](https://github.com/Russianranger/coh-android/actions/runs/36293644180)
+at `9358211586902951b05e495ac4b7648d0df0f036` passed all 102 Windows tooling
+checks and 97 Linux checks (five Windows-only skips), then built the diagnostic
+TestClient successfully. Its runtime passed eight phases: stock creation and
+live influence 12,345, committed protocol logout, same-cluster/service restart,
+and missing-name refusal with an unchanged character inventory and selected SQL.
+
+The positive resume found `TEST34470` in slot 0, then the diagnostic's premature
+ID check returned exit 4 (`COH_RESUME_ONLY_INVALID_SELECTION`) before map entry.
+The harness correctly rejected the disconnected pipe. Source inspection confirmed
+that the list's zero-initialized `db_id` is never received from that packet; the
+ID must instead be checked on the later received MapServer entity. No sustained
+connection, second currency change or second save was accepted in this attempt.
+
+The [complete failed artifact](postgresql-evidence/character-session-36293644180.zip)
+and [report](postgresql-evidence/character-session-36293644180.json) are preserved:
+artifact `10922619086`, 10,005 bytes, SHA-256
+`491214ced33579d31c4bec4ef3bd07cd05b6bdd34aca1f6b859e3e227175364e`.
+The separate [build manifest](postgresql-evidence/resume-testclient-build-36293644180.json)
+and [source receipt](postgresql-evidence/resume-testclient-source-36293644180.json)
+identify the initial diagnostic binary, not a successful runtime acceptance.
+
+The same-commit [stock short-resume regression 36293644040](https://github.com/Russianranger/coh-android/actions/runs/36293644040)
+passed all eight phases with unchanged influence 12,345 and selected rows, and
+`LoginCount` 1 → 1 → 2. Its [report](postgresql-evidence/character-persistence-36293644040.json)
+and [full artifact](postgresql-evidence/character-persistence-36293644040.zip)
+are preserved. All four same-commit
+[PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36293644041)
+also passed.
 
 ## Acceptance
 

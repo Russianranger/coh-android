@@ -29,7 +29,7 @@ def resume_text():
 
 
 def sustained_text():
-    return (resume_text() + f'COH_RESUME_ONLY_SELECTED id=9 slot=2 name={NAME}\n'
+    return (resume_text() + f'COH_RESUME_ONLY_SELECTED slot=2 name={NAME}\n'
             f'COH_RESUME_ONLY_SERVER_UPDATE id=9 name={NAME}\n')
 
 
@@ -163,6 +163,7 @@ class CharacterProtocolTests(unittest.TestCase):
         self.assertTrue(result['processed_server_update_for_original_player'])
         self.assertFalse(result['active_gameplay_confirmed'])
         for text in (resume_text(), sustained_text().replace('id=9', 'id=8'),
+                     sustained_text().replace('COH_RESUME_ONLY_SELECTED slot=', 'COH_RESUME_ONLY_SELECTED id=9 slot='),
                      sustained_text().replace('slot=2', 'slot=3'),
                      sustained_text().replace('name=' + NAME, 'name=OTHER'),
                      sustained_text() + f'COH_RESUME_ONLY_SERVER_UPDATE id=9 name={NAME}\n',
