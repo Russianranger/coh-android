@@ -133,7 +133,14 @@ static void foreign_keys(void) {
 static void metadata(void) {
     SQLHSTMT s=statement(); SQLRETURN rc; SQLLEN len;
     char name[80],type[80],canonical[80]; SQLINTEGER size; int count=0; CohPgKind kind;
+#ifdef COH_ODBC_WIDE_COLUMNS
+    /* The ANSI fallback rejects valid NULL catalog/column filters. Preserve
+     * those filters through the driver's implemented Unicode entry point. */
+    SQLWCHAR schema[]={'d','b','o',0},table[]={'p','g','p','r','o','b','e',0};
+    CHECK(SQLColumnsW(s,NULL,0,schema,SQL_NTS,table,SQL_NTS,NULL,0),SQL_HANDLE_STMT,s);
+#else
     CHECK(SQLColumnsA(s,NULL,0,(SQLCHAR *)"dbo",SQL_NTS,(SQLCHAR *)"pgprobe",SQL_NTS,NULL,0),SQL_HANDLE_STMT,s);
+#endif
     while ((rc=SQLFetch(s))!=SQL_NO_DATA) {
         CHECK(rc,SQL_HANDLE_STMT,s);
         CHECK(SQLGetData(s,4,SQL_C_CHAR,name,sizeof(name),&len),SQL_HANDLE_STMT,s);

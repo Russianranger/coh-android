@@ -143,7 +143,37 @@
       "guest_postgresql_durable_restart_executed": false,
       "android_device_validated": false,
       "raw_report": "runtime-smoke-report-36334953501.json",
-      "next_correction": "Query the same driver version with SQLGetInfoW using the manager HDBC, validate bounded UTF-16 result and preserve all SQL assertions and 65-connection checks"
+      "next_correction": "Query the same driver version with SQLGetInfoW using the manager HDBC, validate bounded UTF-16 result and preserve all SQL assertions and 65-connection checks",
+      "correction_commit": "69c04aab7d61106eca647af36ecbc5cf52311fc3"
+    },
+    {
+      "run_id": 36335852159,
+      "repository_commit": "69c04aab7d61106eca647af36ecbc5cf52311fc3",
+      "result": "failed",
+      "tooling_tests_passed": 79,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108667148210,
+      "stage": "odbc_fixture",
+      "reason": "SQLGetInfoW fix succeeded; fixture passed five check groups then SQLColumns returned SQL_ERROR at line 136 before any driver diagnostic",
+      "odbc_groups_passed": [
+        "PASS all 65 stock DbServer ODBC connections coexist",
+        "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+        "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+        "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+        "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL"
+      ],
+      "root_cause": "Pinned Wine columns_win32_a treats conversion of a valid NULL catalog filter as an allocation failure; NULL column filter would fail similarly",
+      "source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36335852159.json",
+      "next_correction": "SQLColumnsW with the same NULL catalog/column filters and dbo/pgprobe names; retain all row-count and canonical-type assertions"
     }
   ],
   "android_device_validated": false,

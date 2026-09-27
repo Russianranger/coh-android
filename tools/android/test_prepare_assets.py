@@ -20,13 +20,19 @@ class OdbcImportTests(unittest.TestCase):
 
     def test_previous_ansi_info_route_is_rejected(self):
         names = [ODBC_ANSI_ALIASES.get(name, name) for name in self.original_imports()]
-        names = ['SQLGetInfo' if name == 'SQLGetInfoA' else name for name in names]
+        names = [{'SQLGetInfoA':'SQLGetInfo', 'SQLColumnsA':'SQLColumnsW'}.get(name, name) for name in names]
         with self.assertRaisesRegex(ValueError, 'stubbed or broken'):
             verify_odbc_imports(self.dump(names))
 
-    def test_wide_info_preserves_remaining_fixture_imports(self):
+    def test_previous_ansi_columns_route_is_rejected(self):
         names = [ODBC_ANSI_ALIASES.get(name, name) for name in self.original_imports()]
-        names = ['SQLGetInfoW' if name == 'SQLGetInfoA' else name for name in names]
+        names = [{'SQLGetInfoA':'SQLGetInfoW', 'SQLColumnsA':'SQLColumns'}.get(name, name) for name in names]
+        with self.assertRaisesRegex(ValueError, 'stubbed or broken'):
+            verify_odbc_imports(self.dump(names))
+
+    def test_wide_metadata_preserves_remaining_fixture_imports(self):
+        names = [ODBC_ANSI_ALIASES.get(name, name) for name in self.original_imports()]
+        names = [{'SQLGetInfoA':'SQLGetInfoW', 'SQLColumnsA':'SQLColumnsW'}.get(name, name) for name in names]
         self.assertEqual(verify_odbc_imports(self.dump(names)), sorted(names))
 
     def test_each_missing_required_operation_is_rejected(self):
@@ -36,7 +42,7 @@ class OdbcImportTests(unittest.TestCase):
                 verify_odbc_imports(self.dump([name for name in names if name != missing]))
 
     def test_wide_import_does_not_allow_a_forbidden_import_alongside(self):
-        for forbidden in ['SQLGetInfoA', 'SQLGetInfo', 'SQLColumnsA', 'SQLExecDirectA', 'SQLDriverConnectA']:
+        for forbidden in ['SQLGetInfoA', 'SQLGetInfo', 'SQLColumnsA', 'SQLColumns', 'SQLExecDirectA', 'SQLDriverConnectA']:
             with self.subTest(forbidden=forbidden), self.assertRaisesRegex(ValueError, 'stubbed or broken'):
                 verify_odbc_imports(self.dump([*ODBC_REQUIRED_IMPORTS, forbidden]))
 
