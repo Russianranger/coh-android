@@ -74,7 +74,9 @@ static void registration(struct driver_registration *entry, const char *name) {
 }
 
 static int driver_preflight(void) {
-    static const char *required_exports[] = { "SQLDriverConnect", "SQLAllocHandle", "SQLFreeHandle" };
+    /* The pinned Unicode driver exports the W entry point; Wine's ANSI manager
+       dispatch converts to it when the driver has no ANSI connection export. */
+    static const char *required_exports[] = { "SQLDriverConnectW", "SQLAllocHandle", "SQLFreeHandle" };
     struct driver_registration entries[2], *selected = NULL;
     HMODULE driver;
     char loaded[DRIVER_PATH_CAPACITY];
