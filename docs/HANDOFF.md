@@ -45,8 +45,12 @@ Atlas Park, but TestClient's GUI entry allocated its own console and reopened
 stdout/stderr to `CONOUT$`. The harness could not see the required creation
 branch text. The [artifact](postgresql-evidence/character-persistence-36270565732.zip)
 and [report](postgresql-evidence/character-persistence-36270565732.json) are preserved.
-The next correction preallocates the client console while retaining redirected
-logs; exact creation/resume acceptance is retained. Currency, logout/save and
+The attempted console preallocation fix was rejected by its Windows GUI
+regression in [run 36280623154](https://github.com/Russianranger/coh-android/actions/runs/36280623154):
+`AllocConsole` still succeeded, so the runtime job was skipped. The replacement
+uses a bounded observer attached to the actual TestClient console before the
+launcher version exchange, preserving the console across the short client exit.
+Exact creation/resume acceptance is retained. Currency, logout/save and
 restart/resume have not yet been exercised.
 All four [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36269025871)
 also passed on the implementation commit.

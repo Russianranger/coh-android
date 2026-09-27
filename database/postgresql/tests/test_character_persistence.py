@@ -1,10 +1,7 @@
 """Acceptance tests for stock character protocol evidence, not game execution."""
 import copy
 import json
-import os
 from pathlib import Path
-import struct
-import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -207,69 +204,6 @@ class CharacterReceiptTests(unittest.TestCase):
                 process.assert_not_called()
             self.assertFalse((root / 'work').exists())
             self.assertFalse((root / 'output').exists())
-
-
-GUI_CONSOLE_PROBE = r'''
-import ctypes, json, sys
-from ctypes import wintypes as w
-from pathlib import Path
-api = ctypes.WinDLL('kernel32', use_last_error=True)
-api.AllocConsole.argtypes, api.AllocConsole.restype = [], w.BOOL
-api.GetStdHandle.argtypes, api.GetStdHandle.restype = [w.DWORD], w.HANDLE
-api.CreateFileW.argtypes = [w.LPCWSTR, w.DWORD, w.DWORD, w.LPVOID, w.DWORD, w.DWORD, w.HANDLE]
-api.CreateFileW.restype = w.HANDLE
-api.WriteFile.argtypes = [w.HANDLE, w.LPCVOID, w.DWORD, ctypes.POINTER(w.DWORD), w.LPVOID]
-api.WriteFile.restype = w.BOOL
-api.CloseHandle.argtypes, api.CloseHandle.restype = [w.HANDLE], w.BOOL
-allocated = bool(api.AllocConsole())
-error = ctypes.get_last_error() if not allocated else 0
-written = []
-for standard, marker in ((-11, b'GUI_STDOUT_CAPTURED\n'), (-12, b'GUI_STDERR_CAPTURED\n')):
-    # This is the reviewed newConsoleWindow branch: replace output with
-    # CONOUT$ only when AllocConsole succeeds; otherwise retain inherited I/O.
-    handle = (api.CreateFileW('CONOUT$', 0x40000000, 3, None, 3, 0, None)
-              if allocated else api.GetStdHandle(standard))
-    count = w.DWORD()
-    if not api.WriteFile(handle, marker, len(marker), ctypes.byref(count), None):
-        raise ctypes.WinError(ctypes.get_last_error())
-    written.append(count.value)
-    if allocated:
-        api.CloseHandle(handle)
-Path(sys.argv[1]).write_text(json.dumps({'allocated': allocated, 'error': error, 'written': written}))
-'''
-
-
-@unittest.skipUnless(os.name == 'nt', 'GUI console/stdout smoke requires Windows')
-class WindowsGuiConsoleTests(unittest.TestCase):
-    def test_gui_allocconsole_reopens_output_unless_console_preexists(self):
-        pythonw = Path(sys.executable).with_name('pythonw.exe')
-        self.assertTrue(pythonw.is_file(), 'Windows acceptance needs the GUI-subsystem Python executable')
-        image = pythonw.read_bytes()
-        pe_offset = struct.unpack_from('<I', image, 0x3c)[0]
-        self.assertEqual(struct.unpack_from('<H', image, pe_offset + 24 + 68)[0], 2,
-                         'Fixture must use the GUI subsystem like stock TestClient')
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for dedicated in (False, True):
-                label = 'preallocated' if dedicated else 'stock-allocates'
-                result_path = root / (label + '.json')
-                process = driver.network.Process([str(pythonw), '-c', GUI_CONSOLE_PROBE, str(result_path)],
-                                                  root, root, label, new_console=dedicated)
-                try:
-                    self.assertEqual(process.wait(15), 0)
-                    observed = json.loads(result_path.read_text())
-                    self.assertEqual(observed['allocated'], not dedicated)
-                    self.assertTrue(all(value > 0 for value in observed['written']))
-                    if dedicated:
-                        self.assertEqual(observed['error'], 5)  # ERROR_ACCESS_DENIED: already attached.
-                        self.assertIn('GUI_STDOUT_CAPTURED', process.stdout.read_text())
-                        self.assertIn('GUI_STDERR_CAPTURED', process.stderr.read_text())
-                    else:
-                        self.assertNotIn('GUI_STDOUT_CAPTURED', process.stdout.read_text())
-                        self.assertNotIn('GUI_STDERR_CAPTURED', process.stderr.read_text())
-                    self.assertEqual(process.record()['new_console'], dedicated)
-                finally:
-                    process.stop()
 
 
 if __name__ == '__main__':

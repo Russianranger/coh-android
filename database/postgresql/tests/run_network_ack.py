@@ -109,18 +109,11 @@ def new_paths(runtime, reference, work, output, root):
 
 class Process:
     """File-backed output avoids inherited-pipe hangs and bounds each subprocess."""
-    def __init__(self, command, cwd, logs, label, *, env=None, interactive=False, new_console=False):
-        require(not new_console or os.name == 'nt', 'A dedicated Windows console requires Windows')
+    def __init__(self, command, cwd, logs, label, *, env=None, interactive=False):
         self.label, self.started = label, time.monotonic()
-        self.new_console = new_console
         self.stdout, self.stderr = logs / (label + '-stdout.log'), logs / (label + '-stderr.log')
         self.handles = [self.stdout.open('xb'), self.stderr.open('xb')]
         options = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
-        if new_console:
-            # A GUI child that calls AllocConsole then freopen(CONOUT$) would
-            # otherwise replace these redirected stdout/stderr handles. Give
-            # it its console at creation so that later AllocConsole fails.
-            options['creationflags'] |= subprocess.CREATE_NEW_CONSOLE
         try:
             self.child = subprocess.Popen(command, cwd=cwd, env=env,
                 stdin=subprocess.PIPE if interactive else subprocess.DEVNULL,
@@ -178,8 +171,7 @@ class Process:
 
     def record(self):
         return {'label': self.label, 'exit_code': self.child.poll(), 'forced_stop': self.forced_stop,
-                'elapsed_seconds': round(time.monotonic() - self.started, 3),
-                'new_console': self.new_console}
+                'elapsed_seconds': round(time.monotonic() - self.started, 3)}
 
 
 def observe_ack(process, timeout, expected_id=None, batch_ids=None):

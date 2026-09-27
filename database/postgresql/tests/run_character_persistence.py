@@ -23,6 +23,7 @@ import run_generated_schema as schema
 import run_network_ack as network
 import run_one_map as one_map
 import character_snapshot as snapshots
+from character_console import ConsoleCapture
 from character_pipe import TestClientPipe
 from run_generated_schema import (ROOT, require, sha256, redact, initialize,
     make_private_directory, private_write, collect_logs, catalog_snapshot,
@@ -300,18 +301,18 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         'source_contract': contract, 'selected_sql_contract': selection, 'port_preflight': port_checks,
         'diagnostic_version': version, 'diagnostic_version_source': version_source,
         'version_compatibility_validated': False, 'no_version_check': True,
-        'testclient_console_capture': 'CREATE_NEW_CONSOLE before WinMain; stock AllocConsole cannot replace redirected stdout/stderr',
+        'testclient_console_capture': 'Owned helper attaches to stock GUI console before launcher version reply and retains bounded screen buffer through client exit',
         'character_persistence_validated': False, 'gameplay_validated': False, 'android_execution_validated': False,
         'scope': 'Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume',
         'network_scope': 'Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host',
         'raw_evidence_private': True, 'status_samples': [], 'character_status_samples': [], 'snapshots': {}}
-    cluster, processes, pipes, services, secrets = None, [], [], [], []
+    cluster, processes, pipes, consoles, services, secrets = None, [], [], [], [], []
     requested_logout = False
     account = 'CohP' + random_secrets.token_hex(5)
     report['account'] = account
 
-    def start(command, label, private=False, new_console=False):
-        process = network.Process(command, isolated, query_logs if private else logs, label, new_console=new_console)
+    def start(command, label, private=False):
+        process = network.Process(command, isolated, query_logs if private else logs, label)
         processes.append(process)
         return process
 
@@ -320,6 +321,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             require(service.poll() is None, 'Owned service exited: ' + service.label)
         for process in processes:
             process.check_bounds()
+        for console in consoles:
+            console.check_bounds()
         network.engine_bounds(isolated)
 
     def query(args, label, private=False):
@@ -446,7 +449,13 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         pipe = TestClientPipe(version)
         pipe.__enter__()
         pipes.append(pipe)
-        client = start(client_command(isolated, account), 'create-client', new_console=True)
+        client = start(client_command(isolated, account), 'create-client')
+        console = ConsoleCapture(client.child.pid, logs, 'create-client')
+        consoles.append(console)
+        console.start(timeout=10)
+        # The stock client blocks waiting for the launcher version. The pipe
+        # drains only after this PID bind, so its console is owned/captured
+        # before creation diagnostics or a short resume can complete.
         pipe.bind_process(client.child.pid)
         name = wait(lambda: pipe_identity(pipe.snapshot(), client.child.pid, account), phase_timeout,
                     'fresh character launcher identity', client)
@@ -458,7 +467,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['character'] = {'container_id': identifier, 'name': name, 'account': account}
         wait(lambda: connected_on_atlas(char_status(identifier, name, 'created')), phase_timeout,
              'connected character on Atlas Park', client)
-        require('simulateCharacterCreate()' in client.text(), 'Fresh client did not report creation branch')
+        wait(lambda: 'simulateCharacterCreate()' in console.text(), 5, 'captured fresh creation branch', client)
         logs_clean()
         report['phases'].append({'phase': 'created_connected', 'time_utc': utc(), 'status': 'passed'})
         announce('created_connected', 'passed')
@@ -510,7 +519,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         snapshots.validate_attribute_references(before, attr_before)
         state = pipe.snapshot()
         if any(e['kind'] == 'Status' and e['value'] == 'ERROR' for e in state['events']):
-            require(any(EXPECTED_LOGOUT.fullmatch(line) for line in client.text().splitlines()),
+            require(any(EXPECTED_LOGOUT.fullmatch(line) for line in console.text().splitlines()),
                     'Post-quit ERROR lacks the exact stock logout diagnostic')
         report['snapshots']['after_protocol_logout'] = before
         report['first_session_pipe'] = selected_pipe_record(state)
@@ -520,6 +529,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         require(not client.forced_stop, 'Forced disconnect cannot establish protocol logout')
         logs_clean()
         client.stop()  # Cleanup occurs only after independently proven logout/save.
+        console.stop()
         pipe.close()
         for service in reversed(services):
             service.stop()
@@ -538,12 +548,16 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         resume_pipe = TestClientPipe(version)
         resume_pipe.__enter__()
         pipes.append(resume_pipe)
-        resume = start(client_command(isolated, account, name), 'resume-client', new_console=True)
+        resume = start(client_command(isolated, account, name), 'resume-client')
+        resume_console = ConsoleCapture(resume.child.pid, logs, 'resume-client')
+        consoles.append(resume_console)
+        resume_console.start(timeout=10)
         resume_pipe.bind_process(resume.child.pid)
         wait(lambda: resume.poll() is not None, phase_timeout, 'short resume probe process completion')
+        resume_console.stop()  # Captures the retained console once more after child exit.
         wait(lambda: pipe_identity(resume_pipe.snapshot(), resume.child.pid, account, name), 5,
              'short resume pipe drain')
-        report['resume_probe'] = accept_resume(resume.text(), resume_pipe.snapshot(), resume.child.pid,
+        report['resume_probe'] = accept_resume(resume_console.text(), resume_pipe.snapshot(), resume.child.pid,
                                                 account, name, resume.child.returncode)
         report['resume_session_pipe'] = selected_pipe_record(resume_pipe.snapshot())
 
@@ -583,6 +597,11 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 process.stop()
             except Exception as error:
                 report['failures'].append('Process cleanup: ' + redact(str(error), secrets))
+        for console in reversed(consoles):
+            try:
+                console.stop()
+            except Exception as error:
+                report['failures'].append('Console cleanup: ' + redact(str(error), secrets))
         for pipe in reversed(pipes):
             try:
                 pipe.close()
@@ -608,6 +627,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             report['status'] = FAILED
             report['character_persistence_validated'] = False
         report['processes'] = [process.record() for process in processes]
+        report['console_observers'] = [console.report() for console in consoles]
         report['shutdown_scope'] = 'Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated'
         report['finished_utc'] = utc()
         (output / 'character-persistence-report.json').write_text(redact(json.dumps(report, indent=2) + '\n', secrets), encoding='utf-8')

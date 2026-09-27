@@ -42,10 +42,18 @@ then failed because the creation branch text was missing from captured stdout.
 
 TestClient is a GUI executable whose `WinMain` calls `newConsoleWindow`. If
 `AllocConsole` succeeds, the preserved utility code reopens stdout/stderr to
-`CONOUT$`, bypassing harness redirection. The correction preallocates a console
-for TestClient so that the reopen branch is skipped; redirected logs and the
-exact creation/resume assertions are retained. It adds a Windows GUI capture
-regression before the full runtime job.
+`CONOUT$`, bypassing harness redirection. A proposed console preallocation
+fix was rejected by its Windows GUI regression in
+[run 36280623154](https://github.com/Russianranger/coh-android/actions/runs/36280623154):
+`AllocConsole` still succeeded even with `CREATE_NEW_CONSOLE`. The runtime job
+was skipped. The [failed regression record](postgresql-evidence/character-console-36280623154.json)
+preserves that observation.
+
+The replacement captures the actual TestClient console using an observer
+attached to the owned client PID before releasing the launcher version exchange.
+It holds the console across the short client exit and writes bounded private
+snapshots. Creation/resume assertions and failure diagnostics remain required;
+console overflow or loss must fail the experiment.
 
 Preserved retry: [artifact ZIP](postgresql-evidence/character-persistence-36270565732.zip)
 and [report](postgresql-evidence/character-persistence-36270565732.json). Artifact
