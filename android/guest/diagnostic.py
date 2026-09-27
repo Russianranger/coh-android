@@ -38,6 +38,7 @@ PROBE_MARKERS = (
 )
 VERIFY_MARKER = "PASS persisted fixture after reconnect/restart/restore"
 OUTPUT_LIMIT = 2 * 1024 * 1024
+PROGRESS_INTERVAL = 5
 REQUIRED_ASSETS = ("001-coh-compat.sql", "odbc_probe.exe", "psqlodbc_x86.msi",
                    "runtime-probe.exe", "probe.dll")
 
@@ -364,17 +365,22 @@ class Context:
         return record
 
     def run(self, label, argv, *, timeout=60, env=None, input_text=None, check=True, cleanup=False,
-            before_stop=None, allow_background_output=False):
+            before_stop=None, allow_background_output=False, progress_message=None):
         child = self.start(label, argv, env=env, input_text=input_text, cleanup=cleanup)
         try:
             deadline = time.monotonic() + timeout
             if cleanup and self.cleanup_deadline is not None:
                 deadline = min(deadline, self.cleanup_deadline)
+            next_progress = child.started
             while child.process.poll() is None or (child.reader.is_alive() and not allow_background_output):
                 if not cleanup:
                     self.check()
                 require(not child.overflow, label + " exceeded output bound")
                 require(time.monotonic() < deadline, label + " timed out")
+                if progress_message and time.monotonic() >= next_progress:
+                    elapsed = int(time.monotonic() - child.started)
+                    self.event("stage", status="running", message=progress_message + " · " + str(elapsed) + " s")
+                    next_progress = time.monotonic() + PROGRESS_INTERVAL
                 time.sleep(0.05)
             if allow_background_output:
                 # wineboot's services may inherit its stdout after the initializer
@@ -425,6 +431,14 @@ def file_hash(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def wine_initialization_evidence(output):
+    """Count actual Wine 10 registration work, not wineboot process starts."""
+    machines = re.findall(r":trace:wineboot:start_rundll32 machine ([0-9a-fA-F]+) starting ", output)
+    return {"registration_processes": len(machines),
+            "wow64_registration_processes": sum(int(machine, 16) == 0x14c for machine in machines),
+            "registration_passes": output.count(":trace:wineboot:update_wineprefix wine: configuration in ")}
 
 
 def verify_pe32(path):
@@ -538,7 +552,8 @@ class Diagnostic:
         self.base_env = os.environ.copy()
         self.base_env.update(HOME=str(args.state), LANG="C", LC_ALL="C", TZ="UTC")
         self.wine_env = self.base_env.copy()
-        self.wine_env.update(WINEPREFIX=str(self.wineprefix), WINEARCH="win64", WINEDEBUG="-all,err+module",
+        self.wine_env.update(WINEPREFIX=str(self.wineprefix), WINEARCH="win64",
+                             WINEDEBUG="-all,err+module,err+environ,trace+wineboot",
                              WINEDLLOVERRIDES="winemenubuilder,mshtml,mscoree=;winedbg.exe=",
                              XDG_RUNTIME_DIR=str(private_dir(self.root / "runtime")))
         self.port = None
@@ -678,6 +693,77 @@ class Diagnostic:
         require(self.sql("SELECT current_user || '|' || max(version) FROM coh_meta.schema_version;", game=True) == "cohtest|2", "Compatibility migration identity/version differs")
         self.ctx.passed(database=self.database, role="cohtest", migration_version=2, reapplied=True)
 
+    def prepare_wine_initialization(self):
+        private_dir(self.wineprefix)
+        runtime_lock = self.args.assets / "runtime-lock.json"
+        require(runtime_lock.is_file() and not runtime_lock.is_symlink(), "Missing or linked Wine runtime identity")
+        self.wine_ready_marker = self.wineprefix / ".coh-wine-ready.json"
+        timestamp = self.wineprefix / ".update-timestamp"
+        require(not self.wine_ready_marker.is_symlink() and not timestamp.is_symlink(),
+                "Linked Wine initialization marker or timestamp refused")
+        require(not timestamp.exists() or timestamp.is_file(), "Wine update timestamp is not a file")
+        identity = {"format": 1, "purpose": "coh-wine-initialization",
+                    "runtime_lock_sha256": file_hash(runtime_lock)}
+        ready = False
+        if self.wine_ready_marker.exists():
+            require(self.wine_ready_marker.is_file() and self.wine_ready_marker.stat().st_size <= 4096,
+                    "Invalid Wine readiness marker")
+            try:
+                marker = json.loads(self.wine_ready_marker.read_text())
+            except (ValueError, OSError) as exc:
+                raise DiagnosticError("Invalid Wine readiness marker") from exc
+            require(isinstance(marker, dict) and set(marker) == set(identity)
+                    and type(marker["format"]) is int and marker["format"] == 1
+                    and marker["purpose"] == identity["purpose"]
+                    and isinstance(marker["runtime_lock_sha256"], str)
+                    and re.fullmatch(r"[0-9a-f]{64}", marker["runtime_lock_sha256"]),
+                    "Invalid Wine readiness marker")
+            ready = marker == identity and timestamp.is_file()
+        removed = False
+        if not ready:
+            # Wine writes this BEFORE registration completes. Interrupted boots
+            # must retry, while -i avoids -u repeating the automatic first pass.
+            removed = timestamp.exists()
+            timestamp.unlink(missing_ok=True)
+        # Consume even a warm marker: cancellation or failure before the real
+        # PE32 proof must force repair on the next attempt, not preserve readiness.
+        self.wine_ready_marker.unlink(missing_ok=True)
+        self.wine_ready_identity = identity
+        self.wine_initialization = {"policy": "initialize_once_then_reuse", "state": "running",
+            "ready_prefix_reused": ready, "runtime_lock_sha256": identity["runtime_lock_sha256"],
+            "update_timestamp_removed": removed, "timeout_seconds": 600}
+        self.ctx.report["wine_initialization"] = self.wine_initialization
+
+    def initialize_wine(self):
+        self.prepare_wine_initialization()
+        started = time.monotonic()
+        def observe(child):
+            self.wine_initialization.update(wine_initialization_evidence(child.text()))
+            self.wine_initialization["elapsed_seconds"] = round(time.monotonic() - started, 3)
+        try:
+            self.ctx.run("wineboot", [self.args.wine, "wineboot", "-i"], timeout=600,
+                         env=self.wine_env, allow_background_output=True, before_stop=observe,
+                         progress_message="Preparing Windows environment")
+            child = self.ctx.children[-1]
+            observe(child)
+            require("boot event wait timed out" not in child.text(), "Wine internal bootstrap timed out")
+            counts = self.wine_initialization
+            expected = (0, 0, 0) if counts["ready_prefix_reused"] else (3, 1, 1)
+            observed = tuple(counts[key] for key in ("registration_processes", "wow64_registration_processes",
+                                                    "registration_passes"))
+            require(observed == expected, "Wine initialization registration evidence differs")
+            self.wine_initialization["state"] = "initialized"
+        except BaseException:
+            self.wine_initialization["state"] = "failed"
+            raise
+
+    def mark_wine_ready(self):
+        require(self.wine_initialization["state"] == "initialized", "Wine initialization is not complete")
+        timestamp = self.wineprefix / ".update-timestamp"
+        require(timestamp.is_file() and not timestamp.is_symlink(), "Wine initialization timestamp is missing or linked")
+        private_write(self.wine_ready_marker, json.dumps(self.wine_ready_identity) + "\n")
+        self.wine_initialization["state"] = "ready"
+
     def start_wine(self):
         self.ctx.stage("wine_prefix_and_driver")
         private_dir(self.wineprefix)
@@ -699,8 +785,7 @@ class Diagnostic:
             require(time.monotonic() < deadline, "Headless X server startup timed out")
             time.sleep(0.1)
         self.wine_started = True
-        self.ctx.run("wineboot", [self.args.wine, "wineboot", "-u"], timeout=150,
-                     env=self.wine_env, allow_background_output=True)
+        self.initialize_wine()
         # Wine's MSI ODBC action writes the caller's registry view. Execute the
         # actual PE32 installer so its registration matches the PE32 ODBC client.
         installer = self.wineprefix / "drive_c" / "windows" / "syswow64" / "msiexec.exe"
@@ -791,6 +876,7 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
         result = self.ctx.run("runtime-probe", [self.args.wine, windows_path(self.args.assets / "runtime-probe.exe")],
                               timeout=60, env=self.wine_env)
         self.ctx.passed(**validate_runtime_probe(result["output"]))
+        self.mark_wine_ready()
         if self.args.client_probe:
             self.ctx.stage("win32_client_capabilities")
             result = self.ctx.run("client-probe", [self.args.wine,
@@ -845,6 +931,8 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
             self.ctx.record(child, refresh=True)
             if child.overflow:
                 failures.append("Owned process exceeded output bound: " + child.label)
+            if child.reader.is_alive() or child.writer.is_alive():
+                failures.append("Owned process input/output capture did not close: " + child.label)
         self.cleanup_status["owned_processes_reaped"] = all(
             c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
             for c in self.ctx.children)

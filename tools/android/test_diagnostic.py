@@ -12,7 +12,9 @@ import sys
 import tempfile
 import threading
 import time
+from types import SimpleNamespace
 import unittest
+from unittest.mock import Mock, patch
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -388,6 +390,27 @@ class DiagnosticProcessTests(unittest.TestCase):
         self.assert_stopped(child.process.pid)
         self.assertFalse(child.reader.is_alive())
 
+    def test_progress_events_continue_until_stop_without_extending_process_deadline(self):
+        stream = io.StringIO()
+        timer = threading.Timer(.4, lambda: (self.state / 'stop-request').touch())
+        timer.start()
+        try:
+            with patch.object(diagnostic, 'PROGRESS_INTERVAL', .1), redirect_stdout(stream):
+                with self.assertRaises(diagnostic.Cancelled):
+                    self.run_python('initialization', 'import time;time.sleep(60)', timeout=2,
+                                    progress_message='Preparing Windows environment')
+        finally:
+            timer.join(timeout=1)
+        events = [json.loads(line) for line in stream.getvalue().splitlines()]
+        progress = [event for event in events if event['type'] == 'stage']
+        self.assertGreaterEqual(len(progress), 2)
+        self.assertTrue(all(event['status'] == 'running' and
+                            event['message'].startswith('Preparing Windows environment · ')
+                            for event in progress))
+        child = self.context.children[-1]
+        self.assert_stopped(child.process.pid)
+        self.assertLess(child.recorded['failure_observation']['elapsed_seconds'], 2)
+
     def test_late_background_output_stays_bounded_after_initializer_exit(self):
         trigger = self.state / 'emit-output'
         service = ('import time\nfrom pathlib import Path\n'
@@ -483,6 +506,164 @@ class DiagnosticProcessTests(unittest.TestCase):
         self.assertFalse(thread.is_alive())
         self.assertEqual(worker_error, [])
         self.assert_stopped(int(identity.read_text()))
+
+
+class WineInitializationTests(unittest.TestCase):
+    REGISTRATION_TRACE = ('002c:trace:wineboot:start_rundll32 machine 1 starting L"C:\\windows\\system32\\rundll32.exe"\n'
+                          '002c:trace:wineboot:start_rundll32 machine 1 starting L"C:\\windows\\system32\\rundll32.exe"\n'
+                          '002c:trace:wineboot:start_rundll32 machine 14c starting L"C:\\windows\\syswow64\\rundll32.exe"\n'
+                          '002c:trace:wineboot:update_wineprefix wine: configuration in L"/private-prefix" has been updated.\n')
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.state = self.root / 'state'
+        self.assets = self.root / 'assets'
+        self.assets.mkdir()
+        (self.assets / 'runtime-lock.json').write_text('{"runtime":"stable"}\n')
+        self.wine = self.root / 'wine'
+        self.context = diagnostic.Context(self.state, total_timeout=900)
+        self.runner = diagnostic.Diagnostic(SimpleNamespace(state=self.state, assets=self.assets,
+                                                            wine=self.wine, client_probe=False), self.context)
+        self.addCleanup(self.runner.lock.close)
+        self.addCleanup(lambda: [child.stop() for child in self.context.children])
+        self.prefix = self.runner.wineprefix
+        self.prefix.mkdir()
+        self.timestamp = self.prefix / '.update-timestamp'
+        self.marker = self.prefix / '.coh-wine-ready.json'
+
+    def fake_wine(self, output, expected_timestamp=None):
+        timestamp_check = ('assert not timestamp.exists(),"Interrupted timestamp was not removed"\n'
+                           if expected_timestamp is None else
+                           f'assert timestamp.read_text()=={expected_timestamp!r},"Warm timestamp changed"\n')
+        source = (f'#!{sys.executable}\nimport os,sys\nfrom pathlib import Path\n'
+                  'assert sys.argv[1:]==["wineboot","-i"],sys.argv\n'
+                  'timestamp=Path(os.environ["WINEPREFIX"],".update-timestamp")\n' + timestamp_check +
+                  'timestamp.write_text("1234\\n")\n'
+                  f'print({output!r},end="",flush=True)\n')
+        self.wine.write_text(source)
+        self.wine.chmod(0o700)
+
+    def test_interrupted_timestamp_is_removed_and_one_registration_is_required(self):
+        self.timestamp.write_text('1234\n')
+        sentinel = self.prefix / 'user.reg'
+        sentinel.write_text('preserve existing settings')
+        self.fake_wine(self.REGISTRATION_TRACE)
+        self.runner.initialize_wine()
+        receipt = self.context.report['wine_initialization']
+        self.assertEqual(receipt['state'], 'initialized')
+        self.assertTrue(receipt['update_timestamp_removed'])
+        self.assertFalse(receipt['ready_prefix_reused'])
+        self.assertEqual(receipt['timeout_seconds'], 600)
+        self.assertEqual((receipt['registration_processes'], receipt['wow64_registration_processes'],
+                          receipt['registration_passes']), (3, 1, 1))
+        self.assertFalse(self.marker.exists(), 'wineboot exit alone cannot mark a prefix ready')
+        self.assertEqual(sentinel.read_text(), 'preserve existing settings')
+
+    def test_ready_prefix_reuses_stable_runtime_identity_without_forced_registration(self):
+        self.fake_wine(self.REGISTRATION_TRACE)
+        self.runner.initialize_wine()
+        self.runner.mark_wine_ready()
+        self.fake_wine('002c:trace:wineboot:main Operation done\n', expected_timestamp='1234\n')
+        self.runner.initialize_wine()
+        receipt = self.context.report['wine_initialization']
+        self.assertTrue(receipt['ready_prefix_reused'])
+        self.assertFalse(receipt['update_timestamp_removed'])
+        self.assertFalse(self.marker.exists(), 'Warm readiness must be renewed by the current PE32 proof')
+        self.assertEqual(receipt['registration_processes'], 0)
+        self.assertEqual(receipt['registration_passes'], 0)
+        self.assertEqual(receipt['runtime_lock_sha256'], diagnostic.file_hash(self.assets / 'runtime-lock.json'))
+
+    def test_changed_runtime_or_missing_timestamp_requires_fresh_proof(self):
+        self.fake_wine(self.REGISTRATION_TRACE)
+        self.runner.initialize_wine()
+        self.runner.mark_wine_ready()
+        (self.assets / 'runtime-lock.json').write_text('{"runtime":"changed"}\n')
+        self.runner.prepare_wine_initialization()
+        self.assertFalse(self.marker.exists())
+        self.assertFalse(self.timestamp.exists())
+        self.assertFalse(self.runner.wine_initialization['ready_prefix_reused'])
+
+    def test_failed_warm_initialization_consumes_readiness_and_next_attempt_repairs(self):
+        self.fake_wine(self.REGISTRATION_TRACE)
+        self.runner.initialize_wine()
+        self.runner.mark_wine_ready()
+        self.fake_wine('err:environ:run_wineboot boot event wait timed out\n', expected_timestamp='1234\n')
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.runner.initialize_wine()
+        self.assertFalse(self.marker.exists())
+        self.runner.prepare_wine_initialization()
+        self.assertFalse(self.runner.wine_initialization['ready_prefix_reused'])
+        self.assertTrue(self.runner.wine_initialization['update_timestamp_removed'])
+
+    def test_readiness_requires_regular_unlinked_timestamp(self):
+        self.runner.prepare_wine_initialization()
+        self.runner.wine_initialization['state'] = 'initialized'
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.runner.mark_wine_ready()
+        self.assertFalse(self.marker.exists())
+        foreign = self.root / 'foreign-timestamp'
+        foreign.write_text('preserved')
+        self.timestamp.symlink_to(foreign)
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.runner.mark_wine_ready()
+        self.assertFalse(self.marker.exists())
+        self.assertEqual(foreign.read_text(), 'preserved')
+
+    def test_internal_bootstrap_timeout_is_rejected_even_with_exit_zero(self):
+        self.fake_wine(self.REGISTRATION_TRACE + '002c:err:environ:run_wineboot boot event wait timed out\n')
+        with self.assertRaisesRegex(diagnostic.DiagnosticError, 'internal bootstrap timed out'):
+            self.runner.initialize_wine()
+        self.assertEqual(self.context.report['processes'][-1]['exit_code'], 0)
+        self.assertEqual(self.runner.wine_initialization['state'], 'failed')
+        self.assertFalse(self.marker.exists())
+
+    def test_missing_or_duplicate_registration_cannot_pass(self):
+        for output in ('', self.REGISTRATION_TRACE * 2):
+            with self.subTest(output=output):
+                self.fake_wine(output)
+                with self.assertRaisesRegex(diagnostic.DiagnosticError, 'registration evidence differs'):
+                    self.runner.initialize_wine()
+                self.assertFalse(self.marker.exists())
+
+    def test_readiness_marker_is_written_only_after_real_runtime_fixture_validation(self):
+        self.runner.initialize = Mock()
+        self.runner.start_postgres = Mock()
+        self.runner.prepare_database = Mock()
+        self.runner.start_wine = Mock()
+        self.runner.stop_postgres = Mock()
+        self.runner.probe = Mock()
+        self.runner.prepare_wine_initialization()
+        self.runner.wine_initialization['state'] = 'initialized'
+        with patch.object(self.context, 'run', return_value={'output': 'unverified exit zero'}):
+            with self.assertRaises(diagnostic.DiagnosticError):
+                self.runner.execute()
+        self.assertFalse(self.marker.exists())
+        self.timestamp.write_text('1234\n')
+        with patch.object(self.context, 'run', return_value={'output': RUNTIME_MARKER + '\n'}):
+            self.runner.execute()
+        self.assertEqual(json.loads(self.marker.read_text()), self.runner.wine_ready_identity)
+        self.assertEqual(self.runner.wine_initialization['state'], 'ready')
+
+    def test_malformed_and_linked_markers_fail_closed(self):
+        self.timestamp.write_text('existing timestamp')
+        for value in ('not JSON', '[]', '{"format":1}',
+                      '{"format":true,"purpose":"coh-wine-initialization","runtime_lock_sha256":"' + 'a' * 64 + '"}'):
+            self.marker.write_text(value)
+            with self.subTest(marker=value), self.assertRaises(diagnostic.DiagnosticError):
+                self.runner.prepare_wine_initialization()
+            self.assertEqual(self.timestamp.read_text(), 'existing timestamp')
+        self.marker.unlink()
+        foreign = self.root / 'unrelated'
+        foreign.write_text('untouched')
+        for path in (self.marker, self.timestamp):
+            path.unlink(missing_ok=True)
+            path.symlink_to(foreign)
+            with self.subTest(path=path.name), self.assertRaises(diagnostic.DiagnosticError):
+                self.runner.prepare_wine_initialization()
+            path.unlink()
+            self.assertEqual(foreign.read_text(), 'untouched')
 
 
 @unittest.skipIf(os.name == 'nt', 'Wine prefix ownership proof uses POSIX byte locks and Unix sockets')
