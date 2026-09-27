@@ -147,6 +147,38 @@ foreground-service lifecycle, device shutdown, performance or gameplay. A basic
 client-runtime probe can proceed alongside the device gate. Mission/new-zone
 transfers, automatic Launcher startup and combat remain separate unfinished scope.
 
+### Accepted hosted client prerequisite milestone (0.1.1)
+
+Continuation on 2026-09-27 found the hosted M2 gate complete, with physical Thor
+acceptance still pending. The branch had no unfinished result to recover from its
+latest completed workflows; this does not expose another Codex session's internal
+state. Work advanced to the independently permitted
+[basic client capability probe](CLIENT_RUNTIME_PROBE.md).
+
+Commit `c1097bdc0aab433fd3cb1560fd07175c6c3dc6b0` adds a separate **Run client probe**
+operation to 0.1.1. It exercises a real PE32 WGL context, a textured quad with four
+verified RGB readbacks, buffer swap, own-window keyboard/mouse messages and
+DirectInput device creation. Audio enumeration and extension availability are
+observations only. The original database-only operation remains available and
+both modes require complete owned cleanup. The app now scrolls on short displays.
+
+Local validation passed 93 tests with two environment-dependent skips; the actual
+PE32 program also cross-compiled warning-free with `-Werror` and its Windows
+imports were verified. Hosted workflow [36349552245](https://github.com/Russianranger/coh-android/actions/runs/36349552245)
+passed all five jobs at 20:59:41 UTC, including all 93 tooling tests without skips.
+Database mode passed eleven stages; client mode passed twelve. The observed
+renderer was llvmpipe/Mesa 22.3.6 OpenGL 4.3, all four RGB readbacks were exact,
+and synthetic input plus DirectInput device creation passed. Both modes proved
+graceful PostgreSQL restart and complete cleanup. DirectSound enumerated zero
+devices, with no playback claim. All same-source PostgreSQL regressions passed.
+The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
+preserves report hashes, observed capabilities and the verified 13,477,490-byte
+APK. Download 0.1.1 from that run's `coh-diagnostic-apk` artifact and follow
+[the device test](CLIENT_RUNTIME_PROBE.md#device-test).
+A fixture result cannot establish CoH rendering, Cg shaders, physical controls,
+audio playback, Android presentation or GPU acceleration. M2 still needs Thor
+reports, and M3 minimal game-server/device execution remains unfinished.
+
 ### Earlier attempts and corrections
 
 The recovered evidence and new character harness are on

@@ -15,12 +15,18 @@ This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
 AYN Thor (Android 13, ARM64). It exercises the platform needed by the future CoH
 launcher. It contains no game binaries or game assets and cannot launch the game.
 
-## Accepted APK
+## Current follow-on APK
+
+The [0.1.1 client-probe milestone](CLIENT_RUNTIME_PROBE.md) subsequently passed
+both hosted database and client modes. Use that candidate for current testing;
+this page preserves the original 0.1.0 evidence and unchanged database design.
+Physical Thor acceptance is still required for either candidate.
+
+## Original accepted APK (0.1.0)
 
 Download the **coh-diagnostic-apk** artifact from
 [run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
-and extract `COH-Diagnostic-0.1.0.apk`. Use these exact accepted bytes for the
-first Thor report; the certificate belongs to this CI build.
+and extract `COH-Diagnostic-0.1.0.apk`. These are the original accepted bytes; the certificate belongs to this CI build.
 
 | Identity | Accepted value |
 | --- | --- |

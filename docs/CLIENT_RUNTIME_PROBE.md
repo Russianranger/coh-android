@@ -1,6 +1,6 @@
 # Basic Win32 client capability probe
 
-The 0.1.1 diagnostic candidate adds **Run client probe** alongside the existing
+The 0.1.1 diagnostic APK adds **Run client probe** alongside the existing
 database diagnostics. It includes the complete database/restart/shutdown test and
 one additional PE32 fixture in the same private Wine/FEX session. Physical Thor
 acceptance remains pending. The accepted 0.1.0 database-only candidate and its
@@ -54,7 +54,32 @@ Python tests reject missing, duplicate, contradictory and out-of-scope evidence,
 as well as modified or non-PE32 probe payloads. APK verification checks version,
 signature, package identity and exact packaged asset bytes.
 
-The implementation alone is not an accepted runtime result. Hosted results are
-recorded after the workflow completes. A passing hosted fixture remains a basic
-client prerequisite check; the next work is actual client/shader compatibility
-and Android display integration, plus the pending minimal-server device gate.
+[Run 36349552245](https://github.com/Russianranger/coh-android/actions/runs/36349552245)
+passed all five jobs on 2026-09-27 at 20:59:41 UTC. All 93 tooling tests passed
+without skips; database-only mode passed eleven stages and client mode passed
+twelve, with complete owned cleanup in both. The fixture observed Mesa 22.3.6
+OpenGL 4.3 through **llvmpipe software rendering**. All four RGB readbacks exactly
+matched red, green, blue and white. DirectInput keyboard/mouse creation and the
+synthetic messages passed. DirectSound enumeration reported zero devices; audio
+playback remains unvalidated. All same-source PostgreSQL regression jobs passed.
+
+The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
+binds the downloaded evidence and APK. This completes the hosted basic client
+prerequisite milestone. Physical Thor M2 acceptance remains pending. The next
+work is actual client/shader compatibility and Android display integration, plus
+the minimal-server device gate.
+
+## Build identity
+
+| Field | Value |
+| --- | --- |
+| Source | `c1097bdc0aab433fd3cb1560fd07175c6c3dc6b0` |
+| Workflow | [36349552245](https://github.com/Russianranger/coh-android/actions/runs/36349552245) |
+| APK | `COH-Diagnostic-0.1.1.apk`, 13,477,490 bytes |
+| APK SHA-256 | `8f7d7b0201d79d44084e257fff20cca175d7f77a91a449540aaeece4df161850` |
+| Runtime manifest SHA-256 | `9aebda10d6c438a48b52353989df17cf5f80104ffa56d5149b01e29c6fd17218` |
+| Signing certificate SHA-256 | `2c898bb2bdac6bf64d2f582f05662e3333e9b9576e074f8f17885743c8a118a6` |
+
+The downloaded APK artifact digest and APK hash were checked. All twelve embedded
+runtime inputs matched their recorded sizes and hashes. The verified build report
+and runtime manifest are in `docs/android-evidence/` with this run ID.

@@ -1,5 +1,10 @@
 # City of Heroes Android
 
+The latest [diagnostic APK 0.1.1](docs/CLIENT_RUNTIME_PROBE.md) passed hosted
+ARM64 database, Win32 OpenGL pixel-readback and synthetic input checks. It is
+ready for Thor testing; it does not launch City of Heroes. Physical device
+acceptance, game rendering and hardware acceleration remain pending.
+
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
 `0b75ade0c801735e10c5798f641948a45cc50488`. It includes local server services,
