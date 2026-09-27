@@ -140,7 +140,7 @@ public final class MainActivity extends Activity {
         logs.setPadding(dp(12), dp(12), dp(12), dp(12));
         logScroll.addView(logs, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
         root.addView(logScroll, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(180), 1));
-        TextView version = text("M2 + client probe · v0.1.1 · Android " + Build.VERSION.RELEASE + " · "
+        TextView version = text("M2 + client probe · v0.1.2 · Android " + Build.VERSION.RELEASE + " · "
                 + (Build.SUPPORTED_ABIS.length == 0 ? "unknown ABI" : Build.SUPPORTED_ABIS[0]), 11, MUTED);
         version.setPadding(0, dp(8), 0, 0);
         root.addView(version, full());

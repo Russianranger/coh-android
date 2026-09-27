@@ -313,6 +313,98 @@ class DiagnosticProcessTests(unittest.TestCase):
             time.sleep(0.02)
         self.assertFalse(self.process_alive(pid), 'Diagnostic left a synthetic process alive')
 
+    def inherited_output_source(self, exit_code=0):
+        """A real child retains stdout after its initializer exits."""
+        ready = self.state / 'service-ready'
+        identity = self.state / 'service.pid'
+        service = ('import os,time\nfrom pathlib import Path\n'
+                   f'Path({str(identity)!r}).write_text(str(os.getpid()))\n'
+                   f'Path({str(ready)!r}).touch()\n'
+                   'print("service ready",flush=True)\ntime.sleep(60)\n')
+        def cleanup():
+            for child in self.context.children:
+                child.stop()
+        self.addCleanup(cleanup)
+        source = ('import subprocess,sys,time\nfrom pathlib import Path\n'
+                  f'subprocess.Popen([sys.executable,"-u","-c",{service!r}])\n'
+                  f'while not Path({str(ready)!r}).exists():time.sleep(.01)\n'
+                  f'print("initializer finished",flush=True)\nsys.exit({exit_code})\n')
+        return source, identity
+
+    def test_wineboot_completion_leaves_service_owned_until_cleanup(self):
+        source, identity = self.inherited_output_source()
+        result = self.run_python('wineboot', source, timeout=3, allow_background_output=True)
+        child = self.context.children[-1]
+        self.assertEqual(result['exit_code'], 0)
+        self.assertFalse(result['forced_stop'])
+        self.assertTrue(result['completion']['output_capture_open'])
+        self.assertEqual(result['completion']['leader_exit_code'], 0)
+        self.assertIn('initializer finished', result['output'])
+        self.assertTrue(self.process_alive(int(identity.read_text())))
+        self.assertTrue(child.reader.is_alive())
+        child.stop()
+        self.context.record(child, refresh=True)
+        self.assert_stopped(int(identity.read_text()))
+        self.assertTrue(result['output_capture_closed'])
+        self.assertTrue(result['forced_stop'])
+
+    def test_default_eof_policy_still_rejects_inherited_open_pipe(self):
+        source, identity = self.inherited_output_source()
+        with self.assertRaisesRegex(diagnostic.DiagnosticError, 'timed out'):
+            self.run_python('strict-command', source, timeout=.5)
+        result = self.context.report['processes'][-1]
+        self.assertEqual(result['failure_observation']['leader_exit_code'], 0)
+        self.assertTrue(result['failure_observation']['output_capture_open'])
+        self.assert_stopped(int(identity.read_text()))
+
+    def test_wineboot_nonzero_exit_is_rejected_and_inherited_child_stopped(self):
+        source, identity = self.inherited_output_source(exit_code=7)
+        with self.assertRaisesRegex(diagnostic.DiagnosticError, 'failed'):
+            self.run_python('wineboot', source, timeout=3, allow_background_output=True)
+        result = self.context.report['processes'][-1]
+        self.assertEqual(result['failure_observation']['leader_exit_code'], 7)
+        self.assertTrue(result['forced_stop'])
+        self.assert_stopped(int(identity.read_text()))
+
+    def test_genuinely_running_initializer_still_times_out_with_pre_signal_state(self):
+        with self.assertRaisesRegex(diagnostic.DiagnosticError, 'timed out'):
+            self.run_python('wineboot', 'import time;time.sleep(60)',
+                            timeout=.2, allow_background_output=True)
+        result = self.context.report['processes'][-1]
+        self.assertIsNone(result['failure_observation']['leader_exit_code'])
+        self.assertTrue(result['failure_observation']['output_capture_open'])
+        self.assertNotEqual(result['exit_code'], 0)
+
+    def test_background_output_policy_preserves_cancellation(self):
+        timer = threading.Timer(.2, lambda: (self.state / 'stop-request').touch())
+        timer.start()
+        try:
+            with self.assertRaises(diagnostic.Cancelled):
+                self.run_python('wineboot', 'import time;time.sleep(60)',
+                                timeout=3, allow_background_output=True)
+        finally:
+            timer.join(timeout=1)
+        child = self.context.children[-1]
+        self.assert_stopped(child.process.pid)
+        self.assertFalse(child.reader.is_alive())
+
+    def test_late_background_output_stays_bounded_after_initializer_exit(self):
+        trigger = self.state / 'emit-output'
+        service = ('import time\nfrom pathlib import Path\n'
+                   f'while not Path({str(trigger)!r}).exists():time.sleep(.01)\n'
+                   f'print("x"*{diagnostic.OUTPUT_LIMIT+1024},flush=True)\ntime.sleep(60)\n')
+        source = f'import subprocess,sys;subprocess.Popen([sys.executable,"-u","-c",{service!r}])'
+        self.run_python('wineboot', source, timeout=3, allow_background_output=True)
+        child = self.context.children[-1]
+        self.addCleanup(child.stop)
+        trigger.touch()
+        deadline = time.monotonic()+3
+        while not child.overflow and time.monotonic()<deadline:
+            time.sleep(.02)
+        with self.assertRaisesRegex(diagnostic.DiagnosticError, 'output bound'):
+            self.context.check()
+        self.assertLessEqual(len(child.output), diagnostic.OUTPUT_LIMIT)
+
     @unittest.skipIf(os.name == 'nt', 'Guest cancellation owns POSIX process groups')
     def test_timeout_terminates_parent_and_descendant_processes(self):
         identities = self.state / 'processes.json'

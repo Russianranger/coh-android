@@ -236,6 +236,8 @@ class OwnedProcess:
         self.overflow = False
         self.forced_stop = False
         self.recorded = None
+        self.completion = None
+        self.failure_observation = None
         self.process = subprocess.Popen([str(x) for x in argv], stdin=subprocess.PIPE,
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                         env=env, start_new_session=True)
@@ -271,7 +273,7 @@ class OwnedProcess:
 
     def stop(self):
         # The original session leader may exit while descendants still hold pipes.
-        self.forced_stop = self.process.poll() is None or self.reader.is_alive()
+        self.forced_stop = self.forced_stop or self.process.poll() is None or self.reader.is_alive()
         try:
             os.killpg(self.process.pid, signal.SIGTERM)
         except ProcessLookupError:
@@ -339,38 +341,66 @@ class Context:
         self.children.append(child)
         return child
 
-    def record(self, child):
-        if child.recorded is not None:
+    def record(self, child, *, refresh=False):
+        if child.recorded is not None and not refresh:
             return child.recorded
-        record = {"label": child.label, "exit_code": child.process.poll(),
-                  "forced_stop": child.forced_stop,
-                  "elapsed_seconds": round(time.monotonic() - child.started, 3),
-                  "output": redact(child.text(), self.secrets)[-16384:]}
-        self.report["processes"].append(record)
+        record = child.recorded
+        previous_output = record.get("output", "") if record is not None else ""
+        if record is None:
+            record = {"label": child.label,
+                      "elapsed_seconds": round(time.monotonic() - child.started, 3)}
+            self.report["processes"].append(record)
+        record.update(exit_code=child.process.poll(), forced_stop=child.forced_stop,
+                      output_capture_closed=not child.reader.is_alive(),
+                      input_closed=not child.writer.is_alive(),
+                      output=redact(child.text(), self.secrets)[-16384:])
+        if child.completion is not None:
+            record["completion"] = child.completion
+        if child.failure_observation is not None:
+            record["failure_observation"] = redacted_value(child.failure_observation, self.secrets)
         child.recorded = record
-        if record["output"]:
+        if record["output"] and record["output"] != previous_output:
             self.event("log", label=child.label, message=record["output"][-4096:])
         return record
 
     def run(self, label, argv, *, timeout=60, env=None, input_text=None, check=True, cleanup=False,
-            before_stop=None):
+            before_stop=None, allow_background_output=False):
         child = self.start(label, argv, env=env, input_text=input_text, cleanup=cleanup)
         try:
             deadline = time.monotonic() + timeout
             if cleanup and self.cleanup_deadline is not None:
                 deadline = min(deadline, self.cleanup_deadline)
-            while child.process.poll() is None or child.reader.is_alive():
+            while child.process.poll() is None or (child.reader.is_alive() and not allow_background_output):
                 if not cleanup:
                     self.check()
                 require(not child.overflow, label + " exceeded output bound")
                 require(time.monotonic() < deadline, label + " timed out")
                 time.sleep(0.05)
+            if allow_background_output:
+                # wineboot's services may inherit its stdout after the initializer
+                # exits. Keep the bounded reader and process group owned until
+                # prefix shutdown; they are not part of initializer completion.
+                child.reader.join(timeout=0.2)
+            if not cleanup:
+                self.check()
+            require(not child.overflow, label + " exceeded output bound")
             child.writer.join(timeout=1)
+            child.completion = {
+                "policy": "leader_exit_with_owned_background_output" if allow_background_output else "leader_exit_and_output_eof",
+                "leader_exit_code": child.process.poll(),
+                "output_capture_open": child.reader.is_alive(),
+                "elapsed_seconds": round(time.monotonic() - child.started, 3)}
             result = self.record(child)
             if check:
                 require(result["exit_code"] == 0, label + " failed: " + result["output"][-4096:])
             return result
-        except BaseException:
+        except BaseException as exc:
+            # Preserve state BEFORE observers or signals can change exit status.
+            child.failure_observation = {
+                "leader_exit_code": child.process.poll(),
+                "output_capture_open": child.reader.is_alive(),
+                "elapsed_seconds": round(time.monotonic() - child.started, 3),
+                "reason": str(exc)}
             try:
                 if before_stop is not None:
                     try:
@@ -381,7 +411,7 @@ class Context:
                         self.event("log", label=label + "-observation", message=message)
             finally:
                 child.stop()
-                self.record(child)
+                self.record(child, refresh=True)
             raise
 
 
@@ -669,7 +699,8 @@ class Diagnostic:
             require(time.monotonic() < deadline, "Headless X server startup timed out")
             time.sleep(0.1)
         self.wine_started = True
-        self.ctx.run("wineboot", [self.args.wine, "wineboot", "-u"], timeout=150, env=self.wine_env)
+        self.ctx.run("wineboot", [self.args.wine, "wineboot", "-u"], timeout=150,
+                     env=self.wine_env, allow_background_output=True)
         # Wine's MSI ODBC action writes the caller's registry view. Execute the
         # actual PE32 installer so its registration matches the PE32 ODBC client.
         installer = self.wineprefix / "drive_c" / "windows" / "syswow64" / "msiexec.exe"
@@ -811,7 +842,12 @@ SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
         for child in self.ctx.children:
             if child.process.poll() is None or child.reader.is_alive():
                 child.stop()
-        self.cleanup_status["owned_processes_reaped"] = all(c.process.poll() is not None for c in self.ctx.children)
+            self.ctx.record(child, refresh=True)
+            if child.overflow:
+                failures.append("Owned process exceeded output bound: " + child.label)
+        self.cleanup_status["owned_processes_reaped"] = all(
+            c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
+            for c in self.ctx.children)
         (self.root / "odbc-connection.txt").unlink(missing_ok=True)
         self.lock.close()
         return failures
@@ -865,7 +901,9 @@ def main(argv=None):
                 if context.report["status"] == "passed":
                     context.report["status"] = "failed"
         context.report["finished_utc"] = utc()
-        context.report["cleanup_complete"] = not any(c.process.poll() is None for c in context.children)
+        context.report["cleanup_complete"] = all(
+            c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
+            for c in context.children)
         context.report["cleanup"] = diagnostic.cleanup_status if diagnostic else {
             "postgres_graceful": False, "wine_prefix_stopped": False,
             "owned_processes_reaped": context.report["cleanup_complete"]}
