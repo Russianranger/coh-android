@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+  "base": {
+    "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-probe-v1/runtime-arm64.tar.gz",
+    "bytes": 353710639,
+    "sha256": "08c639c26506dc6fbd15464bec475337087bb23cb7c0c5ace2db5240ee36424f",
+    "source_url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-probe-v1/runtime-sources.tar.gz",
+    "source_sha256": "343281a472e87e31df724605af40c14557270a597c5fc9ec08e8848a8f2d7753"
+  },
+  "wine": {
+    "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-fex-v3/runtime-fex-arm64.tar.gz",
+    "bytes": 318095727,
+    "sha256": "030f38066af7b786c142e199cb84adec037840b0f029338849e43f99203a93e1",
+    "source_url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-fex-v3/runtime-fex-sources.tar.gz",
+    "source_sha256": "2da85c45a42b87463739edef39d76d005e3fae2cd70b283a931e37e4837290e7",
+    "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "fex_commit": "320c5f18475b0c8a7e99c51a5fdc5b5e35b147ab",
+    "manifest_sha256": "c186367efab62f9981586623f84644d3ae002fc678d3c167a8b0efad13522b89"
+  },
+  "odbc": {
+    "url": "https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi",
+    "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "version": "18.00.0004",
+    "source_url": "https://ftp.postgresql.org/pub/odbc/versions/src/psqlodbc-18.00.0004.tar.gz"
+  },
+  "scope": "Native ARM64 CPU execution with glibc under app-owned PRoot; not a Bionic PostgreSQL port. Win32 code uses Wine WoW64 and FEX. On-device acceptance remains required."
+}

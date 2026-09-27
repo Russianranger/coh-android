@@ -1,0 +1,124 @@
+name: Thor diagnostic APK
+on:
+  push:
+    paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml', 'database/postgresql/001-coh-compat.sql', 'database/postgresql/tests/odbc_probe.c', 'database/postgresql/overlay/Common/sql/pg_compat.h']
+  pull_request:
+    paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            android
+            tools/android
+      - name: Check ownership, cancellation, archive and build contracts
+        run: |
+          python3 -m unittest discover -s tools/android -p 'test_*.py' -v
+  postgresql:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: tools/android
+      - name: Build pinned PostgreSQL ARM64 and prove installed-tool restart
+        run: python3 tools/android/prepare_pg_runtime.py --output out/android-pg --repository-commit "$GITHUB_SHA" --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-postgresql-runtime
+          path: out/android-pg/
+          compression-level: 0
+          if-no-files-found: error
+  apk:
+    needs: postgresql
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            android
+            tools/android
+            database/postgresql
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-postgresql-runtime
+          path: out/android-pg
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android tools and Win32 compiler
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;27.2.12479018'
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686-posix gawk
+      - name: Build app-owned process runtime
+        run: python3 tools/android/build_proot.py --target android-arm64 --output out/android/native --ndk "$ANDROID_HOME/ndk/27.2.12479018"
+      - name: Assemble verified database and Win32 diagnostic inputs
+        run: |
+          python3 tools/android/prepare_assets.py --repository-commit "$GITHUB_SHA" \
+            --pg-archive out/android-pg/pg-runtime-overlay.tar.gz --pg-receipt out/android-pg/pg-runtime-build.json \
+            --proot-receipt out/android/native/arm64-v8a/proot-build-receipt.json
+      - name: Build and verify diagnostic APK
+        run: python3 tools/android/build_apk.py --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --build-tools "$ANDROID_HOME/build-tools/35.0.0" --keystore "$RUNNER_TEMP/coh-diagnostic.jks"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-diagnostic-apk
+          path: |
+            out/android/COH-Diagnostic-0.1.0.apk
+            out/android/COH-Diagnostic-0.1.0.apk.sha256
+            out/android/apk-build-report.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/android/assets/runtime/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/android/native/arm64-v8a/
+          if-no-files-found: error
+  runtime:
+    needs: apk
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          sparse-checkout: |
+            android
+            tools/android
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/android/assets/runtime
+      - name: Install host build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+      - name: Build matching native ARM64 PRoot
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
+      - name: Prove Win32 ODBC, database restart and owned shutdown through PRoot
+        run: python3 tools/android/host_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-diagnostic-host-evidence
+          path: |
+            out/android/host-evidence/
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

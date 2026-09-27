@@ -1,0 +1,27 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'io.github.russianranger.cohdiagnostic'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'io.github.russianranger.cohdiagnostic'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+        ndk { abiFilters 'arm64-v8a' }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets.main.assets.srcDir rootProject.file('../out/android/assets')
+    sourceSets.main.jniLibs.srcDir rootProject.file('../out/android/native')
+    packaging {
+        jniLibs {
+            useLegacyPackaging true
+            keepDebugSymbols += ['**/libproot.so', '**/libproot-loader.so']
+        }
+    }
+    buildTypes { release { minifyEnabled false } }
+}
