@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import struct
 import subprocess
@@ -10,6 +11,23 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+# Wine 10 implements the original ANSI ODBC names but stubs these A aliases.
+# Only this diagnostic compilation changes imports; fixture operations are intact.
+ODBC_ANSI_ALIASES = {name+'A': name for name in
+                     ('SQLDriverConnect', 'SQLExecDirect', 'SQLColumns', 'SQLGetInfo')}
+WINE_ODBC_SPEC = 'https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec'
+
+def verify_odbc_imports(dump):
+    sections = [part for part in dump.split('DLL Name:')[1:]
+                if part.splitlines()[0].strip().lower() == 'odbc32.dll']
+    if len(sections) != 1:
+        raise ValueError('Expected exactly one Windows ODBC manager import table')
+    imports = set(re.findall(r'^\s*[0-9a-fA-F]+\s+\d+\s+(SQL[A-Za-z0-9_]+)\s*$', sections[0], re.M))
+    if imports.intersection(ODBC_ANSI_ALIASES):
+        raise ValueError('Diagnostic imports an unimplemented Wine ANSI alias')
+    if not set(ODBC_ANSI_ALIASES.values()).issubset(imports) or 'SQLGetDiagRecA' not in imports:
+        raise ValueError('Diagnostic lacks required real ODBC operations')
+    return sorted(imports)
 
 def digest(path):
     with Path(path).open('rb') as stream:
@@ -54,6 +72,7 @@ def main():
     p.add_argument('--proot-receipt', type=Path, required=True)
     p.add_argument('--repository-commit', required=True)
     p.add_argument('--cc', default='i686-w64-mingw32-gcc')
+    p.add_argument('--objdump', default='i686-w64-mingw32-objdump')
     a = p.parse_args()
     out = a.output
     out.mkdir(parents=True, exist_ok=True)
@@ -62,12 +81,15 @@ def main():
     cmds = [
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-o', str(out/'runtime-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-shared', '-static-libgcc', '-Wl,--kill-at', str(ROOT/'android/native/probe.c'), '-o', str(out/'probe.dll')],
-        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', '-I'+str(ROOT/'database/postgresql/overlay/Common/sql'), str(ROOT/'database/postgresql/tests/odbc_probe.c'), '-lodbc32', '-o', str(out/'odbc_probe.exe')],
+        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc',
+         *['-D'+alias+'='+name for alias,name in ODBC_ANSI_ALIASES.items()],
+         '-I'+str(ROOT/'database/postgresql/overlay/Common/sql'), str(ROOT/'database/postgresql/tests/odbc_probe.c'), '-lodbc32', '-o', str(out/'odbc_probe.exe')],
     ]
     for cmd in cmds:
         subprocess.run(cmd, check=True)
     for name in ['runtime-probe.exe', 'probe.dll', 'odbc_probe.exe']:
         pe32(out/name)
+    odbc_imports = verify_odbc_imports(subprocess.check_output([a.objdump, '-p', str(out/'odbc_probe.exe')], text=True))
     inputs = {
         'diagnostic.py': ROOT/'android/guest/diagnostic.py',
         '001-coh-compat.sql': ROOT/'database/postgresql/001-coh-compat.sql',
@@ -83,6 +105,8 @@ def main():
     manifest = {'format':1, 'repository_commit':a.repository_commit, 'candidate':lock['candidate'], 'files':files,
         'runtime_probe':{'executable':'runtime-probe.exe','marker':'COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified','dll':'probe.dll'},
         'compiler':subprocess.check_output([a.cc,'--version'], text=True).splitlines()[0],
+        'odbc_ansi_compatibility':{'wine_export_source':WINE_ODBC_SPEC, 'compile_aliases':ODBC_ANSI_ALIASES,
+                                  'verified_windows_manager_imports':odbc_imports, 'fixture_operations_changed':False},
         'scope':'APK build inputs; not proof of Android execution or gameplay'}
     (out/'runtime-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps({'files':len(files),'repository_commit':a.repository_commit,'manifest_sha256':digest(out/'runtime-manifest.json')}))

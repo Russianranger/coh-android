@@ -26,7 +26,33 @@
       "android_proot_build": "passed",
       "win32_input_assembly": "passed",
       "apk_accepted": false,
-      "arm64_proot_runtime_executed": false
+      "arm64_proot_runtime_executed": false,
+      "correction_commit": "c1006cf7c1f4b7691407ae99b90e417a1a28d3ce"
+    },
+    {
+      "run_id": 36331879591,
+      "repository_commit": "c1006cf7c1f4b7691407ae99b90e417a1a28d3ce",
+      "result": "failed",
+      "tooling_tests_passed": 61,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_and_payload_verification": "passed",
+      "android_and_linux_proot_builds": "passed",
+      "failed_job": 108655952175,
+      "stage": "odbc_fixture",
+      "reason": "Pinned Wine 10 stubs SQLDriverConnectA and three other ANSI A aliases; equivalent unsuffixed ANSI exports are implemented",
+      "guest_stages_passed": [
+        "assets_and_architecture",
+        "initialize_owned_cluster",
+        "postgres_first_start",
+        "restricted_fixture_database",
+        "wine_prefix_and_driver",
+        "win32_runtime_dll"
+      ],
+      "wine_cleanup_accepted": false,
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "source_of_compatibility_correction": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+      "raw_report": "runtime-smoke-report-36331879591.json"
     }
   ],
   "android_device_validated": false,

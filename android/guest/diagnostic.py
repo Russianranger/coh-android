@@ -6,6 +6,7 @@ Stdout is bounded JSON lines; the atomic, redacted receipt is latest-report.json
 """
 import argparse
 import datetime
+import errno
 import fcntl
 import hashlib
 import json
@@ -16,6 +17,7 @@ import re
 import secrets
 import signal
 import socket
+import stat
 import struct
 import subprocess
 import sys
@@ -338,6 +340,49 @@ def arm64_elf(path):
             "Expected native ARM64 ELF: " + path.name)
 
 
+def verify_wine_stopped(prefix, *, server_base=None):
+    """Verify the pinned Linux Wine 10 server's exact prefix lock and endpoint.
+
+    server/request.c derives this directory from prefix device/inode and uses a
+    POSIX byte-range lock, not flock. A silent `wineserver -k` exit 1 means no
+    owner (or a lock error); `-w` itself ignores the fcntl result. Independently
+    taking that same lock and refusing a live socket keeps cleanup fail-closed.
+    """
+    require(not prefix.is_symlink(), "Linked Wine prefix refused")
+    prefix_stat = prefix.stat()
+    base = Path(server_base) if server_base is not None else Path(f"/tmp/.wine-{os.getuid()}")
+    server = base / f"server-{prefix_stat.st_dev:x}-{prefix_stat.st_ino:x}"
+    lock = server / "lock"
+    require(not base.is_symlink() and not server.is_symlink() and not lock.is_symlink(),
+            "Linked Wine server lock refused")
+    require(lock.is_file(), "Wine server lock missing; cannot prove prefix shutdown")
+    fd = os.open(lock, os.O_RDWR | os.O_NOFOLLOW)
+    try:
+        require(stat.S_ISREG(os.fstat(fd).st_mode), "Wine server lock is not a regular file")
+        try:
+            fcntl.lockf(fd, fcntl.LOCK_EX | fcntl.LOCK_NB, 1, 0, os.SEEK_SET)
+        except OSError as exc:
+            raise DiagnosticError("Wine prefix lock is still owned or cannot be verified") from exc
+        endpoint = server / "socket"
+        try:
+            endpoint_stat = endpoint.lstat()
+        except FileNotFoundError:
+            return {"prefix_lock_free": True, "server_socket_inactive": True}
+        require(stat.S_ISSOCK(endpoint_stat.st_mode), "Wine server endpoint is not a Unix socket")
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as probe:
+            probe.settimeout(0.25)
+            try:
+                probe.connect(str(endpoint))
+            except OSError as exc:
+                require(exc.errno in (errno.ENOENT, errno.ECONNREFUSED),
+                        "Wine server endpoint state could not be verified")
+            else:
+                raise DiagnosticError("Wine prefix server socket still accepts connections")
+        return {"prefix_lock_free": True, "server_socket_inactive": True}
+    finally:
+        os.close(fd)
+
+
 class Diagnostic:
     def __init__(self, args, context):
         self.args, self.ctx = args, context
@@ -563,8 +608,14 @@ class Diagnostic:
         self.ctx.cleanup_deadline = time.monotonic() + 22
         if self.wine_started:
             try:
-                self.ctx.run("owned-wine-stop", [self.args.wineserver, "-k"], timeout=3, env=self.wine_env, cleanup=True)
-                self.ctx.run("owned-wine-wait", [self.args.wineserver, "-w"], timeout=5, env=self.wine_env, cleanup=True)
+                stopped = self.ctx.run("owned-wine-stop", [self.args.wineserver, "-k"], timeout=3,
+                                       env=self.wine_env, cleanup=True, check=False)
+                waited = self.ctx.run("owned-wine-wait", [self.args.wineserver, "-w"], timeout=5,
+                                      env=self.wine_env, cleanup=True)
+                require(stopped["exit_code"] in (0, 1), "Wine stop returned an unexpected exit code")
+                evidence = verify_wine_stopped(self.wineprefix)
+                self.ctx.report["wine_shutdown"] = {"stop_exit_code": stopped["exit_code"],
+                                                     "wait_exit_code": waited["exit_code"], **evidence}
                 self.cleanup_status["wine_prefix_stopped"] = True
             except Exception as exc:
                 failures.append("Wine cleanup: " + str(exc))

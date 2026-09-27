@@ -43,6 +43,16 @@ The guest proves:
 6. Prefix-scoped Wine shutdown, graceful final database shutdown and reaping of
    owned processes. A failed cleanup cannot count as a pass.
 
+The diagnostic compiles the existing ODBC fixture with four ANSI import aliases:
+`SQLDriverConnectA`, `SQLExecDirectA`, `SQLColumnsA` and `SQLGetInfoA` use their
+equivalent unsuffixed ANSI exports. The pinned Wine 10 export table stubs those
+four `A` names. Its implemented ANSI functions load the registered Windows
+psqlODBC DLL; no Unix ODBC substitute is used. Build-time inspection verifies the
+actual PE imports and records them in the runtime manifest. The fixture's SQL,
+65-connection test, Unicode checks and acceptance markers remain unchanged.
+See the [pinned export source](https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec)
+and the [failed runtime evidence](android-evidence/runtime-smoke-report-36331879591.json).
+
 Passwords remain in private state, are removed from emitted diagnostics, and are
 not part of the exported ZIP. Export contains the bounded report, recent log and
 build manifest; it does not export a populated database or game save files.

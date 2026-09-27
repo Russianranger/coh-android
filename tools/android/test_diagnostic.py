@@ -6,6 +6,8 @@ import json
 import os
 from pathlib import Path
 import signal
+import socket
+import subprocess
 import sys
 import tempfile
 import threading
@@ -283,6 +285,95 @@ class DiagnosticProcessTests(unittest.TestCase):
         self.assertFalse(thread.is_alive())
         self.assertEqual(worker_error, [])
         self.assert_stopped(int(identity.read_text()))
+
+
+@unittest.skipIf(os.name == 'nt', 'Wine prefix ownership proof uses POSIX byte locks and Unix sockets')
+class WineStoppedProofTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        root = Path(self.temporary.name)
+        self.prefix = root / 'prefix'
+        self.prefix.mkdir()
+        self.server_base = root / 'servers'
+        self.server_base.mkdir()
+        identity = self.prefix.stat()
+        self.server_dir = self.server_base / f'server-{identity.st_dev:x}-{identity.st_ino:x}'
+        self.server_dir.mkdir()
+        self.lock = self.server_dir / 'lock'
+        self.lock.touch()
+
+    def verify(self):
+        return diagnostic.verify_wine_stopped(self.prefix, server_base=self.server_base)
+
+    def assert_stopped_proof(self):
+        proof = self.verify()
+        self.assertIs(proof['prefix_lock_free'], True)
+        self.assertIs(proof['server_socket_inactive'], True)
+
+    def unix_socket(self):
+        try:
+            return socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        except PermissionError:
+            self.skipTest('Executor forbids Unix socket creation; real endpoint acceptance requires hosted Linux')
+
+    def test_free_prefix_lock_and_absent_server_socket_prove_stopped(self):
+        self.assert_stopped_proof()
+        self.assertEqual(self.lock.read_bytes(), b'')
+        self.assertFalse((self.server_dir / 'socket').exists())
+
+    def test_lock_held_by_an_independent_process_is_not_stopped(self):
+        ready = self.server_base / 'lock-held'
+        source = ('import fcntl,sys,time\nfrom pathlib import Path\n'
+                  'lock=open(sys.argv[1],"r+")\n'
+                  'fcntl.lockf(lock,fcntl.LOCK_EX|fcntl.LOCK_NB,1,0)\n'
+                  'Path(sys.argv[2]).touch()\n'
+                  'time.sleep(60)\n')
+        child = subprocess.Popen([sys.executable, '-u', '-c', source, str(self.lock), str(ready)],
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        def cleanup():
+            if child.poll() is None:
+                child.terminate()
+            try:
+                child.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait(timeout=5)
+            child.stderr.close()
+        self.addCleanup(cleanup)
+        deadline = time.monotonic() + 5
+        while not ready.exists():
+            self.assertIsNone(child.poll(), 'Byte-lock fixture exited before acquiring its lock')
+            self.assertLess(time.monotonic(), deadline, 'Byte-lock fixture failed to become ready')
+            time.sleep(0.02)
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.verify()
+        self.assertIsNone(child.poll(), 'Verifying ownership must not terminate the lock holder')
+
+    def test_live_unix_server_socket_prevents_stopped_proof(self):
+        with self.unix_socket() as endpoint:
+            endpoint.bind(str(self.server_dir / 'socket'))
+            endpoint.listen(1)
+            with self.assertRaises(diagnostic.DiagnosticError):
+                self.verify()
+            self.assertTrue((self.server_dir / 'socket').exists())
+
+    def test_stale_unix_socket_with_connection_refused_is_stopped(self):
+        with self.unix_socket() as endpoint:
+            endpoint.bind(str(self.server_dir / 'socket'))
+        self.assertTrue((self.server_dir / 'socket').exists())
+        self.assert_stopped_proof()
+
+    def test_missing_or_symlinked_lock_cannot_supply_ownership_proof(self):
+        self.lock.unlink()
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.verify()
+        unrelated = self.server_base / 'unrelated.lock'
+        unrelated.write_bytes(b'unrelated lock must not change')
+        self.lock.symlink_to(unrelated)
+        with self.assertRaises(diagnostic.DiagnosticError):
+            self.verify()
+        self.assertEqual(unrelated.read_bytes(), b'unrelated lock must not change')
 
 
 if __name__ == '__main__':
