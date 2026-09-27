@@ -287,6 +287,19 @@ class CharacterReceiptTests(unittest.TestCase):
             self.assertFalse((root / 'work').exists())
             self.assertFalse((root / 'output').exists())
 
+    def test_transfer_opt_in_requires_the_separate_verified_client_before_processes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(driver.one_map, 'preflight') as preflight, \
+                 patch.object(driver, 'initialize') as initialize, patch.object(driver.network, 'Process') as process:
+                with self.assertRaisesRegex(ValueError, 'Map transfer requires'):
+                    driver.run(root / 'runtime', root / 'reference', root / 'schema', root / 'comparison',
+                               root / 'inputs', root / 'one-map', root / 'work', root / 'output',
+                               'unused', 'unused', map_transfer=True)
+                preflight.assert_not_called()
+                initialize.assert_not_called()
+                process.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

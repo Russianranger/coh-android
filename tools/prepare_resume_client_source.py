@@ -87,6 +87,14 @@ def expected_resume_receipt(root=ROOT, postgresql_build_input=None):
         'required_argument': '-character NAME',
         'creation_allowed': False,
         'stay_connected': True,
+        'transfer_proof': {
+            'schema_version': 1,
+            'marker': 'COH_RESUME_ONLY_TRANSFER_UPDATE',
+            'epoch': 'successful_doMapXfer',
+            'endpoint': 'connected_peer',
+            'readiness': 'processed_SERVER_UPDATE',
+            'identity': 'initial_received_player_entity',
+        },
         'runtime_validation': 'unverified',
     }
 

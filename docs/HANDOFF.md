@@ -82,6 +82,14 @@ The [failed evidence](postgresql-evidence/character-session-36293644180.json) is
 preserved. The corrected retry above proves the sustained resume and second save;
 the failed attempt remains identified as a failure.
 
+### Active gate: Atlas instance transfer
+
+The next [Atlas instance transfer gate](MAP_TRANSFER_VALIDATION.md) is implemented:
+the same resumed character must move map 1 → clone 101 → map 1,
+prove each destination independently and complete the final protocol save.
+Hosted transfer acceptance is pending. The workflow will also rerun the accepted
+sustained-session experiment against the same newly built diagnostic client.
+
 ### Earlier attempts and corrections
 
 The recovered evidence and new character harness are on

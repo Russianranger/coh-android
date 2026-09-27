@@ -1,4 +1,4 @@
-name: Sustained character session
+name: Character session and Atlas transfer
 
 on:
   workflow_dispatch:
@@ -79,6 +79,10 @@ jobs:
   character:
     if: github.event_name != 'pull_request'
     needs: [tooling, resume-client]
+    strategy:
+      fail-fast: false
+      matrix:
+        experiment: [sustained, transfer]
     # Required only to download the existing unpublished asset. PR checks never
     # receive this permission; no credentials are persisted by checkout.
     permissions:
@@ -169,22 +173,33 @@ jobs:
           if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
           $result = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
           if ($result.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($result.ExitCode)" }
-      - name: Validate missing-name refusal and sustained second-session save
+      - name: Validate ${{ matrix.experiment }} session and protocol save
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
           if (-not $driver) { throw 'x86 Unicode PostgreSQL ODBC driver not found' }
-          python database/postgresql/tests/run_character_persistence.py --runtime out/character-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --comparison-report out/reference-template-evidence/reference-template-comparison-report.json --comparison-inputs out/reference-template-evidence/comparison-runtime-inputs.json --one-map-report out/one-map-evidence/one-map-report.json --bin "$env:PGBIN" --driver "$($driver.Name)" --work "$env:RUNNER_TEMP/coh-character-session" --output out/character-evidence --timeout-seconds 900 --phase-timeout-seconds 300 --resume-client-package out/resume-client --expected-resume-repository-commit "${{ github.sha }}"
-          if ($LASTEXITCODE -ne 0) { throw 'Sustained character session validation failed; inspect redacted evidence' }
+          $transferArgs = @()
+          $experimentTimeout = 900
+          $expectedStatus = 'fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated'
+          if ('${{ matrix.experiment }}' -eq 'transfer') {
+            $transferArgs = @('--map-transfer')
+            $experimentTimeout = 1200
+            $expectedStatus = 'fresh_fakeauth_character_map_roundtrip_second_save_passed_gameplay_unvalidated'
+          }
+          python database/postgresql/tests/run_character_persistence.py --runtime out/character-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --comparison-report out/reference-template-evidence/reference-template-comparison-report.json --comparison-inputs out/reference-template-evidence/comparison-runtime-inputs.json --one-map-report out/one-map-evidence/one-map-report.json --bin "$env:PGBIN" --driver "$($driver.Name)" --work "$env:RUNNER_TEMP/coh-character-${{ matrix.experiment }}" --output out/character-evidence --timeout-seconds "$experimentTimeout" --phase-timeout-seconds 300 --resume-client-package out/resume-client --expected-resume-repository-commit "${{ github.sha }}" @transferArgs
+          if ($LASTEXITCODE -ne 0) { throw 'Character session validation failed; inspect redacted evidence' }
           $report = Get-Content -Raw out/character-evidence/character-persistence-report.json | ConvertFrom-Json
-          if ($report.status -ne 'fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated' -or $report.sustained_session_validated -ne $true -or $report.failures.Count -ne 0) {
-            throw 'The sustained-session workflow requires its own completed acceptance result'
+          if ($report.status -ne $expectedStatus -or $report.sustained_session_validated -ne $true -or $report.failures.Count -ne 0) {
+            throw 'The requested experiment requires its own completed acceptance result'
+          }
+          if ('${{ matrix.experiment }}' -eq 'transfer' -and $report.map_transfer_validated -ne $true) {
+            throw 'A sustained-session result cannot satisfy the map-transfer gate'
           }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: character-session-evidence
+          name: character-${{ matrix.experiment == 'transfer' && 'transfer' || 'session' }}-evidence
           path: out/character-evidence/
           if-no-files-found: warn
           retention-days: 30

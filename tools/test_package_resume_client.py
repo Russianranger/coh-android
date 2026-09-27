@@ -91,6 +91,46 @@ class ResumeClientPackageTests(unittest.TestCase):
             self.package()
         self.assertFalse(self.output.exists())
 
+    def test_missing_transfer_proof_rejected_before_package_creation(self):
+        receipt = copy.deepcopy(self.expected)
+        del receipt['transfer_proof']
+        self.receipt.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'differs from pinned source'):
+            self.package()
+        self.assertFalse(self.output.exists())
+
+    def test_rehashed_consistent_receipts_cannot_weaken_transfer_proof(self):
+        self.package()
+        # These altered receipts agree with each other and their recorded hash.
+        # Only comparison with the source-derived contract can reject them.
+        stale_fields = {
+            'schema_version': 0,
+            'marker': 'COH_RESUME_ONLY_READY',
+            'epoch': 'attempted_doMapXfer',
+            'endpoint': 'requested_peer',
+            'readiness': 'sent_CLIENT_READY',
+            'identity': 'requested_character_name',
+        }
+        self.assertEqual(set(self.expected['transfer_proof']), set(stale_fields))
+        for field in (None, *stale_fields):
+            with self.subTest(field=field or 'missing_transfer_proof'):
+                changed = copy.deepcopy(self.expected)
+                if field is None:
+                    del changed['transfer_proof']
+                else:
+                    self.assertNotEqual(changed['transfer_proof'][field], stale_fields[field])
+                    changed['transfer_proof'][field] = stale_fields[field]
+                target = self.runtime / diagnostic.RECEIPT
+                target.write_text(json.dumps(changed), encoding='utf-8')
+
+                def update(manifest):
+                    manifest['resume_client_build_input'] = changed
+                    manifest['files'][diagnostic.RECEIPT] = file_record(target)
+
+                self.rewrite_manifest(update)
+                with self.assertRaisesRegex(ValueError, 'differs from pinned source'):
+                    self.verify()
+
     def test_wrong_architecture_rejected_before_package_creation(self):
         self.exe.write_bytes(pe_file(machine=0x8664))
         with self.assertRaisesRegex(ValueError, 'Win32 x86'):

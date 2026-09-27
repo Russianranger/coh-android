@@ -1,6 +1,14 @@
 --- a/Utilities/TestClient/src/main.c
 +++ b/Utilities/TestClient/src/main.c
-@@ -73,6 +73,7 @@
+@@ -31,6 +31,7 @@
+ #include "PipeClient.h"
+ #include <conio.h>
+ #include <time.h>
++#include <limits.h>
+ #include <process.h>
+ #include "entity/character_base.h"
+ #include "entity/entclient.h"
+@@ -73,6 +74,7 @@
  #include "testAccountServer.h"
  #include "testMissionSearch.h"
  #include "comm_backend.h"
@@ -8,17 +16,23 @@
  #include <utilitieslib/utils/log.h>
  #include "player/inventory_client.h"
  #include "entity/character_eval.h"
-@@ -193,6 +194,9 @@
+@@ -193,6 +195,15 @@
  int ask_user=0;
  int useLauncherVersion = 1;
  char character_name[256] = {0};
 +static int resume_only = 0;
 +static int resume_only_update_seen = 0;
++static int resume_only_player_id = 0;
++static int resume_only_transfer_epoch = 0;
++static U32 resume_only_peer_ip = 0;
++static int resume_only_peer_port = 0;
++static int resume_only_base_map = 0;
++static int resume_only_instance = 0;
 +static char resume_only_name[64] = {0};
  int err=0;
  int reconnect=0;
  const char *launcherVersion = NULL;
-@@ -379,9 +383,88 @@
+@@ -379,9 +390,135 @@
      return true;
  }
  
@@ -80,23 +94,70 @@
 +        return 4;
 +    }
 +    resume_only_update_seen = 0;
++    resume_only_player_id = 0;
++    resume_only_transfer_epoch = 0;
 +    // This protocol supplies slot/name here, not the character database ID.
 +    printf("COH_RESUME_ONLY_SELECTED slot=%d name=%s\n",
 +        gPlayerNumber, db_info.players[gPlayerNumber].name);
 +    return 0;
 +}
 +
++static void resumeOnlyProofError(const char *reason) {
++    printf("COH_RESUME_ONLY_TRANSFER_PROOF_ERROR reason=%s\n", reason);
++    statusUpdate("ERROR");
++    exit(4);
++}
++
++static void armResumeOnlyTransferProof(void) {
++    if (!resume_only)
++        return;
++    // Arm only after doMapXfer succeeded. A prior unacknowledged epoch cannot
++    // be silently skipped by another transfer or reused as destination proof.
++    if (resume_only_player_id <= 0 || !resume_only_update_seen || do_map_xfer ||
++        !commConnected() || resume_only_transfer_epoch == INT_MAX)
++        resumeOnlyProofError("invalid_transfer_boundary");
++    resume_only_peer_ip = comm_link.addr.sin_addr.s_addr;
++    resume_only_peer_port = ntohs(comm_link.addr.sin_port);
++    resume_only_base_map = game_state.base_map_id;
++    resume_only_instance = game_state.map_instance_id;
++    if (!resume_only_peer_ip || resume_only_peer_port <= 0 ||
++        resume_only_base_map <= 0 || resume_only_instance < 0 ||
++        resume_only_peer_ip != db_info.mapserver.ip ||
++        resume_only_peer_port != db_info.mapserver.port)
++        resumeOnlyProofError("invalid_destination_endpoint");
++    resume_only_transfer_epoch++;
++    resume_only_update_seen = 0;
++}
++
 +static void reportResumeOnlyServerUpdate(void) {
-+    Entity *e = playerPtr();
++    Entity *e;
++    // A scan can process UPDATE and MAP_XFER together. Never label the old
++    // link's update with destination metadata already supplied by MAP_XFER.
++    if (!resume_only || resume_only_update_seen || do_map_xfer || !commConnected())
++        return;
++    e = playerPtr();
 +    if (!e || e->db_id <= 0 ||
-+        strcmp(e->name, resume_only_name) != 0) {
++        strcmp(e->name, resume_only_name) != 0 ||
++        (resume_only_player_id && e->db_id != resume_only_player_id)) {
 +        printf("COH_RESUME_ONLY_IDENTITY_MISMATCH\n");
 +        statusUpdate("ERROR");
 +        exit(4);
 +    }
-+    // e->db_id was received in the MapServer player entity packet. The
-+    // independent harness binds it to the original SQL/find character ID.
-+    printf("COH_RESUME_ONLY_SERVER_UPDATE id=%d name=%s\n", e->db_id, e->name);
++    if (resume_only_transfer_epoch == 0) {
++        // e->db_id was received in the MapServer player entity packet. The
++        // independent harness binds it to the original SQL/find character ID.
++        resume_only_player_id = e->db_id;
++        printf("COH_RESUME_ONLY_SERVER_UPDATE id=%d name=%s\n", e->db_id, e->name);
++    } else {
++        if (comm_link.addr.sin_addr.s_addr != resume_only_peer_ip ||
++            ntohs(comm_link.addr.sin_port) != resume_only_peer_port ||
++            game_state.base_map_id != resume_only_base_map ||
++            game_state.map_instance_id != resume_only_instance)
++            resumeOnlyProofError("destination_changed_before_update");
++        printf("COH_RESUME_ONLY_TRANSFER_UPDATE epoch=%d id=%d base_map=%d instance=%d ip=%s port=%d name=%s\n",
++            resume_only_transfer_epoch, e->db_id, resume_only_base_map, resume_only_instance,
++            makeIpStr(resume_only_peer_ip), resume_only_peer_port, e->name);
++    }
 +    resume_only_update_seen = 1;
 +}
 +
@@ -107,7 +168,7 @@
      test_client_num = 0;
      for (i=1; i<argc; i++) {
          if (CMDEQ("-hideconsole")) {
-@@ -392,6 +475,8 @@
+@@ -392,6 +529,8 @@
          } else if (CMDEQ("-password")) {
              i++;
              strcpy(g_achPasswordTC,argv[i]);
@@ -116,7 +177,7 @@
          } else if (CMDEQ("-character")) {
              strncpy(character_name,argv[++i], sizeof(character_name));
              g_testMode |= TEST_RESUME_CHAR;
-@@ -495,6 +580,7 @@
+@@ -495,6 +634,7 @@
              }
          }
      }
@@ -124,7 +185,7 @@
      if (testClientFakeAuth && (!connserver[0] || game_state.auth_address[0])) {
          printf("-fakeauth requires -db (or -cs) and cannot be combined with -auth.\n");
          exit(1);
-@@ -943,6 +1029,7 @@
+@@ -943,6 +1083,7 @@
      int framecount=0;
      for(;;) // the official infinite loop
      {
@@ -132,7 +193,7 @@
          //heapValidateAll();
          sharedHeapLazySync();
          framecount++;
-@@ -950,10 +1037,17 @@
+@@ -950,10 +1091,17 @@
          glob_plrstate_valid = 0;
          glob_have_camera_pos = PLAYING_GAME;
          commSendInput();
@@ -150,7 +211,15 @@
  
          calcNetworkStats();
  
-@@ -1313,6 +1407,14 @@
+@@ -1067,6 +1215,7 @@
+                 error_exit(0);
+                 break;
+             } else {
++                armResumeOnlyTransferProof();
+                 printf("Map: %s\n", glob_map_name);
+                 sendMessageToLauncher("MapName: %s", glob_map_name);
+                 checkMissionMapXferCallback();
+@@ -1313,6 +1462,14 @@
              }
              gPlayerNumber = 0;
              if (!err) {
@@ -165,7 +234,7 @@
                  for (firstEmptySlot=0; firstEmptySlot<db_info.player_count; firstEmptySlot++) {
                      if (stricmp(db_info.players[firstEmptySlot].name, "empty")==0)
                          break;
-@@ -1320,18 +1422,26 @@
+@@ -1320,18 +1477,26 @@
                  if (strcmp(character_name,"") != 0)
                  {
                      printf("Searching for %s in character list...\n",character_name);
@@ -196,7 +265,7 @@
                  }
                  if (db_info.player_count && firstEmptySlot==db_info.player_count)
                      firstEmptySlot = -1;
-@@ -1380,14 +1490,14 @@
+@@ -1380,14 +1545,14 @@
                  }
              }
  

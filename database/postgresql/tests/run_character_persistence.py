@@ -23,6 +23,7 @@ import run_generated_schema as schema
 import run_network_ack as network
 import run_one_map as one_map
 import character_snapshot as snapshots
+import character_transfer as transfers
 from character_console import ConsoleCapture
 from character_pipe import TestClientPipe
 from run_generated_schema import (ROOT, require, sha256, redact, initialize,
@@ -32,6 +33,7 @@ from prepare_runtime import input_files
 
 SUCCESS = 'fresh_fakeauth_character_persistence_short_resume_passed_gameplay_unvalidated'
 SESSION_SUCCESS = 'fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated'
+TRANSFER_SUCCESS = 'fresh_fakeauth_character_map_roundtrip_second_save_passed_gameplay_unvalidated'
 FAILED = 'character_persistence_validation_failed'
 INFLUENCE = 12345
 SECOND_INFLUENCE = 23456
@@ -43,7 +45,7 @@ CLIENT_FAILURE = re.compile(
 EXPECTED_LOGOUT = re.compile(r'^\s*Fatal Error: Booted back to login screen\s*$')
 PUBLIC_LINE = re.compile(r'DbServer Ready\.|container_id = |\bName .+ Auth .+ MapId |'
     r'Found character |Resuming character in slot |simulateCharacterCreate\(\)|'
-    r'commReqScene\(\)|^COH_RESUME_ONLY_|^Map: |MESSAGE FROM LAUNCHER: CMD (?:quit|influence (?:12345|23456))$')
+    r'commReqScene\(\)|^COH_RESUME_ONLY_|^Map: |MESSAGE FROM LAUNCHER: CMD (?:quit|influence (?:12345|23456)|mapmove (?:1|101))$')
 
 
 def utc():
@@ -366,13 +368,16 @@ def selected_pipe_record(state):
 def run(runtime, reference, schema_report, comparison_report, comparison_inputs, one_map_report,
         work, output, pg_bin, driver, port=15437, timeout=900, phase_timeout=300,
         schema_archive=None, comparison_archive=None, diagnostic_version=None, root=ROOT,
-        resume_client_package=None, expected_resume_repository_commit=None, session_seconds=60):
+        resume_client_package=None, expected_resume_repository_commit=None, session_seconds=60,
+        map_transfer=False):
     runtime, reference, work, output = [Path(p).resolve() for p in (runtime, reference, work, output)]
     network.new_paths(runtime, reference, work, output, root)
     require(60 <= timeout <= 1800 and 30 <= phase_timeout <= 900, 'Timeouts must be startup60..1800 and phase30..900 seconds')
     require(30 <= session_seconds <= 300, 'Sustained observation must be30..300seconds')
     require(bool(resume_client_package) == bool(expected_resume_repository_commit),
             'Resume client package and expected repository commit must be supplied together')
+    require(type(map_transfer) is bool and (not map_transfer or resume_client_package),
+            'Map transfer requires the separately verified resume-only client package')
     announce('input_verification')
     context, outputs, tables, map_contract = one_map.preflight(runtime, reference, Path(schema_report),
         Path(comparison_report), Path(comparison_inputs), Path(schema_archive) if schema_archive else None,
@@ -386,6 +391,10 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         from package_resume_client import verify_resume_client_package
         resume_executable, resume_manifest = verify_resume_client_package(
             Path(resume_client_package), expected_resume_repository_commit, context['package'], root=root)
+    transfer_contract = transfers.source_contract(root) if map_transfer else None
+    if map_transfer:
+        require(resume_manifest['resume_client_build_input'].get('transfer_proof') == transfers.PROOF,
+                'Diagnostic client lacks the reviewed processed transfer-update proof')
     announce('input_verification', 'passed')
     require(os.name == 'nt', 'This stock named-pipe harness requires the Windows reference host')
     version_source = 'explicit diagnostic override' if diagnostic_version else 'reference package'
@@ -394,6 +403,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         version, version_source = 'coh-persistence-diagnostic', 'diagnostic fallback; reference package contains no patch version'
     require(isinstance(version, str) and re.fullmatch(r'[\x20-\x7e]{1,128}', version), 'Invalid diagnostic version')
     port_checks = one_map.preflight_ports(port)
+    if map_transfer:
+        port_checks.append(transfers.preflight_clone_port())
     make_private_directory(work)
     output.mkdir(parents=True)
     isolated, logs, query_logs, scanned = (work / name for name in ('runtime', 'raw-logs', 'private-query-logs', 'scanned-logs'))
@@ -417,6 +428,10 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report.update(resume_client_package=resume_manifest, sustained_session_validated=False,
             scope='Fresh stock-client create/save, service restart, diagnostic-client missing-name refusal, sustained exact-name resume and second protocol save',
             sustained_observation_required_seconds=session_seconds)
+    if map_transfer:
+        report.update(map_transfer_contract=transfer_contract, map_transfer_validated=False,
+            scope='Fresh character/save/restart, missing-name refusal, sustained resume, Atlas1 to clone101 to Atlas1, then second protocol save',
+            transfer_legs=[], transfer_map_startup={})
     cluster, processes, pipes, consoles, services, secrets = None, [], [], [], [], []
     requested_logout = False
     active_client_logs = {'console': None, 'logout_requested': False}
@@ -489,8 +504,10 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 progress_at = time.monotonic() + 30
             time.sleep(0.2)
 
-    def map_status(label, allow_missing=False):
-        sample = one_map.parse_status(query(['-getstatus', '1', '1'], label), allow_missing=allow_missing)
+    def map_status(label, allow_missing=False, map_id=one_map.MAP_ID):
+        text = query(['-getstatus', '1', str(map_id)], label)
+        sample = (transfers.parse_map_status(text, map_id, allow_missing) if map_transfer else
+                  one_map.parse_status(text, allow_missing=allow_missing))
         sample['sampled_utc'] = utc()
         report['status_samples'].append(sample)
         return sample
@@ -607,7 +624,7 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         wait(lambda: connected_on_atlas(char_status(identifier, name, 'resumed')), phase_timeout,
              'resumed original character connected on Atlas Park', resumed)
 
-        def observe_currency(expected, label):
+        def observe_currency(expected, label, map_id=one_map.MAP_ID):
             current_events = sustained_pipe.snapshot()['events']
             sequence = current_events[-1]['sequence'] if current_events else -1
             next_debug = 0
@@ -620,7 +637,10 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 require(not diagnostic_failures(resumed_console.text()), 'Resumed client emitted failure diagnostics')
                 evidence = live_currency_evidence(state['events'], name, account, sequence, expected)
                 if evidence:
-                    require(connected_on_atlas(char_status(identifier, name, label)),
+                    ownership = char_status(identifier, name, label)
+                    connected = (transfers.connected(ownership, map_id) if map_transfer else
+                                 connected_on_atlas(ownership))
+                    require(connected,
                             'Resumed character disconnected before live currency response')
                     require(resumed.poll() is None, 'Resumed client exited before live currency response')
                     return evidence
@@ -630,6 +650,97 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
                 return False
 
             return wait(response, phase_timeout, label, resumed)
+
+        def roundtrip():
+            """Use two owned servers; do not infer arrival from their shared name."""
+            require(not transfers.updates(resumed_console.text(), identifier, name),
+                    'Unrequested map transfer occurred before the round-trip gate')
+            baseline = map_status('clone101-baseline', allow_missing=True, map_id=transfers.CLONE_ID)
+            require(not baseline['ready'] and baseline.get('not_started') is True,
+                    'Clone101 was already running or has no explicit unstarted baseline')
+            report['transfer_map_startup']['baseline'] = baseline
+            services.append(start(transfers.map_command(isolated), 'atlas-clone101'))
+
+            def clone_ready():
+                require(active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid, account, name) == name,
+                        'Character lost its live pipe while the destination started')
+                require(not diagnostic_failures(resumed_console.text()), 'Client failed while the destination started')
+                sample = map_status('clone101-ready-' + str(len(report['status_samples'])), map_id=transfers.CLONE_ID)
+                return sample if transfers.ready(sample, transfers.CLONE_ID) else False
+
+            ready_clone = wait(clone_ready, timeout, 'owned Atlas clone101 protocol readiness', resumed)
+            report['transfer_map_startup']['ready'] = ready_clone
+            report['phases'].append({'phase': 'clone101_prestarted_ready', 'time_utc': utc(), 'status': 'passed',
+                                    'map_id': transfers.CLONE_ID, 'udp_port': transfers.PORTS[transfers.CLONE_ID]})
+            previous_arrival = None
+            for epoch, origin, destination in ((1, transfers.HOME_ID, transfers.CLONE_ID),
+                                               (2, transfers.CLONE_ID, transfers.HOME_ID)):
+                require(len(transfers.updates(resumed_console.text(), identifier, name)) == epoch - 1,
+                        'Transfer history changed before the next requested leg')
+                source_state = char_status(identifier, name, 'transfer' + str(epoch) + '_departure')
+                require(transfers.connected(source_state, origin), 'Character is not owned by the expected departure map')
+                before_maps = {str(map_id): map_status('transfer' + str(epoch) + '-before-map' + str(map_id), map_id=map_id)
+                               for map_id in transfers.PORTS}
+                require(all(transfers.ready(before_maps[str(map_id)], map_id) for map_id in transfers.PORTS),
+                        'Both owned maps must be ready with fresh heartbeats before transfer')
+                leg = {'epoch': epoch, 'from_map_id': origin, 'to_map_id': destination,
+                       'requested_utc': utc(), 'command': 'mapmove ' + str(destination),
+                       'departure_character_status': source_state, 'maps_before': before_maps}
+                report['transfer_legs'].append(leg)
+                sustained_pipe.send('CMD mapmove ' + str(destination))
+
+                def arrived():
+                    require(active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid, account, name) == name,
+                            'Character pipe identity was lost during transfer')
+                    text = resumed_console.text()
+                    require(not diagnostic_failures(text), 'Client emitted failure diagnostics during transfer')
+                    markers = transfers.updates(text, identifier, name)
+                    require(len(markers) <= epoch, 'Client completed an unrequested extra transfer')
+                    if len(markers) < epoch:
+                        return False
+                    map_sample = map_status('transfer' + str(epoch) + '-arrival-map-' + str(len(report['status_samples'])),
+                                            map_id=destination)
+                    character_sample = char_status(identifier, name, 'transfer' + str(epoch) + '_arrival')
+                    if not transfers.ready(map_sample, destination) or not transfers.connected(character_sample, destination):
+                        return False
+                    evidence = transfers.accept_arrival(text, identifier, name, epoch, map_sample, character_sample)
+                    return {'processed_update': evidence, 'map_status': map_sample, 'character_status': character_sample,
+                            'observed_utc': utc()}
+
+                leg['arrival'] = wait(arrived, phase_timeout, 'transfer' + str(epoch) + ' processed update and exact destination', resumed)
+                leg['live_currency'] = observe_currency(INFLUENCE, 'transfer' + str(epoch) + ' live currency', destination)
+
+                def transfer_saved():
+                    require(active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid, account, name) == name,
+                            'Character pipe identity was lost before transfer SQL evidence')
+                    try:
+                        current = snapshots.capture(cluster, tables, account, identifier, name, expected_influence=INFLUENCE)
+                        comparison = snapshots.compare_transfer(before, current, previous_arrival)
+                        return current, comparison
+                    except ValueError as error:
+                        leg['last_pending_committed_update'] = redact(str(error), secrets)
+                        return False
+
+                current, comparison = wait(transfer_saved, phase_timeout, 'transfer' + str(epoch) + ' committed selected SQL', resumed)
+                snapshots.validate_attribute_references(current, attr_before)
+                snapshots.compare_attributes(attr_before, attributes())
+                require(snapshots.character_inventory(cluster, tables) == [dict(current['identity'], logincount=2)],
+                        'Transfer changed the one-character database inventory')
+                leg['sql_comparison'] = comparison
+                leg['committed_sql_observed_utc'] = utc()
+                report['snapshots']['after_transfer' + str(epoch)] = current
+                previous_arrival = current
+                after_map = map_status('transfer' + str(epoch) + '-settled-map', map_id=destination)
+                after_character = char_status(identifier, name, 'transfer' + str(epoch) + '_settled')
+                transfers.accept_arrival(resumed_console.text(), identifier, name, epoch, after_map, after_character)
+                require(resumed.poll() is None and active_pipe_identity(sustained_pipe.snapshot(), resumed.child.pid,
+                        account, name) == name, 'Client disconnected after transfer evidence')
+                leg.update(status='passed', settled_utc=utc(), settled_map_status=after_map,
+                           settled_character_status=after_character, account_character_count=1)
+                logs_clean()
+                report['phases'].append({'phase': 'transfer' + str(epoch) + '_arrived_and_committed', 'time_utc': utc(),
+                                        'status': 'passed', 'map_id': destination, 'udp_port': transfers.PORTS[destination]})
+                announce('transfer' + str(epoch) + '_arrived_and_committed', 'passed', map_id=destination)
 
         report['restored_live_currency_evidence'] = observe_currency(INFLUENCE, 'restored live currency')
         report['phases'].append({'phase': 'restored_currency_while_connected', 'time_utc': utc(),
@@ -663,6 +774,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['phases'].append({'phase': 'sustained_connected_observation', 'time_utc': utc(), 'status': 'passed',
                                 **report['sustained_observation']})
         announce('sustained_connected_observation', 'passed', **report['sustained_observation'])
+        if map_transfer:
+            roundtrip()
         sustained_pipe.send('CMD influence ' + str(SECOND_INFLUENCE))
         report['second_influence_requested_utc'] = utc()
         report['second_live_currency_evidence'] = observe_currency(SECOND_INFLUENCE, 'second live currency')
@@ -721,6 +834,14 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
         report['sustained_session_validated'] = True
         report['character_persistence_validated'] = True
         report['status'] = SESSION_SUCCESS
+        if map_transfer:
+            require(len(report['transfer_legs']) == 2 and all(leg.get('status') == 'passed' for leg in report['transfer_legs']),
+                    'Both requested map-transfer legs must pass before final acceptance')
+            final_clone = map_status('final-transfer-clone101-status', map_id=transfers.CLONE_ID)
+            require(transfers.ready(final_map, transfers.HOME_ID) and transfers.ready(final_clone, transfers.CLONE_ID),
+                    'Owned maps lost readiness after completed round trip and protocol save')
+            report['map_transfer_validated'] = True
+            report['status'] = TRANSFER_SUCCESS
         announce('second_protocol_logout_committed', 'passed')
 
     try:
@@ -944,6 +1065,8 @@ def run(runtime, reference, schema_report, comparison_report, comparison_inputs,
             report['character_persistence_validated'] = False
             if resume_manifest:
                 report['sustained_session_validated'] = False
+            if map_transfer:
+                report['map_transfer_validated'] = False
         report['processes'] = [process.record() for process in processes]
         report['console_observers'] = [console.report() for console in consoles]
         report['shutdown_scope'] = 'Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated'
@@ -969,6 +1092,7 @@ def main():
     parser.add_argument('--resume-client-package', type=Path)
     parser.add_argument('--expected-resume-repository-commit')
     parser.add_argument('--session-seconds', type=float, default=60)
+    parser.add_argument('--map-transfer', action='store_true')
     args = parser.parse_args()
     result = run(args.runtime, args.reference_binaries, args.schema_report, args.comparison_report,
                  args.comparison_inputs, args.one_map_report, args.work, args.output, args.bin, args.driver,
@@ -976,9 +1100,9 @@ def main():
                  args.comparison_archive, args.diagnostic_version,
                  resume_client_package=args.resume_client_package,
                  expected_resume_repository_commit=args.expected_resume_repository_commit,
-                 session_seconds=args.session_seconds)
+                 session_seconds=args.session_seconds, map_transfer=args.map_transfer)
     print(result['status'])
-    return 0 if result['status'] in (SUCCESS, SESSION_SUCCESS) else 1
+    return 0 if result['status'] in (SUCCESS, SESSION_SUCCESS, TRANSFER_SUCCESS) else 1
 
 
 if __name__ == '__main__':

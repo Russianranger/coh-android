@@ -231,6 +231,25 @@ class SnapshotTests(unittest.TestCase):
         self.assertNotIn('lower(authname)', sql)
         self.assertNotIn('SELECT *', sql)
 
+    def test_transfer_updates_commit_resumed_login_without_adding_another_login(self):
+        first_saved = self.capture()
+        first_arrival = copy.deepcopy(first_saved)
+        first_arrival['login_count'] = 2
+        result = snapshot.compare_transfer(first_saved, first_arrival)
+        self.assertEqual(result['committed_login_count'], 2)
+        self.assertFalse(result['additional_transfer_login'])
+        self.assertTrue(snapshot.compare_transfer(first_saved, copy.deepcopy(first_arrival),
+                                                 first_arrival)['selected_rows_unchanged'])
+        for count in (1, 3):
+            with self.assertRaisesRegex(ValueError, 'LoginCount2'):
+                snapshot.compare_transfer(first_saved, dict(first_arrival, login_count=count))
+        for table, field in (('ents', 'influencepoints'), ('ents2', 'curbuild'),
+                              ('powers', 'powername'), ('costumeparts', 'tex1')):
+            changed = copy.deepcopy(first_arrival)
+            changed['rows'][table][0][field] = -100
+            with self.subTest(table=table), self.assertRaisesRegex(ValueError, 'rows changed'):
+                snapshot.compare_transfer(first_saved, changed, first_arrival)
+
     def test_attribute_snapshot_requires_exact_accepted_mapping_and_stable_reload(self):
         with patch.object(snapshot, 'query_json', side_effect=self.query):
             actual = snapshot.attribute_snapshot(None, self.tables, expected=self.attributes)

@@ -25,6 +25,17 @@ Diagnostic lines and outcomes:
   `SERVER_UPDATE` after scene loading. It requires a positive received entity ID and
   exact selected name. The independent harness must bind this ID to the original
   SQL/find identity. The marker is emitted once.
+- `COH_RESUME_ONLY_TRANSFER_UPDATE epoch=N id=N base_map=N instance=N ip=A.B.C.D port=N name=NAME`
+  records the first processed steady update after each successful `doMapXfer`.
+  Epochs start at 1 and increase once per successful transfer, after the previous
+  epoch's update has been proved. The entity must retain the initial received
+  ID and exact name. The actual connected peer must match the received destination
+  endpoint and remain unchanged between transfer completion and the fresh update.
+  Failed transfers, callbacks returning -1, duplicated updates, and an update
+  received alongside a pending next transfer cannot establish destination proof.
+- `COH_RESUME_ONLY_TRANSFER_PROOF_ERROR reason=...` returns 4 for an invalid
+  transfer boundary or changed destination. Transfer markers are available only
+  with `-resumeonly`; the stock transfer path is unchanged without that option.
 - Invalid arguments return 2. Invalid selected identity or received entity
   identity mismatch returns 4. These paths do not fall back to creation.
 
@@ -40,6 +51,19 @@ The update marker relies on pinned source behavior: `commReqScene` in
 that non-full path. The diagnostic requires `commCheck(SERVER_UPDATE) == 1`,
 retains the ordinary `commCheck(0)` drain, then checks the current entity.
 A callback error (`-1`) never counts as a successful update.
+
+For transfer receipts, `base_map` and `instance` come from the received
+`SERVER_GROUPS` metadata (`TestClient/src/externs.c:worldReceiveGroups`). The
+server serializes `db_state.base_map_id` and `db_state.instance_id`, not its real
+MapId. Atlas and its clone share a map filename/base ID. The harness must bind
+the actual peer IP/port to an independent DbServer MapId/SmapId observation;
+the marker intentionally does not invent a client-side MapId. `doMapXfer` in
+`Game/src/gameComm/initClient.c` returns after scene loading queues CLIENT_READY,
+so a separate later steady update is required for every epoch.
+
+The build receipt's `transfer_proof` field describes this contract and is
+checked together with the patch/source hashes. The artifact remains a separately
+identified diagnostic TestClient; it supplies no replacement server executable.
 
 This proves the narrow diagnostic path only when the hosted harness also
 verifies live identity/currency, a bounded connected interval and another normal

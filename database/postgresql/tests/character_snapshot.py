@@ -3,8 +3,8 @@
 The selected fields are fixed before execution and checked against the accepted
 template table map from run_one_map.preflight. Timestamps, play time, position,
 health and power timers are deliberately absent; LoginCount is reported and
-checked separately. Call capture only after the protocol logout/disconnect has
-settled. These SQL reads cannot establish that a client entered or left a map.
+checked separately. Capture after proven protocol logout or a completed map
+transfer followed by a committed SQL read. SQL alone cannot prove map ownership.
 """
 import re
 
@@ -160,6 +160,24 @@ def compare(before, after, phase):
             'only_expected_influence_change': phase == 'second_logout',
             'login_count_before': first, 'login_count_after': second,
             'row_counts': {table: len(after['rows'][table]) for table in SELECTED}}
+
+
+def compare_transfer(first_saved, arrived, previous_arrival=None):
+    """The resumed login may first reach SQL during its ordinary transfer save.
+
+    SQL can still show1 before departure. Each arrival must independently show2
+    from that one resume; a transfer must never create login3 or another row.
+    """
+    require(first_saved['login_count'] == 1 and arrived['login_count'] == 2,
+            'Transfer must preserve exactly the one resumed login (LoginCount2)')
+    stable = compare(first_saved, arrived, phase='resume')
+    if previous_arrival is not None:
+        require(previous_arrival['login_count'] == 2, 'Previous transfer lacks committed LoginCount2')
+        compare(previous_arrival, arrived, phase='restart')
+    return {'identity_unchanged': True, 'selected_rows_unchanged': True,
+            'committed_login_count': 2, 'expected_session_login_count': 2,
+            'additional_transfer_login': False, 'row_counts': stable['row_counts'],
+            'sql_scope': 'Committed ordinary entity update; no forced save or SQL mutation'}
 
 
 def attribute_snapshot(cluster, tables, expected=None):
