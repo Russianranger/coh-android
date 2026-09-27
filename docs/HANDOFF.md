@@ -17,10 +17,11 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The [M2 Thor diagnostic APK](ANDROID_DIAGNOSTIC.md) is built and its hosted
-ARM64 guest gate passed in [run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450).
-The next acceptance step is physical Thor testing. Combat, movement, rendered
-gameplay and Android device execution remain unvalidated.
+The current [0.1.2 M2 Thor retry](ANDROID_WINEBOOT_RETRY.md) passed all five hosted
+jobs in [run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585).
+The two Thor 0.1.1 reports passed four early native database stages but timed out
+at wineboot. The next acceptance step is a physical 0.1.2 retry. Complete device
+diagnostics, combat, movement and rendered gameplay remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -173,11 +174,46 @@ graceful PostgreSQL restart and complete cleanup. DirectSound enumerated zero
 devices, with no playback claim. All same-source PostgreSQL regressions passed.
 The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
 preserves report hashes, observed capabilities and the verified 13,477,490-byte
-APK. Download 0.1.1 from that run's `coh-diagnostic-apk` artifact and follow
-[the device test](CLIENT_RUNTIME_PROBE.md#device-test).
+APK. Preserve it as the historical 0.1.1 result; use the 0.1.2 retry below for
+[the current device test](CLIENT_RUNTIME_PROBE.md#device-test).
 A fixture result cannot establish CoH rendering, Cg shaders, physical controls,
 audio playback, Android presentation or GPU acceleration. M2 still needs Thor
 reports, and M3 minimal game-server/device execution remains unfinished.
+
+### Thor wineboot failure and accepted hosted 0.1.2 retry
+
+The user supplied two Thor/Android13 reports from 0.1.1. Both passed native
+PostgreSQL initialization, restricted fixture SQL and owned cleanup, but failed
+at the 150-second wineboot wait before Windows ODBC or graphics. The second run
+reused the same diagnostic database cluster. This is partial real-device database
+evidence; complete M2/device acceptance remains pending.
+
+[The selected device evidence](android-evidence/thor-wineboot-failure-20260927.json)
+records both failures. Their exit-code0 values were captured after forced cleanup
+and do not establish the initializer's status before the timeout. A real subprocess
+regression reproduced a false timeout when a successful initializer's background
+service retains stdout. Commit `1afb0610095ebe3cb8aba591ea22d749613b7276` applies
+[the narrow 0.1.2 fix](ANDROID_WINEBOOT_RETRY.md): wineboot alone may complete on
+its own exit, with captured background output retained under owned cleanup. Live
+initializer timeouts, nonzero exits, cancellation and output limits remain errors.
+Receipts now record pre-signal state and require capture/writer shutdown too.
+
+[Hosted run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+passed all five jobs at this commit on 2026-09-27 21:44:41 UTC: all 99 tests
+without skips, eleven database stages, twelve client stages and complete owned
+cleanup. The [acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
+preserves the current build and reports. Hosted wineboot exited with output
+capture still open; capture closed during cleanup. This proves the corrected
+wait path was exercised, not that inherited output caused the Thor failures.
+Download `COH-Diagnostic-0.1.2.apk` from that run's `coh-diagnostic-apk` artifact.
+Physical Thor success still requires the user's new exported reports.
+
+If a retry's `failure_observation` shows the wineboot leader still running,
+investigate cold `wineboot -i` versus `-u` and enable `err+environ` diagnostics.
+A separate LSB investigation found that `-u` repeated automatic `--init` work;
+current CoH `err+module` logging also suppresses Wine's boot-event warning.
+Neither observation establishes the cause here. Version 0.1.2 deliberately
+retains the existing init command and logging while isolating the verified wait fix.
 
 ### Earlier attempts and corrections
 
@@ -439,9 +475,9 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 physical Thor acceptance** using the accepted APK above; the
-hosted gate has passed. The following items preserve completed reference gates
-and describe additional work; their order does not place further Windows server
+**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.2** retry
+above; both earlier 0.1.1 device runs stopped at wineboot. The following items
+preserve completed reference gates and describe additional work; their order does not place further Windows server
 experiments ahead of the device gate.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
@@ -495,8 +531,8 @@ experiments ahead of the device gate.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Run the accepted diagnostic APK under its own UID on Thor and export the
-   report. Confirm the 65-connection pool, durable restart, repeat-run and Stop
+4. Run the 0.1.2 diagnostic and client probe under its own UID on Thor and export
+   each report. Confirm the 65-connection pool, durable restart, repeat-run and Stop
    behavior on the physical device; memory and suspension behavior remain
    device measurements. The hosted ARM64 runtime and APK packaging already passed.
 

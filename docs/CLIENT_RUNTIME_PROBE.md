@@ -1,10 +1,21 @@
 # Basic Win32 client capability probe
 
-The 0.1.1 diagnostic APK adds **Run client probe** alongside the existing
-database diagnostics. It includes the complete database/restart/shutdown test and
-one additional PE32 fixture in the same private Wine/FEX session. Physical Thor
-acceptance remains pending. The accepted 0.1.0 database-only candidate and its
-evidence remain documented in [ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md).
+The current **0.1.2** diagnostic APK retains **Run client probe**, introduced in
+0.1.1, alongside the existing database diagnostics. It includes the complete
+database/restart/shutdown test and one additional PE32 fixture in the same private Wine/FEX session. Physical Thor
+acceptance remains pending. The [0.1.2 wineboot retry](ANDROID_WINEBOOT_RETRY.md)
+passed all five hosted jobs in
+[run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+at source `1afb0610095ebe3cb8aba591ea22d749613b7276` on 2026-09-27 21:44:41 UTC:
+99 tests without skips, eleven database stages, twelve client stages and complete
+cleanup. See the [current acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json).
+
+Both Thor 0.1.1 reports failed at wineboot after four early database stages.
+Hosted 0.1.2 wineboot exited while output capture remained open, with capture
+closed during cleanup. This exercises the corrected wait without proving the
+Thor failure's cause; a new physical retry is required. Historical 0.1.1 evidence
+is preserved below, and 0.1.0 remains documented in
+[ANDROID_DIAGNOSTIC.md](ANDROID_DIAGNOSTIC.md).
 
 This step follows the client prerequisites in the imported
 `upstream/ouroboros/Game/CMakeLists.txt`: desktop OpenGL, DirectInput and
@@ -33,14 +44,17 @@ and game rendering unvalidated.
 
 ## Device test
 
-Install `COH-Diagnostic-0.1.1.apk`, choose **Setup runtime**, then **Run diagnostics**
-and export the report. Choose **Run client probe** and export its report separately.
-Reopen the app and repeat the probe, and test **Stop** during another run. Switch
+Download **coh-diagnostic-apk** from [run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585).
+Install `COH-Diagnostic-0.1.2.apk`, choose **Setup runtime**, then **Run diagnostics**
+and export the report. If diagnostics fails, stop further checks and share that
+single report for diagnosis. Only after it passes, choose **Run client probe** and
+export its report separately. After a successful probe, reopen the app and repeat
+it, and test **Stop** during another run. Switch
 away/return during an operation to exercise the foreground service. Setup needs
 at least 5 GiB free and downloads about 641 MiB; subsequent tests are local.
 
 Each hosted build has an ephemeral signing certificate. If Android refuses an
-update over 0.1.0, export any previous reports before uninstalling **COH
+update over an earlier build, export any previous reports before uninstalling **COH
 Diagnostic**, then install the new candidate and repeat setup. This separate
 diagnostic app contains no game saves.
 
@@ -69,7 +83,7 @@ prerequisite milestone. Physical Thor M2 acceptance remains pending. The next
 work is actual client/shader compatibility and Android display integration, plus
 the minimal-server device gate.
 
-## Build identity
+## Historical build identity (0.1.1)
 
 | Field | Value |
 | --- | --- |

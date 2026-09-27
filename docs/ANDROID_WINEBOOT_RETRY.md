@@ -26,8 +26,39 @@ retained output handle from a genuinely stuck initializer on the next device run
 
 Six subprocess regressions cover retained output, strict default EOF handling,
 nonzero exit, a genuinely stuck initializer, cancellation and late output overflow.
-The local suite passed 99 tests with two environment-dependent skips. Hosted
-APK and both runtime modes must pass before this retry is accepted.
+The local suite passed 99 tests with two environment-dependent skips.
+
+## Hosted acceptance
+
+[Run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+passed all five jobs at source `1afb0610095ebe3cb8aba591ea22d749613b7276`,
+finishing 2026-09-27 at 21:44:41 UTC. All 99 hosted tooling tests passed without
+skips. Database mode passed eleven stages; client mode passed twelve, including
+the four checked OpenGL pixels and synthetic input. Both passed Windows ODBC,
+durable database restart and all cleanup checks. Client rendering used llvmpipe
+software rendering; it does not establish hardware acceleration or game rendering.
+[Same-source PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36352422996)
+also passed.
+
+The hosted wineboot processes exited successfully at 71.537 and 78.376 seconds
+while their output captures were still open. Both captures closed during owned
+cleanup without a forced stop. This directly exercises the corrected behavior;
+the original Thor failure still needs device confirmation.
+
+The [accepted receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
+binds the downloaded APK, all twelve packaged inputs and both raw guest reports.
+Download the **coh-diagnostic-apk**
+[artifact](https://github.com/Russianranger/coh-android/actions/runs/36352420585/artifacts/10943061240)
+and extract `COH-Diagnostic-0.1.2.apk`.
+
+| Identity | Accepted value |
+| --- | --- |
+| APK size | 13,477,490 bytes |
+| APK SHA-256 | `75cddbb74e5f6733e252a48989b014975e522a840ce1b36aa6e3a56030a90c01` |
+| Runtime manifest SHA-256 | `b29141f00f82f3f06e853a2ea0146dd4c7ce298593324f10a04d7b12e2783e35` |
+| Signing certificate SHA-256 | `4c8f0212c85be54f507cfff03439ecbd95deaea230a0381af3b9b42b1ebf536e` |
+| Package / version | `io.github.russianranger.cohdiagnostic` / `0.1.2` (3) |
+| Android / ABI | Minimum API 26, target API 35 / `arm64-v8a` |
 
 ## Thor retry
 

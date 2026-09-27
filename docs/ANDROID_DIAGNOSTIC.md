@@ -1,28 +1,40 @@
 # Thor diagnostic APK (M2)
 
-Status: **the diagnostic APK and hosted ARM64 guest gate passed; the APK is
-ready for Thor testing**. [Run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
-passed all four jobs at source `0b61d7455f40f05709f912338cd5de8b1d72d750`,
-completing 2026-09-27 17:29:16 UTC. Its 80 tooling tests and eleven guest stages
-passed with no skips or guest failures. The [accepted evidence](android-evidence/accepted-hosted-36336644450.json)
-binds the APK, build inputs and raw runtime report.
+Status: **0.1.2 passed its hosted gate and is ready for a Thor retry**.
+[Run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+passed all five jobs at source `1afb0610095ebe3cb8aba591ea22d749613b7276`,
+completing 2026-09-27 21:44:41 UTC: 99 tests without skips, eleven database stages,
+twelve client-probe stages and complete owned cleanup. The
+[acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
+binds the current build and reports.
 
-**M2 physical-device acceptance remains pending.** No Android device execution,
-performance or gameplay pass is claimed. The accepted
+**M2 physical-device acceptance remains pending.** Both Thor 0.1.1 reports passed
+four early native database stages, then timed out waiting for wineboot. Complete
+device diagnostics, performance and gameplay remain unvalidated. The accepted
 [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) retains its Windows scope.
 
 This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
 AYN Thor (Android 13, ARM64). It exercises the platform needed by the future CoH
 launcher. It contains no game binaries or game assets and cannot launch the game.
 
-## Current follow-on APK
+## Current retry APK
 
-The [0.1.1 client-probe milestone](CLIENT_RUNTIME_PROBE.md) subsequently passed
-both hosted database and client modes. Use that candidate for current testing;
-this page preserves the original 0.1.0 evidence and unchanged database design.
-Physical Thor acceptance is still required for either candidate.
+Download **coh-diagnostic-apk** from
+[run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+and install `COH-Diagnostic-0.1.2.apk`. The [wineboot retry](ANDROID_WINEBOOT_RETRY.md)
+changes the initializer wait while preserving the database and
+[client-probe checks](CLIENT_RUNTIME_PROBE.md). Hosted wineboot exited while its
+output capture remained open; capture closed during owned cleanup. This validates
+the corrected wait path without proving the cause of the Thor timeouts.
+
+This page preserves the original 0.1.0 evidence below. The 0.1.1 receipt remains
+in [the client-probe record](CLIENT_RUNTIME_PROBE.md#historical-build-identity-011).
 
 ## Original accepted APK (0.1.0)
+
+The original hosted gate passed all four jobs, 80 tooling tests and eleven guest
+stages at 2026-09-27 17:29:16 UTC. Its
+[acceptance receipt](android-evidence/accepted-hosted-36336644450.json) is historical.
 
 Download the **coh-diagnostic-apk** artifact from
 [run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
@@ -44,7 +56,7 @@ this candidate does not establish a stable release/update channel.
 
 ## What the diagnostic does
 
-The app provides **Setup runtime**, **Run diagnostics**, **Stop**, and
+The app provides **Setup runtime**, **Run diagnostics**, **Run client probe**, **Stop**, and
 **Export latest report**. A foreground service owns each operation and shows progress
 while the activity is closed or rotated. Stop requests a graceful guest cleanup
 before terminating only the owned PRoot wrapper as a bounded fallback.
@@ -141,7 +153,7 @@ also passed all four jobs. Earlier failures remain in the
 
 Hosted Linux success establishes this exercised guest path. It does not establish
 Android SELinux/device behavior, activity/foreground-service lifecycle, graphics,
-performance or gameplay. The first Thor report remains a required acceptance step.
+performance or gameplay. A passing Thor retry remains a required acceptance step.
 Preserve the accepted APK and exported report; do not assume a later candidate
 with another signing certificate will install as an in-place update.
 
@@ -151,16 +163,19 @@ snapshots and all previously accepted Windows reference inputs remain untouched.
 
 ## Thor acceptance steps
 
-1. Install the accepted `COH-Diagnostic-0.1.0.apk` above. Open **COH Diagnostic**
+1. Install the current `COH-Diagnostic-0.1.2.apk` above. If Android reports a
+   signing conflict, export old reports before uninstalling **COH Diagnostic**.
+   Open **COH Diagnostic**
    and choose **Setup runtime** with a reliable connection and at least 5 GiB free.
    Wait for setup to finish; no game import is needed.
 2. Choose **Run diagnostics**. Keep its foreground notification active and wait
    for a passed or failed result. Rotate or switch away from the activity and
    return during the run to check that progress and the owned operation persist.
 3. Choose **Export latest report**, save the ZIP using Android's document picker,
-   and attach it to this conversation. Export failed results too.
-4. After a successful run, close/reopen the app, run diagnostics again and export
-   that result. This checks repeat operation on the physical device.
+   and attach it to this conversation. If diagnostics failed, stop further checks
+   and share that single report for diagnosis.
+4. Only after diagnostics passes, choose **Run client probe** and export its report.
+   After a successful probe, close/reopen the app, repeat it and export the result.
 5. Start another diagnostic run, choose **Stop**, wait for its terminal result,
    then export that report. A Stop request alone does not prove owned cleanup.
 
@@ -170,5 +185,5 @@ activity alone does not clear the process-wide cleanup block.
 
 A passing Thor report plus repeat-run and Stop evidence qualifies the exercised
 device database and compatibility runtime. It does not qualify game execution.
-The next gameplay work is the minimal Android server and basic client-runtime
-probe; full rendering, combat and mission behavior remain later gates.
+The next gameplay work is the minimal Android server and actual client/shader
+compatibility; full rendering, combat and mission behavior remain later gates.

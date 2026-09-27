@@ -1,9 +1,13 @@
 # City of Heroes Android
 
-The latest [diagnostic APK 0.1.1](docs/CLIENT_RUNTIME_PROBE.md) passed hosted
-ARM64 database, Win32 OpenGL pixel-readback and synthetic input checks. It is
-ready for Thor testing; it does not launch City of Heroes. Physical device
-acceptance, game rendering and hardware acceleration remain pending.
+The latest [diagnostic APK 0.1.2](docs/ANDROID_WINEBOOT_RETRY.md) passed all five
+hosted jobs in [run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585):
+99 tests, eleven database stages, twelve client-probe stages and complete cleanup.
+Both Thor 0.1.1 reports stopped at wineboot after four early database stages;
+0.1.2 fixes the wait behavior and needs a physical retry. See the
+[acceptance receipt](docs/android-evidence/accepted-wineboot-retry-36352420585.json).
+The diagnostic does not launch City of Heroes. Full device acceptance, game
+rendering and hardware acceleration remain pending.
 
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
@@ -14,7 +18,7 @@ with downstream changes: source code, not a VM image.
 **Validation, 2026-09-27:** all 5,995 imported files pass integrity checks. An
 [upstream Windows build of this exact commit](https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567)
 built the server and client and passed nine utility, archive and codec tests.
-Gameplay and Android execution have not been validated.
+Gameplay and complete diagnostic execution on Android have not been validated.
 
 The complete pinned companion data is now imported under `upstream/i24`: **156,297
 files, 1,992,097,492 bytes**, verified against its original Git tree. Runtime
@@ -80,7 +84,7 @@ forced cleanup. See the [accepted evidence](docs/postgresql-evidence/accepted-ch
 and [transfer scope](docs/MAP_TRANSFER_VALIDATION.md). All five workflow jobs
 passed, including the separate sustained-session regression.
 
-The **M2 diagnostic APK is ready for Thor testing**. All four jobs in
+The original **0.1.0 M2 diagnostic APK passed its hosted gate**. All four jobs in
 [hosted run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
 passed at source `0b61d7455f40f05709f912338cd5de8b1d72d750`. Its exact guest
 assets passed all eleven stages on Linux ARM64: native PostgreSQL, Wine/FEX Win32
@@ -90,10 +94,12 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M2 device acceptance remains pending.** Install the diagnostic, use **Setup
-runtime**, **Run diagnostics** and **Export latest report**, then check repeat
-runs and Stop on Thor. Physical Android execution, foreground-service lifecycle
-and performance are unvalidated; the hosted pass does not establish them. The
+**M2 device acceptance remains pending.** Install the current **0.1.2** retry,
+use **Setup runtime**, then **Run diagnostics** and export its report. If it fails,
+stop further checks and share that report for diagnosis. Only after it passes,
+run **Run client probe** and export separately, then check repeat runs and Stop on Thor. Early native database
+stages passed on-device, but full Wine/client execution, foreground-service
+lifecycle and performance remain unvalidated. The
 app includes no game binaries or assets. New-zone assets, missions, automatic
 map startup, combat and graphics remain separate unfinished work. The repository
 is **not a complete runnable game installation**. Complete asset coverage and
