@@ -1,13 +1,14 @@
 # Sustained character session validation
 
-Status: the first hosted run passed creation/save/restart and missing-name
-refusal, then exposed a diagnostic character-list ID assumption. The correction
-requires the actual MapServer entity ID at the proper protocol stage; a full
-sustained-session pass is still pending.
+Status: **passed** in [run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+at `4e8058c3ffe20acda61b55023202d409ed1d0df1`, completed 2026-09-27
+05:08:11 UTC. All 12 phases passed with no failures. This establishes the
+exercised sustained connection and second save; combat, movement, rendering,
+transfers and Android execution remain unvalidated.
 The accepted [short resume run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
 proved creation, a live currency change, protocol logout/save, same-database
-restart and an exact-name scene probe. The next gate keeps the resumed client
-connected and requires a second protocol logout/save.
+restart and an exact-name scene probe. This follow-on gate kept the resumed
+client connected and completed a second protocol logout/save.
 
 ## Diagnostic client and provenance
 
@@ -31,6 +32,54 @@ name/slot. The later processed MapServer player update supplies the real positiv
 ID, which the harness must match to the original SQL and stock-query identity.
 The diagnostic search uses the allocated slot count, so an empty earlier slot
 cannot hide a later exact-name character.
+
+## Accepted hosted validation: 36295176484
+
+The corrected diagnostic resumed `TEST-37762`, container ID 1, from account
+`CohP62b581371c`. The processed MapServer player update supplied the same ID and
+exact name as independent SQL and the stock character query. A missing-name
+request for `CohAbsent1474e746a27a` exited naturally with code 3 before any
+creation or scene exchange; the whole character inventory remained one row,
+and the selected SQL snapshot and login count were unchanged.
+
+Ten connected Atlas Park samples spanned **66.953 seconds**; the largest gap
+was 7.625 seconds. Every sample had current network/statistics heartbeats and
+connected MapId 1 status. Fresh live replies showed influence 12,345 before and
+after observation, then 23,456 after the second command. The second protocol
+logout committed before forced residual-client cleanup, as did the first save.
+
+| Committed snapshot | LoginCount | Influence |
+| --- | ---: | ---: |
+| First protocol logout | 1 | 12,345 |
+| Same-cluster/service restart | 1 | 12,345 |
+| Missing-name refusal | 1 | 12,345 |
+| Second protocol logout | 2 | 23,456 |
+
+Identity and all selected parent/child fields remained identical except for the
+explicit second influence value: one `ents`, one `ents2`, seven powers and
+16 costume parts. Attribute mappings stayed unchanged and no extra character
+was created. All three console observers captured their final snapshot and
+exited successfully before residual-client cleanup.
+
+The [complete artifact](postgresql-evidence/character-session-36295176484.zip),
+[raw report](postgresql-evidence/character-session-36295176484.json) and
+[acceptance/provenance record](postgresql-evidence/accepted-character-session-36295176484.json)
+are preserved. Artifact `10924041414` is 12,505 bytes, SHA-256
+`410e79e8815ef829a387dc5812f8e4b9b5bc050a3dee855262847366e899dbdc`.
+The separately built diagnostic is identified by its unchanged
+[build manifest](postgresql-evidence/resume-testclient-build-36295176484.json) and
+[source receipt](postgresql-evidence/resume-testclient-source-36295176484.json).
+Its executable SHA-256 is
+`b09a82d8aaffac18dc74828753ccee466d71a37f913dddc05934cb84957e6f7e`;
+the accepted stock TestClient, DbServer and MapServer hashes were retained.
+
+Windows passed all 103 tooling checks; Linux passed 98 with five Windows-only
+skips. The same-commit [stock regression 36295176352](https://github.com/Russianranger/coh-android/actions/runs/36295176352)
+passed its eight phases, and all four
+[PostgreSQL regression jobs 36295176473](https://github.com/Russianranger/coh-android/actions/runs/36295176473)
+passed. The stock regression's [report](postgresql-evidence/character-persistence-36295176352.json)
+and [complete artifact](postgresql-evidence/character-persistence-36295176352.zip)
+are also preserved.
 
 ## First hosted attempt: 36293644180
 

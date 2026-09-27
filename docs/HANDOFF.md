@@ -11,7 +11,10 @@ comparison and Atlas Park protocol readiness have now passed. Fresh fake-auth
 character creation, live currency change, protocol logout/save, database and
 game-service restart, and exact-name short resume also passed in
 [run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135).
-Sustained gameplay and Android execution remain validation gates.
+The follow-on [sustained-session run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+also passed: exact-name resume, missing-name refusal without mutation, 66.953
+seconds connected, restored live currency and a second protocol save.
+Combat, movement, rendered gameplay, transfers and Android execution remain gates.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -44,24 +47,40 @@ Windows-only skips. All four same-commit
 [PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
 passed. The short resume does not establish sustained gameplay or Android execution.
 
-### Active next milestone: sustained second session
+### Accepted next milestone: sustained second session
 
 The [sustained-session implementation](SUSTAINED_SESSION_VALIDATION.md) adds a
 separately identified diagnostic TestClient with creation disabled and a normal
-connected command loop. The next hosted gate requires missing-name refusal with
-zero created rows, live restored currency, 60 seconds of connected observation,
-a second currency change and a second protocol logout/committed save. The accepted
-stock TestClient and server reference binaries remain unchanged. Implementation
-is complete. The first hosted attempt
+connected command loop. [Run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+passed all 12 phases at `4e8058c3ffe20acda61b55023202d409ed1d0df1`, completing
+2026-09-27 05:08:11 UTC. `TEST-37762` / ID 1 resumed with live influence 12,345
+and a processed server update confirming its identity. Ten samples covered
+66.953 seconds connected on Atlas Park, with a maximum gap of 7.625 seconds.
+The second live influence command produced 23,456 and committed through protocol
+logout before forced cleanup. Missing-name refusal exited naturally with code 3
+and left the entire character inventory and selected SQL unchanged.
+
+`LoginCount` progressed 1 → 1 → 1 → 2 across first logout, restart, missing-name
+probe and second logout. Selected identity/rows stayed identical except for the
+intended influence change (1 parent, 1 `ents2`, 7 powers, 16 costume parts).
+All three console observers finalized successfully. The [raw report](postgresql-evidence/character-session-36295176484.json),
+[complete artifact](postgresql-evidence/character-session-36295176484.zip) and
+[acceptance record](postgresql-evidence/accepted-character-session-36295176484.json)
+are preserved. Windows passed 103 tooling checks; Linux passed 98 with five
+Windows-only skips. The same-commit [stock regression](https://github.com/Russianranger/coh-android/actions/runs/36295176352)
+and all four [PostgreSQL regression jobs](https://github.com/Russianranger/coh-android/actions/runs/36295176473)
+passed. The accepted stock TestClient and server reference binaries remain
+unchanged; the diagnostic client has separate source/build receipts.
+
+The first hosted attempt
 [36293644180](https://github.com/Russianranger/coh-android/actions/runs/36293644180)
 passed stock creation/save/restart and missing-name refusal without mutation,
 then rejected the positive selection because the character-list packet does not
 populate its `db_id` field. The correction checks exact name/slot there and binds
 the actual MapServer entity ID after the processed update to independent SQL.
 The [failed evidence](postgresql-evidence/character-session-36293644180.json) is
-preserved; sustained resume and second-save acceptance remain pending. The
-same-commit [stock regression](https://github.com/Russianranger/coh-android/actions/runs/36293644040)
-and all four PostgreSQL regression jobs passed.
+preserved. The corrected retry above proves the sustained resume and second save;
+the failed attempt remains identified as a failure.
 
 ### Earlier attempts and corrections
 
@@ -356,12 +375,16 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 2. Preserve the accepted [character persistence result](CHARACTER_PERSISTENCE_VALIDATION.md#accepted-hosted-validation-36282414135).
    Fake-auth creation, live currency change, explicit logout, committed SQL,
    same-cluster/service restart and exact-name short resume have passed.
-   The next session gate is sustained resume with creation disabled, restored
-   live currency and a second protocol logout/save. Stock no-fallback resume
-   is a short scene probe; a sustained second session needs the separately
-   proposed TestClient option and a new reference build. Include a missing-name
-   negative check proving zero fallback creations.
-   Follow with map transfer, player-session completion callbacks, game-level
+   The [sustained resume and second-save result](SUSTAINED_SESSION_VALIDATION.md#accepted-hosted-validation-36295176484)
+   has also passed, including missing-name refusal without mutation. Preserve
+   the separate diagnostic TestClient receipts alongside the stock reference.
+   The next proposed transfer gate is Atlas map 1 → prestarted Atlas clone 101
+   → map 1, using reviewed assets and distinct owned MapServer ports. Require
+   each destination's MapId, connected status, fresh same-character server update,
+   current heartbeats and live currency, then committed protocol logout with no
+   extra character or login. This remains unvalidated; it would not establish
+   new-zone assets, mission transfers or automatic Launcher startup.
+   Follow with player-session completion callbacks, game-level
    name uniqueness and auxiliary-service persistence. Generic-container network
    ACK ordering is now verified. Fake auth is only the minimal local diagnostic route; no SQL
    Server save migration has been attempted. Empty-database startup/export and

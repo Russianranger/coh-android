@@ -293,13 +293,18 @@ Acceptance for the short probe requires all of the following:
   field. Require server-side evidence before claiming active gameplay: the
   short probe can exit before a queued `CLIENT_READY` packet is processed.
 
-The next [sustained-session validation](SUSTAINED_SESSION_VALIDATION.md) adds a
+The follow-on [sustained-session validation](SUSTAINED_SESSION_VALIDATION.md) adds a
 small TestClient-only `-resumeonly` option that disables CREATE while retaining
 STAY_CONNECTED, fails explicitly if the exact requested character is absent,
 and reports the actual server-provided character ID. It builds a separately
 identified diagnostic client and validates it against the accepted server runtime;
-the current reference package is not modified in place. Hosted acceptance of
-that sustained-session gate is pending.
+the current reference package is not modified in place. Hosted
+[run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+passed that separate gate at `4e8058c3ffe20acda61b55023202d409ed1d0df1`: the
+missing-name request created nothing, the original character remained connected
+for 66.953 seconds with restored live currency, and a second currency command
+persisted influence 23,456 through protocol logout. This extends the historical
+short-probe result without treating it as sustained gameplay evidence.
 
 ## SQL evidence and scope
 

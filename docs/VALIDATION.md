@@ -2,10 +2,10 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, 2026-09-27: [fresh character persistence and short resume](#2026-09-27-fresh-character-persistence-and-short-resume)
-passed all eight phases on hosted Windows. This follows the accepted ordinary
-template comparison and Atlas Park readiness checks. Sustained second-session
-gameplay and Android execution remain unvalidated.
+Latest milestone, 2026-09-27: [sustained character session and second protocol save](#2026-09-27-sustained-character-session-and-second-protocol-save)
+passed all twelve phases on hosted Windows, including missing-name refusal without
+SQL mutation and 66.953 seconds connected after resume. Combat, map transfers,
+graphical gameplay and Android execution remain unvalidated.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 
@@ -452,8 +452,57 @@ two GUI-console and three named-pipe smoke tests; Linux passed 62 with five
 Windows-only skips. [PostgreSQL regression run 36282414187](https://github.com/Russianranger/coh-android/actions/runs/36282414187)
 passed all four jobs. The imported source snapshots were not modified.
 
-The next server gate is a sustained exact-name second session without creation
-fallback, then map transfers and player-session completion checks. The separate
-Android gate is an app-owned ARM64 PostgreSQL plus Win32 ODBC diagnostic APK on
-Thor. Combat, graphical/custom-client compatibility, auxiliary services, complete
-asset coverage, Android execution and performance remain unvalidated.
+At this checkpoint the next server gate was a sustained exact-name second session
+without creation fallback. Its later result is recorded below; the accepted stock
+short-probe result retains its original scope.
+
+## 2026-09-27 sustained character session and second protocol save
+
+[Run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+completed successfully at **05:08:11 UTC**, at commit
+`4e8058c3ffe20acda61b55023202d409ed1d0df1`. All twelve phases passed with no
+failures and status
+`fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated`.
+The accepted stock runtime created the fresh character; a separately built,
+opt-in `-resumeonly` TestClient performed the refusal and sustained-resume checks.
+The stock reference package, schema hashes and imported source snapshots remained
+unchanged.
+
+`TEST-37762` (ID 1) was created on Atlas Park, observed live with influence 12345,
+logged out through the protocol and saved before residual-client cleanup. After
+same-database service restart, selected rows and LoginCount 1 were unchanged.
+The missing-name probe `CohAbsent1474e746a27a` refused explicitly and exited
+naturally with code 3, without entering a map or creating a character. Independent
+SQL still contained exactly the original character with unchanged rows and
+LoginCount 1.
+
+Exact-name resume selected slot 0 with creation disabled. The processed MapServer
+player update supplied the original ID and name. Ten connected MapId 1 samples
+spanned **66.953 seconds**, with a maximum gap of **7.625 seconds** and current
+map heartbeats. Fresh live replies showed influence 12345 before and after this
+observation. A normal command then changed influence to 23456; the live value
+and a second protocol logout/save were independently verified before forced
+cleanup. Across first save, restart, missing-name refusal and second save,
+LoginCount was **1 → 1 → 1 → 2**. Identity and selected rows were unchanged except
+for the intended currency change: one `ents` row, one `ents2` row, seven power
+rows and sixteen costume-part rows. All three console observers finalized cleanly.
+
+The [redacted evidence ZIP](postgresql-evidence/character-session-36295176484.zip)
+is 12,505 bytes with SHA-256
+`410e79e8815ef829a387dc5812f8e4b9b5bc050a3dee855262847366e899dbdc`.
+The [report](postgresql-evidence/character-session-36295176484.json) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-session-36295176484.json)
+are preserved. Windows passed all 103 tooling tests; Linux passed 98 with five
+Windows-only skips. The same-commit
+[legacy character regression](https://github.com/Russianranger/coh-android/actions/runs/36295176352)
+and [PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36295176473)
+also passed. The [sustained-session record](SUSTAINED_SESSION_VALIDATION.md)
+retains the diagnostic-client contract and earlier attempt history.
+
+The next proposed server gate is a round trip between owned, prestarted Atlas Park
+map 1 and its pinned clone 101, with destination ownership, fresh player updates,
+live state and final protocol-save checks. It remains unvalidated and would not
+establish new-zone, mission or automatic Launcher startup coverage. Android's
+app-owned PostgreSQL/Win32 ODBC diagnostic APK remains a separate gate. Combat,
+graphical/custom-client compatibility, auxiliary services, complete asset coverage,
+Android execution and performance remain unvalidated.

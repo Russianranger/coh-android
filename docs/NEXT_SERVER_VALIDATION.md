@@ -4,9 +4,11 @@ Updated: 2026-09-27. Normal DbServer startup/reload, real network save
 acknowledgements, asset-backed template comparison and Atlas Park readiness
 have passed. The corrected hosted run 36176806895 freshly matched all 56
 template outputs and observed Atlas Park ready for 62.235 seconds. Character
-run 36282414135 has now passed fresh fake-auth creation, live currency change,
-protocol logout/save, service restart and exact-name short scene resume. The next
-server gate is a sustained second session with creation fallback disabled.
+run 36282414135 passed fresh fake-auth creation, live currency change,
+protocol logout/save, service restart and exact-name short scene resume.
+Sustained-session run 36295176484 then passed missing-name refusal, 66.953 seconds
+connected after exact-name resume and a second protocol save. The next proposed
+server gate is a transfer round trip between two prestarted Atlas Park instances.
 
 Continuation on 2026-09-26 recovered the run that had completed on 2026-09-25
 at 19:16:38 UTC while the committed handoff still said it was running. No queued
@@ -228,7 +230,7 @@ are preserved. This proves the bounded readiness observation, not complete
 asset coverage or a character session. Normal executables do not expose their
 queued startup error count.
 
-## Passed character persistence; next session and Android gates
+## Passed character persistence and sustained session
 
 The [character persistence harness](CHARACTER_PERSISTENCE_VALIDATION.md)
 passed all eight phases in [run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
@@ -246,12 +248,42 @@ character validation record.
 
 Stock `-justlogin -character NAME` disables CREATE fallback but also exits after
 the scene exchange; it provides a short resume probe, not a second sustained
-session. The next server test needs the proposed TestClient-only `-resumeonly`
-option and a new reference build: preserve STAY_CONNECTED, disable CREATE, fail
-explicitly for a missing requested name, then verify live restored state and a
-second protocol logout/save. A missing-name negative case must create no character.
-Map transfers, player-session completion callbacks and auxiliary services follow
-as separate checks.
+session. That accepted result retains its scope. The separate opt-in
+`-resumeonly` diagnostic client now preserves STAY_CONNECTED, disables CREATE
+and explicitly refuses a missing requested name. It is staged beside the stock
+client as `TestClientResume.exe`; the accepted stock runtime is unchanged.
+
+[Sustained-session run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+passed all twelve phases at `4e8058c3ffe20acda61b55023202d409ed1d0df1` with no
+failures. The missing-name probe exited naturally with code 3 and left the one
+original character, selected SQL rows and LoginCount unchanged. The resumed
+`TEST-37762` (ID 1) matched the processed player update and stayed connected on
+MapId 1 for 66.953 seconds across ten samples with current map heartbeats. Live
+influence was 12345 before and after observation, then changed normally to 23456
+and committed after the second protocol logout. Identity and selected rows stayed
+unchanged except for the intended currency change; LoginCount advanced to 2.
+See the [report](postgresql-evidence/character-session-36295176484.json),
+[redacted archive](postgresql-evidence/character-session-36295176484.zip),
+[acceptance receipt](postgresql-evidence/accepted-character-session-36295176484.json)
+and [scope/attempt record](SUSTAINED_SESSION_VALIDATION.md).
+
+## Proposed Atlas instance transfer and separate Android gate
+
+The next bounded experiment will start two owned MapServers for Atlas Park map 1
+and its pinned clone 101 on distinct ports, then move the same connected character
+1 → 101 → 1 through `CMD mapmove`. Pinned `maps.db` defines 101 with `BaseMapID 1`,
+so this uses the reviewed Atlas assets. Each leg must show the expected DbServer
+MapId, connected status without `InMapXfer`, a fresh destination `SERVER_UPDATE`
+identifying the same character, current map heartbeats and a live currency reply.
+Both instances share MapName, so that text alone cannot identify the destination.
+The current one-shot resume-update diagnostic needs a transfer-specific renewal
+before it can establish a fresh update on each leg.
+
+Final protocol logout must commit the expected currency and unchanged selected
+identity/power/costume rows, without another login or character. This is proposed
+and unvalidated: it would exercise handoff between two prestarted Atlas instances,
+not new-zone assets, mission transfers or automatic Launcher startup. Broader
+player-session callbacks and auxiliary services remain separate checks.
 
 The separate [Android milestone](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria)
 is a diagnostic APK running ARM64 PostgreSQL under its own UID and the existing

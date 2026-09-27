@@ -4,6 +4,8 @@ Updated: 2026-09-27. The exact-pin Windows client/server package builds in this
 repository. Ordinary asset-backed template generation and Atlas Park protocol
 readiness have passed using this package, followed by fresh fake-auth character
 persistence through logout, service restart and a short exact-name scene resume.
+A separately packaged opt-in TestClient has also passed a sustained resumed
+session and second protocol save against the same accepted server package.
 This is not an Android app or a gameplay-validated server.
 
 ## Build and downloads
@@ -312,10 +314,44 @@ cleanup; the second finalized after the client's natural exit. Both retained fin
 snapshots and exited zero without forced stop. The underlying TestClient binary
 and imported snapshots were unchanged.
 
-The stock short resume exits after scene exchange; active gameplay and a sustained
-second session remain unproven. A proposed TestClient-only `-resumeonly` option
-requires a new reference build before testing that second session and logout.
-Map transfers, auxiliary services and graphical/custom-client compatibility remain
-separate gates. The Android diagnostic APK must still prove app-owned ARM64
-PostgreSQL and Win32 ODBC under Wine/translation on Thor; no Android execution or
-performance result is claimed.
+The stock short resume exits after scene exchange; this run alone does not prove
+a sustained second session or active gameplay. The separate diagnostic-client
+result below extends the session evidence while preserving the stock result's
+scope and package hashes.
+
+## Separate diagnostic client: sustained resume and second save
+
+[Run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+built and exercised the opt-in `-resumeonly` TestClient at commit
+`4e8058c3ffe20acda61b55023202d409ed1d0df1`. Download its separate
+`resume-testclient-win32` artifact for this diagnostic. The harness stages its
+executable as `TestClientResume.exe` beside the accepted stock TestClient, checks
+its x86 imports against the accepted runtime dependencies and retains both
+identities. The diagnostic executable SHA-256 is
+`b09a82d8aaffac18dc74828753ccee466d71a37f913dddc05934cb84957e6f7e`.
+The stock reference archive, DbServer, MapServer, schema and asset identities
+above are unchanged; this does not replace the reference package or modify the
+immutable source snapshots.
+
+All twelve runtime phases passed with no failures. Fresh stock-client creation
+and protocol save were followed by service restart, explicit missing-name refusal
+with natural exit 3 and unchanged SQL, then exact-name diagnostic resume of
+`TEST-37762` (ID 1). Its received player identity matched and ten connected Atlas
+Park samples covered 66.953 seconds with current heartbeats. Live influence 12345
+survived restart/resume; a normal command changed it to 23456, and a second
+protocol logout committed that value. Identity and selected rows were unchanged
+except for currency, with LoginCount 1 → 1 → 1 → 2. All three console observers
+finalized cleanly, with protocol-save acceptance preceding residual-client cleanup.
+
+The [report](postgresql-evidence/character-session-36295176484.json),
+[redacted archive](postgresql-evidence/character-session-36295176484.zip) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-session-36295176484.json)
+are preserved. The [sustained-session design and attempt history](SUSTAINED_SESSION_VALIDATION.md)
+describe the diagnostic's limits.
+
+The next proposed transfer test uses two prestarted Atlas instances, map 1 → 101
+→ 1, with the existing assets. It is unvalidated and would not establish new-zone,
+mission or automatic map-start coverage. Combat, auxiliary services and
+graphical/custom-client compatibility remain separate gates. The Android
+diagnostic APK must still prove app-owned ARM64 PostgreSQL and Win32 ODBC under
+Wine/translation on Thor; no Android execution or performance result is claimed.

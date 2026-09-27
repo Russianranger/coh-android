@@ -44,7 +44,7 @@ kept Atlas Park ready for players, confirmed through DbServer status queries,
 for 62.235 seconds. The [recovered reports and archive hashes](docs/reference-runtime-evidence/accepted-gates-36176806895.json)
 record those completed gates.
 
-The [character persistence run](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+The earlier [character persistence run](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
 passed all eight phases: fresh fake-auth creation, live currency change to 12345,
 protocol logout and committed SQL verification, service restart and exact-name
 short scene resume. Selected character, power and costume rows remained unchanged;
@@ -52,9 +52,21 @@ LoginCount advanced from 1 to 2 only after resume. See the
 [accepted evidence](docs/postgresql-evidence/accepted-character-persistence-36282414135.json)
 and [scope of the test](docs/CHARACTER_PERSISTENCE_VALIDATION.md).
 
+The [sustained-session run](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+then passed all twelve phases using a separately packaged `-resumeonly` diagnostic
+TestClient. A missing-name request exited without creating or changing a character.
+The original character resumed with creation disabled and remained connected on
+Atlas Park for 66.953 seconds, with matching received player identity and current
+map heartbeats. Influence 12345 survived restart/resume, then a normal command
+changed it to 23456 and a second protocol logout committed the expected state.
+The stock reference package is unchanged. See the
+[accepted evidence](docs/postgresql-evidence/accepted-character-session-36295176484.json)
+and [sustained-session scope](docs/SUSTAINED_SESSION_VALIDATION.md).
+
 The repository is **not a complete runnable installation**. The next server gate
-is a sustained second session with creation fallback disabled, followed by map
-transfer checks. The separate Android gate is a diagnostic APK running app-owned
+is a proposed transfer between two prestarted Atlas Park instances, map 1 → 101
+→ 1; it has not been validated. New-zone and automatic map-start coverage remain
+separate. The Android gate is a diagnostic APK running app-owned
 ARM64 PostgreSQL and the Win32 ODBC probe under Wine/translation on Thor. Runtime
 cache generation beyond the exercised paths, complete asset coverage, gameplay,
 Android execution and complete serializer equivalence remain unvalidated.
