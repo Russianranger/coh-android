@@ -1,16 +1,18 @@
 # Thor diagnostic APK (M2)
 
-Status: **0.1.2 passed its hosted gate and is ready for a Thor retry**.
-[Run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
-passed all five jobs at source `1afb0610095ebe3cb8aba591ea22d749613b7276`,
-completing 2026-09-27 21:44:41 UTC: 99 tests without skips, eleven database stages,
-twelve client-probe stages and complete owned cleanup. The
-[acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
-binds the current build and reports.
+Status: **0.1.3 passed hosted acceptance and is ready for a Thor retry**.
+[Run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
+passed all five jobs at source `49c1626c10636e46a38493047f34ab61a9a5d5ca` on
+2026-09-27 22:16:35 UTC. All 109 tests passed without skips. Fresh and repeat runs
+passed eleven database stages and twelve client stages each, with complete
+cleanup. The [acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json)
+binds the verified APK, packaged payloads and runtime evidence.
 
-**M2 physical-device acceptance remains pending.** Both Thor 0.1.1 reports passed
-four early native database stages, then timed out waiting for wineboot. Complete
-device diagnostics, performance and gameplay remain unvalidated. The accepted
+**M2 physical-device acceptance remains pending.** The
+[0.1.2 Thor report](android-evidence/thor-initializer-timeout-20260927.json) confirms
+wineboot was still running at 150.040 seconds. Four early native database stages
+passed, but Windows ODBC and graphics were not reached. Output capture remained
+open after prefix shutdown, so complete cleanup was not proved. The accepted
 [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) retains its Windows scope.
 
 This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
@@ -19,13 +21,25 @@ launcher. It contains no game binaries or game assets and cannot launch the game
 
 ## Current retry APK
 
-Download **coh-diagnostic-apk** from
-[run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
-and install `COH-Diagnostic-0.1.2.apk`. The [wineboot retry](ANDROID_WINEBOOT_RETRY.md)
-changes the initializer wait while preserving the database and
-[client-probe checks](CLIENT_RUNTIME_PROBE.md). Hosted wineboot exited while its
-output capture remained open; capture closed during owned cleanup. This validates
-the corrected wait path without proving the cause of the Thor timeouts.
+Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36354263676/artifacts/10942919938) and install
+`COH-Diagnostic-0.1.3.apk`. The [cold initialization correction](ANDROID_WINE_INITIALIZATION.md)
+uses `wineboot -i` for one registration pass, removes the timestamp from an unready
+prefix, allows up to 600 seconds, and reports progress every five seconds. It
+marks the prefix ready only after the PE32 fixture passes. Both fresh and repeat
+hosted runs completed the database, client and cleanup checks. Cold initialization
+took 39.911 seconds in database mode and 40.305 seconds in client mode, with one
+registration pass each. Both warm runs took 4.629 seconds with no registration
+passes. These hosted times do not predict Thor timing.
+
+## Historical 0.1.2 result
+
+[Run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585)
+passed all five jobs at source `1afb0610095ebe3cb8aba591ea22d749613b7276` on
+2026-09-27 21:44:41 UTC: 99 tests without skips, eleven database stages, twelve
+client-probe stages and complete cleanup. Its
+[acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
+preserves the build and reports. The [inherited-output wait fix](ANDROID_WINEBOOT_RETRY.md)
+was exercised successfully on hosted Linux, but did not resolve the Thor failure.
 
 This page preserves the original 0.1.0 evidence below. The 0.1.1 receipt remains
 in [the client-probe record](CLIENT_RUNTIME_PROBE.md#historical-build-identity-011).
@@ -163,14 +177,15 @@ snapshots and all previously accepted Windows reference inputs remain untouched.
 
 ## Thor acceptance steps
 
-1. Install the current `COH-Diagnostic-0.1.2.apk` above. If Android reports a
-   signing conflict, export old reports before uninstalling **COH Diagnostic**.
+1. Install the accepted `COH-Diagnostic-0.1.3.apk` above. If Android
+   reports a signing conflict, export old reports before uninstalling **COH Diagnostic**.
    Open **COH Diagnostic**
    and choose **Setup runtime** with a reliable connection and at least 5 GiB free.
    Wait for setup to finish; no game import is needed.
 2. Choose **Run diagnostics**. Keep its foreground notification active and wait
-   for a passed or failed result. Rotate or switch away from the activity and
-   return during the run to check that progress and the owned operation persist.
+   for a passed or failed result. Cold Windows initialization may take several
+   minutes, with elapsed progress every five seconds and a ten-minute limit.
+   Rotate or switch away and return to check that the operation persists.
 3. Choose **Export latest report**, save the ZIP using Android's document picker,
    and attach it to this conversation. If diagnostics failed, stop further checks
    and share that single report for diagnosis.

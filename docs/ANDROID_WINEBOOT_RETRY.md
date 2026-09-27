@@ -1,5 +1,10 @@
 # Thor wineboot retry (0.1.2)
 
+This is the historical inherited-output retry. The subsequent Thor report
+confirmed that the initializer itself was still running at the timeout; see the
+[0.1.3 cold initialization correction](ANDROID_WINE_INITIALIZATION.md) for current
+testing. The hosted evidence below remains valid within its original scope.
+
 The two 0.1.1 Thor reports stopped at `wineboot timed out` after 150 seconds,
 before Windows ODBC or graphics probes. Native ARM64 PostgreSQL initialization,
 authenticated SQL, migration and owned shutdown passed; the second attempt

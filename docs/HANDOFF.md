@@ -17,11 +17,12 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The current [0.1.2 M2 Thor retry](ANDROID_WINEBOOT_RETRY.md) passed all five hosted
-jobs in [run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585).
-The two Thor 0.1.1 reports passed four early native database stages but timed out
-at wineboot. The next acceptance step is a physical 0.1.2 retry. Complete device
-diagnostics, combat, movement and rendered gameplay remain unvalidated.
+The current [0.1.3 cold initialization retry](ANDROID_WINE_INITIALIZATION.md)
+passed all five hosted jobs, including fresh and repeat database/client runs, in
+[run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676).
+The 0.1.2 Thor report proved wineboot was still running at 150.040 seconds;
+complete device diagnostics, combat, movement and rendered gameplay remain
+unvalidated. The next step is a physical 0.1.3 retry.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -174,13 +175,13 @@ graceful PostgreSQL restart and complete cleanup. DirectSound enumerated zero
 devices, with no playback claim. All same-source PostgreSQL regressions passed.
 The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
 preserves report hashes, observed capabilities and the verified 13,477,490-byte
-APK. Preserve it as the historical 0.1.1 result; use the 0.1.2 retry below for
+APK. Preserve it as the historical 0.1.1 result; use the current retry below for
 [the current device test](CLIENT_RUNTIME_PROBE.md#device-test).
 A fixture result cannot establish CoH rendering, Cg shaders, physical controls,
 audio playback, Android presentation or GPU acceleration. M2 still needs Thor
 reports, and M3 minimal game-server/device execution remains unfinished.
 
-### Thor wineboot failure and accepted hosted 0.1.2 retry
+### Historical Thor wineboot failure and hosted 0.1.2 result
 
 The user supplied two Thor/Android13 reports from 0.1.1. Both passed native
 PostgreSQL initialization, restricted fixture SQL and owned cleanup, but failed
@@ -202,18 +203,46 @@ Receipts now record pre-signal state and require capture/writer shutdown too.
 passed all five jobs at this commit on 2026-09-27 21:44:41 UTC: all 99 tests
 without skips, eleven database stages, twelve client stages and complete owned
 cleanup. The [acceptance receipt](android-evidence/accepted-wineboot-retry-36352420585.json)
-preserves the current build and reports. Hosted wineboot exited with output
+preserves that historical build and reports. Hosted wineboot exited with output
 capture still open; capture closed during cleanup. This proves the corrected
 wait path was exercised, not that inherited output caused the Thor failures.
-Download `COH-Diagnostic-0.1.2.apk` from that run's `coh-diagnostic-apk` artifact.
-Physical Thor success still requires the user's new exported reports.
+The subsequent Thor retry failed; the inherited-output correction alone did not
+resolve device initialization.
 
-If a retry's `failure_observation` shows the wineboot leader still running,
-investigate cold `wineboot -i` versus `-u` and enable `err+environ` diagnostics.
-A separate LSB investigation found that `-u` repeated automatic `--init` work;
-current CoH `err+module` logging also suppresses Wine's boot-event warning.
-Neither observation establishes the cause here. Version 0.1.2 deliberately
-retains the existing init command and logging while isolating the verified wait fix.
+### Current 0.1.3 cold initialization retry
+
+[The 0.1.2 device report](android-evidence/thor-initializer-timeout-20260927.json)
+records wineboot still running at 150.040 seconds before cleanup signals. Four
+early native database stages passed; Windows ODBC and graphics were not reached.
+PostgreSQL and prefix shutdown passed, but output capture remained open, so
+complete cleanup was not proved.
+
+Commit `49c1626c10636e46a38493047f34ab61a9a5d5ca` applies the
+[0.1.3 initialization correction](ANDROID_WINE_INITIALIZATION.md): use `wineboot -i`
+to avoid a forced second registration pass, invalidate only the timestamp of an
+unready prefix, allow 600 seconds with progress every five seconds, and write a
+readiness marker only after the real PE32 fixture passes. Successful warm runs
+preserve the timestamp. Wine bootstrap errors, fixture failures and open captures
+still fail the diagnostic; Stop and the overall fifteen-minute limit remain.
+This addresses startup behavior without identifying the exact internal component
+delayed on Thor.
+
+[Hosted run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
+passed all five jobs on 2026-09-27 22:16:35 UTC at this source. All 109 tests passed
+without skips. Fresh and repeat runs each passed eleven database stages or twelve
+client stages, including all Windows fixtures and complete cleanup. Cold Wine
+initialization took 39.911 seconds in database mode and 40.305 seconds in client
+mode, with one registration pass each; both warm runs took 4.629 seconds with zero
+registration passes. These timings describe the hosted environment. The
+[same-source PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36354266044)
+also passed. The [acceptance receipt](android-evidence/accepted-wine-initialization-36354263676.json)
+binds the verified APK, payload hashes and runtime evidence.
+
+Install `COH-Diagnostic-0.1.3.apk` from the
+[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36354263676/artifacts/10942919938),
+run diagnostics and export its report. If it fails, stop further checks. Only
+after a pass, run and export the client probe, then test repeat operation and Stop
+on Thor. Physical device acceptance remains pending.
 
 ### Earlier attempts and corrections
 
@@ -475,9 +504,10 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.2** retry
-above; both earlier 0.1.1 device runs stopped at wineboot. The following items
-preserve completed reference gates and describe additional work; their order does not place further Windows server
+**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.3**
+cold initialization retry above. The 0.1.1 and 0.1.2 device runs stopped at
+wineboot. The following items preserve completed reference gates and describe
+additional work; their order does not place further Windows server
 experiments ahead of the device gate.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
@@ -531,10 +561,10 @@ experiments ahead of the device gate.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Run the 0.1.2 diagnostic and client probe under its own UID on Thor and export
-   each report. Confirm the 65-connection pool, durable restart, repeat-run and Stop
-   behavior on the physical device; memory and suspension behavior remain
-   device measurements. The hosted ARM64 runtime and APK packaging already passed.
+4. Run the accepted 0.1.3 diagnostic under its own UID on Thor and export its
+   report. Run the client probe only if diagnostics passes. Confirm
+   the 65-connection pool, durable restart, repeat-run and Stop behavior on the
+   physical device; memory and suspension behavior remain device measurements.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

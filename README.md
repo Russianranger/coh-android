@@ -1,12 +1,14 @@
 # City of Heroes Android
 
-The latest [diagnostic APK 0.1.2](docs/ANDROID_WINEBOOT_RETRY.md) passed all five
-hosted jobs in [run 36352420585](https://github.com/Russianranger/coh-android/actions/runs/36352420585):
-99 tests, eleven database stages, twelve client-probe stages and complete cleanup.
-Both Thor 0.1.1 reports stopped at wineboot after four early database stages;
-0.1.2 fixes the wait behavior and needs a physical retry. See the
-[acceptance receipt](docs/android-evidence/accepted-wineboot-retry-36352420585.json).
-The diagnostic does not launch City of Heroes. Full device acceptance, game
+The latest [diagnostic retry, 0.1.3](docs/ANDROID_WINE_INITIALIZATION.md), corrects
+cold Wine initialization after the [0.1.2 Thor report](docs/android-evidence/thor-initializer-timeout-20260927.json)
+confirmed its initializer was still running at 150.040 seconds. The retry removes
+a forced second initialization pass, allows up to ten minutes with progress
+updates, and verifies readiness with a real PE32 fixture. All five jobs in
+[run 36354263676](https://github.com/Russianranger/coh-android/actions/runs/36354263676)
+passed: 109 tests without skips, plus fresh and repeat database/client runs with
+complete cleanup. See the [acceptance receipt](docs/android-evidence/accepted-wine-initialization-36354263676.json).
+A new physical Thor retry is required. The diagnostic does not launch City of Heroes. Full device acceptance, game
 rendering and hardware acceleration remain pending.
 
 The selected baseline is the **original OuroDev-derived source import** from
@@ -94,12 +96,13 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M2 device acceptance remains pending.** Install the current **0.1.2** retry,
-use **Setup runtime**, then **Run diagnostics** and export its report. If it fails,
-stop further checks and share that report for diagnosis. Only after it passes,
-run **Run client probe** and export separately, then check repeat runs and Stop on Thor. Early native database
-stages passed on-device, but full Wine/client execution, foreground-service
-lifecycle and performance remain unvalidated. The
+**M2 device acceptance remains pending.** Install the accepted hosted **0.1.3**
+retry, use **Setup runtime**, then **Run diagnostics** and export its
+report. Cold Windows setup may take several minutes with progress updates. If it
+fails, stop further checks and share that report for diagnosis. Only after a pass,
+run **Run client probe** and export separately, then check repeat runs and Stop on
+Thor. Early native database stages passed on-device, but full Wine/client
+execution, foreground-service lifecycle and performance remain unvalidated. The
 app includes no game binaries or assets. New-zone assets, missions, automatic
 map startup, combat and graphics remain separate unfinished work. The repository
 is **not a complete runnable game installation**. Complete asset coverage and
