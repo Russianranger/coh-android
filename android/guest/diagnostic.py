@@ -290,7 +290,8 @@ class Context:
             self.event("log", label=child.label, message=record["output"][-4096:])
         return record
 
-    def run(self, label, argv, *, timeout=60, env=None, input_text=None, check=True, cleanup=False):
+    def run(self, label, argv, *, timeout=60, env=None, input_text=None, check=True, cleanup=False,
+            before_stop=None):
         child = self.start(label, argv, env=env, input_text=input_text, cleanup=cleanup)
         try:
             deadline = time.monotonic() + timeout
@@ -308,8 +309,17 @@ class Context:
                 require(result["exit_code"] == 0, label + " failed: " + result["output"][-4096:])
             return result
         except BaseException:
-            child.stop()
-            self.record(child)
+            try:
+                if before_stop is not None:
+                    try:
+                        before_stop(child)
+                    except Exception as exc:
+                        message = redact(str(exc), self.secrets)[-2048:]
+                        self.report.setdefault("observation_failures", []).append(message)
+                        self.event("log", label=label + "-observation", message=message)
+            finally:
+                child.stop()
+                self.record(child)
             raise
 
 
@@ -621,8 +631,57 @@ class Diagnostic:
         argv = [self.args.wine, windows_path(self.args.assets / "odbc_probe.exe"), windows_path(self.connection)]
         if verify:
             argv.append("verify")
-        result = self.ctx.run("odbc-verify" if verify else "odbc-fixture", argv, timeout=180, env=self.wine_env)
+        result = self.ctx.run("odbc-verify" if verify else "odbc-fixture", argv, timeout=180,
+                              env=self.wine_env, before_stop=self.observe_odbc_failure)
         self.ctx.passed(**validate_probe(result["output"], verify=verify))
+
+    def observe_odbc_failure(self, child):
+        """Inspect only the private fixture's sessions before cancelling its client.
+
+        Statements are classified, never copied: connection strings, data values
+        and credentials cannot enter this evidence through pg_stat_activity.
+        """
+        if self.pg is None or self.pg.process.poll() is not None:
+            return
+        env = self.base_env.copy()
+        env.update(PGPASSWORD=self.credentials["cohdiag_admin"], PGCONNECT_TIMEOUT="2",
+                   PGOPTIONS="-c statement_timeout=2000")
+        query = """WITH activity AS (
+SELECT backend_type, state, wait_event_type, wait_event,
+       extract(epoch FROM clock_timestamp()-query_start)::integer AS query_age_seconds,
+       extract(epoch FROM clock_timestamp()-xact_start)::integer AS transaction_age_seconds,
+       CASE
+         WHEN query LIKE '%%pg_stat_activity%%' THEN 'connection_pool_count'
+         WHEN query LIKE '%%coh_reserve_id%%' THEN 'reserve_container_id'
+         WHEN query LIKE '%%coh_container_high_water%%' THEN 'container_high_water'
+         WHEN query LIKE '%%coh_rebuild_table%%' THEN 'schema_rebuild'
+         WHEN query ~* '^(begin|commit|rollback)' THEN 'transaction_control'
+         WHEN query ~* '^(create|alter|drop)' THEN 'schema_operation'
+         WHEN query ~* '^(insert|update|delete)' THEN 'fixture_write'
+         WHEN query ~* '^select' THEN 'fixture_read'
+         WHEN query = '' THEN 'none'
+         ELSE 'other'
+       END AS operation
+FROM pg_stat_activity WHERE datname='%s' AND usename='cohtest'
+LIMIT 80)
+SELECT json_build_object('session_count', (SELECT count(*) FROM activity),
+ 'groups', (SELECT coalesce(json_agg(row_to_json(summary)), '[]'::json) FROM (
+ SELECT backend_type, state, wait_event_type, wait_event, operation, count(*) AS sessions,
+        max(query_age_seconds) AS max_query_age_seconds,
+        max(transaction_age_seconds) AS max_transaction_age_seconds
+ FROM activity GROUP BY backend_type, state, wait_event_type, wait_event, operation
+ ORDER BY count(*) DESC LIMIT 16) summary));""" % self.database
+        result = self.ctx.run("odbc-failure-activity", [self.pgtool("psql"), "-X", "-w", "-A", "-t",
+                              "-v", "ON_ERROR_STOP=1", "-h", str(self.socket_dir), "-p", str(self.port),
+                              "-U", "cohdiag_admin", "-d", "postgres"],
+                              timeout=3, env=env, input_text=query, cleanup=True)
+        activity = json.loads(result["output"])
+        require(isinstance(activity, dict) and isinstance(activity.get("groups"), list)
+                and len(activity["groups"]) <= 16 and isinstance(activity.get("session_count"), int)
+                and 0 <= activity["session_count"] <= 80, "Invalid bounded ODBC activity result")
+        self.ctx.report.setdefault("odbc_failure_activity", []).append({
+            "time_utc": utc(), "probe": child.label, "client_alive": child.process.poll() is None,
+            **activity, "raw_sql_included": False})
 
     def execute(self):
         self.initialize()

@@ -98,7 +98,8 @@ serializer equivalence remain unvalidated. Supplied binary assets stay outside G
 
 The goal remains an Android app running a local server and matching client on
 the AYN Thor. The user has no Windows PC: use hosted Windows builds/reference
-tests and Thor gameplay testing. There is no Android APK yet.
+tests and Thor device testing. A diagnostic Android APK is now built; it contains
+no game binaries. See the M2 instructions above for its validation status.
 
 The i25 investigation is now a [deferred alternative](docs/I25_SOURCE_ACQUISITION.md).
 OuroDev access and the `odtoken` secret are not required for this public snapshot.

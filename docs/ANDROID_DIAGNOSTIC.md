@@ -1,7 +1,11 @@
 # Thor diagnostic APK (M2)
 
-Status: implementation submitted for hosted validation. No APK or on-device pass
-is claimed until the build and runtime evidence are recorded below. The accepted
+Status: the diagnostic APK builds, signs and verifies successfully. Hosted guest
+qualification is still in progress: run `36334034143` passed driver registration,
+DLL loading and PE32 execution, then timed out in the ODBC fixture. Its
+[failed report](android-evidence/runtime-smoke-report-36334034143.json) and
+[attempt history](android-evidence/attempts-20260927.json) are preserved.
+No hosted guest or on-device pass is claimed. The accepted
 [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) remains unchanged.
 
 This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
@@ -10,8 +14,8 @@ launcher. It contains no game binaries or game assets and cannot launch the game
 
 ## What the diagnostic does
 
-The app provides **Set up runtime**, **Run diagnostics**, **Stop**, and
-**Export report**. A foreground service owns each operation and shows progress
+The app provides **Setup runtime**, **Run diagnostics**, **Stop**, and
+**Export latest report**. A foreground service owns each operation and shows progress
 while the activity is closed or rotated. Stop requests a graceful guest cleanup
 before terminating only the owned PRoot wrapper as a bounded fallback.
 
@@ -30,7 +34,7 @@ PRoot and its loader are executable APK libraries, rather than writable download
 Android executables. The pinned base, Wine and source archives are in
 [`runtime-lock.json`](../android/runtime-lock.json).
 
-The guest proves:
+The guest requires:
 
 1. Verified inputs, ARM64 PostgreSQL/Wine executables and PE32 diagnostic binaries.
 2. A private owned PostgreSQL cluster, loopback listening, authenticated identity
@@ -91,13 +95,17 @@ snapshots and all previously accepted Windows reference inputs remain untouched.
 
 ## Thor acceptance steps once a verified APK is available
 
-1. Install COH Diagnostic and choose **Set up runtime** with a reliable connection.
+1. Install COH Diagnostic and choose **Setup runtime** with a reliable connection.
 2. Choose **Run diagnostics**. Keep its notification active; wait for a passed or
    failed result. No game import is needed.
-3. Choose **Export report** and attach the ZIP to this conversation.
+3. Choose **Export latest report** and attach the ZIP to this conversation.
 4. After a successful run, repeat after closing/reopening the app. Also exercise
    Stop during a run and export that result, so ownership and shutdown can be
    checked on the device.
+
+If the result is **Cleanup failed**, export the report first. Then use Android
+**Settings → Apps → COH Diagnostic → Force stop** and reopen the app. Closing the
+activity alone does not clear the process-wide cleanup block.
 
 A passing M2 report qualifies the exercised database and compatibility runtime.
 The next gameplay work is the minimal Android server and basic client-runtime

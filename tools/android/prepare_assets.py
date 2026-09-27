@@ -81,7 +81,7 @@ def main():
     cmds = [
         [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', str(ROOT/'android/native/runtime-probe.c'), '-ladvapi32', '-o', str(out/'runtime-probe.exe')],
         [a.cc, '-O2', '-Wall', '-Wextra', '-shared', '-static-libgcc', '-Wl,--kill-at', str(ROOT/'android/native/probe.c'), '-o', str(out/'probe.dll')],
-        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc',
+        [a.cc, '-O2', '-Wall', '-Wextra', '-static-libgcc', '-DCOH_ODBC_TRACE=1',
          *['-D'+alias+'='+name for alias,name in ODBC_ANSI_ALIASES.items()],
          '-I'+str(ROOT/'database/postgresql/overlay/Common/sql'), str(ROOT/'database/postgresql/tests/odbc_probe.c'), '-lodbc32', '-o', str(out/'odbc_probe.exe')],
     ]
@@ -106,7 +106,8 @@ def main():
         'runtime_probe':{'executable':'runtime-probe.exe','marker':'COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified','dll':'probe.dll'},
         'compiler':subprocess.check_output([a.cc,'--version'], text=True).splitlines()[0],
         'odbc_ansi_compatibility':{'wine_export_source':WINE_ODBC_SPEC, 'compile_aliases':ODBC_ANSI_ALIASES,
-                                  'verified_windows_manager_imports':odbc_imports, 'fixture_operations_changed':False},
+                                  'verified_windows_manager_imports':odbc_imports, 'fixture_operations_changed':False,
+                                  'diagnostic_progress':'unbuffered output and credential-free ODBC call line numbers'},
         'scope':'APK build inputs; not proof of Android execution or gameplay'}
     (out/'runtime-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps({'files':len(files),'repository_commit':a.repository_commit,'manifest_sha256':digest(out/'runtime-manifest.json')}))

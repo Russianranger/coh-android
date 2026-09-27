@@ -224,6 +224,64 @@ class DiagnosticProcessTests(unittest.TestCase):
             self.run_python('secret-failure', f'import sys;print({secret!r});sys.exit(7)')
         self.assertNotIn(secret, str(caught.exception))
 
+    def test_timeout_observer_sees_flushed_output_while_child_lives_then_evidence_is_redacted(self):
+        secret = 'private-timeout-diagnostic-password'
+        self.context.secrets.append(secret)
+        observed = []
+        def observe(child):
+            observed.append({'pid': child.process.pid, 'exit_code': child.process.poll(),
+                             'text': child.text()})
+        stream = io.StringIO()
+        with redirect_stdout(stream), self.assertRaisesRegex(diagnostic.DiagnosticError, 'observed-timeout timed out'):
+            self.run_python('observed-timeout',
+                            f'import time;print("CHECK line 42",flush=True);print({secret!r},flush=True);time.sleep(60)',
+                            timeout=0.5, before_stop=observe)
+        self.assertEqual(len(observed), 1)
+        self.assertIsNone(observed[0]['exit_code'], 'Observer ran after the timed-out process was stopped')
+        self.assertIn('CHECK line 42\n', observed[0]['text'])
+        self.assert_stopped(observed[0]['pid'])
+        records = [record for record in self.context.report['processes'] if record['label'] == 'observed-timeout']
+        self.assertEqual(len(records), 1)
+        self.assertTrue(records[0]['forced_stop'])
+        self.assertIn('CHECK line 42\n', records[0]['output'])
+        self.assertNotIn(secret, json.dumps(self.context.report))
+        events = [json.loads(line) for line in stream.getvalue().splitlines()]
+        self.assertTrue(events)
+        self.assertNotIn(secret, json.dumps(events))
+
+    def test_timeout_survives_observer_exception_and_child_is_still_cleaned_up(self):
+        secret = 'private-observation-failure-secret'
+        self.context.secrets.append(secret)
+        observed = []
+        def failing_observer(child):
+            observed.append((child.process.pid, child.process.poll()))
+            raise RuntimeError('observer failed: ' + secret)
+        stream = io.StringIO()
+        with redirect_stdout(stream), self.assertRaisesRegex(diagnostic.DiagnosticError, 'observer-failed-timeout timed out'):
+            self.run_python('observer-failed-timeout',
+                            'import time;print("CHECK line 43",flush=True);time.sleep(60)',
+                            timeout=0.5, before_stop=failing_observer)
+        self.assertEqual(len(observed), 1)
+        self.assertIsNone(observed[0][1])
+        self.assert_stopped(observed[0][0])
+        failures = self.context.report['observation_failures']
+        self.assertEqual(len(failures), 1)
+        self.assertIn('observer failed', str(failures[0]))
+        self.assertNotIn(secret, json.dumps(self.context.report))
+        events = [json.loads(line) for line in stream.getvalue().splitlines()]
+        self.assertNotIn(secret, json.dumps(events))
+        records = [record for record in self.context.report['processes']
+                   if record['label'] == 'observer-failed-timeout']
+        self.assertEqual(len(records), 1)
+        self.assertTrue(records[0]['forced_stop'])
+
+    def test_successful_process_does_not_invoke_failure_observer(self):
+        observed = []
+        result = self.run_python('observed-success', 'print("completed")',
+                                 before_stop=lambda child: observed.append(child.label))
+        self.assertEqual(result['exit_code'], 0)
+        self.assertEqual(observed, [])
+
     @staticmethod
     def process_alive(pid):
         # kill(0) uses the caller's PID namespace. Some CI sandboxes expose a

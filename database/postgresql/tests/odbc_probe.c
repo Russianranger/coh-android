@@ -28,7 +28,12 @@ static void check(SQLRETURN rc, SQLSMALLINT type, SQLHANDLE handle, int line)
         exit(1);
     }
 }
+#ifdef COH_ODBC_TRACE
+/* Diagnostic-only progress: no SQL, login string or parameter values. */
+#define CHECK(rc,t,h) (fprintf(stderr,"CALL:%d\n",__LINE__), check(rc,t,h,__LINE__))
+#else
 #define CHECK(rc,t,h) check(rc,t,h,__LINE__)
+#endif
 static SQLHSTMT statement(void) {
     SQLHSTMT s; CHECK(SQLAllocHandle(SQL_HANDLE_STMT,dbc,&s),SQL_HANDLE_DBC,dbc); return s;
 }
@@ -217,6 +222,9 @@ static void schema_rebuild(void) {
 
 int main(int argc,char **argv) {
     FILE *file; char version[100]; int id;
+#ifdef COH_ODBC_TRACE
+    setvbuf(stdout,NULL,_IONBF,0); setvbuf(stderr,NULL,_IONBF,0);
+#endif
     REQUIRE(argc>=2); file=fopen(argv[1],"rb"); REQUIRE(file);
     REQUIRE(fgets(login,sizeof(login),file)); REQUIRE(feof(file) || fgetc(file)==EOF); fclose(file);
     login[strcspn(login,"\r\n")]=0;

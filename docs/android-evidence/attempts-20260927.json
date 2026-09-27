@@ -79,7 +79,48 @@
       "guest_postgresql_durable_restart_executed": false,
       "android_device_validated": false,
       "raw_report": "runtime-smoke-report-36332802885.json",
-      "next_diagnostic": "Explicit PE32 SysWOW64 MSI installer plus measured HKLM32 registration and native driver DLL load preflight"
+      "next_diagnostic": "Explicit PE32 SysWOW64 MSI installer plus measured HKLM32 registration and native driver DLL load preflight",
+      "correction_commit": "ac927cc3701b8b6c58caac161747c8b718eb45fa"
+    },
+    {
+      "run_id": 36333868865,
+      "repository_commit": "ac927cc3701b8b6c58caac161747c8b718eb45fa",
+      "result": "failed",
+      "tooling_tests_passed": 73,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108661545645,
+      "stage": "win32_odbc_driver",
+      "reason": "PE32 MSI installer established both HKLM32 registrations and driver DLL load; preflight incorrectly required ANSI SQLDriverConnect from the Unicode driver, which exports SQLDriverConnectW",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36333868865.json",
+      "correction_commit": "6a87286219113bc11a5c3e1cdcb84ea87bea3495"
+    },
+    {
+      "run_id": 36334034143,
+      "repository_commit": "6a87286219113bc11a5c3e1cdcb84ea87bea3495",
+      "result": "failed",
+      "tooling_tests_passed": 73,
+      "postgresql_native_build_and_transaction_restart": "passed",
+      "apk_build_signature_payload_and_compiled_odbc_import_verification": "passed",
+      "failed_job": 108662049487,
+      "stage": "odbc_fixture",
+      "reason": "Real HKLM32 driver registration, Windows Unicode DLL load and PE32 runtime fixture passed; ODBC fixture exceeded its 180-second bound without flushed output",
+      "cleanup": {
+        "postgres_graceful": true,
+        "wine_prefix_stopped": true,
+        "owned_processes_reaped": true
+      },
+      "guest_postgresql_durable_restart_executed": false,
+      "android_device_validated": false,
+      "raw_report": "runtime-smoke-report-36334034143.json",
+      "next_diagnostic": "Unbuffered credential-free ODBC call progress and bounded pre-termination database wait-state snapshot; preserve 65 connections and all SQL assertions"
     }
   ],
   "android_device_validated": false,
