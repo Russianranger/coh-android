@@ -12,9 +12,11 @@ import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
-APP_ID = "io.github.russianranger.cohdiagnostic"
-VERSION_NAME = "0.1.5"
-VERSION_CODE = 6
+APP_ID = "io.github.russianranger.cohdiagnostic.m3"
+JAVA_PACKAGE = "io.github.russianranger.cohdiagnostic"
+VERSION_NAME = "0.2.0"
+VERSION_CODE = 7
+APK_NAME = f"COH-Server-Test-{VERSION_NAME}.apk"
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 
 def digest(path):
@@ -40,10 +42,16 @@ def verify_badging(text):
     native = re.search(r"^native-code:\s*(.*)$", text, re.M)
     if not native or native.group(1).strip() != "'arm64-v8a'":
         raise ValueError("APK must contain only ARM64 libraries")
-    if not re.search(r"^launchable-activity: name='" + re.escape(APP_ID) + r"\.MainActivity'", text, re.M):
+    if not re.search(r"^launchable-activity: name='" + re.escape(JAVA_PACKAGE) + r"\.MainActivity'", text, re.M):
         raise ValueError("APK launcher missing")
 
 def payloads(assets, native):
+    # The candidate packages the qualified real DbServer in addition to the
+    # byte-identical accepted M2 runtime. Validate both before signing the APK.
+    import sys
+    sys.path.insert(0, str(ROOT / "tools/android/dbserver"))
+    from prepare_device_assets import verify_device_assets
+    verify_device_assets(assets / "runtime")
     manifest = json.loads((assets / "runtime/runtime-manifest.json").read_text())
     if manifest.get("format") != 1 or not re.fullmatch(r"[0-9a-f]{40}", manifest.get("repository_commit", "")):
         raise ValueError("Runtime manifest lacks exact source commit")
@@ -53,12 +61,19 @@ def payloads(assets, native):
         path = assets / "runtime" / name
         if not path.is_file() or path.stat().st_size != pin["bytes"] or digest(path) != pin["sha256"]:
             raise ValueError("Runtime asset differs from manifest: " + name)
-    members = [(p, "assets/" + p.relative_to(assets).as_posix()) for p in sorted(assets.rglob("*")) if p.is_file()]
+    members = [(assets / "runtime" / name, "assets/runtime/" + name)
+               for name in sorted([*manifest["files"], "runtime-manifest.json"])]
     # Build receipts, corresponding sources and licenses remain separate CI artifacts.
     libraries = [native / "arm64-v8a" / name for name in ("libproot.so", "libproot-loader.so")]
     if any(not p.is_file() for p in libraries):
         raise ValueError("Expected ARM64 PRoot and its loader")
+    native_receipt = json.loads((assets / "runtime/proot-build.json").read_text())
+    if native_receipt.get("target") != "android-arm64":
+        raise ValueError("Expected accepted Android PRoot provenance")
     for path in libraries:
+        pin = native_receipt["files"][path.name]
+        if path.is_symlink() or path.stat().st_size != pin["bytes"] or digest(path) != pin["sha256"]:
+            raise ValueError("Native payload differs from accepted provenance: " + path.name)
         with path.open("rb") as stream:
             header = stream.read(20)
         if len(header) != 20 or header[:6] != b"\x7fELF\x02\x01" or int.from_bytes(header[18:20], "little") != 183:
@@ -72,7 +87,7 @@ def main():
     parser.add_argument("--build-tools", type=Path, required=True)
     parser.add_argument("--keystore", type=Path, required=True)
     parser.add_argument("--alias", default="coh-diagnostic")
-    parser.add_argument("--output", type=Path, default=ROOT / f"out/android/COH-Diagnostic-{VERSION_NAME}.apk")
+    parser.add_argument("--output", type=Path, default=ROOT / "out/android" / APK_NAME)
     args = parser.parse_args()
     for key in ("android_jar", "build_tools", "keystore", "output"):
         setattr(args, key, getattr(args, key).resolve())
@@ -142,6 +157,9 @@ def main():
             "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
             "package_badging_verified": True, "payload_bytes_verified": True,
             "device_validated": False, "gameplay_validated": False,
+            "candidate_role": "physical_thor_real_dbserver_test",
+            "installation": "Side-by-side application ID preserves the accepted 0.1.5 diagnostic and its private runtime",
+            "device_dbserver": manifest["dbserver_device_bundle"],
         }
         (args.output.parent / "apk-build-report.json").write_text(json.dumps(report, indent=2) + "\n")
         args.output.with_suffix(".apk.sha256").write_text(report["sha256"] + "  " + args.output.name + "\n")

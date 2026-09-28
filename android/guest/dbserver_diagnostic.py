@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Run real PE32 DbServer persistence and accepted schema tests in owned PRoot.
 
-This hosted milestone reuses the accepted ARM64 PostgreSQL/Wine lifecycle. It
-does not establish Android execution, gameplay, or generated character saves.
+This reuses the accepted ARM64 PostgreSQL/Wine lifecycle. Device policy enables
+qualified loopback binding before every DbServer launch. Android provenance is
+supplied by the app wrapper; the guest does not attest Android execution.
 """
 import argparse
 import hashlib
@@ -54,6 +55,11 @@ BENIGN_CATALOG_NOTICE = re.compile(
     r'constraint "fk_ents_teamupsid_teamups" of relation "ents" does not exist, skipping)|'
     r'42P07 NOTICE: relation "coh_[0-9a-f]{32}" already exists, skipping)')
 LOG_LIMIT = 16 * 1024 * 1024
+ACCEPTED_RUNTIME_MANIFEST = 'fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203'
+ACCEPTED_RUNTIME_COMMIT = '9dc58f62c58dc4fc5c01288071429bf2aa06d2f4'
+DEVICE_PACKAGE_MANIFEST = '95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6'
+DEVICE_SCHEMA_MANIFEST = 'b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92'
+DEVICE_PACKAGE_RUN = 36460867428
 FIXED_INPUTS_ENV = 'COH_WINE_DB_FIXED_INPUTS'
 FIXED_INPUTS_ACK = ('COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; '
                     'initial reads and lookup mode preserved')
@@ -176,6 +182,88 @@ def load_json(path, limit=32 * 1024 * 1024):
     value = json.loads(path.read_text(), object_pairs_hook=unique)
     require(isinstance(value, dict), 'Manifest must be an object')
     return value
+
+
+def listener_policy(platform, requested=None):
+    require(platform in ('host', 'android'), 'Unknown execution platform')
+    policy = requested or ('device' if platform == 'android' else 'host-default')
+    require(policy in ('device', 'host-default')
+            and (platform != 'android' or policy == 'device'),
+            'Android requires qualified device listener policy')
+    return policy
+
+
+def exact_contract(value, expected):
+    if type(value) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return set(value) == set(expected) and all(exact_contract(value[key], item)
+                                                   for key, item in expected.items())
+    if isinstance(expected, list):
+        return len(value) == len(expected) and all(exact_contract(left, right)
+                                                   for left, right in zip(value, expected))
+    return value == expected
+
+
+def verify_device_payload(package, schema):
+    # Pin the independently qualified binaries and schema before creating any
+    # Wine process. Device mode cannot substitute an unqualified listener build.
+    for root, name, expected in ((package, 'package-manifest.json', DEVICE_PACKAGE_MANIFEST),
+                                 (schema, 'schema-manifest.json', DEVICE_SCHEMA_MANIFEST)):
+        path = root / name
+        require(path.is_file() and not path.is_symlink() and base.file_hash(path) == expected,
+                'Device policy requires the qualified ' + name)
+    return {'run_id': DEVICE_PACKAGE_RUN, 'package_manifest_sha256': DEVICE_PACKAGE_MANIFEST,
+            'schema_manifest_sha256': DEVICE_SCHEMA_MANIFEST}
+
+
+def verify_device_runtime(assets):
+    manifest = load_json(assets / 'runtime-manifest.json')
+    current_hash = base.file_hash(assets / 'runtime-manifest.json')
+    accepted = manifest
+    if current_hash != ACCEPTED_RUNTIME_MANIFEST:
+        accepted_path = assets / 'accepted-runtime-manifest.json'
+        accepted = load_json(accepted_path)
+        require(base.file_hash(accepted_path) == ACCEPTED_RUNTIME_MANIFEST,
+                'Device policy requires the exact accepted base runtime manifest')
+        provenance = manifest.get('accepted_base_runtime')
+        require(exact_contract(provenance, {
+            'run_id': 36364550345, 'repository_commit': ACCEPTED_RUNTIME_COMMIT,
+            'manifest_file': 'accepted-runtime-manifest.json',
+            'manifest_sha256': ACCEPTED_RUNTIME_MANIFEST, 'manifest': accepted}),
+            'Augmented runtime base provenance differs')
+        for name, value in accepted.items():
+            if name not in ('repository_commit', 'files', 'scope'):
+                require(exact_contract(manifest.get(name), value), 'Augmented runtime changed accepted field: ' + name)
+        bundle = manifest.get('dbserver_device_bundle')
+        require(exact_contract(bundle, {
+            'format': 1, 'package_run_id': DEVICE_PACKAGE_RUN,
+            'package_manifest_sha256': DEVICE_PACKAGE_MANIFEST,
+            'package_repository_commit': 'eed2ce1f5388195f65a07853919761a93657aca6',
+            'schema_manifest_sha256': DEVICE_SCHEMA_MANIFEST, 'schema_acceptance_run_id': 36088012666,
+            'guest_script': 'dbserver_diagnostic.py', 'package_archive': 'dbserver-package.tar.gz',
+            'schema_archive': 'dbserver-schema.tar.gz', 'listener_policy': 'device',
+            'android_execution_validated': False, 'gameplay_validated': False}),
+            'Device bundle provenance differs')
+        additions = {'accepted-runtime-manifest.json', 'dbserver_diagnostic.py',
+                     'dbserver-package.tar.gz', 'dbserver-schema.tar.gz'}
+        require(set(manifest.get('files', {})) == set(accepted.get('files', {})) | additions,
+                'Augmented runtime inventory differs')
+    require(accepted.get('repository_commit') == ACCEPTED_RUNTIME_COMMIT
+            and len(accepted.get('files', {})) == 12, 'Accepted runtime identity differs')
+    for name, record in accepted['files'].items():
+        require(exact_contract(manifest.get('files', {}).get(name), record), 'Augmented runtime changed base asset: ' + name)
+    for name, record in manifest.get('files', {}).items():
+        require(isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_.-]+', name)
+                and isinstance(record, dict) and type(record.get('bytes')) is int
+                and 0 <= record['bytes'] <= 300 * 1024 * 1024
+                and isinstance(record.get('sha256'), str) and HEX64.fullmatch(record['sha256']),
+                'Invalid device runtime inventory entry')
+        path = assets / name
+        require(path.is_file() and not path.is_symlink() and path.stat().st_size == record['bytes']
+                and base.file_hash(path) == record['sha256'], 'Device runtime asset differs: ' + name)
+    return {'accepted_manifest_sha256': ACCEPTED_RUNTIME_MANIFEST,
+            'runtime_manifest_sha256': current_hash, 'augmented': current_hash != ACCEPTED_RUNTIME_MANIFEST}
 
 
 def verify_inventory(root, files, *, manifest=None, binary=False):
@@ -348,6 +436,10 @@ class DbServerContext(base.Context):
 
 class DbServerDiagnostic(base.Diagnostic):
     def __init__(self, args, context):
+        self.device_policy = listener_policy(args.execution_platform, args.listener_policy) == 'device'
+        if self.device_policy:
+            context.report['accepted_device_runtime'] = verify_device_runtime(args.assets)
+            context.report['qualified_device_payload'] = verify_device_payload(args.package, args.schema)
         package, schema = verify_inputs(args.package, args.schema)
         super().__init__(args, context)
         for environment in (self.base_env, self.wine_env):
@@ -423,14 +515,16 @@ class DbServerDiagnostic(base.Diagnostic):
         self.ctx.stage('dbserver_' + mode.replace('-', '_'))
         result, output = self.run_windows('dbserver-' + mode, self.fixture_runtime / 'DbServer.exe',
             ['-pgpersistencetest', base.windows_path(connection or self.connection), database or self.database, mode],
-            self.fixture_runtime, timeout=180, expected=expected)
+            self.fixture_runtime, timeout=180, expected=expected, loopback_only=self.device_policy)
         validate_fixed_inputs(output, False)
-        validate_loopback(output, False, [])
+        loopback = validate_loopback(output, self.device_policy, {'required': [], 'optional': []})
         markers = validate_fixture_phase(mode, expected, result['exit_code'], output)
         item = {'mode': mode, 'exit_code': result['exit_code'], 'expected_exit_code': expected,
                 'markers': markers, 'output_sha256': hashlib.sha256(base.redact(output, self.ctx.secrets).encode()).hexdigest()}
         if evidence:
             item['evidence'] = evidence
+        if self.device_policy:
+            item['loopback_only'] = loopback
         self.fixture_report['phases'].append(item)
         self.ctx.passed(mode=mode, expected_exit_code=expected)
 
@@ -572,9 +666,10 @@ class DbServerDiagnostic(base.Diagnostic):
         migration = self.sql(migration_query, game=True)
         require(any(row['version'] == 2 for row in json.loads(migration)), 'Compatibility migration 2 missing')
         previous = None
-        # Cover default startup and the fixed-input/loopback reload without
-        # adding more real server launches or changing the accepted input bytes.
-        for number, fixed_inputs in ((1, False), (2, True)):
+        # Hosted qualification keeps default startup coverage. Device policy
+        # protects every normal launch and avoids directory watch registration.
+        for number in (1, 2):
+            fixed_inputs = self.device_policy or number == 2
             self.ctx.stage('normal_dbserver_schema_' + str(number))
             dump = self.root / ('schema-export-' + str(number) + '-' + secrets.token_hex(6) + '.dump')
             require(not dump.exists(), 'Normal DbServer export was not fresh')
@@ -645,14 +740,16 @@ def main(argv=None):
                           ('xserver', '/usr/bin/Xtigervnc')):
         parser.add_argument('--' + name, type=Path, default=Path(default))
     parser.add_argument('--timeout-seconds', type=int, default=1800)
-    parser.add_argument('--execution-platform', choices=('host',), default='host')
+    parser.add_argument('--execution-platform', choices=('host', 'android'), default='host')
+    parser.add_argument('--listener-policy', choices=('host-default', 'device'),
+                        help='Android always requires device; host may qualify that same policy')
     args = parser.parse_args(argv)
     args.client_probe = False
     os.umask(0o077)
     context = DbServerContext(args.state, args.timeout_seconds)
     context.report.update(diagnostic_mode='dbserver_persistence_and_generated_schema',
         scope='Real fixture-ON DbServer persistence and fixture-OFF accepted schema startup/reload through Wine/FEX on ARM64',
-        execution_platform_requested='host', android_execution_validated=False,
+        execution_platform_requested=args.execution_platform, android_execution_validated=False,
         gameplay_validated=False, generated_character_persistence_validated=False,
         android_listener_binding_validated=False)
     for sig in (signal.SIGTERM, signal.SIGINT):
@@ -660,6 +757,8 @@ def main(argv=None):
     diagnostic = None
     try:
         require(60 <= args.timeout_seconds <= 3600, 'Timeout must be 60 to 3600 seconds')
+        args.listener_policy = listener_policy(args.execution_platform, args.listener_policy)
+        context.report['listener_policy'] = args.listener_policy
         context.check()
         diagnostic = DbServerDiagnostic(args, context)
         diagnostic.execute()

@@ -1,57 +1,55 @@
-name: Thor diagnostic APK
+name: Thor real DbServer candidate
 on:
   push:
-    paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml', 'database/postgresql/001-coh-compat.sql', 'database/postgresql/tests/odbc_probe.c', 'database/postgresql/overlay/Common/sql/pg_compat.h']
+    paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml']
   pull_request:
     paths: ['android/**', 'tools/android/**', '.github/workflows/android-diagnostic.yml']
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
+concurrency:
+  group: android-device-dbserver-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   tooling:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          sparse-checkout: |
-            android
-            tools/android
-      - name: Check ownership, cancellation, archive and build contracts
+          persist-credentials: false
+      - name: Check app lifecycle, device policy and immutable bundle contracts
         run: |
           python3 -m unittest discover -s tools/android -p 'test_*.py' -v
-  postgresql:
+          python3 -m unittest discover -s tools/android/dbserver -p 'test_*.py' -v
+  apk:
     if: github.event_name != 'pull_request'
     needs: tooling
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          sparse-checkout: tools/android
-      - name: Build pinned PostgreSQL ARM64 and prove installed-tool restart
-        run: python3 tools/android/prepare_pg_runtime.py --output out/android-pg --repository-commit "$GITHUB_SHA" --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android-postgresql-runtime
-          path: out/android-pg/
-          compression-level: 0
-          if-no-files-found: error
-  apk:
-    needs: postgresql
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          sparse-checkout: |
-            android
-            tools/android
-            database/postgresql
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          name: android-postgresql-runtime
-          path: out/android-pg
+          name: coh-diagnostic-runtime-inputs
+          path: out/device-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/android/native/arm64-v8a
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/device-inputs/package
+          run-id: 36460867428
+          github-token: ${{ github.token }}
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -60,76 +58,92 @@ jobs:
         with:
           packages: 'platform-tools'
           log-accepted-android-sdk-licenses: false
-      - name: Install pinned Android tools and Win32 compiler
+      - name: Install pinned Android build tools
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Assemble the exact qualified runtime, DbServer and generated schema
         run: |
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;27.2.12479018'
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686-posix gawk
-      - name: Build app-owned process runtime
-        run: python3 tools/android/build_proot.py --target android-arm64 --output out/android/native --ndk "$ANDROID_HOME/ndk/27.2.12479018"
-      - name: Assemble verified database and Win32 diagnostic inputs
-        run: |
-          python3 tools/android/prepare_assets.py --repository-commit "$GITHUB_SHA" \
-            --pg-archive out/android-pg/pg-runtime-overlay.tar.gz --pg-receipt out/android-pg/pg-runtime-build.json \
-            --proot-receipt out/android/native/arm64-v8a/proot-build-receipt.json
-      - name: Build and verify diagnostic APK
-        run: python3 tools/android/build_apk.py --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --build-tools "$ANDROID_HOME/build-tools/35.0.0" --keystore "$RUNNER_TEMP/coh-diagnostic.jks"
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/device-inputs/schema
+          python3 tools/android/dbserver/prepare_device_assets.py \
+            --assets out/device-inputs/runtime --package out/device-inputs/package --schema out/device-inputs/schema \
+            --output out/android/assets/runtime --repository-commit "$GITHUB_SHA" \
+            --receipt out/android/device-assets-preparation.json
+      - name: Build and verify side-by-side Thor candidate
+        run: python3 tools/android/build_apk.py --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --build-tools "$ANDROID_HOME/build-tools/35.0.0" --keystore "$RUNNER_TEMP/coh-server-test.jks"
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-diagnostic-apk
+          name: coh-server-test-apk
           path: |
-            out/android/COH-Diagnostic-0.1.5.apk
-            out/android/COH-Diagnostic-0.1.5.apk.sha256
+            out/android/COH-Server-Test-0.2.0.apk
+            out/android/COH-Server-Test-0.2.0.apk.sha256
             out/android/apk-build-report.json
+            out/android/device-assets-preparation.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-diagnostic-runtime-inputs
+          name: coh-server-test-runtime-inputs
           path: out/android/assets/runtime/
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-proot-android-source-and-build
+          name: coh-server-test-native-provenance
           path: out/android/native/arm64-v8a/
           if-no-files-found: error
   runtime:
     needs: apk
-    strategy:
-      fail-fast: false
-      matrix:
-        mode: [database, client]
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          sparse-checkout: |
-            android
-            tools/android
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-server-test-runtime-inputs
+          path: out/android/assets/runtime
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-server-test-native-provenance
+          path: out/android/accepted-proot-sources
       - uses: actions/download-artifact@v4
         with:
           name: coh-diagnostic-runtime-inputs
-          path: out/android/assets/runtime
-      - name: Install host build dependencies
+          path: out/device-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Verify and extract the same payloads embedded in the APK
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          sys.path.insert(0, 'tools/android/dbserver')
+          from prepare_device_assets import verify_device_assets, extract_device_inputs
+          assets = pathlib.Path('out/android/assets/runtime')
+          manifest = verify_device_assets(assets)
+          folders = extract_device_inputs(assets, pathlib.Path('out/device-unpacked'))
+          pathlib.Path('out/android/device-bundle-verification.json').write_text(json.dumps({
+              'status': 'passed', 'repository_commit': manifest['repository_commit'],
+              'directories': {key: str(value) for key, value in folders.items()},
+              'scope': 'Exact APK payload hashes and safe extraction; physical Android is unvalidated'
+          }, indent=2) + '\n')
+          PY
+      - name: Recover pinned talloc source from accepted provenance
+        run: python3 tools/android/extract_talloc_source.py --assets out/device-inputs/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json
+      - name: Install host runtime dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Build matching native ARM64 PRoot
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
-      - name: Prove requested Win32 fixtures, database restart and owned shutdown through PRoot
-        env:
-          DIAGNOSTIC_MODE: ${{ matrix.mode }}
-        run: |
-          if [ "$DIAGNOSTIC_MODE" = client ]; then
-            python3 tools/android/host_smoke.py --client-probe
-          else
-            python3 tools/android/host_smoke.py
-          fi
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Qualify APK guest with the device listener policy on ARM64
+        run: python3 tools/android/dbserver/host_dbserver_smoke.py --device-policy --assets out/android/assets/runtime --package out/device-unpacked/package --schema out/device-unpacked/schema
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coh-diagnostic-host-evidence-${{ matrix.mode }}
+          name: coh-server-test-arm64-evidence
           path: |
-            out/android/host-evidence/
+            out/android/dbserver-evidence/
+            out/android/device-bundle-verification.json
+            out/device-unpacked/schema/schema-manifest.json
+            out/device-unpacked/package/package-manifest.json
             out/android/native/linux-arm64/proot-build-receipt.json
+            out/android/talloc-source-receipt.json
           if-no-files-found: warn

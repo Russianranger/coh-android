@@ -119,7 +119,13 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**Continue M3 with Android app integration and physical Thor qualification.**
+**The next M3 candidate is COH Server Test 0.2.0 for physical Thor qualification.**
+It uses a separate application ID to preserve the accepted 0.1.5 installation,
+adds the real DbServer persistence/schema test with local-only listeners, and
+retains immutable reports for Stop/rerun testing. See the
+[candidate scope and device steps](docs/ANDROID_SERVER_DEVICE_TEST.md).
+Its APK and hosted device-policy gate must pass before delivery; physical
+Android acceptance requires the resulting Thor reports.
 The hosted Atlas gate is complete. The separate loopback DbServer package is
 [hosted-qualified](docs/android-evidence/accepted-dbserver-hosted-36460867428.json);
 physical Android listener execution and app lifecycle integration remain before

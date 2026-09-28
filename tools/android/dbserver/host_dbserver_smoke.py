@@ -19,6 +19,9 @@ from prepare_assets import digest, fetch
 ROOT = Path(__file__).resolve().parents[3]
 ACCEPTED_RUNTIME_COMMIT = "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4"
 ACCEPTED_RUNTIME_MANIFEST = "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+DEVICE_PACKAGE_MANIFEST = "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6"
+DEVICE_SCHEMA_MANIFEST = "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+DEVICE_PACKAGE_COMMIT = "eed2ce1f5388195f65a07853919761a93657aca6"
 SOURCE_COMMIT = "0b75ade0c801735e10c5798f641948a45cc50488"
 DATA_COMMIT = "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
 DIAGNOSTIC_MODE = "dbserver_persistence_and_generated_schema"
@@ -153,8 +156,14 @@ def verify_inventory(directory, files, *, excluded=()):
                 "Input hash/size mismatch: " + name)
 
 
-def verify_runtime_assets(assets):
+def verify_runtime_assets(assets, *, device_policy=False):
     manifest_path = assets / "runtime-manifest.json"
+    if device_policy and digest(manifest_path) != ACCEPTED_RUNTIME_MANIFEST:
+        from prepare_device_assets import verify_device_assets
+        manifest = verify_device_assets(assets)
+        require(digest(assets / "dbserver_diagnostic.py") == digest(ROOT / "android/guest/dbserver_diagnostic.py"),
+                "Packaged device guest differs from the checked-out qualification script")
+        return manifest
     require(digest(manifest_path) == ACCEPTED_RUNTIME_MANIFEST,
             "M3 requires the exact accepted 0.1.5 runtime manifest")
     manifest = read_manifest(manifest_path)
@@ -226,6 +235,7 @@ def schema_expectations(manifest):
 
 
 def validate_report(report, *, expected):
+    device_policy = expected.get("device_policy", False)
     require(report.get("passed") is True and report.get("status") == "passed"
             and report.get("failures") == [] and report.get("cleanup_complete") is True,
             "DbServer runtime did not prove a complete successful result")
@@ -234,6 +244,20 @@ def validate_report(report, *, expected):
             and all(report.get(name) is False for name in ("android_execution_validated", "gameplay_validated",
                     "generated_character_persistence_validated", "android_listener_binding_validated")),
             "Hosted DbServer diagnostic mode or scope differs")
+    if device_policy:
+        require(report.get("listener_policy") == "device", "Hosted candidate did not use device listener policy")
+        require(exact_contract(report.get("qualified_device_payload"), {
+            "run_id": 36460867428, "package_manifest_sha256": DEVICE_PACKAGE_MANIFEST,
+            "schema_manifest_sha256": DEVICE_SCHEMA_MANIFEST}),
+            "Device policy did not prove its qualified payload")
+        require(exact_contract(report.get("accepted_device_runtime"), {
+            "accepted_manifest_sha256": ACCEPTED_RUNTIME_MANIFEST,
+            "runtime_manifest_sha256": expected["inputs"]["runtime_manifest_sha256"],
+            "augmented": expected["inputs"]["runtime_manifest_sha256"] != ACCEPTED_RUNTIME_MANIFEST}),
+            "Device policy did not preserve accepted base runtime identity")
+    else:
+        require(report.get("listener_policy", "host-default") == "host-default",
+                "Hosted qualification listener policy differs")
     require(all(report.get("cleanup", {}).get(name) is True for name in
                 ("postgres_graceful", "wine_prefix_stopped", "owned_processes_reaped")),
             "DbServer runtime did not prove complete owned cleanup")
@@ -270,6 +294,10 @@ def validate_report(report, *, expected):
     require(isinstance(phases, list) and len(phases) == len(FIXTURE_MODES),
             "Real DbServer persistence phase coverage differs")
     for phase, mode, code in zip(phases, FIXTURE_MODES, FIXTURE_EXIT_CODES):
+        if device_policy:
+            require(exact_contract(phase.get("loopback_only"), {
+                "requested": True, "startup_acknowledgement": LOOPBACK_ACK, "endpoints": []}),
+                "Device fixture did not acknowledge loopback policy without listeners: " + mode)
         require(phase.get("mode") == mode and type(phase.get("exit_code")) is int
                 and phase["exit_code"] == code and type(phase.get("expected_exit_code")) is int
                 and phase["expected_exit_code"] == code,
@@ -298,22 +326,23 @@ def validate_report(report, *, expected):
             "Normal DbServer did not prove both startup and reload")
     catalogs = []
     for number, phase in enumerate(normal_phases, 1):
+        enabled = device_policy or number == 2
         fixed_inputs = phase.get("fixed_inputs", {})
-        require(fixed_inputs.get("requested") is (number == 2)
+        require(fixed_inputs.get("requested") is enabled
                 and "startup_acknowledgement" in fixed_inputs
-                and fixed_inputs["startup_acknowledgement"] == (FIXED_INPUTS_ACK if number == 2 else None),
-                "Normal DbServer did not qualify default startup and acknowledged fixed-input reload")
+                and fixed_inputs["startup_acknowledgement"] == (FIXED_INPUTS_ACK if enabled else None),
+                "Normal DbServer fixed-input acknowledgment differs from requested policy")
         loopback = phase.get("loopback_only")
         require(type(loopback) is dict
                 and set(loopback) == {"requested", "startup_acknowledgement", "endpoints"}
-                and loopback["requested"] is (number == 2)
-                and loopback["startup_acknowledgement"] == (LOOPBACK_ACK if number == 2 else None),
-                "Normal DbServer did not qualify default startup and acknowledged loopback reload")
+                and loopback["requested"] is enabled
+                and loopback["startup_acknowledgement"] == (LOOPBACK_ACK if enabled else None),
+                "Normal DbServer loopback acknowledgment differs from requested policy")
         validate_loopback_endpoints(loopback["endpoints"])
         required, optional = (expected["loopback_endpoints"][key] for key in ("required", "optional"))
         for values in (required, optional):
             validate_loopback_endpoints(values)
-        require((not loopback["endpoints"] if number == 1 else
+        require((not loopback["endpoints"] if not enabled else
                  all(endpoint in loopback["endpoints"] for endpoint in required)
                  and all(endpoint in required + optional for endpoint in loopback["endpoints"])),
                 "Normal DbServer loopback endpoints differ from the source-derived listener set")
@@ -350,7 +379,7 @@ def prepare_guest_hosts(work, evidence, hostname):
             "guest_hosts_evidence_file": "guest-etc-hosts"}
 
 
-def make_command(*, work, assets, package, schema, proot, timeout_seconds):
+def make_command(*, work, assets, package, schema, proot, timeout_seconds, device_policy=False):
     command = [str(proot / "proot"), "--link2symlink", "--kill-on-exit", "--sysvipc",
                "-i", "1000:1000", "-r", str(work / "rootfs")]
     binds = [("/dev", "/dev"), ("/proc", "/proc"), ("/sys", "/sys"),
@@ -370,6 +399,8 @@ def make_command(*, work, assets, package, schema, proot, timeout_seconds):
                 "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine",
                 "--wineserver", "/opt/wine/bin/wineserver",
                 "--timeout-seconds", str(timeout_seconds)]
+    if device_policy:
+        command += ["--listener-policy", "device"]
     return command
 
 
@@ -465,6 +496,8 @@ def main():
     parser.add_argument("--evidence", type=Path, default=ROOT / "out/android/dbserver-evidence")
     parser.add_argument("--proot", type=Path, default=ROOT / "out/android/native/linux-arm64")
     parser.add_argument("--timeout-seconds", type=int, default=1800)
+    parser.add_argument("--device-policy", action="store_true",
+                        help="Qualify the Android loopback/fixed-input launch policy with the accepted device donor")
     parser.add_argument("--isolate-network", action="store_true", default=True,
                         help="Mandatory: use a private loopback-only namespace (always enabled)")
     args = parser.parse_args()
@@ -478,12 +511,18 @@ def main():
     require(not work.exists(), "Use a fresh owned DbServer smoke directory")
     require(not evidence.exists(), "Use a fresh DbServer evidence directory")
     require(work != evidence, "Keep state and evidence in separate directories")
-    runtime_manifest = verify_runtime_assets(assets)
+    runtime_manifest = verify_runtime_assets(assets, device_policy=args.device_policy)
     package_manifest = verify_package(package)
     schema_manifest = verify_schema(schema)
     repository_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    require(package_manifest.get("repository_commit") == repository_commit,
-            "DbServer package was not built from the checked-out runner source")
+    if args.device_policy:
+        require(digest(package / "package-manifest.json") == DEVICE_PACKAGE_MANIFEST
+                and digest(schema / "schema-manifest.json") == DEVICE_SCHEMA_MANIFEST
+                and package_manifest.get("repository_commit") == DEVICE_PACKAGE_COMMIT,
+                "Device policy requires the exact independently qualified loopback donor and schema")
+    else:
+        require(package_manifest.get("repository_commit") == repository_commit,
+                "DbServer package was not built from the checked-out runner source")
     work.mkdir(parents=True, mode=0o700)
     evidence.mkdir(parents=True)
     lock = json.loads((assets / "runtime-lock.json").read_text())
@@ -503,7 +542,9 @@ def main():
     for name in ("opt/coh", "opt/coh/pgsql", "opt/coh-dbserver", "opt/coh-schema", "opt/coh-m3", "opt/wine", "state", "tmp"):
         (work / "rootfs" / name).mkdir(parents=True, exist_ok=True)
     guest_script = work / "m3-tools/dbserver_diagnostic.py"
-    shutil.copyfile(ROOT / "android/guest/dbserver_diagnostic.py", guest_script)
+    packaged_guest = assets / "dbserver_diagnostic.py"
+    shutil.copyfile(packaged_guest if args.device_policy and packaged_guest.is_file()
+                    else ROOT / "android/guest/dbserver_diagnostic.py", guest_script)
     for name in ("proot", "proot-loader"):
         require((proot / name).is_file() and not (proot / name).is_symlink(), "Missing native PRoot input")
         (proot / name).chmod(0o755)
@@ -513,9 +554,10 @@ def main():
         "fixture_executable_sha256": package_manifest["variants"]["fixture"]["files"]["DbServer.exe"]["sha256"],
         "normal_executable_sha256": package_manifest["variants"]["normal"]["files"]["DbServer.exe"]["sha256"],
         "schema_manifest_sha256": digest(schema / "schema-manifest.json"),
-        "repository_commit": repository_commit, "source_commit": SOURCE_COMMIT, "data_commit": DATA_COMMIT,
+        "repository_commit": package_manifest["repository_commit"], "source_commit": SOURCE_COMMIT, "data_commit": DATA_COMMIT,
     }
     expected = {"inputs": expected_inputs, "schema": schema_expectations(schema_manifest),
+                "device_policy": args.device_policy,
                 "runtime_lock_sha256": digest(assets / "runtime-lock.json"),
                 "loopback_endpoints": validate_loopback_build_input(package_manifest["wine_build_input"])}
     inputs = {"format": 1, "scope": "host_dbserver_runtime_inputs", **expected_inputs, **hosts_input,
@@ -526,10 +568,12 @@ def main():
               "proot_loader_sha256": digest(proot / "proot-loader"),
               "schema_acceptance_run_id": schema_manifest["acceptance_run_id"],
               "normal_schema_listeners": package_manifest["wine_build_input"]["normal_schema_listeners"],
+              "listener_policy": "device" if args.device_policy else "host-default",
+              "qualification_repository_commit": repository_commit,
               "android_execution_validated": False, "gameplay_validated": False}
     (evidence / "host-dbserver-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
     command = make_command(work=work, assets=assets, package=package, schema=schema,
-                           proot=proot, timeout_seconds=args.timeout_seconds)
+                           proot=proot, timeout_seconds=args.timeout_seconds, device_policy=args.device_policy)
     command, env, network_expected = isolate_command(command, evidence=evidence, proot=proot, work=work)
     report = run_guest(command, env, work / "state", evidence,
                        timeout_seconds=args.timeout_seconds, expected=expected)

@@ -27,6 +27,7 @@ public final class DiagnosticService extends Service {
     public static final String ACTION_SETUP = "io.github.russianranger.cohdiagnostic.SETUP";
     public static final String ACTION_RUN = "io.github.russianranger.cohdiagnostic.RUN";
     public static final String ACTION_CLIENT_PROBE = "io.github.russianranger.cohdiagnostic.CLIENT_PROBE";
+    public static final String ACTION_DBSERVER = "io.github.russianranger.cohdiagnostic.DBSERVER";
     public static final String ACTION_STOP = "io.github.russianranger.cohdiagnostic.STOP";
     private static final String CHANNEL = "diagnostic_progress";
     private static final int NOTIFICATION_ID = 1;
@@ -34,6 +35,7 @@ public final class DiagnosticService extends Service {
     private static final long SETUP_LIMIT_MS = 45L * 60L * 1000L;
     // The runtime has its own 20 minute limit and needs time to stop its children.
     private static final long RUN_LIMIT_MS = 22L * 60L * 1000L;
+    private static final long DBSERVER_LIMIT_MS = 34L * 60L * 1000L;
 
     public interface Listener { void onState(State state); }
 
@@ -66,13 +68,15 @@ public final class DiagnosticService extends Service {
     private final StringBuilder log = new StringBuilder();
     private static final class Operation {
         final AtomicBoolean stop = new AtomicBoolean(false);
+        final DiagnosticOutcome outcome = new DiagnosticOutcome();
         final File previousReport;
+        final String action;
         // Accessed under this operation's monitor: a delayed Stop cannot
         // interrupt the reused executor thread during a later operation.
         DiagnosticRuntime runtime;
         Thread thread;
         boolean finished;
-        Operation(File previousReport) { this.previousReport = previousReport; }
+        Operation(String action, File previousReport) { this.action = action; this.previousReport = previousReport; }
     }
     private Operation currentOperation;
     private SharedPreferences preferences;
@@ -122,8 +126,8 @@ public final class DiagnosticService extends Service {
         if (ACTION_STOP.equals(action)) {
             requestStop("Stop requested. Waiting for owned processes to finish.");
             if (!busy) stopSelf();
-        } else if (ACTION_SETUP.equals(action) || ACTION_RUN.equals(action) || ACTION_CLIENT_PROBE.equals(action)) {
-            if (!busy) begin(ACTION_SETUP.equals(action), ACTION_CLIENT_PROBE.equals(action));
+        } else if (ACTION_SETUP.equals(action) || ACTION_RUN.equals(action) || ACTION_CLIENT_PROBE.equals(action) || ACTION_DBSERVER.equals(action)) {
+            if (!busy) begin(action);
         }
         // A killed process must never silently restart an interrupted test.
         return START_NOT_STICKY;
@@ -140,7 +144,8 @@ public final class DiagnosticService extends Service {
 
     public void removeListener(Listener listener) { listeners.remove(listener); }
 
-    private void begin(boolean setup, boolean clientProbe) {
+    private void begin(String action) {
+        boolean setup = ACTION_SETUP.equals(action), clientProbe = ACTION_CLIENT_PROBE.equals(action), dbServer = ACTION_DBSERVER.equals(action);
         if (CleanupGuard.isBlocked()) {
             stage = "Cleanup failed";
             detail = CleanupGuard.reason();
@@ -162,14 +167,14 @@ public final class DiagnosticService extends Service {
         }
         busy = true;
         stopping = false;
-        stage = setup ? "Setting up runtime" : clientProbe ? "Running client probe" : "Running diagnostics";
+        stage = setup ? "Setting up runtime" : dbServer ? "Running real DbServer test" : clientProbe ? "Running client probe" : "Running diagnostics";
         detail = "You can leave this screen. Use Stop to cancel.";
         log.setLength(0);
-        final Operation operation = new Operation(latestReport);
+        final Operation operation = new Operation(action, latestReport);
         currentOperation = operation;
         preferences.edit().putBoolean("busy", true).apply();
         foreground();
-        long limit = setup ? SETUP_LIMIT_MS : RUN_LIMIT_MS;
+        long limit = setup ? SETUP_LIMIT_MS : dbServer ? DBSERVER_LIMIT_MS : RUN_LIMIT_MS;
         PowerManager manager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "COHDiagnostic:operation");
         wakeLock.acquire(limit + 30000L);
@@ -178,10 +183,11 @@ public final class DiagnosticService extends Service {
         };
         main.postDelayed(deadline, limit);
         notifyState();
-        worker.execute(() -> execute(setup, clientProbe, operation));
+        worker.execute(() -> execute(operation));
     }
 
-    private void execute(boolean setup, boolean clientProbe, Operation operation) {
+    private void execute(Operation operation) {
+        boolean setup = ACTION_SETUP.equals(operation.action), clientProbe = ACTION_CLIENT_PROBE.equals(operation.action), dbServer = ACTION_DBSERVER.equals(operation.action);
         synchronized (operation) { operation.thread = Thread.currentThread(); }
         DiagnosticRuntime runtime = null;
         File report = operation.previousReport;
@@ -203,15 +209,17 @@ public final class DiagnosticService extends Service {
                         scheduleNotify();
                     });
                 }
-            });
+            }, operation.outcome);
             synchronized (operation) { operation.runtime = runtime; }
-            if (operation.stop.get()) throw new InterruptedException("Stopped before startup");
+            // Enter the runtime even for an immediate Stop so it publishes this
+            // run's cancellation report instead of reusing an older success.
+            if (operation.stop.get()) runtime.requestStop();
             if (setup) {
                 runtime.setupRuntime();
                 passed = true;
                 summary = "Runtime setup finished. You can now run diagnostics.";
             } else {
-                DiagnosticRuntime.Result result = clientProbe ? runtime.runClientProbe() : runtime.runDiagnostics();
+                DiagnosticRuntime.Result result = dbServer ? runtime.runDbServerProbe() : clientProbe ? runtime.runClientProbe() : runtime.runDiagnostics();
                 if (result == null) throw new IllegalStateException("Runtime returned no diagnostic result");
                 passed = result.passed;
                 summary = bounded(result.summary, 600);
@@ -239,11 +247,12 @@ public final class DiagnosticService extends Service {
             final boolean completed = passed && !operation.stop.get();
             final String outcome = summary;
             final File completedReport = report;
-            main.post(() -> finish(setup, clientProbe, operation, operation.stop.get(), completed, outcome, completedReport));
+            main.post(() -> finish(operation, operation.stop.get(), completed, outcome, completedReport));
         }
     }
 
-    private void finish(boolean setup, boolean clientProbe, Operation operation, boolean cancelled, boolean passed, String summary, File report) {
+    private void finish(Operation operation, boolean cancelled, boolean passed, String summary, File report) {
+        boolean setup = ACTION_SETUP.equals(operation.action), clientProbe = ACTION_CLIENT_PROBE.equals(operation.action), dbServer = ACTION_DBSERVER.equals(operation.action);
         if (currentOperation != operation) return;
         if (deadline != null) main.removeCallbacks(deadline);
         releaseWakeLock();
@@ -252,6 +261,7 @@ public final class DiagnosticService extends Service {
         if (setup) setupComplete = passed;
         boolean blocked = CleanupGuard.isBlocked();
         stage = blocked ? "Cleanup failed" : cancelled ? "Stopped" : setup ? (passed ? "Runtime ready" : "Setup failed")
+                                             : dbServer ? (passed ? "Real DbServer test passed" : "Real DbServer test failed")
                                              : clientProbe ? (passed ? "Client probe passed" : "Client probe failed")
                                              : (passed ? "Diagnostics passed" : "Diagnostics failed");
         detail = blocked ? CleanupGuard.reason() : cancelled ? "Owned work has stopped. Export the latest report for details." : bounded(summary, 600);
@@ -266,8 +276,9 @@ public final class DiagnosticService extends Service {
 
     private void requestStop(String reason) {
         if (!busy || stopping) return;
-        stopping = true;
         final Operation operation = currentOperation;
+        if (!operation.outcome.requestStop()) return;
+        stopping = true;
         operation.stop.set(true);
         stage = "Stopping";
         detail = reason;
@@ -301,7 +312,7 @@ public final class DiagnosticService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new Notification.Builder(this, CHANNEL)
                 .setSmallIcon(android.R.drawable.stat_notify_sync)
-                .setContentTitle("COH Diagnostic — " + bounded(stage, 80))
+                .setContentTitle("COH Server Test — " + bounded(stage, 80))
                 .setContentText(bounded(detail, 160)).setContentIntent(open)
                 .setOnlyAlertOnce(true).setOngoing(true)
                 .addAction(new Notification.Action.Builder(null, "Stop", stop).build()).build();

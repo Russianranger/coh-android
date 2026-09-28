@@ -42,7 +42,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService exporter = Executors.newSingleThreadExecutor();
     private DiagnosticService service;
     private boolean bound, exporting;
-    private Button setup, run, clientProbe, stop, export;
+    private Button setup, run, clientProbe, dbServer, stop, export;
     private TextView stage, detail, logs;
     private ProgressBar progress;
     private ScrollView logScroll;
@@ -58,7 +58,7 @@ public final class MainActivity extends Activity {
             service = null;
             stage.setText("Service disconnected");
             detail.setText("Reopen this screen to reconnect. Interrupted tests do not restart automatically.");
-            setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); stop.setEnabled(false);
+            setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); dbServer.setEnabled(false); stop.setEnabled(false);
         }
     };
 
@@ -89,15 +89,20 @@ public final class MainActivity extends Activity {
         screen.addView(root, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
         setContentView(screen);
 
-        TextView title = text("COH Diagnostic", 27, INK);
+        TextView title = text("COH Server Test", 27, INK);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         root.addView(title, full());
-        TextView scope = text("Runtime and database checks for AYN Thor. The optional client probe adds synthetic graphics and input checks. City of Heroes gameplay is not included.", 14, MUTED);
+        TextView scope = text("Run the real City of Heroes DbServer persistence and schema tests on AYN Thor. Database diagnostics and the synthetic client probe are also available. This test app does not launch Atlas Park gameplay.", 14, MUTED);
         scope.setPadding(0, dp(5), 0, dp(12));
         root.addView(scope, full());
 
         setup = button("Setup runtime", () -> startOperation(DiagnosticService.ACTION_SETUP));
         root.addView(setup, full());
+        dbServer = button("Run real DbServer test", () -> startOperation(DiagnosticService.ACTION_DBSERVER));
+        root.addView(dbServer, full());
+        TextView serverScope = text("Uses a fresh test database for real server saves, restarts, backup/restore and schema reload. Allow up to 30 minutes. You can leave this screen; progress and Stop remain in the notification.", 12, MUTED);
+        serverScope.setPadding(0, dp(2), 0, dp(6));
+        root.addView(serverScope, full());
         LinearLayout actions = new LinearLayout(this);
         actions.setOrientation(LinearLayout.HORIZONTAL);
         run = button("Run diagnostics", () -> startOperation(DiagnosticService.ACTION_RUN));
@@ -114,7 +119,7 @@ public final class MainActivity extends Activity {
         root.addView(probeScope, full());
         export = button("Export latest report", this::chooseExport);
         root.addView(export, full());
-        setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); stop.setEnabled(false); export.setEnabled(false);
+        setup.setEnabled(false); run.setEnabled(false); clientProbe.setEnabled(false); dbServer.setEnabled(false); stop.setEnabled(false); export.setEnabled(false);
 
         LinearLayout status = new LinearLayout(this);
         status.setGravity(Gravity.CENTER_VERTICAL);
@@ -140,7 +145,10 @@ public final class MainActivity extends Activity {
         logs.setPadding(dp(12), dp(12), dp(12), dp(12));
         logScroll.addView(logs, new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
         root.addView(logScroll, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(180), 1));
-        TextView version = text("M2 + client probe · v0.1.5 · Android " + Build.VERSION.RELEASE + " · "
+        String versionName;
+        try { versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; }
+        catch (Exception ignored) { versionName = "unknown"; }
+        TextView version = text("Real DbServer test · v" + versionName + " · Android " + Build.VERSION.RELEASE + " · "
                 + (Build.SUPPORTED_ABIS.length == 0 ? "unknown ABI" : Build.SUPPORTED_ABIS[0]), 11, MUTED);
         version.setPadding(0, dp(8), 0, 0);
         root.addView(version, full());
@@ -176,6 +184,7 @@ public final class MainActivity extends Activity {
         setup.setEnabled(!current.busy && !current.blocked);
         run.setEnabled(!current.busy && !current.blocked && current.setupComplete);
         clientProbe.setEnabled(!current.busy && !current.blocked && current.setupComplete);
+        dbServer.setEnabled(!current.busy && !current.blocked && current.setupComplete);
         stop.setEnabled(current.busy && !current.stopping);
         stop.setText(current.stopping ? "Stopping…" : "Stop");
         export.setEnabled(!exporting && current.report != null && current.report.isFile());

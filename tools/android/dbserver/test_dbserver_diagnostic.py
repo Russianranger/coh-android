@@ -69,7 +69,7 @@ class DbServerAcceptanceTests(unittest.TestCase):
             self.assertEqual(environment['WINEPREFIX'], '/private/wine')
             self.assertEqual(diagnostic.wine_env[guest.FIXED_INPUTS_ENV], 'inherited')
 
-    def test_two_normal_launches_cover_default_creation_and_fixed_input_reload(self):
+    def exercise_normal_schema_policy(self, device_policy):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source = root / 'schema/data/server/db/servers.cfg'
@@ -78,6 +78,7 @@ class DbServerAcceptanceTests(unittest.TestCase):
             runtime = root / 'runtime'
             runtime.mkdir()
             diagnostic = object.__new__(guest.DbServerDiagnostic)
+            diagnostic.device_policy = device_policy
             diagnostic.root = root
             diagnostic.args = SimpleNamespace(schema=root / 'schema')
             diagnostic.schema = {'files': ['data/server/db/servers.cfg']}
@@ -101,11 +102,140 @@ class DbServerAcceptanceTests(unittest.TestCase):
             diagnostic.run_windows = run_windows
             with patch.object(guest.base, 'windows_path', side_effect=str):
                 diagnostic.normal_schema()
-            self.assertEqual(requested, [('normal-schema-1', False, False), ('normal-schema-2', True, True)])
             self.assertTrue(diagnostic.schema_report['reload_stable'])
-            self.assertEqual([phase['fixed_inputs']['requested'] for phase in diagnostic.schema_report['phases']],
-                             [False, True])
             self.assertEqual(diagnostic.schema_snapshot.call_count, 2)
+            return diagnostic, requested
+
+    def test_two_normal_launches_cover_default_creation_and_fixed_input_reload(self):
+        diagnostic, requested = self.exercise_normal_schema_policy(False)
+        self.assertEqual(requested, [('normal-schema-1', False, False), ('normal-schema-2', True, True)])
+        self.assertEqual([phase['fixed_inputs']['requested'] for phase in diagnostic.schema_report['phases']],
+                         [False, True])
+
+    def test_device_normal_startup_and_reload_both_enforce_verified_loopback(self):
+        diagnostic, requested = self.exercise_normal_schema_policy(True)
+        self.assertEqual(requested, [('normal-schema-1', True, True), ('normal-schema-2', True, True)])
+        for phase in diagnostic.schema_report['phases']:
+            self.assertEqual(phase['fixed_inputs'], {'requested': True,
+                             'startup_acknowledgement': guest.FIXED_INPUTS_ACK})
+            self.assertEqual(phase['loopback_only']['endpoints'], self.loopback_endpoints()['required'])
+
+    def test_android_cannot_select_unprotected_policy_but_host_can_qualify_device_policy(self):
+        self.assertEqual(guest.listener_policy('host'), 'host-default')
+        self.assertEqual(guest.listener_policy('host', 'device'), 'device')
+        self.assertEqual(guest.listener_policy('android'), 'device')
+        self.assertEqual(guest.listener_policy('android', 'device'), 'device')
+        for platform, policy in (('android', 'host-default'), ('android', 'invalid'), ('other', 'device')):
+            with self.subTest(platform=platform, policy=policy), self.assertRaises(guest.base.DiagnosticError):
+                guest.listener_policy(platform, policy)
+
+    def test_device_fixture_enforces_loopback_ack_and_refuses_any_listener(self):
+        diagnostic = object.__new__(guest.DbServerDiagnostic)
+        diagnostic.device_policy = True
+        diagnostic.fixture_runtime = Path('/private/fixture')
+        diagnostic.connection = Path('/private/connection')
+        diagnostic.database = 'coh_test_' + '0' * 16
+        diagnostic.fixture_report = {'phases': []}
+        diagnostic.ctx = SimpleNamespace(stage=Mock(), passed=Mock(), secrets=[])
+        output = guest.LOOPBACK_ACK + '\nPG_TEST_COMPLETE initial\n'
+        diagnostic.run_windows = Mock(return_value=({'exit_code': 0}, output))
+        diagnostic.phase('initial')
+        self.assertIs(diagnostic.run_windows.call_args.kwargs['loopback_only'], True)
+        self.assertEqual(diagnostic.fixture_report['phases'][0]['loopback_only'], {
+            'requested': True, 'startup_acknowledgement': guest.LOOPBACK_ACK, 'endpoints': []})
+        for invalid in ('PG_TEST_COMPLETE initial\n', output + guest.LOOPBACK_ENV
+                        + ' bind verified: protocol=tcp address=127.0.0.1 port=7000\n'):
+            diagnostic.run_windows.return_value = ({'exit_code': 0}, invalid)
+            with self.subTest(output=invalid), self.assertRaises(guest.base.DiagnosticError):
+                diagnostic.phase('initial')
+
+    def test_device_payload_pin_matches_accepted_artifacts_and_rejects_substitution(self):
+        package_manifest = ROOT / 'docs/android-evidence/dbserver-package-36460867428.json'
+        self.assertEqual(guest.base.file_hash(package_manifest), guest.DEVICE_PACKAGE_MANIFEST)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'package-manifest.json').write_bytes(package_manifest.read_bytes())
+            schema = root / 'schema-manifest.json'
+            schema.write_bytes(b'{}')
+            with patch.object(guest, 'DEVICE_SCHEMA_MANIFEST', guest.base.file_hash(schema)):
+                self.assertEqual(guest.verify_device_payload(root, root)['run_id'], 36460867428)
+                (root / 'package-manifest.json').write_bytes(package_manifest.read_bytes() + b' ')
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'qualified'):
+                    guest.verify_device_payload(root, root)
+
+    def test_device_runtime_preserves_accepted_bytes_and_refuses_changed_base_or_bundle(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            files = {}
+            for number in range(12):
+                name = 'base-' + str(number)
+                path = root / name
+                path.write_bytes(bytes([number]))
+                files[name] = {'bytes': 1, 'sha256': guest.base.file_hash(path)}
+            original = {'format': 1, 'repository_commit': guest.ACCEPTED_RUNTIME_COMMIT,
+                        'scope': 'accepted base', 'files': files, 'android_execution_validated': False}
+            raw = json.dumps(original).encode()
+            accepted_hash = hashlib.sha256(raw).hexdigest()
+            manifest_path = root / 'runtime-manifest.json'
+            manifest_path.write_bytes(raw)
+            with patch.object(guest, 'ACCEPTED_RUNTIME_MANIFEST', accepted_hash):
+                self.assertFalse(guest.verify_device_runtime(root)['augmented'])
+                manifest = copy.deepcopy(original)
+                manifest['repository_commit'] = 'a' * 40
+                manifest['scope'] = 'device candidate'
+                manifest['accepted_base_runtime'] = {'run_id': 36364550345,
+                    'repository_commit': guest.ACCEPTED_RUNTIME_COMMIT,
+                    'manifest_file': 'accepted-runtime-manifest.json', 'manifest_sha256': accepted_hash,
+                    'manifest': original}
+                manifest['dbserver_device_bundle'] = {
+                    'format': 1, 'package_run_id': guest.DEVICE_PACKAGE_RUN,
+                    'package_manifest_sha256': guest.DEVICE_PACKAGE_MANIFEST,
+                    'package_repository_commit': 'eed2ce1f5388195f65a07853919761a93657aca6',
+                    'schema_manifest_sha256': guest.DEVICE_SCHEMA_MANIFEST, 'schema_acceptance_run_id': 36088012666,
+                    'guest_script': 'dbserver_diagnostic.py', 'package_archive': 'dbserver-package.tar.gz',
+                    'schema_archive': 'dbserver-schema.tar.gz', 'listener_policy': 'device',
+                    'android_execution_validated': False, 'gameplay_validated': False}
+                for name in ('accepted-runtime-manifest.json', 'dbserver_diagnostic.py',
+                             'dbserver-package.tar.gz', 'dbserver-schema.tar.gz'):
+                    path = root / name
+                    path.write_bytes(raw if name == 'accepted-runtime-manifest.json' else b'fixture')
+                    manifest['files'][name] = {'bytes': path.stat().st_size, 'sha256': guest.base.file_hash(path)}
+                manifest_path.write_text(json.dumps(manifest))
+                self.assertTrue(guest.verify_device_runtime(root)['augmented'])
+                mutations = [lambda m: m['accepted_base_runtime'].update(manifest_sha256='f' * 64),
+                             lambda m: m['files']['base-0'].update(sha256='f' * 64),
+                             lambda m: m['dbserver_device_bundle'].update(listener_policy='host-default'),
+                             lambda m: m['dbserver_device_bundle'].update(format=True),
+                             lambda m: m['dbserver_device_bundle'].update(android_execution_validated=True),
+                             lambda m: m.update(android_execution_validated=0),
+                             lambda m: m['files'].pop('dbserver_diagnostic.py')]
+                for mutate in mutations:
+                    changed = copy.deepcopy(manifest)
+                    mutate(changed)
+                    manifest_path.write_text(json.dumps(changed))
+                    with self.assertRaises(guest.base.DiagnosticError):
+                        guest.verify_device_runtime(root)
+                manifest_path.write_text(json.dumps(manifest))
+                (root / 'base-0').write_bytes(b'changed')
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'asset differs'):
+                    guest.verify_device_runtime(root)
+
+    def test_android_cli_keeps_provenance_unverified_and_rejects_host_policy_before_launch(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            fake = SimpleNamespace(execute=Mock(), cleanup=lambda: [], cleanup_status={
+                'postgres_graceful': True, 'wine_prefix_stopped': True, 'owned_processes_reaped': True})
+            with patch.object(guest, 'DbServerDiagnostic', return_value=fake) as constructor, \
+                 patch.object(guest.signal, 'signal'), redirect_stdout(io.StringIO()):
+                self.assertEqual(guest.main(['--state', temporary, '--execution-platform', 'android']), 0)
+                report = json.loads((Path(temporary) / 'latest-report.json').read_text())
+                self.assertEqual(report['listener_policy'], 'device')
+                self.assertEqual(report['execution_platform_requested'], 'android')
+                self.assertIs(report['android_execution_validated'], False)
+                self.assertIs(report['android_listener_binding_validated'], False)
+                constructor.reset_mock()
+                self.assertEqual(guest.main(['--state', temporary, '--execution-platform', 'android',
+                                             '--listener-policy', 'host-default']), 1)
+                constructor.assert_not_called()
 
     def loopback_build_input(self):
         with patch.object(sys, 'path', [str(ROOT / 'tools'), *sys.path]):

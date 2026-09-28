@@ -1,6 +1,6 @@
 """Validate real aapt2 badging dialects without relaxing APK identity checks."""
 import unittest
-from build_apk import APP_ID, VERSION_CODE, VERSION_NAME, verify_badging
+from build_apk import APP_ID, JAVA_PACKAGE, VERSION_CODE, VERSION_NAME, verify_badging
 
 
 class BadgingTests(unittest.TestCase):
@@ -10,7 +10,7 @@ class BadgingTests(unittest.TestCase):
         return (f"package: name='{app_id}' versionCode='{version_code}' versionName='{version_name}' "
                 "platformBuildVersionName='15' platformBuildVersionCode='35'\n"
                 f"{minimum}\n{target}\n{native}\n"
-                f"launchable-activity: name='{APP_ID}.MainActivity' label='' icon=''\n")
+                f"launchable-activity: name='{JAVA_PACKAGE}.MainActivity' label='' icon=''\n")
 
     def test_sdk35_minimum_label(self):
         verify_badging(self.sample())
@@ -35,7 +35,7 @@ class BadgingTests(unittest.TestCase):
 
     def test_previous_apk_version_fails(self):
         for old_code, old_name in ((1, '0.1.0'), (2, '0.1.1'), (3, '0.1.2'),
-                                   (4, '0.1.3'), (5, '0.1.4')):
+                                   (4, '0.1.3'), (5, '0.1.4'), (6, '0.1.5')):
             for code, name in ((old_code, old_name), (old_code, VERSION_NAME),
                                (VERSION_CODE, old_name)):
                 with self.subTest(code=code, name=name), self.assertRaisesRegex(ValueError, 'package/version'):

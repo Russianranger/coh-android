@@ -894,6 +894,18 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
+The next candidate is [COH Server Test 0.2.0](ANDROID_SERVER_DEVICE_TEST.md),
+installed alongside 0.1.5 as `io.github.russianranger.cohdiagnostic.m3`.
+It packages the exact accepted M2 payloads and qualified loopback DbServer donor
+`36460867428`, with a device policy enabling loopback for every DbServer process
+and fixed inputs for both normal schema launches. The original Atlas donor is
+not changed. Each real test has disposable state and each operation an immutable
+support ZIP. The candidate workflow builds the APK and runs its exact packaged
+guest/bundles on hosted ARM64 with the device policy. At this implementation
+checkpoint, hosted candidate and physical Thor results are still pending.
+Next device checks are real DbServer pass, Stop/report/rerun, app reopening and
+screen-lock behavior; the device instructions explain the scope and required ZIPs.
+
 **The primary M2 device diagnostic, hosted M3 DbServer and hosted Atlas
 create/save/restart/resume/second-save sequence are accepted.** The Atlas
 [acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)

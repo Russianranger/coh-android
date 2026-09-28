@@ -171,6 +171,14 @@ class NetworkIsolationTests(unittest.TestCase):
 
 
 class RunnerCommandTests(unittest.TestCase):
+    def test_device_policy_command_keeps_host_provenance_and_explicit_protected_policy(self):
+        root = Path('/owned')
+        command = host.make_command(work=root / 'work', assets=root / 'm2', package=root / 'package',
+                                    schema=root / 'schema', proot=root / 'proot', timeout_seconds=1800,
+                                    device_policy=True)
+        self.assertEqual(command[-2:], ['--listener-policy', 'device'])
+        self.assertNotIn('android', command)
+
     def test_new_guest_and_packages_have_separate_binds_from_accepted_m2(self):
         root = Path("/owned")
         command = host.make_command(work=root / "work", assets=root / "m2", package=root / "package",
@@ -252,6 +260,51 @@ class ReportAcceptanceTests(unittest.TestCase):
 
     def test_complete_report_is_accepted(self):
         host.validate_report(self.sample(), expected=self.expected())
+
+    def device_sample(self):
+        report, expected = self.sample(), self.expected()
+        expected['device_policy'] = True
+        report['listener_policy'] = 'device'
+        report['qualified_device_payload'] = {
+            'run_id': 36460867428, 'package_manifest_sha256': host.DEVICE_PACKAGE_MANIFEST,
+            'schema_manifest_sha256': host.DEVICE_SCHEMA_MANIFEST}
+        report['accepted_device_runtime'] = {
+            'accepted_manifest_sha256': host.ACCEPTED_RUNTIME_MANIFEST,
+            'runtime_manifest_sha256': expected['inputs']['runtime_manifest_sha256'], 'augmented': True}
+        for phase in report['fixture']['phases']:
+            phase['loopback_only'] = {'requested': True, 'startup_acknowledgement': host.LOOPBACK_ACK,
+                                      'endpoints': []}
+        phase = report['generated_schema']['phases'][0]
+        phase['fixed_inputs'] = {'requested': True, 'startup_acknowledgement': host.FIXED_INPUTS_ACK}
+        phase['loopback_only'] = {'requested': True, 'startup_acknowledgement': host.LOOPBACK_ACK,
+                                  'endpoints': copy.deepcopy(expected['loopback_endpoints']['required'])}
+        return report, expected
+
+    def test_device_policy_validates_every_real_launch_without_claiming_android(self):
+        report, expected = self.device_sample()
+        host.validate_report(report, expected=expected)
+        mutations = [lambda r: r.update(listener_policy='host-default'),
+                     lambda r: r['qualified_device_payload'].update(package_manifest_sha256='f' * 64),
+                     lambda r: r['accepted_device_runtime'].update(accepted_manifest_sha256='f' * 64),
+                     lambda r: r.update(execution_platform_requested='android'),
+                     lambda r: r.update(android_listener_binding_validated=True),
+                     lambda r: r['fixture']['phases'][0].pop('loopback_only'),
+                     lambda r: r['fixture']['phases'][-1]['loopback_only'].update(requested=1),
+                     lambda r: r['fixture']['phases'][2]['loopback_only'].update(startup_acknowledgement=None),
+                     lambda r: r['fixture']['phases'][3]['loopback_only']['endpoints'].append(
+                         {'protocol': 'tcp', 'address': '127.0.0.1', 'port': 7000}),
+                     lambda r: r['generated_schema']['phases'][0]['loopback_only'].update(requested=False),
+                     lambda r: r['generated_schema']['phases'][0]['loopback_only']['endpoints'].pop(),
+                     lambda r: r['generated_schema']['phases'][0]['fixed_inputs'].update(requested=False)]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(case=index), self.assertRaises(RuntimeError):
+                altered = copy.deepcopy(report)
+                mutate(altered)
+                host.validate_report(altered, expected=expected)
+        with self.assertRaises(RuntimeError):
+            host.validate_report(report, expected=self.expected())
+        with self.assertRaises(RuntimeError):
+            host.validate_report(self.sample(), expected=expected)
 
     def test_partial_cleanup_false_scope_and_input_substitution_are_rejected(self):
         mutations = [lambda r: r.update(passed=False),
