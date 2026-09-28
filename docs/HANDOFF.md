@@ -894,15 +894,22 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-The next candidate is [COH Server Test 0.2.0](ANDROID_SERVER_DEVICE_TEST.md),
+The hosted-qualified candidate is [COH Server Test 0.2.0](ANDROID_SERVER_DEVICE_TEST.md),
 installed alongside 0.1.5 as `io.github.russianranger.cohdiagnostic.m3`.
 It packages the exact accepted M2 payloads and qualified loopback DbServer donor
 `36460867428`, with a device policy enabling loopback for every DbServer process
 and fixed inputs for both normal schema launches. The original Atlas donor is
 not changed. Each real test has disposable state and each operation an immutable
 support ZIP. The candidate workflow builds the APK and runs its exact packaged
-guest/bundles on hosted ARM64 with the device policy. At this implementation
-checkpoint, hosted candidate and physical Thor results are still pending.
+guest/bundles on hosted ARM64 with the device policy. All three jobs and all 28
+runtime stages passed in
+[run 36483331900](https://github.com/Russianranger/coh-android/actions/runs/36483331900)
+at `f7dbba42ec29a1c054d856d71810146f5b53bac6`. Tooling passed 233 checks with eight
+Windows-only skips. The APK is 16,668,615 bytes, SHA-256
+`cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b`.
+The [candidate receipt](android-evidence/accepted-device-candidate-hosted-36483331900.json)
+binds the build, independently checked APK payloads and hosted reports.
+Physical Thor results and peak memory measurements remain pending.
 Next device checks are real DbServer pass, Stop/report/rerun, app reopening and
 screen-lock behavior; the device instructions explain the scope and required ZIPs.
 
@@ -925,9 +932,9 @@ byte-identical repeat; retain both receipts and the current donor.
 The separate loopback listener package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json)
 in run `36460867428`; it has not replaced the Atlas donor. Preserve its earlier
-CRLF fixture-setup failure and correction. Physical Android listener validation
-and app lifecycle integration remain before the next device
-candidate. Keep the existing 0.1.5 APK and runtime. See the
+CRLF fixture-setup failure and correction. The candidate integrates the listener
+package and app lifecycle handling; physical Android validation remains.
+Keep the existing 0.1.5 APK and runtime. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
 Stop followed by a successful rerun, suspend/resume and memory measurements remain
 device checks and can accompany the next candidate. The following items preserve
@@ -984,9 +991,10 @@ completed reference gates; no repeated Windows-only milestone is needed.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Keep the accepted 0.1.5 APK. Start a diagnostic, choose Stop, wait for its
-   terminal result and export the report; then rerun diagnostics and export that
-   result. The combined run with reused state and full cleanup pass above remain accepted.
+4. Keep the accepted 0.1.5 APK. Install the separate
+   [0.2.0 server candidate](ANDROID_SERVER_DEVICE_TEST.md), complete its real
+   DbServer test, then follow the Stop/report/rerun and background steps there.
+   The accepted 0.1.5 combined run with reused state and full cleanup remains accepted.
    Suspend/resume and memory behavior are pending device measurements. These
    checks can accompany the next M3 candidate; implementation need not wait for
    another run of the already-passed diagnostic.

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "directories": {
+    "package": "/home/runner/work/coh-android/coh-android/out/device-unpacked/package",
+    "schema": "/home/runner/work/coh-android/coh-android/out/device-unpacked/schema"
+  },
+  "scope": "Exact APK payload hashes and safe extraction; physical Android is unvalidated"
+}

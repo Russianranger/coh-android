@@ -1,0 +1,167 @@
+{
+  "format": 1,
+  "scope": "host_dbserver_runtime_inputs",
+  "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+  "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+  "fixture_executable_sha256": "77d4677904d967dfdeffa3c6b2609ae0620ccc28177655c6f5f975a7ec4c2212",
+  "normal_executable_sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+  "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "kernel_hostname": "runnervmoyp6c",
+  "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+  "guest_hosts_bytes": 34,
+  "guest_hosts_loopback_aliases": [
+    "localhost",
+    "runnervmoyp6c"
+  ],
+  "guest_hosts_evidence_file": "guest-etc-hosts",
+  "runtime_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "package_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+  "guest_script_sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+  "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+  "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+  "schema_acceptance_run_id": 36088012666,
+  "normal_schema_listeners": {
+    "scope": "normal_schema_exportdump_fakeauth_noqueue_embedded_log",
+    "source_encoding": "UTF-8_LF",
+    "source_sha256": {
+      "Common/ClientLogin/clientcommLogin.c": "19ae7bee0f7f5951760ed80d6ca9e54da63d29f1ad1339044e116d9c1e614aea",
+      "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+      "Common/dbserver/servercfg.c": "bc4f88d167e4725786c2ad8ad46a332d89f14b604b1b076368b7f8e051dbeb32",
+      "DBServer/src/accountservercomm.c": "17867612cc52482fdc3ee1f068bf1cd60a27397d054addb04d14116eb0de95ae",
+      "DBServer/src/arenacomm.c": "df6b5d9e69f676a04d42c2124cbc10e2c26072466451dd81e5aa02db959c8710",
+      "DBServer/src/auctionservercomm.c": "f85ceceaaf9042ac8b44cdf92ab9c9d2d49fdc335c556ff3bb63757ff6d1cf4e",
+      "DBServer/src/beaconservercomm.c": "aac1321a77f5cff36135588c8533beaff72e729372657fc0d9625ba4713e82c0",
+      "DBServer/src/clientcomm.c": "8dde54625131dab6692208af45ae7e710eb72bfa44e78462c62b0e516a7df08c",
+      "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+      "DBServer/src/launchercomm.c": "647746af7350adeb30a8397d592d7e4dc5fb7265604ae2668362f4d77bbc3c0c",
+      "DBServer/src/logserver.c": "fee4cd4113af5ef8225575c570a0f0d5d54564dac71dfcf2fa75eac587b3451d",
+      "DBServer/src/mapcrashreport.c": "cb1c8086cf5fe71e40340e9842395de5e89506bcf3b6f00691c22125b340845a",
+      "DBServer/src/missionservercomm.c": "3ee0ab67577a9b27840982710beb24db0ae9822535fb1e8f1af718739878b17d",
+      "DBServer/src/statservercomm.c": "6c2665f494740ebc1c50c3ece12e248d1ee0942f8e8abd5a3d35a288a6de5b4a",
+      "DBServer/src/svrmoncomm.c": "ced7f25a46753264c6ee0778b0ec15f12b875dbf621cf3a65a4677cd3bdc0ee1",
+      "DBServer/src/turnstileDb.c": "432f4b1f80bc6d17051e048b488b0ac3135a4ac64386388ad2aead82dce8c7cc",
+      "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce"
+    },
+    "endpoints": [
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6971,
+        "constant": "DEFAULT_DBTURNSTILE_PORT",
+        "source": "DBServer/src/turnstileDb.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6974,
+        "constant": "DEFAULT_MISSIONSERVER_PORT",
+        "source": "DBServer/src/missionservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6976,
+        "constant": "DEFAULT_ACCOUNTSERVER_PORT",
+        "source": "DBServer/src/accountservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6977,
+        "constant": "DEFAULT_AUCTIONSERVER_HEROES_PORT",
+        "source": "DBServer/src/auctionservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6979,
+        "constant": "DEFAULT_BEACONCLIENT_PORT",
+        "source": "DBServer/src/beaconservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6980,
+        "constant": "DEFAULT_BEACONSERVER_PORT",
+        "source": "DBServer/src/beaconservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6982,
+        "constant": "DEFAULT_DBSTAT_PORT",
+        "source": "DBServer/src/statservercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6984,
+        "constant": "DEFAULT_DBARENA_PORT",
+        "source": "DBServer/src/arenacomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6989,
+        "constant": "DEFAULT_LOG_PORT",
+        "source": "DBServer/src/logserver.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6992,
+        "constant": "DEFAULT_DBCRASHMAP_PORT",
+        "source": "DBServer/src/mapcrashreport.c",
+        "required_before_export": false
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6996,
+        "constant": "DEFAULT_SVRMON_PORT",
+        "source": "DBServer/src/svrmoncomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6997,
+        "constant": "DEFAULT_DB_PORT",
+        "source": "DBServer/src/dbinit.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "tcp",
+        "address": "127.0.0.1",
+        "port": 6998,
+        "constant": "DEFAULT_DBLAUNCHER_PORT",
+        "source": "DBServer/src/launchercomm.c",
+        "required_before_export": true
+      },
+      {
+        "protocol": "udp",
+        "address": "127.0.0.1",
+        "port": 7000,
+        "constant": "DEFAULT_DBGAMECLIENT_PORT",
+        "source": "Common/ClientLogin/clientcommLogin.c",
+        "required_before_export": true
+      }
+    ]
+  },
+  "listener_policy": "device",
+  "qualification_repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

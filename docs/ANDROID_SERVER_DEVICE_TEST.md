@@ -12,6 +12,26 @@ candidate uses a separate private runtime and separate disposable test databases
 Its CI signing certificate is temporary, so future candidate updates may need
 separate installation instructions.
 
+## Qualified build
+
+[Run 36483331900](https://github.com/Russianranger/coh-android/actions/runs/36483331900)
+at `f7dbba42ec29a1c054d856d71810146f5b53bac6` passed tooling, APK build and
+all 28 hosted ARM64 runtime stages. Tooling ran 241 tests: 233 passed and eight
+Windows-only checks were skipped on Linux. Signature and package identity checks
+passed, and all 17 APK runtime entries plus both native libraries independently
+matched the downloaded build artifacts. See the
+[acceptance receipt](android-evidence/accepted-device-candidate-hosted-36483331900.json).
+
+Download the APK from the run's **coh-server-test-apk** artifact. The APK is
+16,668,615 bytes with SHA-256:
+
+```text
+cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b
+```
+
+This qualifies the APK build and its packaged guest runtime on hosted ARM64.
+Physical Thor execution, listener binding and lifecycle behavior remain pending.
+
 ## Inputs and scope
 
 The candidate retains every accepted M2 runtime payload byte from run
@@ -46,7 +66,9 @@ support wrapper supplies actual device provenance after a device run.
    The normal hosted DbServer test takes a few minutes, but this is not a device
    timing guarantee.
 4. After **Real DbServer test passed**, tap **Export latest report** and save the ZIP.
-5. Start the real test again. Once it is running, tap **Stop**. Wait for **Stopped**,
+5. Start the real test again. Wait until the progress shows
+   `wine_prefix_and_driver` or a `dbserver_` stage, then tap **Stop**. This lets
+   the test launch workers before checking their cleanup. Wait for **Stopped**,
    then export that report. A cancelled test must not be reported as passed.
 6. Run it again to completion. During this run, switch to another app and return,
    then lock the screen for about 30 seconds and unlock it. Export the final report.
@@ -56,7 +78,9 @@ support wrapper supplies actual device provenance after a device run.
 Completed reports have unique immutable filenames. Later operations cannot
 change an earlier file while its export picker is open. The app exports the
 latest operation by default, so export each requested report before starting
-the next operation. An interrupted process never silently restarts a test.
+the next operation. If setup or a test fails, export its report immediately
+before starting another operation. An interrupted process never silently
+restarts a test.
 
 The existing **Run diagnostics** and **Run client probe** buttons remain available
 as supporting checks; they are not prerequisites to repeat after the accepted
@@ -73,3 +97,4 @@ the accepted Atlas donor and evidence until the replacement has passed.
 Physical Atlas execution, interactive rendering, controls, audio, missions and
 combat remain separate unvalidated milestones. The separate earlier intermittent
 hosted fixture signal-11 failure is not claimed repaired by this candidate.
+Peak device memory has not yet been measured.

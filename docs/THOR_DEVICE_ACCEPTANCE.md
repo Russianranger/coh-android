@@ -43,12 +43,14 @@ belongs to the separate native regression.
 
 ## Next work
 
-Keep the installed **0.1.5** and its runtime. No replacement APK, reinstall,
-runtime download or repeat of the successful diagnostic is needed for this gate.
+Keep the installed **0.1.5** and its runtime. No repeat of its successful
+diagnostic is needed. The next gate uses the separate
+[COH Server Test 0.2.0 candidate](ANDROID_SERVER_DEVICE_TEST.md), installed
+alongside it with its own runtime download and disposable DbServer databases.
 The reused state proves a subsequent combined run, but does not establish app
 reopening, Stop cancellation or suspend/resume behavior. These lifecycle checks
-and peak memory measurements remain device work and can accompany the next
-candidate: stop an active run, export its stopped report before it is overwritten,
+and peak memory measurements remain device work. Follow the candidate's steps:
+stop a run after its workers launch, export its stopped report before starting another operation,
 then verify a new run succeeds; also switch away and return during active work.
 A stopped run must report cancellation rather than a successful diagnostic.
 
@@ -65,8 +67,9 @@ readiness took 3 minutes 14 seconds, so device startup performance remains open.
 
 The separate loopback DbServer package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json).
-Continue with app integration and physical Android listener/runtime execution,
-then the Stop/rerun, app reopening, suspend/resume and memory checks above.
+The separate candidate integrates that exact donor into the Android app.
+Continue with physical Android listener/runtime execution and the Stop/rerun,
+app reopening and screen-lock checks. Peak memory remains unmeasured.
 The loopback package has not replaced the accepted Atlas donor 36451873322;
 integrating it needs its own game/runtime validation before device acceptance.
 Preserve the accepted stock Windows reference and immutable upstream source.
