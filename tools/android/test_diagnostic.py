@@ -572,6 +572,137 @@ class WineProcessOwnerTests(unittest.TestCase):
                 self.owner.signal_owned(candidate, signal.SIGTERM)
         kill.assert_not_called()
 
+    def test_dead_leader_live_worker_is_reaped_and_same_shape_sentinel_survives(self):
+        fixture = self.root / 'owned-wine-thread-fixture'
+        subprocess.run(['cc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', '-pthread',
+                        str(ROOT / 'tools/android/owned_wine_thread_fixture.c'), '-o', str(fixture)],
+                       check=True, capture_output=True, timeout=20)
+        sentinel = subprocess.Popen([str(fixture)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    env=dict(os.environ, COH_WINE_SESSION='unrelated-thread-group'))
+        self.addCleanup(self.stop_process, sentinel)
+        self.addCleanup(sentinel.stdout.close)
+        self.assertEqual(sentinel.stdout.readline(), b'worker_ready\n')
+        identity = self.root / 'thread-group.pid'
+        parent = ('import subprocess\nfrom pathlib import Path\n'
+                  f'p=subprocess.Popen([{str(fixture)!r}],start_new_session=True)\n'
+                  f'Path({str(identity)!r}).write_text(str(p.pid))\n')
+        def force_cleanup():
+            if identity.exists():
+                try:
+                    os.kill(int(identity.read_text()), signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        self.addCleanup(force_cleanup)
+        self.context.run('wineboot-thread-group', [sys.executable, '-u', '-c', parent],
+                         env=dict(os.environ, **self.owner.environment), timeout=3,
+                         allow_background_output=True)
+        child = self.context.children[-1]
+        self.addCleanup(child.stop)
+        deadline = time.monotonic() + 3
+        while True:
+            candidates = self.owner.scan(deadline)
+            if self.owner.receipt['owned_live_workers']:
+                break
+            self.assertLess(time.monotonic(), deadline, 'Fixture leader did not exit its thread')
+            time.sleep(.01)
+        self.assertEqual(len(candidates), 1)
+        group = Path('/proc') / str(candidates[0]['proc_pid'])
+        self.assertEqual(self.owner.process_stat(group)['state'], 'Z')
+        live = list(self.owner.live_tasks(group))
+        self.assertEqual(len(live), 1)
+        self.assertEqual(self.owner.status(live[0][0])['tgid'], candidates[0]['proc_pid'])
+        pipe = os.readlink(Path('/proc/self/fd') / str(child.process.stdout.fileno()))
+        self.assertEqual(os.readlink(live[0][0] / 'fd/1'), pipe,
+                         'Live worker must retain the exact captured output pipe')
+        self.assertTrue(child.reader.is_alive())
+        started = time.monotonic()
+        receipt = self.owner.cleanup(started + 5)
+        child.reader.join(timeout=1)
+        self.assertTrue(receipt['complete'])
+        self.assertEqual(receipt['candidates'], 1)
+        self.assertGreaterEqual(receipt['dead_leaders_with_live_tasks'], 2)
+        self.assertEqual(receipt['owned_live_workers'], 1)
+        self.assertEqual(receipt['remaining'], 0)
+        self.assertEqual(receipt['term_signals'], 1)
+        self.assertEqual(receipt['kill_signals'], 1)
+        self.assertFalse(child.reader.is_alive(), 'Live worker retained pipe after whole-group cleanup')
+        self.assertIsNone(sentinel.poll(), 'Unrelated dead-leader group must survive')
+        self.assertLess(time.monotonic() - started, 5)
+
+    def fake_dead_leader(self):
+        group = self.root / '123'
+        task = group / 'task/124'
+        task.mkdir(parents=True)
+        self.owner.proc_root = self.root
+        self.owner.initialized = True
+        self.owner.real_uid = 42
+        self.owner.excluded = set()
+        self.owner.direct_pid_view = True
+        self.owner.diagnostic_starttime = 1
+        leader = {'pid': 123, 'state': 'Z', 'parent': 1, 'starttime': 10}
+        worker = {'pid': 124, 'state': 'S', 'parent': 1, 'starttime': 11}
+        status = {'uid': 42, 'pid': 123, 'tgid': 123, 'namespace_pids': [123]}
+        worker_status = {**status, 'pid': 124, 'namespace_pids': [124]}
+        return group, task, leader, worker, status, worker_status
+
+    def test_true_zombie_group_is_ignored_only_after_task_inspection(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        with patch.object(self.owner, 'status', return_value=status), \
+             patch.object(self.owner, 'process_stat', side_effect=lambda path: leader if path == group else
+                          {**worker, 'state': 'Z'}), \
+             patch.object(self.owner, 'has_token', side_effect=AssertionError('Dead task environment read')):
+            self.assertIsNone(self.owner.inspect(123))
+        self.assertEqual(self.owner.receipt['scanned_tasks'], 1)
+
+    def test_dead_leader_with_unreadable_live_worker_fails_closed(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        with patch.object(self.owner, 'status', side_effect=lambda path: status if path == group else worker_status), \
+             patch.object(self.owner, 'process_stat', side_effect=lambda path: leader if path == group else worker), \
+             patch.object(self.owner, 'has_token', side_effect=PermissionError('Live worker non-dumpable')):
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'Cannot inspect same-UID'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+
+    def test_live_worker_wrong_group_or_changed_starttime_cannot_authorize_signal(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        candidate = {'proc_pid': 123, 'pid': 123, 'starttime': 10}
+        for changed_group in (True, False):
+            reads = [0]
+            def process_stat(path):
+                if path == group:
+                    return leader
+                reads[0] += 1
+                return {**worker, 'starttime': 12} if reads[0] > 1 and not changed_group else worker
+            bad_status = {**worker_status, 'tgid': 456} if changed_group else worker_status
+            with self.subTest(changed_group=changed_group), \
+                 patch.object(self.owner, 'status', side_effect=lambda path: status if path == group else bad_status), \
+                 patch.object(self.owner, 'process_stat', side_effect=process_stat), \
+                 patch.object(self.owner, 'has_token', return_value=True), \
+                 patch.object(diagnostic.os, 'pidfd_open', return_value=19), \
+                 patch.object(diagnostic.os, 'close'), \
+                 patch.object(diagnostic.signal, 'pidfd_send_signal') as send, \
+                 patch.object(diagnostic.os, 'kill') as kill:
+                with self.assertRaises(diagnostic.DiagnosticError):
+                    self.owner.signal_owned(candidate, signal.SIGKILL)
+                send.assert_not_called()
+                kill.assert_not_called()
+
+    def test_dead_leader_live_worker_cannot_hide_lost_ownership_before_signal(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        candidate = {'proc_pid': 123, 'pid': 123, 'starttime': 10}
+        with patch.object(self.owner, 'status', side_effect=lambda path: status if path == group else worker_status), \
+             patch.object(self.owner, 'process_stat', side_effect=lambda path: leader if path == group else worker), \
+             patch.object(self.owner, 'has_token', return_value=False), \
+             patch.object(diagnostic.os, 'pidfd_open', return_value=19), \
+             patch.object(diagnostic.os, 'close'), \
+             patch.object(diagnostic.signal, 'pidfd_send_signal') as send, \
+             patch.object(diagnostic.os, 'kill') as kill:
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'identity changed'):
+                self.owner.signal_owned(candidate, signal.SIGKILL)
+        send.assert_not_called()
+        kill.assert_not_called()
+
     def test_same_uid_unreadable_environment_is_not_accepted_as_clean(self):
         proc = self.root / 'proc'
         proc.mkdir()

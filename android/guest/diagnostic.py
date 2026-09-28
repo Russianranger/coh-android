@@ -311,7 +311,10 @@ class WineProcessOwner:
         self.environment = {self.ENV_KEY: token}
         self.needle = (self.ENV_KEY + "=" + token).encode()
         self.initialized = False
+        self.dead_leaders, self.owned_workers = set(), set()
         self.receipt = {"policy": "same_real_uid_and_run_token", "scanned_processes": 0,
+                        "scanned_tasks": 0, "dead_leaders_with_live_tasks": 0,
+                        "owned_live_workers": 0,
                         "candidates": 0, "term_signals": 0, "kill_signals": 0,
                         "pidfd_signals": 0, "identity_checked_signals": 0,
                         "inspection_failures": 0, "remaining": None, "complete": False}
@@ -322,6 +325,7 @@ class WineProcessOwner:
         fields = {line.split(":", 1)[0]: line.split(":", 1)[1].split()
                   for line in lines if ":" in line}
         return {"uid": int(fields["Uid"][0]), "pid": int(fields["Pid"][0]),
+                "tgid": int(fields["Tgid"][0]),
                 "namespace_pids": [int(value) for value in fields.get("NSpid", [])]}
 
     @staticmethod
@@ -356,7 +360,69 @@ class WineProcessOwner:
                 break
         self.initialized = True
 
-    def inspect(self, proc_pid):
+    def live_tasks(self, path, deadline=None):
+        # A thread-group leader can be a zombie while worker threads still own
+        # the group's descriptors. Only an entirely dead group releases them.
+        for count, task in enumerate((path / "task").iterdir(), 1):
+            require(count <= 4096, "Wine ownership task count exceeds bound")
+            require(deadline is None or time.monotonic() < deadline,
+                    "Wine ownership task inspection timed out")
+            if not task.name.isdecimal():
+                continue
+            self.receipt["scanned_tasks"] += 1
+            try:
+                identity = self.process_stat(task)
+            except FileNotFoundError:
+                continue
+            require(identity["pid"] == int(task.name), "Wine cleanup task identity changed")
+            if identity["state"] != "Z":
+                yield task, identity
+
+    def has_token(self, path):
+        with (path / "environ").open("rb") as source:
+            environment = source.read(1024 * 1024 + 1)
+        require(len(environment) <= 1024 * 1024, "Wine ownership environment exceeds bound")
+        return self.needle in environment.split(b"\0")
+
+    def inspect_dead_leader(self, path, identity, deadline):
+        for task, worker in self.live_tasks(path, deadline):
+            group_key = (identity["pid"], identity["starttime"])
+            require(len(self.dead_leaders) < 4096 or group_key in self.dead_leaders,
+                    "Wine ownership group count exceeds bound")
+            self.dead_leaders.add(group_key)
+            self.receipt["dead_leaders_with_live_tasks"] = len(self.dead_leaders)
+            try:
+                status = self.status(task)
+                require(status["uid"] == self.real_uid and status["tgid"] == identity["pid"]
+                        and status["pid"] == worker["pid"],
+                        "Cannot verify Wine worker group membership")
+                if not self.direct_pid_view:
+                    if (len(status["namespace_pids"]) != self.namespace_depth
+                            or os.readlink(task / "ns/pid") != self.namespace):
+                        return False
+                if not self.has_token(task):
+                    continue
+                current_worker = self.process_stat(task)
+                require(current_worker["pid"] == worker["pid"]
+                        and current_worker["starttime"] == worker["starttime"],
+                        "Wine cleanup worker identity changed")
+                if current_worker["state"] == "Z":
+                    continue
+                current_group = self.process_stat(path)
+                require(current_group["pid"] == identity["pid"]
+                        and current_group["starttime"] == identity["starttime"],
+                        "Wine cleanup group identity changed")
+            except FileNotFoundError:
+                continue
+            worker_key = (*group_key, worker["pid"], worker["starttime"])
+            require(len(self.owned_workers) < 4096 or worker_key in self.owned_workers,
+                    "Wine ownership worker count exceeds bound")
+            self.owned_workers.add(worker_key)
+            self.receipt["owned_live_workers"] = len(self.owned_workers)
+            return True
+        return False
+
+    def inspect(self, proc_pid, deadline=None):
         path = self.proc_root / str(proc_pid)
         try:
             status = self.status(path)
@@ -378,15 +444,14 @@ class WineProcessOwner:
             if identity["starttime"] < self.diagnostic_starttime:
                 return None
             if identity["state"] == "Z":
-                return None  # A zombie cannot execute or retain open descriptors.
-            if not self.direct_pid_view and os.readlink(path / "ns/pid") != self.namespace:
-                return None
-            with (path / "environ").open("rb") as source:
-                environment = source.read(1024 * 1024 + 1)
-            require(len(environment) <= 1024 * 1024, "Wine ownership environment exceeds bound")
+                if not self.inspect_dead_leader(path, identity, deadline):
+                    return None
+            else:
+                if not self.direct_pid_view and os.readlink(path / "ns/pid") != self.namespace:
+                    return None
+                if not self.has_token(path):
+                    return None
         except FileNotFoundError:
-            return None
-        if self.needle not in environment.split(b"\0"):
             return None
         pid = proc_pid if self.direct_pid_view else status["namespace_pids"][-1]
         require(pid > 0 and pid != os.getpid(), "Invalid owned Wine PID")
@@ -402,7 +467,7 @@ class WineProcessOwner:
             require(time.monotonic() < deadline, "Wine ownership inspection timed out")
             self.receipt["scanned_processes"] += 1
             try:
-                candidate = self.inspect(int(path.name))
+                candidate = self.inspect(int(path.name), deadline)
             except PermissionError:
                 # Hidden processes belonging to other UIDs cannot be identified
                 # from status. A known same-UID unreadable environment is unsafe.
@@ -421,7 +486,7 @@ class WineProcessOwner:
                 owned.append(candidate)
         return owned
 
-    def signal_owned(self, identity, sig):
+    def signal_owned(self, identity, sig, deadline=None):
         pidfd = None
         try:
             if hasattr(os, "pidfd_open") and hasattr(signal, "pidfd_send_signal"):
@@ -432,15 +497,19 @@ class WineProcessOwner:
                 except OSError as exc:
                     require(exc.errno in (errno.ENOSYS, errno.EINVAL, errno.EPERM, errno.EACCES),
                             "Cannot open owned Wine process handle")
-            current = self.inspect(identity["proc_pid"])
+            current = self.inspect(identity["proc_pid"], deadline)
             if current is None:
                 # A vanished process is benign; a still-live replaced PID is not.
                 try:
                     changed = self.process_stat(self.proc_root / str(identity["proc_pid"]))
                 except FileNotFoundError:
                     return
-                if changed["state"] == "Z":
-                    return
+                if changed["starttime"] == identity["starttime"] and changed["state"] == "Z":
+                    try:
+                        if next(self.live_tasks(self.proc_root / str(identity["proc_pid"]), deadline), None) is None:
+                            return
+                    except FileNotFoundError:
+                        return
                 raise DiagnosticError("Owned Wine process identity changed before signal")
             require(current == identity, "Owned Wine process identity changed before signal")
             if pidfd is not None:
@@ -465,7 +534,7 @@ class WineProcessOwner:
             for sig, grace in ((signal.SIGTERM, 1), (signal.SIGKILL, 1)):
                 for identity in owned:
                     require(time.monotonic() < deadline, "Wine ownership cleanup timed out")
-                    self.signal_owned(identity, sig)
+                    self.signal_owned(identity, sig, deadline)
                 until = min(deadline, time.monotonic() + grace)
                 while owned and time.monotonic() < until:
                     time.sleep(0.05)

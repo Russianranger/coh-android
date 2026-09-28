@@ -75,16 +75,21 @@ def run_guest(command, env, state, evidence, *, repeat, client_probe, runtime_lo
         raise
     return report
 
-def run_owned_wine_fixture(command, env, state, evidence):
+def run_owned_wine_fixture(command, env, state, evidence, *, thread_fixture=None):
+    fixture_name='owned-wine-thread-smoke' if thread_fixture else 'owned-wine-smoke'
     guest_index=command.index('/usr/bin/python3')
     fixture_command=command[:guest_index]+[
         '/usr/bin/python3','/opt/coh-host-tools/owned_wine_smoke.py',
-        '--diagnostic','/opt/coh/diagnostic.py','--state','/state/owned-wine-smoke']
+        '--diagnostic','/opt/coh/diagnostic.py','--state','/state/'+fixture_name]
+    if thread_fixture:
+        fixture_command+=['--thread-fixture','/opt/coh-native-test/'+thread_fixture.name]
     bind_index=fixture_command.index('-w')
     fixture_command[bind_index:bind_index]=['-b',str(ROOT/'tools/android')+':/opt/coh-host-tools']
-    source_report=state/'owned-wine-smoke/report.json'
-    report_path=evidence/'owned-wine-cleanup-report.json'
-    log_path=evidence/'host-owned-wine.log'
+    if thread_fixture:
+        fixture_command[bind_index:bind_index]=['-b',str(thread_fixture.parent.resolve())+':/opt/coh-native-test']
+    source_report=state/fixture_name/'report.json'
+    report_path=evidence/('owned-wine-thread-cleanup-report.json' if thread_fixture else 'owned-wine-cleanup-report.json')
+    log_path=evidence/('host-owned-wine-thread.log' if thread_fixture else 'host-owned-wine.log')
     report_path.unlink(missing_ok=True)
     with log_path.open('w') as log:
         process=subprocess.Popen(fixture_command,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
@@ -105,11 +110,31 @@ def run_owned_wine_fixture(command, env, state, evidence):
     report=json.loads(report_path.read_text())
     required=('passed','detached_helper_retained_output','detached_helper_reaped',
               'output_eof_observed','unrelated_sentinel_survived','same_prefix_different_token_preserved')
-    if (report.get('scope')!='synthetic_owned_process_cleanup_under_proot'
+    scope='synthetic_owned_thread_cleanup_under_proot' if thread_fixture else 'synthetic_owned_process_cleanup_under_proot'
+    cleanup=report.get('wine_process_cleanup',{})
+    if (report.get('status')!='passed' or report.get('scope')!=scope
             or not all(report.get(name) is True for name in required)
             or report.get('android_execution_validated') is not False
-            or report.get('wine_process_cleanup',{}).get('complete') is not True):
+            or report.get('gameplay_validated') is not False
+            or cleanup.get('complete') is not True or cleanup.get('remaining')!=0
+            or any(type(cleanup.get(name)) is not int or cleanup[name]<1
+                   for name in ('candidates','term_signals','kill_signals'))
+            or not report.get('processes')
+            or any(item.get('exit_code')!=0 or item.get('output_capture_closed') is not True
+                   or item.get('input_closed') is not True for item in report['processes'])):
         raise RuntimeError('Owned Wine cleanup fixture did not prove detached cleanup and sentinel preservation')
+    if thread_fixture:
+        snapshot=report.get('before_cleanup',{})
+        if (not all(report.get(name) is True for name in ('dead_leader_live_worker_reproduced',
+                    'owned_live_workers_reaped','same_executable_sentinel_preserved'))
+                or snapshot.get('leader_state')!='Z'
+                or snapshot.get('initializer_output_capture_open') is not True
+                or snapshot.get('legacy_zombie_skip_would_miss_group') is not True
+                or any(type(snapshot.get(name)) is not int or snapshot[name]<1 for name in
+                       ('live_worker_count','owned_live_worker_count','owned_stdout_pipe_holders'))
+                or any(type(cleanup.get(name)) is not int or cleanup[name]<1 for name in
+                       ('dead_leaders_with_live_tasks','owned_live_workers'))):
+            raise RuntimeError('Owned Wine thread fixture did not prove dead-leader/live-worker cleanup')
     return report
 
 def main():
@@ -135,7 +160,7 @@ def main():
     state.mkdir(mode=0o700);tmp.mkdir(mode=0o700)
     (a.work/'passwd').write_text('root:x:0:0:root:/root:/bin/sh\ncoh:x:1000:1000:COH:/state:/bin/sh\nnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin\n')
     (a.work/'group').write_text('root:x:0:\ncoh:x:1000:\nnogroup:x:65534:\n')
-    for directory in ['opt/coh','opt/coh/pgsql','opt/coh-host-tools','opt/wine','state','tmp']:(root/directory).mkdir(parents=True,exist_ok=True)
+    for directory in ['opt/coh','opt/coh/pgsql','opt/coh-host-tools','opt/coh-native-test','opt/wine','state','tmp']:(root/directory).mkdir(parents=True,exist_ok=True)
     proot=a.proot.resolve()
     for name in ['proot','proot-loader']:(proot/name).chmod(0o755)
     command=[str(proot/'proot'),'--link2symlink','--kill-on-exit','--sysvipc','-i','1000:1000','-r',str(root.resolve())]
@@ -147,9 +172,15 @@ def main():
     env=os.environ.copy();env.update(PROOT_LOADER=str(proot/'proot-loader'),PROOT_TMP_DIR=str(tmp.resolve()),PROOT_NO_SECCOMP='1')
     evidence=a.evidence;evidence.mkdir(parents=True,exist_ok=True)
     for name in ('runtime-smoke-report.json','runtime-repeat-report.json','host-diagnostic.log','host-repeat.log',
-                 'owned-wine-cleanup-report.json','host-owned-wine.log'):
+                 'owned-wine-cleanup-report.json','host-owned-wine.log',
+                 'owned-wine-thread-cleanup-report.json','host-owned-wine-thread.log'):
         (evidence/name).unlink(missing_ok=True)
+    native_test=a.work/'native-test';native_test.mkdir()
+    thread_fixture=native_test/'owned-wine-thread-fixture'
+    subprocess.run(['cc','-std=c11','-O2','-Wall','-Wextra','-Werror','-pthread',
+                    str(ROOT/'tools/android/owned_wine_thread_fixture.c'),'-o',str(thread_fixture)],check=True)
     run_owned_wine_fixture(command,env,state,evidence)
+    run_owned_wine_fixture(command,env,state,evidence,thread_fixture=thread_fixture)
     runtime_lock_sha256=digest(a.assets/'runtime-lock.json')
     # Keep the first run's accepted evidence stable and use the exact same
     # command/runtime/workspace again only after its owned shutdown passed.
@@ -163,6 +194,7 @@ def main():
                       'stages':len(reports[0].get('stages',[])),
                       'repeat_stages':len(reports[1].get('stages',[])),
                       'client_probe':a.client_probe,'warm_repeat_validated':True,
-                      'owned_wine_cleanup_fixture':str(evidence/'owned-wine-cleanup-report.json')}))
+                      'owned_wine_cleanup_fixture':str(evidence/'owned-wine-cleanup-report.json'),
+                      'owned_wine_thread_cleanup_fixture':str(evidence/'owned-wine-thread-cleanup-report.json')}))
 
 if __name__=='__main__':main()
