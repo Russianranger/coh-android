@@ -508,7 +508,7 @@ def prepare_runtime(work, evidence, assets):
                  "opt/coh-schema", "opt/coh-m3", "opt/wine", "state", "tmp"):
         (work / "rootfs" / name).mkdir(parents=True, exist_ok=True)
     scripts = {}
-    for name in ("game_diagnostic.py", "game_evidence.py", "dbserver_diagnostic.py"):
+    for name in ("game_diagnostic.py", "game_evidence.py", "game_failure.py", "dbserver_diagnostic.py"):
         target = work / "m3-tools" / name
         shutil.copyfile(ROOT / "android/guest" / name, target)
         scripts[name] = digest(target)

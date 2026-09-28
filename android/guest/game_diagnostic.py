@@ -20,6 +20,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dbserver_diagnostic as dbserver
 import game_evidence as evidence
+import game_failure
 
 base = dbserver.base
 require = base.require
@@ -252,6 +253,14 @@ class BridgeSession:
 
 
 class GameDiagnostic(dbserver.DbServerDiagnostic):
+    ctx_base = base
+
+    def observe_odbc_failure(self, child):
+        if child.label.startswith('game-query-') and not self.ctx.cancel_requested:
+            game_failure.inspect(self, child)
+        else:
+            super().observe_odbc_failure(child)
+
     def __init__(self, args, context):
         self.package = dbserver.load_json(args.game_package / 'game-package.json')
         self.data = dbserver.load_json(args.game_data / 'game-data-manifest.json', 64 * 1024 * 1024)
