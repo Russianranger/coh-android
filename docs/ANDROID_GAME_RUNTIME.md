@@ -1,7 +1,10 @@
 # Hosted Atlas character persistence on ARM64
 
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
-new hosted gate is implemented; real ARM64 qualification is pending. It does
+new hosted gate is implemented; real ARM64 qualification is pending. The first
+real attempt reached DbServer readiness and progressed into Atlas loading, then
+failed a startup status-query deadline. Its input inventory and owned cleanup
+passed; character execution had not started. It does
 not change the accepted Thor 0.1.5 APK or claim Android game execution.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
@@ -48,3 +51,20 @@ checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
 separate milestones. Keep the accepted device diagnostic installed while this
 hosted runtime is being qualified.
+
+## First real attempt
+
+[Run 36372777933](https://github.com/Russianranger/coh-android/actions/runs/36372777933)
+passed all 48 tooling checks, the PE32 bridge build/native contracts, package
+verification and full data staging. The guest copied and verified its private
+data in 296.868 seconds. DbServer became ready, but a 25-second Atlas status
+query timed out during cold map loading. All 101 process captures closed;
+PostgreSQL and Wine stopped cleanly, with zero remaining owned processes or
+inspection errors. See the [failure receipt](android-evidence/game-runtime-failure-36372777933.json).
+
+All 103 geometry-warning lines retained from that attempt also occur verbatim
+in the accepted Windows reference logs. The exact data inventory matches; no
+source patch or preload-skipping flag is justified by these warnings. The retry
+adds live stage progress, bounded full service captures, less frequent cold
+startup queries and longer startup-only deadlines. Save/resume and current
+heartbeat checks remain unchanged; the overall guest deadline stays 3,600 seconds.

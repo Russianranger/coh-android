@@ -29,6 +29,10 @@ QUERY_LIMIT = 80
 READINESS_LIMIT = 20
 EVENT_LIMIT = 8 * 1024 * 1024
 CONSOLE_LIMIT = 16 * 1024 * 1024
+SERVICE_LABELS = ('first-dbserver', 'first-atlas', 'restart-dbserver', 'restart-atlas')
+SERVICE_STDOUT_LIMIT = 6 * 1024 * 1024
+SERVICE_LOG_LIMIT = 4 * 1024 * 1024
+SERVICE_LOG_SEGMENT = 512 * 1024
 
 
 def safe_path(name):
@@ -47,6 +51,36 @@ def regular_path(root, name):
         require(not target.is_symlink(), 'Linked game payload refused')
     require(target.is_file(), 'Missing game payload: ' + name)
     return target
+
+
+def inventory_files(root, check=lambda: None):
+    """One no-follow tree inventory; DirEntry avoids repeated Path stat calls."""
+    require(not root.is_symlink() and root.is_dir(), 'Invalid game inventory root')
+    files, pending = set(), [root]
+    while pending:
+        check()
+        with os.scandir(pending.pop()) as entries:
+            for entry in entries:
+                require(not entry.is_symlink(), 'Linked game input refused')
+                path = Path(entry.path)
+                if entry.is_dir(follow_symlinks=False):
+                    pending.append(path)
+                else:
+                    require(entry.is_file(follow_symlinks=False), 'Nonregular game input refused')
+                    files.add(path.relative_to(root).as_posix())
+    return files
+
+
+def create_private_parents(path, root, created):
+    """Create each parent once within a freshly owned, still unlaunched tree."""
+    require(path == root or root in path.parents, 'Private game parent escaped runtime')
+    missing = []
+    while path not in created:
+        missing.append(path)
+        path = path.parent
+    for parent in reversed(missing):
+        parent.mkdir(mode=0o700)
+        created.add(parent)
 
 
 def game_config(original, database, connection):
@@ -252,6 +286,10 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.query_count = self.readiness_count = 0
         self.runtime = self.root / ('game-' + secrets.token_hex(6))
         self.game = {'status': 'running', 'phases': [], 'map_samples': [], 'character_samples': [], 'sessions': {}}
+        self.game['startup_policy'] = {'first_atlas_timeout_seconds': 2400, 'restart_atlas_timeout_seconds': 900,
+            'startup_query_timeout_seconds': 90, 'first_poll_interval_seconds': 60,
+            'restart_poll_interval_seconds': 30, 'live_query_timeout_seconds': 25,
+            'overall_timeout_seconds': args.timeout_seconds}
         self.ctx.report['game'] = self.game
         self.ctx.report['inputs'] = {
             'runtime_manifest_sha256': base.file_hash(args.assets / 'runtime-manifest.json'),
@@ -269,6 +307,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 and self.data.get('file_count') == len(files), 'Invalid full game data inventory')
         self.runtime.mkdir(mode=0o700)
         (self.runtime / 'tools').mkdir(mode=0o700)
+        created = {self.runtime, self.runtime / 'tools'}
         names, total = {}, 0
         next_progress = time.monotonic()
         for number, (name, record) in enumerate(files.items(), 1):
@@ -283,25 +322,19 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             source = regular_path(self.args.game_data, name)
             require(source.stat().st_size == record['bytes'], 'Game data size differs: ' + name)
             target = self.runtime / name
-            target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            create_private_parents(target.parent, self.runtime, created)
             shutil.copyfile(source, target)
             require(base.file_hash(target) == record['sha256'], 'Copied game data hash differs: ' + name)
             names[name.casefold()] = name
             if time.monotonic() >= next_progress:
                 self.ctx.event('stage', status='running', message='Staging verified game inputs', files=number)
                 next_progress = time.monotonic() + 5
-        actual = set()
-        for path in self.args.game_data.rglob('*'):
-            require(not path.is_symlink(), 'Linked game input refused')
-            if path.is_file():
-                actual.add(path.relative_to(self.args.game_data).as_posix())
-            else:
-                require(path.is_dir(), 'Nonregular game input refused')
+        actual = inventory_files(self.args.game_data, self.ctx.check)
         require(actual == set(files) | {'game-data-manifest.json'} and total == self.data.get('total_bytes'),
                 'Game data inventory has extra/missing files or bytes')
         for name in self.schema['files']:
             target = self.runtime / names.get(name.casefold(), name)
-            target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            create_private_parents(target.parent, self.runtime, created)
             shutil.copyfile(self.args.schema / name, target)
         for name in self.package['files']:
             shutil.copyfile(self.args.game_package / name, self.runtime / name)
@@ -337,18 +370,18 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.services.append(child)
         return child
 
-    def query(self, arguments, label):
+    def query(self, arguments, label, *, timeout=25):
         self.health()
         require(self.query_count < QUERY_LIMIT, 'Game protocol query budget exceeded')
         self.query_count += 1
         result, text = self.run_windows('game-query-' + label, self.runtime / 'MapServer.exe',
             ['-nogui', '-db', '127.0.0.1', '-dbquery', '-timeout', '10000', *arguments],
-            self.runtime, timeout=25)
+            self.runtime, timeout=timeout)
         require(result['exit_code'] == 0, 'Game protocol query failed')
         return text
 
-    def map_status(self, label, *, allow_missing=False):
-        sample = evidence.parse_map_status(self.query(['-getstatus', '1', '1'], label), allow_missing=allow_missing)
+    def map_status(self, label, *, allow_missing=False, timeout=25):
+        sample = evidence.parse_map_status(self.query(['-getstatus', '1', '1'], label, timeout=timeout), allow_missing=allow_missing)
         sample.update(phase=label, sampled_utc=base.utc(), monotonic=time.monotonic())
         self.game['map_samples'].append(sample)
         return sample
@@ -381,23 +414,27 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             if time.monotonic() < next_baseline:
                 return False
             next_baseline = time.monotonic() + 10
-            baseline = self.map_status(label + '-baseline', allow_missing=True)
+            baseline = self.map_status(label + '-baseline', allow_missing=True, timeout=90)
             require(not baseline['ready'], 'Atlas was running before the owned launch')
             return baseline if baseline.get('not_started') else False
         self.wait(unstarted, 60, 'Unstarted Atlas baseline')
         self.start_game(label + '-atlas', 'MapServer.exe', ['-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1'])
         next_status = 0
+        readiness_timeout = 2400 if label == 'first' else 900
+        poll_interval = 60 if label == 'first' else 30
         def ready():
             nonlocal next_status
             if time.monotonic() < next_status:
                 return False
-            next_status = time.monotonic() + 15
-            sample = self.map_status(label + '-ready')
+            sample = self.map_status(label + '-ready', timeout=90)
+            next_status = time.monotonic() + poll_interval
             return sample if evidence.map_ready_current(sample) else False
-        sample = self.wait(ready, 900, 'Atlas DB-confirmed readiness')
+        sample = self.wait(ready, readiness_timeout, 'Atlas DB-confirmed readiness')
         self.game['phases'].append({'phase': label + '_services_ready', 'status': 'passed',
-                                    'baseline_not_started': True, 'schema': catalog, 'map': sample})
+                                    'baseline_not_started': True, 'schema': catalog, 'map': sample,
+                                    'readiness_timeout_seconds': readiness_timeout,
+                                    'query_timeout_seconds': 90, 'poll_interval_seconds': poll_interval})
         self.ctx.passed(baseline_not_started=True, atlas_ready=True, table_count=catalog['table_count'])
 
     def observe_atlas(self):
@@ -681,6 +718,80 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             write(label + '-snapshot.json', json.dumps(value, sort_keys=True, separators=(',', ':')) + '\n', 1024 * 1024)
         self.game['capture_files'] = inventory
 
+    def export_service_captures(self):
+        """Keep full bounded owned stdout and explicit bounded startup/log tails."""
+        root = self.args.state / 'game-service-captures'
+        require(not root.exists(), 'Refusing stale game service captures')
+        root.mkdir(mode=0o700)
+        files, inventory = {}, {}
+        manifest = {'format': 1, 'files': files, 'selected_log_limit': 32,
+                    'log_segment_bytes': SERVICE_LOG_SEGMENT, 'unselected_logs': 0}
+        def write(name, text, limit, metadata):
+            require(len(text.encode()) <= limit, 'Game service capture exceeded export bound')
+            path = root / name
+            base.private_write(path, text)
+            inventory[name] = {'bytes': path.stat().st_size, 'sha256': base.file_hash(path)}
+            files[name] = {**inventory[name], **metadata}
+        try:
+            for label in SERVICE_LABELS:
+                matches = [child for child in self.ctx.children if child.label == label]
+                require(len(matches) <= 1, 'Repeated service process label')
+                if not matches:
+                    continue
+                child = matches[0]
+                require(len(child.output) <= base.OUTPUT_LIMIT, 'Owned service capture exceeded original bound')
+                write(label + '-stdout.txt', base.redact(child.text(), self.ctx.secrets), SERVICE_STDOUT_LIMIT,
+                      {'kind': 'owned_service_stdout', 'process_label': label,
+                       'original_bytes': len(child.output), 'truncated': child.overflow,
+                       'capture_closed': not child.reader.is_alive(), 'overflow': child.overflow})
+            log_root = self.ctx.log_root
+            paths = []
+            if log_root is not None:
+                require(not log_root.is_symlink() and log_root.is_dir(), 'Invalid service log root')
+                pending, examined = [log_root], 0
+                while pending:
+                    directory = pending.pop()
+                    with os.scandir(directory) as entries:
+                        for entry in entries:
+                            examined += 1
+                            require(examined <= 4096, 'Service log inventory exceeds bound')
+                            path = Path(entry.path)
+                            # Only root *.log and the engine-owned logs/ subtree.
+                            if directory == log_root and entry.name != 'logs' and not entry.name.endswith('.log'):
+                                continue
+                            require(not entry.is_symlink(), 'Linked service log refused')
+                            if entry.is_dir(follow_symlinks=False):
+                                if directory != log_root or entry.name == 'logs':
+                                    pending.append(path)
+                            else:
+                                require(entry.is_file(follow_symlinks=False), 'Nonregular service log refused')
+                                if entry.name.endswith('.log'):
+                                    paths.append(path)
+            paths.sort(key=lambda path: path.relative_to(log_root).as_posix())
+            manifest['unselected_logs'] = max(0, len(paths) - 32)
+            for number, path in enumerate(paths[:32], 1):
+                with path.open('rb') as source:
+                    size = os.fstat(source.fileno()).st_size
+                    raw = source.read(2 * SERVICE_LOG_SEGMENT)
+                    truncated = size > 2 * SERVICE_LOG_SEGMENT
+                    if truncated:
+                        source.seek(-SERVICE_LOG_SEGMENT, os.SEEK_END)
+                        raw = raw[:SERVICE_LOG_SEGMENT] + b'\n[diagnostic capture: middle omitted]\n' + source.read(SERVICE_LOG_SEGMENT)
+                write('log-' + str(number).zfill(3) + '.txt',
+                      base.redact(raw.decode('utf-8', errors='replace'), self.ctx.secrets), SERVICE_LOG_LIMIT,
+                      {'kind': 'runtime_log', 'source_relative_path': path.relative_to(log_root).as_posix(),
+                       'original_bytes': size, 'truncated': truncated})
+        except Exception as exc:
+            manifest['inspection_failure'] = base.redact(str(exc), self.ctx.secrets)
+            raise
+        finally:
+            text = json.dumps(manifest, indent=2) + '\n'
+            require(len(text.encode()) <= 128 * 1024, 'Service capture manifest exceeds bound')
+            path = root / 'manifest.json'
+            base.private_write(path, text)
+            inventory['manifest.json'] = {'bytes': path.stat().st_size, 'sha256': base.file_hash(path)}
+            self.game['service_capture_files'] = inventory
+
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
@@ -722,6 +833,10 @@ def main(argv=None):
                 diagnostic.export_captures()
             except Exception as exc:
                 context.report['failures'].append('Cannot export bounded game evidence: ' + str(exc))
+            try:
+                diagnostic.export_service_captures()
+            except Exception as exc:
+                context.report['failures'].append('Cannot export bounded service evidence: ' + str(exc))
         context.report['finished_utc'] = base.utc()
         context.report['cleanup_complete'] = all(child.process.poll() is not None and not child.reader.is_alive()
                                                 and not child.writer.is_alive() for child in context.children)

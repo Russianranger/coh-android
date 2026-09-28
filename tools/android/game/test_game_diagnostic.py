@@ -1,6 +1,7 @@
 """Focused lifecycle boundaries for the hosted game orchestration."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -166,6 +167,104 @@ class GameOrchestrationTests(unittest.TestCase):
                 context.start('excess', ['true'], cleanup=True)
             spawn.assert_not_called()
         self.assertEqual(len(context.children), guest.PROCESS_LIMIT)
+
+    def test_private_parent_cache_creates_each_directory_once_and_rejects_existing_intruder(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            created = {root}
+            parent = root / 'data' / 'defs'
+            guest.create_private_parents(parent, root, created)
+            with patch.object(Path, 'mkdir', side_effect=AssertionError('repeat mkdir')):
+                guest.create_private_parents(parent, root, created)
+            (root / 'unowned').mkdir()
+            with self.assertRaises(FileExistsError):
+                guest.create_private_parents(root / 'unowned', root, created)
+            with self.assertRaises(guest.base.DiagnosticError):
+                guest.create_private_parents(root.parent, root, created)
+
+    def test_scandir_inventory_matches_exact_files_and_rejects_links_and_special_nodes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'data').mkdir()
+            (root / 'data' / 'one').write_text('one')
+            (root / 'manifest.json').write_text('{}')
+            check = Mock()
+            self.assertEqual(guest.inventory_files(root, check), {'data/one', 'manifest.json'})
+            self.assertTrue(check.called)
+            (root / 'linked').symlink_to(root / 'data', target_is_directory=True)
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Linked'):
+                guest.inventory_files(root)
+            (root / 'linked').unlink()
+            os.mkfifo(root / 'pipe')
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Nonregular'):
+                guest.inventory_files(root)
+
+    def service_diagnostic(self, root, *, output=b'Atlas startup\n'):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        runtime = root / 'runtime'
+        runtime.mkdir()
+        child = SimpleNamespace(label='first-atlas', output=output, overflow=False,
+            text=lambda: output.decode('utf-8', errors='replace'), reader=Mock())
+        child.reader.is_alive.return_value = False
+        diagnostic.ctx = SimpleNamespace(children=[child], log_root=runtime, secrets=['private-secret'])
+        diagnostic.args = SimpleNamespace(state=root)
+        diagnostic.game = {}
+        return diagnostic
+
+    def test_service_export_keeps_full_owned_output_and_explicit_bounded_log_head_tail(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.service_diagnostic(root, output=b'begin private-secret\n' + b'x' * 20000 + b'\nend\n')
+            logs = diagnostic.ctx.log_root / 'logs'
+            logs.mkdir()
+            payload = b'START Password=private-secret;\n' + b'x' * (3 * guest.SERVICE_LOG_SEGMENT) + b'\nFINAL\n'
+            (logs / 'atlas.log').write_bytes(payload)
+            (diagnostic.ctx.log_root / 'servers.cfg').write_text('private-secret must not be exported')
+            diagnostic.export_service_captures()
+            exported = root / 'game-service-captures'
+            manifest = json.loads((exported / 'manifest.json').read_text())
+            self.assertEqual(manifest['format'], 1)
+            self.assertEqual(set(manifest['files']), {'first-atlas-stdout.txt', 'log-001.txt'})
+            stdout = (exported / 'first-atlas-stdout.txt').read_text()
+            self.assertTrue(stdout.startswith('begin [redacted]'))
+            self.assertTrue(stdout.endswith('end\n'))
+            self.assertGreater(len(stdout), 16384, 'Export must retain more than report tail')
+            log = (exported / 'log-001.txt').read_text()
+            self.assertTrue(log.startswith('START Password=[redacted];'))
+            self.assertTrue(log.endswith('FINAL\n'))
+            self.assertIn('[diagnostic capture: middle omitted]', log)
+            record = manifest['files']['log-001.txt']
+            self.assertEqual(record['original_bytes'], len(payload))
+            self.assertEqual(record['source_relative_path'], 'logs/atlas.log')
+            self.assertTrue(record['truncated'])
+            for name, digest in diagnostic.game['service_capture_files'].items():
+                raw = (exported / name).read_bytes()
+                self.assertNotIn(b'private-secret', raw)
+                self.assertEqual(digest, {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()})
+
+    def test_service_export_refuses_linked_log_but_preserves_already_captured_owned_stdout(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.service_diagnostic(root)
+            (diagnostic.ctx.log_root / 'outside.log').symlink_to('/etc/passwd')
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Linked service log'):
+                diagnostic.export_service_captures()
+            exported = root / 'game-service-captures'
+            manifest = json.loads((exported / 'manifest.json').read_text())
+            self.assertEqual(set(manifest['files']), {'first-atlas-stdout.txt'})
+            self.assertIn('inspection_failure', manifest)
+            self.assertEqual(set(diagnostic.game['service_capture_files']), {'first-atlas-stdout.txt', 'manifest.json'})
+
+    def test_live_queries_keep_25_second_budget_and_startup_can_explicitly_use_90(self):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        diagnostic.health = Mock()
+        diagnostic.query_count = 0
+        diagnostic.runtime = Path('/private/runtime')
+        diagnostic.run_windows = Mock(return_value=({'exit_code': 0}, 'status'))
+        diagnostic.query(['-getstatus', '3', '42'], 'live')
+        self.assertEqual(diagnostic.run_windows.call_args.kwargs['timeout'], 25)
+        diagnostic.query(['-getstatus', '1', '1'], 'startup', timeout=90)
+        self.assertEqual(diagnostic.run_windows.call_args.kwargs['timeout'], 90)
 
 
 if __name__ == '__main__':

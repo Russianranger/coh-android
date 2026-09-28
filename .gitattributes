@@ -2,3 +2,5 @@ upstream/ouroboros/** -text
 upstream/i24/** -text
 assets/reference-inputs-*.json -text
 docs/android-evidence/*-36369485666.* -text
+
+docs/android-evidence/*-36372777933.json -text

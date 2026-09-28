@@ -2,6 +2,7 @@
 import copy
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -180,6 +181,95 @@ class RunnerTests(unittest.TestCase):
             self.assertFalse((evidence / "game-runtime-report.json").exists())
 
 
+class ProgressTests(unittest.TestCase):
+    def event(self, **updates):
+        return {"type": "stage", "stage": "game_services_first", "status": "running",
+                "time_utc": "2026-09-28T04:30:00+00:00", "message": "Waiting for Atlas", **updates}
+
+    def test_only_complete_bounded_stage_fields_are_forwarded(self):
+        observed = []
+        progress = host.StageProgress(observed.append)
+        event = self.event(files=123, password="must stay in capture", output="private console")
+        raw = json.dumps(event).encode() + b'\n'
+        progress.feed(raw[:20])
+        self.assertEqual(observed, [])
+        progress.feed(raw[20:])
+        self.assertEqual(observed, [self.event(files=123)])
+        for value in (self.event(type="log"), self.event(stage="unreviewed_stage"),
+                      self.event(status="arbitrary"), {"secret": "not-a-stage"}, []):
+            progress.feed(json.dumps(value).encode() + b'\n')
+        progress.feed(b'raw subprocess warning\n\xff\n')
+        progress.feed(b'x' * (host.PROGRESS_LINE_LIMIT + 1))
+        self.assertEqual(len(progress.pending), 0)
+        progress.feed(json.dumps(self.event()).encode() + b'\n')  # Still part of the discarded line.
+        progress.feed(json.dumps(self.event(status="passed", message="x" * 257, files=True)).encode() + b'\n')
+        self.assertEqual(len(observed), 2)
+        self.assertEqual(observed[-1], {"type": "stage", "stage": "game_services_first", "status": "passed",
+                                      "time_utc": "2026-09-28T04:30:00+00:00"})
+
+    def test_progress_is_visible_before_child_exits_and_raw_log_is_unchanged(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            log_path, acknowledgement = root / "capture.log", root / "observed"
+            event = self.event()
+            program = ("import json,pathlib,sys,time\n"
+                       "print(json.dumps(json.loads(sys.argv[1])),flush=True)\n"
+                       "marker=pathlib.Path(sys.argv[2]); deadline=time.monotonic()+5\n"
+                       "while not marker.exists() and time.monotonic()<deadline: time.sleep(.01)\n"
+                       "sys.exit(0 if marker.exists() else 2)\n")
+            observed = []
+            with log_path.open('wb') as log:
+                process = subprocess.Popen([sys.executable, '-c', program, json.dumps(event), str(acknowledgement)],
+                                           stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+                try:
+                    def emit(value):
+                        self.assertIsNone(process.poll(), 'Progress arrived only after process completion')
+                        observed.append(value)
+                        acknowledgement.write_text('seen')
+                    self.assertEqual(host.wait_with_progress(process, log_path, 6, emit=emit), 0)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                    process.wait()
+            self.assertEqual(observed, [event])
+            self.assertEqual(log_path.read_bytes(), json.dumps(event).encode() + b'\n')
+
+    def test_final_drain_and_event_count_are_bounded(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'capture.log'
+            path.write_bytes(json.dumps(self.event(status='passed')).encode() + b'\n')
+            observed = []
+            with path.open('rb') as stream:
+                progress = host.StageProgress(observed.append)
+                progress.count = host.PROGRESS_EVENT_LIMIT - 1
+                progress.drain(stream)
+                progress.feed(json.dumps(self.event()).encode() + b'\n')
+            self.assertEqual(len(observed), 1)
+            process = mock.Mock(args=['completed-guest'])
+            process.wait.return_value = 0
+            observed = []
+            self.assertEqual(host.wait_with_progress(process, path, 1, emit=observed.append), 0)
+            self.assertEqual(observed, [self.event(status='passed')])
+
+    def test_host_timeout_keeps_original_stop_policy_and_regular_file_capture(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state, evidence = root / 'state', root / 'evidence'
+            state.mkdir(); evidence.mkdir()
+            process = mock.Mock(args=['guest'])
+            with mock.patch.object(host.subprocess, 'Popen', return_value=process) as start, \
+                    mock.patch.object(host, 'wait_with_progress', side_effect=subprocess.TimeoutExpired(['guest'], 91)) as wait, \
+                    mock.patch.object(host.dbhost, 'stop_guest', return_value='wrapper exited after stop') as stop:
+                with self.assertRaisesRegex(RuntimeError, 'tracee cleanup is unverified'):
+                    host.run_guest(['guest'], {}, state, evidence, timeout_seconds=1, expected={})
+            self.assertEqual(wait.call_args.args[2], 91)
+            stop.assert_called_once_with(process, state)
+            self.assertEqual(Path(start.call_args.kwargs['stdout'].name), evidence / 'host-game.log')
+            self.assertTrue(start.call_args.kwargs['start_new_session'])
+            self.assertEqual(start.call_args.kwargs['stderr'], subprocess.STDOUT)
+            self.assertTrue((evidence / 'game-captures.json').is_file())
+
+
 class ReportTests(unittest.TestCase):
     def sample(self):
         expected = {"inputs": {"game_package_sha256": "a" * 64}, "schema": {
@@ -277,6 +367,75 @@ class ReportTests(unittest.TestCase):
 
 
 class CaptureTests(unittest.TestCase):
+    def test_service_exports_require_all_owned_stdout_and_matching_safe_log_metadata(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state, evidence = root / 'state', root / 'evidence'
+            source = state / 'game-service-captures'
+            source.mkdir(parents=True)
+            evidence.mkdir()
+            files = {}
+            for label in host.SERVICE_LABELS:
+                path = source / (label + '-stdout.txt')
+                path.write_text('service diagnostic\n')
+                files[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path),
+                    'kind': 'owned_service_stdout', 'process_label': label, 'original_bytes': path.stat().st_size,
+                    'truncated': False, 'capture_closed': True, 'overflow': False}
+            path = source / 'log-001.txt'
+            path.write_text('bounded beginning\n[middle omitted]\nbounded end\n')
+            files[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path),
+                'kind': 'runtime_log', 'source_relative_path': 'logs/mapserver/error.log',
+                'original_bytes': 2 * 1024 * 1024, 'truncated': True}
+            manifest = {'format': 1, 'files': files, 'selected_log_limit': 32,
+                        'log_segment_bytes': 512 * 1024, 'unselected_logs': 3}
+            (source / 'manifest.json').write_text(json.dumps(manifest))
+            records = host.copy_service_captures(state, evidence)
+            report = {'game': {'service_capture_files': records}}
+            host.validate_service_captures(report, evidence, records)
+            mutations = [lambda m: m['files']['first-atlas-stdout.txt'].update(capture_closed=False),
+                         lambda m: m['files']['first-atlas-stdout.txt'].update(overflow=True),
+                         lambda m: m['files']['first-atlas-stdout.txt'].update(process_label='other-atlas'),
+                         lambda m: m['files']['log-001.txt'].update(source_relative_path='../private.log'),
+                         lambda m: m['files']['log-001.txt'].update(source_relative_path='data/private.log'),
+                         lambda m: m['files']['log-001.txt'].update(truncated=False),
+                         lambda m: m['files']['log-001.txt'].update(sha256='0'*64),
+                         lambda m: m.update(inspection_failure='unreadable log')]
+            for index, mutate in enumerate(mutations):
+                with self.subTest(case=index):
+                    changed = copy.deepcopy(manifest)
+                    mutate(changed)
+                    path = evidence / 'game-service-captures/manifest.json'
+                    path.write_text(json.dumps(changed))
+                    records['manifest.json'] = {'bytes': path.stat().st_size, 'sha256': host.digest(path)}
+                    with self.assertRaises(RuntimeError):
+                        host.validate_service_captures(report, evidence, records)
+
+    def test_partial_service_startup_failure_is_exported_without_claiming_success(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state, evidence = root / 'state', root / 'evidence'
+            source = state / 'game-service-captures'
+            source.mkdir(parents=True)
+            evidence.mkdir()
+            (source / 'first-atlas-stdout.txt').write_text('stopped while loading definitions\n')
+            records = host.copy_service_captures(state, evidence)
+            self.assertEqual(set(records), {'first-atlas-stdout.txt'})
+            self.assertEqual((evidence / 'game-service-captures/first-atlas-stdout.txt').read_text(),
+                             'stopped while loading definitions\n')
+            with self.assertRaisesRegex(RuntimeError, 'service capture inventory'):
+                host.validate_service_captures({'game': {'service_capture_files': records}}, evidence, records)
+
+    def test_service_export_refuses_unlisted_private_file_and_oversized_capture(self):
+        for filename, size in (('credentials.json', 1), ('log-033.txt', 1), ('manifest.json', 128*1024+1)):
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                (root / 'state/game-service-captures').mkdir(parents=True)
+                (root / 'evidence').mkdir()
+                (root / 'state/game-service-captures' / filename).write_bytes(b'x'*size)
+                with self.assertRaises(RuntimeError):
+                    host.copy_service_captures(root / 'state', root / 'evidence')
+                self.assertFalse((root / 'evidence/game-service-captures').exists())
+
     def test_capture_hashes_and_sql_rows_bind_both_saves_and_restart(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

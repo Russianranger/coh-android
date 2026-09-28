@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "dbserver"))
 import host_dbserver_smoke as dbhost
@@ -45,11 +46,17 @@ CAPTURE_LIMITS = {prefix + "-" + name: limit for prefix in ("first", "second") f
                   (("ready.json", 16384), ("result.json", 16384),
                    ("events.jsonl", 8 * 1024 * 1024), ("console.txt", 16 * 1024 * 1024))}
 CAPTURE_LIMITS.update({prefix + "-snapshot.json": 1024 * 1024 for prefix in ("first", "restart", "second")})
+SERVICE_LABELS = ("first-dbserver", "first-atlas", "restart-dbserver", "restart-atlas")
+SERVICE_CAPTURE_LIMITS = {label + "-stdout.txt": 6 * 1024 * 1024 for label in SERVICE_LABELS}
+SERVICE_CAPTURE_LIMITS.update({"log-" + str(number).zfill(3) + ".txt": 4 * 1024 * 1024 for number in range(1, 33)})
+SERVICE_CAPTURE_LIMITS["manifest.json"] = 128 * 1024
 STAGES = ("game_private_runtime", "assets_and_architecture", "initialize_owned_cluster", "postgres_first_start",
           "restricted_fixture_database", "wine_prefix_and_driver", "win32_odbc_driver", "win32_runtime_dll",
           "game_services_first", "atlas_ready_observation", "game_create_and_connect", "game_live_currency",
           "game_protocol_logout_first", "game_restart", "postgres_game_restart", "game_services_restart",
           "game_resume_exact_name", "game_protocol_logout_second")
+PROGRESS_LINE_LIMIT = 64 * 1024
+PROGRESS_EVENT_LIMIT = 4096
 
 
 def canonical_digest(value):
@@ -332,29 +339,74 @@ def validate_report(report, *, expected):
         validate_session(session)
 
 
-def copy_game_captures(state, evidence):
+def copy_capture_area(state, evidence, directory, limits, total_limit):
     """Copy only the guest's bounded, redacted diagnostic export area."""
-    source, destination = state / "game-captures", evidence / "game-captures"
+    source, destination = state / directory, evidence / directory
     records = {}
     if source.exists() or source.is_symlink():
         require(source.is_dir() and not source.is_symlink(), "Invalid game capture export directory")
         files = sorted(source.iterdir())
-        require(len(files) <= len(CAPTURE_LIMITS) and all(path.name in CAPTURE_LIMITS for path in files),
+        require(len(files) <= len(limits) and all(path.name in limits for path in files),
                 "Game capture export contains an unexpected name")
         total = 0
         for path in files:
             require(path.is_file() and not path.is_symlink(), "Linked or nonregular game capture refused")
             total += path.stat().st_size
-            require(path.stat().st_size <= CAPTURE_LIMITS[path.name] and total <= 53 * 1024 * 1024,
+            require(path.stat().st_size <= limits[path.name] and total <= total_limit,
                     "Game capture export exceeds its bounds")
         destination.mkdir(exist_ok=False)
         for path in files:
             target = destination / path.name
             shutil.copyfile(path, target)
             records[path.name] = {"bytes": target.stat().st_size, "sha256": digest(target)}
+    return records
+
+
+def copy_game_captures(state, evidence):
+    records = copy_capture_area(state, evidence, "game-captures", CAPTURE_LIMITS, 53 * 1024 * 1024)
     receipt = {"format": 1, "scope": "redacted_game_diagnostic_captures", "files": records}
     (evidence / "game-captures.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return records
+
+
+def copy_service_captures(state, evidence):
+    records = copy_capture_area(state, evidence, "game-service-captures", SERVICE_CAPTURE_LIMITS, 153 * 1024 * 1024)
+    receipt = {"format": 1, "scope": "redacted_game_service_captures", "files": records}
+    (evidence / "game-service-captures.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    return records
+
+
+def validate_service_captures(report, evidence, records):
+    required = {label + "-stdout.txt" for label in SERVICE_LABELS} | {"manifest.json"}
+    require(required <= set(records) <= set(SERVICE_CAPTURE_LIMITS)
+            and report["game"].get("service_capture_files") == records,
+            "Successful game proof lacks its exact service capture inventory")
+    manifest = read_json(evidence / "game-service-captures/manifest.json", 128 * 1024)
+    files = manifest.get("files", {})
+    require(isinstance(files, dict) and set(files) == set(records) - {"manifest.json"}
+            and manifest.get("selected_log_limit") == 32 and manifest.get("log_segment_bytes") == 512 * 1024
+            and type(manifest.get("unselected_logs")) is int and manifest["unselected_logs"] >= 0
+            and manifest.get("inspection_failure") is None,
+            "Service capture manifest is incomplete or failed inspection")
+    for name, record in files.items():
+        require(isinstance(record, dict) and all(record.get(key) == records[name][key] for key in ("bytes", "sha256"))
+                and type(record.get("original_bytes")) is int and record["original_bytes"] >= 0
+                and type(record.get("truncated")) is bool, "Service capture identity or truncation metadata differs")
+        if name.endswith("-stdout.txt"):
+            require(record.get("kind") == "owned_service_stdout" and record.get("process_label") == name[:-11]
+                    and record["original_bytes"] <= 2 * 1024 * 1024 and record["truncated"] is False
+                    and record.get("overflow") is False and record.get("capture_closed") is True,
+                    "Owned service stdout is incomplete or overflowed")
+        else:
+            source = record.get("source_relative_path")
+            require(isinstance(source, str) and source and "\\" not in source and ":" not in source,
+                    "Invalid service log source path")
+            relative = PurePosixPath(source)
+            require(not relative.is_absolute() and relative.as_posix() == source and ".." not in relative.parts
+                    and relative.suffix == ".log" and (len(relative.parts) == 1 or relative.parts[0] == "logs")
+                    and record.get("kind") == "runtime_log"
+                    and record["truncated"] == (record["original_bytes"] > 1024 * 1024),
+                    "Service log source or bounded-segment metadata differs")
 
 
 def validate_capture_files(report, evidence, records):
@@ -463,6 +515,84 @@ def prepare_runtime(work, evidence, assets):
     return {**hosts, "guest_script_sha256": scripts}
 
 
+class StageProgress:
+    """Observe the existing regular capture file; never own a child output pipe."""
+    def __init__(self, emit=None):
+        self.pending = bytearray()
+        self.discarding = False
+        self.count = 0
+        self.emit = emit if emit is not None else lambda value: print(json.dumps(value), flush=True)
+
+    def line(self, raw):
+        if self.count >= PROGRESS_EVENT_LIMIT:
+            return
+        try:
+            value = json.loads(raw)
+        except (ValueError, UnicodeError, RecursionError):
+            return
+        if (not isinstance(value, dict) or value.get("type") != "stage"
+                or value.get("stage") not in STAGES or value.get("status") not in ("running", "passed")):
+            return
+        event = {key: value[key] for key in ("type", "stage", "status")}
+        # Stage messages are already redacted by Context.event. Project only
+        # bounded progress fields: process output and arbitrary JSON stay in
+        # the owned evidence file and are not streamed into the job console.
+        for key, limit in (("time_utc", 64), ("message", 256)):
+            item = value.get(key)
+            if isinstance(item, str) and len(item) <= limit and all(ord(c) >= 32 for c in item):
+                event[key] = item
+        if type(value.get("files")) is int and 0 <= value["files"] <= MAX_DATA_FILES:
+            event["files"] = value["files"]
+        self.count += 1
+        self.emit(event)
+
+    def feed(self, chunk):
+        parts = chunk.split(b"\n")
+        for index, part in enumerate(parts):
+            complete = index < len(parts) - 1
+            if self.discarding:
+                if complete:
+                    self.discarding = False
+                continue
+            if len(self.pending) + len(part) > PROGRESS_LINE_LIMIT:
+                self.pending.clear()
+                self.discarding = not complete
+                continue
+            self.pending.extend(part)
+            if complete:
+                self.line(self.pending)
+                self.pending.clear()
+
+    def drain(self, stream, *, limit=256 * 1024):
+        # A fixed byte budget also bounds the final drain if a descendant still
+        # appends after the namespace wrapper exits. EOF is not a wait target.
+        remaining = min(limit, max(0, os.fstat(stream.fileno()).st_size - stream.tell()))
+        while remaining:
+            chunk = stream.read(min(65536, remaining))
+            if not chunk:
+                break
+            self.feed(chunk)
+            remaining -= len(chunk)
+
+
+def wait_with_progress(process, log_path, timeout_seconds, *, emit=None):
+    deadline = time.monotonic() + timeout_seconds
+    progress = StageProgress(emit)
+    with log_path.open("rb") as stream:
+        try:
+            while True:
+                progress.drain(stream)
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise subprocess.TimeoutExpired(process.args, timeout_seconds)
+                try:
+                    return process.wait(timeout=min(1, remaining))
+                except subprocess.TimeoutExpired:
+                    pass
+        finally:
+            progress.drain(stream, limit=max(0, os.fstat(stream.fileno()).st_size - stream.tell()))
+
+
 def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
     source = state / "latest-report.json"
     target = evidence / "game-runtime-report.json"
@@ -473,7 +603,7 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
         process = subprocess.Popen(command, env=env, stdout=log, stderr=subprocess.STDOUT,
                                    start_new_session=True)
         try:
-            code = process.wait(timeout=timeout_seconds + 90)
+            code = wait_with_progress(process, log_path, timeout_seconds + 90)
         except subprocess.TimeoutExpired:
             termination = dbhost.stop_guest(process, state)
             raise RuntimeError("Game host runtime exceeded its bounded time; tracee cleanup is unverified: " + termination)
@@ -481,12 +611,14 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
             if source.is_file() and not source.is_symlink() and source.stat().st_size <= MAX_REPORT_BYTES:
                 shutil.copyfile(source, target)
             captures = copy_game_captures(state, evidence)
+            service_captures = copy_service_captures(state, evidence)
     try:
         require(code == 0, "Game PRoot runtime returned a failure exit status")
         require(target.is_file(), "Game runtime did not write a fresh bounded report")
         report = read_json(target, MAX_REPORT_BYTES)
         validate_report(report, expected=expected)
         validate_capture_files(report, evidence, captures)
+        validate_service_captures(report, evidence, service_captures)
     except (RuntimeError, ValueError):
         with log_path.open("rb") as log:
             log.seek(max(0, log_path.stat().st_size - 24000))
