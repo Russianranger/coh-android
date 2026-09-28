@@ -20,8 +20,8 @@ passed all 28 stages with the byte-identical package. The
 and [repeat](../../docs/android-evidence/dbserver-runtime-repeat-36454174374-attempt2.json)
 receipts preserve both outcomes; the repeat does not establish a repair, and
 accepted donor `36451873322` is unchanged.
-The separate loopback listener prerequisite is locally tested but still awaits
-hosted source/package qualification and donor adoption.
+Current qualification and donor-adoption status for the separate loopback
+listener prerequisite are recorded in [ANDROID_DBSERVER.md](../../docs/ANDROID_DBSERVER.md).
 
 With `COH_WINE_DB_FIXED_INPUTS` absent, existing startup, folder-cache mode,
 directory watching and callback behavior remain unchanged. The exact value `1`

@@ -1,7 +1,8 @@
 # Opt-in DbServer loopback listener binding
 
-Prepared prerequisite for the next Android DbServer diagnostic. This code is not
-yet a qualified donor or evidence of physical Android execution.
+Listener prerequisite for the next Android DbServer diagnostic. Current hosted
+qualification and donor status are recorded in [ANDROID_DBSERVER.md](../../docs/ANDROID_DBSERVER.md).
+Physical Android execution remains a separate gate.
 
 `COH_WINE_DB_LOOPBACK_ONLY` absent preserves the stock `sockBind` result and local
 address. Only the exact value `1` enables the mode. Empty, zero, padded, or other
@@ -50,5 +51,6 @@ leaving the immutable upstream snapshot unchanged.
 
 Guest and host validation reject altered mode metadata, source contracts and
 endpoint evidence. The hosted qualification workflow runs the native Windows
-contract before building both variants; these changes remain unqualified until
-that workflow completes. No Android listener execution is claimed.
+contract before building both variants. The current qualification record binds
+the tested source, package and runtime evidence; adoption by another gate is
+recorded separately. No Android listener execution is claimed.
