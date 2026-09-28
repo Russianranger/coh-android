@@ -1,6 +1,6 @@
 # Basic Win32 client capability probe
 
-The current **0.1.5** diagnostic retry retains **Run client probe**, introduced in
+The current **0.1.5** diagnostic retains **Run client probe**, introduced in
 0.1.1, alongside the database diagnostics. It includes the complete database,
 restart and shutdown test plus a PE32 graphics/input fixture in the same private
 Wine/FEX session. The [Wine thread cleanup retry](ANDROID_WINE_THREADS.md)
@@ -11,8 +11,10 @@ All 125 tests passed without skips. Fresh/repeat database and client runs, ordin
 detached-helper fixtures and exited-leader/live-worker fixtures passed with genuine
 capture EOF and unrelated processes preserved. The
 [acceptance receipt](android-evidence/accepted-wine-threads-36364550345.json)
-binds all twelve APK assets and eight reports. Physical 0.1.5 acceptance remains
-pending.
+binds all twelve APK assets and eight reports. The subsequent
+[physical Thor run](THOR_DEVICE_ACCEPTANCE.md) passed all twelve combined stages
+and complete cleanup. Its exact RGB samples and synthetic input passed through
+llvmpipe; it reused the cluster and ready Wine prefix in a 55.344-second run.
 
 The [0.1.4 Thor report](android-evidence/thor-capture-still-open-20260928.json)
 again passed all eleven functional database/Windows stages, including 65 ODBC
@@ -24,8 +26,9 @@ A native reproduction demonstrated an exited thread-group leader with a live
 worker retaining the exact run token and output pipe, which the old scan ignored.
 Version 0.1.5 authenticates surviving tasks using UID, thread-group ID, start time,
 PID namespace and exact token before signaling the group, preferring its pidfd.
-Genuine EOF and preservation of unrelated processes remain required. The device
-report does not establish that this was its pipe holder.
+Genuine EOF and preservation of unrelated processes remain required. The 0.1.5 device
+report confirms three owned live workers behind exited leaders were cleaned up;
+the exact device pipe writer was not inventoried.
 
 The historical [0.1.4 hosted receipt](android-evidence/accepted-wine-cleanup-36356283176.json)
 records all five jobs passing at source `83f132ddb8077c9d5175ae7cd039e0754b70074e`
@@ -73,6 +76,13 @@ and game rendering unvalidated.
 
 ## Device test
 
+The current Thor already passed the combined diagnostic. Keep 0.1.5 installed;
+no repeat setup or replacement APK is needed. Stop followed by a successful new
+run, app reopening/background behavior and memory measurements remain. These
+can accompany the next device candidate. Export any stopped report before a new
+run overwrites it. The following setup steps are for a fresh installation.
+
+
 Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36364550345/artifacts/10946846847) and install
 `COH-Diagnostic-0.1.5.apk`. Choose
 **Setup runtime**, then **Run diagnostics** and export the report. Cold Windows initialization may take several minutes; progress
@@ -112,9 +122,10 @@ playback remains unvalidated. All same-source PostgreSQL regression jobs passed.
 
 The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
 binds the downloaded evidence and APK. This completes the hosted basic client
-prerequisite milestone. Physical Thor M2 acceptance remains pending. The next
-work is actual client/shader compatibility and Android display integration, plus
-the minimal-server device gate.
+prerequisite milestone. The [0.1.5 device receipt](android-evidence/accepted-thor-20260928.json)
+now accepts the corresponding physical diagnostic gate. M3 actual game-server
+execution is next; client/shader compatibility and Android display integration
+remain separate unfinished work.
 
 ## Historical build identity (0.1.1)
 

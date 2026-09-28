@@ -2,12 +2,15 @@
 
 Date: 2026-09-23. This record covers source preservation and assessment accuracy.
 
-Latest milestone, 2026-09-27: the [M2 diagnostic APK and hosted ARM64 guest gate](#2026-09-27-m2-diagnostic-apk-and-hosted-arm64-guest-acceptance)
-passed all four jobs, 80 tooling tests and eleven guest stages in run
-`36336644450`. The APK is ready for physical Thor acceptance, which remains
-pending. The earlier [Atlas instance round trip](#2026-09-27-atlas-instance-round-trip-and-final-protocol-save)
-retains its accepted Windows scope. Missions, automatic map startup, combat,
-graphical gameplay and Android device execution remain unvalidated.
+Latest milestone, 2026-09-28: the [0.1.5 physical Thor diagnostic](THOR_DEVICE_ACCEPTANCE.md)
+passed all twelve database/client stages and complete owned cleanup, including
+all thirty process input/output captures. The combined run reused its cluster and
+Wine prefix. [Selected evidence](android-evidence/accepted-thor-20260928.json)
+binds the report to the accepted runtime manifest and all six reported asset
+hashes. Client scope is headless software rendering and synthetic input.
+Stop/suspend/resume, peak memory, actual Android game-server execution and gameplay
+remain unvalidated. The earlier Atlas instance round trip retains its accepted
+Windows scope.
 Earlier sections remain historical records; they do not describe the newest
 build status.
 

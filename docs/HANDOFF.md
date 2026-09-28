@@ -17,15 +17,17 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The [0.1.4 Thor report](android-evidence/thor-capture-still-open-20260928.json)
-again passed all eleven database/Windows functional stages, including 65 ODBC
-sessions and durable restart. Wineboot output capture remained open despite an
-ownership scan reporting zero candidates. The current [0.1.5 thread cleanup
-retry](ANDROID_WINE_THREADS.md) passed all five hosted jobs in
-[run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345),
-including the reproduced live-worker cleanup case. The Thor report does not prove
-its physical cause. The next step is physical 0.1.5 testing; complete device
-cleanup and client/game rendering remain unvalidated.
+The [primary M2 device diagnostic and headless client capability gate](THOR_DEVICE_ACCEPTANCE.md)
+is now accepted on Thor with 0.1.5. The supplied combined report passed all twelve
+stages, reused the database cluster and ready Wine prefix, and completed owned
+cleanup with all 30 process input/output captures closed. The user also attests to
+a preceding database-only pass; its separate archive was not supplied. Device
+cleanup observed exited leaders with live owned workers, while the exact writer
+of the earlier pipe was not inventoried. The next device gate is Stop followed by
+a successful rerun; suspend/resume and memory checks remain pending and can
+accompany the next candidate. M3 actual game-server execution is the next
+implementation milestone. Android presentation and game rendering remain
+unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -122,7 +124,7 @@ portability error. The fixture now uses Winsock on Windows; client and server
 code are unchanged by that correction. The [tooling failure record](postgresql-evidence/character-transfer-tooling-36297326622.json)
 is preserved separately from the successful retry.
 
-### Accepted hosted M2 gate; Thor device gate pending
+### Historical hosted M2 gate (0.1.0)
 
 [Run 36336644450](https://github.com/Russianranger/coh-android/actions/runs/36336644450)
 passed all four jobs at source `0b61d7455f40f05709f912338cd5de8b1d72d750`,
@@ -142,15 +144,12 @@ no game binaries or assets. The native Java app and owned PRoot session combine
 pinned Bookworm/Wine 10/FEX inputs with PostgreSQL built from official pinned
 source; its ephemeral CI signing certificate is not a stable update identity.
 
-**M2 remains incomplete until physical Thor acceptance.** Follow
-[the device steps](ANDROID_DIAGNOSTIC.md#thor-acceptance-steps): **Setup runtime**,
-**Run diagnostics**, **Export latest report**, then repeat after reopening and
-exercise **Stop**. If cleanup fails, export first, then use Android **Settings →
-Apps → COH Diagnostic → Force stop** and reopen; closing the activity does not
-clear the cleanup block. Hosted Linux execution does not prove Android SELinux,
-foreground-service lifecycle, device shutdown, performance or gameplay. A basic
-client-runtime probe can proceed alongside the device gate. Mission/new-zone
-transfers, automatic Launcher startup and combat remain separate unfinished scope.
+Physical Thor acceptance was pending at this checkpoint. The current
+[device acceptance record](THOR_DEVICE_ACCEPTANCE.md) preserves the later 0.1.5
+pass and remaining lifecycle checks. Hosted Linux execution alone does not prove
+Android SELinux, foreground-service lifecycle, device shutdown, performance or
+gameplay. Mission/new-zone transfers, automatic Launcher startup and combat remain
+separate unfinished scope.
 
 ### Accepted hosted client prerequisite milestone (0.1.1)
 
@@ -178,11 +177,11 @@ graceful PostgreSQL restart and complete cleanup. DirectSound enumerated zero
 devices, with no playback claim. All same-source PostgreSQL regressions passed.
 The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
 preserves report hashes, observed capabilities and the verified 13,477,490-byte
-APK. Preserve it as the historical 0.1.1 result; use the current retry below for
-[the current device test](CLIENT_RUNTIME_PROBE.md#device-test).
+APK. Preserve it as the historical 0.1.1 result; the later
+[Thor acceptance record](THOR_DEVICE_ACCEPTANCE.md) describes current device evidence.
 A fixture result cannot establish CoH rendering, Cg shaders, physical controls,
-audio playback, Android presentation or GPU acceleration. M2 still needs Thor
-reports, and M3 minimal game-server/device execution remains unfinished.
+audio playback, Android presentation or GPU acceleration. Thor reports were still
+needed at this checkpoint; M3 minimal game-server/device execution remains unfinished.
 
 ### Historical Thor wineboot failure and hosted 0.1.2 result
 
@@ -190,7 +189,7 @@ The user supplied two Thor/Android13 reports from 0.1.1. Both passed native
 PostgreSQL initialization, restricted fixture SQL and owned cleanup, but failed
 at the 150-second wineboot wait before Windows ODBC or graphics. The second run
 reused the same diagnostic database cluster. This is partial real-device database
-evidence; complete M2/device acceptance remains pending.
+evidence; complete M2/device acceptance remained pending at this checkpoint.
 
 [The selected device evidence](android-evidence/thor-wineboot-failure-20260927.json)
 records both failures. Their exit-code0 values were captured after forced cleanup
@@ -288,7 +287,7 @@ preserves the build identity, payload hashes and reports.
 The subsequent 0.1.4 Thor run again failed capture closure; the hosted receipt
 and APK remain historical evidence.
 
-### Current 0.1.5 Wine thread cleanup retry
+### Hosted 0.1.5 Wine thread cleanup qualification
 
 [The 0.1.4 device report](android-evidence/thor-capture-still-open-20260928.json)
 passed all eleven functional stages and initialized Wine in 85.957 seconds. The
@@ -332,11 +331,41 @@ All twelve APK payloads and all eight hosted reports were hash-verified. The
 also passed. The [acceptance receipt](android-evidence/accepted-wine-threads-36364550345.json)
 preserves build identity, payload hashes and reports.
 
-Install `COH-Diagnostic-0.1.5.apk` (version code 6) from the
-[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36364550345/artifacts/10946846847),
-run diagnostics and export its report. If it fails, stop further checks. Only
-after a complete pass, run and export the client probe, then test repeat operation
-and Stop. Complete M2 device acceptance remains pending.
+### Accepted primary M2 Thor diagnostic and headless client gate
+
+The [device acceptance record](THOR_DEVICE_ACCEPTANCE.md) and
+[selected evidence](android-evidence/accepted-thor-20260928.json) preserve the
+supplied `coh-diagnostic-20260928-012426.zip` report. It identifies app 0.1.5 on
+AYN Thor/Android 13 and runtime manifest
+`fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203`, matching the
+accepted hosted build. The `database_and_client` run completed at
+2026-09-28 01:24:05.958172 UTC with all twelve stages passed, no failures and
+complete owned cleanup.
+
+This report proves a successful subsequent combined run: the existing database
+cluster and ready Wine prefix were reused. The user says both operations passed, including
+the preceding database-only run; the supplied archive directly documents only
+the subsequent combined run. It verifies native PostgreSQL, real PE32 DLL and ODBC driver
+loading, all 65 ODBC sessions, SQL/value/metadata fixtures and durable same-cluster
+restart. Headless WGL rendering through llvmpipe/Mesa 22.3.6 returned all four
+expected pixel colors; synthetic window input and DirectInput device creation
+passed. This is a software renderer. DirectSound enumerated zero devices, with
+no audio playback claim.
+
+Device cleanup now observed three exited-leader groups and three authenticated
+live-worker witnesses. It issued three TERM signals and one KILL signal through pidfds,
+finished with zero remaining helpers or inspection failures, and closed input and
+output for all 30 recorded processes. This observes the reproduced dead-leader/
+live-worker condition on Thor and completes cleanup successfully. The report does
+not inventory the exact earlier pipe writer, so that identity remains unknown.
+
+**The primary M2 device diagnostic and headless client capability gate are
+accepted.** Android surface presentation, hardware acceleration, physical input,
+audible playback and CoH gameplay remain unvalidated. The current next device
+gate is **Stop followed by a successful diagnostic rerun**, exporting both reports.
+Use the existing 0.1.5 APK; no new build is needed. Suspend/resume and memory
+behavior still need evidence and can accompany the next candidate. M3 actual
+game-server execution is the next implementation milestone.
 
 ### Earlier attempts and corrections
 
@@ -598,11 +627,13 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.5**
-thread cleanup retry above. The 0.1.3 and 0.1.4 device runs passed every
-functional stage; complete owned cleanup remains the database diagnostic failure. The following items preserve completed reference gates and describe
-additional work; their order does not place further Windows server
-experiments ahead of the device gate.
+**The primary M2 device diagnostic and headless client gate are accepted.**
+Implement M3 actual game-server execution in the app-owned runtime, starting
+with an isolated Wine-compatible DbServer build and real database fixtures, then
+normal schema startup/export/reload. See the [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
+Stop followed by a successful rerun, suspend/resume and memory measurements remain
+device checks and can accompany the next candidate. The following items preserve
+completed reference gates; no repeated Windows-only milestone is needed.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
    It passed ordinary template comparison and Atlas Park readiness with schema
@@ -655,11 +686,12 @@ experiments ahead of the device gate.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Run the accepted 0.1.5 diagnostic under its own UID on Thor and export its
-   report. Run the client probe only if diagnostics fully passes.
-   Confirm complete owned cleanup, then repeat-run and Stop behavior. The prior
-   functional database pass is preserved; memory and suspension behavior remain
-   device measurements.
+4. Keep the accepted 0.1.5 APK. Start a diagnostic, choose Stop, wait for its
+   terminal result and export the report; then rerun diagnostics and export that
+   result. The combined run with reused state and full cleanup pass above remain accepted.
+   Suspend/resume and memory behavior are pending device measurements. These
+   checks can accompany the next M3 candidate; implementation need not wait for
+   another run of the already-passed diagnostic.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

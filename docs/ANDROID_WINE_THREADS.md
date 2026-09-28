@@ -1,4 +1,9 @@
-# Thor Wine thread cleanup retry (0.1.5)
+# Thor Wine thread cleanup (0.1.5)
+
+**Accepted on Thor:** the [0.1.5 combined device run](THOR_DEVICE_ACCEPTANCE.md)
+passed all twelve stages and complete cleanup. Three owned worker witnesses behind
+exited leaders were found and cleaned up through pidfds. All thirty process
+input/output captures closed; no owned groups remained.
 
 The [0.1.4 Thor report](android-evidence/thor-capture-still-open-20260928.json)
 again passed all eleven functional database/Windows stages. Wine initialization
@@ -71,7 +76,7 @@ Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actio
 Runtime manifest SHA-256:
 `fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203`.
 
-## Device retry
+## Historical device retry steps
 
 1. Export old reports, uninstall only **COH Diagnostic**, and install
    `COH-Diagnostic-0.1.5.apk`. Test builds have different signing certificates.
@@ -79,5 +84,7 @@ Runtime manifest SHA-256:
 3. Run **Run client probe** only after diagnostics completely passes. If it
    fails, send the report before further checks.
 
-Physical 0.1.5 acceptance, Android presentation, hardware acceleration, real
-controls, audible playback and CoH gameplay remain unvalidated.
+The device retry above has passed; keep the installed 0.1.5 and runtime.
+[Device acceptance](THOR_DEVICE_ACCEPTANCE.md) records the evidence and next work.
+Stop/suspend/resume, Android presentation, hardware acceleration, real controls,
+audible playback and CoH gameplay remain unvalidated.

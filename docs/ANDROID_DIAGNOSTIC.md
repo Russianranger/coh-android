@@ -1,6 +1,9 @@
 # Thor diagnostic APK (M2)
 
-Status: **0.1.5 passed hosted acceptance and is ready for a Thor retry**.
+Status: **0.1.5 passed the physical Thor database and headless client diagnostic gate**.
+The [device acceptance](THOR_DEVICE_ACCEPTANCE.md) records all twelve stages,
+complete cleanup and successful reuse of the cluster and Wine prefix. Stop and
+suspend/resume checks remain; keep the installed 0.1.5 runtime.
 [Run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345)
 passed all five jobs at source `9dc58f62c58dc4fc5c01288071429bf2aa06d2f4` on
 2026-09-28 01:12:14 UTC. All 125 tests passed without skips. Fresh/repeat database
@@ -10,20 +13,21 @@ checks all passed under the pinned PRoot. The
 also passed. The [acceptance receipt](android-evidence/accepted-wine-threads-36364550345.json)
 binds the verified APK, all twelve embedded assets and all eight hosted reports.
 
-**M2 physical-device acceptance remains pending.** The
-[0.1.4 Thor report](android-evidence/thor-capture-still-open-20260928.json) passed
-all eleven functional stages, including real Win32 DLL loading, 65 ODBC sessions
-and durable same-cluster restart. Initialization took 85.957 seconds. The sole
-failure was wineboot output capture staying open after prefix shutdown, while
-ownership scanning reported zero candidates and complete cleanup. This discrepancy
-leaves full cleanup unproved. Client graphics were not requested. The accepted
-[Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) retains its Windows scope.
+The [0.1.5 Thor receipt](android-evidence/accepted-thor-20260928.json) verifies
+all twelve stages and all thirty closed input/output captures in 55.344 seconds.
+The user reported both diagnostics and client probe passed; the supplied archive
+contains the combined client run, including the full database/restart suite.
+Cleanup found three owned live workers behind exited leaders, used pidfds and
+left no owned groups. This closes the capture failure in the historical
+[0.1.4 report](android-evidence/thor-capture-still-open-20260928.json).
+Client rendering was headless llvmpipe software rendering with synthetic input.
+The accepted [Atlas transfer gate](MAP_TRANSFER_VALIDATION.md) retains its Windows scope.
 
 This is a separate app, `io.github.russianranger.cohdiagnostic`, targeting the
 AYN Thor (Android 13, ARM64). It exercises the platform needed by the future CoH
 launcher. It contains no game binaries or game assets and cannot launch the game.
 
-## Current retry APK
+## Current accepted APK
 
 Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36364550345/artifacts/10946846847) and install
 `COH-Diagnostic-0.1.5.apk` (version code 6). The [thread cleanup correction](ANDROID_WINE_THREADS.md) inspects live
@@ -35,8 +39,8 @@ output EOF and no surviving owned tasks; unrelated processes must survive.
 Both hosted live-worker fixtures proved that a zombie leader can retain a worker
 with the exact owned pipe, which the old policy would skip. Each new cleanup
 produced genuine EOF while preserving an unrelated process running the same
-executable. This establishes a cleanup defect, but the Thor report
-has no thread inventory and does not prove the identity of its remaining writer.
+executable. The new Thor run also observed exited leaders with owned live workers and
+completed capture closure. The exact device pipe writer was not inventoried.
 The prior cold initialization policy, ten-minute allowance, progress updates and
 PE32 readiness check remain.
 
@@ -51,7 +55,7 @@ and no remaining owned helpers. The
 also passed. Its [acceptance receipt](android-evidence/accepted-wine-cleanup-36356283176.json)
 preserves the APK, all twelve embedded assets and all six hosted reports. The
 [0.1.4 cleanup correction](ANDROID_WINE_CLEANUP.md) did not resolve the subsequent
-Thor capture failure described above.
+Thor capture failure, now resolved by the 0.1.5 device run.
 
 ## Historical 0.1.3 result
 
@@ -204,7 +208,8 @@ also passed all four jobs. Earlier failures remain in the
 
 Hosted Linux success establishes this exercised guest path. It does not establish
 Android SELinux/device behavior, activity/foreground-service lifecycle, graphics,
-performance or gameplay. A passing Thor retry remains a required acceptance step.
+performance or gameplay. The later [0.1.5 Thor acceptance](THOR_DEVICE_ACCEPTANCE.md)
+provides the device diagnostic evidence; lifecycle checks remain.
 Preserve the accepted APK and exported report; do not assume a later candidate
 with another signing certificate will install as an in-place update.
 
@@ -213,6 +218,10 @@ Source and license records are provided in the workflow artifacts and the
 snapshots and all previously accepted Windows reference inputs remain untouched.
 
 ## Thor acceptance steps
+
+These are reference steps for a fresh installation. The current Thor has passed
+the primary diagnostic and client gate; keep its installed 0.1.5 and runtime.
+Remaining lifecycle checks can accompany the next candidate.
 
 1. Install the accepted `COH-Diagnostic-0.1.5.apk` above. If Android
    reports a signing conflict, export old reports before uninstalling **COH Diagnostic**.

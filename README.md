@@ -1,21 +1,19 @@
 # City of Heroes Android
 
-The latest [diagnostic retry, 0.1.5](docs/ANDROID_WINE_THREADS.md), addresses a
-reproduced gap in Wine thread cleanup. The [0.1.4 Thor report](docs/android-evidence/thor-capture-still-open-20260928.json)
-again passed all eleven database/Windows functional stages, including 65 ODBC
-sessions and durable restart, but wineboot output capture stayed open. Ownership
-scanning reported zero candidates, so it did not identify the remaining writer.
+**The primary M2 device diagnostic and headless client capability gate passed on
+AYN Thor with 0.1.5.** The [device acceptance record](docs/THOR_DEVICE_ACCEPTANCE.md)
+covers a subsequent combined database/client run with all twelve stages passed,
+complete owned cleanup and all 30 process input/output captures closed. It reused
+the database cluster and ready Wine prefix. The user also reports that the
+preceding database-only run passed; the supplied archive contains the combined run.
 
-A native reproduction showed that an exited main thread can leave a live worker
-holding the exact run token and output pipe. Version 0.1.5 checks surviving tasks
-and authenticates ownership before signaling their thread group. All five jobs in
-[run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345)
-passed: 125 tests without skips, fresh/repeat database and client runs, and both
-ordinary and live-worker cleanup fixtures. The
-[acceptance receipt](docs/android-evidence/accepted-wine-threads-36364550345.json)
-records genuine output EOF and preservation of unrelated processes. The device
-report itself does not establish which process held its pipe. Complete device cleanup, client graphics, hardware
-acceleration and gameplay remain unvalidated; this diagnostic cannot launch CoH.
+The headless client fixture verified OpenGL pixel readback through llvmpipe
+software rendering and synthetic keyboard/mouse handling. Cleanup observed exited
+leaders with live owned workers on the device and finished with zero remaining
+helpers. The exact process that held the earlier pipe was not inventoried. See
+the [accepted Thor evidence](docs/android-evidence/accepted-thor-20260928.json).
+Android presentation, GPU acceleration, physical controls, audible playback and
+CoH gameplay remain unvalidated; this diagnostic cannot launch the game.
 
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
@@ -26,7 +24,7 @@ with downstream changes: source code, not a VM image.
 **Validation, 2026-09-27:** all 5,995 imported files pass integrity checks. An
 [upstream Windows build of this exact commit](https://github.com/Thunderspies/CityOfHeroes/actions/runs/35934567567)
 built the server and client and passed nine utility, archive and codec tests.
-Gameplay and complete diagnostic execution on Android have not been validated.
+CoH gameplay remains unvalidated; the accepted Android diagnostic scope is recorded above.
 
 The complete pinned companion data is now imported under `upstream/i24`: **156,297
 files, 1,992,097,492 bytes**, verified against its original Git tree. Runtime
@@ -102,12 +100,11 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M2 device acceptance remains pending.** Install the accepted hosted **0.1.5**
-retry, use **Setup runtime**, then **Run diagnostics** and export its report. If it fails, stop further checks and share that report for diagnosis.
-Only after a complete pass, run **Run client probe** and export separately, then
-check repeat runs and Stop on Thor. The device database and Windows fixtures now
-have a functional pass; owned cleanup, client graphics, foreground-service
-lifecycle and performance still need device validation. The
+**M3 actual game-server execution is the next implementation milestone.**
+Keep the existing 0.1.5 APK and runtime. Stop followed by a successful rerun,
+app reopening, suspend/resume and memory measurements remain device checks;
+they can accompany the next candidate. See the
+[concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The diagnostic
 app includes no game binaries or assets. New-zone assets, missions, automatic
 map startup, combat and graphics remain separate unfinished work. The repository
 is **not a complete runnable game installation**. Complete asset coverage and
