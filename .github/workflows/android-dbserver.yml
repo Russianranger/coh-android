@@ -44,6 +44,22 @@ jobs:
           persist-credentials: false
       - name: Stage separately identified Wine source
         run: python tools/prepare_wine_dbserver_source.py --output out/wine-source
+      - name: Verify opt-in dispatch progress mapping on Windows
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/dbserver/test_dispatch_progress.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/test-dispatch-progress.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\test-dispatch-progress.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Dispatch progress Windows contracts failed' }
       - name: Build normal DbServer and preserve its exact configuration
         working-directory: out/wine-source
         shell: pwsh

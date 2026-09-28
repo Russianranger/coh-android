@@ -35,9 +35,10 @@ zero remaining owned processes or inspection errors. The
 binds the reports and inputs. Physical Android DbServer execution, Android
 presentation and game rendering remain unvalidated. Managed Atlas MapServer and
 diagnostic TestClient execution are now implemented in the separate
-[hosted Atlas gate](ANDROID_GAME_RUNTIME.md). Its latest ARM64 run passed the
-first character creation, live currency change and committed protocol save,
-then failed at the service restart port check; resume remains unproved.
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md). One ARM64 run passed the first
+character creation, live currency change and committed protocol save, then
+failed at the service restart port check. The latest rerun reproduced the
+startup timeout and captured live failure evidence; resume remains unproved.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -72,13 +73,40 @@ lacked the native `SO_REUSEADDR` behavior used by pinned Wine. An isolated Linux
 experiment reproduced the bare-bind error with TIME_WAIT and passed with TCP
 reuse while retaining rejection of live listeners and occupied UDP ports. The
 hosted report has no socket table proving that state, but the behavior is
-consistent with its failure. The narrow harness correction and tests are applied; the full hosted rerun remains required. The
+consistent with its failure. The narrow harness correction and tests were
+applied for the subsequent run described below; restart validation remains required. The
 prior startup timeout did not recur: one query returned after 78.833 seconds and
 AutoCommands retrieval completed after 82.71 seconds. This does not establish
 that intermittent startup delay as fixed. Do not repeat the successful first
 save as if it were still unknown, or mark the full hosted gate accepted before
 restart/resume/second-save pass. Keep the accepted 0.1.5 device diagnostic;
 Android game presentation and gameplay remain unvalidated.
+
+The subsequent [run 36420158506](https://github.com/Russianranger/coh-android/actions/runs/36420158506)
+at `04b9771120737f3e8daf7b4740d2a9fcd6850f28` failed the earlier startup query
+after 90.041 seconds, so it did not exercise the restart-port correction.
+Preserve the prior first-save evidence above. The new
+[failure receipt](android-evidence/game-runtime-failure-36420158506.json),
+[raw report](android-evidence/game-arm64-failed-36420158506.json) and
+[pre-cleanup snapshot](android-evidence/game-hang-36420158506/snapshot.json)
+show live DbServer/Atlas/query processes and 65 idle SQL sessions. All Windows
+capture APIs completed (three processes, 72 threads, 114 modules, zero errors),
+but inspection of pinned Wine/FEX shows `GetThreadContext` supplies saved WOW64
+context rather than current translated x86 execution state. Decoded DbServer
+pointers lead to an already-completed startup path, so they do not identify the
+live blocker or justify a main-loop change. Final cleanup passed with all 59 process
+captures closed and zero remaining owned processes or inspection failures.
+The full hosted restart/resume/second-save gate and Android gameplay remain
+unvalidated.
+
+Next qualify the [opt-in source dispatch markers](../database/wine-dbserver/DISPATCH_PROGRESS.md)
+in the separately receipted DbServer package. The implementation is ready for
+Windows contract tests and DbServer ARM64 qualification before Atlas adopts
+that package. Bounded stage/sequence observations will distinguish progress
+through startup, dispatch, SQL keepalive and console handling without relying
+on stale WOW64 contexts. A stopped marker identifies an operation and its nested
+calls; it does not prove a deadlock or gameplay success. No startup blocker fix
+has been established, and the accepted device APK remains 0.1.5.
 
 ## Continuation validation checkpoint
 

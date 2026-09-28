@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -17,7 +18,8 @@ PATCH = 'patches/wine-dbserver/0001-wine-odbc.patch'
 OVERLAY = 'database/wine-dbserver/overlay'
 RECEIPT = 'wine-dbserver-build-input.json'
 WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c')
-OVERLAY_FILES = ('Common/sql/wine_odbc.c', 'Common/sql/wine_odbc.h')
+OVERLAY_FILES = ('Common/sql/wine_odbc.c', 'Common/sql/wine_odbc.h',
+                 'DBServer/src/wine_dispatch_progress.c', 'DBServer/src/wine_dispatch_progress.h')
 WINE_COMMIT = 'b073859675060c9211fcbccfd90e4e87520dc2c2'
 REQUIRED_IMPORTS = ('SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare', 'SQLGetDiagRecA',
                     'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW')
@@ -47,6 +49,32 @@ def overlay_bytes(root):
     return result
 
 
+def dispatch_progress_metadata(contents):
+    """Publish stage names from the hash-bound C enum, not a second stage list."""
+    header = contents['DBServer/src/wine_dispatch_progress.h'].decode('utf-8')
+    entries = re.findall(r'^    COH_DB_STAGE_([A-Z0-9_]+) = (\d+),?$', header, re.MULTILINE)
+    ids = [int(number) for _, number in entries]
+    require(ids == list(range(1, len(entries) + 1)) and len(set(name for name, _ in entries)) == len(entries),
+            'Dispatch progress stages must have unique contiguous positive IDs')
+    require(entries and entries[-1][0] == 'READY', 'Dispatch progress stage count marker changed')
+    return {
+        'environment_variable': 'COH_WINE_DB_PROGRESS',
+        'format': 1, 'record_bytes': 128, 'mapping_bytes': 4096,
+        'magic_hex': b'COHDBP1\0'.hex(), 'byte_order': 'little',
+        'offsets': {'magic': 0, 'format': 8, 'record_bytes': 12, 'process_id': 16,
+                    'main_thread_id': 20, 'sequence': 24, 'stage': 28,
+                    'loop_count': 32, 'flags': 36, 'stage_count': 40, 'reserved': 44},
+        'stages': {number: name for name, number in entries},
+        'disabled_by_default': True, 'writer': 'dbserver_main_thread',
+        'stage_semantics': 'operation_about_to_run',
+        'sequence_semantics': 'positive_even_stable_odd_updating_no_wrap',
+        'flags': {'1': 'sequence_saturated_samples_unavailable'},
+        'initialization_failure': 'requested_normal_launch_exits_nonzero',
+        'file_creation': 'new_absolute_drive_path_private_parent_required',
+        'proves_sql_or_game_success': False,
+    }
+
+
 def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
     lock = json.loads((root / 'upstream-lock.json').read_text())
     pg = expected_pg_receipt(root, lock)
@@ -54,6 +82,7 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
         require(pg_receipt_matches(postgresql_build_input, pg, root), 'PostgreSQL build receipt mismatch')
         pg = postgresql_build_input
     wine_patch = patch_bytes(root)
+    contents = overlay_bytes(root)
     pg_patch = (root / 'patches/postgresql/0001-dbserver-postgresql.patch').read_bytes().replace(b'\r\n', b'\n')
     # CMakeLists overlaps the PG patch: reproduce PG first, then the Wine patch.
     with tempfile.TemporaryDirectory(prefix='coh-wine-dbserver-receipt-') as temporary:
@@ -76,7 +105,7 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
         'postgresql_build_input_canonical_sha256': canonical_hash(pg),
         'wine_patch_sha256': hashlib.sha256(wine_patch).hexdigest(),
         'wine_overlay_sha256': {name: hashlib.sha256(value).hexdigest()
-                               for name, value in overlay_bytes(root).items()},
+                               for name, value in contents.items()},
         'source_sha256': inputs, 'patched_sha256': outputs,
         'compile_definitions': {'DbServer': ['COH_WINE_ODBC=1']},
         'wine_commit': WINE_COMMIT,
@@ -84,6 +113,7 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
         'persistence_configurations': ['OFF', 'ON'],
         'fixture_startup': {'initialize_file_cache_and_log_before_sql_workers': True,
                             'assert_mode': 'stderr_and_exit', 'log_directory': 'pg-persistence-test'},
+        'dispatch_progress': dispatch_progress_metadata(contents),
         'runtime_validation': 'unverified',
     }
 

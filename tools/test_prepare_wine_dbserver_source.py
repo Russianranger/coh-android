@@ -45,8 +45,126 @@ class WineDbServerSourceTests(unittest.TestCase):
         self.assertEqual(before, {name: wine.sha256(self.original / name) for name in wine.WINE_FILES})
         cmake = (self.source / 'DBServer/CMakeLists.txt').read_text()
         self.assertIn('target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)', cmake)
+        self.assertIn('src/wine_dispatch_progress.c', cmake)
         self.assertIn('option(COH_PG_PERSISTENCE_TESTS', cmake)
         self.assertEqual(receipt['runtime_validation'], 'unverified')
+
+    def test_dispatch_receipt_labels_every_instrumented_stage_and_binds_sources(self):
+        receipt = wine.apply_wine_overlay(self.source)
+        metadata = receipt['dispatch_progress']
+        source = (self.source / 'DBServer/src/dbinit.c').read_text()
+        observer = (self.source / 'DBServer/src/wine_dispatch_progress.c').read_text()
+        markers = set(re.findall(r'cohDbProgressMark\(COH_DB_STAGE_(\w+)\)', source + observer))
+        self.assertEqual(markers, set(metadata['stages'].values()))
+        self.assertFalse(metadata['proves_sql_or_game_success'])
+        self.assertTrue(metadata['disabled_by_default'])
+        self.assertEqual(metadata['environment_variable'], 'COH_WINE_DB_PROGRESS')
+        self.assertEqual(metadata['record_bytes'], 128)
+        self.assertEqual(metadata['mapping_bytes'], 4096)
+        self.assertEqual(metadata['offsets']['sequence'], 24)
+        for name in ('DBServer/src/wine_dispatch_progress.c', 'DBServer/src/wine_dispatch_progress.h'):
+            self.assertEqual(wine.sha256(self.source / name), receipt['wine_overlay_sha256'][name])
+        main = source.split('int main(int argc,char **argv)', 1)[1]
+        self.assertLess(main.index('return pgPersistenceTestMain'), main.index('cohDbProgressInit()'))
+        self.assertLess(main.index('cohDbProgressInit()'), main.index('setWindowIconColoredLetter'))
+        self.assertIn('return 2;', main.split('cohDbProgressInit() < 0)', 1)[1].split('}', 1)[0])
+
+    def test_dispatch_metadata_rejects_duplicate_or_noncontiguous_stage_ids(self):
+        original = wine.overlay_bytes(wine.ROOT)
+        name = 'DBServer/src/wine_dispatch_progress.h'
+        for before, after in ((b'COH_DB_STAGE_STARTUP = 2', b'COH_DB_STAGE_STARTUP = 1'),
+                              (b'COH_DB_STAGE_STARTUP = 2', b'COH_DB_STAGE_STARTUP = 99'),
+                              (b'COH_DB_STAGE_STARTUP = 2', b'COH_DB_STAGE_INITIALIZED = 2')):
+            contents = dict(original)
+            contents[name] = contents[name].replace(before, after)
+            with self.subTest(after=after), self.assertRaisesRegex(ValueError, 'unique contiguous'):
+                wine.dispatch_progress_metadata(contents)
+
+    @unittest.skipUnless(shutil.which('cc'), 'Dispatch boundary contract requires a C compiler')
+    def test_actual_msgscan_marks_calls_without_changing_conditional_work(self):
+        wine.apply_wine_overlay(self.source)
+        source = (self.source / 'DBServer/src/dbinit.c').read_text()
+        header = (self.source / 'DBServer/src/wine_dispatch_progress.h').read_text()
+        enum = header[header.index('typedef enum CohDbProgressStage'):header.index('} CohDbProgressStage;') + len('} CohDbProgressStage;')]
+        functions = source[source.index('static void sendSqlKeepAlive(void)'):source.index('\nchar *getMapName')]
+        probe = self.source / 'dispatch-boundaries.c'
+        probe.write_text('''#include <assert.h>
+#include <string.h>
+typedef unsigned U32;
+#define false 0
+#define SQLCONN_FOREGROUND 0
+#define SQLCONN_MAX 3
+''' + enum + '''
+static CohDbProgressStage stage;
+static unsigned now = 120, foreground_calls, queued_calls, auth_calls, client_calls, chat_calls;
+static int disconnected;
+static struct { int queue_server, use_logserver, name_lock_timeout; } server_cfg;
+void cohDbProgressMark(CohDbProgressStage next) { stage = next; }
+U32 timerSecondsSince2000(void) {
+    assert(stage == COH_DB_STAGE_SQL_KEEPALIVE_CHECK || stage == COH_DB_STAGE_TEMP_LOCKS);
+    return now;
+}
+void sqlConnExecDirect(char *sql, unsigned length, int connection, int flag) {
+    assert(stage == COH_DB_STAGE_SQL_KEEPALIVE_FOREGROUND);
+    assert(!strcmp(sql, ";") && length == 1 && connection == 0 && flag == 0);
+    foreground_calls++;
+}
+void sqlExecAsyncEx(char *sql, unsigned length, unsigned connection, int flag) {
+    assert(stage == COH_DB_STAGE_SQL_KEEPALIVE_QUEUE);
+    assert(!strcmp(sql, ";") && length == 1 && connection < 2 && flag == 0);
+    queued_calls++;
+}
+#define OP(name, marker) void name(void) { assert(stage == COH_DB_STAGE_ ## marker); }
+OP(sqlFifoTick, SQL_FIFO_TICK)
+OP(delinkCrashedMaps, DELINK_MAPS)
+OP(delinkDeadLaunchers, DELINK_LAUNCHERS)
+OP(sqlFifoDisableNMMonitorIfMemoryLow, SQL_MEMORY_PRESSURE)
+void NMMonitor(int timeout) { assert(stage == COH_DB_STAGE_NM_MONITOR && timeout == 1); }
+OP(svrMonSendUpdates, SVRMON_UPDATES)
+OP(checkServerAutoStart, AUTO_START)
+int authDisconnected(void) { assert(stage == COH_DB_STAGE_AUTH_STATUS); return disconnected; }
+void reconnectToAuth(void) { assert(stage == COH_DB_STAGE_AUTH_RECONNECT); auth_calls++; }
+OP(waitingEntitiesCheck, WAITING_ENTITIES)
+OP(dbRelayQueueCheck, DB_RELAY)
+void clientClearDeadLinks(void) { assert(stage == COH_DB_STAGE_CLIENT_LINKS); client_calls++; }
+OP(queueservercomm_updateCount, CLIENT_LINKS)
+OP(launcherLaunchBeaconizers, BEACON_LAUNCHERS)
+OP(stat_Update, STATS)
+void shardChatMonitor(void) { assert(stage == COH_DB_STAGE_SHARD_CHAT); chat_calls++; }
+OP(updateLogStats, LOG_STATS)
+OP(auctionMonitorTick, AUCTION)
+OP(launcherOverloadProtectionTick, OVERLOAD)
+void tempLockTick(int timeout, U32 time) {
+    assert(stage == COH_DB_STAGE_TEMP_LOCKS && timeout == 27 && time == now);
+}
+OP(updateDbServerTitle, CONSOLE_TITLE)
+OP(checkExitRequest, EXIT_REQUEST)
+OP(FolderCacheDoCallbacks, FOLDER_CALLBACKS)
+OP(mpCompactPools, POOL_COMPACT)
+''' + functions + '''
+int main(void) {
+    server_cfg.name_lock_timeout = 27;
+    msgScan();
+    assert(foreground_calls == 1 && queued_calls == 2);
+    assert(auth_calls == 0 && client_calls == 1 && chat_calls == 1);
+    assert(stage == COH_DB_STAGE_POOL_COMPACT);
+    now = 121; disconnected = 1; server_cfg.queue_server = 1; server_cfg.use_logserver = 1;
+    msgScan();
+    assert(foreground_calls == 1 && queued_calls == 2);
+    assert(auth_calls == 1 && client_calls == 1 && chat_calls == 1);
+    now = 180; disconnected = 0;
+    msgScan();
+    assert(foreground_calls == 2 && queued_calls == 4);
+    assert(auth_calls == 1 && client_calls == 1 && chat_calls == 1);
+    return 0;
+}
+''')
+        for flags in ([], ['-DQUEUESERVER_VERIFICATION=1']):
+            executable = self.source / ('dispatch-boundaries-' + str(len(flags)))
+            subprocess.run([shutil.which('cc'), '-std=c99', '-Wall', '-Wextra', '-Werror',
+                            *flags, str(probe), '-o', str(executable)],
+                           check=True, capture_output=True, timeout=30)
+            subprocess.run([str(executable)], check=True, capture_output=True, timeout=10)
 
     def test_changed_touched_source_or_pg_overlay_is_rejected_before_any_patch(self):
         for name in (*wine.WINE_FILES, next(iter(self.pg['overlay_sha256']))):
