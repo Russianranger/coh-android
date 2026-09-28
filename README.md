@@ -1,20 +1,21 @@
 # City of Heroes Android
 
-The latest [diagnostic retry, 0.1.4](docs/ANDROID_WINE_CLEANUP.md), targets the
-remaining Wine helper cleanup failure. The [0.1.3 Thor report](docs/android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
-passed all eleven functional stages, including native PostgreSQL, real Win32 DLL
-loading, all 65 ODBC sessions and durable database restart. Its sole failure was
-an inherited wineboot output pipe remaining open after prefix shutdown.
+The latest [diagnostic retry, 0.1.5](docs/ANDROID_WINE_THREADS.md), addresses a
+reproduced gap in Wine thread cleanup. The [0.1.4 Thor report](docs/android-evidence/thor-capture-still-open-20260928.json)
+again passed all eleven database/Windows functional stages, including 65 ODBC
+sessions and durable restart, but wineboot output capture stayed open. Ownership
+scanning reported zero candidates, so it did not identify the remaining writer.
 
-Version 0.1.4 adds exact process ownership checks and requires output EOF after
-helper cleanup. All five jobs in
-[run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176)
-passed: 116 tests without skips, fresh/repeat database and client diagnostics,
-and detached-helper cleanup with unrelated processes preserved. The verified
-[acceptance receipt](docs/android-evidence/accepted-wine-cleanup-36356283176.json)
-records complete capture closure and no remaining owned helpers.
-The diagnostic does not launch City of Heroes. Complete device cleanup, client
-graphics, hardware acceleration and gameplay remain unvalidated.
+A native reproduction showed that an exited main thread can leave a live worker
+holding the exact run token and output pipe. Version 0.1.5 checks surviving tasks
+and authenticates ownership before signaling their thread group. All five jobs in
+[run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345)
+passed: 125 tests without skips, fresh/repeat database and client runs, and both
+ordinary and live-worker cleanup fixtures. The
+[acceptance receipt](docs/android-evidence/accepted-wine-threads-36364550345.json)
+records genuine output EOF and preservation of unrelated processes. The device
+report itself does not establish which process held its pipe. Complete device cleanup, client graphics, hardware
+acceleration and gameplay remain unvalidated; this diagnostic cannot launch CoH.
 
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
@@ -101,9 +102,8 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M2 device acceptance remains pending.** Install the accepted hosted **0.1.4**
-retry, use **Setup runtime**, then **Run diagnostics** and export its
-report. If it fails, stop further checks and share that report for diagnosis.
+**M2 device acceptance remains pending.** Install the accepted hosted **0.1.5**
+retry, use **Setup runtime**, then **Run diagnostics** and export its report. If it fails, stop further checks and share that report for diagnosis.
 Only after a complete pass, run **Run client probe** and export separately, then
 check repeat runs and Stop on Thor. The device database and Windows fixtures now
 have a functional pass; owned cleanup, client graphics, foreground-service

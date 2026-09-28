@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-Updated: 2026-09-27. PostgreSQL controlled persistence, targeted stage1 inspection,
+Updated: 2026-09-28 (UTC). PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
 generation have passed their current checks. Normal fixture-OFF DbServer schema
 initialization/export/reload and normal MapServer network save acknowledgements
@@ -17,14 +17,15 @@ seconds connected, restored live currency and a second protocol save.
 The follow-on [Atlas transfer run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986)
 also passed: the same character moved map 1 → prestarted clone 101 → map 1,
 preserved committed state at each arrival and completed the final protocol save.
-The [0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
-passed all eleven database/Windows functional stages, including 65 ODBC sessions
-and durable restart. Only wineboot output-capture closure failed after prefix
-shutdown. The current [0.1.4 helper cleanup retry](ANDROID_WINE_CLEANUP.md)
-passed all five hosted jobs, including fresh/repeat diagnostics and detached-helper
-cleanup, in [run 36356283176](https://github.com/Russianranger/coh-android/actions/runs/36356283176).
-The next step is physical 0.1.4 testing. Full device cleanup and client/game
-rendering remain unvalidated.
+The [0.1.4 Thor report](android-evidence/thor-capture-still-open-20260928.json)
+again passed all eleven database/Windows functional stages, including 65 ODBC
+sessions and durable restart. Wineboot output capture remained open despite an
+ownership scan reporting zero candidates. The current [0.1.5 thread cleanup
+retry](ANDROID_WINE_THREADS.md) passed all five hosted jobs in
+[run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345),
+including the reproduced live-worker cleanup case. The Thor report does not prove
+its physical cause. The next step is physical 0.1.5 testing; complete device
+cleanup and client/game rendering remain unvalidated.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -244,7 +245,7 @@ The subsequent device run passed initialization and all eleven functional stages
 its remaining cleanup failure is recorded below. Preserve the 0.1.3 artifact and
 receipt as historical evidence.
 
-### Current 0.1.4 Wine helper cleanup retry
+### Historical 0.1.4 Wine helper cleanup qualification
 
 [The 0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
 completed initialization in 90.927 seconds with one registration pass, then passed
@@ -284,8 +285,55 @@ assets and all six hosted reports were hash-verified. The
 also passed. The [acceptance receipt](android-evidence/accepted-wine-cleanup-36356283176.json)
 preserves the build identity, payload hashes and reports.
 
-Install `COH-Diagnostic-0.1.4.apk` (version code 5) from the
-[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36356283176/artifacts/10943554283),
+The subsequent 0.1.4 Thor run again failed capture closure; the hosted receipt
+and APK remain historical evidence.
+
+### Current 0.1.5 Wine thread cleanup retry
+
+[The 0.1.4 device report](android-evidence/thor-capture-still-open-20260928.json)
+passed all eleven functional stages and initialized Wine in 85.957 seconds. The
+same wineboot capture failure remained after graceful PostgreSQL and Wine prefix
+shutdown. Ownership scanning reported zero candidates, zero inspection failures
+and completion, so its accounting did not explain the still-open pipe. Graphics
+was not requested.
+
+The [thread cleanup investigation](ANDROID_WINE_THREADS.md) reproduced a native
+thread-group leader in `Z` state while a live worker retained the exact ownership
+token and inherited output pipe. The old policy skipped that group, reported zero
+candidates and left the capture open. Signaling the authenticated group allowed
+genuine EOF. This confirms a real cleanup defect; the physical report has no
+thread inventory and cannot identify its remaining writer.
+
+Version 0.1.5 inspects surviving tasks of an exited leader and verifies UID,
+thread-group ID, start time, PID namespace and the exact run token before group
+signaling, preferring a group pidfd. A true zombie without live tasks needs no signal.
+Unknown ownership, surviving owned tasks or missing output EOF must still fail.
+Thread observations in reports exclude environment contents and ownership tokens.
+
+Accepted source `9dc58f62c58dc4fc5c01288071429bf2aa06d2f4` includes the final
+state-transition race and missing-task checks.
+[Run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345)
+passed all five jobs on 2026-09-28 01:12:14 UTC. All 125 tests passed in 15.591
+seconds without skips. Fresh/repeat database runs passed eleven stages each;
+client runs passed twelve each. Cold initialization took 39.343 seconds in
+database mode and 39.747 seconds in client mode; warm runs took 4.176 and 4.277
+seconds respectively. These timings describe the hosted environment.
+
+The ordinary detached-helper and exited-leader/live-worker fixtures passed in
+both modes under the pinned PRoot. Each thread fixture observed a zombie leader
+with an authenticated worker holding the exact inherited pipe, which the old
+policy would miss. Cleanup exercised one TERM and one KILL through two pidfd
+signals and reached genuine EOF. An unrelated, TERM-sensitive sentinel running
+the same executable survived. These are direct fixture observations, not evidence
+of the identity of Thor's remaining writer.
+
+All twelve APK payloads and all eight hosted reports were hash-verified. The
+[same-source PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36364553676)
+also passed. The [acceptance receipt](android-evidence/accepted-wine-threads-36364550345.json)
+preserves build identity, payload hashes and reports.
+
+Install `COH-Diagnostic-0.1.5.apk` (version code 6) from the
+[APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36364550345/artifacts/10946846847),
 run diagnostics and export its report. If it fails, stop further checks. Only
 after a complete pass, run and export the client probe, then test repeat operation
 and Stop. Complete M2 device acceptance remains pending.
@@ -550,9 +598,9 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.4**
-helper cleanup retry above. The 0.1.3 device run passed every functional
-stage; complete owned cleanup is the remaining database diagnostic failure. The following items preserve completed reference gates and describe
+**Complete M2 physical Thor acceptance** using the accepted hosted **0.1.5**
+thread cleanup retry above. The 0.1.3 and 0.1.4 device runs passed every
+functional stage; complete owned cleanup remains the database diagnostic failure. The following items preserve completed reference gates and describe
 additional work; their order does not place further Windows server
 experiments ahead of the device gate.
 
@@ -607,7 +655,7 @@ experiments ahead of the device gate.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Run the accepted 0.1.4 diagnostic under its own UID on Thor and export its
+4. Run the accepted 0.1.5 diagnostic under its own UID on Thor and export its
    report. Run the client probe only if diagnostics fully passes.
    Confirm complete owned cleanup, then repeat-run and Stop behavior. The prior
    functional database pass is preserved; memory and suspension behavior remain

@@ -1,5 +1,10 @@
 # Thor Wine helper cleanup retry (0.1.4)
 
+Historical 0.1.4 qualification. The next Thor report still failed output capture
+closure despite zero tagged process candidates. See the
+[0.1.5 thread cleanup retry](ANDROID_WINE_THREADS.md) for the reproduced
+exited-leader/live-worker defect, current build and retry steps.
+
 The [0.1.3 Thor report](android-evidence/thor-functional-pass-cleanup-failure-20260927.json)
 passed all eleven functional stages. Cold Wine initialization completed in 90.927
 seconds with one registration pass. Native PostgreSQL, real PE32 DLL loading,

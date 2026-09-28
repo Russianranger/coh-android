@@ -1,0 +1,853 @@
+{
+  "format": 1,
+  "run_id": 36364550345,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36364550345",
+  "source_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+  "result": "all_five_jobs_cold_repeat_modes_detached_and_thread_cleanup_passed",
+  "tooling_tests": {
+    "passed": 125,
+    "skipped": 0
+  },
+  "apk": {
+    "format": 1,
+    "apk": "COH-Diagnostic-0.1.5.apk",
+    "bytes": 13481586,
+    "sha256": "bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5",
+    "application_id": "io.github.russianranger.cohdiagnostic",
+    "version_name": "0.1.5",
+    "version_code": 6,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "abi": "arm64-v8a",
+    "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "signature_verified": true,
+    "signer_certificate_sha256": "9582d7cd25ae892b0549c9f9a851f903d493303cece79468df95dbf7820792ea",
+    "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "device_validated": false,
+    "gameplay_validated": false
+  },
+  "qualification": {
+    "run": {
+      "id": 36364550345,
+      "head_sha": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-09-28T01:12:14Z",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/36364550345"
+    },
+    "jobs": [
+      {
+        "id": 108748252733,
+        "name": "tooling",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 36364550345,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Check ownership, cancellation, archive and build contracts",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          }
+        ]
+      },
+      {
+        "id": 108748332769,
+        "name": "postgresql",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 36364550345,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Build pinned PostgreSQL ARM64 and prove installed-tool restart",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          }
+        ]
+      },
+      {
+        "id": 108748719819,
+        "name": "apk",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 36364550345,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run android-actions/setup-android@v3",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Install pinned Android tools and Win32 compiler",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Build app-owned process runtime",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Assemble verified database and Win32 diagnostic inputs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Build and verify diagnostic APK",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Run actions/setup-java@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          }
+        ]
+      },
+      {
+        "id": 108749047066,
+        "name": "runtime (client)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 36364550345,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install host build dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Build matching native ARM64 PRoot",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Prove requested Win32 fixtures, database restart and owned shutdown through PRoot",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          }
+        ]
+      },
+      {
+        "id": 108749047077,
+        "name": "runtime (database)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 36364550345,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/download-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Install host build dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Build matching native ARM64 PRoot",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Prove requested Win32 fixtures, database restart and owned shutdown through PRoot",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          }
+        ]
+      }
+    ],
+    "tooling_tests": {
+      "passed": 125,
+      "skipped": 0
+    },
+    "tooling_log_summary": [
+      "2026-09-28T01:04:40.4370558Z Ran 125 tests in 15.591s",
+      "2026-09-28T01:04:40.4370967Z OK"
+    ],
+    "postgresql_backend": {
+      "id": 36364553676,
+      "head_sha": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-09-28T01:11:08Z",
+      "html_url": "https://github.com/Russianranger/coh-android/actions/runs/36364553676"
+    }
+  },
+  "runtime_modes": {
+    "database": {
+      "owned_cleanup_fixture": {
+        "passed": true,
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 2098,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 1,
+          "term_signals": 1,
+          "kill_signals": 1,
+          "pidfd_signals": 2,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "owned-wine-cleanup-database-36364550345.json",
+        "report_sha256": "a9b90d9b479875e9d5be299480e97c30a106dc5778adc62fbced141f13332f63"
+      },
+      "owned_thread_cleanup_fixture": {
+        "passed": true,
+        "before_cleanup": {
+          "leader_state": "Z",
+          "live_worker_count": 1,
+          "owned_live_worker_count": 1,
+          "owned_stdout_pipe_holders": 1,
+          "initializer_output_capture_open": true,
+          "legacy_zombie_skip_would_miss_group": true
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 2098,
+          "scanned_tasks": 56,
+          "dead_leaders_with_live_tasks": 2,
+          "owned_live_workers": 1,
+          "leader_exit_retries": 0,
+          "candidates": 1,
+          "term_signals": 1,
+          "kill_signals": 1,
+          "pidfd_signals": 2,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "owned-wine-thread-cleanup-database-36364550345.json",
+        "report_sha256": "6811eaff2fc101d370846fc914e538cfb630fbe23c1468f646ba2cef1464c952"
+      },
+      "cold": {
+        "passed": true,
+        "stages": 11,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": false,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 3,
+          "wow64_registration_processes": 1,
+          "registration_passes": 1,
+          "elapsed_seconds": 39.343
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 318,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 0,
+          "term_signals": 0,
+          "kill_signals": 0,
+          "pidfd_signals": 0,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "runtime-database-36364550345.json",
+        "report_sha256": "862d3b00b2d4fdc0ec6ed94f308acdd0a308c198784dd43ac0f3ad7bf553e139",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 39.342,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0158:trace:wineboot:process_run_key Done processing cmd 0.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:process_run_key No commands to execute.\n0158:trace:wineboot:process_run_key Done.\n0158:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 39.342
+          }
+        }
+      },
+      "repeat": {
+        "passed": true,
+        "stages": 11,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": true,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 0,
+          "wow64_registration_processes": 0,
+          "registration_passes": 0,
+          "elapsed_seconds": 4.176
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 318,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 0,
+          "term_signals": 0,
+          "kill_signals": 0,
+          "pidfd_signals": 0,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "runtime-database-repeat-36364550345.json",
+        "report_sha256": "2ee0ae5333d04f316ca9fc4d556a39028ad28a43bc3a5637c5fa39446488897e",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 4.175,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done processing cmd 0.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n00e0:trace:wineboot:process_run_key Done processing cmd 0.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 4.175
+          }
+        }
+      }
+    },
+    "client": {
+      "owned_cleanup_fixture": {
+        "passed": true,
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 2210,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 1,
+          "term_signals": 1,
+          "kill_signals": 1,
+          "pidfd_signals": 2,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "owned-wine-cleanup-client-36364550345.json",
+        "report_sha256": "c9b41b9117eedb81b398529a72972ee2468ae7a20db93dc5936577c13ea2f3b2"
+      },
+      "owned_thread_cleanup_fixture": {
+        "passed": true,
+        "before_cleanup": {
+          "leader_state": "Z",
+          "live_worker_count": 1,
+          "owned_live_worker_count": 1,
+          "owned_stdout_pipe_holders": 1,
+          "initializer_output_capture_open": true,
+          "legacy_zombie_skip_would_miss_group": true
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 2210,
+          "scanned_tasks": 56,
+          "dead_leaders_with_live_tasks": 2,
+          "owned_live_workers": 1,
+          "leader_exit_retries": 0,
+          "candidates": 1,
+          "term_signals": 1,
+          "kill_signals": 1,
+          "pidfd_signals": 2,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "owned-wine-thread-cleanup-client-36364550345.json",
+        "report_sha256": "990d2ad21d89365287773d3ee5ecc4a9f413ce23e4015a218f366926bc33d387"
+      },
+      "cold": {
+        "passed": true,
+        "stages": 12,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": false,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 3,
+          "wow64_registration_processes": 1,
+          "registration_passes": 1,
+          "elapsed_seconds": 39.747
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 316,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 0,
+          "term_signals": 0,
+          "kill_signals": 0,
+          "pidfd_signals": 0,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "runtime-client-36364550345.json",
+        "report_sha256": "6beb05fe6a6e2d6b7fc5ed2aedb26fab738abedc725fe7b040f5d50351253a2b",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 39.747,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 1 starting L\"C:\\\\windows\\\\system32\\\\rundll32.exe\"\n002c:trace:wineboot:start_rundll32 machine 14c starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\"\n00e4:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\rundll32.exe\" in experimental wow64 mode\n00ec:err:environ:init_peb starting L\"C:\\\\windows\\\\syswow64\\\\iexplore.exe\" in experimental wow64 mode\n002c:trace:wineboot:update_wineprefix wine: configuration in L\"/state/diagnostic/wine\" has been updated.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n0154:trace:wineboot:process_run_key Done processing cmd 0.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:process_run_key No commands to execute.\n0154:trace:wineboot:process_run_key Done.\n0154:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 39.747
+          }
+        },
+        "client_probe": {
+          "format": 1,
+          "status": "passed",
+          "failure_stage": "",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "scope": "headless_wgl_client_capabilities",
+          "gl": {
+            "vendor": "Mesa/X.org",
+            "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+            "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+            "renderer_class": "software",
+            "arb_vertex_program": true,
+            "arb_fragment_program": true,
+            "arb_shader_objects": true,
+            "framebuffer_extension": true,
+            "wgl_pbuffer_entrypoint": true,
+            "wgl_pixel_format_entrypoint": true,
+            "pbuffer_exercised": false
+          },
+          "render": {
+            "textured_quad_verified": true,
+            "samples_verified": 4,
+            "swap_buffers": true,
+            "rgb_samples": [
+              [
+                255,
+                0,
+                0
+              ],
+              [
+                0,
+                255,
+                0
+              ],
+              [
+                0,
+                0,
+                255
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          },
+          "input": {
+            "scope": "synthetic_own_window_and_device_creation_only",
+            "window_messages_verified": true,
+            "keyboard_message_mask": 3,
+            "mouse_message_mask": 7,
+            "directinput_devices_created": true,
+            "directinput_hresult": 0,
+            "physical_input_validated": false
+          },
+          "audio": {
+            "scope": "device_enumeration_only",
+            "enumeration_hresult": 0,
+            "devices": 0,
+            "default_reported": false,
+            "playback_validated": false
+          },
+          "cg_shaders_validated": false,
+          "game_rendering_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        }
+      },
+      "repeat": {
+        "passed": true,
+        "stages": 12,
+        "cleanup": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        },
+        "wine_initialization": {
+          "policy": "initialize_once_then_reuse",
+          "state": "ready",
+          "ready_prefix_reused": true,
+          "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+          "update_timestamp_removed": false,
+          "timeout_seconds": 600,
+          "registration_processes": 0,
+          "wow64_registration_processes": 0,
+          "registration_passes": 0,
+          "elapsed_seconds": 4.277
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 316,
+          "scanned_tasks": 0,
+          "dead_leaders_with_live_tasks": 0,
+          "owned_live_workers": 0,
+          "leader_exit_retries": 0,
+          "candidates": 0,
+          "term_signals": 0,
+          "kill_signals": 0,
+          "pidfd_signals": 0,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true
+        },
+        "report": "runtime-client-repeat-36364550345.json",
+        "report_sha256": "71d739fded0a179d6a8342fb34d625f0a46adbda68340749c5c574bd09b2aa81",
+        "wineboot": {
+          "label": "wineboot",
+          "elapsed_seconds": 4.276,
+          "exit_code": 0,
+          "forced_stop": false,
+          "output_capture_closed": true,
+          "input_closed": true,
+          "output": "002c:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n002c:trace:wineboot:process_run_key Done processing cmd 0.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:process_run_key No commands to execute.\n002c:trace:wineboot:process_run_key Done.\n002c:trace:wineboot:main Operation done\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunServicesOnce\" entries under HKLM.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunServices\" entries under HKLM.\n00e0:trace:wineboot:process_run_key Done processing cmd 0.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:ProcessRunKeys Processing L\"RunOnce\" entries under HKLM.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:process_run_key No commands to execute.\n00e0:trace:wineboot:process_run_key Done.\n00e0:trace:wineboot:main Operation done\n",
+          "completion": {
+            "policy": "leader_exit_with_owned_background_output",
+            "leader_exit_code": 0,
+            "output_capture_open": true,
+            "elapsed_seconds": 4.276
+          }
+        },
+        "client_probe": {
+          "format": 1,
+          "status": "passed",
+          "failure_stage": "",
+          "pointer_bits": 32,
+          "win32_error": 0,
+          "scope": "headless_wgl_client_capabilities",
+          "gl": {
+            "vendor": "Mesa/X.org",
+            "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+            "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+            "renderer_class": "software",
+            "arb_vertex_program": true,
+            "arb_fragment_program": true,
+            "arb_shader_objects": true,
+            "framebuffer_extension": true,
+            "wgl_pbuffer_entrypoint": true,
+            "wgl_pixel_format_entrypoint": true,
+            "pbuffer_exercised": false
+          },
+          "render": {
+            "textured_quad_verified": true,
+            "samples_verified": 4,
+            "swap_buffers": true,
+            "rgb_samples": [
+              [
+                255,
+                0,
+                0
+              ],
+              [
+                0,
+                255,
+                0
+              ],
+              [
+                0,
+                0,
+                255
+              ],
+              [
+                255,
+                255,
+                255
+              ]
+            ]
+          },
+          "input": {
+            "scope": "synthetic_own_window_and_device_creation_only",
+            "window_messages_verified": true,
+            "keyboard_message_mask": 3,
+            "mouse_message_mask": 7,
+            "directinput_devices_created": true,
+            "directinput_hresult": 0,
+            "physical_input_validated": false
+          },
+          "audio": {
+            "scope": "device_enumeration_only",
+            "enumeration_hresult": 0,
+            "devices": 0,
+            "default_reported": false,
+            "playback_validated": false
+          },
+          "cg_shaders_validated": false,
+          "game_rendering_validated": false,
+          "android_surface_validated": false,
+          "hardware_acceleration_validated": false
+        }
+      }
+    }
+  },
+  "artifacts": {
+    "apk": {
+      "id": 10946846847,
+      "zip_sha256": "ab501c85bf4f730adb9487bc770a1fee7aa05f54adaf2c823897958f47289761"
+    },
+    "database": {
+      "id": 10947151298,
+      "zip_sha256": "77025ee203391fa2938752a768a8121a8caba54f774c8fd75474f5ad5171da11"
+    },
+    "client": {
+      "id": 10947505782,
+      "zip_sha256": "abf1a4656e9a16b044805463fe7b0925216c0287e8dfdddb5d277fb616780d36"
+    }
+  },
+  "downloaded_apk_and_all_embedded_asset_hashes_verified": true,
+  "runtime_probe_hashes_match_apk": true,
+  "device_failure_evidence": "thor-capture-still-open-20260928.json",
+  "android_device_acceptance": "pending_retry",
+  "scope": "Hosted ARM64 Wine/FEX cold and warm diagnostics plus detached and exited-leader/live-worker cleanup. Prior 0.1.4 passed all eleven functional stages on Thor but failed final capture closure despite zero ownership candidates. Version 0.1.5 physical cleanup, Android presentation, hardware acceleration and gameplay remain unvalidated."
+}

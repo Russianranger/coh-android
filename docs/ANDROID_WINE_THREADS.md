@@ -23,18 +23,53 @@ uses `pthread_exit` for nonfinal thread exit. This establishes a real cleanup
 bug and a plausible explanation for Thor; the device report itself contains no
 thread inventory and cannot prove which process retained its pipe.
 
-Version 0.1.5 must inspect surviving tasks of an exited leader and authenticate
+Version 0.1.5 inspects surviving tasks of an exited leader and authenticates
 the same run ownership before signaling the complete thread group. A true
 zombie with no live tasks is harmless. Unknown ownership, surviving owned tasks
 or a capture that never reaches EOF must still fail. Task observations are
 included in the receipt without exposing environment data or ownership tokens.
+A single bounded retry handles a leader exiting between its state and environment
+or namespace reads, after verifying the same process identity. Missing task
+visibility for an existing group remains a failure.
 
-## Qualification
+## Accepted hosted qualification
 
-Hosted qualification is pending. Keep the ordinary detached-helper regression
-and add the exited-leader/live-worker regression under the actual pinned PRoot,
-alongside fresh and repeated database/client diagnostics. The new case must
-preserve unrelated processes and prove genuine EOF after bounded cleanup.
+[Run 36364550345](https://github.com/Russianranger/coh-android/actions/runs/36364550345)
+passed all five jobs at source `9dc58f62c58dc4fc5c01288071429bf2aa06d2f4`,
+finishing on 2026-09-28 at 01:12:14 UTC. All 125 tooling tests passed without
+skips. The same-source
+[PostgreSQL regressions](https://github.com/Russianranger/coh-android/actions/runs/36364553676)
+also passed.
+
+Each ARM64 PRoot job passed both cleanup regressions. In the new case, its
+independent snapshot observed a `Z` leader, one live token-owned worker and that
+worker's write descriptor for the exact captured pipe. The old zombie skip would
+miss the group. Cleanup used TERM then KILL through pidfds and observed genuine
+EOF. An unrelated same-UID, same-prefix process running the same executable
+survived; that sentinel would terminate if mistakenly signaled. No reader was
+closed to manufacture an EOF result.
+
+Fresh and repeated database runs passed all eleven stages; client runs passed
+all twelve, with complete cleanup and every input/output capture closed. Client
+evidence remains limited to headless llvmpipe rendering, exact RGB readbacks and
+synthetic input. The ordinary runtime runs did not need the thread fallback;
+the dedicated native regressions exercise it explicitly.
+
+| Mode | Cold initialization | Repeat initialization | Registration passes |
+| --- | ---: | ---: | --- |
+| Database | 39.343 s | 4.176 s | 1 cold, 0 repeat |
+| Client | 39.747 s | 4.277 s | 1 cold, 0 repeat |
+
+These are hosted timings. All downloaded archive hashes, all twelve embedded
+APK inputs and all eight hosted reports were verified. The
+[acceptance receipt](android-evidence/accepted-wine-threads-36364550345.json)
+binds the workflow results, package, payloads and runtime evidence.
+
+Download [coh-diagnostic-apk](https://github.com/Russianranger/coh-android/actions/runs/36364550345/artifacts/10946846847):
+`COH-Diagnostic-0.1.5.apk`, version code 6, 13,481,586 bytes, SHA-256
+`bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5`.
+Runtime manifest SHA-256:
+`fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203`.
 
 ## Device retry
 

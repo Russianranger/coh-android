@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "status": "passed",
+  "passed": true,
+  "scope": "synthetic_owned_thread_cleanup_under_proot",
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "before_cleanup": {
+    "leader_state": "Z",
+    "live_worker_count": 1,
+    "owned_live_worker_count": 1,
+    "owned_stdout_pipe_holders": 1,
+    "initializer_output_capture_open": true,
+    "legacy_zombie_skip_would_miss_group": true
+  },
+  "detached_helper_retained_output": true,
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 2210,
+    "scanned_tasks": 56,
+    "dead_leaders_with_live_tasks": 2,
+    "owned_live_workers": 1,
+    "leader_exit_retries": 0,
+    "candidates": 1,
+    "term_signals": 1,
+    "kill_signals": 1,
+    "pidfd_signals": 2,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "dead_leader_live_worker_reproduced": true,
+  "owned_live_workers_reaped": true,
+  "same_executable_sentinel_preserved": true,
+  "detached_helper_reaped": true,
+  "output_eof_observed": true,
+  "unrelated_sentinel_survived": true,
+  "same_prefix_different_token_preserved": true,
+  "processes": [
+    {
+      "label": "detached-wine-initializer",
+      "elapsed_seconds": 0.305,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "output": "worker_ready\n",
+      "completion": {
+        "policy": "leader_exit_with_owned_background_output",
+        "leader_exit_code": 0,
+        "output_capture_open": true,
+        "elapsed_seconds": 0.305
+      }
+    }
+  ]
+}
