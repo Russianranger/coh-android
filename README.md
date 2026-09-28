@@ -23,6 +23,17 @@ exact attribute IDs/names. The catalog remained stable on reload and owned clean
 completed. See the [qualification and evidence](docs/ANDROID_DBSERVER.md).
 Physical Android DbServer execution remains unvalidated; the 0.1.5 APK is unchanged.
 
+**The full hosted Atlas Park gate passed on ARM64 Wine/FEX.**
+[Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)
+passed all three jobs and all 18 runtime stages: character creation, live influence
+change, committed protocol save, same-cluster service restart, exact-name resume
+and a second committed save. All 123 process captures closed and owned cleanup
+completed. See the [Atlas qualification](docs/ANDROID_GAME_RUNTIME.md) and
+[acceptance receipt](docs/android-evidence/accepted-game-hosted-36460005201.json).
+First service readiness took 18 minutes 38 seconds; restart readiness took
+3 minutes 14 seconds. This establishes hosted persistence, not physical Android
+game execution or acceptable device startup performance.
+
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
 `0b75ade0c801735e10c5798f641948a45cc50488`. It includes local server services,
@@ -108,9 +119,11 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**Continue M3 with managed Atlas MapServer and diagnostic TestClient execution
-in the accepted ARM64 runtime.** Android listener binding and app lifecycle
-integration remain before the next device candidate. Keep the existing 0.1.5 APK
+**Continue M3 with Android app integration and physical Thor qualification.**
+The hosted Atlas gate is complete. The separate loopback DbServer package is
+[hosted-qualified](docs/android-evidence/accepted-dbserver-hosted-36460867428.json);
+physical Android listener execution and app lifecycle integration remain before
+the next device candidate. Keep the existing 0.1.5 APK
 and runtime; no replacement is needed for the accepted diagnostic. Stop followed
 by a successful rerun, app reopening, suspend/resume and memory measurements remain device checks;
 they can accompany the next candidate. See the

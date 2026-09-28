@@ -56,11 +56,20 @@ The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) has now passed in
 run 36369485666. A separate Wine build overlay applies the ODBC compatibility
 changes to the real DbServer. Its persistence fixture and normal fixture-OFF
 schema initialization/export/reload passed against ARM64 PostgreSQL; this does
-not establish physical Android DbServer execution. Continue M3 with managed
-Atlas MapServer and diagnostic TestClient execution in the same runtime.
-Android listener binding and app lifecycle integration remain before the next
-device candidate. Preserve the accepted stock Windows reference and immutable
-upstream source.
+not establish physical Android DbServer execution. The subsequent
+[full hosted Atlas gate](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow)
+also passed in run 36460005201, including both protocol saves, same-cluster
+restart and exact-name resume. Do not repeat that completed gate as an unfinished
+milestone. First hosted service readiness took 18 minutes 38 seconds; restart
+readiness took 3 minutes 14 seconds, so device startup performance remains open.
+
+The separate loopback DbServer package is
+[hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json).
+Continue with app integration and physical Android listener/runtime execution,
+then the Stop/rerun, app reopening, suspend/resume and memory checks above.
+The loopback package has not replaced the accepted Atlas donor 36451873322;
+integrating it needs its own game/runtime validation before device acceptance.
+Preserve the accepted stock Windows reference and immutable upstream source.
 
 This acceptance does not establish CoH gameplay, Android surface presentation,
 hardware acceleration, Cg shaders, physical controls or audible playback.

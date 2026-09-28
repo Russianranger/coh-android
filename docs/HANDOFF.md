@@ -113,6 +113,24 @@ Atlas donor `36451873322` at `53c6270dff8a0efcc6be09da756408504d8313bd` and
 APK 0.1.5 remain unchanged. Physical Android game execution, presentation and
 rendering remain unvalidated.
 
+### Testing takeover verification (2026-09-28)
+
+A fresh checkout at `d1907db` independently replayed the accepted `36460005201`
+evidence. All 43 preserved archive members matched their recorded sizes and
+hashes; the raw report was byte-exact. The exact tested validator modules passed
+`validate_report`, `validate_capture_files` and `validate_service_captures`.
+The [verification record](android-evidence/atlas-takeover-verification-20260928.json)
+delimits the retained-evidence scope: no fresh runtime or device execution,
+and no recomputation of the omitted full data inventory or executable payloads.
+The current focused suites passed 103 tests with one Windows-only observer test
+skipped locally; the accepted hosted Windows job covers that observer.
+
+Live GitHub inspection confirmed the successful full Atlas run and zero queued
+or running repository workflows. This does not reveal another agent's internal
+session status. README and Thor next-work instructions now point to Android
+integration and physical device qualification instead of repeating the accepted
+hosted Atlas milestone. The 0.1.5 APK and Atlas donor are unchanged.
+
 ### Earlier acceptance after host validator correction
 
 [Run 36454174481](https://github.com/Russianranger/coh-android/actions/runs/36454174481)
