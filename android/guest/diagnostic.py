@@ -314,7 +314,7 @@ class WineProcessOwner:
         self.dead_leaders, self.owned_workers = set(), set()
         self.receipt = {"policy": "same_real_uid_and_run_token", "scanned_processes": 0,
                         "scanned_tasks": 0, "dead_leaders_with_live_tasks": 0,
-                        "owned_live_workers": 0,
+                        "owned_live_workers": 0, "leader_exit_retries": 0,
                         "candidates": 0, "term_signals": 0, "kill_signals": 0,
                         "pidfd_signals": 0, "identity_checked_signals": 0,
                         "inspection_failures": 0, "remaining": None, "complete": False}
@@ -363,20 +363,31 @@ class WineProcessOwner:
     def live_tasks(self, path, deadline=None):
         # A thread-group leader can be a zombie while worker threads still own
         # the group's descriptors. Only an entirely dead group releases them.
-        for count, task in enumerate((path / "task").iterdir(), 1):
-            require(count <= 4096, "Wine ownership task count exceeds bound")
-            require(deadline is None or time.monotonic() < deadline,
-                    "Wine ownership task inspection timed out")
-            if not task.name.isdecimal():
-                continue
-            self.receipt["scanned_tasks"] += 1
+        observed, unavailable = False, False
+        try:
+            for count, task in enumerate((path / "task").iterdir(), 1):
+                require(count <= 4096, "Wine ownership task count exceeds bound")
+                require(deadline is None or time.monotonic() < deadline,
+                        "Wine ownership task inspection timed out")
+                if not task.name.isdecimal():
+                    continue
+                self.receipt["scanned_tasks"] += 1
+                try:
+                    identity = self.process_stat(task)
+                except FileNotFoundError:
+                    continue
+                observed = True
+                require(identity["pid"] == int(task.name), "Wine cleanup task identity changed")
+                if identity["state"] != "Z":
+                    yield task, identity
+        except FileNotFoundError:
+            unavailable = True
+        if not observed or unavailable:
             try:
-                identity = self.process_stat(task)
+                self.process_stat(path)
             except FileNotFoundError:
-                continue
-            require(identity["pid"] == int(task.name), "Wine cleanup task identity changed")
-            if identity["state"] != "Z":
-                yield task, identity
+                return
+            raise DiagnosticError("Cannot inspect existing Wine group tasks")
 
     def has_token(self, path):
         with (path / "environ").open("rb") as source:
@@ -447,10 +458,29 @@ class WineProcessOwner:
                 if not self.inspect_dead_leader(path, identity, deadline):
                     return None
             else:
-                if not self.direct_pid_view and os.readlink(path / "ns/pid") != self.namespace:
-                    return None
-                if not self.has_token(path):
-                    return None
+                unreadable = None
+                try:
+                    if not self.direct_pid_view and os.readlink(path / "ns/pid") != self.namespace:
+                        return None
+                    token_present = self.has_token(path)
+                except PermissionError as exc:
+                    unreadable, token_present = exc, False
+                if not token_present:
+                    # The leader can exit between stat and its namespace/env
+                    # read, making those files unreadable or empty while workers
+                    # live. Retry once only after proving that exact transition;
+                    # a still-live unreadable process stays unsafe.
+                    changed = self.process_stat(path)
+                    require(changed["pid"] == identity["pid"]
+                            and changed["starttime"] == identity["starttime"],
+                            "Wine cleanup group identity changed")
+                    if changed["state"] != "Z":
+                        if unreadable is not None:
+                            raise unreadable
+                        return None
+                    self.receipt["leader_exit_retries"] += 1
+                    if not self.inspect_dead_leader(path, changed, deadline):
+                        return None
         except FileNotFoundError:
             return None
         pid = proc_pid if self.direct_pid_view else status["namespace_pids"][-1]

@@ -664,6 +664,94 @@ class WineProcessOwnerTests(unittest.TestCase):
         self.assertFalse(self.owner.receipt['complete'])
         self.assertEqual(self.owner.receipt['inspection_failures'], 1)
 
+    def test_missing_task_view_for_existing_group_is_not_accepted_as_dead(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        task.rmdir()
+        for missing_directory in (False, True):
+            if missing_directory:
+                (group / 'task').rmdir()
+            with self.subTest(missing_directory=missing_directory), \
+                 patch.object(self.owner, 'status', return_value=status), \
+                 patch.object(self.owner, 'process_stat', return_value=leader):
+                with self.assertRaisesRegex(diagnostic.DiagnosticError, 'Cannot inspect existing Wine group tasks'):
+                    self.owner.cleanup(time.monotonic() + 1)
+            self.assertFalse(self.owner.receipt['complete'])
+
+    def test_leader_exit_during_namespace_or_environment_read_uses_verified_worker_once(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        self.owner.direct_pid_view = False
+        self.owner.namespace_depth = 2
+        self.owner.namespace = 'pid:[1234]'
+        status['namespace_pids'] = [123, 456]
+        worker_status['namespace_pids'] = [124, 457]
+        for failing_read in ('namespace', 'environment', 'empty_environment'):
+            group_reads = [0]
+            def process_stat(path):
+                if path != group:
+                    return worker
+                group_reads[0] += 1
+                return {**leader, 'state': 'S'} if group_reads[0] == 1 else leader
+            def readlink(path):
+                if path == group / 'ns/pid' and failing_read == 'namespace':
+                    raise PermissionError('Leader exited before namespace read')
+                return self.owner.namespace
+            def has_token(path):
+                if path == group:
+                    if failing_read == 'empty_environment':
+                        return False
+                    raise PermissionError('Leader exited before environment read')
+                return True
+            with self.subTest(failing_read=failing_read), \
+                 patch.object(self.owner, 'status', side_effect=lambda path: status if path == group else worker_status), \
+                 patch.object(self.owner, 'process_stat', side_effect=process_stat), \
+                 patch.object(diagnostic.os, 'readlink', side_effect=readlink), \
+                 patch.object(self.owner, 'has_token', side_effect=has_token):
+                self.assertEqual(self.owner.inspect(123), {'proc_pid': 123, 'pid': 456, 'starttime': 10})
+            self.assertEqual(group_reads[0], 3, 'Only transition check and final group proof are needed')
+        self.assertEqual(self.owner.receipt['owned_live_workers'], 1)
+        self.assertEqual(self.owner.receipt['leader_exit_retries'], 3)
+
+    def test_unreadable_live_leader_does_not_trigger_worker_fallback(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        live = {**leader, 'state': 'S'}
+        for after in (live, {**leader, 'starttime': 20}, FileNotFoundError('Group gone')):
+            expected = None if isinstance(after, FileNotFoundError) else (
+                PermissionError if after['starttime'] == live['starttime'] else diagnostic.DiagnosticError)
+            with self.subTest(after=after), \
+                 patch.object(self.owner, 'status', return_value=status), \
+                 patch.object(self.owner, 'process_stat', side_effect=[live, after]), \
+                 patch.object(self.owner, 'has_token', side_effect=PermissionError('Unreadable environment')), \
+                 patch.object(self.owner, 'inspect_dead_leader', side_effect=AssertionError('Unsafe worker fallback')) as fallback:
+                if expected is None:
+                    self.assertIsNone(self.owner.inspect(123))
+                else:
+                    with self.assertRaises(expected):
+                        self.owner.inspect(123)
+            fallback.assert_not_called()
+
+        with patch.object(self.owner, 'status', return_value=status), \
+             patch.object(self.owner, 'process_stat', return_value=live), \
+             patch.object(self.owner, 'has_token', return_value=False), \
+             patch.object(self.owner, 'inspect_dead_leader', side_effect=AssertionError('Unowned live group retried')) as fallback:
+            self.assertIsNone(self.owner.inspect(123))
+        fallback.assert_not_called()
+
+    def test_leader_exit_retry_preserves_unreadable_worker_failure(self):
+        group, task, leader, worker, status, worker_status = self.fake_dead_leader()
+        group_reads = [0]
+        def process_stat(path):
+            if path != group:
+                return worker
+            group_reads[0] += 1
+            return {**leader, 'state': 'S'} if group_reads[0] == 1 else leader
+        with patch.object(self.owner, 'status', side_effect=lambda path: status if path == group else worker_status), \
+             patch.object(self.owner, 'process_stat', side_effect=process_stat), \
+             patch.object(self.owner, 'has_token', side_effect=PermissionError('Unreadable environment')) as read:
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'Cannot inspect same-UID'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertEqual(read.call_count, 2, 'Worker ownership failure must not trigger another retry')
+        self.assertFalse(self.owner.receipt['complete'])
+
     def test_live_worker_wrong_group_or_changed_starttime_cannot_authorize_signal(self):
         group, task, leader, worker, status, worker_status = self.fake_dead_leader()
         candidate = {'proc_pid': 123, 'pid': 123, 'starttime': 10}
