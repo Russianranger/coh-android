@@ -5,6 +5,35 @@ It builds the actual CoH DbServer with a separately identified Wine compatibilit
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
 PRoot/Wine/FEX runtime. The stock Windows reference and immutable source are preserved.
 
+**The opt-in loopback listener package passed hosted Windows and ARM64 qualification.**
+[Run 36460867428](https://github.com/Russianranger/coh-android/actions/runs/36460867428)
+at `eed2ce1f5388195f65a07853919761a93657aca6` passed all three jobs on
+2026-09-28. The [acceptance receipt](android-evidence/accepted-dbserver-hosted-36460867428.json)
+binds the package, native Windows contracts and ARM64 reports. Windows passed
+four dispatch, four fixed-input and eleven loopback contracts, plus all 21
+persistence groups across 14 phases. ARM64 passed all 28 stages in 191.502348
+seconds, including default normal-schema startup followed by fixed-input and
+loopback mode together. The latter emitted its exact activation acknowledgment
+and all 13 mandatory bind records: 12 TCP endpoints plus UDP 7000. The optional
+asynchronous TCP 6992 bind was also observed, for 14 verified loopback endpoints.
+These records establish successful binds; the existing network namespace gate
+remains required.
+
+Both fresh exports preserved 99 tables, 5,935 ordered columns, 58,272 exact
+attribute IDs/names and the full catalog. All 111 process captures closed;
+cleanup left zero owned processes or inspection errors. This qualifies the
+hosted [listener-binding prerequisite](../database/wine-dbserver/LOOPBACK_BINDING.md).
+Physical Android listener execution and app integration remain unvalidated;
+Atlas continues to use donor `36451873322`, and the accepted APK remains 0.1.5.
+
+The first [attempt 36460005041](https://github.com/Russianranger/coh-android/actions/runs/36460005041)
+at `cfc8ac477e449037213d5242f43480acf4f1cb85` failed Windows loopback test-fixture
+setup before either DbServer build or ARM64 execution. Its
+[failure receipt](android-evidence/dbserver-qualification-failure-36460005041.json)
+preserves the result. The fixture consumed a CRLF patch against LF source files;
+the correction normalizes only its temporary patch input to LF and adds a CRLF
+regression. The later pass does not reclassify the failed attempt.
+
 **The fixed-input DbServer package is qualified and remains the Atlas donor.**
 [Run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322)
 at `53c6270dff8a0efcc6be09da756408504d8313bd` passed all three jobs on
@@ -159,10 +188,10 @@ The host runner uses the exact 0.1.5 M2 runtime manifest and all twelve verified
 inputs from run `36364550345`. The new guest script is bound separately; it reuses
 the accepted process ownership and cleanup implementation. A separate Linux network
 namespace permits loopback only, with the guest running as the original non-root
-runner user. Normal DbServer startup opens wildcard listeners, so this isolation
-is required for the hosted gate. The separate loopback listener prerequisite is
-implemented and locally tested; hosted source/package qualification and donor
-adoption remain pending.
+runner user. Default normal DbServer startup opens wildcard listeners, so this
+isolation is required for the hosted gate. The separate opt-in loopback package
+passed hosted qualification in run `36460867428`; it has not replaced the Atlas
+donor, and the network namespace requirement remains in force.
 
 Each binary variant runs from a private directory with both `data/` and `tools/`
 markers, which the engine requires to recognize its local data root. The fixture
@@ -192,6 +221,6 @@ The accepted managed Atlas sequence from run `36454174481` used donor
 and exact-name resume. It retained both fixed-input acknowledgments and all four
 unchanged input checks. Its original workflow failed on the host exit contract;
 strict revalidation of unchanged evidence passed after that correction. Keep
-the accepted donor unchanged. Android listener binding and app lifecycle
+the accepted donor unchanged. Physical Android listener validation and app lifecycle
 integration precede the next device candidate; retain the accepted 0.1.5
 diagnostic and runtime in the meantime.

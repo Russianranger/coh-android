@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "scope": "isolated_loopback_only_host_network",
+  "host_network_namespace": "net:[4026531833]",
+  "guest_network_namespace": "net:[4026532263]",
+  "distinct_network_namespace": true,
+  "original_uid": 1001,
+  "original_gid": 1001,
+  "effective_uid": 1001,
+  "effective_gid": 1001,
+  "interfaces": [
+    "lo"
+  ],
+  "loopback_up": true,
+  "external_network_disabled": true,
+  "guest_runs_as_root": false
+}

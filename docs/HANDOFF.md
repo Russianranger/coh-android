@@ -52,6 +52,23 @@ The current fixed-input successor is qualified in run `36451873322` at
 default normal-schema startup and acknowledged fixed-input reload on ARM64.
 This remains the Atlas donor; preserve the earlier first-save and dispatch
 evidence. The accepted device APK remains 0.1.5.
+The separate opt-in loopback listener package passed all three hosted jobs in
+[run 36460867428](https://github.com/Russianranger/coh-android/actions/runs/36460867428)
+at `eed2ce1f5388195f65a07853919761a93657aca6`. Its
+[acceptance receipt](android-evidence/accepted-dbserver-hosted-36460867428.json)
+records 28 ARM64 stages in 191.502348 seconds, all 13 required loopback binds
+(12 TCP plus UDP 7000), and the optional asynchronous TCP 6992 bind. Windows
+passed all eleven native loopback contracts and the existing persistence,
+dispatch and fixed-input checks. Both schema exports and the catalog were
+stable; all 111 captures closed with zero owned processes or inspection errors.
+The first attempt `36460005041` failed before DbServer builds or runtime execution
+because its Windows test fixture applied a CRLF patch to LF source files.
+The correction normalizes only that fixture's patch input and adds a CRLF
+regression; preserve the
+[failure receipt](android-evidence/dbserver-qualification-failure-36460005041.json).
+This qualifies the hosted listener prerequisite. Atlas donor `36451873322` and
+APK 0.1.5 remain unchanged; physical Android listener execution and app integration
+remain unvalidated.
 The first attempt with the preceding diagnostic donor `36425508780`, run
 `36427680960`, stopped before game execution
 when the pinned talloc download timed out during the PRoot build. A bounded
@@ -849,9 +866,11 @@ activation acknowledgments and all four schema/configuration snapshots.
 Enabled ARM64 dispatch publication was already verified in run `36428915900`.
 The separate sibling DbServer failure remains unexplained despite the successful
 byte-identical repeat; retain both receipts and the current donor.
-The separate loopback listener prerequisite is implemented and locally tested;
-hosted source/package qualification and donor adoption remain pending. Android
-listener validation and app lifecycle integration remain before the next device
+The separate loopback listener package is
+[hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json)
+in run `36460867428`; it has not replaced the Atlas donor. Preserve its earlier
+CRLF fixture-setup failure and correction. Physical Android listener validation
+and app lifecycle integration remain before the next device
 candidate. Keep the existing 0.1.5 APK and runtime. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
 Stop followed by a successful rerun, suspend/resume and memory measurements remain
