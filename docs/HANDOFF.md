@@ -33,13 +33,15 @@ All 28 ARM64 stages passed, with all 111 process input/output captures closed an
 zero remaining owned processes or inspection errors. The
 [acceptance receipt](android-evidence/accepted-dbserver-hosted-36369485666.json)
 binds the reports and inputs. Physical Android DbServer execution, Android
-presentation and game rendering remain unvalidated. Managed Atlas MapServer and
-diagnostic TestClient execution are now implemented in the separate
-[hosted Atlas gate](ANDROID_GAME_RUNTIME.md). One ARM64 run passed the first
-character creation, live currency change and committed protocol save, then
-failed at the service restart port check. The latest game execution reproduced the
-startup timeout and captured stationary `FOLDER_CALLBACKS` source markers;
-native snapshots show continued operations, not a proven deadlock. Resume remains unproved.
+presentation and game rendering remain unvalidated. The separate
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md) is accepted after strict
+revalidation of unchanged run `36454174481` evidence with a corrected host exit
+contract. It passed all 18 guest stages, including both protocol saves,
+same-cluster restart and exact-name resume. The
+[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
+retains the original Actions failure: its host validator required a field the
+bridge does not emit. Earlier first-save, restart-port and startup-timeout
+evidence is preserved below.
 The follow-on diagnostic DbServer package passed all three jobs in run
 `36425508780`. Windows verified enabled dispatch-record publication; the ARM64
 fixture/schema gate used the observer disabled. Atlas run `36428915900` then
@@ -48,8 +50,8 @@ folder callback boundary during the intermittent timeout.
 The current fixed-input successor is qualified in run `36451873322` at
 `53c6270dff8a0efcc6be09da756408504d8313bd`: all three jobs passed, including
 default normal-schema startup and acknowledged fixed-input reload on ARM64.
-Use this donor for the pending full Atlas gate; preserve the earlier first-save
-and dispatch evidence. The accepted device APK remains 0.1.5.
+This remains the Atlas donor; preserve the earlier first-save and dispatch
+evidence. The accepted device APK remains 0.1.5.
 The first attempt with the preceding diagnostic donor `36425508780`, run
 `36427680960`, stopped before game execution
 when the pinned talloc download timed out during the PRoot build. A bounded
@@ -71,6 +73,49 @@ do not reveal the internal status of the other Codex session.
 
 ## Latest hosted ARM64 game checkpoint (2026-09-28)
 
+[Run 36454174481](https://github.com/Russianranger/coh-android/actions/runs/36454174481)
+at `8944bd598990b33b63a750a64ae448403e4542cd` has an **accepted runtime sequence
+after host revalidation; the original workflow conclusion remains failure**.
+All 18 guest stages passed in 1,867.229988 seconds. The
+[raw report](android-evidence/game-arm64-failed-36454174481.json) records
+`TEST01443` / container 1 / account `CohA318dc5a821`, live influence 12,345,
+first protocol save, Wine and same-cluster PostgreSQL restart, restarted Atlas
+readiness, exact-name resume at slot 0 and the second protocol save. LoginCount
+progressed 1 → 1 → 2; selected SQL retained one `ents` row, one `ents2` row,
+eight powers and 14 costume parts. Atlas readiness was independently observed
+for 31.564746 seconds.
+Both DbServer fixed-input acknowledgments and all four unchanged input checks
+passed (62 files / 4,402,846 bytes). All 122 input/output captures closed;
+cleanup left zero owned processes or inspection failures.
+
+The original host validator incorrectly required `child_exited: true`, which
+the bridge does not serialize. The correction requires the existing exit code
+to be a terminal DWORD and rejects `STILL_ACTIVE` (259). Both clients recorded
+exit code 125 after forced termination following independently committed
+protocol saves. Strict full report, character-capture and service-capture
+validation passed against unchanged evidence. Preserve the separate
+[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json),
+[failure receipt](android-evidence/game-runtime-failure-36454174481.json) and
+[captured evidence](android-evidence/game-evidence-36454174481.zip).
+The actual C serializer, real guest stop validation and host consumer are
+covered by a regression; the runtime, bridge producer and evidence bytes are
+unchanged. The original Actions run remains failed. Keep donor `36451873322` at
+`53c6270dff8a0efcc6be09da756408504d8313bd`
+and the accepted 0.1.5 APK unchanged. Physical Android game execution,
+presentation and rendering remain unvalidated.
+
+The separate sibling DbServer [run 36454174374](https://github.com/Russianranger/coh-android/actions/runs/36454174374)
+failed attempt 1 with SIGSEGV (`-11`) after `PG_TEST_COMPLETE rebuild` and
+teardown messages. Attempt 2 reused the byte-identical package and passed all
+28 stages in 190.362494 seconds, with all 111 captures closed and complete
+cleanup. The [failure](android-evidence/dbserver-runtime-failure-36454174374.json)
+and [repeat](android-evidence/dbserver-runtime-repeat-36454174374-attempt2.json)
+receipts preserve both outcomes. The failure remains intermittent and
+unexplained; the passing repeat does not establish a repair or replace the Atlas
+donor.
+
+### Earlier hosted ARM64 checkpoints
+
 [Run 36416020268](https://github.com/Russianranger/coh-android/actions/runs/36416020268),
 commit `324823be6ca9713bdc60446eb31596004ff6286a`, is an **overall failure with
 new partial runtime evidence**. Atlas stayed independently ready for 31.519
@@ -90,7 +135,7 @@ experiment reproduced the bare-bind error with TIME_WAIT and passed with TCP
 reuse while retaining rejection of live listeners and occupied UDP ports. The
 hosted report has no socket table proving that state, but the behavior is
 consistent with its failure. The narrow harness correction and tests were
-applied for the subsequent run described below; restart validation remains required. The
+applied for the subsequent run described below; restart validation was still required. The
 prior startup timeout did not recur: one query returned after 78.833 seconds and
 AutoCommands retrieval completed after 82.71 seconds. This does not establish
 that intermittent startup delay as fixed. Do not repeat the successful first
@@ -113,8 +158,8 @@ context rather than current translated x86 execution state. Decoded DbServer
 pointers lead to an already-completed startup path, so they do not identify the
 live blocker or justify a main-loop change. Final cleanup passed with all 59 process
 captures closed and zero remaining owned processes or inspection failures.
-The full hosted restart/resume/second-save gate and Android gameplay remain
-unvalidated.
+This run did not validate the full hosted restart/resume/second-save gate or
+Android gameplay.
 
 [Run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
 at `41f3aff596826e22e2774375e11590de895ca33d` qualified the separately receipted
@@ -145,7 +190,7 @@ stall. The isolated retry correction allows at most three transport attempts,
 discards partial downloads and preserves the size/SHA-256 gates; Atlas tooling
 now explicitly runs its regression tests. The next run passed dependency
 preparation without an observed retry. This download remedy is not a game
-startup fix; full restart/resume/second-save remain pending.
+startup fix; this attempt did not reach restart/resume/second-save.
 
 [Run 36428915900](https://github.com/Russianranger/coh-android/actions/runs/36428915900)
 at `f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac` failed a first-phase startup query
@@ -196,10 +241,11 @@ The Atlas harness now enables this mode only for DbServer and requires its exact
 startup acknowledgment on both launches. After private `servers.cfg` generation,
 it binds all 62 accepted schema inputs plus the entire staged `data/server/db`
 tree. Four unchanged snapshots are required: before first startup, after first
-save, before restart and after second save. Full Atlas qualification with this
-donor, exact-name resume and the second save remain pending. Keep the earlier
-successful first-create/save evidence and accepted 0.1.5 APK; Android game
-execution and rendering remain unvalidated.
+save, before restart and after second save. Run `36454174481` subsequently
+completed this sequence; its unchanged evidence passed strict host revalidation
+after correction of the bridge exit contract. Preserve the original failed
+workflow, earlier first-create/save evidence and accepted 0.1.5 APK; Android
+game execution and rendering remain unvalidated.
 
 ## Continuation validation checkpoint
 
@@ -525,9 +571,8 @@ gate is **Stop followed by a successful diagnostic rerun**, exporting both repor
 Use the existing 0.1.5 APK; no new build is needed. Suspend/resume and memory
 behavior still need evidence and can accompany the next candidate. The
 [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) subsequently passed in
-run 36369485666. Managed Atlas MapServer and diagnostic TestClient execution are
-next; Android listener binding and app lifecycle integration remain before the
-device candidate.
+run 36369485666. The latest managed Atlas result is recorded above; Android
+listener binding and app lifecycle integration remain before the device candidate.
 
 ### Earlier attempts and corrections
 
@@ -789,19 +834,25 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**The primary M2 device diagnostic and first hosted M3 DbServer gate are accepted.**
-Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
-the same ARM64 Wine/FEX runtime. The isolated Wine-compatible DbServer fixture
+**The primary M2 device diagnostic, hosted M3 DbServer and hosted Atlas
+create/save/restart/resume/second-save sequence are accepted.** The Atlas
+[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
+records strict revalidation of unchanged run `36454174481` evidence after a
+host exit-contract correction; the original Actions run remains failed.
+The isolated Wine-compatible DbServer fixture
 and normal schema startup/export/reload have passed; preserve their
 [accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).
 The current fixed-input DbServer successor is also
 [qualified](android-evidence/accepted-dbserver-hosted-36451873322.json).
-Use donor `36451873322` for the next Atlas run, require both DbServer activation
-acknowledgments and all four schema/configuration snapshots, and finish
-restart/resume/second-save before accepting that hosted gate. Enabled ARM64
-dispatch publication was already verified in run `36428915900`.
-Android listener binding and app lifecycle integration remain before the next
-device candidate. Keep the existing 0.1.5 APK and runtime. See the
+Keep donor `36451873322` and retain both DbServer
+activation acknowledgments and all four schema/configuration snapshots.
+Enabled ARM64 dispatch publication was already verified in run `36428915900`.
+The separate sibling DbServer failure remains unexplained despite the successful
+byte-identical repeat; retain both receipts and the current donor.
+The separate loopback listener prerequisite is implemented and locally tested;
+hosted source/package qualification and donor adoption remain pending. Android
+listener validation and app lifecycle integration remain before the next device
+candidate. Keep the existing 0.1.5 APK and runtime. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
 Stop followed by a successful rerun, suspend/resume and memory measurements remain
 device checks and can accompany the next candidate. The following items preserve

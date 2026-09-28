@@ -19,10 +19,13 @@ OVERLAY = 'database/wine-dbserver/overlay'
 RECEIPT = 'wine-dbserver-build-input.json'
 WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c',
               'libs/UtilitiesLib/src/utils/FolderCache.c',
-              'libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h')
+              'libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h',
+              'libs/UtilitiesLib/src/network/sock.c',
+              'libs/UtilitiesLib/include/utilitieslib/network/sock.h')
 OVERLAY_FILES = ('Common/sql/wine_odbc.c', 'Common/sql/wine_odbc.h',
                  'DBServer/src/wine_dispatch_progress.c', 'DBServer/src/wine_dispatch_progress.h',
-                 'DBServer/src/wine_fixed_inputs.c', 'DBServer/src/wine_fixed_inputs.h')
+                 'DBServer/src/wine_fixed_inputs.c', 'DBServer/src/wine_fixed_inputs.h',
+                 'DBServer/src/wine_loopback.c', 'DBServer/src/wine_loopback.h')
 WINE_COMMIT = 'b073859675060c9211fcbccfd90e4e87520dc2c2'
 REQUIRED_IMPORTS = ('SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare', 'SQLGetDiagRecA',
                     'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW')
@@ -94,6 +97,87 @@ def fixed_inputs_metadata(contents):
     }
 
 
+def loopback_metadata(contents):
+    header = contents['DBServer/src/wine_loopback.h'].decode('utf-8')
+    constants = dict(re.findall(r'^#define (COH_DB_LOOPBACK_\w+) "([^"\n]+)"$', header, re.MULTILINE))
+    require(set(constants) == {'COH_DB_LOOPBACK_ENVIRONMENT', 'COH_DB_LOOPBACK_ACK'},
+            'Unexpected loopback mode header contract')
+    return {
+        'environment_variable': constants['COH_DB_LOOPBACK_ENVIRONMENT'],
+        'enabled_value': '1', 'disabled_by_default': True,
+        'activation': 'before_common_startup_and_fixture_dispatch',
+        'late_activation': 'refused_after_first_sockBind_attempt',
+        'wildcard_address': '127.0.0.1', 'explicit_addresses': 'IPv4_127/8_only',
+        'endpoint_verification': 'getsockname_and_SO_TYPE_after_each_successful_bind',
+        'socket_types': ['tcp', 'udp'], 'endpoint_record': 'protocol_address_port',
+        'scope': 'explicit_IPv4_listener_binding',
+        'network_namespace_isolation': False, 'outbound_connections_restricted': False,
+        'failure': 'close_socket_and_exit_2',
+        'startup_acknowledgement': constants['COH_DB_LOOPBACK_ACK'],
+        'android_execution_validated': False,
+    }
+
+
+# Immutable source call sites for the accepted fake-auth/no-queue/embedded-log
+# export configuration. Port numbers are parsed from comm_backend.h, never copied.
+# Crash-map starts with an unchecked CreateThread and is not joined before an
+# export returns: its verified bind may be observed, but cannot be required.
+NORMAL_LISTENER_SOURCES = (
+    ('DEFAULT_DBTURNSTILE_PORT', 'tcp', 'DBServer/src/turnstileDb.c'),
+    ('DEFAULT_MISSIONSERVER_PORT', 'tcp', 'DBServer/src/missionservercomm.c'),
+    ('DEFAULT_ACCOUNTSERVER_PORT', 'tcp', 'DBServer/src/accountservercomm.c'),
+    ('DEFAULT_AUCTIONSERVER_HEROES_PORT', 'tcp', 'DBServer/src/auctionservercomm.c'),
+    ('DEFAULT_BEACONCLIENT_PORT', 'tcp', 'DBServer/src/beaconservercomm.c'),
+    ('DEFAULT_BEACONSERVER_PORT', 'tcp', 'DBServer/src/beaconservercomm.c'),
+    ('DEFAULT_DBSTAT_PORT', 'tcp', 'DBServer/src/statservercomm.c'),
+    ('DEFAULT_DBARENA_PORT', 'tcp', 'DBServer/src/arenacomm.c'),
+    ('DEFAULT_LOG_PORT', 'tcp', 'DBServer/src/logserver.c'),
+    ('DEFAULT_DBCRASHMAP_PORT', 'tcp', 'DBServer/src/mapcrashreport.c'),
+    ('DEFAULT_SVRMON_PORT', 'tcp', 'DBServer/src/svrmoncomm.c'),
+    ('DEFAULT_DB_PORT', 'tcp', 'DBServer/src/dbinit.c'),
+    ('DEFAULT_DBLAUNCHER_PORT', 'tcp', 'DBServer/src/launchercomm.c'),
+    ('DEFAULT_DBGAMECLIENT_PORT', 'udp', 'Common/ClientLogin/clientcommLogin.c'),
+)
+
+
+def normal_listener_contract(root=ROOT):
+    directory = Path(root) / 'upstream/ouroboros'
+    names = {'Common/comm_backend.h', 'Common/dbserver/servercfg.c', 'DBServer/src/dbinit.c',
+             'DBServer/src/clientcomm.c', 'libs/UtilitiesLib/src/network/net_linklist.c',
+             *(name for _, _, name in NORMAL_LISTENER_SOURCES)}
+    contents = {}
+    for name in sorted(names):
+        path = directory / name
+        require(path.is_file() and not path.is_symlink(), 'Missing listener source: ' + name)
+        contents[name] = path.read_bytes().replace(b'\r\n', b'\n')
+    defines = re.findall(r'^#define\s+(DEFAULT_\w+_PORT)\s+(\d+)\b',
+                         contents['Common/comm_backend.h'].decode(), re.MULTILINE)
+    require(len(defines) == len({name for name, _ in defines}), 'Ambiguous listener port constants')
+    ports = dict(defines)
+    endpoints = []
+    for constant, protocol, name in NORMAL_LISTENER_SOURCES:
+        source = contents[name].decode()
+        if constant == 'DEFAULT_DBCRASHMAP_PORT':
+            require('socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)' in source
+                    and re.search(r'sockSetAddr\([^;]*,' + constant + r'\)', source),
+                    'Crash-map listener source differs')
+        else:
+            arguments = (r'0\s*,\s*' + constant if protocol == 'tcp' else constant + r'\s*,\s*0')
+            require(re.search(r'netInit\([^;]*,\s*' + arguments + r'\s*\)', source),
+                    'Listener call site differs: ' + constant)
+        require(constant in ports and 0 < int(ports[constant]) < 65536, 'Invalid listener port: ' + constant)
+        endpoints.append({'protocol': protocol, 'address': '127.0.0.1', 'port': int(ports[constant]),
+                          'constant': constant, 'source': name,
+                          'required_before_export': constant != 'DEFAULT_DBCRASHMAP_PORT'})
+    endpoints.sort(key=lambda item: (item['protocol'], item['port']))
+    require(len({(item['protocol'], item['port']) for item in endpoints}) == len(endpoints),
+            'Duplicate normal-schema listener endpoint')
+    return {'scope': 'normal_schema_exportdump_fakeauth_noqueue_embedded_log',
+            'source_encoding': 'UTF-8_LF',
+            'source_sha256': {name: hashlib.sha256(value).hexdigest() for name, value in contents.items()},
+            'endpoints': endpoints}
+
+
 def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
     lock = json.loads((root / 'upstream-lock.json').read_text())
     pg = expected_pg_receipt(root, lock)
@@ -134,6 +218,8 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
                             'assert_mode': 'stderr_and_exit', 'log_directory': 'pg-persistence-test'},
         'dispatch_progress': dispatch_progress_metadata(contents),
         'fixed_inputs': fixed_inputs_metadata(contents),
+        'loopback_only': loopback_metadata(contents),
+        'normal_schema_listeners': normal_listener_contract(root),
         'runtime_validation': 'unverified',
     }
 

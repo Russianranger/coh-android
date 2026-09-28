@@ -1,15 +1,15 @@
 # Hosted Atlas character persistence on ARM64
 
-This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
-new hosted gate is implemented; complete ARM64 qualification is pending. The
-best completed run passed Atlas readiness, fresh character creation, live
-currency change and a committed protocol save, then stopped at the restart port
-check. The latest game execution reproduced the startup query timeout and
-validated enabled ARM64 source markers, which stayed at `FOLDER_CALLBACKS`
-during the failure capture. Native snapshots show continued operations rather
-than a proven deadlock. Exact-name resume and the second save remain
-unproved on ARM64. No accepted Thor 0.1.5 APK changes or Android game execution
-claims follow from these hosted results.
+This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md).
+The hosted ARM64 create/save/restart/resume/second-save sequence is accepted
+after strict revalidation of unchanged run `36454174481` evidence with a
+corrected host exit contract. Its guest report passed all 18 stages; the
+original Actions workflow remains failed because its validator required a
+`child_exited` field the bridge does not emit. The
+[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
+records the separate revalidation. Earlier partial and failure evidence is
+preserved below. The accepted Thor 0.1.5 APK is unchanged; physical Android game
+execution, presentation and rendering remain unvalidated.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
 identified composite runtime from these immutable inputs:
@@ -38,8 +38,8 @@ executable SHA-256 is
 `659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
 Its [acceptance receipt](android-evidence/accepted-dbserver-hosted-36451873322.json)
 records successful Windows and ARM64 qualification, including default normal
-schema startup and acknowledged fixed-input reload. Full Atlas qualification
-with this donor remains pending. Runs `36427680960` and `36428915900` used
+schema startup and acknowledged fixed-input reload. The accepted hosted Atlas
+sequence uses this donor. Runs `36427680960` and `36428915900` used
 the preceding diagnostic donor `36425508780`.
 The Atlas attempts through `36420158506` used donor `36369485666`; their
 first-save and failure evidence remains unchanged.
@@ -67,8 +67,8 @@ The intended acceptance sequence is:
 This gate does not yet cover the longer Windows sustained-session/transfer
 checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
-separate milestones. Keep the accepted device diagnostic installed while this
-hosted runtime is being qualified.
+separate milestones. Keep the accepted 0.1.5 device diagnostic installed while
+Android listener binding and app lifecycle integration are prepared.
 
 ## First real attempt
 
@@ -121,13 +121,13 @@ inspection errors. The [failure receipt](android-evidence/game-runtime-failure-3
 and [raw report](android-evidence/game-arm64-failed-36375412599.json) preserve
 these facts. Character execution did not begin.
 
-The next bounded diagnostic must capture simultaneous owned DbServer, Atlas
+The next bounded diagnostic was required to capture simultaneous owned DbServer, Atlas
 and status-query thread stacks, socket state, and exact last PostgreSQL query
 text before cleanup. In particular, distinguish whether DbServer dispatched
 the AutoCommands request and reached its foreground
 `SELECT dbo.AutoCommands.ContainerId FROM dbo.AutoCommands ORDER BY containerid`.
-No further deadline increase or runtime source change is justified yet.
-The create/save/restart/resume milestone remains unqualified.
+No further deadline increase or runtime source change was justified by this
+capture. The create/save/restart/resume milestone was unqualified at this checkpoint.
 
 ## Recovery diagnostic (2026-09-28)
 
@@ -183,14 +183,14 @@ experiment reproduced the same bare-bind error with TCP TIME_WAIT, then passed
 with TCP address reuse while still rejecting active wildcard/loopback listeners
 and occupied UDP ports. That matches the hosted failure but is not a captured
 TIME_WAIT observation from the hosted run. The narrow TCP preflight correction
-and regression tests were applied for the next run; full restart/resume validation is still
-required. No upstream game-source change is needed for this harness mismatch.
+and regression tests were applied for the next run; full restart/resume validation
+was still required. No upstream game-source change was needed for this harness mismatch.
 
 This run's cold startup query returned after 78.833 seconds and Atlas completed
 AutoCommands retrieval in 82.71 seconds. The prior 90-second failure did not
 recur; it is not established as fixed. No deadline was increased for this run.
-Exact-name resume, post-restart row comparison and a second protocol save remain
-pending, so the hosted create/save/restart/resume gate is still unqualified.
+This attempt did not reach exact-name resume, post-restart row comparison or a
+second protocol save, so it did not qualify the hosted gate.
 Android gameplay, rendering and app integration remain separate gates.
 
 The `wine-game-arm64-evidence` artifact (ID `10968627172`, 8,792,105 bytes)
@@ -254,8 +254,8 @@ disabled. Atlas adopted this qualified package for the subsequent diagnostic,
 requiring a fresh valid record at DbServer readiness and a distinct record after
 restart. Enabled ARM64 publication was subsequently verified in `36428915900`
 below. This is an evidence-gathering step, not a demonstrated startup fix or
-gameplay result. The complete hosted
-restart/resume/second-save gate and physical Android execution remain pending.
+gameplay result. At this checkpoint, the complete hosted
+restart/resume/second-save gate and physical Android execution were pending.
 
 ## Diagnostic attempt stopped before game execution
 
@@ -332,6 +332,59 @@ the exact talloc source from accepted runtime `36364550345`'s authenticated
 corresponding-source bundle. Atlas now uses that same recovery path and preserves
 its extraction receipt; the PRoot compiler recipe and source pins are unchanged.
 
-No startup fix, new character result or restart/resume/second-save result is
-claimed yet. The accepted device APK remains 0.1.5; Android game execution and
-presentation remain unvalidated.
+The subsequent run below exercised both game sessions with this mode; its
+unchanged evidence passed strict revalidation after a host contract correction.
+This does not establish a generic Wine notification repair. The accepted device
+APK remains 0.1.5; Android game execution and presentation remain unvalidated.
+
+## Hosted sequence accepted after host validator correction
+
+[Run 36454174481](https://github.com/Russianranger/coh-android/actions/runs/36454174481)
+at `8944bd598990b33b63a750a64ae448403e4542cd` has an **accepted runtime sequence
+after host revalidation; the original workflow conclusion remains failure**. Its
+[raw guest report](android-evidence/game-arm64-failed-36454174481.json) records
+all 18 stages passed in 1,867.229988 seconds, from 16:57:11.550333 to
+17:28:18.780321 UTC on 2026-09-28. Stock TestClient created `TEST01443` /
+container 1 / account `CohA318dc5a821`, entered Atlas, observed live influence
+12,345 and committed the first protocol save before forced cleanup. Wine and
+the same PostgreSQL cluster restarted, Atlas became ready again, and the resume client selected
+the same character at slot 0 with creation disabled and a processed server
+update before the second protocol save. LoginCount progressed 1 → 1 → 2;
+selected SQL retained one `ents` row, one `ents2` row, eight powers and 14 costume
+parts. Atlas readiness was independently observed for 31.564746 seconds.
+
+Both DbServer launches emitted the exact fixed-input acknowledgment. All four
+input checks preserved 62 files / 4,402,846 bytes. All 122 process records closed
+their input/output captures; PostgreSQL stopped gracefully, the Wine prefix
+stopped, and cleanup left zero owned processes or inspection failures.
+Independent character-capture and service-capture validation passed.
+
+The original host validator rejected the first session because it required
+`child_exited: true`, which the bridge does not serialize. The correction checks
+the existing `child_exit_code` as a terminal DWORD and rejects `STILL_ACTIVE`
+(259), while retaining identity, capture, pipe and save checks. Both clients
+were forcibly stopped after their independently committed protocol saves and
+recorded terminal exit code 125. The corrected full report, character-capture
+and service-capture validators passed against the unchanged raw evidence.
+A regression compiles the actual C result serializer and checks its output
+through the real guest stop validation and host consumer. The runtime, bridge
+producer and evidence bytes are unchanged; only the host exit check was corrected.
+The [acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
+binds the correction and revalidation separately from the original
+[failure receipt](android-evidence/game-runtime-failure-36454174481.json) and
+[captured evidence](android-evidence/game-evidence-36454174481.zip).
+The original Actions run remains failed. The prior startup failures remain
+historical evidence, and this result does not establish a generic Wine
+notification repair.
+
+The separate sibling DbServer run `36454174374` failed attempt 1 with SIGSEGV
+(`-11`) after `PG_TEST_COMPLETE rebuild` and teardown messages. Its byte-identical
+package passed all 28 stages on attempt 2. The
+[failure](android-evidence/dbserver-runtime-failure-36454174374.json) and
+[repeat](android-evidence/dbserver-runtime-repeat-36454174374-attempt2.json)
+receipts retain the intermittent, unexplained failure; the repeat does not
+establish a repair. Atlas donor `36451873322` remains unchanged.
+
+The separate loopback listener prerequisite is implemented and locally tested.
+Hosted source/package qualification and donor adoption remain pending; it does
+not qualify physical Android execution or replace the accepted 0.1.5 APK.

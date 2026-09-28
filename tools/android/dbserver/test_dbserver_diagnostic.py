@@ -74,7 +74,7 @@ class DbServerAcceptanceTests(unittest.TestCase):
             root = Path(temporary)
             source = root / 'schema/data/server/db/servers.cfg'
             source.parent.mkdir(parents=True)
-            source.write_text('UseFakeAuth 1\nUseQueueServer 0\nSqlAllowDDL 1\n')
+            source.write_text('UseFakeAuth 1\nUseQueueServer 0\nUseLogServer 0\nSqlAllowDDL 1\n')
             runtime = root / 'runtime'
             runtime.mkdir()
             diagnostic = object.__new__(guest.DbServerDiagnostic)
@@ -88,22 +88,107 @@ class DbServerAcceptanceTests(unittest.TestCase):
             diagnostic.expect_sql = Mock()
             diagnostic.sql = Mock(return_value='[{"version":2}]')
             diagnostic.schema_report = {'phases': []}
+            diagnostic.loopback_endpoints = self.loopback_endpoints()
             diagnostic.schema_snapshot = Mock(return_value={'table_count': 99, 'attribute_counts': {'attributes': 58272}})
             diagnostic.ctx = SimpleNamespace(log_paths=lambda: [], secrets=[], stage=Mock(), passed=Mock(),
                 report={'inputs': {'schema_manifest_sha256': 'a' * 64}})
             requested = []
-            def run_windows(label, executable, arguments, cwd, *, timeout, fixed_inputs):
-                requested.append((label, fixed_inputs))
+            def run_windows(label, executable, arguments, cwd, *, timeout, fixed_inputs, loopback_only):
+                requested.append((label, fixed_inputs, loopback_only))
                 Path(arguments[1]).write_bytes(b'')
-                return {'exit_code': 0}, guest.FIXED_INPUTS_ACK + '\n' if fixed_inputs else 'Default startup\n'
+                return {'exit_code': 0}, (guest.FIXED_INPUTS_ACK + '\n' + self.loopback_output()
+                                          if fixed_inputs else 'Default startup\n')
             diagnostic.run_windows = run_windows
             with patch.object(guest.base, 'windows_path', side_effect=str):
                 diagnostic.normal_schema()
-            self.assertEqual(requested, [('normal-schema-1', False), ('normal-schema-2', True)])
+            self.assertEqual(requested, [('normal-schema-1', False, False), ('normal-schema-2', True, True)])
             self.assertTrue(diagnostic.schema_report['reload_stable'])
             self.assertEqual([phase['fixed_inputs']['requested'] for phase in diagnostic.schema_report['phases']],
                              [False, True])
             self.assertEqual(diagnostic.schema_snapshot.call_count, 2)
+
+    def loopback_build_input(self):
+        with patch.object(sys, 'path', [str(ROOT / 'tools'), *sys.path]):
+            from prepare_wine_dbserver_source import expected_wine_receipt
+        return expected_wine_receipt(ROOT)
+
+    def loopback_endpoints(self):
+        return guest.loopback_expectations(self.loopback_build_input()['normal_schema_listeners'])
+
+    def loopback_output(self, optional=False):
+        expected = self.loopback_endpoints()
+        endpoints = expected['required'] + (expected['optional'] if optional else [])
+        # Real threads may publish endpoint records in any order.
+        return guest.LOOPBACK_ACK + '\n' + ''.join(
+            guest.LOOPBACK_ENV + ' bind verified: protocol={protocol} address={address} port={port}\n'.format(**item)
+            for item in reversed(endpoints))
+
+    def test_loopback_source_contract_and_async_crashmap_evidence(self):
+        build = self.loopback_build_input()
+        guest.validate_loopback_metadata(build['loopback_only'])
+        expected = self.loopback_endpoints()
+        self.assertEqual(len(expected['required']), 13)
+        self.assertEqual(expected['optional'], [{'protocol': 'tcp', 'address': '127.0.0.1', 'port': 6992}])
+        self.assertEqual(guest.validate_loopback('default startup\n', False, expected),
+                         {'requested': False, 'startup_acknowledgement': None, 'endpoints': []})
+        for optional in (False, True):
+            result = guest.validate_loopback(self.loopback_output(optional), True, expected)
+            self.assertEqual(len(result['endpoints']), 13 + optional)
+            self.assertEqual(result['startup_acknowledgement'], guest.LOOPBACK_ACK)
+
+    def test_loopback_rejects_missing_duplicate_malformed_and_nonloopback_records(self):
+        output = self.loopback_output()
+        lines = output.splitlines()
+        cases = [(True, ''), (False, output), (True, '\n'.join(lines[1:])),
+                 (True, '\n'.join(lines[:-1])), (True, output + lines[-1] + '\n'),
+                 (True, output + guest.LOOPBACK_ACK + '\n'), (True, output.replace('address=127.0.0.1', 'address=0.0.0.0', 1)),
+                 (True, output.replace('protocol=udp', 'protocol=tcp')),
+                 (True, output.replace('port=7000', 'port=70000')), (True, output.replace('port=7000', 'port=7001')),
+                 (True, output.replace('port=7000', 'port=07000')), (True, 'prefix ' + output),
+                 (True, output + guest.LOOPBACK_ENV + ' binding failed: test\n')]
+        for enabled, value in cases:
+            with self.subTest(enabled=enabled, output=value), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_loopback(value, enabled, self.loopback_endpoints())
+
+    def test_loopback_metadata_and_source_contract_are_strict(self):
+        build = self.loopback_build_input()
+        for field in guest.LOOPBACK_METADATA:
+            value = copy.deepcopy(build['loopback_only'])
+            value.pop(field)
+            with self.subTest(missing=field), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_loopback_metadata(value)
+        for field, value in (('disabled_by_default', 1), ('network_namespace_isolation', 0),
+                             ('outbound_connections_restricted', 0), ('android_execution_validated', 0)):
+            with self.subTest(field=field), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_loopback_metadata({**build['loopback_only'], field: value})
+        mutations = [lambda c: c['endpoints'].pop(), lambda c: c['endpoints'].reverse(),
+                     lambda c: c['endpoints'][0].update(port=True),
+                     lambda c: c['endpoints'][0].update(source=['invalid']),
+                     lambda c: c['endpoints'][0].update(address='0.0.0.0'),
+                     lambda c: c['endpoints'][0].update(required_before_export=1),
+                     lambda c: c['endpoints'].append(copy.deepcopy(c['endpoints'][0])),
+                     lambda c: next(e for e in c['endpoints'] if e['constant'] == 'DEFAULT_DBCRASHMAP_PORT').update(required_before_export=True)]
+        for mutate in mutations:
+            contract = copy.deepcopy(build['normal_schema_listeners'])
+            mutate(contract)
+            with self.assertRaises(guest.base.DiagnosticError):
+                guest.loopback_expectations(contract)
+
+    def test_loopback_and_fixed_input_flags_are_explicit_and_independent(self):
+        diagnostic = object.__new__(guest.DbServerDiagnostic)
+        diagnostic.wine_env = {'WINEPREFIX': '/private/wine', guest.LOOPBACK_ENV: 'inherited',
+                               guest.FIXED_INPUTS_ENV: 'inherited'}
+        diagnostic.args = SimpleNamespace(wine=Path('/wine'))
+        diagnostic.observe_odbc_failure = Mock()
+        diagnostic.ctx = SimpleNamespace(run=Mock(return_value={'exit_code': 0}),
+                                         children=[SimpleNamespace(text=lambda: 'output')])
+        for fixed, loopback in ((False, False), (True, True), (False, True), (True, False), (False, False)):
+            diagnostic.run_windows('schema', Path('/DbServer.exe'), [], Path('/private'),
+                                   timeout=10, fixed_inputs=fixed, loopback_only=loopback)
+            environment = diagnostic.ctx.run.call_args.kwargs['env']
+            self.assertEqual(environment.get(guest.LOOPBACK_ENV), '1' if loopback else None)
+            self.assertEqual(environment.get(guest.FIXED_INPUTS_ENV), '1' if fixed else None)
+            self.assertEqual(diagnostic.wine_env[guest.LOOPBACK_ENV], 'inherited')
 
     def test_both_variants_stage_private_legacy_data_root_markers_without_game_assets(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -145,7 +230,7 @@ class DbServerAcceptanceTests(unittest.TestCase):
                 guest.validate_fixture_phase('initial', expected, code, output)
 
     def test_private_config_removes_all_old_sql_settings_and_rejects_external_services(self):
-        original = ('UseFakeAuth 1\nUseQueueServer 0\nSqlAllowDDL 1\n'
+        original = ('UseFakeAuth 1\nUseQueueServer 0\nUseLogServer 0\nSqlAllowDDL 1\n'
                     'SqlLogin "old"\nSqlDbName old\nSqlDbProvider sqlserver\nSqlInit old.sql\n')
         actual = guest.private_config(original, 'coh_test_123',
                                       'Driver={PostgreSQL Unicode};Database=coh_test_123;Password=secret;')
@@ -155,7 +240,9 @@ class DbServerAcceptanceTests(unittest.TestCase):
         self.assertEqual(actual.count('SqlLogin '), 1)
         for changed in (original.replace('UseFakeAuth 1', 'UseFakeAuth 0'),
                         original.replace('UseQueueServer 0', 'UseQueueServer 1'),
-                        original.replace('SqlAllowDDL 1', 'SqlAllowDDL 0'), original + 'AuthServer elsewhere\n'):
+                        original.replace('SqlAllowDDL 1', 'SqlAllowDDL 0'),
+                        original.replace('UseLogServer 0', 'UseLogServer 1'),
+                        original + 'LogServer elsewhere\n', original + 'AuthServer elsewhere\n'):
             with self.subTest(config=changed), self.assertRaises(guest.base.DiagnosticError):
                 guest.private_config(changed, 'coh_test_123', 'Driver={PostgreSQL Unicode};')
 

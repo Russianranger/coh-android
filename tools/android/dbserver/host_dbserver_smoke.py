@@ -55,6 +55,8 @@ FIXED_INPUTS_METADATA = {
     "activation": "before_first_folder_cache_create", "watcher_registration": "disabled",
     "notification_updates": "disabled", "initial_reads": "preserved", "lookup_mode": "preserved",
     "startup_acknowledgement": FIXED_INPUTS_ACK, "proves_generic_notification_fix": False}
+LOOPBACK_ACK = ("COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; "
+                "endpoint verification required")
 
 
 def require(condition, message):
@@ -67,6 +69,55 @@ def validate_fixed_inputs_metadata(value):
             and value.get("disabled_by_default") is True
             and value.get("proves_generic_notification_fix") is False,
             "DbServer fixed-input build contract differs")
+
+
+def exact_contract(value, expected):
+    """Compare JSON contracts without accepting integers in place of booleans."""
+    if type(value) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return set(value) == set(expected) and all(exact_contract(value[key], item)
+                                                   for key, item in expected.items())
+    if isinstance(expected, list):
+        return len(value) == len(expected) and all(exact_contract(left, right)
+                                                   for left, right in zip(value, expected))
+    return value == expected
+
+
+def source_loopback_contracts():
+    # Keep this dependency lazy: source-download tooling also imports this module
+    # from a sparse checkout that deliberately omits the DbServer source tree.
+    sys.path.insert(0, str(ROOT / "tools"))
+    import prepare_wine_dbserver_source as source
+    return source.loopback_metadata(source.overlay_bytes(ROOT)), source.normal_listener_contract(ROOT)
+
+
+def validate_loopback_endpoints(value):
+    require(type(value) is list and all(type(endpoint) is dict
+            and set(endpoint) == {"protocol", "address", "port"}
+            and type(endpoint["protocol"]) is str and endpoint["protocol"] in ("tcp", "udp")
+            and endpoint["address"] == "127.0.0.1"
+            and type(endpoint["port"]) is int and 0 < endpoint["port"] <= 65535
+            for endpoint in value), "DbServer loopback endpoints are malformed or nonloopback")
+    keys = [(endpoint["protocol"], endpoint["port"]) for endpoint in value]
+    require(keys == sorted(set(keys)), "DbServer loopback endpoints are duplicate or unordered")
+
+
+def validate_loopback_build_input(build_input):
+    metadata, listeners = source_loopback_contracts()
+    require(type(build_input) is dict
+            and exact_contract(build_input.get("loopback_only"), metadata)
+            and metadata.get("startup_acknowledgement") == LOOPBACK_ACK,
+            "DbServer loopback build contract differs")
+    require(exact_contract(build_input.get("normal_schema_listeners"), listeners),
+            "DbServer normal-schema listener source contract differs")
+    endpoints = {kind: [{name: endpoint[name] for name in ("protocol", "address", "port")}
+                       for endpoint in listeners["endpoints"]
+                       if endpoint["required_before_export"] is required]
+                 for kind, required in (("required", True), ("optional", False))}
+    for values in endpoints.values():
+        validate_loopback_endpoints(values)
+    return endpoints
 
 
 def read_manifest(path):
@@ -123,6 +174,7 @@ def verify_package(package):
     require(manifest.get("source_commit") == SOURCE_COMMIT,
             "DbServer package uses a different game source")
     validate_fixed_inputs_metadata(manifest.get("wine_build_input", {}).get("fixed_inputs"))
+    validate_loopback_build_input(manifest.get("wine_build_input"))
     variants = manifest.get("variants", {})
     require(set(variants) == {"fixture", "normal"}, "DbServer package needs both exact variants")
     require({path.name for path in package.iterdir()} == {"package-manifest.json", "fixture", "normal"},
@@ -251,6 +303,20 @@ def validate_report(report, *, expected):
                 and "startup_acknowledgement" in fixed_inputs
                 and fixed_inputs["startup_acknowledgement"] == (FIXED_INPUTS_ACK if number == 2 else None),
                 "Normal DbServer did not qualify default startup and acknowledged fixed-input reload")
+        loopback = phase.get("loopback_only")
+        require(type(loopback) is dict
+                and set(loopback) == {"requested", "startup_acknowledgement", "endpoints"}
+                and loopback["requested"] is (number == 2)
+                and loopback["startup_acknowledgement"] == (LOOPBACK_ACK if number == 2 else None),
+                "Normal DbServer did not qualify default startup and acknowledged loopback reload")
+        validate_loopback_endpoints(loopback["endpoints"])
+        required, optional = (expected["loopback_endpoints"][key] for key in ("required", "optional"))
+        for values in (required, optional):
+            validate_loopback_endpoints(values)
+        require((not loopback["endpoints"] if number == 1 else
+                 all(endpoint in loopback["endpoints"] for endpoint in required)
+                 and all(endpoint in required + optional for endpoint in loopback["endpoints"])),
+                "Normal DbServer loopback endpoints differ from the source-derived listener set")
         require(type(phase.get("number")) is int and phase["number"] == number
                 and type(phase.get("exit_code")) is int and phase["exit_code"] == 0
                 and phase.get("failure_diagnostic_lines") == []
@@ -450,7 +516,8 @@ def main():
         "repository_commit": repository_commit, "source_commit": SOURCE_COMMIT, "data_commit": DATA_COMMIT,
     }
     expected = {"inputs": expected_inputs, "schema": schema_expectations(schema_manifest),
-                "runtime_lock_sha256": digest(assets / "runtime-lock.json")}
+                "runtime_lock_sha256": digest(assets / "runtime-lock.json"),
+                "loopback_endpoints": validate_loopback_build_input(package_manifest["wine_build_input"])}
     inputs = {"format": 1, "scope": "host_dbserver_runtime_inputs", **expected_inputs, **hosts_input,
               "runtime_commit": runtime_manifest["repository_commit"],
               "package_commit": package_manifest["repository_commit"],
@@ -458,6 +525,7 @@ def main():
               "proot_sha256": digest(proot / "proot"),
               "proot_loader_sha256": digest(proot / "proot-loader"),
               "schema_acceptance_run_id": schema_manifest["acceptance_run_id"],
+              "normal_schema_listeners": package_manifest["wine_build_input"]["normal_schema_listeners"],
               "android_execution_validated": False, "gameplay_validated": False}
     (evidence / "host-dbserver-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
     command = make_command(work=work, assets=assets, package=package, schema=schema,

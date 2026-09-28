@@ -5,7 +5,7 @@ It builds the actual CoH DbServer with a separately identified Wine compatibilit
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
 PRoot/Wine/FEX runtime. The stock Windows reference and immutable source are preserved.
 
-**The fixed-input DbServer package is qualified for the next hosted Atlas run.**
+**The fixed-input DbServer package is qualified and remains the Atlas donor.**
 [Run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322)
 at `53c6270dff8a0efcc6be09da756408504d8313bd` passed all three jobs on
 2026-09-28. The [acceptance receipt](android-evidence/accepted-dbserver-hosted-36451873322.json)
@@ -16,8 +16,12 @@ the normal fixture-OFF executable SHA-256 is
 `659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
 The normal ARM64 schema gate passed default startup followed by an explicitly
 acknowledged [fixed-input reload](../database/wine-dbserver/FIXED_INPUTS.md).
-The full Atlas create/save/restart/resume/second-save gate remains pending;
-this result does not qualify physical Android execution or rendering.
+The [hosted Atlas sequence](ANDROID_GAME_RUNTIME.md#hosted-sequence-accepted-after-host-validator-correction)
+is now accepted from run `36454174481` after strict revalidation of unchanged
+evidence with the corrected host exit contract. The
+[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
+preserves the original Actions failure separately. Physical Android execution
+and rendering remain unvalidated.
 
 The [ARM64 report](android-evidence/dbserver-arm64-36451873322.json) passed all
 28 stages in 192.280590 seconds: 21 persistence check groups across 14 fixture
@@ -27,6 +31,21 @@ process captures closed; cleanup left zero owned processes or inspection errors.
 Windows passed the same fixture coverage, four dispatch contracts and four
 fixed-input contracts. Tooling ran 77 checks: 69 passed and eight Windows-only
 checks skipped.
+
+The separate sibling [run 36454174374](https://github.com/Russianranger/coh-android/actions/runs/36454174374)
+at `8944bd598990b33b63a750a64ae448403e4542cd` preserves an unresolved runtime
+failure. Attempt 1 passed 18 stages, then the `dbserver-rebuild` process exited
+with SIGSEGV (`-11`) after `PG_TEST_COMPLETE rebuild` and teardown messages.
+It did not reach normal-schema execution. The
+[failure receipt](android-evidence/dbserver-runtime-failure-36454174374.json)
+records closed captures for all 57 processes and complete cleanup. Attempt 2
+used the byte-identical package and passed all 28 stages in 190.362494 seconds,
+including rebuild exit 0, both schema phases and the fixed-input acknowledgment;
+all 111 captures closed, with zero owned processes or inspection failures left.
+The [repeat receipt](android-evidence/dbserver-runtime-repeat-36454174374-attempt2.json)
+retains the failed attempt. The failure is intermittent and unexplained; the
+successful repeat does not establish a repair. Atlas continues to use accepted
+donor `36451873322`, not the sibling package.
 
 The earlier diagnostic package's
 [Run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
@@ -141,7 +160,9 @@ inputs from run `36364550345`. The new guest script is bound separately; it reus
 the accepted process ownership and cleanup implementation. A separate Linux network
 namespace permits loopback only, with the guest running as the original non-root
 runner user. Normal DbServer startup opens wildcard listeners, so this isolation
-is required for the hosted gate. Android listener binding remains unfinished.
+is required for the hosted gate. The separate loopback listener prerequisite is
+implemented and locally tested; hosted source/package qualification and donor
+adoption remain pending.
 
 Each binary variant runs from a private directory with both `data/` and `tools/`
 markers, which the engine requires to recognize its local data root. The fixture
@@ -166,13 +187,11 @@ This qualification does not establish physical Android execution of DbServer,
 MapServer operation, character gameplay, Android graphics, physical input or audio.
 No replacement diagnostic APK is required for the accepted M2 tests.
 
-Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
-the same runtime, using donor `36451873322`. Require a fresh enabled dispatch
-record and a fixed-input acknowledgment from each of the two DbServer launches.
-Bind the 62 schema inputs and entire staged `data/server/db` tree after private
-configuration generation; require unchanged snapshots before first startup,
-after first save, before restart and after second save. Enabled ARM64 dispatch
-publication was already verified in `36428915900`; full Atlas qualification,
-exact-name resume and the second protocol save remain pending. Android listener
-binding and app lifecycle integration precede the next device candidate; retain
-the accepted 0.1.5 diagnostic and runtime in the meantime.
+The accepted managed Atlas sequence from run `36454174481` used donor
+`36451873322` and completed its 18 guest stages, including both protocol saves
+and exact-name resume. It retained both fixed-input acknowledgments and all four
+unchanged input checks. Its original workflow failed on the host exit contract;
+strict revalidation of unchanged evidence passed after that correction. Keep
+the accepted donor unchanged. Android listener binding and app lifecycle
+integration precede the next device candidate; retain the accepted 0.1.5
+diagnostic and runtime in the meantime.

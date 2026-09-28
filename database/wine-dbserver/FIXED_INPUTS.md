@@ -5,8 +5,23 @@ gate's immutable schema/configuration inputs. Hosted Windows and ARM64 DbServer
 qualification passed in [run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322),
 including default normal-schema startup and an acknowledged fixed-input reload.
 See the [acceptance receipt](../../docs/android-evidence/accepted-dbserver-hosted-36451873322.json).
-The complete Atlas gate remains pending. This is not a repair of generic Wine
-notifications or proof of physical Android execution or rendering.
+The [hosted Atlas sequence](../../docs/ANDROID_GAME_RUNTIME.md#hosted-sequence-accepted-after-host-validator-correction)
+from run `36454174481` is accepted after strict revalidation of unchanged evidence
+with a corrected host exit contract. Both protocol saves, exact-name resume,
+two acknowledgments and four unchanged input checks passed. Its
+[acceptance receipt](../../docs/android-evidence/accepted-game-hosted-36454174481.json)
+preserves the original Actions failure separately. This is not a repair of
+generic Wine notifications or proof of physical Android execution or rendering.
+
+The sibling DbServer run `36454174374` retains an unexplained SIGSEGV (`-11`)
+after `PG_TEST_COMPLETE rebuild` and teardown messages in attempt 1. Attempt 2
+passed all 28 stages with the byte-identical package. The
+[failure](../../docs/android-evidence/dbserver-runtime-failure-36454174374.json)
+and [repeat](../../docs/android-evidence/dbserver-runtime-repeat-36454174374-attempt2.json)
+receipts preserve both outcomes; the repeat does not establish a repair, and
+accepted donor `36451873322` is unchanged.
+The separate loopback listener prerequisite is locally tested but still awaits
+hosted source/package qualification and donor adoption.
 
 With `COH_WINE_DB_FIXED_INPUTS` absent, existing startup, folder-cache mode,
 directory watching and callback behavior remain unchanged. The exact value `1`
@@ -54,5 +69,7 @@ watcher registration, update gating, late activation and attempts to re-enable
 updates. Separate Windows tests compile the actual environment helper and check
 strict parsing, refusal and acknowledgment behavior. Hosted qualification retained
 a default normal-schema invocation and passed an enabled normal-schema reload.
-The complete Atlas gate remains necessary to establish map startup with this
-mode, both character saves and exact-name restart/resume.
+The accepted Atlas evidence establishes map startup with this mode, both saves
+and exact-name restart/resume. The original host validator incorrectly required
+a field the bridge does not serialize; corrected terminal-exit validation passed
+against the unchanged report and captures, with the original failure retained.

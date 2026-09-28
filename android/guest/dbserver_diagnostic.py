@@ -64,6 +64,92 @@ FIXED_INPUTS_METADATA = {
     'startup_acknowledgement': FIXED_INPUTS_ACK, 'proves_generic_notification_fix': False}
 
 
+LOOPBACK_ENV = 'COH_WINE_DB_LOOPBACK_ONLY'
+LOOPBACK_ACK = (LOOPBACK_ENV + '=1 active: IPv4 listener binds restricted to loopback; '
+                'endpoint verification required')
+LOOPBACK_METADATA = {
+    'environment_variable': LOOPBACK_ENV, 'enabled_value': '1', 'disabled_by_default': True,
+    'activation': 'before_common_startup_and_fixture_dispatch',
+    'late_activation': 'refused_after_first_sockBind_attempt',
+    'wildcard_address': '127.0.0.1', 'explicit_addresses': 'IPv4_127/8_only',
+    'endpoint_verification': 'getsockname_and_SO_TYPE_after_each_successful_bind',
+    'socket_types': ['tcp', 'udp'], 'endpoint_record': 'protocol_address_port',
+    'scope': 'explicit_IPv4_listener_binding',
+    'network_namespace_isolation': False, 'outbound_connections_restricted': False,
+    'failure': 'close_socket_and_exit_2', 'startup_acknowledgement': LOOPBACK_ACK,
+    'android_execution_validated': False}
+LOOPBACK_PORT_CONSTANTS = {
+    'DEFAULT_DBTURNSTILE_PORT', 'DEFAULT_MISSIONSERVER_PORT', 'DEFAULT_ACCOUNTSERVER_PORT',
+    'DEFAULT_AUCTIONSERVER_HEROES_PORT', 'DEFAULT_BEACONCLIENT_PORT', 'DEFAULT_BEACONSERVER_PORT',
+    'DEFAULT_DBSTAT_PORT', 'DEFAULT_DBARENA_PORT', 'DEFAULT_LOG_PORT', 'DEFAULT_DBCRASHMAP_PORT',
+    'DEFAULT_SVRMON_PORT', 'DEFAULT_DB_PORT', 'DEFAULT_DBLAUNCHER_PORT', 'DEFAULT_DBGAMECLIENT_PORT'}
+LOOPBACK_RECORD = re.compile(re.escape(LOOPBACK_ENV)
+    + r' bind verified: protocol=(tcp|udp) address=(127\.0\.0\.1) port=([1-9][0-9]{0,4})\Z')
+
+
+def validate_loopback_metadata(value):
+    require(isinstance(value, dict) and value == LOOPBACK_METADATA
+            and value.get('disabled_by_default') is True
+            and all(value.get(name) is False for name in
+                    ('network_namespace_isolation', 'outbound_connections_restricted', 'android_execution_validated')),
+            'DbServer loopback build contract differs')
+
+
+def loopback_expectations(contract):
+    require(isinstance(contract, dict) and set(contract) == {'scope', 'source_encoding', 'source_sha256', 'endpoints'}
+            and contract['scope'] == 'normal_schema_exportdump_fakeauth_noqueue_embedded_log'
+            and contract['source_encoding'] == 'UTF-8_LF', 'Invalid normal listener source contract')
+    sources, endpoints = contract['source_sha256'], contract['endpoints']
+    require(isinstance(sources, dict) and 0 < len(sources) <= 32
+            and all(isinstance(name, str) and not PurePosixPath(name).is_absolute()
+                    and '..' not in PurePosixPath(name).parts and '\\' not in name
+                    and isinstance(value, str) and HEX64.fullmatch(value) for name, value in sources.items()),
+            'Invalid listener source hashes')
+    require(isinstance(endpoints, list) and len(endpoints) == len(LOOPBACK_PORT_CONSTANTS),
+            'Normal listener source coverage differs')
+    expected, constants = {'required': [], 'optional': []}, set()
+    for item in endpoints:
+        require(isinstance(item, dict) and set(item) == {'protocol', 'address', 'port', 'constant', 'source', 'required_before_export'}
+                and isinstance(item['constant'], str) and item['constant'] in LOOPBACK_PORT_CONSTANTS
+                and item['constant'] not in constants and isinstance(item['source'], str) and item['source'] in sources
+                and item['protocol'] == ('udp' if item['constant'] == 'DEFAULT_DBGAMECLIENT_PORT' else 'tcp')
+                and item['required_before_export'] is (item['constant'] != 'DEFAULT_DBCRASHMAP_PORT')
+                and item['address'] == '127.0.0.1' and type(item['port']) is int and 0 < item['port'] < 65536,
+                'Invalid normal listener endpoint')
+        constants.add(item['constant'])
+        expected['required' if item['required_before_export'] else 'optional'].append(
+            {name: item[name] for name in ('protocol', 'address', 'port')})
+    keys = [(item['protocol'], item['port']) for item in endpoints]
+    require(constants == LOOPBACK_PORT_CONSTANTS
+            and keys == sorted(set(keys)),
+            'Ambiguous or unordered listener source contract')
+    return expected
+
+
+def validate_loopback(output, enabled, expected):
+    markers = [line for line in output.splitlines() if LOOPBACK_ENV in line]
+    if not enabled:
+        require(not markers, 'Default DbServer launch unexpectedly enabled loopback binding')
+        return {'requested': False, 'startup_acknowledgement': None, 'endpoints': []}
+    required, optional = expected['required'], expected['optional']
+    require(markers and markers[0] == LOOPBACK_ACK
+            and 1 + len(required) <= len(markers) <= 1 + len(required) + len(optional),
+            'Loopback activation or actual listener coverage differs')
+    endpoints = []
+    for line in markers[1:]:
+        match = LOOPBACK_RECORD.fullmatch(line)
+        require(match is not None, 'Malformed or non-loopback actual listener evidence')
+        protocol, address, port = match.groups()
+        require(0 < int(port) < 65536, 'Invalid actual listener port')
+        endpoints.append({'protocol': protocol, 'address': address, 'port': int(port)})
+    endpoints.sort(key=lambda item: (item['protocol'], item['port']))
+    keys = [(item['protocol'], item['port']) for item in endpoints]
+    require(len(keys) == len(set(keys)) and all(item in endpoints for item in required)
+            and all(item in required + optional for item in endpoints),
+            'Actual loopback listeners differ from source expectations')
+    return {'requested': True, 'startup_acknowledgement': LOOPBACK_ACK, 'endpoints': endpoints}
+
+
 def validate_fixed_inputs_metadata(value):
     require(isinstance(value, dict) and value == FIXED_INPUTS_METADATA
             and value.get('disabled_by_default') is True
@@ -139,6 +225,8 @@ def verify_inputs(package, schema):
             and package_receipt.get('gameplay_validated') is False,
             'Invalid DbServer package provenance or scope')
     validate_fixed_inputs_metadata(package_receipt.get('wine_build_input', {}).get('fixed_inputs'))
+    validate_loopback_metadata(package_receipt.get('wine_build_input', {}).get('loopback_only'))
+    loopback_expectations(package_receipt.get('wine_build_input', {}).get('normal_schema_listeners'))
     variants = package_receipt.get('variants', {})
     require(set(variants) == {'fixture', 'normal'}, 'Both DbServer build variants are required')
     for variant, enabled in (('fixture', True), ('normal', False)):
@@ -217,6 +305,7 @@ def private_config(original, database, connection):
             if len(tokens) >= 2:
                 settings[tokens[0].lower()] = tokens[1]
     require(settings.get('usefakeauth') == '1' and settings.get('usequeueserver') == '0'
+            and settings.get('uselogserver', '0') == '0' and 'logserver' not in settings
             and settings.get('sqlallowddl') == '1' and 'authserver' not in settings,
             'Generated schema config would enable an external service or disable DDL')
     login = connection.replace('Database=' + database + ';', '').strip()
@@ -261,6 +350,10 @@ class DbServerDiagnostic(base.Diagnostic):
     def __init__(self, args, context):
         package, schema = verify_inputs(args.package, args.schema)
         super().__init__(args, context)
+        for environment in (self.base_env, self.wine_env):
+            environment.pop(LOOPBACK_ENV, None)
+            environment.pop(FIXED_INPUTS_ENV, None)
+        self.loopback_endpoints = loopback_expectations(package['wine_build_input']['normal_schema_listeners'])
         self.created_databases = []
         self.private_connections = []
         self.package, self.schema = package, schema
@@ -309,9 +402,12 @@ class DbServerDiagnostic(base.Diagnostic):
             shutil.copyfile(self.args.package / variant / name, target / name)
         return target
 
-    def run_windows(self, label, executable, arguments, cwd, *, timeout, expected=0, fixed_inputs=False):
+    def run_windows(self, label, executable, arguments, cwd, *, timeout, expected=0, fixed_inputs=False, loopback_only=False):
         environment = self.wine_env.copy()
         environment.pop(FIXED_INPUTS_ENV, None)
+        environment.pop(LOOPBACK_ENV, None)
+        if loopback_only:
+            environment[LOOPBACK_ENV] = '1'
         if fixed_inputs:
             environment[FIXED_INPUTS_ENV] = '1'
         result = self.ctx.run(label, ['/usr/bin/env', '--chdir=' + str(cwd), self.args.wine,
@@ -329,6 +425,7 @@ class DbServerDiagnostic(base.Diagnostic):
             ['-pgpersistencetest', base.windows_path(connection or self.connection), database or self.database, mode],
             self.fixture_runtime, timeout=180, expected=expected)
         validate_fixed_inputs(output, False)
+        validate_loopback(output, False, [])
         markers = validate_fixture_phase(mode, expected, result['exit_code'], output)
         item = {'mode': mode, 'exit_code': result['exit_code'], 'expected_exit_code': expected,
                 'markers': markers, 'output_sha256': hashlib.sha256(base.redact(output, self.ctx.secrets).encode()).hexdigest()}
@@ -475,7 +572,7 @@ class DbServerDiagnostic(base.Diagnostic):
         migration = self.sql(migration_query, game=True)
         require(any(row['version'] == 2 for row in json.loads(migration)), 'Compatibility migration 2 missing')
         previous = None
-        # Cover stock default startup and the opt-in fixed-input reload without
+        # Cover default startup and the fixed-input/loopback reload without
         # adding more real server launches or changing the accepted input bytes.
         for number, fixed_inputs in ((1, False), (2, True)):
             self.ctx.stage('normal_dbserver_schema_' + str(number))
@@ -483,7 +580,8 @@ class DbServerDiagnostic(base.Diagnostic):
             require(not dump.exists(), 'Normal DbServer export was not fresh')
             result, output = self.run_windows('normal-schema-' + str(number), self.normal_runtime / 'DbServer.exe',
                 ['-exportdump', base.windows_path(dump)], self.normal_runtime, timeout=600,
-                fixed_inputs=fixed_inputs)
+                fixed_inputs=fixed_inputs, loopback_only=fixed_inputs)
+            loopback_evidence = validate_loopback(output, fixed_inputs, self.loopback_endpoints)
             fixed_input_evidence = validate_fixed_inputs(output, fixed_inputs)
             errors, notices, logs = [], [], []
             texts = [output]
@@ -500,7 +598,7 @@ class DbServerDiagnostic(base.Diagnostic):
                         errors.append(base.redact(line[:1500], self.ctx.secrets))
             phase = {'number': number, 'exit_code': result['exit_code'], 'failure_diagnostic_lines': errors[:100],
                      'benign_catalog_notices': {'count': len(notices), 'lines': notices[:100]}, 'logs': logs,
-                     'fixed_inputs': fixed_input_evidence}
+                     'fixed_inputs': fixed_input_evidence, 'loopback_only': loopback_evidence}
             self.schema_report['phases'].append(phase)
             require(not errors, 'Normal DbServer emitted failure diagnostics')
             require(dump.is_file() and not dump.is_symlink() and dump.stat().st_size == 0,
@@ -513,7 +611,7 @@ class DbServerDiagnostic(base.Diagnostic):
             phase.update(snapshot, export_sha256=base.file_hash(dump), export_bytes=0,
                          input_manifest_sha256=self.ctx.report['inputs']['schema_manifest_sha256'])
             self.ctx.passed(table_count=snapshot['table_count'], attribute_counts=snapshot['attribute_counts'],
-                            fixed_inputs=fixed_input_evidence)
+                            fixed_inputs=fixed_input_evidence, loopback_only=loopback_evidence)
         self.schema_report.update(status='passed', reload_stable=True)
 
     def execute(self):

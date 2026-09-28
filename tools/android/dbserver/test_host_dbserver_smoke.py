@@ -46,7 +46,8 @@ class InputInventoryTests(unittest.TestCase):
                               "files": {"DbServer.exe": self.file(name + "/DbServer.exe", name.encode())}}
         manifest = {"format": 1, "source_commit": host.SOURCE_COMMIT,
                     "android_execution_validated": False, "gameplay_validated": False,
-                    "wine_build_input": {"fixed_inputs": copy.deepcopy(host.FIXED_INPUTS_METADATA)},
+                    "wine_build_input": {"fixed_inputs": copy.deepcopy(host.FIXED_INPUTS_METADATA),
+                                         **dict(zip(("loopback_only", "normal_schema_listeners"), host.source_loopback_contracts()))},
                     "variants": variants}
         path = self.directory / "package-manifest.json"
         path.write_text(json.dumps(manifest))
@@ -78,6 +79,21 @@ class InputInventoryTests(unittest.TestCase):
                              ("disabled_by_default", 1), ("proves_generic_notification_fix", 0)):
             with self.subTest(field=field), self.assertRaisesRegex(RuntimeError, "fixed-input build contract"):
                 host.validate_fixed_inputs_metadata({**host.FIXED_INPUTS_METADATA, field: value})
+
+    def test_loopback_build_contract_is_independently_bound_to_source(self):
+        build = dict(zip(("loopback_only", "normal_schema_listeners"), host.source_loopback_contracts()))
+        host.validate_loopback_build_input(build)
+        mutations = [lambda b: b.pop("loopback_only"), lambda b: b.pop("normal_schema_listeners"),
+                     lambda b: b["loopback_only"].update(disabled_by_default=1),
+                     lambda b: b["loopback_only"].update(network_namespace_isolation=0),
+                     lambda b: b["normal_schema_listeners"]["endpoints"][0].update(port=7001),
+                     lambda b: b["normal_schema_listeners"]["endpoints"][0].update(required_before_export=1),
+                     lambda b: b["normal_schema_listeners"]["source_sha256"].update({"DBServer/src/dbinit.c": "f" * 64})]
+        for mutate in mutations:
+            changed = copy.deepcopy(build)
+            mutate(changed)
+            with self.assertRaisesRegex(RuntimeError, "contract differs"):
+                host.validate_loopback_build_input(changed)
 
 
 class NetworkIsolationTests(unittest.TestCase):
@@ -191,7 +207,9 @@ class ReportAcceptanceTests(unittest.TestCase):
         inputs.update(repository_commit="b" * 40, source_commit=host.SOURCE_COMMIT, data_commit=host.DATA_COMMIT)
         schema = host.schema_expectations({"expected_tables": {"attributes": ["id", "name"]},
                                             "expected_attributes": {"attributes": [{"id": 1, "name": "hero"}]}})
-        return {"inputs": inputs, "schema": schema, "runtime_lock_sha256": "c" * 64}
+        return {"inputs": inputs, "schema": schema, "runtime_lock_sha256": "c" * 64,
+                "loopback_endpoints": host.validate_loopback_build_input(dict(zip(
+                    ("loopback_only", "normal_schema_listeners"), host.source_loopback_contracts())))}
 
     def sample(self):
         expected = self.expected()
@@ -208,6 +226,9 @@ class ReportAcceptanceTests(unittest.TestCase):
         normal_phases = [{"number": number, "exit_code": 0, "failure_diagnostic_lines": [],
                           "fixed_inputs": {"requested": number == 2,
                                            "startup_acknowledgement": host.FIXED_INPUTS_ACK if number == 2 else None},
+                          "loopback_only": {"requested": number == 2,
+                                            "startup_acknowledgement": host.LOOPBACK_ACK if number == 2 else None,
+                                            "endpoints": copy.deepcopy(expected["loopback_endpoints"]["required"]) if number == 2 else []},
                           "export_bytes": 0, "export_sha256": host.hashlib.sha256(b"").hexdigest(),
                           "input_manifest_sha256": expected["inputs"]["schema_manifest_sha256"],
                           **copy.deepcopy(expected["schema"]),
@@ -290,6 +311,39 @@ class ReportAcceptanceTests(unittest.TestCase):
                 mutate(report)
                 with self.assertRaises(RuntimeError):
                     host.validate_report(report, expected=self.expected())
+
+    def test_loopback_report_requires_exact_activation_and_every_synchronous_endpoint(self):
+        mutations = [lambda p: p.pop("loopback_only"),
+                     lambda p: p["loopback_only"].update(requested=1),
+                     lambda p: p["loopback_only"].update(startup_acknowledgement=None),
+                     lambda p: p["loopback_only"].update(startup_acknowledgement=host.LOOPBACK_ACK + "."),
+                     lambda p: p["loopback_only"]["endpoints"].pop(),
+                     lambda p: p["loopback_only"]["endpoints"].reverse(),
+                     lambda p: p["loopback_only"]["endpoints"][0].update(address="0.0.0.0"),
+                     lambda p: p["loopback_only"]["endpoints"][0].update(port=True),
+                     lambda p: p["loopback_only"]["endpoints"][0].update(port=65536),
+                     lambda p: p["loopback_only"]["endpoints"][0].update(protocol="unknown"),
+                     lambda p: p["loopback_only"]["endpoints"].append(copy.deepcopy(p["loopback_only"]["endpoints"][0]))]
+        for mutate in mutations:
+            report = self.sample()
+            mutate(report["generated_schema"]["phases"][1])
+            with self.assertRaises(RuntimeError):
+                host.validate_report(report, expected=self.expected())
+        report = self.sample()
+        report["generated_schema"]["phases"][0]["loopback_only"]["endpoints"] = self.expected()["loopback_endpoints"]["required"]
+        with self.assertRaises(RuntimeError):
+            host.validate_report(report, expected=self.expected())
+
+    def test_crashmap_may_be_observed_without_claiming_synchronous_startup(self):
+        report = self.sample()
+        endpoints = report["generated_schema"]["phases"][1]["loopback_only"]["endpoints"]
+        endpoints.extend(self.expected()["loopback_endpoints"]["optional"])
+        endpoints.sort(key=lambda e: (e["protocol"], e["port"]))
+        host.validate_report(report, expected=self.expected())
+        endpoints.append({"protocol": "tcp", "address": "127.0.0.1", "port": 65000})
+        endpoints.sort(key=lambda e: (e["protocol"], e["port"]))
+        with self.assertRaisesRegex(RuntimeError, "source-derived"):
+            host.validate_report(report, expected=self.expected())
 
 
 if __name__ == "__main__":

@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "scope": "host_game_runtime_inputs",
+  "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+  "game_package_sha256": "2042b79141781ed7552af43ba69a6ca18ad54adf6a18a81e5464794dbd20c49d",
+  "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+  "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "binary_sha256": {
+    "DbServer.exe": "659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a",
+    "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "TestClientCreate.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31",
+    "TestClientResume.exe": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+    "TestClientBridge.exe": "1e92ca6ec61310539ca14d2482ce5e26215475e244be047684829c524a606c6a"
+  },
+  "kernel_hostname": "runnervmoyp6c",
+  "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+  "guest_hosts_bytes": 34,
+  "guest_hosts_loopback_aliases": [
+    "localhost",
+    "runnervmoyp6c"
+  ],
+  "guest_hosts_evidence_file": "guest-etc-hosts",
+  "guest_script_sha256": {
+    "game_diagnostic.py": "4ba21588375c6b78c9aef0c374bd36570c6fd5b369f0b1d63ff562a0c5997944",
+    "game_evidence.py": "938ec7ca88ba70c70961200a6a3a157f552b6b897b089e8e21c2d2f5fa6bde07",
+    "game_hang_evidence.py": "9b8868cc49e5ee718e7706c3801f14b1a5ca90c47b01ff5ca5005ba9f4ef46c7",
+    "dbserver_diagnostic.py": "0b5c08cababfd5477ecd99e9a7396698cc90a55b99533c1f82f37ac1a81ea9e5"
+  },
+  "disk_preflight": {
+    "free_bytes_before_setup": 107001872384,
+    "required_free_bytes": 10737418240
+  },
+  "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+  "hang_observer": {
+    "format": 1,
+    "role": "wine_game_hang_observer",
+    "repository_commit": "8944bd598990b33b63a750a64ae448403e4542cd",
+    "source_sha256_lf": "07588c44da54b0e218c41de494a47cdcb313358e75ec5805db18dea81e565891",
+    "source": "database/wine-game/GameStackProbe.c",
+    "compiler": "MSVC",
+    "flags": "/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601",
+    "executable": {
+      "bytes": 121344,
+      "sha256": "e5a11c2d5b71806d536a92a0ced206c107452d02551794682d285c935a486c99",
+      "pe_machine": 332,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+  "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

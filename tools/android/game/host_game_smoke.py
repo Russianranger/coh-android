@@ -276,8 +276,12 @@ def validate_session(session):
                     "protocol_pid_verified", "initial_snapshot"))
             and result.get("error") is None and result.get("final_snapshot") is True
             and result.get("pipe_framing_complete") is True
-            and result.get("pipe_disconnected") is True and result.get("child_exited") is True
-            and type(result.get("child_exit_code")) is int and type(result.get("child_forced_stop")) is bool,
+            and result.get("pipe_disconnected") is True
+            # The bridge publishes a non-null DWORD only after observing a
+            # terminal GetExitCodeProcess result; it has no child_exited field.
+            and type(result.get("child_exit_code")) is int
+            and 0 <= result["child_exit_code"] <= 0xffffffff and result["child_exit_code"] != 259
+            and type(result.get("child_forced_stop")) is bool,
             "TestClient bridge lacks completed identity-bound observation and final capture")
     require(ready.get("buffer_rows_limit") == 16384
             and all(type(item.get("version_requests")) is int and item["version_requests"] == 1

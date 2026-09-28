@@ -47,6 +47,7 @@ class WineDbServerSourceTests(unittest.TestCase):
         self.assertIn('target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)', cmake)
         self.assertIn('src/wine_dispatch_progress.c', cmake)
         self.assertIn('src/wine_fixed_inputs.c', cmake)
+        self.assertIn('src/wine_loopback.c', cmake)
         self.assertIn('option(COH_PG_PERSISTENCE_TESTS', cmake)
         self.assertEqual(receipt['runtime_validation'], 'unverified')
 
@@ -71,6 +72,91 @@ class WineDbServerSourceTests(unittest.TestCase):
         self.assertLess(main.index('cohDbFixedInputsInit()'), main.index('FolderCacheChooseMode()'))
         self.assertLess(main.index('cohDbFixedInputsInit()'), main.index('logSetDir("dbserver")'))
         self.assertIn('return 2;', main.split('cohDbFixedInputsInit() < 0)', 1)[1].split('}', 1)[0])
+
+    def test_loopback_receipt_binds_policy_before_common_and_fixture_startup(self):
+        receipt = wine.apply_wine_overlay(self.source)
+        metadata = receipt['loopback_only']
+        self.assertEqual(metadata, {
+            'environment_variable': 'COH_WINE_DB_LOOPBACK_ONLY', 'enabled_value': '1',
+            'disabled_by_default': True,
+            'activation': 'before_common_startup_and_fixture_dispatch',
+            'late_activation': 'refused_after_first_sockBind_attempt',
+            'wildcard_address': '127.0.0.1', 'explicit_addresses': 'IPv4_127/8_only',
+            'endpoint_verification': 'getsockname_and_SO_TYPE_after_each_successful_bind',
+            'socket_types': ['tcp', 'udp'], 'endpoint_record': 'protocol_address_port',
+            'scope': 'explicit_IPv4_listener_binding',
+            'network_namespace_isolation': False, 'outbound_connections_restricted': False,
+            'failure': 'close_socket_and_exit_2',
+            'startup_acknowledgement': 'COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to loopback; endpoint verification required',
+            'android_execution_validated': False,
+        })
+        for name in ('libs/UtilitiesLib/src/network/sock.c',
+                     'libs/UtilitiesLib/include/utilitieslib/network/sock.h'):
+            self.assertEqual(wine.sha256(self.source / name), receipt['patched_sha256'][name])
+        for name in ('DBServer/src/wine_loopback.c', 'DBServer/src/wine_loopback.h'):
+            self.assertEqual(wine.sha256(self.source / name), receipt['wine_overlay_sha256'][name])
+        main = (self.source / 'DBServer/src/dbinit.c').read_text().split('int main(int argc,char **argv)', 1)[1]
+        for later in ('memCheckInit()', 'return pgPersistenceTestMain', 'EXCEPTION_HANDLER_BEGIN',
+                      'cohDbFixedInputsInit()', 'sockStart()', 'dbInit(start_static)'):
+            self.assertLess(main.index('cohDbLoopbackInit()'), main.index(later))
+        self.assertIn('return 2;', main.split('cohDbLoopbackInit() < 0)', 1)[1].split('}', 1)[0])
+
+    def test_known_listener_paths_still_use_the_verified_bind_boundary(self):
+        # Bind-call inventory of the target's network library catches a new raw
+        # bind bypass; the known direct DbServer/assert listeners use sockBind.
+        network = self.original / 'libs/UtilitiesLib/src/network'
+        raw = [(path.name, match.group()) for path in sorted(network.glob('*.c'))
+               for match in re.finditer(r'(?<![A-Za-z_])bind\s*\(', path.read_text())]
+        self.assertEqual(raw, [('sock.c', 'bind (')])
+        for name, calls in (('libs/UtilitiesLib/src/network/net_linklist.c', 2),
+                            ('libs/UtilitiesLib/src/utils/SuperAssert.c', 1),
+                            ('DBServer/src/mapcrashreport.c', 1)):
+            text = (self.original / name).read_text()
+            self.assertEqual(len(re.findall(r'\bsockBind\s*\(', text)), calls)
+            self.assertNotRegex(text, r'(?<![A-Za-z_])bind\s*\(')
+        source = (self.original / 'DBServer/src/dbinit.c').read_text()
+        export = source.split('stricmp(argv[i],"-exportdump") == 0', 1)[1].split('else if', 1)[0]
+        self.assertLess(export.index('dbInit(-1)'), export.index('exportRawDump('))
+        init = source.split('void dbInit(int start_static)', 1)[1].split('void ', 1)[0]
+        for listener in ('dbNetInit()', 'startMapCrashReportThread()', 'svrMonInit()', 'clientCommInit()'):
+            self.assertIn(listener, init)
+
+    def test_normal_export_contract_distinguishes_synchronous_binds_from_crashmap_thread(self):
+        contract = wine.normal_listener_contract()
+        required = [item for item in contract['endpoints'] if item['required_before_export']]
+        optional = [item for item in contract['endpoints'] if not item['required_before_export']]
+        self.assertEqual(len(required), 13)
+        self.assertEqual([item['port'] for item in required if item['protocol'] == 'tcp'],
+                         [6971, 6974, 6976, 6977, 6979, 6980, 6982, 6984, 6989, 6996, 6997, 6998])
+        self.assertEqual([item['port'] for item in required if item['protocol'] == 'udp'], [7000])
+        self.assertEqual([(item['constant'], item['port']) for item in optional],
+                         [('DEFAULT_DBCRASHMAP_PORT', 6992)])
+        self.assertTrue(all(item['address'] == '127.0.0.1' for item in contract['endpoints']))
+        for name, digest in contract['source_sha256'].items():
+            self.assertEqual(wine.hashlib.sha256((self.original / name).read_bytes().replace(b'\r\n', b'\n')).hexdigest(), digest)
+        thread = (self.original / 'DBServer/src/mapcrashreport.c').read_text().split(
+            'void startMapCrashReportThread()', 1)[1].split('}', 1)[0]
+        self.assertIn('CreateThread(0,0,mapCrashThread,0,0,0);', thread)
+        self.assertNotIn('WaitFor', thread)
+
+    def test_listener_contract_rejects_changed_callsite_or_ambiguous_port_definition(self):
+        contract = wine.normal_listener_contract()
+        root = self.source / 'listener-contract-root'
+        for name in contract['source_sha256']:
+            target = root / 'upstream/ouroboros' / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(self.original / name, target)
+        self.assertEqual(wine.normal_listener_contract(root), contract)
+        header = root / 'upstream/ouroboros/Common/comm_backend.h'
+        original = header.read_text()
+        header.write_text(original + '\n#define DEFAULT_DB_PORT 6997\n')
+        with self.assertRaisesRegex(ValueError, 'Ambiguous listener port'):
+            wine.normal_listener_contract(root)
+        header.write_text(original)
+        call = root / 'upstream/ouroboros/DBServer/src/turnstileDb.c'
+        call.write_text(call.read_text().replace('DEFAULT_DBTURNSTILE_PORT', 'unexpected_port'))
+        with self.assertRaisesRegex(ValueError, 'Listener call site differs'):
+            wine.normal_listener_contract(root)
 
     @unittest.skipUnless(shutil.which('cc'), 'FolderCache boundary contract requires a C compiler')
     def test_actual_folder_cache_preserves_loading_without_registering_or_polling_watches(self):

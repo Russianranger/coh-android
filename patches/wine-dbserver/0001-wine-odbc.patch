@@ -16,21 +16,22 @@
  add_executable(DbServer
  	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
 +# Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
-+target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c)
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c)
 +target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
  option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
  if(COH_PG_PERSISTENCE_TESTS)
      target_sources(DbServer PRIVATE src/pg_persistence_test.c)
 --- a/DBServer/src/dbinit.c
 +++ b/DBServer/src/dbinit.c
-@@ -1,4 +1,6 @@
+@@ -1,4 +1,7 @@
  #include "dbinit.h"
 +#include "wine_dispatch_progress.h"
 +#include "wine_fixed_inputs.h"
++#include "wine_loopback.h"
  #include <utilitieslib/stdtypes.h>
  #include "dbserver/auctionservercomm.h"
  #include "accountservercomm.h"
-@@ -361,50 +363,77 @@
+@@ -361,50 +364,77 @@
          return;
  
      last = now;
@@ -109,7 +110,17 @@
      mpCompactPools();
  }
  
-@@ -1770,11 +1799,27 @@
+@@ -1766,15 +1796,37 @@
+ {
+     int        i,start_static=0,flat_to_sql=0,is_log_server=0,init_encryption = 1;
+
++    /* Configure before common startup or the fixture can create a listener. */
++    if (cohDbLoopbackInit() < 0) {
++        fprintf(stderr, "DbServer loopback initialization failed (Windows error %lu).\n", GetLastError());
++        return 2;
++    }
++
+     memCheckInit();
  #ifdef COH_PG_PERSISTENCE_TESTS
      if (argc > 1 && !strcmp(argv[1], "-pgpersistencetest")) {
          extern int pgPersistenceTestMain(int argc, char **argv);
@@ -137,7 +148,7 @@
      
      setWindowIconColoredLetter(compatibleGetConsoleWindow(), 'D', 0x00ff00);
  
-@@ -1988,8 +2033,10 @@
+@@ -1988,8 +2040,10 @@
      }
  
  
@@ -148,7 +159,7 @@
      printf_stderr("%s DbServer Ready.\n", timerGetTimeString());
  
      for(;;)
-@@ -1998,11 +2045,19 @@
+@@ -1998,11 +2052,19 @@
          extern BOOL g_heuristicdebug_enabled;
          extern void sendRemainTimeToClient(U32 auth_id,U32 curr_avail,U32 total_avail,U8 reservation,int countdown,int change_billing);
  
@@ -169,7 +180,7 @@
                  case 'm':
                      memMonitorDisplayStats();
                  xcase 'w':
-@@ -2107,9 +2162,11 @@
+@@ -2107,9 +2169,11 @@
                  }
              }
          }
@@ -264,3 +275,91 @@
  
  void FolderCacheExclude(FolderCacheExclusion mode, const char *folder);
  
+--- a/libs/UtilitiesLib/src/network/sock.c
++++ b/libs/UtilitiesLib/src/network/sock.c
+@@ -23,11 +23,71 @@
+      addr->sin_port = htons((u_short)port);
+ }
+
++/* States: 0=default/unbound, 1=loopback/unbound, 2=default/binding,
++ * 3=loopback/binding. CAS makes activation and the first bind mutually ordered.
++ * This library hook has no effect until an explicit startup request enables it. */
++static volatile LONG sock_bind_policy = 0;
++
++int sockSetLoopbackOnlyMode(void)
++{
++    return InterlockedCompareExchange(&sock_bind_policy, 1, 0) == 0;
++}
++
++static void sockLoopbackFailure(SOCKET sock, const char *reason, int error)
++{
++    /* Some stock callers ignore sockBind failure. Never let an opted-in
++     * diagnostic continue after an unavailable or unverified listener. */
++    closesocket(sock);
++    fprintf(stderr, "COH_WINE_DB_LOOPBACK_ONLY binding failed: %s (Windows socket error %d)\n", reason, error);
++    fflush(stderr);
++    ExitProcess(2);
++}
++
+ int    sockBind(SOCKET sock,const struct sockaddr_in *name)
+ {
+-    if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
+-
+-    return 0;
++    LONG policy;
++    struct sockaddr_in local, actual;
++    int length = (int)sizeof(actual);
++    int socket_type, type_length = (int)sizeof(socket_type);
++    unsigned long address;
++
++    do {
++        policy = InterlockedCompareExchange(&sock_bind_policy, 0, 0);
++    } while (InterlockedCompareExchange(&sock_bind_policy, policy | 2, policy) != policy);
++    if (!(policy & 1)) {
++        if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
++        return 0;
++    }
++    if (!name || name->sin_family != AF_INET)
++        sockLoopbackFailure(sock, "IPv4 address required", WSAEAFNOSUPPORT);
++    local = *name;
++    address = ntohl(local.sin_addr.s_addr);
++    if (address == INADDR_ANY)
++        local.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++    else if ((address & 0xff000000UL) != 0x7f000000UL)
++        sockLoopbackFailure(sock, "non-loopback address refused", WSAEADDRNOTAVAIL);
++    if (bind(sock, (struct sockaddr *)&local, sizeof(local)) < 0)
++        sockLoopbackFailure(sock, "bind", WSAGetLastError());
++    memset(&actual, 0, sizeof(actual));
++    if (getsockname(sock, (struct sockaddr *)&actual, &length) != 0)
++        sockLoopbackFailure(sock, "getsockname", WSAGetLastError());
++    address = ntohl(actual.sin_addr.s_addr);
++    if (length != (int)sizeof(actual) || actual.sin_family != AF_INET
++            || (address & 0xff000000UL) != 0x7f000000UL
++            || actual.sin_addr.s_addr != local.sin_addr.s_addr
++            || !actual.sin_port || (local.sin_port && actual.sin_port != local.sin_port))
++        sockLoopbackFailure(sock, "bound endpoint verification", WSAEINVAL);
++    if (getsockopt(sock, SOL_SOCKET, SO_TYPE, (char *)&socket_type, &type_length) != 0)
++        sockLoopbackFailure(sock, "getsockopt(SO_TYPE)", WSAGetLastError());
++    if (type_length != (int)sizeof(socket_type)
++            || (socket_type != SOCK_STREAM && socket_type != SOCK_DGRAM))
++        sockLoopbackFailure(sock, "socket type verification", WSAEINVAL);
++    fprintf(stdout, "\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=%s address=%lu.%lu.%lu.%lu port=%u\n",
++            socket_type == SOCK_STREAM ? "tcp" : "udp",
++            (address >> 24) & 255, (address >> 16) & 255,
++            (address >> 8) & 255, address & 255, (unsigned)ntohs(actual.sin_port));
++    fflush(stdout);
++    return 1;
+ }
+
+ void    sockSetBlocking(SOCKET fd,int block)
+--- a/libs/UtilitiesLib/include/utilitieslib/network/sock.h
++++ b/libs/UtilitiesLib/include/utilitieslib/network/sock.h
+@@ -23,6 +23,8 @@
+ C_DECLARATIONS_BEGIN
+
+ void sockSetAddr(struct sockaddr_in *addr,unsigned int ip,int port);
++/* One-way, before the first sockBind attempt. Defaults to the stock policy. */
++int sockSetLoopbackOnlyMode(void);
+ int sockBind(SOCKET sock,const struct sockaddr_in *name);
+ void sockSetBlocking(SOCKET fd, int block);
+ void sockSetDelay(SOCKET fd, int delay);
