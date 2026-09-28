@@ -75,7 +75,7 @@ class InputTests(unittest.TestCase):
 class PackageTests(unittest.TestCase):
     def sample(self):
         paths = {"reference": "docs/reference-runtime-evidence/build-36088012664.json",
-                 "dbserver": "docs/android-evidence/dbserver-package-36369485666.json",
+                 "dbserver": "docs/android-evidence/dbserver-package-36425508780.json",
                  "resume": "docs/postgresql-evidence/resume-testclient-build-36297542986.json"}
         proofs = {role: {**{key: pin[key] for key in ("run_id", "repository_commit", "manifest_sha256")},
                          "manifest": json.loads((host.ROOT / paths[role]).read_text())}

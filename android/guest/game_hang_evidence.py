@@ -2,13 +2,17 @@
 """Bounded failure-only snapshots of this game's owned, still-live services.
 
 Linux /proc stacks are kernel stacks; Windows contexts come from the separate
-PE32 observer. Neither substitutes for a successful game runtime milestone.
+PE32 observer. The pinned Wine/FEX backend can return saved startup contexts,
+so successful context APIs do not prove a current execution location. Neither
+observation substitutes for a successful game runtime milestone.
 """
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
+import stat
+import struct
 import time
 
 import diagnostic as base
@@ -22,10 +26,81 @@ FD_LIMIT = 512
 PG_SESSION_LIMIT = 80
 PG_RESULT_LIMIT = 192 * 1024
 OBSERVATION_SECONDS = 28
+DISPATCH_RECORD_BYTES = 128
+DISPATCH_MAPPING_BYTES = 4096
+DISPATCH_HEADER = struct.Struct('<8s9I')
+
+
+class DispatchPublicationPending(base.DiagnosticError):
+    """The bounded read did not yet observe a stable, even publication."""
 
 
 def error(exc):
     return {'available': False, 'error_type': type(exc).__name__, 'error': str(exc)[-512:]}
+
+
+def read_dispatch_record(path, stages, previous=None):
+    """Read one stable main-thread publication, without a debugger or target IO."""
+    base.require(isinstance(stages, dict) and 0 < len(stages) <= 128
+                 and all(isinstance(key, str) and key.isdecimal() and 0 < int(key) <= 128
+                         and isinstance(value, str) and re.fullmatch(r'[A-Z_]{1,64}', value)
+                         for key, value in stages.items()), 'Invalid dispatch stage contract')
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    try:
+        identity = os.fstat(descriptor)
+        base.require(stat.S_ISREG(identity.st_mode) and identity.st_size == DISPATCH_MAPPING_BYTES
+                     and identity.st_uid == os.getuid(), 'Dispatch record is not an owned bounded regular file')
+        raw = None
+        for _ in range(16):
+            first = os.pread(descriptor, DISPATCH_RECORD_BYTES, 0)
+            second = os.pread(descriptor, DISPATCH_RECORD_BYTES, 0)
+            if len(first) == DISPATCH_RECORD_BYTES and first == second:
+                values = DISPATCH_HEADER.unpack_from(first)
+                if values[5] and not values[5] & 1:
+                    raw = first
+                    break
+            time.sleep(.001)
+        current = os.stat(path, follow_symlinks=False)
+        base.require((current.st_dev, current.st_ino, current.st_size) ==
+                     (identity.st_dev, identity.st_ino, DISPATCH_MAPPING_BYTES),
+                     'Dispatch record changed identity during observation')
+        if raw is None:
+            raise DispatchPublicationPending('Dispatch publication is incomplete or changing')
+        (magic, version, size, pid, tid, sequence, stage, loops, flags, count) = values
+        base.require(magic == b'COHDBP1\0' and version == 1 and size == DISPATCH_RECORD_BYTES
+                     and count == len(stages) and str(stage) in stages and pid > 0 and tid > 0
+                     and flags == 0 and not any(raw[DISPATCH_HEADER.size:]),
+                     'Dispatch record format, identity, stage or overflow flag differs')
+        value = {'available': True, 'sampled_utc': base.utc(), 'format': version,
+                 'windows_pid': pid, 'main_thread_id': tid, 'sequence': sequence,
+                 'stage_id': stage, 'stage': stages[str(stage)], 'loop_count': loops,
+                 'flags': flags, 'stage_count': count,
+                 'file_identity': {'device': identity.st_dev, 'inode': identity.st_ino},
+                 'raw_record_hex': raw.hex(), 'raw_record_sha256': hashlib.sha256(raw).hexdigest(),
+                 'source': 'opt-in DbServer main-thread publication', 'is_success_proof': False}
+        if previous is not None:
+            base.require(all(value[key] == previous[key] for key in
+                             ('windows_pid', 'main_thread_id', 'file_identity'))
+                         and sequence >= previous['sequence'] and loops >= previous['loop_count'],
+                         'Dispatch identity or monotonic counters changed')
+        return value
+    finally:
+        os.close(descriptor)
+
+
+def capture_dispatch(diagnostic, previous=None):
+    observations = {}
+    for phase, path in getattr(diagnostic, 'dispatch_paths', {}).items():
+        try:
+            baseline = (previous if previous is not None else
+                        diagnostic.game['dispatch_progress']['phases']).get(phase)
+            observations[phase] = read_dispatch_record(path, diagnostic.dispatch_stages,
+                                                       baseline if baseline and baseline.get('available') else None)
+        except Exception as exc:
+            observations[phase] = error(exc)
+    return {'available': bool(observations) and all(item.get('available') for item in observations.values()),
+            'active_phase': getattr(diagnostic, 'dispatch_phase', None),
+            'phases': observations, 'is_success_proof': False}
 
 
 def checked_identity(owner, identity, deadline):
@@ -215,7 +290,9 @@ def capture_windows(diagnostic, deadline):
     ctx = diagnostic.ctx
     before = len(ctx.children)
     metadata = {'sampled_utc': base.utc(), 'kind': 'Windows x86 raw contexts, stack words and module addresses',
-                'symbolized': False, 'timeout_seconds': min(15, remaining)}
+                'symbolized': False, 'current_execution_validated': False,
+                'context_limitation': 'Pinned Wine/FEX GetThreadContext can return saved WOW64 startup state',
+                'timeout_seconds': min(15, remaining)}
     try:
         result = ctx.run('game-hang-windows', ['/usr/bin/env', '--chdir=' + str(diagnostic.runtime),
             diagnostic.args.wine, base.windows_path(executable), '--runtime-dir',
@@ -289,6 +366,7 @@ def capture(diagnostic, child=None):
 
     try:
         # The database observation happens before attaching the Windows observer.
+        snapshot['dispatch_before'] = capture_dispatch(diagnostic)
         try:
             snapshot['postgres'] = capture_postgres(diagnostic, deadline)
         except Exception as exc:
@@ -301,6 +379,15 @@ def capture(diagnostic, child=None):
                 write('windows-contexts.jsonl', output, WINDOWS_LIMIT)
         except Exception as exc:
             snapshot['windows'] = error(exc)
+        snapshot['dispatch_after'] = capture_dispatch(diagnostic, snapshot['dispatch_before']['phases'])
+        active = snapshot['dispatch_after']['active_phase']
+        before_dispatch = snapshot['dispatch_before']['phases'].get(active, {})
+        after_dispatch = snapshot['dispatch_after']['phases'].get(active, {})
+        if before_dispatch.get('available') and after_dispatch.get('available'):
+            summary.update(dispatch_stage_before=before_dispatch['stage'],
+                           dispatch_stage_after=after_dispatch['stage'],
+                           dispatch_sequence_advanced=after_dispatch['sequence'] > before_dispatch['sequence'],
+                           dispatch_loop_advanced=after_dispatch['loop_count'] > before_dispatch['loop_count'])
         snapshot.update(finished_utc=base.utc(), elapsed_seconds=round(time.monotonic() - started, 3),
                         trigger_alive_after=child.process.poll() is None if child else None)
         write('snapshot.json', json.dumps(snapshot, indent=2) + '\n', SNAPSHOT_LIMIT)

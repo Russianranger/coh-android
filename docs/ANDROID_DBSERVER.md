@@ -5,6 +5,29 @@ It builds the actual CoH DbServer with a separately identified Wine compatibilit
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
 PRoot/Wine/FEX runtime. The stock Windows reference and immutable source are preserved.
 
+**The diagnostic DbServer package is qualified for the next hosted Atlas run.**
+[Run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
+at `41f3aff596826e22e2774375e11590de895ca33d` passed all three jobs on
+2026-09-28. Its Windows contract verified enabled publication of the
+[opt-in dispatch record](../database/wine-dbserver/DISPATCH_PROGRESS.md).
+The ARM64 fixture and normal schema gates passed with that observer disabled;
+enabled publication on ARM64 remains to be verified by the next Atlas run.
+This qualifies the package, not a startup blocker correction or completed Atlas
+restart/resume. The [new acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
+preserves the package and runtime evidence. Its manifest SHA-256 is
+`656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632`;
+the normal fixture-OFF executable SHA-256 is
+`3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
+
+The [new Windows report](android-evidence/dbserver-windows-36425508780.json)
+passed all 21 persistence check groups across 14 fixture phases, and all four
+Windows dispatch-record contracts passed. The
+[new ARM64 report](android-evidence/dbserver-arm64-36425508780.json) passed 28 stages
+in 187.299219 seconds, including the same persistence coverage and two normal
+fixture-OFF exports/reloads: 99 tables, 5,935 ordered columns, 58,272 exact
+attribute IDs/names and an unchanged catalog. All 111 process captures closed;
+cleanup left zero owned processes or inspection failures.
+
 **The first hosted M3 DbServer gate passed** in
 [run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)
 at `1a5eea159172a4698441eb8cfed5ea5ca99fcf12`, completed 2026-09-28 at
@@ -43,6 +66,16 @@ conversion, preserving optional NULL filters and numeric buffers. Source receipt
 hashes bind the PostgreSQL patch, Wine patch, adapter, original source and modified
 files. This is a pinned application adapter, not a replacement ODBC manager; local
 validation errors do not synthesize driver diagnostic records.
+
+The qualified diagnostic package also contains the opt-in main-thread dispatch
+observer. Its receipt binds the marker source, patched call sites, record format
+and stage names. With `COH_WINE_DB_PROGRESS` absent, it creates no record.
+An explicitly supplied fresh private path enables bounded mapped publication;
+loop markers perform no I/O, logging or platform calls. The Windows live contract
+checked disabled and enabled behavior, external record visibility and refusal of
+invalid or existing paths. Advancing sequence values demonstrate progress between
+samples; a stopped stage identifies an operation and its nested calls, not a
+particular instruction, deadlock, or SQL/gameplay success.
 
 The receipted overlay also initializes the file cache and log path on the main
 thread before the Wine persistence fixture starts its 64 SQL workers. That entry
@@ -92,6 +125,8 @@ MapServer operation, character gameplay, Android graphics, physical input or aud
 No replacement diagnostic APK is required for the accepted M2 tests.
 
 Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
-the same runtime. Android listener binding and app lifecycle integration must be
-completed before the next device candidate; retain the accepted 0.1.5 diagnostic
+the same runtime, using donor `36425508780` and a fresh enabled dispatch record
+for each first/restart launch. Live ARM64 publication, exact-name resume and the
+second protocol save remain pending. Android listener binding and app lifecycle
+integration must be completed before the next device candidate; retain the accepted 0.1.5 diagnostic
 and runtime in the meantime.

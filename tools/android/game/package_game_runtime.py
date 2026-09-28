@@ -19,7 +19,7 @@ SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
 DATA = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 PINS = {
     'reference': ('docs/reference-runtime-evidence/build-36088012664.json', 'build-info.json', 36088012664),
-    'dbserver': ('docs/android-evidence/dbserver-package-36369485666.json', 'package-manifest.json', 36369485666),
+    'dbserver': ('docs/android-evidence/dbserver-package-36425508780.json', 'package-manifest.json', 36425508780),
     'resume': ('docs/postgresql-evidence/resume-testclient-build-36297542986.json', 'build-info.json', 36297542986),
 }
 BRIDGE_SOURCES = ('database/wine-game/TestClientBridge.c', 'database/wine-game/bridge_protocol.h')

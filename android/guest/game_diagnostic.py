@@ -302,11 +302,22 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         base.Diagnostic.__init__(self, args, context)
         self.created_databases, self.private_connections = [], []
         self.services, self.sessions = [], []
+        dispatch = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
+            'wine_build_input', {}).get('dispatch_progress', {})
+        require(dispatch.get('environment_variable') == 'COH_WINE_DB_PROGRESS'
+                and dispatch.get('format') == 1 and dispatch.get('record_bytes') == 128
+                and dispatch.get('mapping_bytes') == 4096 and isinstance(dispatch.get('stages'), dict),
+                'Game DbServer lacks the pinned opt-in dispatch observer')
+        self.dispatch_stages = dispatch['stages']
+        self.dispatch_paths, self.dispatch_phase = {}, None
         self.completed_logout = False
         self.snapshots = {}
         self.query_count = self.readiness_count = 0
         self.runtime = self.root / ('game-' + secrets.token_hex(6))
         self.game = {'status': 'running', 'phases': [], 'map_samples': [], 'character_samples': [], 'sessions': {}}
+        self.game['dispatch_progress'] = {'enabled': True, 'format': 1,
+            'environment_variable': 'COH_WINE_DB_PROGRESS', 'record_bytes': 128,
+            'mapping_bytes': 4096, 'stages': self.dispatch_stages, 'phases': {}, 'is_success_proof': False}
         self.game['startup_policy'] = {'first_atlas_timeout_seconds': 2400, 'restart_atlas_timeout_seconds': 900,
             'startup_query_timeout_seconds': 90, 'first_poll_interval_seconds': 60,
             'restart_poll_interval_seconds': 30, 'live_query_timeout_seconds': 25,
@@ -385,9 +396,10 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 next_progress = time.monotonic() + 5
             time.sleep(interval)
 
-    def start_game(self, label, executable, arguments):
+    def start_game(self, label, executable, arguments, *, env=None):
         child = self.ctx.start(label, ['/usr/bin/env', '--chdir=' + str(self.runtime), self.args.wine,
-                               base.windows_path(self.runtime / executable), *arguments], env=self.wine_env)
+                               base.windows_path(self.runtime / executable), *arguments],
+                               env=self.wine_env if env is None else env)
         self.services.append(child)
         return child
 
@@ -411,7 +423,14 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.ctx.stage('game_services_' + label)
         for port, protocol in ((6997, socket.SOCK_STREAM), (7001, socket.SOCK_DGRAM)):
             check_game_port(port, protocol)
-        self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'])
+        require(label in ('first', 'restart') and label not in self.dispatch_paths,
+                'Dispatch phase must be a fresh owned launch')
+        dispatch_path = self.runtime / ('coh-db-progress-' + label + '.bin')
+        require(not dispatch_path.exists() and not dispatch_path.is_symlink(),
+                'Refusing stale dispatch record')
+        self.dispatch_paths[label], self.dispatch_phase = dispatch_path, label
+        database_env = dict(self.wine_env, COH_WINE_DB_PROGRESS=base.windows_path(dispatch_path))
+        self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'], env=database_env)
         next_query = 0
         expected_columns = sum(map(len, self.schema['expected_tables'].values()))
         def database_ready():
@@ -428,6 +447,16 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             return self.sql("SELECT count(*) FROM information_schema.columns WHERE table_schema='dbo';", game=True) == str(expected_columns)
         self.wait(database_ready, 600, 'DbServer schema and local listener')
         catalog = self.schema_snapshot()
+        def published():
+            try:
+                observation = hang_evidence.read_dispatch_record(dispatch_path, self.dispatch_stages)
+            except hang_evidence.DispatchPublicationPending:
+                return False
+            if observation['loop_count']:
+                self.game['dispatch_progress']['phases'][label] = observation
+                return observation
+            return False
+        self.wait(published, 30, 'DbServer main-thread dispatch publication')
         next_baseline = 0
         def unstarted():
             nonlocal next_baseline
@@ -618,6 +647,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
 
     def restart(self, before):
         self.ctx.stage('game_restart')
+        self.dispatch_phase = None
         self.services.clear()
         stopped = self.ctx.run('game-wine-stop', [self.args.wineserver, '-k'], timeout=3, env=self.wine_env, check=False)
         self.ctx.run('game-wine-wait', [self.args.wineserver, '-w'], timeout=5, env=self.wine_env)

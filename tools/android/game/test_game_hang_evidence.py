@@ -1,10 +1,12 @@
 """Failure lifecycle: observations precede signals and obey owned-read bounds."""
 import hashlib
 import json
+import mmap
 import os
 from pathlib import Path
 import sys
 import tempfile
+import threading
 import time
 from types import SimpleNamespace
 import unittest
@@ -14,6 +16,150 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import game_diagnostic as guest
 import game_hang_evidence as hang
+
+
+class DispatchEvidenceTests(unittest.TestCase):
+    stages = {'1': 'INITIALIZED', '4': 'MAIN_LOOP', '7': 'SQL_KEEPALIVE_FOREGROUND'}
+
+    def record(self, *, sequence=2, stage=1, loops=0, flags=0, pid=41):
+        raw = hang.DISPATCH_HEADER.pack(b'COHDBP1\0', 1, 128, pid, 42,
+                                        sequence, stage, loops, flags, len(self.stages))
+        return raw + bytes(128 - len(raw))
+
+    def test_shared_mapping_publishes_live_stage_without_debugger(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'progress.bin'
+            path.write_bytes(bytes(4096))
+            with path.open('r+b') as output, mmap.mmap(output.fileno(), 4096) as mapping:
+                mapping[:128] = self.record()
+                first = hang.read_dispatch_record(path, self.stages)
+                self.assertEqual(first['stage'], 'INITIALIZED')
+                self.assertFalse(first['is_success_proof'])
+                mapping[:128] = self.record(sequence=4, stage=7, loops=103)
+                second = hang.read_dispatch_record(path, self.stages, first)
+                self.assertEqual(second['stage'], 'SQL_KEEPALIVE_FOREGROUND')
+                self.assertEqual(second['loop_count'], 103)
+                self.assertEqual(bytes.fromhex(second['raw_record_hex']), mapping[:128])
+                self.assertEqual(second['file_identity'], first['file_identity'])
+
+    def test_incomplete_publication_waits_for_even_sequence_and_has_a_bound(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'progress.bin'
+            path.write_bytes(bytes(4096))
+            with path.open('r+b') as output, mmap.mmap(output.fileno(), 4096) as mapping:
+                mapping[:128] = self.record(sequence=3, stage=7)
+                def complete():
+                    time.sleep(.004)
+                    mapping[:128] = self.record(sequence=4, stage=7)
+                writer = threading.Thread(target=complete)
+                writer.start()
+                try:
+                    self.assertEqual(hang.read_dispatch_record(path, self.stages)['sequence'], 4)
+                finally:
+                    writer.join()
+                mapping[:128] = self.record(sequence=5)
+                with self.assertRaisesRegex(hang.DispatchPublicationPending, 'incomplete or changing'):
+                    hang.read_dispatch_record(path, self.stages)
+
+    def test_startup_retries_odd_publication_but_keeps_corruption_fatal(self):
+        class PublicationGatePassed(Exception):
+            pass
+
+        for corrupt in (False, True):
+            with self.subTest(corrupt=corrupt), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                path = root / 'coh-db-progress-first.bin'
+                diagnostic = object.__new__(guest.GameDiagnostic)
+                diagnostic.runtime = root
+                diagnostic.wine_env = {}
+                diagnostic.dispatch_paths = {}
+                diagnostic.dispatch_stages = self.stages
+                diagnostic.schema = {'expected_tables': {}}
+                diagnostic.schema_snapshot = Mock(return_value={})
+                diagnostic.game = {'dispatch_progress': {'phases': {}}}
+                diagnostic.ctx = SimpleNamespace(stage=Mock(), event=Mock(), deadline=time.monotonic() + 2)
+                diagnostic.health = Mock()
+                diagnostic.start_game = Mock(side_effect=lambda *_a, **_k:
+                    path.write_bytes(self.record(sequence=3, stage=4, loops=1) + bytes(4096 - 128)))
+
+                def wait(predicate, seconds, label):
+                    if label == 'DbServer schema and local listener':
+                        return True
+                    if label == 'DbServer main-thread dispatch publication':
+                        return guest.GameDiagnostic.wait(diagnostic, predicate, .5, label, interval=.001)
+                    raise PublicationGatePassed()
+
+                diagnostic.wait = wait
+                read_record = hang.read_dispatch_record
+                attempts = []
+
+                def observe(*args, **kwargs):
+                    attempts.append(None)
+                    try:
+                        return read_record(*args, **kwargs)
+                    finally:
+                        if len(attempts) == 1:
+                            payload = self.record(sequence=4, stage=4, loops=1)
+                            if corrupt:
+                                payload = b'BADMAGIC' + payload[8:]
+                            with path.open('r+b') as output, mmap.mmap(output.fileno(), 4096) as mapping:
+                                mapping[:128] = payload
+
+                with patch.object(guest, 'check_game_port'), \
+                     patch.object(hang, 'read_dispatch_record', side_effect=observe):
+                    if corrupt:
+                        with self.assertRaisesRegex(guest.base.DiagnosticError, 'format, identity, stage') as raised:
+                            diagnostic.start_services('first')
+                        self.assertNotIsInstance(raised.exception, hang.DispatchPublicationPending)
+                        self.assertEqual(diagnostic.game['dispatch_progress']['phases'], {})
+                    else:
+                        with self.assertRaises(PublicationGatePassed):
+                            diagnostic.start_services('first')
+                        self.assertEqual(diagnostic.game['dispatch_progress']['phases']['first']['sequence'], 4)
+                self.assertEqual(len(attempts), 2)
+
+    def test_replaced_file_is_fatal_even_when_old_publication_is_odd(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'progress.bin'
+            path.write_bytes(self.record(sequence=3) + bytes(4096 - 128))
+            replacement = Path(temporary) / 'replacement.bin'
+            replacement.write_bytes(self.record(sequence=4) + bytes(4096 - 128))
+            pread = os.pread
+            replaced = False
+
+            def read_and_replace(*args):
+                nonlocal replaced
+                payload = pread(*args)
+                if not replaced:
+                    os.replace(replacement, path)
+                    replaced = True
+                return payload
+
+            with patch.object(hang.os, 'pread', side_effect=read_and_replace):
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'changed identity') as raised:
+                    hang.read_dispatch_record(path, self.stages)
+                self.assertNotIsInstance(raised.exception, hang.DispatchPublicationPending)
+
+    def test_foreign_linked_malformed_or_regressed_records_are_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'progress.bin'
+            path.write_bytes(self.record(sequence=8, loops=10) + bytes(4096 - 128))
+            first = hang.read_dispatch_record(path, self.stages)
+            for change in ({'pid': 99, 'sequence': 10, 'loops': 10},
+                           {'sequence': 6, 'loops': 10}, {'sequence': 10, 'loops': 9},
+                           {'sequence': 10, 'loops': 10, 'flags': 1},
+                           {'sequence': 10, 'loops': 10, 'stage': 99}):
+                with self.subTest(change=change):
+                    path.write_bytes(self.record(**change) + bytes(4096 - 128))
+                    with self.assertRaises(guest.base.DiagnosticError):
+                        hang.read_dispatch_record(path, self.stages, first)
+            path.write_bytes(self.record() + bytes(4096))
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'bounded regular file'):
+                hang.read_dispatch_record(path, self.stages)
+            link = Path(temporary) / 'link.bin'
+            link.symlink_to(path)
+            with self.assertRaises(OSError):
+                hang.read_dispatch_record(link, self.stages)
 
 
 class HangEvidenceTests(unittest.TestCase):
@@ -239,6 +385,7 @@ class HangEvidenceTests(unittest.TestCase):
                      patch.object(Path, 'is_symlink', return_value=False):
                     metadata, output = hang.capture_windows(diagnostic, time.monotonic() + 20)
                 self.assertEqual(metadata['available'], expected)
+                self.assertFalse(metadata['current_execution_validated'])
                 self.assertEqual(output, raw)
 
 

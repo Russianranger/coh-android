@@ -39,6 +39,11 @@ diagnostic TestClient execution are now implemented in the separate
 character creation, live currency change and committed protocol save, then
 failed at the service restart port check. The latest rerun reproduced the
 startup timeout and captured live failure evidence; resume remains unproved.
+The follow-on diagnostic DbServer package passed all three jobs in run
+`36425508780`. Windows verified enabled dispatch-record publication; the ARM64
+fixture/schema gate used the observer disabled. The next Atlas run adopts this
+qualified donor to verify enabled ARM64 publication and capture the live dispatch
+boundary if the intermittent timeout recurs.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -99,10 +104,20 @@ captures closed and zero remaining owned processes or inspection failures.
 The full hosted restart/resume/second-save gate and Android gameplay remain
 unvalidated.
 
-Next qualify the [opt-in source dispatch markers](../database/wine-dbserver/DISPATCH_PROGRESS.md)
-in the separately receipted DbServer package. The implementation is ready for
-Windows contract tests and DbServer ARM64 qualification before Atlas adopts
-that package. Bounded stage/sequence observations will distinguish progress
+[Run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
+at `41f3aff596826e22e2774375e11590de895ca33d` qualified the separately receipted
+DbServer package containing [opt-in source dispatch markers](../database/wine-dbserver/DISPATCH_PROGRESS.md):
+all three jobs passed, including the Windows enabled-record contract. The ARM64
+fixture and normal schema checks ran with the observer disabled. Preserve the
+[new acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
+alongside the original acceptance. The donor manifest SHA-256 is
+`656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632` and the normal
+executable SHA-256 is
+`3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
+
+Next adopt donor `36425508780` for the Atlas diagnostic, with separate fresh
+records for first startup and restart. Enabled publication on live ARM64 remains
+pending. Bounded stage/sequence observations will distinguish progress
 through startup, dispatch, SQL keepalive and console handling without relying
 on stale WOW64 contexts. A stopped marker identifies an operation and its nested
 calls; it does not prove a deadlock or gameplay success. No startup blocker fix
@@ -701,6 +716,9 @@ Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
 the same ARM64 Wine/FEX runtime. The isolated Wine-compatible DbServer fixture
 and normal schema startup/export/reload have passed; preserve their
 [accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).
+The diagnostic DbServer successor is also [qualified](android-evidence/accepted-dbserver-hosted-36425508780.json).
+Use donor `36425508780` for the next Atlas run; verify enabled ARM64 dispatch
+publication and finish restart/resume/second-save before accepting that hosted gate.
 Android listener binding and app lifecycle integration remain before the next
 device candidate. Keep the existing 0.1.5 APK and runtime. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).

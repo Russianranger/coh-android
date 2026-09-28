@@ -15,7 +15,7 @@ identified composite runtime from these immutable inputs:
 | Component | Accepted run | Role |
 |---|---:|---|
 | ARM64 Wine/FEX/PostgreSQL inputs | 36364550345 | Accepted M2 runtime |
-| Normal Wine-compatible DbServer | 36369485666 | Fixture disabled |
+| Normal Wine-compatible DbServer | 36425508780 | Fixture disabled; qualified opt-in dispatch observer |
 | MapServer and creation TestClient | 36088012664 | Stock reference binaries |
 | Resume TestClient | 36297542986 | Exact name, creation disabled |
 | Generated database schema | 36088012666 | Accepted 99-table schema |
@@ -26,7 +26,16 @@ its output, and forwards ordinary launcher commands. It does not implement
 character creation, mutation, logout, SQL persistence, or game networking.
 Its receipt binds the current repository commit, source hashes, build flags,
 executable bytes and imports. The composite package records every donor and
-explicitly selects the previously accepted Wine normal CrashRpt dependency.
+explicitly selects the Wine donor's normal CrashRpt dependency.
+
+The next Atlas run adopts the qualified diagnostic DbServer donor
+`36425508780`, repository commit `41f3aff596826e22e2774375e11590de895ca33d`.
+Its manifest SHA-256 is
+`656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632` and normal
+executable SHA-256 is
+`3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
+The earlier Atlas attempts below used donor `36369485666`; their first-save and
+failure evidence remains unchanged.
 
 The full reviewed data inventory contains 173,011 files / 2,977,730,517 bytes.
 The preparer verifies the externally pinned asset receipt plus immutable text
@@ -229,8 +238,12 @@ samples show progress; a stopped stage identifies an operation and its nested
 calls, not a specific instruction or proof of deadlock. Markers remain inactive
 unless explicitly enabled and do not change the intended game behavior.
 
-The implementation is ready for Windows contract tests and the DbServer ARM64
-qualification gate. Atlas must retain its accepted package until that new
-package is qualified. This is the next evidence-gathering step, not a demonstrated
-startup fix or gameplay result. The complete hosted restart/resume/second-save
-gate and physical Android execution remain pending.
+[DbServer qualification run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
+passed all three jobs. The [acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
+binds the new donor package. Windows passed the enabled-record contract; the
+ARM64 persistence fixture and normal schema gates passed with the observer
+disabled. Atlas now adopts this qualified package for the next diagnostic,
+requiring a fresh valid record at DbServer readiness and a distinct record after
+restart. Enabled ARM64 publication is still pending. This is an evidence-gathering
+step, not a demonstrated startup fix or gameplay result. The complete hosted
+restart/resume/second-save gate and physical Android execution remain pending.
