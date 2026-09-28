@@ -1,0 +1,64 @@
+name: Inspect hosted Atlas failure evidence
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/android-game-evidence.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Download the fixed failed-run archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/Russianranger/coh-android/actions/artifacts/10951062037/zip > "$RUNNER_TEMP/game-evidence.zip"
+      - name: Verify archive and inspect bounded redacted evidence
+        env:
+          EXPECTED_SHA256: 84a09dbc2d56307722802808afaa589af063591de2a6155bf762c3fff5e3debc
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, hashlib, zipfile, json
+          path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'game-evidence.zip'
+          raw = path.read_bytes()
+          assert len(raw) == 8706268
+          assert hashlib.sha256(raw).hexdigest() == os.environ['EXPECTED_SHA256']
+          print('ARCHIVE_VERIFIED', len(raw), hashlib.sha256(raw).hexdigest())
+          with zipfile.ZipFile(path) as archive:
+              names = archive.namelist()
+              assert len(names) <= 100 and len(names) == len(set(names))
+              for item in archive.infolist():
+                  assert not pathlib.PurePosixPath(item.filename).is_absolute()
+                  assert '..' not in pathlib.PurePosixPath(item.filename).parts
+                  assert item.file_size <= 64 * 1024 * 1024
+              print('INVENTORY', json.dumps([{'path': i.filename, 'bytes': i.file_size} for i in archive.infolist()]))
+              report_name = next(n for n in names if n.endswith('/game-runtime-report.json'))
+              report_raw = archive.read(report_name)
+              report = json.loads(report_raw)
+              print('REPORT_HASH', len(report_raw), hashlib.sha256(report_raw).hexdigest())
+              for key, value in report.items():
+                  if key == 'logs':
+                      continue
+                  print('REPORT_FIELD', json.dumps({'key': key, 'value': value}, separators=(',', ':')))
+              prefix = report_name.rsplit('/', 1)[0] + '/game-service-captures/'
+              manifest = json.loads(archive.read(prefix + 'manifest.json'))
+              print('SERVICE_MANIFEST', json.dumps(manifest, separators=(',', ':')))
+              for name, record in manifest['files'].items():
+                  content = archive.read(prefix + name)
+                  assert len(content) == record['bytes']
+                  assert hashlib.sha256(content).hexdigest() == record['sha256']
+                  print('CAPTURE_VERIFIED', name, len(content), record['sha256'])
+                  text = content.decode('utf-8')
+                  if name.endswith('-stdout.txt'):
+                      lines = text.splitlines()
+                      selected = lines[:240] + ['[inspection output: middle omitted]'] + lines[-160:]
+                  else:
+                      selected = text.splitlines()[-80:]
+                  print('CAPTURE_BEGIN', name)
+                  for line in selected:
+                      print(line[:4000])
+                  print('CAPTURE_END', name)
+          PY
