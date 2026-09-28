@@ -9,6 +9,8 @@ on:
       - 'patches/wine-dbserver/**'
       - 'database/wine-dbserver/**'
       - 'tools/android/dbserver/**'
+      - 'tools/android/extract_talloc_source.py'
+      - 'tools/android/test_extract_talloc_source.py'
       - 'android/guest/dbserver_diagnostic.py'
 permissions:
   contents: read
@@ -26,6 +28,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tools -p test_prepare_wine_dbserver_source.py -v
           python3 -m unittest discover -s tools/android/dbserver -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
   build:
     needs: tooling
     runs-on: windows-2025-vs2026
@@ -134,12 +137,20 @@ jobs:
           path: out/android/assets/runtime
           run-id: 36364550345
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/android/accepted-proot-sources
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover pinned talloc source from accepted runtime provenance
+        run: python3 tools/android/extract_talloc_source.py --assets out/android/assets/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json
       - name: Install host runtime dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Build matching native ARM64 PRoot
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
       - name: Stage accepted schema and minimal pinned text
         run: python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
       - name: Exercise actual DbServer against ARM64 PostgreSQL in an isolated network
@@ -153,4 +164,5 @@ jobs:
             out/dbserver-schema/schema-manifest.json
             out/wine-dbserver/package-manifest.json
             out/android/native/linux-arm64/proot-build-receipt.json
+            out/android/talloc-source-receipt.json
           if-no-files-found: warn

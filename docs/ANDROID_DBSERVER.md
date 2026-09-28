@@ -38,6 +38,14 @@ it does not establish a generic notification fix. The existing two normal
 schema launches will cover default startup followed by acknowledged fixed-input
 reload, with the same exact schema/catalog checks and no additional launches.
 
+Run `36434692816` at `73323b72262d7e61064c16023258e0bfe9016583` passed
+source/tooling checks, both native Windows option contracts, both builds and the
+Windows persistence fixture. Both ARM64 attempts stopped before DbServer execution:
+the talloc download exhausted three transport attempts and ended with HTTP 503.
+This package is not yet qualified for ARM64. The next build uses the identical
+hash-pinned talloc archive from the accepted runtime's corresponding-source
+bundle; the compiler recipe and source hashes remain unchanged.
+
 **The first hosted M3 DbServer gate passed** in
 [run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)
 at `1a5eea159172a4698441eb8cfed5ea5ca99fcf12`, completed 2026-09-28 at

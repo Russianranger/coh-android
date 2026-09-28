@@ -173,6 +173,13 @@ then complete both saves and exact-name resume. Keep the earlier successful
 first-create/save evidence and the accepted 0.1.5 APK. The full hosted gate and
 Android gameplay remain unvalidated.
 
+Fixed-input qualification `36434692816` passed Windows/source checks but both
+ARM64 attempts failed before DbServer execution on talloc HTTP 503 after all
+three transport attempts. Do not adopt that package as ARM64-qualified. Restore
+the held Atlas input/acknowledgement guards and use the identical talloc source
+archive from accepted runtime `36364550345` for the next qualification, then pin
+only the package whose complete ARM64 gate passes.
+
 ## Continuation validation checkpoint
 
 The accepted character run is **36282414135**, tested commit

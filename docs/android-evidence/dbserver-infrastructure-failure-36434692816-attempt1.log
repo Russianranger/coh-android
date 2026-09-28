@@ -1,0 +1,525 @@
+﻿2026-09-28T14:22:39.7417936Z Current runner version: '2.337.0'
+2026-09-28T14:22:39.7450977Z ##[group]Runner Image Provisioner
+2026-09-28T14:22:39.7451980Z Hosted Compute Agent
+2026-09-28T14:22:39.7452579Z Version: 20260828.587
+2026-09-28T14:22:39.7453385Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-28T14:22:39.7454513Z Build Date: 2026-08-28T16:44:25Z
+2026-09-28T14:22:39.7455365Z Worker ID: {c935e3ce-a301-487c-bb9f-fe39917dcf3a}
+2026-09-28T14:22:39.7456131Z Azure Region: centralus
+2026-09-28T14:22:39.7456761Z ##[endgroup]
+2026-09-28T14:22:39.7459169Z ##[group]Operating System
+2026-09-28T14:22:39.7459864Z Ubuntu
+2026-09-28T14:22:39.7460623Z 24.04.5
+2026-09-28T14:22:39.7461183Z LTS
+2026-09-28T14:22:39.7461720Z ##[endgroup]
+2026-09-28T14:22:39.7462369Z ##[group]Runner Image
+2026-09-28T14:22:39.7463021Z Image: ubuntu-24.04-arm
+2026-09-28T14:22:39.7464475Z Version: 20260920.129.1
+2026-09-28T14:22:39.7466057Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260920.129/images/ubuntu/Ubuntu2404-Arm64-Readme.md
+2026-09-28T14:22:39.7467780Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24-arm64%2F20260920.129
+2026-09-28T14:22:39.7468789Z ##[endgroup]
+2026-09-28T14:22:39.7470173Z ##[group]GITHUB_TOKEN Permissions
+2026-09-28T14:22:39.7473888Z Actions: read
+2026-09-28T14:22:39.7474745Z Contents: read
+2026-09-28T14:22:39.7475354Z Metadata: read
+2026-09-28T14:22:39.7475952Z ##[endgroup]
+2026-09-28T14:22:39.7479374Z Secret source: Actions
+2026-09-28T14:22:39.7480373Z Cache mode: write
+2026-09-28T14:22:39.7481554Z Prepare workflow directory
+2026-09-28T14:22:39.7898986Z Prepare all required actions
+2026-09-28T14:22:39.7954221Z Getting action download info
+2026-09-28T14:22:40.0854390Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-28T14:22:40.3030697Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-09-28T14:22:40.7977984Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-28T14:22:41.1325112Z Complete job name: runtime
+2026-09-28T14:22:41.2312253Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-09-28T14:22:41.2314490Z with:
+2026-09-28T14:22:41.2315310Z   repository: Russianranger/coh-android
+2026-09-28T14:22:41.2322091Z   token: ***
+2026-09-28T14:22:41.2322800Z   ssh-strict: true
+2026-09-28T14:22:41.2323898Z   ssh-user: git
+2026-09-28T14:22:41.2324677Z   persist-credentials: true
+2026-09-28T14:22:41.2325462Z   clean: true
+2026-09-28T14:22:41.2326290Z   sparse-checkout-cone-mode: true
+2026-09-28T14:22:41.2327138Z   fetch-depth: 1
+2026-09-28T14:22:41.2327836Z   fetch-tags: false
+2026-09-28T14:22:41.2328719Z   show-progress: true
+2026-09-28T14:22:41.2329459Z   lfs: false
+2026-09-28T14:22:41.2330274Z   submodules: false
+2026-09-28T14:22:41.2331050Z   set-safe-directory: true
+2026-09-28T14:22:41.2331882Z   allow-unsafe-pr-checkout: false
+2026-09-28T14:22:41.2333632Z ##[endgroup]
+2026-09-28T14:22:41.3250928Z Syncing repository: Russianranger/coh-android
+2026-09-28T14:22:41.3254523Z ##[group]Getting Git version info
+2026-09-28T14:22:41.3255802Z Working directory is '/home/runner/work/coh-android/coh-android'
+2026-09-28T14:22:41.3257804Z [command]/usr/bin/git version
+2026-09-28T14:22:41.3329314Z git version 2.55.0
+2026-09-28T14:22:41.3349211Z ##[endgroup]
+2026-09-28T14:22:41.3370090Z Temporarily overriding HOME='/home/runner/work/_temp/a704fc42-b633-4892-b7f9-1a080ada2a79' before making global git config changes
+2026-09-28T14:22:41.3372913Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-28T14:22:41.3375522Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-09-28T14:22:41.3410583Z Deleting the contents of '/home/runner/work/coh-android/coh-android'
+2026-09-28T14:22:41.3417317Z ##[group]Initializing the repository
+2026-09-28T14:22:41.3422432Z [command]/usr/bin/git init /home/runner/work/coh-android/coh-android
+2026-09-28T14:22:41.3575785Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-28T14:22:41.3578425Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-28T14:22:41.3580036Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-28T14:22:41.3581250Z hint: call:
+2026-09-28T14:22:41.3582080Z hint:
+2026-09-28T14:22:41.3582964Z hint: 	git config --global init.defaultBranch <name>
+2026-09-28T14:22:41.3584409Z hint:
+2026-09-28T14:22:41.3585413Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-28T14:22:41.3586893Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-28T14:22:41.3588226Z hint:
+2026-09-28T14:22:41.3588942Z hint: 	git branch -m <name>
+2026-09-28T14:22:41.3589742Z hint:
+2026-09-28T14:22:41.3590841Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-28T14:22:41.3592485Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/.git/
+2026-09-28T14:22:41.3596581Z [command]/usr/bin/git remote add origin https://github.com/Russianranger/coh-android
+2026-09-28T14:22:41.3621765Z ##[endgroup]
+2026-09-28T14:22:41.3623630Z ##[group]Disabling automatic garbage collection
+2026-09-28T14:22:41.3625265Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-28T14:22:41.3659351Z ##[endgroup]
+2026-09-28T14:22:41.3661055Z ##[group]Setting up auth
+2026-09-28T14:22:41.3664467Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-28T14:22:41.3698380Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-28T14:22:41.4068604Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-28T14:22:41.4102121Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-28T14:22:41.4302239Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-28T14:22:41.4334581Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-28T14:22:41.4541555Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-28T14:22:41.4591009Z ##[endgroup]
+2026-09-28T14:22:41.4592606Z ##[group]Fetching the repository
+2026-09-28T14:22:41.4601149Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +73323b72262d7e61064c16023258e0bfe9016583:refs/remotes/origin/codex/character-persistence-continuation
+2026-09-28T14:22:52.4888472Z From https://github.com/Russianranger/coh-android
+2026-09-28T14:22:52.4889664Z  * [new ref]             73323b72262d7e61064c16023258e0bfe9016583 -> origin/codex/character-persistence-continuation
+2026-09-28T14:22:52.4892115Z ##[endgroup]
+2026-09-28T14:22:52.4892864Z ##[group]Determining the checkout info
+2026-09-28T14:22:52.4894218Z ##[endgroup]
+2026-09-28T14:22:52.4903612Z [command]/usr/bin/git sparse-checkout disable
+2026-09-28T14:22:52.4962879Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-28T14:22:52.5000655Z ##[group]Checking out the ref
+2026-09-28T14:22:52.5005858Z [command]/usr/bin/git checkout --progress --force -B codex/character-persistence-continuation refs/remotes/origin/codex/character-persistence-continuation
+2026-09-28T14:22:53.6242229Z Updating files:  21% (34202/162711)
+2026-09-28T14:22:53.6550506Z Updating files:  22% (35797/162711)
+2026-09-28T14:22:53.6855506Z Updating files:  23% (37424/162711)
+2026-09-28T14:22:53.7158575Z Updating files:  24% (39051/162711)
+2026-09-28T14:22:53.7464847Z Updating files:  25% (40678/162711)
+2026-09-28T14:22:53.7755691Z Updating files:  26% (42305/162711)
+2026-09-28T14:22:53.8036935Z Updating files:  27% (43932/162711)
+2026-09-28T14:22:53.8342921Z Updating files:  28% (45560/162711)
+2026-09-28T14:22:53.8649148Z Updating files:  29% (47187/162711)
+2026-09-28T14:22:53.8936178Z Updating files:  30% (48814/162711)
+2026-09-28T14:22:53.9220879Z Updating files:  31% (50441/162711)
+2026-09-28T14:22:53.9526238Z Updating files:  32% (52068/162711)
+2026-09-28T14:22:53.9815477Z Updating files:  33% (53695/162711)
+2026-09-28T14:22:54.0098884Z Updating files:  34% (55322/162711)
+2026-09-28T14:22:54.0401279Z Updating files:  35% (56949/162711)
+2026-09-28T14:22:54.0891249Z Updating files:  36% (58576/162711)
+2026-09-28T14:22:54.1205435Z Updating files:  37% (60204/162711)
+2026-09-28T14:22:54.1504064Z Updating files:  38% (61831/162711)
+2026-09-28T14:22:54.1789387Z Updating files:  39% (63458/162711)
+2026-09-28T14:22:54.2073061Z Updating files:  40% (65085/162711)
+2026-09-28T14:22:54.2359346Z Updating files:  41% (66712/162711)
+2026-09-28T14:22:54.2611040Z Updating files:  42% (68339/162711)
+2026-09-28T14:22:54.2903173Z Updating files:  43% (69966/162711)
+2026-09-28T14:22:54.3202942Z Updating files:  44% (71593/162711)
+2026-09-28T14:22:54.5693636Z Updating files:  45% (73220/162711)
+2026-09-28T14:22:54.5962816Z Updating files:  46% (74848/162711)
+2026-09-28T14:22:54.9559353Z Updating files:  46% (74991/162711)
+2026-09-28T14:22:55.1488592Z Updating files:  47% (76475/162711)
+2026-09-28T14:22:55.6134081Z Updating files:  48% (78102/162711)
+2026-09-28T14:22:55.8834896Z Updating files:  48% (78762/162711)
+2026-09-28T14:22:56.2357224Z Updating files:  49% (79729/162711)
+2026-09-28T14:22:56.6031026Z Updating files:  50% (81356/162711)
+2026-09-28T14:22:56.7793074Z Updating files:  50% (82509/162711)
+2026-09-28T14:22:56.9465863Z Updating files:  51% (82983/162711)
+2026-09-28T14:22:56.9911138Z Updating files:  52% (84610/162711)
+2026-09-28T14:22:57.0365065Z Updating files:  53% (86237/162711)
+2026-09-28T14:22:57.0636489Z Updating files:  54% (87864/162711)
+2026-09-28T14:22:57.0905255Z Updating files:  55% (89492/162711)
+2026-09-28T14:22:57.1182350Z Updating files:  56% (91119/162711)
+2026-09-28T14:22:57.1703993Z Updating files:  57% (92746/162711)
+2026-09-28T14:22:57.3801574Z Updating files:  58% (94373/162711)
+2026-09-28T14:22:57.4784625Z Updating files:  59% (96000/162711)
+2026-09-28T14:22:57.5610689Z Updating files:  60% (97627/162711)
+2026-09-28T14:22:57.5962476Z Updating files:  61% (99254/162711)
+2026-09-28T14:22:57.6126079Z Updating files:  61% (100213/162711)
+2026-09-28T14:22:57.6537849Z Updating files:  62% (100881/162711)
+2026-09-28T14:22:57.6910685Z Updating files:  63% (102508/162711)
+2026-09-28T14:22:57.7278494Z Updating files:  64% (104136/162711)
+2026-09-28T14:22:57.7659595Z Updating files:  65% (105763/162711)
+2026-09-28T14:22:57.8051837Z Updating files:  66% (107390/162711)
+2026-09-28T14:22:57.8437862Z Updating files:  67% (109017/162711)
+2026-09-28T14:22:57.8806922Z Updating files:  68% (110644/162711)
+2026-09-28T14:22:57.9219069Z Updating files:  69% (112271/162711)
+2026-09-28T14:22:57.9580741Z Updating files:  70% (113898/162711)
+2026-09-28T14:22:57.9957237Z Updating files:  71% (115525/162711)
+2026-09-28T14:22:58.0313061Z Updating files:  72% (117152/162711)
+2026-09-28T14:22:58.1027332Z Updating files:  73% (118780/162711)
+2026-09-28T14:22:58.1376820Z Updating files:  74% (120407/162711)
+2026-09-28T14:22:58.1717302Z Updating files:  75% (122034/162711)
+2026-09-28T14:22:58.2050399Z Updating files:  76% (123661/162711)
+2026-09-28T14:22:58.2389919Z Updating files:  77% (125288/162711)
+2026-09-28T14:22:58.2738209Z Updating files:  78% (126915/162711)
+2026-09-28T14:22:58.3102657Z Updating files:  79% (128542/162711)
+2026-09-28T14:22:58.3430383Z Updating files:  80% (130169/162711)
+2026-09-28T14:22:58.3748939Z Updating files:  81% (131796/162711)
+2026-09-28T14:22:58.4068803Z Updating files:  82% (133424/162711)
+2026-09-28T14:22:58.4409068Z Updating files:  83% (135051/162711)
+2026-09-28T14:22:58.4771453Z Updating files:  84% (136678/162711)
+2026-09-28T14:22:58.5108768Z Updating files:  85% (138305/162711)
+2026-09-28T14:22:58.5467431Z Updating files:  86% (139932/162711)
+2026-09-28T14:22:58.5801412Z Updating files:  87% (141559/162711)
+2026-09-28T14:22:58.5962044Z Updating files:  88% (143186/162711)
+2026-09-28T14:22:58.6150003Z Updating files:  88% (143949/162711)
+2026-09-28T14:22:58.6491728Z Updating files:  89% (144813/162711)
+2026-09-28T14:22:58.6838290Z Updating files:  90% (146440/162711)
+2026-09-28T14:22:58.8612510Z Updating files:  91% (148068/162711)
+2026-09-28T14:22:58.9157181Z Updating files:  92% (149695/162711)
+2026-09-28T14:22:58.9971141Z Updating files:  93% (151322/162711)
+2026-09-28T14:22:59.1148042Z Updating files:  94% (152949/162711)
+2026-09-28T14:22:59.2018296Z Updating files:  95% (154576/162711)
+2026-09-28T14:22:59.3220991Z Updating files:  96% (156203/162711)
+2026-09-28T14:22:59.5620746Z Updating files:  97% (157830/162711)
+2026-09-28T14:22:59.5962197Z Updating files:  98% (159457/162711)
+2026-09-28T14:22:59.6641519Z Updating files:  98% (159947/162711)
+2026-09-28T14:23:00.0594726Z Updating files:  99% (161084/162711)
+2026-09-28T14:23:00.0596247Z Updating files: 100% (162711/162711)
+2026-09-28T14:23:00.0596675Z Updating files: 100% (162711/162711), done.
+2026-09-28T14:23:00.3377875Z Switched to a new branch 'codex/character-persistence-continuation'
+2026-09-28T14:23:00.3379343Z branch 'codex/character-persistence-continuation' set up to track 'origin/codex/character-persistence-continuation'.
+2026-09-28T14:23:00.3481058Z ##[endgroup]
+2026-09-28T14:23:00.3527341Z [command]/usr/bin/git log -1 --format=%H
+2026-09-28T14:23:00.3555443Z 73323b72262d7e61064c16023258e0bfe9016583
+2026-09-28T14:23:00.3837034Z ##[group]Run actions/download-artifact@v4
+2026-09-28T14:23:00.3837439Z with:
+2026-09-28T14:23:00.3837835Z   name: wine-dbserver-package
+2026-09-28T14:23:00.3838119Z   path: out/wine-dbserver
+2026-09-28T14:23:00.3838426Z   merge-multiple: false
+2026-09-28T14:23:00.3838738Z   repository: Russianranger/coh-android
+2026-09-28T14:23:00.3839061Z   run-id: 36434692816
+2026-09-28T14:23:00.3839343Z ##[endgroup]
+2026-09-28T14:23:00.5218330Z Downloading single artifact
+2026-09-28T14:23:00.5370062Z (node:2227) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T14:23:00.5370809Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T14:23:00.7244129Z Preparing to download the following artifacts:
+2026-09-28T14:23:00.7244947Z - wine-dbserver-package (ID: 10974749019, Size: 2181634, Expected Digest: sha256:a50ba0af38a78a6d2acc00b61562108b684e1a10d4315adb5f0f616c72a46d4d)
+2026-09-28T14:23:00.9211431Z Redirecting to blob download url: https://productionresultssa4.blob.core.windows.net/actions-results/58ea1a44-d78f-4365-8ad9-87588602b78d/workflow-job-run-9fecec1f-0ccb-5ffc-bcd7-b475d4abe76b/artifacts/a367580ecf1b995853dcde064fe039d32028a6f9a592a67d004fa3e656983bd1.zip
+2026-09-28T14:23:00.9213160Z Starting download of artifact to: /home/runner/work/coh-android/coh-android/out/wine-dbserver
+2026-09-28T14:23:01.0905108Z (node:2227) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-09-28T14:23:01.3645230Z SHA256 digest of downloaded artifact is a50ba0af38a78a6d2acc00b61562108b684e1a10d4315adb5f0f616c72a46d4d
+2026-09-28T14:23:01.3646071Z Artifact download completed successfully.
+2026-09-28T14:23:01.3646422Z Total of 1 artifact(s) downloaded
+2026-09-28T14:23:01.3650961Z Download artifact has finished successfully
+2026-09-28T14:23:01.3792439Z ##[group]Run actions/download-artifact@v4
+2026-09-28T14:23:01.3792905Z with:
+2026-09-28T14:23:01.3793247Z   name: coh-diagnostic-runtime-inputs
+2026-09-28T14:23:01.3793906Z   path: out/android/assets/runtime
+2026-09-28T14:23:01.3794225Z   run-id: 36364550345
+2026-09-28T14:23:01.3797158Z   github-token: ***
+2026-09-28T14:23:01.3797448Z   merge-multiple: false
+2026-09-28T14:23:01.3798185Z   repository: Russianranger/coh-android
+2026-09-28T14:23:01.3798520Z ##[endgroup]
+2026-09-28T14:23:01.5122110Z Downloading single artifact
+2026-09-28T14:23:01.5186597Z (node:2240) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T14:23:01.5187529Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T14:23:01.5375001Z (node:2240) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-28T14:23:01.7743114Z Preparing to download the following artifacts:
+2026-09-28T14:23:01.7744131Z - coh-diagnostic-runtime-inputs (ID: 10947225941, Size: 13337866, Expected Digest: sha256:9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107)
+2026-09-28T14:23:01.7776615Z Downloading artifact '10947225941' from 'Russianranger/coh-android'
+2026-09-28T14:23:01.9517831Z Redirecting to blob download url: https://productionresultssa9.blob.core.windows.net/actions-results/b73f71ec-2625-48f2-9454-64c0f325ef55/workflow-job-run-b80c7f38-4ccb-5eea-b673-d8f5f33378c2/artifacts/bd974f85ee171e7370e716d1ed133214484d6eee295e2f4dd71d425a5f2991d7.zip
+2026-09-28T14:23:01.9519577Z Starting download of artifact to: /home/runner/work/coh-android/coh-android/out/android/assets/runtime
+2026-09-28T14:23:02.1332356Z (node:2240) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-09-28T14:23:02.7111605Z SHA256 digest of downloaded artifact is 9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107
+2026-09-28T14:23:02.7112509Z Artifact download completed successfully.
+2026-09-28T14:23:02.7113057Z Total of 1 artifact(s) downloaded
+2026-09-28T14:23:02.7116515Z Download artifact has finished successfully
+2026-09-28T14:23:02.7250537Z ##[group]Run sudo apt-get update -qq
+2026-09-28T14:23:02.7251118Z [36;1msudo apt-get update -qq[0m
+2026-09-28T14:23:02.7251836Z [36;1msudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux[0m
+2026-09-28T14:23:02.7377936Z shell: /usr/bin/bash -e {0}
+2026-09-28T14:23:02.7378492Z ##[endgroup]
+2026-09-28T14:23:09.5281236Z Reading package lists...
+2026-09-28T14:23:09.8057120Z Building dependency tree...
+2026-09-28T14:23:09.8064086Z Reading state information...
+2026-09-28T14:23:10.0513335Z gawk is already the newest version (1:5.2.1-2ubuntu0.1).
+2026-09-28T14:23:10.0514104Z gawk set to manually installed.
+2026-09-28T14:23:10.0514467Z iproute2 is already the newest version (6.1.0-1ubuntu6.4).
+2026-09-28T14:23:10.0515035Z util-linux is already the newest version (2.39.3-9ubuntu6.6).
+2026-09-28T14:23:10.0515456Z The following additional packages will be installed:
+2026-09-28T14:23:10.0521281Z   ca-certificates-java default-jre-headless libpcsclite1
+2026-09-28T14:23:10.0522361Z   openjdk-21-jdk-headless openjdk-21-jre-headless
+2026-09-28T14:23:10.0531530Z Suggested packages:
+2026-09-28T14:23:10.0531961Z   default-jre pcscd openjdk-21-demo openjdk-21-source libnss-mdns
+2026-09-28T14:23:10.0532519Z   fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei
+2026-09-28T14:23:10.0532923Z   | fonts-wqy-zenhei fonts-indic
+2026-09-28T14:23:10.0734136Z The following NEW packages will be installed:
+2026-09-28T14:23:10.0734730Z   build-essential ca-certificates-java default-jdk-headless
+2026-09-28T14:23:10.0740606Z   default-jre-headless libpcsclite1 openjdk-21-jdk-headless
+2026-09-28T14:23:10.0742095Z   openjdk-21-jre-headless
+2026-09-28T14:23:10.3715740Z 0 upgraded, 7 newly installed, 0 to remove and 34 not upgraded.
+2026-09-28T14:23:10.3716462Z Need to get 128 MB of archives.
+2026-09-28T14:23:10.3716862Z After this operation, 301 MB of additional disk space will be used.
+2026-09-28T14:23:10.3717572Z Get:1 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 build-essential arm64 12.10ubuntu1 [4932 B]
+2026-09-28T14:23:10.5107577Z Get:2 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 ca-certificates-java all 20240118 [11.6 kB]
+2026-09-28T14:23:10.6691416Z Get:3 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 libpcsclite1 arm64 2.0.3-1build1 [21.8 kB]
+2026-09-28T14:23:10.8715075Z Get:4 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 openjdk-21-jre-headless arm64 21.0.12.1+1-1~24.04.4 [45.8 MB]
+2026-09-28T14:23:13.7946770Z Get:5 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 default-jre-headless arm64 2:1.21-75+exp1 [3096 B]
+2026-09-28T14:23:13.9460536Z Get:6 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 openjdk-21-jdk-headless arm64 21.0.12.1+1-1~24.04.4 [81.9 MB]
+2026-09-28T14:23:14.9346508Z Get:7 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 default-jdk-headless arm64 2:1.21-75+exp1 [960 B]
+2026-09-28T14:23:15.2535170Z Fetched 128 MB in 5s (26.3 MB/s)
+2026-09-28T14:23:15.4039707Z Selecting previously unselected package build-essential.
+2026-09-28T14:23:15.4260427Z (Reading database ... 
+2026-09-28T14:23:15.4260827Z (Reading database ... 5%
+2026-09-28T14:23:15.4261368Z (Reading database ... 10%
+2026-09-28T14:23:15.4261729Z (Reading database ... 15%
+2026-09-28T14:23:15.4262065Z (Reading database ... 20%
+2026-09-28T14:23:15.4263007Z (Reading database ... 25%
+2026-09-28T14:23:15.4263305Z (Reading database ... 30%
+2026-09-28T14:23:15.4263892Z (Reading database ... 35%
+2026-09-28T14:23:15.4264197Z (Reading database ... 40%
+2026-09-28T14:23:15.4264664Z (Reading database ... 45%
+2026-09-28T14:23:15.4264938Z (Reading database ... 50%
+2026-09-28T14:23:15.4487441Z (Reading database ... 55%
+2026-09-28T14:23:15.5788139Z (Reading database ... 60%
+2026-09-28T14:23:15.7830665Z (Reading database ... 65%
+2026-09-28T14:23:15.9872921Z (Reading database ... 70%
+2026-09-28T14:23:16.1371470Z (Reading database ... 75%
+2026-09-28T14:23:16.2327895Z (Reading database ... 80%
+2026-09-28T14:23:16.4361538Z (Reading database ... 85%
+2026-09-28T14:23:16.7020904Z (Reading database ... 90%
+2026-09-28T14:23:16.8902629Z (Reading database ... 95%
+2026-09-28T14:23:16.8903364Z (Reading database ... 100%
+2026-09-28T14:23:16.8903924Z (Reading database ... 201510 files and directories currently installed.)
+2026-09-28T14:23:16.8955553Z Preparing to unpack .../0-build-essential_12.10ubuntu1_arm64.deb ...
+2026-09-28T14:23:16.9387025Z Unpacking build-essential (12.10ubuntu1) ...
+2026-09-28T14:23:17.1393327Z Selecting previously unselected package ca-certificates-java.
+2026-09-28T14:23:17.1579342Z Preparing to unpack .../1-ca-certificates-java_20240118_all.deb ...
+2026-09-28T14:23:17.1703136Z Unpacking ca-certificates-java (20240118) ...
+2026-09-28T14:23:17.3091965Z Selecting previously unselected package libpcsclite1:arm64.
+2026-09-28T14:23:17.3262216Z Preparing to unpack .../2-libpcsclite1_2.0.3-1build1_arm64.deb ...
+2026-09-28T14:23:17.3388878Z Unpacking libpcsclite1:arm64 (2.0.3-1build1) ...
+2026-09-28T14:23:17.5380124Z Selecting previously unselected package openjdk-21-jre-headless:arm64.
+2026-09-28T14:23:17.5593260Z Preparing to unpack .../3-openjdk-21-jre-headless_21.0.12.1+1-1~24.04.4_arm64.deb ...
+2026-09-28T14:23:17.6171950Z Unpacking openjdk-21-jre-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T14:23:19.3886892Z Selecting previously unselected package default-jre-headless.
+2026-09-28T14:23:19.4068142Z Preparing to unpack .../4-default-jre-headless_2%3a1.21-75+exp1_arm64.deb ...
+2026-09-28T14:23:19.4082596Z Unpacking default-jre-headless (2:1.21-75+exp1) ...
+2026-09-28T14:23:19.4296460Z Selecting previously unselected package openjdk-21-jdk-headless:arm64.
+2026-09-28T14:23:19.4476755Z Preparing to unpack .../5-openjdk-21-jdk-headless_21.0.12.1+1-1~24.04.4_arm64.deb ...
+2026-09-28T14:23:19.4511707Z Unpacking openjdk-21-jdk-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T14:23:19.8903016Z Selecting previously unselected package default-jdk-headless.
+2026-09-28T14:23:19.9105371Z Preparing to unpack .../6-default-jdk-headless_2%3a1.21-75+exp1_arm64.deb ...
+2026-09-28T14:23:19.9116162Z Unpacking default-jdk-headless (2:1.21-75+exp1) ...
+2026-09-28T14:23:19.9528059Z Setting up libpcsclite1:arm64 (2.0.3-1build1) ...
+2026-09-28T14:23:19.9556083Z Setting up build-essential (12.10ubuntu1) ...
+2026-09-28T14:23:19.9581421Z Setting up ca-certificates-java (20240118) ...
+2026-09-28T14:23:21.9594062Z Adding debian:ACCVRAIZ1.pem
+2026-09-28T14:23:21.9613887Z Adding debian:AC_RAIZ_FNMT-RCM.pem
+2026-09-28T14:23:22.0830854Z Adding debian:AC_RAIZ_FNMT-RCM_SERVIDORES_SEGUROS.pem
+2026-09-28T14:23:22.0848719Z Adding debian:ANF_Secure_Server_Root_CA.pem
+2026-09-28T14:23:22.0864274Z Adding debian:Actalis_Authentication_Root_CA.pem
+2026-09-28T14:23:22.0874790Z Adding debian:Amazon_Root_CA_1.pem
+2026-09-28T14:23:22.0889134Z Adding debian:Amazon_Root_CA_2.pem
+2026-09-28T14:23:22.0896663Z Adding debian:Amazon_Root_CA_3.pem
+2026-09-28T14:23:22.0905274Z Adding debian:Amazon_Root_CA_4.pem
+2026-09-28T14:23:22.0917479Z Adding debian:Atos_TrustedRoot_2011.pem
+2026-09-28T14:23:22.0927155Z Adding debian:Atos_TrustedRoot_Root_CA_ECC_TLS_2021.pem
+2026-09-28T14:23:22.0941652Z Adding debian:Atos_TrustedRoot_Root_CA_RSA_TLS_2021.pem
+2026-09-28T14:23:22.0957855Z Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+2026-09-28T14:23:22.0972572Z Adding debian:BJCA_Global_Root_CA1.pem
+2026-09-28T14:23:22.0981248Z Adding debian:BJCA_Global_Root_CA2.pem
+2026-09-28T14:23:22.1186338Z Adding debian:Buypass_Class_2_Root_CA.pem
+2026-09-28T14:23:22.1201538Z Adding debian:Buypass_Class_3_Root_CA.pem
+2026-09-28T14:23:22.1217341Z Adding debian:CA_Disig_Root_R2.pem
+2026-09-28T14:23:22.1233619Z Adding debian:CFCA_EV_ROOT.pem
+2026-09-28T14:23:22.1241837Z Adding debian:COMODO_ECC_Certification_Authority.pem
+2026-09-28T14:23:22.1257204Z Adding debian:COMODO_RSA_Certification_Authority.pem
+2026-09-28T14:23:22.1264955Z Adding debian:Certainly_Root_E1.pem
+2026-09-28T14:23:22.1286950Z Adding debian:Certainly_Root_R1.pem
+2026-09-28T14:23:22.1300791Z Adding debian:Certigna_Root_CA.pem
+2026-09-28T14:23:22.1308672Z Adding debian:Certum_EC-384_CA.pem
+2026-09-28T14:23:22.1319384Z Adding debian:Certum_Trusted_Network_CA.pem
+2026-09-28T14:23:22.1333182Z Adding debian:Certum_Trusted_Network_CA_2.pem
+2026-09-28T14:23:22.1347021Z Adding debian:Certum_Trusted_Root_CA.pem
+2026-09-28T14:23:22.1357240Z Adding debian:D-TRUST_BR_Root_CA_1_2020.pem
+2026-09-28T14:23:22.1372388Z Adding debian:D-TRUST_BR_Root_CA_2_2023.pem
+2026-09-28T14:23:22.1405107Z Adding debian:D-TRUST_EV_Root_CA_1_2020.pem
+2026-09-28T14:23:22.1405508Z Adding debian:D-TRUST_EV_Root_CA_2_2023.pem
+2026-09-28T14:23:22.1408898Z Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+2026-09-28T14:23:22.1421480Z Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+2026-09-28T14:23:22.1431563Z Adding debian:DigiCert_Assured_ID_Root_G2.pem
+2026-09-28T14:23:22.1439622Z Adding debian:DigiCert_Assured_ID_Root_G3.pem
+2026-09-28T14:23:22.1450155Z Adding debian:DigiCert_Global_Root_G2.pem
+2026-09-28T14:23:22.1457925Z Adding debian:DigiCert_Global_Root_G3.pem
+2026-09-28T14:23:22.1464537Z Adding debian:DigiCert_TLS_ECC_P384_Root_G5.pem
+2026-09-28T14:23:22.1478156Z Adding debian:DigiCert_TLS_RSA4096_Root_G5.pem
+2026-09-28T14:23:22.1492194Z Adding debian:DigiCert_Trusted_Root_G4.pem
+2026-09-28T14:23:22.1513004Z Adding debian:Entrust_Root_Certification_Authority.pem
+2026-09-28T14:23:22.1526438Z Adding debian:GDCA_TrustAUTH_R5_ROOT.pem
+2026-09-28T14:23:22.1538366Z Adding debian:GTS_Root_R1.pem
+2026-09-28T14:23:22.1545478Z Adding debian:GTS_Root_R3.pem
+2026-09-28T14:23:22.1551620Z Adding debian:GTS_Root_R4.pem
+2026-09-28T14:23:22.1558688Z Adding debian:GlobalSign_ECC_Root_CA_-_R4.pem
+2026-09-28T14:23:22.1564224Z Adding debian:GlobalSign_ECC_Root_CA_-_R5.pem
+2026-09-28T14:23:22.1572890Z Adding debian:GlobalSign_Root_CA_-_R3.pem
+2026-09-28T14:23:22.1585634Z Adding debian:GlobalSign_Root_CA_-_R6.pem
+2026-09-28T14:23:22.1591922Z Adding debian:GlobalSign_Root_E46.pem
+2026-09-28T14:23:22.1604874Z Adding debian:GlobalSign_Root_R46.pem
+2026-09-28T14:23:22.1613912Z Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+2026-09-28T14:23:22.1621375Z Adding debian:HARICA_TLS_ECC_Root_CA_2021.pem
+2026-09-28T14:23:22.1635904Z Adding debian:HARICA_TLS_RSA_Root_CA_2021.pem
+2026-09-28T14:23:22.1644834Z Adding debian:Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
+2026-09-28T14:23:22.1659337Z Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
+2026-09-28T14:23:22.1672498Z Adding debian:HiPKI_Root_CA_-_G1.pem
+2026-09-28T14:23:22.1685826Z Adding debian:Hongkong_Post_Root_CA_3.pem
+2026-09-28T14:23:22.1698312Z Adding debian:ISRG_Root_X1.pem
+2026-09-28T14:23:22.1706683Z Adding debian:ISRG_Root_X2.pem
+2026-09-28T14:23:22.1719474Z Adding debian:IdenTrust_Commercial_Root_CA_1.pem
+2026-09-28T14:23:22.1732593Z Adding debian:IdenTrust_Public_Sector_Root_CA_1.pem
+2026-09-28T14:23:22.1754892Z Adding debian:Izenpe.com.pem
+2026-09-28T14:23:22.1757287Z Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+2026-09-28T14:23:22.1765280Z Adding debian:Microsoft_ECC_Root_Certificate_Authority_2017.pem
+2026-09-28T14:23:22.1779220Z Adding debian:Microsoft_RSA_Root_Certificate_Authority_2017.pem
+2026-09-28T14:23:22.1792402Z Adding debian:NAVER_Global_Root_Certification_Authority.pem
+2026-09-28T14:23:22.1815858Z Adding debian:NetLock_Arany_=Class_Gold=_Főtanúsítvány.pem
+2026-09-28T14:23:22.1824073Z Adding debian:OISTE_Server_Root_ECC_G1.pem
+2026-09-28T14:23:22.1840244Z Adding debian:OISTE_Server_Root_RSA_G1.pem
+2026-09-28T14:23:22.1841651Z Adding debian:OISTE_WISeKey_Global_Root_GB_CA.pem
+2026-09-28T14:23:22.1864883Z Adding debian:OISTE_WISeKey_Global_Root_GC_CA.pem
+2026-09-28T14:23:22.1865585Z Adding debian:QuoVadis_Root_CA_1_G3.pem
+2026-09-28T14:23:22.1874439Z Adding debian:QuoVadis_Root_CA_2_G3.pem
+2026-09-28T14:23:22.1891608Z Adding debian:QuoVadis_Root_CA_3_G3.pem
+2026-09-28T14:23:22.1893159Z Adding debian:SSL.com_EV_Root_Certification_Authority_ECC.pem
+2026-09-28T14:23:22.1906950Z Adding debian:SSL.com_EV_Root_Certification_Authority_RSA_R2.pem
+2026-09-28T14:23:22.1914489Z Adding debian:SSL.com_Root_Certification_Authority_ECC.pem
+2026-09-28T14:23:22.1932026Z Adding debian:SSL.com_Root_Certification_Authority_RSA.pem
+2026-09-28T14:23:22.1938550Z Adding debian:SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-09-28T14:23:22.1955883Z Adding debian:SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-09-28T14:23:22.1960172Z Adding debian:SZAFIR_ROOT_CA2.pem
+2026-09-28T14:23:22.1967173Z Adding debian:Sectigo_Public_Server_Authentication_Root_E46.pem
+2026-09-28T14:23:22.1978762Z Adding debian:Sectigo_Public_Server_Authentication_Root_R46.pem
+2026-09-28T14:23:22.1987987Z Adding debian:SecureSign_Root_CA12.pem
+2026-09-28T14:23:22.2024912Z Adding debian:SecureSign_Root_CA14.pem
+2026-09-28T14:23:22.2025531Z Adding debian:SecureSign_Root_CA15.pem
+2026-09-28T14:23:22.2025967Z Adding debian:Security_Communication_ECC_RootCA1.pem
+2026-09-28T14:23:22.2026356Z Adding debian:Security_Communication_RootCA2.pem
+2026-09-28T14:23:22.2055195Z Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+2026-09-28T14:23:22.2055795Z Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+2026-09-28T14:23:22.2056563Z Adding debian:SwissSign_RSA_TLS_Root_CA_2022_-_1.pem
+2026-09-28T14:23:22.2085105Z Adding debian:T-TeleSec_GlobalRoot_Class_2.pem
+2026-09-28T14:23:22.2085578Z Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+2026-09-28T14:23:22.2086240Z Adding debian:TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.pem
+2026-09-28T14:23:22.2115070Z Adding debian:TWCA_CYBER_Root_CA.pem
+2026-09-28T14:23:22.2115722Z Adding debian:TWCA_Global_Root_CA.pem
+2026-09-28T14:23:22.2116080Z Adding debian:TWCA_Root_Certification_Authority.pem
+2026-09-28T14:23:22.2145275Z Adding debian:Telekom_Security_TLS_ECC_Root_2020.pem
+2026-09-28T14:23:22.2145784Z Adding debian:Telekom_Security_TLS_RSA_Root_2023.pem
+2026-09-28T14:23:22.2174831Z Adding debian:Telia_Root_CA_v2.pem
+2026-09-28T14:23:22.2175519Z Adding debian:TrustAsia_Global_Root_CA_G3.pem
+2026-09-28T14:23:22.2175910Z Adding debian:TrustAsia_Global_Root_CA_G4.pem
+2026-09-28T14:23:22.2176377Z Adding debian:TrustAsia_TLS_ECC_Root_CA.pem
+2026-09-28T14:23:22.2204903Z Adding debian:TrustAsia_TLS_RSA_Root_CA.pem
+2026-09-28T14:23:22.2205700Z Adding debian:TunTrust_Root_CA.pem
+2026-09-28T14:23:22.2224607Z Adding debian:UCA_Extended_Validation_Root.pem
+2026-09-28T14:23:22.2225499Z Adding debian:UCA_Global_G2_Root.pem
+2026-09-28T14:23:22.2227014Z Adding debian:USERTrust_ECC_Certification_Authority.pem
+2026-09-28T14:23:22.2243924Z Adding debian:USERTrust_RSA_Certification_Authority.pem
+2026-09-28T14:23:22.2252890Z Adding debian:certSIGN_Root_CA_G2.pem
+2026-09-28T14:23:22.2276571Z Adding debian:e-Szigno_Root_CA_2017.pem
+2026-09-28T14:23:22.2276973Z Adding debian:e-Szigno_TLS_Root_CA_2023.pem
+2026-09-28T14:23:22.2277508Z Adding debian:ePKI_Root_Certification_Authority.pem
+2026-09-28T14:23:22.2283743Z Adding debian:emSign_ECC_Root_CA_-_C3.pem
+2026-09-28T14:23:22.2290802Z Adding debian:emSign_ECC_Root_CA_-_G3.pem
+2026-09-28T14:23:22.2301037Z Adding debian:emSign_Root_CA_-_C1.pem
+2026-09-28T14:23:22.2310988Z Adding debian:emSign_Root_CA_-_G1.pem
+2026-09-28T14:23:22.2318672Z Adding debian:vTrus_ECC_Root_CA.pem
+2026-09-28T14:23:22.2331405Z Adding debian:vTrus_Root_CA.pem
+2026-09-28T14:23:22.3050840Z done.
+2026-09-28T14:23:22.3081268Z Setting up openjdk-21-jre-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T14:23:22.3874078Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-09-28T14:23:22.4163038Z Processing triggers for ca-certificates-java (20240118) ...
+2026-09-28T14:23:22.4459101Z done.
+2026-09-28T14:23:22.4496320Z Setting up openjdk-21-jdk-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T14:23:22.5683067Z Setting up default-jre-headless (2:1.21-75+exp1) ...
+2026-09-28T14:23:22.5716560Z Setting up default-jdk-headless (2:1.21-75+exp1) ...
+2026-09-28T14:23:24.9421806Z 
+2026-09-28T14:23:24.9423554Z Running kernel seems to be up-to-date.
+2026-09-28T14:23:24.9423937Z 
+2026-09-28T14:23:24.9424056Z No services need to be restarted.
+2026-09-28T14:23:24.9424272Z 
+2026-09-28T14:23:24.9424812Z No containers need to be restarted.
+2026-09-28T14:23:24.9425141Z 
+2026-09-28T14:23:24.9425354Z No user sessions are running outdated binaries.
+2026-09-28T14:23:24.9425575Z 
+2026-09-28T14:23:24.9425798Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-09-28T14:23:26.4174221Z ##[group]Run python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
+2026-09-28T14:23:26.4175103Z [36;1mpython3 tools/android/build_proot.py --target linux-arm64 --output out/android/native[0m
+2026-09-28T14:23:26.4214852Z shell: /usr/bin/bash -e {0}
+2026-09-28T14:23:26.4215366Z ##[endgroup]
+2026-09-28T14:23:26.4858875Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-28T14:23:26.4859736Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/proot-git/.git/
+2026-09-28T14:23:27.0633953Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-28T14:23:27.0634834Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-28T14:23:27.0635287Z hint: call:
+2026-09-28T14:23:27.0635585Z hint:
+2026-09-28T14:23:27.0635868Z hint: 	git config --global init.defaultBranch <name>
+2026-09-28T14:23:27.0636403Z hint:
+2026-09-28T14:23:27.0636730Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-28T14:23:27.0637249Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-28T14:23:27.0637722Z hint:
+2026-09-28T14:23:27.0637966Z hint: 	git branch -m <name>
+2026-09-28T14:23:27.0638270Z hint:
+2026-09-28T14:23:27.0638602Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-28T14:23:27.0639123Z From https://github.com/termux/proot
+2026-09-28T14:23:27.0639546Z  * branch            7266fb3e8516535682f5a9c8f3a7e70f6506eddb -> FETCH_HEAD
+2026-09-28T14:24:27.4617305Z Retrying pinned talloc download after transport failure (attempt 2/3)
+2026-09-28T14:25:28.7714454Z Retrying pinned talloc download after transport failure (attempt 3/3)
+2026-09-28T14:25:53.1596501Z PRoot build failed: HTTP Error 503: Service Unavailable
+2026-09-28T14:25:53.1725492Z ##[error]Process completed with exit code 1.
+2026-09-28T14:25:53.1830551Z ##[group]Run actions/upload-artifact@v4
+2026-09-28T14:25:53.1831076Z with:
+2026-09-28T14:25:53.1831490Z   name: wine-dbserver-arm64-evidence
+2026-09-28T14:25:53.1832279Z   path: out/android/dbserver-evidence/
+out/dbserver-schema/schema-manifest.json
+out/wine-dbserver/package-manifest.json
+out/android/native/linux-arm64/proot-build-receipt.json
+
+2026-09-28T14:25:53.1833049Z   if-no-files-found: warn
+2026-09-28T14:25:53.1833664Z   compression-level: 6
+2026-09-28T14:25:53.1833925Z   overwrite: false
+2026-09-28T14:25:53.1834231Z   include-hidden-files: false
+2026-09-28T14:25:53.1834519Z ##[endgroup]
+2026-09-28T14:25:53.3331668Z (node:3061) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T14:25:53.3332595Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T14:25:53.3406347Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-09-28T14:25:53.3409449Z The least common ancestor is /home/runner/work/coh-android/coh-android/out. This will be the root directory of the artifact
+2026-09-28T14:25:53.3410295Z With the provided path, there will be 1 file uploaded
+2026-09-28T14:25:53.3415751Z Artifact name is valid!
+2026-09-28T14:25:53.3417222Z Root directory input is valid!
+2026-09-28T14:25:53.5947270Z Beginning upload of artifact content to blob storage
+2026-09-28T14:25:53.6135024Z (node:3061) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-28T14:25:53.7671201Z Uploaded bytes 5218
+2026-09-28T14:25:53.8165598Z Finished uploading artifact content to blob storage!
+2026-09-28T14:25:53.8166552Z SHA256 digest of uploaded artifact zip is f12a86e5a66c17b1e13ff7a1a3664b73f3a922ec3beedf9e79db1840189094a5
+2026-09-28T14:25:53.8167262Z Finalizing artifact upload
+2026-09-28T14:25:54.0530290Z Artifact wine-dbserver-arm64-evidence.zip successfully finalized. Artifact ID 10975612467
+2026-09-28T14:25:54.0531194Z Artifact wine-dbserver-arm64-evidence has been successfully uploaded! Final size is 5218 bytes. Artifact ID is 10975612467
+2026-09-28T14:25:54.0537015Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/36434692816/artifacts/10975612467
+2026-09-28T14:25:54.0733970Z Post job cleanup.
+2026-09-28T14:25:54.1498759Z [command]/usr/bin/git version
+2026-09-28T14:25:54.1536633Z git version 2.55.0
+2026-09-28T14:25:54.1571618Z Temporarily overriding HOME='/home/runner/work/_temp/92871838-5110-4405-bba8-1967c9fa7832' before making global git config changes
+2026-09-28T14:25:54.1572441Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-28T14:25:54.1577097Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-09-28T14:25:54.1615774Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-28T14:25:54.1648956Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-28T14:25:54.2036560Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-28T14:25:54.2065294Z http.https://github.com/.extraheader
+2026-09-28T14:25:54.2078642Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-28T14:25:54.2120595Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-28T14:25:54.2494423Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-28T14:25:54.2531609Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-28T14:25:54.3066009Z Cleaning up orphan processes
+2026-09-28T14:25:54.3533120Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/download-artifact@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
