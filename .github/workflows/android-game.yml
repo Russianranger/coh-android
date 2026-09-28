@@ -31,6 +31,9 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          sparse-checkout: |
+            database/wine-game
+            tools
       - name: Build PE32 observer for stock TestClient
         shell: pwsh
         run: |
@@ -49,7 +52,7 @@ jobs:
           out\bridge_protocol_contract.exe
           "@
           Set-Content -Path out/build-bridge.cmd -Value $batch -Encoding ASCII
-          cmd /c out/build-bridge.cmd
+          cmd /c .\out\build-bridge.cmd
           if ($LASTEXITCODE -ne 0) { throw 'PE32 bridge build or native contracts failed' }
           python tools/android/game/package_game_runtime.py bridge-receipt --directory out/bridge --repository-commit "$env:GITHUB_SHA"
           if ($LASTEXITCODE -ne 0) { throw 'Bridge receipt failed' }
