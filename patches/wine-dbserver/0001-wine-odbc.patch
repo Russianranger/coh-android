@@ -21,3 +21,18 @@
  option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
  if(COH_PG_PERSISTENCE_TESTS)
      target_sources(DbServer PRIVATE src/pg_persistence_test.c)
+--- a/DBServer/src/dbinit.c
++++ b/DBServer/src/dbinit.c
+@@ -1770,6 +1770,12 @@
+ #ifdef COH_PG_PERSISTENCE_TESTS
+     if (argc > 1 && !strcmp(argv[1], "-pgpersistencetest")) {
+         extern int pgPersistenceTestMain(int argc, char **argv);
++#ifdef COH_WINE_ODBC
++        /* The fixture bypasses normal startup. Initialize its non-thread-safe
++         * file cache and log path before SQL notice logging starts on workers. */
++        setAssertMode(ASSERTMODE_STDERR | ASSERTMODE_EXIT);
++        logSetDir("pg-persistence-test");
++#endif
+         return pgPersistenceTestMain(argc, argv);
+     }
+ #endif

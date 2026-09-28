@@ -95,6 +95,32 @@ class NetworkIsolationTests(unittest.TestCase):
                                            "PROOT_LOADER", "PROOT_TMP_DIR", "PROOT_NO_SECCOMP"})
         self.assertNotIn("private", environment.values())
 
+    def test_controlled_hosts_resolves_localhost_and_kernel_names_to_loopback(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            work, evidence = root / "work", root / "evidence"
+            work.mkdir()
+            evidence.mkdir()
+            receipt = host.prepare_guest_hosts(work, evidence, "runner-123.example.test")
+            contents = (work / "hosts").read_bytes()
+            records = [line.split() for line in contents.decode("ascii").splitlines()]
+            self.assertEqual({record[0] for record in records}, {"127.0.0.1"})
+            self.assertEqual({alias for record in records for alias in record[1:]},
+                             {"localhost", "runner-123.example.test", "runner-123"})
+            self.assertEqual((evidence / receipt["guest_hosts_evidence_file"]).read_bytes(), contents)
+            self.assertEqual(receipt["guest_hosts_sha256"], host.hashlib.sha256(contents).hexdigest())
+            self.assertEqual(receipt["guest_hosts_bytes"], len(contents))
+            self.assertEqual(receipt["kernel_hostname"], "runner-123.example.test")
+
+    def test_controlled_hosts_rejects_injected_or_invalid_hostname(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for hostname in ("", "runner\n203.0.113.1 attacker", "runner attacker", "runner#comment",
+                             "runner..test", "-runner", "runner-", "a" * 64, "éxample"):
+                with self.subTest(hostname=hostname), self.assertRaisesRegex(RuntimeError, "safe hosts-file"):
+                    host.prepare_guest_hosts(root, root, hostname)
+            self.assertFalse((root / "hosts").exists())
+
     def test_wrapper_always_unshares_and_requires_non_root_runner(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -123,6 +149,8 @@ class RunnerCommandTests(unittest.TestCase):
         self.assertIn("/owned/work/m3-tools:/opt/coh-m3", command)
         self.assertIn("/owned/package:/opt/coh-dbserver", command)
         self.assertIn("/owned/schema:/opt/coh-schema", command)
+        self.assertIn("/owned/work/hosts:/etc/hosts", command)
+        self.assertNotIn("/etc/hosts:/etc/hosts", command)
         self.assertIn("/opt/coh-m3/dbserver_diagnostic.py", command)
         self.assertIn("PYTHONDONTWRITEBYTECODE=1", command)
         self.assertEqual(command[-2:], ["--timeout-seconds", "1800"])

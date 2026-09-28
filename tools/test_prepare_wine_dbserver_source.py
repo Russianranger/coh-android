@@ -49,7 +49,7 @@ class WineDbServerSourceTests(unittest.TestCase):
         self.assertEqual(receipt['runtime_validation'], 'unverified')
 
     def test_changed_touched_source_or_pg_overlay_is_rejected_before_any_patch(self):
-        for name in (wine.WINE_FILES[0], wine.WINE_FILES[1], next(iter(self.pg['overlay_sha256']))):
+        for name in (*wine.WINE_FILES, next(iter(self.pg['overlay_sha256']))):
             target = self.source / name
             original = target.read_bytes()
             target.write_bytes(original + b'\n// unexpected edit\n')
@@ -113,6 +113,66 @@ class WineDbServerSourceTests(unittest.TestCase):
                 numeric.update(re.findall(r'sqlConnGetInfo\((SQL_\w+),', path.read_text(errors='strict')))
         self.assertEqual(numeric, {'SQL_GETDATA_EXTENSIONS', 'SQL_ATTR_QUERY_TIMEOUT',
                                    'SQL_ASYNC_DBC_FUNCTIONS', 'SQL_TXN_CAPABLE'})
+
+    @unittest.skipUnless(shutil.which('cc'), 'Native startup ordering contract requires a C compiler')
+    def test_actual_dispatch_warms_cache_before_fixture_only_for_wine_fixture_build(self):
+        wine.apply_wine_overlay(self.source)
+        source = (self.source / 'DBServer/src/dbinit.c').read_text()
+        main = source.split('int main(int argc,char **argv)', 1)[1]
+        dispatch = main.split('memCheckInit();', 1)[1].split('EXCEPTION_HANDLER_BEGIN', 1)[0]
+        self.assertIn('#include <utilitieslib/utils/log.h>', source)
+        self.assertIn('#include <utilitieslib/assert/assert.h>', source)
+        self.assertIn('SuperAssert.h', (self.original /
+                      'libs/UtilitiesLib/include/utilitieslib/assert/assert.h').read_text())
+        probe = self.source / 'startup-order.c'
+        probe.write_text('''#include <assert.h>
+#include <string.h>
+#define ASSERTMODE_STDERR 1
+#define ASSERTMODE_EXIT 2
+static int startup_step;
+void setAssertMode(int mode) {
+    assert(mode == (ASSERTMODE_STDERR | ASSERTMODE_EXIT));
+    assert(startup_step == 0); startup_step = 1;
+}
+void logSetDir(const char *directory) {
+    assert(startup_step == 1 && !strcmp(directory, "pg-persistence-test"));
+    startup_step = 2;
+}
+int pgPersistenceTestMain(int argc, char **argv) {
+    assert(argc == 2 && !strcmp(argv[1], "-pgpersistencetest"));
+#ifdef COH_WINE_ODBC
+    assert(startup_step == 2);
+#else
+    assert(startup_step == 0);
+#endif
+    return 37;
+}
+int entry(int argc, char **argv) {
+    (void)argc; (void)argv;
+''' + dispatch + '''
+    return -1;
+}
+int main(void) {
+    char *fixture[] = {"DbServer.exe", "-pgpersistencetest"};
+    char *normal[] = {"DbServer.exe", "-exportdump"};
+#ifdef COH_PG_PERSISTENCE_TESTS
+    assert(entry(2,fixture) == 37);
+#else
+    assert(entry(2,fixture) == -1);
+#endif
+    startup_step = 0;
+    assert(entry(2,normal) == -1 && startup_step == 0);
+    return 0;
+}
+''')
+        for flags in ([], ['COH_WINE_ODBC'], ['COH_PG_PERSISTENCE_TESTS'],
+                      ['COH_WINE_ODBC', 'COH_PG_PERSISTENCE_TESTS']):
+            with self.subTest(flags=flags):
+                executable = self.source / ('startup-order-' + str(len(flags)) + ('-wine' if 'COH_WINE_ODBC' in flags else ''))
+                subprocess.run([shutil.which('cc'), '-std=c99', '-Wall', '-Wextra', '-Werror',
+                                *['-D' + name + '=1' for name in flags], str(probe), '-o', str(executable)],
+                               check=True, capture_output=True, timeout=30)
+                subprocess.run([str(executable)], check=True, capture_output=True, timeout=10)
 
 
 class WineOdbcAdapterTests(unittest.TestCase):

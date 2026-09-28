@@ -248,6 +248,22 @@ def validate_report(report, *, expected):
     require(catalogs[0] == catalogs[1], "Normal DbServer reload changed its catalog")
 
 
+def prepare_guest_hosts(work, evidence, hostname):
+    """Resolve DbServer's localhost lookup without relying on external DNS."""
+    require(isinstance(hostname, str) and 0 < len(hostname) <= 253
+            and all(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?", label)
+                    for label in hostname.split(".")),
+            "Kernel hostname is not a safe hosts-file name")
+    aliases = list(dict.fromkeys(("localhost", hostname, hostname.split(".")[0])))
+    contents = ("127.0.0.1 " + " ".join(aliases) + "\n").encode("ascii")
+    hosts = work / "hosts"
+    hosts.write_bytes(contents)
+    shutil.copyfile(hosts, evidence / "guest-etc-hosts")
+    return {"kernel_hostname": hostname, "guest_hosts_sha256": digest(hosts),
+            "guest_hosts_bytes": len(contents), "guest_hosts_loopback_aliases": aliases,
+            "guest_hosts_evidence_file": "guest-etc-hosts"}
+
+
 def make_command(*, work, assets, package, schema, proot, timeout_seconds):
     command = [str(proot / "proot"), "--link2symlink", "--kill-on-exit", "--sysvipc",
                "-i", "1000:1000", "-r", str(work / "rootfs")]
@@ -256,7 +272,8 @@ def make_command(*, work, assets, package, schema, proot, timeout_seconds):
              (assets, "/opt/coh"), (work / "pg/opt/coh/pgsql", "/opt/coh/pgsql"),
              (work / "wine", "/opt/wine"), (package, "/opt/coh-dbserver"),
              (schema, "/opt/coh-schema"), (work / "m3-tools", "/opt/coh-m3"),
-             (work / "passwd", "/etc/passwd"), (work / "group", "/etc/group")]
+             (work / "passwd", "/etc/passwd"), (work / "group", "/etc/group"),
+             (work / "hosts", "/etc/hosts")]
     for source, destination in binds:
         command += ["-b", str(Path(source).resolve()) + ":" + destination]
     command += ["-w", "/state", "/usr/bin/env", "-i", "HOME=/state", "USER=coh", "LOGNAME=coh",
@@ -396,6 +413,7 @@ def main():
         (work / name).mkdir(mode=0o700)
     (work / "passwd").write_text("root:x:0:0:root:/root:/bin/sh\ncoh:x:1000:1000:COH:/state:/bin/sh\nnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin\n")
     (work / "group").write_text("root:x:0:\ncoh:x:1000:\nnogroup:x:65534:\n")
+    hosts_input = prepare_guest_hosts(work, evidence, os.uname().nodename)
     for name in ("opt/coh", "opt/coh/pgsql", "opt/coh-dbserver", "opt/coh-schema", "opt/coh-m3", "opt/wine", "state", "tmp"):
         (work / "rootfs" / name).mkdir(parents=True, exist_ok=True)
     guest_script = work / "m3-tools/dbserver_diagnostic.py"
@@ -413,7 +431,7 @@ def main():
     }
     expected = {"inputs": expected_inputs, "schema": schema_expectations(schema_manifest),
                 "runtime_lock_sha256": digest(assets / "runtime-lock.json")}
-    inputs = {"format": 1, "scope": "host_dbserver_runtime_inputs", **expected_inputs,
+    inputs = {"format": 1, "scope": "host_dbserver_runtime_inputs", **expected_inputs, **hosts_input,
               "runtime_commit": runtime_manifest["repository_commit"],
               "package_commit": package_manifest["repository_commit"],
               "guest_script_sha256": digest(guest_script),

@@ -19,6 +19,30 @@ SPEC.loader.exec_module(guest)
 
 
 class DbServerAcceptanceTests(unittest.TestCase):
+    def test_both_variants_stage_private_legacy_data_root_markers_without_game_assets(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = object.__new__(guest.DbServerDiagnostic)
+            diagnostic.root = root / 'state'
+            diagnostic.root.mkdir()
+            diagnostic.args = SimpleNamespace(package=root / 'package')
+            diagnostic.package = {'variants': {}}
+            for variant in ('fixture', 'normal'):
+                source = diagnostic.args.package / variant
+                source.mkdir(parents=True)
+                (source / 'DbServer.exe').write_bytes(b'verified-executable')
+                diagnostic.package['variants'][variant] = {'files': {'DbServer.exe': {}}}
+                runtime = diagnostic.stage_variant(variant)
+                self.assertTrue((runtime / 'data').is_dir())
+                self.assertTrue((runtime / 'tools').is_dir())
+                self.assertEqual(list((runtime / 'data').iterdir()), [])
+                self.assertEqual(list((runtime / 'tools').iterdir()), [])
+                self.assertFalse((runtime / 'gamedatadir.txt').exists())
+                self.assertFalse((runtime / 'piggs').exists())
+                self.assertEqual((runtime / 'DbServer.exe').read_bytes(), b'verified-executable')
+                self.assertEqual(runtime.parent, diagnostic.root)
+                self.assertFalse((source / 'data').exists(), 'Accepted package must remain unchanged')
+
     def test_fixture_requires_exact_completion_and_expected_failure_semantics(self):
         guest.validate_fixture_phase('initial', 0, 0, 'PG_TEST_COMPLETE initial\r\n')
         guest.validate_fixture_phase('fail', 3, 3, 'PG_FIFO_FAILED command=1 SQLSTATE=23514\n')

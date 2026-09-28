@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PATCH = 'patches/wine-dbserver/0001-wine-odbc.patch'
 OVERLAY = 'database/wine-dbserver/overlay'
 RECEIPT = 'wine-dbserver-build-input.json'
-WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt')
+WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c')
 OVERLAY_FILES = ('Common/sql/wine_odbc.c', 'Common/sql/wine_odbc.h')
 WINE_COMMIT = 'b073859675060c9211fcbccfd90e4e87520dc2c2'
 REQUIRED_IMPORTS = ('SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare', 'SQLGetDiagRecA',
@@ -82,6 +82,8 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
         'wine_commit': WINE_COMMIT,
         'odbc_imports': {'required': list(REQUIRED_IMPORTS), 'forbidden': list(FORBIDDEN_IMPORTS)},
         'persistence_configurations': ['OFF', 'ON'],
+        'fixture_startup': {'initialize_file_cache_and_log_before_sql_workers': True,
+                            'assert_mode': 'stderr_and_exit', 'log_directory': 'pg-persistence-test'},
         'runtime_validation': 'unverified',
     }
 

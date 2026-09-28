@@ -275,6 +275,13 @@ class DbServerDiagnostic(base.Diagnostic):
     def stage_variant(self, variant):
         target = self.root / ('dbserver-' + variant + '-' + secrets.token_hex(6))
         target.mkdir(mode=0o700)
+        # UtilitiesLib/file.c:addAppropriateDataDirs recognizes a local data
+        # root only when BOTH data/ and tools/ exist. Without these markers the
+        # fixture's first threaded SQL notice triggers game-data discovery and
+        # fallback cache initialization. The fixture needs no data payload;
+        # normal_schema subsequently copies only the accepted manifest files.
+        for name in ('data', 'tools'):
+            (target / name).mkdir(mode=0o700)
         for name in self.package['variants'][variant]['files']:
             shutil.copyfile(self.args.package / variant / name, target / name)
         return target
