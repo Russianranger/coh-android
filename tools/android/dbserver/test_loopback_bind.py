@@ -21,6 +21,35 @@ ACK = ('COH_WINE_DB_LOOPBACK_ONLY=1 active: IPv4 listener binds restricted to lo
        'endpoint verification required')
 
 
+def apply_postgresql_contract_patch(source, patch_path):
+    # Git keeps immutable upstream bytes (-text), but Windows checkouts may
+    # convert the patch to CRLF. Match production source preparation's LF input.
+    try:
+        wine.apply_patch(source, patch_path.read_bytes().replace(b'\r\n', b'\n'))
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError('PostgreSQL contract patch failed:\n'
+                           + error.stderr.decode('utf-8', 'replace')) from error
+
+
+class LoopbackPatchStagingTests(unittest.TestCase):
+    def test_windows_crlf_patch_stages_the_exact_receipted_native_contract(self):
+        receipt = wine.expected_wine_receipt()
+        with tempfile.TemporaryDirectory(prefix='coh-loopback-crlf-') as temporary:
+            root = Path(temporary)
+            source = root / 'source'
+            for name in set(wine.WINE_FILES).union(receipt['postgresql_build_input']['patched_sha256']):
+                target = source / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(ROOT / 'upstream/ouroboros' / name, target)
+            patch = root / 'postgresql.patch'
+            patch.write_bytes((ROOT / 'patches/postgresql/0001-dbserver-postgresql.patch')
+                              .read_bytes().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n'))
+            apply_postgresql_contract_patch(source, patch)
+            wine.apply_patch(source, wine.patch_bytes(ROOT))
+            self.assertEqual({name: wine.sha256(source / name) for name in receipt['patched_sha256']},
+                             receipt['patched_sha256'])
+
+
 class LoopbackBindTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -35,7 +64,7 @@ class LoopbackBindTests(unittest.TestCase):
                 target = cls.build / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(ROOT / 'upstream/ouroboros' / name, target)
-            wine.apply_patch(cls.build, (ROOT / 'patches/postgresql/0001-dbserver-postgresql.patch').read_bytes())
+            apply_postgresql_contract_patch(cls.build, ROOT / 'patches/postgresql/0001-dbserver-postgresql.patch')
             wine.apply_patch(cls.build, wine.patch_bytes(ROOT))
             source = (cls.build / 'libs/UtilitiesLib/src/network/sock.c').read_text()
             fragment = source[source.index('/* States: 0=default/unbound'):source.index('\nvoid    sockSetBlocking')]
