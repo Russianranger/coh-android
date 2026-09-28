@@ -1,12 +1,14 @@
 # Hosted Atlas character persistence on ARM64
 
-This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
-new hosted gate is implemented; real ARM64 qualification is pending. The first
-real attempt reached DbServer readiness and progressed into Atlas loading, then
-failed a startup status-query deadline. A retry with a 90-second startup query
-also failed. Its final Atlas output reached AutoCommands retrieval; character
-execution had not started. It does
-not change the accepted Thor 0.1.5 APK or claim Android game execution.
+This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md).
+Complete ARM64 qualification is pending. Run `36416020268` passed Atlas
+readiness, fresh creation, live influence 12345 and the first committed
+protocol-logout save, then failed a TCP port preflight during restart. The
+isolated recovery fixed and reproduced that TIME_WAIT false failure. Run
+`36419952350` passed tooling and bridge build, but hit the intermittent startup
+stall before reaching restart; the full sequence remains unqualified. See the
+[recovery checkpoint](ATLAS_RECOVERY_20260928.md) and hash-verified reports.
+The accepted Thor 0.1.5 diagnostic APK remains the device baseline.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
 identified composite runtime from these immutable inputs:

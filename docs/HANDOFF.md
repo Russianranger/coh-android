@@ -50,6 +50,23 @@ or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43
 (2026-09-25 19:05:39 UTC). The workflow finished at 19:16:38 UTC. These observations
 do not reveal the internal status of the other Codex session.
 
+## Recovery branch checkpoint, 2026-09-28
+
+An isolated recovery is in `codex/atlas-recovery-20260928`; do not overwrite the
+concurrently maintained continuation checkout. [Recovery details](ATLAS_RECOVERY_20260928.md)
+preserve both new outcomes: `36416446409` captured idle SQL and pending DbServer
+requests at another startup timeout, while `36416020268` passed a real Atlas
+character creation, live influence 12345 and committed protocol save before a
+restart preflight `EADDRINUSE`. The TCP TIME_WAIT regression is fixed and passes
+real socket tests. Hosted run `36419952350` at
+`eb28fd6598502420028d171384977a5a4b67692a` failed the intermittent first Atlas
+startup query before reaching restart. Its companion diagnostic workflow
+`36419952339` passed all five jobs. Native capture from continuation run
+`36420158506` returned contexts, but they are not validated current execution:
+the captured RaiseException registers disagree with the accompanying stack.
+Direct DbServer dispatch progress is the next useful diagnostic. No Android game APK is
+yet qualified; retain the accepted Thor 0.1.5 device baseline.
+
 ## Continuation validation checkpoint
 
 The accepted character run is **36282414135**, tested commit

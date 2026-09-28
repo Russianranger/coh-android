@@ -40,7 +40,11 @@ hash-verified raw report and analysis are in
 were idle: foreground last SQL `;`, 64 workers last SQL `COMMIT`. DbServer's
 6997 listener had one pending connection and established connections had unread
 request bytes. The blocked function is still unknown. All three WineDbg
-attachments returned error 5 / exit 255; **no stacks were obtained**. The
+attachments returned error 5 / exit 255; **no stacks were obtained**. Reviewing
+pinned Wine 10.0 `programs/winedbg/winedbg.c` and `tgt_active.c` explains the
+observer failure: the SysWOW64 debugger attaches, then `restart_if_wow64()`
+launches a second debugger that repeats the attach. The local follow-up uses
+System32 WineDbg directly; this has not yet been exercised on hosted failure. The
 following fix makes that partial capture explicit rather than leaving the
 inspection's top-level failure list empty. Cleanup passed.
 
@@ -63,8 +67,13 @@ TCP and UDP sockets. All 66 game tests passed locally. No game binaries,
 ownership cleanup checks, save criteria or time limits changed.
 
 [Run 36419952350](https://github.com/Russianranger/coh-android/actions/runs/36419952350)
-is qualifying that restart fix. Inspect its terminal result and artifact before
-starting another runtime attempt. Companion diagnostic APK run: `36419952339`.
+passed all 66 tooling tests and the Windows bridge build, then failed the
+90-second first Atlas query at 12:34 UTC. It did not exercise the restart fix.
+The SQL inspection again found 65 idle sessions, and all three failed WineDbg
+captures are now explicitly reported as failures with `stacks_available:false`.
+Owned cleanup completed. Raw evidence and concise interpretation are in
+`game-arm64-failed-36419952350.json` and `game-runtime-failure-36419952350.json`.
+Companion diagnostic APK run `36419952339` passed all five jobs.
 The preceding companion `36416446231` passed all five jobs, including APK,
 native PostgreSQL, database runtime and client runtime. It remains diagnostic
 version 0.1.5, without a game-launch feature.
@@ -83,3 +92,29 @@ The installed, accepted Thor 0.1.5 APK remains the device baseline. Full Atlas
 save/restart/resume persistence, Android game listener binding and a game APK
 remain unqualified. The first live character save is now verified; do not
 promote that partial result to full milestone acceptance.
+
+## Native context limitation
+
+Continuation run `36420158506` at `04b9771120737f3e8daf7b4740d2a9fcd6850f28`
+also failed startup, but captured three processes, 72 thread contexts and 114
+modules before cleanup. All 65 database sessions were idle. Successful Windows
+API return codes **do not validate current emulator execution**.
+
+Resolving those contexts against the hash-verified pinned Wine DLLs places
+the three main-thread EIPs at `kernelbase!RaiseException+0x69`. Their EBX values
+point to source filenames used by the game's thread-naming exception. At that
+instruction the exception record should begin at `EBP-0x54`, equal to captured
+ESP, but the independently read stack does not contain the expected exception
+record. Most worker contexts still name `ntdll!RtlUserThreadStart`. These
+inconsistent register and memory observations strongly indicate cached WOW64
+contexts; they do not prove a thread-name exception hang or an active SQL call.
+Raw stack words are not an unwound call chain.
+
+The pinned FEX WOW64 implementation flushes emulator state for owned threads;
+remote Windows context retrieval does not by itself establish that flush.
+The recovery debugger now reports `current_execution_validated:false`, even
+if its corrected native executable obtains output. Direct opt-in DbServer
+dispatch markers are being developed in the separate continuation checkout.
+Do not change SQL, skip AutoCommands, or extend timeouts based on these contexts.
+See `game-context-analysis-36420158506.json` for artifact identities, exact
+addresses, binary hashes and pinned source references.

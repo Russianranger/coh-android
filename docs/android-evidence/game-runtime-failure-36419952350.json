@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "run_id": 36419952350,
+  "repository_commit": "eb28fd6598502420028d171384977a5a4b67692a",
+  "status": "failed",
+  "failure": [
+    "game-query-first-ready timed out"
+  ],
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36419952350",
+  "artifact": {
+    "id": 10969224502,
+    "bytes": 8711909,
+    "sha256": "ca8d9eae486c81b000ce36c6f3d2c4e27cab56b715dbc0edaead9bca8ece8d0a"
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-failed-36419952350.json",
+    "bytes": 138762,
+    "sha256": "93ad8406ed11a7cc5161fa425b7af5fddf1aab89abb932b006a8ad47ee74ae21"
+  },
+  "observations": {
+    "captured_before_cleanup": true,
+    "query_alive_before_capture": true,
+    "postgres_sessions": 65,
+    "postgres_states": [
+      "idle"
+    ],
+    "last_sql_counts": {
+      ";": 1,
+      "COMMIT": 64
+    },
+    "stacks_available": false,
+    "capture_failures": [
+      "Stacks: incomplete or failed observer for MapServer PID 1124",
+      "Stacks: incomplete or failed observer for MapServer PID 952",
+      "Stacks: incomplete or failed observer for DbServer PID 412"
+    ],
+    "cleanup_complete": true,
+    "owned_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "interpretation": "Startup query timed out before character testing or service restart. This run neither validates nor disproves the TCP TIME_WAIT restart fix. The actual blocked DbServer function remains unknown. All 66 tooling tests and Windows bridge build passed. Companion diagnostic run 36419952339 passed all five jobs."
+}

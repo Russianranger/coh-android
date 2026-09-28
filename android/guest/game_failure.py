@@ -35,7 +35,11 @@ def inspect(diagnostic, failed_child):
     ctx, base = diagnostic.ctx, diagnostic.ctx_base
     result = {'time_utc': base.utc(), 'trigger': failed_child.label,
               'query_alive_before_capture': failed_child.process.poll() is None,
-              'before_cleanup': True, 'failures': [], 'stacks': [], 'stacks_available': False}
+              'before_cleanup': True, 'failures': [], 'stacks': [], 'stacks_available': False,
+              'current_execution_validated': False,
+              'context_limitation': 'Cross-process WOW64 contexts under the pinned FEX runtime may reflect '
+                  'cached exception or thread-start state. Debugger output alone does not establish '
+                  'the currently blocked function.'}
     ctx.report['game_failure_inspection'] = result
     ctx.event('stage', status='running', message='Capturing blocked game threads, sockets and SQL before cleanup')
     started = time.monotonic()
@@ -80,7 +84,10 @@ ORDER BY pid LIMIT 80) a;"""
         # failure observers enable the pinned runtime's builtin debugger.
         env['WINEDLLOVERRIDES'] = 'winemenubuilder.exe,mshtml,mscoree=;winedbg.exe=b'
         env['WINEDEBUG'] = '-all'
-        command = [diagnostic.args.wine, r'C:\windows\syswow64\winedbg.exe']
+        # Wine 10's 32-bit debugger attaches before restart_if_wow64(), then
+        # its 64-bit child attempts the same attachment and fails with error 5.
+        # Start the native debugger directly; it supports the PE32 targets.
+        command = [diagnostic.args.wine, r'C:\windows\system32\winedbg.exe']
         listing = ctx.start('game-failure-process-list', command + ['--command', 'info proc'],
                             env=env, cleanup=True)
         finish(ctx, listing, time.monotonic() + 12)
