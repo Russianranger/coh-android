@@ -4,7 +4,7 @@
   "repository_commit": "52e11f87b0298c9195f276e4586fe9f53ce07635",
   "status": "failed",
   "stage": "game_services_first",
-  "evidence_basis": "Completed GitHub Actions job log; expanded artifact extraction and independent verification pending",
+  "evidence_basis": "Hash-verified fixed artifact inspected by read-only hosted workflow; exact report recovered through chunked job output",
   "job_id": 108780324516,
   "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36375412599",
   "failure": [
@@ -17,7 +17,8 @@
     "id": 10951062037,
     "bytes": 8706268,
     "github_reported_sha256": "84a09dbc2d56307722802808afaa589af063591de2a6155bf762c3fff5e3debc",
-    "downloaded_bytes_independently_verified": false
+    "downloaded_bytes_independently_verified": true,
+    "sha256": "84a09dbc2d56307722802808afaa589af063591de2a6155bf762c3fff5e3debc"
   },
   "bridge_artifact": {
     "id": 10950444232,
@@ -59,10 +60,12 @@
       ]
     },
     "postgres_graceful_shutdown_logged": true,
-    "owned_cleanup_independently_verified": false
+    "owned_cleanup_independently_verified": true,
+    "atlas_registered_with_dbserver": true,
+    "query_output_buffering_caveat": "-nogui preserves stdout buffering; started timestamp uses stderr, so missing command-line/error-log output does not establish an early-startup stall."
   },
-  "interpretation": "Atlas progressed beyond map parsing. The query stopped before its normal command-line/error-log output. A longer query deadline did not resolve the transition. Exact root cause remains unproved.",
-  "follow_up": "Verify/extract expanded artifact, inspect full owned service captures and raw process report, then investigate query pre-dispatch initialization and Atlas AutoCommands wait. Do not extend deadlines or patch source without evidence.",
+  "interpretation": "Atlas registered and finished map loading, then waited synchronously for the AutoCommands reply. The longer status-query deadline did not resolve the transition. Idle SQL sessions do not identify the blocked client-side operation; exact root cause remains unproved.",
+  "follow_up": "Capture simultaneous owned DbServer, Atlas and query thread stacks, socket state and exact last SQL text before cleanup. Determine whether AutoCommands reached DbServer foreground ODBC. Do not infer startup position from buffered stdout or extend deadlines without evidence.",
   "execution_blocker": "409 environment_offline: Environment is not connected",
   "regression_workflows": {
     "thor": [
@@ -72,5 +75,64 @@
     "postgresql": 36375415647,
     "character_persistence": 36375415579,
     "atlas_transfer": 36375415816
+  },
+  "evidence_inspection": {
+    "run_id": 36377967143,
+    "job_id": 108787584382,
+    "archive_sha256_verified": true,
+    "service_capture_hashes_verified": 4,
+    "source_run": 36375412599,
+    "local_workspace_available": false
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-failed-36375412599.json",
+    "bytes": 72447,
+    "sha256": "db63ada08f12d7c589596277c7693261c21323caa4e50c568383c2f03242755f"
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "owned_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 312,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "process_records": 58,
+  "all_process_captures_closed": true,
+  "service_capture_files": {
+    "first-dbserver-stdout.txt": {
+      "bytes": 3631,
+      "sha256": "fcc17ebed91311ed75c7a3b212f4ef7706e8e5eda6d78172ab2015ee4c0a0340"
+    },
+    "first-atlas-stdout.txt": {
+      "bytes": 880388,
+      "sha256": "0ed49e4c371a08ba66b0e4a055ffd991aa526d8802b762871bc96fcf07f9d11e"
+    },
+    "log-001.txt": {
+      "bytes": 802,
+      "sha256": "f89008496b3b331a1c333f7b70fcd333d934b9da765a015b4f80ee5388d7d95c"
+    },
+    "log-002.txt": {
+      "bytes": 819546,
+      "sha256": "7c2c38220119ca5d5075d9b3d5673084482fb17b86f88a0eb3aea1b46eb5db3e"
+    },
+    "manifest.json": {
+      "bytes": 1359,
+      "sha256": "2e3531d82a2fb0ff0480834842949b1d1a4a16e7eb77357a37a524dc5f600bf3"
+    }
   }
 }

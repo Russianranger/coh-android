@@ -79,17 +79,35 @@ persistence and Atlas transfer regression workflows also passed at that head.
 The ARM64 runtime again failed `game-query-first-ready timed out`, now after
 90 seconds. Increasing this allowance alone did not resolve the failure.
 
-The completed job log shows the last successful map status query at 04:15:50 UTC.
-The next query printed only its startup timestamp at 04:16:52, before its normal
-command-line and error-log initialization output. Atlas continued through
-encounter groups, script markers and door animation points, ending at
-`Retrieving AutoCommands..`. Captured PostgreSQL sessions were idle with no
-active transactions. This does not establish a SQL lock or an AutoCommands
-root cause; inspect the query's early startup path and the full service captures.
+The expanded Atlas capture proves successful connection and registration with
+DbServer, followed by completed geometry, encounter, script and door loading.
+Its final output is `Retrieving AutoCommands..`. That source path waits
+synchronously for a DbServer container reply. The DbServer request handler can
+enumerate AutoCommands through foreground ODBC on its dispatch thread.
+Captured PostgreSQL sessions were idle with no active transactions, so no
+active database-side SQL query or lock was observed. The precise blocked
+client operation remains unknown.
 
-The expanded evidence artifact was uploaded, but local extraction and independent
-verification were blocked when the workspace disconnected. See the
-[job-log failure receipt](android-evidence/game-runtime-failure-36375412599.json)
-for its GitHub-reported identity. Download and verify this artifact before
-changing runtime source or accepting cleanup. The create/save/restart/resume
-milestone remains unqualified.
+The killed status query printed only its startup timestamp. This does not
+localize it to early initialization: that timestamp is written to stderr,
+while the command line and initialized-error-log message use stdout, which
+`-nogui` leaves buffered. Killing the process can discard that output.
+
+The local execution workspace disconnected, so the fixed evidence archive
+was inspected on a separate read-only hosted job. [Inspection 36377967143](https://github.com/Russianranger/coh-android/actions/runs/36377967143)
+verified the complete archive SHA-256 and all four service-capture hashes,
+recovered the exact raw report, and exposed registration and final wait markers.
+Both full service stdout files were closed without overflow or truncation.
+The report proves graceful PostgreSQL stop, stopped Wine prefix, all 58 process
+input/output captures closed, zero remaining owned processes, and zero ownership
+inspection errors. The [failure receipt](android-evidence/game-runtime-failure-36375412599.json)
+and [raw report](android-evidence/game-arm64-failed-36375412599.json) preserve
+these facts. Character execution did not begin.
+
+The next bounded diagnostic must capture simultaneous owned DbServer, Atlas
+and status-query thread stacks, socket state, and exact last PostgreSQL query
+text before cleanup. In particular, distinguish whether DbServer dispatched
+the AutoCommands request and reached its foreground
+`SELECT dbo.AutoCommands.ContainerId FROM dbo.AutoCommands ORDER BY containerid`.
+No further deadline increase or runtime source change is justified yet.
+The create/save/restart/resume milestone remains unqualified.
