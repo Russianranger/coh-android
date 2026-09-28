@@ -11,6 +11,77 @@ from unittest import mock
 import host_game_smoke as host
 
 
+def fixed_input_sample():
+    record = {'bytes': 1, 'sha256': 'a' * 64}
+    schema = {'files': {'data/defs/entities.def': {'bytes': 2, 'sha256': 'b' * 64},
+                        **{'data/attributes/name' + str(number) + '.def': dict(record) for number in range(61)}}}
+    data = {'files': {'data/server/db/servers.cfg': dict(record),
+                      'data/server/db/sub/WeeklyTF.cfg': dict(record),
+                      'data/defs/Entities.def': dict(record), 'data/bin/generated.bin': dict(record)}}
+    expected = host.fixed_input_expectations(data, schema)
+    files = {name: (record if record is not None else {'bytes': 100, 'sha256': 'c' * 64})
+             for name, record in expected['files'].items()}
+    payload = {'files': copy.deepcopy(files), 'directories': expected['directories'].copy()}
+    baseline = {**payload, 'inventory_sha256': host.canonical_digest(payload),
+                'file_count': len(files), 'total_bytes': sum(record['bytes'] for record in files.values())}
+    value = {'requested': True, 'metadata': copy.deepcopy(host.dbhost.FIXED_INPUTS_METADATA),
+             'scope': 'accepted_schema_and_db_configuration', 'schema_file_count': 62, 'baseline': baseline,
+             'checks': [{'phase': phase, 'unchanged': True,
+                         **{key: baseline[key] for key in ('inventory_sha256', 'file_count', 'total_bytes')}}
+                        for phase in ('before-first', 'after-first-save', 'before-restart', 'after-second-save')]}
+    return value, expected
+
+
+class FixedInputTests(unittest.TestCase):
+    def sample(self):
+        value, expected = fixed_input_sample()
+        phases = [{'fixed_inputs': {'requested': True, 'startup_acknowledgement': host.dbhost.FIXED_INPUTS_ACK}}
+                  for _ in range(2)]
+        return {'fixed_inputs': value, 'phases': phases}, expected
+
+    def reseal(self, game):
+        value = game['fixed_inputs']
+        baseline = value['baseline']
+        baseline['file_count'] = len(baseline['files'])
+        baseline['total_bytes'] = sum(record['bytes'] for record in baseline['files'].values())
+        baseline['inventory_sha256'] = host.canonical_digest({key: baseline[key] for key in ('files', 'directories')})
+        for check in value['checks']:
+            check.update({key: baseline[key] for key in ('inventory_sha256', 'file_count', 'total_bytes')})
+
+    def test_host_derives_exact_casefold_schema_overlay_and_configuration_union(self):
+        game, expected = self.sample()
+        host.validate_fixed_inputs(game, expected)
+        self.assertEqual(expected['files']['data/defs/Entities.def'], {'bytes': 2, 'sha256': 'b' * 64})
+        self.assertIsNone(expected['files']['data/server/db/servers.cfg'])
+        self.assertNotIn('data/defs/entities.def', expected['files'])
+        self.assertNotIn('data/bin/generated.bin', expected['files'])
+        self.assertEqual(expected['directories'], ['data/server/db', 'data/server/db/sub'])
+
+    def test_resealed_file_scope_metadata_and_phase_tampering_is_rejected(self):
+        mutations = [lambda g: g['fixed_inputs'].update(requested=1),
+                     lambda g: g['fixed_inputs'].update(unexpected='unbound metadata'),
+                     lambda g: g['fixed_inputs'].update(scope='all_data'),
+                     lambda g: g['fixed_inputs'].update(schema_file_count=61),
+                     lambda g: g['fixed_inputs']['metadata'].update(disabled_by_default=False),
+                     lambda g: g['fixed_inputs']['baseline']['files']['data/defs/Entities.def'].update(sha256='d'*64),
+                     lambda g: g['fixed_inputs']['baseline']['files']['data/server/db/servers.cfg'].update(bytes=0),
+                     lambda g: g['fixed_inputs']['baseline']['files'].pop('data/server/db/sub/WeeklyTF.cfg'),
+                     lambda g: g['fixed_inputs']['baseline']['files'].update({'data/extra.cfg': {'bytes': 1, 'sha256': 'e'*64}}),
+                     lambda g: g['fixed_inputs']['baseline']['directories'].append('data/server/db/extra'),
+                     lambda g: g['fixed_inputs']['checks'].pop(),
+                     lambda g: g['fixed_inputs']['checks'][1].update(phase='before-first'),
+                     lambda g: g['fixed_inputs']['checks'][2].update(unchanged=1),
+                     lambda g: g['phases'][0]['fixed_inputs'].update(requested=1),
+                     lambda g: g['phases'][1]['fixed_inputs'].update(startup_acknowledgement='missing')]
+        for number, mutate in enumerate(mutations):
+            with self.subTest(mutation=number):
+                game, expected = self.sample()
+                mutate(game)
+                self.reseal(game)
+                with self.assertRaises(RuntimeError):
+                    host.validate_fixed_inputs(game, expected)
+
+
 class InputTests(unittest.TestCase):
     def record(self, payload=b"x"):
         return {"bytes": len(payload), "sha256": host.dbhost.hashlib.sha256(payload).hexdigest()}
@@ -75,7 +146,7 @@ class InputTests(unittest.TestCase):
 class PackageTests(unittest.TestCase):
     def sample(self):
         paths = {"reference": "docs/reference-runtime-evidence/build-36088012664.json",
-                 "dbserver": "docs/android-evidence/dbserver-package-36425508780.json",
+                 "dbserver": "docs/android-evidence/dbserver-package-36451873322.json",
                  "resume": "docs/postgresql-evidence/resume-testclient-build-36297542986.json"}
         proofs = {role: {**{key: pin[key] for key in ("run_id", "repository_commit", "manifest_sha256")},
                          "manifest": json.loads((host.ROOT / paths[role]).read_text())}
@@ -276,6 +347,7 @@ class ReportTests(unittest.TestCase):
             "table_count": 99, "column_count": 5935, "attribute_counts": {"attributes": 56411},
             "attribute_sha256": {"attributes": "a" * 64}, "ordered_columns_sha256": "b" * 64},
             "runtime_lock_sha256": "c" * 64}
+        fixed_inputs, expected['fixed_inputs'] = fixed_input_sample()
         stages = [{"stage": name, "status": "passed"} for name in host.STAGES]
         stages[0].update(input_files=host.DATA_FILE_COUNT, input_bytes=host.DATA_TOTAL_BYTES, accepted_schema_overlay_files=62)
         stages[2].update(cluster_reused=False)
@@ -300,8 +372,10 @@ class ReportTests(unittest.TestCase):
                 "independent_committed_sql": True, "forced_stop_before_save": False, "influence": 12345,
                 "snapshot_sha256": "f"*64, "row_counts": rows}
         game = {"status": "passed", "created_connected": True, "attributes_unchanged": True,
+                "fixed_inputs": fixed_inputs,
                 "process_budget": 240, "query_budget": 80, "query_processes": 20, "readiness_queries": 4,
                 "phases": [{"phase": name + "_services_ready", "status": "passed", "baseline_not_started": True,
+                            "fixed_inputs": {"requested": True, "startup_acknowledgement": host.dbhost.FIXED_INPUTS_ACK},
                             "map": copy.deepcopy(ready_map), "schema": {**expected["schema"],
                             "catalog_sha256": {key: "1"*64 for key in ("columns", "indexes", "constraints")}}}
                            for name in ("first", "restart")],
@@ -377,7 +451,7 @@ class CaptureTests(unittest.TestCase):
             files = {}
             for label in host.SERVICE_LABELS:
                 path = source / (label + '-stdout.txt')
-                path.write_text('service diagnostic\n')
+                path.write_text('service diagnostic\n' + (host.dbhost.FIXED_INPUTS_ACK + '\n' if label.endswith('-dbserver') else ''))
                 files[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path),
                     'kind': 'owned_service_stdout', 'process_label': label, 'original_bytes': path.stat().st_size,
                     'truncated': False, 'capture_closed': True, 'overflow': False}
@@ -409,6 +483,29 @@ class CaptureTests(unittest.TestCase):
                     records['manifest.json'] = {'bytes': path.stat().st_size, 'sha256': host.digest(path)}
                     with self.assertRaises(RuntimeError):
                         host.validate_service_captures(report, evidence, records)
+
+            # Rehashing both capture and manifest cannot make missing, altered,
+            # duplicated or wrongly scoped activation output into valid proof.
+            for label, text in (('first-dbserver', 'missing\n'),
+                                ('restart-dbserver', host.dbhost.FIXED_INPUTS_ACK + '.\n'),
+                                ('first-dbserver', (host.dbhost.FIXED_INPUTS_ACK + '\n') * 2),
+                                ('restart-atlas', host.dbhost.FIXED_INPUTS_ACK + '\n')):
+                with self.subTest(label=label, text=text):
+                    changed = copy.deepcopy(manifest)
+                    path = evidence / 'game-service-captures' / (label + '-stdout.txt')
+                    original = path.read_text()
+                    path.write_text(text)
+                    record = {'bytes': path.stat().st_size, 'sha256': host.digest(path)}
+                    changed['files'][path.name].update(record, original_bytes=record['bytes'])
+                    original_record = records[path.name]
+                    records[path.name] = record
+                    manifest_path = path.parent / 'manifest.json'
+                    manifest_path.write_text(json.dumps(changed))
+                    records['manifest.json'] = {'bytes': manifest_path.stat().st_size, 'sha256': host.digest(manifest_path)}
+                    with self.assertRaisesRegex(RuntimeError, 'acknowledgement differs'):
+                        host.validate_service_captures(report, evidence, records)
+                    path.write_text(original)
+                    records[path.name] = original_record
 
     def test_partial_service_startup_failure_is_exported_without_claiming_success(self):
         with tempfile.TemporaryDirectory() as temporary:

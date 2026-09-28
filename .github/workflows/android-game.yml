@@ -7,6 +7,8 @@ on:
       - 'database/wine-game/**'
       - 'tools/android/game/**'
       - 'tools/android/build_proot.py'
+      - 'tools/android/extract_talloc_source.py'
+      - 'tools/android/test_extract_talloc_source.py'
       - 'android/guest/game_*.py'
 permissions:
   contents: read
@@ -26,6 +28,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
           python3 -m unittest discover -s tools/android -p 'test_proot_download.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
   bridge:
     needs: tooling
     runs-on: windows-2025-vs2026
@@ -101,7 +104,7 @@ jobs:
         with:
           name: wine-dbserver-package
           path: out/wine-dbserver
-          run-id: 36425508780
+          run-id: 36451873322
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
@@ -121,6 +124,14 @@ jobs:
           path: out/android/assets/runtime
           run-id: 36364550345
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/android/accepted-proot-sources
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover pinned talloc source from accepted runtime provenance
+        run: python3 tools/android/extract_talloc_source.py --assets out/android/assets/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json
       - name: Verify accepted inner reference archive and assemble composite package
         run: |
           python3 - <<'PY'
@@ -146,7 +157,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Build matching native ARM64 PRoot
-        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
       - name: Enter Atlas, save, restart and resume exact character in isolated ARM64 runtime
         run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe
       - uses: actions/upload-artifact@v4
@@ -160,4 +171,5 @@ jobs:
             out/dbserver-schema/schema-manifest.json
             out/bridge/bridge-build.json
             out/android/native/linux-arm64/proot-build-receipt.json
+            out/android/talloc-source-receipt.json
           if-no-files-found: warn

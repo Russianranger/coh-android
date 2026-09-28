@@ -45,7 +45,13 @@ The follow-on diagnostic DbServer package passed all three jobs in run
 fixture/schema gate used the observer disabled. Atlas run `36428915900` then
 verified enabled ARM64 publication with this qualified donor and captured the
 folder callback boundary during the intermittent timeout.
-The first attempt with that donor, run `36427680960`, stopped before game execution
+The current fixed-input successor is qualified in run `36451873322` at
+`53c6270dff8a0efcc6be09da756408504d8313bd`: all three jobs passed, including
+default normal-schema startup and acknowledged fixed-input reload on ARM64.
+Use this donor for the pending full Atlas gate; preserve the earlier first-save
+and dispatch evidence. The accepted device APK remains 0.1.5.
+The first attempt with the preceding diagnostic donor `36425508780`, run
+`36427680960`, stopped before game execution
 when the pinned talloc download timed out during the PRoot build. A bounded
 download retry is now applied. The next run passed dependency preparation with
 no retry line observed; the transport remedy supplies no startup-fix evidence.
@@ -163,22 +169,37 @@ eight service/hang capture hashes were independently verified. Final cleanup
 passed with all 57 process input/output captures closed and zero remaining owned
 processes or inspection failures. No new character or restart result was obtained.
 
-Next, qualify the opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md).
-It prevents watcher registration before the first cache and preserves initial
-reads/lookup mode; merely disabling callbacks would leave notifications queued
-in Wine. The two existing normal schema launches cover default startup and
-acknowledged fixed-input reload. After qualification, adopt the new donor in
-Atlas with unchanged-input checks over schema and DbServer configuration files,
-then complete both saves and exact-name resume. Keep the earlier successful
-first-create/save evidence and the accepted 0.1.5 APK. The full hosted gate and
-Android gameplay remain unvalidated.
+The opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md)
+is now qualified in [run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322)
+at `53c6270dff8a0efcc6be09da756408504d8313bd`. It prevents watcher registration
+before the first cache while preserving initial reads and lookup mode; it does
+not establish a generic Wine notification fix. All 28 ARM64 stages passed in
+192.280590 seconds, including 21 persistence groups across 14 fixture phases,
+default normal-schema startup and acknowledged fixed-input reload. Both fresh
+empty exports preserved 99 tables, 5,935 ordered columns, 58,272 exact attribute
+IDs/names and the full catalog. All 111 process captures closed; cleanup left
+zero owned processes or inspection errors. Preserve the
+[acceptance receipt](android-evidence/accepted-dbserver-hosted-36451873322.json).
+The donor manifest SHA-256 is
+`e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b`;
+normal executable SHA-256 is
+`659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
 
-Fixed-input qualification `36434692816` passed Windows/source checks but both
-ARM64 attempts failed before DbServer execution on talloc HTTP 503 after all
-three transport attempts. Do not adopt that package as ARM64-qualified. Restore
-the held Atlas input/acknowledgement guards and use the identical talloc source
-archive from accepted runtime `36364550345` for the next qualification, then pin
-only the package whose complete ARM64 gate passes.
+Earlier fixed-input qualification `36434692816` passed Windows/source checks,
+but both ARM64 attempts failed before DbServer execution on talloc HTTP 503
+after all three transport attempts. Successful qualification `36451873322`
+recovered the identical archive from accepted runtime `36364550345`'s verified
+corresponding-source bundle. Atlas uses the same source recovery; the build
+recipe and source pins are unchanged.
+
+The Atlas harness now enables this mode only for DbServer and requires its exact
+startup acknowledgment on both launches. After private `servers.cfg` generation,
+it binds all 62 accepted schema inputs plus the entire staged `data/server/db`
+tree. Four unchanged snapshots are required: before first startup, after first
+save, before restart and after second save. Full Atlas qualification with this
+donor, exact-name resume and the second save remain pending. Keep the earlier
+successful first-create/save evidence and accepted 0.1.5 APK; Android game
+execution and rendering remain unvalidated.
 
 ## Continuation validation checkpoint
 
@@ -773,9 +794,12 @@ Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
 the same ARM64 Wine/FEX runtime. The isolated Wine-compatible DbServer fixture
 and normal schema startup/export/reload have passed; preserve their
 [accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).
-The diagnostic DbServer successor is also [qualified](android-evidence/accepted-dbserver-hosted-36425508780.json).
-Use donor `36425508780` for the next Atlas run; verify enabled ARM64 dispatch
-publication and finish restart/resume/second-save before accepting that hosted gate.
+The current fixed-input DbServer successor is also
+[qualified](android-evidence/accepted-dbserver-hosted-36451873322.json).
+Use donor `36451873322` for the next Atlas run, require both DbServer activation
+acknowledgments and all four schema/configuration snapshots, and finish
+restart/resume/second-save before accepting that hosted gate. Enabled ARM64
+dispatch publication was already verified in run `36428915900`.
 Android listener binding and app lifecycle integration remain before the next
 device candidate. Keep the existing 0.1.5 APK and runtime. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).

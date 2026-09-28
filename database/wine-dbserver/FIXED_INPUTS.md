@@ -1,8 +1,12 @@
 # Opt-in fixed-input DbServer mode
 
 The staged Wine DbServer supports a narrowly scoped mode for the hosted Atlas
-gate's immutable schema/configuration inputs. It is prepared for qualification;
-it is not an accepted runtime result or a repair of generic Wine notifications.
+gate's immutable schema/configuration inputs. Hosted Windows and ARM64 DbServer
+qualification passed in [run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322),
+including default normal-schema startup and an acknowledged fixed-input reload.
+See the [acceptance receipt](../../docs/android-evidence/accepted-dbserver-hosted-36451873322.json).
+The complete Atlas gate remains pending. This is not a repair of generic Wine
+notifications or proof of physical Android execution or rendering.
 
 With `COH_WINE_DB_FIXED_INPUTS` absent, existing startup, folder-cache mode,
 directory watching and callback behavior remain unchanged. The exact value `1`
@@ -34,19 +38,21 @@ saves and restart/resume checks remain active. The mode does not clear previousl
 queued callbacks or change archive callbacks; the intended gate uses reviewed
 loose assets and activates before filesystem monitoring can queue anything.
 
-The harness must enable this mode only for DbServer, require the acknowledgment,
-and verify that the union of the 62 accepted schema inputs and the entire staged
+The Atlas harness enables this mode only for DbServer, requires a complete
+acknowledgment from each of its two owned launches,
+and verifies that the union of the 62 accepted schema inputs and the entire staged
 `data/server/db` tree remains unchanged. This includes optional WeeklyTF and
-load-balancing configurations and additions/deletions. Hash/inventory checks
-surround first startup/save and service restart/second save. The initial inventory
-is taken after private `servers.cfg` generation. This mode is unsuitable for hot
+load-balancing configurations and additions/deletions. Hash/inventory and
+file/directory identity checks run before first startup, after first save,
+before restart and after second save. The initial inventory is taken after
+private `servers.cfg` generation and includes empty directories. This mode is unsuitable for hot
 reload or editing those inputs during a session; cached metadata may become stale.
 
 Tests compile actual staged FolderCache functions and exercise all five lookup
 modes with and without fixed inputs, checking initial scan/hash behavior,
 watcher registration, update gating, late activation and attempts to re-enable
 updates. Separate Windows tests compile the actual environment helper and check
-strict parsing, refusal and acknowledgment behavior. Hosted qualification must
-retain a default normal-schema invocation and run an enabled normal-schema reload
-before Atlas adopts the new donor. The complete Atlas gate remains necessary to
-establish enabled ARM64 behavior and character restart/resume results.
+strict parsing, refusal and acknowledgment behavior. Hosted qualification retained
+a default normal-schema invocation and passed an enabled normal-schema reload.
+The complete Atlas gate remains necessary to establish map startup with this
+mode, both character saves and exact-name restart/resume.

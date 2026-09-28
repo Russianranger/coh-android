@@ -17,7 +17,7 @@ identified composite runtime from these immutable inputs:
 | Component | Accepted run | Role |
 |---|---:|---|
 | ARM64 Wine/FEX/PostgreSQL inputs | 36364550345 | Accepted M2 runtime |
-| Normal Wine-compatible DbServer | 36425508780 | Fixture disabled; qualified opt-in dispatch observer |
+| Normal Wine-compatible DbServer | 36451873322 | Fixture disabled; qualified dispatch observer and fixed-input mode |
 | MapServer and creation TestClient | 36088012664 | Stock reference binaries |
 | Resume TestClient | 36297542986 | Exact name, creation disabled |
 | Generated database schema | 36088012666 | Accepted 99-table schema |
@@ -30,12 +30,17 @@ Its receipt binds the current repository commit, source hashes, build flags,
 executable bytes and imports. The composite package records every donor and
 explicitly selects the Wine donor's normal CrashRpt dependency.
 
-The current Atlas configuration adopts the qualified diagnostic DbServer donor
-`36425508780`, repository commit `41f3aff596826e22e2774375e11590de895ca33d`.
+The current Atlas configuration adopts the qualified fixed-input DbServer donor
+`36451873322`, repository commit `53c6270dff8a0efcc6be09da756408504d8313bd`.
 Its manifest SHA-256 is
-`656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632` and normal
+`e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b` and normal
 executable SHA-256 is
-`3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
+`659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
+Its [acceptance receipt](android-evidence/accepted-dbserver-hosted-36451873322.json)
+records successful Windows and ARM64 qualification, including default normal
+schema startup and acknowledged fixed-input reload. Full Atlas qualification
+with this donor remains pending. Runs `36427680960` and `36428915900` used
+the preceding diagnostic donor `36425508780`.
 The Atlas attempts through `36420158506` used donor `36369485666`; their
 first-save and failure evidence remains unchanged.
 
@@ -308,13 +313,24 @@ binds the raw report, all three preserved hang files and all eight service/hang
 capture hashes. The 8,738,855-byte archive has SHA-256
 `bc51de6db5afa732bfd92ca57ffa9d68c12c16013aacaea66736317be110d0ce`.
 
-The scoped response is an opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md),
+The scoped response is the qualified opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md),
 which prevents watcher registration from startup while preserving initial reads
 and lookup mode. Disabling callbacks alone would leave Wine accumulating
-undrained notification records. The new mode needs separate qualification before
-Atlas adopts its package. The harness will bind the accepted schema files plus
-the complete DbServer configuration directory and reject changes across both
-service launches and saves. Default dynamic behavior remains available.
+undrained notification records. Run `36451873322` qualified its package; Atlas
+now requires a complete startup acknowledgment from each owned DbServer launch,
+with the mode enabled only for DbServer. After private `servers.cfg` generation,
+the harness binds the union of all 62 accepted schema inputs and the entire
+staged `data/server/db` tree, including optional configuration files and empty
+directories. Four snapshots must remain unchanged: before first startup, after
+first save, before restart and after second save. The checks reject changed
+bytes, replaced files/directories and inventory additions/deletions. Default
+dynamic behavior remains available outside this controlled mode.
+
+Both ARM64 attempts in earlier fixed-input qualification `36434692816` failed
+before DbServer execution on talloc HTTP 503. The successful qualification used
+the exact talloc source from accepted runtime `36364550345`'s authenticated
+corresponding-source bundle. Atlas now uses that same recovery path and preserves
+its extraction receipt; the PRoot compiler recipe and source pins are unchanged.
 
 No startup fix, new character result or restart/resume/second-save result is
 claimed yet. The accepted device APK remains 0.1.5; Android game execution and

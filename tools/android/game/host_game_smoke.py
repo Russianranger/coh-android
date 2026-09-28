@@ -35,9 +35,9 @@ DONORS = {
     "reference": {"run_id": 36088012664, "repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
                   "manifest_sha256": "a498eeb9c92299d44a748d08e720cd2e8aeacca0631129182a766ed00ff98952",
                   "canonical_sha256": "31f5553e093947e6ce8c67caa1ed375ce86bf870dc25a5ee2609149b4ae7b03a"},
-    "dbserver": {"run_id": 36425508780, "repository_commit": "41f3aff596826e22e2774375e11590de895ca33d",
-                 "manifest_sha256": "656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632",
-                 "canonical_sha256": "2f2874a114cdaf2bf73a6b72b2bd2bf497d52f59360265e6db35e60c24153065"},
+    "dbserver": {"run_id": 36451873322, "repository_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+                 "manifest_sha256": "e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b",
+                 "canonical_sha256": "4d7971f81959a45376592f064b0c69104ea26da36f44bdf04529c634bb41d842"},
     "resume": {"run_id": 36297542986, "repository_commit": "5f2c561058a186de59d3f27301eea210bd4bb66d",
                "manifest_sha256": "299b908e42abd3164d85e75b96122c3a61bfb1d33055e0967ccfe3f891ab7048",
                "canonical_sha256": "00cfdbd15aa272c4d964b66ad3d646fceed6d85b09a7ccb23ee841e75ce3b28a"},
@@ -175,7 +175,72 @@ def verify_data(data):
     return manifest
 
 
-def make_expectations(assets, package, data, schema, package_manifest, schema_manifest):
+def fixed_input_expectations(data_manifest, schema_manifest):
+    """Derive the configuration/schema union independently of the guest report."""
+    source = data_manifest['files']
+    mapping = {name.casefold(): name for name in source}
+    require(len(mapping) == len(source) and len(schema_manifest['files']) == 62,
+            'Fixed-input source mapping or schema count differs')
+    files = {name: {key: record[key] for key in ('bytes', 'sha256')}
+             for name, record in source.items() if name.startswith('data/server/db/')}
+    for name, record in schema_manifest['files'].items():
+        files[mapping.get(name.casefold(), name)] = {key: record[key] for key in ('bytes', 'sha256')}
+    inventory_bounds(files, maximum_files=512, maximum_bytes=256 * 1024 * 1024)
+    require('data/server/db/servers.cfg' in files, 'Fixed inputs lack private server configuration')
+    directories = {'data/server/db'}
+    for name in files:
+        if name.startswith('data/server/db/'):
+            directories.update(parent.as_posix() for parent in PurePosixPath(name).parents
+                               if parent.as_posix() == 'data/server/db' or parent.as_posix().startswith('data/server/db/'))
+    require(len(directories) <= 512, 'Fixed-input directory count exceeded bound')
+    # The guest writes randomized credentials before its baseline. Its hash is
+    # bound across all phases but cannot equal the source template's hash.
+    files['data/server/db/servers.cfg'] = None
+    return {'files': files, 'directories': sorted(directories), 'schema_file_count': 62}
+
+
+def validate_fixed_inputs(game, expected):
+    value = game.get('fixed_inputs', {})
+    require(isinstance(value, dict) and set(value) == {'requested', 'metadata', 'scope', 'schema_file_count',
+                                                     'baseline', 'checks'} and value.get('requested') is True
+            and value.get('scope') == 'accepted_schema_and_db_configuration'
+            and type(value.get('schema_file_count')) is int
+            and value['schema_file_count'] == expected['schema_file_count'],
+            'Game fixed-input mode or scope differs')
+    dbhost.validate_fixed_inputs_metadata(value.get('metadata'))
+    baseline = value.get('baseline', {})
+    require(isinstance(baseline, dict) and set(baseline) == {
+        'files', 'directories', 'inventory_sha256', 'file_count', 'total_bytes'},
+        'Fixed-input baseline is incomplete')
+    files = baseline['files']
+    total = inventory_bounds(files, maximum_files=512, maximum_bytes=256 * 1024 * 1024)
+    require(set(files) == set(expected['files'])
+            and all(set(record) == {'bytes', 'sha256'} for record in files.values())
+            and all(record is None or files[name] == record for name, record in expected['files'].items())
+            and files['data/server/db/servers.cfg']['bytes'] > 0
+            and baseline['directories'] == expected['directories'],
+            'Fixed-input baseline differs from accepted schema/configuration scope')
+    digest = canonical_digest({key: baseline[key] for key in ('files', 'directories')})
+    require(baseline['inventory_sha256'] == digest and type(baseline['file_count']) is int
+            and baseline['file_count'] == len(files) and type(baseline['total_bytes']) is int
+            and baseline['total_bytes'] == total, 'Fixed-input baseline digest or counts differ')
+    checks = [{'phase': phase, 'unchanged': True, 'inventory_sha256': digest,
+               'file_count': len(files), 'total_bytes': total}
+              for phase in ('before-first', 'after-first-save', 'before-restart', 'after-second-save')]
+    require(value.get('checks') == checks
+            and all(check.get('unchanged') is True and type(check.get('file_count')) is int
+                    and type(check.get('total_bytes')) is int for check in value['checks']),
+            'Fixed-input checks must surround both starts and saves')
+    phases = game.get('phases', [])
+    require(len(phases) == 2 and all(phase.get('fixed_inputs') == {
+        'requested': True, 'startup_acknowledgement': dbhost.FIXED_INPUTS_ACK}
+        and phase['fixed_inputs']['requested'] is True for phase in phases),
+        'Both DbServer starts must acknowledge fixed inputs')
+
+
+def make_expectations(assets, package, data, schema, package_manifest, schema_manifest, data_manifest):
+    dbhost.validate_fixed_inputs_metadata(package_manifest.get('inputs', {}).get('dbserver', {}).get(
+        'manifest', {}).get('wine_build_input', {}).get('fixed_inputs'))
     inputs = {"runtime_manifest_sha256": digest(assets / "runtime-manifest.json"),
               "game_package_sha256": digest(package / "game-package.json"),
               "game_data_manifest_sha256": digest(data / "game-data-manifest.json"),
@@ -184,6 +249,7 @@ def make_expectations(assets, package, data, schema, package_manifest, schema_ma
               "source_commit": dbhost.SOURCE_COMMIT, "data_commit": dbhost.DATA_COMMIT,
               "binary_sha256": {name: package_manifest["files"][name]["sha256"] for name in EXECUTABLES}}
     return {"inputs": inputs, "schema": dbhost.schema_expectations(schema_manifest),
+            "fixed_inputs": fixed_input_expectations(data_manifest, schema_manifest),
             "runtime_lock_sha256": digest(assets / "runtime-lock.json")}
 
 
@@ -262,6 +328,7 @@ def validate_report(report, *, expected):
                     (("registration_processes", 3), ("wow64_registration_processes", 1), ("registration_passes", 1))),
             "Game runtime did not prove accepted cold Wine initialization")
     game = report.get("game", {})
+    validate_fixed_inputs(game, expected['fixed_inputs'])
     require(game.get("status") == "passed" and game.get("created_connected") is True
             and game.get("attributes_unchanged") is True and game.get("process_budget") == 240
             and game.get("query_budget") == 80 and type(game.get("query_processes")) is int
@@ -408,6 +475,10 @@ def validate_service_captures(report, evidence, records):
                     and record["original_bytes"] <= 2 * 1024 * 1024 and record["truncated"] is False
                     and record.get("overflow") is False and record.get("capture_closed") is True,
                     "Owned service stdout is incomplete or overflowed")
+            output = (evidence / 'game-service-captures' / name).read_text(encoding='utf-8')
+            markers = [line for line in output.splitlines() if 'COH_WINE_DB_FIXED_INPUTS' in line]
+            require(markers == ([dbhost.FIXED_INPUTS_ACK] if name.endswith('-dbserver-stdout.txt') else []),
+                    'Owned service fixed-input acknowledgement differs')
         else:
             source = record.get("source_relative_path")
             require(isinstance(source, str) and source and "\\" not in source and ":" not in source,
@@ -673,7 +744,7 @@ def main():
     setup = prepare_runtime(work, evidence, assets)
     shutil.copyfile(args.stack_probe / "GameStackProbe.exe", work / "m3-tools/GameStackProbe.exe")
     shutil.copyfile(args.stack_probe / "stack-probe-build.json", evidence / "stack-probe-build.json")
-    expected = make_expectations(assets, package, data, schema, package_manifest, schema_manifest)
+    expected = make_expectations(assets, package, data, schema, package_manifest, schema_manifest, data_manifest)
     inputs = {"format": 1, "scope": "host_game_runtime_inputs", **expected["inputs"], **setup,
               "disk_preflight": disk, "runtime_commit": runtime["repository_commit"],
               "hang_observer": observer,

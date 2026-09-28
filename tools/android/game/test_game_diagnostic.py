@@ -7,6 +7,7 @@ from pathlib import Path
 import socket
 import sys
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -14,6 +15,163 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import game_diagnostic as guest
+
+
+class FixedInputTests(unittest.TestCase):
+    def diagnostic(self, root):
+        payloads = {'data/server/db/servers.cfg': 'private configuration',
+                    'data/server/db/nested/loadBalance.cfg': 'load balance',
+                    'data/defs/entities.def': 'schema', 'data/attributes/names.def': 'attributes'}
+        for name, payload in payloads.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(payload)
+        value = object.__new__(guest.GameDiagnostic)
+        value.runtime = root
+        value.fixed_schema_paths = {'data/defs/entities.def', 'data/attributes/names.def'}
+        value.ctx = SimpleNamespace(check=Mock())
+        value.game = {'fixed_inputs': {'checks': []}}
+        value.bind_fixed_inputs()
+        return value
+
+    def test_baseline_tracks_schema_and_complete_db_tree_but_allows_generated_bins(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.diagnostic(root)
+            baseline = diagnostic.game['fixed_inputs']['baseline']
+            self.assertEqual(baseline['file_count'], 4)
+            self.assertEqual(baseline['directories'], ['data/server/db', 'data/server/db/nested'])
+            self.assertEqual(baseline['inventory_sha256'], hashlib.sha256(json.dumps(
+                {key: baseline[key] for key in ('files', 'directories')},
+                sort_keys=True, separators=(',', ':')).encode()).hexdigest())
+            (root / 'data/bin').mkdir()
+            (root / 'data/bin/generated.bin').write_text('legitimate MapServer cache')
+            for phase in ('before-first', 'after-first-save', 'before-restart', 'after-second-save'):
+                diagnostic.check_fixed_inputs(phase)
+            self.assertEqual([item['phase'] for item in diagnostic.game['fixed_inputs']['checks']],
+                             ['before-first', 'after-first-save', 'before-restart', 'after-second-save'])
+
+    def test_mutation_replacement_links_and_restored_bytes_are_rejected(self):
+        def rewrite_restore(path):
+            before, original = path.stat(), path.read_bytes()
+            time.sleep(.002)
+            path.write_bytes(b'changed')
+            path.write_bytes(original)
+            os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns))
+
+        def replace(path):
+            replacement = path.with_suffix('.replacement')
+            replacement.write_bytes(path.read_bytes())
+            os.replace(replacement, path)
+
+        mutations = {
+            'contents': lambda root: (root / 'data/defs/entities.def').write_text('changed'),
+            'add': lambda root: (root / 'data/server/db/WeeklyTF.cfg').write_text('new'),
+            'delete': lambda root: (root / 'data/server/db/nested/loadBalance.cfg').unlink(),
+            'replace': lambda root: replace(root / 'data/defs/entities.def'),
+            'rewrite-restored': lambda root: rewrite_restore(root / 'data/defs/entities.def'),
+            'directory-add': lambda root: (root / 'data/server/db/extra').mkdir(),
+            'symlink': lambda root: (root / 'data/server/db/linked').symlink_to(root / 'data/defs/entities.def'),
+            'hardlink': lambda root: os.link(root / 'data/defs/entities.def', root / 'second-link'),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(mutation=name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                diagnostic = self.diagnostic(root)
+                diagnostic.check_fixed_inputs('before-first')
+                mutate(root)
+                with self.assertRaises((guest.base.DiagnosticError, FileNotFoundError)):
+                    diagnostic.check_fixed_inputs('after-first-save')
+                self.assertEqual(len(diagnostic.game['fixed_inputs']['checks']), 1)
+
+    def test_baseline_cannot_be_rebound_and_checks_have_one_fixed_order(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            diagnostic = self.diagnostic(Path(temporary))
+            with patch.object(guest, 'fixed_input_snapshot', side_effect=AssertionError('must fail before hashing')):
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'already bound'):
+                    diagnostic.bind_fixed_inputs()
+                for phase in ('after-first-save', 'before-restart', 'after-second-save', 'unknown'):
+                    with self.subTest(phase=phase), self.assertRaisesRegex(guest.base.DiagnosticError, 'out of order'):
+                        diagnostic.check_fixed_inputs(phase)
+            for phase in ('before-first', 'after-first-save', 'before-restart', 'after-second-save'):
+                diagnostic.check_fixed_inputs(phase)
+                with patch.object(guest, 'fixed_input_snapshot', side_effect=AssertionError('must fail before hashing')):
+                    with self.assertRaisesRegex(guest.base.DiagnosticError, 'out of order'):
+                        diagnostic.check_fixed_inputs(phase)
+
+    def test_casefold_collisions_in_schema_configuration_union_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.diagnostic(root)
+            path = root / 'data/server/db/Servers.cfg'
+            path.write_text('colliding schema input')
+            diagnostic.fixed_schema_paths.add(path.relative_to(root).as_posix())
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Case-conflicting'):
+                diagnostic.check_fixed_inputs('before-first')
+
+    def test_no_follow_parents_and_resource_bounds(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.diagnostic(root)
+            for constant, limit in (('FIXED_INPUT_FILE_LIMIT', 3), ('FIXED_INPUT_BYTE_LIMIT', 1),
+                                    ('FIXED_INPUT_DIRECTORY_LIMIT', 1)):
+                with self.subTest(constant=constant), patch.object(guest, constant, limit):
+                    with self.assertRaisesRegex(guest.base.DiagnosticError, 'exceeded bound'):
+                        diagnostic.check_fixed_inputs('before-first')
+            (root / 'data/defs').rename(root / 'moved')
+            (root / 'data/defs').symlink_to(root / 'moved', target_is_directory=True)
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Linked'):
+                diagnostic.check_fixed_inputs('before-first')
+
+    def test_acknowledgement_requires_one_complete_exact_line_in_owned_output(self):
+        child = SimpleNamespace(overflow=False, text=Mock())
+        ack = guest.dbserver.FIXED_INPUTS_ACK
+        for output in ('unrelated\n', ack, ack + '\r'):
+            child.text.return_value = output
+            self.assertFalse(guest.fixed_inputs_acknowledgement(child))
+        child.text.return_value = 'prior diagnostics\n' + ack + '\r\npartial next line'
+        self.assertEqual(guest.fixed_inputs_acknowledgement(child),
+                         {'requested': True, 'startup_acknowledgement': ack})
+        for output in (ack + '\n' + ack + '\n', 'prefix ' + ack + '\n', ack + '.\n'):
+            child.text.return_value = output
+            with self.assertRaises(guest.base.DiagnosticError):
+                guest.fixed_inputs_acknowledgement(child)
+        child.overflow = True
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'overflowed'):
+            guest.fixed_inputs_acknowledgement(child)
+
+    def test_service_launch_scopes_mode_to_db_and_requires_ack_before_atlas(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            diagnostic = object.__new__(guest.GameDiagnostic)
+            diagnostic.runtime = Path(temporary)
+            diagnostic.ctx = SimpleNamespace(stage=Mock(), passed=Mock())
+            diagnostic.wine_env = {'WINEPREFIX': '/private/wine'}
+            diagnostic.check_fixed_inputs = Mock()
+            diagnostic.dispatch_paths, diagnostic.dispatch_stages = {}, {}
+            diagnostic.schema = {'expected_tables': {}}
+            diagnostic.schema_snapshot = Mock(return_value={'table_count': 99})
+            diagnostic.game = {'dispatch_progress': {'phases': {}}, 'phases': []}
+            child = SimpleNamespace(overflow=False, text=lambda: guest.dbserver.FIXED_INPUTS_ACK + '\n')
+            diagnostic.start_game = Mock(return_value=child)
+            diagnostic.map_status = Mock(side_effect=[{'ready': False, 'not_started': True}, {'ready': True}])
+            def wait(predicate, seconds, label):
+                if label == 'DbServer schema and local listener':
+                    return True
+                if label == 'DbServer fixed-input activation acknowledgement':
+                    self.assertEqual(diagnostic.start_game.call_count, 1)
+                return predicate()
+            diagnostic.wait = wait
+            with patch.object(guest, 'check_game_port'), \
+                    patch.object(guest.hang_evidence, 'read_dispatch_record', return_value={'loop_count': 1}), \
+                    patch.object(guest.evidence, 'map_ready_current', return_value=True):
+                diagnostic.start_services('first')
+            diagnostic.check_fixed_inputs.assert_called_once_with('before-first')
+            calls = diagnostic.start_game.call_args_list
+            self.assertEqual(calls[0].kwargs['env'][guest.dbserver.FIXED_INPUTS_ENV], '1')
+            self.assertEqual(calls[1].kwargs, {})
+            self.assertNotIn(guest.dbserver.FIXED_INPUTS_ENV, diagnostic.wine_env)
+            self.assertEqual(diagnostic.game['phases'][0]['fixed_inputs']['startup_acknowledgement'],
+                             guest.dbserver.FIXED_INPUTS_ACK)
 
 
 @unittest.skipUnless(sys.platform.startswith('linux'), 'Wine guest uses native Linux socket semantics')

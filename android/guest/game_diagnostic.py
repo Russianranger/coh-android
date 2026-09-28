@@ -14,6 +14,7 @@ import secrets
 import shutil
 import signal
 import socket
+import stat
 import sys
 import time
 
@@ -34,6 +35,10 @@ SERVICE_LABELS = ('first-dbserver', 'first-atlas', 'restart-dbserver', 'restart-
 SERVICE_STDOUT_LIMIT = 6 * 1024 * 1024
 SERVICE_LOG_LIMIT = 4 * 1024 * 1024
 SERVICE_LOG_SEGMENT = 512 * 1024
+FIXED_INPUT_FILE_LIMIT = 512
+FIXED_INPUT_BYTE_LIMIT = 256 * 1024 * 1024
+FIXED_INPUT_DIRECTORY_LIMIT = 512
+FIXED_INPUT_ROOT = 'data/server/db'
 
 
 def check_game_port(port, protocol):
@@ -112,6 +117,96 @@ def game_config(original, database, connection):
     kept = [line for line in original.splitlines()
             if not line.split() or line.split()[0].lower() not in settings]
     return dbserver.private_config('\n'.join(kept + list(settings.values())) + '\n', database, connection)
+
+
+def fixed_inputs_acknowledgement(child):
+    """Only complete lines in this owned process's full output can acknowledge activation."""
+    require(not child.overflow, 'Fixed-input startup output overflowed')
+    output = child.text()
+    complete = output[:output.rfind('\n') + 1]
+    if dbserver.FIXED_INPUTS_ENV not in complete:
+        return False
+    return dbserver.validate_fixed_inputs(complete, True)
+
+
+def fixed_input_snapshot(runtime, schema_paths, check=lambda: None):
+    """Bind the schema/configuration union; generated caches outside it remain writable."""
+    def checked_path(name, directory=False):
+        path = runtime
+        require(path.is_dir() and not path.is_symlink(), 'Invalid fixed-input runtime')
+        for part in safe_path(name).parts:
+            path /= part
+            info = path.lstat()
+            require(not stat.S_ISLNK(info.st_mode), 'Linked fixed input refused')
+        require(stat.S_ISDIR(info.st_mode) if directory else stat.S_ISREG(info.st_mode),
+                'Nonregular fixed input refused: ' + name)
+        return path
+
+    def inventory():
+        checked_path(FIXED_INPUT_ROOT, directory=True)
+        files, directories, pending = set(), {}, [FIXED_INPUT_ROOT]
+        while pending:
+            check()
+            name = pending.pop()
+            path = checked_path(name, directory=True)
+            info = path.lstat()
+            directories[name] = (info.st_dev, info.st_ino, info.st_mtime_ns, info.st_ctime_ns)
+            require(len(directories) <= FIXED_INPUT_DIRECTORY_LIMIT, 'Fixed-input directory count exceeded bound')
+            with os.scandir(path) as entries:
+                for entry in entries:
+                    relative = name + '/' + entry.name
+                    safe_path(relative)
+                    require(not entry.is_symlink(), 'Linked fixed input refused')
+                    if entry.is_dir(follow_symlinks=False):
+                        pending.append(relative)
+                        require(len(pending) + len(directories) <= FIXED_INPUT_DIRECTORY_LIMIT,
+                                'Fixed-input directory count exceeded bound')
+                    else:
+                        require(entry.is_file(follow_symlinks=False), 'Nonregular fixed input refused')
+                        files.add(relative)
+                        require(len(files) <= FIXED_INPUT_FILE_LIMIT, 'Fixed-input file count exceeded bound')
+        return files, directories
+
+    schema_paths = set(schema_paths)
+    for name in schema_paths:
+        require(safe_path(name).parts[0] == 'data', 'Fixed schema path must remain under data')
+    config_files, directories = inventory()
+    names = config_files | schema_paths
+    require(0 < len(names) <= FIXED_INPUT_FILE_LIMIT, 'Fixed-input file count exceeded bound')
+    require(len({name.casefold() for name in names}) == len(names), 'Case-conflicting fixed inputs refused')
+    files, identities, total = {}, {}, 0
+    for name in sorted(names):
+        check()
+        path = checked_path(name)
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            before = os.fstat(descriptor)
+            require(stat.S_ISREG(before.st_mode) and before.st_uid == os.getuid() and before.st_nlink == 1,
+                    'Fixed input must be an owned regular file with one link')
+            total += before.st_size
+            require(total <= FIXED_INPUT_BYTE_LIMIT, 'Fixed-input bytes exceeded bound')
+            identity = lambda item: (item.st_dev, item.st_ino, item.st_size,
+                                     item.st_mtime_ns, item.st_ctime_ns, item.st_nlink)
+            hashed, count = hashlib.sha256(), 0
+            while True:
+                check()
+                chunk = os.read(descriptor, min(1024 * 1024, before.st_size - count + 1))
+                if not chunk:
+                    break
+                count += len(chunk)
+                require(count <= before.st_size, 'Fixed input grew during hashing')
+                hashed.update(chunk)
+            require(count == before.st_size and identity(before) == identity(os.fstat(descriptor))
+                    == identity(checked_path(name).lstat()), 'Fixed input changed during hashing')
+            files[name] = {'bytes': count, 'sha256': hashed.hexdigest()}
+            identities[name] = identity(before)
+        finally:
+            os.close(descriptor)
+    require(inventory() == (config_files, directories), 'Fixed-input directory inventory changed during hashing')
+    payload = {'files': files, 'directories': sorted(directories)}
+    digest = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    return {**payload, 'inventory_sha256': digest, 'file_count': len(files), 'total_bytes': total}, {
+        'files': identities, 'directories': directories}
 
 
 class GameContext(dbserver.DbServerContext):
@@ -302,6 +397,11 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         base.Diagnostic.__init__(self, args, context)
         self.created_databases, self.private_connections = [], []
         self.services, self.sessions = [], []
+        self.base_env.pop(dbserver.FIXED_INPUTS_ENV, None)
+        self.wine_env.pop(dbserver.FIXED_INPUTS_ENV, None)
+        fixed_inputs = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
+            'wine_build_input', {}).get('fixed_inputs')
+        dbserver.validate_fixed_inputs_metadata(fixed_inputs)
         dispatch = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
             'wine_build_input', {}).get('dispatch_progress', {})
         require(dispatch.get('environment_variable') == 'COH_WINE_DB_PROGRESS'
@@ -315,6 +415,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.query_count = self.readiness_count = 0
         self.runtime = self.root / ('game-' + secrets.token_hex(6))
         self.game = {'status': 'running', 'phases': [], 'map_samples': [], 'character_samples': [], 'sessions': {}}
+        self.game['fixed_inputs'] = {'requested': True, 'metadata': fixed_inputs,
+            'scope': 'accepted_schema_and_db_configuration', 'schema_file_count': 62, 'checks': []}
         self.game['dispatch_progress'] = {'enabled': True, 'format': 1,
             'environment_variable': 'COH_WINE_DB_PROGRESS', 'record_bytes': 128,
             'mapping_bytes': 4096, 'stages': self.dispatch_stages, 'phases': {}, 'is_success_proof': False}
@@ -368,11 +470,29 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             target = self.runtime / names.get(name.casefold(), name)
             create_private_parents(target.parent, self.runtime, created)
             shutil.copyfile(self.args.schema / name, target)
+        require(len(self.schema['files']) == 62, 'Fixed-input game schema must contain 62 accepted files')
+        self.fixed_schema_paths = {names.get(name.casefold(), name) for name in self.schema['files']}
         for name in self.package['files']:
             shutil.copyfile(self.args.game_package / name, self.runtime / name)
         require(not (self.runtime / 'gamedatadir.txt').exists(), 'External game data roots are forbidden')
         self.ctx.log_root = self.runtime
         self.ctx.passed(input_files=len(files), input_bytes=total, accepted_schema_overlay_files=len(self.schema['files']))
+
+    def bind_fixed_inputs(self):
+        require('baseline' not in self.game['fixed_inputs'], 'Fixed-input baseline is already bound')
+        baseline, self.fixed_input_identities = fixed_input_snapshot(self.runtime, self.fixed_schema_paths, self.ctx.check)
+        self.game['fixed_inputs']['baseline'] = baseline
+
+    def check_fixed_inputs(self, phase):
+        phases = ('before-first', 'after-first-save', 'before-restart', 'after-second-save')
+        checks = self.game['fixed_inputs']['checks']
+        require(len(checks) < len(phases) and phase == phases[len(checks)],
+                'Fixed-input check phase is repeated, out of order or exceeds its bound')
+        current, identities = fixed_input_snapshot(self.runtime, self.fixed_schema_paths, self.ctx.check)
+        require(current == self.game['fixed_inputs']['baseline'] and identities == self.fixed_input_identities,
+                'Fixed-input schema or configuration changed: ' + phase)
+        self.game['fixed_inputs']['checks'].append({'phase': phase, 'unchanged': True,
+            **{key: current[key] for key in ('inventory_sha256', 'file_count', 'total_bytes')}})
 
     def health(self):
         self.ctx.check()
@@ -421,6 +541,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
 
     def start_services(self, label):
         self.ctx.stage('game_services_' + label)
+        self.check_fixed_inputs('before-' + label)
         for port, protocol in ((6997, socket.SOCK_STREAM), (7001, socket.SOCK_DGRAM)):
             check_game_port(port, protocol)
         require(label in ('first', 'restart') and label not in self.dispatch_paths,
@@ -429,8 +550,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         require(not dispatch_path.exists() and not dispatch_path.is_symlink(),
                 'Refusing stale dispatch record')
         self.dispatch_paths[label], self.dispatch_phase = dispatch_path, label
-        database_env = dict(self.wine_env, COH_WINE_DB_PROGRESS=base.windows_path(dispatch_path))
-        self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'], env=database_env)
+        database_env = dict(self.wine_env, COH_WINE_DB_PROGRESS=base.windows_path(dispatch_path),
+                            COH_WINE_DB_FIXED_INPUTS='1')
+        database = self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'], env=database_env)
         next_query = 0
         expected_columns = sum(map(len, self.schema['expected_tables'].values()))
         def database_ready():
@@ -457,6 +579,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 return observation
             return False
         self.wait(published, 30, 'DbServer main-thread dispatch publication')
+        fixed_inputs = self.wait(lambda: fixed_inputs_acknowledgement(database), 30,
+                                 'DbServer fixed-input activation acknowledgement')
         next_baseline = 0
         def unstarted():
             nonlocal next_baseline
@@ -481,6 +605,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             return sample if evidence.map_ready_current(sample) else False
         sample = self.wait(ready, readiness_timeout, 'Atlas DB-confirmed readiness')
         self.game['phases'].append({'phase': label + '_services_ready', 'status': 'passed',
+                                    'fixed_inputs': fixed_inputs,
                                     'baseline_not_started': True, 'schema': catalog, 'map': sample,
                                     'readiness_timeout_seconds': readiness_timeout,
                                     'query_timeout_seconds': 90, 'poll_interval_seconds': poll_interval})
@@ -713,15 +838,18 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         config = self.runtime / 'data/server/db/servers.cfg'
         base.private_write(config, game_config(config.read_text(), self.database, self.connection_for(self.database)))
         self.private_connections.append(config)
+        self.bind_fixed_inputs()
         self.game['account'] = 'CohA' + secrets.token_hex(5)
         self.start_services('first')
         self.observe_atlas()
         session = self.create_character()
         self.live_currency(session)
         first = self.logout(session, 'first', 1)
+        self.check_fixed_inputs('after-first-save')
         self.restart(first)
         resumed = self.resume()
         second = self.logout(resumed, 'second', 2)
+        self.check_fixed_inputs('after-second-save')
         self.game['second_save']['comparison'] = evidence.compare_snapshots(first, second, 'second_logout')
         final_schema = self.schema_snapshot()
         self.game['attributes_unchanged'] = final_schema['attribute_sha256'] == self.game['phases'][0]['schema']['attribute_sha256']

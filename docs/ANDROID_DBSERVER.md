@@ -5,7 +5,30 @@ It builds the actual CoH DbServer with a separately identified Wine compatibilit
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
 PRoot/Wine/FEX runtime. The stock Windows reference and immutable source are preserved.
 
-**The diagnostic DbServer package is qualified for the next hosted Atlas run.**
+**The fixed-input DbServer package is qualified for the next hosted Atlas run.**
+[Run 36451873322](https://github.com/Russianranger/coh-android/actions/runs/36451873322)
+at `53c6270dff8a0efcc6be09da756408504d8313bd` passed all three jobs on
+2026-09-28. The [acceptance receipt](android-evidence/accepted-dbserver-hosted-36451873322.json)
+binds the package, Windows contracts and ARM64 persistence/schema results.
+Its manifest SHA-256 is
+`e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b`;
+the normal fixture-OFF executable SHA-256 is
+`659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
+The normal ARM64 schema gate passed default startup followed by an explicitly
+acknowledged [fixed-input reload](../database/wine-dbserver/FIXED_INPUTS.md).
+The full Atlas create/save/restart/resume/second-save gate remains pending;
+this result does not qualify physical Android execution or rendering.
+
+The [ARM64 report](android-evidence/dbserver-arm64-36451873322.json) passed all
+28 stages in 192.280590 seconds: 21 persistence check groups across 14 fixture
+phases, followed by two fresh empty schema exports with 99 tables, 5,935 ordered
+columns, 58,272 exact attribute IDs/names and an unchanged full catalog. All 111
+process captures closed; cleanup left zero owned processes or inspection errors.
+Windows passed the same fixture coverage, four dispatch contracts and four
+fixed-input contracts. Tooling ran 77 checks: 69 passed and eight Windows-only
+checks skipped.
+
+The earlier diagnostic package's
 [Run 36425508780](https://github.com/Russianranger/coh-android/actions/runs/36425508780)
 at `41f3aff596826e22e2774375e11590de895ca33d` passed all three jobs on
 2026-09-28. Its Windows contract verified enabled publication of the
@@ -14,37 +37,38 @@ The ARM64 fixture and normal schema gates passed with that observer disabled;
 Atlas run `36428915900` subsequently verified enabled publication on ARM64 and
 localized its startup stall to `FOLDER_CALLBACKS` or nested work.
 This qualifies the package, not a startup blocker correction or completed Atlas
-restart/resume. The [new acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
+restart/resume. Its [acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
 preserves the package and runtime evidence. Its manifest SHA-256 is
 `656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632`;
 the normal fixture-OFF executable SHA-256 is
 `3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
 
-The [new Windows report](android-evidence/dbserver-windows-36425508780.json)
+The [earlier Windows report](android-evidence/dbserver-windows-36425508780.json)
 passed all 21 persistence check groups across 14 fixture phases, and all four
 Windows dispatch-record contracts passed. The
-[new ARM64 report](android-evidence/dbserver-arm64-36425508780.json) passed 28 stages
+[earlier ARM64 report](android-evidence/dbserver-arm64-36425508780.json) passed 28 stages
 in 187.299219 seconds, including the same persistence coverage and two normal
 fixture-OFF exports/reloads: 99 tables, 5,935 ordered columns, 58,272 exact
 attribute IDs/names and an unchanged catalog. All 111 process captures closed;
 cleanup left zero owned processes or inspection failures.
 
-A separately receipted [fixed-input mode](../database/wine-dbserver/FIXED_INPUTS.md)
-is prepared for the controlled Atlas gate and awaits qualification. It prevents
+The separately receipted fixed-input mode prevents
 directory-watch creation before the first file cache and disables notification
 updates, while preserving initial reads and the chosen lookup mode. Default
 startup remains unchanged. This avoids leaving undrained notifications in Wine;
-it does not establish a generic notification fix. The existing two normal
-schema launches will cover default startup followed by acknowledged fixed-input
-reload, with the same exact schema/catalog checks and no additional launches.
+it does not establish a generic notification fix. The two normal schema launches
+cover default startup followed by acknowledged fixed-input reload, with the same
+exact schema/catalog checks and no additional launches.
 
 Run `36434692816` at `73323b72262d7e61064c16023258e0bfe9016583` passed
 source/tooling checks, both native Windows option contracts, both builds and the
 Windows persistence fixture. Both ARM64 attempts stopped before DbServer execution:
 the talloc download exhausted three transport attempts and ended with HTTP 503.
-This package is not yet qualified for ARM64. The next build uses the identical
-hash-pinned talloc archive from the accepted runtime's corresponding-source
-bundle; the compiler recipe and source hashes remain unchanged.
+Those failed attempts remain unqualified. Successful run `36451873322` recovered
+the identical hash-pinned talloc archive from accepted runtime `36364550345`'s
+corresponding-source bundle, validating the manifest, build receipt, bundle and
+exact archive member before rebuilding PRoot. The compiler recipe and source
+hashes remain unchanged; the extraction receipt is retained with ARM64 evidence.
 
 **The first hosted M3 DbServer gate passed** in
 [run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)
@@ -143,8 +167,12 @@ MapServer operation, character gameplay, Android graphics, physical input or aud
 No replacement diagnostic APK is required for the accepted M2 tests.
 
 Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
-the same runtime, using donor `36425508780` and a fresh enabled dispatch record
-for each first/restart launch. Live ARM64 publication, exact-name resume and the
-second protocol save remain pending. Android listener binding and app lifecycle
-integration must be completed before the next device candidate; retain the accepted 0.1.5 diagnostic
-and runtime in the meantime.
+the same runtime, using donor `36451873322`. Require a fresh enabled dispatch
+record and a fixed-input acknowledgment from each of the two DbServer launches.
+Bind the 62 schema inputs and entire staged `data/server/db` tree after private
+configuration generation; require unchanged snapshots before first startup,
+after first save, before restart and after second save. Enabled ARM64 dispatch
+publication was already verified in `36428915900`; full Atlas qualification,
+exact-name resume and the second protocol save remain pending. Android listener
+binding and app lifecycle integration precede the next device candidate; retain
+the accepted 0.1.5 diagnostic and runtime in the meantime.

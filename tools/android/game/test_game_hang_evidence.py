@@ -76,6 +76,7 @@ class DispatchEvidenceTests(unittest.TestCase):
                 diagnostic.dispatch_stages = self.stages
                 diagnostic.schema = {'expected_tables': {}}
                 diagnostic.schema_snapshot = Mock(return_value={})
+                diagnostic.check_fixed_inputs = Mock()
                 diagnostic.game = {'dispatch_progress': {'phases': {}}}
                 diagnostic.ctx = SimpleNamespace(stage=Mock(), event=Mock(), deadline=time.monotonic() + 2)
                 diagnostic.health = Mock()
