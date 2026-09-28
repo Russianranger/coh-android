@@ -41,6 +41,7 @@ jobs:
           $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
           if (-not $installation) { throw 'MSVC installation was not found' }
           New-Item -ItemType Directory -Path out/bridge -Force | Out-Null
+          New-Item -ItemType Directory -Path out/stack-probe -Force | Out-Null
           $batch = @"
           @echo off
           call "$installation\VC\Auxiliary\Build\vcvars32.bat"
@@ -50,16 +51,28 @@ jobs:
           cl /nologo /W4 /O2 /MT database/wine-game/bridge_protocol_contract.c /Fe:out/bridge_protocol_contract.exe
           if errorlevel 1 exit /b 1
           out\bridge_protocol_contract.exe
+          if errorlevel 1 exit /b 1
+          cl /nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601 database/wine-game/GameStackProbe.c /Fe:out/stack-probe/GameStackProbe.exe
+          if errorlevel 1 exit /b 1
+          python tools/android/game/test_stack_probe.py
+          if errorlevel 1 exit /b 1
           "@
           Set-Content -Path out/build-bridge.cmd -Value $batch -Encoding ASCII
           cmd /c .\out\build-bridge.cmd
           if ($LASTEXITCODE -ne 0) { throw 'PE32 bridge build or native contracts failed' }
           python tools/android/game/package_game_runtime.py bridge-receipt --directory out/bridge --repository-commit "$env:GITHUB_SHA"
           if ($LASTEXITCODE -ne 0) { throw 'Bridge receipt failed' }
+          python tools/android/game/stack_probe_receipt.py --directory out/stack-probe --repository-commit "$env:GITHUB_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'Stack observer receipt failed' }
       - uses: actions/upload-artifact@v4
         with:
           name: wine-testclient-bridge
           path: out/bridge/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-game-stack-probe
+          path: out/stack-probe/
           if-no-files-found: error
   runtime:
     needs: bridge
@@ -77,6 +90,10 @@ jobs:
         with:
           name: wine-testclient-bridge
           path: out/bridge
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-stack-probe
+          path: out/stack-probe
       - uses: actions/download-artifact@v4
         with:
           name: wine-dbserver-package
@@ -128,7 +145,7 @@ jobs:
       - name: Build matching native ARM64 PRoot
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
       - name: Enter Atlas, save, restart and resume exact character in isolated ARM64 runtime
-        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema
+        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe
       - uses: actions/upload-artifact@v4
         if: always()
         with:

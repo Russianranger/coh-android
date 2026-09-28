@@ -20,6 +20,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dbserver_diagnostic as dbserver
 import game_evidence as evidence
+import game_hang_evidence as hang_evidence
 
 base = dbserver.base
 require = base.require
@@ -252,6 +253,11 @@ class BridgeSession:
 
 
 class GameDiagnostic(dbserver.DbServerDiagnostic):
+    def observe_odbc_failure(self, child):
+        # Context.run invokes this while the timed-out query still exists,
+        # before child.stop() can discard the decisive waiting state.
+        hang_evidence.capture(self, child)
+
     def __init__(self, args, context):
         self.package = dbserver.load_json(args.game_package / 'game-package.json')
         self.data = dbserver.load_json(args.game_data / 'game-data-manifest.json', 64 * 1024 * 1024)
@@ -825,6 +831,14 @@ def main(argv=None):
         context.report.update(status='failed', failures=[str(exc)])
     finally:
         if diagnostic is not None:
+            if context.report['status'] == 'failed':
+                try:
+                    # Covers failures raised outside run_windows. A pre-stop
+                    # snapshot is never replaced by this later observation.
+                    hang_evidence.capture(diagnostic)
+                except Exception as exc:
+                    context.report.setdefault('observation_failures', []).append(
+                        'Cannot capture pre-cleanup game evidence: ' + str(exc))
             try:
                 context.report['failures'].extend(diagnostic.cleanup())
             except Exception as exc:

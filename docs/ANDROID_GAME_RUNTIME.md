@@ -111,3 +111,32 @@ the AutoCommands request and reached its foreground
 `SELECT dbo.AutoCommands.ContainerId FROM dbo.AutoCommands ORDER BY containerid`.
 No further deadline increase or runtime source change is justified yet.
 The create/save/restart/resume milestone remains unqualified.
+
+## Recovery diagnostic (2026-09-28)
+
+The continuation workspace and branch were recovered at `18522cada`. No active
+hosted build remained. The next run now captures failure state **before** stopping
+the failed query or cleaning up the game services. It records the private
+database's exact last query text, wait events and timestamps; token-owned Linux
+process/task state and socket inodes; and a separate PE32 observer's Windows x86
+contexts, stack words and module addresses. Unavailable or truncated observations
+are explicitly reported. These observations are not symbolized stack traces.
+
+The observer has its own source/PE32 receipt and is staged separately from the
+accepted game package. Snapshot collection is time/size bounded, occurs only on
+failure and preserves the existing cleanup path. The game source and accepted
+runtime donors are unchanged. The startup timeout has not been extended again.
+
+Source inspection narrows interpretation: the status-query process waits for the
+initial DbServer handshake before its command's timeout applies. That status
+handler and map registration are memory/network operations. DbServer's main loop
+also performs synchronous foreground SQL keepalive before network dispatch.
+The failed query began before Atlas reached AutoCommands, so the final printed
+Atlas message does not establish which DbServer operation blocked. Capture and
+inspect the simultaneous state before selecting a runtime correction.
+
+A separate latest Thor tooling run failed its synthetic process-exit assertion.
+The test helper now uses kernel pidfds to distinguish exited, unreaped children
+from live processes even when `/proc` exposes another PID namespace. A real child
+regression covers that distinction; this is a test correction, not a change to
+the accepted app's lifecycle behavior.

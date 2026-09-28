@@ -1,10 +1,12 @@
 """Portable diagnostic gates and process cleanup; no PostgreSQL/Wine needed."""
 import importlib.util
 from contextlib import redirect_stdout
+import errno
 import io
 import json
 import os
 from pathlib import Path
+import select
 import signal
 import socket
 import subprocess
@@ -286,6 +288,22 @@ class DiagnosticProcessTests(unittest.TestCase):
 
     @staticmethod
     def process_alive(pid):
+        # pidfds use our PID namespace and become readable on exit, even while
+        # an orphan remains unreaped. A foreign /proc mount cannot prove that
+        # distinction with kill(0), which also succeeds for zombies.
+        if hasattr(os, 'pidfd_open'):
+            try:
+                descriptor = os.pidfd_open(pid)
+            except ProcessLookupError:
+                return False
+            except OSError as error:
+                if error.errno != errno.ENOSYS:
+                    raise
+            else:
+                try:
+                    return not select.select([descriptor], [], [], 0)[0]
+                finally:
+                    os.close(descriptor)
         # kill(0) uses the caller's PID namespace. Some CI sandboxes expose a
         # host /proc mount, where /proc/<child namespace PID> is unrelated.
         try:
@@ -317,10 +335,12 @@ class DiagnosticProcessTests(unittest.TestCase):
         for reads in ([ProcessLookupError(3, 'status process disappeared')],
                       [target, own, ProcessLookupError(3, 'stat process disappeared')]):
             with self.subTest(reads=reads), patch.object(sys, 'platform', 'linux'), \
+                 patch.object(os, 'pidfd_open', create=True, side_effect=OSError(errno.ENOSYS, 'No pidfds')), \
                  patch.object(os, 'kill', return_value=None), \
                  patch.object(Path, 'read_text', side_effect=reads):
                 self.assertTrue(self.process_alive(123), 'A foreign /proc disappearance cannot prove local exit')
-        with patch.object(os, 'kill', side_effect=ProcessLookupError(3, 'local process disappeared')), \
+        with patch.object(os, 'pidfd_open', create=True, side_effect=OSError(errno.ENOSYS, 'No pidfds')), \
+             patch.object(os, 'kill', side_effect=ProcessLookupError(3, 'local process disappeared')), \
              patch.object(Path, 'read_text') as read:
             self.assertFalse(self.process_alive(123))
             read.assert_not_called()
@@ -329,10 +349,33 @@ class DiagnosticProcessTests(unittest.TestCase):
         for reads in ([PermissionError(13, 'status denied')],
                       ['NSpid:\t123\n', 'NSpid:\t456\n', PermissionError(13, 'stat denied')]):
             with self.subTest(reads=reads), patch.object(sys, 'platform', 'linux'), \
+                 patch.object(os, 'pidfd_open', create=True, side_effect=OSError(errno.ENOSYS, 'No pidfds')), \
                  patch.object(os, 'kill', return_value=None), \
                  patch.object(Path, 'read_text', side_effect=reads):
                 with self.assertRaises(PermissionError):
                     self.process_alive(123)
+
+    @unittest.skipUnless(hasattr(os, 'pidfd_open'), 'Kernel process descriptors are Linux-specific')
+    def test_process_alive_distinguishes_live_child_and_unreaped_exit_without_proc(self):
+        process = subprocess.Popen([sys.executable, '-c', 'import time;time.sleep(60)'])
+        def cleanup():
+            if process.poll() is None:
+                process.kill()
+            process.wait(timeout=3)
+        self.addCleanup(cleanup)
+        # A host-mounted /proc need not contain this child's namespace PID.
+        # Keep the exited child unreaped so kill(0) still reports it exists.
+        with patch.object(Path, 'read_text', side_effect=FileNotFoundError()) as read:
+            self.assertTrue(self.process_alive(process.pid))
+            process.kill()
+            self.assert_stopped(process.pid)
+            os.kill(process.pid, 0)
+            read.assert_not_called()
+
+    def test_process_alive_does_not_hide_pidfd_permission_errors(self):
+        with patch.object(os, 'pidfd_open', create=True, side_effect=PermissionError(errno.EACCES, 'Denied')):
+            with self.assertRaises(PermissionError):
+                self.process_alive(123)
 
     def assert_stopped(self, pid):
         deadline = time.monotonic() + 3

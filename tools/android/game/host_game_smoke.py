@@ -15,6 +15,7 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "dbserver"))
 import host_dbserver_smoke as dbhost
+import stack_probe_receipt
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -376,6 +377,16 @@ def copy_service_captures(state, evidence):
     return records
 
 
+def copy_hang_captures(state, evidence):
+    records = copy_capture_area(state, evidence, "game-hang-captures",
+                                {"snapshot.json": 4 * 1024 * 1024, "manifest.json": 65536,
+                                 "windows-contexts.jsonl": 384 * 1024},
+                                4 * 1024 * 1024 + 65536 + 384 * 1024)
+    (evidence / "game-hang-captures.json").write_text(json.dumps(
+        {"format": 1, "scope": "pre_cleanup_game_hang_evidence", "files": records}, indent=2) + "\n")
+    return records
+
+
 def validate_service_captures(report, evidence, records):
     required = {label + "-stdout.txt" for label in SERVICE_LABELS} | {"manifest.json"}
     require(required <= set(records) <= set(SERVICE_CAPTURE_LIMITS)
@@ -508,7 +519,7 @@ def prepare_runtime(work, evidence, assets):
                  "opt/coh-schema", "opt/coh-m3", "opt/wine", "state", "tmp"):
         (work / "rootfs" / name).mkdir(parents=True, exist_ok=True)
     scripts = {}
-    for name in ("game_diagnostic.py", "game_evidence.py", "dbserver_diagnostic.py"):
+    for name in ("game_diagnostic.py", "game_evidence.py", "game_hang_evidence.py", "dbserver_diagnostic.py"):
         target = work / "m3-tools" / name
         shutil.copyfile(ROOT / "android/guest" / name, target)
         scripts[name] = digest(target)
@@ -612,6 +623,7 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
                 shutil.copyfile(source, target)
             captures = copy_game_captures(state, evidence)
             service_captures = copy_service_captures(state, evidence)
+            copy_hang_captures(state, evidence)
     try:
         require(code == 0, "Game PRoot runtime returned a failure exit status")
         require(target.is_file(), "Game runtime did not write a fresh bounded report")
@@ -635,6 +647,7 @@ def main():
     parser.add_argument("--work", type=Path, default=ROOT / "out/android/game-host")
     parser.add_argument("--evidence", type=Path, default=ROOT / "out/android/game-evidence")
     parser.add_argument("--proot", type=Path, default=ROOT / "out/android/native/linux-arm64")
+    parser.add_argument("--stack-probe", type=Path, required=True)
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
     require(sys.platform == "linux" and platform.machine().lower() in ("aarch64", "arm64"),
@@ -650,6 +663,7 @@ def main():
     repository_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     require(package_manifest.get("repository_commit") == repository_commit,
             "Game bridge package differs from the checked-out harness source")
+    observer = stack_probe_receipt.verify(args.stack_probe, repository_commit)
     disk = check_paths_and_space(work, evidence, (assets, package, data, schema, proot),
                                  data_bytes=sum(record["bytes"] for record in data_manifest["files"].values()))
     for name in ("proot", "proot-loader"):
@@ -657,9 +671,12 @@ def main():
         require(path.is_file() and not path.is_symlink(), "Missing native PRoot input")
         path.chmod(0o755)
     setup = prepare_runtime(work, evidence, assets)
+    shutil.copyfile(args.stack_probe / "GameStackProbe.exe", work / "m3-tools/GameStackProbe.exe")
+    shutil.copyfile(args.stack_probe / "stack-probe-build.json", evidence / "stack-probe-build.json")
     expected = make_expectations(assets, package, data, schema, package_manifest, schema_manifest)
     inputs = {"format": 1, "scope": "host_game_runtime_inputs", **expected["inputs"], **setup,
               "disk_preflight": disk, "runtime_commit": runtime["repository_commit"],
+              "hang_observer": observer,
               "proot_sha256": digest(proot / "proot"), "proot_loader_sha256": digest(proot / "proot-loader"),
               "android_execution_validated": False, "gameplay_validated": False}
     (evidence / "host-game-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
