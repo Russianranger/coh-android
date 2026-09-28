@@ -1,0 +1,145 @@
+(1240) Z:/state/diagnostic/game-5a442b4cf12a/TestClientCreate.exe
+cmdline args: -db 127.0.0.1 -fakeauth -authname CohAe8d3fca874 -dontpause -nosharedmemory -nolevel -TEAMACCEPT -FOLLOW -SUPERGROUPACCEPT -LEAGUEACCEPT
+Working directory: Z:\state\diagnostic\game-5a442b4cf12a
+Memory startup...
+ ** WARN **: Not using shared memory due to -nosharedmemory
+Misc startup...
+Disabled TEAMACCEPT
+Disabled FOLLOW
+Disabled SUPERGROUPACCEPT
+Disabled LEAGUEACCEPT
+                                                      (0.15)
+Pigs/Foldercache...                                                   (0.15)
+Connecting as CohAe8d3fca874...
+PipeClientCreate("TestClientLauncher", ".")...getting version from launcher: coh-persistence-diagnostic
+                        (0.10)
+Networking startup...[2026-09-28 13:25:34.604] [DEBUG] Reading from bin/authmsg-en.bin
+                                                 (0.31)
+load_AllDefs()[2026-09-28 13:25:34.929] [DEBUG]         Parsing .statebits from seqstatebits.bin
+[2026-09-28 13:25:35.125] [DEBUG]       sequencers
+[2026-09-28 13:25:35.343] [DEBUG] Loading attribute names
+[2026-09-28 13:25:35.473] [DEBUG]       Parsing defs/attrib_names.def from attrib_names.bin
+[2026-09-28 13:25:35.704] [INFO] Loaded attribute names
+[2026-09-28 13:25:35.819] [DEBUG]       Parsing defs/visionPhases.def from visionPhases.bin
+[2026-09-28 13:25:36.079] [DEBUG] Loading vision phase names
+[2026-09-28 13:25:36.219] [DEBUG]       Parsing defs/visionPhasesExclusive.def from visionPhasesExclusive.bin
+[2026-09-28 13:25:36.508] [INFO] Loaded vision phase names
+[2026-09-28 13:25:36.637] [DEBUG] Loading hero origins
+[2026-09-28 13:25:36.798] [INFO] Loaded hero origins
+[2026-09-28 13:25:36.896] [DEBUG] Loading badges
+[2026-09-28 13:25:36.970] [DEBUG]       Parsing defs/badges.def from badges.bin
+[2026-09-28 13:25:37.598] [INFO] Loaded badges
+[2026-09-28 13:25:37.668] [DEBUG] Loading miscellaneous
+[2026-09-28 13:25:37.816] [DEBUG]       Parsing defs/CustomCritterRewardMods.def from CustomCritterRewardMods.bin
+[2026-09-28 13:25:38.190] [DEBUG]       Parsing defs/PowersetConversion.def from PowersetConversion.bin
+[2026-09-28 13:25:38.521] [DEBUG]       Parsing defs/auctionconfig.def from auctionconfig.bin
+[2026-09-28 13:25:38.704] [DEBUG]       Parsing defs/account/product_catalog.def from product_catalog.bin
+[2026-09-28 13:25:38.928] [DEBUG]       Parsing defs/combine_chances.def from combine_chances.bin
+[2026-09-28 13:25:39.121] [DEBUG]       Parsing defs/combine_same_set_chances.def from combine_same_set_chances.bin
+[2026-09-28 13:25:39.491] [DEBUG]       Parsing defs/boost_effect_above.def from boost_effect_above.bin
+[2026-09-28 13:25:39.816] [DEBUG]       Parsing defs/boost_effect_below.def from boost_effect_below.bin
+[2026-09-28 13:25:40.147] [DEBUG]       Parsing defs/combine_booster_chances.def from combine_booster_chances.bin
+[2026-09-28 13:25:40.508] [DEBUG]       Parsing defs/boost_effect_boosters.def from boost_effect_boosters.bin
+[2026-09-28 13:25:40.843] [DEBUG]       Parsing defs/exemplar_handicaps.def from exemplar_handicaps.bin
+[2026-09-28 13:25:41.171] [DEBUG]       Parsing defs/experience.def from experience.bin
+[2026-09-28 13:25:41.441] [DEBUG]       Parsing defs/schedules.def from schedules.bin
+[2026-09-28 13:25:41.681] [DEBUG]       Parsing defs/attrib_descriptions.def from attrib_descriptions.bin
+[2026-09-28 13:25:42.012] [INFO] Loaded miscellaneous
+[2026-09-28 13:25:42.063] [DEBUG] Adding defines
+[2026-09-28 13:25:42.131] [INFO] Added defines
+[2026-09-28 13:25:42.190] [DEBUG] Loading power dictionary and boost sets
+[2026-09-28 13:25:42.338] [DEBUG]       defs
+[2026-09-28 13:25:43.849] [DEBUG]       defs
+[2026-09-28 13:25:45.002] [DEBUG]       defs
+[2026-09-28 13:27:58.111] [DEBUG]       Parsing defs/replacepowernames.def from replacepowernames.bin
+[2026-09-28 13:28:03.147] [DEBUG]       Set folder cache callback for defs/powers/*.powers
+[2026-09-28 13:28:03.356] [DEBUG]       Set folder cache callback for menu/Powers/AnimFX/*.pfx
+[2026-09-28 13:28:03.511] [INFO] Loaded power dictionary and boost sets
+[2026-09-28 13:28:03.626] [DEBUG] Loading hero classes
+[2026-09-28 13:28:04.143] [INFO] Loaded hero classes
+[2026-09-28 13:28:04.257] [DEBUG] Loaded inventory attribute files
+[2026-09-28 13:28:05.225] [INFO] Loaded inventory attribute files
+[2026-09-28 13:28:05.380] [DEBUG] Loading base data
+[2026-09-28 13:28:05.450] [DEBUG]       Parsing .details from details.bin
+[2026-09-28 13:28:05.640] [DEBUG]       defs
+[2026-09-28 13:28:05.776] [DEBUG]       Parsing .cats from detailcats.bin
+[2026-09-28 13:28:06.114] [DEBUG]       defs
+[2026-09-28 13:28:06.153] [DEBUG]       Parsing .category from roomcategories.bin
+[2026-09-28 13:28:06.411] [DEBUG]       defs
+[2026-09-28 13:28:06.447] [DEBUG]       Parsing .template from roomtemplates.bin
+[2026-09-28 13:28:06.703] [DEBUG]       defs
+[2026-09-28 13:28:06.755] [DEBUG]       Parsing .plot from plots.bin
+[2026-09-28 13:28:06.973] [DEBUG]       defs
+[2026-09-28 13:28:07.014] [DEBUG]       Parsing defs/v_bases/baseupkeep.def from baseupkeep.bin
+[2026-09-28 13:28:07.324] [INFO] Loaded base data
+[2026-09-28 13:28:07.375] [DEBUG] Loading villain classes
+[2026-09-28 13:28:08.648] [INFO] Loaded villain classes
+[2026-09-28 13:28:08.795] [DEBUG] Loading salvage
+[2026-09-28 13:28:09.931] [INFO] Loaded salvage
+[2026-09-28 13:28:10.026] [DEBUG] Loading recipes
+[2026-09-28 13:28:10.096] [DEBUG]       Parsing .recipe from baserecipes.bin
+[2026-09-28 13:28:10.293] [DEBUG]       defs
+[2026-09-28 13:28:11.458] [INFO] Loaded recipes
+[2026-09-28 13:28:11.561] [INFO] Loaded text links
+[2026-09-28 13:28:11.708] [DEBUG] Loading arena maps list
+[2026-09-28 13:28:11.913] [DEBUG]       Parsing defs/generic/arenamaps.def from arenamaps.bin
+[2026-09-28 13:28:13.864] [INFO] Loaded arena maps list
+                                                        (159.23)
+bpReadBodyPartFiles()[2026-09-28 13:28:14.150] [DEBUG]  Parsing .bp from BodyParts.bin
+[2026-09-28 13:28:14.346] [DEBUG]       Defs
+                                                 (0.35)
+loadCostumes()
+  Loading Costume...[2026-09-28 13:28:14.513] [DEBUG]   Parsing Menu/Costume/Localized/costume.ctm from costume.bin
+[2026-09-28 13:28:20.723] [DEBUG]       Parsing Menu/Costume/ColorPalettes/supergroupColors.ctm from supergroupColors.bin
+[2026-09-28 13:28:20.991] [DEBUG]       Parsing Menu/Costume/TailorCost.ctm from tailorcost.bin
+                                                  (6.86)
+[2026-09-28 13:28:21.371] [DEBUG]       Parsing Menu/PowerCustomization/powercustomizationcost.ctm from powercustomizationcost.bin
+[2026-09-28 13:28:21.663] [DEBUG]       Parsing Defs/powercustomizationmenu.def from powercustomizationmenu.bin
+                                                                      (7.59)
+[2026-09-28 13:28:22.125] [INFO] Connecting to DBServer 127.0.0.1:7000 (UDP) Cookie: 0
+
+CHECKSUM (Z:/state/diagnostic/game-5a442b4cf12a/TestClientCreate.exe):
+  576148d8 db6dab94 22a56dd7 d66a168
+simulateCharacterCreate()
+Chose origin Natural
+Chose class Class_Dominator
+Cat 0: Chose powerset Electric_Control
+Cat 0: Chose power Tesla_Cage
+Cat 1: Chose powerset Earth_Assault
+Cat 1: Chose power Stone_Spears
+Creating character with fake auth; skipping AccountServer slot redemption.
+Creating character...
+[2026-09-28 13:28:22.770] [INFO] Connecting to MapServer 127.0.0.1:7001 (UDP) Cookie: 190c773c
+dialogTimed: <face heading><span align=center>Welcome to Atlas Park!</span></face><br>All heroes should talk to Matthew Habashy to get their first mission.  He is standing in front of the steps of Cit
+y Hall.  <br><br>As you level up or would like to make adjustments to your costume, see Ms. Liberty in front of the Atlas Statue.  Tailors can also be found at Icon.
+done                                                                  (1.06)
+Map: maps/City_Zones/City_01_01/City_01_01.txt
+Total time to launch TestClient : 171
+Press Esc to exit...
+Total bytes/pkts read/sent: 34175(36) / 1672(9)
+MESSAGE FROM LAUNCHER: CMD influence 12345
+MESSAGE FROM LAUNCHER: CMD debug "TEST05026"
+ [con:]
+Player:    TEST05026
+Global Handle:
+Login:     CohAe8d3fca874
+Origin:    Natural
+Archetype: Class_Dominator
+Player Type: Hero
+Praetorian Progress: Primal-Born
+Total Time: 0:01
+Level (Base-1):     1/1
+XP/Debt/Rest:   0 / 0 / 0
+Influence Type: Hero
+Current cash: 12345 (Influence)
+Respec:  c 0
+Map:       maps/City_Zones/City_01_01/City_01_01.txt
+Mission -       (none)
+Storyarcs -
+        (none)
+
+Power Sets:     Electric_Control, Earth_Assault
+attentionText: FloatEarnedBadge
+MESSAGE FROM LAUNCHER: CMD quit
+dialog: QuitNow
+

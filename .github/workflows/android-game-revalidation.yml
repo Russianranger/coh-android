@@ -1,0 +1,38 @@
+name: Revalidate completed Atlas evidence
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/android-game-revalidation.yml'
+      - 'tools/android/game/host_game_smoke.py'
+      - 'tools/android/game/revalidate_game_artifact.py'
+      - 'tools/android/game/test_host_game_smoke.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  immutable-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify report and capture contracts
+        run: python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+      - name: Retrieve the exact completed runtime artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p out
+          curl --fail --silent --show-error --location --retry 3 --connect-timeout 20 --max-time 120 \
+            -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/10973022843/zip" \
+            --output out/original-atlas-evidence.zip
+      - name: Validate unchanged runtime evidence and publish independent receipt
+        run: python3 tools/android/game/revalidate_game_artifact.py --archive out/original-atlas-evidence.zip --receipt out/revalidated-atlas.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: revalidated-atlas-36424870915
+          path: out/revalidated-atlas.json
+          if-no-files-found: error

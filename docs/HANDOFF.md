@@ -1,5 +1,13 @@
 # City of Heroes Android handoff
 
+Recovery checkpoint: run `36424870915` completed the full hosted ARM64 Atlas
+save/restart/exact-name-resume/second-save sequence, all 18 guest stages and
+complete cleanup. Its final host check incorrectly required a nonexistent bridge
+JSON field. The corrected validator passes the original immutable report and
+all capture files locally; independent CI replay is being published. See
+[recovery details](ATLAS_RECOVERY_20260928.md). The original workflow's failed
+conclusion is retained. Startup reliability and an Android game APK remain open.
+
 Updated: 2026-09-28 (UTC). PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
 generation have passed their current checks. Normal fixture-OFF DbServer schema
@@ -35,7 +43,8 @@ zero remaining owned processes or inspection errors. The
 binds the reports and inputs. Physical Android DbServer execution, Android
 presentation and game rendering remain unvalidated. Managed Atlas MapServer and
 diagnostic TestClient execution are now implemented in the separate
-[hosted Atlas gate](ANDROID_GAME_RUNTIME.md); its actual ARM64 run is pending.
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md); its completed ARM64 execution and
+host validator correction are recorded in the recovery checkpoint above.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -64,8 +73,10 @@ startup query before reaching restart. Its companion diagnostic workflow
 `36419952339` passed all five jobs. Native capture from continuation run
 `36420158506` returned contexts, but they are not validated current execution:
 the captured RaiseException registers disagree with the accompanying stack.
-Direct DbServer dispatch progress is the next useful diagnostic. No Android game APK is
-yet qualified; retain the accepted Thor 0.1.5 device baseline.
+Run `36424870915` subsequently completed both saves and exact-name resume;
+see the checkpoint at the top for its host validator correction. Direct
+DbServer dispatch progress remains useful for intermittent startup failures.
+No Android game APK is yet qualified; retain the accepted Thor 0.1.5 device baseline.
 
 ## Continuation validation checkpoint
 

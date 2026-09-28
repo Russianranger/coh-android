@@ -1,0 +1,121 @@
+(692) Z:/state/diagnostic/game-5a442b4cf12a/TestClientResume.exe
+cmdline args: -db 127.0.0.1 -fakeauth -authname CohAe8d3fca874 -dontpause -nosharedmemory -resumeonly -character TEST05026
+Working directory: Z:\state\diagnostic\game-5a442b4cf12a
+Memory startup...
+ ** WARN **: Not using shared memory due to -nosharedmemory
+Misc startup...
+Will attempt to resume character TEST05026...
+                                                      (0.10)
+Pigs/Foldercache...                                                   (0.12)
+Connecting as CohAe8d3fca874...
+PipeClientCreate("TestClientLauncher", ".")...getting version from launcher: coh-persistence-diagnostic
+                        (0.08)
+Networking startup...[2026-09-28 13:32:03.243] [DEBUG] Reading from bin/authmsg-en.bin
+                                                 (0.22)
+load_AllDefs()[2026-09-28 13:32:03.468] [DEBUG]         Parsing .statebits from seqstatebits.bin
+[2026-09-28 13:32:03.706] [DEBUG] Loading attribute names
+[2026-09-28 13:32:03.766] [DEBUG]       Parsing defs/attrib_names.def from attrib_names.bin
+[2026-09-28 13:32:03.892] [INFO] Loaded attribute names
+[2026-09-28 13:32:03.935] [DEBUG]       Parsing defs/visionPhases.def from visionPhases.bin
+[2026-09-28 13:32:04.073] [DEBUG] Loading vision phase names
+[2026-09-28 13:32:04.122] [DEBUG]       Parsing defs/visionPhasesExclusive.def from visionPhasesExclusive.bin
+[2026-09-28 13:32:04.299] [INFO] Loaded vision phase names
+[2026-09-28 13:32:04.356] [DEBUG] Loading hero origins
+[2026-09-28 13:32:04.412] [DEBUG]       Parsing defs/origins.def from origins.bin
+[2026-09-28 13:32:04.527] [INFO] Loaded hero origins
+[2026-09-28 13:32:04.569] [DEBUG] Loading badges
+[2026-09-28 13:32:04.622] [DEBUG]       Parsing defs/badges.def from badges.bin
+[2026-09-28 13:32:04.940] [INFO] Loaded badges
+[2026-09-28 13:32:04.968] [DEBUG] Loading miscellaneous
+[2026-09-28 13:32:05.030] [DEBUG]       Parsing defs/CustomCritterRewardMods.def from CustomCritterRewardMods.bin
+[2026-09-28 13:32:05.222] [DEBUG]       Parsing defs/PowersetConversion.def from PowersetConversion.bin
+[2026-09-28 13:32:05.387] [DEBUG]       Parsing defs/auctionconfig.def from auctionconfig.bin
+[2026-09-28 13:32:05.529] [DEBUG]       Parsing defs/account/product_catalog.def from product_catalog.bin
+[2026-09-28 13:32:05.709] [DEBUG]       Parsing defs/combine_chances.def from combine_chances.bin
+[2026-09-28 13:32:05.860] [DEBUG]       Parsing defs/combine_same_set_chances.def from combine_same_set_chances.bin
+[2026-09-28 13:32:06.043] [DEBUG]       Parsing defs/boost_effect_above.def from boost_effect_above.bin
+[2026-09-28 13:32:06.215] [DEBUG]       Parsing defs/boost_effect_below.def from boost_effect_below.bin
+[2026-09-28 13:32:06.376] [DEBUG]       Parsing defs/combine_booster_chances.def from combine_booster_chances.bin
+[2026-09-28 13:32:06.554] [DEBUG]       Parsing defs/boost_effect_boosters.def from boost_effect_boosters.bin
+[2026-09-28 13:32:06.730] [DEBUG]       Parsing defs/exemplar_handicaps.def from exemplar_handicaps.bin
+[2026-09-28 13:32:06.889] [DEBUG]       Parsing defs/experience.def from experience.bin
+[2026-09-28 13:32:07.013] [DEBUG]       Parsing defs/schedules.def from schedules.bin
+[2026-09-28 13:32:07.132] [DEBUG]       Parsing defs/attrib_descriptions.def from attrib_descriptions.bin
+[2026-09-28 13:32:07.306] [INFO] Loaded miscellaneous
+[2026-09-28 13:32:07.363] [DEBUG] Adding defines
+[2026-09-28 13:32:07.415] [INFO] Added defines
+[2026-09-28 13:32:07.441] [DEBUG] Loading power dictionary and boost sets
+[2026-09-28 13:32:07.546] [DEBUG]       Parsing defs/dim_returns.def from dim_returns.bin
+[2026-09-28 13:32:07.696] [DEBUG]       Parsing .categories from powercats.bin
+[2026-09-28 13:32:08.481] [DEBUG]       Parsing .powersets from powersets.bin
+[2026-09-28 13:32:09.308] [DEBUG]       Parsing .powers from powers.bin
+[2026-09-28 13:32:47.335] [DEBUG]       Parsing defs/replacepowernames.def from replacepowernames.bin
+[2026-09-28 13:32:47.492] [DEBUG]       Parsing defs/boostsets/boostsets.def from boostsets.bin
+[2026-09-28 13:32:48.105] [DEBUG]       Parsing defs/boostsets/conversionsets.def from conversionsets.bin
+[2026-09-28 13:32:48.281] [DEBUG]       Set folder cache callback for defs/powers/*.powers
+[2026-09-28 13:32:48.394] [DEBUG]       Set folder cache callback for menu/Powers/AnimFX/*.pfx
+[2026-09-28 13:32:48.512] [INFO] Loaded power dictionary and boost sets
+[2026-09-28 13:32:48.606] [DEBUG] Loading hero classes
+[2026-09-28 13:32:48.649] [DEBUG]       Parsing defs/classes.def from classes.bin
+[2026-09-28 13:32:48.908] [INFO] Loaded hero classes
+[2026-09-28 13:32:48.944] [DEBUG] Loaded inventory attribute files
+[2026-09-28 13:32:49.024] [DEBUG]       Parsing defs/dbidmaps/InvSalvage.dbidmap from InvSalvage.bin
+[2026-09-28 13:32:49.199] [DEBUG]       Parsing defs/dbidmaps/InvConcept.dbidmap from InvConcept.bin
+[2026-09-28 13:32:49.356] [DEBUG]       Parsing defs/dbidmaps/InvRecipe.dbidmap from InvRecipe.bin
+[2026-09-28 13:32:49.514] [DEBUG]       Parsing defs/dbidmaps/InvBaseDetail.dbidmap from InvBaseDetail.bin
+[2026-09-28 13:32:49.677] [DEBUG]       Parsing defs/dbidmaps/InvStoredSalvage.dbidmap from InvStoredSalvage.bin
+[2026-09-28 13:32:49.874] [INFO] Loaded inventory attribute files
+[2026-09-28 13:32:49.960] [DEBUG] Loading base data
+[2026-09-28 13:32:49.995] [DEBUG]       Parsing .details from details.bin
+[2026-09-28 13:32:50.110] [DEBUG]       Parsing .cats from detailcats.bin
+[2026-09-28 13:32:50.218] [DEBUG]       Parsing .category from roomcategories.bin
+[2026-09-28 13:32:50.324] [DEBUG]       Parsing .template from roomtemplates.bin
+[2026-09-28 13:32:50.451] [DEBUG]       Parsing .plot from plots.bin
+[2026-09-28 13:32:50.548] [DEBUG]       Parsing defs/v_bases/baseupkeep.def from baseupkeep.bin
+[2026-09-28 13:32:50.701] [INFO] Loaded base data
+[2026-09-28 13:32:50.748] [DEBUG] Loading villain classes
+[2026-09-28 13:32:50.817] [DEBUG]       Parsing defs/villain_classes.def from villain_classes.bin
+[2026-09-28 13:32:51.352] [INFO] Loaded villain classes
+[2026-09-28 13:32:51.394] [DEBUG] Loading salvage
+[2026-09-28 13:32:51.451] [DEBUG]       Parsing defs/Invention/Salvage.salvage from Salvage.bin
+[2026-09-28 13:32:51.607] [DEBUG]       Parsing defs/ProficiencyIds.dbidmap from ProficiencyIds.bin
+[2026-09-28 13:32:51.769] [DEBUG]       Parsing defs/Invention/Proficiencies.proficiency from Proficiencies.bin
+[2026-09-28 13:32:51.953] [INFO] Loaded salvage
+[2026-09-28 13:32:51.996] [DEBUG] Loading recipes
+[2026-09-28 13:32:52.030] [DEBUG]       Parsing .recipe from baserecipes.bin
+[2026-09-28 13:32:53.390] [INFO] Loaded recipes
+[2026-09-28 13:32:53.419] [INFO] Loaded text links
+[2026-09-28 13:32:53.474] [DEBUG] Loading arena maps list
+[2026-09-28 13:32:53.534] [DEBUG]       Parsing defs/generic/arenamaps.def from arenamaps.bin
+[2026-09-28 13:32:53.693] [INFO] Loaded arena maps list
+                                                        (50.40)
+bpReadBodyPartFiles()[2026-09-28 13:32:53.875] [DEBUG]  Parsing .bp from BodyParts.bin
+                                                 (0.19)
+loadCostumes()
+  Loading Costume...[2026-09-28 13:32:54.082] [DEBUG]   Parsing Menu/Costume/Localized/costume.ctm from costume.bin
+[2026-09-28 13:32:59.320] [DEBUG]       Parsing Menu/Costume/ColorPalettes/supergroupColors.ctm from supergroupColors.bin
+[2026-09-28 13:32:59.519] [DEBUG]       Parsing Menu/Costume/TailorCost.ctm from tailorcost.bin
+                                                  (5.72)
+[2026-09-28 13:32:59.793] [DEBUG]       Parsing Menu/PowerCustomization/powercustomizationcost.ctm from powercustomizationcost.bin
+[2026-09-28 13:33:00.021] [DEBUG]       Parsing Defs/powercustomizationmenu.def from powercustomizationmenu.bin
+                                                                      (6.26)
+[2026-09-28 13:33:00.353] [INFO] Connecting to DBServer 127.0.0.1:7000 (UDP) Cookie: 0
+
+CHECKSUM (Z:/state/diagnostic/game-5a442b4cf12a/TestClientResume.exe):
+  542fa966 caff9cb1 239dddc3 29ec41f0
+Searching for TEST05026 in character list...
+ 0 - TEST05026
+Found character TEST05026 in slot 0
+COH_RESUME_ONLY_SELECTED slot=0 name=TEST05026
+Resuming character in slot 0...                                       (0.51)
+[2026-09-28 13:33:01.245] [INFO] Connecting to MapServer 127.0.0.1:7001 (UDP) Cookie: 8581a5c7
+commReqScene()
+                                                                      (0.38)
+Map: maps/City_Zones/City_01_01/City_01_01.txt
+Total time to launch TestClient : 60.4
+Press Esc to exit...
+Total bytes/pkts read/sent: 35585(37) / 512(9)
+COH_RESUME_ONLY_SERVER_UPDATE id=1 name=TEST05026
+MESSAGE FROM LAUNCHER: CMD quit
+dialog: QuitNow
+

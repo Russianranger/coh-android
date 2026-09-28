@@ -1,13 +1,17 @@
 # Hosted Atlas character persistence on ARM64
 
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md).
-Complete ARM64 qualification is pending. Run `36416020268` passed Atlas
-readiness, fresh creation, live influence 12345 and the first committed
-protocol-logout save, then failed a TCP port preflight during restart. The
-isolated recovery fixed and reproduced that TIME_WAIT false failure. Run
-`36419952350` passed tooling and bridge build, but hit the intermittent startup
-stall before reaching restart; the full sequence remains unqualified. See the
-[recovery checkpoint](ATLAS_RECOVERY_20260928.md) and hash-verified reports.
+Run `36424870915` completed all 18 ARM64 guest stages: Atlas readiness,
+fresh creation, live influence 12345, committed protocol logout, same-cluster
+service restart, exact-name resume and a second committed save. All 128 process
+captures closed and owned cleanup passed. Its original workflow remains red
+because the host validator required a `child_exited` field that the format-1
+bridge never emits. The corrected validator checks the real verified uint32
+exit code, excluding `STILL_ACTIVE` (259), and passes against the unchanged,
+hash-verified report and every exported capture. Independent CI revalidation
+is being published. See the [recovery checkpoint](ATLAS_RECOVERY_20260928.md).
+Startup reliability remains under investigation; this successful attempt had
+one readiness query take 86.757 seconds within the existing 90-second limit.
 The accepted Thor 0.1.5 diagnostic APK remains the device baseline.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
@@ -106,10 +110,14 @@ inspection errors. The [failure receipt](android-evidence/game-runtime-failure-3
 and [raw report](android-evidence/game-arm64-failed-36375412599.json) preserve
 these facts. Character execution did not begin.
 
-The next bounded diagnostic must capture simultaneous owned DbServer, Atlas
-and status-query thread stacks, socket state, and exact last PostgreSQL query
-text before cleanup. In particular, distinguish whether DbServer dispatched
-the AutoCommands request and reached its foreground
-`SELECT dbo.AutoCommands.ContainerId FROM dbo.AutoCommands ORDER BY containerid`.
-No further deadline increase or runtime source change is justified yet.
-The create/save/restart/resume milestone remains unqualified.
+Subsequent recovery runs captured socket state and exact last PostgreSQL query
+text before cleanup. A separate native observer also returned thread contexts,
+but comparison against the exact Wine binaries found inconsistent registers
+and stack memory: these can be cached FEX/WOW64 contexts, not current execution.
+See [the recovery evidence](ATLAS_RECOVERY_20260928.md). The useful next diagnostic
+is direct DbServer main-thread dispatch progress, including foreground SQL,
+network monitoring and console operations. It must distinguish whether the
+AutoCommands request reaches its foreground enumeration query. No further
+deadline increase or functional runtime patch is supported by the evidence.
+The complete guest restart/resume sequence subsequently passed in run
+`36424870915`; its corrected host evidence validation is tracked above.

@@ -1,0 +1,16 @@
+{"sequence":1,"kind":"BridgeStarted","value":"692","raw":"","elapsed_ms":78}
+{"sequence":2,"kind":"PID","value":"692","raw":"PID: 692","elapsed_ms":2581}
+{"sequence":3,"kind":"Host","value":"RUNNERVMOYP6C","raw":"Host: RUNNERVMOYP6C","elapsed_ms":2582}
+{"sequence":4,"kind":"Status","value":"Loading","raw":"Status: Loading","elapsed_ms":2596}
+{"sequence":5,"kind":"AuthName","value":"CohAe8d3fca874","raw":"AuthName: CohAe8d3fca874","elapsed_ms":2597}
+{"sequence":6,"kind":"VersionRequest","value":"NULL","raw":"VersionRequest: NULL","elapsed_ms":2599}
+{"sequence":7,"kind":"VersionReply","value":"coh-persistence-diagnostic","raw":"coh-persistence-diagnostic","elapsed_ms":2620}
+{"sequence":8,"kind":"Status","value":"Connecting","raw":"Status: Connecting","elapsed_ms":59788}
+{"sequence":9,"kind":"ChatText","value":"Destination shard error from server (AccountClientNoServer) - restarting","raw":"ChatText:Destination shard error from server (AccountClientNoServer) - restarting","elapsed_ms":60008}
+{"sequence":10,"kind":"ChatText","value":"Destination shard error from server (AccountClientNoServer) - restarting","raw":"ChatText:Destination shard error from server (AccountClientNoServer) - restarting","elapsed_ms":60010}
+{"sequence":11,"kind":"MapName","value":"maps/City_Zones/City_01_01/City_01_01.txt","raw":"MapName: maps/City_Zones/City_01_01/City_01_01.txt","elapsed_ms":61343}
+{"sequence":12,"kind":"Player","value":"TEST05026","raw":"Player: TEST05026","elapsed_ms":61345}
+{"sequence":13,"kind":"HP","value":"99.0/99.0","raw":"HP: 99.0/99.0","elapsed_ms":61346}
+{"sequence":14,"kind":"Status","value":"Running","raw":"Status: Running","elapsed_ms":61348}
+{"sequence":15,"kind":"Command","value":"CMD quit","raw":"CMD quit","elapsed_ms":65609,"command_sequence":1}
+{"sequence":16,"kind":"QuitNow","value":"","raw":"QuitNow:","elapsed_ms":65669}

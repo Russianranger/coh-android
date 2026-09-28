@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "run_id": 36425508780,
+  "repository_commit": "41f3aff596826e22e2774375e11590de895ca33d",
+  "status": "passed",
+  "artifact": {
+    "id": 10971721309,
+    "bytes": 530914,
+    "sha256": "0b4db39080174eaf09d762d8412646a24a5e1e427d76db5c2bc50a08cf1e1e07"
+  },
+  "package_artifact": {
+    "id": 10971339041,
+    "bytes": 2180596,
+    "sha256": "735eb729fab9f4ff0876c2351b1ba65a5de2e37da0feef99dd6e6f939de86458"
+  },
+  "raw_report": {
+    "archive_member": "android/dbserver-evidence/dbserver-runtime-report.json",
+    "bytes": 168904,
+    "sha256": "760dddfcd87d12cd801ddc7d5704220f50f18a379088ccb950cee010729a17e1"
+  },
+  "package_manifest_sha256": "656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632",
+  "normal_executable_sha256": "3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830",
+  "fixture_checks": 21,
+  "arm64_stages": 28,
+  "cleanup_complete": true,
+  "remaining_owned_processes": 0,
+  "inspection_failures": 0,
+  "scope": "This separately maintained continuation binary contains opt-in dispatch markers. Its existing persistence and schema gate passed with the observer disabled; the four live Windows producer tests passed. It has not yet proved enabled marker publication under FEX, Atlas startup reliability, full save/restart/resume, or Android game execution. This recovery branch does not include that source change."
+}

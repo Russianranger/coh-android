@@ -1,0 +1,1 @@
+{"capture_byte_limit": 16777216, "child_exit_code": 125, "child_forced_stop": true, "child_pid": 1240, "command_count": 3, "console_snapshots": 1578, "error": null, "event_byte_limit": 8388608, "event_count": 20, "final_snapshot": true, "format": 1, "pipe_disconnected": true, "pipe_framing_complete": true, "version_requests": 1}

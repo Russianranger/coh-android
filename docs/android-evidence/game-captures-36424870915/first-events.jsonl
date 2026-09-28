@@ -1,0 +1,20 @@
+{"sequence":1,"kind":"BridgeStarted","value":"1240","raw":"","elapsed_ms":84}
+{"sequence":2,"kind":"PID","value":"1240","raw":"PID: 1240","elapsed_ms":2931}
+{"sequence":3,"kind":"Host","value":"RUNNERVMOYP6C","raw":"Host: RUNNERVMOYP6C","elapsed_ms":2933}
+{"sequence":4,"kind":"Status","value":"Loading","raw":"Status: Loading","elapsed_ms":2935}
+{"sequence":5,"kind":"AuthName","value":"CohAe8d3fca874","raw":"AuthName: CohAe8d3fca874","elapsed_ms":2936}
+{"sequence":6,"kind":"VersionRequest","value":"NULL","raw":"VersionRequest: NULL","elapsed_ms":2938}
+{"sequence":7,"kind":"VersionReply","value":"coh-persistence-diagnostic","raw":"coh-persistence-diagnostic","elapsed_ms":2948}
+{"sequence":8,"kind":"Status","value":"Connecting","raw":"Status: Connecting","elapsed_ms":170561}
+{"sequence":9,"kind":"ChatText","value":"Destination shard error from server (AccountClientNoServer) - restarting","raw":"ChatText:Destination shard error from server (AccountClientNoServer) - restarting","elapsed_ms":170839}
+{"sequence":10,"kind":"ChatText","value":"Destination shard error from server (AccountClientNoServer) - restarting","raw":"ChatText:Destination shard error from server (AccountClientNoServer) - restarting","elapsed_ms":170840}
+{"sequence":11,"kind":"MapName","value":"maps/City_Zones/City_01_01/City_01_01.txt","raw":"MapName: maps/City_Zones/City_01_01/City_01_01.txt","elapsed_ms":172038}
+{"sequence":12,"kind":"Player","value":"TEST05026","raw":"Player: TEST05026","elapsed_ms":172092}
+{"sequence":13,"kind":"HP","value":"99.0/99.0","raw":"HP: 99.0/99.0","elapsed_ms":172093}
+{"sequence":14,"kind":"Status","value":"Running","raw":"Status: Running","elapsed_ms":172094}
+{"sequence":15,"kind":"Command","value":"CMD influence 12345","raw":"CMD influence 12345","elapsed_ms":176217,"command_sequence":1}
+{"sequence":16,"kind":"Command","value":"CMD debug \"TEST05026\"","raw":"CMD debug \"TEST05026\"","elapsed_ms":176425,"command_sequence":2}
+{"sequence":17,"kind":"ChatText","value":"conPrintf:0:\nPlayer:    TEST05026 \nGlobal Handle:     \nLogin:     CohAe8d3fca874 \nOrigin:    Natural \nArchetype: Class_Dominator \nPlayer Type: Hero \nPraetorian Progress: Primal-Born \nTotal Time: 0:01 \nLevel (Base-1):     1/1 \nXP/Debt/Rest:   0 / 0 / 0\nInfluence Type: Hero \nCurrent cash: 12345 (Influence)\nRespec:  c 0\nMap:       maps/City_Zones/City_01_01/City_01_01.txt \nMission - \t(none)\nStoryarcs -\n\t(none)\n\nPower Sets:\tElectric_Control, Earth_Assault","raw":"ChatText:conPrintf:0:\nPlayer:    TEST05026 \nGlobal Handle:     \nLogin:     CohAe8d3fca874 \nOrigin:    Natural \nArchetype: Class_Dominator \nPlayer Type: Hero \nPraetorian Progress: Primal-Born \nTotal Time: 0:01 \nLevel (Base-1):     1/1 \nXP/Debt/Rest:   0 / 0 / 0\nInfluence Type: Hero \nCurrent cash: 12345 (Influence)\nRespec:  c 0\nMap:       maps/City_Zones/City_01_01/City_01_01.txt \nMission - \t(none)\nStoryarcs -\n\t(none)\n\nPower Sets:\tElectric_Control, Earth_Assault","elapsed_ms":177144}
+{"sequence":18,"kind":"ChatText","value":"attentionText:0:FloatEarnedBadge","raw":"ChatText:attentionText:0:FloatEarnedBadge","elapsed_ms":179823}
+{"sequence":19,"kind":"Command","value":"CMD quit","raw":"CMD quit","elapsed_ms":180439,"command_sequence":3}
+{"sequence":20,"kind":"QuitNow","value":"","raw":"QuitNow:","elapsed_ms":180477}

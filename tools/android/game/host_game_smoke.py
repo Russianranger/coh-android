@@ -201,6 +201,9 @@ def map_ready(value):
 
 def validate_session(session):
     ready, result = session.get("ready", {}), session.get("result", {})
+    # Format 1 writes an integer only after GetExitCodeProcess confirms the
+    # launched child is no longer STILL_ACTIVE. It has no child_exited field.
+    exit_code = result.get("child_exit_code")
     require(session.get("proof_completed_before_stop") is True and ready.get("format") == result.get("format") == 1
             and type(ready.get("child_pid")) is int and 0 < ready["child_pid"] <= 0xffffffff
             and type(ready.get("transport_pid")) is int and ready["transport_pid"] == ready["child_pid"]
@@ -209,8 +212,9 @@ def validate_session(session):
                     "protocol_pid_verified", "initial_snapshot"))
             and result.get("error") is None and result.get("final_snapshot") is True
             and result.get("pipe_framing_complete") is True
-            and result.get("pipe_disconnected") is True and result.get("child_exited") is True
-            and type(result.get("child_exit_code")) is int and type(result.get("child_forced_stop")) is bool,
+            and result.get("pipe_disconnected") is True
+            and type(exit_code) is int and 0 <= exit_code <= 0xffffffff and exit_code != 259
+            and type(result.get("child_forced_stop")) is bool,
             "TestClient bridge lacks completed identity-bound observation and final capture")
     require(ready.get("buffer_rows_limit") == 16384
             and all(type(item.get("version_requests")) is int and item["version_requests"] == 1

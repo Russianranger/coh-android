@@ -289,7 +289,7 @@ class ReportTests(unittest.TestCase):
                  "event_byte_limit": 8*1024*1024}
         result = {"format": 1, "child_pid": 120, "child_exit_code": 0, "child_forced_stop": True,
                   "error": None, "final_snapshot": True, "pipe_framing_complete": True, "version_requests": 1,
-                  "pipe_disconnected": True, "child_exited": True,
+                  "pipe_disconnected": True,
                   "command_count": 3, "event_count": 15, "console_snapshots": 20,
                   "capture_byte_limit": 16*1024*1024, "event_byte_limit": 8*1024*1024}
         session = {"proof_completed_before_stop": True, "ready": ready, "result": result,
@@ -355,7 +355,7 @@ class ReportTests(unittest.TestCase):
                      lambda r: r["game"]["sessions"]["first"]["ready"].update(transport_pid=121),
                      lambda r: r["game"]["sessions"]["second"]["result"].update(final_snapshot=False),
                      lambda r: r["game"]["sessions"]["second"]["result"].update(pipe_disconnected=False),
-                     lambda r: r["game"]["sessions"]["second"]["result"].update(child_exited=False),
+                     lambda r: r["game"]["sessions"]["second"]["result"].update(child_exit_code=259),
                      lambda r: r["game"]["sessions"]["second"].update(proof_completed_before_stop=False)]
         for index, mutate in enumerate(mutations):
             with self.subTest(case=index):
@@ -364,6 +364,17 @@ class ReportTests(unittest.TestCase):
                 mutate(report)
                 with self.assertRaises(RuntimeError):
                     host.validate_report(report, expected=expected)
+
+    def test_real_bridge_format_one_requires_a_completed_uint32_exit_code(self):
+        raw = json.loads((host.ROOT / 'docs/android-evidence/game-arm64-completed-36424870915.json').read_text())
+        for session in raw['game']['sessions'].values():
+            self.assertNotIn('child_exited', session['result'])
+            host.validate_session(session)
+            for invalid in (None, True, False, -1, 259, 0x100000000, '125'):
+                changed = copy.deepcopy(session)
+                changed['result']['child_exit_code'] = invalid
+                with self.subTest(exit_code=invalid), self.assertRaises(RuntimeError):
+                    host.validate_session(changed)
 
 
 class CaptureTests(unittest.TestCase):
