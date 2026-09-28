@@ -115,9 +115,11 @@ Android power-management state.
 
 ## Next gate
 
-Integrate the qualified local listener package into the Atlas game runtime and requalify
-that combined package before delivering a game-server device candidate. Preserve
-the accepted Atlas donor and evidence until the replacement has passed.
+The qualified local listener package passed the combined hosted Atlas sequence in
+[run 36493722153](android-evidence/accepted-game-loopback-hosted-36493722153.json).
+Next, prepare MapServer/TestClient local binding support, verified asset import
+and Android Atlas lifecycle integration before delivering a game-server device
+candidate. Preserve both accepted diagnostics and the historical Atlas evidence.
 Physical Atlas execution, interactive rendering, controls, audio, missions and
 combat remain separate unvalidated milestones. The separate earlier intermittent
 hosted fixture signal-11 failure is not claimed repaired by this candidate.

@@ -21,7 +21,7 @@ passed all 21 real persistence check groups across 14 fixture invocations, then
 two normal fixture-OFF exports with 99 tables, 5,935 ordered columns and 58,272
 exact attribute IDs/names. The catalog remained stable on reload and owned cleanup
 completed. See the [qualification and evidence](docs/ANDROID_DBSERVER.md).
-Physical Android DbServer execution remains unvalidated; the 0.1.5 APK is unchanged.
+Physical Android DbServer execution subsequently passed with 0.2.0, as recorded below.
 
 **The full hosted Atlas Park gate passed on ARM64 Wine/FEX.**
 [Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)
@@ -132,9 +132,13 @@ binds its exact payloads and reports. The subsequent
 records two full 28-stage passes and a clean Stop between them, with all local
 DbServer endpoints and owned cleanup verified. App switching and screen locking
 are user-attested; peak memory is unmeasured.
-The hosted Atlas gate is complete. The separate loopback DbServer package is
-[hosted-qualified](docs/android-evidence/accepted-dbserver-hosted-36460867428.json);
-the next gate combines it with Atlas in a separate hosted qualification.
+The loopback DbServer package also passed the full hosted Atlas sequence in
+[run 36493722153](https://github.com/Russianranger/coh-android/actions/runs/36493722153):
+all three jobs and 18 runtime stages, both local DbServer starts, two committed
+saves and exact-character resume, with all 122 captures closed and clean cleanup.
+The [combined receipt](docs/android-evidence/accepted-game-loopback-hosted-36493722153.json)
+preserves independent evidence verification. Next comes MapServer/TestClient
+local binding support, verified asset import and Android Atlas integration.
 Keep the existing 0.1.5 APK
 and runtime, plus the accepted 0.2.0 server test. See the
 [concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The new candidate
@@ -156,8 +160,9 @@ serializer equivalence remain unvalidated. Supplied binary assets stay outside G
 
 The goal remains an Android app running a local server and matching client on
 the AYN Thor. The user has no Windows PC: use hosted Windows builds/reference
-tests and Thor device testing. A diagnostic Android APK is now built; it contains
-no game binaries. See the M2 instructions above for its validation status.
+tests and Thor device testing. The accepted M2 0.1.5 diagnostic contains no game
+binaries; the separate accepted 0.2.0 test includes real DbServer binaries.
+Neither diagnostic launches the full game.
 
 The i25 investigation is now a [deferred alternative](docs/I25_SOURCE_ACQUISITION.md).
 OuroDev access and the `odtoken` secret are not required for this public snapshot.

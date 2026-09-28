@@ -5,8 +5,10 @@ Two complete 28-stage passes surround an intentional, cleanly cancelled run.
 See the [device results](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results)
 and [acceptance receipt](android-evidence/accepted-dbserver-thor-20260928.json).
 App switching and screen locking passed by user attestation; peak memory is
-unmeasured. Keep both accepted installations. The next implementation gate is
-hosted Atlas integration of the qualified loopback DbServer package.
+unmeasured. Keep both accepted installations. The subsequent
+[hosted Atlas loopback integration](ANDROID_GAME_RUNTIME.md#accepted-loopback-dbserver-integration)
+also passed; MapServer/client local binding support and Android Atlas integration
+are the next implementation gates.
 
 ## Earlier M2 diagnostic — 0.1.5
 
@@ -73,10 +75,11 @@ readiness took 3 minutes 14 seconds, so device startup performance remains open.
 The separate loopback DbServer package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json).
 The accepted 0.2.0 app integrates that exact donor and now verifies its physical
-Android execution and local listeners. Continue with a separately identified
-hosted Atlas integration, preserving the prior accepted result.
-The loopback package has not replaced the accepted Atlas donor 36451873322;
-integrating it needs its own game/runtime validation before device acceptance.
+Android execution and local listeners. The separately identified
+[Atlas loopback profile](android-evidence/accepted-game-loopback-hosted-36493722153.json)
+then passed the full hosted game sequence in `36493722153`, preserving the prior
+accepted result and default donor `36451873322`. Continue with
+[MapServer/client binding and Android preparation](ANDROID_GAME_RUNTIME.md#remaining-preparation-for-a-physical-atlas-candidate).
 Preserve the accepted stock Windows reference and immutable upstream source.
 
 This acceptance does not establish CoH gameplay, Android surface presentation,

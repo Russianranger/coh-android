@@ -1,5 +1,12 @@
 # Real DbServer on the ARM64 Wine runtime
 
+**Physical Thor execution passed with COH Server Test 0.2.0.** The
+[device receipt](android-evidence/accepted-dbserver-thor-20260928.json) records
+two complete 28-stage passes, real DbServer loopback binds and clean Stop/rerun.
+App switching and screen locking are user-attested; peak memory is unmeasured.
+The [device results](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results) follow
+the hosted package qualifications preserved below.
+
 This is the first M3 qualification after the [accepted Thor diagnostic](THOR_DEVICE_ACCEPTANCE.md).
 It builds the actual CoH DbServer with a separately identified Wine compatibility
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
@@ -11,7 +18,7 @@ stages and the final host validator. The
 [acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
 records both saves, same-cluster restart and exact-name resume; the
 [runtime details](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow) preserve
-the independently verified evidence. The accepted APK remains 0.1.5.
+the independently verified evidence. Keep accepted 0.1.5 and 0.2.0 installations.
 
 **The opt-in loopback listener package passed hosted Windows and ARM64 qualification.**
 [Run 36460867428](https://github.com/Russianranger/coh-android/actions/runs/36460867428)
@@ -31,8 +38,10 @@ Both fresh exports preserved 99 tables, 5,935 ordered columns, 58,272 exact
 attribute IDs/names and the full catalog. All 111 process captures closed;
 cleanup left zero owned processes or inspection errors. This qualifies the
 hosted [listener-binding prerequisite](../database/wine-dbserver/LOOPBACK_BINDING.md).
-Physical Android listener execution and app integration remain unvalidated;
-Atlas continues to use donor `36451873322`, and the accepted APK remains 0.1.5.
+Physical Android listener execution and app integration subsequently passed in
+0.2.0. The accepted Atlas default retains donor `36451873322`; a separate
+loopback-profile Atlas qualification passed in
+[run 36493722153](android-evidence/accepted-game-loopback-hosted-36493722153.json).
 
 The first [attempt 36460005041](https://github.com/Russianranger/coh-android/actions/runs/36460005041)
 at `cfc8ac477e449037213d5242f43480acf4f1cb85` failed Windows loopback test-fixture
@@ -57,7 +66,7 @@ The [full hosted Atlas workflow](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-wo
 passed in run `36460005201` with this donor. The earlier
 [post-correction acceptance](android-evidence/accepted-game-hosted-36454174481.json)
 and [original workflow failure](android-evidence/game-runtime-failure-36454174481.json)
-remain preserved separately. Physical Android execution and rendering remain
+remain preserved separately. Physical Android game execution and rendering remain
 unvalidated.
 
 The [ARM64 report](android-evidence/dbserver-arm64-36451873322.json) passed all
@@ -129,7 +138,7 @@ hashes remain unchanged; the extraction receipt is retained with ARM64 evidence.
 **The first hosted M3 DbServer gate passed** in
 [run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)
 at `1a5eea159172a4698441eb8cfed5ea5ca99fcf12`, completed 2026-09-28 at
-02:33:22 UTC. Physical Android DbServer execution remains unvalidated.
+02:33:22 UTC. Physical Android DbServer execution subsequently passed with 0.2.0.
 The [workflow](../.github/workflows/android-dbserver.yml) builds separate normal
 and persistence-fixture products, checks their exact ODBC imports and dependency
 closure, runs the real fixture on Windows, then performs the ARM64 test.
@@ -228,6 +237,8 @@ The successful full Atlas workflow `36460005201` used donor `36451873322` and
 completed all 18 guest stages, both protocol saves and exact-name resume.
 LoginCount progressed 1 → 1 → 2, both fixed-input acknowledgments and all four
 input checks passed, and all 123 captures closed with complete cleanup. Keep
-the accepted donor unchanged. Physical Android listener validation and app lifecycle
-integration precede the next device candidate; retain the accepted 0.1.5
-diagnostic and runtime in the meantime.
+the accepted default and evidence. The separate 0.2.0 acceptance now proves
+DbServer local listeners and Stop/rerun on Thor. The loopback Atlas profile also
+passed its own full hosted validation in `36493722153`. Next comes MapServer/client
+listener preparation and Android game integration. Retain both accepted diagnostic
+installations.

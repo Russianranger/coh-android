@@ -4,9 +4,11 @@ Latest device checkpoint (2026-09-28, 22:28 UTC): **COH Server Test 0.2.0 passed
 on Thor**. The [receipt](android-evidence/accepted-dbserver-thor-20260928.json)
 records two complete 28-stage real DbServer passes, a clean cancellation between
 them, exact local listener coverage and complete owned cleanup. App switching
-and screen locking are user-attested; peak memory is unmeasured. The next gate
-integrates this qualified DbServer donor into a separately identified hosted
-Atlas package. Physical Atlas execution and rendering remain unvalidated.
+and screen locking are user-attested; peak memory is unmeasured. The subsequent
+hosted Atlas loopback integration passed in `36493722153`, including both local
+DbServer starts and both committed saves. Next comes MapServer/TestClient local
+binding support, verified asset import and Android Atlas integration.
+Physical Atlas execution and rendering remain unvalidated.
 
 Updated: 2026-09-28 (UTC). PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
@@ -59,8 +61,8 @@ folder callback boundary during the intermittent timeout.
 The current fixed-input successor is qualified in run `36451873322` at
 `53c6270dff8a0efcc6be09da756408504d8313bd`: all three jobs passed, including
 default normal-schema startup and acknowledged fixed-input reload on ARM64.
-This remains the Atlas donor; preserve the earlier first-save and dispatch
-evidence. The accepted device APK remains 0.1.5.
+This remains the default Atlas donor; preserve the earlier first-save and
+dispatch evidence. The accepted device diagnostics are 0.1.5 and 0.2.0.
 The separate opt-in loopback listener package passed all three hosted jobs in
 [run 36460867428](https://github.com/Russianranger/coh-android/actions/runs/36460867428)
 at `eed2ce1f5388195f65a07853919761a93657aca6`. Its
@@ -75,9 +77,9 @@ because its Windows test fixture applied a CRLF patch to LF source files.
 The correction normalizes only that fixture's patch input and adds a CRLF
 regression; preserve the
 [failure receipt](android-evidence/dbserver-qualification-failure-36460005041.json).
-This qualifies the hosted listener prerequisite. Atlas donor `36451873322` and
-APK 0.1.5 remain unchanged; physical Android listener execution and app integration
-remain unvalidated.
+This qualifies the hosted listener prerequisite. Physical DbServer listener
+execution and app integration subsequently passed with 0.2.0. The default Atlas
+donor remains `36451873322`; its separate loopback profile uses `36460867428`.
 The first attempt with the preceding diagnostic donor `36425508780`, run
 `36427680960`, stopped before game execution
 when the pinned talloc download timed out during the PRoot build. A bounded
@@ -98,6 +100,34 @@ or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43
 do not reveal the internal status of the other Codex session.
 
 ## Latest hosted ARM64 game checkpoint (2026-09-28)
+
+[Run 36493722153](https://github.com/Russianranger/coh-android/actions/runs/36493722153)
+at `708878f78a3361b595dcc03a0c4b14fb6cd2e6c3` **passed the separately identified
+Atlas loopback DbServer profile**: all three jobs, all 18 guest stages and final
+host validation. The [receipt](android-evidence/accepted-game-loopback-hosted-36493722153.json)
+binds independent replay of the unchanged reports and captures. Runtime took
+1,883.535869 seconds; first service readiness took about 17 minutes 32 seconds
+and restart readiness about 3 minutes 13 seconds.
+
+Both DbServer starts proved all 14 observed local endpoints, including optional
+TCP 6992. Character `TEST-60538` / container 1 retained influence 12,345 and its
+selected committed SQL rows through same-cluster restart and exact-name resume
+with creation disabled. LoginCount progressed 1 → 1 → 2 across both protocol
+saves. Both fixed-input acknowledgments and all four inventory checks passed.
+All 122 process input/output captures closed, with complete cleanup and zero
+remaining owned processes or inspection failures. Preserve the
+[raw report](android-evidence/game-loopback-arm64-36493722153.json) and
+[captured evidence](android-evidence/game-loopback-evidence-36493722153.zip).
+
+The workflow explicitly selects loopback donor `36460867428`; default assembly
+and the earlier accepted profile retain `36451873322`. This qualifies DbServer
+binding within the Atlas sequence. The private hosted network namespace remains
+mandatory because stock MapServer and TestClient socket binding still needs its
+own Android preparation. Physical Atlas execution remains unvalidated. Follow
+the [remaining device preparation](ANDROID_GAME_RUNTIME.md#remaining-preparation-for-a-physical-atlas-candidate),
+keeping accepted 0.1.5 and 0.2.0 installed.
+
+### Earlier accepted default-profile workflow
 
 [Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)
 at `cfc8ac477e449037213d5242f43480acf4f1cb85` **passed all three jobs and the
@@ -635,13 +665,14 @@ not inventory the exact earlier pipe writer, so that identity remains unknown.
 
 **The primary M2 device diagnostic and headless client capability gate are
 accepted.** Android surface presentation, hardware acceleration, physical input,
-audible playback and CoH gameplay remain unvalidated. The current next device
-gate is **Stop followed by a successful diagnostic rerun**, exporting both reports.
-Use the existing 0.1.5 APK; no new build is needed. Suspend/resume and memory
-behavior still need evidence and can accompany the next candidate. The
+audible playback and CoH gameplay remain unvalidated. The subsequent 0.2.0
+DbServer test passed two full runs with a clean Stop between them. App switching
+and screen locking are user-attested; peak memory remains unmeasured. Keep both
+accepted installations. The next device work is the combined Atlas runtime,
+including MapServer/client listener policy and Android lifecycle handling. The
 [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) subsequently passed in
 run 36369485666. The latest managed Atlas result is recorded above; Android
-listener binding and app lifecycle integration remain before the device candidate.
+game listener policy and app lifecycle integration remain before the Atlas device candidate.
 
 ### Earlier attempts and corrections
 
@@ -924,9 +955,9 @@ during active Wine setup. Both passes verified 14 local endpoints, all 21 fixtur
 groups, both schema passes and all 111 closed process captures. The stopped run
 closed all 22 captures and correctly reported cancellation. All three ended with
 zero owned processes and inspection failures. App switching and screen locking
-are user-attested; peak memory is unmeasured. Continue with hosted Atlas integration
-of the loopback donor, retaining the existing accepted Atlas default until the
-new package passes. Stock MapServer/client listener behavior still needs its own
+are user-attested; peak memory is unmeasured. The subsequent hosted Atlas loopback
+integration passed in `36493722153`, preserving the earlier accepted default.
+Stock MapServer/client listener behavior still needs its own
 Android preparation; this DbServer acceptance does not establish physical Atlas.
 
 **The primary M2 device diagnostic, hosted M3 DbServer and hosted Atlas
@@ -940,14 +971,15 @@ and normal schema startup/export/reload have passed; preserve their
 [accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).
 The current fixed-input DbServer successor is also
 [qualified](android-evidence/accepted-dbserver-hosted-36451873322.json).
-Keep donor `36451873322` and retain both DbServer
+Keep default donor `36451873322` and retain both DbServer
 activation acknowledgments and all four schema/configuration snapshots.
 Enabled ARM64 dispatch publication was already verified in run `36428915900`.
 The separate sibling DbServer failure remains unexplained despite the successful
-byte-identical repeat; retain both receipts and the current donor.
+byte-identical repeat; retain both receipts and the qualified donors.
 The separate loopback listener package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json)
-in run `36460867428`; it has not replaced the Atlas donor. Preserve its earlier
+in run `36460867428` and accepted for the explicit Atlas loopback profile in
+`36493722153`; the historical default donor is retained. Preserve its earlier
 CRLF fixture-setup failure and correction. The 0.2.0 device results accept this
 listener package and Stop/rerun handling on Thor.
 Keep the existing 0.1.5 and 0.2.0 APKs and runtimes. See the
