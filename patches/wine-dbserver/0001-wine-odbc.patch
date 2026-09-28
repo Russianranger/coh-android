@@ -1,0 +1,23 @@
+--- a/Common/sql/sqlinclude.h
++++ b/Common/sql/sqlinclude.h
+@@ -46,4 +46,8 @@
+ #define MSSQL_SMALLDATETIME_PRECISION (sizeof("yyyy-mm-dd hh:mm:ss")-1)
+ #define MSSQL_SMALLDATETIME_DECIMALDIGITS 0
+ 
++#ifdef COH_WINE_ODBC
++#include "wine_odbc.h"
+ #endif
++
++#endif
+--- a/DBServer/CMakeLists.txt
++++ b/DBServer/CMakeLists.txt
+@@ -163,6 +163,9 @@
+ 
+ add_executable(DbServer
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
++# Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c)
++target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
+ option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
+ if(COH_PG_PERSISTENCE_TESTS)
+     target_sources(DbServer PRIVATE src/pg_persistence_test.c)
