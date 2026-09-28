@@ -36,6 +36,18 @@ SERVICE_LOG_LIMIT = 4 * 1024 * 1024
 SERVICE_LOG_SEGMENT = 512 * 1024
 
 
+def check_game_port(port, protocol):
+    """Reject live listeners while permitting a stopped TCP service's TIME_WAIT."""
+    with socket.socket(socket.AF_INET, protocol) as check:
+        if protocol == socket.SOCK_STREAM:
+            check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        check.bind(('0.0.0.0', port))
+        if protocol == socket.SOCK_STREAM:
+            # A reusable bind alone is insufficient to exclude another bound
+            # reusable socket. Claim the listener, then release it for Wine.
+            check.listen(1)
+
+
 def safe_path(name):
     require(isinstance(name, str) and '\\' not in name and ':' not in name and '\x00' not in name,
             'Invalid game payload path')
@@ -398,8 +410,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
     def start_services(self, label):
         self.ctx.stage('game_services_' + label)
         for port, protocol in ((6997, socket.SOCK_STREAM), (7001, socket.SOCK_DGRAM)):
-            with socket.socket(socket.AF_INET, protocol) as check:
-                check.bind(('0.0.0.0', port))
+            check_game_port(port, protocol)
         self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'])
         next_query = 0
         expected_columns = sum(map(len, self.schema['expected_tables'].values()))

@@ -35,7 +35,7 @@ def inspect(diagnostic, failed_child):
     ctx, base = diagnostic.ctx, diagnostic.ctx_base
     result = {'time_utc': base.utc(), 'trigger': failed_child.label,
               'query_alive_before_capture': failed_child.process.poll() is None,
-              'before_cleanup': True, 'failures': [], 'stacks': []}
+              'before_cleanup': True, 'failures': [], 'stacks': [], 'stacks_available': False}
     ctx.report['game_failure_inspection'] = result
     ctx.event('stage', status='running', message='Capturing blocked game threads, sockets and SQL before cleanup')
     started = time.monotonic()
@@ -101,6 +101,10 @@ ORDER BY pid LIMIT 80) a;"""
                 'exit_code': child.process.poll(), 'forced_stop': child.forced_stop,
                 'overflow': child.overflow, 'truncated': len(raw) > 128 * 1024,
                 'output': base.redact(raw[:128 * 1024], ctx.secrets)})
+            if (child.process.returncode != 0 or child.forced_stop or child.overflow
+                    or len(raw) > 128 * 1024 or 'Backtrace:' not in raw):
+                result['failures'].append('Stacks: incomplete or failed observer for ' + name + ' PID ' + str(pid))
+        result['stacks_available'] = not any(value.startswith('Stacks:') for value in result['failures'])
     except Exception as exc:
         result['failures'].append('Stacks: ' + str(exc))
     finally:
