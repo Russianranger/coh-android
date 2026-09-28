@@ -16,20 +16,21 @@
  add_executable(DbServer
  	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
 +# Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
-+target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c)
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c)
 +target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
  option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
  if(COH_PG_PERSISTENCE_TESTS)
      target_sources(DbServer PRIVATE src/pg_persistence_test.c)
 --- a/DBServer/src/dbinit.c
 +++ b/DBServer/src/dbinit.c
-@@ -1,4 +1,5 @@
+@@ -1,4 +1,6 @@
  #include "dbinit.h"
 +#include "wine_dispatch_progress.h"
++#include "wine_fixed_inputs.h"
  #include <utilitieslib/stdtypes.h>
  #include "dbserver/auctionservercomm.h"
  #include "accountservercomm.h"
-@@ -361,50 +362,77 @@
+@@ -361,50 +363,77 @@
          return;
  
      last = now;
@@ -108,7 +109,7 @@
      mpCompactPools();
  }
  
-@@ -1770,11 +1798,23 @@
+@@ -1770,11 +1799,27 @@
  #ifdef COH_PG_PERSISTENCE_TESTS
      if (argc > 1 && !strcmp(argv[1], "-pgpersistencetest")) {
          extern int pgPersistenceTestMain(int argc, char **argv);
@@ -124,6 +125,10 @@
  
      EXCEPTION_HANDLER_BEGIN
 +
++    if (cohDbFixedInputsInit() < 0) {
++        printf_stderr("DbServer fixed-input initialization failed (Windows error %lu).\n", GetLastError());
++        return 2;
++    }
 +    if (cohDbProgressInit() < 0) {
 +        printf_stderr("DbServer dispatch progress initialization failed (Windows error %lu).\n", GetLastError());
 +        return 2;
@@ -132,7 +137,7 @@
      
      setWindowIconColoredLetter(compatibleGetConsoleWindow(), 'D', 0x00ff00);
  
-@@ -1988,8 +2028,10 @@
+@@ -1988,8 +2033,10 @@
      }
  
  
@@ -143,7 +148,7 @@
      printf_stderr("%s DbServer Ready.\n", timerGetTimeString());
  
      for(;;)
-@@ -1998,11 +2040,19 @@
+@@ -1998,11 +2045,19 @@
          extern BOOL g_heuristicdebug_enabled;
          extern void sendRemainTimeToClient(U32 auth_id,U32 curr_avail,U32 total_avail,U8 reservation,int countdown,int change_billing);
  
@@ -164,7 +169,7 @@
                  case 'm':
                      memMonitorDisplayStats();
                  xcase 'w':
-@@ -2107,9 +2157,11 @@
+@@ -2107,9 +2162,11 @@
                  }
              }
          }
@@ -176,3 +181,86 @@
  
      EXCEPTION_HANDLER_END
          return 0;
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -57,6 +57,10 @@
+ int folder_cache_update_enable=1;
+ int folder_cache_manual_callback_check=0;
+ 
++/* Opt-in immutable-input runtime: never create directory watchers or ingest
++ * change notifications. Normal cache selection and initial reads are retained. */
++static int folder_cache_fixed_inputs=0;
++
+ static int folder_cache_dirMonTimeout = 0;
+ static int folder_cache_noDisableOnBufferOverruns = 0;
+ 
+@@ -90,6 +94,16 @@
+ 
+ 
+ static DWORD threadid=0;
++
++int FolderCacheSetFixedInputsMode(void)
++{
++    /* Refuse late activation instead of abandoning live asynchronous watches. */
++    if (threadid)
++        return 0;
++    folder_cache_fixed_inputs = 1;
++    folder_cache_update_enable = 0;
++    return 1;
++}
+ 
+ FolderCache *FolderCacheCreate() {
+     FolderCache *fc = calloc(sizeof(FolderCache),1);
+@@ -365,13 +379,15 @@
+         return;
+     }
+ 
+-    // Add notification hook
+-    dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
+-    context = malloc(sizeof(*context));
+-    context->fc = fc;
+-    context->virtual_location = virtual_location;
+-    if (!dirMonAddDirectory(basepath, true, (void*)context)) {
+-        verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++    // Fixed inputs keep initial reads/cache behavior without creating watches.
++    if (!folder_cache_fixed_inputs) {
++        dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
++        context = malloc(sizeof(*context));
++        context->fc = fc;
++        context->virtual_location = virtual_location;
++        if (!dirMonAddDirectory(basepath, true, (void*)context)) {
++            verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++        }
+     }
+     
+     if (FolderCacheGetMode()!=FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC) {
+@@ -872,7 +888,7 @@
+     bool hog_file_changed=false;
+     DirChangeInfo* bufferOverrun;
+ 
+-    if (!folder_cache_update_enable) {
++    if (folder_cache_fixed_inputs || !folder_cache_update_enable) {
+         return 0;
+     }
+ 
+@@ -1307,7 +1323,7 @@
+ }
+ 
+ void FolderCacheEnableCallbacks(int enable) { // Disables/enables checking for changes in the filesystem (turn these off when loading)
+-    folder_cache_update_enable = enable;
++    folder_cache_update_enable = enable && !folder_cache_fixed_inputs;
+ }
+ 
+ void FolderCacheChooseMode(void) { // Auto-chooses the appropriate mode, based on existence of ./piggs
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h
+@@ -108,6 +108,9 @@
+ void FolderCacheChooseMode(void); // Auto-chooses the appropriate mode, based on existence of ./piggs
+ 
+ void FolderCacheEnableCallbacks(int enable); // Disables/enables checking for changes in the filesystem (turn these off when loading)
++// One-way opt-in before the first FolderCacheCreate; returns 0 if called too late.
++// Prevents watcher creation/updates while retaining lookup mode and initial reads.
++int FolderCacheSetFixedInputsMode(void);
+ 
+ void FolderCacheExclude(FolderCacheExclusion mode, const char *folder);
+ 

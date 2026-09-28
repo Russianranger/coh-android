@@ -17,9 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 PATCH = 'patches/wine-dbserver/0001-wine-odbc.patch'
 OVERLAY = 'database/wine-dbserver/overlay'
 RECEIPT = 'wine-dbserver-build-input.json'
-WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c')
+WINE_FILES = ('Common/sql/sqlinclude.h', 'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c',
+              'libs/UtilitiesLib/src/utils/FolderCache.c',
+              'libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h')
 OVERLAY_FILES = ('Common/sql/wine_odbc.c', 'Common/sql/wine_odbc.h',
-                 'DBServer/src/wine_dispatch_progress.c', 'DBServer/src/wine_dispatch_progress.h')
+                 'DBServer/src/wine_dispatch_progress.c', 'DBServer/src/wine_dispatch_progress.h',
+                 'DBServer/src/wine_fixed_inputs.c', 'DBServer/src/wine_fixed_inputs.h')
 WINE_COMMIT = 'b073859675060c9211fcbccfd90e4e87520dc2c2'
 REQUIRED_IMPORTS = ('SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare', 'SQLGetDiagRecA',
                     'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW')
@@ -75,6 +78,22 @@ def dispatch_progress_metadata(contents):
     }
 
 
+def fixed_inputs_metadata(contents):
+    header = contents['DBServer/src/wine_fixed_inputs.h'].decode('utf-8')
+    constants = dict(re.findall(r'^#define (COH_DB_FIXED_INPUTS_\w+) "([^"\n]+)"$', header, re.MULTILINE))
+    require(set(constants) == {'COH_DB_FIXED_INPUTS_ENVIRONMENT', 'COH_DB_FIXED_INPUTS_ACK'},
+            'Unexpected fixed-input mode header contract')
+    return {
+        'environment_variable': constants['COH_DB_FIXED_INPUTS_ENVIRONMENT'],
+        'enabled_value': '1', 'disabled_by_default': True,
+        'activation': 'before_first_folder_cache_create',
+        'watcher_registration': 'disabled', 'notification_updates': 'disabled',
+        'initial_reads': 'preserved', 'lookup_mode': 'preserved',
+        'startup_acknowledgement': constants['COH_DB_FIXED_INPUTS_ACK'],
+        'proves_generic_notification_fix': False,
+    }
+
+
 def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
     lock = json.loads((root / 'upstream-lock.json').read_text())
     pg = expected_pg_receipt(root, lock)
@@ -114,6 +133,7 @@ def expected_wine_receipt(root=ROOT, postgresql_build_input=None):
         'fixture_startup': {'initialize_file_cache_and_log_before_sql_workers': True,
                             'assert_mode': 'stderr_and_exit', 'log_directory': 'pg-persistence-test'},
         'dispatch_progress': dispatch_progress_metadata(contents),
+        'fixed_inputs': fixed_inputs_metadata(contents),
         'runtime_validation': 'unverified',
     }
 

@@ -46,8 +46,59 @@ class WineDbServerSourceTests(unittest.TestCase):
         cmake = (self.source / 'DBServer/CMakeLists.txt').read_text()
         self.assertIn('target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)', cmake)
         self.assertIn('src/wine_dispatch_progress.c', cmake)
+        self.assertIn('src/wine_fixed_inputs.c', cmake)
         self.assertIn('option(COH_PG_PERSISTENCE_TESTS', cmake)
         self.assertEqual(receipt['runtime_validation'], 'unverified')
+
+    def test_fixed_input_receipt_binds_hooks_and_normal_startup_order(self):
+        receipt = wine.apply_wine_overlay(self.source)
+        metadata = receipt['fixed_inputs']
+        self.assertEqual(len(metadata), 10)
+        self.assertEqual(metadata['environment_variable'], 'COH_WINE_DB_FIXED_INPUTS')
+        self.assertTrue(metadata['disabled_by_default'])
+        self.assertFalse(metadata['proves_generic_notification_fix'])
+        self.assertEqual(metadata['activation'], 'before_first_folder_cache_create')
+        header = (self.source / 'DBServer/src/wine_fixed_inputs.h').read_text()
+        self.assertIn('"' + metadata['startup_acknowledgement'] + '"', header)
+        for name in ('libs/UtilitiesLib/src/utils/FolderCache.c',
+                     'libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h'):
+            self.assertEqual(wine.sha256(self.source / name), receipt['patched_sha256'][name])
+        for name in ('DBServer/src/wine_fixed_inputs.c', 'DBServer/src/wine_fixed_inputs.h'):
+            self.assertEqual(wine.sha256(self.source / name), receipt['wine_overlay_sha256'][name])
+        main = (self.source / 'DBServer/src/dbinit.c').read_text().split('int main(int argc,char **argv)', 1)[1]
+        self.assertLess(main.index('return pgPersistenceTestMain'), main.index('cohDbFixedInputsInit()'))
+        self.assertLess(main.index('cohDbFixedInputsInit()'), main.index('cohDbProgressInit()'))
+        self.assertLess(main.index('cohDbFixedInputsInit()'), main.index('FolderCacheChooseMode()'))
+        self.assertLess(main.index('cohDbFixedInputsInit()'), main.index('logSetDir("dbserver")'))
+        self.assertIn('return 2;', main.split('cohDbFixedInputsInit() < 0)', 1)[1].split('}', 1)[0])
+
+    @unittest.skipUnless(shutil.which('cc'), 'FolderCache boundary contract requires a C compiler')
+    def test_actual_folder_cache_preserves_loading_without_registering_or_polling_watches(self):
+        wine.apply_wine_overlay(self.source)
+        source = (self.source / 'libs/UtilitiesLib/src/utils/FolderCache.c').read_text()
+        header = (self.source / 'libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h').read_text()
+        def function(signature):
+            return signature + source.split(signature, 1)[1].split('\n}\n', 1)[0] + '\n}\n'
+        enum = header[header.index('typedef enum {\n    FOLDER_CACHE_MODE_DEVELOPMENT,'):]
+        enum = enum.split('} FolderCacheMode;', 1)[0] + '} FolderCacheMode;\n'
+        (self.source / 'foldercache_types.inc').write_text(enum)
+        globals_used = '\n'.join(re.findall(r'^(?:static )?(?:int|DWORD) (?:folder_cache_fixed_inputs|folder_cache_update_enable|threadid)\s*=.*;$', source, re.MULTILINE))
+        self.assertEqual(len(globals_used.splitlines()), 3)
+        update = function('static int FolderCacheUpdate(DirChangeInfo** bufferOverrunOut)')
+        guard = update[update.index('    if (folder_cache_fixed_inputs'):update.index('    if (GetCurrentThreadId()')]
+        self.assertLess(update.index(guard), update.index('dirMonCheckDirs('))
+        fragments = globals_used + '\n' + '\n'.join(function(signature) for signature in (
+            'int FolderCacheSetFixedInputsMode(void)', 'FolderCache *FolderCacheCreate()',
+            'void FolderCacheAddFolder(FolderCache *fc, const char *basepath, int virtual_location)',
+            'void FolderCacheEnableCallbacks(int enable)'))
+        fragments += '\nstatic int test_update_entry(void) {\n' + guard + '    poll_calls++; return 1;\n}\n'
+        (self.source / 'foldercache_source_fragments.inc').write_text(fragments)
+        executable = self.source / 'fixed-inputs-foldercache-contract'
+        subprocess.run([shutil.which('cc'), '-std=c99', '-Wall', '-Wextra', '-Werror',
+                        '-I' + str(self.source), str(wine.ROOT / 'database/wine-dbserver/tests/fixed_inputs_foldercache_contract.c'),
+                        '-o', str(executable)], check=True, capture_output=True, timeout=30)
+        result = subprocess.run([str(executable)], check=True, capture_output=True, text=True, timeout=10)
+        self.assertIn('PASS actual FolderCache fixed-input boundary contract', result.stdout)
 
     def test_dispatch_receipt_labels_every_instrumented_stage_and_binds_sources(self):
         receipt = wine.apply_wine_overlay(self.source)

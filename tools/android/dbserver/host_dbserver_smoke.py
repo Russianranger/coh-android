@@ -48,11 +48,25 @@ STAGES = ("assets_and_architecture", "initialize_owned_cluster", "postgres_first
           "dbserver_rebuild_fail", "dbserver_rebuild_fail_view", "dbserver_verify_rebuilt", "dbserver_backup_restore",
           "dbserver_verify_rebuilt", "restricted_fixture_database", "normal_dbserver_schema_1", "normal_dbserver_schema_2")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
+FIXED_INPUTS_ACK = ("COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; "
+                    "initial reads and lookup mode preserved")
+FIXED_INPUTS_METADATA = {
+    "environment_variable": "COH_WINE_DB_FIXED_INPUTS", "enabled_value": "1", "disabled_by_default": True,
+    "activation": "before_first_folder_cache_create", "watcher_registration": "disabled",
+    "notification_updates": "disabled", "initial_reads": "preserved", "lookup_mode": "preserved",
+    "startup_acknowledgement": FIXED_INPUTS_ACK, "proves_generic_notification_fix": False}
 
 
 def require(condition, message):
     if not condition:
         raise RuntimeError(message)
+
+
+def validate_fixed_inputs_metadata(value):
+    require(isinstance(value, dict) and value == FIXED_INPUTS_METADATA
+            and value.get("disabled_by_default") is True
+            and value.get("proves_generic_notification_fix") is False,
+            "DbServer fixed-input build contract differs")
 
 
 def read_manifest(path):
@@ -108,6 +122,7 @@ def verify_package(package):
             "Windows package cannot claim Android execution or gameplay")
     require(manifest.get("source_commit") == SOURCE_COMMIT,
             "DbServer package uses a different game source")
+    validate_fixed_inputs_metadata(manifest.get("wine_build_input", {}).get("fixed_inputs"))
     variants = manifest.get("variants", {})
     require(set(variants) == {"fixture", "normal"}, "DbServer package needs both exact variants")
     require({path.name for path in package.iterdir()} == {"package-manifest.json", "fixture", "normal"},
@@ -231,6 +246,11 @@ def validate_report(report, *, expected):
             "Normal DbServer did not prove both startup and reload")
     catalogs = []
     for number, phase in enumerate(normal_phases, 1):
+        fixed_inputs = phase.get("fixed_inputs", {})
+        require(fixed_inputs.get("requested") is (number == 2)
+                and "startup_acknowledgement" in fixed_inputs
+                and fixed_inputs["startup_acknowledgement"] == (FIXED_INPUTS_ACK if number == 2 else None),
+                "Normal DbServer did not qualify default startup and acknowledged fixed-input reload")
         require(type(phase.get("number")) is int and phase["number"] == number
                 and type(phase.get("exit_code")) is int and phase["exit_code"] == 0
                 and phase.get("failure_diagnostic_lines") == []

@@ -7,10 +7,11 @@ import json
 from contextlib import redirect_stdout
 from pathlib import Path
 import struct
+import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[3]
 SPEC = importlib.util.spec_from_file_location('coh_dbserver_diagnostic', ROOT / 'android/guest/dbserver_diagnostic.py')
@@ -19,6 +20,91 @@ SPEC.loader.exec_module(guest)
 
 
 class DbServerAcceptanceTests(unittest.TestCase):
+    def test_current_source_receipt_matches_guest_and_host_fixed_input_contract(self):
+        with patch.object(sys, 'path', [str(ROOT / 'tools'), str(ROOT / 'tools/android/dbserver'), *sys.path]):
+            from prepare_wine_dbserver_source import expected_wine_receipt
+            from host_dbserver_smoke import validate_fixed_inputs_metadata as validate_host_metadata
+        metadata = expected_wine_receipt(ROOT)['fixed_inputs']
+        guest.validate_fixed_inputs_metadata(metadata)
+        validate_host_metadata(metadata)
+
+    def test_fixed_input_startup_requires_exact_single_ack_only_when_requested(self):
+        self.assertEqual(guest.validate_fixed_inputs('normal startup\n', False),
+                         {'requested': False, 'startup_acknowledgement': None})
+        self.assertEqual(guest.validate_fixed_inputs(guest.FIXED_INPUTS_ACK + '\r\n', True),
+                         {'requested': True, 'startup_acknowledgement': guest.FIXED_INPUTS_ACK})
+        cases = ((True, ''), (False, guest.FIXED_INPUTS_ACK),
+                 (True, guest.FIXED_INPUTS_ACK + '.'),
+                 (True, guest.FIXED_INPUTS_ACK + '\n' + guest.FIXED_INPUTS_ACK),
+                 (True, 'prefix ' + guest.FIXED_INPUTS_ACK),
+                 (True, guest.FIXED_INPUTS_ACK.replace('lookup mode preserved', 'lookup mode changed')))
+        for enabled, output in cases:
+            with self.subTest(enabled=enabled, output=output), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_fixed_inputs(output, enabled)
+
+    def test_fixed_input_receipt_cannot_change_mode_semantics(self):
+        guest.validate_fixed_inputs_metadata(copy.deepcopy(guest.FIXED_INPUTS_METADATA))
+        for field in guest.FIXED_INPUTS_METADATA:
+            changed = copy.deepcopy(guest.FIXED_INPUTS_METADATA)
+            changed.pop(field)
+            with self.subTest(missing=field), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_fixed_inputs_metadata(changed)
+        for field, value in (('lookup_mode', 'changed'), ('disabled_by_default', 1),
+                             ('proves_generic_notification_fix', 0)):
+            with self.subTest(field=field), self.assertRaises(guest.base.DiagnosticError):
+                guest.validate_fixed_inputs_metadata({**guest.FIXED_INPUTS_METADATA, field: value})
+
+    def test_fixed_input_environment_is_explicit_per_launch_and_cannot_leak_to_default(self):
+        diagnostic = object.__new__(guest.DbServerDiagnostic)
+        diagnostic.wine_env = {'WINEPREFIX': '/private/wine', guest.FIXED_INPUTS_ENV: 'inherited'}
+        diagnostic.args = SimpleNamespace(wine=Path('/wine'))
+        diagnostic.observe_odbc_failure = Mock()
+        diagnostic.ctx = SimpleNamespace(run=Mock(return_value={'exit_code': 0}),
+                                         children=[SimpleNamespace(text=lambda: 'output')])
+        for enabled in (False, True, False):
+            diagnostic.run_windows('schema', Path('/DbServer.exe'), [], Path('/private'),
+                                   timeout=10, fixed_inputs=enabled)
+            environment = diagnostic.ctx.run.call_args.kwargs['env']
+            self.assertEqual(environment.get(guest.FIXED_INPUTS_ENV), '1' if enabled else None)
+            self.assertEqual(environment['WINEPREFIX'], '/private/wine')
+            self.assertEqual(diagnostic.wine_env[guest.FIXED_INPUTS_ENV], 'inherited')
+
+    def test_two_normal_launches_cover_default_creation_and_fixed_input_reload(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / 'schema/data/server/db/servers.cfg'
+            source.parent.mkdir(parents=True)
+            source.write_text('UseFakeAuth 1\nUseQueueServer 0\nSqlAllowDDL 1\n')
+            runtime = root / 'runtime'
+            runtime.mkdir()
+            diagnostic = object.__new__(guest.DbServerDiagnostic)
+            diagnostic.root = root
+            diagnostic.args = SimpleNamespace(schema=root / 'schema')
+            diagnostic.schema = {'files': ['data/server/db/servers.cfg']}
+            diagnostic.prepare_database = Mock()
+            diagnostic.stage_variant = Mock(return_value=runtime)
+            diagnostic.connection_for = Mock(return_value='Driver={PostgreSQL Unicode};')
+            diagnostic.private_connections = []
+            diagnostic.expect_sql = Mock()
+            diagnostic.sql = Mock(return_value='[{"version":2}]')
+            diagnostic.schema_report = {'phases': []}
+            diagnostic.schema_snapshot = Mock(return_value={'table_count': 99, 'attribute_counts': {'attributes': 58272}})
+            diagnostic.ctx = SimpleNamespace(log_paths=lambda: [], secrets=[], stage=Mock(), passed=Mock(),
+                report={'inputs': {'schema_manifest_sha256': 'a' * 64}})
+            requested = []
+            def run_windows(label, executable, arguments, cwd, *, timeout, fixed_inputs):
+                requested.append((label, fixed_inputs))
+                Path(arguments[1]).write_bytes(b'')
+                return {'exit_code': 0}, guest.FIXED_INPUTS_ACK + '\n' if fixed_inputs else 'Default startup\n'
+            diagnostic.run_windows = run_windows
+            with patch.object(guest.base, 'windows_path', side_effect=str):
+                diagnostic.normal_schema()
+            self.assertEqual(requested, [('normal-schema-1', False), ('normal-schema-2', True)])
+            self.assertTrue(diagnostic.schema_report['reload_stable'])
+            self.assertEqual([phase['fixed_inputs']['requested'] for phase in diagnostic.schema_report['phases']],
+                             [False, True])
+            self.assertEqual(diagnostic.schema_snapshot.call_count, 2)
+
     def test_both_variants_stage_private_legacy_data_root_markers_without_game_assets(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

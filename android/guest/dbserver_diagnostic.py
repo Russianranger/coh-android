@@ -54,6 +54,28 @@ BENIGN_CATALOG_NOTICE = re.compile(
     r'constraint "fk_ents_teamupsid_teamups" of relation "ents" does not exist, skipping)|'
     r'42P07 NOTICE: relation "coh_[0-9a-f]{32}" already exists, skipping)')
 LOG_LIMIT = 16 * 1024 * 1024
+FIXED_INPUTS_ENV = 'COH_WINE_DB_FIXED_INPUTS'
+FIXED_INPUTS_ACK = ('COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; '
+                    'initial reads and lookup mode preserved')
+FIXED_INPUTS_METADATA = {
+    'environment_variable': FIXED_INPUTS_ENV, 'enabled_value': '1', 'disabled_by_default': True,
+    'activation': 'before_first_folder_cache_create', 'watcher_registration': 'disabled',
+    'notification_updates': 'disabled', 'initial_reads': 'preserved', 'lookup_mode': 'preserved',
+    'startup_acknowledgement': FIXED_INPUTS_ACK, 'proves_generic_notification_fix': False}
+
+
+def validate_fixed_inputs_metadata(value):
+    require(isinstance(value, dict) and value == FIXED_INPUTS_METADATA
+            and value.get('disabled_by_default') is True
+            and value.get('proves_generic_notification_fix') is False,
+            'DbServer fixed-input build contract differs')
+
+
+def validate_fixed_inputs(output, enabled):
+    markers = [line for line in output.splitlines() if FIXED_INPUTS_ENV in line]
+    require(markers == ([FIXED_INPUTS_ACK] if enabled else []),
+            'DbServer fixed-input startup acknowledgement differs from requested mode')
+    return {'requested': enabled, 'startup_acknowledgement': FIXED_INPUTS_ACK if enabled else None}
 
 
 def load_json(path, limit=32 * 1024 * 1024):
@@ -116,6 +138,7 @@ def verify_inputs(package, schema):
             and package_receipt.get('android_execution_validated') is False
             and package_receipt.get('gameplay_validated') is False,
             'Invalid DbServer package provenance or scope')
+    validate_fixed_inputs_metadata(package_receipt.get('wine_build_input', {}).get('fixed_inputs'))
     variants = package_receipt.get('variants', {})
     require(set(variants) == {'fixture', 'normal'}, 'Both DbServer build variants are required')
     for variant, enabled in (('fixture', True), ('normal', False)):
@@ -286,10 +309,14 @@ class DbServerDiagnostic(base.Diagnostic):
             shutil.copyfile(self.args.package / variant / name, target / name)
         return target
 
-    def run_windows(self, label, executable, arguments, cwd, *, timeout, expected=0):
+    def run_windows(self, label, executable, arguments, cwd, *, timeout, expected=0, fixed_inputs=False):
+        environment = self.wine_env.copy()
+        environment.pop(FIXED_INPUTS_ENV, None)
+        if fixed_inputs:
+            environment[FIXED_INPUTS_ENV] = '1'
         result = self.ctx.run(label, ['/usr/bin/env', '--chdir=' + str(cwd), self.args.wine,
                                     base.windows_path(executable), *arguments],
-                              timeout=timeout, env=self.wine_env, check=False,
+                              timeout=timeout, env=environment, check=False,
                               before_stop=self.observe_odbc_failure,
                               progress_message='Running real DbServer ' + label)
         child = self.ctx.children[-1]
@@ -301,6 +328,7 @@ class DbServerDiagnostic(base.Diagnostic):
         result, output = self.run_windows('dbserver-' + mode, self.fixture_runtime / 'DbServer.exe',
             ['-pgpersistencetest', base.windows_path(connection or self.connection), database or self.database, mode],
             self.fixture_runtime, timeout=180, expected=expected)
+        validate_fixed_inputs(output, False)
         markers = validate_fixture_phase(mode, expected, result['exit_code'], output)
         item = {'mode': mode, 'exit_code': result['exit_code'], 'expected_exit_code': expected,
                 'markers': markers, 'output_sha256': hashlib.sha256(base.redact(output, self.ctx.secrets).encode()).hexdigest()}
@@ -447,12 +475,16 @@ class DbServerDiagnostic(base.Diagnostic):
         migration = self.sql(migration_query, game=True)
         require(any(row['version'] == 2 for row in json.loads(migration)), 'Compatibility migration 2 missing')
         previous = None
-        for number in (1, 2):
+        # Cover stock default startup and the opt-in fixed-input reload without
+        # adding more real server launches or changing the accepted input bytes.
+        for number, fixed_inputs in ((1, False), (2, True)):
             self.ctx.stage('normal_dbserver_schema_' + str(number))
             dump = self.root / ('schema-export-' + str(number) + '-' + secrets.token_hex(6) + '.dump')
             require(not dump.exists(), 'Normal DbServer export was not fresh')
             result, output = self.run_windows('normal-schema-' + str(number), self.normal_runtime / 'DbServer.exe',
-                ['-exportdump', base.windows_path(dump)], self.normal_runtime, timeout=600)
+                ['-exportdump', base.windows_path(dump)], self.normal_runtime, timeout=600,
+                fixed_inputs=fixed_inputs)
+            fixed_input_evidence = validate_fixed_inputs(output, fixed_inputs)
             errors, notices, logs = [], [], []
             texts = [output]
             for path in sorted(self.ctx.log_paths()):
@@ -467,7 +499,8 @@ class DbServerDiagnostic(base.Diagnostic):
                     elif FAILURE.search(line):
                         errors.append(base.redact(line[:1500], self.ctx.secrets))
             phase = {'number': number, 'exit_code': result['exit_code'], 'failure_diagnostic_lines': errors[:100],
-                     'benign_catalog_notices': {'count': len(notices), 'lines': notices[:100]}, 'logs': logs}
+                     'benign_catalog_notices': {'count': len(notices), 'lines': notices[:100]}, 'logs': logs,
+                     'fixed_inputs': fixed_input_evidence}
             self.schema_report['phases'].append(phase)
             require(not errors, 'Normal DbServer emitted failure diagnostics')
             require(dump.is_file() and not dump.is_symlink() and dump.stat().st_size == 0,
@@ -479,7 +512,8 @@ class DbServerDiagnostic(base.Diagnostic):
             previous = snapshot
             phase.update(snapshot, export_sha256=base.file_hash(dump), export_bytes=0,
                          input_manifest_sha256=self.ctx.report['inputs']['schema_manifest_sha256'])
-            self.ctx.passed(table_count=snapshot['table_count'], attribute_counts=snapshot['attribute_counts'])
+            self.ctx.passed(table_count=snapshot['table_count'], attribute_counts=snapshot['attribute_counts'],
+                            fixed_inputs=fixed_input_evidence)
         self.schema_report.update(status='passed', reload_stable=True)
 
     def execute(self):

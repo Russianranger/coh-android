@@ -37,3 +37,8 @@ the foreground and queue markers are written only when the keepalive is due.
 The upstream source remains immutable: preparation applies the PostgreSQL patch
 first, then the receipted Wine patch and overlay. The marker source, enum, and
 patched call sites are bound by the same build-input receipt used for packaging.
+
+The separate [fixed-input mode](FIXED_INPUTS.md) is a scoped candidate response to
+a captured stop at `FOLDER_CALLBACKS`. It does not change the observation format
+or make a stationary stage proof of deadlock. Its runtime qualification is a
+separate gate.

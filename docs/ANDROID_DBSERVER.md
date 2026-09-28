@@ -11,7 +11,8 @@ at `41f3aff596826e22e2774375e11590de895ca33d` passed all three jobs on
 2026-09-28. Its Windows contract verified enabled publication of the
 [opt-in dispatch record](../database/wine-dbserver/DISPATCH_PROGRESS.md).
 The ARM64 fixture and normal schema gates passed with that observer disabled;
-enabled publication on ARM64 remains to be verified by the next Atlas run.
+Atlas run `36428915900` subsequently verified enabled publication on ARM64 and
+localized its startup stall to `FOLDER_CALLBACKS` or nested work.
 This qualifies the package, not a startup blocker correction or completed Atlas
 restart/resume. The [new acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
 preserves the package and runtime evidence. Its manifest SHA-256 is
@@ -27,6 +28,15 @@ in 187.299219 seconds, including the same persistence coverage and two normal
 fixture-OFF exports/reloads: 99 tables, 5,935 ordered columns, 58,272 exact
 attribute IDs/names and an unchanged catalog. All 111 process captures closed;
 cleanup left zero owned processes or inspection failures.
+
+A separately receipted [fixed-input mode](../database/wine-dbserver/FIXED_INPUTS.md)
+is prepared for the controlled Atlas gate and awaits qualification. It prevents
+directory-watch creation before the first file cache and disables notification
+updates, while preserving initial reads and the chosen lookup mode. Default
+startup remains unchanged. This avoids leaving undrained notifications in Wine;
+it does not establish a generic notification fix. The existing two normal
+schema launches will cover default startup followed by acknowledged fixed-input
+reload, with the same exact schema/catalog checks and no additional launches.
 
 **The first hosted M3 DbServer gate passed** in
 [run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)

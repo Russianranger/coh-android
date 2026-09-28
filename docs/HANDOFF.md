@@ -38,15 +38,17 @@ diagnostic TestClient execution are now implemented in the separate
 [hosted Atlas gate](ANDROID_GAME_RUNTIME.md). One ARM64 run passed the first
 character creation, live currency change and committed protocol save, then
 failed at the service restart port check. The latest game execution reproduced the
-startup timeout and captured live failure evidence; resume remains unproved.
+startup timeout and captured stationary `FOLDER_CALLBACKS` source markers;
+native snapshots show continued operations, not a proven deadlock. Resume remains unproved.
 The follow-on diagnostic DbServer package passed all three jobs in run
 `36425508780`. Windows verified enabled dispatch-record publication; the ARM64
-fixture/schema gate used the observer disabled. The next Atlas run adopts this
-qualified donor to verify enabled ARM64 publication and capture the live dispatch
-boundary if the intermittent timeout recurs.
+fixture/schema gate used the observer disabled. Atlas run `36428915900` then
+verified enabled ARM64 publication with this qualified donor and captured the
+folder callback boundary during the intermittent timeout.
 The first attempt with that donor, run `36427680960`, stopped before game execution
 when the pinned talloc download timed out during the PRoot build. A bounded
-download retry is now applied; it supplies no new game-runtime evidence.
+download retry is now applied. The next run passed dependency preparation with
+no retry line observed; the transport remedy supplies no startup-fix evidence.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -91,8 +93,9 @@ restart/resume/second-save pass. Keep the accepted 0.1.5 device diagnostic;
 Android game presentation and gameplay remain unvalidated.
 
 The subsequent [run 36420158506](https://github.com/Russianranger/coh-android/actions/runs/36420158506)
-at `04b9771120737f3e8daf7b4740d2a9fcd6850f28` failed the earlier startup query
-after 90.041 seconds, so it did not exercise the restart-port correction.
+at `04b9771120737f3e8daf7b4740d2a9fcd6850f28` failed a startup query in the first
+service phase after 13 preceding readiness queries had completed. The failing
+query reached 90.041 seconds, so it did not exercise the restart-port correction.
 Preserve the prior first-save evidence above. The new
 [failure receipt](android-evidence/game-runtime-failure-36420158506.json),
 [raw report](android-evidence/game-arm64-failed-36420158506.json) and
@@ -118,9 +121,9 @@ alongside the original acceptance. The donor manifest SHA-256 is
 executable SHA-256 is
 `3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
 
-Next retry donor `36425508780` for the Atlas diagnostic, with separate fresh
-records for first startup and restart. Enabled publication on live ARM64 remains
-pending. Bounded stage/sequence observations will distinguish progress
+Atlas adopted donor `36425508780`, with separate fresh records required for
+first startup and restart. Enabled publication on live ARM64 was subsequently
+verified in run `36428915900` below. Bounded stage/sequence observations distinguish progress
 through startup, dispatch, SQL keepalive and console handling without relying
 on stale WOW64 contexts. A stopped marker identifies an operation and its nested
 calls; it does not prove a deadlock or gameplay success. No startup blocker fix
@@ -134,9 +137,41 @@ The [infrastructure failure receipt](android-evidence/game-infrastructure-failur
 preserves this result. It adds no evidence about the intermittent startup
 stall. The isolated retry correction allows at most three transport attempts,
 discards partial downloads and preserves the size/SHA-256 gates; Atlas tooling
-now explicitly runs its regression tests. Retry the qualified diagnostic donor
-without treating this download remedy as a game startup fix. Enabled ARM64
-publication and full restart/resume/second-save remain pending.
+now explicitly runs its regression tests. The next run passed dependency
+preparation without an observed retry. This download remedy is not a game
+startup fix; full restart/resume/second-save remain pending.
+
+[Run 36428915900](https://github.com/Russianranger/coh-android/actions/runs/36428915900)
+at `f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac` failed a first-phase startup query
+after 90.030 seconds, following 13 completed readiness queries. Enabled ARM64
+source markers are now validated: the initial record had sequence 28 / loop 1
+at `NM_MONITOR`; the same DbServer PID 412 / main thread 416 and mapped file
+later held `FOLDER_CALLBACKS`, sequence 2,449,552 / loop 43,741. Identical before
+and after records span 13:55:20.897–13:55:23.957 UTC. This localizes the observed
+work to folder callbacks or nested calls. Separate non-atomic native snapshots
+showed `read` and `fchdir` operations under PRoot, so a deadlock is not established.
+The specific nested operation and throughput remain unknown.
+
+The query, DbServer and Atlas were alive before cleanup, and the query remained
+alive after the 3.061-second capture. All 65 SQL sessions were idle in
+`ClientRead`, without active transactions; the foreground last query was `;`,
+about 134.9 seconds old. Atlas ended at `Retrieving AutoCommands..`. Preserve the
+[failure receipt](android-evidence/game-runtime-failure-36428915900.json),
+[raw report](android-evidence/game-arm64-failed-36428915900.json) and
+[snapshot](android-evidence/game-hang-36428915900/snapshot.json). Archive and all
+eight service/hang capture hashes were independently verified. Final cleanup
+passed with all 57 process input/output captures closed and zero remaining owned
+processes or inspection failures. No new character or restart result was obtained.
+
+Next, qualify the opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md).
+It prevents watcher registration before the first cache and preserves initial
+reads/lookup mode; merely disabling callbacks would leave notifications queued
+in Wine. The two existing normal schema launches cover default startup and
+acknowledged fixed-input reload. After qualification, adopt the new donor in
+Atlas with unchanged-input checks over schema and DbServer configuration files,
+then complete both saves and exact-name resume. Keep the earlier successful
+first-create/save evidence and the accepted 0.1.5 APK. The full hosted gate and
+Android gameplay remain unvalidated.
 
 ## Continuation validation checkpoint
 

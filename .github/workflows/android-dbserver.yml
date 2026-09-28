@@ -56,6 +56,8 @@ jobs:
           if errorlevel 1 exit /b 1
           python tools/android/dbserver/test_dispatch_progress.py --require-windows
           if errorlevel 1 exit /b 1
+          python tools/android/dbserver/test_fixed_inputs.py --require-windows
+          if errorlevel 1 exit /b 1
           "@
           Set-Content -Path out/test-dispatch-progress.cmd -Value $batch -Encoding ASCII
           cmd /c .\out\test-dispatch-progress.cmd

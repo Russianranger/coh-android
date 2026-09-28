@@ -46,6 +46,7 @@ class InputInventoryTests(unittest.TestCase):
                               "files": {"DbServer.exe": self.file(name + "/DbServer.exe", name.encode())}}
         manifest = {"format": 1, "source_commit": host.SOURCE_COMMIT,
                     "android_execution_validated": False, "gameplay_validated": False,
+                    "wine_build_input": {"fixed_inputs": copy.deepcopy(host.FIXED_INPUTS_METADATA)},
                     "variants": variants}
         path = self.directory / "package-manifest.json"
         path.write_text(json.dumps(manifest))
@@ -64,6 +65,19 @@ class InputInventoryTests(unittest.TestCase):
         self.file("runtime-manifest.json", b'{"format":1}')
         with self.assertRaisesRegex(RuntimeError, "exact accepted"):
             host.verify_runtime_assets(self.directory)
+
+    def test_fixed_input_receipt_requires_unchanged_reads_lookup_and_disabled_default(self):
+        host.validate_fixed_inputs_metadata(copy.deepcopy(host.FIXED_INPUTS_METADATA))
+        for field in host.FIXED_INPUTS_METADATA:
+            value = copy.deepcopy(host.FIXED_INPUTS_METADATA)
+            value.pop(field)
+            with self.subTest(missing=field), self.assertRaisesRegex(RuntimeError, "fixed-input build contract"):
+                host.validate_fixed_inputs_metadata(value)
+        for field, value in (("lookup_mode", "filesystem_only"), ("activation", "after_initialization"),
+                             ("watcher_registration", "enabled"), ("initial_reads", "skipped"),
+                             ("disabled_by_default", 1), ("proves_generic_notification_fix", 0)):
+            with self.subTest(field=field), self.assertRaisesRegex(RuntimeError, "fixed-input build contract"):
+                host.validate_fixed_inputs_metadata({**host.FIXED_INPUTS_METADATA, field: value})
 
 
 class NetworkIsolationTests(unittest.TestCase):
@@ -192,6 +206,8 @@ class ReportAcceptanceTests(unittest.TestCase):
         stages = [{"stage": name, "status": "passed"} for name in host.STAGES]
         stages[1]["cluster_reused"] = False
         normal_phases = [{"number": number, "exit_code": 0, "failure_diagnostic_lines": [],
+                          "fixed_inputs": {"requested": number == 2,
+                                           "startup_acknowledgement": host.FIXED_INPUTS_ACK if number == 2 else None},
                           "export_bytes": 0, "export_sha256": host.hashlib.sha256(b"").hexdigest(),
                           "input_manifest_sha256": expected["inputs"]["schema_manifest_sha256"],
                           **copy.deepcopy(expected["schema"]),
@@ -260,6 +276,14 @@ class ReportAcceptanceTests(unittest.TestCase):
                      lambda r: r["generated_schema"]["phases"][1]["catalog_sha256"].update(indexes="f" * 64),
                      lambda r: r["generated_schema"]["phases"][1].update(ordered_columns_sha256="f" * 64),
                      lambda r: r["generated_schema"]["phases"][1]["attribute_sha256"].update(attributes="f" * 64)]
+        mutations.extend([
+            lambda r: r["generated_schema"]["phases"][0]["fixed_inputs"].update(requested=True),
+            lambda r: r["generated_schema"]["phases"][1]["fixed_inputs"].update(requested=False),
+            lambda r: r["generated_schema"]["phases"][1]["fixed_inputs"].update(requested=1),
+            lambda r: r["generated_schema"]["phases"][0]["fixed_inputs"].update(startup_acknowledgement=host.FIXED_INPUTS_ACK),
+            lambda r: r["generated_schema"]["phases"][1]["fixed_inputs"].update(startup_acknowledgement=None),
+            lambda r: r["generated_schema"]["phases"][1]["fixed_inputs"].update(startup_acknowledgement=host.FIXED_INPUTS_ACK + '.'),
+            lambda r: r["generated_schema"]["phases"][0].pop("fixed_inputs")])
         for index, mutate in enumerate(mutations):
             with self.subTest(case=index):
                 report = self.sample()

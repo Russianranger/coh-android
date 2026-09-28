@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "scope": "bounded failure-only observations before owned service cleanup",
+  "snapshot_byte_limit": 1048576,
+  "windows_byte_limit": 393216,
+  "files": {
+    "windows-contexts.jsonl": {
+      "bytes": 104770,
+      "sha256": "6a5d97afef95c706c26c5d710ca3f661e6658a2389d96c3c44e1343ecaa07e8a"
+    },
+    "snapshot.json": {
+      "bytes": 427197,
+      "sha256": "e64b3783d857b504dc90ab4e93fae313cb28fe0e4fb8767699681d012c1e38a3"
+    }
+  },
+  "summary": {
+    "attempted": true,
+    "started_utc": "2026-09-28T13:55:20.896304+00:00",
+    "before_service_cleanup": true,
+    "before_failed_query_stop": true,
+    "trigger_label": "game-query-first-ready",
+    "trigger_alive": true,
+    "dispatch_stage_before": "FOLDER_CALLBACKS",
+    "dispatch_stage_after": "FOLDER_CALLBACKS",
+    "dispatch_sequence_advanced": false,
+    "dispatch_loop_advanced": false,
+    "snapshot_written": true,
+    "elapsed_seconds": 3.061,
+    "windows_contexts_available": true
+  }
+}

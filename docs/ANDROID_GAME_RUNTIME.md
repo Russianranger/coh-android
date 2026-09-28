@@ -4,9 +4,10 @@ This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
 new hosted gate is implemented; complete ARM64 qualification is pending. The
 best completed run passed Atlas readiness, fresh character creation, live
 currency change and a committed protocol save, then stopped at the restart port
-check. The last game execution reproduced the earlier startup query timeout and
-captured the live failure state. A subsequent diagnostic attempt stopped during
-a pinned build-dependency download. Exact-name resume and the second save remain
+check. The latest game execution reproduced the startup query timeout and
+validated enabled ARM64 source markers, which stayed at `FOLDER_CALLBACKS`
+during the failure capture. Native snapshots show continued operations rather
+than a proven deadlock. Exact-name resume and the second save remain
 unproved on ARM64. No accepted Thor 0.1.5 APK changes or Android game execution
 claims follow from these hosted results.
 
@@ -35,8 +36,8 @@ Its manifest SHA-256 is
 `656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632` and normal
 executable SHA-256 is
 `3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
-The earlier Atlas attempts below used donor `36369485666`; their first-save and
-failure evidence remains unchanged.
+The Atlas attempts through `36420158506` used donor `36369485666`; their
+first-save and failure evidence remains unchanged.
 
 The full reviewed data inventory contains 173,011 files / 2,977,730,517 bytes.
 The preparer verifies the externally pinned asset receipt plus immutable text
@@ -197,8 +198,9 @@ closed without overflow or truncation.
 ## Startup timeout reproduced with pre-cleanup evidence
 
 [Run 36420158506](https://github.com/Russianranger/coh-android/actions/runs/36420158506)
-at `04b9771120737f3e8daf7b4740d2a9fcd6850f28` failed the first startup status
-query after 90.041 seconds. It did not reach character creation or exercise the
+at `04b9771120737f3e8daf7b4740d2a9fcd6850f28` failed a startup query in the first
+service phase after 13 preceding readiness queries had completed. The failing
+query reached 90.041 seconds. It did not reach character creation or exercise the
 restart preflight correction. The prior run's first creation and committed save
 remain valid partial evidence; this rerun does not complete the hosted gate.
 
@@ -232,7 +234,7 @@ and [raw report](android-evidence/game-arm64-failed-36420158506.json) bind the
 verified archive and all eight captured files. Its 8,736,139-byte artifact has
 SHA-256 `811106aac6577990fd376f772ed411e80b579f39ac284e5883263969ec938487`.
 
-The next diagnostic uses [opt-in source dispatch markers](../database/wine-dbserver/DISPATCH_PROGRESS.md)
+The follow-on diagnostic uses [opt-in source dispatch markers](../database/wine-dbserver/DISPATCH_PROGRESS.md)
 in a separately receipted DbServer build. They publish bounded main-thread
 progress around startup, dispatch, SQL keepalive and console handling. Advancing
 samples show progress; a stopped stage identifies an operation and its nested
@@ -243,10 +245,11 @@ unless explicitly enabled and do not change the intended game behavior.
 passed all three jobs. The [acceptance receipt](android-evidence/accepted-dbserver-hosted-36425508780.json)
 binds the new donor package. Windows passed the enabled-record contract; the
 ARM64 persistence fixture and normal schema gates passed with the observer
-disabled. Atlas now adopts this qualified package for the next diagnostic,
+disabled. Atlas adopted this qualified package for the subsequent diagnostic,
 requiring a fresh valid record at DbServer readiness and a distinct record after
-restart. Enabled ARM64 publication is still pending. This is an evidence-gathering
-step, not a demonstrated startup fix or gameplay result. The complete hosted
+restart. Enabled ARM64 publication was subsequently verified in `36428915900`
+below. This is an evidence-gathering step, not a demonstrated startup fix or
+gameplay result. The complete hosted
 restart/resume/second-save gate and physical Android execution remain pending.
 
 ## Diagnostic attempt stopped before game execution
@@ -264,5 +267,55 @@ The isolated download correction now permits at most three attempts for
 transport failures, deletes partial bytes before retrying, and retains the
 original size bound and required SHA-256. Hash mismatches and permanent HTTP
 errors remain failures. Atlas tooling explicitly runs the retry regression
-tests. This prepares another attempt with the same qualified donor; enabled
-ARM64 dispatch publication and full restart/resume/second-save remain pending.
+tests. The next run used the same qualified donor and passed this preparation
+step; its log contains no observed download retry. The transport remedy does
+not establish a game startup fix.
+
+## Enabled ARM64 dispatch evidence localizes folder work
+
+[Run 36428915900](https://github.com/Russianranger/coh-android/actions/runs/36428915900)
+at `f32ccd7c0f1aa950d1f87ceb81ab09b2dba4e2ac` failed a startup query in the first
+service phase after 13 preceding readiness queries completed. The query timed
+out after 90.030 seconds. Eight setup stages passed, but Atlas readiness,
+character creation and the restart correction were not reached in this run.
+The earlier first creation and committed save remain valid partial evidence.
+
+The [raw report](android-evidence/game-arm64-failed-36428915900.json) validates
+enabled ARM64 source publication: at 13:40:22 UTC, DbServer PID 412 / main thread
+416 published `NM_MONITOR`, sequence 28, loop 1. The
+[pre-cleanup snapshot](android-evidence/game-hang-36428915900/snapshot.json)
+then read the same mapped file at 13:55:20.897 and 13:55:23.957 UTC. Both reads
+contained `FOLDER_CALLBACKS` (stage 30), sequence 2,449,552 and loop 43,741,
+with identical raw-record hashes. This places the main thread in folder
+callbacks or nested work during the observation. It does not identify the
+specific nested call or prove a deadlock.
+
+Separate, non-atomic native process/task samples showed `read` and `fchdir`
+operations under PRoot. These indicate continuing native activity but do not
+measure its throughput or identify the particular folder request. Kernel
+stacks were permission-denied, and the descriptor cap omitted DbServer's file
+descriptors. Saved WOW64 contexts remain unsuitable as live translated stacks.
+DbServer, Atlas and the timed-out query were alive before cleanup; the query
+was still alive after the 3.061-second capture. All 65 PostgreSQL sessions were
+idle in `ClientRead`, with no active transactions. The foreground last query
+was `;`, about 134.9 seconds old; the 64 workers' last queries were `COMMIT`.
+Atlas's full stdout ended at `Retrieving AutoCommands..`.
+
+Final PostgreSQL/Wine cleanup passed, all 57 process input/output captures
+closed, and zero owned processes or inspection failures remained. The
+[verified receipt](android-evidence/game-runtime-failure-36428915900.json)
+binds the raw report, all three preserved hang files and all eight service/hang
+capture hashes. The 8,738,855-byte archive has SHA-256
+`bc51de6db5afa732bfd92ca57ffa9d68c12c16013aacaea66736317be110d0ce`.
+
+The scoped response is an opt-in [fixed-input DbServer mode](../database/wine-dbserver/FIXED_INPUTS.md),
+which prevents watcher registration from startup while preserving initial reads
+and lookup mode. Disabling callbacks alone would leave Wine accumulating
+undrained notification records. The new mode needs separate qualification before
+Atlas adopts its package. The harness will bind the accepted schema files plus
+the complete DbServer configuration directory and reject changes across both
+service launches and saves. Default dynamic behavior remains available.
+
+No startup fix, new character result or restart/resume/second-save result is
+claimed yet. The accepted device APK remains 0.1.5; Android game execution and
+presentation remain unvalidated.
