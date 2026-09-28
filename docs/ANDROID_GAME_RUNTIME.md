@@ -72,6 +72,31 @@ separate milestones. Keep the accepted 0.1.5 and 0.2.0 device diagnostics instal
 DbServer local listeners and Stop/rerun are now verified on Thor; MapServer/client
 listener preparation and the combined Android game runtime remain separate work.
 
+## Loopback DbServer integration candidate
+
+After [0.2.0 passed on Thor](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results),
+the workflow now explicitly selects `--dbserver-profile loopback` for assembly
+and validation. This candidate uses the exact qualified donor `36460867428`
+(`eed2ce1f5388195f65a07853919761a93657aca6`). The default assembly profile and
+accepted historical result retain donor `36451873322`; a candidate manifest
+cannot silently substitute either donor or downgrade the requested policy.
+
+Both DbServer starts enable loopback binding, alongside the existing fixed-input
+mode. Listener proof is required after main-thread dispatch initialization and
+before Atlas starts: the same 13 required endpoints and optional crash-map TCP
+6992 apply to the managed `-start 0`, fake-auth, no-queue, embedded-log setup.
+The host independently reparses each complete DbServer stdout capture and checks
+it against the phase receipt and pinned source-derived endpoint contract.
+Missing, duplicate, substituted or wildcard endpoints fail qualification.
+
+This is a separately identified **hosted-only** integration gate. The mandatory
+private network namespace remains in place. The DbServer flag is cleared from
+MapServer and client environments: the stock MapServer still binds wildcard
+UDP 7001, and TestClient sends through implicitly bound UDP sockets. Their
+listener policy and Android lifecycle integration must be addressed before a
+physical Atlas candidate. The new combined package is not yet accepted at this
+implementation checkpoint; its full create/save/restart/resume run must pass.
+
 ## Accepted full hosted workflow
 
 [Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)

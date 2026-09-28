@@ -22,6 +22,9 @@ PINS = {
     'dbserver': ('docs/android-evidence/dbserver-package-36451873322.json', 'package-manifest.json', 36451873322),
     'resume': ('docs/postgresql-evidence/resume-testclient-build-36297542986.json', 'build-info.json', 36297542986),
 }
+LOOPBACK_DBSERVER_PIN = ('docs/android-evidence/dbserver-package-36460867428.json',
+                       'package-manifest.json', 36460867428)
+DBSERVER_PROFILES = ('accepted', 'loopback')
 BRIDGE_SOURCES = ('database/wine-game/TestClientBridge.c', 'database/wine-game/bridge_protocol.h')
 BRIDGE_FLAGS = '/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601'
 
@@ -49,8 +52,10 @@ def bridge_receipt(directory, commit):
     return value
 
 
-def verified_donor(directory, kind):
-    accepted_name, manifest_name, run_id = PINS[kind]
+def verified_donor(directory, kind, *, dbserver_profile='accepted'):
+    require(dbserver_profile in DBSERVER_PROFILES, 'Unknown DbServer profile')
+    accepted_name, manifest_name, run_id = (LOOPBACK_DBSERVER_PIN
+        if kind == 'dbserver' and dbserver_profile == 'loopback' else PINS[kind])
     manifest_path = directory / manifest_name
     require(manifest_path.is_file() and not manifest_path.is_symlink(), 'Missing donor manifest: ' + kind)
     manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
@@ -102,7 +107,8 @@ def assemble(args):
     require(re.fullmatch(r'[0-9a-f]{40}', args.repository_commit), 'Invalid repository commit')
     new_output(args.output)
     ref, ref_dir, ref_proof = verified_donor(args.reference, 'reference')
-    db, normal_dir, db_proof = verified_donor(args.dbserver, 'dbserver')
+    profile = getattr(args, 'dbserver_profile', 'accepted')
+    db, normal_dir, db_proof = verified_donor(args.dbserver, 'dbserver', dbserver_profile=profile)
     resume, resume_dir, resume_proof = verified_donor(args.resume, 'resume')
     resume_exe, _ = verify_resume_client_package(args.resume, resume['repository_commit'], ref)
     bridge_path = args.bridge / 'bridge-build.json'
@@ -128,6 +134,10 @@ def assemble(args):
                            'bridge': {'repository_commit': args.repository_commit, 'manifest_sha256': sha(bridge_path), 'manifest': bridge}},
                 'postgresql_persistence_fixture': False, 'runtime_execution_validated': False,
                 'scope': 'Composite hosted qualification input; not a replacement stock reference package'}
+    # Preserve the byte-level shape of accepted packages. The opt-in candidate
+    # is a separate composite qualification, never a replacement acceptance.
+    if profile == 'loopback':
+        manifest['dbserver_profile'] = profile
     try:
         args.output.mkdir(parents=True)
         for name, (path, _) in chosen.items():
@@ -150,6 +160,8 @@ def main():
     for name in ('reference', 'dbserver', 'resume', 'bridge', 'output'):
         package.add_argument('--' + name, type=Path, required=True)
     package.add_argument('--repository-commit', required=True)
+    package.add_argument('--dbserver-profile', choices=DBSERVER_PROFILES, default='accepted',
+                         help='Opt into separate hosted qualification of the loopback DbServer donor')
     args = ap.parse_args()
     value = bridge_receipt(args.directory, args.repository_commit) if args.command == 'bridge-receipt' else assemble(args)
     print(json.dumps({'role': value['role'], 'files': len(value['files'])}))

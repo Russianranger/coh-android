@@ -1,4 +1,4 @@
-name: Wine Atlas character persistence ARM64 qualification
+name: Wine Atlas loopback DbServer ARM64 qualification
 on:
   workflow_dispatch:
   push:
@@ -104,7 +104,7 @@ jobs:
         with:
           name: wine-dbserver-package
           path: out/wine-dbserver
-          run-id: 36451873322
+          run-id: 36460867428
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
@@ -142,7 +142,7 @@ jobs:
               assert all('/' not in n and '\\' not in n and n not in ('.','..') for n in value.namelist())
               value.extractall('out/reference-runtime')
           PY
-          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime --dbserver out/wine-dbserver --resume out/resume-client --bridge out/bridge --output out/wine-game --repository-commit "$GITHUB_SHA"
+          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime --dbserver out/wine-dbserver --resume out/resume-client --bridge out/bridge --output out/wine-game --repository-commit "$GITHUB_SHA" --dbserver-profile loopback
       - name: Retrieve existing reviewed asset input
         env:
           GH_TOKEN: ${{ github.token }}
@@ -158,8 +158,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Build matching native ARM64 PRoot
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
-      - name: Enter Atlas, save, restart and resume exact character in isolated ARM64 runtime
-        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe
+      - name: Qualify both loopback DbServer starts with Atlas saves and exact character resume
+        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe --dbserver-profile loopback
       - uses: actions/upload-artifact@v4
         if: always()
         with:

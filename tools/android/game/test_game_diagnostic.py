@@ -1,5 +1,6 @@
 """Focused lifecycle boundaries for the hosted game orchestration."""
 import errno
+import copy
 import hashlib
 import json
 import os
@@ -146,6 +147,7 @@ class FixedInputTests(unittest.TestCase):
             diagnostic.runtime = Path(temporary)
             diagnostic.ctx = SimpleNamespace(stage=Mock(), passed=Mock())
             diagnostic.wine_env = {'WINEPREFIX': '/private/wine'}
+            diagnostic.loopback_enabled = False
             diagnostic.check_fixed_inputs = Mock()
             diagnostic.dispatch_paths, diagnostic.dispatch_stages = {}, {}
             diagnostic.schema = {'expected_tables': {}}
@@ -172,6 +174,156 @@ class FixedInputTests(unittest.TestCase):
             self.assertNotIn(guest.dbserver.FIXED_INPUTS_ENV, diagnostic.wine_env)
             self.assertEqual(diagnostic.game['phases'][0]['fixed_inputs']['startup_acknowledgement'],
                              guest.dbserver.FIXED_INPUTS_ACK)
+
+
+class LoopbackProfileTests(unittest.TestCase):
+    def package(self):
+        manifest = json.loads((ROOT / 'docs/android-evidence/dbserver-package-36460867428.json').read_text())
+        return {'dbserver_profile': 'loopback', 'files': copy.deepcopy(manifest['variants']['normal']['files']),
+                'inputs': {'dbserver': {'run_id': 36460867428,
+                    'repository_commit': manifest['repository_commit'],
+                    'manifest_sha256': guest.dbserver.DEVICE_PACKAGE_MANIFEST, 'manifest': manifest}}}
+
+    def endpoints(self):
+        return guest.game_loopback_contract(self.package())['endpoints']
+
+    def output(self, *, optional=False):
+        endpoints = self.endpoints()
+        return guest.dbserver.LOOPBACK_ACK + '\n' + ''.join(
+            guest.dbserver.LOOPBACK_ENV + ' bind verified: protocol={protocol} address={address} port={port}\n'.format(**item)
+            for item in reversed(endpoints['required'] + (endpoints['optional'] if optional else [])))
+
+    def test_only_explicit_loopback_profile_accepts_exact_qualified_normal_donor(self):
+        self.assertIsNone(guest.game_loopback_contract({}))
+        self.assertIsNone(guest.game_loopback_contract({'dbserver_profile': 'accepted'}))
+        contract = guest.game_loopback_contract(self.package())
+        self.assertEqual(contract['metadata'], guest.dbserver.LOOPBACK_METADATA)
+        self.assertEqual(len(contract['endpoints']['required']), 13)
+        self.assertEqual(contract['endpoints']['optional'], [{'protocol': 'tcp', 'address': '127.0.0.1', 'port': 6992}])
+        mutations = [lambda p: p.update(dbserver_profile='unknown'),
+                     lambda p: p['inputs']['dbserver'].update(run_id=36451873322),
+                     lambda p: p['inputs']['dbserver'].update(manifest_sha256='f' * 64),
+                     lambda p: p['inputs']['dbserver'].update(repository_commit='f' * 40),
+                     lambda p: p['inputs']['dbserver']['manifest']['variants']['normal'].update(postgresql_persistence_fixture=True),
+                     lambda p: p['files']['DbServer.exe'].update(sha256='f' * 64),
+                     lambda p: p['files']['CrashRpt.dll'].update(sha256='f' * 64),
+                     lambda p: p['inputs']['dbserver']['manifest']['wine_build_input']['loopback_only'].update(android_execution_validated=True)]
+        for mutate in mutations:
+            package = self.package()
+            mutate(package)
+            with self.assertRaises(guest.base.DiagnosticError):
+                guest.game_loopback_contract(package)
+
+    def test_ack_waits_for_complete_mandatory_records_and_allows_only_known_optional(self):
+        child = SimpleNamespace(overflow=False, text=Mock())
+        output = self.output()
+        lines = output.splitlines(keepends=True)
+        for pending in ('', guest.dbserver.LOOPBACK_ACK, ''.join(lines[:-1]), output[:-1]):
+            child.text.return_value = pending
+            self.assertFalse(guest.loopback_acknowledgement(child, self.endpoints()))
+        for optional in (False, True):
+            child.text.return_value = self.output(optional=optional) + 'partial next diagnostic'
+            receipt = guest.loopback_acknowledgement(child, self.endpoints())
+            self.assertEqual(len(receipt['endpoints']), 13 + optional)
+            self.assertEqual(receipt['startup_acknowledgement'], guest.dbserver.LOOPBACK_ACK)
+
+    def test_ack_refuses_duplicates_unknown_wildcard_and_malformed_records_without_waiting(self):
+        output = self.output()
+        invalid = (output + output.splitlines()[1] + '\n', output + guest.dbserver.LOOPBACK_ACK + '\n',
+                   output.replace('address=127.0.0.1', 'address=0.0.0.0', 1),
+                   output.replace('port=7000', 'port=65535'), output.replace('port=7000', 'port=70000'),
+                   output.replace('protocol=udp', 'protocol=tcp'), 'prefix ' + output,
+                   output.replace('bind verified:', 'bind failed:', 1))
+        child = SimpleNamespace(overflow=False, text=Mock())
+        for value in invalid:
+            child.text.return_value = value
+            with self.subTest(output=value), self.assertRaises(guest.base.DiagnosticError):
+                guest.loopback_acknowledgement(child, self.endpoints())
+        child.overflow = True
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'overflowed'):
+            guest.loopback_acknowledgement(child, self.endpoints())
+
+    def test_launch_environment_cannot_enable_mapserver_or_legacy_dbserver(self):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        diagnostic.wine_env = {'WINEPREFIX': '/private/wine', guest.dbserver.LOOPBACK_ENV: 'inherited'}
+        diagnostic.runtime = Path('/private/game')
+        diagnostic.args = SimpleNamespace(wine=Path('/wine'))
+        diagnostic.ctx = SimpleNamespace(start=Mock())
+        diagnostic.services = []
+        for enabled, executable in ((False, 'DbServer.exe'), (True, 'DbServer.exe'),
+                                    (True, 'MapServer.exe'), (True, 'TestClientCreate.exe')):
+            diagnostic.loopback_enabled = enabled
+            for supplied in (None, {**diagnostic.wine_env, guest.dbserver.LOOPBACK_ENV: '1'}):
+                with self.subTest(enabled=enabled, executable=executable, supplied=supplied):
+                    diagnostic.start_game('owned', executable, [], env=supplied)
+                    environment = diagnostic.ctx.start.call_args.kwargs['env']
+                    self.assertEqual(environment.get(guest.dbserver.LOOPBACK_ENV),
+                                     '1' if enabled and executable == 'DbServer.exe' else None)
+                    self.assertEqual(environment['WINEPREFIX'], '/private/wine')
+        self.assertEqual(diagnostic.wine_env[guest.dbserver.LOOPBACK_ENV], 'inherited')
+
+    def test_both_service_starts_wait_after_dispatch_and_before_atlas_then_record_bindings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            diagnostic = object.__new__(guest.GameDiagnostic)
+            diagnostic.runtime = Path(temporary)
+            diagnostic.ctx = SimpleNamespace(stage=Mock(), passed=Mock())
+            diagnostic.wine_env = {'WINEPREFIX': '/private/wine'}
+            diagnostic.loopback_enabled = True
+            diagnostic.loopback_contract = guest.game_loopback_contract(self.package())
+            diagnostic.check_fixed_inputs = Mock()
+            diagnostic.dispatch_paths, diagnostic.dispatch_stages = {}, {}
+            diagnostic.schema = {'expected_tables': {}}
+            diagnostic.schema_snapshot = Mock(return_value={'table_count': 99})
+            diagnostic.game = {'dispatch_progress': {'phases': {}}, 'phases': []}
+            child = SimpleNamespace(overflow=False, text=lambda: guest.dbserver.FIXED_INPUTS_ACK + '\n' + self.output())
+            diagnostic.start_game = Mock(return_value=child)
+            diagnostic.map_status = Mock(side_effect=[{'ready': False, 'not_started': True}, {'ready': True}] * 2)
+            waits = []
+            def wait(predicate, seconds, label):
+                waits.append(label)
+                if label == 'DbServer schema and local listener':
+                    return True
+                if label == 'DbServer loopback listener acknowledgements':
+                    self.assertIn('DbServer main-thread dispatch publication', waits)
+                    self.assertEqual(diagnostic.start_game.call_count % 2, 1, 'Atlas must not start before verified binds')
+                result = predicate()
+                self.assertTrue(result)
+                return result
+            diagnostic.wait = wait
+            with patch.object(guest, 'check_game_port'), \
+                    patch.object(guest.hang_evidence, 'read_dispatch_record', return_value={'loop_count': 1}), \
+                    patch.object(guest.evidence, 'map_ready_current', return_value=True):
+                diagnostic.start_services('first')
+                diagnostic.start_services('restart')
+            self.assertEqual(waits.count('DbServer loopback listener acknowledgements'), 2)
+            for number, call in enumerate(diagnostic.start_game.call_args_list):
+                if number % 2 == 0:
+                    self.assertEqual(call.kwargs['env'][guest.dbserver.LOOPBACK_ENV], '1')
+                    self.assertEqual(call.kwargs['env'][guest.dbserver.FIXED_INPUTS_ENV], '1')
+                else:
+                    self.assertEqual(call.args[1], 'MapServer.exe')
+                    self.assertEqual(call.kwargs, {})
+            self.assertNotIn(guest.dbserver.LOOPBACK_ENV, diagnostic.wine_env)
+            self.assertEqual([phase['phase'] for phase in diagnostic.game['phases']],
+                             ['first_services_ready', 'restart_services_ready'])
+            for phase in diagnostic.game['phases']:
+                self.assertEqual(phase['loopback_only']['endpoints'], self.endpoints()['required'])
+
+    def test_clean_logs_rechecks_late_duplicates_and_does_not_claim_mapserver_policy(self):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        diagnostic.loopback_enabled = True
+        diagnostic.loopback_contract = guest.game_loopback_contract(self.package())
+        database = SimpleNamespace(label='first-dbserver', text=Mock(return_value=self.output()))
+        atlas = SimpleNamespace(label='first-atlas', text=lambda: 'normal MapServer diagnostics\n')
+        diagnostic.services = [database, atlas]
+        diagnostic.ctx = SimpleNamespace(log_paths=lambda: [], secrets=[])
+        diagnostic.completed_logout = False
+        diagnostic.clean_logs()
+        database.text.return_value = self.output(optional=True)
+        diagnostic.clean_logs()
+        database.text.return_value += guest.dbserver.LOOPBACK_ACK + '\n'
+        with self.assertRaises(guest.base.DiagnosticError):
+            diagnostic.clean_logs()
 
 
 @unittest.skipUnless(sys.platform.startswith('linux'), 'Wine guest uses native Linux socket semantics')

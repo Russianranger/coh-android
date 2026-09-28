@@ -72,6 +72,8 @@ class DispatchEvidenceTests(unittest.TestCase):
                 diagnostic = object.__new__(guest.GameDiagnostic)
                 diagnostic.runtime = root
                 diagnostic.wine_env = {}
+                diagnostic.loopback_enabled = False
+                diagnostic.loopback_contract = None
                 diagnostic.dispatch_paths = {}
                 diagnostic.dispatch_stages = self.stages
                 diagnostic.schema = {'expected_tables': {}}

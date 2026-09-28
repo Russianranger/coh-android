@@ -11,6 +11,26 @@ from unittest import mock
 import host_game_smoke as host
 
 
+def loopback_sample(game, expected):
+    donor = json.loads((host.ROOT / 'docs/android-evidence/dbserver-package-36460867428.json').read_text())
+    build_input = donor['wine_build_input']
+    endpoints = host.dbhost.validate_loopback_build_input(build_input)
+    expected.update(dbserver_profile='loopback', loopback_metadata=build_input['loopback_only'],
+                    loopback_endpoints=endpoints)
+    game.update(dbserver_profile='loopback',
+                loopback_only={'requested': True, 'metadata': copy.deepcopy(build_input['loopback_only'])})
+    for phase in game['phases']:
+        phase['loopback_only'] = {'requested': True, 'startup_acknowledgement': host.dbhost.LOOPBACK_ACK,
+                                 'endpoints': copy.deepcopy(endpoints['required'])}
+    return endpoints
+
+
+def loopback_stdout(endpoints):
+    return host.dbhost.LOOPBACK_ACK + '\n' + ''.join(
+        'COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol={protocol} address={address} port={port}\n'.format(**value)
+        for value in endpoints)
+
+
 def fixed_input_sample():
     record = {'bytes': 1, 'sha256': 'a' * 64}
     schema = {'files': {'data/defs/entities.def': {'bytes': 2, 'sha256': 'b' * 64},
@@ -144,13 +164,17 @@ class InputTests(unittest.TestCase):
 
 
 class PackageTests(unittest.TestCase):
-    def sample(self):
+    def sample(self, dbserver_profile='accepted'):
         paths = {"reference": "docs/reference-runtime-evidence/build-36088012664.json",
                  "dbserver": "docs/android-evidence/dbserver-package-36451873322.json",
                  "resume": "docs/postgresql-evidence/resume-testclient-build-36297542986.json"}
+        donors = host.DONORS
+        if dbserver_profile == 'loopback':
+            paths['dbserver'] = 'docs/android-evidence/dbserver-package-36460867428.json'
+            donors = {**donors, 'dbserver': host.LOOPBACK_DONOR}
         proofs = {role: {**{key: pin[key] for key in ("run_id", "repository_commit", "manifest_sha256")},
                          "manifest": json.loads((host.ROOT / paths[role]).read_text())}
-                  for role, pin in host.DONORS.items()}
+                  for role, pin in donors.items()}
         reference = proofs["reference"]["manifest"]["files"]
         normal = proofs["dbserver"]["manifest"]["variants"]["normal"]["files"]
         selected = {name: (record, "reference") for name, record in reference.items() if name.lower().endswith(".dll")}
@@ -170,12 +194,42 @@ class PackageTests(unittest.TestCase):
         selected["TestClientBridge.exe"] = (bridge_record, "bridge")
         files = {name: {**{key: value for key, value in record.items() if key != "size"},
                         "bytes": record.get("bytes", record.get("size"))} for name, (record, _) in selected.items()}
-        return {"format": 1, "role": "wine_game_runtime", "source_commit": host.dbhost.SOURCE_COMMIT,
+        return {**({'dbserver_profile': 'loopback'} if dbserver_profile == 'loopback' else {}),
+                "format": 1, "role": "wine_game_runtime", "source_commit": host.dbhost.SOURCE_COMMIT,
                 "data_commit": host.dbhost.DATA_COMMIT, "repository_commit": "f" * 40,
                 "client_version": "coh-persistence-diagnostic", "postgresql_persistence_fixture": False,
                 "runtime_execution_validated": False, "inputs": proofs, "files": files,
                 "file_donors": {name: role for name, (_, role) in selected.items()},
                 "dependency_report": host.dependency_report(files)}
+
+    def test_profile_requires_exact_loopback_donor_and_explicit_host_selection(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = self.sample('loopback')
+            for name in candidate['files']:
+                (root / name).write_bytes(name.encode())
+            def pe_record(data):
+                return {key: value for key, value in candidate['files'][data.decode()].items()
+                        if key not in ('bytes', 'sha256')}
+            with mock.patch.object(host.dbhost, 'verify_inventory'), mock.patch.object(host, 'pe_info', side_effect=pe_record):
+                path = root / 'game-package.json'
+                path.write_text(json.dumps(candidate))
+                host.verify_package(root, dbserver_profile='loopback')
+                with self.assertRaisesRegex(RuntimeError, 'profile differs'):
+                    host.verify_package(root)
+                mutations = [lambda m: m.pop('dbserver_profile'),
+                             lambda m: m.update(dbserver_profile='unqualified'),
+                             lambda m: m['inputs'].update(dbserver=self.sample()['inputs']['dbserver']),
+                             lambda m: m['inputs']['dbserver'].update(run_id=36451873322),
+                             lambda m: m['inputs']['dbserver']['manifest']['wine_build_input']['loopback_only'].update(
+                                 disabled_by_default=False)]
+                for number, mutate in enumerate(mutations):
+                    with self.subTest(mutation=number):
+                        changed = copy.deepcopy(candidate)
+                        mutate(changed)
+                        path.write_text(json.dumps(changed))
+                        with self.assertRaises(RuntimeError):
+                            host.verify_package(root, dbserver_profile='loopback')
 
     def test_package_requires_exact_donors_and_current_bridge_receipt(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -442,6 +496,96 @@ class ReportTests(unittest.TestCase):
                 mutate(report)
                 with self.assertRaises(RuntimeError):
                     host.validate_report(report, expected=expected)
+
+
+class LoopbackTests(unittest.TestCase):
+    def test_combined_report_requires_both_starts_and_cannot_downgrade_the_profile(self):
+        report, expected = ReportTests().sample()
+        loopback_sample(report['game'], expected)
+        host.validate_report(report, expected=expected)
+        mutations = [lambda g: g.pop('dbserver_profile'),
+                     lambda g: g.update(dbserver_profile='accepted'),
+                     lambda g: g['loopback_only'].update(requested=1),
+                     lambda g: g['loopback_only']['metadata'].update(android_execution_validated=True),
+                     lambda g: g['phases'][0].pop('loopback_only'),
+                     lambda g: g['phases'][1]['loopback_only'].update(requested=1),
+                     lambda g: g['phases'][1]['loopback_only'].update(startup_acknowledgement='missing'),
+                     lambda g: g['phases'][1]['loopback_only']['endpoints'].pop(),
+                     lambda g: g['phases'][1]['loopback_only']['endpoints'][0].update(address='0.0.0.0'),
+                     lambda g: g['phases'][1]['loopback_only']['endpoints'][0].update(port=True)]
+        for number, mutate in enumerate(mutations):
+            with self.subTest(mutation=number):
+                changed = copy.deepcopy(report)
+                mutate(changed['game'])
+                with self.assertRaises(RuntimeError):
+                    host.validate_report(changed, expected=expected)
+        accepted_expected = ReportTests().sample()[1]
+        with self.assertRaisesRegex(RuntimeError, 'unexpectedly claims'):
+            host.validate_report(report, expected=accepted_expected)
+
+    def test_final_stdout_requires_exact_ack_and_complete_source_derived_bind_set(self):
+        report, expected = ReportTests().sample()
+        endpoints = loopback_sample(report['game'], expected)
+        good = loopback_stdout(endpoints['required'])
+        host.parse_loopback_output(good, endpoints)
+        with_optional = loopback_stdout(endpoints['required'] + endpoints['optional'])
+        self.assertEqual(len(host.parse_loopback_output(with_optional, endpoints)['endpoints']), 14)
+        failures = [good.replace(host.dbhost.LOOPBACK_ACK + '\n', ''),
+                    good + host.dbhost.LOOPBACK_ACK + '\n',
+                    good + good.splitlines()[1] + '\n',
+                    loopback_stdout(endpoints['required'][:-1]),
+                    good.replace('127.0.0.1', '0.0.0.0'),
+                    good.replace('port=6971', 'port=7002'),
+                    good.replace('port=6971', 'port=69710'),
+                    good.replace('protocol=tcp', 'protocol=unknown', 1)]
+        for number, output in enumerate(failures):
+            with self.subTest(mutation=number), self.assertRaises(RuntimeError):
+                host.parse_loopback_output(output, endpoints)
+
+    def test_resealed_raw_service_captures_cannot_hide_missing_or_mis_scoped_bind_proof(self):
+        report, expected = ReportTests().sample()
+        endpoints = loopback_sample(report['game'], expected)
+        required = loopback_stdout(endpoints['required'])
+        later = loopback_stdout(endpoints['required'] + endpoints['optional'])
+        cases = [(None, None, False),
+                 ('first-dbserver', later, False),
+                 ('restart-dbserver', later, False),
+                 ('first-dbserver', '', True),
+                 ('restart-dbserver', loopback_stdout(endpoints['required'][:-1]), True),
+                 ('restart-dbserver', required.replace('127.0.0.1', '0.0.0.0'), True),
+                 ('restart-dbserver', required + required.splitlines()[1] + '\n', True),
+                 ('first-atlas', required, True)]
+        for label, changed, fails in cases:
+            with self.subTest(label=label, changed=changed), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                state, evidence = root / 'state', root / 'evidence'
+                source = state / 'game-service-captures'
+                source.mkdir(parents=True)
+                evidence.mkdir()
+                files = {}
+                for service in host.SERVICE_LABELS:
+                    output = required if service.endswith('-dbserver') else ''
+                    if service == label:
+                        output = changed
+                    if service.endswith('-dbserver'):
+                        output = host.dbhost.FIXED_INPUTS_ACK + '\n' + output
+                    path = source / (service + '-stdout.txt')
+                    path.write_text('owned process output\n' + output)
+                    files[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path),
+                        'kind': 'owned_service_stdout', 'process_label': service,
+                        'original_bytes': path.stat().st_size, 'truncated': False,
+                        'capture_closed': True, 'overflow': False}
+                (source / 'manifest.json').write_text(json.dumps({'format': 1, 'files': files,
+                    'selected_log_limit': 32, 'log_segment_bytes': 512 * 1024, 'unselected_logs': 0}))
+                records = host.copy_service_captures(state, evidence)
+                report['game']['service_capture_files'] = records
+                if fails:
+                    with self.assertRaises(RuntimeError):
+                        host.validate_service_captures(report, evidence, records, expected=expected)
+                else:
+                    host.validate_service_captures(report, evidence, records, expected=expected)
+                    with self.assertRaises(RuntimeError):
+                        host.validate_service_captures(report, evidence, records)
 
 
 class CaptureTests(unittest.TestCase):

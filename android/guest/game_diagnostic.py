@@ -129,6 +129,58 @@ def fixed_inputs_acknowledgement(child):
     return dbserver.validate_fixed_inputs(complete, True)
 
 
+def game_loopback_contract(package):
+    """The new hosted profile uses the separately qualified loopback donor only."""
+    profile = package.get('dbserver_profile', 'accepted')
+    require(profile in ('accepted', 'loopback'), 'Unknown game DbServer profile')
+    if profile == 'accepted':
+        return None
+    donor = package.get('inputs', {}).get('dbserver', {})
+    manifest = donor.get('manifest', {})
+    require(type(donor.get('run_id')) is int and donor['run_id'] == dbserver.DEVICE_PACKAGE_RUN
+            and donor.get('manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
+            and donor.get('repository_commit') == manifest.get('repository_commit')
+            == 'eed2ce1f5388195f65a07853919761a93657aca6',
+            'Loopback game profile requires the qualified DbServer donor')
+    normal = manifest.get('variants', {}).get('normal', {})
+    files = normal.get('files', {})
+    require(normal.get('postgresql_persistence_fixture') is False
+            and files.get('DbServer.exe', {}).get('sha256')
+            == '535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c'
+            and all(dbserver.exact_contract(package.get('files', {}).get(name), record)
+                    for name, record in files.items()),
+            'Loopback game profile does not preserve the qualified normal dependency closure')
+    build = manifest.get('wine_build_input', {})
+    metadata = build.get('loopback_only')
+    dbserver.validate_loopback_metadata(metadata)
+    endpoints = dbserver.loopback_expectations(build.get('normal_schema_listeners'))
+    return {'metadata': metadata, 'endpoints': endpoints}
+
+
+def loopback_acknowledgement(child, expected):
+    """Wait for complete required bind records; malformed complete records fail immediately."""
+    require(not child.overflow, 'Loopback startup output overflowed')
+    output = child.text()
+    complete = output[:output.rfind('\n') + 1]
+    markers = [line for line in complete.splitlines() if dbserver.LOOPBACK_ENV in line]
+    if not markers:
+        return False
+    require(markers[0] == dbserver.LOOPBACK_ACK, 'Loopback startup acknowledgement differs')
+    observed = []
+    allowed = expected['required'] + expected['optional']
+    for line in markers[1:]:
+        match = dbserver.LOOPBACK_RECORD.fullmatch(line)
+        require(match is not None, 'Malformed or non-loopback game listener evidence')
+        protocol, address, port = match.groups()
+        endpoint = {'protocol': protocol, 'address': address, 'port': int(port)}
+        require(endpoint in allowed and endpoint not in observed,
+                'Unexpected or duplicate game listener evidence')
+        observed.append(endpoint)
+    if not all(endpoint in observed for endpoint in expected['required']):
+        return False
+    return dbserver.validate_loopback(complete, True, expected)
+
+
 def fixed_input_snapshot(runtime, schema_paths, check=lambda: None):
     """Bind the schema/configuration union; generated caches outside it remain writable."""
     def checked_path(name, directory=False):
@@ -397,8 +449,11 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         base.Diagnostic.__init__(self, args, context)
         self.created_databases, self.private_connections = [], []
         self.services, self.sessions = [], []
-        self.base_env.pop(dbserver.FIXED_INPUTS_ENV, None)
-        self.wine_env.pop(dbserver.FIXED_INPUTS_ENV, None)
+        for environment in (self.base_env, self.wine_env):
+            environment.pop(dbserver.FIXED_INPUTS_ENV, None)
+            environment.pop(dbserver.LOOPBACK_ENV, None)
+        self.loopback_contract = game_loopback_contract(self.package)
+        self.loopback_enabled = self.loopback_contract is not None
         fixed_inputs = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
             'wine_build_input', {}).get('fixed_inputs')
         dbserver.validate_fixed_inputs_metadata(fixed_inputs)
@@ -415,6 +470,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.query_count = self.readiness_count = 0
         self.runtime = self.root / ('game-' + secrets.token_hex(6))
         self.game = {'status': 'running', 'phases': [], 'map_samples': [], 'character_samples': [], 'sessions': {}}
+        if self.loopback_enabled:
+            self.game['dbserver_profile'] = 'loopback'
+            self.game['loopback_only'] = {'requested': True, 'metadata': self.loopback_contract['metadata']}
         self.game['fixed_inputs'] = {'requested': True, 'metadata': fixed_inputs,
             'scope': 'accepted_schema_and_db_configuration', 'schema_file_count': 62, 'checks': []}
         self.game['dispatch_progress'] = {'enabled': True, 'format': 1,
@@ -517,9 +575,15 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             time.sleep(interval)
 
     def start_game(self, label, executable, arguments, *, env=None):
+        environment = (self.wine_env if env is None else env).copy()
+        # Only the two explicitly owned DbServer launches enable the donor's
+        # binding mode. MapServer and clients retain their separate host policy.
+        environment.pop(dbserver.LOOPBACK_ENV, None)
+        if executable == 'DbServer.exe' and self.loopback_enabled:
+            environment[dbserver.LOOPBACK_ENV] = '1'
         child = self.ctx.start(label, ['/usr/bin/env', '--chdir=' + str(self.runtime), self.args.wine,
                                base.windows_path(self.runtime / executable), *arguments],
-                               env=self.wine_env if env is None else env)
+                               env=environment)
         self.services.append(child)
         return child
 
@@ -552,6 +616,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.dispatch_paths[label], self.dispatch_phase = dispatch_path, label
         database_env = dict(self.wine_env, COH_WINE_DB_PROGRESS=base.windows_path(dispatch_path),
                             COH_WINE_DB_FIXED_INPUTS='1')
+        database_env.pop(dbserver.LOOPBACK_ENV, None)
+        if self.loopback_enabled:
+            database_env[dbserver.LOOPBACK_ENV] = '1'
         database = self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'], env=database_env)
         next_query = 0
         expected_columns = sum(map(len, self.schema['expected_tables'].values()))
@@ -581,6 +648,12 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.wait(published, 30, 'DbServer main-thread dispatch publication')
         fixed_inputs = self.wait(lambda: fixed_inputs_acknowledgement(database), 30,
                                  'DbServer fixed-input activation acknowledgement')
+        if self.loopback_enabled:
+            # These listeners are initialized by dbInit before main dispatch
+            # under this fake-auth/no-queue/embedded-log configuration, just as
+            # in the donor schema gate. This run separately proves Atlas use.
+            self.wait(lambda: loopback_acknowledgement(database, self.loopback_contract['endpoints']), 30,
+                      'DbServer loopback listener acknowledgements')
         next_baseline = 0
         def unstarted():
             nonlocal next_baseline
@@ -604,11 +677,17 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             next_status = time.monotonic() + poll_interval
             return sample if evidence.map_ready_current(sample) else False
         sample = self.wait(ready, readiness_timeout, 'Atlas DB-confirmed readiness')
-        self.game['phases'].append({'phase': label + '_services_ready', 'status': 'passed',
+        phase = {'phase': label + '_services_ready', 'status': 'passed',
                                     'fixed_inputs': fixed_inputs,
                                     'baseline_not_started': True, 'schema': catalog, 'map': sample,
                                     'readiness_timeout_seconds': readiness_timeout,
-                                    'query_timeout_seconds': 90, 'poll_interval_seconds': poll_interval})
+                                    'query_timeout_seconds': 90, 'poll_interval_seconds': poll_interval}
+        if self.loopback_enabled:
+            phase['loopback_only'] = dbserver.validate_loopback(database.text(), True,
+                                                                self.loopback_contract['endpoints'])
+        else:
+            dbserver.validate_loopback(database.text(), False, {})
+        self.game['phases'].append(phase)
         self.ctx.passed(baseline_not_started=True, atlas_ready=True, table_count=catalog['table_count'])
 
     def observe_atlas(self):
@@ -761,6 +840,11 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
 
     def clean_logs(self, *, session=None, allow_logout=False):
         texts = [child.text() for child in self.services]
+        for child, text in zip(self.services, texts):
+            if getattr(child, 'label', None) in ('first-dbserver', 'restart-dbserver'):
+                enabled = self.loopback_enabled
+                dbserver.validate_loopback(text, enabled,
+                    self.loopback_contract['endpoints'] if enabled else {})
         texts.extend(path.read_text(encoding='utf-8', errors='replace') for path in self.ctx.log_paths())
         failures = []
         for text in texts:

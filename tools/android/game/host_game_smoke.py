@@ -42,6 +42,13 @@ DONORS = {
                "manifest_sha256": "299b908e42abd3164d85e75b96122c3a61bfb1d33055e0967ccfe3f891ab7048",
                "canonical_sha256": "00cfdbd15aa272c4d964b66ad3d646fceed6d85b09a7ccb23ee841e75ce3b28a"},
 }
+LOOPBACK_DONOR = {"run_id": 36460867428,
+                  "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+                  "manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+                  "canonical_sha256": "b90c1d3f159dd18e7700eba4a1192924f452cba5160175d8513a80765e009d21"}
+DBSERVER_PROFILES = ("accepted", "loopback")
+LOOPBACK_RECORD = re.compile(r"COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=(tcp|udp) "
+                             r"address=(127\.0\.0\.1) port=([1-9][0-9]{0,4})\Z")
 EXECUTABLES = ("DbServer.exe", "MapServer.exe", "TestClientCreate.exe", "TestClientResume.exe", "TestClientBridge.exe")
 CAPTURE_LIMITS = {prefix + "-" + name: limit for prefix in ("first", "second") for name, limit in
                   (("ready.json", 16384), ("result.json", 16384),
@@ -92,8 +99,11 @@ def inventory_bounds(files, *, maximum_files, maximum_bytes):
     return total
 
 
-def verify_package(package):
+def verify_package(package, *, dbserver_profile="accepted"):
     manifest = read_json(package / "game-package.json", 8 * 1024 * 1024)
+    require(dbserver_profile in DBSERVER_PROFILES
+            and manifest.get("dbserver_profile", "accepted") == dbserver_profile,
+            "Game package DbServer profile differs from the requested qualification")
     require(manifest.get("role") == "wine_game_runtime"
             and manifest.get("source_commit") == dbhost.SOURCE_COMMIT
             and manifest.get("data_commit") == dbhost.DATA_COMMIT
@@ -107,12 +117,15 @@ def verify_package(package):
     require(all(len(PurePosixPath(name).parts) == 1 for name in files), "Game package must be flat")
     proofs = manifest.get("inputs", {})
     require(isinstance(proofs, dict) and set(proofs) == {*DONORS, "bridge"}, "Game package donor set differs")
-    for role, pin in DONORS.items():
+    donors = {**DONORS, **({"dbserver": LOOPBACK_DONOR} if dbserver_profile == "loopback" else {})}
+    for role, pin in donors.items():
         proof = proofs[role]
         require(isinstance(proof, dict)
                 and all(proof.get(key) == pin[key] for key in ("run_id", "repository_commit", "manifest_sha256"))
                 and canonical_digest(proof.get("manifest")) == pin["canonical_sha256"],
                 "Game package donor is not the exact accepted build: " + role)
+    if dbserver_profile == "loopback":
+        dbhost.validate_loopback_build_input(proofs["dbserver"]["manifest"].get("wine_build_input"))
     bridge = proofs["bridge"]
     require(isinstance(bridge, dict) and isinstance(bridge.get("manifest"), dict), "Missing bridge build receipt")
     receipt = bridge["manifest"]
@@ -248,9 +261,60 @@ def make_expectations(assets, package, data, schema, package_manifest, schema_ma
               "repository_commit": package_manifest["repository_commit"],
               "source_commit": dbhost.SOURCE_COMMIT, "data_commit": dbhost.DATA_COMMIT,
               "binary_sha256": {name: package_manifest["files"][name]["sha256"] for name in EXECUTABLES}}
-    return {"inputs": inputs, "schema": dbhost.schema_expectations(schema_manifest),
+    expected = {"inputs": inputs, "schema": dbhost.schema_expectations(schema_manifest),
             "fixed_inputs": fixed_input_expectations(data_manifest, schema_manifest),
             "runtime_lock_sha256": digest(assets / "runtime-lock.json")}
+    if package_manifest.get('dbserver_profile') == 'loopback':
+        build_input = package_manifest['inputs']['dbserver']['manifest']['wine_build_input']
+        expected.update(dbserver_profile='loopback',
+                        loopback_endpoints=dbhost.validate_loopback_build_input(build_input),
+                        loopback_metadata=build_input['loopback_only'])
+    return expected
+
+
+def validate_loopback_record(value, endpoints):
+    require(type(value) is dict and set(value) == {'requested', 'startup_acknowledgement', 'endpoints'}
+            and value['requested'] is True and value['startup_acknowledgement'] == dbhost.LOOPBACK_ACK,
+            'Game DbServer loopback acknowledgement differs')
+    dbhost.validate_loopback_endpoints(value['endpoints'])
+    required, optional = endpoints['required'], endpoints['optional']
+    require(all(item in value['endpoints'] for item in required)
+            and all(item in required + optional for item in value['endpoints']),
+            'Game DbServer loopback endpoints differ from the source contract')
+
+
+def validate_game_loopback(game, expected):
+    if expected.get('dbserver_profile', 'accepted') == 'accepted':
+        require('dbserver_profile' not in game and 'loopback_only' not in game
+                and all('loopback_only' not in phase for phase in game.get('phases', [])),
+                'Accepted game report unexpectedly claims loopback qualification')
+        return
+    require(expected.get('dbserver_profile') == 'loopback'
+            and game.get('dbserver_profile') == 'loopback'
+            and dbhost.exact_contract(game.get('loopback_only'), {
+                'requested': True, 'metadata': expected['loopback_metadata']}),
+            'Game loopback profile or metadata differs from the pinned package')
+    phases = game.get('phases', [])
+    require(len(phases) == 2, 'Both DbServer starts must prove loopback bindings')
+    for phase in phases:
+        validate_loopback_record(phase.get('loopback_only'), expected['loopback_endpoints'])
+
+
+def parse_loopback_output(output, endpoints):
+    """Independently inspect final owned stdout, not just guest-produced booleans."""
+    lines = [line for line in output.splitlines() if 'COH_WINE_DB_LOOPBACK_ONLY' in line]
+    require(lines and lines[0] == dbhost.LOOPBACK_ACK,
+            'Owned DbServer stdout lacks exact loopback activation')
+    values = []
+    for line in lines[1:]:
+        match = LOOPBACK_RECORD.fullmatch(line)
+        require(match is not None, 'Malformed owned DbServer loopback output')
+        protocol, address, port = match.groups()
+        values.append({'protocol': protocol, 'address': address, 'port': int(port)})
+    values.sort(key=lambda value: (value['protocol'], value['port']))
+    record = {'requested': True, 'startup_acknowledgement': dbhost.LOOPBACK_ACK, 'endpoints': values}
+    validate_loopback_record(record, endpoints)
+    return record
 
 
 def owned_cleanup_complete(value):
@@ -341,6 +405,7 @@ def validate_report(report, *, expected):
     phases = game.get("phases", [])
     require(isinstance(phases, list) and [item.get("phase") for item in phases] == ["first_services_ready", "restart_services_ready"],
             "Both game service starts were not proved")
+    validate_game_loopback(game, expected)
     catalogs = []
     for phase in phases:
         require(phase.get("status") == "passed" and phase.get("baseline_not_started") is True and map_ready(phase.get("map")),
@@ -458,7 +523,7 @@ def copy_hang_captures(state, evidence):
     return records
 
 
-def validate_service_captures(report, evidence, records):
+def validate_service_captures(report, evidence, records, *, expected=None):
     required = {label + "-stdout.txt" for label in SERVICE_LABELS} | {"manifest.json"}
     require(required <= set(records) <= set(SERVICE_CAPTURE_LIMITS)
             and report["game"].get("service_capture_files") == records,
@@ -483,6 +548,23 @@ def validate_service_captures(report, evidence, records):
             markers = [line for line in output.splitlines() if 'COH_WINE_DB_FIXED_INPUTS' in line]
             require(markers == ([dbhost.FIXED_INPUTS_ACK] if name.endswith('-dbserver-stdout.txt') else []),
                     'Owned service fixed-input acknowledgement differs')
+            loopback = (expected or {}).get('dbserver_profile') == 'loopback'
+            if name.endswith('-dbserver-stdout.txt') and loopback:
+                validate_game_loopback(report['game'], expected)
+                observed = parse_loopback_output(output, expected['loopback_endpoints'])
+                phase_name = ('first' if name.startswith('first-') else 'restart') + '_services_ready'
+                phases = [phase for phase in report['game']['phases'] if phase.get('phase') == phase_name]
+                require(len(phases) == 1, 'Owned DbServer stdout lacks its unique service phase')
+                earlier = phases[0]['loopback_only']['endpoints']
+                # The unchecked crash-map thread may bind after readiness.
+                # Only that source-listed optional endpoint may be added later.
+                require(all(item in observed['endpoints'] for item in earlier)
+                        and all(item in earlier or item in expected['loopback_endpoints']['optional']
+                                for item in observed['endpoints']),
+                        'Final DbServer loopback bindings differ from readiness evidence')
+            else:
+                require('COH_WINE_DB_LOOPBACK_ONLY' not in output,
+                        'Loopback activation appeared outside the selected DbServer qualification')
         else:
             source = record.get("source_relative_path")
             require(isinstance(source, str) and source and "\\" not in source and ":" not in source,
@@ -705,7 +787,7 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
         report = read_json(target, MAX_REPORT_BYTES)
         validate_report(report, expected=expected)
         validate_capture_files(report, evidence, captures)
-        validate_service_captures(report, evidence, service_captures)
+        validate_service_captures(report, evidence, service_captures, expected=expected)
     except (RuntimeError, ValueError):
         with log_path.open("rb") as log:
             log.seek(max(0, log_path.stat().st_size - 24000))
@@ -723,6 +805,8 @@ def main():
     parser.add_argument("--evidence", type=Path, default=ROOT / "out/android/game-evidence")
     parser.add_argument("--proot", type=Path, default=ROOT / "out/android/native/linux-arm64")
     parser.add_argument("--stack-probe", type=Path, required=True)
+    parser.add_argument("--dbserver-profile", choices=DBSERVER_PROFILES, default="accepted",
+                        help="Qualify the separately identified loopback DbServer composite")
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
     require(sys.platform == "linux" and platform.machine().lower() in ("aarch64", "arm64"),
@@ -732,7 +816,7 @@ def main():
     assets, package, data, schema, work, evidence, proot = (
         getattr(args, name).resolve() for name in ("assets", "package", "data", "schema", "work", "evidence", "proot"))
     runtime = dbhost.verify_runtime_assets(assets)
-    package_manifest = verify_package(package)
+    package_manifest = verify_package(package, dbserver_profile=args.dbserver_profile)
     data_manifest = verify_data(data)
     schema_manifest = dbhost.verify_schema(schema)
     repository_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
@@ -754,6 +838,9 @@ def main():
               "hang_observer": observer,
               "proot_sha256": digest(proot / "proot"), "proot_loader_sha256": digest(proot / "proot-loader"),
               "android_execution_validated": False, "gameplay_validated": False}
+    if args.dbserver_profile == 'loopback':
+        inputs['dbserver_profile'] = 'loopback'
+        inputs['dbserver_loopback_scope'] = 'DbServer only; host network namespace remains mandatory'
     (evidence / "host-game-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
     command = make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                            proot=proot, timeout_seconds=args.timeout_seconds)

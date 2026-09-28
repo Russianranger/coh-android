@@ -9,6 +9,29 @@ import package_game_runtime as game
 
 
 class CompositePackageTests(unittest.TestCase):
+    def test_loopback_donor_is_opt_in_and_cannot_substitute_the_accepted_donor(self):
+        for profile, pin in (('accepted', game.PINS['dbserver']), ('loopback', game.LOOPBACK_DBSERVER_PIN)):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                manifest = json.loads((game.ROOT / pin[0]).read_text())
+                (root / pin[1]).write_text(json.dumps(manifest))
+                normal = root / 'normal'
+                normal.mkdir()
+                records = manifest['variants']['normal']['files']
+                for name in records:
+                    (normal / name).write_bytes(b'payload validated by record helper')
+                with patch.object(game, 'record', side_effect=lambda path: records[path.name]):
+                    actual, _, proof = game.verified_donor(root, 'dbserver', dbserver_profile=profile)
+                    self.assertEqual(actual, manifest)
+                    self.assertEqual(proof['run_id'], pin[2])
+                    opposite = 'loopback' if profile == 'accepted' else 'accepted'
+                    with self.assertRaisesRegex(ValueError, 'accepted receipt'):
+                        game.verified_donor(root, 'dbserver', dbserver_profile=opposite)
+                    if profile == 'accepted':
+                        self.assertEqual(game.verified_donor(root, 'dbserver')[2]['run_id'], 36451873322)
+                with self.assertRaisesRegex(ValueError, 'Unknown DbServer profile'):
+                    game.verified_donor(root, 'dbserver', dbserver_profile='unqualified')
+
     def test_donor_manifest_tampering_is_rejected_before_payloads(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
