@@ -34,7 +34,8 @@ zero remaining owned processes or inspection errors. The
 [acceptance receipt](android-evidence/accepted-dbserver-hosted-36369485666.json)
 binds the reports and inputs. Physical Android DbServer execution, Android
 presentation and game rendering remain unvalidated. Managed Atlas MapServer and
-diagnostic TestClient execution are the next M3 implementation work.
+diagnostic TestClient execution are now implemented in the separate
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md); its actual ARM64 run is pending.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving

@@ -1,0 +1,140 @@
+name: Wine Atlas character persistence ARM64 qualification
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/android-game.yml'
+      - 'database/wine-game/**'
+      - 'tools/android/game/**'
+      - 'android/guest/game_*.py'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-game-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify composite inputs, data staging, bridge and lifecycle contracts
+        run: python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+  bridge:
+    needs: tooling
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build PE32 observer for stock TestClient
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/bridge -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          cl /nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601 database/wine-game/TestClientBridge.c /Fe:out/bridge/TestClientBridge.exe
+          if errorlevel 1 exit /b 1
+          cl /nologo /W4 /O2 /MT database/wine-game/bridge_protocol_contract.c /Fe:out/bridge_protocol_contract.exe
+          if errorlevel 1 exit /b 1
+          out\bridge_protocol_contract.exe
+          "@
+          Set-Content -Path out/build-bridge.cmd -Value $batch -Encoding ASCII
+          cmd /c out/build-bridge.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'PE32 bridge build or native contracts failed' }
+          python tools/android/game/package_game_runtime.py bridge-receipt --directory out/bridge --repository-commit "$env:GITHUB_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'Bridge receipt failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-testclient-bridge
+          path: out/bridge/
+          if-no-files-found: error
+  runtime:
+    needs: bridge
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 100
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-testclient-bridge
+          path: out/bridge
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/wine-dbserver
+          run-id: 36369485666
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/reference-artifact
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: resume-testclient-win32
+          path: out/resume-client
+          run-id: 36297542986
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/android/assets/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Verify accepted inner reference archive and assemble composite package
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/reference-artifact/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as value:
+              assert all('/' not in n and '\\' not in n and n not in ('.','..') for n in value.namelist())
+              value.extractall('out/reference-runtime')
+          PY
+          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime --dbserver out/wine-dbserver --resume out/resume-client --bridge out/bridge --output out/wine-game --repository-commit "$GITHUB_SHA"
+      - name: Retrieve existing reviewed asset input
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/asset-inputs.zip --release-asset-id 588984151
+      - name: Verify and stage reviewed full game data and accepted schema
+        run: |
+          python3 tools/runtime_asset_bundle.py stage --archive out/asset-inputs.zip --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+          python3 tools/android/game/prepare_game_data.py --asset-data out/reviewed-assets --output out/game-data
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Build matching native ARM64 PRoot
+        run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native
+      - name: Enter Atlas, save, restart and resume exact character in isolated ARM64 runtime
+        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-game-arm64-evidence
+          path: |
+            out/android/game-evidence/
+            out/wine-game/game-package.json
+            out/game-data/game-data-manifest.json
+            out/dbserver-schema/schema-manifest.json
+            out/bridge/bridge-build.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn
