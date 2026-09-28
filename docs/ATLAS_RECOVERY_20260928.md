@@ -31,20 +31,43 @@ Do not overwrite or force-update that branch with this recovery branch.
   Three focused download regressions passed. The Atlas workflow now watches
   its PRoot build dependency.
 
-## Active qualification
+## Verified results and current qualification
 
-[Run 36416446409](https://github.com/Russianranger/coh-android/actions/runs/36416446409)
-tests `3dc466764252355ead31d19729ae8c5efb8ca510`.
-At this checkpoint its tooling and Windows bridge jobs passed; ARM64 runtime
-qualification is pending. Inspect its terminal result and artifact before
-starting another runtime attempt. The new observation is stored in
-`game-runtime-report.json` under `game_failure_inspection` if a query fails.
+Recovery run `36416446409` failed its 90-second Atlas readiness query. The
+hash-verified raw report and analysis are in
+`docs/android-evidence/game-arm64-failed-36416446409.json` and
+`game-runtime-failure-36416446409.json`. Before cleanup, all 65 game SQL sessions
+were idle: foreground last SQL `;`, 64 workers last SQL `COMMIT`. DbServer's
+6997 listener had one pending connection and established connections had unread
+request bytes. The blocked function is still unknown. All three WineDbg
+attachments returned error 5 / exit 255; **no stacks were obtained**. The
+following fix makes that partial capture explicit rather than leaving the
+inspection's top-level failure list empty. Cleanup passed.
 
-The companion Android workflow is `36416446231`; it rebuilds existing 0.1.5
-diagnostics and does not add a game launch feature. Local broad tests encountered
-two `/proc` permission errors in process-ownership tests; hosted tooling passed
-all 127 pre-existing tests on the preceding recovery commit. Do not weaken the
-production ownership checks to accommodate the local execution sandbox.
+The independent continuation run `36416020268` at `324823be6ca9713bdc60446eb31596004ff6286a`
+passed Atlas readiness and its sustained observation, fresh character creation
+and connection, live influence change to 12345, protocol logout, and independent
+committed SQL verification. Character `TEST02279`, container 1, saved 1 Ents row,
+1 Ents2 row, 7 powers and 17 costume parts with login count 1. Owned Wine shutdown
+and PostgreSQL shutdown/restart passed. **Game restart then failed before
+DbServer launch**, with Python `EADDRINUSE` in the port preflight. This is not a
+new SQL failure or a persistence comparison failure. Raw report and analysis:
+`game-arm64-first-save-36416020268.json` and `game-first-save-36416020268.json` in
+`docs/android-evidence/`.
+
+Commit `eb28fd6598502420028d171384977a5a4b67692a` fixes the TCP port preflight:
+SO_REUSEADDR permits a stopped connection's TIME_WAIT; an actual listen call
+still excludes an existing listener. UDP retains exclusive bind behavior.
+Real socket regressions reproduce the old failure and verify rejection of live
+TCP and UDP sockets. All 66 game tests passed locally. No game binaries,
+ownership cleanup checks, save criteria or time limits changed.
+
+[Run 36419952350](https://github.com/Russianranger/coh-android/actions/runs/36419952350)
+is qualifying that restart fix. Inspect its terminal result and artifact before
+starting another runtime attempt. Companion diagnostic APK run: `36419952339`.
+The preceding companion `36416446231` passed all five jobs, including APK,
+native PostgreSQL, database runtime and client runtime. It remains diagnostic
+version 0.1.5, without a game-launch feature.
 
 An independently verified source fallback is available in accepted run
 `36364550345`, artifact `10946592550` (`coh-proot-android-source-and-build`).
@@ -56,6 +79,7 @@ is exactly 684,092 bytes, SHA-256
 Those inner bytes were recovered and verified locally. The existing build
 script accepts them through `--talloc-archive` without changing source inputs.
 
-The installed, accepted Thor 0.1.5 APK remains the device baseline. Atlas
-character persistence, Android game listener binding and a game APK remain
-unqualified. Diagnose the live wait before altering game source or deadlines.
+The installed, accepted Thor 0.1.5 APK remains the device baseline. Full Atlas
+save/restart/resume persistence, Android game listener binding and a game APK
+remain unqualified. The first live character save is now verified; do not
+promote that partial result to full milestone acceptance.

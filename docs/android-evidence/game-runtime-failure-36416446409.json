@@ -1,0 +1,64 @@
+{
+  "format": 1,
+  "run_id": 36416446409,
+  "repository_commit": "3dc466764252355ead31d19729ae8c5efb8ca510",
+  "status": "failed",
+  "failure": [
+    "game-query-first-ready timed out"
+  ],
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36416446409",
+  "artifact": {
+    "id": 10968826305,
+    "bytes": 8712005,
+    "sha256": "a0bb56e04ed507dab4a3b42b3b1c48c6a561637235236a1f142db68ef77c7453"
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-failed-36416446409.json",
+    "bytes": 138455,
+    "sha256": "2132c8fb90826f829f584d8ea992c402a2f90306857a912a9de8c15ceff4a1c2"
+  },
+  "observations": {
+    "captured_before_cleanup": true,
+    "query_alive_before_capture": true,
+    "postgres_sessions": 65,
+    "postgres_states": [
+      "idle"
+    ],
+    "foreground_last_sql": ";",
+    "foreground_query_start": "2026-09-28T11:59:20.015182+00:00",
+    "worker_last_sql": "COMMIT",
+    "worker_sessions": 64,
+    "active_sql_queries": 0,
+    "last_successful_status": "2026-09-28T11:59:11.015028+00:00",
+    "last_atlas_output": "Retrieving AutoCommands..",
+    "socket_6997_listen_receive_queue": 1,
+    "socket_6997_established_receive_bytes": [
+      28,
+      36
+    ],
+    "wine_process_list_complete": true,
+    "wine_stacks_available": false,
+    "wine_stack_error": "All three WineDbg attachments returned Win32 error 5 / exit 255. No thread stacks were captured.",
+    "capture_elapsed_seconds": 2.735,
+    "cleanup_complete": true,
+    "owned_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "dbserver_registration_log_present": false
+  },
+  "interpretation": "The database was idle and DbServer had unconsumed game requests. This does not identify the blocked DbServer function. Never treat the empty top-level inspection failures list as proof that debugger attachment succeeded; each stack record failed.",
+  "comparison": {
+    "run_id": 36416020268,
+    "commit": "324823be6ca9713bdc60446eb31596004ff6286a",
+    "checkpoint_utc": "2026-09-28T12:04:41Z",
+    "atlas_readiness_passed": true,
+    "character_test_in_progress": true,
+    "terminal_result_pending": false,
+    "first_save_passed": true,
+    "failure": "[Errno 98] Address already in use",
+    "stage": "game_services_restart"
+  },
+  "scope": "Atlas startup failure only; no character, save/restart/resume or Android gameplay qualification."
+}

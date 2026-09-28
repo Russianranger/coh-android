@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "run_id": 36416020268,
+  "repository_commit": "324823be6ca9713bdc60446eb31596004ff6286a",
+  "status": "failed",
+  "stage": "game_services_restart",
+  "failure": [
+    "[Errno 98] Address already in use"
+  ],
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36416020268",
+  "artifact": {
+    "id": 10968627172,
+    "bytes": 8792105,
+    "sha256": "d046ac6c71d6ed54df3c8672236d54b1bd9f55dbdb0dcc91d85940512bb6e810"
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-first-save-36416020268.json",
+    "bytes": 111320,
+    "sha256": "2a567bf689b6dd0c0816b554b04123d9d6ed30c21cc738d4369f49496a4ac03a"
+  },
+  "passed_stages": [
+    "game_private_runtime",
+    "assets_and_architecture",
+    "initialize_owned_cluster",
+    "postgres_first_start",
+    "restricted_fixture_database",
+    "wine_prefix_and_driver",
+    "win32_odbc_driver",
+    "win32_runtime_dll",
+    "game_services_first",
+    "atlas_ready_observation",
+    "game_create_and_connect",
+    "game_live_currency",
+    "game_protocol_logout_first",
+    "game_restart",
+    "postgres_game_restart"
+  ],
+  "game": {
+    "atlas_observation": {
+      "seconds": 31.519376420999833,
+      "minimum_seconds": 30,
+      "samples": [
+        {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 0,
+          "stats_age_seconds": 0,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "first-observation",
+          "sampled_utc": "2026-09-28T12:01:20.963762+00:00",
+          "monotonic": 2249.153039276
+        },
+        {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 1,
+          "stats_age_seconds": 1,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "first-observation",
+          "sampled_utc": "2026-09-28T12:01:32.419001+00:00",
+          "monotonic": 2260.608273237
+        },
+        {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 3,
+          "stats_age_seconds": 3,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "first-observation",
+          "sampled_utc": "2026-09-28T12:01:43.877655+00:00",
+          "monotonic": 2272.066928213
+        },
+        {
+          "ready": true,
+          "not_started": false,
+          "map_id": 1,
+          "network_age_seconds": 0,
+          "stats_age_seconds": 0,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "phase": "first-observation",
+          "sampled_utc": "2026-09-28T12:01:51.067002+00:00",
+          "monotonic": 2279.256274063
+        }
+      ],
+      "db_confirmed_ready": true,
+      "current_heartbeats": true
+    },
+    "character": {
+      "container_id": 1,
+      "name": "TEST02279",
+      "account": "CohA7748697fc1"
+    },
+    "created_connected": true,
+    "live_currency": {
+      "player": "TEST02279",
+      "account": "CohA7748697fc1",
+      "influence": 12345,
+      "elapsed_ms": 174655,
+      "sequence": 17
+    },
+    "first_save": {
+      "protocol_quit": true,
+      "quitnow_is_save_ack": false,
+      "disconnected_before_sql": true,
+      "independent_committed_sql": true,
+      "forced_stop_before_save": false,
+      "login_count": 1,
+      "influence": 12345,
+      "snapshot_sha256": "35467e6cfcc20d0f400920edbcbdf6eca5ac15bdb969c24aa2371da5a80164de",
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 17
+      }
+    }
+  },
+  "cleanup_complete": true,
+  "interpretation": "First real Atlas connection, live influence change and protocol-logout committed SQL save passed. The restarted PostgreSQL passed; the second game service launch was blocked by the Python port preflight before DbServer was launched. No restart persistence comparison, exact-name resume, second save or Android gameplay is qualified.",
+  "follow_up": {
+    "commit": "eb28fd6598502420028d171384977a5a4b67692a",
+    "run_id": 36419952350,
+    "change": "TCP preflight uses SO_REUSEADDR and listen to allow TIME_WAIT while rejecting live listeners. Real socket regressions reproduce old EADDRINUSE and verify rejection of live TCP and UDP sockets."
+  }
+}
