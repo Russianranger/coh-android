@@ -8,8 +8,12 @@ captures closed and owned cleanup passed. Its original workflow remains red
 because the host validator required a `child_exited` field that the format-1
 bridge never emits. The corrected validator checks the real verified uint32
 exit code, excluding `STILL_ACTIVE` (259), and passes against the unchanged,
-hash-verified report and every exported capture. Independent CI revalidation
-is being published. See the [recovery checkpoint](ATLAS_RECOVERY_20260928.md).
+hash-verified report and every exported capture. Independent
+[CI revalidation 36430794421](https://github.com/Russianranger/coh-android/actions/runs/36430794421)
+passed at `73b1aeef8dfaa901d45763f7e4361054db777632`; the hosted runtime
+evidence is accepted with that correction. See the
+[acceptance receipt](android-evidence/accepted-game-hosted-36424870915.json) and
+[recovery checkpoint](ATLAS_RECOVERY_20260928.md).
 Startup reliability remains under investigation; this successful attempt had
 one readiness query take 86.757 seconds within the existing 90-second limit.
 The accepted Thor 0.1.5 diagnostic APK remains the device baseline.

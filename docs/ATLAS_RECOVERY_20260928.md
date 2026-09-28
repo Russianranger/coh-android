@@ -149,8 +149,9 @@ builds, Windows persistence, and all 28 ARM64 stages / 21 persistence checks
 with complete owned cleanup. Both package and report artifact hashes were
 independently verified. See `dispatch-dbserver-qualified-36425508780.json`.
 That gate ran with the marker disabled; enabled FEX publication and Atlas
-qualification remain pending. Its game reader remains separately in development.
-That source change is not present in this recovery branch.
+qualification remain separate. Its game reader is committed in the continuation
+branch at `82386fd48c2352a2ce65d5920f7857e8b92ec442`. That source change is not
+present in this recovery branch or in the completed game artifact below.
 
 ## Complete guest sequence and host contract correction
 
@@ -189,7 +190,16 @@ Both client captures and all three SQL snapshots are preserved in
 `game-captures-36424870915/`. The bounded replay tool pins the original archive,
 donors, reviewed producer and accepted data/schema/runtime identities; it runs
 the complete report, capture-file and service-capture validators on unmodified
-bytes. Local replay passed. Independent CI revalidation is being published.
+bytes. Local replay passed. Independent
+[CI revalidation 36430794421](https://github.com/Russianranger/coh-android/actions/runs/36430794421)
+also passed, including all 67 tooling tests, at
+`73b1aeef8dfaa901d45763f7e4361054db777632`. The CI receipt verifies that its
+validator source tree was clean. Artifact `10974345001` is 3,410 bytes with
+SHA-256 `4dabf08a48d36d0669e8fd23e164876cd8a778c0701d9008bb8540af036d1d9e`.
+That artifact and all validator source hashes were independently verified after
+download. The unchanged CI receipt is `game-revalidation-36430794421.json`;
+`accepted-game-hosted-36424870915.json` binds the original execution, corrected
+validation, exact input/capture identities and acceptance scope.
 
 This run also recorded a successful 86.757-second cold-start readiness query.
 It does not resolve earlier intermittent startup failures, which remain a

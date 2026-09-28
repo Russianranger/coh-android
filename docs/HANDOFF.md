@@ -3,8 +3,10 @@
 Recovery checkpoint: run `36424870915` completed the full hosted ARM64 Atlas
 save/restart/exact-name-resume/second-save sequence, all 18 guest stages and
 complete cleanup. Its final host check incorrectly required a nonexistent bridge
-JSON field. The corrected validator passes the original immutable report and
-all capture files locally; independent CI replay is being published. See
+JSON field. The corrected validator passed the original immutable report and
+all capture files in independent [CI replay 36430794421](https://github.com/Russianranger/coh-android/actions/runs/36430794421)
+at `73b1aeef8dfaa901d45763f7e4361054db777632`. This hosted evidence is now accepted;
+see the [acceptance receipt](android-evidence/accepted-game-hosted-36424870915.json) and
 [recovery details](ATLAS_RECOVERY_20260928.md). The original workflow's failed
 conclusion is retained. Startup reliability and an Android game APK remain open.
 

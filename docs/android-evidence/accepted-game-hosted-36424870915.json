@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_runtime_via_corrected_evidence_validation",
+  "runtime_run_id": 36424870915,
+  "runtime_repository_commit": "f756f50b708cfd2307f460946918d1c24c36e0af",
+  "original_workflow_conclusion": "failure",
+  "original_host_error": "Validator required child_exited, absent from the format-1 bridge producer",
+  "revalidation_run_id": 36430794421,
+  "revalidation_workflow_conclusion": "success",
+  "revalidation_repository_commit": "73b1aeef8dfaa901d45763f7e4361054db777632",
+  "runtime_artifact": {
+    "id": 10973022843,
+    "bytes": 8984584,
+    "sha256": "a539817527900628ed3387a7384fa230fd9dcaa9964b5373780d54b2b4210ee3"
+  },
+  "revalidation_artifact": {
+    "id": 10974345001,
+    "bytes": 3410,
+    "sha256": "4dabf08a48d36d0669e8fd23e164876cd8a778c0701d9008bb8540af036d1d9e"
+  },
+  "raw_report": {
+    "bytes": 192204,
+    "sha256": "56a7e295c7a942176cb8ce353ad8cbf6f038894d04bb243334b69866e14ca015",
+    "path": "docs/android-evidence/game-arm64-completed-36424870915.json"
+  },
+  "revalidation_receipt": {
+    "path": "docs/android-evidence/game-revalidation-36430794421.json",
+    "bytes": 9105,
+    "sha256": "c80d99ef4e0d903d77f6171714431e50896c3193ae5d9dd887a714b644604f26"
+  },
+  "runtime_evidence_modified": false,
+  "runtime_reexecuted_for_revalidation": false,
+  "passed_runtime_stages": 18,
+  "closed_process_captures": 128,
+  "character": {
+    "container_id": 1,
+    "name": "TEST05026",
+    "account": "CohAe8d3fca874"
+  },
+  "influence": 12345,
+  "login_count_progression": [
+    1,
+    1,
+    2
+  ],
+  "selected_row_counts": {
+    "ents": 1,
+    "ents2": 1,
+    "powers": 12,
+    "costumeparts": 14
+  },
+  "both_protocol_saves_before_forced_cleanup": true,
+  "same_cluster_and_database_restarted_without_reseed": true,
+  "exact_name_resume_creation_disabled": true,
+  "processed_original_character_server_update": true,
+  "selected_rows_unchanged": true,
+  "cleanup_complete": true,
+  "remaining_owned_processes": 0,
+  "ownership_inspection_failures": 0,
+  "longest_successful_cold_readiness_query_seconds": 86.757,
+  "scope": "Hosted ARM64 Wine/FEX Atlas creation, live influence, committed protocol saves and same-character restart/resume; startup reliability and Android gameplay remain separate.",
+  "limitations": [
+    "Earlier intermittent cold-start query failures are not resolved by this successful run.",
+    "The original workflow remains failed; independent CI revalidated its completed immutable guest evidence after the host contract correction.",
+    "Physical Android game execution, an interactive game surface and hardware acceleration are not qualified.",
+    "The instrumented DbServer in the continuation branch is a different package and is not the binary qualified by this game artifact."
+  ]
+}

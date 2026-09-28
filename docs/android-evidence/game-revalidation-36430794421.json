@@ -1,0 +1,276 @@
+{
+  "format": 1,
+  "status": "passed",
+  "kind": "immutable_completed_runtime_evidence_revalidation",
+  "runtime_run_id": 36424870915,
+  "runtime_repository_commit": "f756f50b708cfd2307f460946918d1c24c36e0af",
+  "original_workflow_conclusion": "failure",
+  "original_host_error": "Validator required child_exited, absent from the format-1 bridge producer",
+  "correction": "Require a verified uint32 child_exit_code, excluding STILL_ACTIVE (259); retain all identity, save, capture and cleanup checks",
+  "runtime_reexecuted": false,
+  "runtime_evidence_modified": false,
+  "artifact": {
+    "id": 10973022843,
+    "bytes": 8984584,
+    "sha256": "a539817527900628ed3387a7384fa230fd9dcaa9964b5373780d54b2b4210ee3"
+  },
+  "raw_report": {
+    "bytes": 192204,
+    "sha256": "56a7e295c7a942176cb8ce353ad8cbf6f038894d04bb243334b69866e14ca015"
+  },
+  "validator_repository_commit": "73b1aeef8dfaa901d45763f7e4361054db777632",
+  "validator_worktree_clean": true,
+  "validator_sources_sha256": {
+    "tools/android/game/revalidate_game_artifact.py": "e4d9f507bcaa4aff4a1ad7ac993e22feabdd91935d39865243081fdfbd27b130",
+    "tools/android/game/host_game_smoke.py": "a51f01376f78089dadad5f6d1f2bb8fe6b3e42a90fc212b848098c7b945812e4",
+    "tools/android/dbserver/host_dbserver_smoke.py": "98bc776f24a7798bd85f0163d0751c8c25238bdc36ce0d192853b43dca44abba"
+  },
+  "reviewed_bridge_sources_sha256_lf": {
+    "database/wine-game/TestClientBridge.c": "ce7f07eb903c885eb2b24e8e396a86decc92579d96632dc3d69b6153752b634c",
+    "database/wine-game/bridge_protocol.h": "e75cf3827808c1c0717455915f248e37b0872e8db191b933143f3f0e6e61b36f"
+  },
+  "passed_runtime_stages": [
+    "game_private_runtime",
+    "assets_and_architecture",
+    "initialize_owned_cluster",
+    "postgres_first_start",
+    "restricted_fixture_database",
+    "wine_prefix_and_driver",
+    "win32_odbc_driver",
+    "win32_runtime_dll",
+    "game_services_first",
+    "atlas_ready_observation",
+    "game_create_and_connect",
+    "game_live_currency",
+    "game_protocol_logout_first",
+    "game_restart",
+    "postgres_game_restart",
+    "game_services_restart",
+    "game_resume_exact_name",
+    "game_protocol_logout_second"
+  ],
+  "process_captures": 128,
+  "character": {
+    "container_id": 1,
+    "name": "TEST05026",
+    "account": "CohAe8d3fca874"
+  },
+  "first_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 1,
+    "influence": 12345,
+    "snapshot_sha256": "2b36b0a02ad7d3656637a53c9edd072761b6e9b57081d2d91d2b005419fa66fa",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 12,
+      "costumeparts": 14
+    }
+  },
+  "restart": {
+    "same_cluster": true,
+    "same_database": true,
+    "no_reseed_or_restore": true,
+    "wine_shutdown": {
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 312,
+      "scanned_tasks": 4,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    },
+    "snapshot_sha256": "2b36b0a02ad7d3656637a53c9edd072761b6e9b57081d2d91d2b005419fa66fa",
+    "phase": "restart",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": true,
+    "login_count_before": 1,
+    "login_count_after": 1,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 12,
+      "costumeparts": 14
+    }
+  },
+  "resume": {
+    "slot": 0,
+    "database_id": 1,
+    "exact_name": "TEST05026",
+    "creation_disabled": true,
+    "database_id_source": "processed MapServer player entity update",
+    "scene_exchange_observed": true,
+    "processed_server_update_for_original_player": true,
+    "active_gameplay_confirmed": false,
+    "connected_on_atlas": true,
+    "processed_server_update": true
+  },
+  "second_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 2,
+    "influence": 12345,
+    "snapshot_sha256": "4922fc66181d35ab2303596871d4fb9224834108e27f76be7b9cb18dfd861bdc",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 12,
+      "costumeparts": 14
+    },
+    "comparison": {
+      "phase": "second_logout",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": true,
+      "login_count_before": 1,
+      "login_count_after": 2,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 12,
+        "costumeparts": 14
+      }
+    }
+  },
+  "cleanup_complete": true,
+  "owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 626,
+    "scanned_tasks": 8,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "game_capture_files": {
+    "second-snapshot.json": {
+      "bytes": 6311,
+      "sha256": "7ccce8701a40d71e3d2972808227fde848c44c85bf20d1809db7410bf316d757"
+    },
+    "first-events.jsonl": {
+      "bytes": 3329,
+      "sha256": "bb89a0fac7a526a02eafe6f5121b3543e2d5fa7cd3369a01ab470703b85477c1"
+    },
+    "restart-snapshot.json": {
+      "bytes": 6311,
+      "sha256": "527c86c2775387a2fd678a6c1b2a4a8ab0a5f4d9c21de3a97eb30e1870bd0ec7"
+    },
+    "second-ready.json": {
+      "bytes": 276,
+      "sha256": "743b76cce5e6b8b22467e5eb2aae73ae9aae56ae78a0e7639057ed7619d87a09"
+    },
+    "second-result.json": {
+      "bytes": 329,
+      "sha256": "0b7a7b79aa431d6fd14232f229c06bcd9f64f8805f05960b9ce54438df5bebf7"
+    },
+    "first-snapshot.json": {
+      "bytes": 6311,
+      "sha256": "527c86c2775387a2fd678a6c1b2a4a8ab0a5f4d9c21de3a97eb30e1870bd0ec7"
+    },
+    "first-ready.json": {
+      "bytes": 278,
+      "sha256": "28f9fbd618236b4b218e4b631171ecfa2c0c3a7f777a573ff94a2519708b44b0"
+    },
+    "first-result.json": {
+      "bytes": 331,
+      "sha256": "ad5a01d78d62a89b465f50b40d7e8268f676fa361e8d8abf9dd0686a5b4759cb"
+    },
+    "second-console.txt": {
+      "bytes": 8697,
+      "sha256": "7ced138b61a9641e4f725c163d35b9243621482520c6ba9614e775e88b5307ae"
+    },
+    "first-console.txt": {
+      "bytes": 8616,
+      "sha256": "b1da524ba6a41b52e0fc18700b175239dfd2ee6a485c33b6e7d2825f6d9e0045"
+    },
+    "second-events.jsonl": {
+      "bytes": 1861,
+      "sha256": "54fe22a906fe7e4f71ac6579485d2ff6743f56edb9e9d6aca40ae6a4ef44849c"
+    }
+  },
+  "service_capture_files": {
+    "manifest.json": {
+      "bytes": 4108,
+      "sha256": "5724c25fbfb3a04c63249e27c9e5c7bdf47a9e29a07e6de83374b1e210b825b4"
+    },
+    "log-007.txt": {
+      "bytes": 1048614,
+      "sha256": "417892aebf83579e59cf380319cf53a06def46f8894bb49584607ac1fa59e29b"
+    },
+    "log-006.txt": {
+      "bytes": 92,
+      "sha256": "fd914adf2d5ebd90f59ed593ab6836ae75a18ed83920018599ea21a50d281903"
+    },
+    "log-009.txt": {
+      "bytes": 1048614,
+      "sha256": "69780d9a5f5dadfc342a6b20b8acd0c31aee60a19e96819cd54f6ee48f214c75"
+    },
+    "first-atlas-stdout.txt": {
+      "bytes": 1015861,
+      "sha256": "460b07b1789e0b7ddefc22025a490feae6501d24b293461cda57d45446301589"
+    },
+    "restart-dbserver-stdout.txt": {
+      "bytes": 16576,
+      "sha256": "26d4a9c0aa36cd5d39c79e42f66c28ebe94e98d040a2fff7614ee92660078b76"
+    },
+    "restart-atlas-stdout.txt": {
+      "bytes": 1000389,
+      "sha256": "cfde947aa33bef4534425a5f03c27d1d32cabb342fc1a6232ced1ea5bf399613"
+    },
+    "first-dbserver-stdout.txt": {
+      "bytes": 3631,
+      "sha256": "afe9015bd5000c1b7d3adb86ccd84113bb8b5853a385cfe6c0ec1505557f17cb"
+    },
+    "log-002.txt": {
+      "bytes": 76,
+      "sha256": "3cd6c53351db33de1cf6f3b303bdc80bf89f7036d854b3f06247f62bb4e28380"
+    },
+    "log-005.txt": {
+      "bytes": 92,
+      "sha256": "f2aec4f1115e3c5de324c881f61bca212c7eb2d690dc426fe5b4ff7e5aade926"
+    },
+    "log-008.txt": {
+      "bytes": 1048614,
+      "sha256": "723468d68234dddc53ceff877e05db997076103a3befcad5f839aada25570442"
+    },
+    "log-004.txt": {
+      "bytes": 1235,
+      "sha256": "005153e1fed23675f3ad66019c15d81b3b549e35b079791400fabca112ae8776"
+    },
+    "log-003.txt": {
+      "bytes": 15213,
+      "sha256": "fcdddca13ee5e29dd26de0e5d1c735482c06b8edfdd605d59333591daf97436c"
+    },
+    "log-001.txt": {
+      "bytes": 76,
+      "sha256": "672a6cec1046e88cbd79e98c7ec74dff2135bda57c441c347437369b3b8793ce"
+    }
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "scope": "Hosted ARM64 Wine/FEX Atlas creation, live influence, committed protocol saves and same-character restart/resume; startup reliability and Android gameplay remain separate."
+}
