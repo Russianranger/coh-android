@@ -36,11 +36,28 @@ class ImportTests(unittest.TestCase):
         struct.pack_into('<I', data, 528, 0x1200)
         self.assertEqual(imported_functions(data), ['SQLColumnsW', 'SQLGetInfoW'])
 
-    def test_ordinal_cannot_satisfy_named_contract(self):
+    def test_pinned_ordinal_resolves_to_exact_wine_export(self):
         data = image()
-        struct.pack_into('<I', data, 1024, 0x80000001)
-        with self.assertRaisesRegex(ValueError, 'Ordinal'):
+        struct.pack_into('<I', data, 1024, 0x80000091)  # 145: SQLGetInfoW
+        self.assertEqual(imported_functions(data), ['SQLColumnsW', 'SQLGetInfoW'])
+
+    def test_unknown_ordinal_cannot_satisfy_named_contract(self):
+        data = image()
+        struct.pack_into('<I', data, 1024, 0x80007fff)
+        with self.assertRaisesRegex(ValueError, 'Unknown pinned Wine ODBC ordinal'):
             imported_functions(data)
+
+    def test_stubbed_and_malformed_ordinals_are_refused(self):
+        for value, error in ((0x800000d3, 'Stubbed'), (0x80010091, 'Malformed')):
+            data = image()
+            struct.pack_into('<I', data, 1024, value)
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, error):
+                imported_functions(data)
+
+    def test_numbered_and_named_imports_share_the_same_contract(self):
+        data = image(('SQLExecDirect', 'SQLColumnsW'))
+        struct.pack_into('<I', data, 1024, 0x8000000b)
+        self.assertEqual(imported_functions(data), ['SQLColumnsW', 'SQLExecDirect'])
 
     def test_out_of_bounds_name(self):
         data = image()

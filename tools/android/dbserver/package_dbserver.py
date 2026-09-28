@@ -12,7 +12,21 @@ import sys
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'tools'))
 from package_reference_runtime import pe_info, dependency_report, require, SYSTEM_DLLS
-from prepare_wine_dbserver_source import expected_wine_receipt, REQUIRED_IMPORTS, FORBIDDEN_IMPORTS
+from prepare_wine_dbserver_source import expected_wine_receipt, REQUIRED_IMPORTS, FORBIDDEN_IMPORTS, WINE_COMMIT
+
+
+def ordinal_exports():
+    path = ROOT / 'database/wine-dbserver/odbc32-exports.json'
+    value = json.loads(path.read_text())
+    require(value['wine_commit'] == WINE_COMMIT, 'ODBC export map is not the pinned Wine revision')
+    source = path.with_name('odbc32.spec').read_bytes().replace(b'\r\n', b'\n')
+    source_hash = hashlib.sha256(source).hexdigest()
+    require(source_hash == value['source_sha256'] == '2e9ce4715558914972e83fff0bb04f4dc3101619cf760616756e494c2fd49350',
+            'Pinned Wine ODBC export specification changed')
+    exports = {ordinal: {'name': name, 'kind': kind} for ordinal, kind, name in
+               re.findall(r'^\s*(\d+)\s+(\w+)\s+(\w+)', source.decode(), re.M)}
+    require(exports == value['exports'], 'ODBC ordinal map differs from the pinned export specification')
+    return value
 
 
 def imported_functions(data, library='odbc32.dll'):
@@ -60,8 +74,15 @@ def imported_functions(data, library='odbc32.dll'):
             value = struct.unpack_from('<I', data, locate(table + index * 4, 4))[0]
             if not value:
                 break
-            require(not value & 0x80000000, 'Ordinal ODBC import cannot satisfy named contract')
-            found.append(string(value + 2))
+            if value & 0x80000000:
+                require(value & 0x7fff0000 == 0, 'Malformed ODBC ordinal import')
+                ordinal = value & 0xffff
+                export = ordinal_exports()['exports'].get(str(ordinal))
+                require(export is not None, 'Unknown pinned Wine ODBC ordinal: ' + str(ordinal))
+                require(export['kind'] == 'stdcall', 'Stubbed or unsupported Wine ODBC ordinal: ' + str(ordinal))
+                found.append(export['name'])
+            else:
+                found.append(string(value + 2))
         else:
             raise ValueError('Unterminated import lookup table')
     require(found, 'Missing ODBC function imports')
@@ -85,6 +106,8 @@ def package(args):
     manifest = {'format': 1, 'repository_commit': args.repository_commit,
                 'source_commit': wine['source_commit'], 'wine_build_input': wine,
                 'configuration': 'OptDebug', 'architecture': 'Win32',
+                'odbc_export_spec': {k: v for k, v in ordinal_exports().items() if k != 'exports'},
+                'odbc_export_map_sha256': hashlib.sha256((ROOT / 'database/wine-dbserver/odbc32-exports.json').read_bytes()).hexdigest(),
                 'variants': {}, 'android_execution_validated': False, 'gameplay_validated': False,
                 'scope': 'Separate Wine-compatible real DbServer; runtime qualification required'}
     for name, fixture in (('fixture', True), ('normal', False)):
