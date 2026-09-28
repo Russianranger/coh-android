@@ -34,14 +34,14 @@ zero remaining owned processes or inspection errors. The
 [acceptance receipt](android-evidence/accepted-dbserver-hosted-36369485666.json)
 binds the reports and inputs. Physical Android DbServer execution, Android
 presentation and game rendering remain unvalidated. The separate
-[hosted Atlas gate](ANDROID_GAME_RUNTIME.md) is accepted after strict
-revalidation of unchanged run `36454174481` evidence with a corrected host exit
-contract. It passed all 18 guest stages, including both protocol saves,
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow)
+passed its full workflow in run `36460005201`: all three jobs, all 18 guest
+stages and the final host validator succeeded, including both protocol saves,
 same-cluster restart and exact-name resume. The
-[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
-retains the original Actions failure: its host validator required a field the
-bridge does not emit. Earlier first-save, restart-port and startup-timeout
-evidence is preserved below.
+[acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
+binds independently verified reports and captures. The earlier `36454174481`
+workflow failure and separate post-correction acceptance remain preserved,
+alongside the first-save, restart-port and startup-timeout history below.
 The follow-on diagnostic DbServer package passed all three jobs in run
 `36425508780`. Windows verified enabled dispatch-record publication; the ARM64
 fixture/schema gate used the observer disabled. Atlas run `36428915900` then
@@ -89,6 +89,31 @@ or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43
 do not reveal the internal status of the other Codex session.
 
 ## Latest hosted ARM64 game checkpoint (2026-09-28)
+
+[Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)
+at `cfc8ac477e449037213d5242f43480acf4f1cb85` **passed all three jobs and the
+complete hosted Atlas gate**. The [raw report](android-evidence/game-arm64-36460005201.json)
+records all 18 stages in 1,963.43549 seconds, `TEST48625` / container 1 /
+account `CohAa82e8aaa56`, live influence 12,345, first protocol save, Wine and
+same-cluster PostgreSQL restart, exact-name resume at slot 0 with creation
+disabled and a processed server update, and the second protocol save.
+LoginCount progressed 1 → 1 → 2; selected SQL retained one `ents` row, one
+`ents2` row, seven powers and 13 costume parts. Atlas readiness was independently
+observed for 31.421914 seconds with current heartbeats.
+
+Both fixed-input acknowledgments and all four unchanged input checks passed
+(62 files / 4,402,846 bytes). Schema, attribute IDs/names and the full catalog
+stayed stable. All 123 process input/output captures closed; graceful PostgreSQL
+and Wine cleanup left zero owned processes or inspection failures. Independent
+full report, character/SQL capture and service-capture checks passed with the
+exact tested validator modules. Preserve the
+[acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json) and
+[captured evidence](android-evidence/game-evidence-36460005201.zip).
+Atlas donor `36451873322` at `53c6270dff8a0efcc6be09da756408504d8313bd` and
+APK 0.1.5 remain unchanged. Physical Android game execution, presentation and
+rendering remain unvalidated.
+
+### Earlier acceptance after host validator correction
 
 [Run 36454174481](https://github.com/Russianranger/coh-android/actions/runs/36454174481)
 at `8944bd598990b33b63a750a64ae448403e4542cd` has an **accepted runtime sequence
@@ -853,9 +878,10 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 **The primary M2 device diagnostic, hosted M3 DbServer and hosted Atlas
 create/save/restart/resume/second-save sequence are accepted.** The Atlas
-[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
-records strict revalidation of unchanged run `36454174481` evidence after a
-host exit-contract correction; the original Actions run remains failed.
+[acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
+records the successful full workflow `36460005201`, including the final host
+validator. Preserve the earlier `36454174481` workflow failure and its separate
+post-correction acceptance.
 The isolated Wine-compatible DbServer fixture
 and normal schema startup/export/reload have passed; preserve their
 [accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).

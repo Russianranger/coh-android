@@ -5,6 +5,14 @@ It builds the actual CoH DbServer with a separately identified Wine compatibilit
 overlay, then exercises it against native ARM64 PostgreSQL through the accepted
 PRoot/Wine/FEX runtime. The stock Windows reference and immutable source are preserved.
 
+**The full hosted Atlas workflow passed in run `36460005201`**, using unchanged
+DbServer donor `36451873322`. All three jobs passed, including all 18 ARM64
+stages and the final host validator. The
+[acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
+records both saves, same-cluster restart and exact-name resume; the
+[runtime details](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow) preserve
+the independently verified evidence. The accepted APK remains 0.1.5.
+
 **The opt-in loopback listener package passed hosted Windows and ARM64 qualification.**
 [Run 36460867428](https://github.com/Russianranger/coh-android/actions/runs/36460867428)
 at `eed2ce1f5388195f65a07853919761a93657aca6` passed all three jobs on
@@ -45,12 +53,12 @@ the normal fixture-OFF executable SHA-256 is
 `659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a`.
 The normal ARM64 schema gate passed default startup followed by an explicitly
 acknowledged [fixed-input reload](../database/wine-dbserver/FIXED_INPUTS.md).
-The [hosted Atlas sequence](ANDROID_GAME_RUNTIME.md#hosted-sequence-accepted-after-host-validator-correction)
-is now accepted from run `36454174481` after strict revalidation of unchanged
-evidence with the corrected host exit contract. The
-[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
-preserves the original Actions failure separately. Physical Android execution
-and rendering remain unvalidated.
+The [full hosted Atlas workflow](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow)
+passed in run `36460005201` with this donor. The earlier
+[post-correction acceptance](android-evidence/accepted-game-hosted-36454174481.json)
+and [original workflow failure](android-evidence/game-runtime-failure-36454174481.json)
+remain preserved separately. Physical Android execution and rendering remain
+unvalidated.
 
 The [ARM64 report](android-evidence/dbserver-arm64-36451873322.json) passed all
 28 stages in 192.280590 seconds: 21 persistence check groups across 14 fixture
@@ -216,11 +224,10 @@ This qualification does not establish physical Android execution of DbServer,
 MapServer operation, character gameplay, Android graphics, physical input or audio.
 No replacement diagnostic APK is required for the accepted M2 tests.
 
-The accepted managed Atlas sequence from run `36454174481` used donor
-`36451873322` and completed its 18 guest stages, including both protocol saves
-and exact-name resume. It retained both fixed-input acknowledgments and all four
-unchanged input checks. Its original workflow failed on the host exit contract;
-strict revalidation of unchanged evidence passed after that correction. Keep
+The successful full Atlas workflow `36460005201` used donor `36451873322` and
+completed all 18 guest stages, both protocol saves and exact-name resume.
+LoginCount progressed 1 → 1 → 2, both fixed-input acknowledgments and all four
+input checks passed, and all 123 captures closed with complete cleanup. Keep
 the accepted donor unchanged. Physical Android listener validation and app lifecycle
 integration precede the next device candidate; retain the accepted 0.1.5
 diagnostic and runtime in the meantime.

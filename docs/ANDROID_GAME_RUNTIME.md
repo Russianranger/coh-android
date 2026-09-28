@@ -1,15 +1,15 @@
 # Hosted Atlas character persistence on ARM64
 
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md).
-The hosted ARM64 create/save/restart/resume/second-save sequence is accepted
-after strict revalidation of unchanged run `36454174481` evidence with a
-corrected host exit contract. Its guest report passed all 18 stages; the
-original Actions workflow remains failed because its validator required a
-`child_exited` field the bridge does not emit. The
-[acceptance receipt](android-evidence/accepted-game-hosted-36454174481.json)
-records the separate revalidation. Earlier partial and failure evidence is
-preserved below. The accepted Thor 0.1.5 APK is unchanged; physical Android game
-execution, presentation and rendering remain unvalidated.
+**The full hosted ARM64 Atlas workflow passed in run `36460005201`.** All three
+jobs succeeded at `cfc8ac477e449037213d5242f43480acf4f1cb85`, including the
+18-stage create/save/restart/exact-name-resume/second-save sequence and final
+host validation. The [acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
+binds the independently verified reports and captures. The earlier
+`36454174481` workflow failure and its separate post-correction acceptance
+remain preserved below. Atlas donor `36451873322` and the accepted Thor 0.1.5
+APK are unchanged; physical Android game execution, presentation and rendering
+remain unvalidated.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
 identified composite runtime from these immutable inputs:
@@ -69,6 +69,39 @@ checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
 separate milestones. Keep the accepted 0.1.5 device diagnostic installed while
 Android listener binding and app lifecycle integration are prepared.
+
+## Accepted full hosted workflow
+
+[Run 36460005201](https://github.com/Russianranger/coh-android/actions/runs/36460005201)
+at `cfc8ac477e449037213d5242f43480acf4f1cb85` passed all three jobs on
+2026-09-28. Its [raw guest report](android-evidence/game-arm64-36460005201.json)
+passed all 18 stages in 1,963.43549 seconds, from 17:48:08.291869 to
+18:20:51.727359 UTC. Stock TestClient created `TEST48625` / container 1 / account
+`CohAa82e8aaa56`, entered Atlas, observed live influence 12,345 and completed
+the first independently committed protocol save before forced cleanup. Wine
+and the same PostgreSQL cluster restarted without reseeding or restoration.
+The resume client selected the same character at slot 0 with creation disabled
+and a processed server update, then completed the second protocol save.
+LoginCount progressed 1 → 1 → 2; selected SQL retained one `ents` row, one
+`ents2` row, seven powers and 13 costume parts.
+
+First service readiness took 1,118.015542 seconds and restart readiness took
+194.370597 seconds. Independent Atlas readiness with current heartbeats was
+observed for 31.421914 seconds. Both DbServer launches emitted the exact
+fixed-input acknowledgment; all four input checks preserved 62 files /
+4,402,846 bytes. The 99-table schema, 5,935 ordered columns, 58,272 attribute
+IDs/names and full catalog remained stable. All 123 process input/output
+captures closed; PostgreSQL stopped gracefully, the Wine prefix stopped, and
+cleanup left zero owned processes or inspection failures.
+
+The corrected bridge exit consumer ran in CI. Independent validation repeated
+the full report, character/SQL capture and service-capture checks using the
+exact tested validator modules, with unchanged report and capture bytes.
+The [acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
+and [captured evidence](android-evidence/game-evidence-36460005201.zip) preserve
+this successful full workflow. The earlier failed workflow and its separate
+post-correction acceptance remain historical evidence; the sibling DbServer
+SIGSEGV remains unexplained. No generic Wine notification repair is established.
 
 ## First real attempt
 
@@ -385,6 +418,7 @@ package passed all 28 stages on attempt 2. The
 receipts retain the intermittent, unexplained failure; the repeat does not
 establish a repair. Atlas donor `36451873322` remains unchanged.
 
-The separate loopback listener prerequisite is implemented and locally tested.
-Hosted source/package qualification and donor adoption remain pending; it does
-not qualify physical Android execution or replace the accepted 0.1.5 APK.
+The separate loopback listener package passed hosted qualification in
+[run 36460867428](android-evidence/accepted-dbserver-hosted-36460867428.json).
+It has not replaced Atlas donor `36451873322` and does not qualify physical
+Android execution or replace the accepted 0.1.5 APK.
