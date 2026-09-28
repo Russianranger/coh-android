@@ -6,6 +6,7 @@ on:
       - '.github/workflows/android-game.yml'
       - 'database/wine-game/**'
       - 'tools/android/game/**'
+      - 'tools/android/build_proot.py'
       - 'android/guest/game_*.py'
 permissions:
   contents: read
@@ -22,7 +23,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Verify composite inputs, data staging, bridge and lifecycle contracts
-        run: python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+        run: |
+          python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_proot_download.py' -v
   bridge:
     needs: tooling
     runs-on: windows-2025-vs2026

@@ -4,8 +4,9 @@ This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
 new hosted gate is implemented; complete ARM64 qualification is pending. The
 best completed run passed Atlas readiness, fresh character creation, live
 currency change and a committed protocol save, then stopped at the restart port
-check. The latest diagnostic reproduced the earlier startup query timeout and
-captured the live failure state. Exact-name resume and the second save remain
+check. The last game execution reproduced the earlier startup query timeout and
+captured the live failure state. A subsequent diagnostic attempt stopped during
+a pinned build-dependency download. Exact-name resume and the second save remain
 unproved on ARM64. No accepted Thor 0.1.5 APK changes or Android game execution
 claims follow from these hosted results.
 
@@ -28,7 +29,7 @@ Its receipt binds the current repository commit, source hashes, build flags,
 executable bytes and imports. The composite package records every donor and
 explicitly selects the Wine donor's normal CrashRpt dependency.
 
-The next Atlas run adopts the qualified diagnostic DbServer donor
+The current Atlas configuration adopts the qualified diagnostic DbServer donor
 `36425508780`, repository commit `41f3aff596826e22e2774375e11590de895ca33d`.
 Its manifest SHA-256 is
 `656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632` and normal
@@ -247,3 +248,21 @@ requiring a fresh valid record at DbServer readiness and a distinct record after
 restart. Enabled ARM64 publication is still pending. This is an evidence-gathering
 step, not a demonstrated startup fix or gameplay result. The complete hosted
 restart/resume/second-save gate and physical Android execution remain pending.
+
+## Diagnostic attempt stopped before game execution
+
+[Run 36427680960](https://github.com/Russianranger/coh-android/actions/runs/36427680960)
+at `82386fd48c2352a2ce65d5920f7857e8b92ec442` passed source, package and data
+staging, then failed while building PRoot: the pinned talloc source download hit
+a read timeout. The guest game diagnostic never ran, so this attempt produced
+no runtime report or dispatch samples. It neither reproduced nor resolved the
+intermittent DbServer startup stall. The
+[infrastructure failure receipt](android-evidence/game-infrastructure-failure-36427680960.json)
+preserves the failed build evidence.
+
+The isolated download correction now permits at most three attempts for
+transport failures, deletes partial bytes before retrying, and retains the
+original size bound and required SHA-256. Hash mismatches and permanent HTTP
+errors remain failures. Atlas tooling explicitly runs the retry regression
+tests. This prepares another attempt with the same qualified donor; enabled
+ARM64 dispatch publication and full restart/resume/second-save remain pending.

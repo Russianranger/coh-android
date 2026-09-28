@@ -37,13 +37,16 @@ presentation and game rendering remain unvalidated. Managed Atlas MapServer and
 diagnostic TestClient execution are now implemented in the separate
 [hosted Atlas gate](ANDROID_GAME_RUNTIME.md). One ARM64 run passed the first
 character creation, live currency change and committed protocol save, then
-failed at the service restart port check. The latest rerun reproduced the
+failed at the service restart port check. The latest game execution reproduced the
 startup timeout and captured live failure evidence; resume remains unproved.
 The follow-on diagnostic DbServer package passed all three jobs in run
 `36425508780`. Windows verified enabled dispatch-record publication; the ARM64
 fixture/schema gate used the observer disabled. The next Atlas run adopts this
 qualified donor to verify enabled ARM64 publication and capture the live dispatch
 boundary if the intermittent timeout recurs.
+The first attempt with that donor, run `36427680960`, stopped before game execution
+when the pinned talloc download timed out during the PRoot build. A bounded
+download retry is now applied; it supplies no new game-runtime evidence.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -115,13 +118,25 @@ alongside the original acceptance. The donor manifest SHA-256 is
 executable SHA-256 is
 `3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830`.
 
-Next adopt donor `36425508780` for the Atlas diagnostic, with separate fresh
+Next retry donor `36425508780` for the Atlas diagnostic, with separate fresh
 records for first startup and restart. Enabled publication on live ARM64 remains
 pending. Bounded stage/sequence observations will distinguish progress
 through startup, dispatch, SQL keepalive and console handling without relying
 on stale WOW64 contexts. A stopped marker identifies an operation and its nested
 calls; it does not prove a deadlock or gameplay success. No startup blocker fix
 has been established, and the accepted device APK remains 0.1.5.
+
+[Run 36427680960](https://github.com/Russianranger/coh-android/actions/runs/36427680960)
+at `82386fd48c2352a2ce65d5920f7857e8b92ec442` passed source, package and data
+staging, then failed on a read timeout downloading pinned talloc for the PRoot
+build. No game diagnostic ran, and no runtime report or dispatch sample exists.
+The [infrastructure failure receipt](android-evidence/game-infrastructure-failure-36427680960.json)
+preserves this result. It adds no evidence about the intermittent startup
+stall. The isolated retry correction allows at most three transport attempts,
+discards partial downloads and preserves the size/SHA-256 gates; Atlas tooling
+now explicitly runs its regression tests. Retry the qualified diagnostic donor
+without treating this download remedy as a game startup fix. Enabled ARM64
+publication and full restart/resume/second-save remain pending.
 
 ## Continuation validation checkpoint
 
