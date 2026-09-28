@@ -3,8 +3,9 @@
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
 new hosted gate is implemented; real ARM64 qualification is pending. The first
 real attempt reached DbServer readiness and progressed into Atlas loading, then
-failed a startup status-query deadline. Its input inventory and owned cleanup
-passed; character execution had not started. It does
+failed a startup status-query deadline. A retry with a 90-second startup query
+also failed. Its final Atlas output reached AutoCommands retrieval; character
+execution had not started. It does
 not change the accepted Thor 0.1.5 APK or claim Android game execution.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
@@ -68,3 +69,27 @@ source patch or preload-skipping flag is justified by these warnings. The retry
 adds live stage progress, bounded full service captures, less frequent cold
 startup queries and longer startup-only deadlines. Save/resume and current
 heartbeat checks remain unchanged; the overall guest deadline stays 3,600 seconds.
+
+## Extended-query retry
+
+[Run 36375412599](https://github.com/Russianranger/coh-android/actions/runs/36375412599)
+at `52e11f87b0298c9195f276e4586fe9f53ce07635` passed all 60 tooling checks
+and the Windows bridge build. Thor, PostgreSQL backend, Windows character
+persistence and Atlas transfer regression workflows also passed at that head.
+The ARM64 runtime again failed `game-query-first-ready timed out`, now after
+90 seconds. Increasing this allowance alone did not resolve the failure.
+
+The completed job log shows the last successful map status query at 04:15:50 UTC.
+The next query printed only its startup timestamp at 04:16:52, before its normal
+command-line and error-log initialization output. Atlas continued through
+encounter groups, script markers and door animation points, ending at
+`Retrieving AutoCommands..`. Captured PostgreSQL sessions were idle with no
+active transactions. This does not establish a SQL lock or an AutoCommands
+root cause; inspect the query's early startup path and the full service captures.
+
+The expanded evidence artifact was uploaded, but local extraction and independent
+verification were blocked when the workspace disconnected. See the
+[job-log failure receipt](android-evidence/game-runtime-failure-36375412599.json)
+for its GitHub-reported identity. Download and verify this artifact before
+changing runtime source or accepting cleanup. The create/save/restart/resume
+milestone remains unqualified.
