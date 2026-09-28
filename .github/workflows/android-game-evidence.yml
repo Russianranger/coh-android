@@ -39,6 +39,9 @@ jobs:
               report_raw = archive.read(report_name)
               report = json.loads(report_raw)
               print('REPORT_HASH', len(report_raw), hashlib.sha256(report_raw).hexdigest())
+              report_text = report_raw.decode('utf-8')
+              for offset in range(0, len(report_text), 6000):
+                  print('RAW_REPORT_CHUNK', json.dumps({'offset': offset, 'text': report_text[offset:offset+6000]}))
               for key, value in report.items():
                   if key == 'logs':
                       continue
@@ -54,7 +57,7 @@ jobs:
                   text = content.decode('utf-8')
                   if name.endswith('-stdout.txt'):
                       lines = text.splitlines()
-                      selected = lines[:240] + ['[inspection output: middle omitted]'] + lines[-160:]
+                      selected = lines[:240] + ['[inspection output: middle omitted]'] + [line for line in lines[240:-160] if any(token in line.lower() for token in ('connect', 'database', 'dbserver', 'autocommand', 'assert', 'exception', 'fatal'))] + lines[-160:]
                   else:
                       selected = text.splitlines()[-80:]
                   print('CAPTURE_BEGIN', name)
