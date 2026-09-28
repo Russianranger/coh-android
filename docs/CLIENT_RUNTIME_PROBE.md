@@ -123,9 +123,11 @@ playback remains unvalidated. All same-source PostgreSQL regression jobs passed.
 The [acceptance record](android-evidence/accepted-client-probe-36349552245.json)
 binds the downloaded evidence and APK. This completes the hosted basic client
 prerequisite milestone. The [0.1.5 device receipt](android-evidence/accepted-thor-20260928.json)
-now accepts the corresponding physical diagnostic gate. M3 actual game-server
-execution is next; client/shader compatibility and Android display integration
-remain separate unfinished work.
+now accepts the corresponding physical diagnostic gate. The
+[first hosted M3 DbServer gate](ANDROID_DBSERVER.md) has also passed; managed
+Atlas MapServer and diagnostic TestClient execution are next. Physical Android
+game-server execution, client/shader compatibility and Android display integration
+remain unfinished.
 
 ## Historical build identity (0.1.1)
 

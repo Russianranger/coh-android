@@ -246,5 +246,8 @@ activity alone does not clear the process-wide cleanup block.
 
 A passing Thor report plus repeat-run and Stop evidence qualifies the exercised
 device database and compatibility runtime. It does not qualify game execution.
-The next gameplay work is the minimal Android server and actual client/shader
-compatibility; full rendering, combat and mission behavior remain later gates.
+The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) has now passed in the
+ARM64 Wine/FEX runtime. Managed Atlas MapServer and diagnostic TestClient execution
+are next; Android listener binding and app lifecycle integration remain before
+the next device candidate. Physical Android game-server execution, actual
+client/shader compatibility, full rendering, combat and missions remain unvalidated.

@@ -1,0 +1,556 @@
+{
+  "format": 1,
+  "repository_commit": "1a5eea159172a4698441eb8cfed5ea5ca99fcf12",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "wine_build_input": {
+    "schema_version": 1,
+    "build_role": "wine_dbserver",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "postgresql_build_input": {
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+      "overlay_sha256": {
+        "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+        "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+      },
+      "patched_sha256": {
+        "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+        "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+        "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+        "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+        "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+        "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+        "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+        "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+        "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+        "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+        "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+        "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+        "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+        "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+        "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+        "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+      }
+    },
+    "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+    "wine_patch_sha256": "463cdb6334107ad74faf211f01e2eaa6043acdeafa2c2e684c55a1b1082a7c58",
+    "wine_overlay_sha256": {
+      "Common/sql/wine_odbc.c": "b5390becf88f2ca481df052d94b200ff640278750ef9da1dcc900ab6c4b64242",
+      "Common/sql/wine_odbc.h": "6fe3475bd0098e0a193971a4c19023356d865cee2cc3ec7ee2855b7f47d75a0f"
+    },
+    "source_sha256": {
+      "Common/sql/sqlinclude.h": "f49bff920b233a4c611ab3c79cd3585cd3096103bde72ede0609ef91fe1faf23",
+      "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+      "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f"
+    },
+    "patched_sha256": {
+      "Common/sql/sqlinclude.h": "e7d8736d15de458ff77cd3db540ce20da20f4e10c9b1bc69e60fdd0257d59a91",
+      "DBServer/CMakeLists.txt": "f1450df44230de3b64fb6346b7147bd72b399c6d62ce42a451a17599b5bfdee7",
+      "DBServer/src/dbinit.c": "777b694f99f07100ad6c7642a58e74cc35216a99a7460faf19a358a4ce8359d7"
+    },
+    "compile_definitions": {
+      "DbServer": [
+        "COH_WINE_ODBC=1"
+      ]
+    },
+    "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "odbc_imports": {
+      "required": [
+        "SQLDriverConnect",
+        "SQLExecDirect",
+        "SQLPrepare",
+        "SQLGetDiagRecA",
+        "SQLGetInfoW",
+        "SQLColumnsW",
+        "SQLTablesW",
+        "SQLForeignKeysW"
+      ],
+      "forbidden": [
+        "SQLDriverConnectA",
+        "SQLExecDirectA",
+        "SQLPrepareA",
+        "SQLGetInfo",
+        "SQLGetInfoA",
+        "SQLColumns",
+        "SQLColumnsA",
+        "SQLTables",
+        "SQLTablesA",
+        "SQLForeignKeys",
+        "SQLForeignKeysA"
+      ]
+    },
+    "persistence_configurations": [
+      "OFF",
+      "ON"
+    ],
+    "fixture_startup": {
+      "initialize_file_cache_and_log_before_sql_workers": true,
+      "assert_mode": "stderr_and_exit",
+      "log_directory": "pg-persistence-test"
+    },
+    "runtime_validation": "unverified"
+  },
+  "configuration": "OptDebug",
+  "architecture": "Win32",
+  "odbc_export_spec": {
+    "format": 1,
+    "source_url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+    "wine_commit": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+    "bytes": 7958,
+    "explicit_ordinals": 164,
+    "unassigned_exports": "@ declarations deliberately excluded; numeric ordinal is not guessed",
+    "source_sha256": "2e9ce4715558914972e83fff0bb04f4dc3101619cf760616756e494c2fd49350"
+  },
+  "odbc_export_map_sha256": "0734e31b7e2660c511d13309b98a93def832c4f7b9d10b0d1b25b87e70559635",
+  "variants": {
+    "fixture": {
+      "postgresql_persistence_fixture": true,
+      "files": {
+        "CrashRpt.dll": {
+          "bytes": 39424,
+          "sha256": "d62739d3193194ae261af1024f207d2f40676106d4ce57026f548b17bef605d7",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "vcruntime140.dll": {
+          "bytes": 123328,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "delay_imports": []
+        },
+        "msvcp140.dll": {
+          "bytes": 618944,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "DbServer.exe": {
+          "bytes": 1671168,
+          "sha256": "767ff3190e8e98faa732398f8237df6ec7a226a11c4fd07152ec0842a5b79c5f",
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      },
+      "cmake_cache_sha256": "3ae7b2e29ed63245826cebad866bd6a979a38493939f02dbf73f99398de3d62a",
+      "odbc_imports": [
+        "SQLAllocHandle",
+        "SQLBindCol",
+        "SQLBindParameter",
+        "SQLCancel",
+        "SQLCloseCursor",
+        "SQLColumnsW",
+        "SQLDisconnect",
+        "SQLDriverConnect",
+        "SQLEndTran",
+        "SQLExecDirect",
+        "SQLExecDirectW",
+        "SQLExecute",
+        "SQLFetch",
+        "SQLForeignKeysW",
+        "SQLFreeHandle",
+        "SQLFreeStmt",
+        "SQLGetData",
+        "SQLGetDescField",
+        "SQLGetDiagRecA",
+        "SQLGetInfoW",
+        "SQLGetStmtAttr",
+        "SQLMoreResults",
+        "SQLPrepare",
+        "SQLSetConnectAttr",
+        "SQLSetEnvAttr",
+        "SQLTablesW"
+      ],
+      "dependency_report": {
+        "files": {
+          "CrashRpt.dll": {
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "MSVCP140.dll": {
+              "kind": "packaged",
+              "file": "msvcp140.dll"
+            },
+            "VCRUNTIME140.dll": {
+              "kind": "packaged",
+              "file": "vcruntime140.dll"
+            }
+          },
+          "vcruntime140.dll": {
+            "api-ms-win-crt-convert-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            }
+          },
+          "msvcp140.dll": {
+            "api-ms-win-crt-convert-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-environment-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-filesystem-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-locale-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-math-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-time-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-utility-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "VCRUNTIME140.dll": {
+              "kind": "packaged",
+              "file": "vcruntime140.dll"
+            }
+          },
+          "DbServer.exe": {
+            "ADVAPI32.dll": {
+              "kind": "windows_system_api"
+            },
+            "GDI32.dll": {
+              "kind": "windows_system_api"
+            },
+            "IPHLPAPI.DLL": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "ODBC32.dll": {
+              "kind": "windows_system_api"
+            },
+            "USER32.dll": {
+              "kind": "windows_system_api"
+            },
+            "WINMM.dll": {
+              "kind": "windows_system_api"
+            },
+            "WS2_32.dll": {
+              "kind": "windows_system_api"
+            }
+          }
+        },
+        "unresolved": [],
+        "explicit_dynamic_dependencies": [
+          "CrashRpt.dll"
+        ],
+        "optional_dynamic_driver_probes": [],
+        "limitation": "Import inventory and explicit dynamic allowlist; execution not validated"
+      }
+    },
+    "normal": {
+      "postgresql_persistence_fixture": false,
+      "files": {
+        "CrashRpt.dll": {
+          "bytes": 39424,
+          "sha256": "d62739d3193194ae261af1024f207d2f40676106d4ce57026f548b17bef605d7",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll",
+            "MSVCP140.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "vcruntime140.dll": {
+          "bytes": 123328,
+          "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "KERNEL32.dll"
+          ],
+          "delay_imports": []
+        },
+        "msvcp140.dll": {
+          "bytes": 618944,
+          "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a",
+          "pe_machine": 332,
+          "imports": [
+            "api-ms-win-crt-convert-l1-1-0.dll",
+            "api-ms-win-crt-environment-l1-1-0.dll",
+            "api-ms-win-crt-filesystem-l1-1-0.dll",
+            "api-ms-win-crt-heap-l1-1-0.dll",
+            "api-ms-win-crt-locale-l1-1-0.dll",
+            "api-ms-win-crt-math-l1-1-0.dll",
+            "api-ms-win-crt-runtime-l1-1-0.dll",
+            "api-ms-win-crt-stdio-l1-1-0.dll",
+            "api-ms-win-crt-string-l1-1-0.dll",
+            "api-ms-win-crt-time-l1-1-0.dll",
+            "api-ms-win-crt-utility-l1-1-0.dll",
+            "KERNEL32.dll",
+            "VCRUNTIME140.dll"
+          ],
+          "delay_imports": []
+        },
+        "DbServer.exe": {
+          "bytes": 1657856,
+          "sha256": "b6ce3b447e31daced5d9502a99d80ddb8dd0cd74e6bbdd75456f8a6ba802ef6b",
+          "pe_machine": 332,
+          "imports": [
+            "ADVAPI32.dll",
+            "GDI32.dll",
+            "IPHLPAPI.DLL",
+            "KERNEL32.dll",
+            "ODBC32.dll",
+            "USER32.dll",
+            "WINMM.dll",
+            "WS2_32.dll"
+          ],
+          "delay_imports": []
+        }
+      },
+      "cmake_cache_sha256": "2fc504f7aed9a5df2a1b29bbcdc7eb73b89e23c8ec3c6eb2cf0c059993d1f5e5",
+      "odbc_imports": [
+        "SQLAllocHandle",
+        "SQLBindCol",
+        "SQLBindParameter",
+        "SQLCancel",
+        "SQLCloseCursor",
+        "SQLColumnsW",
+        "SQLDisconnect",
+        "SQLDriverConnect",
+        "SQLEndTran",
+        "SQLExecDirect",
+        "SQLExecDirectW",
+        "SQLExecute",
+        "SQLFetch",
+        "SQLForeignKeysW",
+        "SQLFreeHandle",
+        "SQLFreeStmt",
+        "SQLGetData",
+        "SQLGetDescField",
+        "SQLGetDiagRecA",
+        "SQLGetInfoW",
+        "SQLGetStmtAttr",
+        "SQLMoreResults",
+        "SQLPrepare",
+        "SQLSetConnectAttr",
+        "SQLSetEnvAttr",
+        "SQLTablesW"
+      ],
+      "dependency_report": {
+        "files": {
+          "CrashRpt.dll": {
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "MSVCP140.dll": {
+              "kind": "packaged",
+              "file": "msvcp140.dll"
+            },
+            "VCRUNTIME140.dll": {
+              "kind": "packaged",
+              "file": "vcruntime140.dll"
+            }
+          },
+          "vcruntime140.dll": {
+            "api-ms-win-crt-convert-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            }
+          },
+          "msvcp140.dll": {
+            "api-ms-win-crt-convert-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-environment-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-filesystem-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-heap-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-locale-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-math-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-runtime-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-stdio-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-string-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-time-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "api-ms-win-crt-utility-l1-1-0.dll": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "VCRUNTIME140.dll": {
+              "kind": "packaged",
+              "file": "vcruntime140.dll"
+            }
+          },
+          "DbServer.exe": {
+            "ADVAPI32.dll": {
+              "kind": "windows_system_api"
+            },
+            "GDI32.dll": {
+              "kind": "windows_system_api"
+            },
+            "IPHLPAPI.DLL": {
+              "kind": "windows_system_api"
+            },
+            "KERNEL32.dll": {
+              "kind": "windows_system_api"
+            },
+            "ODBC32.dll": {
+              "kind": "windows_system_api"
+            },
+            "USER32.dll": {
+              "kind": "windows_system_api"
+            },
+            "WINMM.dll": {
+              "kind": "windows_system_api"
+            },
+            "WS2_32.dll": {
+              "kind": "windows_system_api"
+            }
+          }
+        },
+        "unresolved": [],
+        "explicit_dynamic_dependencies": [
+          "CrashRpt.dll"
+        ],
+        "optional_dynamic_driver_probes": [],
+        "limitation": "Import inventory and explicit dynamic allowlist; execution not validated"
+      }
+    }
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "scope": "Separate Wine-compatible real DbServer; runtime qualification required"
+}

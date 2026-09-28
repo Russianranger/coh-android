@@ -305,9 +305,34 @@ class DiagnosticProcessTests(unittest.TestCase):
                 # A terminated descendant can briefly remain a zombie until
                 # the host init reaps it; it cannot run or write further data.
                 return Path('/proc', str(pid), 'stat').read_text().split(') ', 1)[1][0] != 'Z'
-            except FileNotFoundError:
+            except (FileNotFoundError, ProcessLookupError):
+                # /proc can disappear between kill(0) and the read, or refer to
+                # a different PID namespace. Retry until kill(0) proves exit.
                 return True
         return True
+
+    def test_process_alive_retries_proc_disappearance_but_trusts_kill_zero_esrch(self):
+        target = 'NSpid:\t123\n'
+        own = 'NSpid:\t456\n'
+        for reads in ([ProcessLookupError(3, 'status process disappeared')],
+                      [target, own, ProcessLookupError(3, 'stat process disappeared')]):
+            with self.subTest(reads=reads), patch.object(sys, 'platform', 'linux'), \
+                 patch.object(os, 'kill', return_value=None), \
+                 patch.object(Path, 'read_text', side_effect=reads):
+                self.assertTrue(self.process_alive(123), 'A foreign /proc disappearance cannot prove local exit')
+        with patch.object(os, 'kill', side_effect=ProcessLookupError(3, 'local process disappeared')), \
+             patch.object(Path, 'read_text') as read:
+            self.assertFalse(self.process_alive(123))
+            read.assert_not_called()
+
+    def test_process_alive_does_not_hide_proc_permission_errors(self):
+        for reads in ([PermissionError(13, 'status denied')],
+                      ['NSpid:\t123\n', 'NSpid:\t456\n', PermissionError(13, 'stat denied')]):
+            with self.subTest(reads=reads), patch.object(sys, 'platform', 'linux'), \
+                 patch.object(os, 'kill', return_value=None), \
+                 patch.object(Path, 'read_text', side_effect=reads):
+                with self.assertRaises(PermissionError):
+                    self.process_alive(123)
 
     def assert_stopped(self, pid):
         deadline = time.monotonic() + 3

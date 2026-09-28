@@ -15,6 +15,14 @@ the [accepted Thor evidence](docs/android-evidence/accepted-thor-20260928.json).
 Android presentation, GPU acceleration, physical controls, audible playback and
 CoH gameplay remain unvalidated; this diagnostic cannot launch the game.
 
+**The first hosted M3 DbServer gate also passed on ARM64 Wine/FEX.**
+[Run 36369485666](https://github.com/Russianranger/coh-android/actions/runs/36369485666)
+passed all 21 real persistence check groups across 14 fixture invocations, then
+two normal fixture-OFF exports with 99 tables, 5,935 ordered columns and 58,272
+exact attribute IDs/names. The catalog remained stable on reload and owned cleanup
+completed. See the [qualification and evidence](docs/ANDROID_DBSERVER.md).
+Physical Android DbServer execution remains unvalidated; the 0.1.5 APK is unchanged.
+
 The selected baseline is the **original OuroDev-derived source import** from
 `Thunderspies/CityOfHeroes`, at commit
 `0b75ade0c801735e10c5798f641948a45cc50488`. It includes local server services,
@@ -100,9 +108,11 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**M3 actual game-server execution is the next implementation milestone.**
-Keep the existing 0.1.5 APK and runtime. Stop followed by a successful rerun,
-app reopening, suspend/resume and memory measurements remain device checks;
+**Continue M3 with managed Atlas MapServer and diagnostic TestClient execution
+in the accepted ARM64 runtime.** Android listener binding and app lifecycle
+integration remain before the next device candidate. Keep the existing 0.1.5 APK
+and runtime; no replacement is needed for the accepted diagnostic. Stop followed
+by a successful rerun, app reopening, suspend/resume and memory measurements remain device checks;
 they can accompany the next candidate. See the
 [concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The diagnostic
 app includes no game binaries or assets. New-zone assets, missions, automatic

@@ -25,9 +25,16 @@ a preceding database-only pass; its separate archive was not supplied. Device
 cleanup observed exited leaders with live owned workers, while the exact writer
 of the earlier pipe was not inventoried. The next device gate is Stop followed by
 a successful rerun; suspend/resume and memory checks remain pending and can
-accompany the next candidate. M3 actual game-server execution is the next
-implementation milestone. Android presentation and game rendering remain
-unvalidated.
+accompany the next candidate. The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md)
+also passed in run 36369485666: 21 persistence check groups across 14 fixture
+invocations, then two fixture-OFF schema exports with 99 tables, 5,935 ordered
+columns, 58,272 exact attribute IDs/names and a stable catalog on reload.
+All 28 ARM64 stages passed, with all 111 process input/output captures closed and
+zero remaining owned processes or inspection errors. The
+[acceptance receipt](android-evidence/accepted-dbserver-hosted-36369485666.json)
+binds the reports and inputs. Physical Android DbServer execution, Android
+presentation and game rendering remain unvalidated. Managed Atlas MapServer and
+diagnostic TestClient execution are the next M3 implementation work.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -364,8 +371,11 @@ accepted.** Android surface presentation, hardware acceleration, physical input,
 audible playback and CoH gameplay remain unvalidated. The current next device
 gate is **Stop followed by a successful diagnostic rerun**, exporting both reports.
 Use the existing 0.1.5 APK; no new build is needed. Suspend/resume and memory
-behavior still need evidence and can accompany the next candidate. M3 actual
-game-server execution is the next implementation milestone.
+behavior still need evidence and can accompany the next candidate. The
+[first hosted M3 DbServer gate](ANDROID_DBSERVER.md) subsequently passed in
+run 36369485666. Managed Atlas MapServer and diagnostic TestClient execution are
+next; Android listener binding and app lifecycle integration remain before the
+device candidate.
 
 ### Earlier attempts and corrections
 
@@ -627,10 +637,14 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-**The primary M2 device diagnostic and headless client gate are accepted.**
-Implement M3 actual game-server execution in the app-owned runtime, starting
-with an isolated Wine-compatible DbServer build and real database fixtures, then
-normal schema startup/export/reload. See the [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
+**The primary M2 device diagnostic and first hosted M3 DbServer gate are accepted.**
+Continue M3 with managed Atlas MapServer and diagnostic TestClient execution in
+the same ARM64 Wine/FEX runtime. The isolated Wine-compatible DbServer fixture
+and normal schema startup/export/reload have passed; preserve their
+[accepted evidence](android-evidence/accepted-dbserver-hosted-36369485666.json).
+Android listener binding and app lifecycle integration remain before the next
+device candidate. Keep the existing 0.1.5 APK and runtime. See the
+[concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
 Stop followed by a successful rerun, suspend/resume and memory measurements remain
 device checks and can accompany the next candidate. The following items preserve
 completed reference gates; no repeated Windows-only milestone is needed.

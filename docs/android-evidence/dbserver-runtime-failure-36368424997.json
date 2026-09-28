@@ -9,7 +9,10 @@
     "status": "passed",
     "phases": 14,
     "check_groups": 21,
-    "report": "dbserver-windows-36368424997.json"
+    "report": "dbserver-windows-36368424997.json",
+    "artifact_report_bytes": 5627,
+    "artifact_report_sha256": "7afe0da70267623d26d0ba2c92a6e90ae565bbd87ccaf2e4cb30d8c14f9c584c",
+    "preserved_report_line_endings": "LF; artifact report CRLF normalized without changing JSON values"
   },
   "arm64_runtime": {
     "status": "failed",
@@ -66,8 +69,8 @@
   },
   "preserved_reports": {
     "dbserver-windows-36368424997.json": {
-      "bytes": 5627,
-      "sha256": "7afe0da70267623d26d0ba2c92a6e90ae565bbd87ccaf2e4cb30d8c14f9c584c"
+      "bytes": 5470,
+      "sha256": "d2deeb779b681e237aaa6057cdde7bca8823ca3da4b1adf7f7135b8baf81d384"
     },
     "dbserver-arm64-failed-36368424997.json": {
       "bytes": 25238,

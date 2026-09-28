@@ -52,14 +52,15 @@ candidate: stop an active run, export its stopped report before it is overwritte
 then verify a new run succeeds; also switch away and return during active work.
 A stopped run must report cancellation rather than a successful diagnostic.
 
-The next implementation milestone is **M3: actual CoH server execution in the
-app-owned runtime**. Start with the real DbServer, applying the already-proven
-Wine ODBC compatibility changes in a separate build overlay. The diagnostic
-fixture's ANSI import aliases and wide metadata workarounds are not yet applied
-to the game. Qualify the real DbServer fixture, then normal fixture-OFF schema
-initialization/export/reload against ARM64 PostgreSQL. Add managed Atlas MapServer
-and the diagnostic TestClient after that gate. Preserve the accepted stock Windows
-reference and immutable upstream source.
+The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) has now passed in
+run 36369485666. A separate Wine build overlay applies the ODBC compatibility
+changes to the real DbServer. Its persistence fixture and normal fixture-OFF
+schema initialization/export/reload passed against ARM64 PostgreSQL; this does
+not establish physical Android DbServer execution. Continue M3 with managed
+Atlas MapServer and diagnostic TestClient execution in the same runtime.
+Android listener binding and app lifecycle integration remain before the next
+device candidate. Preserve the accepted stock Windows reference and immutable
+upstream source.
 
 This acceptance does not establish CoH gameplay, Android surface presentation,
 hardware acceleration, Cg shaders, physical controls or audible playback.
