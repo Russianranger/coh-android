@@ -118,3 +118,23 @@ dispatch markers are being developed in the separate continuation checkout.
 Do not change SQL, skip AutoCommands, or extend timeouts based on these contexts.
 See `game-context-analysis-36420158506.json` for artifact identities, exact
 addresses, binary hashes and pinned source references.
+
+## Subsequent observer qualification
+
+Commit `f756f50b708cfd2307f460946918d1c24c36e0af` corrects WineDbg selection
+and publishes the context limitation and terminal retry evidence. Game run
+`36424870915` passed tooling and bridge build; ARM64 execution is in progress.
+The corrected debugger affects failed-query inspection only.
+
+Companion diagnostic run `36424871060` failed one of 130 tooling tests at
+`DiagnosticProcessTests.assert_stopped`. The log shows the assertion returned
+in milliseconds, before its three-second deadline. Its first liveness check
+therefore observed exit, while the immediate second check returned alive.
+The helper deliberately treats a successful kill(0) followed by an ambiguous
+/proc disappearance as alive. Reaping a previously observed zombie between
+those checks can therefore cause a false failure. The helper now retains the
+first confirmed exit instead of invalidating it with an immediate second read.
+No runtime cleanup or ownership logic changed. A deterministic stopped-then-
+ambiguous observation reproduces the old failure and passes the fix. The local
+130-test suite passed with two environment-dependent skips; hosted verification
+is still required.

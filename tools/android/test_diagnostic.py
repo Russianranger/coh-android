@@ -336,9 +336,15 @@ class DiagnosticProcessTests(unittest.TestCase):
 
     def assert_stopped(self, pid):
         deadline = time.monotonic() + 3
-        while self.process_alive(pid) and time.monotonic() < deadline:
+        while True:
+            # Keep the first exit proof. A zombie can be reaped between two
+            # reads; process_alive correctly treats an ambiguous /proc miss
+            # after a successful kill(0) as alive until a later retry.
+            if not self.process_alive(pid):
+                return
+            if time.monotonic() >= deadline:
+                self.fail('Diagnostic left a synthetic process alive')
             time.sleep(0.02)
-        self.assertFalse(self.process_alive(pid), 'Diagnostic left a synthetic process alive')
 
     def inherited_output_source(self, exit_code=0):
         """A real child retains stdout after its initializer exits."""
