@@ -1,12 +1,12 @@
 # Hosted Atlas character persistence on ARM64
 
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md). The
-new hosted gate is implemented; real ARM64 qualification is pending. The first
-real attempt reached DbServer readiness and progressed into Atlas loading, then
-failed a startup status-query deadline. A retry with a 90-second startup query
-also failed. Its final Atlas output reached AutoCommands retrieval; character
-execution had not started. It does
-not change the accepted Thor 0.1.5 APK or claim Android game execution.
+new hosted gate is implemented; complete ARM64 qualification is pending. The
+latest run passed Atlas readiness, fresh character creation, live currency change
+and a committed protocol save. It stopped at the service restart port check;
+exact-name resume and the second save remain unproved on ARM64. Earlier attempts
+failed a startup status-query deadline. No accepted Thor 0.1.5 APK changes or
+Android game execution claims follow from these hosted results.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
 identified composite runtime from these immutable inputs:
@@ -140,3 +140,45 @@ The test helper now uses kernel pidfds to distinguish exited, unreaped children
 from live processes even when `/proc` exposes another PID namespace. A real child
 regression covers that distinction; this is a test correction, not a change to
 the accepted app's lifecycle behavior.
+
+## First ARM64 creation and protocol save; restart gate failed
+
+[Run 36416020268](https://github.com/Russianranger/coh-android/actions/runs/36416020268)
+at `324823be6ca9713bdc60446eb31596004ff6286a` completed with an overall failure
+on 2026-09-28. Its [unaltered guest report](android-evidence/game-arm64-failed-36416020268.json)
+records independently confirmed Atlas readiness for 31.519 seconds, fresh
+`TEST02279` / container 1 creation and Atlas entry, live influence 12,345, then
+protocol logout and committed SQL before forced cleanup. LoginCount was 1;
+selected SQL held one `ents` row, one `ents2` row, seven powers and 17 costume
+parts. The first session's bridge proof completed before its subsequent stop.
+
+Wine shutdown, owned-process cleanup and graceful PostgreSQL stop passed. The
+same cluster restarted successfully. `game_services_restart` then failed
+immediately with `[Errno 98] Address already in use`, before a replacement
+DbServer or Atlas process was launched. The failure snapshot found zero owned
+Wine processes and zero game-role database sessions; the Windows observer found
+no game targets. Final cleanup also passed, with zero remaining owned processes
+and zero ownership inspection failures. No owned socket table remained to
+identify the rejecting port or state directly. Review confirmed a preflight
+mismatch: the pinned Wine TCP socket implementation enables native
+`SO_REUSEADDR`, while the Python TCP preflight did not. An isolated Linux
+experiment reproduced the same bare-bind error with TCP TIME_WAIT, then passed
+with TCP address reuse while still rejecting active wildcard/loopback listeners
+and occupied UDP ports. That matches the hosted failure but is not a captured
+TIME_WAIT observation from the hosted run. The narrow TCP preflight correction
+and regression tests are applied; full restart/resume validation is still
+required. No upstream game-source change is needed for this harness mismatch.
+
+This run's cold startup query returned after 78.833 seconds and Atlas completed
+AutoCommands retrieval in 82.71 seconds. The prior 90-second failure did not
+recur; it is not established as fixed. No deadline was increased for this run.
+Exact-name resume, post-restart row comparison and a second protocol save remain
+pending, so the hosted create/save/restart/resume gate is still unqualified.
+Android gameplay, rendering and app integration remain separate gates.
+
+The `wine-game-arm64-evidence` artifact (ID `10968627172`, 8,792,105 bytes)
+was downloaded and its archive SHA-256 verified as
+`d046ac6c71d6ed54df3c8672236d54b1bd9f55dbdb0dcc91d85940512bb6e810`.
+All 16 files listed by the report's character, service and hang capture inventories
+matched their byte counts and SHA-256 values. Both full service stdout captures
+closed without overflow or truncation.

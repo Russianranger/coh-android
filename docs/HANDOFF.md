@@ -35,7 +35,9 @@ zero remaining owned processes or inspection errors. The
 binds the reports and inputs. Physical Android DbServer execution, Android
 presentation and game rendering remain unvalidated. Managed Atlas MapServer and
 diagnostic TestClient execution are now implemented in the separate
-[hosted Atlas gate](ANDROID_GAME_RUNTIME.md); its actual ARM64 run is pending.
+[hosted Atlas gate](ANDROID_GAME_RUNTIME.md). Its latest ARM64 run passed the
+first character creation, live currency change and committed protocol save,
+then failed at the service restart port check; resume remains unproved.
 The reviewed asset ZIP has been uploaded to a draft release and downloaded by
 the hosted runner with its exact size/hash verified. That attempt then stopped
 on Windows manifest line endings before game execution. The byte-preserving
@@ -49,6 +51,34 @@ handoff had retained an in-progress status. At recovery, GitHub showed no queued
 or running workflow and the latest commit was `04d62616e2e1b41b10f35a04d4c798e43680d5ba`
 (2026-09-25 19:05:39 UTC). The workflow finished at 19:16:38 UTC. These observations
 do not reveal the internal status of the other Codex session.
+
+## Latest hosted ARM64 game checkpoint (2026-09-28)
+
+[Run 36416020268](https://github.com/Russianranger/coh-android/actions/runs/36416020268),
+commit `324823be6ca9713bdc60446eb31596004ff6286a`, is an **overall failure with
+new partial runtime evidence**. Atlas stayed independently ready for 31.519
+seconds. Stock TestClient created `TEST02279` / ID 1, entered Atlas, changed live
+influence to 12,345 and completed protocol logout with an independent committed
+SQL snapshot (LoginCount 1) before forced cleanup. Wine and PostgreSQL shut down
+cleanly; the same PostgreSQL cluster restarted. The next service-launch
+preflight failed immediately with `[Errno 98] Address already in use`, before
+replacement game services started. No exact-name resume or second-save proof
+was obtained. Preserve the [raw report](android-evidence/game-arm64-failed-36416020268.json)
+and [detailed evidence](ANDROID_GAME_RUNTIME.md#first-arm64-creation-and-protocol-save-restart-gate-failed).
+
+The bounded fallback snapshot found no owned Wine processes or game-role SQL
+sessions after the verified shutdown. Review confirmed that the TCP preflight
+lacked the native `SO_REUSEADDR` behavior used by pinned Wine. An isolated Linux
+experiment reproduced the bare-bind error with TIME_WAIT and passed with TCP
+reuse while retaining rejection of live listeners and occupied UDP ports. The
+hosted report has no socket table proving that state, but the behavior is
+consistent with its failure. The narrow harness correction and tests are applied; the full hosted rerun remains required. The
+prior startup timeout did not recur: one query returned after 78.833 seconds and
+AutoCommands retrieval completed after 82.71 seconds. This does not establish
+that intermittent startup delay as fixed. Do not repeat the successful first
+save as if it were still unknown, or mark the full hosted gate accepted before
+restart/resume/second-save pass. Keep the accepted 0.1.5 device diagnostic;
+Android game presentation and gameplay remain unvalidated.
 
 ## Continuation validation checkpoint
 

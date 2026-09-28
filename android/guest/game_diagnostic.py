@@ -36,6 +36,21 @@ SERVICE_LOG_LIMIT = 4 * 1024 * 1024
 SERVICE_LOG_SEGMENT = 512 * 1024
 
 
+def check_game_port(port, protocol):
+    """Match Wine's native TCP reuse policy while rejecting live listeners."""
+    transport = 'TCP' if protocol == socket.SOCK_STREAM else 'UDP'
+    try:
+        with socket.socket(socket.AF_INET, protocol) as check:
+            if protocol == socket.SOCK_STREAM:
+                # Pinned Wine server/sock.c enables this for all native TCP
+                # sockets. A bare bind wrongly rejects their closed TIME_WAIT
+                # connections during restart; UDP must remain exclusive.
+                check.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            check.bind(('0.0.0.0', port))
+    except OSError as exc:
+        raise base.DiagnosticError(f'Game {transport} port {port} unavailable: {exc}') from exc
+
+
 def safe_path(name):
     require(isinstance(name, str) and '\\' not in name and ':' not in name and '\x00' not in name,
             'Invalid game payload path')
@@ -395,8 +410,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
     def start_services(self, label):
         self.ctx.stage('game_services_' + label)
         for port, protocol in ((6997, socket.SOCK_STREAM), (7001, socket.SOCK_DGRAM)):
-            with socket.socket(socket.AF_INET, protocol) as check:
-                check.bind(('0.0.0.0', port))
+            check_game_port(port, protocol)
         self.start_game(label + '-dbserver', 'DbServer.exe', ['-start', '0'])
         next_query = 0
         expected_columns = sum(map(len, self.schema['expected_tables'].values()))

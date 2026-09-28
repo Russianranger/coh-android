@@ -1,8 +1,10 @@
 """Focused lifecycle boundaries for the hosted game orchestration."""
+import errno
 import hashlib
 import json
 import os
 from pathlib import Path
+import socket
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -12,6 +14,55 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import game_diagnostic as guest
+
+
+@unittest.skipUnless(sys.platform.startswith('linux'), 'Wine guest uses native Linux socket semantics')
+class GamePortTests(unittest.TestCase):
+    def test_tcp_preflight_accepts_closed_wine_style_connection_in_time_wait(self):
+        with socket.socket() as listener:
+            listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            listener.bind(('0.0.0.0', 0))
+            port = listener.getsockname()[1]
+            listener.listen(1)
+            listener.settimeout(2)
+            with socket.create_connection(('127.0.0.1', port), timeout=2) as client:
+                connection, _ = listener.accept()
+                with connection:
+                    connection.settimeout(2)
+                    # The server closes first, leaving its local port in
+                    # TIME_WAIT after both endpoints finish their FIN exchange.
+                    connection.shutdown(socket.SHUT_WR)
+                    self.assertEqual(client.recv(1), b'')
+                    client.shutdown(socket.SHUT_WR)
+                    self.assertEqual(connection.recv(1), b'')
+        with socket.socket() as previous_preflight:
+            with self.assertRaises(OSError) as busy:
+                previous_preflight.bind(('0.0.0.0', port))
+            self.assertEqual(busy.exception.errno, errno.EADDRINUSE)
+        guest.check_game_port(port, socket.SOCK_STREAM)
+
+    def test_tcp_preflight_rejects_live_listeners_with_port_context(self):
+        for address in ('0.0.0.0', '127.0.0.1'):
+            for reuse in (False, True):
+                with self.subTest(address=address, reuse=reuse), socket.socket() as listener:
+                    if reuse:
+                        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    listener.bind((address, 0))
+                    port = listener.getsockname()[1]
+                    listener.listen(1)
+                    with self.assertRaisesRegex(guest.base.DiagnosticError, f'TCP port {port} unavailable'):
+                        guest.check_game_port(port, socket.SOCK_STREAM)
+
+    def test_udp_preflight_rejects_live_bound_sockets_with_port_context(self):
+        for address in ('0.0.0.0', '127.0.0.1'):
+            for reuse in (False, True):
+                with self.subTest(address=address, reuse=reuse), socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as owner:
+                    if reuse:
+                        owner.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    owner.bind((address, 0))
+                    port = owner.getsockname()[1]
+                    with self.assertRaisesRegex(guest.base.DiagnosticError, f'UDP port {port} unavailable'):
+                        guest.check_game_port(port, socket.SOCK_DGRAM)
 
 
 class GameOrchestrationTests(unittest.TestCase):
