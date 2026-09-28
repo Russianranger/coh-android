@@ -1,5 +1,13 @@
 # City of Heroes Android handoff
 
+Latest device checkpoint (2026-09-28, 22:28 UTC): **COH Server Test 0.2.0 passed
+on Thor**. The [receipt](android-evidence/accepted-dbserver-thor-20260928.json)
+records two complete 28-stage real DbServer passes, a clean cancellation between
+them, exact local listener coverage and complete owned cleanup. App switching
+and screen locking are user-attested; peak memory is unmeasured. The next gate
+integrates this qualified DbServer donor into a separately identified hosted
+Atlas package. Physical Atlas execution and rendering remain unvalidated.
+
 Updated: 2026-09-28 (UTC). PostgreSQL controlled persistence, targeted stage1 inspection,
 matching Windows packaging, base runtime assembly and data-only database schema
 generation have passed their current checks. Normal fixture-OFF DbServer schema
@@ -23,17 +31,18 @@ stages, reused the database cluster and ready Wine prefix, and completed owned
 cleanup with all 30 process input/output captures closed. The user also attests to
 a preceding database-only pass; its separate archive was not supplied. Device
 cleanup observed exited leaders with live owned workers, while the exact writer
-of the earlier pipe was not inventoried. The next device gate is Stop followed by
-a successful rerun; suspend/resume and memory checks remain pending and can
-accompany the next candidate. The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md)
+of the earlier pipe was not inventoried. The subsequent 0.2.0 device gate now
+proves Stop followed by a successful fresh rerun; app switching and screen
+locking are user-attested, while peak memory remains unmeasured.
+The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md)
 also passed in run 36369485666: 21 persistence check groups across 14 fixture
 invocations, then two fixture-OFF schema exports with 99 tables, 5,935 ordered
 columns, 58,272 exact attribute IDs/names and a stable catalog on reload.
 All 28 ARM64 stages passed, with all 111 process input/output captures closed and
 zero remaining owned processes or inspection errors. The
 [acceptance receipt](android-evidence/accepted-dbserver-hosted-36369485666.json)
-binds the reports and inputs. Physical Android DbServer execution, Android
-presentation and game rendering remain unvalidated. The separate
+binds the reports and inputs. Physical Android DbServer execution has since
+passed with 0.2.0; Android presentation and game rendering remain unvalidated. The separate
 [hosted Atlas gate](ANDROID_GAME_RUNTIME.md#accepted-full-hosted-workflow)
 passed its full workflow in run `36460005201`: all three jobs, all 18 guest
 stages and the final host validator succeeded, including both protocol saves,
@@ -894,7 +903,7 @@ customized Thunderspy/Homecoming live client or reuse unrelated generated bins.
 
 ## Next implementation priority and remaining scope
 
-The hosted-qualified candidate is [COH Server Test 0.2.0](ANDROID_SERVER_DEVICE_TEST.md),
+The accepted device build is [COH Server Test 0.2.0](ANDROID_SERVER_DEVICE_TEST.md),
 installed alongside 0.1.5 as `io.github.russianranger.cohdiagnostic.m3`.
 It packages the exact accepted M2 payloads and qualified loopback DbServer donor
 `36460867428`, with a device policy enabling loopback for every DbServer process
@@ -909,9 +918,16 @@ Windows-only skips. The APK is 16,668,615 bytes, SHA-256
 `cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b`.
 The [candidate receipt](android-evidence/accepted-device-candidate-hosted-36483331900.json)
 binds the build, independently checked APK payloads and hosted reports.
-Physical Thor results and peak memory measurements remain pending.
-Next device checks are real DbServer pass, Stop/report/rerun, app reopening and
-screen-lock behavior; the device instructions explain the scope and required ZIPs.
+The [physical Thor receipt](android-evidence/accepted-dbserver-thor-20260928.json)
+records two full passes in 325.763 and 338.326 seconds, surrounding a clean Stop
+during active Wine setup. Both passes verified 14 local endpoints, all 21 fixture
+groups, both schema passes and all 111 closed process captures. The stopped run
+closed all 22 captures and correctly reported cancellation. All three ended with
+zero owned processes and inspection failures. App switching and screen locking
+are user-attested; peak memory is unmeasured. Continue with hosted Atlas integration
+of the loopback donor, retaining the existing accepted Atlas default until the
+new package passes. Stock MapServer/client listener behavior still needs its own
+Android preparation; this DbServer acceptance does not establish physical Atlas.
 
 **The primary M2 device diagnostic, hosted M3 DbServer and hosted Atlas
 create/save/restart/resume/second-save sequence are accepted.** The Atlas
@@ -932,12 +948,11 @@ byte-identical repeat; retain both receipts and the current donor.
 The separate loopback listener package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json)
 in run `36460867428`; it has not replaced the Atlas donor. Preserve its earlier
-CRLF fixture-setup failure and correction. The candidate integrates the listener
-package and app lifecycle handling; physical Android validation remains.
-Keep the existing 0.1.5 APK and runtime. See the
+CRLF fixture-setup failure and correction. The 0.2.0 device results accept this
+listener package and Stop/rerun handling on Thor.
+Keep the existing 0.1.5 and 0.2.0 APKs and runtimes. See the
 [concrete next steps](THOR_DEVICE_ACCEPTANCE.md#next-work).
-Stop followed by a successful rerun, suspend/resume and memory measurements remain
-device checks and can accompany the next candidate. The following items preserve
+Peak memory remains unmeasured. The following items preserve
 completed reference gates; no repeated Windows-only milestone is needed.
 
 1. Preserve the accepted results from corrected manual [asset run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
@@ -991,13 +1006,10 @@ completed reference gates; no repeated Windows-only milestone is needed.
    further archives only when runtime evidence identifies a concrete missing
    input. The older upstream v2i3 release is not the locked build; use the current
    reference artifact.
-4. Keep the accepted 0.1.5 APK. Install the separate
-   [0.2.0 server candidate](ANDROID_SERVER_DEVICE_TEST.md), complete its real
-   DbServer test, then follow the Stop/report/rerun and background steps there.
-   The accepted 0.1.5 combined run with reused state and full cleanup remains accepted.
-   Suspend/resume and memory behavior are pending device measurements. These
-   checks can accompany the next M3 candidate; implementation need not wait for
-   another run of the already-passed diagnostic.
+4. Keep the accepted 0.1.5 and [0.2.0 server](ANDROID_SERVER_DEVICE_TEST.md)
+   installations. The real DbServer, Stop/rerun and requested background checks
+   are complete within their documented evidence scope; do not request another
+   run of these passed diagnostics. Peak memory remains unmeasured.
 
 Do not run the unmodified upstream asset fetcher inside `upstream/i24`; it assumes
 a standalone Git checkout. Never modify the preserved snapshot to fix a launcher.

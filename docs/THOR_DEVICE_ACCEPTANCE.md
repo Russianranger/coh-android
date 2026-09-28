@@ -1,4 +1,14 @@
-# Thor diagnostic acceptance (0.1.5)
+# Thor device acceptance
+
+The **real DbServer and Stop/rerun gate passed with 0.2.0** on 2026-09-28.
+Two complete 28-stage passes surround an intentional, cleanly cancelled run.
+See the [device results](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results)
+and [acceptance receipt](android-evidence/accepted-dbserver-thor-20260928.json).
+App switching and screen locking passed by user attestation; peak memory is
+unmeasured. Keep both accepted installations. The next implementation gate is
+hosted Atlas integration of the qualified loopback DbServer package.
+
+## Earlier M2 diagnostic — 0.1.5
 
 On 2026-09-28 at 01:24:05 UTC (September 27, 20:24 CDT), **0.1.5 passed the
 physical Thor database and headless client diagnostic gate**. The user reported
@@ -43,16 +53,11 @@ belongs to the separate native regression.
 
 ## Next work
 
-Keep the installed **0.1.5** and its runtime. No repeat of its successful
-diagnostic is needed. The next gate uses the separate
-[COH Server Test 0.2.0 candidate](ANDROID_SERVER_DEVICE_TEST.md), installed
-alongside it with its own runtime download and disposable DbServer databases.
-The reused state proves a subsequent combined run, but does not establish app
-reopening, Stop cancellation or suspend/resume behavior. These lifecycle checks
-and peak memory measurements remain device work. Follow the candidate's steps:
-stop a run after its workers launch, export its stopped report before starting another operation,
-then verify a new run succeeds; also switch away and return during active work.
-A stopped run must report cancellation rather than a successful diagnostic.
+Keep **0.1.5** and **COH Server Test 0.2.0** with their separate runtimes.
+Their completed diagnostics do not need repeating. The 0.2.0 reports prove
+real DbServer execution, local listeners and Stop followed by a successful fresh
+run. The user confirms the requested app-switch and screen-lock steps passed.
+These actions are not separately instrumented, and peak memory is unmeasured.
 
 The [first hosted M3 DbServer gate](ANDROID_DBSERVER.md) has now passed in
 run 36369485666. A separate Wine build overlay applies the ODBC compatibility
@@ -67,9 +72,9 @@ readiness took 3 minutes 14 seconds, so device startup performance remains open.
 
 The separate loopback DbServer package is
 [hosted-qualified](android-evidence/accepted-dbserver-hosted-36460867428.json).
-The separate candidate integrates that exact donor into the Android app.
-Continue with physical Android listener/runtime execution and the Stop/rerun,
-app reopening and screen-lock checks. Peak memory remains unmeasured.
+The accepted 0.2.0 app integrates that exact donor and now verifies its physical
+Android execution and local listeners. Continue with a separately identified
+hosted Atlas integration, preserving the prior accepted result.
 The loopback package has not replaced the accepted Atlas donor 36451873322;
 integrating it needs its own game/runtime validation before device acceptance.
 Preserve the accepted stock Windows reference and immutable upstream source.

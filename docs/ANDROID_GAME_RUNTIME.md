@@ -7,8 +7,9 @@ jobs succeeded at `cfc8ac477e449037213d5242f43480acf4f1cb85`, including the
 host validation. The [acceptance receipt](android-evidence/accepted-game-hosted-36460005201.json)
 binds the independently verified reports and captures. The earlier
 `36454174481` workflow failure and its separate post-correction acceptance
-remain preserved below. Atlas donor `36451873322` and the accepted Thor 0.1.5
-APK are unchanged; physical Android game execution, presentation and rendering
+remain preserved below. The accepted Atlas default remains donor `36451873322`.
+The separate [0.2.0 DbServer test passed on Thor](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results);
+physical Android game execution, presentation and rendering
 remain unvalidated.
 
 The workflow `.github/workflows/android-game.yml` creates a separately
@@ -67,8 +68,9 @@ The intended acceptance sequence is:
 This gate does not yet cover the longer Windows sustained-session/transfer
 checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
-separate milestones. Keep the accepted 0.1.5 device diagnostic installed while
-Android listener binding and app lifecycle integration are prepared.
+separate milestones. Keep the accepted 0.1.5 and 0.2.0 device diagnostics installed.
+DbServer local listeners and Stop/rerun are now verified on Thor; MapServer/client
+listener preparation and the combined Android game runtime remain separate work.
 
 ## Accepted full hosted workflow
 

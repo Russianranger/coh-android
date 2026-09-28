@@ -119,7 +119,7 @@ restart and owned-process cleanup. The APK is 13,309,477 bytes, SHA-256
 See the [accepted hosted evidence](docs/android-evidence/accepted-hosted-36336644450.json)
 and [download and Thor steps](docs/ANDROID_DIAGNOSTIC.md).
 
-**COH Server Test 0.2.0 is ready for physical Thor qualification.**
+**COH Server Test 0.2.0 passed physical Thor qualification.**
 It uses a separate application ID to preserve the accepted 0.1.5 installation,
 adds the real DbServer persistence/schema test with local-only listeners, and
 retains immutable reports for Stop/rerun testing. See the
@@ -127,15 +127,16 @@ retains immutable reports for Stop/rerun testing. See the
 Its APK build and all 28 hosted ARM64 device-policy stages passed in
 [run 36483331900](https://github.com/Russianranger/coh-android/actions/runs/36483331900).
 The [candidate receipt](docs/android-evidence/accepted-device-candidate-hosted-36483331900.json)
-binds its exact payloads and reports. Physical Android acceptance requires the
-resulting Thor reports.
+binds its exact payloads and reports. The subsequent
+[Thor acceptance](docs/android-evidence/accepted-dbserver-thor-20260928.json)
+records two full 28-stage passes and a clean Stop between them, with all local
+DbServer endpoints and owned cleanup verified. App switching and screen locking
+are user-attested; peak memory is unmeasured.
 The hosted Atlas gate is complete. The separate loopback DbServer package is
 [hosted-qualified](docs/android-evidence/accepted-dbserver-hosted-36460867428.json);
-physical Android listener execution and lifecycle checks are the next gate.
+the next gate combines it with Atlas in a separate hosted qualification.
 Keep the existing 0.1.5 APK
-and runtime; no replacement is needed for the accepted diagnostic. Stop followed
-by a successful rerun, app reopening, suspend/resume and memory measurements remain device checks;
-they can accompany the next candidate. See the
+and runtime, plus the accepted 0.2.0 server test. See the
 [concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The new candidate
 contains the DbServer test, without Atlas MapServer or graphical client execution.
 New-zone assets, missions, automatic

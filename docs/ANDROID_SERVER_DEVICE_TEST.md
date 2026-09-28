@@ -1,6 +1,6 @@
-# Thor real DbServer candidate — 0.2.0
+# Thor real DbServer acceptance — 0.2.0
 
-This is the next physical-device gate after the accepted hosted Atlas Park
+This physical-device gate passed on 2026-09-28 after the accepted hosted Atlas Park
 create/save/restart/resume test. It exercises the real Windows DbServer through
 Wine/FEX against native ARM64 PostgreSQL on Thor. It does not launch Atlas Park
 or the graphical City of Heroes client.
@@ -30,7 +30,32 @@ cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b
 ```
 
 This qualifies the APK build and its packaged guest runtime on hosted ARM64.
-Physical Thor execution, listener binding and lifecycle behavior remain pending.
+The subsequent physical Thor results are recorded below.
+
+## Accepted Thor results
+
+The [device acceptance receipt](android-evidence/accepted-dbserver-thor-20260928.json)
+binds the three supplied reports to this candidate's manifest and exact donor
+inputs. The Android wrapper identifies 0.2.0, AYN Thor and Android API 33.
+
+| Export | Result | Elapsed | Closed process captures |
+|---|---|---:|---:|
+| `coh-diagnostic-20260928-221134.zip` | Full pass, all 28 stages | 325.763 s | 111 |
+| `coh-diagnostic-20260928-222225.zip` | Intentional Stop, clean cancellation | 9.343 s | 22 |
+| `coh-diagnostic-20260928-222941.zip` | Fresh rerun, all 28 stages | 338.326 s | 111 |
+
+Both full runs passed all 21 persistence check groups, both normal-schema passes,
+and all 14 observed loopback endpoints (13 required plus optional TCP 6992).
+All three reports prove PostgreSQL shutdown, Wine shutdown and zero remaining
+owned processes or inspection failures. Stop occurred during Wine setup with
+PostgreSQL already active and was correctly reported as cancelled, not passed.
+Each run used fresh disposable state; the rerun proves recovery after Stop,
+without claiming reuse of the same database or Wine prefix.
+
+The user confirmed all requested steps passed. App switching and screen locking
+are user-attested; these reports do not separately instrument those actions.
+Peak memory and Android Atlas execution remain unmeasured. Keep this accepted
+installation; no repeat of these completed checks is needed.
 
 ## Inputs and scope
 
@@ -54,7 +79,7 @@ listener policy on hosted ARM64 before delivery. Hosted execution leaves all
 physical Android, gameplay and rendering assertions unvalidated. The Android
 support wrapper supplies actual device provenance after a device run.
 
-## Test on Thor
+## Completed test procedure
 
 1. Install **COH-Server-Test-0.2.0.apk** and open **COH Server Test**. Allow
    notifications so the active test and Stop control remain visible.
@@ -90,8 +115,7 @@ Android power-management state.
 
 ## Next gate
 
-Once the real DbServer and Stop/rerun/background checks pass on Thor, integrate
-the qualified local listener package into the Atlas game runtime and requalify
+Integrate the qualified local listener package into the Atlas game runtime and requalify
 that combined package before delivering a game-server device candidate. Preserve
 the accepted Atlas donor and evidence until the replacement has passed.
 Physical Atlas execution, interactive rendering, controls, audio, missions and
