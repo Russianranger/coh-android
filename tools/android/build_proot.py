@@ -6,6 +6,7 @@ work directory and preserves original sources, patches and recipes with hashes.
 """
 import argparse
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,8 @@ import struct
 import subprocess
 import sys
 import tarfile
+import time
+import urllib.error
 import urllib.request
 
 
@@ -44,6 +47,30 @@ def sha256(path):
 
 def record(path):
     return {'bytes': path.stat().st_size, 'sha256': sha256(path)}
+
+
+def download_talloc(destination):
+    """Retry transport failures; every attempt replaces partial bytes and must
+    satisfy the original size and digest gates before extraction is possible.
+    """
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(TALLOC_URL, timeout=60) as source, destination.open('wb') as target:
+                total = 0
+                while chunk := source.read(1024 * 1024):
+                    total += len(chunk)
+                    require(total <= 16 * 1024 * 1024, 'talloc source exceeds the reviewed bound')
+                    target.write(chunk)
+            require(sha256(destination) == TALLOC_SHA256, 'talloc source SHA-256 mismatch')
+            return
+        except (TimeoutError, ConnectionError, http.client.IncompleteRead, urllib.error.URLError) as exc:
+            destination.unlink(missing_ok=True)
+            if isinstance(exc, urllib.error.HTTPError) and exc.code not in (408, 429, 500, 502, 503, 504):
+                raise
+            if attempt == 2:
+                raise
+            print('Retrying pinned talloc download after transport failure (attempt ' + str(attempt + 2) + '/3)', flush=True)
+            time.sleep(attempt + 1)
 
 
 def run(command, cwd=None, env=None, capture=False):
@@ -81,14 +108,7 @@ def prepare(work, checkout=None, talloc_archive=None):
     if talloc_archive:
         shutil.copyfile(talloc_archive, talloc)
     else:
-        # TLS verification remains enabled. Failed/partial downloads never pass
-        # the mandatory complete-file hash check below.
-        with urllib.request.urlopen(TALLOC_URL, timeout=60) as source, talloc.open('wb') as target:
-            total = 0
-            while chunk := source.read(1024 * 1024):
-                total += len(chunk)
-                require(total <= 16 * 1024 * 1024, 'talloc source exceeds the reviewed bound')
-                target.write(chunk)
+        download_talloc(talloc)
     require(sha256(talloc) == TALLOC_SHA256, 'talloc source SHA-256 mismatch')
     extract(proot_archive, work)
     extract(talloc, work)

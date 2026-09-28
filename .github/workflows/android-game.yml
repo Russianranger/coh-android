@@ -6,6 +6,7 @@ on:
       - '.github/workflows/android-game.yml'
       - 'database/wine-game/**'
       - 'tools/android/game/**'
+      - 'tools/android/build_proot.py'
       - 'android/guest/game_*.py'
 permissions:
   contents: read
