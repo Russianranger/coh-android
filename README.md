@@ -1,5 +1,26 @@
 # City of Heroes Android
 
+**MapServer diagnostics qualified; 0.4.4 integration is in progress.**
+Run `36630872719` passed all six real Windows producer contracts and all eighteen
+ARM64 game stages in 31 minutes 23.5 seconds. Independent review verified both
+committed saves, exact-name resume, 122 closed children and zero ownership
+inspection failures at restart and final cleanup. Raw records show 8,226 completed
+ticks on the first launch and 2,425 on restart, with distinct file identities.
+Only the separately identified MapServer changed; accepted supporting binaries
+and their original source identities remain exact.
+
+The successful run also captured a 114.233-second interval inside the first
+`FolderCacheDoCallbacks` call, with one tick started and none completed. Existing
+freshness checks rejected protocol-ready samples aged 23 and 85 seconds. This
+does not prove the cause of earlier uninstrumented failures or repair the folder
+work. The selected 0.4.4 profile will additionally require a freshly validated
+completed tick before accepting current protocol readiness, preserving existing
+startup deadlines, 20-second freshness and 30-second observation.
+
+0.4.4 will carry the candidate cleanup correction and these diagnostics. Its
+exact APK still needs qualification. No new physical Thor test is requested yet.
+See the [hosted diagnostic qualification](docs/android-evidence/accepted-mapserver-progress-hosted-36630872719.json).
+
 **0.4.3 remains unqualified after two hosted Atlas heartbeat failures.**
 All 113 candidate checks and exact APK verification passed. Both runtime attempts
 of the same signed APK in run `36621227369` passed nine stages, then failed
@@ -8,12 +29,11 @@ restart. DbServer kept dispatching and both services were alive at capture.
 Both final cleanups completed with zero ownership inspection failures and zero
 remaining owned processes. Neither attempt exercised the targeted restart race.
 
-Identical retries are stopped. A separately receipted, opt-in MapServer producer
-is being added to expose fresh late-startup and main-loop stages, including
-`dbComm` and folder callbacks. It will preserve all existing readiness, freshness,
-listener and cleanup checks. Buffered stdout and saved thread contexts do not
-prove the blocked operation. Accepted donors remain unchanged. Do not install
-0.4.3 as a qualified candidate; no new physical Thor test is requested yet.
+Identical 0.4.3 retries are stopped. The separately receipted MapServer diagnostic
+above now exposes fresh late-startup and main-loop stages while preserving all
+readiness, listener and cleanup checks. Buffered stdout and saved thread contexts
+from these failures do not prove the blocked operation. Do not install 0.4.3 as
+a qualified candidate; no new physical Thor test is requested yet.
 See the [attempt 1 review](docs/android-evidence/atlas-test-review-36621227369-attempt1-failed.json),
 [attempt 2 review](docs/android-evidence/atlas-test-review-36621227369-attempt2-failed.json),
 and [observer design](docs/android-evidence/atlas-test-heartbeat-observer-plan-20260929.md).
@@ -27,8 +47,8 @@ Final cleanup subsequently found zero remaining owned processes and closed all
 correctly refused reuse. This run did not reach PostgreSQL restart, the new
 restart startup budget or exact-name resume. No Stop or cancellation was recorded.
 
-The next cleanup correction is being developed as 0.4.3. Do not repeat the
-failed 0.4.2 test; physical restart/resume remains unaccepted.
+The cleanup correction first built in 0.4.3 is retained for the next candidate.
+Do not repeat the failed 0.4.2 test; physical restart/resume remains unaccepted.
 See the [device failure review](docs/android-evidence/atlas-test-thor-cleanup-failure-20260929-185717.json).
 
 **Previous hosted checkpoint: COH Atlas Test 0.4.2 passed on attempt 2.**

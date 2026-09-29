@@ -1,0 +1,918 @@
+{
+  "schema_version": 1,
+  "build_role": "mapserver_progress",
+  "status": "diagnostic_build_packaged_runtime_unverified",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "configuration": "OptDebug",
+  "architecture": "Win32",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36630872719",
+  "postgresql_persistence_fixture": false,
+  "runtime_execution_validated": false,
+  "build_targets": [
+    "MapServer"
+  ],
+  "build_input": {
+    "schema_version": 1,
+    "build_role": "mapserver_progress",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "game_build_input": {
+      "schema_version": 1,
+      "build_role": "game_loopback",
+      "variant": "creation",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "postgresql_build_input": {
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+        "overlay_sha256": {
+          "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+          "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+        },
+        "patched_sha256": {
+          "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+          "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+          "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+          "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+          "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+          "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+          "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+          "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+          "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+          "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+          "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+          "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+          "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+          "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+          "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+          "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+        }
+      },
+      "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+      "resume_build_input": null,
+      "game_patch_sha256": "7c4f4b25ab134a0dac2f4501f7cf2a5cccbfcd9482775350e3be0e1df532b8a6",
+      "source_sha256": {
+        "libs/UtilitiesLib/src/network/sock.c": "e8ba6fccb09af31fe805019bf383a14367057cf72f3a57882bd461b0dd39642b",
+        "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "5fc76eec5dcd8903458060d28d85cb7248f0161910d592365ad5cf33b8316306",
+        "libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+        "Utilities/TestClient/src/packetFlood.c": "9934a2e607948655f56ddc23db869150d4589853e9a90f5ce730dc0b407c2ceb",
+        "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+        "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83"
+      },
+      "patched_sha256": {
+        "libs/UtilitiesLib/src/network/sock.c": "882c80138c9bfa6be451fa9c1e07ab6856d3787147fe63dce585f29f50a323d7",
+        "libs/UtilitiesLib/include/utilitieslib/network/sock.h": "9b09d7ec9e6f207924eb40ad8adb5ce0588dcea9575394fd8e90cf2368e2b433",
+        "libs/UtilitiesLib/src/network/net_link.c": "afaca395a02efb395fa4afb74263c51b1ecf54e05680eb44243fe523b295628e",
+        "Utilities/TestClient/src/packetFlood.c": "3798a071f8959239d500d404b72ea14f6780d31858a5ef456476e8f470848801",
+        "MapServer/src/svr/svr_init.c": "7aa0098ebc60b0f9409afdd3c8d63bc35a04ee3687265768d4f878afeb59749a",
+        "Utilities/TestClient/src/main.c": "e32330b1750fa4a71634ea4f8561fdc1c93f05ee11e8c68c22a3fa7d44860cba"
+      },
+      "loopback_only": {
+        "environment_variable": "COH_GAME_LOOPBACK_ONLY",
+        "enabled_value": "1",
+        "disabled_by_default": true,
+        "activation": "before_common_startup",
+        "late_activation": "refused_after_first_explicit_or_client_UDP_bind_attempt",
+        "wildcard_address": "127.0.0.1",
+        "explicit_addresses": "IPv4_127/8_only",
+        "client_UDP": "explicit_loopback_ephemeral_bind_before_first_send",
+        "endpoint_verification": "getsockname_and_SO_TYPE_after_each_successful_bind",
+        "socket_types": [
+          "tcp",
+          "udp"
+        ],
+        "endpoint_record": "protocol_address_port",
+        "scope": "explicit_IPv4_listeners_and_client_UDP_bindings",
+        "network_namespace_isolation": false,
+        "outbound_connections_restricted": false,
+        "outbound_TCP": "unchanged",
+        "failure": "close_socket_and_exit_2",
+        "startup_acknowledgement": "COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy",
+        "android_execution_validated": false
+      },
+      "socket_contract": {
+        "scope": "fakeauth_Atlas_create_save_restart_resume",
+        "source_sha256": {
+          "Common/comm_backend.h": "9af3a17854cc0c9a7e32e545bc563158b6a8538afd9e215f490f55574397f24c",
+          "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+          "libs/UtilitiesLib/src/network/net_linklist.c": "3f9328a0fd15c6084b25ebb90d2e5b84c3a7d4211a5d1fa8b79ad73e4c7790ce",
+          "libs/UtilitiesLib/src/network/net_link.c": "798fbc6dcbabfa212bd9c5ed1d3cf36f4c6c06fddaadcd863ae18a3288056ed9",
+          "Utilities/TestClient/src/packetFlood.c": "9934a2e607948655f56ddc23db869150d4589853e9a90f5ce730dc0b407c2ceb",
+          "Utilities/TestClient/src/win_init.c": "e7ae3630c5a44ee3452f743af0e7aa99a629d40f38f64ef797c96fbf184e9c3c"
+        },
+        "mapserver": {
+          "required_endpoints": [
+            {
+              "protocol": "udp",
+              "address": "127.0.0.1",
+              "port": 7001,
+              "constant": "BASE_MAPSERVER_PORT"
+            }
+          ]
+        },
+        "testclient": {
+          "protocol": "udp",
+          "address": "127.0.0.1",
+          "port": "assigned_nonzero",
+          "minimum_binds_per_session": 2,
+          "paths": [
+            "netOpenSocketUdp",
+            "sendToUDP",
+            "sendToUDPStream"
+          ]
+        }
+      },
+      "runtime_validation": "unverified"
+    },
+    "game_build_input_canonical_sha256": "d7ecf58b4a016592fb5602579b7fe2ca9f719a86ff40b5fc9656ceca79f360ee",
+    "progress_patch_sha256": "0fc278d0f04c979b5153421278156978f11fc58584c3413645937ecd83021b2c",
+    "progress_overlay_sha256": {
+      "MapServer/src/svr/wine_map_progress.c": "78eae983cc8a6e573b0500ca5d57d7424af2315b9afe58970de76e28b427940f",
+      "MapServer/src/svr/wine_map_progress.h": "e92f8f8b20513d81db7a170c96c0a19b2b6231ad04d91699e5fdcc113696af88"
+    },
+    "source_sha256": {
+      "MapServer/CMakeLists.txt": "e2fd7a6a7015dea05b578236f2296a56504eb3de13d0b4b2580dbb0cd1aa3954",
+      "MapServer/src/svr/svr_init.c": "7aa0098ebc60b0f9409afdd3c8d63bc35a04ee3687265768d4f878afeb59749a",
+      "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0"
+    },
+    "patched_sha256": {
+      "MapServer/CMakeLists.txt": "c5f306938d0bc12497ac27db115f46b36ba4c8f42f10870f9c83615fe04ffb9b",
+      "MapServer/src/svr/svr_init.c": "e5c15d8fa93da08b4476e73adf318906e39b3365778924d80cc2e3c6615893f8",
+      "MapServer/src/svr/svr_tick.c": "c1039e69e811cc84ff4e974119974702a0bc69bf0d5f0da751fb7e8d4856902c"
+    },
+    "progress_contract": {
+      "environment_variable": "COH_WINE_MAP_PROGRESS",
+      "format": 1,
+      "record_bytes": 128,
+      "mapping_bytes": 4096,
+      "magic_hex": "434f484d41503100",
+      "byte_order": "little",
+      "offsets": {
+        "magic": 0,
+        "format": 8,
+        "record_bytes": 12,
+        "process_id": 16,
+        "main_thread_id": 20,
+        "sequence": 24,
+        "stage": 28,
+        "tick_started": 32,
+        "tick_completed": 36,
+        "flags": 40,
+        "stage_count": 44,
+        "reserved": 48
+      },
+      "reserved_bytes": 80,
+      "stages": {
+        "1": "INITIALIZED",
+        "2": "STARTUP",
+        "3": "MAP_LOAD",
+        "4": "DB_SETUP",
+        "5": "READY_PUBLISH",
+        "6": "READY_PUBLISHED",
+        "7": "RUNTIME_PRIORITY",
+        "8": "RUNTIME_PRIORITY_DONE",
+        "9": "HEAP_VALIDATE",
+        "10": "HEAP_VALIDATED",
+        "11": "SG_VERIFY",
+        "12": "SG_VERIFIED",
+        "13": "CALLBACKS_ENABLE",
+        "14": "CALLBACKS_ENABLED",
+        "15": "RANDOM_SEED",
+        "16": "ITEM_POWER_REQUEST",
+        "17": "ITEM_POWER_REQUESTED",
+        "18": "ERROR_QUEUE_DRAIN",
+        "19": "ERROR_QUEUE_DRAINED",
+        "20": "READY_STDOUT",
+        "21": "LAUNCHER_CONTACT",
+        "22": "LATE_STARTUP_DONE",
+        "23": "LOOP_PRE_TICK",
+        "24": "TICK_BEGIN",
+        "25": "TICK_TOP",
+        "26": "DB_COMM",
+        "27": "DB_COMM_DONE",
+        "28": "FOLDER_CALLBACKS",
+        "29": "FOLDER_CALLBACKS_DONE",
+        "30": "TICK_TOP_DONE",
+        "31": "ENTITY_UPDATE",
+        "32": "GAME_LOGIC",
+        "33": "TICK_BOTTOM",
+        "34": "TICK_DONE",
+        "35": "LOOP_POST_TICK",
+        "36": "SLEEP",
+        "37": "SLEEP_DONE"
+      },
+      "disabled_by_default": true,
+      "writer": "mapserver_main_thread",
+      "stage_semantics": "operation_about_to_run_unless_DONE_or_ED",
+      "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+      "tick_started_stage": 24,
+      "tick_completed_stage": 34,
+      "counter_semantics": "monotonic_no_wrap_completed_not_greater_than_started",
+      "flags": {
+        "1": "sequence_or_counter_saturated_samples_unavailable"
+      },
+      "initialization_failure": "requested_launch_exits_nonzero",
+      "file_creation": "new_absolute_drive_path_private_parent_required",
+      "proves_readiness_or_game_success": false
+    },
+    "build_targets": [
+      "MapServer"
+    ],
+    "runtime_validation": "unverified"
+  },
+  "progress_contract": {
+    "environment_variable": "COH_WINE_MAP_PROGRESS",
+    "format": 1,
+    "record_bytes": 128,
+    "mapping_bytes": 4096,
+    "magic_hex": "434f484d41503100",
+    "byte_order": "little",
+    "offsets": {
+      "magic": 0,
+      "format": 8,
+      "record_bytes": 12,
+      "process_id": 16,
+      "main_thread_id": 20,
+      "sequence": 24,
+      "stage": 28,
+      "tick_started": 32,
+      "tick_completed": 36,
+      "flags": 40,
+      "stage_count": 44,
+      "reserved": 48
+    },
+    "reserved_bytes": 80,
+    "stages": {
+      "1": "INITIALIZED",
+      "2": "STARTUP",
+      "3": "MAP_LOAD",
+      "4": "DB_SETUP",
+      "5": "READY_PUBLISH",
+      "6": "READY_PUBLISHED",
+      "7": "RUNTIME_PRIORITY",
+      "8": "RUNTIME_PRIORITY_DONE",
+      "9": "HEAP_VALIDATE",
+      "10": "HEAP_VALIDATED",
+      "11": "SG_VERIFY",
+      "12": "SG_VERIFIED",
+      "13": "CALLBACKS_ENABLE",
+      "14": "CALLBACKS_ENABLED",
+      "15": "RANDOM_SEED",
+      "16": "ITEM_POWER_REQUEST",
+      "17": "ITEM_POWER_REQUESTED",
+      "18": "ERROR_QUEUE_DRAIN",
+      "19": "ERROR_QUEUE_DRAINED",
+      "20": "READY_STDOUT",
+      "21": "LAUNCHER_CONTACT",
+      "22": "LATE_STARTUP_DONE",
+      "23": "LOOP_PRE_TICK",
+      "24": "TICK_BEGIN",
+      "25": "TICK_TOP",
+      "26": "DB_COMM",
+      "27": "DB_COMM_DONE",
+      "28": "FOLDER_CALLBACKS",
+      "29": "FOLDER_CALLBACKS_DONE",
+      "30": "TICK_TOP_DONE",
+      "31": "ENTITY_UPDATE",
+      "32": "GAME_LOGIC",
+      "33": "TICK_BOTTOM",
+      "34": "TICK_DONE",
+      "35": "LOOP_POST_TICK",
+      "36": "SLEEP",
+      "37": "SLEEP_DONE"
+    },
+    "disabled_by_default": true,
+    "writer": "mapserver_main_thread",
+    "stage_semantics": "operation_about_to_run_unless_DONE_or_ED",
+    "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+    "tick_started_stage": 24,
+    "tick_completed_stage": 34,
+    "counter_semantics": "monotonic_no_wrap_completed_not_greater_than_started",
+    "flags": {
+      "1": "sequence_or_counter_saturated_samples_unavailable"
+    },
+    "initialization_failure": "requested_launch_exits_nonzero",
+    "file_creation": "new_absolute_drive_path_private_parent_required",
+    "proves_readiness_or_game_success": false
+  },
+  "cmake_cache_sha256": "2d5aa6589bb46adb3c1561064d83eaa14e95ad864bab3c28b4db37ab00bd1266",
+  "files": {
+    "MapServer.exe": {
+      "sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb",
+      "size": 6914048,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "COMDLG32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "PhysXCooking.dll",
+        "PhysXLoader.dll",
+        "SHELL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "mapserver-progress-build-input.json": {
+      "sha256": "715eaca89904e31ab731cbb1df2bd5a55e681f64c9c544f28bde4891a3d2ed67",
+      "size": 10207
+    }
+  },
+  "symbols": {
+    "MapServer.pdb": {
+      "sha256": "d50ec81707e08ee59c3ce4da170f4f638fb96d4e5dc1baaa021fab2164f05e57",
+      "size": 40038400
+    }
+  },
+  "dependency_validation": "accepted_reference_runtime",
+  "dependency_report": {
+    "files": {
+      "DbServer.exe": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "ODBC32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "MapServer.exe": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "COMDLG32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "PhysXCooking.dll": {
+          "kind": "packaged",
+          "file": "PhysXCooking.dll"
+        },
+        "PhysXLoader.dll": {
+          "kind": "packaged",
+          "file": "PhysXLoader.dll"
+        },
+        "SHELL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "CityOfHeroes.exe": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "cg.dll": {
+          "kind": "packaged",
+          "file": "cg.dll"
+        },
+        "cgGL.dll": {
+          "kind": "packaged",
+          "file": "cgGL.dll"
+        },
+        "COMDLG32.dll": {
+          "kind": "windows_system_api"
+        },
+        "DDRAW.dll": {
+          "kind": "windows_system_api"
+        },
+        "DINPUT8.dll": {
+          "kind": "windows_system_api"
+        },
+        "DSOUND.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GLU32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IMM32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "ole32.dll": {
+          "kind": "windows_system_api"
+        },
+        "OPENGL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "PhysXCooking.dll": {
+          "kind": "packaged",
+          "file": "PhysXCooking.dll"
+        },
+        "PhysXLoader.dll": {
+          "kind": "packaged",
+          "file": "PhysXLoader.dll"
+        },
+        "SHELL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "VERSION.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "TestClient.exe": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "pig.exe": {
+        "COMCTL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "SHELL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "Launcher.exe": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "GDI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "pdh.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WINMM.dll": {
+          "kind": "windows_system_api"
+        },
+        "WS2_32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "CrashRpt.dll": {
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "cg.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "cgGL.dll": {
+        "cg.dll": {
+          "kind": "packaged",
+          "file": "cg.dll"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "OPENGL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "NxCharacter.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "PhysXLoader.dll": {
+          "kind": "packaged",
+          "file": "PhysXLoader.dll"
+        }
+      },
+      "PhysXCooking.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WSOCK32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "PhysXCore.dll": {
+        "cudart32_30_9.dll": {
+          "kind": "packaged",
+          "file": "cudart32_30_9.dll"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WSOCK32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "PhysXLoader.dll": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "IPHLPAPI.DLL": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "cudart32_30_9.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "NxCooking.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "WSOCK32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "physxcudart_20.dll": {
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "PhysXDevice.dll": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "USER32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "concrt140.dll": {
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-math-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "msvcp140.dll": {
+        "api-ms-win-crt-convert-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-environment-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-filesystem-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-locale-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-math-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-time-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-utility-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "msvcp140_1.dll": {
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "msvcp140_2.dll": {
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-locale-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-math-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "msvcp140_atomic_wait.dll": {
+        "ADVAPI32.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-core-synch-l1-2-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-locale-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "msvcp140_codecvt_ids.dll": {
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "vccorlib140.dll": {
+        "api-ms-win-core-winrt-error-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-core-winrt-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-core-winrt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-math-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "MSVCP140.dll": {
+          "kind": "packaged",
+          "file": "msvcp140.dll"
+        },
+        "ole32.dll": {
+          "kind": "windows_system_api"
+        },
+        "OLEAUT32.dll": {
+          "kind": "windows_system_api"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      },
+      "vcruntime140.dll": {
+        "api-ms-win-crt-convert-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-stdio-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-string-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        }
+      },
+      "vcruntime140_threads.dll": {
+        "api-ms-win-crt-heap-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-runtime-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "api-ms-win-crt-time-l1-1-0.dll": {
+          "kind": "windows_system_api"
+        },
+        "KERNEL32.dll": {
+          "kind": "windows_system_api"
+        },
+        "VCRUNTIME140.dll": {
+          "kind": "packaged",
+          "file": "vcruntime140.dll"
+        }
+      }
+    },
+    "unresolved": [],
+    "explicit_dynamic_dependencies": [
+      "CrashRpt.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "NxCharacter.dll",
+      "PhysXCooking.dll",
+      "PhysXCore.dll",
+      "PhysXLoader.dll",
+      "cudart32_30_9.dll",
+      "NxCooking.dll",
+      "physxcudart_20.dll",
+      "PhysXDevice.dll"
+    ],
+    "optional_dynamic_driver_probes": [
+      "lightfx.dll",
+      "nvcpl.dll",
+      "nvcuda.dll"
+    ],
+    "limitation": "Import inventory and explicit dynamic allowlist; execution not validated"
+  },
+  "scope": "Separate MapServer progress diagnostic; accepted binaries and receipts remain unchanged"
+}

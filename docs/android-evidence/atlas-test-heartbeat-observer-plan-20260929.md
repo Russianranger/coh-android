@@ -1,12 +1,13 @@
-# MapServer heartbeat diagnostics: implementation awaiting qualification
+# MapServer heartbeat diagnostics: hosted qualification complete
 
 Hosted runs `36599606621` attempt 1 and `36621227369` attempts 1 and 2
 failed Atlas freshness observation. Both 0.4.3 attempts had advancing DbServer
 dispatch, live services and clean final cleanup, but never reached character
 creation or restart. Identical retries are stopped. The separately receipted
-observer described below is implemented; real Windows producer contracts and
-the new ARM64 runtime workflow must still qualify it. No heartbeat correction
-or qualified replacement APK is claimed.
+observer described below passed all six real Windows producer contracts and
+the eighteen-stage ARM64 runtime in run `36630872719`. Independent review verified
+raw tick progress, both committed saves, exact-name resume and complete cleanup.
+No qualified replacement APK or repair of earlier heartbeat failures is claimed.
 
 The current evidence cannot identify the blocked Windows operation. MapServer
 publishes readiness before completing late startup. Buffered stdout ending at SG
@@ -49,8 +50,16 @@ identity, sequence, stage and tick counts to bounded observations. Full observer
 qualification requires valid records and positive completed-tick advancement
 for both launches in addition to the unchanged eighteen game stages.
 
-Next: run those real Windows contracts and the ARM64 diagnostic, inspect any
-fresh failure before changing behavior, then integrate the qualified explicit
-profile into a new Android candidate and run the exact-APK gate. Preserve all
+The successful run captured a 114.233-second interval between first-tick folder
+entry/completion markers. Protocol-ready samples aged 23 and 85 seconds were
+correctly rejected by existing freshness checks. Once the first tick completed,
+current readiness and the remaining stages passed. This does not establish the
+cause of earlier uninstrumented failures or repair the folder work.
+
+Next: integrate the qualified explicit profile into 0.4.4 and require a fresh,
+valid, same-launch publication with a completed tick before accepting the normal
+protocol-ready sample. Revalidate identity after that query, never fall back to
+cached progress, and preserve startup deadlines, freshness and observation.
+Run the exact-APK gate with that additional startup proof. Preserve all
 accepted donors and the candidate-only cleanup correction separately. Do not
 request another physical Thor test until that candidate qualifies.

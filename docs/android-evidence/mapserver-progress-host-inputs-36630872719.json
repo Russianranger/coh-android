@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "scope": "host_game_runtime_inputs",
+  "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+  "game_package_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+  "game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+  "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "binary_sha256": {
+    "DbServer.exe": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c",
+    "MapServer.exe": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb",
+    "TestClientCreate.exe": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58",
+    "TestClientResume.exe": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1",
+    "TestClientBridge.exe": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+  },
+  "kernel_hostname": "runnervmoyp6c",
+  "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+  "guest_hosts_bytes": 34,
+  "guest_hosts_loopback_aliases": [
+    "localhost",
+    "runnervmoyp6c"
+  ],
+  "guest_hosts_evidence_file": "guest-etc-hosts",
+  "guest_script_sha256": {
+    "game_diagnostic.py": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539",
+    "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+    "game_hang_evidence.py": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef",
+    "game_map_progress.py": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec",
+    "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+  },
+  "disk_preflight": {
+    "free_bytes_before_setup": 106957303808,
+    "required_free_bytes": 10737418240
+  },
+  "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+  "hang_observer": {
+    "format": 1,
+    "role": "wine_game_hang_observer",
+    "repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+    "source_sha256_lf": "07588c44da54b0e218c41de494a47cdcb313358e75ec5805db18dea81e565891",
+    "source": "database/wine-game/GameStackProbe.c",
+    "compiler": "MSVC",
+    "flags": "/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601",
+    "executable": {
+      "bytes": 121344,
+      "sha256": "e91d231a141c3413684bfea4a3c393b9391f48eee53c68b6b286753e15a28876",
+      "pe_machine": 332,
+      "imports": [
+        "KERNEL32.dll"
+      ],
+      "delay_imports": []
+    }
+  },
+  "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+  "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "dbserver_profile": "loopback",
+  "dbserver_loopback_scope": "DbServer only; host network namespace remains mandatory",
+  "game_listener_profile": "loopback",
+  "game_listener_scope": "Owned Atlas and TestClient IPv4 UDP bindings; host network namespace remains mandatory",
+  "mapserver_progress_profile": "dispatch_progress_v1",
+  "mapserver_progress_producer": {
+    "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+    "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+    "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+  },
+  "accepted_supporting_donors": {
+    "run_id": 36510836956,
+    "repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+    "manifest_sha256": "ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a"
+  }
+}
