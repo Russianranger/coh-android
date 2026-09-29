@@ -1,6 +1,31 @@
 # City of Heroes Android handoff
 
-**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+**Thor 0.4.2 follow-up (2026-09-29, 18:57 UTC): cleanup is blocked again.**
+The first 13 stages passed, including Atlas live-heartbeat observation and the
+committed save of `TEST24402` with 12,345 influence. `game_restart` failed with
+`Cannot verify Wine descendant ownership` after Wine stop/wait both returned 0.
+Final cleanup subsequently found zero remaining owned processes and closed all
+84 child records, but one earlier inspection failure remained latched. The app
+correctly refused reuse. This run did not reach PostgreSQL restart, the new
+restart startup budget or exact-name resume. No Stop or cancellation was recorded.
+
+The report has zero permission-read retries and no permission observations. Its
+message comes from the generic OS/parse-error path and omits the underlying
+exception, errno and process identity. A reproduced proc-file exit race is a
+candidate mechanism, not a proved explanation of this particular device run.
+The 0.4.3 candidate handles ESRCH from status/stat as task disappearance.
+Environment/namespace ESRCH requires a fresh exact-identity check and preserves
+inspection of live workers behind a stopped leader. Live unreadable ownership
+still fails; retries and diagnostic records are bounded. The original operation,
+exception type, errno and process/thread IDs are retained without raw contents.
+See the [owned-child reproduction](android-evidence/atlas-test-proc-exit-reproduction-20260929.json).
+Accepted base payloads, identity/token signaling checks and Java cleanup gates
+remain unchanged. Hosted qualification is pending. Do not repeat 0.4.2 or proceed to Stop/rerun. After exporting,
+follow the app's force-stop/reopen recovery instruction. Await qualification of
+the next candidate, then run one full Thor test/export before further checks.
+See the [device failure review](android-evidence/atlas-test-thor-cleanup-failure-20260929-185717.json).
+
+**Previous hosted checkpoint: COH Atlas Test 0.4.2 passed on attempt 2.**
 The exact signed APK completed import and all 18 create/save/restart/resume stages
 in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
 All 100 candidate checks passed. This qualifies the bounded DbServer startup
@@ -14,7 +39,7 @@ commits preserve evidence and update instructions only. Uninstall only Atlas Tes
 0.4.1, install 0.4.2, prepare runtime/import, then run one complete Thor test and
 export before continuing Stop/rerun. Keep accepted 0.1.5/0.2.0/0.3.0 installed.
 
-Current device checkpoint (2026-09-29, 16:32 UTC): **0.4.1 recovered the ownership
+Previous device checkpoint (2026-09-29, 16:32 UTC): **0.4.1 recovered the ownership
 read race and passed 15 stages, then hit a separate DbServer startup deadline.**
 The first committed save, owned service stop and PostgreSQL restart passed.
 Both restart and final cleanup reported zero inspection failures and zero

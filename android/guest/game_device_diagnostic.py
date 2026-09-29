@@ -160,9 +160,9 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
     """Handle a worker exiting during a private-token ownership read.
 
     A zombie leader can outlive its workers. Android may deny a worker's
-    namespace/environment read while that worker is exiting, before its proc
-    directory disappears. Only verified termination or a fresh complete
-    ownership check resolves that denial; a persistently unreadable live task
+    namespace/environment read or return ESRCH while that worker is exiting,
+    before its proc directory disappears. Only verified termination or a fresh
+    complete ownership check resolves that error; a persistently unreadable live task
     still fails closed. Signaling remains the accepted identity/pidfd policy.
     """
     PERMISSION_ATTEMPTS = 3
@@ -172,13 +172,114 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
     def __init__(self, context, proc_root=Path('/proc')):
         super().__init__(context, proc_root)
         self.receipt.update(permission_read_retries=0, worker_exit_rechecks=0,
-                            permission_observations=[], permission_observations_omitted=0)
+                            permission_observations=[], permission_observations_omitted=0,
+                            proc_read_retries=0, proc_read_observations=[],
+                            proc_read_observations_omitted=0, last_inspection_failure=None)
+
+    def observe_proc(self, observation):
+        if len(self.receipt['proc_read_observations']) < self.OBSERVATION_LIMIT:
+            self.receipt['proc_read_observations'] = [*self.receipt['proc_read_observations'], observation]
+        else:
+            self.receipt['proc_read_observations_omitted'] += 1
+        return observation
+
+    def proc_read(self, path, operation, reader, task_disappearance=False):
+        try:
+            return reader()
+        except (OSError, ValueError, KeyError, IndexError) as exc:
+            parts = path.relative_to(self.proc_root).parts
+            observation = {'operation': operation, 'error_type': type(exc).__name__,
+                'errno': getattr(exc, 'errno', None),
+                'group_pid': int(parts[0]) if parts and parts[0].isdecimal() else None,
+                'worker_tid': int(parts[2]) if len(parts) == 3 and parts[1] == 'task'
+                    and parts[2].isdecimal() else None, 'resolution': 'unresolved'}
+            exc.ownership_observation = observation
+            # proc status/stat read callbacks return ESRCH when get_pid_task no
+            # longer resolves the task, including an FD opened before exit.
+            # Environment/ns ESRCH has different semantics (a missing mm can
+            # leave live workers), so it must take the identity recheck below.
+            if task_disappearance and isinstance(exc, ProcessLookupError):
+                observation['resolution'] = 'task_disappeared'
+                self.observe_proc(observation)
+                raise FileNotFoundError(exc.errno, 'Proc task disappeared') from exc
+            raise
+
+    def status(self, path):
+        return self.proc_read(path, 'status', lambda: super(DeviceWineProcessOwner, self).status(path), True)
+
+    def process_stat(self, path):
+        return self.proc_read(path, 'stat', lambda: super(DeviceWineProcessOwner, self).process_stat(path), True)
+
+    def has_token(self, path):
+        return self.proc_read(path, 'environment', lambda: super(DeviceWineProcessOwner, self).has_token(path))
+
+    def pid_namespace(self, path):
+        return self.proc_read(path, 'pid_namespace', lambda: os.readlink(path / 'ns/pid'))
+
+    def live_tasks(self, path, deadline=None):
+        try:
+            yield from super().live_tasks(path, deadline)
+        except (OSError, ValueError, KeyError, IndexError) as exc:
+            observation = getattr(exc, 'ownership_observation', None) or {
+                'operation': 'task_inspection', 'group_pid': int(path.name) if path.name.isdecimal() else None,
+                'error_type': type(exc).__name__, 'errno': getattr(exc, 'errno', None),
+                'resolution': 'unresolved'}
+            # Directory enumeration ESRCH does not prove every worker exited.
+            # signal_owned also invokes this iterator outside inspect(), so its
+            # unreadable error must not reach the signal-syscall ESRCH handler.
+            self.terminal_failure(exc, observation)
+            if isinstance(exc, ProcessLookupError):
+                self.raise_unreadable(exc, observation)
+            raise
+
+    def count_failure(self, error):
+        if not getattr(error, 'ownership_failure_counted', False):
+            self.receipt['inspection_failures'] += 1
+            error.ownership_failure_counted = True
+
+    def terminal_failure(self, error, fallback=None):
+        observation = getattr(error, 'ownership_observation', None) or fallback
+        if observation is None:
+            observation = {'operation': 'group_inspection', 'error_type': type(error).__name__,
+                           'errno': getattr(error, 'errno', None), 'resolution': 'unresolved'}
+        # Reserve a terminal record even when benign exits exhausted the bounded
+        # observation list. Replacement also preserves earlier restart receipts.
+        self.receipt['last_inspection_failure'] = dict(observation)
+
+    def raise_unreadable(self, error, observation, verified_recheck_failed=False):
+        error.ownership_observation = observation
+        self.terminal_failure(error)
+        if isinstance(error, ProcessLookupError) or verified_recheck_failed:
+            # signal_owned legitimately catches ESRCH from the signal syscall;
+            # an unverified *live* proc read must never reach that catch.
+            failure = base.DiagnosticError('Cannot verify live Wine ownership after proc read failure')
+            failure.ownership_observation = observation
+            self.count_failure(failure)
+            raise failure from error
+        raise error
+
+    def failed_recheck(self, observation, error, operation):
+        detail = getattr(error, 'ownership_observation', {})
+        observation.update(resolution='identity_recheck_failed',
+            recheck_operation=detail.get('operation', operation),
+            recheck_error_type=type(error).__name__, recheck_errno=getattr(error, 'errno', None))
+        error.ownership_observation = observation
+        # This task's identity was already known. A failed recheck cannot use
+        # scan's initial unknown/foreign-UID permission exception. Count even
+        # EIO/parse failures here: signal_owned rechecks outside the base scan.
+        if isinstance(error, base.DiagnosticError):
+            self.terminal_failure(error)
+            self.count_failure(error)
+            raise error
+        self.raise_unreadable(error, observation, verified_recheck_failed=True)
 
     def observe_permission(self, group, worker, operation, error, attempt):
         observation = {'group_pid': group['pid'], 'group_starttime': group['starttime'],
             'worker_tid': worker['pid'], 'worker_starttime': worker['starttime'],
-            'operation': operation, 'errno': error.errno, 'attempt': attempt,
+            'operation': operation, 'errno': error.errno, 'error_type': type(error).__name__, 'attempt': attempt,
             'worker_state_before': worker['state'], 'resolution': 'unresolved'}
+        if isinstance(error, ProcessLookupError):
+            return self.observe_proc(observation)
         if len(self.receipt['permission_observations']) < self.OBSERVATION_LIMIT:
             # The accepted restart captures dict(receipt). Give each subsequent
             # scan a new list so final cleanup cannot amend that earlier proof.
@@ -190,7 +291,7 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
     def inspect(self, proc_pid, deadline=None):
         before = len(self.receipt['permission_observations']) + self.receipt['permission_observations_omitted']
         try:
-            return super().inspect(proc_pid, deadline)
+            return self.inspect_group(proc_pid, deadline)
         except PermissionError as exc:
             recorded = len(self.receipt['permission_observations']) + self.receipt['permission_observations_omitted']
             try:
@@ -208,7 +309,87 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                     current = {'pid': proc_pid, 'starttime': None, 'state': 'unavailable'}
                 observation = self.observe_permission(current, current, 'group_inspection', exc, 1)
                 observation['resolution'] = 'unresolved_group_permission_denied'
+                self.terminal_failure(exc, observation)
+            elif known_same_uid:
+                self.terminal_failure(exc)
             raise
+        except (OSError, ValueError, KeyError, IndexError, base.DiagnosticError) as exc:
+            observation = getattr(exc, 'ownership_observation', None) or {
+                'group_pid': proc_pid, 'operation': 'group_inspection',
+                'error_type': type(exc).__name__, 'errno': getattr(exc, 'errno', None),
+                'resolution': 'unresolved'}
+            self.terminal_failure(exc, observation)
+            if isinstance(exc, ProcessLookupError):
+                self.raise_unreadable(exc, observation)
+            if isinstance(exc, base.DiagnosticError):
+                # The accepted scan counts OSError/parse failures itself, but
+                # not a failed identity proof expressed as DiagnosticError.
+                self.count_failure(exc)
+            raise
+
+    def inspect_group(self, proc_pid, deadline):
+        # Same accepted ownership policy; only env/ns ESRCH joins the existing
+        # exact-leader transition recheck instead of escaping as task absence.
+        path = self.proc_root / str(proc_pid)
+        try:
+            status = self.status(path)
+        except FileNotFoundError:
+            return None
+        if status['uid'] != self.real_uid or proc_pid in self.excluded:
+            return None
+        if not self.direct_pid_view and len(status['namespace_pids']) != self.namespace_depth:
+            return None
+        try:
+            identity = self.process_stat(path)
+            require(identity['pid'] == proc_pid == status['pid'], 'Wine cleanup PID view changed')
+            if identity['starttime'] < self.diagnostic_starttime:
+                return None
+            if identity['state'] == 'Z':
+                if not self.inspect_dead_leader(path, identity, deadline):
+                    return None
+            else:
+                unreadable, observation = None, None
+                operation = 'group_pid_namespace'
+                try:
+                    if not self.direct_pid_view and self.pid_namespace(path) != self.namespace:
+                        return None
+                    operation = 'group_environment'
+                    token_present = self.has_token(path)
+                except (PermissionError, ProcessLookupError) as exc:
+                    unreadable, token_present = exc, False
+                    if isinstance(exc, ProcessLookupError):
+                        observation = self.observe_permission(identity, identity, operation, exc, 1)
+                        exc.ownership_observation = observation
+                if not token_present:
+                    try:
+                        changed = self.process_stat(path)
+                        require(changed['pid'] == identity['pid'] and changed['starttime'] == identity['starttime'],
+                                'Wine cleanup group identity changed')
+                    except FileNotFoundError:
+                        if observation is not None:
+                            observation['resolution'] = 'verified_disappearance'
+                        return None
+                    except Exception as exc:
+                        if observation is not None:
+                            self.failed_recheck(observation, exc, 'group_identity_after_read')
+                        raise
+                    if changed['state'] != 'Z':
+                        if unreadable is not None:
+                            if observation is not None:
+                                observation['resolution'] = 'persistent_live_read_failure'
+                                self.raise_unreadable(unreadable, observation)
+                            raise unreadable
+                        return None
+                    self.receipt['leader_exit_retries'] += 1
+                    if observation is not None:
+                        observation['resolution'] = 'same_leader_became_zombie_check_workers'
+                    if not self.inspect_dead_leader(path, changed, deadline):
+                        return None
+        except FileNotFoundError:
+            return None
+        pid = proc_pid if self.direct_pid_view else status['namespace_pids'][-1]
+        require(pid > 0 and pid != os.getpid(), 'Invalid owned Wine PID')
+        return {'proc_pid': proc_pid, 'pid': pid, 'starttime': identity['starttime']}
 
     def inspect_dead_leader(self, path, identity, deadline):
         for task, worker in self.live_tasks(path, deadline):
@@ -229,7 +410,7 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                     if not self.direct_pid_view:
                         operation = 'worker_pid_namespace'
                         if (len(status['namespace_pids']) != self.namespace_depth
-                                or os.readlink(task / 'ns/pid') != self.namespace):
+                                or self.pid_namespace(task) != self.namespace):
                             return False
                     operation = 'worker_environment'
                     token_present = self.has_token(task)
@@ -259,13 +440,16 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         previous_denial['resolution'] = 'verified_disappearance'
                         self.receipt['worker_exit_rechecks'] += 1
                     break
-                except PermissionError as exc:
+                except (PermissionError, ProcessLookupError) as exc:
                     observation = self.observe_permission(identity, worker, operation, exc, attempt)
+                    exc.ownership_observation = observation
                     try:
+                        recheck_operation = 'group_identity_after_read'
                         current_group = self.process_stat(path)
                         require(current_group['pid'] == identity['pid']
                                 and current_group['starttime'] == identity['starttime'],
                                 'Wine cleanup group identity changed during permission recheck')
+                        recheck_operation = 'worker_identity_after_read'
                         current_worker = self.process_stat(task)
                         require(current_worker['pid'] == worker['pid']
                                 and current_worker['starttime'] == worker['starttime'],
@@ -274,8 +458,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         observation['resolution'] = 'verified_disappearance'
                         self.receipt['worker_exit_rechecks'] += 1
                         break
-                    except Exception:
-                        observation['resolution'] = 'identity_recheck_failed'
+                    except Exception as recheck_error:
+                        self.failed_recheck(observation, recheck_error, recheck_operation)
                         raise
                     observation['worker_state_after'] = current_worker['state']
                     if current_worker['state'] == 'Z':
@@ -284,12 +468,24 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         break
                     if attempt == self.PERMISSION_ATTEMPTS or (deadline is not None
                             and time.monotonic() + self.PERMISSION_PAUSE >= deadline):
-                        observation['resolution'] = 'persistent_live_permission_denied'
-                        raise
+                        observation['resolution'] = ('persistent_live_permission_denied'
+                            if isinstance(exc, PermissionError) else 'persistent_live_read_failure')
+                        self.raise_unreadable(exc, observation)
                     observation['resolution'] = 'retry_same_live_worker'
                     previous_denial = observation
-                    self.receipt['permission_read_retries'] += 1
+                    self.receipt['permission_read_retries' if isinstance(exc, PermissionError)
+                                 else 'proc_read_retries'] += 1
                     time.sleep(self.PERMISSION_PAUSE)
+                except (OSError, ValueError, KeyError, IndexError, base.DiagnosticError) as exc:
+                    if previous_denial is not None:
+                        self.failed_recheck(previous_denial, exc, operation)
+                    elif not hasattr(exc, 'ownership_observation'):
+                        exc.ownership_observation = {'group_pid': identity['pid'],
+                            'group_starttime': identity['starttime'], 'worker_tid': worker['pid'],
+                            'worker_starttime': worker['starttime'], 'operation': operation,
+                            'error_type': type(exc).__name__, 'errno': getattr(exc, 'errno', None),
+                            'resolution': 'unresolved'}
+                    raise
         return False
 
 

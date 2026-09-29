@@ -8,6 +8,7 @@ import io
 import json
 import os
 import signal
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -414,6 +415,216 @@ class DeviceOwnershipTests(unittest.TestCase):
         self.assertEqual(self.owner.receipt['inspection_failures'], 0)
         self.assertEqual(self.owner.receipt['owned_live_workers'], 0)
 
+    def test_live_group_esrch_is_not_swallowed_by_signal_owned(self):
+        self.leader['state'] = 'S'
+        for operation in ('has_token', 'pid_namespace'):
+            self.owner.direct_pid_view = operation != 'pid_namespace'
+            self.owner.namespace_depth, self.owner.namespace = 1, 'pid:[111]'
+            before = self.owner.receipt['inspection_failures']
+            with self.subTest(operation=operation), \
+                    patch.object(self.owner, operation, side_effect=ProcessLookupError(3, 'sensitive text')), \
+                    patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal') as send, patch.object(guest.os, 'kill') as kill:
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                    self.owner.signal_owned({'proc_pid': 123, 'pid': 123, 'starttime': 10}, signal.SIGTERM,
+                                            time.monotonic() + 1)
+                send.assert_not_called()
+                kill.assert_not_called()
+            failure = self.owner.receipt['last_inspection_failure']
+            self.assertEqual(failure['error_type'], 'ProcessLookupError')
+            self.assertEqual(failure['errno'], 3)
+            self.assertEqual(failure['resolution'], 'persistent_live_read_failure')
+            self.assertEqual(self.owner.receipt['inspection_failures'], before + 1)
+            self.assertNotIn('sensitive text', json.dumps(self.owner.receipt))
+
+    def test_group_environ_esrch_during_leader_exit_preserves_live_worker(self):
+        self.leader['state'] = 'S'
+        def read(path):
+            if path == self.group:
+                self.leader['state'] = 'Z'
+                raise ProcessLookupError(3, 'mm is gone but worker is alive')
+            return True
+        with patch.object(self.owner, 'has_token', side_effect=read):
+            self.assertEqual(self.owner.inspect(123, time.monotonic() + 1),
+                             {'proc_pid': 123, 'pid': 123, 'starttime': 10})
+        self.assertEqual(self.owner.receipt['owned_live_workers'], 1)
+        self.assertEqual(self.owner.receipt['leader_exit_retries'], 1)
+        self.assertEqual(self.owner.receipt['proc_read_observations'][0]['resolution'],
+                         'same_leader_became_zombie_check_workers')
+
+    def test_group_namespace_esrch_checks_worker_namespace_and_token(self):
+        self.leader['state'] = 'S'
+        self.owner.direct_pid_view = False
+        self.owner.namespace_depth, self.owner.namespace = 1, 'pid:[111]'
+        def namespace(path):
+            if path == self.group:
+                self.leader['state'] = 'Z'
+                raise ProcessLookupError(3, 'leader exiting')
+            return self.owner.namespace
+        with patch.object(self.owner, 'pid_namespace', side_effect=namespace) as read_ns, \
+                patch.object(self.owner, 'has_token', return_value=True) as token:
+            self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(read_ns.call_count, 2)
+        token.assert_called_once_with(self.task)
+
+    def test_worker_esrch_requires_fresh_full_ownership_and_respects_deadline(self):
+        with patch.object(self.owner, 'has_token', side_effect=[ProcessLookupError(3, 'temporary'), True]) as token, \
+                patch.object(guest.time, 'sleep'):
+            self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(token.call_count, 2)
+        self.assertEqual(self.owner.receipt['proc_read_observations'][-1]['resolution'], 'complete_ownership_read')
+        with patch.object(self.owner, 'has_token', side_effect=ProcessLookupError(3, 'still live')) as token, \
+                patch.object(guest.time, 'sleep') as wait:
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                self.owner.inspect(123, time.monotonic() + .001)
+        token.assert_called_once()
+        wait.assert_not_called()
+
+    def test_identity_recheck_failure_keeps_original_error_and_recheck_operation(self):
+        original = self.owner.process_stat.side_effect
+        def read(path):
+            self.owner.process_stat.side_effect = lambda selected: (
+                (_ for _ in ()).throw(OSError(5, 'private recheck text'))
+                if selected == self.task else original(selected))
+            raise ProcessLookupError(3, 'private original text')
+        with patch.object(self.owner, 'has_token', side_effect=read), \
+                patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                patch.object(guest.signal, 'pidfd_send_signal') as send:
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                self.owner.signal_owned({'proc_pid': 123, 'pid': 123, 'starttime': 10}, signal.SIGTERM,
+                                        time.monotonic() + 1)
+            send.assert_not_called()
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+        failure = self.owner.receipt['last_inspection_failure']
+        self.assertEqual((failure['operation'], failure['error_type'], failure['errno']),
+                         ('worker_environment', 'ProcessLookupError', 3))
+        self.assertEqual((failure['recheck_operation'], failure['recheck_error_type'], failure['recheck_errno']),
+                         ('worker_identity_after_read', 'OSError', 5))
+        self.assertNotIn('private', json.dumps(failure))
+
+    def test_esrch_recheck_permission_failure_cannot_be_skipped_as_hidden_foreign_uid(self):
+        original_stat = self.owner.process_stat.side_effect
+        def read(path):
+            self.owner.status.side_effect = PermissionError(13, 'now hidden')
+            self.owner.process_stat.side_effect = lambda selected: (
+                (_ for _ in ()).throw(PermissionError(13, 'recheck hidden'))
+                if selected == self.task else original_stat(selected))
+            raise ProcessLookupError(3, 'initial environment failure')
+        with patch.object(self.owner, 'has_token', side_effect=read):
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+        failure = self.owner.receipt['last_inspection_failure']
+        self.assertEqual((failure['error_type'], failure['errno']), ('ProcessLookupError', 3))
+        self.assertEqual((failure['recheck_error_type'], failure['recheck_errno']), ('PermissionError', 13))
+
+    def test_worker_esrch_exit_does_not_skip_remaining_live_worker(self):
+        another = self.group / 'task/125'
+        another.mkdir()
+        next_worker = {**self.worker, 'pid': 125, 'starttime': 12}
+        self.owner.process_stat.side_effect = lambda path: dict(
+            self.leader if path == self.group else next_worker if path == another else self.worker)
+        self.owner.status.side_effect = lambda path: dict(self.status if path == self.group else
+            {**self.worker_status, 'pid': 125} if path == another else self.worker_status)
+        def read(path):
+            if path == self.task:
+                self.worker['state'] = 'Z'
+                raise ProcessLookupError(3, 'worker exiting')
+            return True
+        with patch.object(self.owner, 'has_token', side_effect=read), \
+                patch.object(self.owner, 'live_tasks', return_value=iter([(self.task, dict(self.worker)),
+                                                                       (another, next_worker)])):
+            self.assertIsNotNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(self.owner.owned_workers, {(123, 10, 125, 12)})
+        self.assertEqual(self.owner.receipt['worker_exit_rechecks'], 1)
+
+    def test_worker_esrch_retry_is_bounded_and_persistent_failure_is_counted(self):
+        with patch.object(self.owner, 'has_token', side_effect=ProcessLookupError(3, 'not gone')) as read, \
+                patch.object(guest.time, 'sleep') as wait:
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertEqual(read.call_count, 3)
+        self.assertEqual(wait.call_count, 2)
+        self.assertEqual(self.owner.receipt['proc_read_retries'], 2)
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['last_inspection_failure']['operation'], 'worker_environment')
+
+    def test_esrch_rechecks_never_authorize_changed_worker_group_or_membership(self):
+        for changed, field in ((self.worker, 'starttime'), (self.leader, 'starttime'),
+                               (self.worker_status, 'tgid')):
+            original = changed[field]
+            before = self.owner.receipt['inspection_failures']
+            def read(path):
+                changed[field] += 1
+                raise ProcessLookupError(3, 'identity changed')
+            with self.subTest(field=field, pid=changed['pid']), \
+                    patch.object(self.owner, 'has_token', side_effect=read), patch.object(guest.time, 'sleep'), \
+                    patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal') as send, patch.object(guest.os, 'kill') as kill:
+                with self.assertRaises(guest.base.DiagnosticError):
+                    self.owner.signal_owned({'proc_pid': 123, 'pid': 123, 'starttime': 10}, signal.SIGTERM,
+                                            time.monotonic() + 1)
+                send.assert_not_called()
+                kill.assert_not_called()
+            self.assertEqual(self.owner.receipt['inspection_failures'], before + 1)
+            changed[field] = original
+        # A later clean sweep can release resources; it cannot erase earlier
+        # uncertainty from the cumulative native acceptance guard.
+        self.worker['state'] = 'Z'
+        self.owner.cleanup(time.monotonic() + 1)
+        self.assertTrue(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 3)
+
+    def test_task_iteration_esrch_is_not_swallowed_in_signal_recheck_or_fallback(self):
+        candidate = {'proc_pid': 123, 'pid': 123, 'starttime': 10}
+        for fallback in (False, True):
+            before = self.owner.receipt['inspection_failures']
+            with self.subTest(fallback=fallback), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(guest.base.WineProcessOwner, 'live_tasks',
+                                                side_effect=ProcessLookupError(3, 'directory unavailable')))
+                if fallback:
+                    stack.enter_context(patch.object(self.owner, 'inspect', return_value=None))
+                stack.enter_context(patch.object(guest.os, 'pidfd_open', return_value=19))
+                stack.enter_context(patch.object(guest.os, 'close'))
+                send = stack.enter_context(patch.object(guest.signal, 'pidfd_send_signal'))
+                kill = stack.enter_context(patch.object(guest.os, 'kill'))
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'live Wine ownership'):
+                    self.owner.signal_owned(candidate, signal.SIGTERM, time.monotonic() + 1)
+                send.assert_not_called()
+                kill.assert_not_called()
+            self.assertEqual(self.owner.receipt['inspection_failures'], before + 1)
+            self.assertEqual(self.owner.receipt['last_inspection_failure']['operation'], 'task_inspection')
+
+    def test_terminal_error_survives_observation_saturation_and_keeps_operation(self):
+        for _ in range(self.owner.OBSERVATION_LIMIT + 2):
+            self.owner.observe_proc({'operation': 'stat', 'resolution': 'task_disappeared'})
+        self.leader['state'] = 'S'
+        with patch.object(guest.base.WineProcessOwner, 'has_token', side_effect=OSError(5, 'secret contents')):
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Cannot verify Wine descendant'):
+                self.owner.cleanup(time.monotonic() + 1)
+        failure = self.owner.receipt['last_inspection_failure']
+        self.assertEqual((failure['operation'], failure['error_type'], failure['errno']), ('environment', 'OSError', 5))
+        self.assertEqual(failure['group_pid'], 123)
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+        self.assertEqual(len(self.owner.receipt['proc_read_observations']), self.owner.OBSERVATION_LIMIT)
+        self.assertNotIn('secret contents', json.dumps(self.owner.receipt))
+
+    def test_malformed_status_or_stat_remains_a_failure_with_sanitized_operation(self):
+        for operation in ('status', 'process_stat'):
+            with self.subTest(operation=operation), \
+                    patch.object(guest.base.WineProcessOwner, operation, side_effect=ValueError('private data')):
+                # Bypass the synthetic identity fixture to exercise real candidate read wrappers.
+                with patch.object(self.owner, operation, side_effect=lambda path:
+                        getattr(guest.DeviceWineProcessOwner, operation)(self.owner, path)):
+                    with self.assertRaisesRegex(guest.base.DiagnosticError, 'Cannot verify Wine descendant'):
+                        self.owner.cleanup(time.monotonic() + 1)
+            self.assertEqual(self.owner.receipt['last_inspection_failure']['operation'],
+                             'stat' if operation == 'process_stat' else 'status')
+            self.assertEqual(self.owner.receipt['last_inspection_failure']['error_type'], 'ValueError')
+            self.assertNotIn('private data', json.dumps(self.owner.receipt))
+
     def test_vanished_worker_is_checked_without_treating_a_live_denial_as_dead(self):
         original = self.owner.process_stat.side_effect
         def denied(path):
@@ -559,8 +770,17 @@ class DeviceOwnershipTests(unittest.TestCase):
         case = module.WineProcessOwnerTests('test_dead_leader_live_worker_is_reaped_and_same_shape_sentinel_survives')
         case.setUp()
         try:
-            case.owner = guest.DeviceWineProcessOwner(case.context)
+            class ExitRaceOwner(guest.DeviceWineProcessOwner):
+                injected = False
+                def has_token(self, path):
+                    if 'task' in path.parts and not self.injected:
+                        self.injected = True
+                        raise ProcessLookupError(3, 'simulated worker read race')
+                    return super().has_token(path)
+            case.owner = ExitRaceOwner(case.context)
             case.test_dead_leader_live_worker_is_reaped_and_same_shape_sentinel_survives()
+            self.assertTrue(case.owner.injected)
+            self.assertEqual(case.owner.receipt['proc_read_retries'], 1)
         finally:
             case.doCleanups()
 
@@ -595,6 +815,53 @@ class DeviceOwnershipTests(unittest.TestCase):
         self.assertNotEqual(value.wine_env[key], initial_token[0])
         self.assertIs(type(self.context.memory_sampler.scanner), guest.DeviceWineProcessOwner)
         self.assertFalse(value.wine_started)
+
+
+class RealProcExitTests(unittest.TestCase):
+    def test_real_held_status_and_stat_fds_after_reaping_are_task_disappearance(self):
+        child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
+        handles = {}
+        try:
+            parent = guest.base.WineProcessOwner.process_stat(Path('/proc/self'))['pid']
+            matches = []
+            for path in Path('/proc').iterdir():
+                if not path.name.isdecimal():
+                    continue
+                try:
+                    status = guest.base.WineProcessOwner.status(path)
+                    identity = guest.base.WineProcessOwner.process_stat(path)
+                except (OSError, ValueError, KeyError, IndexError):
+                    continue
+                if identity['parent'] == parent and status['namespace_pids'][-1:] == [child.pid]:
+                    matches.append(path)
+            self.assertEqual(len(matches), 1, 'Must identify only the owned child')
+            path = matches[0]
+            for name in ('status', 'stat'):
+                handles[name] = (path / name).open('rb', buffering=0)
+            child.kill()
+            child.wait(timeout=3)
+            context = SimpleNamespace(secrets=[])
+            owner = guest.DeviceWineProcessOwner(context)
+            for name, handle in handles.items():
+                with self.subTest(operation=name):
+                    with self.assertRaises(ProcessLookupError):
+                        handle.read(32768)
+                    # Redirect only Path's input to the already-open real proc
+                    # FD. The kernel, not a mocked exception, produces ESRCH.
+                    with patch.object(Path, 'read_text', side_effect=lambda: handle.read(32768).decode()):
+                        with self.assertRaises(FileNotFoundError):
+                            (owner.status if name == 'status' else owner.process_stat)(path)
+                    observed = owner.receipt['proc_read_observations'][-1]
+                    self.assertEqual((observed['operation'], observed['errno']), (name, 3))
+                    self.assertEqual(observed['resolution'], 'task_disappeared')
+            self.assertEqual(owner.receipt['inspection_failures'], 0)
+            self.assertIsNone(owner.receipt['last_inspection_failure'])
+        finally:
+            for handle in handles.values():
+                handle.close()
+            if child.poll() is None:
+                child.kill()
+                child.wait(timeout=3)
 
 
 class ResourceAndCompletionTests(unittest.TestCase):

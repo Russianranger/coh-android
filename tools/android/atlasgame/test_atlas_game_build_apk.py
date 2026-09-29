@@ -18,16 +18,16 @@ class IdentityTests(unittest.TestCase):
     def badging(self, *, app_id=builder.APP_ID, permissions=builder.PERMISSIONS,
                 minimum="minSdkVersion:'26'", native="native-code: 'arm64-v8a'\n"):
         permission_text = "".join("uses-permission: name='" + value + "'\n" for value in sorted(permissions))
-        return (f"package: name='{app_id}' versionCode='3' versionName='0.4.2'\n"
+        return (f"package: name='{app_id}' versionCode='4' versionName='0.4.3'\n"
                 f"{minimum}\ntargetSdkVersion:'35'\n{permission_text}{native}"
                 f"launchable-activity: name='{builder.LAUNCHER}' label='COH Atlas Test' icon=''\n")
 
     def manifest(self, directory, *, app_id=builder.APP_ID, permissions=builder.PERMISSIONS,
-                 shared="", version="0.4.2", sdk="26", launcher=builder.LAUNCHER,
+                 shared="", version="0.4.3", sdk="26", launcher=builder.LAUNCHER,
                  extraction="true", backup="false", exported="false"):
         permissions_text = "".join(f'<uses-permission android:name="{name}" />' for name in sorted(permissions))
         xml = (f'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="{app_id}" '
-               f'android:versionCode="3" android:versionName="{version}" {shared}>'
+               f'android:versionCode="4" android:versionName="{version}" {shared}>'
                f'<uses-sdk android:minSdkVersion="{sdk}" android:targetSdkVersion="35" />'
                f'{permissions_text}<application android:extractNativeLibs="{extraction}" android:allowBackup="{backup}">'
                f'<activity android:name="{launcher}" android:exported="true">'

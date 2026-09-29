@@ -1,5 +1,30 @@
 # Atlas Park server test on Android
 
+**Thor 0.4.2 follow-up (2026-09-29, 18:57 UTC): cleanup is blocked again.**
+The first 13 stages passed, including Atlas live-heartbeat observation and the
+committed save of `TEST24402` with 12,345 influence. `game_restart` failed with
+`Cannot verify Wine descendant ownership` after Wine stop/wait both returned 0.
+Final cleanup subsequently found zero remaining owned processes and closed all
+84 child records, but one earlier inspection failure remained latched. The app
+correctly refused reuse. This run did not reach PostgreSQL restart, the new
+restart startup budget or exact-name resume. No Stop or cancellation was recorded.
+
+The report has zero permission-read retries and no permission observations. Its
+message comes from the generic OS/parse-error path and omits the underlying
+exception, errno and process identity. A reproduced proc-file exit race is a
+candidate mechanism, not a proved explanation of this particular device run.
+The 0.4.3 candidate handles ESRCH from status/stat as task disappearance.
+Environment/namespace ESRCH requires a fresh exact-identity check and preserves
+inspection of live workers behind a stopped leader. Live unreadable ownership
+still fails; retries and diagnostic records are bounded. The original operation,
+exception type, errno and process/thread IDs are retained without raw contents.
+See the [owned-child reproduction](android-evidence/atlas-test-proc-exit-reproduction-20260929.json).
+Accepted base payloads, identity/token signaling checks and Java cleanup gates
+remain unchanged. Hosted qualification is pending. Do not repeat 0.4.2 or proceed to Stop/rerun. After exporting,
+follow the app's force-stop/reopen recovery instruction. Await qualification of
+the next candidate, then run one full Thor test/export before further checks.
+See the [device failure review](android-evidence/atlas-test-thor-cleanup-failure-20260929-185717.json).
+
 **Thor follow-up:** 0.4.1 passed 15 stages, including the first committed save,
 clean service shutdown and PostgreSQL restart. The ownership correction recovered
 a denied worker read; final cleanup was complete and the app was not blocked.
@@ -9,13 +34,13 @@ launcher wait was still running. No Stop/cancellation was recorded. See the
 The older [0.4.0 cleanup failure](android-evidence/atlas-test-thor-restart-failure-20260929.json)
 and subsequent user force-stop remain preserved separately.
 
-The next M3 device candidate is **COH Atlas Test 0.4.2**, application ID
+The next M3 device candidate is **COH Atlas Test 0.4.3**, application ID
 `io.github.russianranger.cohatlastest`. It combines the accepted content importer
 with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+**Previous hosted checkpoint: COH Atlas Test 0.4.2 passed on attempt 2.**
 The exact signed APK completed import and all 18 create/save/restart/resume stages
 in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
 All 100 candidate checks passed. This qualifies the bounded DbServer startup
@@ -59,8 +84,8 @@ remain accepted; they do not need repeating in those apps.
 Keep 0.1.5, 0.2.0 and 0.3.0 installed. The new app has a separate private data
 directory. Android does not allow it to read the setup app's imported files, and
 the earlier CI signing certificate is not available for an in-place update.
-The failed 0.4.1 Atlas Test used an ephemeral CI signing key which is no longer
-available. Uninstall only **COH Atlas Test 0.4.1** before installing 0.4.2;
+The failed 0.4.2 Atlas Test used an ephemeral CI signing key which is no longer
+available. After 0.4.3 qualifies, uninstall only **COH Atlas Test 0.4.2** before installing it;
 its private runtime/import will need preparing again. Keep the earlier accepted
 diagnostic and setup apps installed.
 Import the same complete `coh-reference-assets.zip` once into this candidate.
@@ -95,8 +120,8 @@ hosted qualification retains its mandatory private network namespace.
 
 ## Device procedure after hosted qualification
 
-1. After uninstalling only the failed 0.4.1 Atlas Test, install
-   `COH-Atlas-Test-0.4.2.apk`.
+1. After 0.4.3 passes hosted qualification, uninstall only the failed 0.4.2
+   Atlas Test and install `COH-Atlas-Test-0.4.3.apk`.
 2. Choose **Set up runtime** with Internet access. Have at least 8 GiB free
    internal storage before setup; this is a working-space check, not the final
    installed size.
@@ -152,7 +177,7 @@ The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
 
-The current 0.4.2 APK is 355,109,686 bytes, SHA-256
+The preceding 0.4.2 APK was 355,109,686 bytes, SHA-256
 `1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07`. Its 30 payloads and 12 Java source identities
 match the exact candidate code and its build receipt. Independent review replayed
 all current hosted evidence and the unchanged Java acceptance gate.

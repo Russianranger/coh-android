@@ -119,7 +119,7 @@ public final class AtlasActivity extends Activity {
         log = text("Progress will appear here.", 12, MUTED);
         log.setTypeface(Typeface.MONOSPACE); log.setTextIsSelectable(true);
         root.addView(log, full());
-        TextView version = text("Local server test · v0.4.2 · Android " + Build.VERSION.RELEASE, 11, MUTED);
+        TextView version = text("Local server test · v0.4.3 · Android " + Build.VERSION.RELEASE, 11, MUTED);
         version.setPadding(0, dp(16), 0, dp(8));
         root.addView(version, full());
         root.requestApplyInsets();

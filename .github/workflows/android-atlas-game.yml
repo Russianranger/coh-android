@@ -157,13 +157,13 @@ jobs:
           --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore "$RUNNER_TEMP/coh-atlas-test.jks"
-          --output out/atlas-game/COH-Atlas-Test-0.4.2.apk
+          --output out/atlas-game/COH-Atlas-Test-0.4.3.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-atlas-test-apk
           path: |
-            out/atlas-game/COH-Atlas-Test-0.4.2.apk
-            out/atlas-game/COH-Atlas-Test-0.4.2.apk.sha256
+            out/atlas-game/COH-Atlas-Test-0.4.3.apk
+            out/atlas-game/COH-Atlas-Test-0.4.3.apk.sha256
             out/atlas-game/atlas-game-apk-build-report.json
             out/atlas-game/device-assets-preparation.json
           if-no-files-found: error
@@ -231,7 +231,7 @@ jobs:
       - name: Qualify exact APK import and Atlas Park create save restart resume
         run: >-
           python3 tools/android/atlasgame/host_device_smoke.py
-          --apk out/atlas-game/COH-Atlas-Test-0.4.2.apk
+          --apk out/atlas-game/COH-Atlas-Test-0.4.3.apk
           --archive out/asset-inputs.zip --repository-commit "$GITHUB_SHA"
           --proot out/android/native/linux-arm64 --work out/atlas-game-host
           --evidence out/atlas-game-evidence --timeout-seconds 5400

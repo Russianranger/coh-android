@@ -1,6 +1,19 @@
 # City of Heroes Android
 
-**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+**Thor 0.4.2 follow-up (2026-09-29, 18:57 UTC): cleanup is blocked again.**
+The first 13 stages passed, including Atlas live-heartbeat observation and the
+committed save of `TEST24402` with 12,345 influence. `game_restart` failed with
+`Cannot verify Wine descendant ownership` after Wine stop/wait both returned 0.
+Final cleanup subsequently found zero remaining owned processes and closed all
+84 child records, but one earlier inspection failure remained latched. The app
+correctly refused reuse. This run did not reach PostgreSQL restart, the new
+restart startup budget or exact-name resume. No Stop or cancellation was recorded.
+
+The next cleanup correction is being developed as 0.4.3. Do not repeat the
+failed 0.4.2 test; physical restart/resume remains unaccepted.
+See the [device failure review](docs/android-evidence/atlas-test-thor-cleanup-failure-20260929-185717.json).
+
+**Previous hosted checkpoint: COH Atlas Test 0.4.2 passed on attempt 2.**
 The exact signed APK completed import and all 18 create/save/restart/resume stages
 in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
 All 100 candidate checks passed. This qualifies the bounded DbServer startup
