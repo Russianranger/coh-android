@@ -1,12 +1,18 @@
 # City of Heroes Android handoff
 
-Current continuation (2026-09-29): the separate [COH Atlas Setup asset-import
-candidate](ANDROID_ASSET_IMPORT.md) is being qualified. It combines the reviewed
-ZIP with the exact repository text through Android's file picker, preserves the
-previous complete generation on failure/Stop, and does not launch game services.
-The next required evidence is the signed APK's hosted complete-data import, then
-the physical Thor import/Stop/retry reports. Accepted listener and diagnostic
-evidence below remains unchanged.
+Current continuation (2026-09-29): **COH Atlas Setup 0.3.0 passed hosted
+qualification** in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364)
+at `2f828ca3e626245ea9fd60055745980bc3f32001`. All 65 checks, the signed APK
+build, full 173,011-file import, cancelled re-import and abandoned-stage recovery
+passed. The complete inventory matches the accepted game data. The downloaded
+APK and all four payloads were independently rehashed against the reports.
+See the [acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json)
+and [candidate/device instructions](ANDROID_ASSET_IMPORT.md).
+The next required evidence is physical Thor import/Stop/retry, including app
+switching and screen locking. Then implement the combined Android Atlas Park
+server test. This app imports content only; Android game services and graphical
+gameplay remain unvalidated. Accepted listener and diagnostic evidence below
+remains unchanged. The candidate uses a development/ephemeral signing certificate.
 
 Continuation recovery (2026-09-29 UTC): recovered branch head `7aea5ee` and
 confirmed its completed GitHub checks. Independently replayed the preserved
@@ -16,7 +22,7 @@ The original uploaded ZIP downloads returned HTTP 502 during this recovery;
 the replay used the receipt-bound reports and captures already in this repo,
 not newly downloaded archives or fresh device execution.
 
-**Latest hosted milestone accepted:** the separate [MapServer/TestClient
+**Previous hosted runtime milestone accepted:** the separate [MapServer/TestClient
 listener profile](ANDROID_GAME_RUNTIME.md#mapserver-and-testclient-listener-candidate)
 passed all four jobs in
 [run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
@@ -33,11 +39,12 @@ inspection failures. The
 binds the [raw report](android-evidence/game-listeners-arm64-36510836956.json)
 and [preserved captures](android-evidence/game-listeners-evidence-36510836956.zip).
 
-Next implement verified file-picker asset import and the separate Android
-Atlas runtime/lifecycle integration. The hosted namespace remains mandatory;
+Verified file-picker import is implemented and hosted-qualified above; next
+collect its physical reports and implement the separate Android Atlas
+runtime/lifecycle integration. The hosted namespace remains mandatory;
 the local binding policy does not establish device-wide network isolation.
 Keep installed 0.1.5 and 0.2.0; no repeat of their passed diagnostics is needed,
-and this milestone supplies no new APK or physical Atlas result.
+and the listener milestone itself supplies no physical Atlas result.
 Local verification: 162 checks ran (161 passed, one Windows-only observer
 skipped), including 17 actual socket contracts and eight source-preparation
 checks. Both complete creation/resume staging commands verified the immutable

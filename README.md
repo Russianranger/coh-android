@@ -1,8 +1,15 @@
 # City of Heroes Android
 
-The next device step is the separate [COH Atlas Setup asset-import candidate](docs/ANDROID_ASSET_IMPORT.md). It prepares verified game data; game-server and graphical-client execution are later device gates.
+**COH Atlas Setup 0.3.0 is ready for its Thor import check.** The separate
+[asset-import candidate](docs/ANDROID_ASSET_IMPORT.md) passed all 65 hosted checks,
+signed APK verification and complete 173,011-file import, cancellation and recovery
+in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364).
+The downloaded APK and its four data payloads also match their recorded hashes.
+Physical import/Stop/retry remains pending; game-server and graphical-client
+execution are later device gates. See the linked instructions and
+[acceptance receipt](docs/android-evidence/accepted-asset-import-hosted-36556279364.json).
 
-**Latest hosted milestone: MapServer and TestClient local bindings passed.**
+**Previous hosted runtime milestone: MapServer and TestClient local bindings passed.**
 [Run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
 at `ac4c1f7978be444a893f65f5177641191861d42f` passed all four jobs, 17 native
 Windows socket contracts and all 18 ARM64 stages. Both Atlas starts and both
@@ -13,9 +20,9 @@ with zero remaining owned processes or inspection failures. See the
 [acceptance receipt](docs/android-evidence/accepted-game-listeners-hosted-36510836956.json),
 [raw report](docs/android-evidence/game-listeners-arm64-36510836956.json) and
 [preserved evidence](docs/android-evidence/game-listeners-evidence-36510836956.zip).
-Next comes verified file-picker asset import and a separate Android Atlas
-runtime with lifecycle handling. Keep 0.1.5 and 0.2.0 installed; this hosted
-milestone does not provide a new APK or establish physical Android Atlas.
+The next device steps are the separate import candidate above, then an Android
+Atlas runtime with lifecycle handling. Keep 0.1.5 and 0.2.0 installed; hosted
+listener qualification does not establish physical Android Atlas execution.
 
 **The primary M2 device diagnostic and headless client capability gate passed on
 AYN Thor with 0.1.5.** The [device acceptance record](docs/THOR_DEVICE_ACCEPTANCE.md)

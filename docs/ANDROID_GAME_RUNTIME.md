@@ -86,8 +86,9 @@ checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
 separate milestones. Keep the accepted 0.1.5 and 0.2.0 device diagnostics installed.
 DbServer local listeners and Stop/rerun are verified on Thor. MapServer/client
-listeners are now verified on the hosted runtime; verified asset import and
-the combined Android Atlas runtime/lifecycle are the next implementation work.
+listeners are now verified on the hosted runtime. The separate asset-import APK
+has passed hosted qualification; its physical import check and the combined
+Android Atlas runtime/lifecycle remain next.
 
 ## Accepted loopback DbServer integration
 
@@ -191,16 +192,20 @@ is supplied by this milestone; the device candidate still needs the steps below.
 
 ### Remaining preparation for a physical Atlas candidate
 
-The verified import implementation is the separate [COH Atlas Setup candidate](ANDROID_ASSET_IMPORT.md). Its APK and device import gate must pass before the prepared data is used in an Android game-service test.
+The verified import implementation is the separate [COH Atlas Setup 0.3.0 candidate](ANDROID_ASSET_IMPORT.md).
+Its signed APK and full-data import passed hosted run `36556279364`; physical
+import/Stop/retry must pass before the prepared data is used in an Android
+game-service test.
 
 With the combined hosted gate accepted:
 
-1. Package the reviewed game assets plus authoritative repository text with
-   exact inventories. The reviewed asset ZIP is 615,541,018 bytes; the combined
-   tree is 173,011 files / 2,977,730,517 bytes. Prefer verified file-picker import
-   of the existing ZIP. Its draft-release download currently requires CI
-   credentials, which must not be embedded in the Android app. No new broad
-   asset upload or public asset publication is required by this plan.
+1. Collect the physical import evidence for the hosted-qualified candidate.
+   The reviewed asset ZIP is 615,541,018 bytes; the combined tree is 173,011
+   files / 2,977,730,517 bytes. The app selects the existing ZIP through Android
+   Files and supplies authoritative text from its APK. A repository owner can
+   download the existing draft-release asset while signed into GitHub; no
+   credentials are embedded in the app. Import, Stop/retry, reopening and
+   background behavior must pass on Thor.
 2. Add a separately identified Android Atlas test, retaining accepted 0.1.5 and 0.2.0.
    Use fresh owned state, foreground-service Stop handling, bounded startup
    deadlines and streamed support exports containing the game, service and hang

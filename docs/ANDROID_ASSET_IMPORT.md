@@ -6,10 +6,28 @@ the next local server test in Atlas Park. It has no server/client executable,
 Wine runtime, native library or network permission. The accepted 0.1.5 and 0.2.0
 diagnostics and their private data are unchanged.
 
-The implementation is ready for hosted APK and complete-data qualification.
-Physical Android import is not accepted until a device report is collected.
+Hosted APK and complete-data qualification passed in
+[run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364)
+at `2f828ca3e626245ea9fd60055745980bc3f32001`: all 65 contract checks,
+signed APK verification and a complete 173,011-file import passed. Every imported
+file was independently rehashed on the runner, matching the accepted full-data
+inventory; cancelled re-import and abandoned-stage recovery also passed.
+Physical Android import is not accepted until device reports are collected.
 This is an import milestone; Android MapServer execution and graphical gameplay
 remain subsequent milestones.
+
+Download the [qualified APK artifact](https://github.com/Russianranger/coh-android/actions/runs/36556279364/artifacts/11027848275)
+while signed into GitHub, extract its ZIP, and install `COH-Atlas-Setup-0.3.0.apk`.
+The APK is 321,041,177 bytes; SHA-256
+`df25f33f673988d3b0c1c6fea2c4ae95dd776cbf84505e65ba3889159165e9fb`.
+The artifact expires 2026-12-28. The
+[acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json),
+[host report](android-evidence/asset-import-hosted-36556279364.json),
+[APK report](android-evidence/asset-import-apk-36556279364.json) and
+[preserved evidence](android-evidence/asset-import-evidence-36556279364.zip)
+record the exact candidate. The downloaded APK and all four packaged data
+payloads were independently rehashed after CI. Hosted qualification took
+82.252 seconds; this is not a Thor timing estimate.
 
 ## Inputs and publication
 
