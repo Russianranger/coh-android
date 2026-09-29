@@ -1,5 +1,7 @@
 # City of Heroes Android
 
+The next device step is the separate [COH Atlas Setup asset-import candidate](docs/ANDROID_ASSET_IMPORT.md). It prepares verified game data; game-server and graphical-client execution are later device gates.
+
 **Latest hosted milestone: MapServer and TestClient local bindings passed.**
 [Run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
 at `ac4c1f7978be444a893f65f5177641191861d42f` passed all four jobs, 17 native

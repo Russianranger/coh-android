@@ -1,5 +1,13 @@
 # City of Heroes Android handoff
 
+Current continuation (2026-09-29): the separate [COH Atlas Setup asset-import
+candidate](ANDROID_ASSET_IMPORT.md) is being qualified. It combines the reviewed
+ZIP with the exact repository text through Android's file picker, preserves the
+previous complete generation on failure/Stop, and does not launch game services.
+The next required evidence is the signed APK's hosted complete-data import, then
+the physical Thor import/Stop/retry reports. Accepted listener and diagnostic
+evidence below remains unchanged.
+
 Continuation recovery (2026-09-29 UTC): recovered branch head `7aea5ee` and
 confirmed its completed GitHub checks. Independently replayed the preserved
 Thor and hosted loopback evidence: both 28-stage physical runs, clean Stop,

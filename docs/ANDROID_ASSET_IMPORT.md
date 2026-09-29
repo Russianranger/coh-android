@@ -1,0 +1,95 @@
+# Verified game-data import for Android
+
+The next device candidate is **COH Atlas Setup 0.3.0**, application ID
+`io.github.russianranger.cohatlas`. It prepares the exact reviewed base data for
+the next local server test in Atlas Park. It has no server/client executable,
+Wine runtime, native library or network permission. The accepted 0.1.5 and 0.2.0
+diagnostics and their private data are unchanged.
+
+The implementation is ready for hosted APK and complete-data qualification.
+Physical Android import is not accepted until a device report is collected.
+This is an import milestone; Android MapServer execution and graphical gameplay
+remain subsequent milestones.
+
+## Inputs and publication
+
+The APK includes the pinned repository text as a compressed archive, plus small
+streaming inventories and an import contract. The user selects the existing
+reviewed `coh-reference-assets.zip` through Android's document picker.
+
+| Input | Identity |
+|---|---|
+| Source | `0b75ade0c801735e10c5798f641948a45cc50488` |
+| Companion data | `d51533ec8e6a9cf726b9214968077a05fdcf19f3` |
+| Reviewed asset ZIP | 615,541,018 bytes; SHA-256 `28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07` |
+| Binary assets | 16,721 files / 985,644,857 bytes |
+| Authoritative text | 156,290 files / 1,992,085,660 bytes |
+| Combined base data | 173,011 files / 2,977,730,517 bytes |
+| Accepted complete inventory | SHA-256 `b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4` |
+
+The original ZIP is already retained as asset `588984151` in the repository's
+[existing draft release](https://github.com/Russianranger/coh-android/releases/tag/untagged-5105ae5e41ef8f13e80d).
+The repository owner can access this while signed into GitHub. Choose
+`coh-reference-assets.zip`; the similarly named `partial-invalid` file is an
+incomplete historical upload and must not be used. This work does not publish
+the release, upload another broad asset set, or embed GitHub credentials in the app.
+
+The importer first copies and checks complete archive bytes, then validates ZIP
+metadata and each file's exact path, length and SHA-256. Text is installed first
+so its canonical directory spelling is preserved for 1,009 binary asset paths
+that share directories with text. Source database configuration keeps its
+existing precedence. A hosted cross-check requires the assembled inventory to
+match the previously accepted full-data digest, including path spelling.
+
+Extraction occurs in private staging. A single atomic pointer update publishes
+the completed generation; Stop, an invalid archive, insufficient space or an
+interruption cannot replace the prior accepted generation with partial data.
+Abandoned work is recovered during the next explicitly started import. Reopening
+the app checks the completed receipt; it does not silently repeat all 173,011
+file hashes or start another import. Future game startup must verify its selected
+inputs and use a separate writable runtime copy for schema, caches and credentials.
+
+## Device check after hosted qualification
+
+1. Keep 0.1.5 and COH Server Test 0.2.0 installed. Install the separate
+   `COH-Atlas-Setup-0.3.0.apk` candidate.
+2. Have the complete reviewed ZIP available through Android Files. The original
+   ZIP is selected directly; do not select a PIGG, a split part, or unzip it first.
+3. Have at least **5 GiB free internal storage after APK installation**. The
+   importer calculates the required space from its actual archives, full data,
+   file-allocation allowance, indexes and reserve. Existing accepted data remains
+   in place during a replacement, so a re-import also needs free working space.
+4. Tap **Import game assets**, select the ZIP, and allow the operation to finish.
+   Progress and Stop remain available in the notification when leaving the app.
+   The operation has a 90-minute limit; no Thor completion-time claim has yet been
+   established. Success must report **173,011 verified files**.
+5. Export that report. Reopen the app and confirm the completed content remains
+   available. During a subsequent import, use Stop and export the stopped report;
+   verify the prior completed content remains available. Then retry the import
+   and export its successful report. App switching and screen locking can be
+   checked during that run.
+
+Each attempt has an immutable support ZIP containing its status, progress,
+device/application identity and pinned import contract. It excludes the asset
+payloads, selected URI and document-provider filename. A failed/stopped attempt
+cannot use an older successful report as its latest result.
+
+This development APK uses an ephemeral CI signing certificate. It does not
+establish a stable release-update identity; a later differently signed candidate
+may require reinstalling and repeating content import.
+
+## Hosted checks and remaining milestone
+
+`.github/workflows/android-atlas-import.yml` runs the Java importer contracts,
+package checks and APK verification. It then downloads the existing reviewed ZIP,
+extracts the four data payloads from the actual signed APK, runs the same importer
+core on a JVM with the full inputs, checks cancelled re-import/recovery, and
+independently rehashes every resulting file against the accepted Atlas inventory.
+APK, signing/payload report and bounded hosted evidence are separate artifacts.
+The raw binary asset ZIP is not uploaded as an Actions artifact.
+
+After this import passes on Thor, the next implementation combines these prepared
+inputs with the qualified runtime, DbServer, MapServer and TestClient in an Android
+Atlas test. That candidate must independently pass create/save/restart/resume,
+Stop with game services active and a fresh rerun, with measured memory/startup and
+complete owned cleanup. Rendering and human controls remain separate work.

@@ -191,6 +191,8 @@ is supplied by this milestone; the device candidate still needs the steps below.
 
 ### Remaining preparation for a physical Atlas candidate
 
+The verified import implementation is the separate [COH Atlas Setup candidate](ANDROID_ASSET_IMPORT.md). Its APK and device import gate must pass before the prepared data is used in an Android game-service test.
+
 With the combined hosted gate accepted:
 
 1. Package the reviewed game assets plus authoritative repository text with
