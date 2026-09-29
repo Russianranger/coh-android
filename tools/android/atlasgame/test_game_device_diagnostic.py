@@ -227,6 +227,150 @@ class VerifiedCopyTests(unittest.TestCase):
             self.assertFalse(value.runtime.exists())
 
 
+class DeviceStartupBudgetTests(unittest.TestCase):
+    """Exercise the actual accepted start_services order using a simulated clock."""
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.clock = 0.0
+        self.listener_at = 12.0
+        self.main_loop_at = 60.0
+        self.cancel_at = None
+        self.exit_at = None
+        self.publication_error = None
+        self.value = object.__new__(guest.DeviceGameDiagnostic)
+        value = self.value
+        value.runtime = Path(temporary.name)
+        value.wine_env = {'WINEPREFIX': '/private/test-wine'}
+        value.loopback_enabled = value.game_listener_enabled = False
+        value.check_fixed_inputs = Mock()
+        value.dispatch_paths, value.dispatch_stages = {}, {'8': 'SQL_KEEPALIVE_QUEUE', '13': 'NM_MONITOR'}
+        value.schema = {'expected_tables': {'ents': ['containerid']}}
+        value.schema_snapshot = Mock(return_value={'table_count': 99})
+        value.sql = Mock(return_value='1')  # Already persisted before restart.
+        value.game = {'dispatch_progress': {'phases': {}}, 'phases': []}
+        value.readiness_count = 0
+        value.services = []
+        value.pg = SimpleNamespace(process=SimpleNamespace(poll=lambda: None))
+        value.ctx = SimpleNamespace(stage=Mock(), passed=Mock(), event=Mock(), check=self.check, deadline=1000)
+        self.launches = []
+        def start_game(label, executable, arguments, **options):
+            child = SimpleNamespace(label=label, overflow=False,
+                process=SimpleNamespace(poll=lambda: 1 if self.exit_at is not None and self.clock >= self.exit_at else None),
+                text=lambda: guest.dbserver.FIXED_INPUTS_ACK + '\n' if executable == 'DbServer.exe' else '')
+            self.launches.append((label, self.clock))
+            value.services.append(child)
+            return child
+        value.start_game = start_game
+        value.map_status = Mock(side_effect=[{'ready': False, 'not_started': True}, {'ready': True}])
+        def dispatch(*args):
+            if self.publication_error:
+                raise self.publication_error
+            return {'loop_count': int(self.clock >= self.main_loop_at), 'stage': 'SQL_KEEPALIVE_QUEUE',
+                    'sequence': 10, 'windows_pid': 32, 'main_thread_id': 36}
+        socket = Mock()
+        socket.connect_ex.side_effect = lambda address: 0 if self.clock >= self.listener_at else 1
+        socket_context = Mock()
+        socket_context.__enter__ = Mock(return_value=socket)
+        socket_context.__exit__ = Mock(return_value=False)
+        for patcher in (
+                patch.object(guest.time, 'monotonic', side_effect=lambda: self.clock),
+                patch.object(guest.time, 'sleep', side_effect=self.sleep),
+                patch.object(guest.game, 'check_game_port'),
+                patch.object(guest.game.socket, 'socket', return_value=socket_context),
+                patch.object(guest.game.hang_evidence, 'read_dispatch_record', side_effect=dispatch),
+                patch.object(guest.game.evidence, 'map_ready_current', side_effect=lambda sample: sample['ready'])):
+            self.addCleanup(patcher.stop)
+            patcher.start()
+
+    def sleep(self, seconds):
+        self.clock += seconds
+
+    def check(self):
+        if self.cancel_at is not None and self.clock >= self.cancel_at:
+            raise guest.base.Cancelled('Stop during DbServer startup')
+        guest.require(self.clock < self.value.ctx.deadline, 'Overall diagnostic deadline exceeded')
+
+    def test_retained_schema_can_precede_legitimate_main_loop_by_more_than_thirty_seconds(self):
+        self.value.start_services('restart')
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver', 'restart-atlas'])
+        self.assertGreaterEqual(self.launches[1][1], 60)
+        self.assertEqual(self.value.game['dispatch_progress']['phases']['restart']['loop_count'], 1)
+        record = self.value.game['device_dbserver_startup']['restart']
+        self.assertEqual(record['budget_seconds'], 600)
+        self.assertLess(record['milestones']['schema_and_listener']['elapsed_since_startup_seconds'], 13)
+        self.assertGreaterEqual(record['milestones']['positive_main_loop']['elapsed_since_startup_seconds'], 60)
+        self.assertIsNone(self.value._dbserver_startup)
+
+    def test_same_causal_sequence_fails_the_original_separate_thirty_second_wait(self):
+        with patch.object(guest.DeviceGameDiagnostic, 'wait', guest.game.GameDiagnostic.wait):
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'main-thread dispatch publication'):
+                self.value.start_services('restart')
+        self.assertGreaterEqual(self.clock, 42)
+        self.assertLess(self.clock, 43)
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver'])
+
+    def test_slow_schema_does_not_allocate_another_six_hundred_seconds_to_dispatch(self):
+        self.listener_at, self.main_loop_at = 590, 620
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'shared DbServer startup budget'):
+            self.value.start_services('restart')
+        self.assertGreaterEqual(self.clock, 600)
+        self.assertLess(self.clock, 601)
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver'])
+        self.assertEqual(self.value.game['device_dbserver_startup']['restart']['milestones']['positive_main_loop']['status'], 'failed')
+        self.assertIsNone(self.value._dbserver_startup)
+
+    def test_zero_loop_count_never_becomes_ready_and_overall_deadline_still_wins(self):
+        self.main_loop_at = 10000
+        self.value.ctx.deadline = 45
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Overall diagnostic deadline'):
+            self.value.start_services('first')
+        self.assertLess(self.clock, 46)
+        self.assertEqual(self.value.game['dispatch_progress']['phases'], {})
+        self.assertEqual([label for label, _ in self.launches], ['first-dbserver'])
+
+    def test_stop_still_aborts_before_atlas(self):
+        # Stop occurs during the same real publication wait, before
+        # fixed-input/listener acceptance can authorize the Atlas launch.
+        self.cancel_at = 20
+        with self.assertRaises(guest.base.Cancelled):
+            self.value.start_services('restart')
+        self.assertEqual(self.value.game['device_dbserver_startup']['restart']['milestones']['positive_main_loop']['status'], 'cancelled')
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver'])
+        self.assertIsNone(self.value._dbserver_startup)
+
+    def test_exited_owned_dbserver_is_not_hidden_by_startup_budget(self):
+        self.exit_at = 20
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Owned game service exited'):
+            self.value.start_services('restart')
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver'])
+
+    def test_malformed_dispatch_is_not_retried_as_pending(self):
+        self.publication_error = guest.base.DiagnosticError('Invalid dispatch identity')
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Invalid dispatch identity'):
+            self.value.start_services('restart')
+        self.assertLess(self.clock, 13)
+        self.assertEqual([label for label, _ in self.launches], ['restart-dbserver'])
+        self.assertIsNone(self.value._dbserver_startup)
+
+    def test_predicate_finishing_after_shared_deadline_cannot_publish_success(self):
+        self.value._dbserver_startup = {'started': 0, 'deadline': 5, 'record': {'milestones': {}}}
+        def late_positive():
+            self.sleep(6)
+            return {'loop_count': 1}
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'shared DbServer startup budget'):
+            self.value.wait(late_positive, 30, 'DbServer main-thread dispatch publication')
+        milestone = self.value._dbserver_startup['record']['milestones']['positive_main_loop']
+        self.assertEqual(milestone['status'], 'failed')
+        self.assertEqual(milestone['elapsed_since_startup_seconds'], 6)
+
+    def test_unrelated_waits_keep_their_original_duration(self):
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Atlas readiness'):
+            self.value.wait(lambda: False, 7, 'Atlas readiness')
+        self.assertGreaterEqual(self.clock, 7)
+        self.assertLess(self.clock, 8)
+
+
 class DeviceOwnershipTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()

@@ -1,12 +1,14 @@
 # City of Heroes Android
 
-**Thor 0.4.0 follow-up:** Atlas startup, character creation and the first committed
-save passed. Restart stopped on a Wine ownership inspection failure; the complete
-device gate remains pending. The targeted 0.4.1 correction is now hosted-qualified
-and ready for one full Thor retry.
-See the [failure receipt](docs/android-evidence/atlas-test-thor-restart-failure-20260929.json).
+**Thor 0.4.1 follow-up:** the ownership correction recovered a denied worker read,
+and service shutdown plus PostgreSQL restart passed with clean final cleanup.
+Fifteen stages passed, including the first committed character save. The next
+stage hit a separate 30-second DbServer startup timeout before the normal
+launcher wait could finish. A targeted 0.4.2 correction is being qualified;
+the complete device gate remains pending. See the
+[failure receipt](docs/android-evidence/atlas-test-thor-dispatch-failure-20260929.json).
 
-**COH Atlas Test 0.4.1 passed hosted qualification.**
+**Previous hosted baseline: COH Atlas Test 0.4.1 passed qualification.**
 The separate [Android server candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md) passed
 exact-APK import and all 18 Atlas Park create/save/restart/resume stages in
 [run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816).
@@ -14,10 +16,10 @@ Both saves committed, the exact character resumed, and all 122 process records
 closed cleanly with zero ownership inspection failures. All 91 candidate checks
 passed; the full import/server check took 32 minutes 49 seconds.
 See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36579726816.json).
-Uninstall only the failed 0.4.0 Atlas Test, install 0.4.1, prepare its runtime and
-import, then run one full test and submit its report before continuing Stop/rerun.
-The host did not reproduce the Android permission race; Thor confirmation is
-still required. Graphical client execution follows later.
+The later Thor run exercised the permission recovery but stopped on the separate
+startup deadline above. Wait for 0.4.2 qualification before one full test/export;
+review that result before continuing Stop/rerun. Graphical client execution
+follows later.
 
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
 verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop

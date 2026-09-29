@@ -34,7 +34,7 @@ final class AtlasGameReports {
             JSONObject report = new JSONObject().put("format", 1).put("run_id", runId)
                     .put("operation", operation).put("status", status).put("message", message)
                     .put("started_epoch_ms", started).put("finished_epoch_ms", System.currentTimeMillis())
-                    .put("app_id", context.getPackageName()).put("app_version", "0.4.1")
+                    .put("app_id", context.getPackageName()).put("app_version", "0.4.2")
                     .put("android_sdk", Build.VERSION.SDK_INT)
                     .put("device", Build.MANUFACTURER + " " + Build.MODEL)
                     .put("content_import_validated", imported)

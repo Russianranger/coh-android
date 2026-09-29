@@ -1,6 +1,29 @@
 # City of Heroes Android handoff
 
-Current checkpoint (2026-09-29, 14:49 UTC): **COH Atlas Test 0.4.1 passed hosted
+Current device checkpoint (2026-09-29, 16:32 UTC): **0.4.1 recovered the ownership
+read race and passed 15 stages, then hit a separate DbServer startup deadline.**
+The first committed save, owned service stop and PostgreSQL restart passed.
+Both restart and final cleanup reported zero inspection failures and zero
+remaining owned processes. Two denied worker-environment reads ended in verified
+disappearance; the app was not cleanup-blocked. The report records a timeout,
+not cancellation. Screen off/on events were recorded during the earlier startup,
+but the full lifecycle/device milestone remains unaccepted.
+
+At restart the retained 5,935-column schema was ready at 16:31:28; this started
+the inherited 30-second dispatch deadline while DbServer was still initializing.
+Its normal minimum 15-second launcher wait began at 16:31:50. The deadline fired
+at 16:31:58.99, before that wait could finish. Pre-cleanup publication was valid
+but still at SQL_KEEPALIVE_QUEUE with loop count zero. The test correctly refused
+to call this ready. The 0.4.2 adapter correction uses one shared 600-second startup
+budget across schema/listener readiness and positive-loop dispatch, retaining
+the existing overall deadline, cancellation, health and readiness predicates.
+Accepted base payloads and Java guards remain unchanged. See the
+[failure receipt](android-evidence/atlas-test-thor-dispatch-failure-20260929.json).
+The correction is being qualified. After it passes hosted checks, uninstall
+only Atlas Test 0.4.1, install 0.4.2, prepare runtime/import and run one full
+Thor test/export before continuing Stop/rerun. Keep earlier accepted apps.
+
+Previous hosted checkpoint (2026-09-29, 14:49 UTC): **COH Atlas Test 0.4.1 passed hosted
 qualification** in [run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816)
 at `6b50467a1b96133acc92a378617ff961733f288c`. All 91 candidate checks, 65 import
 checks and 142 of 143 existing game checks passed (one Windows-only skip).
@@ -15,11 +38,10 @@ report's hosted identity. See the
 The candidate-only scanner correction handles identity-verified worker exit
 during ownership reads and bounded full-read retries; persistent live denial
 still fails. It adds sanitized failure details without changing accepted base
-payloads or Java acceptance guards. Hosted cleanup needed no permission retry,
-so physical confirmation is still required. Next: uninstall only failed Atlas
-Test 0.4.0 (its ephemeral signing key cannot update in place), install 0.4.1,
-set up runtime/import again, then **run one full Thor test and submit the export
-before continuing Stop/rerun**. Keep the accepted 0.1.5/0.2.0/0.3.0 apps installed.
+payloads or Java acceptance guards. Hosted cleanup needed no permission retry;
+the later Thor run above exercised that recovery successfully. Its new startup
+failure supersedes the old 0.4.1 retry instructions. Keep the accepted
+0.1.5/0.2.0/0.3.0 apps installed.
 After the first pass is reviewed, complete Stop during active services and a
 successful rerun with app switching and screen lock/unlock. Graphical client
 work remains later. See the [device procedure](ANDROID_ATLAS_DEVICE_TEST.md).

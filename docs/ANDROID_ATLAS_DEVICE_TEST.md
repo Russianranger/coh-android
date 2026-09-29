@@ -1,30 +1,28 @@
 # Atlas Park server test on Android
 
-**Thor follow-up:** the first 0.4.0 device run passed 13 stages, including Atlas
-startup, character creation and the first committed save. It failed while
-verifying Wine ownership during restart. Final cleanup reported no remaining
-owned processes, but the earlier inspection failure kept the app blocked.
-The user force-stopped that candidate after the failure, probably after exporting
-the report. This was the appropriate recovery and did not cause the recorded
-failure. The corrected 0.4.1 candidate has passed hosted qualification and is
-ready for the focused retry below.
-The exact failed read was not recorded; the fix targets
-an identified worker-exit race and adds bounded diagnostics. See the
-[failure receipt](android-evidence/atlas-test-thor-restart-failure-20260929.json).
+**Thor follow-up:** 0.4.1 passed 15 stages, including the first committed save,
+clean service shutdown and PostgreSQL restart. The ownership correction recovered
+a denied worker read; final cleanup was complete and the app was not blocked.
+It then hit a separate 30-second DbServer readiness deadline while the normal
+launcher wait was still running. No Stop/cancellation was recorded. See the
+[failure receipt](android-evidence/atlas-test-thor-dispatch-failure-20260929.json).
+The older [0.4.0 cleanup failure](android-evidence/atlas-test-thor-restart-failure-20260929.json)
+and subsequent user force-stop remain preserved separately.
 
-The next M3 device candidate is **COH Atlas Test 0.4.1**, application ID
+The next M3 device candidate is **COH Atlas Test 0.4.2**, application ID
 `io.github.russianranger.cohatlastest`. It combines the accepted content importer
 with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-The 0.4.1 correction is hosted-qualified. It adds identity-checked
-recovery when a worker exits during ownership inspection and bounded diagnostic
-context for denied reads. Live unreadable ownership, changed identities and
-unresolved cleanup remain failures. The accepted base runtime and game binaries
-are unchanged.
+The 0.4.2 correction is being qualified. It gives schema/listener readiness and
+positive main-loop dispatch one shared 600-second DbServer startup budget.
+The overall 90-minute guest deadline and all readiness requirements remain.
+The 0.4.1 identity-checked worker-exit recovery and bounded denied-read diagnostics
+remain in place. Live unreadable ownership, changed identities and unresolved
+cleanup still fail. The accepted base runtime and game binaries are unchanged.
 
-The 0.4.1 hosted qualification passed in
+The preceding 0.4.1 hosted qualification passed in
 [run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816)
 at `6b50467a1b96133acc92a378617ff961733f288c`. The exact signed APK's full import
 and 18-stage server test passed in 32 minutes 49 seconds, including 31 minutes
@@ -37,7 +35,8 @@ and [raw evidence](android-evidence/atlas-test-evidence-36579726816.zip).
 All 91 candidate contract tests passed. Independent review verified 25 capture
 files and all 122 closed process records. Restart and final cleanup had zero
 inspection failures and zero remaining owned processes. The host did not need
-permission-read retries; it does not prove the Android-specific recovery.
+permission-read retries; the subsequent failed Thor run exercised that recovery
+but did not complete restart/resume.
 The preceding [0.4.0 hosted baseline](android-evidence/accepted-atlas-test-hosted-36563104664.json)
 remains preserved. Complete physical Android Atlas acceptance is pending the
 new candidate's device reports.
@@ -50,8 +49,8 @@ remain accepted; they do not need repeating in those apps.
 Keep 0.1.5, 0.2.0 and 0.3.0 installed. The new app has a separate private data
 directory. Android does not allow it to read the setup app's imported files, and
 the earlier CI signing certificate is not available for an in-place update.
-The failed 0.4.0 Atlas Test used an ephemeral CI signing key which is no longer
-available. Uninstall only **COH Atlas Test 0.4.0** before installing 0.4.1;
+The failed 0.4.1 Atlas Test used an ephemeral CI signing key which is no longer
+available. Uninstall only **COH Atlas Test 0.4.1** before installing 0.4.2;
 its private runtime/import will need preparing again. Keep the earlier accepted
 diagnostic and setup apps installed.
 Import the same complete `coh-reference-assets.zip` once into this candidate.
@@ -86,8 +85,8 @@ hosted qualification retains its mandatory private network namespace.
 
 ## Device procedure after hosted qualification
 
-1. After uninstalling only the failed 0.4.0 Atlas Test, install
-   `COH-Atlas-Test-0.4.1.apk`.
+1. After uninstalling only the failed 0.4.1 Atlas Test, install
+   `COH-Atlas-Test-0.4.2.apk`.
 2. Choose **Set up runtime** with Internet access. Have at least 8 GiB free
    internal storage before setup; this is a working-space check, not the final
    installed size.
@@ -96,9 +95,9 @@ hosted qualification retains its mandatory private network namespace.
    files. Do not select split ZIP parts or individual PIGGs.
 4. Have at least 6 GiB free **after setup and import**, then choose **Run Atlas
    test**. The test creates its own disposable writable game copy and database.
-   The overall guest deadline is 90 minutes. The failed 0.4.0 Thor run took about
-   44 minutes 37 seconds through its first save and attempted restart, including
-   about 26 minutes 29 seconds for initial server startup. A complete Thor run's
+   The overall guest deadline is 90 minutes. The failed 0.4.1 Thor run took about
+   50 minutes 19 seconds through its first save and attempted restart, including
+   about 24 minutes 10 seconds for initial server startup. A complete Thor run's
    timing is still unknown; allow the active stage to finish.
 5. Export and submit this first complete attempt for review, even if it fails.
    Pause here until its restart/resume and cleanup evidence has been checked.
@@ -143,7 +142,7 @@ The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
 
-The 0.4.1 APK is 355,105,590 bytes, SHA-256
+The preceding 0.4.1 APK was 355,105,590 bytes, SHA-256
 `781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734`.
 The Java acceptance gate was also replayed against this fresh hosted report:
 the untouched host report was rejected as Android evidence, its cleanup was

@@ -38,6 +38,11 @@ GUEST_FILES = ('game_diagnostic.py', 'dbserver_diagnostic.py', 'game_evidence.py
                'game_hang_evidence.py', 'game_device_diagnostic.py')
 COPY_BLOCK = 1024 * 1024
 RUNTIME_RESERVE_BYTES = 2 * 1024**3
+DBSERVER_STARTUP_SECONDS = 600
+DBSERVER_STARTUP_WAITS = {
+    'DbServer schema and local listener': 'schema_and_listener',
+    'DbServer main-thread dispatch publication': 'positive_main_loop',
+}
 
 
 def checked_file(path, limit):
@@ -423,6 +428,55 @@ class DeviceGameDiagnostic(game.GameDiagnostic):
         self.ctx.report['imported_content'] = imported
         self.ctx.report['device_adapter'] = adapter
         self.ctx.memory_sampler = WineMemorySampler(self)
+
+    def start_services(self, label):
+        """One DbServer startup budget includes both SQL and dispatch readiness.
+
+        On restart the retained SQL columns already exist when dbNetInit opens
+        the listener, before DbServer finishes its ODBC/schema work and minimum
+        launcher wait. The accepted positive-loop predicate remains necessary;
+        it shares the original 600-second startup budget instead of beginning
+        a separate 30-second countdown at that early SQL observation.
+        """
+        require(getattr(self, '_dbserver_startup', None) is None, 'Nested DbServer service startup refused')
+        started = time.monotonic()
+        record = {'scope': 'service_startup_entry_through_positive_main_loop',
+                  'budget_seconds': DBSERVER_STARTUP_SECONDS, 'milestones': {}}
+        self.game.setdefault('device_dbserver_startup', {})[label] = record
+        self._dbserver_startup = {
+            'started': started, 'deadline': min(self.ctx.deadline, started + DBSERVER_STARTUP_SECONDS),
+            'record': record}
+        try:
+            return super().start_services(label)
+        finally:
+            self._dbserver_startup = None
+
+    def wait(self, predicate, seconds, label, **options):
+        startup = getattr(self, '_dbserver_startup', None)
+        if startup is None or label not in DBSERVER_STARTUP_WAITS:
+            return super().wait(predicate, seconds, label, **options)
+        deadline = startup['deadline']
+        remaining = deadline - time.monotonic()
+        milestone = {'status': 'waiting'}
+        startup['record']['milestones'][DBSERVER_STARTUP_WAITS[label]] = milestone
+        def within_startup_budget():
+            require(time.monotonic() < deadline, 'Timed out waiting for ' + label + ' within shared DbServer startup budget')
+            result = predicate()
+            require(time.monotonic() < deadline, 'Timed out waiting for ' + label + ' within shared DbServer startup budget')
+            return result
+        try:
+            require(remaining > 0, 'Timed out waiting for ' + label + ' within shared DbServer startup budget')
+            result = super().wait(within_startup_budget, remaining, label, **options)
+            milestone['status'] = 'passed'
+            return result
+        except base.Cancelled:
+            milestone['status'] = 'cancelled'
+            raise
+        except Exception:
+            milestone['status'] = 'failed'
+            raise
+        finally:
+            milestone['elapsed_since_startup_seconds'] = round(time.monotonic() - startup['started'], 3)
 
     def prepare_runtime(self):
         self.ctx.stage('game_private_runtime')
