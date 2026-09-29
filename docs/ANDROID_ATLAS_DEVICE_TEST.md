@@ -6,8 +6,18 @@ with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-Implementation is undergoing hosted qualification. Do not classify physical
-Android Atlas execution as accepted until this candidate produces device reports.
+Hosted qualification passed in
+[run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)
+at `4a8534b46ec024ca8f97bcbdc689f5fe23746a69`. The exact signed APK's full import
+and 18-stage server test passed in 32 minutes 28 seconds, including 31 minutes
+32 seconds of guest execution. Both committed saves, same-cluster restart,
+exact-name resume, all captures and owned cleanup passed. The downloaded APK,
+all 30 packaged payloads and all 12 compiled source identities were checked
+against the build receipt. See the
+[acceptance receipt](android-evidence/accepted-atlas-test-hosted-36563104664.json)
+and [raw evidence](android-evidence/atlas-test-evidence-36563104664.zip).
+Physical Android Atlas execution remains pending until this candidate produces
+device reports.
 The [0.3.0 content import/Stop/retry](ANDROID_ASSET_IMPORT.md#accepted-thor-importstopretry)
 and [0.2.0 DbServer tests](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results)
 remain accepted; they do not need repeating in those apps.
@@ -58,8 +68,10 @@ hosted qualification retains its mandatory private network namespace.
    files. Do not select split ZIP parts or individual PIGGs.
 4. Have at least 6 GiB free **after setup and import**, then choose **Run Atlas
    test**. The test creates its own disposable writable game copy and database.
-   The overall guest deadline is 90 minutes. The earlier hosted run took about
-   31 minutes; physical Thor timing is not yet established.
+   The overall guest deadline is 90 minutes. This candidate's hosted guest run
+   took about 32 minutes; physical Thor timing is not yet established.
+   Initial server startup alone took 17 minutes 35 seconds on the hosted runner;
+   allow the active stage to finish rather than treating a long startup as a hang.
 5. Export the successful report. Start another test, use **Stop** while game
    services are active, wait for cleanup and export that report. Then run a fresh
    successful test and export its report. Switch apps and lock/unlock the screen
@@ -100,6 +112,13 @@ in a private loopback namespace. This establishes hosted qualification only.
 The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
+
+The delivered APK is 355,105,590 bytes, SHA-256
+`826f8c56cabcd597d9558e4d072b0a43922580afcb3ccf75d4e8d1879605a80f`.
+The Java acceptance gate was also replayed against this fresh hosted report:
+the untouched host report was rejected as Android evidence, its cleanup was
+accepted unchanged, and a scratch copy passed after changing only the requested
+platform field. This is validator compatibility evidence, not Android execution.
 
 After device create/save/restart/resume and Stop/rerun pass, the next milestones
 are the graphical client on an Android surface, accelerated rendering, physical

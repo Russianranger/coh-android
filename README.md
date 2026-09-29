@@ -1,9 +1,14 @@
 # City of Heroes Android
 
-The next implementation is the separate [COH Atlas Test 0.4.0 Android server
-candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md), combining verified content with
-the automatic Atlas Park character save/restart/resume test. Hosted qualification
-and its physical Thor results are pending.
+**COH Atlas Test 0.4.0 passed hosted qualification and is ready for Thor testing.**
+The separate [Android server candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md) passed
+exact-APK import and all 18 Atlas Park create/save/restart/resume stages in
+[run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664).
+Both saves committed, the exact character resumed, and all 122 process records
+closed cleanly. The full import/server check took 32 minutes 28 seconds.
+See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36563104664.json).
+Physical Thor server execution, Stop/rerun and lifecycle checks are next;
+graphical client execution follows later.
 
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
 verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop
@@ -14,8 +19,8 @@ The separate
 signed APK verification and complete 173,011-file import, cancellation and recovery
 in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364).
 The downloaded APK and its four data payloads also match their recorded hashes.
-The next implementation is the combined Android Atlas Park game-service test;
-graphical-client execution follows later. Separate screen-lock/app-switching
+The combined Android Atlas Park server candidate above is now ready for testing.
+Separate screen-lock/app-switching
 events are not recorded in the import reports. See the linked instructions and
 [acceptance receipt](docs/android-evidence/accepted-asset-import-hosted-36556279364.json).
 
@@ -30,8 +35,8 @@ with zero remaining owned processes or inspection failures. See the
 [acceptance receipt](docs/android-evidence/accepted-game-listeners-hosted-36510836956.json),
 [raw report](docs/android-evidence/game-listeners-arm64-36510836956.json) and
 [preserved evidence](docs/android-evidence/game-listeners-evidence-36510836956.zip).
-With device import accepted, next comes an Android Atlas runtime with lifecycle
-handling. Keep 0.1.5 and 0.2.0 installed; hosted
+The Android Atlas candidate above adds lifecycle handling. Keep the accepted
+0.1.5, 0.2.0 and 0.3.0 apps installed; hosted
 listener qualification does not establish physical Android Atlas execution.
 
 **The primary M2 device diagnostic and headless client capability gate passed on

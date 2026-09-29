@@ -1,9 +1,21 @@
 # City of Heroes Android handoff
 
-Current implementation: the separate [COH Atlas Test 0.4.0 candidate](ANDROID_ATLAS_DEVICE_TEST.md)
-combines content import with the accepted local server/runtime package and the
-automatic Atlas Park create/save/restart/resume test. Hosted qualification and
-physical device execution remain pending for this new candidate. It uses a new
+Current checkpoint (2026-09-29, 12:18 UTC): the separate
+[COH Atlas Test 0.4.0 candidate](ANDROID_ATLAS_DEVICE_TEST.md) **passed hosted
+qualification** in [run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)
+at `4a8534b46ec024ca8f97bcbdc689f5fe23746a69`. The exact APK passed full import,
+all 18 server stages, two committed saves, same-cluster restart, exact-name
+resume and cleanup of all 122 captured process records. Import plus runtime
+took 1,947.999 seconds. All 77 new contract tests and existing regression gates
+passed (one existing Windows-only test skipped on Linux). The downloaded APK,
+payloads and source identities match their receipts; the current report also
+passed the scratch JVM validator compatibility check without being relabelled
+as device evidence. See the
+[acceptance receipt](android-evidence/accepted-atlas-test-hosted-36563104664.json).
+Next: physical Thor setup/import, success, Stop during active services, then
+success again with app switching and lock/unlock; export all three server reports.
+The candidate combines content import with the accepted local server/runtime
+package and the automatic Atlas Park create/save/restart/resume test. It uses a new
 application ID, so its private content must be imported once; accepted 0.3.0 data
 cannot be read across Android app sandboxes. The unchanged accepted executable
 package is reassembled from run `36510836956`; current wrapper/guest provenance
@@ -20,8 +32,8 @@ are preserved in the [device acceptance receipt](android-evidence/accepted-asset
 No repeat of import/Stop/retry is required. The reports do not separately record
 app switching, screen locking, a reopen, process death or Stop latency; carry
 explicit lifecycle/resource checks into the next combined game-service candidate.
-Next implement Android Atlas Park create/save/restart/resume and Stop/rerun
-using the prepared content and qualified local server runtime. Graphical client
+That combined server candidate is now hosted-qualified above; its physical
+create/save/restart/resume and Stop/rerun checks are next. Graphical client
 execution remains later work. Keep all existing diagnostics installed.
 
 Current continuation (2026-09-29): **COH Atlas Setup 0.3.0 passed hosted
@@ -32,9 +44,9 @@ passed. The complete inventory matches the accepted game data. The downloaded
 APK and all four payloads were independently rehashed against the reports.
 See the [acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json)
 and [candidate/device instructions](ANDROID_ASSET_IMPORT.md).
-Physical Thor import/Stop/retry is now accepted above. Next implement the combined
-Android Atlas Park server test, with explicit app-switching and screen-lock
-checks. This app imports content only; Android game services and graphical
+Physical Thor import/Stop/retry is now accepted above. The new 0.4.0 candidate
+is ready for its server, app-switching and screen-lock device checks. The 0.3.0
+app imports content only; Android Atlas game services and graphical
 gameplay remain unvalidated. Accepted listener and diagnostic evidence below
 remains unchanged. The candidate uses a development/ephemeral signing certificate.
 

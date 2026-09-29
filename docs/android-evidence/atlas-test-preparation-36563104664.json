@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "scope": "android_atlas_device_assets_preparation",
+  "repository_commit": "4a8534b46ec024ca8f97bcbdc689f5fe23746a69",
+  "runtime_manifest_sha256": "79cfcbec75de98ad3725526fe692937c0cb160191e8ff205eecbf5b0b77a38ed",
+  "accepted_base_runtime": {
+    "run_id": 36364550345,
+    "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "manifest_file": "accepted-runtime-manifest.json",
+    "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+  },
+  "atlas_device_bundle": {
+    "format": 1,
+    "package_run_id": 36510836956,
+    "package_repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+    "package_manifest_sha256": "ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a",
+    "package_archive": "game-package.tar.gz",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "schema_acceptance_run_id": 36088012666,
+    "schema_archive": "dbserver-schema.tar.gz",
+    "data_manifest_archive": "game-data-manifest.json.gz",
+    "data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "data_manifest_bytes": 32184737,
+    "data_file_count": 173011,
+    "data_total_bytes": 2977730517,
+    "guest_script": "game_device_diagnostic.py",
+    "guest_scripts": [
+      "game_device_diagnostic.py",
+      "game_diagnostic.py",
+      "game_evidence.py",
+      "game_hang_evidence.py",
+      "dbserver_diagnostic.py"
+    ],
+    "observer_manifest_sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185",
+    "listener_policy": "device",
+    "dbserver_profile": "loopback",
+    "game_listener_profile": "loopback",
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "additional_files": {
+    "GameStackProbe.exe": {
+      "bytes": 121344,
+      "sha256": "e91d231a141c3413684bfea4a3c393b9391f48eee53c68b6b286753e15a28876"
+    },
+    "accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "dbserver-schema.tar.gz": {
+      "bytes": 1139794,
+      "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "game-data-manifest.json.gz": {
+      "bytes": 8232262,
+      "sha256": "6089bc674e4d4d24354b43239eb37598aa728565006bfc68f8ede6645986a52e"
+    },
+    "game-package.tar.gz": {
+      "bytes": 10931035,
+      "sha256": "48a1578b110956b8700bb745c8358102df2d5895f5ae64f17e21cf8d300fa1e1"
+    },
+    "game_device_diagnostic.py": {
+      "bytes": 23558,
+      "sha256": "a156dc957dd0eac71d48ba625aa3533ee9c149269b077471731cc8a57b532ae2"
+    },
+    "game_diagnostic.py": {
+      "bytes": 70922,
+      "sha256": "605ebc439833ac88301ecfa5e0305dc11a1da627166823cbf13878316aa421dd"
+    },
+    "game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "game_hang_evidence.py": {
+      "bytes": 21491,
+      "sha256": "9b8868cc49e5ee718e7706c3801f14b1a5ca90c47b01ff5ca5005ba9f4ef46c7"
+    },
+    "stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    }
+  },
+  "base_file_bytes_preserved": true,
+  "archive_roundtrip_verified": true,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}
