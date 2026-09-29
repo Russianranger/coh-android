@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "host_JVM_Java_gate_compatibility_only",
+  "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "workflow_run_id": 36638344040,
+  "apk_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+  "java_source_sha256": "871a2bbba6dfe497126a4405d9e90370b405c8b9b5d36c48311bd8333458643b",
+  "java_sources": {
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameAcceptance.java": {
+      "bytes": 20028,
+      "sha256": "871a2bbba6dfe497126a4405d9e90370b405c8b9b5d36c48311bd8333458643b"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasMapProgressAcceptance.java": {
+      "bytes": 12320,
+      "sha256": "82a14a9c4d4d887a63d652e2789d0ee19d3e2980f8b78c7bce1117e17fda7956"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameCapturePolicy.java": {
+      "bytes": 1382,
+      "sha256": "da5740fb2b456156cbeea080c75893a097215872af38b214c63699f0b03baeed"
+    }
+  },
+  "test_harness_source": {
+    "path": "tools/android/atlasgame/test_game_acceptance.py",
+    "bytes": 21049,
+    "sha256": "88ab0a4eb5a049db5e6f1915b01a43cb3f11efd382e2521890f9e6db9c94ea0e"
+  },
+  "compiled_harness": {
+    "bytes": 3108,
+    "sha256": "773ff8870b42c50e60ffda3f082f0e5916fb1a78a35786c73357c159d6ca3d79"
+  },
+  "version_name": "0.4.4",
+  "version_code": 5,
+  "runtime_manifest_sha256": "2d0cabd598af74f383d7973429a1d9359d5764fdcb8aba348a5e6bc29cdf43aa",
+  "mapserver_progress_profile": "dispatch_progress_v1",
+  "mapserver_progress_producer": {
+    "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+    "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+    "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+  },
+  "selected_package_run_id": 36630872719,
+  "selected_package_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "selected_package_manifest_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+  "report_sha256": "0e1c737bec94eaefe9caf85ed0277fe7d80e98bf5cf4460a76fccc9cf1d76819",
+  "import_report_sha256": "07224cf80c7216b2ae64ae3049dd32ab630299a17b8de05c8278c99920074f75",
+  "untouched_host_report_rejected": true,
+  "untouched_cleanup_accepted": true,
+  "adapted_report_accepted": true,
+  "original_evidence_unchanged": true,
+  "adapted_fields": [
+    {
+      "field": "execution_platform_requested",
+      "before": "host",
+      "after": "android"
+    }
+  ],
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "warning": "Scratch-only platform adaptation checks Java validator compatibility; it does not establish Android execution."
+}

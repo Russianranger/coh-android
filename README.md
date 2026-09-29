@@ -1,6 +1,41 @@
 # City of Heroes Android
 
-**MapServer diagnostics qualified; 0.4.4 integration is in progress.**
+**COH Atlas Test 0.4.4 passed hosted qualification; one full Thor test/export is next.**
+The exact signed APK in [run 36638344040](https://github.com/Russianranger/coh-android/actions/runs/36638344040)
+at `e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce` passed full import and all 18
+create/save/restart/resume stages in 33 minutes 10.8 seconds. Both protocol saves
+committed, the exact character resumed in the same database cluster, and restart
+and final owned cleanup completed with zero inspection failures and zero remaining
+owned processes. Independent review verified the preserved raw evidence and
+replayed Java acceptance compatibility without relabelling the host as Android.
+See the [0.4.4 acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36638344040.json).
+
+All 149 candidate checks and 65 import checks passed. Of 179 game checks, 172
+passed and seven Windows-only checks were skipped; the qualified MapServer donor
+separately passed all six real native producer checks. The exact APK's 31 payloads,
+14 Java source identities and six guest helpers match their receipts.
+
+The selected `dispatch_progress_v1` profile requires a fresh coherent observation
+with a positive completed-tick count before each startup protocol query, then a coherent
+same-identity after-read, on both first launch and restart. Missing or invalid
+observations cannot reuse cached success. The existing 20-second protocol
+freshness, 30-second observation, shared 600-second DbServer startup budget,
+overall deadline and cancellation remain intact. The narrow 0.4.3 ownership
+correction is retained; live unreadable ownership still fails. Java acceptance
+now checks the selected profile and raw startup evidence, retaining cleanup gates.
+
+This qualifies hosted execution only. Complete physical Thor 0.4.4 acceptance,
+Stop/rerun, lifecycle checks and graphical gameplay remain pending. Because the
+CI signing certificate changed, uninstall only the failed **COH Atlas Test 0.4.2**,
+then install **COH-Atlas-Test-0.4.4.apk**, prepare its private runtime and import the
+complete reviewed ZIP. Keep accepted **0.1.5, 0.2.0 and 0.3.0** installed. Run one
+full Thor test and export its report, even on failure. Hold Stop/rerun and lifecycle
+checks until that report's restart/resume and cleanup evidence is reviewed.
+
+The earlier checkpoints below preserve their original successes and failures.
+Their installation and retry directions are superseded by the 0.4.4 procedure above.
+
+**Qualified MapServer diagnostic donor: run 36630872719.**
 Run `36630872719` passed all six real Windows producer contracts and all eighteen
 ARM64 game stages in 31 minutes 23.5 seconds. Independent review verified both
 committed saves, exact-name resume, 122 closed children and zero ownership
@@ -13,12 +48,14 @@ The successful run also captured a 114.233-second interval inside the first
 `FolderCacheDoCallbacks` call, with one tick started and none completed. Existing
 freshness checks rejected protocol-ready samples aged 23 and 85 seconds. This
 does not prove the cause of earlier uninstrumented failures or repair the folder
-work. The selected 0.4.4 profile will additionally require a freshly validated
-completed tick before accepting current protocol readiness, preserving existing
+work. The qualified 0.4.4 profile additionally requires a freshly validated
+completed tick and the two-phase startup guard described above, preserving
 startup deadlines, 20-second freshness and 30-second observation.
 
-0.4.4 will carry the candidate cleanup correction and these diagnostics. Its
-exact APK still needs qualification. No new physical Thor test is requested yet.
+0.4.4 carries these diagnostics from donor commit
+`003b07bcd98cb100c1505c15670c07d11a240c8f`, separately from its Android
+wrapper and guest-adapter commit. Only the instrumented MapServer is replaced;
+accepted supporting binaries and their original source identities remain exact.
 See the [hosted diagnostic qualification](docs/android-evidence/accepted-mapserver-progress-hosted-36630872719.json).
 
 **0.4.3 remains unqualified after two hosted Atlas heartbeat failures.**
@@ -33,7 +70,8 @@ Identical 0.4.3 retries are stopped. The separately receipted MapServer diagnost
 above now exposes fresh late-startup and main-loop stages while preserving all
 readiness, listener and cleanup checks. Buffered stdout and saved thread contexts
 from these failures do not prove the blocked operation. Do not install 0.4.3 as
-a qualified candidate; no new physical Thor test is requested yet.
+a qualified candidate. The 0.4.4 hosted pass does not establish the root cause or
+repair of either earlier uninstrumented failure.
 See the [attempt 1 review](docs/android-evidence/atlas-test-review-36621227369-attempt1-failed.json),
 [attempt 2 review](docs/android-evidence/atlas-test-review-36621227369-attempt2-failed.json),
 and [observer design](docs/android-evidence/atlas-test-heartbeat-observer-plan-20260929.md).
@@ -47,20 +85,21 @@ Final cleanup subsequently found zero remaining owned processes and closed all
 correctly refused reuse. This run did not reach PostgreSQL restart, the new
 restart startup budget or exact-name resume. No Stop or cancellation was recorded.
 
-The cleanup correction first built in 0.4.3 is retained for the next candidate.
+The cleanup correction first built in 0.4.3 is retained in 0.4.4. The original
+0.4.2 report omits the failed operation, exception and errno; the reproduced
+proc-file exit race is a candidate mechanism, not a proved cause of that run.
 Do not repeat the failed 0.4.2 test; physical restart/resume remains unaccepted.
 See the [device failure review](docs/android-evidence/atlas-test-thor-cleanup-failure-20260929-185717.json).
 
 **Previous hosted checkpoint: COH Atlas Test 0.4.2 passed on attempt 2.**
 The exact signed APK completed import and all 18 create/save/restart/resume stages
 in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
-All 100 candidate checks passed. This qualifies the bounded DbServer startup
-correction for the next Thor test; physical Android acceptance remains pending.
+All 100 candidate checks passed. That checkpoint qualified the bounded
+DbServer startup correction; the subsequent failed Thor run is preserved above.
 Attempt 1's separate Atlas heartbeat failure remains preserved. The unchanged
 repeat passed, but does not establish a repair or root cause for that failure.
 See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36599606621.json)
-and [device procedure](docs/ANDROID_ATLAS_DEVICE_TEST.md). Run one full test and
-export its report before continuing Stop/rerun.
+and the [current 0.4.4 device procedure](docs/ANDROID_ATLAS_DEVICE_TEST.md).
 
 **Thor 0.4.1 follow-up:** the ownership correction recovered a denied worker read,
 and service shutdown plus PostgreSQL restart passed with clean final cleanup.
@@ -79,9 +118,8 @@ closed cleanly with zero ownership inspection failures. All 91 candidate checks
 passed; the full import/server check took 32 minutes 49 seconds.
 See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36579726816.json).
 The later Thor run exercised the permission recovery but stopped on the separate
-startup deadline above. Use hosted-qualified 0.4.2 for one full test/export;
-review that result before continuing Stop/rerun. Graphical client execution
-follows later.
+startup deadline above. Its earlier installation instructions are superseded
+by the current 0.4.4 device procedure. Graphical client execution follows later.
 
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
 verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop
