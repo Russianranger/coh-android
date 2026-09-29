@@ -1,0 +1,173 @@
+{
+  "format": 1,
+  "status": "accepted_thor_asset_import_stop_retry",
+  "accepted_utc": "2026-09-29T11:14:40.006170+00:00",
+  "milestone": "Physical AYN Thor content import, Stop preserving the prior completed generation, and successful fresh retry",
+  "application_id": "io.github.russianranger.cohatlas",
+  "version_name": "0.3.0",
+  "repository_commit": "2f828ca3e626245ea9fd60055745980bc3f32001",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "hosted_acceptance_receipt": "accepted-asset-import-hosted-36556279364.json",
+  "hosted_qualified_apk": {
+    "name": "COH-Atlas-Setup-0.3.0.apk",
+    "bytes": 321041177,
+    "sha256": "df25f33f673988d3b0c1c6fea2c4ae95dd776cbf84505e65ba3889159165e9fb",
+    "signature_verified_by_CI": true,
+    "signer_certificate_sha256": "12c14badba8fb1bbb907ed489a8334c5afb1a37fc5e95659b131c220ee7057b7",
+    "signing": "Development/ephemeral CI certificate; not a stable release/update signing identity",
+    "downloaded_bytes_independently_rehashed": true,
+    "downloaded_payloads_independently_rehashed": true
+  },
+  "installed_apk_bytes_or_signer_independently_measured_on_device": false,
+  "contract_identity": {
+    "bytes": 923,
+    "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+  },
+  "all_three_contracts_exactly_match_hosted_apk": true,
+  "file_count": 173011,
+  "total_bytes": 2977730517,
+  "sequence": [
+    {
+      "archive": "coh-atlas-import-20260929-110926.zip",
+      "bytes": 1760,
+      "sha256": "a75ccba3719b2bfd9f20608ddc4dc7f8ee118419e744850887fb2c10f8f69208",
+      "members": {
+        "atlas-import-report.json": {
+          "bytes": 1347,
+          "sha256": "914b340241905a1e02d010d26fdd9927c2f99b86e015f848a8b16fbb5be8e93c"
+        },
+        "import.log": {
+          "bytes": 305,
+          "sha256": "9e7bbc57778c295dbf527168bc276dd107ced1db6c420dfdee64ff7b958e2819"
+        },
+        "atlas-import.properties": {
+          "bytes": 923,
+          "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+        }
+      },
+      "run_id": "b299b879-57d4-457f-bfa1-bd3209ab0004",
+      "status": "passed",
+      "started_utc": "2026-09-29T11:08:14.667000+00:00",
+      "finished_utc": "2026-09-29T11:09:11.277000+00:00",
+      "elapsed_seconds": 56.61,
+      "progress": {
+        "phase": "Publishing verified content",
+        "files_done": 173011,
+        "total_files": 173011,
+        "bytes_done": 2977730517,
+        "total_bytes": 2977730517
+      },
+      "available_content": {
+        "generation": "generation-c3d2cdd093cd4d6aa3c609a4e43a0e71",
+        "file_count": 173011,
+        "total_bytes": 2977730517,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+        "repository_commit": "2f828ca3e626245ea9fd60055745980bc3f32001",
+        "verified_during_this_attempt": true,
+        "inspection_scope": "All archived file sizes and hashes were checked during this import"
+      }
+    },
+    {
+      "archive": "coh-atlas-import-20260929-111012.zip",
+      "bytes": 1777,
+      "sha256": "410837186ff62ee9e53dcc8c20b0f6fe054405052d347233fb7774262e01dc64",
+      "members": {
+        "atlas-import-report.json": {
+          "bytes": 1401,
+          "sha256": "2b45a31994e5cfa934c92bdf88ff54db77769fb50a266fe9df0b0cce6487441d"
+        },
+        "import.log": {
+          "bytes": 276,
+          "sha256": "66aa56359001940f5256aae5b5023a9ff5591725c68a7d5439963335969b1c95"
+        },
+        "atlas-import.properties": {
+          "bytes": 923,
+          "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+        }
+      },
+      "run_id": "c696cb2b-8ca4-4562-9364-c037f2d779fb",
+      "status": "cancelled",
+      "started_utc": "2026-09-29T11:09:46.701000+00:00",
+      "finished_utc": "2026-09-29T11:09:56.018000+00:00",
+      "elapsed_seconds": 9.317,
+      "progress": {
+        "phase": "Installing verified content",
+        "files_done": 4552,
+        "total_files": 173011,
+        "bytes_done": 86958402,
+        "total_bytes": 2977730517
+      },
+      "available_content": {
+        "generation": "generation-c3d2cdd093cd4d6aa3c609a4e43a0e71",
+        "file_count": 173011,
+        "total_bytes": 2977730517,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+        "repository_commit": "2f828ca3e626245ea9fd60055745980bc3f32001",
+        "verified_during_this_attempt": false,
+        "inspection_scope": "Previously committed import receipt; reopening the app does not rescan all content"
+      }
+    },
+    {
+      "archive": "coh-atlas-import-20260929-111126.zip",
+      "bytes": 1760,
+      "sha256": "0cc433b6b408f370a9f956ab661c620dff0b2f086fb1f27dcb5b239051159773",
+      "members": {
+        "atlas-import-report.json": {
+          "bytes": 1347,
+          "sha256": "879282ef9f7c0c64a9804b810cfca96469531e8e9091610d9d678bb75102c2bd"
+        },
+        "import.log": {
+          "bytes": 305,
+          "sha256": "9e7bbc57778c295dbf527168bc276dd107ced1db6c420dfdee64ff7b958e2819"
+        },
+        "atlas-import.properties": {
+          "bytes": 923,
+          "sha256": "ecd844b0d16f5f7e82441d215c061cc6bf773bbe01f24d260c8312e4305ad287"
+        }
+      },
+      "run_id": "ecb71728-65b2-4921-8c1c-64146edb3ac6",
+      "status": "passed",
+      "started_utc": "2026-09-29T11:10:22.172000+00:00",
+      "finished_utc": "2026-09-29T11:11:23.994000+00:00",
+      "elapsed_seconds": 61.822,
+      "progress": {
+        "phase": "Publishing verified content",
+        "files_done": 173011,
+        "total_files": 173011,
+        "bytes_done": 2977730517,
+        "total_bytes": 2977730517
+      },
+      "available_content": {
+        "generation": "generation-5f1a5283c69d402086ef253c98cd80a4",
+        "file_count": 173011,
+        "total_bytes": 2977730517,
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+        "repository_commit": "2f828ca3e626245ea9fd60055745980bc3f32001",
+        "verified_during_this_attempt": true,
+        "inspection_scope": "All archived file sizes and hashes were checked during this import"
+      }
+    }
+  ],
+  "successful_imports": 2,
+  "intentional_cancellations": 1,
+  "previous_generation_preserved_on_stop": true,
+  "retry_published_distinct_complete_generation": true,
+  "cancelled_attempt_duration_is_not_stop_latency": true,
+  "physical_content_import_validated": true,
+  "physical_stop_and_retry_validated": true,
+  "server_execution_validated": false,
+  "gameplay_validated": false,
+  "user_attestation": "All 3 seemed to be successful",
+  "app_switching_and_screen_lock": "Not separately recorded in these reports or explicitly described by the user; no independent lifecycle-event claim.",
+  "scope_limitations": [
+    "Reports validate complete per-file hash/size verification during both imports; the cancelled attempt reads the prior committed receipt and does not rehash all prior content.",
+    "The review independently checked archive CRCs/hashes, exact hosted import contract, source/data/repository identities, counts, chronological run identities and generation continuity. It did not access the device filesystem or rehash installed APK bytes.",
+    "Physical process-death recovery, separate app-reopen behavior, screen-lock/app-switch events, peak memory and Stop response latency are not measured by these reports.",
+    "Import only: no MapServer, DbServer, game client or rendering was executed by this app."
+  ],
+  "next_gate": "Implement and host-qualify the separate Android Atlas Park game-service candidate using prepared content; then test create/save/restart/resume, Stop, fresh rerun, and explicit lifecycle/resource checks on Thor."
+}

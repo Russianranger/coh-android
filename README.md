@@ -1,12 +1,17 @@
 # City of Heroes Android
 
-**COH Atlas Setup 0.3.0 is ready for its Thor import check.** The separate
+**COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
+verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop
+preserved the first completed generation; retry published a new complete one.
+See the [device acceptance receipt](docs/android-evidence/accepted-asset-import-thor-20260929.json).
+The separate
 [asset-import candidate](docs/ANDROID_ASSET_IMPORT.md) passed all 65 hosted checks,
 signed APK verification and complete 173,011-file import, cancellation and recovery
 in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364).
 The downloaded APK and its four data payloads also match their recorded hashes.
-Physical import/Stop/retry remains pending; game-server and graphical-client
-execution are later device gates. See the linked instructions and
+The next implementation is the combined Android Atlas Park game-service test;
+graphical-client execution follows later. Separate screen-lock/app-switching
+events are not recorded in the import reports. See the linked instructions and
 [acceptance receipt](docs/android-evidence/accepted-asset-import-hosted-36556279364.json).
 
 **Previous hosted runtime milestone: MapServer and TestClient local bindings passed.**
@@ -20,8 +25,8 @@ with zero remaining owned processes or inspection failures. See the
 [acceptance receipt](docs/android-evidence/accepted-game-listeners-hosted-36510836956.json),
 [raw report](docs/android-evidence/game-listeners-arm64-36510836956.json) and
 [preserved evidence](docs/android-evidence/game-listeners-evidence-36510836956.zip).
-The next device steps are the separate import candidate above, then an Android
-Atlas runtime with lifecycle handling. Keep 0.1.5 and 0.2.0 installed; hosted
+With device import accepted, next comes an Android Atlas runtime with lifecycle
+handling. Keep 0.1.5 and 0.2.0 installed; hosted
 listener qualification does not establish physical Android Atlas execution.
 
 **The primary M2 device diagnostic and headless client capability gate passed on

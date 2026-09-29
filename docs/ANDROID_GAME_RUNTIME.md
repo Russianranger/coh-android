@@ -87,8 +87,8 @@ surface, accelerated rendering, or a human-operated client. Those remain
 separate milestones. Keep the accepted 0.1.5 and 0.2.0 device diagnostics installed.
 DbServer local listeners and Stop/rerun are verified on Thor. MapServer/client
 listeners are now verified on the hosted runtime. The separate asset-import APK
-has passed hosted qualification; its physical import check and the combined
-Android Atlas runtime/lifecycle remain next.
+has passed hosted qualification and physical import/Stop/retry on Thor.
+The combined Android Atlas runtime/lifecycle remains next.
 
 ## Accepted loopback DbServer integration
 
@@ -194,18 +194,20 @@ is supplied by this milestone; the device candidate still needs the steps below.
 
 The verified import implementation is the separate [COH Atlas Setup 0.3.0 candidate](ANDROID_ASSET_IMPORT.md).
 Its signed APK and full-data import passed hosted run `36556279364`; physical
-import/Stop/retry must pass before the prepared data is used in an Android
-game-service test.
+import/Stop/retry is now accepted in the
+[2026-09-29 Thor receipt](android-evidence/accepted-asset-import-thor-20260929.json).
 
 With the combined hosted gate accepted:
 
-1. Collect the physical import evidence for the hosted-qualified candidate.
+1. **Complete: physical import/Stop/retry.** Two full imports and a stopped
+   replacement passed on Thor; exact contracts match the hosted candidate.
    The reviewed asset ZIP is 615,541,018 bytes; the combined tree is 173,011
    files / 2,977,730,517 bytes. The app selects the existing ZIP through Android
    Files and supplies authoritative text from its APK. A repository owner can
    download the existing draft-release asset while signed into GitHub; no
-   credentials are embedded in the app. Import, Stop/retry, reopening and
-   background behavior must pass on Thor.
+   credentials are embedded in the app. Separate reopening and background
+   events are not recorded in these import reports; include explicit lifecycle
+   checks in the combined game-service test.
 2. Add a separately identified Android Atlas test, retaining accepted 0.1.5 and 0.2.0.
    Use fresh owned state, foreground-service Stop handling, bounded startup
    deadlines and streamed support exports containing the game, service and hang

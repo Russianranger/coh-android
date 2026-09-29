@@ -1,6 +1,6 @@
 # Verified game-data import for Android
 
-The next device candidate is **COH Atlas Setup 0.3.0**, application ID
+The accepted device importer is **COH Atlas Setup 0.3.0**, application ID
 `io.github.russianranger.cohatlas`. It prepares the exact reviewed base data for
 the next local server test in Atlas Park. It has no server/client executable,
 Wine runtime, native library or network permission. The accepted 0.1.5 and 0.2.0
@@ -12,7 +12,7 @@ at `2f828ca3e626245ea9fd60055745980bc3f32001`: all 65 contract checks,
 signed APK verification and a complete 173,011-file import passed. Every imported
 file was independently rehashed on the runner, matching the accepted full-data
 inventory; cancelled re-import and abandoned-stage recovery also passed.
-Physical Android import is not accepted until device reports are collected.
+Physical Android import/Stop/retry passed on AYN Thor on 2026-09-29, as recorded below.
 This is an import milestone; Android MapServer execution and graphical gameplay
 remain subsequent milestones.
 
@@ -67,7 +67,33 @@ the app checks the completed receipt; it does not silently repeat all 173,011
 file hashes or start another import. Future game startup must verify its selected
 inputs and use a separate writable runtime copy for schema, caches and credentials.
 
-## Device check after hosted qualification
+## Accepted Thor import/Stop/retry
+
+The three supplied reports from Android 13 / SDK 33 match the exact import
+contract embedded in the hosted-qualified APK. Archive integrity, report
+identities, counts, revisions and chronological generation continuity passed
+independent review. See the
+[device acceptance receipt](android-evidence/accepted-asset-import-thor-20260929.json).
+
+| Report | Result | Attempt duration |
+|---|---|---|
+| [110926](android-evidence/coh-atlas-import-20260929-110926.zip) | Passed: 173,011 files / 2,977,730,517 bytes verified | 56.610 seconds |
+| [111012](android-evidence/coh-atlas-import-20260929-111012.zip) | Expected cancellation during extraction; prior completed generation preserved | 9.317 seconds |
+| [111126](android-evidence/coh-atlas-import-20260929-111126.zip) | Passed: full verification repeated; new completed generation published | 61.822 seconds |
+
+The cancelled attempt stopped after 4,552 files / 86,958,402 bytes. Its
+`CancelledException` is the expected Stop outcome. Its available-content receipt
+names the same completed generation as the first run; the final run publishes
+a different complete generation. The 9.317 seconds describes the entire stopped
+attempt, not Stop response latency. Neither successful report contains an error.
+
+The user reports that all three checks appeared successful. App switching,
+screen locking, a separate reopen and process death are not individually
+recorded by these reports; they remain outside this acceptance claim. No repeat
+of the accepted import/Stop/retry sequence is required. Carry explicit lifecycle
+and resource checks into the combined game-service candidate.
+
+## Device check procedure (completed for import/Stop/retry)
 
 1. Keep 0.1.5 and COH Server Test 0.2.0 installed. Install the separate
    `COH-Atlas-Setup-0.3.0.apk` candidate.
@@ -79,8 +105,8 @@ inputs and use a separate writable runtime copy for schema, caches and credentia
    in place during a replacement, so a re-import also needs free working space.
 4. Tap **Import game assets**, select the ZIP, and allow the operation to finish.
    Progress and Stop remain available in the notification when leaving the app.
-   The operation has a 90-minute limit; no Thor completion-time claim has yet been
-   established. Success must report **173,011 verified files**.
+   The operation has a 90-minute limit; the two accepted Thor imports took about
+   57 and 62 seconds. Success must report **173,011 verified files**.
 5. Export that report. Reopen the app and confirm the completed content remains
    available. During a subsequent import, use Stop and export the stopped report;
    verify the prior completed content remains available. Then retry the import
@@ -106,7 +132,7 @@ independently rehashes every resulting file against the accepted Atlas inventory
 APK, signing/payload report and bounded hosted evidence are separate artifacts.
 The raw binary asset ZIP is not uploaded as an Actions artifact.
 
-After this import passes on Thor, the next implementation combines these prepared
+With import/Stop/retry accepted on Thor, the next implementation combines these prepared
 inputs with the qualified runtime, DbServer, MapServer and TestClient in an Android
 Atlas test. That candidate must independently pass create/save/restart/resume,
 Stop with game services active and a fresh rerun, with measured memory/startup and

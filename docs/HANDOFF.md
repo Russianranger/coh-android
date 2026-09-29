@@ -1,5 +1,20 @@
 # City of Heroes Android handoff
 
+Latest device checkpoint (2026-09-29, 11:11 UTC): **COH Atlas Setup 0.3.0 passed
+physical import/Stop/retry on Thor (Android 13 / SDK 33)**. Both full imports
+verified 173,011 files / 2,977,730,517 bytes, taking 56.610 and 61.822 seconds.
+The intervening cancelled import stopped during extraction after 4,552 files
+and retained the first completed generation. Retry published a new complete
+generation. All three raw contracts exactly match hosted-qualified build
+`2f828ca3e626245ea9fd60055745980bc3f32001`. Original report ZIPs and their hashes
+are preserved in the [device acceptance receipt](android-evidence/accepted-asset-import-thor-20260929.json).
+No repeat of import/Stop/retry is required. The reports do not separately record
+app switching, screen locking, a reopen, process death or Stop latency; carry
+explicit lifecycle/resource checks into the next combined game-service candidate.
+Next implement Android Atlas Park create/save/restart/resume and Stop/rerun
+using the prepared content and qualified local server runtime. Graphical client
+execution remains later work. Keep all existing diagnostics installed.
+
 Current continuation (2026-09-29): **COH Atlas Setup 0.3.0 passed hosted
 qualification** in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364)
 at `2f828ca3e626245ea9fd60055745980bc3f32001`. All 65 checks, the signed APK
@@ -8,9 +23,9 @@ passed. The complete inventory matches the accepted game data. The downloaded
 APK and all four payloads were independently rehashed against the reports.
 See the [acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json)
 and [candidate/device instructions](ANDROID_ASSET_IMPORT.md).
-The next required evidence is physical Thor import/Stop/retry, including app
-switching and screen locking. Then implement the combined Android Atlas Park
-server test. This app imports content only; Android game services and graphical
+Physical Thor import/Stop/retry is now accepted above. Next implement the combined
+Android Atlas Park server test, with explicit app-switching and screen-lock
+checks. This app imports content only; Android game services and graphical
 gameplay remain unvalidated. Accepted listener and diagnostic evidence below
 remains unchanged. The candidate uses a development/ephemeral signing certificate.
 
@@ -39,8 +54,8 @@ inspection failures. The
 binds the [raw report](android-evidence/game-listeners-arm64-36510836956.json)
 and [preserved captures](android-evidence/game-listeners-evidence-36510836956.zip).
 
-Verified file-picker import is implemented and hosted-qualified above; next
-collect its physical reports and implement the separate Android Atlas
+Verified file-picker import is implemented and accepted on Thor above; next
+implement the separate Android Atlas
 runtime/lifecycle integration. The hosted namespace remains mandatory;
 the local binding policy does not establish device-wide network isolation.
 Keep installed 0.1.5 and 0.2.0; no repeat of their passed diagnostics is needed,
@@ -54,15 +69,15 @@ against their source receipts, byte hashes and PE metadata. Existing Wine,
 DbServer console/launcher and orphaned Atlas door-point warnings match the
 previous accepted run; no new failure diagnostics were found.
 
-Latest device checkpoint (2026-09-28, 22:28 UTC): **COH Server Test 0.2.0 passed
+Previous device checkpoint (2026-09-28, 22:28 UTC): **COH Server Test 0.2.0 passed
 on Thor**. The [receipt](android-evidence/accepted-dbserver-thor-20260928.json)
 records two complete 28-stage real DbServer passes, a clean cancellation between
 them, exact local listener coverage and complete owned cleanup. App switching
 and screen locking are user-attested; peak memory is unmeasured. The subsequent
 hosted Atlas loopback integration passed in `36493722153`, including both local
 DbServer starts and both committed saves. MapServer/TestClient local bindings
-subsequently passed hosted qualification in `36510836956`. Next comes verified
-asset import and Android Atlas integration.
+subsequently passed hosted qualification in `36510836956`. Asset import has
+since passed on Thor with 0.3.0; Android Atlas integration remains next.
 Physical Atlas execution and rendering remain unvalidated.
 
 Updated: 2026-09-29 (UTC). PostgreSQL controlled persistence, targeted stage1 inspection,
