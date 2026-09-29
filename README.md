@@ -1,10 +1,21 @@
 # City of Heroes Android
 
+**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+The exact signed APK completed import and all 18 create/save/restart/resume stages
+in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
+All 100 candidate checks passed. This qualifies the bounded DbServer startup
+correction for the next Thor test; physical Android acceptance remains pending.
+Attempt 1's separate Atlas heartbeat failure remains preserved. The unchanged
+repeat passed, but does not establish a repair or root cause for that failure.
+See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36599606621.json)
+and [device procedure](docs/ANDROID_ATLAS_DEVICE_TEST.md). Run one full test and
+export its report before continuing Stop/rerun.
+
 **Thor 0.4.1 follow-up:** the ownership correction recovered a denied worker read,
 and service shutdown plus PostgreSQL restart passed with clean final cleanup.
 Fifteen stages passed, including the first committed character save. The next
 stage hit a separate 30-second DbServer startup timeout before the normal
-launcher wait could finish. A targeted 0.4.2 correction is being qualified;
+launcher wait could finish. The targeted 0.4.2 correction is now hosted-qualified above;
 the complete device gate remains pending. See the
 [failure receipt](docs/android-evidence/atlas-test-thor-dispatch-failure-20260929.json).
 
@@ -17,7 +28,7 @@ closed cleanly with zero ownership inspection failures. All 91 candidate checks
 passed; the full import/server check took 32 minutes 49 seconds.
 See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36579726816.json).
 The later Thor run exercised the permission recovery but stopped on the separate
-startup deadline above. Wait for 0.4.2 qualification before one full test/export;
+startup deadline above. Use hosted-qualified 0.4.2 for one full test/export;
 review that result before continuing Stop/rerun. Graphical client execution
 follows later.
 

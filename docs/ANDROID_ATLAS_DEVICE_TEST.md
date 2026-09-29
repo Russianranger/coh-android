@@ -15,7 +15,17 @@ with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-The 0.4.2 correction is being qualified. It gives schema/listener readiness and
+**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+The exact signed APK completed import and all 18 create/save/restart/resume stages
+in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
+All 100 candidate checks passed. This qualifies the bounded DbServer startup
+correction for the next Thor test; physical Android acceptance remains pending.
+Attempt 1's separate Atlas heartbeat failure remains preserved. The unchanged
+repeat passed, but does not establish a repair or root cause for that failure.
+See the [current acceptance receipt](android-evidence/accepted-atlas-test-hosted-36599606621.json)
+and [failed first-attempt review](android-evidence/atlas-test-independent-failure-review-36599606621-attempt1.json).
+
+The correction gives schema/listener readiness and
 positive main-loop dispatch one shared 600-second DbServer startup budget.
 The overall 90-minute guest deadline and all readiness requirements remain.
 The 0.4.1 identity-checked worker-exit recovery and bounded denied-read diagnostics
@@ -141,6 +151,11 @@ in a private loopback namespace. This establishes hosted qualification only.
 The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
+
+The current 0.4.2 APK is 355,109,686 bytes, SHA-256
+`1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07`. Its 30 payloads and 12 Java source identities
+match the exact candidate code and its build receipt. Independent review replayed
+all current hosted evidence and the unchanged Java acceptance gate.
 
 The preceding 0.4.1 APK was 355,105,590 bytes, SHA-256
 `781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734`.

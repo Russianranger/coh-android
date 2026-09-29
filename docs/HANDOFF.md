@@ -1,5 +1,19 @@
 # City of Heroes Android handoff
 
+**COH Atlas Test 0.4.2 passed hosted qualification on attempt 2.**
+The exact signed APK completed import and all 18 create/save/restart/resume stages
+in 32 minutes 11 seconds, with both committed saves and complete owned cleanup.
+All 100 candidate checks passed. This qualifies the bounded DbServer startup
+correction for the next Thor test; physical Android acceptance remains pending.
+Attempt 1's separate Atlas heartbeat failure remains preserved. The unchanged
+repeat passed, but does not establish a repair or root cause for that failure.
+See [run 36599606621, attempt 2](https://github.com/Russianranger/coh-android/actions/runs/36599606621/attempts/2)
+and the [acceptance receipt](android-evidence/accepted-atlas-test-hosted-36599606621.json).
+Candidate code remains `ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5`; subsequent
+commits preserve evidence and update instructions only. Uninstall only Atlas Test
+0.4.1, install 0.4.2, prepare runtime/import, then run one complete Thor test and
+export before continuing Stop/rerun. Keep accepted 0.1.5/0.2.0/0.3.0 installed.
+
 Current device checkpoint (2026-09-29, 16:32 UTC): **0.4.1 recovered the ownership
 read race and passed 15 stages, then hit a separate DbServer startup deadline.**
 The first committed save, owned service stop and PostgreSQL restart passed.
@@ -30,14 +44,24 @@ qualification. The [failed evidence](android-evidence/atlas-test-evidence-365996
 and [partial review](android-evidence/atlas-test-review-36599606621-attempt1-failed.json)
 are preserved. Atlas publishes readiness before its final startup work, and the
 stdout tail can be buffered; these observations do not establish an SG permission
-verification defect. One runtime-only retry of the exact same signed APK and
-unchanged guards is in progress as attempt 2. Do not deliver it before reviewing
-a complete passing report. A repeat pass would not establish a repair of this
-separate failure.
+verification defect. The runtime-only retry of the exact same signed APK and
+unchanged guards passed as attempt 2, as recorded above. That repeat does not
+establish a repair of this separate failure.
 
-The correction is being qualified. After it passes hosted checks, uninstall
+The correction is hosted-qualified. For the next physical check, uninstall
 only Atlas Test 0.4.1, install 0.4.2, prepare runtime/import and run one full
 Thor test/export before continuing Stop/rerun. Keep earlier accepted apps.
+
+For any repeated Atlas heartbeat failure, preserve the existing 20-second
+freshness requirement and 30-second observation. `dbReadyForPlayers` precedes
+late initialization; registration sets the initial age timestamps. Later stats
+come from `dbComm` inside `svrTick`. Unbounded directory/callback draining later
+in that tick is a plausible source of delay, not an established cause. The
+[exact-PDB context review](android-evidence/atlas-test-context-review-36599606621-attempt1.json)
+identifies folder/path/hash words but explicitly cannot prove current execution.
+If this failure repeats, the next diagnostic should add bounded, fresh MapServer
+main-thread stage/tick publication around late startup, `dbComm` and folder
+callbacks. Do not disable callbacks or relax heartbeat checks on this evidence.
 
 Previous hosted checkpoint (2026-09-29, 14:49 UTC): **COH Atlas Test 0.4.1 passed hosted
 qualification** in [run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816)

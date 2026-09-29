@@ -1,0 +1,112 @@
+{
+  "scope": "candidate_stack_words_not_validated_current_stack",
+  "apk_mapserver_sha256": "2a904c848ff34149e027ef0bfbad680979d97af271ad9e2bfe922ec0972f25c3",
+  "mapserver_pdb_sha256": "70a1931a8fe1ac3d8f06e87d473d64b3a6af789fc9068d0b1454de9a3ed8fd96",
+  "pdb_codeview_match": true,
+  "codeview": {
+    "guid": "17cf2755-798f-4970-bce9-9b15c052af9f",
+    "age": 1,
+    "path": "D:\\a\\coh-android\\coh-android\\out\\game-create-source\\out\\build\\vs2026\\bin\\OptDebug\\MapServer.pdb"
+  },
+  "image_base": "0x400000",
+  "public_symbol_count": 46891,
+  "unmapped_symbol_count": 14,
+  "procedure_count": 13605,
+  "selected_symbols": [
+    {
+      "stack_word": "0x840636",
+      "nearest_public_symbol": "__libm_sse2_tan_precise",
+      "symbol_address": "0x8403a0",
+      "offset": 662,
+      "next_public_symbol_address": "0x840820",
+      "containing_procedures": [
+        {
+          "name": "_strupr_s_l_stat",
+          "address": "0x840610",
+          "size": 522,
+          "module": "d:\\os\\obj\\x86fre\\minkernel\\crts\\ucrt\\src\\appcrt\\dll\\mt\\..\\..\\string\\mt\\objfre\\i386\\strupr.obj",
+          "object": "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\ucrt\\x86\\libucrt.lib",
+          "offset": 38
+        }
+      ],
+      "immediately_preceded_by_call": true,
+      "call_destination": "0x846e50",
+      "call_destination_procedures": [
+        "strnlen"
+      ]
+    },
+    {
+      "stack_word": "0x7c1959",
+      "nearest_public_symbol": "_FolderNodeAdd",
+      "symbol_address": "0x7c1570",
+      "offset": 1001,
+      "next_public_symbol_address": "0x7c1ae0",
+      "containing_procedures": [
+        {
+          "name": "FolderNodeAdd",
+          "address": "0x7c1570",
+          "size": 1387,
+          "module": "UtilitiesLib.dir\\OptDebug\\FolderCacheNode.obj",
+          "object": "D:\\a\\coh-android\\coh-android\\out\\game-create-source\\out\\build\\vs2026\\libs\\UtilitiesLib\\OptDebug\\UtilitiesLib.lib",
+          "offset": 1001
+        }
+      ],
+      "immediately_preceded_by_call": true,
+      "call_destination": "0x7c1570",
+      "call_destination_procedures": [
+        "FolderNodeAdd"
+      ]
+    },
+    {
+      "stack_word": "0x7c1969",
+      "nearest_public_symbol": "_FolderNodeAdd",
+      "symbol_address": "0x7c1570",
+      "offset": 1017,
+      "next_public_symbol_address": "0x7c1ae0",
+      "containing_procedures": [
+        {
+          "name": "FolderNodeAdd",
+          "address": "0x7c1570",
+          "size": 1387,
+          "module": "UtilitiesLib.dir\\OptDebug\\FolderCacheNode.obj",
+          "object": "D:\\a\\coh-android\\coh-android\\out\\game-create-source\\out\\build\\vs2026\\libs\\UtilitiesLib\\OptDebug\\UtilitiesLib.lib",
+          "offset": 1017
+        }
+      ],
+      "immediately_preceded_by_call": true,
+      "call_destination": "0x81b360",
+      "call_destination_procedures": [
+        "__security_check_cookie"
+      ]
+    },
+    {
+      "stack_word": "0x74895b",
+      "nearest_public_symbol": "_stashFindIndexByKey",
+      "symbol_address": "0x7487a0",
+      "offset": 443,
+      "next_public_symbol_address": "0x748bf0",
+      "containing_procedures": [
+        {
+          "name": "stashFindIndexByKeyInternal",
+          "address": "0x7488f0",
+          "size": 760,
+          "module": "UtilitiesLib.dir\\OptDebug\\StashTable.obj",
+          "object": "D:\\a\\coh-android\\coh-android\\out\\game-create-source\\out\\build\\vs2026\\libs\\UtilitiesLib\\OptDebug\\UtilitiesLib.lib",
+          "offset": 107
+        }
+      ],
+      "immediately_preceded_by_call": true,
+      "call_destination": "0x7809d0",
+      "call_destination_procedures": [
+        "burtlehash3StashDefault"
+      ]
+    }
+  ],
+  "captured_context_sha256": "e251abc7125e0d6a3a3d8359a5063e08596885b85a27a8fd76991fbcd04efd89",
+  "captured_process_pe_identity_matches": true,
+  "pid": 928,
+  "tid": 932,
+  "captured_eip": "0x7b9c24e9",
+  "captured_path": "object_library/streets/elements/Parked_Cars/Parked_Sport1",
+  "limitation": "Public symbols and exact containing module procedures for captured words; does not establish an active call stack or current FEX/Wine execution point"
+}
