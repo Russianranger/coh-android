@@ -29,13 +29,21 @@ GAME_COMMIT = 'ac4c1f7978be444a893f65f5177641191861d42f'
 BASE_COMMIT = '9dc58f62c58dc4fc5c01288071429bf2aa06d2f4'
 BASE_MANIFEST_SHA256 = 'fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203'
 PACKAGE_SHA256 = 'ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a'
+PACKAGE_RUN_ID = 36510836956
+MAP_PROGRESS_PROFILE = 'dispatch_progress_v1'
+MAP_PROGRESS_RUN_ID = 36630872719
+MAP_PROGRESS_COMMIT = '003b07bcd98cb100c1505c15670c07d11a240c8f'
+MAP_PROGRESS_PACKAGE_SHA256 = 'ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd'
+MAP_PROGRESS_PRODUCER = {'repository_commit': MAP_PROGRESS_COMMIT,
+    'manifest_sha256': 'b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1',
+    'mapserver_sha256': '52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb'}
 SCHEMA_SHA256 = 'b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92'
 DATA_MANIFEST_SHA256 = 'b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4'
 DATA_MANIFEST_BYTES = 32184737
 DATA_COUNT = 173011
 DATA_BYTES = 2977730517
 GUEST_FILES = ('game_diagnostic.py', 'dbserver_diagnostic.py', 'game_evidence.py',
-               'game_hang_evidence.py', 'game_device_diagnostic.py')
+               'game_hang_evidence.py', 'game_device_diagnostic.py', 'game_map_progress.py')
 COPY_BLOCK = 1024 * 1024
 RUNTIME_RESERVE_BYTES = 2 * 1024**3
 DBSERVER_STARTUP_SECONDS = 600
@@ -114,6 +122,19 @@ def import_receipt(generation, contract_sha256):
             'source_generation_unchanged': False}
 
 
+def selected_package_metadata(profile=None):
+    require(profile in (None, MAP_PROGRESS_PROFILE), 'Unknown Android MapServer progress profile')
+    value = {'selected_package_run_id': PACKAGE_RUN_ID,
+             'selected_package_repository_commit': GAME_COMMIT,
+             'selected_package_manifest_sha256': PACKAGE_SHA256}
+    if profile is not None:
+        value.update(selected_package_run_id=MAP_PROGRESS_RUN_ID,
+                     selected_package_repository_commit=MAP_PROGRESS_COMMIT,
+                     selected_package_manifest_sha256=MAP_PROGRESS_PACKAGE_SHA256,
+                     mapserver_progress_profile=profile, mapserver_progress_producer=dict(MAP_PROGRESS_PRODUCER))
+    return value
+
+
 def candidate_metadata(assets):
     accepted = pinned_json(assets / 'accepted-runtime-manifest.json', BASE_MANIFEST_SHA256, 256 * 1024)
     current = dbserver.load_json(checked_file(assets / 'runtime-manifest.json', 1024 * 1024), 1024 * 1024)
@@ -128,6 +149,14 @@ def candidate_metadata(assets):
     for name in set(accepted) - {'files', 'repository_commit', 'scope'}:
         require(dbserver.exact_contract(current.get(name), accepted[name]),
                 'Candidate changed accepted base runtime contract: ' + name)
+    bundle = current.get('atlas_device_bundle', {})
+    selected = selected_package_metadata(bundle.get('mapserver_progress_profile'))
+    expected = {key.removeprefix('selected_'): value for key, value in selected.items()}
+    require(all(dbserver.exact_contract(bundle.get(key), value) for key, value in expected.items())
+            and ('mapserver_progress_producer' in bundle) == ('mapserver_progress_producer' in selected)
+            and isinstance(bundle.get('guest_scripts'), list)
+            and len(bundle['guest_scripts']) == len(GUEST_FILES) and set(bundle['guest_scripts']) == set(GUEST_FILES),
+            'Android selected package or guest inventory contract differs')
     guests = {}
     for name in GUEST_FILES:
         path = checked_file(assets / name, 256 * 1024)
@@ -138,7 +167,26 @@ def candidate_metadata(assets):
         guests[name] = actual
     return {'candidate_repository_commit': current['repository_commit'],
             'accepted_runtime_manifest_sha256': BASE_MANIFEST_SHA256,
-            'accepted_game_repository_commit': GAME_COMMIT, 'guest_source_sha256': guests}
+            'accepted_game_repository_commit': GAME_COMMIT, 'guest_source_sha256': guests, **selected}
+
+
+def validate_selected_package(package, adapter):
+    profile = adapter.get('mapserver_progress_profile')
+    selected = selected_package_metadata(profile)
+    require(all(dbserver.exact_contract(adapter.get(key), value) for key, value in selected.items()),
+            'Android selected package provenance differs')
+    require(package.get('repository_commit') == selected['selected_package_repository_commit']
+            and package.get('source_commit') == SOURCE_COMMIT and package.get('data_commit') == DATA_COMMIT
+            and package.get('dbserver_profile') == package.get('game_listener_profile') == 'loopback'
+            and package.get('postgresql_persistence_fixture') is False
+            and package.get('mapserver_progress_profile') == profile,
+            'Android Atlas requires the selected qualified loopback game package')
+    if profile is not None:
+        contract = game.mapserver_progress_contract(package)
+        require(dbserver.exact_contract(contract['producer'], selected['mapserver_progress_producer']),
+                'Android MapServer progress producer differs from qualified donor')
+    else:
+        require('mapserver_progress' not in package.get('inputs', {}), 'Unexpected Android progress donor')
 
 
 class ManifestDirectory:
@@ -599,17 +647,14 @@ class DeviceGameDiagnostic(game.GameDiagnostic):
         adapter = candidate_metadata(args.assets)
         contract_sha256 = import_contract(args.import_contract, adapter['candidate_repository_commit'])
         imported = import_receipt(args.game_data, contract_sha256)
-        package = pinned_json(args.game_package / 'game-package.json', PACKAGE_SHA256, 8 * 1024 * 1024)
+        package = pinned_json(args.game_package / 'game-package.json',
+                              adapter['selected_package_manifest_sha256'], 8 * 1024 * 1024)
         pinned_json(args.schema / 'schema-manifest.json', SCHEMA_SHA256, 8 * 1024 * 1024)
         checked_file(args.game_data_manifest, DATA_MANIFEST_BYTES)
         require(args.game_data_manifest.stat().st_size == DATA_MANIFEST_BYTES
                 and base.file_hash(args.game_data_manifest) == DATA_MANIFEST_SHA256,
                 'Accepted game data manifest differs')
-        require(package.get('repository_commit') == GAME_COMMIT
-                and package.get('source_commit') == SOURCE_COMMIT and package.get('data_commit') == DATA_COMMIT
-                and package.get('dbserver_profile') == package.get('game_listener_profile') == 'loopback'
-                and package.get('postgresql_persistence_fixture') is False,
-                'Android Atlas requires the accepted loopback game package')
+        validate_selected_package(package, adapter)
         if args.android_metadata is not None:
             context.report['android_context_unverified'] = dbserver.load_json(
                 checked_file(args.android_metadata, 16384), 16384)
@@ -624,6 +669,34 @@ class DeviceGameDiagnostic(game.GameDiagnostic):
         self.ctx.report['imported_content'] = imported
         self.ctx.report['device_adapter'] = adapter
         self.ctx.memory_sampler = WineMemorySampler(self)
+
+    def map_status(self, label, *, allow_missing=False, timeout=25):
+        phase = {'first-ready': 'first', 'restart-ready': 'restart'}.get(label)
+        if phase is None or self.package.get('mapserver_progress_profile') != MAP_PROGRESS_PROFILE:
+            return super().map_status(label, allow_missing=allow_missing, timeout=timeout)
+        # This extra selected-profile guard remains inside the original Atlas
+        # startup loop and deadline. A fresh failed read never reuses a cache.
+        require(self.map_progress_phase == phase, 'MapServer startup progress phase differs')
+        proof = self.game.setdefault('mapserver_startup', {
+            'profile': MAP_PROGRESS_PROFILE, 'requires_completed_tick_before_protocol': True, 'phases': {}})
+        prior = proof['phases'].get(phase, {})
+        attempt = {'attempts': prior.get('attempts', 0) + 1, 'status': 'waiting',
+                   'before': self.sample_map_progress('startup-tick-before:' + label, force=True),
+                   'after': None, 'protocol': None}
+        proof['phases'][phase] = attempt
+        before = attempt['before']
+        if not before or not before.get('available') or before['tick_completed'] <= 0:
+            return {'ready': False}
+        sample = super().map_status(label, allow_missing=allow_missing, timeout=timeout)
+        attempt['protocol'] = sample
+        after = self.sample_map_progress('startup-tick-after:' + label, force=True)
+        attempt['after'] = after
+        if not after or not after.get('available') or after['tick_completed'] <= 0:
+            return {'ready': False}
+        game.map_progress_module().compare_records(after, before)
+        if game.evidence.map_ready_current(sample):
+            attempt['status'] = 'passed'
+        return sample
 
     def start_services(self, label):
         """One DbServer startup budget includes both SQL and dispatch readiness.

@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path, PurePosixPath
 import platform
@@ -178,7 +179,109 @@ def make_command(*, work, assets, package, generation, schema, data_manifest, im
                       '--import-contract', '/opt/coh-import-contract.properties', '--listener-policy', 'device']
 
 
-def validate_adapter_report(report, *, candidate_commit, runtime, import_report):
+def install_apk_guest_scripts(assets, work, runtime):
+    """Replace every seeded helper with its declared, hash-bound APK payload."""
+    sources = {}
+    for name in assets_builder.GUEST_SCRIPTS:
+        source = regular_input(assets / name)
+        record = runtime['files'].get(name, {})
+        require(record.get('sha256') == digest(source) and record.get('bytes') == source.stat().st_size,
+                'APK guest helper is missing or differs from declared payload: ' + name)
+        sources[name] = source
+    scripts = {}
+    for name, source in sources.items():
+        target = work / 'm3-tools' / name
+        shutil.copyfile(source, target)
+        scripts[name] = digest(target)
+        require(scripts[name] == runtime['files'][name]['sha256'], 'APK guest changed while staging: ' + name)
+    require({path.name for path in (work / 'm3-tools').glob('*.py')} == set(assets_builder.GUEST_SCRIPTS),
+            'Hosted adapter retained an undeclared checkout helper')
+    return scripts
+
+
+def validate_startup_progress(game_report, producer):
+    """Require the device-only completed-tick guard alongside protocol readiness."""
+    game.validate_mapserver_progress(game_report, {
+        'mapserver_progress_profile': game.MAPSERVER_PROGRESS_PROFILE,
+        'mapserver_progress_producer': producer})
+    import game_map_progress as progress
+    proof = game_report.get('mapserver_startup', {})
+    require(proof.get('profile') == game.MAPSERVER_PROGRESS_PROFILE
+            and proof.get('requires_completed_tick_before_protocol') is True
+            and set(proof.get('phases', {})) == {'first', 'restart'},
+            'Device MapServer completed-tick startup proof differs')
+    for phase in ('first', 'restart'):
+        item = proof['phases'][phase]
+        require(item.get('status') == 'passed' and type(item.get('attempts')) is int and item['attempts'] > 0,
+                'Device MapServer startup guard did not pass: ' + phase)
+        records = []
+        phase_history = game_report['mapserver_progress']['phases'][phase]
+        count = phase_history['sample_count']
+        expected_ordinals = (list(range(1, count + 1)) if count <= progress.HISTORY_LIMIT else
+            list(range(1, progress.INITIAL_HISTORY + 1))
+            + list(range(count - (progress.HISTORY_LIMIT - progress.INITIAL_HISTORY) + 1, count + 1)))
+        require([sample['sample_number'] for sample in phase_history['samples']] == expected_ordinals
+                and phase_history['dropped_samples'] == max(0, count - progress.HISTORY_LIMIT),
+                'Device MapServer retained history differs from bounded retention policy')
+        retained = {sample['sample_number']: sample for sample in phase_history['samples']}
+        history = [sample for sample in phase_history['samples'] if sample.get('available') is True]
+        for key in ('before', 'after'):
+            sample = item.get(key, {})
+            require(sample.get('available') is True and sample.get('is_success_proof') is False,
+                    'Device MapServer startup record unavailable: ' + phase)
+            ordinal = sample.get('sample_number')
+            require(type(ordinal) is int and 0 < ordinal <= count
+                    and sample.get('reason') == 'startup-tick-' + key + ':' + phase + '-ready',
+                    'Device MapServer startup witness ordinal or reason differs')
+            if ordinal in retained:
+                require(dbhost.exact_contract(sample, retained[ordinal]),
+                        'Device MapServer startup witness differs from retained observation')
+            else:
+                require(count > progress.HISTORY_LIMIT and progress.INITIAL_HISTORY < ordinal
+                        <= count - (progress.HISTORY_LIMIT - progress.INITIAL_HISTORY),
+                        'Device MapServer startup witness was not evicted by bounded retention')
+            try:
+                decoded = progress.decode_record(bytes.fromhex(sample.get('raw_record_hex', '')))
+            except (TypeError, ValueError) as exc:
+                raise RuntimeError('Device MapServer startup raw record differs') from exc
+            require(all(dbhost.exact_contract(sample.get(name), value) for name, value in decoded.items())
+                    and sample['tick_completed'] > 0
+                    and type(sample.get('observed_monotonic')) in (float, int)
+                    and math.isfinite(sample['observed_monotonic'])
+                    and sample.get('freshness') in ('initial', 'advanced', 'unchanged')
+                    and type(sample.get('last_advance_monotonic')) in (float, int)
+                    and math.isfinite(sample['last_advance_monotonic'])
+                    and phase_history['launch_monotonic'] <= sample['last_advance_monotonic'] <= sample['observed_monotonic']
+                    and type(sample.get('unchanged_seconds')) in (float, int)
+                    and math.isfinite(sample['unchanged_seconds']) and sample['unchanged_seconds'] >= 0
+                    and sample['unchanged_seconds'] == round(sample['observed_monotonic'] - sample['last_advance_monotonic'], 3)
+                    and (sample['freshness'] == 'unchanged'
+                         or sample['last_advance_monotonic'] == sample['observed_monotonic'])
+                    and all(dbhost.exact_contract(sample.get(name), history[0][name])
+                            for name in ('windows_pid', 'main_thread_id', 'file_identity'))
+                    and 0 < sample['sequence'] <= history[-1]['sequence']
+                    and game_report['mapserver_progress']['phases'][phase]['launch_monotonic']
+                        <= sample['observed_monotonic'] <= history[-1]['observed_monotonic'],
+                    'Device MapServer startup identity, counters or digest differs')
+            records.append(sample)
+        before, after = records
+        require(before['sample_number'] < after['sample_number'] and after['freshness'] != 'initial'
+                and after['last_advance_monotonic'] >= before['last_advance_monotonic']
+                and (after['sequence'] != before['sequence']
+                     or after['last_advance_monotonic'] == before['last_advance_monotonic']),
+                'Device MapServer startup witness order or advance clock differs')
+        progress.compare_records(after, before)
+        progress.compare_records(history[-1], after)
+        phases = [value for value in game_report.get('phases', []) if value.get('phase') == phase + '_services_ready']
+        sample = item.get('protocol')
+        require(len(phases) == 1 and dbhost.exact_contract(sample, phases[0].get('map'))
+                and game.map_ready(sample)
+                and type(sample.get('monotonic')) in (float, int) and math.isfinite(sample['monotonic'])
+                and before['observed_monotonic'] <= sample.get('monotonic', -1) <= after['observed_monotonic'],
+                'Device MapServer startup protocol association or freshness differs')
+
+
+def validate_adapter_report(report, *, candidate_commit, runtime, import_report, mapserver_progress_profile=None):
     """Bind new adapter provenance alongside the unchanged eighteen-stage proof."""
     require(report.get('listener_policy') == 'device'
             and report.get('android_listener_binding_validated') is False,
@@ -188,13 +291,24 @@ def validate_adapter_report(report, *, candidate_commit, runtime, import_report)
     expected_content.update(private_copy_verified=True, source_generation_unchanged=True)
     require(dbhost.exact_contract(report.get('imported_content'), expected_content),
             'Guest did not preserve and independently verify the exact imported generation')
+    bundle = assets_builder.bundle_contract(mapserver_progress_profile)
+    require(dbhost.exact_contract(runtime.get('atlas_device_bundle'), bundle),
+            'APK selected package bundle differs')
     expected_adapter = {'candidate_repository_commit': candidate_commit,
                         'accepted_runtime_manifest_sha256': dbhost.ACCEPTED_RUNTIME_MANIFEST,
                         'accepted_game_repository_commit': assets_builder.PACKAGE_COMMIT,
+                        'selected_package_run_id': bundle['package_run_id'],
+                        'selected_package_repository_commit': bundle['package_repository_commit'],
+                        'selected_package_manifest_sha256': bundle['package_manifest_sha256'],
                         'guest_source_sha256': {name: runtime['files'][name]['sha256']
                                                 for name in assets_builder.GUEST_SCRIPTS}}
+    if mapserver_progress_profile is not None:
+        expected_adapter.update(mapserver_progress_profile=mapserver_progress_profile,
+                                mapserver_progress_producer=bundle['mapserver_progress_producer'])
     require(dbhost.exact_contract(report.get('device_adapter'), expected_adapter),
             'Guest adapter provenance differs from the exact APK')
+    if mapserver_progress_profile is not None:
+        validate_startup_progress(report.get('game', {}), bundle['mapserver_progress_producer'])
 
 
 def qualify(args):
@@ -218,9 +332,12 @@ def qualify(args):
             'Qualification outputs overlap')
     extracted = extract_apk_assets(apk, inputs_root / 'apk-assets')
     assets = extracted['runtime']
-    runtime = assets_builder.verify_device_metadata(assets)
+    progress_profile = getattr(args, 'mapserver_progress_profile', None)
+    runtime = assets_builder.verify_device_metadata(assets, mapserver_progress_profile=progress_profile)
     require(runtime['repository_commit'] == commit, 'APK runtime candidate commit differs')
-    prepared = assets_builder.extract_device_inputs(assets, inputs_root / 'runtime-inputs')
+    prepared = assets_builder.extract_device_inputs(assets, inputs_root / 'runtime-inputs',
+                                                    mapserver_progress_profile=progress_profile)
+    bundle = assets_builder.bundle_contract(progress_profile)
     contract = package.verify_package(extracted['atlas'], commit, verify_archive=False)
     disk = game.check_paths_and_space(work, evidence, (inputs_root, apk, archive, proot), data_bytes=game.DATA_TOTAL_BYTES)
     for name in ('proot', 'proot-loader'):
@@ -228,9 +345,8 @@ def qualify(args):
         path.chmod(0o755)
     setup = game.prepare_runtime(work, evidence, assets)
     # Replace even the inherited modules with the verified APK bytes.
-    for name in (*assets_builder.GUEST_SCRIPTS, 'GameStackProbe.exe'):
-        shutil.copyfile(assets / name, work / 'm3-tools' / name)
-    setup['guest_script_sha256'] = {name: digest(work / 'm3-tools' / name) for name in assets_builder.GUEST_SCRIPTS}
+    setup['guest_script_sha256'] = install_apk_guest_scripts(assets, work, runtime)
+    shutil.copyfile(assets / 'GameStackProbe.exe', work / 'm3-tools' / 'GameStackProbe.exe')
     shutil.copyfile(assets / 'stack-probe-build.json', evidence / 'stack-probe-build.json')
     started = time.monotonic()
     proof = {'format': 1, 'status': 'running', 'scope': 'exact_APK_import_and_isolated_ARM64_device_adapter',
@@ -248,6 +364,9 @@ def qualify(args):
         inputs = {'format': 1, 'scope': 'host_Atlas_device_adapter_inputs', **expected['inputs'], **setup,
                   'candidate_repository_commit': commit, 'apk': proof['apk'],
                   'accepted_package_run_id': assets_builder.PACKAGE_RUN_ID,
+                  'selected_package_run_id': bundle['package_run_id'],
+                  'selected_package_repository_commit': bundle['package_repository_commit'],
+                  'selected_package_manifest_sha256': bundle['package_manifest_sha256'],
                   'import_contract_sha256': imported['contract_sha256'],
                   'import_receipt_sha256': imported['receipt_sha256'], 'import_generation': generation.name,
                   'disk_preflight': disk, 'runtime_commit': runtime['repository_commit'],
@@ -256,6 +375,9 @@ def qualify(args):
                   'dbserver_profile': 'loopback', 'game_listener_profile': 'loopback',
                   'listener_policy': 'device', 'host_network_namespace_required': True,
                   'android_execution_validated': False, 'gameplay_validated': False}
+        if progress_profile is not None:
+            inputs.update(mapserver_progress_profile=progress_profile,
+                          mapserver_progress_producer=bundle['mapserver_progress_producer'])
         (evidence / 'host-device-inputs.json').write_text(json.dumps(inputs, indent=2) + '\n')
         (work / 'rootfs/opt/coh-game-data' / generation.name).mkdir(mode=0o700)
         (work / 'rootfs/opt/coh-game-data-manifest.json').touch()
@@ -268,10 +390,17 @@ def qualify(args):
         report = game.run_guest(command, environment, work / 'state', evidence,
                                 timeout_seconds=args.timeout_seconds, expected=expected)
         dbhost.validate_network_receipt(game.read_json(evidence / 'network-isolation.json'), network_expected)
-        validate_adapter_report(report, candidate_commit=commit, runtime=runtime, import_report=imported)
+        validate_adapter_report(report, candidate_commit=commit, runtime=runtime, import_report=imported,
+                                mapserver_progress_profile=progress_profile)
         proof.update(status='passed', stages=len(report['stages']), full_game_captures_verified=True,
                      network_namespace_verified=True, imported_generation_verified=True,
-                     accepted_package_run_id=assets_builder.PACKAGE_RUN_ID)
+                     accepted_package_run_id=assets_builder.PACKAGE_RUN_ID,
+                     selected_package_run_id=bundle['package_run_id'],
+                     selected_package_repository_commit=bundle['package_repository_commit'],
+                     selected_package_manifest_sha256=bundle['package_manifest_sha256'])
+        if progress_profile is not None:
+            proof.update(mapserver_progress_profile=progress_profile,
+                         mapserver_progress_producer=bundle['mapserver_progress_producer'])
     except Exception as failure:
         proof.update(status='failed', failure_type=type(failure).__name__, failure=str(failure))
         raise
@@ -288,6 +417,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--timeout-seconds', type=int, default=5400)
+    parser.add_argument('--mapserver-progress-profile', choices=(game.MAPSERVER_PROGRESS_PROFILE,))
     qualify(parser.parse_args())
 
 

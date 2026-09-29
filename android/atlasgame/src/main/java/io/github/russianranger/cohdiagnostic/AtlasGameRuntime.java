@@ -344,7 +344,7 @@ public final class AtlasGameRuntime {
             }
             processExit=process.exitValue();reader.join(2000);check();
             report=json(new File(state,"latest-report.json"),MAX_REPORT);
-            passed=processExit==0&&AtlasGameAcceptance.accepts(jsonValue(report),manifestHash,jsonValue(importEvidence));
+            passed=processExit==0&&AtlasGameAcceptance.accepts(jsonValue(report),manifestHash,jsonValue(importEvidence),jsonValue(manifest.getJSONObject("atlas_device_bundle")));
             if(!passed)throw new IOException("An Atlas Park check failed. Export the latest report for review.");
         } catch(Exception e) {
             failure=e;appError=clean(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage());
@@ -493,7 +493,7 @@ public final class AtlasGameRuntime {
             JSONObject inventory=game.optJSONObject(group[0]);if(inventory==null)continue;
             List<String> members=new ArrayList<>();for(Iterator<String> it=inventory.keys();it.hasNext();)members.add(it.next());Collections.sort(members);
             for(String member:members) {
-                long maximum=captureLimit(group[1],member);JSONObject pin=inventory.getJSONObject(member);
+                long maximum=AtlasGameCapturePolicy.captureLimit(group[1],member);JSONObject pin=inventory.getJSONObject(member);
                 long size=pin.getLong("bytes");String hash=pin.getString("sha256");
                 if(size<0||size>maximum||!hash.matches("[0-9a-f]{64}")||paths.size()>=80||(total+=size)>192L*1024*1024)
                     throw new IOException("Capture inventory exceeds export bounds");
@@ -503,25 +503,12 @@ public final class AtlasGameRuntime {
                 MessageDigest digest=MessageDigest.getInstance("SHA-256");long actual=0;byte[] block=new byte[1024*1024];
                 try(InputStream in=new FileInputStream(source)){int n;while((n=in.read(block))!=-1){actual+=n;if(actual>size)throw new IOException("Capture exceeds declared size");digest.update(block,0,n);}}
                 if(actual!=size||!hex(digest.digest()).equals(hash))throw new IOException("Capture hash differs");
+                if("game-captures".equals(group[1])&&"mapserver-progress.json".equals(member)
+                        &&!jsonValue(json(source,maximum)).equals(jsonValue(game.getJSONObject("mapserver_progress"))))
+                    throw new IOException("MapServer progress capture differs from report");
                 String name=group[1]+"/"+member;pins.put(name,new JSONObject().put("bytes",size).put("sha256",hash));paths.add(source);names.add(name);
             }
         }
     }
-    private static long captureLimit(String group,String name) throws IOException {
-        if("game-captures".equals(group)) {
-            if(name.matches("(first|second)-(ready|result)\\.json"))return 16384;
-            if(name.matches("(first|second)-events\\.jsonl"))return 8L*1024*1024;
-            if(name.matches("(first|second)-console\\.txt"))return 16L*1024*1024;
-            if(name.matches("(first|restart|second)-snapshot\\.json"))return 1024*1024;
-        } else if("game-service-captures".equals(group)) {
-            if(name.matches("(first|restart)-(dbserver|atlas)-stdout\\.txt"))return 6L*1024*1024;
-            if(name.matches("log-(00[1-9]|0[12][0-9]|03[0-2])\\.txt"))return 4L*1024*1024;
-            if("manifest.json".equals(name))return 128*1024;
-        } else if("game-hang-captures".equals(group)) {
-            if("snapshot.json".equals(name))return 1024*1024;
-            if("windows-contexts.jsonl".equals(name))return 384*1024;
-            if("manifest.json".equals(name))return 64*1024;
-        }
-        throw new IOException("Unexpected capture name");
-    }
+
 }

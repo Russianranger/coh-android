@@ -1,5 +1,6 @@
 """Pinned Atlas packaging, unchanged runtime identity and bounded extraction."""
 import contextlib
+import copy
 import gzip
 import hashlib
 import importlib.util
@@ -31,6 +32,153 @@ class AcceptedEvidenceTests(unittest.TestCase):
         self.assertEqual(inputs["game_package_sha256"], prepare.PACKAGE_MANIFEST_SHA256)
         self.assertEqual(prepare.bundle_contract()["package_repository_commit"], prepare.PACKAGE_COMMIT)
         self.assertFalse(prepare.bundle_contract()["android_execution_validated"])
+
+    def test_progress_production_pins_match_separate_preserved_qualification(self):
+        profile = prepare.MAPSERVER_PROGRESS_PROFILE
+        inputs = prepare.accepted_evidence(profile)
+        contract = prepare.bundle_contract(profile)
+        self.assertEqual(inputs["game_package_sha256"], contract["package_manifest_sha256"])
+        self.assertEqual(inputs["repository_commit"], contract["package_repository_commit"])
+        self.assertEqual(inputs["mapserver_progress_producer"], contract["mapserver_progress_producer"])
+        self.assertEqual(inputs["accepted_supporting_donors"]["manifest_sha256"], prepare.PACKAGE_MANIFEST_SHA256)
+
+    def test_progress_profile_has_separate_pins_and_keeps_six_checkout_guests(self):
+        original = prepare.bundle_contract()
+        progress = prepare.bundle_contract(prepare.MAPSERVER_PROGRESS_PROFILE)
+        changed = {"package_run_id", "package_repository_commit", "package_manifest_sha256",
+                   "mapserver_progress_profile", "mapserver_progress_producer"}
+        self.assertEqual({key: value for key, value in original.items() if key not in changed},
+                         {key: value for key, value in progress.items() if key not in changed})
+        self.assertEqual(original["package_run_id"], 36510836956)
+        self.assertEqual(progress["package_run_id"], 36630872719)
+        self.assertEqual(progress["package_repository_commit"], prepare.MAPSERVER_PROGRESS_COMMIT)
+        self.assertEqual(progress["mapserver_progress_producer"], {
+            "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+            "manifest_sha256": prepare.MAPSERVER_PROGRESS_MANIFEST_SHA256,
+            "mapserver_sha256": prepare.MAPSERVER_PROGRESS_BINARY_SHA256})
+        self.assertEqual(len(original["guest_scripts"]), 6)
+        self.assertIn("game_map_progress.py", original["guest_scripts"])
+        self.assertNotIn("mapserver_progress_profile", original)
+        for profile in ("accepted", "unknown", "dispatch_progress_v2", ""):
+            with self.subTest(profile=profile), self.assertRaisesRegex(RuntimeError, "Unknown MapServer progress"):
+                prepare.accepted_evidence(profile)
+
+
+class ProgressEvidenceTests(unittest.TestCase):
+    """Exercise qualification record checks without inventing production acceptance."""
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.evidence = self.root / "docs/android-evidence"
+        self.evidence.mkdir(parents=True)
+        for name in (f"accepted-game-listeners-hosted-{prepare.PACKAGE_RUN_ID}.json",
+                     f"game-listeners-host-inputs-{prepare.PACKAGE_RUN_ID}.json",
+                     f"game-listeners-package-{prepare.PACKAGE_RUN_ID}.json"):
+            shutil.copyfile(prepare.ROOT / "docs/android-evidence" / name, self.evidence / name)
+        self.contract = prepare.bundle_contract(prepare.MAPSERVER_PROGRESS_PROFILE)
+        self.package = self.evidence / f"mapserver-progress-package-{prepare.MAPSERVER_PROGRESS_RUN_ID}.json"
+        self.inputs = self.evidence / f"mapserver-progress-host-inputs-{prepare.MAPSERVER_PROGRESS_RUN_ID}.json"
+        self.accepted = self.evidence / f"accepted-mapserver-progress-hosted-{prepare.MAPSERVER_PROGRESS_RUN_ID}.json"
+        manifest = {"format": 1, "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+                    "mapserver_progress_profile": prepare.MAPSERVER_PROGRESS_PROFILE,
+                    "files": {"MapServer.exe": {"sha256": prepare.MAPSERVER_PROGRESS_BINARY_SHA256}},
+                    "inputs": {"mapserver_progress": {
+                        "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+                        "manifest_sha256": prepare.MAPSERVER_PROGRESS_MANIFEST_SHA256}}}
+        package_sha = write_json(self.package, manifest)
+        self.input_value = {
+            "format": 1,
+            "runtime_manifest_sha256": prepare.host.ACCEPTED_RUNTIME_MANIFEST,
+            "game_package_sha256": package_sha, "schema_manifest_sha256": prepare.SCHEMA_MANIFEST_SHA256,
+            "game_data_manifest_sha256": prepare.DATA_MANIFEST_SHA256,
+            "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+            "runtime_commit": prepare.host.ACCEPTED_RUNTIME_COMMIT,
+            "mapserver_progress_profile": prepare.MAPSERVER_PROGRESS_PROFILE,
+            "mapserver_progress_producer": self.contract["mapserver_progress_producer"],
+            "binary_sha256": {"MapServer.exe": prepare.MAPSERVER_PROGRESS_BINARY_SHA256},
+            "accepted_supporting_donors": {"run_id": prepare.PACKAGE_RUN_ID,
+                "repository_commit": prepare.PACKAGE_COMMIT, "manifest_sha256": prepare.PACKAGE_MANIFEST_SHA256}}
+        self.record = {"format": 1, "status": "accepted_hosted_mapserver_progress", "workflow_conclusion": "success",
+                       "run_id": prepare.MAPSERVER_PROGRESS_RUN_ID, "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+                       "android_execution_validated": False, "gameplay_validated": False,
+                       "native_contracts": {"passed": 6, "skipped": 0},
+                       "arm64": {"stages_passed": 18, "cleanup_complete": True},
+                       "independent_validation": {"status": "passed"},
+                       "mapserver_progress_profile": prepare.MAPSERVER_PROGRESS_PROFILE,
+                       "mapserver_progress_producer": copy.deepcopy(self.contract["mapserver_progress_producer"])}
+        self.write_evidence()
+        stack = contextlib.ExitStack()
+        self.addCleanup(stack.close)
+        stack.enter_context(mock.patch.object(prepare, "ROOT", self.root))
+        stack.enter_context(mock.patch.object(prepare, "MAPSERVER_PROGRESS_PACKAGE_SHA256", package_sha))
+
+    def write_evidence(self):
+        write_json(self.inputs, self.input_value)
+        self.record["inputs"] = copy.deepcopy(self.input_value)
+        self.record["preserved_files"] = {path.name: {"bytes": path.stat().st_size, "sha256": prepare.digest(path)}
+                                           for path in (self.inputs, self.package)}
+        write_json(self.accepted, self.record)
+
+    def verify(self):
+        return prepare.accepted_evidence(prepare.MAPSERVER_PROGRESS_PROFILE)
+
+    def test_new_qualification_requires_complete_pinned_inputs_and_original_support_acceptance(self):
+        self.assertEqual(self.verify(), self.input_value)
+        path = self.evidence / f"accepted-game-listeners-hosted-{prepare.PACKAGE_RUN_ID}.json"
+        old = json.loads(path.read_text())
+        old["status"] = "failed"
+        write_json(path, old)
+        with self.assertRaisesRegex(RuntimeError, "qualification differs"):
+            self.verify()
+
+    def test_failed_unreviewed_or_mismatched_run_does_not_qualify(self):
+        original = copy.deepcopy(self.record)
+        for key, value in (("status", "diagnostic_build_packaged_runtime_unverified"),
+                           ("workflow_conclusion", "failure"), ("run_id", prepare.PACKAGE_RUN_ID),
+                           ("repository_commit", "a" * 40), ("android_execution_validated", True)):
+            with self.subTest(key=key):
+                write_json(self.accepted, dict(original, **{key: value}))
+                with self.assertRaisesRegex(RuntimeError, "qualification differs"):
+                    self.verify()
+
+    def test_rehashed_input_cannot_substitute_producer_or_supporting_donors(self):
+        original = copy.deepcopy(self.input_value)
+        for mutate in (lambda value: value["mapserver_progress_producer"].update(repository_commit="a" * 40),
+                       lambda value: value["mapserver_progress_producer"].update(manifest_sha256="0" * 64),
+                       lambda value: value["binary_sha256"].update({"MapServer.exe": "0" * 64}),
+                       lambda value: value["accepted_supporting_donors"].update(run_id=prepare.MAPSERVER_PROGRESS_RUN_ID)):
+            self.input_value = copy.deepcopy(original)
+            mutate(self.input_value)
+            self.write_evidence()
+            with self.assertRaisesRegex(RuntimeError, "producer or supporting donor pins"):
+                self.verify()
+
+    def test_all_native_arm64_and_independent_review_gates_are_mandatory(self):
+        original = copy.deepcopy(self.record)
+        for mutate in (lambda value: value["native_contracts"].update(passed=5),
+                       lambda value: value["native_contracts"].update(skipped=1),
+                       lambda value: value["arm64"].update(stages_passed=9),
+                       lambda value: value["arm64"].update(cleanup_complete=1),
+                       lambda value: value["independent_validation"].update(status="pending"),
+                       lambda value: value["mapserver_progress_producer"].update(mapserver_sha256="0" * 64),
+                       lambda value: value.update(mapserver_progress_profile=None)):
+            changed = copy.deepcopy(original)
+            mutate(changed)
+            write_json(self.accepted, changed)
+            with self.assertRaisesRegex(RuntimeError, "review gates differ"):
+                self.verify()
+
+    def test_preserved_bytes_and_exact_input_record_cannot_drift(self):
+        self.inputs.write_text(self.inputs.read_text() + " ")
+        with self.assertRaisesRegex(RuntimeError, "Preserved Atlas evidence differs"):
+            self.verify()
+        self.write_evidence()
+        changed = copy.deepcopy(self.record)
+        changed["inputs"].pop("binary_sha256")
+        write_json(self.accepted, changed)
+        with self.assertRaisesRegex(RuntimeError, "Qualified MapServer inputs differ"):
+            self.verify()
 
 
 class PackagingTests(unittest.TestCase):
@@ -65,7 +213,7 @@ class PackagingTests(unittest.TestCase):
         self.patch(prepare, "DATA_MANIFEST_BYTES", self.data_manifest.stat().st_size)
         self.patch(prepare.game, "DATA_FILE_COUNT", 1)
         self.patch(prepare.game, "DATA_TOTAL_BYTES", 1)
-        self.patch(prepare, "accepted_evidence", lambda: {})
+        self.patch(prepare, "accepted_evidence", lambda profile=None: {})
         # Real ZIP/tar/hash/metadata validators run on tiny inventory fixtures.
         # PE dependency interpretation is covered by the donor suite and CI's
         # actual accepted binaries; replace only that external parser boundary.
@@ -92,6 +240,18 @@ class PackagingTests(unittest.TestCase):
         values.update(kwargs)
         return prepare.prepare_device_assets(**values)
 
+    def use_progress_package(self):
+        executable = self.package / "MapServer.exe"
+        executable.write_bytes(b"local unit-test progress executable")
+        producer = {"repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+                    "manifest_sha256": prepare.MAPSERVER_PROGRESS_MANIFEST_SHA256}
+        value = {"format": 1, "repository_commit": prepare.MAPSERVER_PROGRESS_COMMIT,
+                 "mapserver_progress_profile": prepare.MAPSERVER_PROGRESS_PROFILE,
+                 "inputs": {"mapserver_progress": producer},
+                 "files": {name: info for name, info in inventory(self.package).items() if name != "game-package.json"}}
+        self.patch(prepare, "MAPSERVER_PROGRESS_BINARY_SHA256", prepare.digest(executable))
+        self.patch(prepare, "MAPSERVER_PROGRESS_PACKAGE_SHA256", write_json(self.package / "game-package.json", value))
+
     def rewrite_inventory(self, name):
         root = self.root / "candidate"
         path = root / "runtime-manifest.json"
@@ -111,6 +271,59 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(first["atlas_device_bundle"]["package_repository_commit"], prepare.PACKAGE_COMMIT)
         self.assertEqual((self.root / "first/accepted-runtime-manifest.json").read_bytes(),
                          (self.assets / "runtime-manifest.json").read_bytes())
+
+    def test_explicit_progress_roundtrip_keeps_distinct_wrapper_donor_and_old_observer(self):
+        self.use_progress_package()
+        profile = prepare.MAPSERVER_PROGRESS_PROFILE
+        with mock.patch.object(prepare.stack_probe_receipt, "verify", return_value={}) as observer:
+            result = self.assemble(mapserver_progress_profile=profile)
+            self.assertTrue(observer.call_args_list)
+            self.assertTrue(all(call.args[1] == prepare.PACKAGE_COMMIT for call in observer.call_args_list))
+        self.assertEqual(result["repository_commit"], "a" * 40)
+        self.assertEqual(result["atlas_device_bundle"], prepare.bundle_contract(profile))
+        self.assertNotEqual(result["repository_commit"], result["atlas_device_bundle"]["package_repository_commit"])
+        paths = prepare.extract_device_inputs(self.root / "candidate", self.root / "unpacked",
+                                               mapserver_progress_profile=profile)
+        self.assertEqual(inventory(paths["package"]), inventory(self.package))
+        manifest = prepare.verify_device_assets(self.root / "candidate", mapserver_progress_profile=profile)
+        self.assertIn("game_map_progress.py", manifest["files"])
+        self.assertEqual(len(manifest["atlas_device_bundle"]["guest_scripts"]), 6)
+        with self.assertRaisesRegex(RuntimeError, "bundle contract differs"):
+            prepare.verify_device_metadata(self.root / "candidate")
+
+    def test_progress_package_requires_explicit_selection_and_cannot_use_old_package(self):
+        with self.assertRaisesRegex(RuntimeError, "exact qualified Atlas"):
+            self.assemble(mapserver_progress_profile=prepare.MAPSERVER_PROGRESS_PROFILE)
+        self.use_progress_package()
+        with self.assertRaisesRegex(RuntimeError, "exact qualified Atlas"):
+            self.assemble()
+        self.assertFalse((self.root / "candidate").exists())
+        with self.assertRaisesRegex(RuntimeError, "Unknown MapServer progress profile"):
+            self.assemble(mapserver_progress_profile="unknown")
+
+    def test_progress_parser_is_required_and_rehashed_checkout_substitution_fails(self):
+        self.use_progress_package()
+        profile = prepare.MAPSERVER_PROGRESS_PROFILE
+        self.assemble(mapserver_progress_profile=profile)
+        parser = self.root / "candidate/game_map_progress.py"
+        parser.write_text("substituted parser")
+        self.rewrite_inventory(parser.name)
+        with self.assertRaisesRegex(RuntimeError, "guest script differs"):
+            prepare.verify_device_metadata(self.root / "candidate", mapserver_progress_profile=profile)
+        parser.unlink()
+        with self.assertRaisesRegex(RuntimeError, "inventory|Missing"):
+            prepare.verify_device_metadata(self.root / "candidate", mapserver_progress_profile=profile)
+
+    def test_rehashed_progress_bundle_cannot_relabel_the_donor_as_wrapper(self):
+        self.use_progress_package()
+        profile = prepare.MAPSERVER_PROGRESS_PROFILE
+        self.assemble(mapserver_progress_profile=profile)
+        path = self.root / "candidate/runtime-manifest.json"
+        value = json.loads(path.read_text())
+        value["atlas_device_bundle"]["package_repository_commit"] = value["repository_commit"]
+        write_json(path, value)
+        with self.assertRaisesRegex(RuntimeError, "bundle contract differs"):
+            prepare.verify_device_assets(self.root / "candidate", mapserver_progress_profile=profile)
 
     def test_modified_accepted_manifest_is_rejected_before_publication(self):
         with (self.package / "game-package.json").open("a") as stream:

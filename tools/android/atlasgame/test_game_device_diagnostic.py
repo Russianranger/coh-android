@@ -111,6 +111,206 @@ class ImportBoundaryTests(unittest.TestCase):
             guest.DeviceGameDiagnostic(args, context)
 
 
+class SelectedProfileTests(unittest.TestCase):
+    def assets(self, root, profile=None):
+        root.mkdir()
+        original = {'format': 1, 'repository_commit': guest.BASE_COMMIT,
+                    'files': {'base-' + str(index): {'bytes': 1, 'sha256': str(index % 10) * 64}
+                              for index in range(12)}}
+        raw = (json.dumps(original) + '\n').encode()
+        (root / 'accepted-runtime-manifest.json').write_bytes(raw)
+        current = copy.deepcopy(original)
+        current['repository_commit'] = 'f' * 40
+        selection = guest.selected_package_metadata(profile)
+        current['atlas_device_bundle'] = {key.removeprefix('selected_'): value for key, value in selection.items()}
+        current['atlas_device_bundle']['guest_scripts'] = list(guest.GUEST_FILES)
+        for name in guest.GUEST_FILES:
+            payload = ('exact APK ' + name).encode()
+            (root / name).write_bytes(payload)
+            current['files'][name] = {'bytes': len(payload), 'sha256': sha(payload)}
+        (root / 'runtime-manifest.json').write_text(json.dumps(current))
+        return current, sha(raw)
+
+    def test_selected_metadata_hashes_all_six_scripts_and_separates_wrapper_donor_support(self):
+        for profile in (None, guest.MAP_PROGRESS_PROFILE):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary) / 'assets'
+                _, accepted_sha = self.assets(root, profile)
+                with patch.object(guest, 'BASE_MANIFEST_SHA256', accepted_sha):
+                    value = guest.candidate_metadata(root)
+                self.assertEqual(value['candidate_repository_commit'], 'f' * 40)
+                self.assertEqual(value['accepted_game_repository_commit'], guest.GAME_COMMIT)
+                self.assertEqual(value['selected_package_repository_commit'],
+                                 guest.MAP_PROGRESS_COMMIT if profile else guest.GAME_COMMIT)
+                self.assertEqual(set(value['guest_source_sha256']), set(guest.GUEST_FILES))
+                self.assertIn('game_map_progress.py', value['guest_source_sha256'])
+
+    def test_relabelled_donor_wrong_selection_or_missing_changed_helper_fails(self):
+        for mutation in ('donor', 'unknown-profile', 'producer', 'missing', 'changed', 'five-scripts'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary) / 'assets'
+                current, accepted_sha = self.assets(root, guest.MAP_PROGRESS_PROFILE)
+                bundle = current['atlas_device_bundle']
+                if mutation == 'donor':
+                    bundle['package_repository_commit'] = current['repository_commit']
+                elif mutation == 'unknown-profile':
+                    bundle['mapserver_progress_profile'] = 'unknown'
+                elif mutation == 'producer':
+                    bundle['mapserver_progress_producer']['manifest_sha256'] = 'f' * 64
+                elif mutation == 'missing':
+                    (root / 'game_map_progress.py').unlink()
+                elif mutation == 'changed':
+                    (root / 'game_map_progress.py').write_bytes(b'wrong helper')
+                else:
+                    bundle['guest_scripts'].remove('game_map_progress.py')
+                (root / 'runtime-manifest.json').write_text(json.dumps(current))
+                with patch.object(guest, 'BASE_MANIFEST_SHA256', accepted_sha):
+                    with self.assertRaises((guest.base.DiagnosticError, FileNotFoundError)):
+                        guest.candidate_metadata(root)
+
+    def test_package_selection_uses_qualified_composite_identity_not_wrapper_commit(self):
+        package = json.loads((ROOT / 'docs/android-evidence/game-listeners-package-36510836956.json').read_text())
+        guest.validate_selected_package(package, guest.selected_package_metadata())
+        donor = json.loads((ROOT / 'docs/android-evidence/mapserver-progress-donor-36630872719.json').read_text())
+        package['repository_commit'] = guest.MAP_PROGRESS_COMMIT
+        package['mapserver_progress_profile'] = guest.MAP_PROGRESS_PROFILE
+        record = donor['files']['MapServer.exe']
+        package['files']['MapServer.exe'] = {key: value for key, value in record.items() if key != 'size'}
+        package['files']['MapServer.exe']['bytes'] = record['size']
+        package['inputs']['mapserver_progress'] = {'repository_commit': guest.MAP_PROGRESS_COMMIT,
+            'manifest_sha256': guest.MAP_PROGRESS_PRODUCER['manifest_sha256'], 'manifest': donor}
+        adapter = dict(guest.selected_package_metadata(guest.MAP_PROGRESS_PROFILE), candidate_repository_commit='f' * 40)
+        guest.validate_selected_package(package, adapter)
+        for commit in (guest.GAME_COMMIT, adapter['candidate_repository_commit']):
+            with self.subTest(commit=commit), self.assertRaisesRegex(guest.base.DiagnosticError, 'selected qualified'):
+                guest.validate_selected_package(dict(package, repository_commit=commit), adapter)
+        with self.assertRaises(guest.base.DiagnosticError):
+            guest.validate_selected_package(package, guest.selected_package_metadata())
+
+
+class DeviceMapStartupTests(unittest.TestCase):
+    def diagnostic(self, root, phase='first'):
+        progress = guest.game.map_progress_module()
+        value = object.__new__(guest.DeviceGameDiagnostic)
+        value.package = {'mapserver_progress_profile': guest.MAP_PROGRESS_PROFILE}
+        value.runtime = root
+        value.map_progress_contract = {'producer': dict(guest.MAP_PROGRESS_PRODUCER)}
+        value.map_progress_paths, value.map_progress_previous = {}, {}
+        value.map_progress_phase, value.map_progress_next_sample = None, 0
+        value.game = {'mapserver_progress': progress.evidence(guest.MAP_PROGRESS_PRODUCER)}
+        value.begin_map_progress(phase)
+        return value
+
+    def publish(self, path, *, sequence=8, started=1, completed=1, flags=0, pid=41):
+        progress = guest.game.map_progress_module()
+        raw = progress.HEADER.pack(b'COHMAP1\0', 1, 128, pid, 42, sequence, 34,
+                                   started, completed, flags, 37) + bytes(80)
+        path.write_bytes(raw + bytes(4096 - 128))
+
+    def protocol(self, **updates):
+        return {'ready': True, 'map_id': 1, 'address': '127.0.0.1', 'port': 7001,
+                'network_age_seconds': 0, 'stats_age_seconds': 0, 'monotonic': time.monotonic(), **updates}
+
+    def test_zero_completed_tick_prevents_early_protocol_query_and_preserves_outer_wait(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            value = self.diagnostic(Path(temporary))
+            self.publish(value.map_progress_paths['first'], completed=0)
+            with patch.object(guest.game.GameDiagnostic, 'map_status') as query:
+                self.assertEqual(value.map_status('first-ready', timeout=90), {'ready': False})
+            query.assert_not_called()
+            proof = value.game['mapserver_startup']['phases']['first']
+            self.assertEqual(proof['status'], 'waiting')
+            self.assertIsNone(proof['protocol'])
+            value._dbserver_startup = None
+            with patch.object(guest.game.GameDiagnostic, 'wait', return_value=True) as waiting:
+                value.wait(lambda: True, 2400, 'Atlas DB-confirmed readiness')
+            self.assertEqual(waiting.call_args.args[1:], (2400, 'Atlas DB-confirmed readiness'))
+
+    def test_completed_tick_brackets_original_fresh_protocol_and_both_phase_identities(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            value = self.diagnostic(Path(temporary))
+            for phase in ('first', 'restart'):
+                if phase == 'restart':
+                    value.begin_map_progress(phase)
+                self.publish(value.map_progress_paths[phase], pid=41 if phase == 'first' else 61)
+                with patch.object(guest.game.GameDiagnostic, 'map_status', side_effect=lambda *_a, **_k: self.protocol()) as query:
+                    sample = value.map_status(phase + '-ready', timeout=90)
+                query.assert_called_once_with(phase + '-ready', allow_missing=False, timeout=90)
+                proof = value.game['mapserver_startup']['phases'][phase]
+                self.assertEqual(proof['status'], 'passed')
+                self.assertEqual(proof['protocol'], sample)
+                self.assertGreater(proof['before']['tick_completed'], 0)
+                self.assertEqual(proof['before']['file_identity'], proof['after']['file_identity'])
+                self.assertLessEqual(proof['before']['observed_monotonic'], sample['monotonic'])
+                self.assertLessEqual(sample['monotonic'], proof['after']['observed_monotonic'])
+            phases = value.game['mapserver_startup']['phases']
+            self.assertNotEqual(phases['first']['before']['file_identity'], phases['restart']['before']['file_identity'])
+
+    def test_positive_completed_tick_does_not_accept_stale_protocol_or_later_observation_failure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            value = self.diagnostic(Path(temporary))
+            self.publish(value.map_progress_paths['first'])
+            with patch.object(guest.game.GameDiagnostic, 'map_status', side_effect=lambda *_a, **_k: self.protocol(stats_age_seconds=21)):
+                sample = value.map_status('first-ready')
+                self.assertFalse(guest.game.evidence.map_ready_current(sample))
+                self.assertEqual(value.game['mapserver_startup']['phases']['first']['status'], 'waiting')
+                value.ctx = SimpleNamespace(stage=Mock())
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'lost current readiness'):
+                    value.observe_atlas()
+
+    def test_missing_bad_odd_flagged_or_replaced_read_never_falls_back_to_positive_cache(self):
+        for mutation in ('missing', 'malformed', 'odd', 'flagged', 'replaced'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                value = self.diagnostic(root)
+                path = value.map_progress_paths['first']
+                self.publish(path)
+                value.sample_map_progress('prime-cache', force=True)
+                if mutation == 'missing':
+                    path.unlink()
+                elif mutation == 'malformed':
+                    path.write_bytes(b'bad')
+                elif mutation == 'odd':
+                    self.publish(path, sequence=9)
+                elif mutation == 'flagged':
+                    self.publish(path, flags=1)
+                else:
+                    replacement = root / 'replacement.bin'
+                    self.publish(replacement)
+                    os.replace(replacement, path)
+                with patch.object(guest.game.GameDiagnostic, 'map_status') as query:
+                    self.assertEqual(value.map_status('first-ready'), {'ready': False})
+                query.assert_not_called()
+                self.assertGreater(value.map_progress_previous['first']['tick_completed'], 0)
+                self.assertFalse(value.game['mapserver_startup']['phases']['first']['before']['available'])
+
+    def test_replacement_after_protocol_query_cannot_accept_its_fresh_reply(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            value = self.diagnostic(root)
+            path = value.map_progress_paths['first']
+            self.publish(path)
+            def protocol(*_args, **_kwargs):
+                replacement = root / 'replacement.bin'
+                self.publish(replacement, sequence=10)
+                os.replace(replacement, path)
+                return self.protocol()
+            with patch.object(guest.game.GameDiagnostic, 'map_status', side_effect=protocol):
+                self.assertEqual(value.map_status('first-ready'), {'ready': False})
+            proof = value.game['mapserver_startup']['phases']['first']
+            self.assertTrue(guest.game.evidence.map_ready_current(proof['protocol']))
+            self.assertFalse(proof['after']['available'])
+            self.assertEqual(proof['status'], 'waiting')
+
+    def test_default_profile_never_samples_new_startup_guard(self):
+        value = object.__new__(guest.DeviceGameDiagnostic)
+        value.package = {}
+        value.sample_map_progress = Mock(side_effect=AssertionError('default profile must not inspect progress'))
+        with patch.object(guest.game.GameDiagnostic, 'map_status', return_value={'ready': True}) as query:
+            self.assertEqual(value.map_status('first-ready', timeout=90), {'ready': True})
+        query.assert_called_once_with('first-ready', allow_missing=False, timeout=90)
+
+
 class VerifiedCopyTests(unittest.TestCase):
     def test_copy_is_independent_and_every_byte_rehashed(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -800,7 +1000,8 @@ class DeviceOwnershipTests(unittest.TestCase):
             value.wine_owner = guest.base.WineProcessOwner(context)
             value.wine_env = dict(value.wine_owner.environment)
             initial_token.append(value.wine_env[value.wine_owner.ENV_KEY])
-        with patch.object(guest, 'candidate_metadata', return_value={'candidate_repository_commit': 'a' * 40}), \
+        with patch.object(guest, 'candidate_metadata', return_value={
+                'candidate_repository_commit': 'a' * 40, **guest.selected_package_metadata()}), \
                 patch.object(guest, 'import_contract', return_value='b' * 64), \
                 patch.object(guest, 'import_receipt', return_value={}), \
                 patch.object(guest, 'pinned_json', return_value=package), \

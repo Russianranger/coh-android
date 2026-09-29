@@ -20,6 +20,12 @@ final class AtlasGameAcceptance {
     private static final String[] DIGEST_KEYS={"game_package_sha256","game_data_manifest_sha256","schema_manifest_sha256"};
     private static final String[] DIGESTS={"ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a",
         "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4","b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"};
+    private static final String PACKAGE_COMMIT="ac4c1f7978be444a893f65f5177641191861d42f";
+    private static final String PROGRESS_PROFILE="dispatch_progress_v1";
+    private static final String PROGRESS_COMMIT="003b07bcd98cb100c1505c15670c07d11a240c8f";
+    private static final String PROGRESS_PACKAGE="ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd";
+    private static final String PROGRESS_MANIFEST="b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1";
+    private static final String PROGRESS_BINARY="52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb";
 
     static boolean cleanupSafe(Object value) {
         Map<?,?> report=object(value),execution=object(report.get("cleanup_execution"));
@@ -37,8 +43,19 @@ final class AtlasGameAcceptance {
             &&(no(execution.get("wine_started"))||(yes(cleanup.get("wine_prefix_stopped"))&&owned(report.get("wine_process_cleanup"))));
     }
 
-    static boolean accepts(Object value,String runtimeHash,Object imported) {
-        Map<?,?> report=object(value),expectedImport=object(imported);
+    static boolean accepts(Object value,String runtimeHash,Object imported,Object selectedBundle) {
+        Map<?,?> report=object(value),expectedImport=object(imported),bundle=object(selectedBundle);
+        Object profile=bundle.get("mapserver_progress_profile");
+        boolean progress=PROGRESS_PROFILE.equals(profile);
+        if(profile!=null&&!progress)return false;
+        String packageCommit=progress?PROGRESS_COMMIT:PACKAGE_COMMIT,packageHash=progress?PROGRESS_PACKAGE:DIGESTS[0];
+        if(!number(bundle.get("format"),1)||!number(bundle.get("package_run_id"),progress?36630872719L:36510836956L)
+                ||!packageCommit.equals(bundle.get("package_repository_commit"))
+                ||!packageHash.equals(bundle.get("package_manifest_sha256")))return false;
+        Map<?,?> producer=object(bundle.get("mapserver_progress_producer"));
+        if(progress?(producer.size()!=3||!PROGRESS_COMMIT.equals(producer.get("repository_commit"))
+                ||!PROGRESS_MANIFEST.equals(producer.get("manifest_sha256"))||!PROGRESS_BINARY.equals(producer.get("mapserver_sha256")))
+                :bundle.containsKey("mapserver_progress_producer"))return false;
         if(!yes(report.get("passed"))||!"passed".equals(report.get("status"))||!empty(report.get("failures"))
                 ||!"atlas_character_persistence".equals(report.get("diagnostic_mode"))
                 ||!"android".equals(report.get("execution_platform_requested"))||!"device".equals(report.get("listener_policy"))
@@ -47,10 +64,11 @@ final class AtlasGameAcceptance {
                 "hardware_acceleration_validated","interactive_rendering_validated"})if(!no(report.get(key)))return false;
         Map<?,?> inputs=object(report.get("inputs"));
         if(!digest(runtimeHash)||!runtimeHash.equals(inputs.get("runtime_manifest_sha256"))
-                ||!"ac4c1f7978be444a893f65f5177641191861d42f".equals(inputs.get("repository_commit"))
+                ||!packageCommit.equals(inputs.get("repository_commit"))
                 ||!"0b75ade0c801735e10c5798f641948a45cc50488".equals(inputs.get("source_commit"))
                 ||!"d51533ec8e6a9cf726b9214968077a05fdcf19f3".equals(inputs.get("data_commit")))return false;
-        for(int i=0;i<DIGEST_KEYS.length;i++)if(!DIGESTS[i].equals(inputs.get(DIGEST_KEYS[i])))return false;
+        for(int i=0;i<DIGEST_KEYS.length;i++)if(!(i==0?packageHash:DIGESTS[i]).equals(inputs.get(DIGEST_KEYS[i])))return false;
+        if(progress&&!PROGRESS_BINARY.equals(object(inputs.get("binary_sha256")).get("MapServer.exe")))return false;
         Map<?,?> actualImport=object(report.get("imported_content"));
         if(expectedImport.isEmpty()||!yes(actualImport.get("private_copy_verified"))||!yes(actualImport.get("source_generation_unchanged")))return false;
         for(String key:new String[]{"generation","contract_sha256","receipt_sha256"})
@@ -75,6 +93,8 @@ final class AtlasGameAcceptance {
         for(String label:new String[]{"first-dbserver","first-atlas","restart-dbserver","restart-atlas","bridge-create","bridge-resume",
                 "postgres_first_start","postgres_game_restart"})if(Collections.frequency(labels,label)!=1)return false;
         Map<?,?> game=object(report.get("game"));
+        if(progress?!AtlasMapProgressAcceptance.accepts(game,producer):
+                (game.containsKey("mapserver_progress")||game.containsKey("mapserver_startup")))return false;
         if(!"passed".equals(game.get("status"))||!all(game,"created_connected","attributes_unchanged")
                 ||!"loopback".equals(game.get("dbserver_profile"))||!"loopback".equals(game.get("game_listener_profile")))return false;
         List<?> phases=list(game.get("phases"));if(phases.size()!=2)return false;
@@ -127,6 +147,8 @@ final class AtlasGameAcceptance {
         for(String label:new String[]{"first","second"})for(String suffix:new String[]{"ready.json","result.json","events.jsonl","console.txt","snapshot.json"})
             if(!pin(captures.get(label+"-"+suffix)))return false;
         if(!pin(captures.get("restart-snapshot.json")))return false;
+        if(progress&&(!pin(captures.get("mapserver-progress.json"))
+                ||!range(object(captures.get("mapserver-progress.json")).get("bytes"),1,512*1024)))return false;
         for(String label:new String[]{"first-dbserver","first-atlas","restart-dbserver","restart-atlas"})if(!pin(service.get(label+"-stdout.txt")))return false;
         return pin(service.get("manifest.json"));
     }

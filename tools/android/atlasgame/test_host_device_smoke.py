@@ -1,8 +1,10 @@
 """Boundary and provenance checks for the combined APK import/runtime gate."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import stat
+import sys
 import tempfile
 import unittest
 from unittest import mock
@@ -83,10 +85,46 @@ class ApkExtractionTests(unittest.TestCase):
 
 
 class AdapterTests(unittest.TestCase):
-    def sample(self):
+    def progress_game(self, producer, *, evicted=False):
+        sys.path.insert(0, str(host.ROOT / 'android/guest'))
+        import game_map_progress as progress
+        observed = progress.evidence(producer)
+        startup = {'profile': progress.PROFILE, 'requires_completed_tick_before_protocol': True, 'phases': {}}
+        phases = []
+        for index, phase in enumerate(('first', 'restart')):
+            start = 100.0 + index * 1000
+            history = {'path_name': 'coh-map-progress-' + phase + '-fixture.bin', 'process_label': phase + '-atlas',
+                       'launch_monotonic': start, 'fresh_path_before_launch': True,
+                       'sample_count': 0, 'dropped_samples': 0, 'samples': []}
+            observed['phases'][phase] = history
+            before_number, after_number = (18, 19) if evicted else (2, 3)
+            witnesses = {}
+            for number in range(1, 241 if evicted else 5):
+                raw = progress.HEADER.pack(b'COHMAP1\0', 1, 128, 40 + index, 42 + index,
+                    number * 2, 34, number - 1, number - 1, 0, 37) + bytes(80)
+                sample = dict(progress.decode_record(raw), available=True, is_success_proof=False,
+                    file_identity={'device': 1, 'inode': 200 + index}, observed_monotonic=start + number,
+                    last_advance_monotonic=start + number, unchanged_seconds=0,
+                    freshness='initial' if number == 1 else 'advanced', reason='synthetic-test')
+                key = 'before' if number == before_number else 'after' if number == after_number else None
+                if key is not None:
+                    sample['reason'] = 'startup-tick-' + key + ':' + phase + '-ready'
+                progress.append_sample(history, sample)
+                if key is not None:
+                    witnesses[key] = copy.deepcopy(sample)
+            protocol = {'ready': True, 'map_id': 1, 'address': '127.0.0.1', 'port': 7001,
+                        'network_age_seconds': 0, 'stats_age_seconds': 0, 'monotonic': start + before_number + .5}
+            startup['phases'][phase] = {'status': 'passed', 'attempts': 1,
+                **witnesses,
+                'protocol': copy.deepcopy(protocol)}
+            phases.append({'phase': phase + '_services_ready', 'map': protocol})
+        return {'mapserver_progress': observed, 'mapserver_startup': startup, 'phases': phases}
+
+    def sample(self, profile=None):
         imported = {'generation': 'generation-' + 'a' * 32, 'contract_sha256': 'b' * 64,
                     'receipt_sha256': 'c' * 64, 'file_count': 173011, 'total_bytes': 2977730517}
-        runtime = {'files': {name: {'sha256': str(number) * 64}
+        bundle = host.assets_builder.bundle_contract(profile)
+        runtime = {'atlas_device_bundle': bundle, 'files': {name: {'sha256': str(number) * 64}
                             for number, name in enumerate(host.assets_builder.GUEST_SCRIPTS)}}
         report = {'listener_policy': 'device', 'android_listener_binding_validated': False,
                   'imported_content': {**imported, 'private_copy_verified': True,
@@ -94,9 +132,16 @@ class AdapterTests(unittest.TestCase):
                   'device_adapter': {'candidate_repository_commit': 'd' * 40,
                                      'accepted_runtime_manifest_sha256': host.dbhost.ACCEPTED_RUNTIME_MANIFEST,
                                      'accepted_game_repository_commit': host.assets_builder.PACKAGE_COMMIT,
+                                     'selected_package_run_id': bundle['package_run_id'],
+                                     'selected_package_repository_commit': bundle['package_repository_commit'],
+                                     'selected_package_manifest_sha256': bundle['package_manifest_sha256'],
                                      'guest_source_sha256': {name: value['sha256']
                                                               for name, value in runtime['files'].items()}}}
-        return report, {'candidate_commit': 'd' * 40, 'runtime': runtime, 'import_report': imported}
+        if profile is not None:
+            report['device_adapter'].update(mapserver_progress_profile=profile,
+                                            mapserver_progress_producer=bundle['mapserver_progress_producer'])
+        return report, {'candidate_commit': 'd' * 40, 'runtime': runtime, 'import_report': imported,
+                        'mapserver_progress_profile': profile}
 
     def test_complete_provenance_passes(self):
         report, expected = self.sample()
@@ -122,11 +167,114 @@ class AdapterTests(unittest.TestCase):
     def test_new_candidate_cannot_relabel_the_accepted_donor_or_guest(self):
         report, expected = self.sample()
         for key in ('candidate_repository_commit', 'accepted_game_repository_commit',
-                    'accepted_runtime_manifest_sha256', 'guest_source_sha256'):
+                    'accepted_runtime_manifest_sha256', 'guest_source_sha256', 'selected_package_run_id',
+                    'selected_package_repository_commit', 'selected_package_manifest_sha256'):
             with self.subTest(key=key), self.assertRaisesRegex(RuntimeError, 'provenance'):
                 changed = copy.deepcopy(report)
                 changed['device_adapter'][key] = 'substituted'
                 host.validate_adapter_report(changed, **expected)
+
+    def test_progress_profile_keeps_wrapper_donor_and_support_identities_distinct(self):
+        profile = host.game.MAPSERVER_PROGRESS_PROFILE
+        report, expected = self.sample(profile)
+        with mock.patch.object(host, 'validate_startup_progress') as startup:
+            host.validate_adapter_report(report, **expected)
+            startup.assert_called_once_with({}, expected['runtime']['atlas_device_bundle']['mapserver_progress_producer'])
+        adapter = report['device_adapter']
+        self.assertNotEqual(adapter['candidate_repository_commit'], adapter['selected_package_repository_commit'])
+        self.assertNotEqual(adapter['accepted_game_repository_commit'], adapter['selected_package_repository_commit'])
+        for key in ('mapserver_progress_profile', 'mapserver_progress_producer'):
+            changed = copy.deepcopy(report)
+            changed['device_adapter'][key] = 'substituted'
+            with self.assertRaisesRegex(RuntimeError, 'provenance'):
+                host.validate_adapter_report(changed, **expected)
+        expected['mapserver_progress_profile'] = None
+        with self.assertRaisesRegex(RuntimeError, 'bundle'):
+            host.validate_adapter_report(report, **expected)
+
+    def test_startup_guard_requires_raw_positive_ticks_same_identity_and_enclosed_current_protocol(self):
+        profile = host.game.MAPSERVER_PROGRESS_PROFILE
+        report, expected = self.sample(profile)
+        producer = expected['runtime']['atlas_device_bundle']['mapserver_progress_producer']
+        report['game'] = self.progress_game(producer)
+        host.validate_adapter_report(report, **expected)
+        mutations = {
+            'missing-phase': lambda g: g['mapserver_startup']['phases'].pop('restart'),
+            'missing-after': lambda g: g['mapserver_startup']['phases']['first'].update(after={}),
+            'pending': lambda g: g['mapserver_startup']['phases']['first'].update(status='waiting'),
+            'zero-tick': lambda g: g['mapserver_startup']['phases']['first'].update(
+                before=copy.deepcopy(g['mapserver_progress']['phases']['first']['samples'][0])),
+            'digest': lambda g: g['mapserver_startup']['phases']['first']['before'].update(raw_record_sha256='f' * 64),
+            'different-phase': lambda g: g['mapserver_startup']['phases']['first'].update(
+                after=copy.deepcopy(g['mapserver_startup']['phases']['restart']['after'])),
+            'after-outside-history': lambda g: g['mapserver_startup']['phases']['first']['after'].update(observed_monotonic=1000),
+            'query-too-early': lambda g: g['mapserver_startup']['phases']['first']['protocol'].update(monotonic=100),
+            'query-after-read': lambda g: g['mapserver_startup']['phases']['first']['protocol'].update(monotonic=105),
+            'stale-protocol': lambda g: (g['mapserver_startup']['phases']['first']['protocol'].update(stats_age_seconds=21),
+                                        g['phases'][0]['map'].update(stats_age_seconds=21)),
+            'different-protocol': lambda g: g['phases'][0]['map'].update(stats_age_seconds=1),
+            'retained-time-disagrees': lambda g: g['mapserver_startup']['phases']['first']['before'].update(observed_monotonic=102.25),
+            'retained-clock-rewritten': lambda g: g['mapserver_startup']['phases']['first']['before'].update(
+                observed_monotonic=102.25, last_advance_monotonic=102.25),
+            'zero-ordinal': lambda g: g['mapserver_startup']['phases']['first']['before'].update(sample_number=0),
+            'out-of-range-ordinal': lambda g: g['mapserver_startup']['phases']['first']['after'].update(sample_number=5),
+            'inverted-ordinal': lambda g: g['mapserver_startup']['phases']['first']['before'].update(sample_number=4),
+            'wrong-reason': lambda g: g['mapserver_startup']['phases']['first']['before'].update(reason='unrelated'),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label), self.assertRaises(RuntimeError):
+                changed = copy.deepcopy(report['game'])
+                mutate(changed)
+                host.validate_startup_progress(changed, producer)
+
+    def test_startup_proof_remains_valid_after_its_history_entries_are_evicted(self):
+        producer = host.assets_builder.bundle_contract(host.game.MAPSERVER_PROGRESS_PROFILE)['mapserver_progress_producer']
+        game_report = self.progress_game(producer, evicted=True)
+        host.validate_startup_progress(game_report, producer)
+        for phase in ('first', 'restart'):
+            self.assertNotIn(18, [sample['sample_number'] for sample in
+                                 game_report['mapserver_progress']['phases'][phase]['samples']])
+        for field, value in (('unchanged_seconds', 8), ('last_advance_monotonic', float('nan')),
+                             ('freshness', 'unknown'), ('sample_number', 0), ('sample_number', 241),
+                             ('sample_number', 20), ('reason', 'unrelated')):
+            with self.subTest(field=field, value=value), self.assertRaises(RuntimeError):
+                changed = copy.deepcopy(game_report)
+                changed['mapserver_startup']['phases']['first']['before'][field] = value
+                host.validate_startup_progress(changed, producer)
+
+    def test_protected_history_entries_cannot_be_relabelled_as_evicted(self):
+        producer = host.assets_builder.bundle_contract(host.game.MAPSERVER_PROGRESS_PROFILE)['mapserver_progress_producer']
+        game_report = self.progress_game(producer)
+        for phase in ('first', 'restart'):
+            history = game_report['mapserver_progress']['phases'][phase]
+            del history['samples'][1:3]
+            history['dropped_samples'] = 2
+        with self.assertRaisesRegex(RuntimeError, 'retention policy'):
+            host.validate_startup_progress(game_report, producer)
+
+    def test_helper_execution_uses_apk_bytes_and_missing_helper_cannot_fall_back_to_checkout(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            assets, work = root / 'assets', root / 'work'
+            assets.mkdir()
+            (work / 'm3-tools').mkdir(parents=True)
+            runtime = {'files': {}}
+            for name in host.assets_builder.GUEST_SCRIPTS:
+                payload = ('APK source ' + name).encode()
+                (assets / name).write_bytes(payload)
+                runtime['files'][name] = {'bytes': len(payload), 'sha256': hashlib.sha256(payload).hexdigest()}
+            helper = work / 'm3-tools/game_map_progress.py'
+            helper.write_bytes(b'unrelated checkout helper')
+            receipt = host.install_apk_guest_scripts(assets, work, runtime)
+            self.assertEqual(helper.read_bytes(), (assets / helper.name).read_bytes())
+            self.assertEqual(receipt[helper.name], runtime['files'][helper.name]['sha256'])
+            (assets / helper.name).unlink()
+            helper.write_bytes(b'unrelated checkout helper')
+            with self.assertRaisesRegex(RuntimeError, 'Missing or linked input'):
+                host.install_apk_guest_scripts(assets, work, runtime)
+            (assets / helper.name).write_bytes(b'altered APK source')
+            with self.assertRaisesRegex(RuntimeError, 'differs from declared payload'):
+                host.install_apk_guest_scripts(assets, work, runtime)
 
     def test_command_uses_exact_adapter_receipt_manifest_and_device_policy(self):
         root = Path('/fixture')

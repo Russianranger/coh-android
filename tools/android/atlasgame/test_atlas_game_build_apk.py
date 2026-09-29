@@ -18,16 +18,16 @@ class IdentityTests(unittest.TestCase):
     def badging(self, *, app_id=builder.APP_ID, permissions=builder.PERMISSIONS,
                 minimum="minSdkVersion:'26'", native="native-code: 'arm64-v8a'\n"):
         permission_text = "".join("uses-permission: name='" + value + "'\n" for value in sorted(permissions))
-        return (f"package: name='{app_id}' versionCode='4' versionName='0.4.3'\n"
+        return (f"package: name='{app_id}' versionCode='5' versionName='0.4.4'\n"
                 f"{minimum}\ntargetSdkVersion:'35'\n{permission_text}{native}"
                 f"launchable-activity: name='{builder.LAUNCHER}' label='COH Atlas Test' icon=''\n")
 
     def manifest(self, directory, *, app_id=builder.APP_ID, permissions=builder.PERMISSIONS,
-                 shared="", version="0.4.3", sdk="26", launcher=builder.LAUNCHER,
+                 shared="", version="0.4.4", code="5", sdk="26", launcher=builder.LAUNCHER,
                  extraction="true", backup="false", exported="false"):
         permissions_text = "".join(f'<uses-permission android:name="{name}" />' for name in sorted(permissions))
         xml = (f'<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="{app_id}" '
-               f'android:versionCode="4" android:versionName="{version}" {shared}>'
+               f'android:versionCode="{code}" android:versionName="{version}" {shared}>'
                f'<uses-sdk android:minSdkVersion="{sdk}" android:targetSdkVersion="35" />'
                f'{permissions_text}<application android:extractNativeLibs="{extraction}" android:allowBackup="{backup}">'
                f'<activity android:name="{launcher}" android:exported="true">'
@@ -69,7 +69,8 @@ class IdentityTests(unittest.TestCase):
 
     def test_shared_identity_wrong_version_launcher_and_runtime_configuration_rejected(self):
         cases = (({"shared": 'android:sharedUserId="io.github.russianranger.cohatlas"'}, "identity"),
-                 ({"version": "0.3.0"}, "identity"), ({"sdk": "25"}, "SDK"),
+                 ({"version": "0.3.0"}, "identity"), ({"version": "0.4.3", "code": "4"}, "identity"),
+                 ({"code": "4"}, "identity"), ({"sdk": "25"}, "SDK"),
                  ({"launcher": builder.APP_ID + ".OtherActivity"}, "launcher"),
                  ({"extraction": "false"}, "native extraction"), ({"backup": "true"}, "backup"),
                  ({"exported": "true"}, "private special-use"))
@@ -81,6 +82,15 @@ class IdentityTests(unittest.TestCase):
     def test_current_runtime_manifest_accepted(self):
         with tempfile.TemporaryDirectory() as temp:
             builder.verify_source_manifest(self.manifest(Path(temp)))
+
+    def test_actual_source_manifest_and_version_literals_match(self):
+        builder.verify_source_manifest(builder.ROOT / "android/atlasgame/src/main/AndroidManifest.xml")
+        for name in ("AtlasActivity.java", "AtlasGameReports.java"):
+            text = (builder.ROOT / "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest" / name).read_text()
+            self.assertIn(builder.VERSION_NAME, text)
+            self.assertNotIn("0.4.3", text)
+        with self.assertRaisesRegex(ValueError, "package/version"):
+            builder.verify_badging(self.badging().replace("versionCode='5' versionName='0.4.4'", "versionCode='4' versionName='0.4.3'"))
 
     def test_only_exact_repository_commits_accepted(self):
         self.assertEqual(builder.source_commit("a" * 40), "a" * 40)
@@ -114,8 +124,9 @@ class PayloadTests(unittest.TestCase):
             name: builder.file_pin(self.native / "arm64-v8a" / name) for name in builder.NATIVE_NAMES}}
         (self.runtime / "proot-build.json").write_text(json.dumps(self.receipt))
         (self.runtime / "game-package.tar.gz").write_bytes(b"fixture compressed payload")
+        (self.runtime / "game_map_progress.py").write_text("# selected fixture parser\n")
         self.manifest = {"format": 1, "repository_commit": "a" * 40, "files": {
-            name: builder.file_pin(self.runtime / name) for name in ("proot-build.json", "game-package.tar.gz")}}
+            name: builder.file_pin(self.runtime / name) for name in ("proot-build.json", "game-package.tar.gz", "game_map_progress.py")}}
         (self.runtime / "runtime-manifest.json").write_text(json.dumps(self.manifest))
         self.apk = self.directory / "fixture.apk"
         self.members = [(self.assets / name, "assets/atlas/" + name) for name in sorted(builder.IMPORT_NAMES)]
@@ -150,7 +161,7 @@ class PayloadTests(unittest.TestCase):
                 mock.patch.object(builder, "verify_runtime_assets", return_value=self.manifest) as runtime:
             contract, manifest, members, pins = builder.payloads(self.assets, self.runtime, self.native, "a" * 40)
         imports.assert_called_once_with(self.assets, "a" * 40)
-        runtime.assert_called_once_with(self.runtime)
+        runtime.assert_called_once_with(self.runtime, mapserver_progress_profile=None)
         self.assertEqual(contract, self.contract)
         self.assertEqual(manifest, self.manifest)
         self.assertEqual(dict((member, path) for path, member in members), dict((member, path) for path, member in self.members))
@@ -158,8 +169,22 @@ class PayloadTests(unittest.TestCase):
         self.write_apk()
         self.assertEqual(builder.verify_packaged_payloads(self.apk, pins), pins)
 
+    def test_progress_selection_is_explicitly_forwarded(self):
+        with mock.patch.object(builder, "verify_import_package", return_value=self.contract), \
+                mock.patch.object(builder, "verify_runtime_assets", return_value=self.manifest) as runtime:
+            _, _, _, pins = builder.payloads(self.assets, self.runtime, self.native, "a" * 40, "dispatch_progress_v1")
+        runtime.assert_called_once_with(self.runtime, mapserver_progress_profile="dispatch_progress_v1")
+        self.assertIn("assets/runtime/game_map_progress.py", pins)
+        module = mock.Mock()
+        with mock.patch.object(builder, "load_tool", return_value=module):
+            builder.verify_runtime_assets(self.runtime, "dispatch_progress_v1")
+        module.verify_device_assets.assert_called_once_with(self.runtime, mapserver_progress_profile="dispatch_progress_v1")
+        self.write_apk(omit="assets/runtime/game_map_progress.py")
+        with self.assertRaisesRegex(ValueError, "payload set"):
+            builder.verify_packaged_payloads(self.apk, pins)
+
     def test_changed_data_runtime_and_native_payloads_rejected(self):
-        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz",
+        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz", self.runtime / "game_map_progress.py",
                      self.native / "arm64-v8a/libproot.so"):
             with self.subTest(path=path):
                 original = path.read_bytes()
@@ -173,7 +198,7 @@ class PayloadTests(unittest.TestCase):
             with self.subTest(path=path):
                 original = path.read_bytes()
 
-                def mutate(_assets):
+                def mutate(_assets, **_selection):
                     path.write_bytes(b"changed")
                     return self.manifest
 
@@ -215,7 +240,7 @@ class PayloadTests(unittest.TestCase):
                     self.payloads(manifest=manifest)
 
     def test_symlinked_payloads_and_native_directory_rejected(self):
-        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz",
+        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz", self.runtime / "game_map_progress.py",
                      self.native / "arm64-v8a/libproot.so", self.native / "arm64-v8a"):
             with self.subTest(path=path):
                 target = self.directory / "outside"
@@ -227,7 +252,7 @@ class PayloadTests(unittest.TestCase):
                 target.rename(path)
 
     def test_changed_packaged_bytes_rejected_even_when_crc_valid(self):
-        for path in (self.assets / "atlas-assets-index.tsv", self.runtime / "game-package.tar.gz",
+        for path in (self.assets / "atlas-assets-index.tsv", self.runtime / "game-package.tar.gz", self.runtime / "game_map_progress.py",
                      self.native / "arm64-v8a/libproot-loader.so"):
             with self.subTest(path=path):
                 original = path.read_bytes()
@@ -257,7 +282,7 @@ class PayloadTests(unittest.TestCase):
             builder.verify_packaged_payloads(self.apk, self.pins)
 
     def test_large_data_runtime_and_native_verification_never_uses_unbounded_reads(self):
-        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz",
+        for path in (self.assets / "atlas-text.zip", self.runtime / "game-package.tar.gz", self.runtime / "game_map_progress.py",
                      self.native / "arm64-v8a/libproot-loader.so"):
             with path.open("wb") as stream:
                 for _ in range(9):

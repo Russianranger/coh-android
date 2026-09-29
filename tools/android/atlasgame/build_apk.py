@@ -24,8 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 APP_ID = "io.github.russianranger.cohatlastest"
 LAUNCHER = APP_ID + ".AtlasActivity"
-VERSION_NAME = "0.4.3"
-VERSION_CODE = 4
+VERSION_NAME = "0.4.4"
+VERSION_CODE = 5
 APK_NAME = f"COH-Atlas-Test-{VERSION_NAME}.apk"
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 IMPORT_NAMES = frozenset({"atlas-import.properties", "atlas-text.zip",
@@ -91,9 +91,9 @@ def verify_import_package(assets, commit):
     return module.verify_package(assets, repository_commit=commit)
 
 
-def verify_runtime_assets(assets):
+def verify_runtime_assets(assets, mapserver_progress_profile=None):
     module = load_tool("atlas_game_device_assets", ROOT / "tools/android/atlasgame/prepare_device_assets.py")
-    return module.verify_device_assets(assets)
+    return module.verify_device_assets(assets, mapserver_progress_profile=mapserver_progress_profile)
 
 
 def verify_source_manifest(path):
@@ -175,7 +175,7 @@ def checked_file(path, pin=None):
     return actual
 
 
-def payloads(assets, runtime_assets, native, commit):
+def payloads(assets, runtime_assets, native, commit, mapserver_progress_profile=None):
     commit = source_commit(commit)
     assets, runtime_assets, native = Path(assets), Path(runtime_assets), Path(native)
     for directory in (assets, runtime_assets, native, native / "arm64-v8a"):
@@ -184,7 +184,7 @@ def payloads(assets, runtime_assets, native, commit):
     metadata_pins = {"assets/atlas/atlas-import.properties": checked_file(assets / "atlas-import.properties"),
                      "assets/runtime/runtime-manifest.json": checked_file(runtime_assets / "runtime-manifest.json")}
     contract = verify_import_package(assets, commit)
-    runtime = verify_runtime_assets(runtime_assets)
+    runtime = verify_runtime_assets(runtime_assets, mapserver_progress_profile=mapserver_progress_profile)
     if contract.get("repository.commit") != commit:
         raise ValueError("Import contract lacks the exact candidate commit")
     if (runtime.get("format") != 1 or runtime.get("repository_commit") != commit
@@ -289,6 +289,7 @@ def main():
     parser.add_argument("--runtime-assets", type=Path, required=True)
     parser.add_argument("--native", type=Path, required=True)
     parser.add_argument("--repository-commit")
+    parser.add_argument("--mapserver-progress-profile", choices=["dispatch_progress_v1"])
     parser.add_argument("--keystore", type=Path, required=True)
     parser.add_argument("--alias", default="coh-atlas-test")
     parser.add_argument("--output", type=Path, default=ROOT / "out/android-atlas-game" / APK_NAME)
@@ -296,7 +297,7 @@ def main():
     for key in ("android_jar", "build_tools", "assets", "runtime_assets", "native", "keystore", "output"):
         setattr(args, key, getattr(args, key).absolute())
     commit = source_commit(args.repository_commit)
-    contract, runtime, members, payload_pins = payloads(args.assets, args.runtime_assets, args.native, commit)
+    contract, runtime, members, payload_pins = payloads(args.assets, args.runtime_assets, args.native, commit, args.mapserver_progress_profile)
     main_dir = ROOT / "android/atlasgame/src/main"
     verify_source_manifest(main_dir / "AndroidManifest.xml")
     for path in [args.android_jar, args.build_tools / "aapt2", args.build_tools / "zipalign",
@@ -360,7 +361,7 @@ def main():
             "payload_bytes_verified": True, "device_validated": False, "gameplay_validated": False,
             "candidate_role": "physical_thor_atlas_park_server_test",
             "scope": "Reviewed asset import and local Atlas Park server persistence test; no graphical game client",
-            "installation": "Same Atlas Test application ID; the ephemeral 0.4.2 signing key is unavailable, so uninstall only Atlas Test before installing 0.4.3, then set up runtime and import again. Earlier accepted diagnostic/setup apps remain separate.",
+            "installation": "Same Atlas Test application ID. Builds use an ephemeral signing key; if Android reports a signature conflict, uninstall Atlas Test before installing 0.4.4, then set up runtime and import again. Earlier accepted diagnostic/setup apps remain separate.",
         }
         (args.output.parent / "atlas-game-apk-build-report.json").write_text(json.dumps(report, indent=2) + "\n")
         args.output.with_suffix(".apk.sha256").write_text(report["sha256"] + "  " + args.output.name + "\n")

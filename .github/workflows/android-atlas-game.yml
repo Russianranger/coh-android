@@ -5,12 +5,18 @@ on:
     paths:
       - 'android/atlasgame/**'
       - 'android/guest/game_device*.py'
+      - 'android/guest/game_diagnostic.py'
+      - 'android/guest/game_hang_evidence.py'
+      - 'android/guest/game_map_progress.py'
       - 'tools/android/atlasgame/**'
       - '.github/workflows/android-atlas-game.yml'
   pull_request:
     paths:
       - 'android/atlasgame/**'
       - 'android/guest/game_device*.py'
+      - 'android/guest/game_diagnostic.py'
+      - 'android/guest/game_hang_evidence.py'
+      - 'android/guest/game_map_progress.py'
       - 'tools/android/atlasgame/**'
       - '.github/workflows/android-atlas-game.yml'
 permissions:
@@ -45,6 +51,35 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - name: Verify hosted MapServer qualification and derive exact donor inputs
+        id: mapserver-progress-inputs
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          sys.path.insert(0, 'tools/android/atlasgame')
+          import prepare_device_assets as prepare
+          profile = prepare.MAPSERVER_PROGRESS_PROFILE
+          inputs = prepare.accepted_evidence(profile)
+          contract = prepare.bundle_contract(profile)
+          evidence = pathlib.Path('docs/android-evidence')
+          qualification = prepare.game.read_json(evidence / (
+              f"accepted-mapserver-progress-hosted-{contract['package_run_id']}.json"))
+          producer = inputs['mapserver_progress_producer']
+          outputs = {'run-id': qualification['run_id'],
+                     'repository-commit': inputs['repository_commit'],
+                     'package-sha256': inputs['game_package_sha256'],
+                     'donor-manifest-sha256': producer['manifest_sha256'],
+                     'mapserver-sha256': producer['mapserver_sha256']}
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              for key, value in outputs.items():
+                  print(f'{key}={value}', file=output)
+          destination = pathlib.Path('out/atlas-game')
+          destination.mkdir(parents=True, exist_ok=True)
+          receipt = {'format': 1, 'mapserver_progress_profile': profile,
+                     'apk_repository_commit': os.environ['GITHUB_SHA'],
+                     'qualified_mapserver_inputs': outputs}
+          (destination / 'qualified-mapserver-inputs.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
       - uses: actions/download-artifact@v4
         with:
           name: coh-diagnostic-runtime-inputs
@@ -89,6 +124,12 @@ jobs:
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
+          name: wine-mapserver-progress-donor
+          path: out/atlas-inputs/mapserver-progress
+          run-id: ${{ steps.mapserver-progress-inputs.outputs.run-id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
           name: wine-game-stack-probe
           path: out/atlas-inputs/stack-probe
           run-id: 36510836956
@@ -109,10 +150,19 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - name: Install pinned Android build tools
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
-      - name: Reassemble the exact accepted Atlas executables
+      - name: Reassemble the qualified MapServer donor and exact accepted supporting executables
+        env:
+          COH_MAPSERVER_DONOR_RUN_ID: ${{ steps.mapserver-progress-inputs.outputs.run-id }}
+          COH_MAPSERVER_DONOR_COMMIT: ${{ steps.mapserver-progress-inputs.outputs.repository-commit }}
+          COH_MAPSERVER_PACKAGE_SHA256: ${{ steps.mapserver-progress-inputs.outputs.package-sha256 }}
+          COH_MAPSERVER_DONOR_MANIFEST_SHA256: ${{ steps.mapserver-progress-inputs.outputs.donor-manifest-sha256 }}
+          COH_MAPSERVER_BINARY_SHA256: ${{ steps.mapserver-progress-inputs.outputs.mapserver-sha256 }}
         run: |
           python3 - <<'PY'
-          import hashlib, pathlib, zipfile
+          import hashlib, os, pathlib, zipfile
+          donor = pathlib.Path('out/atlas-inputs/mapserver-progress')
+          assert hashlib.sha256((donor / 'build-info.json').read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_DONOR_MANIFEST_SHA256']
+          assert hashlib.sha256((donor / 'MapServer.exe').read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_BINARY_SHA256']
           archive = pathlib.Path('out/atlas-inputs/reference-archive/coh-reference-win32.zip')
           assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
           with zipfile.ZipFile(archive) as source:
@@ -123,21 +173,23 @@ jobs:
             --reference out/atlas-inputs/reference --dbserver out/atlas-inputs/dbserver \
             --resume out/atlas-inputs/resume --bridge out/atlas-inputs/bridge \
             --output out/atlas-inputs/game-package \
-            --repository-commit ac4c1f7978be444a893f65f5177641191861d42f \
+            --repository-commit "$COH_MAPSERVER_DONOR_COMMIT" \
             --dbserver-profile loopback --game-listener-profile loopback \
-            --loopback-game out/atlas-inputs/game-listeners
+            --loopback-game out/atlas-inputs/game-listeners \
+            --mapserver-progress out/atlas-inputs/mapserver-progress
           python3 - <<'PY'
-          import hashlib, json, pathlib, shutil
+          import hashlib, json, os, pathlib, shutil
           actual = pathlib.Path('out/atlas-inputs/game-package/game-package.json')
-          accepted = pathlib.Path('docs/android-evidence/game-listeners-package-36510836956.json')
-          assert hashlib.sha256(accepted.read_bytes()).hexdigest() == 'ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a'
+          accepted = pathlib.Path('docs/android-evidence') / (
+              'mapserver-progress-package-' + os.environ['COH_MAPSERVER_DONOR_RUN_ID'] + '.json')
+          assert hashlib.sha256(accepted.read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_PACKAGE_SHA256']
           # Assembly verifies every executable and dependency first. Mapping
           # insertion order can differ by filesystem; only byte formatting is
           # restored from the accepted receipt after exact semantic equality.
           assert json.loads(actual.read_text()) == json.loads(accepted.read_text())
           shutil.copyfile(accepted, actual)
           PY
-      - name: Prepare current device harness with accepted binaries and data
+      - name: Prepare current device harness with the explicitly qualified MapServer profile
         run: |
           python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/atlas-inputs/schema
           python3 tools/android/atlasgame/prepare_device_assets.py \
@@ -146,6 +198,7 @@ jobs:
             --game-data-manifest out/atlas-inputs/accepted-evidence/game-data/game-data-manifest.json \
             --stack-probe out/atlas-inputs/stack-probe \
             --output out/atlas-game/runtime --repository-commit "$GITHUB_SHA" \
+            --mapserver-progress-profile dispatch_progress_v1 \
             --receipt out/atlas-game/device-assets-preparation.json
           python3 tools/android/atlas/package_game_import.py \
             --output out/atlas-game/import-assets --repository-commit "$GITHUB_SHA"
@@ -154,18 +207,20 @@ jobs:
           python3 tools/android/atlasgame/build_apk.py
           --assets out/atlas-game/import-assets --runtime-assets out/atlas-game/runtime
           --native out/atlas-native --repository-commit "$GITHUB_SHA"
+          --mapserver-progress-profile dispatch_progress_v1
           --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore "$RUNNER_TEMP/coh-atlas-test.jks"
-          --output out/atlas-game/COH-Atlas-Test-0.4.3.apk
+          --output out/atlas-game/COH-Atlas-Test-0.4.4.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-atlas-test-apk
           path: |
-            out/atlas-game/COH-Atlas-Test-0.4.3.apk
-            out/atlas-game/COH-Atlas-Test-0.4.3.apk.sha256
+            out/atlas-game/COH-Atlas-Test-0.4.4.apk
+            out/atlas-game/COH-Atlas-Test-0.4.4.apk.sha256
             out/atlas-game/atlas-game-apk-build-report.json
             out/atlas-game/device-assets-preparation.json
+            out/atlas-game/qualified-mapserver-inputs.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: always()
@@ -174,6 +229,7 @@ jobs:
           path: |
             out/atlas-game/device-assets-preparation.json
             out/atlas-game/atlas-game-apk-build-report.json
+            out/atlas-game/qualified-mapserver-inputs.json
             out/atlas-game/runtime/runtime-manifest.json
             out/atlas-game/import-assets/atlas-import-build.json
             out/atlas-game/import-assets/atlas-import.properties
@@ -231,8 +287,9 @@ jobs:
       - name: Qualify exact APK import and Atlas Park create save restart resume
         run: >-
           python3 tools/android/atlasgame/host_device_smoke.py
-          --apk out/atlas-game/COH-Atlas-Test-0.4.3.apk
+          --apk out/atlas-game/COH-Atlas-Test-0.4.4.apk
           --archive out/asset-inputs.zip --repository-commit "$GITHUB_SHA"
+          --mapserver-progress-profile dispatch_progress_v1
           --proot out/android/native/linux-arm64 --work out/atlas-game-host
           --evidence out/atlas-game-evidence --timeout-seconds 5400
       - uses: actions/upload-artifact@v4
