@@ -1,5 +1,20 @@
 # City of Heroes Android
 
+**Latest hosted milestone: MapServer and TestClient local bindings passed.**
+[Run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
+at `ac4c1f7978be444a893f65f5177641191861d42f` passed all four jobs, 17 native
+Windows socket contracts and all 18 ARM64 stages. Both Atlas starts and both
+client sessions proved actual loopback UDP bindings alongside the accepted
+DbServer bindings. The same character survived committed save, same-cluster
+restart, exact-name resume and a second save. All 122 process captures closed,
+with zero remaining owned processes or inspection failures. See the
+[acceptance receipt](docs/android-evidence/accepted-game-listeners-hosted-36510836956.json),
+[raw report](docs/android-evidence/game-listeners-arm64-36510836956.json) and
+[preserved evidence](docs/android-evidence/game-listeners-evidence-36510836956.zip).
+Next comes verified file-picker asset import and a separate Android Atlas
+runtime with lifecycle handling. Keep 0.1.5 and 0.2.0 installed; this hosted
+milestone does not provide a new APK or establish physical Android Atlas.
+
 **The primary M2 device diagnostic and headless client capability gate passed on
 AYN Thor with 0.1.5.** The [device acceptance record](docs/THOR_DEVICE_ACCEPTANCE.md)
 covers a subsequent combined database/client run with all twelve stages passed,
@@ -137,11 +152,12 @@ The loopback DbServer package also passed the full hosted Atlas sequence in
 all three jobs and 18 runtime stages, both local DbServer starts, two committed
 saves and exact-character resume, with all 122 captures closed and clean cleanup.
 The [combined receipt](docs/android-evidence/accepted-game-loopback-hosted-36493722153.json)
-preserves independent evidence verification. Next comes MapServer/TestClient
-local binding support, verified asset import and Android Atlas integration.
+preserves independent evidence verification. MapServer/TestClient local binding
+qualification subsequently passed in `36510836956`, as recorded above.
+Next comes verified asset import and Android Atlas runtime/lifecycle integration.
 Keep the existing 0.1.5 APK
 and runtime, plus the accepted 0.2.0 server test. See the
-[concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The new candidate
+[concrete next steps](docs/THOR_DEVICE_ACCEPTANCE.md#next-work). The accepted 0.2.0 app
 contains the DbServer test, without Atlas MapServer or graphical client execution.
 New-zone assets, missions, automatic
 map startup, combat and graphics remain separate unfinished work. The repository

@@ -1,11 +1,16 @@
 # Hosted Atlas character persistence on ARM64
 
 This follows the accepted [Wine DbServer milestone](ANDROID_DBSERVER.md).
-**The loopback DbServer Atlas integration passed in run `36493722153`.** All
-three jobs and all 18 runtime stages passed with both DbServer starts bound to
-loopback, both committed saves, same-cluster restart and exact-name resume.
-See the [combined acceptance](android-evidence/accepted-game-loopback-hosted-36493722153.json)
-and [results below](#accepted-loopback-dbserver-integration).
+**The complete hosted MapServer/TestClient listener milestone passed in run
+`36510836956` at `ac4c1f7978be444a893f65f5177641191861d42f`.** All four jobs,
+17 native Windows socket contracts and all 18 ARM64 runtime stages passed.
+Both DbServer and Atlas starts and both TestClient sessions proved actual
+loopback bindings while preserving character creation, both committed saves,
+same-cluster restart and exact-name resume. See the
+[acceptance receipt](android-evidence/accepted-game-listeners-hosted-36510836956.json)
+and [listener results below](#mapserver-and-testclient-listener-candidate).
+The earlier DbServer-only loopback integration in `36493722153` remains
+[accepted and preserved](#accepted-loopback-dbserver-integration).
 
 The earlier full hosted ARM64 Atlas workflow passed in run `36460005201`. All three
 jobs succeeded at `cfc8ac477e449037213d5242f43480acf4f1cb85`, including the
@@ -18,18 +23,18 @@ The separate [0.2.0 DbServer test passed on Thor](ANDROID_SERVER_DEVICE_TEST.md#
 physical Android game execution, presentation and rendering
 remain unvalidated.
 
-The workflow `.github/workflows/android-game.yml` now prepares the separate
-**MapServer and TestClient listener candidate** described below. Its new game
-donors require fresh Windows and ARM64 qualification. The accepted DbServer-only
-loopback result above is preserved. Assembly retains `accepted` as the default
-for both the DbServer and game-listener profiles. The existing profiles use
-these immutable inputs:
+The workflow `.github/workflows/android-game.yml` builds and qualifies the
+separate **MapServer and TestClient listener profile** described below. Its
+three game donors passed Windows and ARM64 qualification in `36510836956`.
+Assembly retains `accepted` as the default for both the DbServer and
+game-listener profiles. The profiles use these immutable inputs:
 
 | Component | Accepted run | Role |
 |---|---:|---|
 | ARM64 Wine/FEX/PostgreSQL inputs | 36364550345 | Accepted M2 runtime |
 | Loopback-profile DbServer | 36460867428 | Fixture disabled; qualified local bindings, dispatch observer and fixed-input mode |
 | Default-profile DbServer | 36451873322 | Earlier accepted Atlas donor, retained for reproducibility |
+| Loopback-profile MapServer and creation/resume TestClients | 36510836956 | Separately built, qualified local listeners and client UDP bindings |
 | MapServer and creation TestClient | 36088012664 | Stock reference binaries |
 | Resume TestClient | 36297542986 | Exact name, creation disabled |
 | Generated database schema | 36088012666 | Accepted 99-table schema |
@@ -66,7 +71,7 @@ The intended acceptance sequence is:
 1. Start the private PostgreSQL database, normal DbServer and Atlas MapServer
    inside a mandatory network namespace with only loopback enabled.
 2. Observe independent DbServer-confirmed Atlas readiness for at least 30 seconds.
-3. Create a fresh fake-auth character through the stock TestClient and enter Atlas.
+3. Create a fresh fake-auth character through the selected TestClient and enter Atlas.
 4. Set influence to 12,345 through the normal command protocol and observe the
    live server response for the same character/account.
 5. Request protocol logout, then verify independent committed SQL and disconnected
@@ -80,8 +85,9 @@ This gate does not yet cover the longer Windows sustained-session/transfer
 checks, Android listener binding or app lifecycle integration, an Android game
 surface, accelerated rendering, or a human-operated client. Those remain
 separate milestones. Keep the accepted 0.1.5 and 0.2.0 device diagnostics installed.
-DbServer local listeners and Stop/rerun are now verified on Thor; MapServer/client
-listener preparation and the combined Android game runtime remain separate work.
+DbServer local listeners and Stop/rerun are verified on Thor. MapServer/client
+listeners are now verified on the hosted runtime; verified asset import and
+the combined Android Atlas runtime/lifecycle are the next implementation work.
 
 ## Accepted loopback DbServer integration
 
@@ -100,12 +106,11 @@ The host independently reparses each complete DbServer stdout capture and checks
 it against the phase receipt and pinned source-derived endpoint contract.
 Missing, duplicate, substituted or wildcard endpoints fail qualification.
 
-This is a separately identified **hosted-only** integration gate. The mandatory
-private network namespace remains in place. The DbServer flag is cleared from
-MapServer and client environments: the stock MapServer still binds wildcard
-UDP 7001, and TestClient sends through implicitly bound UDP sockets. Their
-listener policy and Android lifecycle integration must be addressed before a
-physical Atlas candidate.
+This earlier **hosted-only** integration gate retained a mandatory private
+network namespace. Its DbServer flag was cleared from MapServer and client
+environments: the stock MapServer bound wildcard UDP 7001, and TestClient used
+implicitly bound UDP sockets. The separately qualified listener profile below
+addresses those bindings; Android lifecycle integration remains device work.
 
 [Run 36493722153](https://github.com/Russianranger/coh-android/actions/runs/36493722153)
 at `708878f78a3361b595dcc03a0c4b14fb6cd2e6c3` passed all three jobs and all
@@ -129,7 +134,37 @@ executable bytes. The earlier accepted profile and evidence remain unchanged.
 
 ### MapServer and TestClient listener candidate
 
-The next gate adds `COH_GAME_LOOPBACK_ONLY=1` to separately built MapServer,
+**Accepted hosted qualification:**
+[run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
+passed all four jobs at `ac4c1f7978be444a893f65f5177641191861d42f`.
+The Windows job passed 17 native Winsock contracts, then built and packaged
+the separate MapServer and creation/resume TestClient donors. All 18 ARM64
+stages and final host validation passed in 1,873.269766 seconds.
+
+Both DbServer starts recorded 14 loopback endpoints. Each Atlas start proved
+UDP `127.0.0.1:7001`; each client session proved two UDP sockets bound to
+`127.0.0.1` before sending. Independent replay checked the complete owned
+service stdout and final client console against live phase/session records.
+Character `TEST33790` / container 1 retained influence 12,345 and its selected
+SQL rows (one `ents`, one `ents2`, seven powers and 14 costume parts) across
+same-cluster restart, exact-name resume with creation disabled, and the second
+committed protocol save. LoginCount progressed 1 → 1 → 2. All 122 process
+input/output captures closed; cleanup finished with zero owned processes and
+zero inspection failures. First service readiness took 1,051.081781 seconds;
+restart readiness took 193.152082 seconds.
+
+The [acceptance receipt](android-evidence/accepted-game-listeners-hosted-36510836956.json)
+binds the [raw report](android-evidence/game-listeners-arm64-36510836956.json)
+and [preserved captures](android-evidence/game-listeners-evidence-36510836956.zip).
+The three new donor executables were separately downloaded and verified against
+their source receipts, byte hashes and PE metadata. The compact capture archive
+omits only the large deterministic game-data inventory after verifying its
+accepted digest, byte size and file counts; its identity remains in the receipt.
+Existing Wine experimental-WOW64 notices, DbServer console/launcher warnings
+and three orphaned Atlas door animation points match the previous accepted run.
+No new failure diagnostics were found.
+
+This profile adds `COH_GAME_LOOPBACK_ONLY=1` to separately built MapServer,
 creation TestClient and resume TestClient donors. The overlay changes staged
 source only. Without the environment flag, the normal binding behavior remains;
 invalid values refuse startup. The policy covers explicit IPv4 listeners and
@@ -146,35 +181,31 @@ closure against the accepted reference. Assembly requires explicit
 composite must identify the same repository commit. The accepted reference,
 resume donor and 0.1.5/0.2.0 APKs are retained.
 
-The workflow runs native Windows socket contracts before building and then
-qualifies the new composite through the full ARM64 sequence. Acceptance requires
-actual socket address/type/port records from both MapServer starts and both
-test clients, tied to owned service and client captures, along with the existing
-character identity, SQL save, restart, resume and cleanup checks. A startup
-acknowledgment alone is insufficient. This source preparation is not an Android
-Atlas acceptance; the physical candidate still needs the steps below.
+The completed workflow qualified actual socket address/type/port records from
+both MapServer starts and both test clients, tied to owned service/client captures
+and the character identity, SQL save, restart, resume and cleanup checks.
+The private hosted network namespace remains mandatory: the binding policy
+does not restrict outgoing TCP or prove device-wide network isolation.
+This is hosted acceptance only. No new APK or physical Android Atlas result
+is supplied by this milestone; the device candidate still needs the steps below.
 
 ### Remaining preparation for a physical Atlas candidate
 
 With the combined hosted gate accepted:
 
-1. Complete the new MapServer and creation/resume TestClient listener
-   qualification above. Cover MapServer's explicit UDP 7001 listener and
-   TestClient's implicitly bound UDP sockets with native Windows contracts and
-   the hosted persistence sequence. Preserve failure evidence if a gate fails.
-2. Package the reviewed game assets plus authoritative repository text with
+1. Package the reviewed game assets plus authoritative repository text with
    exact inventories. The reviewed asset ZIP is 615,541,018 bytes; the combined
    tree is 173,011 files / 2,977,730,517 bytes. Prefer verified file-picker import
    of the existing ZIP. Its draft-release download currently requires CI
    credentials, which must not be embedded in the Android app. No new broad
    asset upload or public asset publication is required by this plan.
-3. Add a separately identified Android Atlas test, retaining accepted 0.2.0.
+2. Add a separately identified Android Atlas test, retaining accepted 0.1.5 and 0.2.0.
    Use fresh owned state, foreground-service Stop handling, bounded startup
    deadlines and streamed support exports containing the game, service and hang
    captures. Determine storage and timeout limits from the actual packaged data
    and measured device timings, rather than inheriting the 30-minute DbServer
    limit unchanged.
-4. Qualify the exact APK payloads on hosted ARM64, then collect a physical Atlas
+3. Qualify the exact APK payloads on hosted ARM64, then collect a physical Atlas
    create/save/restart/resume pass, Stop with game services active, and fresh
    successful rerun with background checks. Keep rendering and human controls
    as separate milestones.

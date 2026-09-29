@@ -7,8 +7,10 @@ and [acceptance receipt](android-evidence/accepted-dbserver-thor-20260928.json).
 App switching and screen locking passed by user attestation; peak memory is
 unmeasured. Keep both accepted installations. The subsequent
 [hosted Atlas loopback integration](ANDROID_GAME_RUNTIME.md#accepted-loopback-dbserver-integration)
-also passed; MapServer/client local binding support and Android Atlas integration
-are the next implementation gates.
+and [MapServer/TestClient listener qualification](ANDROID_GAME_RUNTIME.md#mapserver-and-testclient-listener-candidate)
+also passed. Verified file-picker asset import and separate Android Atlas
+runtime/lifecycle integration are the next implementation gates. The latest
+hosted result does not provide a new APK or a physical Atlas pass.
 
 ## Earlier M2 diagnostic — 0.1.5
 
@@ -78,8 +80,15 @@ The accepted 0.2.0 app integrates that exact donor and now verifies its physical
 Android execution and local listeners. The separately identified
 [Atlas loopback profile](android-evidence/accepted-game-loopback-hosted-36493722153.json)
 then passed the full hosted game sequence in `36493722153`, preserving the prior
-accepted result and default donor `36451873322`. Continue with
-[MapServer/client binding and Android preparation](ANDROID_GAME_RUNTIME.md#remaining-preparation-for-a-physical-atlas-candidate).
+accepted result and default donor `36451873322`. The subsequent
+[listener milestone](android-evidence/accepted-game-listeners-hosted-36510836956.json)
+passed all four jobs in
+[run 36510836956](https://github.com/Russianranger/coh-android/actions/runs/36510836956)
+at `ac4c1f7978be444a893f65f5177641191861d42f`: 17 native Windows socket contracts,
+all 18 ARM64 stages, both committed saves, same-cluster restart and exact-name
+resume. Both Atlas starts and both clients proved actual local UDP bindings;
+all 122 captures closed with zero remaining owned processes or inspection failures.
+Continue with [verified asset import and Android Atlas preparation](ANDROID_GAME_RUNTIME.md#remaining-preparation-for-a-physical-atlas-candidate).
 Preserve the accepted stock Windows reference and immutable upstream source.
 
 This acceptance does not establish CoH gameplay, Android surface presentation,
