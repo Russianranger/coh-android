@@ -1,5 +1,10 @@
 # City of Heroes Android
 
+The next implementation is the separate [COH Atlas Test 0.4.0 Android server
+candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md), combining verified content with
+the automatic Atlas Park character save/restart/resume test. Hosted qualification
+and its physical Thor results are pending.
+
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
 verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop
 preserved the first completed generation; retry published a new complete one.

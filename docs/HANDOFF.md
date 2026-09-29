@@ -1,5 +1,14 @@
 # City of Heroes Android handoff
 
+Current implementation: the separate [COH Atlas Test 0.4.0 candidate](ANDROID_ATLAS_DEVICE_TEST.md)
+combines content import with the accepted local server/runtime package and the
+automatic Atlas Park create/save/restart/resume test. Hosted qualification and
+physical device execution remain pending for this new candidate. It uses a new
+application ID, so its private content must be imported once; accepted 0.3.0 data
+cannot be read across Android app sandboxes. The unchanged accepted executable
+package is reassembled from run `36510836956`; current wrapper/guest provenance
+is recorded separately. The new workflow is `android-atlas-game.yml`.
+
 Latest device checkpoint (2026-09-29, 11:11 UTC): **COH Atlas Setup 0.3.0 passed
 physical import/Stop/retry on Thor (Android 13 / SDK 33)**. Both full imports
 verified 173,011 files / 2,977,730,517 bytes, taking 56.610 and 61.822 seconds.
