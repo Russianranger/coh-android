@@ -1,12 +1,27 @@
 # Atlas Park server test on Android
 
-The next M3 device candidate is **COH Atlas Test 0.4.0**, application ID
+**Thor follow-up:** the first 0.4.0 device run passed 13 stages, including Atlas
+startup, character creation and the first committed save. It failed while
+verifying Wine ownership during restart. Final cleanup reported no remaining
+owned processes, but the earlier inspection failure kept the app blocked.
+Force-stop this candidate and wait for the 0.4.1 correction before continuing
+the test sequence below. The exact failed read was not recorded; the fix targets
+an identified worker-exit race and adds bounded diagnostics. See the
+[failure receipt](android-evidence/atlas-test-thor-restart-failure-20260929.json).
+
+The next M3 device candidate is **COH Atlas Test 0.4.1**, application ID
 `io.github.russianranger.cohatlastest`. It combines the accepted content importer
 with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-Hosted qualification passed in
+The 0.4.1 correction is undergoing qualification. It adds identity-checked
+recovery when a worker exits during ownership inspection and bounded diagnostic
+context for denied reads. Live unreadable ownership, changed identities and
+unresolved cleanup remain failures. The accepted base runtime and game binaries
+are unchanged.
+
+The preceding 0.4.0 hosted qualification passed in
 [run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)
 at `4a8534b46ec024ca8f97bcbdc689f5fe23746a69`. The exact signed APK's full import
 and 18-stage server test passed in 32 minutes 28 seconds, including 31 minutes
@@ -27,7 +42,11 @@ remain accepted; they do not need repeating in those apps.
 Keep 0.1.5, 0.2.0 and 0.3.0 installed. The new app has a separate private data
 directory. Android does not allow it to read the setup app's imported files, and
 the earlier CI signing certificate is not available for an in-place update.
-Import the same complete `coh-reference-assets.zip` once into this new candidate.
+The failed 0.4.0 Atlas Test used an ephemeral CI signing key which is no longer
+available. Uninstall only **COH Atlas Test 0.4.0** before installing 0.4.1;
+its private runtime/import will need preparing again. Keep the earlier accepted
+diagnostic and setup apps installed.
+Import the same complete `coh-reference-assets.zip` once into this candidate.
 This is preparation for the new app, not a repeat acceptance test of 0.3.0.
 
 The new APK includes the reviewed repository text and exact inventories. It
@@ -59,7 +78,8 @@ hosted qualification retains its mandatory private network namespace.
 
 ## Device procedure after hosted qualification
 
-1. Install the separate `COH-Atlas-Test-0.4.0.apk`.
+1. After uninstalling only the failed 0.4.0 Atlas Test, install
+   `COH-Atlas-Test-0.4.1.apk`.
 2. Choose **Set up runtime** with Internet access. Have at least 8 GiB free
    internal storage before setup; this is a working-space check, not the final
    installed size.
@@ -68,7 +88,7 @@ hosted qualification retains its mandatory private network namespace.
    files. Do not select split ZIP parts or individual PIGGs.
 4. Have at least 6 GiB free **after setup and import**, then choose **Run Atlas
    test**. The test creates its own disposable writable game copy and database.
-   The overall guest deadline is 90 minutes. This candidate's hosted guest run
+   The overall guest deadline is 90 minutes. The preceding candidate's hosted guest run
    took about 32 minutes; physical Thor timing is not yet established.
    Initial server startup alone took 17 minutes 35 seconds on the hosted runner;
    allow the active stage to finish rather than treating a long startup as a hang.
@@ -113,7 +133,7 @@ The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
 
-The delivered APK is 355,105,590 bytes, SHA-256
+The preceding 0.4.0 APK was 355,105,590 bytes, SHA-256
 `826f8c56cabcd597d9558e4d072b0a43922580afcb3ccf75d4e8d1879605a80f`.
 The Java acceptance gate was also replayed against this fresh hosted report:
 the untouched host report was rejected as Android evidence, its cleanup was

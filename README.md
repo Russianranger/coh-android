@@ -1,13 +1,18 @@
 # City of Heroes Android
 
-**COH Atlas Test 0.4.0 passed hosted qualification and is ready for Thor testing.**
+**Thor 0.4.0 follow-up:** Atlas startup, character creation and the first committed
+save passed. Restart stopped on a Wine ownership inspection failure; the complete
+device gate remains pending. A targeted 0.4.1 correction is in preparation.
+See the [failure receipt](docs/android-evidence/atlas-test-thor-restart-failure-20260929.json).
+
+**Hosted baseline: COH Atlas Test 0.4.0 passed qualification before the device failure above.**
 The separate [Android server candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md) passed
 exact-APK import and all 18 Atlas Park create/save/restart/resume stages in
 [run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664).
 Both saves committed, the exact character resumed, and all 122 process records
 closed cleanly. The full import/server check took 32 minutes 28 seconds.
 See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36563104664.json).
-Physical Thor server execution, Stop/rerun and lifecycle checks are next;
+The corrected candidate must pass hosted qualification before the Thor retry;
 graphical client execution follows later.
 
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports

@@ -1,5 +1,21 @@
 # City of Heroes Android handoff
 
+Thor follow-up (2026-09-29, 13:50 UTC): **0.4.0 reached Atlas Park and committed
+the first character save, then failed the restart ownership check.** The first
+13 stages passed; `TEST-47452` (container 1) saved influence 12,345. Wine stop and
+wait finished, but the process scanner reported `Cannot inspect same-UID Wine
+ownership`. Final cleanup subsequently reported zero remaining owned processes
+and closed all 86 child records; the cumulative inspection failure correctly
+kept the Android guard blocked. The full restart/resume milestone is not accepted.
+The failed PID/read is absent from this report; a worker-exit race in the scanner
+is consistent with the captured zombie leaders and surviving Wine workers.
+An isolated 0.4.1 candidate correction is in preparation, retaining strict live
+ownership checks and adding bounded failure context. Force-stop the 0.4.0 app;
+do not repeat the remaining device tests on it. See the
+[failure receipt](android-evidence/atlas-test-thor-restart-failure-20260929.json).
+The user confirms following the force-stop instruction at the end, probably
+after exporting the report. This was recovery after the recorded failure.
+
 Current checkpoint (2026-09-29, 12:18 UTC): the separate
 [COH Atlas Test 0.4.0 candidate](ANDROID_ATLAS_DEVICE_TEST.md) **passed hosted
 qualification** in [run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)

@@ -1,13 +1,17 @@
 """Boundaries of the isolated imported-data Android Atlas guest adapter."""
 import argparse
+import copy
 import contextlib
 import hashlib
+import importlib.util
 import io
 import json
 import os
+import signal
 from pathlib import Path
 import sys
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -221,6 +225,232 @@ class VerifiedCopyTests(unittest.TestCase):
                 with self.assertRaisesRegex(guest.base.DiagnosticError, 'storage'):
                     value.prepare_runtime()
             self.assertFalse(value.runtime.exists())
+
+
+class DeviceOwnershipTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.context = guest.base.Context(self.root)
+        self.owner = guest.DeviceWineProcessOwner(self.context, self.root)
+        self.owner.initialized = True
+        self.owner.real_uid = 42
+        self.owner.excluded = set()
+        self.owner.direct_pid_view = True
+        self.owner.diagnostic_starttime = 1
+        self.group = self.root / '123'
+        self.task = self.group / 'task/124'
+        self.task.mkdir(parents=True)
+        self.leader = {'pid': 123, 'state': 'Z', 'parent': 1, 'starttime': 10}
+        self.worker = {'pid': 124, 'state': 'S', 'parent': 1, 'starttime': 11}
+        self.status = {'uid': 42, 'pid': 123, 'tgid': 123, 'namespace_pids': [123]}
+        self.worker_status = {**self.status, 'pid': 124, 'namespace_pids': [124]}
+        status = patch.object(self.owner, 'status', side_effect=lambda path:
+            dict(self.status if path == self.group else self.worker_status))
+        identity = patch.object(self.owner, 'process_stat', side_effect=lambda path:
+            dict(self.leader if path == self.group else self.worker))
+        self.addCleanup(status.stop)
+        self.addCleanup(identity.stop)
+        status.start()
+        identity.start()
+
+    def test_worker_permission_transition_to_zombie_is_verified_before_exclusion(self):
+        def denied(path):
+            self.worker['state'] = 'Z'
+            raise PermissionError(13, 'worker exited')
+        with patch.object(self.owner, 'has_token', side_effect=denied):
+            self.assertIsNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(self.owner.receipt['worker_exit_rechecks'], 1)
+        observed = self.owner.receipt['permission_observations']
+        self.assertEqual(len(observed), 1)
+        self.assertEqual(observed[0]['operation'], 'worker_environment')
+        self.assertEqual(observed[0]['worker_tid'], 124)
+        self.assertEqual(observed[0]['resolution'], 'same_worker_became_zombie')
+        self.assertEqual(self.owner.receipt['inspection_failures'], 0)
+        self.assertEqual(self.owner.receipt['owned_live_workers'], 0)
+
+    def test_vanished_worker_is_checked_without_treating_a_live_denial_as_dead(self):
+        original = self.owner.process_stat.side_effect
+        def denied(path):
+            def vanished(selected):
+                if selected == self.task:
+                    raise FileNotFoundError('worker disappeared')
+                return original(selected)
+            self.owner.process_stat.side_effect = vanished
+            raise PermissionError(13, 'worker exiting')
+        with patch.object(self.owner, 'has_token', side_effect=denied):
+            self.assertIsNone(self.owner.inspect(123, time.monotonic() + 1))
+        self.assertEqual(self.owner.receipt['permission_observations'][0]['resolution'], 'verified_disappearance')
+        self.assertEqual(self.owner.receipt['worker_exit_rechecks'], 1)
+
+    def test_transient_denial_requires_fresh_complete_token_group_and_identity_reads(self):
+        with patch.object(self.owner, 'has_token', side_effect=[PermissionError(13, 'transient'), True]) as token, \
+                patch.object(guest.time, 'sleep') as wait:
+            result = self.owner.inspect(123, time.monotonic() + 1)
+        self.assertEqual(result, {'proc_pid': 123, 'pid': 123, 'starttime': 10})
+        self.assertEqual(token.call_count, 2)
+        wait.assert_called_once_with(self.owner.PERMISSION_PAUSE)
+        self.assertEqual(self.owner.receipt['permission_read_retries'], 1)
+        self.assertEqual(self.owner.receipt['owned_live_workers'], 1)
+        self.assertEqual(self.owner.receipt['permission_observations'][0]['resolution'], 'complete_ownership_read')
+        encoded = json.dumps(self.owner.receipt)
+        self.assertNotIn(self.owner.environment[self.owner.ENV_KEY], encoded)
+        self.assertNotIn('transient', encoded, 'Raw exception messages must not enter ownership evidence')
+
+    def test_persistently_inaccessible_live_worker_still_fails_cleanup(self):
+        with patch.object(self.owner, 'has_token', side_effect=PermissionError(13, 'private-token must not be exposed')) as read, \
+                patch.object(guest.time, 'sleep') as wait, patch.object(guest.os, 'kill') as kill:
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Cannot inspect same-UID'):
+                self.owner.cleanup(time.monotonic() + 1)
+        self.assertEqual(read.call_count, 3)
+        self.assertEqual(wait.call_count, 2)
+        self.assertFalse(self.owner.receipt['complete'])
+        self.assertEqual(self.owner.receipt['inspection_failures'], 1)
+        self.assertEqual(self.owner.receipt['permission_observations'][-1]['resolution'], 'persistent_live_permission_denied')
+        kill.assert_not_called()
+
+    def test_permission_retry_never_extends_cleanup_deadline(self):
+        with patch.object(self.owner, 'has_token', side_effect=PermissionError(13, 'denied')) as read, \
+                patch.object(guest.time, 'sleep') as wait:
+            with self.assertRaises(PermissionError):
+                self.owner.inspect(123, time.monotonic() + .001)
+        self.assertEqual(read.call_count, 1)
+        wait.assert_not_called()
+
+    def test_worker_or_group_pid_reuse_during_denial_cannot_authorize_signal(self):
+        candidate = {'proc_pid': 123, 'pid': 123, 'starttime': 10}
+        for changed in (self.worker, self.leader):
+            def denied(path):
+                changed['starttime'] += 1
+                raise PermissionError(13, 'identity changed')
+            with self.subTest(pid=changed['pid']), patch.object(self.owner, 'has_token', side_effect=denied), \
+                    patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal') as send, patch.object(guest.os, 'kill') as kill:
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'identity changed'):
+                    self.owner.signal_owned(candidate, signal.SIGTERM, time.monotonic() + 1)
+                send.assert_not_called()
+                kill.assert_not_called()
+            self.worker['starttime'], self.leader['starttime'] = 11, 10
+
+    def test_wrong_worker_group_on_retry_cannot_authorize_signal(self):
+        def denied(path):
+            self.worker_status['tgid'] = 999
+            raise PermissionError(13, 'temporary')
+        with patch.object(self.owner, 'has_token', side_effect=denied), patch.object(guest.time, 'sleep'), \
+                patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                patch.object(guest.signal, 'pidfd_send_signal') as send, patch.object(guest.os, 'kill') as kill:
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'group membership'):
+                self.owner.signal_owned({'proc_pid': 123, 'pid': 123, 'starttime': 10}, signal.SIGTERM,
+                                        time.monotonic() + 1)
+            send.assert_not_called()
+            kill.assert_not_called()
+
+    def test_namespace_denial_retries_full_read_but_wrong_namespace_or_token_cannot_signal(self):
+        self.owner.direct_pid_view = False
+        self.owner.namespace_depth = 2
+        self.owner.namespace = 'pid:[111]'
+        self.status['namespace_pids'] = [123, 456]
+        self.worker_status['namespace_pids'] = [124, 457]
+        candidate = {'proc_pid': 123, 'pid': 456, 'starttime': 10}
+        with patch.object(guest.os, 'readlink', side_effect=[PermissionError(13, 'transient'), 'pid:[111]']), \
+                patch.object(self.owner, 'has_token', return_value=True), patch.object(guest.time, 'sleep'):
+            self.assertEqual(self.owner.inspect(123, time.monotonic() + 1), candidate)
+        self.assertEqual(self.owner.receipt['permission_observations'][0]['operation'], 'worker_pid_namespace')
+        for namespace, token in (('pid:[222]', True), ('pid:[111]', False)):
+            with self.subTest(namespace=namespace, token=token), \
+                    patch.object(guest.os, 'readlink', return_value=namespace), \
+                    patch.object(self.owner, 'has_token', return_value=token), \
+                    patch.object(guest.os, 'pidfd_open', return_value=19), patch.object(guest.os, 'close'), \
+                    patch.object(guest.signal, 'pidfd_send_signal') as send, patch.object(guest.os, 'kill') as kill:
+                with self.assertRaisesRegex(guest.base.DiagnosticError, 'identity changed'):
+                    self.owner.signal_owned(candidate, signal.SIGTERM, time.monotonic() + 1)
+                send.assert_not_called()
+                kill.assert_not_called()
+
+    def test_group_denial_keeps_context_and_failure_without_worker_fallback(self):
+        self.leader['state'] = 'S'
+        with patch.object(self.owner, 'has_token', side_effect=PermissionError(13, 'group inaccessible')), \
+                patch.object(self.owner, 'inspect_dead_leader', side_effect=AssertionError('unsafe fallback')):
+            with self.assertRaises(PermissionError):
+                self.owner.inspect(123, time.monotonic() + 1)
+        observation = self.owner.receipt['permission_observations'][0]
+        self.assertEqual(observation['operation'], 'group_inspection')
+        self.assertEqual(observation['resolution'], 'unresolved_group_permission_denied')
+        self.assertEqual(observation['group_pid'], 123)
+
+    def test_hidden_foreign_processes_do_not_fill_permission_evidence_budget(self):
+        for statuses in ([PermissionError(13, 'hidden')] * 3,
+                         [PermissionError(13, 'initial denial'), {'uid': 999}, {'uid': 999}]):
+            with self.subTest(statuses=statuses), patch.object(self.owner, 'status', side_effect=statuses):
+                self.assertEqual(self.owner.scan(time.monotonic() + 1), [])
+            self.assertEqual(self.owner.receipt['permission_observations'], [])
+            self.assertEqual(self.owner.receipt['permission_observations_omitted'], 0)
+            self.assertEqual(self.owner.receipt['inspection_failures'], 0)
+
+    def test_optional_sampler_cannot_mutate_main_nested_permission_evidence(self):
+        diagnostic = SimpleNamespace(ctx=self.context, wine_owner=self.owner, wine_started=True)
+        sampler = guest.WineMemorySampler(diagnostic)
+        before = copy.deepcopy(self.owner.receipt)
+        sampler.scanner.observe_permission(self.leader, self.worker, 'worker_environment', PermissionError(13, 'denied'), 1)
+        sampler.scanner.receipt['inspection_failures'] += 1
+        sampler.scanner.dead_leaders.add((123, 10))
+        self.assertEqual(self.owner.receipt, before)
+        self.assertEqual(self.owner.dead_leaders, set())
+        self.assertIs(type(sampler.scanner), guest.DeviceWineProcessOwner)
+
+    def test_later_cleanup_cannot_amend_prior_restart_permission_observations(self):
+        self.owner.observe_permission(self.leader, self.worker, 'worker_environment', PermissionError(13, 'first'), 1)
+        restart = dict(self.owner.receipt)
+        self.owner.observe_permission(self.leader, self.worker, 'worker_status', PermissionError(13, 'later'), 1)
+        self.assertEqual(len(restart['permission_observations']), 1)
+        self.assertEqual(len(self.owner.receipt['permission_observations']), 2)
+
+    def test_real_dead_leader_worker_is_reaped_and_unrelated_same_shape_sentinel_survives(self):
+        # Reuse the existing native pthread fixture and its actual pipe/PID
+        # assertions, changing only the ownership implementation under test.
+        spec = importlib.util.spec_from_file_location('atlas_base_owner_tests', ROOT / 'tools/android/test_diagnostic.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        case = module.WineProcessOwnerTests('test_dead_leader_live_worker_is_reaped_and_same_shape_sentinel_survives')
+        case.setUp()
+        try:
+            case.owner = guest.DeviceWineProcessOwner(case.context)
+            case.test_dead_leader_live_worker_is_reaped_and_same_shape_sentinel_survives()
+        finally:
+            case.doCleanups()
+
+    def test_constructed_device_diagnostic_uses_new_owner_and_matching_child_token(self):
+        args = SimpleNamespace(execution_platform='android', listener_policy='device',
+            assets=self.root / 'assets', import_contract=self.root / 'contract', game_data=self.root / 'imported',
+            game_package=self.root / 'package', schema=self.root / 'schema',
+            game_data_manifest=self.root / 'manifest', android_metadata=None)
+        args.game_data_manifest.write_bytes(b'{}')
+        package = {'repository_commit': guest.GAME_COMMIT, 'source_commit': guest.SOURCE_COMMIT,
+            'data_commit': guest.DATA_COMMIT, 'dbserver_profile': 'loopback', 'game_listener_profile': 'loopback',
+            'postgresql_persistence_fixture': False}
+        initial_token = []
+        def original_constructor(value, adapted, context):
+            value.ctx = context
+            value.wine_started = False
+            value.wine_owner = guest.base.WineProcessOwner(context)
+            value.wine_env = dict(value.wine_owner.environment)
+            initial_token.append(value.wine_env[value.wine_owner.ENV_KEY])
+        with patch.object(guest, 'candidate_metadata', return_value={'candidate_repository_commit': 'a' * 40}), \
+                patch.object(guest, 'import_contract', return_value='b' * 64), \
+                patch.object(guest, 'import_receipt', return_value={}), \
+                patch.object(guest, 'pinned_json', return_value=package), \
+                patch.object(guest, 'checked_file', side_effect=lambda path, limit: path), \
+                patch.object(guest, 'DATA_MANIFEST_BYTES', 2), \
+                patch.object(guest.base, 'file_hash', return_value=guest.DATA_MANIFEST_SHA256), \
+                patch.object(guest.game.GameDiagnostic, '__init__', original_constructor):
+            value = guest.DeviceGameDiagnostic(args, self.context)
+        self.assertIs(type(value.wine_owner), guest.DeviceWineProcessOwner)
+        key = value.wine_owner.ENV_KEY
+        self.assertEqual(value.wine_env[key], value.wine_owner.environment[key])
+        self.assertNotEqual(value.wine_env[key], initial_token[0])
+        self.assertIs(type(self.context.memory_sampler.scanner), guest.DeviceWineProcessOwner)
+        self.assertFalse(value.wine_started)
 
 
 class ResourceAndCompletionTests(unittest.TestCase):

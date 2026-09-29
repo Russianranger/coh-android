@@ -1,0 +1,203 @@
+{
+  "format": 1,
+  "status": "partial_first_session_evidence_verified_full_gate_failed",
+  "source_archive": {
+    "name": "coh-atlas-test-20260929-135024.zip",
+    "bytes": 294925,
+    "sha256": "7d5650bd271743ca93c029283c3a83fdb5716c5c4b282583e38234040f0f75c8"
+  },
+  "app_version": "0.4.0",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "candidate_repository_commit": "4a8534b46ec024ca8f97bcbdc689f5fe23746a69",
+  "runtime_manifest_sha256": "79cfcbec75de98ad3725526fe692937c0cb160191e8ff205eecbf5b0b77a38ed",
+  "exported_runtime_manifest_sha256": "89599884dda14c0c5e9feb230fe51bcd9f76ec37e136996c9cb4b187a19f6012",
+  "exported_runtime_manifest_semantically_equal": true,
+  "runtime_manifest_export_note": "Android exporter serializes parsed JSON with indentation; exported bytes differ from original APK manifest, while JSON content and reported original input hash agree.",
+  "outer_run_id": "a54ba6ce-8356-4b69-a55e-61b90767fae8",
+  "runtime_run_id": "9744a58c-de80-44c7-b6cd-5dd0858a2dac",
+  "checks": [
+    "All uploaded ZIP bytes match extracted evidence",
+    "All sixteen capture hashes and lengths verified",
+    "Hosted-qualified runtime manifest semantic equality, source hashes and accepted package/data/schema pins",
+    "Exact APK import contract and reconstructed generation receipt",
+    "First thirteen stages passed; restart remains incomplete",
+    "Existing bridge session and protocol identity validators",
+    "Live influence response after game commands and before protocol logout",
+    "First committed SQL snapshot and accepted attribute references",
+    "First DbServer/Atlas/client loopback records and thirty-second Atlas readiness"
+  ],
+  "passed_stage_count": 13,
+  "incomplete_stage": "game_restart",
+  "character": {
+    "container_id": 1,
+    "name": "TEST-47452",
+    "account": "CohA5e7fc2c7b5"
+  },
+  "live_currency": {
+    "player": "TEST-47452",
+    "account": "CohA5e7fc2c7b5",
+    "influence": 12345,
+    "elapsed_ms": 354025,
+    "sequence": 18
+  },
+  "first_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 1,
+    "influence": 12345,
+    "snapshot_sha256": "0b8a66aec5ec592a09238be7db2574506007df3d83561b02864f4f4a1e527446",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 8,
+      "costumeparts": 15
+    }
+  },
+  "first_client_final_result": {
+    "format": 1,
+    "child_pid": 1316,
+    "child_exit_code": 125,
+    "child_forced_stop": true,
+    "final_snapshot": true,
+    "pipe_framing_complete": true,
+    "pipe_disconnected": true,
+    "version_requests": 1,
+    "command_count": 3,
+    "event_count": 20,
+    "console_snapshots": 3174,
+    "capture_byte_limit": 16777216,
+    "event_byte_limit": 8388608,
+    "error": null
+  },
+  "cleanup_state": {
+    "outer_status": "cleanup_failed",
+    "cleanup_blocked": true,
+    "guest_status": "failed",
+    "guest_cleanup_complete": true,
+    "guest_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 362,
+      "scanned_tasks": 119,
+      "dead_leaders_with_live_tasks": 7,
+      "owned_live_workers": 7,
+      "leader_exit_retries": 0,
+      "candidates": 3,
+      "term_signals": 8,
+      "kill_signals": 2,
+      "pidfd_signals": 10,
+      "identity_checked_signals": 0,
+      "inspection_failures": 1,
+      "remaining": 0,
+      "complete": true
+    }
+  },
+  "failure": {
+    "guest_failures": [
+      "Cannot inspect same-UID Wine ownership"
+    ],
+    "app_error": "Owned process cleanup could not be proved",
+    "full_gate_validator_rejection": "Game runtime did not prove complete success"
+  },
+  "elapsed_seconds": {
+    "guest_attempt": 2676.201875,
+    "game_private_runtime": 567.876014,
+    "assets_and_architecture": 0.020374,
+    "initialize_owned_cluster": 3.275487,
+    "postgres_first_start": 0.405799,
+    "restricted_fixture_database": 1.166663,
+    "wine_prefix_and_driver": 92.937321,
+    "win32_odbc_driver": 1.603648,
+    "win32_runtime_dll": 0.724121,
+    "game_services_first": 1589.254078,
+    "atlas_ready_observation": 32.481386,
+    "game_create_and_connect": 353.459079,
+    "game_live_currency": 5.45123,
+    "game_protocol_logout_first": 5.179252
+  },
+  "scope_limits": [
+    "This is evidence acceptance for the first session only; the Android Atlas milestone remains failed",
+    "No completed restart, exact-name resume, second logout, or second committed save",
+    "Later cleanup reports zero remaining processes, but one ownership inspection failure is retained and cleanup acceptance remains blocked",
+    "The TestClient was stopped after save proof completed; a forced final child stop is not treated as the save acknowledgement",
+    "No graphical client, interactive gameplay, background/screen-lock acceptance, or complete Android listener milestone claim"
+  ],
+  "android_atlas_test_passed": false,
+  "generated_character_persistence_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "capture_files": {
+    "game-captures/first-console.txt": {
+      "bytes": 8325,
+      "sha256": "1afacc0c47fa709e3b34b390595b1f9f832fb6737cb9b5964bb08ae79a1d2b2f"
+    },
+    "game-captures/first-events.jsonl": {
+      "bytes": 3310,
+      "sha256": "ee32907f485d642fe99b052159c9e5f3827aaacab808426606c445df287fdcd8"
+    },
+    "game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "4a7174223a914469c3afa5b7711c046810372649ba4a1e3f4ccd9c2171f3a390"
+    },
+    "game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "f39b13cf66873391fec2a7b847088a11b8bc15f2408d5e213d4e17d9a6190e63"
+    },
+    "game-captures/first-snapshot.json": {
+      "bytes": 5642,
+      "sha256": "19718fc1800161081733276b37dd5bad240fb989df074b4e97902ab33bc8f147"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016012,
+      "sha256": "8de065464c7b06a12e28c723fbf8776073c545b5cbf2869e85aa7914f43e65d9"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 9724,
+      "sha256": "b72b6a4bbdf13da93b86076c9e9eb189f217d7c088801b975a1582c8ee3cd8f6"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "4245e60341192792b9e3e3b25e5b8bf06e80921f71eb7d53904e0650ca73ddb5"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 17877,
+      "sha256": "29ab41f33aa08fc3c4893ed71e30c9c1edd8232f2eb9f2fed8c0f4f7f27286e9"
+    },
+    "game-service-captures/log-003.txt": {
+      "bytes": 93,
+      "sha256": "b8b82d4527e51c68e50d64b94844db606839948472b9564bb7cfe6ad1159ee9e"
+    },
+    "game-service-captures/log-004.txt": {
+      "bytes": 1048614,
+      "sha256": "6f3f6e20784ea96e4b4a5a129bce9ff4b673bfc4ff04db11e28d15d5ea7a8435"
+    },
+    "game-service-captures/log-005.txt": {
+      "bytes": 825585,
+      "sha256": "d512949933ce6d7fd97dadaf7ae833c259db0a88858109984cac05837e517081"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 2248,
+      "sha256": "dfcf852fb664b26e269f7cdf3f4c0f025c2c07bfb2d934eca03ce24ae1a715fb"
+    },
+    "game-hang-captures/manifest.json": {
+      "bytes": 784,
+      "sha256": "2d66b255bfbf878bbf90b534037496ea2a718f9466e0dee59668ed3154a79e1e"
+    },
+    "game-hang-captures/snapshot.json": {
+      "bytes": 17326,
+      "sha256": "fa79f1fd87175de4fd5608e237b54e039860cf9e9b35b9e9756534a417a86047"
+    },
+    "game-hang-captures/windows-contexts.jsonl": {
+      "bytes": 1804,
+      "sha256": "4e02c0e15802664e9e604a7b1fcfebcd82611f78bebd58f62aa7f062aa018abc"
+    }
+  }
+}

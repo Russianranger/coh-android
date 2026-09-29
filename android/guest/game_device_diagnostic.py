@@ -7,6 +7,7 @@ writable session before the original eighteen stages run. Android execution is
 attested by the native application, never by a guest command-line flag.
 """
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -150,6 +151,143 @@ class ManifestDirectory:
         return self.manifest
 
 
+class DeviceWineProcessOwner(base.WineProcessOwner):
+    """Handle a worker exiting during a private-token ownership read.
+
+    A zombie leader can outlive its workers. Android may deny a worker's
+    namespace/environment read while that worker is exiting, before its proc
+    directory disappears. Only verified termination or a fresh complete
+    ownership check resolves that denial; a persistently unreadable live task
+    still fails closed. Signaling remains the accepted identity/pidfd policy.
+    """
+    PERMISSION_ATTEMPTS = 3
+    PERMISSION_PAUSE = .025
+    OBSERVATION_LIMIT = 16
+
+    def __init__(self, context, proc_root=Path('/proc')):
+        super().__init__(context, proc_root)
+        self.receipt.update(permission_read_retries=0, worker_exit_rechecks=0,
+                            permission_observations=[], permission_observations_omitted=0)
+
+    def observe_permission(self, group, worker, operation, error, attempt):
+        observation = {'group_pid': group['pid'], 'group_starttime': group['starttime'],
+            'worker_tid': worker['pid'], 'worker_starttime': worker['starttime'],
+            'operation': operation, 'errno': error.errno, 'attempt': attempt,
+            'worker_state_before': worker['state'], 'resolution': 'unresolved'}
+        if len(self.receipt['permission_observations']) < self.OBSERVATION_LIMIT:
+            # The accepted restart captures dict(receipt). Give each subsequent
+            # scan a new list so final cleanup cannot amend that earlier proof.
+            self.receipt['permission_observations'] = [*self.receipt['permission_observations'], observation]
+        else:
+            self.receipt['permission_observations_omitted'] += 1
+        return observation
+
+    def inspect(self, proc_pid, deadline=None):
+        before = len(self.receipt['permission_observations']) + self.receipt['permission_observations_omitted']
+        try:
+            return super().inspect(proc_pid, deadline)
+        except PermissionError as exc:
+            recorded = len(self.receipt['permission_observations']) + self.receipt['permission_observations_omitted']
+            try:
+                known_same_uid = proc_pid not in self.excluded and self.status(
+                    self.proc_root / str(proc_pid))['uid'] == self.real_uid
+            except (OSError, ValueError, KeyError, IndexError):
+                known_same_uid = False
+            if recorded == before and known_same_uid:
+                # This is outside the worker read covered below. Record its
+                # identity when readable, but do not infer ownership or retry
+                # an unknown denied operation. The base scanner still refuses it.
+                try:
+                    current = self.process_stat(self.proc_root / str(proc_pid))
+                except (OSError, ValueError, KeyError, IndexError):
+                    current = {'pid': proc_pid, 'starttime': None, 'state': 'unavailable'}
+                observation = self.observe_permission(current, current, 'group_inspection', exc, 1)
+                observation['resolution'] = 'unresolved_group_permission_denied'
+            raise
+
+    def inspect_dead_leader(self, path, identity, deadline):
+        for task, worker in self.live_tasks(path, deadline):
+            group_key = (identity['pid'], identity['starttime'])
+            require(len(self.dead_leaders) < 4096 or group_key in self.dead_leaders,
+                    'Wine ownership group count exceeds bound')
+            self.dead_leaders.add(group_key)
+            self.receipt['dead_leaders_with_live_tasks'] = len(self.dead_leaders)
+            previous_denial = None
+            for attempt in range(1, self.PERMISSION_ATTEMPTS + 1):
+                operation = 'worker_status'
+                try:
+                    require(deadline is None or time.monotonic() < deadline,
+                            'Wine ownership task inspection timed out')
+                    status = self.status(task)
+                    require(status['uid'] == self.real_uid and status['tgid'] == identity['pid']
+                            and status['pid'] == worker['pid'], 'Cannot verify Wine worker group membership')
+                    if not self.direct_pid_view:
+                        operation = 'worker_pid_namespace'
+                        if (len(status['namespace_pids']) != self.namespace_depth
+                                or os.readlink(task / 'ns/pid') != self.namespace):
+                            return False
+                    operation = 'worker_environment'
+                    token_present = self.has_token(task)
+                    operation = 'worker_identity_after_read'
+                    current_worker = self.process_stat(task)
+                    require(current_worker['pid'] == worker['pid']
+                            and current_worker['starttime'] == worker['starttime'],
+                            'Wine cleanup worker identity changed')
+                    operation = 'group_identity_after_read'
+                    current_group = self.process_stat(path)
+                    require(current_group['pid'] == identity['pid']
+                            and current_group['starttime'] == identity['starttime'],
+                            'Wine cleanup group identity changed')
+                    if previous_denial is not None:
+                        previous_denial.update(resolution='complete_ownership_read',
+                            worker_state_after=current_worker['state'], token_matched=token_present)
+                    if not token_present or current_worker['state'] == 'Z':
+                        break
+                    worker_key = (*group_key, worker['pid'], worker['starttime'])
+                    require(len(self.owned_workers) < 4096 or worker_key in self.owned_workers,
+                            'Wine ownership worker count exceeds bound')
+                    self.owned_workers.add(worker_key)
+                    self.receipt['owned_live_workers'] = len(self.owned_workers)
+                    return True
+                except FileNotFoundError:
+                    if previous_denial is not None:
+                        previous_denial['resolution'] = 'verified_disappearance'
+                        self.receipt['worker_exit_rechecks'] += 1
+                    break
+                except PermissionError as exc:
+                    observation = self.observe_permission(identity, worker, operation, exc, attempt)
+                    try:
+                        current_group = self.process_stat(path)
+                        require(current_group['pid'] == identity['pid']
+                                and current_group['starttime'] == identity['starttime'],
+                                'Wine cleanup group identity changed during permission recheck')
+                        current_worker = self.process_stat(task)
+                        require(current_worker['pid'] == worker['pid']
+                                and current_worker['starttime'] == worker['starttime'],
+                                'Wine cleanup worker identity changed during permission recheck')
+                    except FileNotFoundError:
+                        observation['resolution'] = 'verified_disappearance'
+                        self.receipt['worker_exit_rechecks'] += 1
+                        break
+                    except Exception:
+                        observation['resolution'] = 'identity_recheck_failed'
+                        raise
+                    observation['worker_state_after'] = current_worker['state']
+                    if current_worker['state'] == 'Z':
+                        observation['resolution'] = 'same_worker_became_zombie'
+                        self.receipt['worker_exit_rechecks'] += 1
+                        break
+                    if attempt == self.PERMISSION_ATTEMPTS or (deadline is not None
+                            and time.monotonic() + self.PERMISSION_PAUSE >= deadline):
+                        observation['resolution'] = 'persistent_live_permission_denied'
+                        raise
+                    observation['resolution'] = 'retry_same_live_worker'
+                    previous_denial = observation
+                    self.receipt['permission_read_retries'] += 1
+                    time.sleep(self.PERMISSION_PAUSE)
+        return False
+
+
 class WineMemorySampler:
     """Bounded read-only samples; a missing measurement cannot fail gameplay proof.
 
@@ -161,10 +299,10 @@ class WineMemorySampler:
     def __init__(self, diagnostic):
         self.diagnostic = diagnostic
         self.next_sample = 0
-        self.scanner = object.__new__(base.WineProcessOwner)
+        self.scanner = object.__new__(type(diagnostic.wine_owner))
         self.scanner.__dict__.update(diagnostic.wine_owner.__dict__)
         self.scanner.initialized = False
-        self.scanner.receipt = dict(diagnostic.wine_owner.receipt)
+        self.scanner.receipt = copy.deepcopy(diagnostic.wine_owner.receipt)
         self.scanner.dead_leaders, self.scanner.owned_workers = set(), set()
         self.report = {'scope': 'run_token_owned_Wine_FEX_processes_only',
             'measurement': 'sampled_sum_of_process_VmRSS_kibibytes', 'minimum_interval_seconds': 5,
@@ -278,6 +416,9 @@ class DeviceGameDiagnostic(game.GameDiagnostic):
         adapted = argparse.Namespace(**vars(args))
         adapted.game_data = ManifestDirectory(args.game_data_manifest)
         super().__init__(adapted, context)
+        require(not self.wine_started, 'Device ownership guard must be installed before Wine starts')
+        self.wine_owner = DeviceWineProcessOwner(self.ctx, self.wine_owner.proc_root)
+        self.wine_env.update(self.wine_owner.environment)
         self.imported = imported
         self.ctx.report['imported_content'] = imported
         self.ctx.report['device_adapter'] = adapter

@@ -24,8 +24,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 APP_ID = "io.github.russianranger.cohatlastest"
 LAUNCHER = APP_ID + ".AtlasActivity"
-VERSION_NAME = "0.4.0"
-VERSION_CODE = 1
+VERSION_NAME = "0.4.1"
+VERSION_CODE = 2
 APK_NAME = f"COH-Atlas-Test-{VERSION_NAME}.apk"
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 IMPORT_NAMES = frozenset({"atlas-import.properties", "atlas-text.zip",
@@ -360,7 +360,7 @@ def main():
             "payload_bytes_verified": True, "device_validated": False, "gameplay_validated": False,
             "candidate_role": "physical_thor_atlas_park_server_test",
             "scope": "Reviewed asset import and local Atlas Park server persistence test; no graphical game client",
-            "installation": "Separate application ID preserves accepted apps; import the reviewed asset ZIP into this app before running",
+            "installation": "Same Atlas Test application ID; the ephemeral 0.4.0 signing key is unavailable, so uninstall only Atlas Test before installing 0.4.1, then set up runtime and import again. Earlier accepted diagnostic/setup apps remain separate.",
         }
         (args.output.parent / "atlas-game-apk-build-report.json").write_text(json.dumps(report, indent=2) + "\n")
         args.output.with_suffix(".apk.sha256").write_text(report["sha256"] + "  " + args.output.name + "\n")
