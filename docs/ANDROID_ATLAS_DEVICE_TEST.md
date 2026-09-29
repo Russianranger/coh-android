@@ -1,5 +1,26 @@
 # Atlas Park server test on Android
 
+**0.4.3 hosted qualification: build passed; first runtime attempt failed.**
+All 113 candidate checks passed, and the downloaded APK's 30 payloads, 12 Java
+source identities and five guest files match code
+`d75ec1e5efeeccd8dcb51aaad574ecdb1a3ce76a`. Run `36621227369` attempt 1 passed
+nine stages, then failed `Atlas lost current readiness during observation`.
+DbServer kept dispatching; Atlas heartbeat ages reached 26/27 seconds. Final
+cleanup completed with zero ownership inspection failures and zero remaining
+owned processes. No character session or restart was reached, so this does not
+qualify the targeted restart cleanup path.
+
+This matches the earlier intermittent hosted Atlas failure. One runtime-only
+retry of the exact same signed APK, with unchanged readiness and cleanup checks,
+is in progress. A passing retry would qualify that run's full persistence path;
+it would not establish a repair or root cause for the intermittent heartbeat
+failure. Preserve both attempts. If the same failure repeats, add bounded fresh
+MapServer main-thread startup/tick publication before further retries. Do not
+relax freshness checks or infer the current operation from buffered stdout.
+Do not install 0.4.3 on Thor until full qualification and independent review pass.
+See the [failed evidence](android-evidence/atlas-test-evidence-36621227369-attempt1-failed.zip)
+and [independent review](android-evidence/atlas-test-review-36621227369-attempt1-failed.json).
+
 **Thor 0.4.2 follow-up (2026-09-29, 18:57 UTC): cleanup is blocked again.**
 The first 13 stages passed, including Atlas live-heartbeat observation and the
 committed save of `TEST24402` with 12,345 influence. `game_restart` failed with
