@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "scope": "host_JVM_Java_gate_compatibility_only",
+  "repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "apk_sha256": "781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734",
+  "java_source_sha256": "cf272a3f63c724ef8ea1f4e225c7038b5e783015908182909d7bcabdaea64885",
+  "runtime_manifest_sha256": "1c88865e94841fc3511dfc20b6d9e15e28dbb2ed646ae74295f6f2b994b74711",
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "gameplay_validated": false,
+  "status": "passed",
+  "untouched_host_report_rejected": true,
+  "untouched_cleanup_accepted": true,
+  "adapted_report_accepted": true,
+  "original_evidence_unchanged": true,
+  "report_sha256": "87536858e677137d13cce549a7d149700ad4b2bc2fa71e5467e4b2ebda1b38ff",
+  "import_report_sha256": "d71a227c5d9a4ccaada3f333f41bff4a9d22fdf0ec1d7d806c41d81501190ee9",
+  "adapted_fields": [
+    {
+      "field": "execution_platform_requested",
+      "before": "host",
+      "after": "android"
+    }
+  ],
+  "warning": "Only the source-bound Java acceptance semantics were replayed on the host JVM; no Android execution was performed."
+}

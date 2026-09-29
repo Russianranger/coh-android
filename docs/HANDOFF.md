@@ -1,5 +1,29 @@
 # City of Heroes Android handoff
 
+Current checkpoint (2026-09-29, 14:49 UTC): **COH Atlas Test 0.4.1 passed hosted
+qualification** in [run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816)
+at `6b50467a1b96133acc92a378617ff961733f288c`. All 91 candidate checks, 65 import
+checks and 142 of 143 existing game checks passed (one Windows-only skip).
+The exact signed APK's import and all 18 stages passed in 1,968.534 seconds.
+Independent review verified 25 capture files, both committed saves, same-cluster
+restart, exact-name resume and all 122 closed process records. Restart and final
+cleanup each had zero inspection failures and zero remaining owned processes.
+The Java gate compatibility replay also passed while retaining the original
+report's hosted identity. See the
+[acceptance receipt](android-evidence/accepted-atlas-test-hosted-36579726816.json).
+
+The candidate-only scanner correction handles identity-verified worker exit
+during ownership reads and bounded full-read retries; persistent live denial
+still fails. It adds sanitized failure details without changing accepted base
+payloads or Java acceptance guards. Hosted cleanup needed no permission retry,
+so physical confirmation is still required. Next: uninstall only failed Atlas
+Test 0.4.0 (its ephemeral signing key cannot update in place), install 0.4.1,
+set up runtime/import again, then **run one full Thor test and submit the export
+before continuing Stop/rerun**. Keep the accepted 0.1.5/0.2.0/0.3.0 apps installed.
+After the first pass is reviewed, complete Stop during active services and a
+successful rerun with app switching and screen lock/unlock. Graphical client
+work remains later. See the [device procedure](ANDROID_ATLAS_DEVICE_TEST.md).
+
 Thor follow-up (2026-09-29, 13:50 UTC): **0.4.0 reached Atlas Park and committed
 the first character save, then failed the restart ownership check.** The first
 13 stages passed; `TEST-47452` (container 1) saved influence 12,345. Wine stop and
@@ -9,14 +33,14 @@ and closed all 86 child records; the cumulative inspection failure correctly
 kept the Android guard blocked. The full restart/resume milestone is not accepted.
 The failed PID/read is absent from this report; a worker-exit race in the scanner
 is consistent with the captured zombie leaders and surviving Wine workers.
-An isolated 0.4.1 candidate correction is in preparation, retaining strict live
-ownership checks and adding bounded failure context. Force-stop the 0.4.0 app;
-do not repeat the remaining device tests on it. See the
+The isolated 0.4.1 correction is now hosted-qualified above, retaining strict live
+ownership checks and adding bounded failure context. Do not repeat the remaining
+device tests on 0.4.0. See the
 [failure receipt](android-evidence/atlas-test-thor-restart-failure-20260929.json).
 The user confirms following the force-stop instruction at the end, probably
 after exporting the report. This was recovery after the recorded failure.
 
-Current checkpoint (2026-09-29, 12:18 UTC): the separate
+Previous hosted checkpoint (2026-09-29, 12:18 UTC): the separate
 [COH Atlas Test 0.4.0 candidate](ANDROID_ATLAS_DEVICE_TEST.md) **passed hosted
 qualification** in [run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)
 at `4a8534b46ec024ca8f97bcbdc689f5fe23746a69`. The exact APK passed full import,
@@ -28,8 +52,9 @@ payloads and source identities match their receipts; the current report also
 passed the scratch JVM validator compatibility check without being relabelled
 as device evidence. See the
 [acceptance receipt](android-evidence/accepted-atlas-test-hosted-36563104664.json).
-Next: physical Thor setup/import, success, Stop during active services, then
-success again with app switching and lock/unlock; export all three server reports.
+The next gate at that checkpoint was Thor success/Stop/success with lifecycle
+checks. The failed first run superseded that sequence: use 0.4.1 for one full
+run/export and pause for review, as directed in the current checkpoint above.
 The candidate combines content import with the accepted local server/runtime
 package and the automatic Atlas Park create/save/restart/resume test. It uses a new
 application ID, so its private content must be imported once; accepted 0.3.0 data
@@ -52,7 +77,7 @@ That combined server candidate is now hosted-qualified above; its physical
 create/save/restart/resume and Stop/rerun checks are next. Graphical client
 execution remains later work. Keep all existing diagnostics installed.
 
-Current continuation (2026-09-29): **COH Atlas Setup 0.3.0 passed hosted
+Earlier hosted import checkpoint (2026-09-29): **COH Atlas Setup 0.3.0 passed hosted
 qualification** in [run 36556279364](https://github.com/Russianranger/coh-android/actions/runs/36556279364)
 at `2f828ca3e626245ea9fd60055745980bc3f32001`. All 65 checks, the signed APK
 build, full 173,011-file import, cancelled re-import and abandoned-stage recovery
@@ -60,8 +85,9 @@ passed. The complete inventory matches the accepted game data. The downloaded
 APK and all four payloads were independently rehashed against the reports.
 See the [acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json)
 and [candidate/device instructions](ANDROID_ASSET_IMPORT.md).
-Physical Thor import/Stop/retry is now accepted above. The new 0.4.0 candidate
-is ready for its server, app-switching and screen-lock device checks. The 0.3.0
+Physical Thor import/Stop/retry is now accepted above. The subsequent 0.4.0
+candidate failed its first restart check; the current 0.4.1 retry instructions
+above supersede its device test sequence. The 0.3.0
 app imports content only; Android Atlas game services and graphical
 gameplay remain unvalidated. Accepted listener and diagnostic evidence below
 remains unchanged. The candidate uses a development/ephemeral signing certificate.
@@ -91,9 +117,10 @@ inspection failures. The
 binds the [raw report](android-evidence/game-listeners-arm64-36510836956.json)
 and [preserved captures](android-evidence/game-listeners-evidence-36510836956.zip).
 
-Verified file-picker import is implemented and accepted on Thor above; next
-implement the separate Android Atlas
-runtime/lifecycle integration. The hosted namespace remains mandatory;
+Verified file-picker import is implemented and accepted on Thor above. The
+separate Android Atlas runtime/lifecycle integration was subsequently built and
+hosted-qualified; the current 0.4.1 physical retry is the next gate. The hosted
+namespace remains mandatory;
 the local binding policy does not establish device-wide network isolation.
 Keep installed 0.1.5 and 0.2.0; no repeat of their passed diagnostics is needed,
 and the listener milestone itself supplies no physical Atlas result.

@@ -4,8 +4,11 @@
 startup, character creation and the first committed save. It failed while
 verifying Wine ownership during restart. Final cleanup reported no remaining
 owned processes, but the earlier inspection failure kept the app blocked.
-Force-stop this candidate and wait for the 0.4.1 correction before continuing
-the test sequence below. The exact failed read was not recorded; the fix targets
+The user force-stopped that candidate after the failure, probably after exporting
+the report. This was the appropriate recovery and did not cause the recorded
+failure. The corrected 0.4.1 candidate has passed hosted qualification and is
+ready for the focused retry below.
+The exact failed read was not recorded; the fix targets
 an identified worker-exit race and adds bounded diagnostics. See the
 [failure receipt](android-evidence/atlas-test-thor-restart-failure-20260929.json).
 
@@ -15,24 +18,29 @@ with the qualified PostgreSQL/Wine/FEX runtime, DbServer, Atlas Park MapServer,
 and creation/resume TestClients. It runs an automatic character persistence test.
 It does not supply a graphical game client or human controls.
 
-The 0.4.1 correction is undergoing qualification. It adds identity-checked
+The 0.4.1 correction is hosted-qualified. It adds identity-checked
 recovery when a worker exits during ownership inspection and bounded diagnostic
 context for denied reads. Live unreadable ownership, changed identities and
 unresolved cleanup remain failures. The accepted base runtime and game binaries
 are unchanged.
 
-The preceding 0.4.0 hosted qualification passed in
-[run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664)
-at `4a8534b46ec024ca8f97bcbdc689f5fe23746a69`. The exact signed APK's full import
-and 18-stage server test passed in 32 minutes 28 seconds, including 31 minutes
-32 seconds of guest execution. Both committed saves, same-cluster restart,
+The 0.4.1 hosted qualification passed in
+[run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816)
+at `6b50467a1b96133acc92a378617ff961733f288c`. The exact signed APK's full import
+and 18-stage server test passed in 32 minutes 49 seconds, including 31 minutes
+52 seconds of guest execution. Both committed saves, same-cluster restart,
 exact-name resume, all captures and owned cleanup passed. The downloaded APK,
 all 30 packaged payloads and all 12 compiled source identities were checked
 against the build receipt. See the
-[acceptance receipt](android-evidence/accepted-atlas-test-hosted-36563104664.json)
-and [raw evidence](android-evidence/atlas-test-evidence-36563104664.zip).
-Physical Android Atlas execution remains pending until this candidate produces
-device reports.
+[acceptance receipt](android-evidence/accepted-atlas-test-hosted-36579726816.json)
+and [raw evidence](android-evidence/atlas-test-evidence-36579726816.zip).
+All 91 candidate contract tests passed. Independent review verified 25 capture
+files and all 122 closed process records. Restart and final cleanup had zero
+inspection failures and zero remaining owned processes. The host did not need
+permission-read retries; it does not prove the Android-specific recovery.
+The preceding [0.4.0 hosted baseline](android-evidence/accepted-atlas-test-hosted-36563104664.json)
+remains preserved. Complete physical Android Atlas acceptance is pending the
+new candidate's device reports.
 The [0.3.0 content import/Stop/retry](ANDROID_ASSET_IMPORT.md#accepted-thor-importstopretry)
 and [0.2.0 DbServer tests](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results)
 remain accepted; they do not need repeating in those apps.
@@ -88,11 +96,13 @@ hosted qualification retains its mandatory private network namespace.
    files. Do not select split ZIP parts or individual PIGGs.
 4. Have at least 6 GiB free **after setup and import**, then choose **Run Atlas
    test**. The test creates its own disposable writable game copy and database.
-   The overall guest deadline is 90 minutes. The preceding candidate's hosted guest run
-   took about 32 minutes; physical Thor timing is not yet established.
-   Initial server startup alone took 17 minutes 35 seconds on the hosted runner;
-   allow the active stage to finish rather than treating a long startup as a hang.
-5. Export the successful report. Start another test, use **Stop** while game
+   The overall guest deadline is 90 minutes. The failed 0.4.0 Thor run took about
+   44 minutes 37 seconds through its first save and attempted restart, including
+   about 26 minutes 29 seconds for initial server startup. A complete Thor run's
+   timing is still unknown; allow the active stage to finish.
+5. Export and submit this first complete attempt for review, even if it fails.
+   Pause here until its restart/resume and cleanup evidence has been checked.
+6. After that pass is accepted, start another test, use **Stop** while game
    services are active, wait for cleanup and export that report. Then run a fresh
    successful test and export its report. Switch apps and lock/unlock the screen
    during this final run. The service records bounded lifecycle observations.
@@ -133,8 +143,8 @@ The candidate retains a development/ephemeral CI signing certificate. It does
 not establish a stable release update identity. A later candidate may need a
 separate installation or reinstall and re-import.
 
-The preceding 0.4.0 APK was 355,105,590 bytes, SHA-256
-`826f8c56cabcd597d9558e4d072b0a43922580afcb3ccf75d4e8d1879605a80f`.
+The 0.4.1 APK is 355,105,590 bytes, SHA-256
+`781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734`.
 The Java acceptance gate was also replayed against this fresh hosted report:
 the untouched host report was rejected as Android evidence, its cleanup was
 accepted unchanged, and a scratch copy passed after changing only the requested

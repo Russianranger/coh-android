@@ -2,18 +2,22 @@
 
 **Thor 0.4.0 follow-up:** Atlas startup, character creation and the first committed
 save passed. Restart stopped on a Wine ownership inspection failure; the complete
-device gate remains pending. A targeted 0.4.1 correction is in preparation.
+device gate remains pending. The targeted 0.4.1 correction is now hosted-qualified
+and ready for one full Thor retry.
 See the [failure receipt](docs/android-evidence/atlas-test-thor-restart-failure-20260929.json).
 
-**Hosted baseline: COH Atlas Test 0.4.0 passed qualification before the device failure above.**
+**COH Atlas Test 0.4.1 passed hosted qualification.**
 The separate [Android server candidate](docs/ANDROID_ATLAS_DEVICE_TEST.md) passed
 exact-APK import and all 18 Atlas Park create/save/restart/resume stages in
-[run 36563104664](https://github.com/Russianranger/coh-android/actions/runs/36563104664).
+[run 36579726816](https://github.com/Russianranger/coh-android/actions/runs/36579726816).
 Both saves committed, the exact character resumed, and all 122 process records
-closed cleanly. The full import/server check took 32 minutes 28 seconds.
-See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36563104664.json).
-The corrected candidate must pass hosted qualification before the Thor retry;
-graphical client execution follows later.
+closed cleanly with zero ownership inspection failures. All 91 candidate checks
+passed; the full import/server check took 32 minutes 49 seconds.
+See the [acceptance receipt](docs/android-evidence/accepted-atlas-test-hosted-36579726816.json).
+Uninstall only the failed 0.4.0 Atlas Test, install 0.4.1, prepare its runtime and
+import, then run one full test and submit its report before continuing Stop/rerun.
+The host did not reproduce the Android permission race; Thor confirmation is
+still required. Graphical client execution follows later.
 
 **COH Atlas Setup 0.3.0 passed import/Stop/retry on Thor.** The two full imports
 verified all 173,011 files in 56.610 and 61.822 seconds. The intervening Stop
