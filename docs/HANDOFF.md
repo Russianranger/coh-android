@@ -19,6 +19,22 @@ budget across schema/listener readiness and positive-loop dispatch, retaining
 the existing overall deadline, cancellation, health and readiness predicates.
 Accepted base payloads and Java guards remain unchanged. See the
 [failure receipt](android-evidence/atlas-test-thor-dispatch-failure-20260929.json).
+The 0.4.2 APK built successfully and its 30 payloads and 12 Java source identities
+match candidate commit `ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5`. All 100 candidate
+checks passed. Hosted run `36599606621` attempt 1 passed nine stages, then failed
+`atlas_ready_observation`: Atlas heartbeat ages reached 29 seconds while DbServer
+dispatch continued. The first DbServer startup milestones passed in 42.468 and
+57.217 seconds. Final cleanup completed with zero inspection failures and no
+remaining owned processes. This is a separate failure, not accepted runtime
+qualification. The [failed evidence](android-evidence/atlas-test-evidence-36599606621-attempt1-failed.zip)
+and [partial review](android-evidence/atlas-test-review-36599606621-attempt1-failed.json)
+are preserved. Atlas publishes readiness before its final startup work, and the
+stdout tail can be buffered; these observations do not establish an SG permission
+verification defect. One runtime-only retry of the exact same signed APK and
+unchanged guards is in progress as attempt 2. Do not deliver it before reviewing
+a complete passing report. A repeat pass would not establish a repair of this
+separate failure.
+
 The correction is being qualified. After it passes hosted checks, uninstall
 only Atlas Test 0.4.1, install 0.4.2, prepare runtime/import and run one full
 Thor test/export before continuing Stop/rerun. Keep earlier accepted apps.
@@ -75,8 +91,8 @@ passed the scratch JVM validator compatibility check without being relabelled
 as device evidence. See the
 [acceptance receipt](android-evidence/accepted-atlas-test-hosted-36563104664.json).
 The next gate at that checkpoint was Thor success/Stop/success with lifecycle
-checks. The failed first run superseded that sequence: use 0.4.1 for one full
-run/export and pause for review, as directed in the current checkpoint above.
+checks. Later failed runs superseded that sequence: follow the current candidate's
+full run/export and pause for review, as directed in the current checkpoint above.
 The candidate combines content import with the accepted local server/runtime
 package and the automatic Atlas Park create/save/restart/resume test. It uses a new
 application ID, so its private content must be imported once; accepted 0.3.0 data
@@ -108,7 +124,7 @@ APK and all four payloads were independently rehashed against the reports.
 See the [acceptance receipt](android-evidence/accepted-asset-import-hosted-36556279364.json)
 and [candidate/device instructions](ANDROID_ASSET_IMPORT.md).
 Physical Thor import/Stop/retry is now accepted above. The subsequent 0.4.0
-candidate failed its first restart check; the current 0.4.1 retry instructions
+candidate failed its first restart check; the current candidate's retry instructions
 above supersede its device test sequence. The 0.3.0
 app imports content only; Android Atlas game services and graphical
 gameplay remain unvalidated. Accepted listener and diagnostic evidence below
@@ -141,7 +157,7 @@ and [preserved captures](android-evidence/game-listeners-evidence-36510836956.zi
 
 Verified file-picker import is implemented and accepted on Thor above. The
 separate Android Atlas runtime/lifecycle integration was subsequently built and
-hosted-qualified; the current 0.4.1 physical retry is the next gate. The hosted
+hosted-qualified; the current candidate's physical retry is the next gate. The hosted
 namespace remains mandatory;
 the local binding policy does not establish device-wide network isolation.
 Keep installed 0.1.5 and 0.2.0; no repeat of their passed diagnostics is needed,

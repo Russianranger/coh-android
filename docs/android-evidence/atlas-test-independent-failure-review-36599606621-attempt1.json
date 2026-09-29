@@ -1,0 +1,453 @@
+{
+  "format": 1,
+  "review_status": "partial_failure_evidence_verified",
+  "qualification_status": "failed",
+  "run_id": 36599606621,
+  "repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+  "artifact": {
+    "id": 11049608005,
+    "bytes": 231774,
+    "sha256": "6e5118b8a597a8b9343762d9bca9a89e8a16159218b2f0c216b9c9be9f577cf5"
+  },
+  "apk": {
+    "bytes": 355109686,
+    "sha256": "1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07"
+  },
+  "scope": "independent downloaded failure evidence inspection; no runtime execution, source changes or success-gate relaxation",
+  "checks": [
+    "Original evidence ZIP and extracted file bytes",
+    "Exact candidate APK manifest/input provenance and accepted binary/data identities",
+    "Full imported-generation receipt and private-copy preservation",
+    "All 5 service and 3 hang capture hashes; nested inventories",
+    "First-phase schema signature and source-emitted loopback listeners",
+    "Distinct private host network namespace and non-root owner",
+    "Raw initial and pre-cleanup DbServer dispatch records",
+    "Complete final owned cleanup with zero remaining workers and inspection failures"
+  ],
+  "failure": {
+    "message": "Atlas lost current readiness during observation",
+    "stage": "atlas_ready_observation",
+    "passed_stages": 9,
+    "attempted_stages": 10,
+    "character_created": false,
+    "first_save_proven": false,
+    "restart_reached": false
+  },
+  "timing_seconds": {
+    "host_gate": 1338.980644,
+    "import": 53.556068,
+    "guest": 1284.669197,
+    "hang_capture": 2.832,
+    "game_private_runtime": 276.254267,
+    "assets_and_architecture": 0.007864,
+    "initialize_owned_cluster": 2.105924,
+    "postgres_first_start": 0.215548,
+    "restricted_fixture_database": 0.808229,
+    "wine_prefix_and_driver": 40.031959,
+    "win32_odbc_driver": 1.179666,
+    "win32_runtime_dll": 0.407503,
+    "game_services_first": 930.852873
+  },
+  "device_dbserver_startup": {
+    "first": {
+      "scope": "service_startup_entry_through_positive_main_loop",
+      "budget_seconds": 600,
+      "milestones": {
+        "schema_and_listener": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 42.468
+        },
+        "positive_main_loop": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 57.217
+        }
+      }
+    }
+  },
+  "dispatch": {
+    "initial_positive_loop": {
+      "sampled_utc": "2026-09-29T16:55:51.204747+00:00",
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 84,
+      "stage": "NM_MONITOR",
+      "loop_count": 2,
+      "file_identity": {
+        "device": 2049,
+        "inode": 6586553
+      }
+    },
+    "before": {
+      "sampled_utc": "2026-09-29T17:10:51.381540+00:00",
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 2781720,
+      "stage": "NM_MONITOR",
+      "loop_count": 49673,
+      "file_identity": {
+        "device": 2049,
+        "inode": 6586553
+      }
+    },
+    "after": {
+      "sampled_utc": "2026-09-29T17:10:54.213226+00:00",
+      "windows_pid": 412,
+      "main_thread_id": 416,
+      "sequence": 2787264,
+      "stage": "NM_MONITOR",
+      "loop_count": 49772,
+      "file_identity": {
+        "device": 2049,
+        "inode": 6586553
+      }
+    },
+    "sequence_delta": 5544,
+    "loop_delta": 99
+  },
+  "atlas_ready_sample": {
+    "ready": true,
+    "not_started": false,
+    "map_id": 1,
+    "network_age_seconds": 3,
+    "stats_age_seconds": 3,
+    "address": "127.0.0.1",
+    "port": 7001,
+    "phase": "first-ready",
+    "sampled_utc": "2026-09-29T17:10:24.838981+00:00",
+    "monotonic": 1574.289581864
+  },
+  "atlas_observation_samples": [
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 5,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:26.860889+00:00",
+      "monotonic": 1576.311488662
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 17,
+      "stats_age_seconds": 17,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:39.148224+00:00",
+      "monotonic": 1588.59882291
+    },
+    {
+      "ready": true,
+      "not_started": false,
+      "map_id": 1,
+      "network_age_seconds": 29,
+      "stats_age_seconds": 29,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "phase": "first-observation",
+      "sampled_utc": "2026-09-29T17:10:51.380865+00:00",
+      "monotonic": 1600.83146415
+    }
+  ],
+  "hang": {
+    "services_before_cleanup": [
+      {
+        "label": "first-dbserver",
+        "pid": 6302,
+        "alive": true,
+        "forced_stop": false
+      },
+      {
+        "label": "first-atlas",
+        "pid": 6560,
+        "alive": true,
+        "forced_stop": false
+      }
+    ],
+    "postgres_session_count": 65,
+    "postgres_state_counts": {
+      "idle/ClientRead": 65
+    },
+    "atlas_linux_identity": {
+      "proc_pid": 6560,
+      "pid": 6560,
+      "starttime": 70202
+    },
+    "atlas_linux_threads": [
+      {
+        "identity": {
+          "pid": 6560,
+          "state": "R",
+          "parent": 6065,
+          "starttime": 70202
+        },
+        "wchan": {
+          "available": true,
+          "text": "anon_pipe_read",
+          "bytes": 14,
+          "truncated": false
+        },
+        "syscall": {
+          "available": true,
+          "text": "63 0x6 0x7ffffe0ff920 0x40 0x0 0x1 0x2 0x7ffffe0ff750 0xffb2388adbcc\n",
+          "bytes": 69,
+          "truncated": false
+        },
+        "stack": {
+          "available": false,
+          "error_type": "PermissionError",
+          "error": "[Errno 13] Permission denied"
+        }
+      },
+      {
+        "identity": {
+          "pid": 6567,
+          "state": "S",
+          "parent": 6065,
+          "starttime": 70364
+        },
+        "wchan": {
+          "available": true,
+          "text": "anon_pipe_read",
+          "bytes": 14,
+          "truncated": false
+        },
+        "syscall": {
+          "available": true,
+          "text": "63 0x12 0x1004ed4f0 0x10 0x0 0x1 0x103 0x1004ed4a0 0xffb2388adbcc\n",
+          "bytes": 66,
+          "truncated": false
+        },
+        "stack": {
+          "available": false,
+          "error_type": "PermissionError",
+          "error": "[Errno 13] Permission denied"
+        }
+      },
+      {
+        "identity": {
+          "pid": 6727,
+          "state": "S",
+          "parent": 6065,
+          "starttime": 137441
+        },
+        "wchan": {
+          "available": true,
+          "text": "poll_schedule_timeout.constprop.0",
+          "bytes": 33,
+          "truncated": false
+        },
+        "syscall": {
+          "available": true,
+          "text": "72 0x0 0x0 0x0 0x0 0x100afe478 0x0 0x100afe450 0xffb2388b4a14\n",
+          "bytes": 62,
+          "truncated": false
+        },
+        "stack": {
+          "available": false,
+          "error_type": "PermissionError",
+          "error": "[Errno 13] Permission denied"
+        }
+      }
+    ],
+    "linux_limits": {
+      "owned_process_count": 12,
+      "tasks_examined": 118,
+      "fds_examined": 512,
+      "fd_limit": 512
+    },
+    "windows": {
+      "sampled_utc": "2026-09-29T17:10:51.897555+00:00",
+      "kind": "Windows x86 raw contexts, stack words and module addresses",
+      "symbolized": false,
+      "current_execution_validated": false,
+      "context_limitation": "Pinned Wine/FEX GetThreadContext can return saved WOW64 startup state",
+      "timeout_seconds": 15,
+      "exit_code": 0,
+      "output_bytes": 97145,
+      "output_overflow": false,
+      "output_capture_closed": true,
+      "forced_stop": false,
+      "truncated": false,
+      "completion": {
+        "kind": "complete",
+        "format": 1,
+        "processes": 2,
+        "threads": 70,
+        "modules": 77,
+        "errors": 0,
+        "truncated": false,
+        "bytes_before_complete": 96763
+      },
+      "available": true
+    }
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 546,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0
+  },
+  "capture_counts": {
+    "game-service-captures": 5,
+    "game-hang-captures": 3
+  },
+  "imported_content": {
+    "generation": "generation-de8db7beff3545d59564562d2570f818",
+    "contract_sha256": "500be57ce3425a3aac52d6eaf43a05560a19f894d32eb2fa353f2c0de19265f8",
+    "receipt_sha256": "485034e70f93fa256bf0f5e421a2838e9b92dd154bf2a3d842f29ceb54bb2381",
+    "file_count": 173011,
+    "total_bytes": 2977730517,
+    "private_copy_verified": true,
+    "source_generation_unchanged": true
+  },
+  "candidate_device_adapter": {
+    "candidate_repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+    "accepted_runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "accepted_game_repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+    "guest_source_sha256": {
+      "game_diagnostic.py": "605ebc439833ac88301ecfa5e0305dc11a1da627166823cbf13878316aa421dd",
+      "dbserver_diagnostic.py": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2",
+      "game_evidence.py": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d",
+      "game_hang_evidence.py": "9b8868cc49e5ee718e7706c3801f14b1a5ca90c47b01ff5ca5005ba9f4ef46c7",
+      "game_device_diagnostic.py": "3c8430626ff3b6bae7d33c118868df400ca92a1a783b0f80a1cf9cc6f6bd46de"
+    }
+  },
+  "memory_observation_summary": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "successful_samples": 193,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 2238716,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false
+  },
+  "source_observations": [
+    "svr_init.c calls dbReadyForPlayers before the development-mode memory and SG checks, before Server ready output, and before entering the server main loop.",
+    "Supergroup.c sgroup_verifyPermissionTable only iterates the 22 permission entries and asserts each enum is in order; it has no normal network or file wait.",
+    "loadstart_printf explicitly flushes its text, but loadend_printf does not explicitly flush; the last stdout fragment alone does not establish the exact blocked function.",
+    "The accepted 0.4.1 hosted baseline prints SG verification done (0.00) followed by Server ready using the same accepted MapServer identity."
+  ],
+  "assessment": "The Atlas heartbeat ceased advancing during its first startup. DbServer continued dispatching (+99 main loops in the bounded hang capture), and no character was created. Existing evidence does not establish a specific SG assertion, Wine call, deadlock or root cause. No evidence-grounded source fix is justified yet. One exact-APK runtime-only retry with unchanged gates is reasonable to determine reproducibility; preserve this failed attempt alongside any later result.",
+  "limits": [
+    "No full-success validator was run and no eighteen-stage qualification is claimed",
+    "Restart startup budget not exercised in this run",
+    "Windows GetThreadContext observations explicitly do not validate current execution; raw register/stack words cannot identify current blocked instructions",
+    "Linux kernel stacks unavailable (permission denied); FD sampling reached its bound, so absent descriptors do not prove absent sockets",
+    "The final MapServer exit code 1 was recorded after cleanup; both services were alive before cleanup",
+    "This is hosted ARM64 evidence, not physical Android or gameplay validation",
+    "Root separately verified APK payload/source bytes; this review read their exact manifest contracts and evidence identities"
+  ],
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "evidence_files": {
+    "game-captures.json": {
+      "bytes": 81,
+      "sha256": "f848b4558f78d74166e5a0f6267d99c9300dbe13b8af2c82b0190a1dceabc71c"
+    },
+    "game-hang-captures/manifest.json": {
+      "bytes": 945,
+      "sha256": "62af2b3f9191863d8e63680415137bfe136bfc1cf3515546c575250f0a03a18c"
+    },
+    "game-hang-captures/snapshot.json": {
+      "bytes": 418173,
+      "sha256": "9b12f74abe24f7de839c895dcdfeccb700c0d6f908c5c1445687c12fb90add22"
+    },
+    "game-hang-captures/windows-contexts.jsonl": {
+      "bytes": 97145,
+      "sha256": "e251abc7125e0d6a3a3d8359a5063e08596885b85a27a8fd76991fbcd04efd89"
+    },
+    "game-hang-captures.json": {
+      "bytes": 493,
+      "sha256": "dc569a782c831f7f34c4af76c89be31a3cde4c8ec65c4ac199b92ec4cad6d151"
+    },
+    "game-runtime-report.json": {
+      "bytes": 162606,
+      "sha256": "586c7a9bf1cc08c12b4cc4aafa6d5fb303a958f25ac32e2461fc70ae0bb7502b"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 882087,
+      "sha256": "d154b30d647c0c9ecb5c8aa3cc5c1fdfed11be8c4789f6d6a81c5c806d54baf8"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 5471,
+      "sha256": "9a99f43c64b5461ad93c95ac7b8f605447264ba43458cbd3dcc8e38542568aa1"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 802,
+      "sha256": "4dfb13b883c309e3a5119c34a8c15564d67cb4fab461855bcffd7f0758b02549"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 819546,
+      "sha256": "d7f028b19b9c7dd8b8befbc4e544206f62af1117affdbb43327a0147e39e3708"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 1359,
+      "sha256": "736c42e4e149690107410486a14d5714a9f048615d2fd071783029793fb32bf0"
+    },
+    "game-service-captures.json": {
+      "bytes": 770,
+      "sha256": "9bc1a190d9fb00a45c1230a94a33997938e5c5877eb3c5d73c2d7e43cf638223"
+    },
+    "guest-etc-hosts": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "host-device-inputs.json": {
+      "bytes": 3615,
+      "sha256": "74a7622651b0cd6a1d7a955910aebb34d3c6cc705f6001920542da5a84aaa890"
+    },
+    "host-device-qualification.json": {
+      "bytes": 508,
+      "sha256": "113f2f1efec376436821289166fae3c1d0b045c1a2cf8f12e1065489f792da86"
+    },
+    "host-game.log": {
+      "bytes": 94959,
+      "sha256": "307bddf73646f4817e5ce6870ddba9f3c2330696b765d6d4c8e0cb149926e62b"
+    },
+    "imported/host-import-report.json": {
+      "bytes": 1801,
+      "sha256": "1f9d1081f547486359d42a38e1f866646e627db8dbd12f008e346a1d6864155d"
+    },
+    "imported/host-import.log": {
+      "bytes": 824,
+      "sha256": "d31682e73d7228adb49880cc577c205029e84c36fa30368027be821bc26c520e"
+    },
+    "imported/import-summary.properties": {
+      "bytes": 393,
+      "sha256": "10ddd105a8b0c2625b05ff58fdbae3927772735fa891791e8094edf3a58fc3c2"
+    },
+    "network-isolation.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    }
+  }
+}
