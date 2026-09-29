@@ -261,6 +261,140 @@ class PackageTests(unittest.TestCase):
                             host.verify_package(root)
 
 
+class MapServerProgressHostTests(unittest.TestCase):
+    def progress_sample(self):
+        sys.path.insert(0, str(host.ROOT / 'android/guest'))
+        import game_map_progress as progress
+        producer = {'repository_commit': 'f' * 40, 'manifest_sha256': 'a' * 64,
+                    'mapserver_sha256': 'b' * 64}
+        value = progress.evidence(producer)
+        for inode, label in enumerate(('first', 'restart'), 1):
+            phase = {'fresh_path_before_launch': True, 'process_label': label + '-atlas',
+                     'path_name': 'coh-map-progress-' + label + '-fixture.bin',
+                     'launch_monotonic': 0, 'sample_count': 0, 'dropped_samples': 0, 'samples': []}
+            value['phases'][label] = phase
+            for ticks in (0, 1):
+                raw = progress.HEADER.pack(b'COHMAP1\0', 1, 128, inode * 100, 42, (ticks + 1) * 2,
+                                           34 if ticks else 1, ticks, ticks, 0, 37) + bytes(80)
+                sample = {**progress.decode_record(raw), 'available': True, 'is_success_proof': False,
+                          'reason': 'owned_read', 'observed_monotonic': ticks + 1,
+                          'file_identity': {'device': 1, 'inode': inode},
+                          'freshness': 'advanced' if ticks else 'initial',
+                          'last_advance_monotonic': ticks + 1, 'unchanged_seconds': 0}
+                progress.append_sample(phase, sample)
+        return value, {'mapserver_progress_profile': host.MAPSERVER_PROGRESS_PROFILE,
+                       'mapserver_progress_producer': producer}
+
+    def candidate(self):
+        manifest = host.accepted_game_package()
+        manifest['repository_commit'] = 'f' * 40
+        manifest['mapserver_progress_profile'] = host.MAPSERVER_PROGRESS_PROFILE
+        manifest['files']['MapServer.exe']['sha256'] = 'a' * 64
+        record = dict(manifest['files']['MapServer.exe'])
+        record['size'] = record.pop('bytes')
+        donor = {'repository_commit': 'f' * 40, 'files': {'MapServer.exe': record}}
+        manifest['inputs']['mapserver_progress'] = {
+            'repository_commit': 'f' * 40, 'manifest': donor,
+            'manifest_sha256': host.hashlib.sha256((json.dumps(donor, indent=2) + '\n').encode()).hexdigest()}
+        manifest['file_donors']['MapServer.exe'] = 'mapserver_progress'
+        return manifest
+
+    def test_explicit_profile_keeps_exact_accepted_supporting_donors(self):
+        import package_mapserver_progress
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = self.candidate()
+            for name in original['files']:
+                (root / name).write_bytes(name.encode())
+            def pe_record(data):
+                return {key: value for key, value in original['files'][data.decode()].items()
+                        if key not in ('bytes', 'sha256')}
+            options = {'dbserver_profile': 'loopback', 'game_listener_profile': 'loopback',
+                       'mapserver_progress_profile': host.MAPSERVER_PROGRESS_PROFILE}
+            with mock.patch.object(host.dbhost, 'verify_inventory'), \
+                    mock.patch.object(host, 'pe_info', side_effect=pe_record), \
+                    mock.patch.object(package_mapserver_progress, 'verify_mapserver_progress_manifest') as verify:
+                path = root / 'game-package.json'
+                path.write_text(json.dumps(original))
+                host.verify_package(root, **options)
+                verify.assert_called_once_with(original['inputs']['mapserver_progress']['manifest'], 'f' * 40,
+                                               original['inputs']['reference']['manifest'])
+                with self.assertRaisesRegex(RuntimeError, 'progress profile'):
+                    host.verify_package(root, dbserver_profile='loopback', game_listener_profile='loopback')
+                mutations = [lambda m: m.pop('mapserver_progress_profile'),
+                             lambda m: m['inputs']['bridge'].update(repository_commit='f' * 40),
+                             lambda m: m['inputs']['loopback_game']['manifest'].update(repository_commit='f' * 40),
+                             lambda m: m['inputs']['mapserver_progress'].update(repository_commit=host.ACCEPTED_GAME_COMMIT),
+                             lambda m: m['inputs']['mapserver_progress'].update(manifest_sha256='0' * 64),
+                             lambda m: m['files']['TestClientCreate.exe'].update(sha256='0' * 64),
+                             lambda m: m['file_donors'].update({'MapServer.exe': 'loopback_game'})]
+                for index, mutation in enumerate(mutations):
+                    with self.subTest(mutation=index):
+                        value = copy.deepcopy(original)
+                        mutation(value)
+                        path.write_text(json.dumps(value))
+                        with self.assertRaises(RuntimeError):
+                            host.verify_package(root, **options)
+
+    def test_progress_requires_exact_accepted_stack_receipt_without_relabeling(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'stack-probe-build.json').write_text('{}')
+            with mock.patch.object(host.stack_probe_receipt, 'verify', return_value={}) as verify:
+                with self.assertRaisesRegex(RuntimeError, 'exact accepted stack'):
+                    host.verify_stack_probe(root, 'f' * 40, host.MAPSERVER_PROGRESS_PROFILE)
+                verify.assert_not_called()
+                with mock.patch.object(host, 'digest', return_value=host.ACCEPTED_STACK_PROBE_SHA256):
+                    host.verify_stack_probe(root, 'f' * 40, host.MAPSERVER_PROGRESS_PROFILE)
+                    verify.assert_called_once_with(root, host.ACCEPTED_GAME_COMMIT)
+                verify.reset_mock()
+                host.verify_stack_probe(root, 'f' * 40)
+                verify.assert_called_once_with(root, 'f' * 40)
+
+    def test_unselected_profile_rejects_diagnostic_claims(self):
+        with self.assertRaisesRegex(RuntimeError, 'Unselected'):
+            host.validate_mapserver_progress({'mapserver_progress': {}}, {})
+
+    def test_success_requires_raw_completed_tick_advance_on_both_owned_starts(self):
+        value, expected = self.progress_sample()
+        report, full_expected = ReportTests().sample()
+        report['game']['mapserver_progress'] = value
+        full_expected.update(expected)
+        host.validate_report(report, expected=full_expected)
+        mutations = [lambda v: v['phases'].pop('restart'),
+                     lambda v: v['producer'].update(mapserver_sha256='0' * 64),
+                     lambda v: v['phases']['restart']['samples'][1].update(raw_record_sha256='0' * 64),
+                     lambda v: v['phases']['first']['samples'][1].update(tick_completed=0),
+                     lambda v: v['phases']['first']['samples'][1].update(freshness='unchanged'),
+                     lambda v: v['phases']['restart']['samples'][1].update(file_identity={'device': 1, 'inode': 99})]
+        for index, mutation in enumerate(mutations):
+            with self.subTest(mutation=index):
+                changed = copy.deepcopy(value)
+                mutation(changed)
+                with self.assertRaises(RuntimeError):
+                    host.validate_mapserver_progress({'mapserver_progress': changed}, expected)
+        # A valid producer record is additional evidence, never a replacement
+        # for the existing fresh Atlas endpoint and complete game lifecycle.
+        report['game']['phases'][0]['map']['network_age_seconds'] = 21
+        with self.assertRaises(RuntimeError):
+            host.validate_report(report, expected=full_expected)
+
+    def test_failure_exports_bounded_raw_progress_without_claiming_success(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state, evidence = root / 'state', root / 'evidence'
+            captures = state / 'game-captures'
+            captures.mkdir(parents=True)
+            evidence.mkdir()
+            source = captures / 'mapserver-progress.json'
+            source.write_text('{"enabled":true,"is_success_proof":false}')
+            records = host.copy_game_captures(state, evidence)
+            self.assertEqual(records[source.name]['sha256'], host.digest(source))
+            self.assertEqual((evidence / 'game-captures' / source.name).read_bytes(), source.read_bytes())
+            with self.assertRaisesRegex(RuntimeError, 'exact exported capture inventory'):
+                host.validate_capture_files({'game': {'capture_files': records}}, evidence, records)
+
+
 class RunnerTests(unittest.TestCase):
     def test_game_binds_keep_accepted_runtime_and_separate_script_inputs(self):
         root = Path("/owned")

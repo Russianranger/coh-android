@@ -366,6 +366,9 @@ def capture(diagnostic, child=None):
 
     try:
         # The database observation happens before attaching the Windows observer.
+        before_map = diagnostic.sample_map_progress('failure-before-inspection', force=True)
+        if before_map is not None:
+            snapshot['mapserver_before'] = before_map
         snapshot['dispatch_before'] = capture_dispatch(diagnostic)
         try:
             snapshot['postgres'] = capture_postgres(diagnostic, deadline)
@@ -380,6 +383,14 @@ def capture(diagnostic, child=None):
         except Exception as exc:
             snapshot['windows'] = error(exc)
         snapshot['dispatch_after'] = capture_dispatch(diagnostic, snapshot['dispatch_before']['phases'])
+        after_map = diagnostic.sample_map_progress('failure-before-cleanup', force=True)
+        if after_map is not None:
+            snapshot['mapserver_after'] = after_map
+        if before_map and after_map and before_map.get('available') and after_map.get('available'):
+            summary.update(mapserver_stage_before=before_map['stage'], mapserver_stage_after=after_map['stage'],
+                           mapserver_sequence_advanced=after_map['sequence'] > before_map['sequence'],
+                           mapserver_tick_started_advanced=after_map['tick_started'] > before_map['tick_started'],
+                           mapserver_tick_completed_advanced=after_map['tick_completed'] > before_map['tick_completed'])
         active = snapshot['dispatch_after']['active_phase']
         before_dispatch = snapshot['dispatch_before']['phases'].get(active, {})
         after_dispatch = snapshot['dispatch_after']['phases'].get(active, {})

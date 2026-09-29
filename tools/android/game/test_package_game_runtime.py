@@ -11,6 +11,17 @@ from test_package_reference_runtime import pe_file
 
 
 class CompositePackageTests(unittest.TestCase):
+    def test_progress_requires_both_explicit_loopback_profiles(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for listener, db, donor in (('accepted', 'accepted', None),
+                                         ('loopback', 'accepted', Path(temp))):
+                args = SimpleNamespace(repository_commit='a' * 40, output=Path(temp) / 'out',
+                                       game_listener_profile=listener, dbserver_profile=db,
+                                       loopback_game=donor, mapserver_progress=Path(temp))
+                with self.subTest(listener=listener, db=db), self.assertRaisesRegex(ValueError, 'both explicit loopback'):
+                    game.assemble(args)
+                self.assertFalse(args.output.exists())
+
     def test_game_candidate_requires_explicit_profile_and_donor(self):
         with tempfile.TemporaryDirectory() as temp:
             for profile, donor in (('accepted', Path(temp)), ('loopback', None), ('unknown', None)):
@@ -89,6 +100,78 @@ class CompositePackageTests(unittest.TestCase):
                         self.assertEqual(game.verified_donor(root, 'dbserver')[2]['run_id'], 36451873322)
                 with self.assertRaisesRegex(ValueError, 'Unknown DbServer profile'):
                     game.verified_donor(root, 'dbserver', dbserver_profile='unqualified')
+
+    def test_progress_changes_only_mapserver_and_preserves_exact_accepted_donor_identities(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for folder, names in (('reference', ('MapServer.exe', 'TestClient.exe')),
+                                  ('dbserver', ('DbServer.exe',)), ('resume', ('TestClient.exe',)),
+                                  ('bridge', ('TestClientBridge.exe',)),
+                                  ('loopback', ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe')),
+                                  ('progress', ('MapServer.exe',))):
+                (root / folder).mkdir()
+                for name in names:
+                    (root / folder / name).write_bytes(pe_file(('KERNEL32.dll',)) + folder.encode())
+            old_commit, new_commit = 'a' * 40, 'b' * 40
+            game.bridge_receipt(root / 'bridge', old_commit)
+            candidate = {'build_role': 'loopback_game_diagnostic', 'repository_commit': old_commit}
+            diagnostic = {'build_role': 'mapserver_progress', 'repository_commit': new_commit}
+            for name, receipt in (('loopback', candidate), ('progress', diagnostic)):
+                (root / name / 'build-info.json').write_text(json.dumps(receipt))
+            args = SimpleNamespace(repository_commit=old_commit, reference=root / 'reference',
+                                   dbserver=root / 'dbserver', resume=root / 'resume', bridge=root / 'bridge',
+                                   output=root / 'base-out', dbserver_profile='loopback',
+                                   game_listener_profile='loopback', loopback_game=root / 'loopback')
+            def donor(directory, kind, **kwargs):
+                return {'repository_commit': old_commit}, directory, {'manifest': {'role': kind}}
+            selected = {name: root / 'loopback' / name
+                        for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe')}
+            with patch.object(game, 'verified_donor', side_effect=donor), \
+                    patch.object(game, 'verify_resume_client_package', return_value=(root / 'resume/TestClient.exe', {})), \
+                    patch('package_loopback_game.verify_loopback_game_package', return_value=(selected, candidate)) as loopback, \
+                    patch('package_mapserver_progress.verify_mapserver_progress_package',
+                          return_value=(root / 'progress/MapServer.exe', diagnostic)) as progress:
+                accepted = game.assemble(args)
+                progress.assert_not_called()
+                self.assertNotIn('mapserver_progress_profile', accepted)
+                self.assertNotIn('mapserver_progress', accepted['inputs'])
+                args.repository_commit = new_commit
+                args.output = root / 'progress-out'
+                args.mapserver_progress = root / 'progress'
+                with patch.object(game, 'accepted_loopback_package', return_value=accepted):
+                    actual = game.assemble(args)
+                    loopback.assert_called_with(args.loopback_game, old_commit, {'repository_commit': old_commit})
+                    progress.assert_called_once_with(args.mapserver_progress, new_commit, {'repository_commit': old_commit})
+                    self.assertEqual(actual['mapserver_progress_profile'], 'dispatch_progress_v1')
+                    self.assertEqual(actual['repository_commit'], new_commit)
+                    self.assertEqual(actual['inputs']['mapserver_progress']['manifest'], diagnostic)
+                    for role, proof in accepted['inputs'].items():
+                        self.assertEqual(actual['inputs'][role], proof)
+                    for name in accepted['files']:
+                        if name == 'MapServer.exe':
+                            self.assertNotEqual(actual['files'][name], accepted['files'][name])
+                            self.assertEqual(actual['file_donors'][name], 'mapserver_progress')
+                        else:
+                            self.assertEqual(actual['files'][name], accepted['files'][name])
+                            self.assertEqual((args.output / name).read_bytes(), (root / 'base-out' / name).read_bytes())
+                    args.output = root / 'tampered-out'
+                    (root / 'loopback/TestClientCreate.exe').write_bytes(pe_file(('KERNEL32.dll',)) + b'new binary')
+                    with self.assertRaisesRegex(ValueError, 'only replace the accepted MapServer'):
+                        game.assemble(args)
+                    self.assertFalse(args.output.exists())
+                    (root / 'loopback/build-info.json').write_text(json.dumps(dict(candidate, run_url='different')))
+                    with self.assertRaisesRegex(ValueError, 'exact accepted loopback donor'):
+                        game.assemble(args)
+                    (root / 'bridge/bridge-build.json').write_text(json.dumps(dict(
+                        json.loads((root / 'bridge/bridge-build.json').read_text()), repository_commit=new_commit)))
+                    with self.assertRaisesRegex(ValueError, 'Bridge commit'):
+                        game.assemble(args)
+
+    def test_accepted_loopback_receipt_is_pinned_independently_of_candidate(self):
+        self.assertEqual(game.accepted_loopback_package()['repository_commit'], 'ac4c1f7978be444a893f65f5177641191861d42f')
+        with patch.object(game, 'ACCEPTED_LOOPBACK_SHA256', '0' * 64):
+            with self.assertRaisesRegex(ValueError, 'Accepted loopback package receipt differs'):
+                game.accepted_loopback_package()
 
     def test_donor_manifest_tampering_is_rejected_before_payloads(self):
         with tempfile.TemporaryDirectory() as temp:

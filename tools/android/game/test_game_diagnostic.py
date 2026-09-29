@@ -5,7 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import socket
+import subprocess
 import sys
 import tempfile
 import time
@@ -16,6 +18,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import game_diagnostic as guest
+import game_map_progress as progress
 
 
 class FixedInputTests(unittest.TestCase):
@@ -669,6 +672,137 @@ class GameOrchestrationTests(unittest.TestCase):
         self.assertEqual(diagnostic.run_windows.call_args.kwargs['timeout'], 25)
         diagnostic.query(['-getstatus', '1', '1'], 'startup', timeout=90)
         self.assertEqual(diagnostic.run_windows.call_args.kwargs['timeout'], 90)
+
+
+class MapProgressProfileTests(unittest.TestCase):
+    def test_ordinary_guest_imports_and_runs_default_paths_without_progress_helper(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for source in (ROOT / 'android/guest').glob('*.py'):
+                if source.name != 'game_map_progress.py':
+                    shutil.copyfile(source, root / source.name)
+            shutil.copyfile(ROOT / 'docs/android-evidence/game-listeners-package-36510836956.json', root / 'package.json')
+            code = '''
+import json, sys, time
+from pathlib import Path
+from types import SimpleNamespace
+sys.path.insert(0, str(Path.cwd()))
+import game_device_diagnostic
+import game_diagnostic as game
+package = json.loads(Path('package.json').read_text())
+assert game.mapserver_progress_contract(package) is None
+assert game.game_listener_contract(package) == game.evidence.GAME_LOOPBACK_METADATA
+diagnostic = object.__new__(game.GameDiagnostic)
+diagnostic.wine_env = {game.MAP_PROGRESS_ENVIRONMENT: 'inherited'}
+diagnostic.health = lambda: None
+diagnostic.ctx = SimpleNamespace(deadline=time.monotonic() + 1)
+diagnostic.begin_map_progress('first')
+assert diagnostic.sample_map_progress('default', force=True) is None
+assert diagnostic.wait(lambda: True, 1, 'normal readiness') is True
+assert game.MAP_PROGRESS_ENVIRONMENT not in diagnostic.game_environment('MapServer.exe')
+assert 'game_map_progress' not in sys.modules
+'''
+            result = subprocess.run([sys.executable, '-I', '-c', code], cwd=root,
+                                    text=True, capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def seal(self, package):
+        donor = package['inputs']['mapserver_progress']
+        manifest = donor['manifest']
+        source = (json.dumps(manifest['build_input'], indent=2) + '\n').encode()
+        manifest['files']['mapserver-progress-build-input.json'] = {
+            'size': len(source), 'sha256': hashlib.sha256(source).hexdigest()}
+        donor['manifest_sha256'] = hashlib.sha256((json.dumps(manifest, indent=2) + '\n').encode()).hexdigest()
+        return package
+
+    def package(self):
+        sys.path.insert(0, str(ROOT / 'tools'))
+        from prepare_mapserver_progress_source import expected_progress_receipt
+        package = json.loads((ROOT / 'docs/android-evidence/game-listeners-package-36510836956.json').read_text())
+        package['repository_commit'] = 'f' * 40
+        package['mapserver_progress_profile'] = progress.PROFILE
+        package['files']['MapServer.exe']['sha256'] = 'c' * 64
+        record = {key: value for key, value in package['files']['MapServer.exe'].items() if key != 'bytes'}
+        record['size'] = package['files']['MapServer.exe']['bytes']
+        build = expected_progress_receipt(ROOT)
+        manifest = {'repository_commit': package['repository_commit'], 'schema_version': 1,
+            'build_role': 'mapserver_progress', 'status': 'diagnostic_build_packaged_runtime_unverified',
+            'configuration': 'OptDebug', 'architecture': 'Win32', 'postgresql_persistence_fixture': False,
+            'runtime_execution_validated': False, 'build_targets': ['MapServer'],
+            'source_commit': package['source_commit'], 'data_commit': package['data_commit'],
+            'build_input': build, 'progress_contract': copy.deepcopy(build['progress_contract']),
+            'files': {'MapServer.exe': record}}
+        package['inputs']['mapserver_progress'] = {'repository_commit': package['repository_commit'], 'manifest': manifest}
+        return self.seal(package)
+
+    def test_explicit_profile_binds_fresh_binary_and_source_receipt_to_accepted_supporting_donors(self):
+        package = self.package()
+        contract = guest.mapserver_progress_contract(package)
+        self.assertEqual(contract['producer']['mapserver_sha256'], 'c' * 64)
+        self.assertEqual(contract['contract']['stages'], progress.STAGES)
+        self.assertEqual(guest.game_listener_contract(package), guest.evidence.GAME_LOOPBACK_METADATA)
+        self.assertIsNone(guest.mapserver_progress_contract({}))
+        self.assertIsNone(guest.mapserver_progress_contract({'inputs': {}}))
+        for malformed in ({'mapserver_progress_profile': 'unknown'},
+                          {'inputs': {'mapserver_progress': {}}},
+                          {'mapserver_progress_profile': progress.PROFILE}):
+            with self.assertRaises(guest.base.DiagnosticError):
+                guest.mapserver_progress_contract(malformed)
+
+    def test_internal_contract_and_binary_mismatch_are_rejected_even_if_envelope_is_rehashed(self):
+        original = self.package()
+        changes = {
+            'revision': lambda p: p['inputs']['mapserver_progress']['manifest'].update(repository_commit='d' * 40),
+            'source': lambda p: p['inputs']['mapserver_progress']['manifest']['build_input'].update(source_commit='d' * 40),
+            'stage': lambda p: p['inputs']['mapserver_progress']['manifest']['progress_contract']['stages'].update({'26': 'OTHER'}),
+            'semantics': lambda p: p['inputs']['mapserver_progress']['manifest']['progress_contract'].update(tick_started_stage=25),
+            'base-receipt': lambda p: p['inputs']['mapserver_progress']['manifest']['build_input'].update(game_build_input={}),
+            'target': lambda p: p['inputs']['mapserver_progress']['manifest'].update(build_targets=['TestClient']),
+            'fixture': lambda p: p['inputs']['mapserver_progress']['manifest'].update(postgresql_persistence_fixture=True),
+            'binary': lambda p: p['files']['MapServer.exe'].update(sha256='d' * 64),
+            'listener-profile': lambda p: p.update(game_listener_profile='accepted'),
+        }
+        for name, change in changes.items():
+            with self.subTest(name=name):
+                package = copy.deepcopy(original)
+                change(package)
+                self.seal(package)
+                with self.assertRaises(guest.base.DiagnosticError):
+                    guest.mapserver_progress_contract(package)
+        package = copy.deepcopy(original)
+        package['inputs']['mapserver_progress']['manifest']['files']['mapserver-progress-build-input.json']['sha256'] = 'f' * 64
+        donor = package['inputs']['mapserver_progress']
+        donor['manifest_sha256'] = hashlib.sha256((json.dumps(donor['manifest'], indent=2) + '\n').encode()).hexdigest()
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'source receipt bytes'):
+            guest.mapserver_progress_contract(package)
+
+    def test_progress_environment_only_reaches_owned_atlas_launch(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = object.__new__(guest.GameDiagnostic)
+            diagnostic.runtime = root
+            diagnostic.wine_env = {progress.ENVIRONMENT: 'inherited', 'WINEPREFIX': '/private/wine'}
+            diagnostic.services = []
+            diagnostic.args = SimpleNamespace(wine=Path('/private/wine/bin/wine'))
+            diagnostic.ctx = SimpleNamespace(start=Mock(return_value=SimpleNamespace(process=SimpleNamespace(pid=123))))
+            for executable in guest.EXES:
+                diagnostic.start_game('unselected', executable, [])
+                self.assertNotIn(progress.ENVIRONMENT, diagnostic.ctx.start.call_args.kwargs['env'])
+            diagnostic.map_progress_contract = guest.mapserver_progress_contract(self.package())
+            diagnostic.map_progress_paths, diagnostic.map_progress_previous = {}, {}
+            diagnostic.map_progress_phase, diagnostic.map_progress_next_sample = None, 0
+            diagnostic.game = {'mapserver_progress': progress.evidence(diagnostic.map_progress_contract['producer'])}
+            diagnostic.begin_map_progress('first')
+            for label, executable in (('first-atlas', 'MapServer.exe'), ('query', 'MapServer.exe'),
+                                      ('first-dbserver', 'DbServer.exe'), ('client', 'TestClientCreate.exe')):
+                diagnostic.start_game(label, executable, [])
+                environment = diagnostic.ctx.start.call_args.kwargs['env']
+                if label == 'first-atlas':
+                    self.assertEqual(environment[progress.ENVIRONMENT],
+                                     guest.base.windows_path(diagnostic.map_progress_paths['first']))
+                else:
+                    self.assertNotIn(progress.ENVIRONMENT, environment)
+            self.assertEqual(diagnostic.wine_env[progress.ENVIRONMENT], 'inherited')
 
 
 if __name__ == '__main__':

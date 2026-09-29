@@ -28,6 +28,8 @@ DBSERVER_PROFILES = ('accepted', 'loopback')
 GAME_LISTENER_PROFILES = ('accepted', 'loopback')
 BRIDGE_SOURCES = ('database/wine-game/TestClientBridge.c', 'database/wine-game/bridge_protocol.h')
 BRIDGE_FLAGS = '/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601'
+ACCEPTED_LOOPBACK_PACKAGE = 'docs/android-evidence/game-listeners-package-36510836956.json'
+ACCEPTED_LOOPBACK_SHA256 = 'ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a'
 
 
 def sha(path):
@@ -41,6 +43,12 @@ def source_hashes(root=ROOT):
 
 def new_output(path):
     require(not path.exists() and not path.is_symlink(), 'Output must be a new directory')
+
+
+def accepted_loopback_package():
+    path = ROOT / ACCEPTED_LOOPBACK_PACKAGE
+    require(sha(path) == ACCEPTED_LOOPBACK_SHA256, 'Accepted loopback package receipt differs')
+    return json.loads(path.read_text(encoding='utf-8-sig'))
 
 
 def bridge_receipt(directory, commit):
@@ -111,19 +119,28 @@ def assemble(args):
     require(listener_profile in GAME_LISTENER_PROFILES, 'Unknown game listener profile')
     require((listener_profile == 'loopback') == (loopback_directory is not None),
             'Loopback game donor requires explicit loopback listener profile')
+    progress_directory = getattr(args, 'mapserver_progress', None)
+    profile = getattr(args, 'dbserver_profile', 'accepted')
+    require(progress_directory is None or (listener_profile == 'loopback' and profile == 'loopback'),
+            'MapServer progress donor requires both explicit loopback profiles')
+    accepted_base = accepted_loopback_package() if progress_directory is not None else None
+    base_commit = accepted_base['repository_commit'] if accepted_base else args.repository_commit
     new_output(args.output)
     ref, ref_dir, ref_proof = verified_donor(args.reference, 'reference')
-    profile = getattr(args, 'dbserver_profile', 'accepted')
     db, normal_dir, db_proof = verified_donor(args.dbserver, 'dbserver', dbserver_profile=profile)
     resume, resume_dir, resume_proof = verified_donor(args.resume, 'resume')
     resume_exe, _ = verify_resume_client_package(args.resume, resume['repository_commit'], ref)
     bridge_path = args.bridge / 'bridge-build.json'
     bridge = json.loads(bridge_path.read_text())
     require(bridge.get('format') == 1 and bridge.get('role') == 'stock_testclient_launcher_bridge', 'Wrong bridge role')
-    require(bridge.get('repository_commit') == args.repository_commit and bridge.get('architecture') == 'Win32', 'Bridge commit/architecture differs')
+    require(bridge.get('repository_commit') == base_commit and bridge.get('architecture') == 'Win32', 'Bridge commit/architecture differs')
     require(bridge.get('sources_sha256_lf') == source_hashes() and bridge.get('flags') == BRIDGE_FLAGS,
             'Bridge source or build flags differ')
     require(bridge.get('files') == {'TestClientBridge.exe': record(args.bridge / 'TestClientBridge.exe')}, 'Bridge bytes differ')
+    bridge_proof = {'repository_commit': base_commit, 'manifest_sha256': sha(bridge_path), 'manifest': bridge}
+    if accepted_base:
+        require(bridge_proof == accepted_base['inputs']['bridge'],
+                'MapServer progress requires the exact accepted bridge donor')
     chosen, collisions = choose_files(ref_dir, normal_dir)
     chosen['TestClientResume.exe'] = (resume_exe, 'resume')
     chosen['TestClientBridge.exe'] = (args.bridge / 'TestClientBridge.exe', 'bridge')
@@ -131,12 +148,28 @@ def assemble(args):
     if listener_profile == 'loopback':
         require(profile == 'loopback', 'Loopback game listeners require the loopback DbServer profile')
         from package_loopback_game import verify_loopback_game_package
-        executables, candidate = verify_loopback_game_package(loopback_directory, args.repository_commit, ref)
+        executables, candidate = verify_loopback_game_package(loopback_directory, base_commit, ref)
         chosen.update({name: (path, 'loopback_game') for name, path in executables.items()})
-        loopback_proof = {'repository_commit': args.repository_commit,
+        loopback_proof = {'repository_commit': base_commit,
                           'manifest_sha256': sha(loopback_directory / 'build-info.json'), 'manifest': candidate}
+        if accepted_base:
+            require(loopback_proof == accepted_base['inputs']['loopback_game'],
+                    'MapServer progress requires the exact accepted loopback donor')
+    progress_proof = None
+    if progress_directory is not None:
+        from package_mapserver_progress import PROFILE, verify_mapserver_progress_package
+        executable, candidate = verify_mapserver_progress_package(progress_directory, args.repository_commit, ref)
+        chosen['MapServer.exe'] = (executable, 'mapserver_progress')
+        progress_proof = {'repository_commit': args.repository_commit,
+                          'manifest_sha256': sha(progress_directory / 'build-info.json'), 'manifest': candidate}
     require(len({name.casefold() for name in chosen}) == len(chosen), 'Case-colliding game payload')
     files = {name: record(path) for name, (path, _) in chosen.items()}
+    if accepted_base:
+        require(set(files) == set(accepted_base['files'])
+                and all(files[name] == accepted_base['files'][name]
+                        and chosen[name][1] == accepted_base['file_donors'][name]
+                        for name in files if name != 'MapServer.exe'),
+                'MapServer progress may only replace the accepted MapServer executable')
     deps = dependency_report(files)
     require(not deps['unresolved'], 'Unresolved composite imports: ' + str(deps['unresolved']))
     manifest = {'format': 1, 'role': 'wine_game_runtime', 'source_commit': SOURCE, 'data_commit': DATA,
@@ -145,7 +178,7 @@ def assemble(args):
                 'files': files, 'file_donors': {name: donor for name, (_, donor) in chosen.items()},
                 'dependency_report': deps, 'dll_collisions': collisions,
                 'inputs': {'reference': ref_proof, 'dbserver': db_proof, 'resume': resume_proof,
-                           'bridge': {'repository_commit': args.repository_commit, 'manifest_sha256': sha(bridge_path), 'manifest': bridge}},
+                           'bridge': bridge_proof},
                 'postgresql_persistence_fixture': False, 'runtime_execution_validated': False,
                 'scope': 'Composite hosted qualification input; not a replacement stock reference package'}
     # Preserve the byte-level shape of accepted packages. The opt-in candidate
@@ -155,6 +188,9 @@ def assemble(args):
     if listener_profile == 'loopback':
         manifest['game_listener_profile'] = listener_profile
         manifest['inputs']['loopback_game'] = loopback_proof
+    if progress_proof is not None:
+        manifest['mapserver_progress_profile'] = PROFILE
+        manifest['inputs']['mapserver_progress'] = progress_proof
     try:
         args.output.mkdir(parents=True)
         for name, (path, _) in chosen.items():
@@ -183,6 +219,8 @@ def main():
                          help='Opt into separately built loopback MapServer and TestClient candidates')
     package.add_argument('--loopback-game', type=Path,
                          help='Separate loopback-game runtime donor; requires both loopback profiles')
+    package.add_argument('--mapserver-progress', type=Path,
+                         help='Replace only MapServer in the exact accepted loopback package with a progress diagnostic')
     args = ap.parse_args()
     value = bridge_receipt(args.directory, args.repository_commit) if args.command == 'bridge-receipt' else assemble(args)
     print(json.dumps({'role': value['role'], 'files': len(value['files'])}))

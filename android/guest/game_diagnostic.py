@@ -39,6 +39,15 @@ FIXED_INPUT_FILE_LIMIT = 512
 FIXED_INPUT_BYTE_LIMIT = 256 * 1024 * 1024
 FIXED_INPUT_DIRECTORY_LIMIT = 512
 FIXED_INPUT_ROOT = 'data/server/db'
+MAP_PROGRESS_PROFILE = 'dispatch_progress_v1'
+MAP_PROGRESS_ENVIRONMENT = 'COH_WINE_MAP_PROGRESS'
+
+
+def map_progress_module():
+    # Ordinary accepted Android bundles intentionally keep their existing five
+    # guest scripts. Only the separately packaged opt-in host profile needs it.
+    import game_map_progress
+    return game_map_progress
 
 
 def check_game_port(port, protocol):
@@ -190,7 +199,10 @@ def game_listener_contract(package):
     require(package.get('dbserver_profile') == 'loopback', 'Game listener profile requires the loopback DbServer')
     donor = package.get('inputs', {}).get('loopback_game', {})
     manifest = donor.get('manifest', {})
-    require(donor.get('repository_commit') == manifest.get('repository_commit') == package.get('repository_commit')
+    progress_enabled = package.get('mapserver_progress_profile') == MAP_PROGRESS_PROFILE
+    expected_commit = ('ac4c1f7978be444a893f65f5177641191861d42f' if progress_enabled
+                       else package.get('repository_commit'))
+    require(donor.get('repository_commit') == manifest.get('repository_commit') == expected_commit
             and manifest.get('schema_version') == 1
             and manifest.get('build_role') == 'loopback_game_diagnostic'
             and manifest.get('status') == 'diagnostic_build_packaged_runtime_unverified'
@@ -203,13 +215,17 @@ def game_listener_contract(package):
     require(donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
             hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
             'Game listener donor receipt bytes differ')
+    require(not progress_enabled or donor.get('manifest_sha256') ==
+            'd10e61be69555da91cea1f5b4a0f9852f0c564f9a768a91896b485f0774c0791',
+            'MapServer progress requires the accepted supporting game listener donor')
     for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe'):
         record = manifest.get('files', {}).get(name)
         require(isinstance(record, dict) and type(record.get('size')) is int and record['size'] > 0,
                 'Game listener donor file record differs')
         normalized = {key: value for key, value in record.items() if key != 'size'}
         normalized['bytes'] = record['size']
-        require(dbserver.exact_contract(package.get('files', {}).get(name), normalized),
+        require((name == 'MapServer.exe' and package.get('mapserver_progress_profile') == MAP_PROGRESS_PROFILE)
+                or dbserver.exact_contract(package.get('files', {}).get(name), normalized),
                 'Game listener executable differs from its source-bound donor')
     variants = manifest.get('variants', {})
     require(set(variants) == {'creation', 'resume'}, 'Game listener donor variants differ')
@@ -219,6 +235,60 @@ def game_listener_contract(package):
     require(dbserver.exact_contract(metadata, variants['resume'].get('build_input', {}).get('loopback_only')),
             'Game listener variants use different binding policies')
     return metadata
+
+
+def mapserver_progress_contract(package):
+    """Bind the opt-in binary, complete source receipt and exact publication ABI."""
+    profile = package.get('mapserver_progress_profile')
+    if profile is None:
+        require('mapserver_progress' not in package.get('inputs', {}), 'Unexpected MapServer progress donor')
+        return None
+    require(profile == MAP_PROGRESS_PROFILE, 'Unknown MapServer progress profile')
+    require(package.get('dbserver_profile') == 'loopback' and package.get('game_listener_profile') == 'loopback',
+            'MapServer progress requires both explicit loopback profiles')
+    donor = package.get('inputs', {}).get('mapserver_progress', {})
+    manifest = donor.get('manifest', {})
+    require(donor.get('repository_commit') == manifest.get('repository_commit') == package.get('repository_commit')
+            and isinstance(package.get('repository_commit'), str)
+            and dbserver.COMMIT.fullmatch(package['repository_commit'])
+            and manifest.get('schema_version') == 1 and manifest.get('build_role') == 'mapserver_progress'
+            and manifest.get('status') == 'diagnostic_build_packaged_runtime_unverified'
+            and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+            and manifest.get('postgresql_persistence_fixture') is False
+            and manifest.get('runtime_execution_validated') is False
+            and manifest.get('build_targets') == ['MapServer']
+            and manifest.get('source_commit') == package.get('source_commit')
+            and manifest.get('data_commit') == package.get('data_commit'),
+            'MapServer progress donor identity or fixture mode differs')
+    encoded = json.dumps(manifest, indent=2) + '\n'
+    require(donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
+            hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
+            'MapServer progress donor receipt bytes differ')
+    build = manifest.get('build_input', {})
+    contract = map_progress_module().validate_contract(manifest.get('progress_contract'), source=True)
+    require(build.get('schema_version') == 1 and build.get('build_role') == 'mapserver_progress'
+            and build.get('source_commit') == package.get('source_commit')
+            and build.get('build_targets') == ['MapServer'] and build.get('runtime_validation') == 'unverified'
+            and dbserver.exact_contract(build.get('progress_contract'), contract),
+            'MapServer progress source receipt differs')
+    game_build = build.get('game_build_input')
+    require(isinstance(game_build, dict) and build.get('game_build_input_canonical_sha256') == hashlib.sha256(
+                json.dumps(game_build, sort_keys=True, separators=(',', ':')).encode()).hexdigest(),
+            'MapServer progress base source receipt digest differs')
+    source_record = manifest.get('files', {}).get('mapserver-progress-build-input.json', {})
+    source = json.dumps(build, indent=2) + '\n'
+    require(any(source_record.get('size') == len(raw) and source_record.get('sha256') == hashlib.sha256(raw).hexdigest()
+                for raw in (source.encode(), source.replace('\n', '\r\n').encode())),
+            'MapServer progress source receipt bytes differ')
+    record = manifest.get('files', {}).get('MapServer.exe')
+    require(isinstance(record, dict) and type(record.get('size')) is int and record['size'] > 0,
+            'MapServer progress binary record differs')
+    normalized = {key: value for key, value in record.items() if key != 'size'}
+    normalized['bytes'] = record['size']
+    require(dbserver.exact_contract(package.get('files', {}).get('MapServer.exe'), normalized),
+            'MapServer progress executable differs from its source-bound donor')
+    return {'contract': contract, 'producer': {'repository_commit': donor['repository_commit'],
+            'manifest_sha256': donor['manifest_sha256'], 'mapserver_sha256': record['sha256']}}
 
 
 def fixed_input_snapshot(runtime, schema_paths, check=lambda: None):
@@ -493,10 +563,15 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             environment.pop(dbserver.FIXED_INPUTS_ENV, None)
             environment.pop(dbserver.LOOPBACK_ENV, None)
             environment.pop(evidence.GAME_LOOPBACK_ENV, None)
+            environment.pop(MAP_PROGRESS_ENVIRONMENT, None)
         self.loopback_contract = game_loopback_contract(self.package)
         self.loopback_enabled = self.loopback_contract is not None
         self.game_listener_metadata = game_listener_contract(self.package)
         self.game_listener_enabled = self.game_listener_metadata is not None
+        self.map_progress_contract = mapserver_progress_contract(self.package)
+        self.map_progress_paths, self.map_progress_previous = {}, {}
+        self.map_progress_phase = None
+        self.map_progress_next_sample = 0
         fixed_inputs = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
             'wine_build_input', {}).get('fixed_inputs')
         dbserver.validate_fixed_inputs_metadata(fixed_inputs)
@@ -525,6 +600,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.game['dispatch_progress'] = {'enabled': True, 'format': 1,
             'environment_variable': 'COH_WINE_DB_PROGRESS', 'record_bytes': 128,
             'mapping_bytes': 4096, 'stages': self.dispatch_stages, 'phases': {}, 'is_success_proof': False}
+        if self.map_progress_contract is not None:
+            self.game['mapserver_progress'] = map_progress_module().evidence(self.map_progress_contract['producer'])
         self.game['startup_policy'] = {'first_atlas_timeout_seconds': 2400, 'restart_atlas_timeout_seconds': 900,
             'startup_query_timeout_seconds': 90, 'first_poll_interval_seconds': 60,
             'restart_poll_interval_seconds': 30, 'live_query_timeout_seconds': 25,
@@ -612,6 +689,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             self.health()
             if session is not None:
                 session.check(require_live=live)
+            self.sample_map_progress('wait:' + label)
             value = predicate()
             if value:
                 return value
@@ -623,6 +701,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
 
     def game_environment(self, executable, env=None):
         environment = (self.wine_env if env is None else env).copy()
+        environment.pop(MAP_PROGRESS_ENVIRONMENT, None)
         environment.pop(dbserver.LOOPBACK_ENV, None)
         environment.pop(evidence.GAME_LOOPBACK_ENV, None)
         if executable == 'DbServer.exe' and getattr(self, 'loopback_enabled', False):
@@ -632,12 +711,51 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             environment[evidence.GAME_LOOPBACK_ENV] = '1'
         return environment
 
+    def begin_map_progress(self, label):
+        if getattr(self, 'map_progress_contract', None) is None:
+            return
+        require(label in ('first', 'restart') and label not in self.map_progress_paths,
+                'MapServer progress phase must be a fresh owned launch')
+        path = self.runtime / ('coh-map-progress-' + label + '-' + secrets.token_hex(8) + '.bin')
+        require(not path.exists() and not path.is_symlink(), 'Refusing stale MapServer progress record')
+        self.map_progress_paths[label], self.map_progress_phase = path, label
+        self.game['mapserver_progress']['phases'][label] = {
+            'path_name': path.name, 'process_label': label + '-atlas', 'launch_utc': base.utc(),
+            'launch_monotonic': time.monotonic(), 'fresh_path_before_launch': True,
+            'sample_count': 0, 'dropped_samples': 0, 'samples': []}
+        self.sample_map_progress('before-launch', force=True)
+
+    def sample_map_progress(self, reason, *, force=False):
+        label = getattr(self, 'map_progress_phase', None)
+        if label is None:
+            return None
+        map_progress = map_progress_module()
+        now = time.monotonic()
+        if not force and now < self.map_progress_next_sample:
+            return None
+        self.map_progress_next_sample = now + map_progress.SAMPLE_INTERVAL
+        try:
+            value = map_progress.read_record(self.map_progress_paths[label], self.map_progress_previous.get(label))
+            self.map_progress_previous[label] = value
+        except Exception as exc:
+            value = dict(hang_evidence.error(exc), sampled_utc=base.utc(), observed_monotonic=now,
+                         is_success_proof=False)
+        value = dict(value, reason=reason)
+        map_progress.append_sample(self.game['mapserver_progress']['phases'][label], value)
+        return value
+
     def start_game(self, label, executable, arguments, *, env=None):
         environment = self.game_environment(executable, env)
+        phase = getattr(self, 'map_progress_phase', None)
+        if (getattr(self, 'map_progress_contract', None) is not None and phase in ('first', 'restart')
+                and label == phase + '-atlas' and executable == 'MapServer.exe'):
+            environment[MAP_PROGRESS_ENVIRONMENT] = base.windows_path(self.map_progress_paths[phase])
         child = self.ctx.start(label, ['/usr/bin/env', '--chdir=' + str(self.runtime), self.args.wine,
                                base.windows_path(self.runtime / executable), *arguments],
                                env=environment)
         self.services.append(child)
+        if phase is not None and label == phase + '-atlas':
+            self.game['mapserver_progress']['phases'][phase]['launcher_pid'] = child.process.pid
         return child
 
     def query(self, arguments, label, *, timeout=25):
@@ -651,7 +769,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         return text
 
     def map_status(self, label, *, allow_missing=False, timeout=25):
+        self.sample_map_progress('before-map-status:' + label, force=True)
         sample = evidence.parse_map_status(self.query(['-getstatus', '1', '1'], label, timeout=timeout), allow_missing=allow_missing)
+        self.sample_map_progress('after-map-status:' + label, force=True)
         sample.update(phase=label, sampled_utc=base.utc(), monotonic=time.monotonic())
         self.game['map_samples'].append(sample)
         return sample
@@ -717,8 +837,10 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             require(not baseline['ready'], 'Atlas was running before the owned launch')
             return baseline if baseline.get('not_started') else False
         self.wait(unstarted, 60, 'Unstarted Atlas baseline')
+        self.begin_map_progress(label)
         atlas = self.start_game(label + '-atlas', 'MapServer.exe', ['-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1'])
+        self.sample_map_progress('after-launch', force=True)
         next_status = 0
         readiness_timeout = 2400 if label == 'first' else 900
         poll_interval = 60 if label == 'first' else 30
@@ -730,6 +852,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             next_status = time.monotonic() + poll_interval
             return sample if evidence.map_ready_current(sample) else False
         sample = self.wait(ready, readiness_timeout, 'Atlas DB-confirmed readiness')
+        self.sample_map_progress('startup-ready', force=True)
         phase = {'phase': label + '_services_ready', 'status': 'passed',
                                     'fixed_inputs': fixed_inputs,
                                     'baseline_not_started': True, 'schema': catalog, 'map': sample,
@@ -755,6 +878,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         samples = []
         while True:
             sample = self.map_status('first-observation')
+            self.sample_map_progress('ready-observation', force=True)
             require(evidence.map_ready_current(sample), 'Atlas lost current readiness during observation')
             samples.append(sample)
             elapsed = time.monotonic() - started
@@ -935,6 +1059,8 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
 
     def restart(self, before):
         self.ctx.stage('game_restart')
+        self.sample_map_progress('before-restart-stop', force=True)
+        self.map_progress_phase = None
         self.dispatch_phase = None
         self.services.clear()
         stopped = self.ctx.run('game-wine-stop', [self.args.wineserver, '-k'], timeout=3, env=self.wine_env, check=False)
@@ -1019,6 +1145,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.game['attributes_unchanged'] = final_schema['attribute_sha256'] == self.game['phases'][0]['schema']['attribute_sha256']
         require(self.game['attributes_unchanged'], 'Character sessions changed generated attribute IDs')
         self.clean_logs()
+        self.sample_map_progress('before-success-cleanup', force=True)
         self.game.update(status='passed', query_processes=self.query_count, readiness_queries=self.readiness_count,
                          process_budget=PROCESS_LIMIT, query_budget=QUERY_LIMIT)
 
@@ -1058,6 +1185,9 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         for label, snapshot in self.snapshots.items():
             value = base.redacted_value(snapshot, self.ctx.secrets)
             write(label + '-snapshot.json', json.dumps(value, sort_keys=True, separators=(',', ':')) + '\n', 1024 * 1024)
+        if 'mapserver_progress' in self.game:
+            write('mapserver-progress.json', json.dumps(self.game['mapserver_progress'], indent=2) + '\n',
+                  map_progress_module().EXPORT_LIMIT)
         self.game['capture_files'] = inventory
 
     def export_service_captures(self):

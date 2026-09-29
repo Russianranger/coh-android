@@ -48,6 +48,11 @@ LOOPBACK_DONOR = {"run_id": 36460867428,
                   "canonical_sha256": "b90c1d3f159dd18e7700eba4a1192924f452cba5160175d8513a80765e009d21"}
 DBSERVER_PROFILES = ("accepted", "loopback")
 GAME_LISTENER_PROFILES = ("accepted", "loopback")
+MAPSERVER_PROGRESS_PROFILE = 'dispatch_progress_v1'
+ACCEPTED_GAME_PACKAGE = 'docs/android-evidence/game-listeners-package-36510836956.json'
+ACCEPTED_GAME_PACKAGE_SHA256 = 'ebfdbbab3984627f7c39220f42a9c3e67b78ffe555aa742621a7a1450731fb2a'
+ACCEPTED_GAME_COMMIT = 'ac4c1f7978be444a893f65f5177641191861d42f'
+ACCEPTED_STACK_PROBE_SHA256 = '7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185'
 GAME_LOOPBACK_ENV = 'COH_GAME_LOOPBACK_ONLY'
 GAME_LOOPBACK_ACK = 'COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy'
 GAME_LOOPBACK_RECORD = re.compile(r'COH_GAME_LOOPBACK_ONLY bind verified: protocol=(tcp|udp) '
@@ -59,6 +64,7 @@ CAPTURE_LIMITS = {prefix + "-" + name: limit for prefix in ("first", "second") f
                   (("ready.json", 16384), ("result.json", 16384),
                    ("events.jsonl", 8 * 1024 * 1024), ("console.txt", 16 * 1024 * 1024))}
 CAPTURE_LIMITS.update({prefix + "-snapshot.json": 1024 * 1024 for prefix in ("first", "restart", "second")})
+CAPTURE_LIMITS['mapserver-progress.json'] = 512 * 1024
 SERVICE_LABELS = ("first-dbserver", "first-atlas", "restart-dbserver", "restart-atlas")
 SERVICE_CAPTURE_LIMITS = {label + "-stdout.txt": 6 * 1024 * 1024 for label in SERVICE_LABELS}
 SERVICE_CAPTURE_LIMITS.update({"log-" + str(number).zfill(3) + ".txt": 4 * 1024 * 1024 for number in range(1, 33)})
@@ -104,8 +110,26 @@ def inventory_bounds(files, *, maximum_files, maximum_bytes):
     return total
 
 
-def verify_package(package, *, dbserver_profile="accepted", game_listener_profile="accepted"):
+def accepted_game_package():
+    path = ROOT / ACCEPTED_GAME_PACKAGE
+    require(digest(path) == ACCEPTED_GAME_PACKAGE_SHA256,
+            'Accepted game package evidence differs from its pinned receipt')
+    value = read_json(path)
+    require(value.get('repository_commit') == ACCEPTED_GAME_COMMIT,
+            'Accepted game package source identity differs')
+    return value
+
+
+def verify_package(package, *, dbserver_profile="accepted", game_listener_profile="accepted",
+                   mapserver_progress_profile=None):
     manifest = read_json(package / "game-package.json", 8 * 1024 * 1024)
+    require(mapserver_progress_profile in (None, MAPSERVER_PROGRESS_PROFILE)
+            and manifest.get('mapserver_progress_profile') == mapserver_progress_profile
+            and (mapserver_progress_profile is None or
+                 dbserver_profile == game_listener_profile == 'loopback'),
+            'Game package MapServer progress profile differs from explicit qualification')
+    accepted = accepted_game_package() if mapserver_progress_profile else None
+    shared_commit = ACCEPTED_GAME_COMMIT if accepted else manifest.get('repository_commit')
     require(dbserver_profile in DBSERVER_PROFILES
             and manifest.get("dbserver_profile", "accepted") == dbserver_profile,
             "Game package DbServer profile differs from the requested qualification")
@@ -126,7 +150,12 @@ def verify_package(package, *, dbserver_profile="accepted", game_listener_profil
     require(all(len(PurePosixPath(name).parts) == 1 for name in files), "Game package must be flat")
     proofs = manifest.get("inputs", {})
     donor_roles = {*DONORS, 'bridge'} | ({'loopback_game'} if game_listener_profile == 'loopback' else set())
+    if mapserver_progress_profile:
+        donor_roles.add('mapserver_progress')
     require(isinstance(proofs, dict) and set(proofs) == donor_roles, "Game package donor set differs")
+    if accepted:
+        require(all(proofs[role] == accepted['inputs'][role] for role in ('bridge', 'loopback_game')),
+                'MapServer progress must retain exact accepted bridge and TestClient donor provenance')
     donors = {**DONORS, **({"dbserver": LOOPBACK_DONOR} if dbserver_profile == "loopback" else {})}
     for role, pin in donors.items():
         proof = proofs[role]
@@ -141,7 +170,7 @@ def verify_package(package, *, dbserver_profile="accepted", game_listener_profil
     receipt = bridge["manifest"]
     bridge_sources = {name: hashlib.sha256((ROOT / name).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
                       for name in ("database/wine-game/TestClientBridge.c", "database/wine-game/bridge_protocol.h")}
-    require(bridge.get("repository_commit") == receipt.get("repository_commit") == manifest["repository_commit"]
+    require(bridge.get("repository_commit") == receipt.get("repository_commit") == shared_commit
             and receipt.get("format") == 1 and receipt.get("role") == "stock_testclient_launcher_bridge"
             and receipt.get("architecture") == "Win32" and receipt.get("compiler") == "MSVC"
             and receipt.get("flags") == "/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601"
@@ -162,21 +191,40 @@ def verify_package(package, *, dbserver_profile="accepted", game_listener_profil
     if game_listener_profile == 'loopback':
         from package_loopback_game import verify_loopback_game_manifest
         game_donor = proofs['loopback_game']
-        require(isinstance(game_donor, dict) and game_donor.get('repository_commit') == manifest['repository_commit'],
+        require(isinstance(game_donor, dict) and game_donor.get('repository_commit') == shared_commit,
                 'Game listener donor repository identity differs')
         game_manifest = game_donor.get('manifest')
-        verify_loopback_game_manifest(game_manifest, manifest['repository_commit'], proofs['reference']['manifest'])
+        verify_loopback_game_manifest(game_manifest, shared_commit, proofs['reference']['manifest'])
         encoded = json.dumps(game_manifest, indent=2) + '\n'
         require(game_donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
                 hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
                 'Game listener donor receipt bytes differ')
         for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe'):
             selected[name] = (game_manifest['files'][name], 'loopback_game')
+    if mapserver_progress_profile:
+        from package_mapserver_progress import verify_mapserver_progress_manifest
+        donor = proofs['mapserver_progress']
+        require(isinstance(donor, dict) and donor.get('repository_commit') == manifest['repository_commit'],
+                'MapServer progress donor repository identity differs')
+        progress_manifest = donor.get('manifest')
+        verify_mapserver_progress_manifest(progress_manifest, manifest['repository_commit'],
+                                          proofs['reference']['manifest'])
+        encoded = json.dumps(progress_manifest, indent=2) + '\n'
+        require(donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
+                hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
+                'MapServer progress donor receipt bytes differ')
+        selected['MapServer.exe'] = (progress_manifest['files']['MapServer.exe'], 'mapserver_progress')
     selected["TestClientBridge.exe"] = (receipt["files"]["TestClientBridge.exe"], "bridge")
     require(set(files) == set(selected) and set(name for name in files if name.lower().endswith(".exe")) == set(EXECUTABLES),
             "Game package executable/dependency selection differs")
     require(manifest.get("file_donors") == {name: role for name, (_, role) in selected.items()},
             "Game package file donor mapping differs")
+    if accepted:
+        require({name: record for name, record in files.items() if name != 'MapServer.exe'} ==
+                {name: record for name, record in accepted['files'].items() if name != 'MapServer.exe'}
+                and {name: role for name, role in manifest['file_donors'].items() if name != 'MapServer.exe'} ==
+                {name: role for name, role in accepted['file_donors'].items() if name != 'MapServer.exe'},
+                'MapServer progress substituted an accepted non-MapServer payload')
     for name, (record, _) in selected.items():
         expected = {key: value for key, value in record.items() if key != "size"}
         expected["bytes"] = record.get("bytes", record.get("size"))
@@ -296,6 +344,13 @@ def make_expectations(assets, package, data, schema, package_manifest, schema_ma
         donor = package_manifest['inputs']['loopback_game']['manifest']
         expected.update(game_listener_profile='loopback',
                         game_listener_metadata=donor['variants']['creation']['build_input']['loopback_only'])
+    if package_manifest.get('mapserver_progress_profile') == MAPSERVER_PROGRESS_PROFILE:
+        donor = package_manifest['inputs']['mapserver_progress']
+        expected.update(mapserver_progress_profile=MAPSERVER_PROGRESS_PROFILE,
+                        mapserver_progress_producer={
+                            'repository_commit': donor['repository_commit'],
+                            'manifest_sha256': donor['manifest_sha256'],
+                            'mapserver_sha256': package_manifest['files']['MapServer.exe']['sha256']})
     return expected
 
 
@@ -489,6 +544,7 @@ def validate_report(report, *, expected):
                     (("registration_processes", 3), ("wow64_registration_processes", 1), ("registration_passes", 1))),
             "Game runtime did not prove accepted cold Wine initialization")
     game = report.get("game", {})
+    validate_mapserver_progress(game, expected)
     validate_fixed_inputs(game, expected['fixed_inputs'])
     require(game.get("status") == "passed" and game.get("created_connected") is True
             and game.get("attributes_unchanged") is True and game.get("process_budget") == 240
@@ -594,7 +650,7 @@ def copy_capture_area(state, evidence, directory, limits, total_limit):
 
 
 def copy_game_captures(state, evidence):
-    records = copy_capture_area(state, evidence, "game-captures", CAPTURE_LIMITS, 53 * 1024 * 1024)
+    records = copy_capture_area(state, evidence, "game-captures", CAPTURE_LIMITS, 54 * 1024 * 1024)
     receipt = {"format": 1, "scope": "redacted_game_diagnostic_captures", "files": records}
     (evidence / "game-captures.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return records
@@ -680,11 +736,29 @@ def validate_service_captures(report, evidence, records, *, expected=None):
                     "Service log source or bounded-segment metadata differs")
 
 
+def validate_mapserver_progress(game, expected):
+    if expected.get('mapserver_progress_profile') != MAPSERVER_PROGRESS_PROFILE:
+        require('mapserver_progress' not in game,
+                'Unselected game profile unexpectedly claims MapServer progress diagnostics')
+        return
+    sys.path.insert(0, str(ROOT / 'android/guest'))
+    import game_map_progress
+    game_map_progress.validate_evidence(game.get('mapserver_progress'),
+                                       expected['mapserver_progress_producer'],
+                                       require_phase_progress=True)
+
+
 def validate_capture_files(report, evidence, records, *, expected=None):
     game = report["game"]
-    require(set(records) == set(CAPTURE_LIMITS) and game.get("capture_files") == records,
+    progress = (expected or {}).get('mapserver_progress_profile') == MAPSERVER_PROGRESS_PROFILE
+    required = set(CAPTURE_LIMITS) - (set() if progress else {'mapserver-progress.json'})
+    require(set(records) == required and game.get("capture_files") == records,
             "Successful game proof lacks its exact exported capture inventory")
     folder = evidence / "game-captures"
+    if progress:
+        require(read_json(folder / 'mapserver-progress.json', CAPTURE_LIMITS['mapserver-progress.json']) ==
+                game.get('mapserver_progress'), 'Exported MapServer progress differs from the diagnostic report')
+        validate_mapserver_progress(game, expected)
     snapshots = {}
     for prefix in ("first", "second"):
         session = game["sessions"][prefix]
@@ -787,7 +861,8 @@ def prepare_runtime(work, evidence, assets):
                  "opt/coh-schema", "opt/coh-m3", "opt/wine", "state", "tmp"):
         (work / "rootfs" / name).mkdir(parents=True, exist_ok=True)
     scripts = {}
-    for name in ("game_diagnostic.py", "game_evidence.py", "game_hang_evidence.py", "dbserver_diagnostic.py"):
+    for name in ("game_diagnostic.py", "game_evidence.py", "game_hang_evidence.py", "game_map_progress.py",
+                 "dbserver_diagnostic.py"):
         target = work / "m3-tools" / name
         shutil.copyfile(ROOT / "android/guest" / name, target)
         scripts[name] = digest(target)
@@ -907,6 +982,15 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
     return report
 
 
+def verify_stack_probe(directory, repository_commit, mapserver_progress_profile=None):
+    if mapserver_progress_profile:
+        require(mapserver_progress_profile == MAPSERVER_PROGRESS_PROFILE
+                and digest(directory / 'stack-probe-build.json') == ACCEPTED_STACK_PROBE_SHA256,
+                'MapServer progress requires the exact accepted stack observer receipt')
+        repository_commit = ACCEPTED_GAME_COMMIT
+    return stack_probe_receipt.verify(directory, repository_commit)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--assets", type=Path, default=ROOT / "out/android/assets/runtime")
@@ -920,6 +1004,8 @@ def main():
                         help="Qualify the separately identified loopback DbServer composite")
     parser.add_argument('--game-listener-profile', choices=GAME_LISTENER_PROFILES, default='accepted',
                         help='Qualify opt-in MapServer and TestClient actual local UDP bindings')
+    parser.add_argument('--mapserver-progress-profile', choices=(MAPSERVER_PROGRESS_PROFILE,),
+                        help='Explicitly select the separately receipted MapServer startup/tick diagnostic')
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
     require(sys.platform == "linux" and platform.machine().lower() in ("aarch64", "arm64"),
@@ -930,13 +1016,14 @@ def main():
         getattr(args, name).resolve() for name in ("assets", "package", "data", "schema", "work", "evidence", "proot"))
     runtime = dbhost.verify_runtime_assets(assets)
     package_manifest = verify_package(package, dbserver_profile=args.dbserver_profile,
-                                      game_listener_profile=args.game_listener_profile)
+                                      game_listener_profile=args.game_listener_profile,
+                                      mapserver_progress_profile=args.mapserver_progress_profile)
     data_manifest = verify_data(data)
     schema_manifest = dbhost.verify_schema(schema)
     repository_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     require(package_manifest.get("repository_commit") == repository_commit,
-            "Game bridge package differs from the checked-out harness source")
-    observer = stack_probe_receipt.verify(args.stack_probe, repository_commit)
+            "Game package differs from the checked-out harness source")
+    observer = verify_stack_probe(args.stack_probe, repository_commit, args.mapserver_progress_profile)
     disk = check_paths_and_space(work, evidence, (assets, package, data, schema, proot),
                                  data_bytes=sum(record["bytes"] for record in data_manifest["files"].values()))
     for name in ("proot", "proot-loader"):
@@ -958,6 +1045,11 @@ def main():
     if args.game_listener_profile == 'loopback':
         inputs['game_listener_profile'] = 'loopback'
         inputs['game_listener_scope'] = 'Owned Atlas and TestClient IPv4 UDP bindings; host network namespace remains mandatory'
+    if args.mapserver_progress_profile:
+        inputs['mapserver_progress_profile'] = args.mapserver_progress_profile
+        inputs['mapserver_progress_producer'] = expected['mapserver_progress_producer']
+        inputs['accepted_supporting_donors'] = {'run_id': 36510836956, 'repository_commit': ACCEPTED_GAME_COMMIT,
+                                               'manifest_sha256': ACCEPTED_GAME_PACKAGE_SHA256}
     (evidence / "host-game-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
     command = make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                            proot=proot, timeout_seconds=args.timeout_seconds)
@@ -965,8 +1057,20 @@ def main():
     report = run_guest(command, env, work / "state", evidence,
                        timeout_seconds=args.timeout_seconds, expected=expected)
     dbhost.validate_network_receipt(read_json(evidence / "network-isolation.json"), network_expected)
-    print(json.dumps({"status": "native_arm64_proot_game_passed_android_unvalidated",
-                      "report": str(evidence / "game-runtime-report.json"), "stages": len(report["stages"])}))
+    result = {"status": "native_arm64_proot_game_passed_android_unvalidated",
+              "report": str(evidence / "game-runtime-report.json"), "stages": len(report["stages"])}
+    if args.mapserver_progress_profile:
+        phases = {}
+        for name, phase in report['game']['mapserver_progress']['phases'].items():
+            samples = [sample for sample in phase['samples'] if sample['available']]
+            first, last = samples[0], samples[-1]
+            phases[name] = {'windows_pid': last['windows_pid'], 'main_thread_id': last['main_thread_id'],
+                            'valid_retained_samples': len(samples),
+                            'tick_started_delta': last['tick_started'] - first['tick_started'],
+                            'tick_completed_delta': last['tick_completed'] - first['tick_completed']}
+        result['mapserver_progress'] = {'profile': args.mapserver_progress_profile,
+                                        'additional_observer_contract_passed': True, 'phases': phases}
+    print(json.dumps(result))
 
 
 if __name__ == "__main__":

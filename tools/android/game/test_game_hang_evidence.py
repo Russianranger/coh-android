@@ -216,6 +216,26 @@ class HangEvidenceTests(unittest.TestCase):
             finally:
                 service.stop()
 
+    def test_map_progress_samples_bracket_failure_inspection_before_service_cleanup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            diagnostic = self.diagnostic(root)
+            stage = {'available': True, 'stage': 'FOLDER_CALLBACKS', 'sequence': 82,
+                     'tick_started': 3, 'tick_completed': 2, 'is_success_proof': False}
+            diagnostic.sample_map_progress = Mock(return_value=stage)
+            order = []
+            diagnostic.sample_map_progress.side_effect = lambda reason, **_kwargs: (order.append(reason) or stage)
+            with patch.object(hang, 'capture_postgres', side_effect=lambda *_a: (order.append('postgres') or {})), \
+                 patch.object(hang, 'capture_processes', return_value={}), \
+                 patch.object(hang, 'capture_windows', side_effect=lambda *_a: (order.append('windows') or ({'available': False}, None))):
+                hang.capture(diagnostic)
+            self.assertEqual(order, ['failure-before-inspection', 'postgres', 'windows', 'failure-before-cleanup'])
+            snapshot = json.loads((root / 'game-hang-captures/snapshot.json').read_text())
+            self.assertEqual(snapshot['mapserver_before']['stage'], 'FOLDER_CALLBACKS')
+            self.assertEqual(snapshot['mapserver_after']['stage'], 'FOLDER_CALLBACKS')
+            self.assertFalse(diagnostic.game['hang_capture']['mapserver_tick_completed_advanced'])
+            self.assertFalse(diagnostic.game['hang_capture']['mapserver_sequence_advanced'])
+
     def test_failure_observers_cannot_mask_original_error_or_prevent_query_stop(self):
         with tempfile.TemporaryDirectory() as temporary:
             diagnostic = self.diagnostic(Path(temporary))
@@ -230,9 +250,11 @@ class HangEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             diagnostic = self.diagnostic(Path(temporary))
             diagnostic.ctx.cancel_requested = True
+            diagnostic.sample_map_progress = Mock()
             with patch.object(hang, 'capture_postgres') as probe:
                 hang.capture(diagnostic)
             probe.assert_not_called()
+            diagnostic.sample_map_progress.assert_not_called()
             self.assertFalse(diagnostic.game['hang_capture']['attempted'])
             self.assertFalse((Path(temporary) / 'game-hang-captures').exists())
 

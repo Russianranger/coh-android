@@ -1,12 +1,12 @@
-# Pending MapServer heartbeat diagnostics
+# MapServer heartbeat diagnostics: implementation awaiting qualification
 
-This is a read-only design checkpoint, not an implemented correction or accepted
-runtime result. Hosted runs `36599606621` attempt 1 and `36621227369` attempt 1
-failed Atlas freshness observation. The latter had advancing DbServer dispatch,
-live services and clean final cleanup, but never reached character creation or
-restart. The exact-APK retry must retain all current acceptance checks. A retry
-pass does not resolve intermittent startup reliability; another matching failure
-should trigger fresh MapServer diagnostics before further identical retries.
+Hosted runs `36599606621` attempt 1 and `36621227369` attempts 1 and 2
+failed Atlas freshness observation. Both 0.4.3 attempts had advancing DbServer
+dispatch, live services and clean final cleanup, but never reached character
+creation or restart. Identical retries are stopped. The separately receipted
+observer described below is implemented; real Windows producer contracts and
+the new ARM64 runtime workflow must still qualify it. No heartbeat correction
+or qualified replacement APK is claimed.
 
 The current evidence cannot identify the blocked Windows operation. MapServer
 publishes readiness before completing late startup. Buffered stdout ending at SG
@@ -35,9 +35,22 @@ then consider a separate UtilitiesLib hook to distinguish directory draining
 from callback bodies. Do not suppress callbacks or relax readiness from these
 current observations.
 
-Implementation needs an explicitly receipted source overlay/profile: the current
-`tools/prepare_game_loopback_source.py` contract permits only six patched files.
-Add Windows producer contracts for disabled behavior, existing-file refusal and
-external visibility; guest parser/capture checks; a fresh Win32 donor and package
-identity; full ARM64 qualification; then exact-APK qualification. Preserve all
-accepted donors and the candidate-only cleanup correction separately.
+The implementation uses `tools/prepare_mapserver_progress_source.py` and a
+separate three-file patch plus two-file producer overlay, preserving the existing
+six-file game-loopback contract. `package_mapserver_progress.py` receipts the
+fresh Win32 MapServer and symbols. Composite packaging permits that MapServer
+override only with the exact accepted supporting donors. The explicit profile is
+`dispatch_progress_v1`; its first workflow is `android-map-progress.yml`.
+
+Windows contracts compile the actual producer and verify external live reads,
+disabled behavior, no added thread, refusal to overwrite evidence, and compiled
+markers without calls or synchronization. Guest evidence binds raw record bytes,
+identity, sequence, stage and tick counts to bounded observations. Full observer
+qualification requires valid records and positive completed-tick advancement
+for both launches in addition to the unchanged eighteen game stages.
+
+Next: run those real Windows contracts and the ARM64 diagnostic, inspect any
+fresh failure before changing behavior, then integrate the qualified explicit
+profile into a new Android candidate and run the exact-APK gate. Preserve all
+accepted donors and the candidate-only cleanup correction separately. Do not
+request another physical Thor test until that candidate qualifies.
