@@ -326,6 +326,49 @@ class LoopbackProfileTests(unittest.TestCase):
             diagnostic.clean_logs()
 
 
+class GameListenerProfileTests(unittest.TestCase):
+    def test_only_selected_atlas_and_clients_inherit_game_policy(self):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        diagnostic.wine_env = {'WINEPREFIX': '/private/wine', guest.dbserver.LOOPBACK_ENV: 'inherited',
+                               guest.evidence.GAME_LOOPBACK_ENV: 'inherited'}
+        diagnostic.loopback_enabled = True
+        for enabled in (False, True):
+            diagnostic.game_listener_enabled = enabled
+            for executable in guest.EXES:
+                with self.subTest(enabled=enabled, executable=executable):
+                    environment = diagnostic.game_environment(executable)
+                    self.assertEqual(environment.get(guest.dbserver.LOOPBACK_ENV),
+                                     '1' if executable == 'DbServer.exe' else None)
+                    self.assertEqual(environment.get(guest.evidence.GAME_LOOPBACK_ENV),
+                        '1' if enabled and executable in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe') else None)
+                    self.assertEqual(environment['WINEPREFIX'], '/private/wine')
+        self.assertEqual(diagnostic.wine_env[guest.evidence.GAME_LOOPBACK_ENV], 'inherited')
+
+    def test_game_source_metadata_is_disabled_by_default_and_keeps_namespace_required(self):
+        self.assertIsNone(guest.game_listener_contract({}))
+        for package in ({'game_listener_profile': 'unknown'},
+                        {'game_listener_profile': 'loopback'},
+                        {'inputs': {'loopback_game': {}}}):
+            with self.subTest(package=package), self.assertRaises(guest.base.DiagnosticError):
+                guest.game_listener_contract(package)
+
+    def test_live_observation_checks_actual_client_console_before_recording(self):
+        diagnostic = object.__new__(guest.GameDiagnostic)
+        diagnostic.game_listener_enabled = True
+        diagnostic.game = {'client_listener_observations': {}}
+        diagnostic.wait = lambda predicate, *args, **kwargs: predicate()
+        text = guest.evidence.GAME_LOOPBACK_ACK + '\n' + ''.join(
+            f'{guest.evidence.GAME_LOOPBACK_ENV} bind verified: protocol=udp address=127.0.0.1 port={port}\n'
+            for port in (41001, 41002))
+        session = SimpleNamespace(console=lambda: text)
+        diagnostic.observe_client_listeners(session, 'first')
+        self.assertEqual(len(diagnostic.game['client_listener_observations']['first']['endpoints']), 2)
+        session.console = lambda: text.replace('127.0.0.1', '0.0.0.0')
+        with self.assertRaises(guest.base.DiagnosticError):
+            diagnostic.observe_client_listeners(session, 'second')
+        self.assertNotIn('second', diagnostic.game['client_listener_observations'])
+
+
 @unittest.skipUnless(sys.platform.startswith('linux'), 'Wine guest uses native Linux socket semantics')
 class GamePortTests(unittest.TestCase):
     def test_tcp_preflight_accepts_closed_wine_style_connection_in_time_wait(self):

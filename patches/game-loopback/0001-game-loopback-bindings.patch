@@ -1,0 +1,196 @@
+--- a/libs/UtilitiesLib/src/network/sock.c
++++ b/libs/UtilitiesLib/src/network/sock.c
+@@ -23,11 +23,116 @@
+      addr->sin_port = htons((u_short)port);
+ }
+ 
++/* States: 0=default/unbound, 1=loopback/unbound, 2=default/binding,
++ * 3=loopback/binding. CAS makes activation and the first bind mutually ordered.
++ * This library hook has no effect until an explicit startup request enables it. */
++#define COH_GAME_LOOPBACK_ENVIRONMENT "COH_GAME_LOOPBACK_ONLY"
++#define COH_GAME_LOOPBACK_ACK "COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy"
++static volatile LONG sock_bind_policy = 0;
++
++int sockGameSetLoopbackOnlyMode(void)
++{
++    return InterlockedCompareExchange(&sock_bind_policy, 1, 0) == 0;
++}
++
++static LONG sockGameBindingPolicy(void)
++{
++    LONG policy;
++    do {
++        policy = InterlockedCompareExchange(&sock_bind_policy, 0, 0);
++    } while (InterlockedCompareExchange(&sock_bind_policy, policy | 2, policy) != policy);
++    return policy;
++}
++
++int sockGameLoopbackInit(void)
++{
++    char value[2];
++    DWORD length;
++    SetLastError(ERROR_SUCCESS);
++    length = GetEnvironmentVariableA(COH_GAME_LOOPBACK_ENVIRONMENT, value, sizeof(value));
++    if (!length && GetLastError() == ERROR_ENVVAR_NOT_FOUND)
++        return 0;
++    if (length != 1 || value[0] != '1') {
++        SetLastError(ERROR_INVALID_PARAMETER);
++        return -1;
++    }
++    if (!sockGameSetLoopbackOnlyMode()) {
++        SetLastError(ERROR_INVALID_STATE);
++        return -1;
++    }
++    fprintf(stdout, "\n%s\n", COH_GAME_LOOPBACK_ACK);
++    fflush(stdout);
++    return 1;
++}
++
++static void sockLoopbackFailure(SOCKET sock, const char *reason, int error)
++{
++    /* Some stock callers ignore sockBind failure. Never let an opted-in
++     * diagnostic continue after an unavailable or unverified listener. */
++    closesocket(sock);
++    fprintf(stderr, "COH_GAME_LOOPBACK_ONLY binding failed: %s (Windows socket error %d)\n", reason, error);
++    fflush(stderr);
++    ExitProcess(2);
++}
++
+ int    sockBind(SOCKET sock,const struct sockaddr_in *name)
+ {
+-    if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
+-
+-    return 0;
++    LONG policy;
++    struct sockaddr_in local, actual;
++    int length = (int)sizeof(actual);
++    int socket_type, type_length = (int)sizeof(socket_type);
++    unsigned long address;
++
++    policy = sockGameBindingPolicy();
++    if (!(policy & 1)) {
++        if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
++        return 0;
++    }
++    if (!name || name->sin_family != AF_INET)
++        sockLoopbackFailure(sock, "IPv4 address required", WSAEAFNOSUPPORT);
++    local = *name;
++    address = ntohl(local.sin_addr.s_addr);
++    if (address == INADDR_ANY)
++        local.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++    else if ((address & 0xff000000UL) != 0x7f000000UL)
++        sockLoopbackFailure(sock, "non-loopback address refused", WSAEADDRNOTAVAIL);
++    if (bind(sock, (struct sockaddr *)&local, sizeof(local)) < 0)
++        sockLoopbackFailure(sock, "bind", WSAGetLastError());
++    memset(&actual, 0, sizeof(actual));
++    if (getsockname(sock, (struct sockaddr *)&actual, &length) != 0)
++        sockLoopbackFailure(sock, "getsockname", WSAGetLastError());
++    address = ntohl(actual.sin_addr.s_addr);
++    if (length != (int)sizeof(actual) || actual.sin_family != AF_INET
++            || (address & 0xff000000UL) != 0x7f000000UL
++            || actual.sin_addr.s_addr != local.sin_addr.s_addr
++            || !actual.sin_port || (local.sin_port && actual.sin_port != local.sin_port))
++        sockLoopbackFailure(sock, "bound endpoint verification", WSAEINVAL);
++    if (getsockopt(sock, SOL_SOCKET, SO_TYPE, (char *)&socket_type, &type_length) != 0)
++        sockLoopbackFailure(sock, "getsockopt(SO_TYPE)", WSAGetLastError());
++    if (type_length != (int)sizeof(socket_type)
++            || (socket_type != SOCK_STREAM && socket_type != SOCK_DGRAM))
++        sockLoopbackFailure(sock, "socket type verification", WSAEINVAL);
++    fprintf(stdout, "\nCOH_GAME_LOOPBACK_ONLY bind verified: protocol=%s address=%lu.%lu.%lu.%lu port=%u\n",
++            socket_type == SOCK_STREAM ? "tcp" : "udp",
++            (address >> 24) & 255, (address >> 16) & 255,
++            (address >> 8) & 255, address & 255, (unsigned)ntohs(actual.sin_port));
++    fflush(stdout);
++    return 1;
++}
++
++/* Called immediately after every game client UDP socket is created, before
++ * sendto can implicitly bind it to wildcard. No extra Winsock calls in default
++ * mode, but every attempt prevents a later policy activation. */
++void sockGameBindClientUdp(SOCKET sock)
++{
++    struct sockaddr_in local;
++    LONG policy = sockGameBindingPolicy();
++    if (!(policy & 1))
++        return;
++    memset(&local, 0, sizeof(local));
++    local.sin_family = AF_INET;
++    local.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++    sockBind(sock, &local);
+ }
+ 
+ void    sockSetBlocking(SOCKET fd,int block)
+--- a/libs/UtilitiesLib/include/utilitieslib/network/sock.h
++++ b/libs/UtilitiesLib/include/utilitieslib/network/sock.h
+@@ -23,6 +23,10 @@
+ C_DECLARATIONS_BEGIN
+ 
+ void sockSetAddr(struct sockaddr_in *addr,unsigned int ip,int port);
++/* Opt-in game diagnostic policy; call before common startup. Absent=0,
++ * exact "1"=1, invalid/late/repeated requests=-1; defaults remain unchanged. */
++int sockGameLoopbackInit(void);
++void sockGameBindClientUdp(SOCKET sock);
+ int sockBind(SOCKET sock,const struct sockaddr_in *name);
+ void sockSetBlocking(SOCKET fd, int block);
+ void sockSetDelay(SOCKET fd, int delay);
+--- a/libs/UtilitiesLib/src/network/net_link.c
++++ b/libs/UtilitiesLib/src/network/net_link.c
+@@ -765,6 +765,8 @@
+         UNUSED(code);
+         return 0;
+     }
++
++    sockGameBindClientUdp(link->socket);
+ 
+     // Got a valid address?
+     ip = ipFromString(address);
+--- a/Utilities/TestClient/src/packetFlood.c
++++ b/Utilities/TestClient/src/packetFlood.c
+@@ -70,6 +70,8 @@
+         return;
+     }
+ 
++    sockGameBindClientUdp(s);
++
+     sockSetAddr(&addr,destip,port);
+     result = sendto(s, data, len, 0, (struct sockaddr*)&addr, sizeof(addr));
+     if (result != len) {
+@@ -89,6 +91,8 @@
+         printf("Couldn't create socket");
+         return;
+     }
++
++    sockGameBindClientUdp(s);
+ 
+     sockSetAddr(&addr,destip,port);
+     for (i=0; i<loops; i++) {
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -1938,6 +1938,12 @@
+     #pragma message("Don't even think about running 64 bit compiled MapServer binaries. The only reason they are compile-able in this state is to simplify batch builds")
+ #endif
+     
++    if (sockGameLoopbackInit() < 0) {
++        fprintf(stderr, "Game loopback initialization failed (Windows error %lu).\n", GetLastError());
++        fflush(stderr);
++        return 2;
++    }
++
+     memCheckInit();
+ 
+     regSetAppName("CoH");
+--- a/Utilities/TestClient/src/main.c
++++ b/Utilities/TestClient/src/main.c
+@@ -1104,6 +1104,12 @@
+     int timer;
+     int global_count=0;
+ 
++    if (sockGameLoopbackInit() < 0) {
++        fprintf(stderr, "Game loopback initialization failed (Windows error %lu).\n", GetLastError());
++        fflush(stderr);
++        return 2;
++    }
++
+     memCheckInit();
+ 
+     timer = timerAlloc();

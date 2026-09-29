@@ -181,6 +181,46 @@ def loopback_acknowledgement(child, expected):
     return dbserver.validate_loopback(complete, True, expected)
 
 
+def game_listener_contract(package):
+    profile = package.get('game_listener_profile', 'accepted')
+    require(profile in ('accepted', 'loopback'), 'Unknown game listener profile')
+    if profile == 'accepted':
+        require('loopback_game' not in package.get('inputs', {}), 'Unexpected game listener donor')
+        return None
+    require(package.get('dbserver_profile') == 'loopback', 'Game listener profile requires the loopback DbServer')
+    donor = package.get('inputs', {}).get('loopback_game', {})
+    manifest = donor.get('manifest', {})
+    require(donor.get('repository_commit') == manifest.get('repository_commit') == package.get('repository_commit')
+            and manifest.get('schema_version') == 1
+            and manifest.get('build_role') == 'loopback_game_diagnostic'
+            and manifest.get('status') == 'diagnostic_build_packaged_runtime_unverified'
+            and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+            and manifest.get('runtime_execution_validated') is False
+            and manifest.get('source_commit') == package.get('source_commit')
+            and manifest.get('postgresql_persistence_fixture') is False,
+            'Game listener donor identity or fixture mode differs')
+    encoded = json.dumps(manifest, indent=2) + '\n'
+    require(donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
+            hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
+            'Game listener donor receipt bytes differ')
+    for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe'):
+        record = manifest.get('files', {}).get(name)
+        require(isinstance(record, dict) and type(record.get('size')) is int and record['size'] > 0,
+                'Game listener donor file record differs')
+        normalized = {key: value for key, value in record.items() if key != 'size'}
+        normalized['bytes'] = record['size']
+        require(dbserver.exact_contract(package.get('files', {}).get(name), normalized),
+                'Game listener executable differs from its source-bound donor')
+    variants = manifest.get('variants', {})
+    require(set(variants) == {'creation', 'resume'}, 'Game listener donor variants differ')
+    metadata = variants['creation'].get('build_input', {}).get('loopback_only')
+    require(dbserver.exact_contract(metadata, evidence.GAME_LOOPBACK_METADATA),
+            'Game listener metadata differs')
+    require(dbserver.exact_contract(metadata, variants['resume'].get('build_input', {}).get('loopback_only')),
+            'Game listener variants use different binding policies')
+    return metadata
+
+
 def fixed_input_snapshot(runtime, schema_paths, check=lambda: None):
     """Bind the schema/configuration union; generated caches outside it remain writable."""
     def checked_path(name, directory=False):
@@ -303,7 +343,7 @@ class BridgeSession:
                 base.windows_path(diagnostic.runtime / 'TestClientBridge.exe'),
                 '--output', base.windows_path(self.root), '--version', diagnostic.package['client_version'],
                 '--timeout', '1200', '--', base.windows_path(diagnostic.runtime / executable), *arguments]
-        self.child = self.ctx.start('bridge-' + label, argv, env=diagnostic.wine_env)
+        self.child = self.ctx.start('bridge-' + label, argv, env=diagnostic.game_environment(executable))
 
     def small(self, name):
         path = self.root / name
@@ -452,8 +492,11 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         for environment in (self.base_env, self.wine_env):
             environment.pop(dbserver.FIXED_INPUTS_ENV, None)
             environment.pop(dbserver.LOOPBACK_ENV, None)
+            environment.pop(evidence.GAME_LOOPBACK_ENV, None)
         self.loopback_contract = game_loopback_contract(self.package)
         self.loopback_enabled = self.loopback_contract is not None
+        self.game_listener_metadata = game_listener_contract(self.package)
+        self.game_listener_enabled = self.game_listener_metadata is not None
         fixed_inputs = self.package.get('inputs', {}).get('dbserver', {}).get('manifest', {}).get(
             'wine_build_input', {}).get('fixed_inputs')
         dbserver.validate_fixed_inputs_metadata(fixed_inputs)
@@ -473,6 +516,10 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         if self.loopback_enabled:
             self.game['dbserver_profile'] = 'loopback'
             self.game['loopback_only'] = {'requested': True, 'metadata': self.loopback_contract['metadata']}
+        if self.game_listener_enabled:
+            self.game['game_listener_profile'] = 'loopback'
+            self.game['game_listener_policy'] = {'requested': True, 'metadata': self.game_listener_metadata}
+            self.game['client_listener_observations'] = {}
         self.game['fixed_inputs'] = {'requested': True, 'metadata': fixed_inputs,
             'scope': 'accepted_schema_and_db_configuration', 'schema_file_count': 62, 'checks': []}
         self.game['dispatch_progress'] = {'enabled': True, 'format': 1,
@@ -574,13 +621,19 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 next_progress = time.monotonic() + 5
             time.sleep(interval)
 
-    def start_game(self, label, executable, arguments, *, env=None):
+    def game_environment(self, executable, env=None):
         environment = (self.wine_env if env is None else env).copy()
-        # Only the two explicitly owned DbServer launches enable the donor's
-        # binding mode. MapServer and clients retain their separate host policy.
         environment.pop(dbserver.LOOPBACK_ENV, None)
-        if executable == 'DbServer.exe' and self.loopback_enabled:
+        environment.pop(evidence.GAME_LOOPBACK_ENV, None)
+        if executable == 'DbServer.exe' and getattr(self, 'loopback_enabled', False):
             environment[dbserver.LOOPBACK_ENV] = '1'
+        if executable in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe') \
+                and getattr(self, 'game_listener_enabled', False):
+            environment[evidence.GAME_LOOPBACK_ENV] = '1'
+        return environment
+
+    def start_game(self, label, executable, arguments, *, env=None):
+        environment = self.game_environment(executable, env)
         child = self.ctx.start(label, ['/usr/bin/env', '--chdir=' + str(self.runtime), self.args.wine,
                                base.windows_path(self.runtime / executable), *arguments],
                                env=environment)
@@ -664,7 +717,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             require(not baseline['ready'], 'Atlas was running before the owned launch')
             return baseline if baseline.get('not_started') else False
         self.wait(unstarted, 60, 'Unstarted Atlas baseline')
-        self.start_game(label + '-atlas', 'MapServer.exe', ['-nogui', '-db', '127.0.0.1',
+        atlas = self.start_game(label + '-atlas', 'MapServer.exe', ['-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1'])
         next_status = 0
         readiness_timeout = 2400 if label == 'first' else 900
@@ -687,6 +740,12 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                                                                 self.loopback_contract['endpoints'])
         else:
             dbserver.validate_loopback(database.text(), False, {})
+        if getattr(self, 'game_listener_enabled', False):
+            require(not atlas.overflow, 'Atlas listener capture overflowed')
+            phase['game_listeners'] = self.wait(lambda: evidence.game_listener_bindings(
+                atlas.text(), 'atlas', pending=True), 30, 'Atlas actual loopback UDP binding')
+        else:
+            evidence.game_listener_bindings(atlas.text(), 'atlas', enabled=False)
         self.game['phases'].append(phase)
         self.ctx.passed(baseline_not_started=True, atlas_ready=True, table_count=catalog['table_count'])
 
@@ -762,11 +821,20 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             next_status = time.monotonic() + 10
             return evidence.connected_on_atlas(self.character_status('created'))
         self.wait(connected, 300, 'Created character connected on Atlas', session=session, live=True)
+        self.observe_client_listeners(session, 'first')
         require('simulateCharacterCreate()' in session.console(), 'Fresh creation branch was not captured')
         self.clean_logs(session=session)
         self.game['created_connected'] = True
         self.ctx.passed(character_id=identifier, map_id=1, fresh_creation_branch=True)
         return session
+
+    def observe_client_listeners(self, session, label):
+        if getattr(self, 'game_listener_enabled', False):
+            record = self.wait(lambda: evidence.game_listener_bindings(session.console(), 'client', pending=True),
+                30, 'TestClient actual loopback UDP bindings', session=session, live=True)
+            self.game['client_listener_observations'][label] = record
+        else:
+            evidence.game_listener_bindings(session.console(), 'client', enabled=False)
 
     def live_currency(self, session):
         self.ctx.stage('game_live_currency')
@@ -820,6 +888,11 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
         self.snapshots[label] = snapshot
         session.proof_complete = True
         receipt = session.stop()
+        if getattr(self, 'game_listener_enabled', False):
+            receipt['game_listeners'] = evidence.game_listener_bindings(session.console(), 'client')
+            earlier = self.game['client_listener_observations'][label]['endpoints']
+            require(receipt['game_listeners']['endpoints'][:len(earlier)] == earlier,
+                    'Final TestClient bind capture lost live-session evidence')
         final_events = session.events()
         require(evidence.pipe_identity(final_events, session.ready(), self.game['account'], self.game['character']['name'],
                     allow_logout_error=True), 'Final launcher identity is incomplete')
@@ -845,12 +918,18 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
                 enabled = self.loopback_enabled
                 dbserver.validate_loopback(text, enabled,
                     self.loopback_contract['endpoints'] if enabled else {})
+                require(evidence.GAME_LOOPBACK_ENV not in text, 'Game binding mode leaked into DbServer')
+            elif getattr(child, 'label', None) in ('first-atlas', 'restart-atlas'):
+                require(not getattr(child, 'overflow', False), 'Atlas listener capture overflowed')
+                evidence.game_listener_bindings(text, 'atlas', enabled=getattr(self, 'game_listener_enabled', False))
         texts.extend(path.read_text(encoding='utf-8', errors='replace') for path in self.ctx.log_paths())
         failures = []
         for text in texts:
             failures.extend(evidence.diagnostic_failures(text,
                 allow_requested_logout=allow_logout or self.completed_logout))
         if session is not None:
+            evidence.game_listener_bindings(session.console(), 'client',
+                                            enabled=getattr(self, 'game_listener_enabled', False))
             failures.extend(evidence.diagnostic_failures(session.console(), allow_requested_logout=allow_logout))
         require(not failures, 'Game diagnostic failure: ' + '\n'.join(base.redact(line, self.ctx.secrets) for line in failures[:20]))
 
@@ -903,6 +982,7 @@ class GameDiagnostic(dbserver.DbServerDiagnostic):
             next_status = time.monotonic() + 10
             return evidence.connected_on_atlas(self.character_status('resumed'))
         self.wait(connected, 300, 'Resumed character connected on Atlas', session=session, live=True)
+        self.observe_client_listeners(session, 'second')
         self.clean_logs(session=session)
         self.game['resume'] = dict(proof, creation_disabled=True, connected_on_atlas=True, processed_server_update=True)
         self.ctx.passed(creation_disabled=True, exact_name=True, processed_server_update=True, map_id=1)

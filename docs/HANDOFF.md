@@ -1,5 +1,27 @@
 # City of Heroes Android handoff
 
+Continuation recovery (2026-09-29 UTC): recovered branch head `7aea5ee` and
+confirmed its completed GitHub checks. Independently replayed the preserved
+Thor and hosted loopback evidence: both 28-stage physical runs, clean Stop,
+and the hosted 18-stage create/save/restart/resume sequence remain accepted.
+The original uploaded ZIP downloads returned HTTP 502 during this recovery;
+the replay used the receipt-bound reports and captures already in this repo,
+not newly downloaded archives or fresh device execution.
+
+The next implementation is the separate [MapServer/TestClient listener
+candidate](ANDROID_GAME_RUNTIME.md#mapserver-and-testclient-listener-candidate).
+It adds opt-in local bindings, source/package receipts and actual endpoint
+checks to the existing persistence sequence. New donors need Windows build and
+ARM64 runtime qualification before Android asset import/service integration.
+Keep installed 0.1.5 and 0.2.0; no repeat of their passed diagnostics is needed.
+Local verification: 162 checks ran (161 passed, one Windows-only observer
+skipped), including 17 actual socket contracts and eight source-preparation
+checks. Both complete creation/resume staging commands verified the immutable
+5,995-file source snapshot and produced the expected separate receipts.
+The workflow now builds all three candidate game executables on Windows and
+qualifies their actual bindings through the full ARM64 persistence sequence.
+Its new results must be recorded before accepting this listener milestone.
+
 Latest device checkpoint (2026-09-28, 22:28 UTC): **COH Server Test 0.2.0 passed
 on Thor**. The [receipt](android-evidence/accepted-dbserver-thor-20260928.json)
 records two complete 28-stage real DbServer passes, a clean cancellation between

@@ -38,6 +38,40 @@ def resume_text():
             f'COH_RESUME_ONLY_SERVER_UPDATE id={IDENTIFIER} name={NAME}\n')
 
 
+class GameListenerTests(unittest.TestCase):
+    def output(self, ports):
+        return evidence.GAME_LOOPBACK_ACK + '\n' + ''.join(
+            f'{evidence.GAME_LOOPBACK_ENV} bind verified: protocol=udp address=127.0.0.1 port={port}\n'
+            for port in ports)
+
+    def test_actual_map_and_both_client_socket_binds_are_required(self):
+        self.assertEqual(evidence.game_listener_bindings(self.output([7001]), 'atlas')['endpoints'],
+                         [{'protocol': 'udp', 'address': '127.0.0.1', 'port': 7001}])
+        # Reopening a closed UDP socket can legitimately reuse the ephemeral port.
+        for ports in ([41001, 41002], [41001, 41001], [41001, 41002, 41003]):
+            self.assertEqual([item['port'] for item in evidence.game_listener_bindings(
+                self.output(ports), 'client')['endpoints']], ports)
+        for role, ports in (('atlas', []), ('atlas', [7002]), ('atlas', [7001, 7001]), ('client', [41001])):
+            with self.subTest(role=role, ports=ports), self.assertRaises(evidence.base.DiagnosticError):
+                evidence.game_listener_bindings(self.output(ports), role)
+
+    def test_partial_records_wait_but_complete_invalid_records_fail(self):
+        good = self.output([41001, 41002])
+        for text in ('', evidence.GAME_LOOPBACK_ACK, self.output([41001]), good[:-1]):
+            self.assertFalse(evidence.game_listener_bindings(text, 'client', pending=True))
+        for text in (good.replace('127.0.0.1', '0.0.0.0'), good.replace('udp', 'tcp'),
+                     good.replace('port=41002', 'port=0'), good.replace('port=41002', 'port=65536'),
+                     good + evidence.GAME_LOOPBACK_ACK + '\n', 'prefix ' + good,
+                     good.replace('bind verified', 'bind failed'), self.output([1] * 129)):
+            with self.subTest(text=text), self.assertRaises(evidence.base.DiagnosticError):
+                evidence.game_listener_bindings(text, 'client', pending=True)
+
+    def test_accepted_profile_cannot_silently_activate_policy(self):
+        self.assertIsNone(evidence.game_listener_bindings('normal output\n', 'client', enabled=False))
+        with self.assertRaises(evidence.base.DiagnosticError):
+            evidence.game_listener_bindings(self.output([41001, 41002]), 'client', enabled=False)
+
+
 def sql_evidence(login_count=1):
     rows = {table: [{column: 1 for column in fields}] for table, fields in evidence.SELECTED.items()}
     for table, records in rows.items():

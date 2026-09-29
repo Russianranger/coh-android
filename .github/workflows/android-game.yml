@@ -1,10 +1,14 @@
-name: Wine Atlas loopback DbServer ARM64 qualification
+name: Wine Atlas game listener ARM64 qualification
 on:
   workflow_dispatch:
   push:
     paths:
       - '.github/workflows/android-game.yml'
       - 'database/wine-game/**'
+      - 'database/game-loopback/**'
+      - 'patches/game-loopback/**'
+      - 'tools/prepare_game_loopback_source.py'
+      - 'tools/test_prepare_game_loopback_source.py'
       - 'tools/android/game/**'
       - 'tools/android/build_proot.py'
       - 'tools/android/extract_talloc_source.py'
@@ -27,6 +31,7 @@ jobs:
       - name: Verify composite inputs, data staging, bridge and lifecycle contracts
         run: |
           python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+          python3 -m unittest discover -s tools -p 'test_prepare_game_loopback_source.py' -v
           python3 -m unittest discover -s tools/android -p 'test_proot_download.py' -v
           python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
   bridge:
@@ -80,8 +85,105 @@ jobs:
           name: wine-game-stack-probe
           path: out/stack-probe/
           if-no-files-found: error
+  game-donors:
+    needs: tooling
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify real Winsock listener and client UDP contracts
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/game/test_game_loopback_bind.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/test-game-listeners.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\test-game-listeners.cmd
+          if ($LASTEXITCODE -ne 0) { throw 'Game listener Windows contracts failed' }
+      - name: Stage separate creation and resume source trees
+        shell: pwsh
+        run: |
+          python tools/prepare_game_loopback_source.py --output out/game-create-source --variant creation
+          if ($LASTEXITCODE -ne 0) { throw 'Game creation source preparation failed' }
+          python tools/prepare_game_loopback_source.py --output out/game-resume-source --variant resume
+          if ($LASTEXITCODE -ne 0) { throw 'Game resume source preparation failed' }
+      - name: Build MapServer and creation TestClient with opt-in listeners
+        working-directory: out/game-create-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Game creation configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target MapServer TestClient --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Game creation build failed' }
+      - name: Build resume TestClient with opt-in listeners
+        working-directory: out/game-resume-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Game resume configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target TestClient --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Game resume build failed' }
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/reference-artifact
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - name: Verify accepted reference archive for dependency closure
+        shell: python
+        run: |
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/reference-artifact/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as value:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in value.namelist())
+              value.extractall('out/reference-runtime')
+      - name: Package separately identified game listener donors
+        shell: pwsh
+        run: >-
+          python tools/android/game/package_loopback_game.py
+          --create-directory out/game-create-source/out/build/vs2026/bin/OptDebug
+          --resume-directory out/game-resume-source/out/build/vs2026/bin/OptDebug
+          --create-build-input out/game-create-source/game-loopback-build-input.json
+          --resume-build-input out/game-resume-source/game-loopback-build-input.json
+          --create-cache out/game-create-source/out/build/vs2026/CMakeCache.txt
+          --resume-cache out/game-resume-source/out/build/vs2026/CMakeCache.txt
+          --reference out/reference-runtime
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/game-listeners
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-game-loopback-donors
+          path: out/game-listeners/runtime/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-game-loopback-symbols
+          path: out/game-listeners/symbols/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-game-loopback-build-inputs
+          path: |
+            out/game-create-source/game-loopback-build-input.json
+            out/game-resume-source/game-loopback-build-input.json
+            out/game-create-source/out/build/vs2026/CMakeCache.txt
+            out/game-resume-source/out/build/vs2026/CMakeCache.txt
+          if-no-files-found: warn
   runtime:
-    needs: bridge
+    needs: [bridge, game-donors]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 100
@@ -100,6 +202,10 @@ jobs:
         with:
           name: wine-game-stack-probe
           path: out/stack-probe
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-loopback-donors
+          path: out/game-listeners
       - uses: actions/download-artifact@v4
         with:
           name: wine-dbserver-package
@@ -142,7 +248,7 @@ jobs:
               assert all('/' not in n and '\\' not in n and n not in ('.','..') for n in value.namelist())
               value.extractall('out/reference-runtime')
           PY
-          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime --dbserver out/wine-dbserver --resume out/resume-client --bridge out/bridge --output out/wine-game --repository-commit "$GITHUB_SHA" --dbserver-profile loopback
+          python3 tools/android/game/package_game_runtime.py assemble --reference out/reference-runtime --dbserver out/wine-dbserver --resume out/resume-client --bridge out/bridge --output out/wine-game --repository-commit "$GITHUB_SHA" --dbserver-profile loopback --game-listener-profile loopback --loopback-game out/game-listeners
       - name: Retrieve existing reviewed asset input
         env:
           GH_TOKEN: ${{ github.token }}
@@ -158,8 +264,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
       - name: Build matching native ARM64 PRoot
         run: python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
-      - name: Qualify both loopback DbServer starts with Atlas saves and exact character resume
-        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe --dbserver-profile loopback
+      - name: Qualify all local game listeners with Atlas saves and exact character resume
+        run: python3 tools/android/game/host_game_smoke.py --assets out/android/assets/runtime --package out/wine-game --data out/game-data --schema out/dbserver-schema --stack-probe out/stack-probe --dbserver-profile loopback --game-listener-profile loopback
       - uses: actions/upload-artifact@v4
         if: always()
         with:

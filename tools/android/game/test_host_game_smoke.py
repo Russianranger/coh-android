@@ -498,6 +498,133 @@ class ReportTests(unittest.TestCase):
                     host.validate_report(report, expected=expected)
 
 
+class GameListenerHostTests(unittest.TestCase):
+    def output(self, ports):
+        return host.GAME_LOOPBACK_ACK + '\n' + ''.join(
+            f'{host.GAME_LOOPBACK_ENV} bind verified: protocol=udp address=127.0.0.1 port={port}\n'
+            for port in ports)
+
+    def sample(self):
+        report, expected = ReportTests().sample()
+        loopback_sample(report['game'], expected)
+        metadata = {'environment_variable': host.GAME_LOOPBACK_ENV, 'disabled_by_default': True}
+        expected.update(game_listener_profile='loopback', game_listener_metadata=metadata)
+        game = report['game']
+        game.update(game_listener_profile='loopback',
+                    game_listener_policy={'requested': True, 'metadata': copy.deepcopy(metadata)},
+                    client_listener_observations={})
+        for phase in game['phases']:
+            phase['game_listeners'] = host.parse_game_listener_output(self.output([7001]), 'atlas')
+        for label, session in game['sessions'].items():
+            session['game_listeners'] = host.parse_game_listener_output(self.output([41001, 41002]), 'client')
+            game['client_listener_observations'][label] = copy.deepcopy(session['game_listeners'])
+        return report, expected
+
+    def test_binding_policy_requires_live_and_final_proof_across_both_starts_and_saves(self):
+        report, expected = self.sample()
+        host.validate_report(report, expected=expected)
+        mutations = [lambda g: g.pop('game_listener_profile'),
+                     lambda g: g['game_listener_policy']['metadata'].update(disabled_by_default=False),
+                     lambda g: g['phases'][1].pop('game_listeners'),
+                     lambda g: g['phases'][0]['game_listeners']['endpoints'][0].update(address='0.0.0.0'),
+                     lambda g: g['phases'][0]['game_listeners']['endpoints'][0].update(port=True),
+                     lambda g: g['client_listener_observations'].pop('second'),
+                     lambda g: g['sessions']['first']['game_listeners']['endpoints'].pop(),
+                     lambda g: g['sessions']['second']['game_listeners']['endpoints'].reverse()]
+        for number, mutate in enumerate(mutations):
+            with self.subTest(mutation=number), self.assertRaises(RuntimeError):
+                changed = copy.deepcopy(report)
+                mutate(changed['game'])
+                host.validate_report(changed, expected=expected)
+        earlier_profile = dict(expected)
+        earlier_profile.pop('game_listener_profile')
+        with self.assertRaisesRegex(RuntimeError, 'unexpectedly claims'):
+            host.validate_report(report, expected=earlier_profile)
+
+    def test_host_parser_rejects_spoofed_incomplete_and_nonlocal_owned_output(self):
+        good = self.output([41001, 41002])
+        for text in ('', self.output([41001]), good.replace(host.GAME_LOOPBACK_ACK, 'missing'),
+                     good + host.GAME_LOOPBACK_ACK + '\n', good.replace('udp', 'tcp'),
+                     good.replace('127.0.0.1', '0.0.0.0'), good.replace('port=41001', 'port=0'),
+                     good.replace('port=41001', 'port=65536'), 'prefix ' + good):
+            with self.subTest(text=text), self.assertRaises(RuntimeError):
+                host.parse_game_listener_output(text, 'client')
+        value = host.parse_game_listener_output(self.output([41001, 41001]), 'client')
+        self.assertEqual(value['endpoints'][0], value['endpoints'][1])
+
+    def test_resealed_raw_atlas_capture_must_match_both_readiness_bindings(self):
+        for tampered in (None, 'first-atlas', 'restart-atlas', 'first-dbserver'):
+            with self.subTest(tampered=tampered), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                state, evidence = root / 'state', root / 'evidence'
+                source = state / 'game-service-captures'
+                source.mkdir(parents=True)
+                evidence.mkdir()
+                report, expected = self.sample()
+                files = {}
+                for label in host.SERVICE_LABELS:
+                    if label.endswith('dbserver'):
+                        output = host.dbhost.FIXED_INPUTS_ACK + '\n' + loopback_stdout(expected['loopback_endpoints']['required'])
+                    else:
+                        output = self.output([7001])
+                    if label == tampered:
+                        output = output + self.output([7001]) if label.endswith('dbserver') else output.replace('port=7001', 'port=7002')
+                    path = source / (label + '-stdout.txt')
+                    path.write_text(output)
+                    files[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path),
+                        'kind': 'owned_service_stdout', 'process_label': label,
+                        'original_bytes': path.stat().st_size, 'truncated': False,
+                        'capture_closed': True, 'overflow': False}
+                (source / 'manifest.json').write_text(json.dumps({'format': 1, 'files': files,
+                    'selected_log_limit': 32, 'log_segment_bytes': 512 * 1024, 'unselected_logs': 0}))
+                records = host.copy_service_captures(state, evidence)
+                report['game']['service_capture_files'] = records
+                if tampered:
+                    with self.assertRaises(RuntimeError):
+                        host.validate_service_captures(report, evidence, records, expected=expected)
+                else:
+                    host.validate_service_captures(report, evidence, records, expected=expected)
+
+    def test_resealed_raw_client_console_must_match_final_identity_bound_session(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state, evidence = root / 'state', root / 'evidence'
+            source = state / 'game-captures'
+            source.mkdir(parents=True)
+            evidence.mkdir()
+            report, expected = self.sample()
+            game = report['game']
+            identity = {'containerid': 42, 'authid': 12, 'authname': game['account'], 'name': 'Hero'}
+            rows = {table: [{'containerid': 42, 'subid': n} for n in range(count)]
+                    for table, count in game['first_save']['row_counts'].items()}
+            rows['ents'] = [{**identity, 'influencepoints': 12345}]
+            for prefix, proof in (('first', game['first_save']), ('restart', game['restart']), ('second', game['second_save'])):
+                snapshot = {'identity': identity, 'login_count': 2 if prefix == 'second' else 1, 'rows': rows}
+                (source / (prefix + '-snapshot.json')).write_text(json.dumps(snapshot))
+                proof['snapshot_sha256'] = host.canonical_digest(snapshot)
+            for prefix, session in game['sessions'].items():
+                for name in ('ready', 'result'):
+                    (source / (prefix + '-' + name + '.json')).write_text(json.dumps(session[name]))
+                for name, text, key in (('console.txt', self.output([41001, 41002]), 'console_sha256'),
+                                        ('events.jsonl', '{}\n', 'events_sha256')):
+                    path = source / (prefix + '-' + name)
+                    path.write_text(text)
+                    session[key] = host.digest(path)
+            records = host.copy_game_captures(state, evidence)
+            game['capture_files'] = records
+            host.validate_capture_files(report, evidence, records, expected=expected)
+            for prefix in ('first', 'second'):
+                path = evidence / 'game-captures' / (prefix + '-console.txt')
+                path.write_text(self.output([41001, 41999]))
+                records[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path)}
+                game['sessions'][prefix]['console_sha256'] = host.digest(path)
+                with self.subTest(prefix=prefix), self.assertRaisesRegex(RuntimeError, 'actual bindings differ'):
+                    host.validate_capture_files(report, evidence, records, expected=expected)
+                path.write_text(self.output([41001, 41002]))
+                records[path.name] = {'bytes': path.stat().st_size, 'sha256': host.digest(path)}
+                game['sessions'][prefix]['console_sha256'] = host.digest(path)
+
+
 class LoopbackTests(unittest.TestCase):
     def test_combined_report_requires_both_starts_and_cannot_downgrade_the_profile(self):
         report, expected = ReportTests().sample()

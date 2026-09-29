@@ -25,6 +25,7 @@ PINS = {
 LOOPBACK_DBSERVER_PIN = ('docs/android-evidence/dbserver-package-36460867428.json',
                        'package-manifest.json', 36460867428)
 DBSERVER_PROFILES = ('accepted', 'loopback')
+GAME_LISTENER_PROFILES = ('accepted', 'loopback')
 BRIDGE_SOURCES = ('database/wine-game/TestClientBridge.c', 'database/wine-game/bridge_protocol.h')
 BRIDGE_FLAGS = '/nologo /W4 /O2 /MT /D_WIN32_WINNT=0x0601'
 
@@ -105,6 +106,11 @@ def choose_files(reference_dir, normal_dir):
 
 def assemble(args):
     require(re.fullmatch(r'[0-9a-f]{40}', args.repository_commit), 'Invalid repository commit')
+    listener_profile = getattr(args, 'game_listener_profile', 'accepted')
+    loopback_directory = getattr(args, 'loopback_game', None)
+    require(listener_profile in GAME_LISTENER_PROFILES, 'Unknown game listener profile')
+    require((listener_profile == 'loopback') == (loopback_directory is not None),
+            'Loopback game donor requires explicit loopback listener profile')
     new_output(args.output)
     ref, ref_dir, ref_proof = verified_donor(args.reference, 'reference')
     profile = getattr(args, 'dbserver_profile', 'accepted')
@@ -121,6 +127,14 @@ def assemble(args):
     chosen, collisions = choose_files(ref_dir, normal_dir)
     chosen['TestClientResume.exe'] = (resume_exe, 'resume')
     chosen['TestClientBridge.exe'] = (args.bridge / 'TestClientBridge.exe', 'bridge')
+    loopback_proof = None
+    if listener_profile == 'loopback':
+        require(profile == 'loopback', 'Loopback game listeners require the loopback DbServer profile')
+        from package_loopback_game import verify_loopback_game_package
+        executables, candidate = verify_loopback_game_package(loopback_directory, args.repository_commit, ref)
+        chosen.update({name: (path, 'loopback_game') for name, path in executables.items()})
+        loopback_proof = {'repository_commit': args.repository_commit,
+                          'manifest_sha256': sha(loopback_directory / 'build-info.json'), 'manifest': candidate}
     require(len({name.casefold() for name in chosen}) == len(chosen), 'Case-colliding game payload')
     files = {name: record(path) for name, (path, _) in chosen.items()}
     deps = dependency_report(files)
@@ -138,6 +152,9 @@ def assemble(args):
     # is a separate composite qualification, never a replacement acceptance.
     if profile == 'loopback':
         manifest['dbserver_profile'] = profile
+    if listener_profile == 'loopback':
+        manifest['game_listener_profile'] = listener_profile
+        manifest['inputs']['loopback_game'] = loopback_proof
     try:
         args.output.mkdir(parents=True)
         for name, (path, _) in chosen.items():
@@ -162,6 +179,10 @@ def main():
     package.add_argument('--repository-commit', required=True)
     package.add_argument('--dbserver-profile', choices=DBSERVER_PROFILES, default='accepted',
                          help='Opt into separate hosted qualification of the loopback DbServer donor')
+    package.add_argument('--game-listener-profile', choices=GAME_LISTENER_PROFILES, default='accepted',
+                         help='Opt into separately built loopback MapServer and TestClient candidates')
+    package.add_argument('--loopback-game', type=Path,
+                         help='Separate loopback-game runtime donor; requires both loopback profiles')
     args = ap.parse_args()
     value = bridge_receipt(args.directory, args.repository_commit) if args.command == 'bridge-receipt' else assemble(args)
     print(json.dumps({'role': value['role'], 'files': len(value['files'])}))

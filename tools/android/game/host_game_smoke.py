@@ -47,6 +47,11 @@ LOOPBACK_DONOR = {"run_id": 36460867428,
                   "manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
                   "canonical_sha256": "b90c1d3f159dd18e7700eba4a1192924f452cba5160175d8513a80765e009d21"}
 DBSERVER_PROFILES = ("accepted", "loopback")
+GAME_LISTENER_PROFILES = ("accepted", "loopback")
+GAME_LOOPBACK_ENV = 'COH_GAME_LOOPBACK_ONLY'
+GAME_LOOPBACK_ACK = 'COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy'
+GAME_LOOPBACK_RECORD = re.compile(r'COH_GAME_LOOPBACK_ONLY bind verified: protocol=(tcp|udp) '
+                                  r'address=(127\.0\.0\.1) port=([1-9][0-9]{0,4})\Z')
 LOOPBACK_RECORD = re.compile(r"COH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=(tcp|udp) "
                              r"address=(127\.0\.0\.1) port=([1-9][0-9]{0,4})\Z")
 EXECUTABLES = ("DbServer.exe", "MapServer.exe", "TestClientCreate.exe", "TestClientResume.exe", "TestClientBridge.exe")
@@ -99,11 +104,15 @@ def inventory_bounds(files, *, maximum_files, maximum_bytes):
     return total
 
 
-def verify_package(package, *, dbserver_profile="accepted"):
+def verify_package(package, *, dbserver_profile="accepted", game_listener_profile="accepted"):
     manifest = read_json(package / "game-package.json", 8 * 1024 * 1024)
     require(dbserver_profile in DBSERVER_PROFILES
             and manifest.get("dbserver_profile", "accepted") == dbserver_profile,
             "Game package DbServer profile differs from the requested qualification")
+    require(game_listener_profile in GAME_LISTENER_PROFILES
+            and manifest.get('game_listener_profile', 'accepted') == game_listener_profile
+            and (game_listener_profile == 'accepted' or dbserver_profile == 'loopback'),
+            'Game package listener profile differs from the requested qualification')
     require(manifest.get("role") == "wine_game_runtime"
             and manifest.get("source_commit") == dbhost.SOURCE_COMMIT
             and manifest.get("data_commit") == dbhost.DATA_COMMIT
@@ -116,7 +125,8 @@ def verify_package(package, *, dbserver_profile="accepted"):
     inventory_bounds(files, maximum_files=64, maximum_bytes=512 * 1024 * 1024)
     require(all(len(PurePosixPath(name).parts) == 1 for name in files), "Game package must be flat")
     proofs = manifest.get("inputs", {})
-    require(isinstance(proofs, dict) and set(proofs) == {*DONORS, "bridge"}, "Game package donor set differs")
+    donor_roles = {*DONORS, 'bridge'} | ({'loopback_game'} if game_listener_profile == 'loopback' else set())
+    require(isinstance(proofs, dict) and set(proofs) == donor_roles, "Game package donor set differs")
     donors = {**DONORS, **({"dbserver": LOOPBACK_DONOR} if dbserver_profile == "loopback" else {})}
     for role, pin in donors.items():
         proof = proofs[role]
@@ -149,6 +159,19 @@ def verify_package(package, *, dbserver_profile="accepted"):
                      "TestClientCreate.exe": (reference["TestClient.exe"], "reference")})
     selected.update({name: (record, "dbserver") for name, record in normal.items()})
     selected["TestClientResume.exe"] = (proofs["resume"]["manifest"]["files"]["TestClient.exe"], "resume")
+    if game_listener_profile == 'loopback':
+        from package_loopback_game import verify_loopback_game_manifest
+        game_donor = proofs['loopback_game']
+        require(isinstance(game_donor, dict) and game_donor.get('repository_commit') == manifest['repository_commit'],
+                'Game listener donor repository identity differs')
+        game_manifest = game_donor.get('manifest')
+        verify_loopback_game_manifest(game_manifest, manifest['repository_commit'], proofs['reference']['manifest'])
+        encoded = json.dumps(game_manifest, indent=2) + '\n'
+        require(game_donor.get('manifest_sha256') in {hashlib.sha256(encoded.encode()).hexdigest(),
+                hashlib.sha256(encoded.replace('\n', '\r\n').encode()).hexdigest()},
+                'Game listener donor receipt bytes differ')
+        for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe'):
+            selected[name] = (game_manifest['files'][name], 'loopback_game')
     selected["TestClientBridge.exe"] = (receipt["files"]["TestClientBridge.exe"], "bridge")
     require(set(files) == set(selected) and set(name for name in files if name.lower().endswith(".exe")) == set(EXECUTABLES),
             "Game package executable/dependency selection differs")
@@ -269,6 +292,10 @@ def make_expectations(assets, package, data, schema, package_manifest, schema_ma
         expected.update(dbserver_profile='loopback',
                         loopback_endpoints=dbhost.validate_loopback_build_input(build_input),
                         loopback_metadata=build_input['loopback_only'])
+    if package_manifest.get('game_listener_profile') == 'loopback':
+        donor = package_manifest['inputs']['loopback_game']['manifest']
+        expected.update(game_listener_profile='loopback',
+                        game_listener_metadata=donor['variants']['creation']['build_input']['loopback_only'])
     return expected
 
 
@@ -315,6 +342,72 @@ def parse_loopback_output(output, endpoints):
     record = {'requested': True, 'startup_acknowledgement': dbhost.LOOPBACK_ACK, 'endpoints': values}
     validate_loopback_record(record, endpoints)
     return record
+
+
+def validate_game_listener_record(value, role):
+    require(type(value) is dict and set(value) == {'requested', 'startup_acknowledgement', 'endpoints'}
+            and value['requested'] is True and value['startup_acknowledgement'] == GAME_LOOPBACK_ACK,
+            'Game listener activation acknowledgement differs')
+    endpoints = value['endpoints']
+    require(isinstance(endpoints, list) and 1 <= len(endpoints) <= 128,
+            'Game actual-binding record count differs')
+    for endpoint in endpoints:
+        require(type(endpoint) is dict and set(endpoint) == {'protocol', 'address', 'port'}
+                and endpoint['protocol'] == 'udp' and endpoint['address'] == '127.0.0.1'
+                and type(endpoint['port']) is int and 1 <= endpoint['port'] <= 65535,
+                'Game actual binding is not a valid loopback UDP endpoint')
+    require(role in ('atlas', 'client'), 'Unknown game listener role')
+    if role == 'atlas':
+        require(endpoints == [{'protocol': 'udp', 'address': '127.0.0.1', 'port': 7001}],
+                'Atlas must prove exactly its UDP 7001 listener')
+    else:
+        require(len(endpoints) >= 2, 'TestClient must prove both database and map UDP socket bindings')
+
+
+def parse_game_listener_output(output, role):
+    """Host parser independently checks final source-emitted getsockname records."""
+    require(isinstance(output, str) and '\0' not in output and len(output.encode()) <= 16 * 1024 * 1024,
+            'Invalid or oversized game listener output')
+    lines = [line for line in output.splitlines() if GAME_LOOPBACK_ENV in line]
+    require(lines and lines[0] == GAME_LOOPBACK_ACK, 'Owned game output lacks exact listener activation')
+    endpoints = []
+    for line in lines[1:]:
+        match = GAME_LOOPBACK_RECORD.fullmatch(line)
+        require(match is not None, 'Malformed owned game listener output')
+        protocol, address, port = match.groups()
+        endpoints.append({'protocol': protocol, 'address': address, 'port': int(port)})
+    value = {'requested': True, 'startup_acknowledgement': GAME_LOOPBACK_ACK, 'endpoints': endpoints}
+    validate_game_listener_record(value, role)
+    return value
+
+
+def validate_game_listener_profile(game, expected):
+    enabled = expected.get('game_listener_profile', 'accepted') == 'loopback'
+    phases, sessions = game.get('phases', []), game.get('sessions', {})
+    if not enabled:
+        require('game_listener_profile' not in game and 'game_listener_policy' not in game
+                and 'client_listener_observations' not in game
+                and all('game_listeners' not in phase for phase in phases)
+                and all('game_listeners' not in session for session in sessions.values()),
+                'Accepted listener profile unexpectedly claims local-binding qualification')
+        return
+    require(expected.get('dbserver_profile') == game.get('dbserver_profile') == 'loopback'
+            and game.get('game_listener_profile') == 'loopback'
+            and dbhost.exact_contract(game.get('game_listener_policy'), {
+                'requested': True, 'metadata': expected.get('game_listener_metadata')}),
+            'Game listener profile or source-bound metadata differs')
+    require(len(phases) == 2 and set(sessions) == {'first', 'second'}
+            and set(game.get('client_listener_observations', {})) == {'first', 'second'},
+            'Game listener proof must cover both starts and both character sessions')
+    for phase in phases:
+        validate_game_listener_record(phase.get('game_listeners'), 'atlas')
+    for label, session in sessions.items():
+        earlier = game['client_listener_observations'][label]
+        final = session.get('game_listeners')
+        validate_game_listener_record(earlier, 'client')
+        validate_game_listener_record(final, 'client')
+        require(final['endpoints'][:len(earlier['endpoints'])] == earlier['endpoints'],
+                'Final TestClient bind evidence lost the live-session prefix')
 
 
 def owned_cleanup_complete(value):
@@ -406,6 +499,7 @@ def validate_report(report, *, expected):
     require(isinstance(phases, list) and [item.get("phase") for item in phases] == ["first_services_ready", "restart_services_ready"],
             "Both game service starts were not proved")
     validate_game_loopback(game, expected)
+    validate_game_listener_profile(game, expected)
     catalogs = []
     for phase in phases:
         require(phase.get("status") == "passed" and phase.get("baseline_not_started") is True and map_ready(phase.get("map")),
@@ -565,6 +659,15 @@ def validate_service_captures(report, evidence, records, *, expected=None):
             else:
                 require('COH_WINE_DB_LOOPBACK_ONLY' not in output,
                         'Loopback activation appeared outside the selected DbServer qualification')
+            if name.endswith('-atlas-stdout.txt') and (expected or {}).get('game_listener_profile') == 'loopback':
+                observed = parse_game_listener_output(output, 'atlas')
+                phase_name = ('first' if name.startswith('first-') else 'restart') + '_services_ready'
+                phases = [phase for phase in report['game']['phases'] if phase.get('phase') == phase_name]
+                require(len(phases) == 1 and dbhost.exact_contract(observed, phases[0].get('game_listeners')),
+                        'Final Atlas actual bindings differ from readiness evidence')
+            else:
+                require(GAME_LOOPBACK_ENV not in output,
+                        'Game listener activation appeared outside the selected Atlas qualification')
         else:
             source = record.get("source_relative_path")
             require(isinstance(source, str) and source and "\\" not in source and ":" not in source,
@@ -577,7 +680,7 @@ def validate_service_captures(report, evidence, records, *, expected=None):
                     "Service log source or bounded-segment metadata differs")
 
 
-def validate_capture_files(report, evidence, records):
+def validate_capture_files(report, evidence, records, *, expected=None):
     game = report["game"]
     require(set(records) == set(CAPTURE_LIMITS) and game.get("capture_files") == records,
             "Successful game proof lacks its exact exported capture inventory")
@@ -591,6 +694,14 @@ def validate_capture_files(report, evidence, records):
         for kind in ("ready", "result"):
             require(read_json(folder / (prefix + "-" + kind + ".json"), 16384) == session[kind],
                     "Exported bridge identity/result differs from session proof")
+        console = (folder / (prefix + '-console.txt')).read_text(encoding='utf-8')
+        if (expected or {}).get('game_listener_profile') == 'loopback':
+            observed = parse_game_listener_output(console, 'client')
+            require(dbhost.exact_contract(observed, session.get('game_listeners')),
+                    'Final owned TestClient actual bindings differ from saved-session evidence')
+        else:
+            require(GAME_LOOPBACK_ENV not in console,
+                    'TestClient listener activation appeared outside the selected qualification')
     for prefix, proof in (("first", game["first_save"]), ("restart", game["restart"]), ("second", game["second_save"])):
         path = folder / (prefix + "-snapshot.json")
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -786,7 +897,7 @@ def run_guest(command, env, state, evidence, *, timeout_seconds, expected):
         require(target.is_file(), "Game runtime did not write a fresh bounded report")
         report = read_json(target, MAX_REPORT_BYTES)
         validate_report(report, expected=expected)
-        validate_capture_files(report, evidence, captures)
+        validate_capture_files(report, evidence, captures, expected=expected)
         validate_service_captures(report, evidence, service_captures, expected=expected)
     except (RuntimeError, ValueError):
         with log_path.open("rb") as log:
@@ -807,6 +918,8 @@ def main():
     parser.add_argument("--stack-probe", type=Path, required=True)
     parser.add_argument("--dbserver-profile", choices=DBSERVER_PROFILES, default="accepted",
                         help="Qualify the separately identified loopback DbServer composite")
+    parser.add_argument('--game-listener-profile', choices=GAME_LISTENER_PROFILES, default='accepted',
+                        help='Qualify opt-in MapServer and TestClient actual local UDP bindings')
     parser.add_argument("--timeout-seconds", type=int, default=3600)
     args = parser.parse_args()
     require(sys.platform == "linux" and platform.machine().lower() in ("aarch64", "arm64"),
@@ -816,7 +929,8 @@ def main():
     assets, package, data, schema, work, evidence, proot = (
         getattr(args, name).resolve() for name in ("assets", "package", "data", "schema", "work", "evidence", "proot"))
     runtime = dbhost.verify_runtime_assets(assets)
-    package_manifest = verify_package(package, dbserver_profile=args.dbserver_profile)
+    package_manifest = verify_package(package, dbserver_profile=args.dbserver_profile,
+                                      game_listener_profile=args.game_listener_profile)
     data_manifest = verify_data(data)
     schema_manifest = dbhost.verify_schema(schema)
     repository_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
@@ -841,6 +955,9 @@ def main():
     if args.dbserver_profile == 'loopback':
         inputs['dbserver_profile'] = 'loopback'
         inputs['dbserver_loopback_scope'] = 'DbServer only; host network namespace remains mandatory'
+    if args.game_listener_profile == 'loopback':
+        inputs['game_listener_profile'] = 'loopback'
+        inputs['game_listener_scope'] = 'Owned Atlas and TestClient IPv4 UDP bindings; host network namespace remains mandatory'
     (evidence / "host-game-inputs.json").write_text(json.dumps(inputs, indent=2) + "\n")
     command = make_command(work=work, assets=assets, package=package, data=data, schema=schema,
                            proot=proot, timeout_seconds=args.timeout_seconds)

@@ -18,9 +18,12 @@ The separate [0.2.0 DbServer test passed on Thor](ANDROID_SERVER_DEVICE_TEST.md#
 physical Android game execution, presentation and rendering
 remain unvalidated.
 
-The workflow `.github/workflows/android-game.yml` selects the accepted explicit
-loopback profile. Assembly retains the earlier `accepted` profile as its default.
-Both create separately identified composites from these immutable inputs:
+The workflow `.github/workflows/android-game.yml` now prepares the separate
+**MapServer and TestClient listener candidate** described below. Its new game
+donors require fresh Windows and ARM64 qualification. The accepted DbServer-only
+loopback result above is preserved. Assembly retains `accepted` as the default
+for both the DbServer and game-listener profiles. The existing profiles use
+these immutable inputs:
 
 | Component | Accepted run | Role |
 |---|---:|---|
@@ -31,7 +34,7 @@ Both create separately identified composites from these immutable inputs:
 | Resume TestClient | 36297542986 | Exact name, creation disabled |
 | Generated database schema | 36088012666 | Accepted 99-table schema |
 
-The new PE32 `TestClientBridge.exe` starts one unchanged TestClient, verifies
+The PE32 `TestClientBridge.exe` starts one receipted TestClient, verifies
 its Windows process identity against the launcher pipe and console, observes
 its output, and forwards ordinary launcher commands. It does not implement
 character creation, mutation, logout, SQL persistence, or game networking.
@@ -124,14 +127,41 @@ captures, and complete data/schema inventories. Executable payload checks were
 performed by CI; this downloaded evidence contains their receipts, not all
 executable bytes. The earlier accepted profile and evidence remain unchanged.
 
+### MapServer and TestClient listener candidate
+
+The next gate adds `COH_GAME_LOOPBACK_ONLY=1` to separately built MapServer,
+creation TestClient and resume TestClient donors. The overlay changes staged
+source only. Without the environment flag, the normal binding behavior remains;
+invalid values refuse startup. The policy covers explicit IPv4 listeners and
+the test clients' UDP sockets, including sockets which formerly bound implicitly
+on their first send. It does not restrict outgoing TCP destinations or replace
+the hosted network namespace.
+
+`tools/prepare_game_loopback_source.py` stages `creation` and `resume` variants.
+The resume variant retains the existing exact-name, creation-disabled behavior.
+`tools/android/game/package_loopback_game.py` records the three executables,
+both source receipts, fixture-OFF build configurations, symbols and dependency
+closure against the accepted reference. Assembly requires explicit
+`--game-listener-profile loopback --loopback-game PATH`; the donor, bridge and
+composite must identify the same repository commit. The accepted reference,
+resume donor and 0.1.5/0.2.0 APKs are retained.
+
+The workflow runs native Windows socket contracts before building and then
+qualifies the new composite through the full ARM64 sequence. Acceptance requires
+actual socket address/type/port records from both MapServer starts and both
+test clients, tied to owned service and client captures, along with the existing
+character identity, SQL save, restart, resume and cleanup checks. A startup
+acknowledgment alone is insufficient. This source preparation is not an Android
+Atlas acceptance; the physical candidate still needs the steps below.
+
 ### Remaining preparation for a physical Atlas candidate
 
 With the combined hosted gate accepted:
 
-1. Build separately receipted MapServer and creation/resume TestClient donors
-   with an opt-in local binding policy. Cover MapServer's explicit UDP 7001
-   listener and TestClient's implicitly bound UDP sockets; qualify actual
-   bindings with native Windows contracts and the hosted persistence sequence.
+1. Complete the new MapServer and creation/resume TestClient listener
+   qualification above. Cover MapServer's explicit UDP 7001 listener and
+   TestClient's implicitly bound UDP sockets with native Windows contracts and
+   the hosted persistence sequence. Preserve failure evidence if a gate fails.
 2. Package the reviewed game assets plus authoritative repository text with
    exact inventories. The reviewed asset ZIP is 615,541,018 bytes; the combined
    tree is 173,011 files / 2,977,730,517 bytes. Prefer verified file-picker import

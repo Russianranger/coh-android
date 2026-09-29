@@ -20,6 +20,23 @@ MAP_UDP_PORT = 7001
 INFLUENCE = 12345
 LOG_LIMIT = 16 * 1024 * 1024
 EVENT_LIMIT = 8 * 1024 * 1024
+GAME_LOOPBACK_ENV = 'COH_GAME_LOOPBACK_ONLY'
+GAME_LOOPBACK_ACK = 'COH_GAME_LOOPBACK_ONLY=1 active: IPv4 loopback binding policy'
+GAME_LOOPBACK_RECORD = re.compile(r'COH_GAME_LOOPBACK_ONLY bind verified: protocol=(tcp|udp) '
+                                  r'address=(127\.0\.0\.1) port=([1-9][0-9]{0,4})\Z')
+GAME_LOOPBACK_METADATA = {
+    'environment_variable': GAME_LOOPBACK_ENV, 'enabled_value': '1', 'disabled_by_default': True,
+    'activation': 'before_common_startup',
+    'late_activation': 'refused_after_first_explicit_or_client_UDP_bind_attempt',
+    'wildcard_address': '127.0.0.1', 'explicit_addresses': 'IPv4_127/8_only',
+    'client_UDP': 'explicit_loopback_ephemeral_bind_before_first_send',
+    'endpoint_verification': 'getsockname_and_SO_TYPE_after_each_successful_bind',
+    'socket_types': ['tcp', 'udp'], 'endpoint_record': 'protocol_address_port',
+    'scope': 'explicit_IPv4_listeners_and_client_UDP_bindings',
+    'network_namespace_isolation': False, 'outbound_connections_restricted': False,
+    'outbound_TCP': 'unchanged', 'failure': 'close_socket_and_exit_2',
+    'startup_acknowledgement': GAME_LOOPBACK_ACK, 'android_execution_validated': False,
+}
 IDENTITY_FIELDS = ('containerid', 'authid', 'authname', 'name')
 SELECTED = {
     'ents': IDENTITY_FIELDS + ('class', 'origin', 'level', 'experiencepoints',
@@ -64,6 +81,44 @@ def _text(text):
     require(isinstance(text, str) and '\0' not in text and
             len(text.encode('utf-8')) <= LOG_LIMIT, 'Invalid or oversized text evidence')
     return text
+
+
+def game_listener_bindings(text, role, *, enabled=True, pending=False):
+    """Parse ordered getsockname records from one owned process's complete output.
+
+    Sequential client sockets can legitimately reuse a port after closing. Keep
+    every record and its order so a later capture must preserve the live prefix.
+    """
+    require(role in ('atlas', 'client'), 'Unknown game listener role')
+    output = _text(text)
+    if pending:
+        output = output[:output.rfind('\n') + 1]
+    lines = [line for line in output.splitlines() if GAME_LOOPBACK_ENV in line]
+    if not enabled:
+        require(not lines, 'Game listener policy activated outside the selected profile')
+        return None
+    if not lines and pending:
+        return False
+    require(lines and lines[0] == GAME_LOOPBACK_ACK, 'Game listener activation is missing or malformed')
+    require(len(lines) <= 129, 'Game listener record count exceeded bound')
+    endpoints = []
+    for line in lines[1:]:
+        match = GAME_LOOPBACK_RECORD.fullmatch(line)
+        require(match is not None, 'Malformed or non-loopback game binding evidence')
+        protocol, address, port = match.groups()
+        require(protocol == 'udp' and 1 <= int(port) <= 65535,
+                'Unexpected game transport or invalid actual bound port')
+        endpoints.append({'protocol': protocol, 'address': address, 'port': int(port)})
+    if role == 'atlas':
+        required = [{'protocol': 'udp', 'address': '127.0.0.1', 'port': MAP_UDP_PORT}]
+        require(not endpoints or endpoints == required, 'Atlas listener differs from the UDP 7001 contract')
+        ready = endpoints == required
+    else:
+        ready = len(endpoints) >= 2  # Database login and map connection sockets.
+    if pending and not ready:
+        return False
+    require(ready, 'Game listener proof is incomplete for ' + role)
+    return {'requested': True, 'startup_acknowledgement': GAME_LOOPBACK_ACK, 'endpoints': endpoints}
 
 
 def _identity(account, identifier=None, name=None):

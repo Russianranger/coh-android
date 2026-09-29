@@ -2,13 +2,71 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import package_game_runtime as game
+from test_package_reference_runtime import pe_file
 
 
 class CompositePackageTests(unittest.TestCase):
+    def test_game_candidate_requires_explicit_profile_and_donor(self):
+        with tempfile.TemporaryDirectory() as temp:
+            for profile, donor in (('accepted', Path(temp)), ('loopback', None), ('unknown', None)):
+                args = SimpleNamespace(repository_commit='a' * 40, output=Path(temp) / 'out',
+                                       game_listener_profile=profile, loopback_game=donor)
+                with self.subTest(profile=profile), self.assertRaisesRegex(ValueError, 'profile'):
+                    game.assemble(args)
+                self.assertFalse(args.output.exists())
+
+    def test_candidate_selection_is_separate_and_accepted_default_is_unchanged(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for folder, names in (('reference', ('MapServer.exe', 'TestClient.exe')),
+                                  ('dbserver', ('DbServer.exe',)), ('resume', ('TestClient.exe',)),
+                                  ('bridge', ('TestClientBridge.exe',)),
+                                  ('loopback', ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe'))):
+                (root / folder).mkdir()
+                for name in names:
+                    (root / folder / name).write_bytes(pe_file(('KERNEL32.dll',)) + folder.encode())
+            commit = 'a' * 40
+            game.bridge_receipt(root / 'bridge', commit)
+            candidate = {'build_role': 'loopback_game_diagnostic', 'repository_commit': commit}
+            (root / 'loopback' / 'build-info.json').write_text(json.dumps(candidate))
+            args = SimpleNamespace(repository_commit=commit, reference=root / 'reference',
+                                   dbserver=root / 'dbserver', resume=root / 'resume', bridge=root / 'bridge',
+                                   output=root / 'accepted-out')
+            def donor(directory, kind, **kwargs):
+                return {'repository_commit': commit}, directory, {'manifest': {'role': kind}}
+            selected = {name: root / 'loopback' / name
+                        for name in ('MapServer.exe', 'TestClientCreate.exe', 'TestClientResume.exe')}
+            with patch.object(game, 'verified_donor', side_effect=donor), \
+                    patch.object(game, 'verify_resume_client_package', return_value=(root / 'resume/TestClient.exe', {})), \
+                    patch('package_loopback_game.verify_loopback_game_package', return_value=(selected, candidate)) as loopback:
+                accepted = game.assemble(args)
+                loopback.assert_not_called()
+                self.assertNotIn('game_listener_profile', accepted)
+                self.assertNotIn('loopback_game', accepted['inputs'])
+                self.assertEqual(accepted['file_donors']['MapServer.exe'], 'reference')
+                self.assertEqual(accepted['file_donors']['TestClientResume.exe'], 'resume')
+                original = (args.output / 'MapServer.exe').read_bytes()
+                args.output = root / 'candidate-out'
+                args.game_listener_profile = 'loopback'
+                args.loopback_game = root / 'loopback'
+                with self.assertRaisesRegex(ValueError, 'require the loopback DbServer'):
+                    game.assemble(args)
+                self.assertFalse(args.output.exists())
+                args.dbserver_profile = 'loopback'
+                actual = game.assemble(args)
+                loopback.assert_called_once_with(args.loopback_game, commit, {'repository_commit': commit})
+                self.assertEqual(actual['game_listener_profile'], 'loopback')
+                self.assertEqual(actual['inputs']['loopback_game']['manifest'], candidate)
+                for name, path in selected.items():
+                    self.assertEqual(actual['file_donors'][name], 'loopback_game')
+                    self.assertEqual((args.output / name).read_bytes(), path.read_bytes())
+                self.assertEqual((root / 'accepted-out/MapServer.exe').read_bytes(), original)
+
     def test_loopback_donor_is_opt_in_and_cannot_substitute_the_accepted_donor(self):
         for profile, pin in (('accepted', game.PINS['dbserver']), ('loopback', game.LOOPBACK_DBSERVER_PIN)):
             with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temp:
