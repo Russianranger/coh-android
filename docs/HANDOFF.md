@@ -1,6 +1,35 @@
 # City of Heroes Android handoff
 
-**The first Thor 0.8.0 local-login attempt failed before DbServer or the game launched; 0.8.1 is being prepared to correct Wine profile refresh handling. No repeat of 0.8.0 is requested.**
+**0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**
+
+Qualified source `1fb4c6057fda579da1913670889922ba8e53bbdc`,
+[run 36785793934](https://github.com/Russianranger/coh-android/actions/runs/36785793934),
+passed all 11 guest stages. The test first created a genuinely ready Wine profile
+using the exact APK and real PE32 probe, stopped it cleanly, then made only its
+stored registration timestamp stale. The login run performed exactly one real
+registration pass (3/1/1) in 38.481 seconds, retained the prefix inode and sentinel,
+matched the new timestamp, and renewed readiness after the real PE32 probe.
+The seed's retained raw timestamp bytes confirm CRLF (`0d0a`) line endings.
+
+Root screenshot review confirms **Server Used/Total: 0/12** with twelve empty
+Create Character slots. Local authentication, the sent character list and SQL
+account identity agree. Client startup took 439.248 seconds, followed by 48.585
+seconds of observation. All 63 login-run child records closed with zero remaining
+owned workers or inspection failures; PostgreSQL stopped gracefully and retained
+its database. The separate prefix seed also cleaned up successfully.
+
+The qualified `COH-Local-Login-0.8.1.apk` is 373,849,564 bytes, SHA-256
+`2f9663f43c24b071714a7ea2f63a2f8abd624a49bca4b64298f58c7e56278a20`.
+It retains the installed app identity and signing certificate, increments version
+code to 3, and preserves the imported assets, client caches and Wine state.
+All 86 interactive and 26 client/cache automated checks passed. See the
+[hosted review](android-evidence/local-login-hosted-36785793934.json),
+[package review](android-evidence/local-login-package-review-36785793934.json)
+and [one-session Thor instructions](ANDROID_LOCAL_LOGIN_TEST.md).
+Physical Thor local login remains pending; no new Atlas, Settings, general input,
+character creation, or restart/reopen device test is requested in this pass.
+
+**Historical Thor 0.8.0 failure: Wine profile refresh was rejected before DbServer or the game launched. No repeat of 0.8.0 is requested.**
 
 The supplied `coh-local-login-20260930-220534.zip` records a 76.956-second
 operation. Imported assets and the generated client caches were successfully
@@ -26,7 +55,19 @@ writing readiness. The hosted stale-timestamp regression seeds a real prefix
 using the exact APK's Wine and PE32 probe, proves cleanup, changes only the
 stored timestamp, and requires a real registration refresh before graphical
 login. Prefix inode/sentinel and Wine input hashes must survive. This regression
-must pass before the corrected APK is delivered.
+passed in corrected run 36785793934, as recorded above.
+
+The first corrective hosted run
+[36784616495](https://github.com/Russianranger/coh-android/actions/runs/36784616495)
+successfully seeded a real Wine profile and performed the required saved-profile
+refresh. It then failed because the new timestamp reader accepted only LF line
+endings. Pinned Wine writes this file through CRT text mode, which uses CRLF.
+Corrected source `1fb4c6057fda579da1913670889922ba8e53bbdc` accepts complete decimal
+timestamps ending in LF or CRLF, retains all registration/probe checks, and adds
+raw timestamp-format evidence to the hosted seed receipt. Keep the
+[failed hosted receipt](android-evidence/local-login-hosted-36784616495.json);
+that candidate was not delivered for a device test. All 86 interactive and 26
+client/cache automated tests pass; corrected hosted run 36785793934 passed.
 
 **Historical 0.8.0 fresh-profile hosted qualification passed; the Thor result above supersedes its device-test recommendation.**
 

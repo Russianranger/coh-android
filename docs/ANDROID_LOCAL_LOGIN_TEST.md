@@ -1,16 +1,23 @@
-# COH Local Login 0.8.0 — one Thor session
+# COH Local Login 0.8.1 — one Thor session
 
-Hosted qualification passed in [run 36779011148](https://github.com/Russianranger/coh-android/actions/runs/36779011148)
-from source `a80bc9c9df684779987dd6d1c146c66960db9458`. Independent screenshot
-review confirms the empty character-selection screen, **Server Used/Total: 0/12**.
-The next acceptance step is this single physical Thor session.
+Corrected build from source `1fb4c6057fda579da1913670889922ba8e53bbdc`:
+[run 36785793934](https://github.com/Russianranger/coh-android/actions/runs/36785793934).
+Hosted saved-profile refresh and graphical-login qualification passed. Root
+screenshot review confirms the empty **Server Used/Total: 0/12** selection screen.
+The next acceptance step is this one physical Thor session.
 
-Accepted APK: `COH-Local-Login-0.8.0.apk`, 373,845,468 bytes.
-SHA-256: `76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd`.
+APK: `COH-Local-Login-0.8.1.apk`, 373,849,564 bytes.
+SHA-256: `2f9663f43c24b071714a7ea2f63a2f8abd624a49bca4b64298f58c7e56278a20`.
 The retained signing certificate SHA-256 is
 `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
-See the [hosted review](android-evidence/local-login-hosted-36779011148.json)
-and [package review](android-evidence/local-login-package-review-36779011148.json).
+See the [hosted review](android-evidence/local-login-hosted-36785793934.json)
+and [package review](android-evidence/local-login-package-review-36785793934.json).
+
+Version 0.8.1 corrects Wine registration after an in-place runtime update. It
+preserves the Windows profile and existing assets/caches, verifies the installed
+Wine registration timestamp, and requires the real PE32 probe before continuing.
+It also handles the consumed readiness marker left by the failed 0.8.0 attempt.
+No reset or manual file repair is required.
 
 This milestone connects the graphical client to its private local PostgreSQL and
 DbServer, then displays an empty character-selection screen. The database remains
@@ -19,9 +26,9 @@ later milestones; the accepted touch/controller/text checks need no repeat.
 
 ## Update the existing app
 
-1. Install the supplied `COH-Local-Login-0.8.0.apk` as an update to **COH Client
-   Interaction 0.7.0**. It uses the same app identity and signing key, with Android
-   version code 2. Do not uninstall the old app or clear its storage.
+1. Install the supplied `COH-Local-Login-0.8.1.apk` as an update to **COH Local Login
+   0.8.0** (or **COH Client Interaction 0.7.0**). It uses the same app identity and
+   signing key, with Android version code 3. Do not uninstall the old app or clear its storage.
 2. Open the updated app. Tap **1 · Refresh runtime** if setup is required, then
    wait for **Runtime ready**. Keep Internet available for any required download.
    The refresh preserves cached inputs, the completed asset import, Wine state
