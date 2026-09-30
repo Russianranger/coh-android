@@ -19,7 +19,8 @@ or screen-lock test is requested.
 4. Tap **3 · Start CoH client** once. Keep the screen visible. Wine initializes,
    then the actual CoH client loads its graphics and data. A blank view during
    early initialization is expected. The first launch also creates small links
-   and writable cache directories; it does not duplicate all imported data.
+   and installs the prepared client data caches; it does not duplicate all
+   imported data. Cache preparation is included in the APK.
 5. Watch for a recognizable CoH loading or login screen. No login or controller
    input is required. After startup is detected, the app observes the client
    for 30 seconds and closes it automatically.

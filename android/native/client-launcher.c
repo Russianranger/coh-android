@@ -119,14 +119,15 @@ int main(int argc, char **argv) {
     HANDLE saved[3]={GetStdHandle(STD_INPUT_HANDLE), GetStdHandle(STD_OUTPUT_HANDLE), GetStdHandle(STD_ERROR_HANDLE)};
     HANDLE pipe=NULL, screen=INVALID_HANDLE_VALUE;
     ULONGLONG deadline;
-    int attached=0;
+    int attached=0, generate=argc==5 && !strcmp(argv[4],"--generate-caches");
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
     char command[4096], executable[2048], message[512];
     DWORD code;
     size_t index;
-    const char *flags=" -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
-    if (argc!=4 || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
+    const char *flags=generate ? " -createbins -nogui 1 -console 1 -noaudio 1 -verbose 1 -physics 0" :
+        " -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
+    if ((argc!=4 && !generate) || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
     for(index=0; index<32; index++) if(!strchr("0123456789abcdef",argv[1][index])) return 64;
     if(strlen(executable)+strlen(flags)+1>sizeof(command)) return 64;
     strcpy(command, executable); strcat(command,flags);
@@ -169,7 +170,7 @@ int main(int argc, char **argv) {
             output(pipe,message);
         }
         if(attached) console_capture(screen,pipe);
-        EnumWindows(position_owned_window,0);
+        if(!generate) EnumWindows(position_owned_window,0);
     }
     if(attached) { console_capture(screen,pipe); CloseHandle(screen); FreeConsole(); }
     if(!GetExitCodeProcess(pi.hProcess,&code)) { CloseHandle(pi.hProcess); return 68; }

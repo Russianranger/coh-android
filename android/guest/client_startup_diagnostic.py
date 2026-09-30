@@ -16,6 +16,7 @@ import re
 import shutil
 import signal
 import stat
+import struct
 import sys
 import time
 import zipfile
@@ -29,8 +30,11 @@ SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
 DATA = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 EXE_SHA = '81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca'
 DATA_COUNT, DATA_BYTES = 173011, 2977730517
+ASSET_ARCHIVE_SHA = '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'
+CACHE_EPOCH = 1767225600
+CACHE_BYTES_LIMIT = 512*1024*1024
 REQUIRED = (presentation.REQUIRED - {'presentation-probe.exe'}) | {
-    'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip'}
+    'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip'}
 PRIVATE_CACHE_ROOTS = ('bin', 'server/bin', 'geobin')
 LAUNCH_MARKER = 'COH_CLIENT_LAUNCH_V1 '
 CONSOLE_MARKER = 'COH_CLIENT_CONSOLE_V1 '
@@ -68,7 +72,8 @@ def verify_assets(assets):
         require(isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', name)
                 and name not in ('.', '..') and isinstance(expected, dict), 'Unsafe client inventory entry')
         path = assets / name
-        require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= 128*1024*1024,
+        limit = CACHE_BYTES_LIMIT if name == 'client-caches.zip' else 128*1024*1024
+        require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= limit,
                 'Missing, linked or oversized client input: ' + name)
         digest = expected.get('sha256')
         size = expected.get('bytes', expected.get('size'))
@@ -135,14 +140,93 @@ def private_cache(relative):
     return any(value == root or value.startswith(root + '/') for root in PRIVATE_CACHE_ROOTS)
 
 
+def cache_manifest(archive):
+    entries = archive.infolist()
+    require(1 < len(entries) <= 1025 and len({e.filename.casefold() for e in entries}) == len(entries),
+            'Duplicate or oversized prepared cache inventory')
+    require('client-cache-manifest.json' in archive.namelist()
+            and archive.getinfo('client-cache-manifest.json').file_size <= 1024*1024,
+            'Prepared cache manifest missing or oversized')
+    manifest = json.loads(archive.read('client-cache-manifest.json'))
+    require(manifest.get('format') == 1 and manifest.get('role') == 'actual_client_generated_caches'
+            and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+            and manifest.get('executable_sha256') == EXE_SHA
+            and manifest.get('asset_archive_sha256') == ASSET_ARCHIVE_SHA
+            and manifest.get('reference_run_id') == 36088012664
+            and type(manifest.get('normalized_mtime_epoch')) is int
+            and manifest['normalized_mtime_epoch'] == CACHE_EPOCH,
+            'Prepared cache source, data or timestamp identity differs')
+    files = manifest.get('files')
+    require(isinstance(files, dict) and files and set(files) | {'client-cache-manifest.json'} == set(archive.namelist())
+            and 'data/bin/sequencers.bin' in {name.lower() for name in files},
+            'Prepared cache contents differ or sequencer cache is missing')
+    total = 0
+    for entry in entries:
+        mode = entry.external_attr >> 16
+        require(not entry.is_dir() and not entry.flag_bits & 1 and stat.S_IFMT(mode) in (0, stat.S_IFREG),
+                'Unsafe prepared cache entry')
+        if entry.filename == 'client-cache-manifest.json': continue
+        name = entry.filename
+        require(name.isascii() and len(name) <= 260 and '\\' not in name and ':' not in name
+                and all(part not in ('', '.', '..') for part in name.split('/'))
+                and name.startswith(('data/bin/', 'data/server/bin/', 'data/geobin/'))
+                and name.lower().endswith('.bin'), 'Unsafe prepared cache path')
+        pin = files[name]
+        require(isinstance(pin, dict) and type(pin.get('bytes')) is int and 0 < pin['bytes'] <= 256*1024*1024
+                and pin['bytes'] == entry.file_size and re.fullmatch(r'[0-9a-f]{64}', str(pin.get('sha256')))
+                and re.fullmatch(r'[0-9a-f]{8}', str(pin.get('schema_crc'))), 'Prepared cache file pin differs')
+        total += entry.file_size
+    require(total <= CACHE_BYTES_LIMIT, 'Prepared cache output exceeds bound')
+    return manifest
+
+
+def verify_cache_envelope(path, pin):
+    """Verify Parse6 boundaries and source dates; the client validates its schema/body."""
+    with path.open('rb') as source:
+        def exact(count):
+            data = source.read(count)
+            require(len(data) == count, 'Truncated prepared cache envelope')
+            return data
+        def integer(): return struct.unpack('<I', exact(4))[0]
+        def pascal():
+            length = struct.unpack('<H', exact(2))[0]
+            require(length <= 1024, 'Oversized prepared cache dependency path')
+            data = exact(length)
+            exact((-(length + 2)) % 4)
+            return data
+        require(exact(8) == b'CrypticS' and f'{integer():08x}' == pin['schema_crc']
+                and pascal() == b'Parse6' and pascal() == b'Files1', 'Prepared cache envelope differs')
+        size = integer()
+        end = source.tell() + size
+        require(4 <= size <= 32*1024*1024 and end + 4 <= pin['bytes'], 'Prepared cache dependency block exceeds bound')
+        count = integer()
+        require(count <= size // 8, 'Prepared cache dependency count exceeds block')
+        for _ in range(count):
+            name = pascal()
+            require(name and not name.startswith((b'/', b'\\')) and b':' not in name
+                    and b'..' not in name.replace(b'\\', b'/').split(b'/'), 'Unsafe prepared cache dependency')
+            # Source permits zero for a deliberately checked missing optional file.
+            require(integer() in (0, CACHE_EPOCH - 3600, CACHE_EPOCH, CACHE_EPOCH + 3600),
+                    'Prepared cache source timestamp differs')
+            require(source.tell() <= end, 'Prepared cache dependency exceeds block')
+        require(source.tell() == end, 'Prepared cache dependency block length differs')
+        body = integer()
+        require(source.tell() + body == pin['bytes'], 'Prepared cache body length differs')
+
+
 def prepare_worktree(root, data, assets, identity, context):
     """Protect imported leaves, create one reusable thin tree, isolate all caches."""
     package_sha = base.file_hash(assets / 'client-runtime.zip')
-    key = hashlib.sha256((identity['receipt_sha256'] + package_sha).encode()).hexdigest()[:24]
+    cache_sha = base.file_hash(assets / 'client-caches.zip')
+    with zipfile.ZipFile(assets / 'client-caches.zip') as archive:
+        caches = cache_manifest(archive)
+    cache_bytes = sum(pin['bytes'] for pin in caches['files'].values())
+    key = hashlib.sha256((identity['receipt_sha256'] + package_sha + cache_sha + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
     destination = root / ('client-work-' + key)
     marker = destination / 'client-work.json'
     expected_identity = {'format': 1, 'source_data': str(data), 'import': identity,
-                         'package_sha256': package_sha}
+                         'package_sha256': package_sha, 'cache_archive_sha256': cache_sha,
+                         'normalized_mtime_epoch': CACHE_EPOCH}
     if destination.exists() or destination.is_symlink():
         require(destination.is_dir() and not destination.is_symlink(), 'Linked client worktree')
         saved = read_json(marker)
@@ -162,6 +246,8 @@ def prepare_worktree(root, data, assets, identity, context):
             require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['size']
                     and base.file_hash(target) == pin['sha256'], 'Cached client binary differs: ' + name)
         return destination, dict(saved, reused=True)
+    require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + 256*1024*1024,
+            'Insufficient space for private client links, prepared caches and runtime reserve')
     staging = root / ('client-staging-' + base.secrets.token_hex(12))
     staging.mkdir(mode=0o700)
     count = total = linked = copied = 0
@@ -188,10 +274,13 @@ def prepare_worktree(root, data, assets, identity, context):
                         require(stat.S_ISREG(info.st_mode), 'Nonregular immutable input refused')
                         count += 1; total += info.st_size
                         require(count <= DATA_COUNT and total <= DATA_BYTES, 'Imported content exceeds accepted bounds')
+                        # Metadata is normalized once; accepted input bytes stay unchanged.
+                        os.utime(source, (CACHE_EPOCH, CACHE_EPOCH), follow_symlinks=False)
                         os.chmod(source, 0o444, follow_symlinks=False)
                         if private_cache(relative) or source.suffix.casefold() == '.dbidmap':
                             shutil.copyfile(source, target, follow_symlinks=False)
                             os.chmod(target, 0o600)
+                            os.utime(target, (CACHE_EPOCH, CACHE_EPOCH), follow_symlinks=False)
                             copied += 1
                         else:
                             target.symlink_to(source)
@@ -202,6 +291,19 @@ def prepare_worktree(root, data, assets, identity, context):
         require((count, total) == (DATA_COUNT, DATA_BYTES), 'Imported data size/count differs from completed receipt')
         for name in PRIVATE_CACHE_ROOTS:
             (staging / 'data' / name).mkdir(parents=True, exist_ok=True, mode=0o700)
+        with zipfile.ZipFile(assets / 'client-caches.zip') as archive:
+            for name, pin in caches['files'].items():
+                context.check()
+                target = staging / name
+                target.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                require(not target.is_symlink(), 'Linked prepared cache output refused')
+                with archive.open(name) as source, target.open('wb') as output:
+                    shutil.copyfileobj(source, output, 1024*1024)
+                require(target.stat().st_size == pin['bytes'] and base.file_hash(target) == pin['sha256'],
+                        'Prepared cache output hash differs: ' + name)
+                verify_cache_envelope(target, pin)
+                os.chmod(target, 0o600)
+                os.utime(target, (CACHE_EPOCH, CACHE_EPOCH), follow_symlinks=False)
         with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
             package = archive_manifest(archive)
             for name, pin in package['files'].items():
@@ -214,6 +316,8 @@ def prepare_worktree(root, data, assets, identity, context):
                 os.chmod(target, 0o400)
         saved = dict(expected_identity, linked_files=linked, copied_writable_files=copied,
                      input_files=count, input_bytes=total, imported_inputs_readonly=True,
+                     imported_input_bytes_unchanged=True, imported_metadata_normalized=True,
+                     prepared_cache_files=len(caches['files']), prepared_cache_bytes=cache_bytes,
                      writable_cache_roots=list(PRIVATE_CACHE_ROOTS))
         base.private_write(staging / 'client-work.json', json.dumps(saved, indent=2) + '\n')
         os.rename(staging, destination)

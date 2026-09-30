@@ -47,6 +47,26 @@ def package(path, *, changed_name=None, manifest_extra=None):
     return files['CityOfHeroes.exe']['sha256']
 
 
+def cache_package(path, *, changed_name=None, epoch=guest.CACHE_EPOCH):
+    def pascal(value):
+        raw = struct.pack('<H',len(value)) + value
+        return raw + b'\0' * (-len(raw) % 4)
+    dependencies = struct.pack('<I',1) + pascal(b'textures/a.texture') + struct.pack('<I',epoch)
+    body = b'fixture'
+    value = (b'CrypticS' + struct.pack('<I',0x12345678) + pascal(b'Parse6') + pascal(b'Files1')
+        + struct.pack('<I',len(dependencies)) + dependencies + struct.pack('<I',len(body)) + body)
+    name = changed_name or 'data/bin/sequencers.bin'
+    manifest = {'format': 1, 'role': 'actual_client_generated_caches', 'source_commit': guest.SOURCE,
+        'data_commit': guest.DATA, 'executable_sha256': guest.EXE_SHA,
+        'asset_archive_sha256': guest.ASSET_ARCHIVE_SHA, 'reference_run_id': 36088012664,
+        'normalized_mtime_epoch': guest.CACHE_EPOCH, 'files': {name: {
+            'bytes': len(value), 'sha256': hashlib.sha256(value).hexdigest(), 'schema_crc': '12345678'}}}
+    with zipfile.ZipFile(path,'w') as archive:
+        archive.writestr(name,value)
+        archive.writestr('client-cache-manifest.json',json.dumps(manifest))
+    return manifest
+
+
 class EvidenceTests(unittest.TestCase):
     def test_exact_current_pid_and_registry_required(self):
         output = 'Renderer initialization complete\nLoaded all data!\n'
@@ -110,6 +130,7 @@ class WorktreeTests(unittest.TestCase):
         self.identity = {'receipt_sha256': 'f'*64, 'generation': 'generation-'+'1'*32}
         self.exesha = package(self.assets / 'client-runtime.zip')
         self.pin = patch.object(guest, 'EXE_SHA', self.exesha); self.pin.start(); self.addCleanup(self.pin.stop)
+        cache_package(self.assets/'client-caches.zip')
         for name in ['textures/a.texture', 'defs/test.dbidmap', 'bin/cache.bin', 'server/bin/server.bin', 'geobin/map.bin']:
             path = self.data / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(b'input')
         self.count = patch.object(guest, 'DATA_COUNT', 5); self.count.start(); self.addCleanup(self.count.stop)
@@ -124,8 +145,15 @@ class WorktreeTests(unittest.TestCase):
         self.assertTrue(linked.is_symlink())
         self.assertEqual(linked.resolve(), self.data/'textures/a.texture')
         self.assertEqual(stat.S_IMODE(linked.stat().st_mode), 0o444)
+        self.assertEqual(int(linked.stat().st_mtime),guest.CACHE_EPOCH)
+        self.assertTrue(receipt['imported_metadata_normalized'])
+        self.assertTrue(receipt['imported_input_bytes_unchanged'])
+        self.assertEqual(receipt['prepared_cache_files'],1)
+        self.assertEqual(receipt['cache_archive_sha256'],hashlib.sha256((self.assets/'client-caches.zip').read_bytes()).hexdigest())
+        self.assertEqual(int((work/'data/bin/sequencers.bin').stat().st_mtime),guest.CACHE_EPOCH)
         for name in ['defs/test.dbidmap','bin/cache.bin','server/bin/server.bin','geobin/map.bin']:
             target = work/'data'/name
+            self.assertEqual(int(target.stat().st_mtime),guest.CACHE_EPOCH)
             self.assertFalse(target.is_symlink()); target.write_bytes(b'generated')
             self.assertEqual((self.data/name).read_bytes(), b'input')
         with patch.object(guest.os,'scandir',side_effect=AssertionError('Must not rescan all inputs')):
@@ -147,6 +175,22 @@ class WorktreeTests(unittest.TestCase):
         target = work/'CityOfHeroes.exe'; target.chmod(0o600); target.write_bytes(b'changed')
         with self.assertRaisesRegex(guest.base.DiagnosticError,'Cached client binary'):
             guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+
+    def test_prepared_cache_dates_and_paths_are_checked(self):
+        cache_package(self.assets/'client-caches.zip',epoch=guest.CACHE_EPOCH-30)
+        with self.assertRaisesRegex(guest.base.DiagnosticError,'source timestamp differs'):
+            guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertEqual(list(self.work.iterdir()),[])
+        cache_package(self.assets/'client-caches.zip',changed_name='data/bin/../sequencers.bin')
+        with zipfile.ZipFile(self.assets/'client-caches.zip') as archive:
+            with self.assertRaises(guest.base.DiagnosticError): guest.cache_manifest(archive)
+
+    def test_cache_preflight_reserves_space_before_touching_inputs(self):
+        with patch.object(guest.shutil,'disk_usage',return_value=argparse.Namespace(free=1)):
+            with self.assertRaisesRegex(guest.base.DiagnosticError,'Insufficient space'):
+                guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertEqual(list(self.work.iterdir()),[])
+        self.assertNotEqual(int((self.data/'textures/a.texture').stat().st_mtime),guest.CACHE_EPOCH)
 
     def test_cache_inventory_excludes_inputs_and_stops_at_bound(self):
         private = self.root / 'private'

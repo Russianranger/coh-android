@@ -15,10 +15,16 @@ The one-run instructions are in [the client device test](ANDROID_CLIENT_DEVICE_T
 The initial actual-client hosted attempt [36700734062](https://github.com/Russianranger/coh-android/actions/runs/36700734062)
 displayed the Freedom loading artwork but timed out before `game_mainLoop`;
 cleanup was complete. Do not deliver that APK as qualified. Its later console
-output was redirected away from the inherited pipe. The next candidate adds
-owned-console capture, correct window placement and bounded cache/activity
-evidence; the exact stalled data-loading stage remains unconfirmed. See the
-[failed startup receipt](android-evidence/client-startup-hosted-36700734062.json).
+output was redirected away from the inherited pipe. See the
+[first failed startup receipt](android-evidence/client-startup-hosted-36700734062.json).
+The next diagnostic [36704251918](https://github.com/Russianranger/coh-android/actions/runs/36704251918)
+confirmed owned-console capture and a correctly fitted 800×600 loading screen.
+Renderer, texture headers, fonts, group libraries and LOD data completed; the
+300-second diagnostic deadline expired during sequencer text parsing. Nine
+private caches were generated and cleanup was complete. This establishes cold
+data processing, not a rendering deadlock or complete startup. The next work
+is to prepare compatible client caches off-device and qualify a normal startup.
+See the [second failed startup receipt](android-evidence/client-startup-hosted-36704251918.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

@@ -35,9 +35,77 @@ jobs:
           java-version: '17'
       - name: Check actual client packaging, session evidence and package boundaries
         run: python3 -m unittest discover -s tools/android/client -p 'test_*.py' -v
-  apk:
+  client-caches:
     if: github.event_name != 'pull_request'
     needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/cache-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-test-apk
+          path: out/cache-inputs/atlas-apk
+          run-id: 36638344040
+          github-token: ${{ github.token }}
+      - name: Install native x86 Wine and Mesa software graphics
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine64 wine32:i386 xvfb xauth libgl1-mesa-dri:i386 libgl1:i386 default-jdk-headless gcc-mingw-w64-i686
+          mkdir -p out/cache-inputs
+          dpkg-query -W wine wine64 wine32:i386 libgl1-mesa-dri:i386 libgl1:i386 > out/cache-inputs/host-packages.txt
+      - name: Retrieve exact reviewed game assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/cache-inputs/assets.zip --release-asset-id 588984151
+      - name: Recover exact qualified graphical client
+        run: |
+          python3 - <<'PYTHON'
+          import pathlib,hashlib,zipfile
+          path=pathlib.Path('out/cache-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(path.read_bytes()).hexdigest()=='dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(path) as archive:
+              assert all('/' not in name and '\\' not in name and name not in ('.','..') for name in archive.namelist())
+              archive.extractall('out/cache-inputs/reference')
+          PYTHON
+      - name: Generate matching client caches with native x86 execution
+        run: >-
+          xvfb-run -a -s '-screen 0 800x600x24 -nolisten tcp'
+          python3 tools/android/client/prepare_client_caches.py
+          --atlas-apk out/cache-inputs/atlas-apk/COH-Atlas-Test-0.4.4.apk
+          --reference out/cache-inputs/reference --archive out/cache-inputs/assets.zip
+          --work out/cache-work --output out/client-caches --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: |
+            out/client-caches/client-caches.zip
+            out/client-caches/client-caches.zip.sha256
+            out/client-caches/client-cache-manifest.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-cache-generation-evidence
+          path: |
+            out/client-caches/
+            out/cache-inputs/host-packages.txt
+          if-no-files-found: warn
+  apk:
+    if: github.event_name != 'pull_request'
+    needs: [tooling, client-caches]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -96,12 +164,17 @@ jobs:
           sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686 binutils-mingw-w64-i686
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: out/client-inputs/client-caches
       - name: Preserve accepted runtime and add qualified graphical client
         run: |
           mkdir -p out/client
           python3 tools/android/client/prepare_assets.py \
             --assets out/client-inputs/runtime --output out/client/runtime \
             --client out/client-inputs/client-package/client-runtime.zip \
+            --client-caches out/client-inputs/client-caches/client-caches.zip \
             --repository-commit "$GITHUB_SHA" > out/client/assets-preparation.json
       - name: Build and verify separate COH Game Client Test APK
         run: >-

@@ -14,6 +14,7 @@ import tempfile
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import package_client_runtime as client_package
+import prepare_client_caches as cache_package
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNTIME_RUN_ID = 36364550345
@@ -25,8 +26,8 @@ GUEST_SCRIPTS = ('diagnostic.py', 'presentation_diagnostic.py', 'client_startup_
                  'game_diagnostic.py', 'game_device_diagnostic.py', 'game_evidence.py',
                  'game_hang_evidence.py', 'game_map_progress.py')
 PROBE_FILES = frozenset((*GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
-                         'client-launcher.exe', 'client-runtime.zip'))
-EXTRA_FILES = frozenset({BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
+                         'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip'))
+EXTRA_FILES = frozenset({BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
 HEX40 = re.compile(r'[0-9a-f]{40}\Z')
 HEX64 = re.compile(r'[0-9a-f]{64}\Z')
 NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*\Z')
@@ -130,10 +131,11 @@ def verify_device_assets(assets, *, repository_commit=None):
         require(file_pin(assets/name) == file_pin(ROOT/'android/guest'/name), 'Guest script differs from checkout: '+name)
     pe32(assets/'client-launcher.exe')
     client_package.verify_archive(assets/'client-runtime.zip', repository_commit)
+    cache_package.verify_cache_archive(assets/'client-caches.zip')
     return manifest
 
 
-def prepare(*, assets, output, client, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
+def prepare(*, assets, output, client, client_caches, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
     assets, output = Path(assets), Path(output)
     require(isinstance(repository_commit, str) and HEX40.fullmatch(repository_commit), 'Expected exact source commit')
     require(not output.exists() and not output.is_symlink(), 'Use a fresh assets output directory')
@@ -149,6 +151,8 @@ def prepare(*, assets, output, client, repository_commit, cc='i686-w64-mingw32-g
             if name != 'diagnostic.py': shutil.copyfile(ROOT/'android/guest'/name, staging/name)
         client_package.verify_archive(Path(client), repository_commit)
         shutil.copyfile(client, staging/'client-runtime.zip')
+        cache_package.verify_cache_archive(Path(client_caches))
+        shutil.copyfile(client_caches, staging/'client-caches.zip')
         subprocess.run([cc,'-std=c11','-O2','-Wall','-Wextra','-Werror','-static-libgcc','-mconsole',
                         str(ROOT/'android/native/client-launcher.c'),'-luser32','-lkernel32',
                         '-o',str(staging/'client-launcher.exe')],check=True)
@@ -175,7 +179,7 @@ def prepare(*, assets, output, client, repository_commit, cc='i686-w64-mingw32-g
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for key in ('assets', 'output', 'client'): parser.add_argument('--'+key, required=True, type=Path)
+    for key in ('assets', 'output', 'client', 'client-caches'): parser.add_argument('--'+key, required=True, type=Path)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--cc', default='i686-w64-mingw32-gcc')
     parser.add_argument('--objdump', default='i686-w64-mingw32-objdump')

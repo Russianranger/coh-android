@@ -86,4 +86,31 @@ class ProfileTests(unittest.TestCase):
                 at+=12+size
             raw=zlib.decompress(encoded);self.assertEqual(600*(800*3+1),len(raw));self.assertEqual(b'\0\xff\0\0',raw[:4])
 
+class CachePackageTests(unittest.TestCase):
+    def test_exact_parse6_envelope_accepts_real_signature_offset_and_rejects_time_drift(self):
+        import struct
+        cache=load('client_cache_test','prepare_client_caches.py')
+        def pascal(value):
+            data=struct.pack('<H',len(value))+value
+            return data+b'\0'*((-len(data))%4)
+        def payload(timestamp):
+            dependency=pascal(b'defs/sample.def')+struct.pack('<I',timestamp)
+            return b'CrypticS'+struct.pack('<I',123)+pascal(b'Parse6')+pascal(b'Files1')+struct.pack('<II',4+len(dependency),1)+dependency+struct.pack('<I',4)+b'\0'*4
+        good=payload(cache.EPOCH)
+        cache.validate_dependency_dates(good)
+        with self.assertRaisesRegex(ValueError,'not normalized'):cache.validate_dependency_dates(payload(cache.EPOCH+7))
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);path=root/'cache.bin';path.write_bytes(good)
+            envelope=cache.generator.parse6_envelope(path);self.assertEqual('Parse6',envelope['format'])
+            name='data/bin/sequencers.bin'
+            manifest={'format':1,'role':cache.ROLE,'source_commit':package.SOURCE,'data_commit':package.DATA,
+                      'reference_run_id':package.REFERENCE_RUN,'normalized_mtime_epoch':cache.EPOCH,
+                      'executable_sha256':package.accepted()['files']['CityOfHeroes.exe']['sha256'],
+                      'asset_archive_sha256':build.accepted_import_receipt()['bundle_contract']['asset.archive.sha256'],
+                      'files':{name:{**build.file_pin(path),'schema_crc':envelope['schema_crc']}}}
+            archive=root/'cache.zip'
+            with zipfile.ZipFile(archive,'w') as output:
+                output.writestr(cache.MANIFEST,json.dumps(manifest));output.write(path,name)
+            self.assertEqual(manifest,cache.verify_cache_archive(archive))
+
 if __name__=='__main__':unittest.main()
