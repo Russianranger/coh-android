@@ -55,6 +55,17 @@ changes native prompts and the small initial splash, while retaining actual
 game window creation, graphics, data loading and texture validation. It needs
 fresh hosted qualification; no phone rerun is requested for failed candidates.
 See the [console profile review](android-evidence/client-console-profile-20260930.md).
+The profile worked in `36716064689`: the child attached to the real parent
+console and preserved direct logging. The full warning stream exceeded the
+10 MiB guest limit during NPC validation, about 321 seconds into startup;
+the deadline was not reached and cleanup was complete. NPC warnings alone
+are estimated to exceed 20 MiB. The hosted Raw-only RFB viewer also disconnected
+on a desktop-size change; Android's existing viewer already handles that event.
+The next candidate retains up to 128 MiB of complete raw output, streams the
+bounded support archive into the Android export, and fixes the hosted viewer's
+resize and post-readiness frame checks. It keeps the same startup deadline,
+full data validation, and exact game/cache inputs. See the
+[direct-output receipt](android-evidence/client-startup-hosted-36716064689.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

@@ -38,6 +38,7 @@ public final class ClientRuntime {
     }
 
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
+    private static final long MAX_GUEST_ZIP = 160L * 1024 * 1024;
     private static final String PROCESS_INSTANCE = UUID.randomUUID().toString();
     private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Game Client Test in Android settings, then reopen it.";
     private static boolean guardInitialized, blocked;
@@ -669,7 +670,7 @@ public final class ClientRuntime {
                 }
                 if ("client_startup".equals(operation) && runLaunched) {
                     File file = new File(state, "report.zip");
-                    if (file.isFile()) zipBytes(out, "guest-report.zip", read(file, 32L * 1024 * 1024));
+                    if (file.isFile()) zipFile(out, "guest-report.zip", file, MAX_GUEST_ZIP);
                 }
             }
             Files.move(part.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
@@ -708,6 +709,20 @@ public final class ClientRuntime {
     }
     private static byte[] read(File file, long limit) throws IOException {
         try (InputStream in = new FileInputStream(file)) { return read(in, limit); }
+    }
+    private static void zipFile(ZipOutputStream out, String name, File file, long limit) throws IOException {
+        long expected = file.length(), copied = 0;
+        if (expected > limit) throw new IOException("Guest support archive exceeds size limit");
+        out.putNextEntry(new ZipEntry(name));
+        try (InputStream in = new FileInputStream(file)) {
+            byte[] buffer = new byte[65536]; int count;
+            while ((count = in.read(buffer)) != -1) {
+                if (copied + count > limit) throw new IOException("Guest support archive exceeds size limit");
+                out.write(buffer, 0, count); copied += count;
+            }
+        }
+        if (copied != expected) throw new IOException("Guest support archive changed during export");
+        out.closeEntry();
     }
     private static byte[] read(InputStream in, long limit) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream(); byte[] bytes = new byte[8192]; int count;

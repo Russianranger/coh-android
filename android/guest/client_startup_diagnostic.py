@@ -33,8 +33,10 @@ DATA_COUNT, DATA_BYTES = 173011, 2977730517
 ASSET_ARCHIVE_SHA = '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'
 CACHE_EPOCH = 1767225600
 CACHE_BYTES_LIMIT = 512*1024*1024
-CLIENT_OUTPUT_LIMIT = 10*1024*1024
-CLIENT_EVIDENCE_LIMIT = 24*1024*1024
+CLIENT_OUTPUT_LIMIT = 128*1024*1024
+# 128 MiB raw console plus bounded screenshots/logs; 144 MiB evidence and the
+# 2 MiB report fit Android's 160 MiB archive cap even with DEFLATE overhead.
+CLIENT_EVIDENCE_LIMIT = 144*1024*1024
 REQUIRED = (presentation.REQUIRED - {'presentation-probe.exe'}) | {
     'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip',
     'client-prerequisites.zip'}
@@ -826,8 +828,8 @@ def main(argv=None):
     parser.add_argument('--observation-seconds', type=int, default=30)
     parser.add_argument('--timeout-seconds', type=int, default=1800)
     args = parser.parse_args(argv)
-    # This dedicated client invocation permits an 8 MiB console plus launcher/Wine
-    # overhead. Every owned child remains bounded and overflow remains fatal.
+    # This dedicated client invocation retains the full, verbose validation log
+    # up to 128 MiB. Every owned child stays bounded and overflow remains fatal.
     # The accepted diagnostic.py payload itself stays byte-identical.
     base.OUTPUT_LIMIT = CLIENT_OUTPUT_LIMIT
     os.umask(0o077)

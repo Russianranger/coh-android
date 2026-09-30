@@ -123,9 +123,12 @@ class EvidenceTests(unittest.TestCase):
 
 
 class ConsoleBudgetTests(unittest.TestCase):
-    def test_owned_console_preserves_eight_mib_and_overflow_still_fails(self):
-        with tempfile.TemporaryDirectory() as temporary, patch.object(guest.base, 'OUTPUT_LIMIT', guest.CLIENT_OUTPUT_LIMIT):
-            for size, overflow in ((8*1024*1024+1024, False), (guest.CLIENT_OUTPUT_LIMIT+1, True)):
+    def test_owned_console_preserves_exact_bound_and_overflow_still_fails(self):
+        # Exercise the real pipe reader at a scaled bound without allocating the
+        # production 128 MiB budget in every focused test run.
+        output_limit = 128*1024
+        with tempfile.TemporaryDirectory() as temporary, patch.object(guest.base, 'OUTPUT_LIMIT', output_limit):
+            for size, overflow in ((output_limit, False), (output_limit+1, True)):
                 with self.subTest(size=size):
                     context = guest.base.Context(Path(temporary))
                     command = [sys.executable, '-c',
@@ -136,7 +139,7 @@ class ConsoleBudgetTests(unittest.TestCase):
                         child.reader.join(3); child.writer.join(3)
                         self.assertFalse(child.reader.is_alive())
                         self.assertEqual(child.overflow, overflow)
-                        self.assertLessEqual(len(child.output), guest.CLIENT_OUTPUT_LIMIT)
+                        self.assertLessEqual(len(child.output), output_limit)
                         if overflow:
                             with self.assertRaises(guest.base.DiagnosticError): context.check()
                         else:
@@ -409,16 +412,18 @@ class ManifestAndLifecycleTests(unittest.TestCase):
         with self.assertRaises(guest.base.DiagnosticError): guest.persist_report(self.args,context,capture)
 
     def test_large_console_bundle_retains_exact_limit_and_rejects_excess(self):
+        limit = patch.object(guest, 'CLIENT_EVIDENCE_LIMIT', 144*1024)
+        limit.start(); self.addCleanup(limit.stop)
         self.args.state.mkdir()
         capture = self.root/'large-captures'; capture.mkdir()
         console = capture/'client-console.log'
-        with console.open('wb') as stream: stream.truncate(8*1024*1024)
+        with console.open('wb') as stream: stream.truncate(128*1024)
         with (capture/'other-evidence.bin').open('wb') as stream:
             stream.truncate(guest.CLIENT_EVIDENCE_LIMIT-console.stat().st_size)
         context = guest.base.Context(self.args.state)
         guest.persist_report(self.args, context, capture)
         with zipfile.ZipFile(self.args.state/'report.zip') as archive:
-            self.assertEqual(archive.getinfo('client-evidence/client-console.log').file_size, 8*1024*1024)
+            self.assertEqual(archive.getinfo('client-evidence/client-console.log').file_size, 128*1024)
             self.assertEqual(sum(info.file_size for info in archive.infolist() if info.filename.startswith('client-evidence/')),
                              guest.CLIENT_EVIDENCE_LIMIT)
         with console.open('ab') as stream: stream.write(b'x')

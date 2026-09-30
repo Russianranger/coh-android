@@ -14,6 +14,8 @@ apk_tool=load('actual_client_apk_host',Path(__file__).with_name('build_apk.py'))
 transport=load('accepted_presentation_transport_host',ROOT/'tools/android/presentation/host_smoke.py')
 require,digest=assets_tool.require,assets_tool.digest
 WIDTH,HEIGHT=800,600
+MAX_WIDTH,MAX_HEIGHT=1024,768
+DESKTOP_SIZE=-223
 
 
 def extract_apk_assets(apk,output,build_report,commit):
@@ -66,49 +68,176 @@ def import_game_data(imports,archive,work,evidence):
     return data
 
 
-def save_png(path,pixels):
+def save_png(path,pixels,width=WIDTH,height=HEIGHT):
     # Raw RFB is little-endian BGRX; encode a bounded RGB PNG without Pillow.
+    require(0<width<=MAX_WIDTH and 0<height<=MAX_HEIGHT and len(pixels)==width*height*4,
+            'Invalid bounded PNG framebuffer')
     rows=bytearray()
-    for y in range(HEIGHT):
+    for y in range(height):
         rows.append(0)
-        for x in range(WIDTH):
-            offset=(y*WIDTH+x)*4;rows.extend((pixels[offset+2],pixels[offset+1],pixels[offset]))
+        for x in range(width):
+            offset=(y*width+x)*4;rows.extend((pixels[offset+2],pixels[offset+1],pixels[offset]))
     def chunk(kind,data):return struct.pack('!I',len(data))+kind+data+struct.pack('!I',zlib.crc32(kind+data)&0xffffffff)
-    data=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!IIBBBBB',WIDTH,HEIGHT,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(rows,6))+chunk(b'IEND',b'')
+    data=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!IIBBBBB',width,height,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(rows,6))+chunk(b'IEND',b'')
     path.write_bytes(data)
 
 
-def observe_rfb(connection,session,process,deadline,evidence):
-    desktop=transport.rfb_handshake(connection);pixels=bytearray(WIDTH*HEIGHT*4)
+def client_rfb_handshake(connection):
+    desktop=transport.rfb_handshake(connection)
+    # Keep the accepted shared transport unchanged. The actual client can issue
+    # a fullscreen mode event, so advertise the same bounded resize as Android.
+    connection.sendall(struct.pack('!BBHii',2,0,2,0,DESKTOP_SIZE))
+    return desktop
+
+
+class ClientFramebuffer:
+    def __init__(self):
+        self.generation=0
+        self.resize(WIDTH,HEIGHT)
+
+    def resize(self,width,height):
+        require(0<width<=MAX_WIDTH and 0<height<=MAX_HEIGHT,'RFB framebuffer size exceeds bounds')
+        self.width,self.height=width,height
+        self.pixels=bytearray(width*height*4)
+        self.generation+=1
+        self.fresh=False
+        self.updates=0
+
+    def read_update(self,connection):
+        count=struct.unpack_from('!H',transport.recv_exact(connection,3),1)[0]
+        require(count<=1024,'Invalid RFB rectangle count')
+        changed=resized=False
+        for index in range(count):
+            x,y,w,h,encoding=struct.unpack('!HHHHi',transport.recv_exact(connection,12))
+            if encoding==DESKTOP_SIZE:
+                require(x==0 and y==0 and index==count-1,'Invalid RFB desktop-size rectangle')
+                self.resize(w,h)
+                changed=False # Discard every old-size rectangle in this update.
+                resized=True
+            else:
+                require(encoding==0 and w>0 and h>0 and x+w<=self.width and y+h<=self.height,
+                        'Invalid RFB rectangle')
+                # Row reads retain the accepted transport's read bound even at
+                # the Android maximum 1024x768 intermediate desktop size.
+                for row in range(h):
+                    start=((y+row)*self.width+x)*4
+                    self.pixels[start:start+w*4]=transport.recv_exact(connection,w*4)
+                changed=True
+        if changed:
+            self.fresh=True
+            self.updates+=1
+        return changed,resized
+
+
+class ClientEvents:
+    """Read only complete, bounded guest event lines from this host invocation."""
+    def __init__(self,path,session):
+        self.path,self.session=path,session
+        self.offset=0
+        self.pending=b''
+        self.generation=0
+        self.client_pid=None
+        self.active=self.terminal=False
+
+    def poll(self):
+        with self.path.open('rb') as source:
+            source.seek(self.offset)
+            data=source.read(131072)
+        self.offset+=len(data)
+        require(self.offset<=2*1024*1024,'Host guest-event stream exceeds bound')
+        lines=(self.pending+data).split(b'\n')
+        self.pending=lines.pop()
+        require(len(self.pending)<=65536,'Host guest-event line exceeds bound')
+        for line in lines:
+            require(len(line)<=65536,'Host guest-event line exceeds bound')
+            try:event=json.loads(line)
+            except (ValueError,UnicodeDecodeError):continue
+            if not isinstance(event,dict):continue
+            if event.get('type')=='client_startup_observed' and event.get('session_id')==self.session:
+                pid=event.get('client_pid')
+                require(type(pid) is int and pid>0,'Invalid startup event client PID')
+                require(not self.terminal,'Startup event followed terminal completion')
+                self.client_pid=pid
+                self.generation+=1
+                self.active=True
+            elif event.get('type')=='stage' and event.get('stage')=='actual_client_startup' and event.get('status')=='passed':
+                require(self.client_pid is not None,'Client completion preceded readiness event')
+                self.active=False
+                self.terminal=True
+
+
+def observe_rfb(connection,session,process,deadline,evidence,event_path):
+    desktop=client_rfb_handshake(connection);frame=ClientFramebuffer()
     updates=0;fingerprints=[];snapshots=[];last_capture=0;terminal=None;started=time.monotonic()
+    resizes=[];events=ClientEvents(event_path,session);captures=[];event_generation=0
+    pending_request=False;request_generation=0;failure=None
     while process.poll() is None and time.monotonic()<deadline:
         try:
-            connection.sendall(struct.pack('!BBHHHH',3,0,0,0,WIDTH,HEIGHT))
+            events.poll()
+            if events.generation!=event_generation:
+                captures=[];event_generation=events.generation
+            if not pending_request:
+                connection.sendall(struct.pack('!BBHHHH',3,0,0,0,frame.width,frame.height))
+                request_generation=events.generation if events.active else 0
+                pending_request=True
             kind=transport.recv_exact(connection,1)[0]
             if kind==2:continue
             if kind==3:
                 header=transport.recv_exact(connection,7);size=struct.unpack_from('!I',header,3)[0]
                 require(size<=4096,'Oversized cut text');transport.recv_exact(connection,size);continue
             require(kind==0,'Unexpected RFB message')
-            count=struct.unpack_from('!H',transport.recv_exact(connection,3),1)[0]
-            require(0<count<=1024,'Invalid RFB rectangle count')
-            for _ in range(count):
-                x,y,w,h,encoding=struct.unpack('!HHHHi',transport.recv_exact(connection,12))
-                require(encoding==0 and w>0 and h>0 and x+w<=WIDTH and y+h<=HEIGHT,'Invalid RFB rectangle')
-                raw=transport.recv_exact(connection,w*h*4)
-                for row in range(h):
-                    start=((y+row)*WIDTH+x)*4;pixels[start:start+w*4]=raw[row*w*4:(row+1)*w*4]
-            updates+=1;sha=hashlib.sha256(pixels).hexdigest()
+            changed,resized=frame.read_update(connection)
+            pending_request=False
+            events.poll()
+            if events.generation!=event_generation:
+                captures=[];event_generation=events.generation
+            if resized:
+                require(len(resizes)<64,'RFB desktop-size event count exceeds bound')
+                resizes.append({'width':frame.width,'height':frame.height,'generation':frame.generation,
+                                'elapsed_seconds':round(time.monotonic()-started,3)})
+                if not events.terminal:captures=[]
+            if not changed:continue
+            updates+=1;sha=hashlib.sha256(frame.pixels).hexdigest()
             if sha not in fingerprints and len(fingerprints)<2000:fingerprints.append(sha)
             now=time.monotonic()
+            if (events.active and request_generation==events.generation and request_generation>0
+                    and (frame.width,frame.height)==(WIDTH,HEIGHT) and len(captures)<3
+                    and (not captures or now-started-captures[-1]['elapsed_seconds']>=1)):
+                colors=set()
+                for offset in range(0,len(frame.pixels),4):
+                    colors.add(bytes(frame.pixels[offset:offset+3]))
+                    if len(colors)>=8:break
+                if len(colors)>=8:
+                    name=f'client-startup-external-{len(captures):03d}.png'
+                    save_png(evidence/name,frame.pixels)
+                    captures.append({'file':name,'elapsed_seconds':now-started,'frame_sha256':sha,
+                        'png_sha256':digest(evidence/name),'session_id':session,'client_pid':events.client_pid,
+                        'width':WIDTH,'height':HEIGHT,'distinct_colors_capped':len(colors),
+                        'frame_sequence':updates,'frame_generation':frame.generation,
+                        'event_generation':events.generation})
             if now-last_capture>=20 and len(snapshots)<60:
-                name=f'client-frame-{len(snapshots):03d}.png';save_png(evidence/name,pixels)
-                snapshots.append({'file':name,'elapsed_seconds':round(now-started,3),'frame_sha256':sha});last_capture=now
+                name=f'client-frame-{len(snapshots):03d}.png';save_png(evidence/name,frame.pixels,frame.width,frame.height)
+                snapshots.append({'file':name,'elapsed_seconds':round(now-started,3),'frame_sha256':sha,
+                                  'width':frame.width,'height':frame.height,'generation':frame.generation});last_capture=now
             time.sleep(0.5)
-        except (EOFError,BrokenPipeError,ConnectionResetError) as error:terminal=type(error).__name__;break
-    if updates:save_png(evidence/'client-frame-final.png',pixels)
+        except (EOFError,BrokenPipeError,ConnectionResetError) as error:
+            terminal=type(error).__name__
+            # X closes during ordinary guest cleanup; event output may arrive
+            # just after the socket EOF. Match the Android two-second allowance.
+            terminal_deadline=min(deadline,time.monotonic()+2)
+            while not events.terminal and time.monotonic()<terminal_deadline:
+                events.poll()
+                if not events.terminal:time.sleep(.05)
+            if not events.terminal:failure='Private RFB transport ended before client startup observation completed'
+            break
+    events.poll()
+    if frame.fresh:save_png(evidence/'client-frame-final.png',frame.pixels,frame.width,frame.height)
     return {'scope':'host_external_unix_rfb_actual_client','desktop':desktop,'session_id':session,'updates':updates,
             'distinct_frame_sha256':fingerprints,'snapshots':snapshots,'terminal_transport':terminal,
+            'desktop_size_events':resizes,'final_frame':{'width':frame.width,'height':frame.height,
+                'generation':frame.generation,'fresh_after_resize':frame.fresh,'updates_after_resize':frame.updates},
+            'post_startup_captures':captures,'client_pid':events.client_pid,'terminal_event_observed':events.terminal,
+            'failure':failure,
             'connected_outside_proot':True,'android_surface_validated':False,'gameplay_validated':False}
 
 
@@ -188,11 +317,21 @@ def main():
                 require(process.poll() is None and time.monotonic()<deadline,'Guest exited before display socket');time.sleep(0.1)
             with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as connection:
                 connection.settimeout(90);connection.connect(str(socket_path))
-                observer=observe_rfb(connection,session,process,deadline,args.evidence)
+                observer=observe_rfb(connection,session,process,deadline,args.evidence,args.evidence/'host-client.log')
+            require(observer['failure'] is None,observer['failure'] or 'External client observer failed')
             code=process.wait(timeout=max(1,deadline-time.monotonic()))
             require(code==0,'Client guest exited unsuccessfully')
             report=json.loads((args.work/'state/latest-report.json').read_text());validate_report(report,session,manifest)
+            require(observer['failure'] is None and observer['terminal_event_observed'] is True,
+                    observer['failure'] or 'Missing external-observer terminal event')
             require(observer['updates']>=2 and len(observer['distinct_frame_sha256'])>=2,'Actual client did not change the display')
+            captures=observer['post_startup_captures']
+            require(observer['client_pid']==report['client_launch']['pid'] and len(captures)==3
+                    and all(c['width']==WIDTH and c['height']==HEIGHT
+                            and c['frame_generation']==captures[0]['frame_generation']
+                            and c['event_generation']==captures[0]['event_generation'] for c in captures)
+                    and captures[-1]['elapsed_seconds']-captures[0]['elapsed_seconds']>=2,
+                    'Missing three session-bound fresh external startup frames')
             require(not socket_path.exists(),'Private RFB socket survived cleanup')
         except Exception as error:
             failure={'type':type(error).__name__,'message':str(error)};raise
