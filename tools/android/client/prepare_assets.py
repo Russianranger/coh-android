@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import package_client_runtime as client_package
 import prepare_client_caches as cache_package
+import prepare_client_prerequisites as prerequisite_package
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNTIME_RUN_ID = 36364550345
@@ -26,8 +27,8 @@ GUEST_SCRIPTS = ('diagnostic.py', 'presentation_diagnostic.py', 'client_startup_
                  'game_diagnostic.py', 'game_device_diagnostic.py', 'game_evidence.py',
                  'game_hang_evidence.py', 'game_map_progress.py')
 PROBE_FILES = frozenset((*GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
-                         'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip'))
-EXTRA_FILES = frozenset({BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
+                         'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip'))
+EXTRA_FILES = frozenset({BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
 HEX40 = re.compile(r'[0-9a-f]{40}\Z')
 HEX64 = re.compile(r'[0-9a-f]{64}\Z')
 NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*\Z')
@@ -132,6 +133,7 @@ def verify_device_assets(assets, *, repository_commit=None):
     pe32(assets/'client-launcher.exe')
     client_package.verify_archive(assets/'client-runtime.zip', repository_commit)
     cache_package.verify_cache_archive(assets/'client-caches.zip')
+    prerequisite_package.verify_archive(assets/'client-prerequisites.zip')
     return manifest
 
 
@@ -153,6 +155,7 @@ def prepare(*, assets, output, client, client_caches, repository_commit, cc='i68
         shutil.copyfile(client, staging/'client-runtime.zip')
         cache_package.verify_cache_archive(Path(client_caches))
         shutil.copyfile(client_caches, staging/'client-caches.zip')
+        prerequisite_package.prepare(staging/'client-prerequisites.zip')
         subprocess.run([cc,'-std=c11','-O2','-Wall','-Wextra','-Werror','-static-libgcc','-mconsole',
                         str(ROOT/'android/native/client-launcher.c'),'-luser32','-lkernel32',
                         '-o',str(staging/'client-launcher.exe')],check=True)

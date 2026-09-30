@@ -34,7 +34,17 @@ ASSET_ARCHIVE_SHA = '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d615
 CACHE_EPOCH = 1767225600
 CACHE_BYTES_LIMIT = 512*1024*1024
 REQUIRED = (presentation.REQUIRED - {'presentation-probe.exe'}) | {
-    'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip'}
+    'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip',
+    'client-prerequisites.zip'}
+PREREQUISITES = {
+    'data/server/db/templates/badges.attribute': {'bytes': 51724,
+        'sha256': '789ed244ac7c686cc275a8a2914de95bbb044b00483875df950a713f05b66fea'},
+    'data/server/db/templates/pophelp.attribute': {'bytes': 2185,
+        'sha256': '34195086d3223c717dca5e1cd00bc35a947a05d5fe31b2408a863e85aea617a1'},
+    'data/server/db/templates/supergroup_badges.attribute': {'bytes': 1039,
+        'sha256': 'd63b3c490fc23086aa6af4fd9add6c2af0892452011d32d6984cac2198d65a7e'},
+}
+PREREQUISITES_MANIFEST_SHA = '32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f'
 PRIVATE_CACHE_ROOTS = ('bin', 'server/bin', 'geobin')
 LAUNCH_MARKER = 'COH_CLIENT_LAUNCH_V1 '
 CONSOLE_MARKER = 'COH_CLIENT_CONSOLE_V1 '
@@ -140,6 +150,33 @@ def private_cache(relative):
     return any(value == root or value.startswith(root + '/') for root in PRIVATE_CACHE_ROOTS)
 
 
+def prerequisites_manifest(archive):
+    entries = archive.infolist()
+    manifest_name = 'client-prerequisites-manifest.json'
+    require(len(entries) == 4 and {entry.filename for entry in entries} == set(PREREQUISITES) | {manifest_name},
+            'Client prerequisite inventory differs from the exact three reviewed attributes')
+    for entry in entries:
+        mode = entry.external_attr >> 16
+        require(not entry.is_dir() and not entry.flag_bits & 1 and stat.S_IFMT(mode) in (0, stat.S_IFREG)
+                and 0 < entry.file_size <= 128*1024, 'Unsafe client prerequisite entry')
+    raw = archive.read(manifest_name)
+    require(hashlib.sha256(raw).hexdigest() == PREREQUISITES_MANIFEST_SHA,
+            'Client prerequisite canonical provenance differs')
+    manifest = json.loads(raw)
+    require(type(manifest.get('format')) is int and manifest['format'] == 1
+            and manifest.get('role') == 'actual_client_prerequisites'
+            and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+            and manifest.get('reference_run_id') == 36088012664
+            and manifest.get('schema_run_id') == 36088012666
+            and manifest.get('ordinary_comparison_run_id') == 36176806895
+            and manifest.get('files') == PREREQUISITES, 'Client prerequisite provenance or exact pins differ')
+    for name, pin in PREREQUISITES.items():
+        require(archive.getinfo(name).file_size == pin['bytes']
+                and hashlib.sha256(archive.read(name)).hexdigest() == pin['sha256'],
+                'Client prerequisite payload differs: ' + name)
+    return manifest, hashlib.sha256(raw).hexdigest()
+
+
 def cache_manifest(archive):
     entries = archive.infolist()
     require(1 < len(entries) <= 1025 and len({e.filename.casefold() for e in entries}) == len(entries),
@@ -153,6 +190,8 @@ def cache_manifest(archive):
             and manifest.get('executable_sha256') == EXE_SHA
             and manifest.get('asset_archive_sha256') == ASSET_ARCHIVE_SHA
             and manifest.get('reference_run_id') == 36088012664
+            and re.fullmatch(r'[0-9a-f]{64}', str(manifest.get('prerequisites_manifest_sha256')))
+            and manifest.get('generated_noncache_outputs') == []
             and type(manifest.get('normalized_mtime_epoch')) is int
             and manifest['normalized_mtime_epoch'] == CACHE_EPOCH,
             'Prepared cache source, data or timestamp identity differs')
@@ -218,14 +257,23 @@ def prepare_worktree(root, data, assets, identity, context):
     """Protect imported leaves, create one reusable thin tree, isolate all caches."""
     package_sha = base.file_hash(assets / 'client-runtime.zip')
     cache_sha = base.file_hash(assets / 'client-caches.zip')
+    prerequisites_sha = base.file_hash(assets / 'client-prerequisites.zip')
+    with zipfile.ZipFile(assets / 'client-prerequisites.zip') as archive:
+        _, prerequisites_manifest_sha = prerequisites_manifest(archive)
     with zipfile.ZipFile(assets / 'client-caches.zip') as archive:
         caches = cache_manifest(archive)
+    require(caches['prerequisites_manifest_sha256'] == prerequisites_manifest_sha,
+            'Prepared caches were generated with different client prerequisites')
     cache_bytes = sum(pin['bytes'] for pin in caches['files'].values())
-    key = hashlib.sha256((identity['receipt_sha256'] + package_sha + cache_sha + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
+    prerequisites_bytes = sum(pin['bytes'] for pin in PREREQUISITES.values())
+    key = hashlib.sha256((identity['receipt_sha256'] + package_sha + cache_sha + prerequisites_sha
+                         + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
     destination = root / ('client-work-' + key)
     marker = destination / 'client-work.json'
     expected_identity = {'format': 1, 'source_data': str(data), 'import': identity,
                          'package_sha256': package_sha, 'cache_archive_sha256': cache_sha,
+                         'prerequisites_archive_sha256': prerequisites_sha,
+                         'prerequisites_manifest_sha256': prerequisites_manifest_sha,
                          'normalized_mtime_epoch': CACHE_EPOCH}
     if destination.exists() or destination.is_symlink():
         require(destination.is_dir() and not destination.is_symlink(), 'Linked client worktree')
@@ -245,8 +293,13 @@ def prepare_worktree(root, data, assets, identity, context):
             target = destination / name
             require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['size']
                     and base.file_hash(target) == pin['sha256'], 'Cached client binary differs: ' + name)
+        for name, pin in PREREQUISITES.items():
+            target = destination / name
+            require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['bytes']
+                    and base.file_hash(target) == pin['sha256'] and int(target.stat().st_mtime) == CACHE_EPOCH,
+                    'Cached client prerequisite differs: ' + name)
         return destination, dict(saved, reused=True)
-    require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + 256*1024*1024,
+    require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + prerequisites_bytes + 256*1024*1024,
             'Insufficient space for private client links, prepared caches and runtime reserve')
     staging = root / ('client-staging-' + base.secrets.token_hex(12))
     staging.mkdir(mode=0o700)
@@ -291,6 +344,17 @@ def prepare_worktree(root, data, assets, identity, context):
         require((count, total) == (DATA_COUNT, DATA_BYTES), 'Imported data size/count differs from completed receipt')
         for name in PRIVATE_CACHE_ROOTS:
             (staging / 'data' / name).mkdir(parents=True, exist_ok=True, mode=0o700)
+        with zipfile.ZipFile(assets / 'client-prerequisites.zip') as archive:
+            for name, pin in PREREQUISITES.items():
+                context.check()
+                target = staging / name
+                target.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                require(not target.exists() and not target.is_symlink(), 'Client prerequisite would overwrite imported input')
+                with target.open('xb') as output:
+                    output.write(archive.read(name))
+                require(base.file_hash(target) == pin['sha256'], 'Installed client prerequisite differs')
+                os.utime(target, (CACHE_EPOCH, CACHE_EPOCH), follow_symlinks=False)
+                os.chmod(target, 0o444)
         with zipfile.ZipFile(assets / 'client-caches.zip') as archive:
             for name, pin in caches['files'].items():
                 context.check()
@@ -318,6 +382,7 @@ def prepare_worktree(root, data, assets, identity, context):
                      input_files=count, input_bytes=total, imported_inputs_readonly=True,
                      imported_input_bytes_unchanged=True, imported_metadata_normalized=True,
                      prepared_cache_files=len(caches['files']), prepared_cache_bytes=cache_bytes,
+                     prepared_prerequisite_files=len(PREREQUISITES), prepared_prerequisite_bytes=prerequisites_bytes,
                      writable_cache_roots=list(PRIVATE_CACHE_ROOTS))
         base.private_write(staging / 'client-work.json', json.dumps(saved, indent=2) + '\n')
         os.rename(staging, destination)

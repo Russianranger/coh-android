@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "status": "failed",
+  "scope": "native_x86_client_cache_generation",
+  "run_id": 36706745544,
+  "repository_commit": "755d2d612332e7d951624122a82177c095ad1984",
+  "artifact_id": 11093110328,
+  "artifact_bytes": 31971,
+  "artifact_sha256": "260ed7ac77f3cbfa46d2dce7980b862b2413e25f4372d253046de59520c1dd35",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 221.01,
+  "failures": [
+    "explicit failure diagnostics appeared in captured output"
+  ],
+  "failure_diagnostic_lines": [
+    "ERROR: Can't open server/db/templates/badges.attribute",
+    "ERROR: Can't open server/db/templates/supergroup_badges.attribute",
+    "ERROR: Can't open server/db/templates/pophelp.attribute",
+    "ERROR: Can't open server/db/templates/badges.attribute",
+    "ERROR: Can't open server/db/templates/supergroup_badges.attribute",
+    "ERROR: Can't open server/db/templates/pophelp.attribute"
+  ],
+  "source_completion_marker_observed": true,
+  "written_outputs": 103,
+  "parse6_caches": 100,
+  "console_bytes": 434514,
+  "fix": "Add three exact accepted badge/pophelp attributes before native generation and normal client startup.",
+  "limitation": "Numerous missing costume textures remain logged; cached output does not establish complete game content or normal startup.",
+  "cache_payload_accepted": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

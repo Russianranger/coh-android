@@ -59,6 +59,8 @@ def cache_package(path, *, changed_name=None, epoch=guest.CACHE_EPOCH):
     manifest = {'format': 1, 'role': 'actual_client_generated_caches', 'source_commit': guest.SOURCE,
         'data_commit': guest.DATA, 'executable_sha256': guest.EXE_SHA,
         'asset_archive_sha256': guest.ASSET_ARCHIVE_SHA, 'reference_run_id': 36088012664,
+        'prerequisites_manifest_sha256': guest.PREREQUISITES_MANIFEST_SHA,
+        'generated_noncache_outputs': [],
         'normalized_mtime_epoch': guest.CACHE_EPOCH, 'files': {name: {
             'bytes': len(value), 'sha256': hashlib.sha256(value).hexdigest(), 'schema_crc': '12345678'}}}
     with zipfile.ZipFile(path,'w') as archive:
@@ -130,6 +132,21 @@ class WorktreeTests(unittest.TestCase):
         self.identity = {'receipt_sha256': 'f'*64, 'generation': 'generation-'+'1'*32}
         self.exesha = package(self.assets / 'client-runtime.zip')
         self.pin = patch.object(guest, 'EXE_SHA', self.exesha); self.pin.start(); self.addCleanup(self.pin.stop)
+        self.prerequisite_contents = {name: name.encode('ascii') for name in guest.PREREQUISITES}
+        prerequisite_pins = {name: {'bytes': len(value), 'sha256': hashlib.sha256(value).hexdigest()}
+                             for name, value in self.prerequisite_contents.items()}
+        prerequisite_manifest = {'format': 1, 'role': 'actual_client_prerequisites',
+            'source_commit': guest.SOURCE, 'data_commit': guest.DATA, 'reference_run_id': 36088012664,
+            'schema_run_id': 36088012666, 'ordinary_comparison_run_id': 36176806895,
+            'files': prerequisite_pins}
+        raw = json.dumps(prerequisite_manifest).encode()
+        self.prerequisite_manifest = raw
+        for name, value in [('PREREQUISITES', prerequisite_pins),
+                            ('PREREQUISITES_MANIFEST_SHA', hashlib.sha256(raw).hexdigest())]:
+            patched = patch.object(guest,name,value);patched.start();self.addCleanup(patched.stop)
+        with zipfile.ZipFile(self.assets/'client-prerequisites.zip','w') as archive:
+            archive.writestr('client-prerequisites-manifest.json',raw)
+            for name, value in self.prerequisite_contents.items(): archive.writestr(name,value)
         cache_package(self.assets/'client-caches.zip')
         for name in ['textures/a.texture', 'defs/test.dbidmap', 'bin/cache.bin', 'server/bin/server.bin', 'geobin/map.bin']:
             path = self.data / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(b'input')
@@ -149,6 +166,12 @@ class WorktreeTests(unittest.TestCase):
         self.assertTrue(receipt['imported_metadata_normalized'])
         self.assertTrue(receipt['imported_input_bytes_unchanged'])
         self.assertEqual(receipt['prepared_cache_files'],1)
+        self.assertEqual(receipt['prepared_prerequisite_files'],3)
+        for name, contents in self.prerequisite_contents.items():
+            self.assertEqual((work/name).read_bytes(),contents)
+            self.assertEqual(int((work/name).stat().st_mtime),guest.CACHE_EPOCH)
+            self.assertEqual(stat.S_IMODE((work/name).stat().st_mode),0o444)
+            self.assertFalse((self.data/Path(name).relative_to('data')).exists())
         self.assertEqual(receipt['cache_archive_sha256'],hashlib.sha256((self.assets/'client-caches.zip').read_bytes()).hexdigest())
         self.assertEqual(int((work/'data/bin/sequencers.bin').stat().st_mtime),guest.CACHE_EPOCH)
         for name in ['defs/test.dbidmap','bin/cache.bin','server/bin/server.bin','geobin/map.bin']:
@@ -184,6 +207,21 @@ class WorktreeTests(unittest.TestCase):
         cache_package(self.assets/'client-caches.zip',changed_name='data/bin/../sequencers.bin')
         with zipfile.ZipFile(self.assets/'client-caches.zip') as archive:
             with self.assertRaises(guest.base.DiagnosticError): guest.cache_manifest(archive)
+
+    def test_prerequisite_payload_change_fails(self):
+        with zipfile.ZipFile(self.assets/'client-prerequisites.zip','w') as archive:
+            archive.writestr('client-prerequisites-manifest.json',self.prerequisite_manifest)
+            for name,value in self.prerequisite_contents.items(): archive.writestr(name,b'x'+value[1:])
+        with self.assertRaisesRegex(guest.base.DiagnosticError,'prerequisite payload differs'):
+            guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertEqual(list(self.work.iterdir()),[])
+
+    def test_prerequisites_are_hash_checked_on_reuse(self):
+        work,_ = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        target = work/next(iter(self.prerequisite_contents))
+        target.chmod(0o600);target.write_bytes(b'changed')
+        with self.assertRaisesRegex(guest.base.DiagnosticError,'Cached client prerequisite differs'):
+            guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
 
     def test_cache_preflight_reserves_space_before_touching_inputs(self):
         with patch.object(guest.shutil,'disk_usage',return_value=argparse.Namespace(free=1)):

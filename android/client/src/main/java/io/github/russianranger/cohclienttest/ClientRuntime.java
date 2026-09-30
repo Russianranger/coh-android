@@ -509,7 +509,7 @@ public final class ClientRuntime {
             if (!file.isFile() || file.length() != pin.getLong("bytes") || !sha(file).equals(pin.getString("sha256")))
                 throw new IOException("Runtime integrity check failed: " + name);
         }
-        for (String name : new String[]{"client_startup_diagnostic.py", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-launcher.exe"})
+        for (String name : new String[]{"client_startup_diagnostic.py", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
             if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
     }
     private void removePreviousGuestOutput() throws IOException {
@@ -578,6 +578,9 @@ public final class ClientRuntime {
                 || !Boolean.TRUE.equals(worktree.opt("imported_metadata_normalized"))
                 || worktree.optLong("normalized_mtime_epoch", -1) != 1767225600L
                 || !pins.getJSONObject("client-caches.zip").getString("sha256").equals(worktree.optString("cache_archive_sha256"))
+                || !pins.getJSONObject("client-prerequisites.zip").getString("sha256").equals(worktree.optString("prerequisites_archive_sha256"))
+                || worktree.optInt("prepared_prerequisite_files", -1) != 3
+                || worktree.optLong("prepared_prerequisite_bytes", -1) != 54948L
                 || worktree.optLong("input_files", -1) != imported.count
                 || worktree.optLong("input_bytes", -1) != imported.bytes) return false;
         String[] requiredStages = {"client_inputs", "client_private_data", "presentation_display", "wine_initialization",

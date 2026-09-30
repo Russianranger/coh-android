@@ -54,6 +54,8 @@ class ProfileTests(unittest.TestCase):
 
     def test_guest_inventory_contains_actual_client_and_launcher_no_server(self):
         self.assertIn('client-runtime.zip',assets.PROBE_FILES)
+        self.assertIn('client-caches.zip',assets.PROBE_FILES)
+        self.assertIn('client-prerequisites.zip',assets.PROBE_FILES)
         self.assertIn('client-launcher.exe',assets.PROBE_FILES)
         self.assertIn('client_startup_diagnostic.py',assets.PROBE_FILES)
         self.assertIn('presentation_diagnostic.py',assets.PROBE_FILES)
@@ -105,6 +107,8 @@ class CachePackageTests(unittest.TestCase):
             name='data/bin/sequencers.bin'
             manifest={'format':1,'role':cache.ROLE,'source_commit':package.SOURCE,'data_commit':package.DATA,
                       'reference_run_id':package.REFERENCE_RUN,'normalized_mtime_epoch':cache.EPOCH,
+                      'prerequisites_manifest_sha256':cache.prerequisites.manifest_sha256(),
+                      'generated_noncache_outputs':[],
                       'executable_sha256':package.accepted()['files']['CityOfHeroes.exe']['sha256'],
                       'asset_archive_sha256':build.accepted_import_receipt()['bundle_contract']['asset.archive.sha256'],
                       'files':{name:{**build.file_pin(path),'schema_crc':envelope['schema_crc']}}}
@@ -112,5 +116,32 @@ class CachePackageTests(unittest.TestCase):
             with zipfile.ZipFile(archive,'w') as output:
                 output.writestr(cache.MANIFEST,json.dumps(manifest));output.write(path,name)
             self.assertEqual(manifest,cache.verify_cache_archive(archive))
+
+class PrerequisitePackageTests(unittest.TestCase):
+    def test_exact_accepted_identifier_attributes_and_archive_boundary(self):
+        prerequisites=load('client_prerequisites_test','prepare_client_prerequisites.py')
+        payloads=prerequisites.accepted_payloads()
+        self.assertEqual(3,len(payloads));self.assertEqual(54948,sum(map(len,payloads.values())))
+        self.assertEqual({'badges.attribute','pophelp.attribute','supergroup_badges.attribute'},
+                         {Path(name).name for name in payloads})
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);archive=root/prerequisites.ARCHIVE
+            prerequisites.prepare(archive)
+            self.assertEqual(prerequisites.contract(),prerequisites.verify_archive(archive))
+            prerequisites.install(root/'runtime')
+            for name,data in payloads.items():self.assertEqual(data,(root/'runtime'/name).read_bytes())
+            with self.assertRaisesRegex(ValueError,'collision'):prerequisites.install(root/'runtime')
+            with zipfile.ZipFile(archive,'a') as output:output.writestr('data/server/db/templates/extra.attribute',b'extra')
+            with self.assertRaisesRegex(ValueError,'inventory'):prerequisites.verify_archive(archive)
+
+    def test_prerequisite_hash_cannot_be_changed_with_its_manifest(self):
+        prerequisites=load('client_prerequisites_tamper_test','prepare_client_prerequisites.py')
+        payloads=prerequisites.accepted_payloads();name=next(iter(payloads));payloads[name]=b'x'*len(payloads[name])
+        with tempfile.TemporaryDirectory() as temporary:
+            path=Path(temporary)/prerequisites.ARCHIVE
+            with zipfile.ZipFile(path,'w') as archive:
+                archive.writestr(prerequisites.MANIFEST,package.canonical(prerequisites.contract()))
+                for entry,data in payloads.items():archive.writestr(entry,data)
+            with self.assertRaisesRegex(ValueError,'hash differs'):prerequisites.verify_archive(path)
 
 if __name__=='__main__':unittest.main()

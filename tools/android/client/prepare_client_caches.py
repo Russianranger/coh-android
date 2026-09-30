@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import package_client_runtime as client
+import prepare_client_prerequisites as prerequisites
 import build_apk as builder
 sys.path.insert(0,str(ROOT/'tools'))
 import generate_runtime_data as generator
@@ -51,7 +52,9 @@ def verify_cache_archive(path):
                 and manifest.get('source_commit')==client.SOURCE and manifest.get('data_commit')==client.DATA
                 and manifest.get('executable_sha256')==client.accepted()['files']['CityOfHeroes.exe']['sha256']
                 and manifest.get('reference_run_id')==client.REFERENCE_RUN
+                and manifest.get('prerequisites_manifest_sha256')==prerequisites.manifest_sha256()
                 and manifest.get('normalized_mtime_epoch')==EPOCH,'Cache generation identity differs')
+        require(manifest.get('generated_noncache_outputs')==[],'Unexpected generated noncache outputs')
         require(manifest.get('asset_archive_sha256')==builder.accepted_import_receipt()['bundle_contract']['asset.archive.sha256'],
                 'Cache binary asset identity differs')
         files=manifest.get('files',{})
@@ -85,6 +88,7 @@ def main():
     import host_smoke as host
     data=host.import_game_data(imports,args.archive.resolve(),args.work,args.output)
     runtime=data.parent
+    prerequisites.install(runtime)
     for directory,dirs,files in os.walk(data,followlinks=False):
         for name in dirs:require(not (Path(directory)/name).is_symlink(),'Linked imported directory')
         for name in files:
@@ -95,7 +99,8 @@ def main():
     for name in client.selected_files(receipt):shutil.copyfile(folder/name,runtime/name)
     inputs={'source_commit':client.SOURCE,'data_commit':client.DATA,
             'build_file_sha256':{name:record['sha256'] for name,record in client.selected_files(receipt).items()},
-            'import_donor':builder.import_donor(),'normalized_mtime_epoch':EPOCH}
+            'import_donor':builder.import_donor(),'normalized_mtime_epoch':EPOCH,
+            'prerequisites':prerequisites.contract(),'prerequisites_manifest_sha256':prerequisites.manifest_sha256()}
     (runtime/'runtime-inputs.json').write_text(json.dumps(inputs,indent=2)+'\n')
     os.environ.update(WINEPREFIX=str(args.work/'wine-prefix'),WINEDEBUG='-all',TZ='UTC',
                       LIBGL_ALWAYS_SOFTWARE='1',GALLIUM_DRIVER='llvmpipe',LP_NUM_THREADS='2',
@@ -116,6 +121,9 @@ def main():
     require(result['status']=='output_checks_passed_runtime_unvalidated','Native client cache generation did not complete')
     stdout=(args.output/'generation/client-bins/stdout.log').read_text(errors='replace')
     require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in stdout,'Console capture exceeded its evidence bound')
+    require(not result['phases'][0]['removed_outputs'],'Client generation removed source inputs')
+    noncache=[r for r in result['phases'][0]['written_outputs'] if not safe_cache(r['path'])]
+    require(not noncache,'Client generation changed noncache inputs: '+', '.join(r['path'] for r in noncache))
     files={}
     for record in result['phases'][0]['written_outputs']:
         name=record['path']
@@ -130,11 +138,12 @@ def main():
               'executable_sha256':receipt['files']['CityOfHeroes.exe']['sha256'],
               'asset_archive_sha256':builder.accepted_import_receipt()['bundle_contract']['asset.archive.sha256'],
               'import_donor':builder.import_donor(),'normalized_mtime_epoch':EPOCH,
+              'prerequisites_manifest_sha256':prerequisites.manifest_sha256(),
               'generator_platform':'native_x86_64_linux_wine_x86_client','wine_version':wine_version,
               'generation_report':pin(args.output/'generation/generation-report.json'),
               'launcher_source_sha256':pin(ROOT/'android/native/client-launcher.c')['sha256'],
               'launcher_sha256':pin(launcher)['sha256'],
-              'generated_noncache_outputs':[r for r in result['phases'][0]['written_outputs'] if not safe_cache(r['path'])],
+              'generated_noncache_outputs':[],
               'files':dict(sorted(files.items())),'nonfatal_queued_errors_reviewed':False,
               'cache_consumption_validated':False,'android_execution_validated':False,'gameplay_validated':False}
     (args.output/MANIFEST).write_bytes(client.canonical(manifest))

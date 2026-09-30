@@ -12,7 +12,7 @@ or screen-lock test is requested.
    and at least 5 GiB free, and wait for **Runtime ready**.
 3. Tap **2 · Import client assets**. Choose the same complete
    `coh-reference-assets.zip` used for Atlas (615,541,018 bytes). Have at least
-   4.6 GiB free after runtime setup for the import. Wait for
+   6 GiB free after runtime setup for the import and prepared client data. Wait for
    **Client data ready**. This separate app needs its own one-time import;
    Android keeps the existing Atlas app's files private. The imported data is
    about 3 GB. Select the complete ZIP, not split parts or individual PIGGs.

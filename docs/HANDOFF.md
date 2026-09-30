@@ -25,6 +25,11 @@ private caches were generated and cleanup was complete. This establishes cold
 data processing, not a rendering deadlock or complete startup. The next work
 is to prepare compatible client caches off-device and qualify a normal startup.
 See the [second failed startup receipt](android-evidence/client-startup-hosted-36704251918.json).
+Native x86 cache generation then finished in 221 seconds with the game completion
+marker, but correctly failed its output checks because three badge/pophelp
+attributes were absent. The next candidate includes those exact accepted lookup
+files for both cache generation and normal startup. See the
+[cache generation receipt](android-evidence/client-cache-generation-36706745544.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.
