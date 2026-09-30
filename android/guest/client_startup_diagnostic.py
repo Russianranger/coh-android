@@ -33,6 +33,8 @@ DATA_COUNT, DATA_BYTES = 173011, 2977730517
 ASSET_ARCHIVE_SHA = '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'
 CACHE_EPOCH = 1767225600
 CACHE_BYTES_LIMIT = 512*1024*1024
+CLIENT_OUTPUT_LIMIT = 10*1024*1024
+CLIENT_EVIDENCE_LIMIT = 24*1024*1024
 REQUIRED = (presentation.REQUIRED - {'presentation-probe.exe'}) | {
     'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip',
     'client-prerequisites.zip'}
@@ -712,7 +714,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
 
     def save_evidence(self):
         if self.client:
-            data = self.client.text().encode('utf-8')
+            data = bytes(self.client.output)  # Preserve bounded raw bytes without replacement-decoding expansion.
             target = self.capture_dir / 'client-console.log'
             if not target.exists(): target.write_bytes(data)
             self.ctx.report['client_console'] = {'path': target.name, 'bytes': len(data),
@@ -786,7 +788,7 @@ def persist_report(args, context, capture_dir):
                         if not path.is_file(): continue
                         size = path.stat().st_size
                         count += 1; total += size
-                        require(count <= 70 and total <= 12*1024*1024, 'Capture export exceeded bound')
+                        require(count <= 70 and total <= CLIENT_EVIDENCE_LIMIT, 'Capture export exceeded bound')
                         archive.write(path, 'client-evidence/' + path.relative_to(capture_dir).as_posix())
             handle.flush(); os.fsync(handle.fileno())
         os.replace(temporary, target)
@@ -807,6 +809,10 @@ def main(argv=None):
     parser.add_argument('--observation-seconds', type=int, default=30)
     parser.add_argument('--timeout-seconds', type=int, default=1800)
     args = parser.parse_args(argv)
+    # This dedicated client invocation permits an 8 MiB console plus launcher/Wine
+    # overhead. Every owned child remains bounded and overflow remains fatal.
+    # The accepted diagnostic.py payload itself stays byte-identical.
+    base.OUTPUT_LIMIT = CLIENT_OUTPUT_LIMIT
     os.umask(0o077)
     context = base.Context(args.state, args.timeout_seconds)
     context.report.update(scope=SCOPE, diagnostic_mode='actual_client_startup', session_id=args.session_id,

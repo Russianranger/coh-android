@@ -13,6 +13,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
+from types import SimpleNamespace
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -119,6 +120,44 @@ class EvidenceTests(unittest.TestCase):
         result = guest.startup_evidence('Loaded all data!', '', [], None)
         self.assertFalse(result['menu_visual_validated'])
         self.assertFalse(result['startup_observed'])
+
+
+class ConsoleBudgetTests(unittest.TestCase):
+    def test_owned_console_preserves_eight_mib_and_overflow_still_fails(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(guest.base, 'OUTPUT_LIMIT', guest.CLIENT_OUTPUT_LIMIT):
+            for size, overflow in ((8*1024*1024+1024, False), (guest.CLIENT_OUTPUT_LIMIT+1, True)):
+                with self.subTest(size=size):
+                    context = guest.base.Context(Path(temporary))
+                    command = [sys.executable, '-c',
+                        "import sys; sys.stdout.buffer.write(b'x'*int(sys.argv[1])+b'END')", str(size-3)]
+                    child = context.start('actual-coh-client', command)
+                    try:
+                        child.process.wait(timeout=10)
+                        child.reader.join(3); child.writer.join(3)
+                        self.assertFalse(child.reader.is_alive())
+                        self.assertEqual(child.overflow, overflow)
+                        self.assertLessEqual(len(child.output), guest.CLIENT_OUTPUT_LIMIT)
+                        if overflow:
+                            with self.assertRaises(guest.base.DiagnosticError): context.check()
+                        else:
+                            context.check()
+                            self.assertEqual(len(child.output), size)
+                            self.assertTrue(child.output.endswith(b'END'))
+                    finally:
+                        child.stop()
+
+    def test_console_export_preserves_raw_bytes_without_decode_expansion(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            diagnostic = guest.ClientStartupDiagnostic.__new__(guest.ClientStartupDiagnostic)
+            diagnostic.client = SimpleNamespace(output=bytearray(b'prefix\xff\xfe\n'))
+            diagnostic.capture_dir = Path(temporary)
+            diagnostic.ctx = SimpleNamespace(report={})
+            diagnostic.observer = diagnostic.work = None
+            diagnostic.save_evidence()
+            exported = (diagnostic.capture_dir/'client-console.log').read_bytes()
+            self.assertEqual(exported, bytes(diagnostic.client.output))
+            self.assertEqual(diagnostic.ctx.report['client_console']['bytes'], len(exported))
+            self.assertEqual(diagnostic.ctx.report['client_console']['sha256'], hashlib.sha256(exported).hexdigest())
 
 
 class WorktreeTests(unittest.TestCase):
@@ -304,6 +343,22 @@ class ManifestAndLifecycleTests(unittest.TestCase):
             self.assertFalse(json.loads(archive.read('latest-report.json'))['passed'])
         (capture/'linked').symlink_to(capture/'screen.ppm')
         with self.assertRaises(guest.base.DiagnosticError): guest.persist_report(self.args,context,capture)
+
+    def test_large_console_bundle_retains_exact_limit_and_rejects_excess(self):
+        self.args.state.mkdir()
+        capture = self.root/'large-captures'; capture.mkdir()
+        console = capture/'client-console.log'
+        with console.open('wb') as stream: stream.truncate(8*1024*1024)
+        with (capture/'other-evidence.bin').open('wb') as stream:
+            stream.truncate(guest.CLIENT_EVIDENCE_LIMIT-console.stat().st_size)
+        context = guest.base.Context(self.args.state)
+        guest.persist_report(self.args, context, capture)
+        with zipfile.ZipFile(self.args.state/'report.zip') as archive:
+            self.assertEqual(archive.getinfo('client-evidence/client-console.log').file_size, 8*1024*1024)
+            self.assertEqual(sum(info.file_size for info in archive.infolist() if info.filename.startswith('client-evidence/')),
+                             guest.CLIENT_EVIDENCE_LIMIT)
+        with console.open('ab') as stream: stream.write(b'x')
+        with self.assertRaises(guest.base.DiagnosticError): guest.persist_report(self.args, context, capture)
 
 
 if __name__ == '__main__': unittest.main()

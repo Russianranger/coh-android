@@ -38,6 +38,12 @@ deadline expired. Cleanup was complete. The next qualification uses this exact
 APK and its existing normal 900-second startup budget, with all readiness,
 observation and cleanup checks unchanged; do not rebuild or repeat phone tests.
 See the [cached diagnostic receipt](android-evidence/client-startup-hosted-36707839624.json).
+The full-budget run `36710174172` advanced through FX, villains, cape FX and
+body parts, then hit the diagnostic 1 MiB console limit during NPC costume
+missing-texture warnings. It did not exhaust the startup deadline, and cleanup
+was complete. The next wrapper increases bounded observation capacity, preserves
+all failure/readiness checks, and reuses the exact verified caches. See the
+[observation-budget receipt](android-evidence/client-startup-hosted-36710174172.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

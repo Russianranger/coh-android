@@ -19,7 +19,7 @@ static void output(HANDLE handle, const char *text) {
 #define CONSOLE_CHARS (CONSOLE_COLUMNS * CONSOLE_ROWS)
 #define CONSOLE_NORMALIZED (CONSOLE_CHARS + CONSOLE_ROWS)
 #define CONSOLE_TEXT (CONSOLE_NORMALIZED * 4 + 1)
-#define CONSOLE_BUDGET (1024 * 1024)
+#define CONSOLE_BUDGET (8 * 1024 * 1024)
 static WCHAR console_wide[CONSOLE_CHARS];
 static WCHAR normalized_wide[CONSOLE_NORMALIZED];
 static char console_text[CONSOLE_TEXT], previous_text[CONSOLE_TEXT];
