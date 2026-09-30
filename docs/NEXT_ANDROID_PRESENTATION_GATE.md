@@ -1,6 +1,8 @@
 # Next Android presentation gate
 
-The complete physical Atlas 0.4.4 create/save/restart/resume test passed. The
+The physical 0.5.0 presentation test passed with all 120 Android PixelCopy frames.
+Advance directly to step 5 below: pinned actual CoH graphical startup.
+The complete physical Atlas 0.4.4 create/save/restart/resume test also passed. The
 user explicitly declined manual Stop/rerun and additional lifecycle testing
 because of the long boot process; those checks remain unvalidated and do not
 block this step. Implement a visible Wine display in a separate client
@@ -16,7 +18,8 @@ repeat the accepted server/database diagnostics.
   passed on Thor with Mesa llvmpipe. It currently exits too quickly to verify
   visible presentation, reconnects or sustained frame updates.
 - The new separate `android/presentation` app supplies a bounded RFB decoder,
-  SurfaceView and PixelCopy verification. Its physical Android result is pending.
+  SurfaceView and PixelCopy verification. Its physical Android result passed; see
+  [the acceptance receipt](android-evidence/accepted-presentation-thor-20260930.json).
 - The Atlas APK's game package excludes `CityOfHeroes.exe`.
   `tools/android/game/package_game_runtime.py`, `choose_files()`, deliberately
   packages the server/TestClient subset. A visible surface alone will not add

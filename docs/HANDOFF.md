@@ -1,6 +1,21 @@
 # City of Heroes Android handoff
 
-**COH Atlas Test 0.4.4 passed on the physical AYN Thor. Visible client presentation is next.**
+**Physical Thor presentation 0.5.0 passed. Actual CoH graphical client startup is next.**
+The supplied `coh-client-test-20260930-094646.zip` verifies all 120 current-session
+PixelCopy frames over 62.758 seconds. The full operation took 128.592 seconds;
+all five guest stages and six child records passed, and cleanup left zero
+owned processes or inspection failures. Exact shipped Java acceptance and
+runtime identities were independently replayed. See the [physical presentation
+receipt](android-evidence/accepted-presentation-thor-20260930.json).
+
+The next separate **COH Game Client Test 0.6.0** packages the pinned actual
+`CityOfHeroes.exe` and matching DLLs. Reuse the reviewed asset ZIP for one
+private import, then attempt visible game loading/login without a server boot.
+Physical synthetic presentation is closed; do not request another pattern,
+Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
+acceleration and gameplay claims remain separate.
+
+**COH Atlas Test 0.4.4 also passed on the physical AYN Thor.**
 The supplied `coh-atlas-test-20260930-003609.zip` verifies all 18 stages in
 55 minutes 52.7 seconds: both protocol saves committed, `TEST50056` resumed in
 the same cluster with 12,345 influence and login count 1 → 2, and all 102 child
@@ -27,8 +42,8 @@ all six children and the socket cleaned up. The APK itself is from build
 `36653423058`, source `6fdeef4494dd41f6137ee51d80ec4e39cf687b01`; only the
 host viewer changed for qualification. See the [receipt](android-evidence/accepted-presentation-hosted-36654262400.json).
 
-The next physical step is one foreground [display test and export](ANDROID_PRESENTATION_DEVICE_TEST.md).
-Android PixelCopy presentation remains unvalidated until that report is supplied.
+That physical [display test and export](ANDROID_PRESENTATION_DEVICE_TEST.md) has now passed,
+as recorded above. Its installation instructions are retained as historical evidence.
 A visible fixture does not establish actual CoH menus, world rendering, controls
 or gameplay. Preserve the separate APK and do not repeat the accepted server test.
 
