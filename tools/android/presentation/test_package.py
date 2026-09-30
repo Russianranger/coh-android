@@ -143,6 +143,33 @@ class FrameTests(unittest.TestCase):
         self.assertTrue(result['connected_outside_proot'])
         self.assertFalse(result['android_surface_validated'])
 
+    def test_terminal_broken_pipe_reset_and_truncated_update_preserve_only_complete_frames(self):
+        class ClosingConnection:
+            def __init__(self, count, closing):
+                self.data = b''.join(b'\0\0\0\x01'+struct.pack('!HHHHi',0,0,800,600,0)
+                                    +encoded_frame(FrameTests.SESSION,n) for n in range(1,count+1))
+                self.closing = closing
+                self.requests = 0
+            def sendall(self, data):
+                self.requests += 1
+                if not self.data and self.closing is BrokenPipeError: raise BrokenPipeError('closed')
+            def recv(self, count):
+                if not self.data:
+                    if self.closing is ConnectionResetError: raise ConnectionResetError('closed')
+                    return b''
+                block,self.data = self.data[:count],self.data[count:]
+                return block
+        for closing in (BrokenPipeError, ConnectionResetError, EOFError):
+            with self.subTest(closing=closing), mock.patch.object(host,'rfb_handshake',return_value='fixture'), \
+                    mock.patch.object(host.time,'sleep'):
+                result=host.observe_rfb(ClosingConnection(6,closing),self.SESSION,
+                                       mock.Mock(poll=lambda:None),time.monotonic()+10)
+                self.assertEqual(list(range(1,7)),result['distinct_native_frames'])
+                self.assertEqual(closing.__name__,result['terminal_transport'])
+                with self.assertRaisesRegex(ValueError,'did not prove'):
+                    host.observe_rfb(ClosingConnection(2,closing),self.SESSION,
+                                     mock.Mock(poll=lambda:None),time.monotonic()+10)
+
     def test_host_report_rejects_cleanup_failure_and_wrong_session(self):
         valid={'scope':'visible_presentation_guest','status':'passed','passed':True,'failures':[],
             'session_id':self.SESSION,'android_execution_validated':False,'gameplay_validated':False,
@@ -151,6 +178,13 @@ class FrameTests(unittest.TestCase):
             'producer':{'status':'passed','session_id':self.SESSION,'width':800,'height':600,
                 'duration_seconds':60,'frames':120,'pointer_bits':32,'frame_contract':1,
                 'readback_verified':True,'android_surface_validated':False,'game_validated':False}}
+        valid.update(stages=[{'stage':name,'status':'passed'} for name in (
+            'presentation_inputs','presentation_display','wine_initialization','win32_runtime_dll','visible_presentation_frames')],
+            presentation_socket_removed=True, frames_emitted=120, postgres_started=False,
+            cleanup_execution={'diagnostic_initialized':True,'wine_started':True,'owned_child_count':4},
+            processes=[{'label':label,'exit_code':0,'input_closed':True,'output_capture_closed':True}
+                       for label in ('runtime-probe','presentation-probe','wineboot','private-presentation-x')])
+        valid['stages'][1].update(rfb_tcp=False,x_tcp=False,socket_path='/presentation-socket/view.sock',socket_mode='0600')
         host.validate_report(valid,self.SESSION)
         with self.assertRaises(ValueError): host.validate_report(valid,'f'*32)
         valid['cleanup_complete']=False

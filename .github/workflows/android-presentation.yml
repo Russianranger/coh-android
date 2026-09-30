@@ -7,6 +7,7 @@ on:
       - 'android/native/presentation-probe.c'
       - 'android/guest/presentation_diagnostic.py'
       - 'tools/android/presentation/**'
+      - '!tools/android/presentation/host_smoke.py'
       - '.github/workflows/android-presentation.yml'
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - 'android/native/presentation-probe.c'
       - 'android/guest/presentation_diagnostic.py'
       - 'tools/android/presentation/**'
+      - '!tools/android/presentation/host_smoke.py'
       - '.github/workflows/android-presentation.yml'
 permissions:
   contents: read
@@ -23,6 +25,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   tooling:
+    # A host-only qualification reruns the focused checks in the dedicated
+    # workflow and reuses the exact signed APK without creating another build.
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[presentation-host-only]')
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

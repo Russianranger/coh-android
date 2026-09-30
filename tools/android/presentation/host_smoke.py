@@ -153,38 +153,46 @@ def observe_rfb(connection, session, process, deadline):
     desktop = rfb_handshake(connection)
     pixels = bytearray(WIDTH*HEIGHT*4)
     frames, updates = [], 0
+    terminal_transport = None
     while process.poll() is None and time.monotonic() < deadline:
-        connection.sendall(struct.pack('!BBHHHH', 3, 0, 0, 0, WIDTH, HEIGHT))
-        try: message_type = recv_exact(connection, 1)[0]
-        except EOFError: break
-        if message_type == 2: continue  # Bell
-        if message_type == 3:
-            header = recv_exact(connection, 7)
-            length = struct.unpack_from('!I', header, 3)[0]
-            require(length <= 65536, 'Oversized server cut text')
-            recv_exact(connection, length); continue
-        require(message_type == 0, 'Unexpected RFB message')
-        header = recv_exact(connection, 3)
-        rectangles = struct.unpack_from('!H', header, 1)[0]
-        require(0 < rectangles <= 4096, 'Invalid RFB rectangle count')
-        for _ in range(rectangles):
-            x, y, width, height, encoding = struct.unpack('!HHHHi', recv_exact(connection, 12))
-            require(encoding == 0 and width > 0 and height > 0 and x+width <= WIDTH and y+height <= HEIGHT,
-                    'Invalid or unsupported RFB rectangle')
-            raw = recv_exact(connection, width*height*4)
-            for row in range(height):
-                start = ((y+row)*WIDTH+x)*4
-                pixels[start:start+width*4] = raw[row*width*4:(row+1)*width*4]
-        updates += 1
-        frame = decode_pattern(pixels, session)
-        if frame is not None and frame not in frames: frames.append(frame)
-        # Cap the observer rate to reduce transfer load; this is not game FPS.
-        time.sleep(0.1)
+        try:
+            connection.sendall(struct.pack('!BBHHHH', 3, 0, 0, 0, WIDTH, HEIGHT))
+            message_type = recv_exact(connection, 1)[0]
+            if message_type == 2: continue  # Bell
+            if message_type == 3:
+                header = recv_exact(connection, 7)
+                length = struct.unpack_from('!I', header, 3)[0]
+                require(length <= 65536, 'Oversized server cut text')
+                recv_exact(connection, length); continue
+            require(message_type == 0, 'Unexpected RFB message')
+            header = recv_exact(connection, 3)
+            rectangles = struct.unpack_from('!H', header, 1)[0]
+            require(0 < rectangles <= 4096, 'Invalid RFB rectangle count')
+            for _ in range(rectangles):
+                x, y, width, height, encoding = struct.unpack('!HHHHi', recv_exact(connection, 12))
+                require(encoding == 0 and width > 0 and height > 0 and x+width <= WIDTH and y+height <= HEIGHT,
+                        'Invalid or unsupported RFB rectangle')
+                raw = recv_exact(connection, width*height*4)
+                for row in range(height):
+                    start = ((y+row)*WIDTH+x)*4
+                    pixels[start:start+width*4] = raw[row*width*4:(row+1)*width*4]
+            updates += 1
+            frame = decode_pattern(pixels, session)
+            if frame is not None and frame not in frames: frames.append(frame)
+            # Cap the observer rate to reduce transfer load; this is not game FPS.
+            time.sleep(0.1)
+        except (EOFError, BrokenPipeError, ConnectionResetError) as closure:
+            # Xvnc closes during normal owned cleanup. Preserve complete frames
+            # already observed; a short/failed producer still cannot pass the
+            # independent frame threshold and complete guest/process gates below.
+            terminal_transport = type(closure).__name__
+            break
     require(len(frames) >= 6 and max(frames)-min(frames) >= 5
             and any(frame % 2 for frame in frames) and any(not frame % 2 for frame in frames),
             'External RFB observer did not prove changing session-bound frames')
     return {'scope': 'host_external_unix_rfb_observer', 'desktop': desktop, 'session_id': session,
             'updates': updates, 'distinct_native_frames': frames, 'native_pattern_verified': True,
+            'terminal_transport': terminal_transport,
             'connected_outside_proot': True, 'android_surface_validated': False,
             'game_rendering_validated': False, 'hardware_acceleration_validated': False}
 
@@ -218,7 +226,7 @@ def make_command(work, assets, proot, session):
     return command, env
 
 
-def validate_report(report, session):
+def validate_report(report, session, manifest=None):
     require(report.get('passed') is True and report.get('failures') == [] and report.get('scope') == 'visible_presentation_guest'
             and report.get('status') == 'passed', 'Guest presentation report failed')
     require(report.get('session_id') == session, 'Guest session receipt differs')
@@ -240,12 +248,40 @@ def validate_report(report, session):
             and producer.get('android_surface_validated') is False and producer.get('game_validated') is False,
             'Guest native producer proof differs')
 
+    stages = report.get('stages', [])
+    require([stage.get('stage') for stage in stages] == ['presentation_inputs', 'presentation_display',
+            'wine_initialization', 'win32_runtime_dll', 'visible_presentation_frames']
+            and all(stage.get('status') == 'passed' for stage in stages), 'Guest presentation stages incomplete')
+    display = stages[1]
+    require(display.get('rfb_tcp') is False and display.get('x_tcp') is False
+            and display.get('socket_path') == '/presentation-socket/view.sock'
+            and display.get('socket_mode') == '0600' and report.get('presentation_socket_removed') is True,
+            'Private presentation socket evidence incomplete')
+    children = report.get('processes', [])
+    execution = report.get('cleanup_execution', {})
+    require(isinstance(children, list) and len(children) >= 4
+            and execution.get('diagnostic_initialized') is True and execution.get('wine_started') is True
+            and type(execution.get('owned_child_count')) is int and execution['owned_child_count'] == len(children)
+            and all(type(child.get('exit_code')) is int and child.get('input_closed') is True
+                    and child.get('output_capture_closed') is True for child in children),
+            'Guest owned child closure evidence incomplete')
+    for label in ('runtime-probe', 'presentation-probe'):
+        matching = [child for child in children if child.get('label') == label]
+        require(len(matching) == 1 and matching[0]['exit_code'] == 0, 'Required native child did not exit successfully')
+    require(report.get('frames_emitted') == 120 and report.get('postgres_started') is False,
+            'Unexpected producer count or server execution')
+    if manifest is not None:
+        expected = {name: manifest['files'][name]['sha256'] for name in assets_tool.PROBE_FILES}
+        require(report.get('asset_sha256') == expected, 'Guest asset hashes differ from the exact APK')
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for key in ('apk','build-report','proot','work','evidence'): parser.add_argument('--'+key, type=Path, required=True)
-    parser.add_argument('--repository-commit', required=True)
+    parser.add_argument('--repository-commit', required=True, help='Exact APK producer source commit')
+    parser.add_argument('--verifier-commit', help='Current host verifier source commit when qualifying an existing APK')
     args = parser.parse_args()
+    verifier_commit = apk_tool.source_commit(args.verifier_commit)
     require(platform.machine().lower() in ('aarch64','arm64'), 'Native ARM64 Linux is required')
     require(not args.work.exists() and not args.work.is_symlink(), 'Use a fresh owned smoke directory')
     args.work = args.work.resolve(); args.proot = args.proot.resolve()
@@ -272,7 +308,8 @@ def main():
             code = process.wait(timeout=max(1,deadline-time.monotonic()))
             require(code == 0, 'Guest process exit status differs')
             report = json.loads((args.work/'state'/'latest-report.json').read_text())
-            validate_report(report, session)
+            validate_report(report, session, manifest)
+            require(not socket_path.exists(), 'Guest private RFB socket survived cleanup')
         except Exception as error:
             failure = {'type': type(error).__name__, 'message': str(error)}
             raise
@@ -288,7 +325,9 @@ def main():
                 source = args.work/'state'/name
                 if source.is_file(): shutil.copyfile(source, args.evidence/name)
             result = {'format':1,'status':'failed' if failure else 'passed','scope':'exact_apk_native_arm64_guest_external_rfb',
-                      'repository_commit':args.repository_commit,'apk_sha256':digest(args.apk),
+                      'repository_commit':args.repository_commit, 'apk_repository_commit':args.repository_commit,
+                      'verifier_repository_commit':verifier_commit,'host_verifier_sha256':digest(Path(__file__)),
+                      'apk_sha256':digest(args.apk),
                       'runtime_manifest_sha256':digest(assets/'runtime-manifest.json'),
                       'accepted_runtime_run_id':manifest['accepted_base_runtime']['run_id'],
                       'session_id':session,'external_observer':observer,'failure':failure,
