@@ -20,9 +20,17 @@ Keep the accepted Atlas app and its private runtime installed. The separate
 **COH Client Test 0.5.0** implements the next [presentation gate](NEXT_ANDROID_PRESENTATION_GATE.md):
 a session-bound animated Wine/OpenGL fixture, app-private Unix RFB, an Android
 SurfaceView, and actual PixelCopy frame verification. It starts no game server
-or SQL service and imports no game data. Its hosted qualification and physical
-Android presentation evidence must be recorded separately; a visible fixture
-does not establish actual CoH menus, world rendering, controls or gameplay.
+or SQL service and imports no game data. The exact signed APK passed hosted qualification in
+[run 36654262400](https://github.com/Russianranger/coh-android/actions/runs/36654262400):
+the external private RFB viewer observed all 120 frames in 109.26 seconds, and
+all six children and the socket cleaned up. The APK itself is from build
+`36653423058`, source `6fdeef4494dd41f6137ee51d80ec4e39cf687b01`; only the
+host viewer changed for qualification. See the [receipt](android-evidence/accepted-presentation-hosted-36654262400.json).
+
+The next physical step is one foreground [display test and export](ANDROID_PRESENTATION_DEVICE_TEST.md).
+Android PixelCopy presentation remains unvalidated until that report is supplied.
+A visible fixture does not establish actual CoH menus, world rendering, controls
+or gameplay. Preserve the separate APK and do not repeat the accepted server test.
 
 The 0.4.4 exact signed APK remains hosted-qualified in
 [run 36638344040](https://github.com/Russianranger/coh-android/actions/runs/36638344040)

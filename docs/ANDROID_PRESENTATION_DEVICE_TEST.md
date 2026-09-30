@@ -34,3 +34,12 @@ The fixture is not `CityOfHeroes.exe`. Game menus, world rendering, hardware
 acceleration, controller input, audio and interactive gameplay remain untested.
 The next step after the visible presentation pass is the separately pinned
 actual CoH graphical client package and startup.
+
+## Qualified delivery identity
+
+`COH-Client-Test-0.5.0.apk`: 13,851,058 bytes; SHA-256
+`d0745f974567f798cf1254fb98b95eb056702021e11c2f29938e9cb407a83e71`.
+The exact signed APK passed the external Unix RFB and guest cleanup check in
+[run 36654262400](https://github.com/Russianranger/coh-android/actions/runs/36654262400).
+All 120 frames were observed; hosted execution took 109.26 seconds. This timing
+is not a physical Thor measurement. Android display evidence remains pending.
