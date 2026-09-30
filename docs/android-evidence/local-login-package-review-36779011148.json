@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "scope": "independent_exact_apk_local_login_package_review",
+  "run_id": 36779011148,
+  "repository_commit": "a80bc9c9df684779987dd6d1c146c66960db9458",
+  "status": "passed",
+  "artifact_zip": {
+    "id": 11126443280,
+    "bytes": 339216117,
+    "sha256": "3cfa148499df0d6ec858767559a8b397265ca52ab5e476fb5dc23456531d4e7f",
+    "sha256_matches_github_artifact_metadata": true
+  },
+  "apk": {
+    "name": "COH-Local-Login-0.8.0.apk",
+    "bytes": 373845468,
+    "sha256": "76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd"
+  },
+  "package_manifest_independently_decoded": true,
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "previous_version": {
+    "name": "0.7.0",
+    "code": 1
+  },
+  "candidate_version": {
+    "name": "0.8.0",
+    "code": 2
+  },
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "abi": "arm64-v8a",
+  "permissions_match": true,
+  "payload_count": 38,
+  "all_payload_bytes_verified": true,
+  "all_zip_crc_verified": true,
+  "retained_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "certificate_matches_previous_apk": true,
+  "jar_v1_signature_independently_verified": true,
+  "apk_v2_v3_signature_reverified_locally": false,
+  "apk_v2_v3_note": "Hosted build apksigner verification passed; local SDK apksigner unavailable. Local JDK JarFile verified signed entry contents.",
+  "base_runtime_files_preserved": 12,
+  "import_files_preserved": 4,
+  "client_caches_and_prerequisites_preserved": true,
+  "native_proot_files_preserved": 2,
+  "client_binary_files_preserved": 21,
+  "guest_scripts_match_checkout": true,
+  "java_sources_match_checkout": 15,
+  "native_launcher_source_matches_checkout": true,
+  "server_archive_exact_accepted_inputs_verified": true,
+  "server_source_files_verified_from_exact_commit": 25,
+  "server_donor": {
+    "package_run_id": 36460867428,
+    "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+    "package_repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "schema_acceptance_run_id": 36088012666,
+    "package_archive": "dbserver-package.tar.gz",
+    "schema_archive": "dbserver-schema.tar.gz",
+    "listener_policy": "device",
+    "variant": "normal",
+    "persistent_profile": "android-local-login",
+    "mapserver_included": false
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

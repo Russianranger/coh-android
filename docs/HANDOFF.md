@@ -1,6 +1,43 @@
 # City of Heroes Android handoff
 
-**0.8.0 local graphical login is being corrected after its first hosted check; no new Thor run is requested yet.**
+**0.8.0 local graphical login passed hosted qualification and is ready for one Thor login session.**
+
+Accepted source `a80bc9c9df684779987dd6d1c146c66960db9458`, run
+[36779011148](https://github.com/Russianranger/coh-android/actions/runs/36779011148),
+passed all 11 guest stages and independent package review. Root visual review of
+fresh post-response screenshots confirms **Server Used/Total: 0/12** and twelve
+empty Create Character slots. The owned local DbServer authenticated `COHLOCAL`,
+sent the character list, and matched SQL account ID `1353310574` with zero
+characters. The graphical client became ready in 441.389 seconds; total hosted
+execution took 671.270 seconds. Finish completed after 49.235 seconds of live
+observation. All 63 child records closed, PostgreSQL stopped gracefully, the
+database was retained, and no owned workers or inspection failures remained.
+The same run also recovered the login screen after Settings X/Escape.
+
+The accepted `COH-Local-Login-0.8.0.apk` is 373,845,468 bytes, SHA-256
+`76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd`.
+It retains app ID `io.github.russianranger.cohclientinteractive` and the 0.7.0
+signing key, increments version code to 2, and preserves imported assets, Wine
+state and compatible prepared/generated caches. All 77 interactive and 26
+client/cache automated checks passed. See the [hosted receipt](android-evidence/local-login-hosted-36779011148.json),
+[package review](android-evidence/local-login-package-review-36779011148.json)
+and [one-session Thor instructions](ANDROID_LOCAL_LOGIN_TEST.md).
+
+The scope is hosted graphical local login and an empty character list. Android
+local login, account reopening after restart, character creation and world entry
+are not yet accepted. This hosted run initialized a fresh persistent profile;
+retaining its database at cleanup does not prove a subsequent reopen. Raw
+automation reports intentionally leave visual-validation flags false; the
+separate review receipt records the screenshot assessment.
+
+Sequential targets:
+1. Confirm this APK's local login and clean Finish on Thor in one session.
+2. Create and save one graphical character against the persistent profile.
+3. Restart and reopen that exact saved character, proving durable persistence.
+4. Enter a local map with MapServer and verify initial world interaction.
+5. Refine gameplay controls, performance, audio and hardware acceleration.
+
+The first hosted attempt below remains a failed historical result.
 
 Candidate source `8d8ebd35396e193f426df686167c87e3d2eeee7a`, run
 [36775940197](https://github.com/Russianranger/coh-android/actions/runs/36775940197),
@@ -21,15 +58,15 @@ headless TestClient already requests the supported development version exception
 The correction adds `--local-login` to the native launcher, which alone appends
 `-noversioncheck 1`; ordinary startup and cache generation are unchanged. The
 separate DbServer wire-protocol check and exact source/executable/data pins remain
-enforced. A repeat hosted qualification of this corrected APK is required.
+enforced. Corrected run 36779011148 passed as recorded above.
 
 The update keeps the installed app identity/signature, imported assets, Wine
 prefix and compatible prepared/generated caches. The new persistent
 `android-local-login` profile starts PostgreSQL/DbServer with no MapServer. Login
 acceptance requires current owned-server authentication and a sent character-list
 response, matching SQL account identity and fresh captures; actual empty-character
-selection requires visual review. Draft [one-session Thor instructions](ANDROID_LOCAL_LOGIN_TEST.md)
-must receive the accepted APK receipt/hash before delivery. Do not repeat earlier
+selection requires visual review. The [one-session Thor instructions](ANDROID_LOCAL_LOGIN_TEST.md)
+now identify the accepted APK receipt/hash. Do not repeat earlier
 startup, menu input, Atlas, or synthetic display device tests.
 
 **Physical Thor startup and basic menu input are accepted within their reviewed scope. The 0.7.0 device session failed its final-frame check during a graphics reload; cleanup passed.**
@@ -61,8 +98,8 @@ preserve the existing support archive limit. All 53 interactive automated tests
 passed after this correction, including transient blank recovery, permanent
 blank output, deadline, process/window loss and truncated console cases.
 Hosted run 36775940197 now demonstrates the Settings-close/Escape sequence
-returning to the login screen; the corrected APK still awaits local-login
-qualification. Keep the installed 0.7.0 package and its imported/runtime state.
+returning to the login screen; corrected run 36779011148 also passed local-login
+qualification. Install 0.8.0 over 0.7.0 and retain its imported/runtime state.
 
 The supplied `coh-game-client-test-20260930-141120.zip` passed the exact shipped
 Java cleanup and PixelCopy acceptance checks. Its pinned actual client reached

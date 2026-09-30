@@ -1,7 +1,16 @@
 # COH Local Login 0.8.0 — one Thor session
 
-Candidate qualification is pending. The APK's accepted build receipt and SHA-256
-must be recorded before this procedure is issued for device testing.
+Hosted qualification passed in [run 36779011148](https://github.com/Russianranger/coh-android/actions/runs/36779011148)
+from source `a80bc9c9df684779987dd6d1c146c66960db9458`. Independent screenshot
+review confirms the empty character-selection screen, **Server Used/Total: 0/12**.
+The next acceptance step is this single physical Thor session.
+
+Accepted APK: `COH-Local-Login-0.8.0.apk`, 373,845,468 bytes.
+SHA-256: `76723c1b2f52d351f48d3b46a15625414c3977fdb8230965d83ec939d2af88fd`.
+The retained signing certificate SHA-256 is
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+See the [hosted review](android-evidence/local-login-hosted-36779011148.json)
+and [package review](android-evidence/local-login-package-review-36779011148.json).
 
 This milestone connects the graphical client to its private local PostgreSQL and
 DbServer, then displays an empty character-selection screen. The database remains
@@ -34,7 +43,8 @@ later milestones; the accepted touch/controller/text checks need no repeat.
    text with `offline`, keep **Replace focused game field (Ctrl+A)** checked, and
    tap **Send**. This is the local test password; use these supplied values.
 5. Tap the game's **Log In**, then select its single `127.0.0.1` server row.
-   Wait for the empty character-selection screen with its empty character slots.
+   Wait for the empty character-selection screen with **Server Used/Total: 0/12**
+   and twelve **Create Character** slots. Do not create a character yet.
 6. Leave that screen visible until the Android status says **Local login
    verified**. Server logs can take about 60 seconds to flush; the app then saves
    three fresh Android captures. The general capture counter alone does not mean
