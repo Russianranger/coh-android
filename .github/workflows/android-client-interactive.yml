@@ -177,13 +177,13 @@ jobs:
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore out/client-signing/coh-client-interactive.jks
           --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
-          --output out/client/COH-Local-Login-0.8.0.apk
+          --output out/client/COH-Local-Login-0.8.1.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-interaction-apk
           path: |
-            out/client/COH-Local-Login-0.8.0.apk
-            out/client/COH-Local-Login-0.8.0.apk.sha256
+            out/client/COH-Local-Login-0.8.1.apk
+            out/client/COH-Local-Login-0.8.1.apk.sha256
             out/client/interactive-apk-build-report.json
             out/client/assets-preparation.json
           if-no-files-found: error
@@ -247,11 +247,11 @@ jobs:
       - name: Exercise exact APK local login through private Unix RFB
         run: >-
           python3 tools/android/interactive/login_host_smoke.py
-          --apk out/client/COH-Local-Login-0.8.0.apk
+          --apk out/client/COH-Local-Login-0.8.1.apk
           --archive out/client-assets.zip
           --build-report out/client/interactive-apk-build-report.json
           --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
-          --startup-timeout-seconds 900
+          --startup-timeout-seconds 900 --warm-prefix-refresh
           --work out/client-host --evidence out/client-evidence
       - uses: actions/upload-artifact@v4
         if: always()

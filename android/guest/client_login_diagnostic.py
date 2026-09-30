@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """One graphical local-login session with a persistent private server profile."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import os
+import re
+import stat
 import signal
 import sys
 
@@ -15,6 +18,49 @@ base, require = interactive.base, interactive.require
 SCOPE = 'actual_client_login_guest'
 REQUIRED = interactive.REQUIRED | {'client_login_diagnostic.py', 'local_login_server.py',
     'dbserver-package.tar.gz', 'dbserver-schema.tar.gz', '001-coh-compat.sql', 'psqlodbc_x86.msi'}
+
+
+def wine_registration_input(wine):
+    """Record the installed INF used by this pinned Wine's timestamp policy."""
+    path = wine.parent.parent / 'share/wine/wine.inf'
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        before = os.fstat(descriptor)
+        require(stat.S_ISREG(before.st_mode) and 0 < before.st_size <= 4*1024*1024,
+                'Wine registration input is missing, nonregular or oversized')
+        digest = hashlib.sha256()
+        total = 0
+        while True:
+            chunk = os.read(descriptor, 65536)
+            if not chunk: break
+            total += len(chunk)
+            require(total <= before.st_size, 'Wine registration input grew during inspection')
+            digest.update(chunk)
+        after = os.fstat(descriptor)
+        current = path.lstat()
+        identity = lambda value: (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns)
+        require(total == before.st_size and identity(before) == identity(after) == identity(current)
+                and not stat.S_ISLNK(current.st_mode), 'Wine registration input changed during inspection')
+        return {'path': str(path), 'bytes': total, 'sha256': digest.hexdigest(),
+                'mtime_seconds': int(before.st_mtime), 'mtime_ns': before.st_mtime_ns,
+                'device': before.st_dev, 'inode': before.st_ino}
+    finally:
+        os.close(descriptor)
+
+
+def wine_update_timestamp(path):
+    """Wine stores the INF's integer mtime in this file's contents."""
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        info = os.fstat(descriptor)
+        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and 0 < info.st_size <= 32,
+                'Wine update timestamp is not an owned bounded regular file')
+        raw = os.read(descriptor, 33)
+        require(len(raw) == info.st_size and re.fullmatch(rb'[0-9]{1,10}\n', raw) is not None,
+                'Wine update timestamp content is invalid')
+        return int(raw)
+    finally:
+        os.close(descriptor)
 
 
 class LoginContext(base.Context):
@@ -37,6 +83,51 @@ class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):
             'source_binary_pin_verified': False,
             'scope': 'private_loopback_fake_auth_only',
         }
+
+    def prepare_wine_initialization(self):
+        # Runtime archives are byte-pinned, but Android's installer creates new
+        # file mtimes on an APK manifest update. Wine compares wine.inf mtime
+        # with .update-timestamp CONTENT, not our runtime-lock identity. A prior
+        # readiness proof therefore does not guarantee registration can skip.
+        registration = wine_registration_input(self.args.wine)
+        prefix_existed = self.wineprefix.is_dir()
+        super().prepare_wine_initialization()
+        self._wine_registration_input = registration
+        receipt = self.wine_initialization
+        prior_ready = receipt['ready_prefix_reused']
+        receipt.update(prior_ready_prefix=prior_ready, existing_prefix_preserved=prefix_existed,
+            installed_wine_inf=registration, refresh_reason='none' if prior_ready else 'no_current_readiness_proof',
+            update_timestamp_content_before=None, update_timestamp_content_after=None,
+            registration_timestamp_verified=False)
+        if prior_ready:
+            timestamp = self.wineprefix / '.update-timestamp'
+            previous = wine_update_timestamp(timestamp)
+            receipt['update_timestamp_content_before'] = previous
+            if previous != registration['mtime_seconds']:
+                # Force one genuine bounded registration pass through Wine.
+                # Never fabricate Wine's timestamp or remove prefix/settings.
+                timestamp.unlink()
+                receipt.update(ready_prefix_reused=False, update_timestamp_removed=True,
+                               refresh_reason='wine_inf_timestamp_changed')
+                self.ctx.event('stage', status='running', message='Refreshing preserved Windows environment')
+
+    def initialize_wine(self):
+        try:
+            # Retain the immutable accepted lifecycle: 0/0/0 for warm reuse,
+            # exactly 3/1/1 for registration; real exit and timeout checks apply.
+            super().initialize_wine()
+            current = wine_registration_input(self.args.wine)
+            require(current == self._wine_registration_input,
+                    'Wine registration input changed during initialization')
+            timestamp = wine_update_timestamp(self.wineprefix / '.update-timestamp')
+            self.wine_initialization['update_timestamp_content_after'] = timestamp
+            require(timestamp == current['mtime_seconds'], 'Wine registration timestamp differs from installed input')
+            self.wine_initialization['registration_timestamp_verified'] = True
+            # No readiness marker is written here. The inherited execute path
+            # still requires the real PE32 runtime probe before mark_wine_ready.
+        except BaseException:
+            if hasattr(self, 'wine_initialization'): self.wine_initialization['state'] = 'failed'
+            raise
 
     def launcher_command(self):
         return super().launcher_command() + ['--local-login']

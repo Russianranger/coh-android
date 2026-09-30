@@ -64,7 +64,7 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Local Login",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.8.0",12,false));
+        controls.addView(text("Persistent local server · v0.8.1",12,false));
         controls.addView(text("Connect the graphical client to your local server. Your imported assets and accepted tests carry forward.",13,false));
         setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);

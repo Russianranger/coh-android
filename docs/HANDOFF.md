@@ -1,6 +1,34 @@
 # City of Heroes Android handoff
 
-**0.8.0 local graphical login passed hosted qualification and is ready for one Thor login session.**
+**The first Thor 0.8.0 local-login attempt failed before DbServer or the game launched; 0.8.1 is being prepared to correct Wine profile refresh handling. No repeat of 0.8.0 is requested.**
+
+The supplied `coh-local-login-20260930-220534.zip` records a 76.956-second
+operation. Imported assets and the generated client caches were successfully
+reused through the wrapper-only migration. PostgreSQL initialized its persistent
+profile and started successfully. Wine then exited initialization with code 0,
+recording one complete registration pass (three registration processes, one
+WoW64 process), but the reused-prefix validator expected no registration and
+reported `Wine initialization registration evidence differs`. No client inputs
+were sent. All 21 child records closed; PostgreSQL stopped gracefully, its
+database remained intact, and no owned workers or inspection failures remained.
+See the [device failure receipt](android-evidence/local-login-thor-review-20260930.json).
+
+Source review explains the upgrade-specific mismatch: the Android extractor
+recreates Wine files with extraction-time modification dates on a new runtime
+generation. Wine compares the installed `wine.inf` modification time with the
+decimal value inside the preserved prefix's `.update-timestamp`. Our marker
+only compared the unchanged runtime archive identity. The device report did
+not contain those timestamp values, so the timestamp mismatch is a source-based
+explanation; the complete unexpected registration pass is directly recorded.
+The correction reconciles this metadata before calling the existing strict
+initializer, preserves the prefix, and requires the real PE32 runtime probe before
+writing readiness. The hosted stale-timestamp regression seeds a real prefix
+using the exact APK's Wine and PE32 probe, proves cleanup, changes only the
+stored timestamp, and requires a real registration refresh before graphical
+login. Prefix inode/sentinel and Wine input hashes must survive. This regression
+must pass before the corrected APK is delivered.
+
+**Historical 0.8.0 fresh-profile hosted qualification passed; the Thor result above supersedes its device-test recommendation.**
 
 Accepted source `a80bc9c9df684779987dd6d1c146c66960db9458`, run
 [36779011148](https://github.com/Russianranger/coh-android/actions/runs/36779011148),

@@ -2,6 +2,7 @@
 """Qualify the exact local-login APK on native ARM64 with a private server."""
 from __future__ import annotations
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -20,6 +21,179 @@ spec = importlib.util.spec_from_file_location('local_login_shared_host', Path(__
 host = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(host)
 require = host.require
+
+# This small hosted driver uses only the APK's pinned guest modules and actual
+# Wine/PE32 executables. It never manufactures a Wine readiness marker.
+WARM_PREFIX_SEED = r'''
+import json, os, platform, signal, sys
+from pathlib import Path
+from types import SimpleNamespace
+sys.path.insert(0, '/opt/coh')
+import client_startup_diagnostic as startup
+import presentation_diagnostic as presentation
+base = startup.base
+args = SimpleNamespace(state=Path('/state'), assets=Path('/opt/coh'),
+    pg_bin=Path('/opt/coh/pgsql/bin'), wine=Path('/opt/wine/bin/wine'),
+    wineserver=Path('/opt/wine/bin/wineserver'), xserver=Path('/usr/bin/Xtigervnc'),
+    socket_dir=Path('/presentation-socket'), session_id=sys.argv[1])
+os.umask(0o077)
+context = base.Context(args.state, 690)
+context.report.update(scope='host_real_wine_prefix_seed', session_id=args.session_id,
+    postgres_started=False, server_started=False, client_process_started=False)
+for sig in (signal.SIGTERM, signal.SIGINT):
+    signal.signal(sig, lambda *_: setattr(context, 'cancel_requested', True))
+diagnostic = None
+try:
+    base.require(platform.machine().lower() in ('aarch64', 'arm64') and os.geteuid() == 1000,
+                 'Seed must execute in the accepted ARM64 guest identity')
+    context.report['asset_sha256'] = startup.verify_assets(args.assets)
+    base.arm64_elf(args.wine); base.arm64_elf(args.wineserver)
+    base.require(not (args.state/'diagnostic/wine').exists(), 'Seed requires a genuinely fresh prefix')
+    diagnostic = presentation.PresentationDiagnostic(args, context)
+    diagnostic.start_wine()
+    context.stage('win32_runtime_dll')
+    result = context.run('runtime-probe', [args.wine, base.windows_path(args.assets/'runtime-probe.exe')],
+                         timeout=60, env=diagnostic.wine_env)
+    proof = base.validate_runtime_probe(result['output'])
+    context.passed(**proof)
+    diagnostic.mark_wine_ready()
+    context.report.update(runtime_probe=proof, status='passed')
+except Exception as error:
+    context.report.update(status='failed', failures=[str(error)])
+finally:
+    if diagnostic is not None:
+        try: context.report['failures'].extend(diagnostic.cleanup())
+        except Exception as error: context.report['failures'].append('Seed cleanup failed: '+str(error))
+    closed = all(c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
+                 for c in context.children)
+    context.report.update(cleanup_complete=closed,
+        cleanup=diagnostic.cleanup_status if diagnostic else {},
+        cleanup_execution={'diagnostic_initialized': diagnostic is not None,
+            'wine_started': bool(diagnostic is not None and diagnostic.wine_started),
+            'owned_child_count': len(context.children)})
+    context.report['passed'] = (context.report['status'] == 'passed' and not context.report['failures']
+        and diagnostic is not None and diagnostic.wine_initialization['state'] == 'ready'
+        and closed and all(context.report['cleanup'].values()))
+    base.private_write(args.state/'warm-prefix-seed.json', json.dumps(context.report, indent=2)+'\n')
+sys.exit(0 if context.report['passed'] else 1)
+'''
+
+
+def verify_prefix_seed(report, session, manifest):
+    require(report.get('scope') == 'host_real_wine_prefix_seed' and report.get('session_id') == session
+        and report.get('status') == 'passed' and report.get('passed') is True and report.get('failures') == [],
+        'Real Wine prefix seed did not complete')
+    require(report.get('asset_sha256') == {name: manifest['files'][name]['sha256']
+        for name in host.assets_tool.PROBE_FILES}, 'Seed APK input hashes differ')
+    initialization = report.get('wine_initialization', {})
+    require(initialization.get('state') == 'ready' and initialization.get('ready_prefix_reused') is False
+        and tuple(initialization.get(k) for k in ('registration_processes', 'wow64_registration_processes',
+            'registration_passes')) == (3, 1, 1), 'Seed did not perform real initial Wine registration')
+    require(report.get('runtime_probe') == {'pointer_bits': 32, 'dll_export_verified': True,
+        'odbc_manager_loaded': True}, 'Seed lacks actual PE32/DLL proof')
+    children = report.get('processes', [])
+    probes = [child for child in children if child.get('label') == 'runtime-probe']
+    require(len(probes) == 1 and probes[0].get('exit_code') == 0
+        and probes[0].get('output', '').splitlines().count('COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified') == 1,
+        'Seed must retain successful real runtime-probe output')
+    require(report.get('postgres_started') is False and report.get('server_started') is False
+        and report.get('client_process_started') is False, 'Prefix seed exceeded its scope')
+    require(report.get('cleanup_complete') is True and len(children) >= 5
+        and all(type(child.get('exit_code')) is int and child.get('input_closed') is True
+            and child.get('output_capture_closed') is True for child in children)
+        and report.get('cleanup_execution') == {'diagnostic_initialized': True,
+            'wine_started': True, 'owned_child_count': len(children)}
+        and report.get('cleanup', {}).get('wine_prefix_stopped') is True
+        and report.get('cleanup', {}).get('owned_processes_reaped') is True
+        and report.get('wine_process_cleanup', {}).get('complete') is True
+        and report.get('wine_process_cleanup', {}).get('remaining') == 0
+        and report.get('wine_process_cleanup', {}).get('inspection_failures') == 0
+        and report.get('presentation_socket_removed') is True,
+        'Seed owned-process cleanup was not proved')
+
+
+def stage_stale_prefix(work, manifest, report, session):
+    """Change one timestamp only after a real, closed, current-APK seed passed."""
+    verify_prefix_seed(report, session, manifest)
+    prefix = work/'state/diagnostic/wine'
+    marker = prefix/'.coh-wine-ready.json'
+    timestamp = prefix/'.update-timestamp'
+    wine_inf = work/'wine/share/wine/wine.inf'
+    require(prefix.is_dir() and not prefix.is_symlink() and all(path.is_file() and not path.is_symlink()
+        for path in (marker, timestamp, wine_inf)), 'Seed prefix identity files are missing or linked')
+    identity = {'format': 1, 'purpose': 'coh-wine-initialization',
+        'runtime_lock_sha256': manifest['files']['runtime-lock.json']['sha256']}
+    require(marker.stat().st_size <= 4096 and json.loads(marker.read_text()) == identity,
+        'Real seed did not publish the expected Wine readiness marker')
+    require(timestamp.stat().st_size <= 128 and re.fullmatch(r'[0-9]+\n?', timestamp.read_text()),
+        'Seed Wine timestamp is not decimal')
+    current = int(wine_inf.stat().st_mtime)
+    require(current > 1 and int(timestamp.read_text()) == current, 'Real seed timestamp differs from installed wine.inf')
+    sentinel = prefix/'.coh-host-prefix-retained'
+    require(not sentinel.exists() and not sentinel.is_symlink(), 'Host preservation sentinel already exists')
+    sentinel.write_text(session+'\n'); sentinel.chmod(0o600)
+    before = prefix.stat()
+    timestamp.write_text(str(current-1)+'\n')
+    return {'mode': 'real_prefix_then_stale_wine_inf_timestamp', 'session_id': session,
+        'prefix_device': before.st_dev, 'prefix_inode': before.st_ino,
+        'prefix_sentinel_sha256': host.digest(sentinel), 'ready_marker_sha256': host.digest(marker),
+        'wine_inf_sha256': host.digest(wine_inf), 'wine_inf_mtime': current,
+        'timestamp_before': current, 'timestamp_staged': current-1,
+        'seed_driver_sha256': hashlib.sha256(WARM_PREFIX_SEED.encode()).hexdigest()}
+
+
+def prepare_warm_prefix(command, environment, work, evidence, manifest, session):
+    start = command.index('/usr/bin/python3')
+    seed_command = command[:start]+['/usr/bin/python3', '-c', WARM_PREFIX_SEED, session]
+    process = None
+    try:
+        with (evidence/'warm-prefix-seed.log').open('w') as log:
+            process = subprocess.Popen(seed_command, env=environment, stdout=log,
+                stderr=subprocess.STDOUT, start_new_session=True)
+            code = process.wait(timeout=720)
+        require(code == 0, 'Real Wine prefix preparation failed')
+        report = host.assets_tool.read_json(work/'state/warm-prefix-seed.json')
+        require(not (work/'socket/view.sock').exists(), 'Seed display socket survived cleanup')
+        receipt = stage_stale_prefix(work, manifest, report, session)
+        (evidence/'warm-prefix-refresh.json').write_text(json.dumps(receipt, indent=2)+'\n')
+        return receipt
+    finally:
+        if process is not None and process.poll() is None:
+            (work/'state/stop-request').write_text('stop\n')
+            try: process.wait(timeout=35)
+            except subprocess.TimeoutExpired:
+                process.send_signal(signal.SIGQUIT)
+                try: process.wait(timeout=10)
+                except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)
+        source = work/'state/warm-prefix-seed.json'
+        if source.is_file(): shutil.copyfile(source, evidence/source.name)
+
+
+def verify_warm_refresh(work, receipt, report):
+    initialization = report.get('wine_initialization', {})
+    require(initialization.get('state') == 'ready' and initialization.get('prior_ready_prefix') is True
+        and initialization.get('ready_prefix_reused') is False
+        and initialization.get('refresh_reason') == 'wine_inf_timestamp_changed'
+        and initialization.get('existing_prefix_preserved') is True
+        and initialization.get('registration_timestamp_verified') is True
+        and initialization.get('update_timestamp_content_before') == receipt['timestamp_staged']
+        and initialization.get('update_timestamp_content_after') == receipt['wine_inf_mtime']
+        and tuple(initialization.get(k) for k in ('registration_processes', 'wow64_registration_processes',
+            'registration_passes')) == (3, 1, 1), 'Existing prefix did not execute the required real Wine refresh')
+    prefix = work/'state/diagnostic/wine'
+    require(prefix.is_dir() and not prefix.is_symlink() and all((prefix/name).is_file()
+        and not (prefix/name).is_symlink() for name in ('.coh-host-prefix-retained', '.coh-wine-ready.json', '.update-timestamp')),
+        'Existing prefix evidence became linked or missing')
+    current = prefix.stat()
+    require(current.st_dev == receipt['prefix_device'] and current.st_ino == receipt['prefix_inode']
+        and host.digest(prefix/'.coh-host-prefix-retained') == receipt['prefix_sentinel_sha256']
+        and host.digest(prefix/'.coh-wine-ready.json') == receipt['ready_marker_sha256']
+        and int((prefix/'.update-timestamp').read_text()) == receipt['wine_inf_mtime'],
+        'Existing Wine prefix was replaced or readiness was not restored')
+    wine_inf = work/'wine/share/wine/wine.inf'
+    require(int(wine_inf.stat().st_mtime) == receipt['wine_inf_mtime']
+        and host.digest(wine_inf) == receipt['wine_inf_sha256'], 'Installed Wine initialization source changed')
+    return dict(receipt, refresh_validated=True, prefix_retained=True, actual_registration_counts=[3, 1, 1])
 
 
 def replace_field(connection, value):
@@ -187,6 +361,8 @@ def main():
         parser.add_argument('--'+key, type=Path, required=True)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--startup-timeout-seconds', type=int, default=900, choices=range(120, 901))
+    parser.add_argument('--warm-prefix-refresh', action='store_true',
+        help='Seed a real qualified Wine prefix, then exercise refresh from a stale wine.inf timestamp')
     args = parser.parse_args()
     require(platform.machine().lower() in ('aarch64', 'arm64'), 'Native ARM64 Linux required')
     require(not args.work.exists(), 'Fresh private smoke work required')
@@ -196,6 +372,8 @@ def main():
     data = host.import_game_data(imports, args.archive.resolve(), args.work, args.evidence)
     session = secrets.token_hex(16)
     command, environment = make_command(args.work, assets, args.proot, session, data, args.startup_timeout_seconds)
+    warm_prefix = prepare_warm_prefix(command, environment, args.work, args.evidence, manifest, session) \
+        if args.warm_prefix_refresh else None
     start = time.monotonic(); deadline = start+1860; observer = failure = process = None
     with (args.evidence/'host-client.log').open('w') as log:
         try:
@@ -213,6 +391,9 @@ def main():
             require(code == 0, 'Local login guest exited unsuccessfully')
             report = json.loads((args.work/'state/latest-report.json').read_text())
             validate_report(report, session, manifest); validate_observer(observer, report)
+            if warm_prefix is not None:
+                warm_prefix = verify_warm_refresh(args.work, warm_prefix, report)
+                (args.evidence/'warm-prefix-refresh.json').write_text(json.dumps(warm_prefix, indent=2)+'\n')
             require(not socket_path.exists(), 'Private display socket survived cleanup')
         except Exception as error:
             failure = {'type':type(error).__name__, 'message':str(error)}
@@ -232,6 +413,7 @@ def main():
                 'scope':'exact_apk_actual_client_local_login_native_arm64', 'repository_commit':args.repository_commit,
                 'apk_sha256':host.digest(args.apk), 'runtime_manifest_sha256':host.digest(assets/'runtime-manifest.json'),
                 'session_id':session, 'external_observer':observer, 'failure':failure,
+                'warm_prefix_refresh':warm_prefix,
                 'elapsed_seconds':round(time.monotonic()-start, 3), 'android_execution_validated':False,
                 'android_surface_validated':False, 'character_selection_visual_validated':False, 'gameplay_validated':False}
             (args.evidence/'host-client-report.json').write_text(json.dumps(result, indent=2)+'\n')

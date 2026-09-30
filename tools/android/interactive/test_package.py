@@ -27,12 +27,12 @@ class InteractivePackageTests(unittest.TestCase):
     def test_separate_app_and_version_are_enforced(self):
         manifest=build.ROOT/'android/interactive/src/main/AndroidManifest.xml'
         build.verify_source_manifest(manifest)
-        self.assertEqual('COH-Local-Login-0.8.0.apk',build.APK_NAME)
+        self.assertEqual('COH-Local-Login-0.8.1.apk',build.APK_NAME)
         with tempfile.TemporaryDirectory() as temporary:
             path=Path(temporary)/'AndroidManifest.xml';text=manifest.read_text()
             for changed in (text.replace('cohclientinteractive','cohclienttest'),
-                            text.replace('versionName="0.8.0"','versionName="0.7.0"'),
-                            text.replace('versionCode="2"','versionCode="1"')):
+                            text.replace('versionName="0.8.1"','versionName="0.8.0"'),
+                            text.replace('versionCode="3"','versionCode="2"')):
                 path.write_text(changed)
                 with self.assertRaisesRegex(ValueError,'identity'):build.verify_source_manifest(path)
 

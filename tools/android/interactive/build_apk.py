@@ -25,8 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 APP_ID = "io.github.russianranger.cohclientinteractive"
 LAUNCHER = APP_ID + ".ClientActivity"
-VERSION_NAME = "0.8.0"
-VERSION_CODE = 2
+VERSION_NAME = "0.8.1"
+VERSION_CODE = 3
 APK_NAME = f"COH-Local-Login-{VERSION_NAME}.apk"
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 NATIVE_NAMES = frozenset({"libproot.so", "libproot-loader.so"})

@@ -1,6 +1,8 @@
 """Local-login RFB actions, event identity, and post-response image freshness."""
 import importlib.util
+import copy
 import json
+import os
 from pathlib import Path
 import struct
 import tempfile
@@ -35,6 +37,63 @@ def save(path, pixels, *geometry):
 
 
 class LoginHostTests(unittest.TestCase):
+    def test_stale_prefix_requires_real_probe_receipt_and_changes_only_timestamp(self):
+        compile(login.WARM_PREFIX_SEED, '<hosted-wine-seed>', 'exec')
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            prefix = work/'state/diagnostic/wine'; prefix.mkdir(parents=True)
+            wine_inf = work/'wine/share/wine/wine.inf'; wine_inf.parent.mkdir(parents=True)
+            wine_inf.write_text('qualified fixture'); os.utime(wine_inf, (1000, 1000))
+            manifest = {'files': {name: {'sha256': 'a'*64} for name in host.assets_tool.PROBE_FILES}}
+            identity = {'format': 1, 'purpose': 'coh-wine-initialization', 'runtime_lock_sha256': 'a'*64}
+            marker = prefix/'.coh-wine-ready.json'; marker.write_text(json.dumps(identity)+'\n')
+            timestamp = prefix/'.update-timestamp'; timestamp.write_text('1000\n')
+            registry = prefix/'user.reg'; registry.write_text('retained account and game settings')
+            children = [{'label': label, 'exit_code': 0, 'input_closed': True, 'output_capture_closed': True,
+                         'output': 'COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified' if label == 'runtime-probe' else ''}
+                        for label in ('private-presentation-x', 'wineboot', 'runtime-probe', 'owned-wine-stop', 'owned-wine-wait')]
+            report = {'scope': 'host_real_wine_prefix_seed', 'session_id': SESSION, 'status': 'passed', 'passed': True,
+                'failures': [], 'asset_sha256': {name: 'a'*64 for name in host.assets_tool.PROBE_FILES},
+                'wine_initialization': {'state': 'ready', 'ready_prefix_reused': False,
+                    'registration_processes': 3, 'wow64_registration_processes': 1, 'registration_passes': 1},
+                'runtime_probe': {'pointer_bits': 32, 'dll_export_verified': True, 'odbc_manager_loaded': True},
+                'processes': children, 'postgres_started': False, 'server_started': False, 'client_process_started': False,
+                'cleanup_complete': True, 'cleanup_execution': {'diagnostic_initialized': True,
+                    'wine_started': True, 'owned_child_count': len(children)},
+                'cleanup': {'wine_prefix_stopped': True, 'owned_processes_reaped': True},
+                'wine_process_cleanup': {'complete': True, 'remaining': 0, 'inspection_failures': 0},
+                'presentation_socket_removed': True}
+            for mutation in ('no-probe-output', 'no-registration', 'live-process', 'wrong-session'):
+                invalid = copy.deepcopy(report)
+                if mutation == 'no-probe-output': invalid['processes'][2]['output'] = ''
+                elif mutation == 'no-registration': invalid['wine_initialization']['registration_processes'] = 0
+                elif mutation == 'live-process': invalid['wine_process_cleanup']['remaining'] = 1
+                else: invalid['session_id'] = 'f'*32
+                with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                    login.stage_stale_prefix(work, manifest, invalid, SESSION)
+                self.assertEqual(timestamp.read_text(), '1000\n')
+                self.assertFalse((prefix/'.coh-host-prefix-retained').exists())
+            receipt = login.stage_stale_prefix(work, manifest, report, SESSION)
+            self.assertEqual(timestamp.read_text(), '999\n')
+            self.assertEqual(json.loads(marker.read_text()), identity)
+            self.assertEqual(registry.read_text(), 'retained account and game settings')
+            refreshed = {'wine_initialization': dict(report['wine_initialization'], prior_ready_prefix=True,
+                refresh_reason='wine_inf_timestamp_changed', existing_prefix_preserved=True,
+                registration_timestamp_verified=True, update_timestamp_content_before=999,
+                update_timestamp_content_after=1000)}
+            timestamp.write_text('1000\n')
+            verified = login.verify_warm_refresh(work, receipt, refreshed)
+            self.assertTrue(verified['refresh_validated'])
+            self.assertTrue(verified['prefix_retained'])
+            for key, value in (('prior_ready_prefix', False), ('registration_processes', 0),
+                               ('ready_prefix_reused', True), ('refresh_reason', 'fresh_prefix')):
+                invalid = copy.deepcopy(refreshed); invalid['wine_initialization'][key] = value
+                with self.subTest(key=key), self.assertRaisesRegex(ValueError, 'required real Wine refresh'):
+                    login.verify_warm_refresh(work, receipt, invalid)
+            (prefix/'.coh-host-prefix-retained').write_text('replaced')
+            with self.assertRaisesRegex(ValueError, 'replaced'):
+                login.verify_warm_refresh(work, receipt, refreshed)
+
     def test_fixed_login_actions_replace_both_fields_and_require_three_fresh_login_views(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
