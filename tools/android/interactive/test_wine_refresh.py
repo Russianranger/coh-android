@@ -64,7 +64,7 @@ class WineRefreshTests(unittest.TestCase):
         source = (f'#!{sys.executable}\nimport os,sys\nfrom pathlib import Path\n'
             'assert sys.argv[1:]==["wineboot","-i"],sys.argv\n'
             'timestamp=Path(os.environ["WINEPREFIX"],".update-timestamp")\n' + check +
-            f'timestamp.write_text({str(result_timestamp) + chr(10)!r})\n' +
+            f'timestamp.write_bytes({(str(result_timestamp) + chr(13) + chr(10)).encode("ascii")!r})\n' +
             (f'os.utime({str(self.inf)!r},({self.INF_MTIME+1},{self.INF_MTIME+1}))\n' if alter_inf else '') +
             f'print({output!r},end="",flush=True)\nsys.exit({exit_code})\n')
         self.wine.write_text(source)
@@ -98,16 +98,20 @@ class WineRefreshTests(unittest.TestCase):
         self.assertEqual(self.sentinel.read_text(), 'keep existing settings\n')
 
     def test_matching_content_reuses_prefix_despite_timestamp_files_own_mtime(self):
-        self.ready_prefix(self.INF_MTIME)
-        os.utime(self.timestamp, (1, 1))
-        self.fake_wine('002c:trace:wineboot:main Operation done\n', expected_timestamp=self.INF_MTIME)
-        receipt = self.initialize()
-        self.assertTrue(receipt['prior_ready_prefix'])
-        self.assertTrue(receipt['ready_prefix_reused'])
-        self.assertFalse(receipt['update_timestamp_removed'])
-        self.assertEqual(receipt['refresh_reason'], 'none')
-        self.assertEqual(receipt['registration_processes'], 0)
-        self.assertFalse(self.marker.exists())
+        for ending in ('\n', '\r\n'):
+            with self.subTest(ending=ending):
+                self.ready_prefix(self.INF_MTIME)
+                self.timestamp.write_bytes(f'{self.INF_MTIME}{ending}'.encode('ascii'))
+                os.utime(self.timestamp, (1, 1))
+                self.fake_wine('002c:trace:wineboot:main Operation done\n', expected_timestamp=self.INF_MTIME)
+                receipt = self.initialize()
+                self.assertTrue(receipt['prior_ready_prefix'])
+                self.assertTrue(receipt['ready_prefix_reused'])
+                self.assertFalse(receipt['update_timestamp_removed'])
+                self.assertEqual(receipt['refresh_reason'], 'none')
+                self.assertEqual(receipt['registration_processes'], 0)
+                self.assertEqual(receipt['update_timestamp_content_after'], self.INF_MTIME)
+                self.assertFalse(self.marker.exists())
 
     def test_matching_stamp_with_unexpected_registration_still_fails(self):
         self.ready_prefix(self.INF_MTIME)
@@ -166,7 +170,8 @@ class WineRefreshTests(unittest.TestCase):
 
     def test_malformed_warm_timestamp_and_linked_inf_are_refused_before_execution(self):
         self.fake_wine(self.REGISTRATION)
-        for value in ('', 'disable\n', '1234', '1234\nextra', '9'*33):
+        for value in ('', 'disable\n', '1234', '1234\r', '1234\r\r\n',
+                      '1234\nextra', '1234\r\nextra', '1234\n\n', '9'*33):
             with self.subTest(value=value):
                 self.ready_prefix(self.INF_MTIME)
                 self.timestamp.write_text(value)

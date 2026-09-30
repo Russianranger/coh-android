@@ -56,8 +56,10 @@ def wine_update_timestamp(path):
         require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and 0 < info.st_size <= 32,
                 'Wine update timestamp is not an owned bounded regular file')
         raw = os.read(descriptor, 33)
-        require(len(raw) == info.st_size and re.fullmatch(rb'[0-9]{1,10}\n', raw) is not None,
-                'Wine update timestamp content is invalid')
+        # Wine's CRT text-mode write can produce CRLF; Python-created recovery
+        # fixtures use LF. Accept only these complete decimal timestamp forms.
+        require(len(raw) == info.st_size and re.fullmatch(rb'[0-9]{1,10}\r?\n', raw) is not None,
+                'Wine update timestamp content is invalid (hex=' + raw.hex() + ')')
         return int(raw)
     finally:
         os.close(descriptor)

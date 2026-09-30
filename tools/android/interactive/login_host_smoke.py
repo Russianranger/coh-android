@@ -133,12 +133,14 @@ def stage_stale_prefix(work, manifest, report, session):
     require(not sentinel.exists() and not sentinel.is_symlink(), 'Host preservation sentinel already exists')
     sentinel.write_text(session+'\n'); sentinel.chmod(0o600)
     before = prefix.stat()
+    original_timestamp_hex = timestamp.read_bytes().hex()
     timestamp.write_text(str(current-1)+'\n')
     return {'mode': 'real_prefix_then_stale_wine_inf_timestamp', 'session_id': session,
         'prefix_device': before.st_dev, 'prefix_inode': before.st_ino,
         'prefix_sentinel_sha256': host.digest(sentinel), 'ready_marker_sha256': host.digest(marker),
         'wine_inf_sha256': host.digest(wine_inf), 'wine_inf_mtime': current,
         'timestamp_before': current, 'timestamp_staged': current-1,
+        'original_timestamp_bytes_hex': original_timestamp_hex,
         'seed_driver_sha256': hashlib.sha256(WARM_PREFIX_SEED.encode()).hexdigest()}
 
 
