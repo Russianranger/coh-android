@@ -29,6 +29,17 @@ class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):
         super().__init__(args, context)
         self.local_server = server.LocalLoginServer(self)
         self.login_announced = False
+        self.local_server.report['version_policy'] = {
+            'mode': 'explicit_dev_stamp_comparison_skipped',
+            'native_launcher_mode': '--local-login', 'client_option': '-noversioncheck 1',
+            'protocol_version_check_retained': True,
+            'protocol_check_basis': 'reviewed_pinned_DbServer_handleLogin_source',
+            'source_binary_pin_verified': False,
+            'scope': 'private_loopback_fake_auth_only',
+        }
+
+    def launcher_command(self):
+        return super().launcher_command() + ['--local-login']
 
     def sql(self, text, *, game=False, cleanup=False):
         # The inherited cleanup is intentionally used, but it can never drop
@@ -40,6 +51,7 @@ class ClientLoginDiagnostic(interactive.ClientInteractiveDiagnostic):
         super().initialize()
         require(REQUIRED <= set(self.ctx.report['asset_sha256']), 'Local login inputs missing from the pinned client inventory')
         self.local_server.initialize()
+        self.local_server.report['version_policy']['source_binary_pin_verified'] = True
         self.ctx.server_health = self.local_server.health
 
     def start_wine(self):

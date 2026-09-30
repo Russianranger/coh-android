@@ -349,17 +349,28 @@ def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_p
                 snapshots.append({'file':name,'elapsed_seconds':round(now-started,3),'frame_sha256':sha,
                                   'width':frame.width,'height':frame.height,'generation':frame.generation});last_capture=now
             time.sleep(0.5)
+        except ValueError as error:
+            # Keep the current session's screenshots and input steps even when
+            # a bounded observation/identity check fails. The caller still
+            # rejects the result and stops the owned guest immediately.
+            failure=str(error)
+            break
         except (EOFError,BrokenPipeError,ConnectionResetError) as error:
             terminal=type(error).__name__
             # X closes during ordinary guest cleanup; event output may arrive
             # just after the socket EOF. Match the Android two-second allowance.
             terminal_deadline=min(deadline,time.monotonic()+2)
             while not events.terminal and time.monotonic()<terminal_deadline:
-                events.poll()
+                try:events.poll()
+                except ValueError as invalid:
+                    failure=str(invalid)
+                    break
                 if not events.terminal:time.sleep(.05)
-            if not events.terminal:failure='Private RFB transport ended before client startup observation completed'
+            if not events.terminal and failure is None:failure='Private RFB transport ended before client startup observation completed'
             break
-    events.poll()
+    try:events.poll()
+    except ValueError as invalid:
+        if failure is None:failure=str(invalid)
     if frame.fresh:save_png(evidence/'client-frame-final.png',frame.pixels,frame.width,frame.height)
     return {'scope':'host_external_unix_rfb_actual_client_interaction','desktop':desktop,'session_id':session,'updates':updates,
             'distinct_frame_sha256':fingerprints,'snapshots':snapshots,'terminal_transport':terminal,

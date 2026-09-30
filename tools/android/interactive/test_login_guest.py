@@ -1,6 +1,8 @@
 """The persistent profile must survive cleanup and prove this launch's login."""
 import io
 import json
+import shutil
+import subprocess
 from pathlib import Path
 import sys
 import tarfile
@@ -17,6 +19,46 @@ import local_login_server as server
 SESSION = '0123456789abcdef0123456789abcdef'
 DEBUG = '260930 00:28:21 0 127.0.0.1 successful login for "COHLOCAL" AuthID 900260380 Cookie 0\n'
 SPECS = '260930 00:28:21 0 IP,127.0.0.1,AuthName,COHLOCAL,SystemSpecs,Disabled\n'
+
+
+class LauncherPolicyTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        compiler = shutil.which('cc') or shutil.which('gcc')
+        if compiler is None: raise unittest.SkipTest('A C compiler is needed for the native mode policy')
+        cls.temporary = tempfile.TemporaryDirectory(); root = Path(cls.temporary.name)
+        source = (ROOT / 'android/native/client-launcher.c').read_text()
+        policy = source[source.index('static const char *launch_policy('):source.index('int main(int argc, char **argv)')]
+        harness = ('#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n' + policy
+            + 'int main(int argc,char **argv) { int generate=-1; const char *value; '
+            + 'if(argc<2)return 2; value=launch_policy(atoi(argv[1]),argc>2?argv[2]:NULL,&generate); '
+            + 'printf("%d|%s",generate,value?value:"INVALID"); return 0; }\n')
+        path = root / 'policy.c'; path.write_text(harness)
+        cls.binary = root / 'policy'
+        subprocess.run([compiler, '-std=c11', '-Wall', '-Wextra', '-Werror', str(path), '-o', str(cls.binary)], check=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        if hasattr(cls, 'temporary'): cls.temporary.cleanup()
+
+    def test_native_override_only_for_explicit_local_login(self):
+        for arguments, expected in [(['4'], '0|'), (['5','--generate-caches'], '1|'),
+                (['5','--local-login'], '0| -noversioncheck 1'), (['5','--unknown'], '0|INVALID'),
+                (['5'], '0|INVALID'), (['3'], '0|INVALID'), (['6','--local-login'], '0|INVALID')]:
+            with self.subTest(arguments=arguments):
+                actual = subprocess.check_output([str(self.binary), *arguments], text=True)
+                self.assertEqual(actual, expected)
+
+    def test_guest_mode_hook_preserves_default_and_scopes_local_login(self):
+        args = SimpleNamespace(wine=Path('/wine'), assets=Path('/assets'), session_id=SESSION)
+        default = guest.interactive.ClientInteractiveDiagnostic.__new__(guest.interactive.ClientInteractiveDiagnostic)
+        default.args = args; default.work = Path('/work')
+        local = guest.ClientLoginDiagnostic.__new__(guest.ClientLoginDiagnostic)
+        local.args = args; local.work = Path('/work')
+        expected = default.launcher_command()
+        self.assertEqual(len(expected), 5)
+        self.assertNotIn('--local-login', expected)
+        self.assertEqual(local.launcher_command(), expected + ['--local-login'])
 
 
 class LoginProofTests(unittest.TestCase):

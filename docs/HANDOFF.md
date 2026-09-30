@@ -1,5 +1,37 @@
 # City of Heroes Android handoff
 
+**0.8.0 local graphical login is being corrected after its first hosted check; no new Thor run is requested yet.**
+
+Candidate source `8d8ebd35396e193f426df686167c87e3d2eeee7a`, run
+[36775940197](https://github.com/Russianranger/coh-android/actions/runs/36775940197),
+passed signed packaging and independent package review. PostgreSQL and the pinned
+loopback DbServer started, and the graphical client reached its login screen in
+438.599 seconds. Root screenshot review confirmed Settings X/Escape recovery,
+`COHLOCAL`, masked password entry and the single `127.0.0.1` shard. The client
+then displayed **Wrong game version** and the bounded interaction timed out.
+All 67 owned child records closed; PostgreSQL stopped gracefully, its profile
+was retained, and no owned workers or inspection failures remained. Preserve
+that failed result: see the [runtime review](android-evidence/local-login-hosted-36775940197.json)
+and [package review](android-evidence/local-login-package-review-36775940197.json).
+
+Pinned source explains the malformed development version strings: its getter
+expects `Ouroboros.exe`, ignores the failed timestamp lookup in these differently
+named executable layouts, then formats uninitialized date fields. The accepted
+headless TestClient already requests the supported development version exception.
+The correction adds `--local-login` to the native launcher, which alone appends
+`-noversioncheck 1`; ordinary startup and cache generation are unchanged. The
+separate DbServer wire-protocol check and exact source/executable/data pins remain
+enforced. A repeat hosted qualification of this corrected APK is required.
+
+The update keeps the installed app identity/signature, imported assets, Wine
+prefix and compatible prepared/generated caches. The new persistent
+`android-local-login` profile starts PostgreSQL/DbServer with no MapServer. Login
+acceptance requires current owned-server authentication and a sent character-list
+response, matching SQL account identity and fresh captures; actual empty-character
+selection requires visual review. Draft [one-session Thor instructions](ANDROID_LOCAL_LOGIN_TEST.md)
+must receive the accepted APK receipt/hash before delivery. Do not repeat earlier
+startup, menu input, Atlas, or synthetic display device tests.
+
 **Physical Thor startup and basic menu input are accepted within their reviewed scope. The 0.7.0 device session failed its final-frame check during a graphics reload; cleanup passed.**
 
 The supplied `coh-client-interaction-20260930-201926.zip` records 174 input
@@ -28,10 +60,9 @@ and deadline expiry still fail. At most three raw blank images are retained to
 preserve the existing support archive limit. All 53 interactive automated tests
 passed after this correction, including transient blank recovery, permanent
 blank output, deadline, process/window loss and truncated console cases.
-Hosted graphics-recovery qualification
-and an updated APK are still pending: qualify the Settings-close and Escape
-sequence before shipping the correction with the next milestone. Keep the
-installed 0.7.0 package and its imported/runtime state.
+Hosted run 36775940197 now demonstrates the Settings-close/Escape sequence
+returning to the login screen; the corrected APK still awaits local-login
+qualification. Keep the installed 0.7.0 package and its imported/runtime state.
 
 The supplied `coh-game-client-test-20260930-141120.zip` passed the exact shipped
 Java cleanup and PixelCopy acceptance checks. Its pinned actual client reached

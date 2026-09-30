@@ -202,6 +202,44 @@ class LoginHostTests(unittest.TestCase):
             self.assertIsNone(result['failure'])
             self.assertEqual(seen, [(1, 0, 0), (2, 1, 0), (3, 1, 1)])
 
+    def test_observation_failure_keeps_partial_input_steps_and_frame_evidence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            event_path = root/'events'
+            event_path.write_text(json.dumps({'type': 'client_interaction_ready',
+                'session_id': SESSION, 'client_pid': PID})+'\n')
+            clock = [0.0]
+
+            class Frames(Connection):
+                def sendall(self, data):
+                    super().sendall(data)
+                    pixels = b''.join(bytes((value, value, value, 0)) for value in range(8))
+                    self.data.extend(b'\0'+struct.pack('!BH', 0, 1)+struct.pack('!HHHHi', 0, 0, 8, 1, 0)+pixels)
+
+            class FailingInteraction:
+                def __init__(self, *args): self.result = {'steps': []}
+                def on_frame(self, connection, frame, events, sequence, captures, now):
+                    self.result['steps'].append({'action': 'submit_local_login', 'frame_sequence': sequence})
+                    if sequence == 2:
+                        raise ValueError('Local login observation deadline exceeded')
+
+            process = mock.Mock()
+            process.poll.return_value = None
+            with mock.patch.object(host, 'client_rfb_handshake', return_value='desktop'), \
+                 mock.patch.object(host.time, 'monotonic', side_effect=lambda: clock[0]), \
+                 mock.patch.object(host.time, 'sleep', side_effect=lambda seconds: clock.__setitem__(0, clock[0]+seconds)), \
+                 mock.patch.object(host, 'save_png', side_effect=save):
+                result = host.observe_rfb(Frames(), SESSION, process, 20, root,
+                    event_path, root/'finish.json', FailingInteraction)
+            self.assertEqual(result['failure'], 'Local login observation deadline exceeded')
+            self.assertEqual([step['frame_sequence'] for step in result['interaction_script']['steps']], [1, 2])
+            self.assertEqual(result['client_pid'], PID)
+            self.assertEqual(result['updates'], 2)
+            self.assertEqual(len(result['post_startup_captures']), 1)
+            self.assertFalse(result['terminal_event_observed'])
+            self.assertTrue((root/'client-frame-final.png').is_file())
+            self.assertFalse((root/'finish.json').exists())
+
 
 if __name__ == '__main__':
     unittest.main()

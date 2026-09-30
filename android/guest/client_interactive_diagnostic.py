@@ -148,6 +148,10 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         finally:
             settling['elapsed_seconds'] = round(time.monotonic()-started, 3)
 
+    def launcher_command(self):
+        return [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
+                base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
+
     def execute(self):
         require(not self.finish_path.exists() and not self.finish_path.is_symlink(),
                 "Stale interaction finish request must be removed before launch")
@@ -181,8 +185,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         # window, renderer and data validation, while suppressing native dialogs
         # and splash UI. It keeps inherited log pipes and observes the owned
         # child's console as a fallback; game code and assets remain unchanged.
-        command = [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
-                   base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
+        command = self.launcher_command()
         previous = Path.cwd()
         try:
             os.chdir(self.work)

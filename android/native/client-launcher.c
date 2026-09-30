@@ -115,22 +115,34 @@ static int quoted(char *out, size_t limit, const char *text) {
     while(slashes) { out[used++]='\\'; out[used++]='\\'; slashes--; }
     out[used++]='"'; out[used]=0; return 1;
 }
+/* Only the explicit private fake-auth login profile may request the game's
+   supported development-stamp override. The DbServer wire-protocol check and
+   our pinned binary/data validation are unchanged. */
+static const char *launch_policy(int argc, const char *mode, int *generate) {
+    *generate=0;
+    if(argc==4) return "";
+    if(argc!=5 || !mode) return NULL;
+    if(!strcmp(mode,"--generate-caches")) { *generate=1; return ""; }
+    if(!strcmp(mode,"--local-login")) return " -noversioncheck 1";
+    return NULL;
+}
 int main(int argc, char **argv) {
     HANDLE saved[3]={GetStdHandle(STD_INPUT_HANDLE), GetStdHandle(STD_OUTPUT_HANDLE), GetStdHandle(STD_ERROR_HANDLE)};
     HANDLE pipe=NULL, screen=INVALID_HANDLE_VALUE;
     ULONGLONG deadline;
-    int attached=0, generate=argc==5 && !strcmp(argv[4],"--generate-caches");
+    int attached=0, generate=0;
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
     char command[4096], executable[2048], message[512];
     DWORD code;
     size_t index;
+    const char *policy=launch_policy(argc,argc==5 ? argv[4] : NULL,&generate);
     const char *flags=generate ? " -createbins -nogui 1 -console 1 -noaudio 1 -verbose 1 -physics 0" :
         " -nogui 1 -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
-    if ((argc!=4 && !generate) || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
+    if (!policy || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
     for(index=0; index<32; index++) if(!strchr("0123456789abcdef",argv[1][index])) return 64;
-    if(strlen(executable)+strlen(flags)+1>sizeof(command)) return 64;
-    strcpy(command, executable); strcat(command,flags);
+    if(strlen(executable)+strlen(flags)+strlen(policy)+1>sizeof(command)) return 64;
+    strcpy(command, executable); strcat(command,flags); strcat(command,policy);
     if(!DuplicateHandle(GetCurrentProcess(),saved[1],GetCurrentProcess(),&pipe,0,FALSE,DUPLICATE_SAME_ACCESS)) return 69;
     /* Wine's initial shell console may be only a sentinel. Make a real parent
        console for the client's explicit AttachConsole(ATTACH_PARENT_PROCESS).

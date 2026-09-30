@@ -208,6 +208,7 @@ def main():
                 connection.settimeout(90); connection.connect(str(socket_path))
                 observer = host.observe_rfb(connection, session, process, deadline, args.evidence,
                     args.evidence/'host-client.log', args.work/'state/interaction-finish.json', LoginInteraction)
+            require(observer.get('failure') is None, observer.get('failure') or 'Local login observer failed')
             code = process.wait(timeout=max(1, deadline-time.monotonic()))
             require(code == 0, 'Local login guest exited unsuccessfully')
             report = json.loads((args.work/'state/latest-report.json').read_text())
