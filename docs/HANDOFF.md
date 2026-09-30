@@ -1,6 +1,24 @@
 # City of Heroes Android handoff
 
-**Physical Thor presentation 0.5.0 passed. Actual CoH graphical client startup is next.**
+**Actual CoH graphical client startup 0.6.0 passed hosted ARM64 qualification. One physical Thor client launch is next.**
+
+Exact APK source `5e4e8f2f0acc78e397a3ee8c1eb7df6f661953cb`, run
+[`36719533060`](https://github.com/Russianranger/coh-android/actions/runs/36719533060),
+passed all six guest stages. Startup reached the renderer, all-data completion,
+main loop and exact-PID 800×600 window in 362.742 seconds, then remained live
+for 33.433 seconds. Three fresh external frames span 2.566 seconds after
+readiness, and final cleanup left zero owned processes or inspection failures.
+Root visual review sees the Freedom login screen with its first-launch
+Quality/Ultra graphics prompt. Interaction remains untested; leave that prompt
+untouched for the physical run. The full 39,463,670-byte console is retained.
+The exact APK is 370,539,567 bytes, SHA-256
+`ca506e5c22369de04d80cb98b6a747bd818ef20c81245806b6d7271357f3377d`.
+See the [hosted qualification receipt](android-evidence/client-startup-hosted-36719533060.json)
+and [one-run device instructions](ANDROID_CLIENT_DEVICE_TEST.md). Hosted evidence
+does not establish Android execution, PixelCopy, input, world entry, hardware
+acceleration or playable performance for this actual-client build.
+
+**Physical Thor presentation 0.5.0 passed and remains accepted.**
 The supplied `coh-client-test-20260930-094646.zip` verifies all 120 current-session
 PixelCopy frames over 62.758 seconds. The full operation took 128.592 seconds;
 all five guest stages and six child records passed, and cleanup left zero
@@ -8,10 +26,13 @@ owned processes or inspection failures. Exact shipped Java acceptance and
 runtime identities were independently replayed. See the [physical presentation
 receipt](android-evidence/accepted-presentation-thor-20260930.json).
 
-The next separate **COH Game Client Test 0.6.0** packages the pinned actual
+The separate **COH Game Client Test 0.6.0** packages the pinned actual
 `CityOfHeroes.exe` and matching DLLs. Reuse the reviewed asset ZIP for one
 private import, then attempt visible game loading/login without a server boot.
 The one-run instructions are in [the client device test](ANDROID_CLIENT_DEVICE_TEST.md).
+Earlier hosted attempts below are historical; their proposed next actions are
+superseded by the exact-APK qualification above.
+
 The initial actual-client hosted attempt [36700734062](https://github.com/Russianranger/coh-android/actions/runs/36700734062)
 displayed the Freedom loading artwork but timed out before `game_mainLoop`;
 cleanup was complete. Do not deliver that APK as qualified. Its later console

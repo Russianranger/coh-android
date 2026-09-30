@@ -21,9 +21,10 @@ or screen-lock test is requested.
    early initialization is expected. The first launch also creates small links
    and installs the prepared client data caches; it does not duplicate all
    imported data. Cache preparation is included in the APK.
-5. Watch for a recognizable CoH loading or login screen. No login or controller
-   input is required. After startup is detected, the app observes the client
-   for 30 seconds and closes it automatically.
+5. Watch for a recognizable CoH loading or login screen. The first-launch
+   Quality/Ultra graphics prompt may appear over the login screen; leave it
+   untouched. No login or controller input is required. After startup is detected,
+   the app observes the client for 30 seconds and closes it automatically.
 6. Tap **Export latest report** and send the ZIP, whether the result passes or
    fails. Say what appeared on screen: CoH loading/login, an error dialog,
    black view, or a frozen view. The ZIP includes bounded screenshots and logs.
