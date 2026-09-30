@@ -1,8 +1,7 @@
 name: Bootstrap retained client interaction development signer
+# Completed one-time bootstrap. New production/development identities must be explicit.
 on:
-  push:
-    paths:
-      - '.github/workflows/android-client-signing.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

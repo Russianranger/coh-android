@@ -1,0 +1,250 @@
+name: Thor interactive graphical client candidate
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/interactive/**'
+      - 'android/guest/client_interactive_diagnostic.py'
+      - 'tools/android/interactive/**'
+      - '.github/workflows/android-client-interactive.yml'
+  pull_request:
+    paths:
+      - 'android/interactive/**'
+      - 'android/guest/client_interactive_diagnostic.py'
+      - 'tools/android/interactive/**'
+      - '.github/workflows/android-client-interactive.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-interactive-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check actual client packaging, session evidence and package boundaries
+        run: python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v
+  client-caches:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: out/client-caches
+          run-id: 36707839624
+          github-token: ${{ github.token }}
+      - name: Verify exact prepared caches against current client inputs
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, pathlib, sys
+          sys.path.insert(0, 'tools/android/client')
+          import prepare_client_caches
+          receipt = prepare_client_caches.verify_accepted_cache_donor(pathlib.Path('out/client-caches'))
+          receipt['repository_commit'] = os.environ['GITHUB_SHA']
+          pathlib.Path('out/client-cache-reuse.json').write_text(json.dumps(receipt, indent=2)+'\n')
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: |
+            out/client-caches/client-caches.zip
+            out/client-caches/client-caches.zip.sha256
+            out/client-caches/client-cache-manifest.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-cache-reuse-evidence
+          path: out/client-cache-reuse.json
+          if-no-files-found: warn
+  apk:
+    if: github.event_name != 'pull_request'
+    needs: [tooling, client-caches]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-native/arm64-v8a
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/client-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-test-apk
+          path: out/client-inputs/atlas-apk
+          run-id: 36638344040
+          github-token: ${{ github.token }}
+      - name: Recover exact client and accepted import donors
+        run: |
+          python3 - <<'PYTHON'
+          import hashlib, pathlib, sys, zipfile
+          path=pathlib.Path('out/client-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(path.read_bytes()).hexdigest()=='dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(path) as archive:
+              assert all('/' not in n and '\\' not in n and n not in ('.','..') for n in archive.namelist())
+              archive.extractall('out/client-inputs/reference')
+          sys.path.insert(0,'tools/android/client')
+          import build_apk
+          build_apk.extract_import_donor('out/client-inputs/atlas-apk/COH-Atlas-Test-0.4.4.apk','out/client-inputs/import-assets')
+          PYTHON
+          python3 tools/android/client/package_client_runtime.py --reference out/client-inputs/reference \
+            --output out/client-inputs/client-package --repository-commit "$GITHUB_SHA"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Install SDK 35 and PE32 compiler
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686 binutils-mingw-w64-i686
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-generated-caches
+          path: out/client-inputs/client-caches
+      - name: Preserve accepted runtime and add qualified graphical client
+        run: |
+          mkdir -p out/client
+          python3 tools/android/interactive/prepare_assets.py \
+            --assets out/client-inputs/runtime --output out/client/runtime \
+            --client out/client-inputs/client-package/client-runtime.zip \
+            --client-caches out/client-inputs/client-caches/client-caches.zip \
+            --repository-commit "$GITHUB_SHA" > out/client/assets-preparation.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: out/client-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Build and verify separate COH Client Interaction APK
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_apk.py
+          --runtime-assets out/client/runtime --native out/client-native
+          --import-assets out/client-inputs/import-assets
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore out/client-signing/coh-client-interactive.jks
+          --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
+          --output out/client/COH-Client-Interaction-0.7.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: |
+            out/client/COH-Client-Interaction-0.7.0.apk
+            out/client/COH-Client-Interaction-0.7.0.apk.sha256
+            out/client/interactive-apk-build-report.json
+            out/client/assets-preparation.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-interaction-packaging-evidence
+          path: |
+            out/client/assets-preparation.json
+            out/client/interactive-apk-build-report.json
+            out/client/runtime/runtime-manifest.json
+            out/client/runtime/client-manifest.json
+          if-no-files-found: warn
+  runtime:
+    needs: apk
+    # GitHub requires write-level repository access to READ unpublished draft assets.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: out/client
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/client-base-runtime
+          --bundle out/client-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/client/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Retrieve the existing reviewed game asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
+      - name: Exercise exact APK client menus through private Unix RFB
+        run: >-
+          python3 tools/android/interactive/host_smoke.py
+          --apk out/client/COH-Client-Interaction-0.7.0.apk
+          --archive out/client-assets.zip
+          --build-report out/client/interactive-apk-build-report.json
+          --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
+          --startup-timeout-seconds 900
+          --work out/client-host --evidence out/client-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-interaction-arm64-evidence
+          path: |
+            out/client-evidence/
+            out/client/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

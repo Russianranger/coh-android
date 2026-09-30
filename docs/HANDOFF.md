@@ -1,6 +1,34 @@
 # City of Heroes Android handoff
 
-**Actual CoH graphical client startup 0.6.0 passed hosted ARM64 qualification. One physical Thor client launch is next.**
+**Physical Thor actual-client startup 0.6.0 is accepted. Interactive client menus are next.**
+
+The supplied `coh-game-client-test-20260930-141120.zip` passed the exact shipped
+Java cleanup and PixelCopy acceptance checks. Its pinned actual client reached
+renderer, all-data completion, main loop and the exact-PID window. All three
+Android screenshots show the Freedom login screen and first-launch graphics
+prompt; they span 2.037 seconds after current-session readiness. The client
+remained observable for 34.810 seconds, and all 38 child records closed with
+zero remaining owned processes and zero inspection failures. Renderer startup
+at about 5m56s explains the user's reported first visible boot; full readiness
+was 10m20s after client launch and the entire first operation took 16m24s,
+including private-data preparation and Wine initialization. See the
+[physical client receipt](android-evidence/accepted-client-startup-thor-20260930.json).
+No repeat startup, Atlas, synthetic presentation, Stop/rerun or screen-lock
+acceptance test is requested.
+
+The next **COH Client Interaction 0.7.0** milestone adds touch, text and basic
+Thor controller menu input, then Finish and verified cleanup in one session.
+It starts no server. The old 0.6.0 development signing key was not retained,
+so its installed package cannot be updated while preserving private state.
+The new package `io.github.russianranger.cohclientinteractive` installs beside
+it and requires its own one-time runtime setup and asset import. Before shipping,
+the new development signing identity must be retained, backed up and pinned;
+future builds must fail rather than silently generate another certificate.
+The accepted old apps stay installed. Interaction, login, world entry, audio,
+hardware acceleration and playable performance are separate unproven outcomes.
+
+
+**Historical hosted qualification for the accepted 0.6.0 build follows.**
 
 Exact APK source `5e4e8f2f0acc78e397a3ee8c1eb7df6f661953cb`, run
 [`36719533060`](https://github.com/Russianranger/coh-android/actions/runs/36719533060),
