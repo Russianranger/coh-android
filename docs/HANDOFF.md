@@ -21,11 +21,24 @@ Thor controller menu input, then Finish and verified cleanup in one session.
 It starts no server. The old 0.6.0 development signing key was not retained,
 so its installed package cannot be updated while preserving private state.
 The new package `io.github.russianranger.cohclientinteractive` installs beside
-it and requires its own one-time runtime setup and asset import. Before shipping,
-the new development signing identity must be retained, backed up and pinned;
-future builds must fail rather than silently generate another certificate.
+it and requires its own one-time runtime setup and asset import. The new
+development signing identity is retained, backed up and pinned to certificate
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`;
+future builds fail rather than silently generate another certificate.
 The accepted old apps stay installed. Interaction, login, world entry, audio,
 hardware acceleration and playable performance are separate unproven outcomes.
+
+
+The first interactive hosted candidate, run `36732627939`, passed startup,
+observation, Finish and cleanup, but failed visual input qualification: Settings
+opened while the graphics prompt remained and `COHINPUT` was absent. That APK
+was not delivered. Source review found that Cancel and account focus use stored
+button-down coordinates, while Settings uses the current cursor position. CoH
+polls the absolute pointer at the end of its input frame, so a combined pointer
+warp and press can leave stored click coordinates stale. The correction sends
+neutral pointer movement before a bounded settling interval and button-down;
+the hosted check also waits for fresh frames before clicks and text entry.
+No game binary, accepted startup gate or window-focus behavior is changed.
 
 
 **Historical hosted qualification for the accepted 0.6.0 build follows.**

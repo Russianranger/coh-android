@@ -166,6 +166,12 @@ class ClientEvents:
                 self.terminal=True
 
 
+def pointer_move(connection,x,y):
+    require(type(x) is int and type(y) is int and 0<=x<WIDTH and 0<=y<HEIGHT,
+            'Host interaction pointer is outside the actual client viewport')
+    connection.sendall(struct.pack('!BBHH',5,0,x,y))
+
+
 def pointer_click(connection,x,y):
     require(type(x) is int and type(y) is int and 0<=x<WIDTH and 0<=y<HEIGHT,
             'Host interaction pointer is outside the actual client viewport')
@@ -207,8 +213,12 @@ class MenuInteraction:
         self.action=0
         self.last_action_at=0
         self.watermark=0
+        self.fresh_frames=0
+        self.frame_generation=None
         self.result={'scope':'host_rfb_pointer_keyboard_delivery','input_effect_verified':False,
-                     'script_completed':False,'test_marker':'COHINPUT','steps':[],'screenshots':[]}
+                     'script_completed':False,'test_marker':'COHINPUT',
+                     'pointer_preposition_fresh_frames':2,'pointer_press_ms':120,
+                     'account_focus_fresh_frames':1,'steps':[],'screenshots':[]}
 
     def capture(self,label,frame,events,sequence,now):
         path=self.evidence/(label+'.png');save_png(path,frame.pixels)
@@ -219,33 +229,56 @@ class MenuInteraction:
 
     def on_frame(self,connection,frame,events,sequence,captures,now):
         if self.ready_at is None:self.ready_at=now
+        require(now-self.ready_at<180,'Host menu interaction exceeded its live session bound')
         if len(captures)<3 or (frame.width,frame.height)!=(WIDTH,HEIGHT):return
-        if self.action and (now-self.last_action_at<1 or sequence<=self.watermark):return
+        if self.action:
+            require(frame.generation==self.frame_generation,'Client resized during host menu input')
+            if sequence<=self.watermark:return
+            self.watermark=sequence
+            self.fresh_frames+=1
+            # CoH records its polled pointer at button-down. Let the game see
+            # neutral motion in separate frames before creating a click, then
+            # let its SMF account widget obtain focus before sending characters.
+            required_frames=2 if self.action in (1,3,6) else 1
+            if self.fresh_frames<required_frames or now-self.last_action_at<1:return
         if self.action==0:
             self.capture('interaction-before-input',frame,events,sequence,now)
-            pointer_click(connection,400,403) # Cancel the first-start graphics prompt.
-            name='cancel_graphics_prompt';self.action=1
+            pointer_move(connection,400,403)
+            name='preposition_cancel_graphics_prompt';self.action=1
         elif self.action==1:
-            self.capture('interaction-after-cancel',frame,events,sequence,now)
-            pointer_click(connection,625,240)
-            type_test_marker(connection)
-            name='type_visible_test_marker';self.action=2
+            pointer_click(connection,400,403) # Cancel the first-start graphics prompt.
+            name='cancel_graphics_prompt';self.action=2
         elif self.action==2:
-            self.capture('interaction-after-text',frame,events,sequence,now)
-            pointer_click(connection,635,430)
-            name='open_login_settings';self.action=3
+            self.capture('interaction-after-cancel',frame,events,sequence,now)
+            pointer_move(connection,625,240)
+            name='preposition_account_field';self.action=3
         elif self.action==3:
+            pointer_click(connection,625,240)
+            name='focus_account_field';self.action=4
+        elif self.action==4:
+            type_test_marker(connection)
+            name='type_visible_test_marker';self.action=5
+        elif self.action==5:
+            self.capture('interaction-after-text',frame,events,sequence,now)
+            pointer_move(connection,635,430)
+            name='preposition_login_settings';self.action=6
+        elif self.action==6:
+            pointer_click(connection,635,430)
+            name='open_login_settings';self.action=7
+        elif self.action==7:
             self.capture('interaction-settings',frame,events,sequence,now)
             self.result['script_completed']=True
-            self.action=4
+            self.action=8
             return
         else:
             if now-self.ready_at>=30 and 'finish_request' not in self.result:
                 self.result['finish_request']=write_finish_request(self.finish_path,self.session,events.client_pid)
             return
-        self.watermark=sequence;self.last_action_at=time.monotonic()
         self.result['steps'].append({'action':name,'session_id':self.session,'client_pid':events.client_pid,
-            'after_frame_sequence':sequence,'elapsed_since_ready':round(now-self.ready_at,3)})
+            'after_frame_sequence':sequence,'fresh_frames_since_previous_action':self.fresh_frames,
+            'elapsed_since_ready':round(now-self.ready_at,3)})
+        self.watermark=sequence;self.last_action_at=time.monotonic()
+        self.fresh_frames=0;self.frame_generation=frame.generation
 
 
 def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_path):
@@ -427,7 +460,7 @@ def main():
                     and captures[-1]['elapsed_seconds']-captures[0]['elapsed_seconds']>=2,
                     'Missing three session-bound fresh external startup frames')
             script=observer['interaction_script']
-            require(script['script_completed'] is True and len(script['steps'])==3
+            require(script['script_completed'] is True and len(script['steps'])==7
                     and len(script['screenshots'])==4 and script.get('finish_request',{}).get('client_pid')==observer['client_pid']
                     and report['interaction_completion_reason']=='finish_requested',
                     'Host menu input script or its session-bound completion did not finish')

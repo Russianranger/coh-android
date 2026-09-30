@@ -34,6 +34,7 @@ public final class ClientActivity extends Activity {
     private final Set<Integer> heldButtons=new HashSet<>();
     private float rightX,rightY;
     private boolean inputActive,textDialogVisible;
+    private AlertDialog activeTextDialog;
     private long lastTick;
     private final Runnable inputTick=new Runnable(){@Override public void run(){
         long now=SystemClock.uptimeMillis();float elapsed=Math.min(64,Math.max(0,now-lastTick));lastTick=now;
@@ -53,7 +54,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls();inputActive=false;display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -84,7 +85,7 @@ public final class ClientActivity extends Activity {
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
-            @Override public void onReleaseAll(String session){if(service!=null)service.releaseAllInputs(session);}
+            @Override public void onReleaseAll(String session){releaseRemoteInputs(session,!textDialogVisible);}
             @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
         });
         right.addView(text("Tap / drag · Right stick: cursor · A: click · B: Esc · Shoulders: right click · D-pad: arrows · L3: text",12,false));
@@ -95,7 +96,7 @@ public final class ClientActivity extends Activity {
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     @Override protected void onStart(){super.onStart();lastTick=SystemClock.uptimeMillis();inputHandler.post(inputTick);bound=bindService(new Intent(this,ClientService.class),connection,BIND_AUTO_CREATE);}
-    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls();display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
+    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
     private void render(ClientService.State next){
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         boolean idle=!next.busy&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&next.report!=null&&!exporting);
@@ -114,7 +115,10 @@ public final class ClientActivity extends Activity {
     }
     private void showTextInput(){
         if(!inputActive||service==null||textDialogVisible)return;
-        releaseControls();textDialogVisible=true;
+        // This app-owned dialog must not discard the preceding account-field tap
+        // while its neutral preposition is settling on the input worker.
+        textDialogVisible=true;releaseControls();
+        try {
         EditText field=new EditText(this);field.setSingleLine(true);field.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         field.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);field.setSaveEnabled(false);
         field.setFilters(new InputFilter[]{new InputFilter.LengthFilter(ClientInput.MAX_TEXT)});field.setText("COHINPUT");field.selectAll();
@@ -133,8 +137,15 @@ public final class ClientActivity extends Activity {
                     if(!queued){service.releaseAllInputs(shownSession);Toast.makeText(this,"Text was not fully sent. Wait for input ready and retry.",Toast.LENGTH_SHORT).show();}
                     field.setText("");
                 }).create();
-        dialog.setOnDismissListener(d->{textDialogVisible=false;field.setText("");});dialog.show();
+        activeTextDialog=dialog;
+        dialog.setOnDismissListener(d->{textDialogVisible=false;activeTextDialog=null;field.setText("");});dialog.show();
         field.requestFocus();if(dialog.getWindow()!=null)dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        } catch(RuntimeException failure){
+            textDialogVisible=false;
+            if(activeTextDialog!=null){activeTextDialog.dismiss();activeTextDialog=null;}
+            releaseControls(true);
+            Toast.makeText(this,"Could not open test text entry. Return to the client and retry.",Toast.LENGTH_SHORT).show();
+        }
     }
     private void pressKey(int physical,int keysym){
         if(keysym==0||heldKeys.containsKey(physical)||service==null)return;
@@ -145,10 +156,15 @@ public final class ClientActivity extends Activity {
         Integer key=heldKeys.remove(physical);
         if(key!=null&&!heldKeys.containsValue(key)&&service!=null)service.sendKey(shownSession,key,false);
     }
-    private void releaseControls(){
+    private void releaseRemoteInputs(String session,boolean discardPending){
+        if(service==null||session.isEmpty())return;
+        if(discardPending)service.releaseAllInputs(session);else service.releaseInput(session);
+    }
+    private void releaseControls(){releaseControls(!textDialogVisible);}
+    private void releaseControls(boolean discardPending){
         rightX=rightY=0;heldKeys.clear();heldButtons.clear();
         if(display!=null)display.releaseInput();
-        if(service!=null&&!shownSession.isEmpty())service.releaseAllInputs(shownSession);
+        releaseRemoteInputs(shownSession,discardPending);
     }
     @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus)releaseControls();}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
@@ -235,5 +251,5 @@ public final class ClientActivity extends Activity {
         exporter.execute(()->{String message;try(InputStream in=new FileInputStream(selected);OutputStream out=getContentResolver().openOutputStream(uri,"w")){if(out==null)throw new IOException("No export stream");byte[] buffer=new byte[65536];int n;while((n=in.read(buffer))!=-1)out.write(buffer,0,n);message="Report exported";}catch(Exception e){message="Export failed. Try another destination.";}final String finish=message;runOnUiThread(()->{exporting=false;if(state!=null)render(state);Toast.makeText(this,finish,Toast.LENGTH_LONG).show();});});
     }
     @Override protected void onSaveInstanceState(Bundle out){out.putString("export",pendingExport);out.putString("action",pendingAction);out.putString("import_uri",pendingImport==null?null:pendingImport.toString());out.putBoolean("import_waiting",importWaiting);super.onSaveInstanceState(out);}
-    @Override protected void onDestroy(){exporter.shutdown();super.onDestroy();}
+    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();exporter.shutdown();super.onDestroy();}
 }

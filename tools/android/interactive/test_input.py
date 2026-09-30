@@ -41,8 +41,15 @@ public class InputHarness {
       check(ClientInput.unicodeKeysym(0xd800)==0 && ClientInput.unicodeKeysym('\n')==0);
       System.out.println("mapping passed"); return;
     }
+    final java.util.concurrent.CountDownLatch neutralSent=new java.util.concurrent.CountDownLatch(1);
     ByteArrayOutputStream output=new ByteArrayOutputStream(){
+      private int flushed;
       @Override public void write(int value){super.write(value);Thread.yield();}
+      @Override public synchronized void flush(){
+        byte[] bytes=toByteArray();
+        if(bytes.length-flushed==6 && bytes[flushed]==5 && bytes[flushed+1]==0)neutralSent.countDown();
+        flushed=bytes.length;
+      }
     };
     final InteractiveRfbClient[] ref=new InteractiveRfbClient[1];
     final String mode=args[0];
@@ -55,13 +62,55 @@ public class InputHarness {
         } else if(mode.equals("concurrent")) {
           Thread[] writers=new Thread[4];
           for(int i=0;i<4;i++){final int id=i;writers[i]=new Thread(()->{
-            for(int n=0;n<50;n++)try{
+            for(int n=0;n<8;n++)try{
               if(id==0)ref[0].requestFullUpdate();
               else if(id==1){ref[0].sendKey('X',true);ref[0].sendKey('X',false);}
               else ref[0].sendPointer(id,0,n%2==0?1:0);
             }catch(IOException e){throw new IllegalStateException(e);}
           });writers[i].start();}
           for(Thread thread:writers)thread.join();ref[0].releaseAllInputs();
+        } else if(mode.equals("settle")){
+          long before=System.nanoTime();ref[0].sendPointer(1,1,1);
+          check(System.nanoTime()-before>=280_000_000L);
+          long pressed=System.nanoTime();ref[0].sendPointer(1,1,0);
+          check(System.nanoTime()-pressed<200_000_000L); // queued touch-up never inherits the prepress wait
+          before=System.nanoTime();ref[0].sendKey('A',true);
+          check(System.nanoTime()-before>=280_000_000L);
+          ref[0].sendKey('A',false);
+          ref[0].sendPointer(1,1,1);before=System.nanoTime();
+          ref[0].sendPointer(0,1,1);ref[0].sendPointer(0,1,0);
+          check(System.nanoTime()-before<200_000_000L); // drag and release stay immediate
+        } else if(mode.equals("ordered_dialog")){
+          java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+          try{
+            worker.submit(()->{try{ref[0].sendPointer(1,1,1);}catch(IOException e){throw new IllegalStateException(e);}});
+            worker.submit(()->{try{ref[0].sendPointer(1,1,0);}catch(IOException e){throw new IllegalStateException(e);}});
+            // App-owned dialog focus loss orders its release after the valid target tap.
+            worker.submit(()->{try{ref[0].releaseAllInputs();}catch(IOException e){throw new IllegalStateException(e);}});
+            worker.submit(()->{try{ref[0].sendKey('A',true);ref[0].sendKey('A',false);}
+              catch(IOException e){throw new IllegalStateException(e);}}).get(3,java.util.concurrent.TimeUnit.SECONDS);
+          }finally{worker.shutdownNow();}
+        } else if(mode.equals("cancel")){
+          final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
+          Thread pending=new Thread(()->{try{ref[0].sendPointer(1,1,1,epoch);}
+            catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
+            catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();check(neutralSent.await(1,java.util.concurrent.TimeUnit.SECONDS));
+          ref[0].cancelPendingInput();pending.join(1000);check(!pending.isAlive()&&cancelled[0]);
+          ref[0].releaseAllInputs();
+        } else if(mode.equals("stale")){
+          long epoch=ref[0].inputEpoch();ref[0].cancelPendingInput();int cancelled=0;
+          try{ref[0].sendPointer(1,1,1,epoch);}catch(InteractiveRfbClient.InputCancelledException expected){cancelled++;}
+          try{ref[0].sendKey('A',true,epoch);}catch(InteractiveRfbClient.InputCancelledException expected){cancelled++;}
+          check(cancelled==2);ref[0].sendKey('B',true);ref[0].cancelPendingInput();ref[0].releaseAllInputs();
+        } else if(mode.equals("cancel_key")){
+          ref[0].sendPointer(1,1,1);ref[0].sendPointer(1,1,0);
+          final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
+          Thread pending=new Thread(()->{try{ref[0].sendKey('A',true,epoch);}
+            catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
+            catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();Thread.sleep(40);ref[0].cancelPendingInput();pending.join(1000);
+          check(!pending.isAlive()&&cancelled[0]);ref[0].releaseAllInputs();
         } else if(mode.equals("bounds")){
           int rejected=0;
           try{ref[0].sendPointer(0,0,8);}catch(IOException expected){rejected++;}
@@ -132,20 +181,44 @@ class InputTests(unittest.TestCase):
         messages = self.messages(self.run_harness('basic'))
         key = lambda code, down: struct.pack('>BBHI', 4, down, 0, code)
         pointer = lambda mask, x, y: struct.pack('>BBHH', 5, mask, x, y)
-        self.assertEqual([struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2), pointer(1, 0, 1),
+        self.assertEqual([struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2), pointer(0, 0, 1), pointer(1, 0, 1),
                           pointer(4, 1, 0), key(65, 1), key(0xff52, 1), key(65, 0),
                           key(0xff52, 0), pointer(0, 1, 0), struct.pack('>BBHHHH', 3, 1, 0, 0, 2, 2)], messages)
 
     def test_input_and_refresh_writes_do_not_interleave(self):
         messages = self.messages(self.run_harness('concurrent'))
-        self.assertEqual(52, sum(m[0] == 3 for m in messages))
-        self.assertEqual(100, sum(m[0] == 4 for m in messages))
-        self.assertEqual(100, sum(m[0] == 5 for m in messages))
+        self.assertEqual(10, sum(m[0] == 3 for m in messages))
+        self.assertEqual(16, sum(m[0] == 4 for m in messages))
+        self.assertEqual(17, sum(m[0] == 5 for m in messages))
         for message in messages:
             if message[0] == 4:
                 self.assertIn(message, [struct.pack('>BBHI', 4, x, 0, 88) for x in (0, 1)])
             if message[0] == 5:
                 self.assertIn(message, [struct.pack('>BBHH', 5, x, 1, 0) for x in (0, 1)])
+
+    def test_preposition_then_short_click_focus_settle_and_drag(self):
+        messages = self.messages(self.run_harness('settle'))
+        pointer = lambda mask, x, y: struct.pack('>BBHH', 5, mask, x, y)
+        self.assertEqual([pointer(0, 1, 1), pointer(1, 1, 1), pointer(0, 1, 1)], messages[1:4])
+        self.assertEqual([pointer(1, 1, 1), pointer(1, 0, 1), pointer(0, 0, 1)], messages[-4:-1])
+
+    def test_own_text_dialog_ordered_release_preserves_queued_focus_tap(self):
+        messages = self.messages(self.run_harness('ordered_dialog'))
+        self.assertEqual([struct.pack('>BBHH', 5, mask, 1, 1) for mask in (0, 1, 0)]
+                         + [struct.pack('>BBHI', 4, down, 0, 65) for down in (1, 0)], messages[1:-1])
+
+    def test_finish_cancels_delayed_press_after_neutral_move(self):
+        messages = self.messages(self.run_harness('cancel'))
+        self.assertEqual([struct.pack('>BBHH', 5, 0, 1, 1)], messages[1:-1])
+
+    def test_queued_stale_epoch_writes_nothing_and_emergency_release_bypasses_epoch(self):
+        messages = self.messages(self.run_harness('stale'))
+        self.assertEqual([struct.pack('>BBHI', 4, 1, 0, 66), struct.pack('>BBHI', 4, 0, 0, 66)], messages[1:-1])
+
+    def test_focus_settle_can_cancel_before_first_character(self):
+        messages = self.messages(self.run_harness('cancel_key'))
+        self.assertFalse(any(message[0] == 4 for message in messages))
+        self.assertEqual([0, 1, 0], [message[1] for message in messages if message[0] == 5])
 
     def test_invalid_inputs_and_held_key_limit_fail_without_writes(self):
         messages = self.messages(self.run_harness('bounds'))

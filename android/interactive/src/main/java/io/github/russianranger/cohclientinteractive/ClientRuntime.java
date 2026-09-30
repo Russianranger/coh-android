@@ -363,30 +363,36 @@ public final class ClientRuntime {
         if (finished || producerCompleted) return false;
         AtlasAssetImporter.Control control = importControl;
         if (control != null && !control.requestCancel()) return false;
-        releaseAllInputs(session); inputReady = false; cancelled = true; signalStop(); notifyInputState();
+        inputReady = false; cancelPendingInput(); releaseAllInputs(session);
+        cancelled = true; signalStop(); notifyInputState();
         DiagnosticRuntime activeInstaller = installer; if (activeInstaller != null) activeInstaller.requestStop();
         return true;
     }
-    private interface InputWrite { void write(InteractiveRfbClient active) throws IOException; }
+    private interface InputWrite { void write(InteractiveRfbClient active, long epoch) throws IOException; }
     public boolean sendPointer(String selectedSession, int x, int y, int mask) {
         if (x < 0 || y < 0 || mask < 0 || mask > 7) return false;
-        return queueInput(selectedSession, active -> active.sendPointer(x, y, mask));
+        return queueInput(selectedSession, (active, epoch) -> active.sendPointer(x, y, mask, epoch));
     }
     public boolean sendKey(String selectedSession, int keysym, boolean down) {
         if (keysym <= 0) return false;
-        return queueInput(selectedSession, active -> active.sendKey(keysym, down));
+        return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch));
     }
     private synchronized boolean queueInput(String selectedSession, InputWrite action) {
         if (!inputReady || finishRequested || finished || cancelled || producerCompleted
                 || session == null || !session.equals(selectedSession)) return false;
+        InteractiveRfbClient queuedDecoder = decoder;
+        if (queuedDecoder == null) return false;
+        // Bind at queue acceptance: a task which starts after a lifecycle release
+        // must not adopt the new epoch and deliver a stale delayed press.
+        long queuedEpoch = queuedDecoder.inputEpoch();
         try {
             inputWorker.execute(() -> {
                 InteractiveRfbClient active = decoder;
-                if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active == null) return;
+                if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder) return;
                 try {
                     // The executor and decoder both serialize writes. Never retain
                     // key values or typed text in the evidence archive.
-                    action.write(active);
+                    action.write(active, queuedEpoch);
                     synchronized (ClientRuntime.this) {
                         inputSent++; lastInputUptime = SystemClock.uptimeMillis();
                         lastInputFrameWatermark = decodedFrames;
@@ -394,6 +400,9 @@ public final class ClientRuntime {
                     long now = SystemClock.uptimeMillis();
                     if (now - lastInputRefresh >= 500) { active.requestFullUpdate(); lastInputRefresh = now; }
                     notifyInputState();
+                } catch (InteractiveRfbClient.InputCancelledException discarded) {
+                    // An intentionally discarded pending gesture is neither a
+                    // sent input event nor a transport failure.
                 } catch (IOException failure) { inputFailure("Input transport write failed"); }
             });
             return true;
@@ -409,7 +418,7 @@ public final class ClientRuntime {
                 finishRequested && !finished, inputSent, inputFailed, readyDeadlineUptimeMillis);
     }
     private synchronized void inputFailure(String detail) {
-        inputFailed++; inputReady = false;
+        inputFailed++; inputReady = false; cancelPendingInput();
         receiverFailure = detail; recordLifecycle(detail); notifyInputState();
     }
     private void releaseOnInputWorker() {
@@ -429,7 +438,7 @@ public final class ClientRuntime {
     private void queueRelease(String selectedSession, boolean discard) {
         if (session == null || !session.equals(selectedSession) || finished || inputWorker.isShutdown()) return;
         if (finishRequested) return; // The queued Finish already releases input before writing its request.
-        if (discard) inputWorker.getQueue().clear();
+        if (discard) { cancelPendingInput(); inputWorker.getQueue().clear(); }
         if (decoder == null || clientWindowObservedUptime < 0) return;
         try { inputWorker.execute(this::releaseOnInputWorker); }
         catch (RejectedExecutionException full) {
@@ -443,7 +452,7 @@ public final class ClientRuntime {
     }
     public synchronized boolean requestFinish() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted || observedClientPid < 1) return false;
-        finishRequested = true; inputReady = false;
+        finishRequested = true; inputReady = false; cancelPendingInput();
         inputWorker.getQueue().clear(); notifyInputState();
         try {
             inputWorker.execute(() -> {
@@ -461,7 +470,7 @@ public final class ClientRuntime {
         } catch (RejectedExecutionException closed) { inputFailure("Finish could not be queued"); return false; }
     }
     private void stopInputWorker() {
-        inputReady = false;
+        inputReady = false; cancelPendingInput();
         inputWorker.getQueue().clear();
         if (!inputWorker.isShutdown()) {
             try { inputWorker.execute(this::releaseOnInputWorker); } catch (RejectedExecutionException ignored) {}
@@ -470,6 +479,10 @@ public final class ClientRuntime {
             inputWorker.shutdownNow();
         }
         notifyInputState();
+    }
+    private void cancelPendingInput() {
+        InteractiveRfbClient active = decoder;
+        if (active != null) active.cancelPendingInput();
     }
     private synchronized void signalStop() {
         try { write(new File(state, "stop-request"), "stop\n".getBytes(StandardCharsets.UTF_8)); }

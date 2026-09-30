@@ -76,8 +76,9 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
     }
-    public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.releaseAllInputs(selectedSession);}
-    public void releaseInput(String selectedSession){releaseAllInputs(selectedSession);}
+    public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(selectedSession);}
+    /** Our own text dialog keeps the queued target-field tap before releasing held input. */
+    public void releaseInput(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.releaseAllInputs(selectedSession);}
     public boolean finish(String selectedSession){return session.equals(selectedSession)&&requestFinish();}
     public boolean requestFinish(){
         ClientRuntime active=runtime;

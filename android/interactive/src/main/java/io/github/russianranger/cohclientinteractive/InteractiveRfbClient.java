@@ -31,6 +31,17 @@ public final class InteractiveRfbClient implements Closeable {
     private long sequence;
     private final java.util.LinkedHashSet<Integer> heldKeys = new java.util.LinkedHashSet<>();
     private int pointerX, pointerY, pointerMask;
+    private boolean pointerPositionKnown;
+    private long pointerSettledAfter, keyFocusSettledAfter;
+    private static final long INPUT_SETTLE_NANOS = 300_000_000L;
+    private final java.util.concurrent.atomic.AtomicLong inputGeneration = new java.util.concurrent.atomic.AtomicLong();
+    public static final class InputCancelledException extends IOException {
+        InputCancelledException() { super("Pending input was cancelled"); }
+    }
+    public long inputEpoch() { return inputGeneration.get(); }
+    /** Nonblocking: Finish/focus loss can cancel an already-running neutral-position delay. */
+    public void cancelPendingInput() { inputGeneration.incrementAndGet(); }
+
 
 
     public InteractiveRfbClient(InputStream input, OutputStream output, Listener listener) {
@@ -184,12 +195,23 @@ public final class InteractiveRfbClient implements Closeable {
         output.flush();
     }
 
-    /** Serialized with refresh requests; never writes input into an incomplete handshake. */
-    public synchronized void sendKey(int keysym, boolean down) throws IOException {
-        requireInputReady();
+    /** Call on the dedicated input worker, never the Android UI thread. */
+    public void sendKey(int keysym, boolean down) throws IOException {
+        sendKey(keysym, down, inputEpoch());
+    }
+
+    public synchronized void sendKey(int keysym, boolean down, long expectedEpoch) throws IOException {
+        requireCurrentInput(expectedEpoch);
         if (keysym < 1 || keysym > 0x0110ffff) throw new IOException("Invalid input keysym");
         if (down && !heldKeys.contains(keysym) && heldKeys.size() >= 64)
             throw new IOException("Too many held keys");
+        // The game's edit-field focus follows its next input/UI frame after a click.
+        // Only new key-downs wait; held-key releases must never be delayed.
+        if (down) awaitInputTime(keyFocusSettledAfter, expectedEpoch);
+        writeKey(keysym, down);
+    }
+
+    private void writeKey(int keysym, boolean down) throws IOException {
         output.writeByte(4);
         output.writeByte(down ? 1 : 0);
         output.writeShort(0);
@@ -198,24 +220,70 @@ public final class InteractiveRfbClient implements Closeable {
         if (down) heldKeys.add(keysym); else heldKeys.remove(keysym);
     }
 
-    /** Coordinates clamp after a desktop resize; only the three ordinary mouse buttons are allowed. */
-    public synchronized void sendPointer(int x, int y, int mask) throws IOException {
-        requireInputReady();
-        if (mask < 0 || mask > 7) throw new IOException("Invalid pointer buttons");
-        pointerX = Math.max(0, Math.min(width - 1, x));
-        pointerY = Math.max(0, Math.min(height - 1, y));
-        output.writeByte(5);
-        output.writeByte(mask);
-        output.writeShort(pointerX);
-        output.writeShort(pointerY);
-        output.flush();
-        pointerMask = mask;
+    /** Coordinates clamp after resize. Any settling occurs on the existing dedicated input worker. */
+    public void sendPointer(int x, int y, int mask) throws IOException {
+        sendPointer(x, y, mask, inputEpoch());
     }
 
+    public synchronized void sendPointer(int x, int y, int mask, long expectedEpoch) throws IOException {
+        requireCurrentInput(expectedEpoch);
+        if (mask < 0 || mask > 7) throw new IOException("Invalid pointer buttons");
+        int nextX = Math.max(0, Math.min(width - 1, x));
+        int nextY = Math.max(0, Math.min(height - 1, y));
+        boolean moved = !pointerPositionKnown || nextX != pointerX || nextY != pointerY;
+        if (pointerMask == 0 && mask != 0) {
+            // CoH records click coordinates from its prior mouse poll. A warp plus
+            // press in one RFB event can hit the old position, although hover updates.
+            // Preposition with no buttons, then allow three 10-FPS game frames.
+            if (moved) {
+                writePointer(nextX, nextY, 0);
+                pointerSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
+            }
+            awaitInputTime(pointerSettledAfter, expectedEpoch);
+        }
+        // No added wait occurs for a queued touch-up or any held-button drag.
+        int previousMask = pointerMask;
+        writePointer(nextX, nextY, mask);
+        if (mask == 0 && moved) pointerSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
+        if (previousMask != 0 && mask == 0) keyFocusSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
+    }
+
+    private void writePointer(int x, int y, int mask) throws IOException {
+        output.writeByte(5);
+        output.writeByte(mask);
+        output.writeShort(x);
+        output.writeShort(y);
+        output.flush();
+        pointerX = x; pointerY = y; pointerMask = mask; pointerPositionKnown = true;
+    }
+
+    private void requireCurrentInput(long expectedEpoch) throws IOException {
+        if (inputEpoch() != expectedEpoch) throw new InputCancelledException();
+        requireInputReady();
+    }
+
+    private void awaitInputTime(long deadline, long expectedEpoch) throws IOException {
+        while (true) {
+            requireCurrentInput(expectedEpoch);
+            long remaining = deadline - System.nanoTime();
+            if (deadline == 0 || remaining <= 0) return;
+            long sleep = Math.min(remaining, 20_000_000L);
+            try { Thread.sleep(sleep / 1_000_000L, (int) (sleep % 1_000_000L)); }
+            catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                throw new InputCancelledException();
+            }
+        }
+    }
+
+    /** Emergency/Finish release bypasses input epochs and all settling delays. */
     public synchronized void releaseAllInputs() throws IOException {
         requireInputReady();
-        for (int key : new java.util.ArrayList<>(heldKeys)) sendKey(key, false);
-        if (pointerMask != 0) sendPointer(pointerX, pointerY, 0);
+        for (int key : new java.util.ArrayList<>(heldKeys)) writeKey(key, false);
+        if (pointerMask != 0) {
+            writePointer(pointerX, pointerY, 0);
+            keyFocusSettledAfter = System.nanoTime() + INPUT_SETTLE_NANOS;
+        }
     }
 
     private void requireInputReady() throws IOException {
@@ -233,6 +301,7 @@ public final class InteractiveRfbClient implements Closeable {
 
     @Override public void close() throws IOException {
         closed = true;
+        cancelPendingInput();
         IOException failure = null;
         try { input.close(); } catch (IOException ex) { failure = ex; }
         try { output.close(); } catch (IOException ex) { if (failure == null) failure = ex; }

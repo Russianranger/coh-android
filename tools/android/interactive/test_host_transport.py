@@ -125,13 +125,19 @@ class TransportTests(unittest.TestCase):
             script=host.MenuInteraction(session,directory,finish)
             events=SimpleNamespace(client_pid=460)
             frame=host.ClientFramebuffer();frame.pixels[:32]=b''.join(bytes((x,x,x,0)) for x in range(8))
-            connection=Connection();clock=[0.0]
+            clock=[0.0];packets=[]
+            class TimedConnection(Connection):
+                def sendall(self,data):
+                    packets.append((clock[0],data))
+                    super().sendall(data)
+            connection=TimedConnection()
             def sleep(seconds):clock[0]+=seconds
             def save(path,pixels,*geometry):path.write_bytes(b'png')
             with mock.patch.object(host.time,'monotonic',side_effect=lambda:clock[0]), \
                  mock.patch.object(host.time,'sleep',side_effect=sleep), \
                  mock.patch.object(host,'save_png',side_effect=save):
-                for index,seconds in enumerate(range(0,31,2)):
+                for index in range(61):
+                    seconds=index*.5
                     clock[0]=seconds
                     script.on_frame(connection,frame,events,index+1,[{}, {}, {}],seconds)
                     if seconds<30:self.assertFalse(finish.exists())
@@ -141,11 +147,54 @@ class TransportTests(unittest.TestCase):
             self.assertEqual(json.loads(finish.read_text()),{
                 'format':1,'session_id':session,'client_pid':460,'action':'finish_interaction'})
             pointers=[struct.unpack('!BBHH',packet) for packet in connection.sent if packet[0]==5]
-            self.assertEqual(pointers,[(5,1,400,403),(5,0,400,403),(5,1,625,240),
-                                       (5,0,625,240),(5,1,635,430),(5,0,635,430)])
+            self.assertEqual(pointers,[(5,0,400,403),(5,1,400,403),(5,0,400,403),
+                                       (5,0,625,240),(5,1,625,240),(5,0,625,240),
+                                       (5,0,635,430),(5,1,635,430),(5,0,635,430)])
             keys=[struct.unpack('!BBHI',packet) for packet in connection.sent if packet[0]==4]
             self.assertEqual(keys,[(4,down,0,ord(key)) for key in 'COHINPUT' for down in (1,0)])
             self.assertNotIn(0xff0d,[key[3] for key in keys]) # Never press Enter/log in.
+            pointer_times=[when for when,packet in packets if packet[0]==5]
+            for offset in (0,3,6):
+                self.assertGreaterEqual(pointer_times[offset+1]-pointer_times[offset],1)
+                self.assertAlmostEqual(pointer_times[offset+2]-pointer_times[offset+1],.12)
+            first_key_time=next(when for when,packet in packets if packet[0]==4)
+            self.assertGreaterEqual(first_key_time-pointer_times[5],1)
+            steps=script.result['steps']
+            self.assertEqual([step['action'] for step in steps],[
+                'preposition_cancel_graphics_prompt','cancel_graphics_prompt',
+                'preposition_account_field','focus_account_field','type_visible_test_marker',
+                'preposition_login_settings','open_login_settings'])
+            for index in (1,3,6):
+                self.assertGreaterEqual(steps[index]['fresh_frames_since_previous_action'],2)
+                self.assertGreaterEqual(steps[index]['after_frame_sequence']-steps[index-1]['after_frame_sequence'],2)
+            self.assertGreaterEqual(steps[4]['fresh_frames_since_previous_action'],1)
+
+    def test_neutral_preposition_waits_for_two_distinct_frames_and_is_bounded(self):
+        with tempfile.TemporaryDirectory() as temp:
+            directory=Path(temp)
+            script=host.MenuInteraction('f'*32,directory,directory/'finish.json')
+            events=SimpleNamespace(client_pid=460);frame=host.ClientFramebuffer()
+            connection=Connection();clock=[0.0]
+            def save(path,pixels,*geometry):path.write_bytes(b'png')
+            with mock.patch.object(host.time,'monotonic',side_effect=lambda:clock[0]), \
+                 mock.patch.object(host.time,'sleep'),mock.patch.object(host,'save_png',side_effect=save):
+                script.on_frame(connection,frame,events,10,[{},{},{}],0)
+                self.assertEqual(connection.sent,[struct.pack('!BBHH',5,0,400,403)])
+                clock[0]=2
+                script.on_frame(connection,frame,events,10,[{},{},{}],2)
+                script.on_frame(connection,frame,events,11,[{},{},{}],2)
+                self.assertEqual(len(connection.sent),1) # Age or duplicate frame cannot replace fresh frames.
+                script.on_frame(connection,frame,events,11,[{},{},{}],3)
+                self.assertEqual(len(connection.sent),1)
+                clock[0]=3
+                script.on_frame(connection,frame,events,12,[{},{},{}],3)
+                self.assertEqual(connection.sent[-2:],[struct.pack('!BBHH',5,1,400,403),
+                                                      struct.pack('!BBHH',5,0,400,403)])
+                frame.generation+=1
+                with self.assertRaisesRegex(ValueError,'resized'):
+                    script.on_frame(connection,frame,events,13,[{},{},{}],4)
+                with self.assertRaisesRegex(ValueError,'bound'):
+                    script.on_frame(connection,frame,events,14,[{},{},{}],180)
 
     def test_finish_identity_and_pointer_bounds_are_strict(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -156,6 +205,7 @@ class TransportTests(unittest.TestCase):
             with self.assertRaises(ValueError):host.write_finish_request(path,'f'*32,44)
         for x,y in [(-1,0),(800,0),(0,600),(True,0)]:
             with self.assertRaises(ValueError):host.pointer_click(Connection(),x,y)
+            with self.assertRaises(ValueError):host.pointer_move(Connection(),x,y)
 
 
 if __name__=='__main__':unittest.main()
