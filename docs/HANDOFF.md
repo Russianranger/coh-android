@@ -1,6 +1,37 @@
 # City of Heroes Android handoff
 
-**Physical Thor startup is accepted. COH Client Interaction 0.7.0 is hosted-qualified and ready for one device menu session.**
+**Physical Thor startup and basic menu input are accepted within their reviewed scope. The 0.7.0 device session failed its final-frame check during a graphics reload; cleanup passed.**
+
+The supplied `coh-client-interaction-20260930-201926.zip` records 174 input
+events with zero transport failures. The user confirmed touch and right-stick
+pointer movement, A as left click, and text entry; retained Android captures
+show `COHINPUT` in Account Name with Settings open. All 40 owned child records
+closed, with zero remaining owned workers or inspection failures. Preserve
+the original failed result: Finish captured an all-black guest desktop after
+58.427 seconds of observation, reporting `Observed client desktop became blank`.
+See the [device interaction review](android-evidence/client-interaction-thor-review-20260930.json).
+
+The last Android capture shows loading artwork. The console continues through
+shader compilation. Source review shows that the Settings red X invokes the
+settings-close path, which reapplies graphics settings and can show loading
+artwork while rebuilding rendering resources. This supports a graphics-reload
+explanation; it does not prove eventual recovery or that B caused the blackout.
+B maps to Escape; its separate visible effect remains unverified. Do not call
+the complete session passed or suppress the blank-frame acceptance check.
+
+No repeat device menu test is requested. Carry the confirmed input results
+forward. The source correction now adds bounded final-frame settling within the existing
+interaction deadline, retaining blank samples and checking the exact client
+window/process, display and complete console evidence. Fresh nonblank output
+is required before acceptance; permanent blank output, client exit, window loss
+and deadline expiry still fail. At most three raw blank images are retained to
+preserve the existing support archive limit. All 53 interactive automated tests
+passed after this correction, including transient blank recovery, permanent
+blank output, deadline, process/window loss and truncated console cases.
+Hosted graphics-recovery qualification
+and an updated APK are still pending: qualify the Settings-close and Escape
+sequence before shipping the correction with the next milestone. Keep the
+installed 0.7.0 package and its imported/runtime state.
 
 The supplied `coh-game-client-test-20260930-141120.zip` passed the exact shipped
 Java cleanup and PixelCopy acceptance checks. Its pinned actual client reached
@@ -30,10 +61,10 @@ All 44 automated checks passed. See the
 [hosted interaction receipt](android-evidence/client-interaction-hosted-36736910061.json),
 [package review](android-evidence/client-interaction-package-review-36736910061.json)
 and [one-session device instructions](ANDROID_CLIENT_INTERACTION_TEST.md).
-Android touch and physical Thor controller input remain the next device gate;
+The later physical review above accepts the user-confirmed basic menu inputs;
 input counts alone do not establish a visible game response.
 
-The next **COH Client Interaction 0.7.0** milestone adds touch, text and basic
+The **COH Client Interaction 0.7.0** milestone adds touch, text and basic
 Thor controller menu input, then Finish and verified cleanup in one session.
 It starts no server. The old 0.6.0 development signing key was not retained,
 so its installed package cannot be updated while preserving private state.
@@ -42,8 +73,9 @@ it and requires its own one-time runtime setup and asset import. The new
 development signing identity is retained, backed up and pinned to certificate
 `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`;
 future builds fail rather than silently generate another certificate.
-The accepted old apps stay installed. Physical Android interaction, login, world entry, audio, hardware acceleration
-and playable performance remain separate unproven outcomes.
+The accepted old apps stay installed. Login, world entry, audio, hardware
+acceleration, B/Escape behavior and recovery after a settings reload remain
+separate unproven outcomes.
 
 
 The first interactive hosted candidate, run `36732627939`, passed startup,
@@ -58,7 +90,7 @@ the hosted check also waits for fresh frames before clicks and text entry.
 No game binary, accepted startup gate or window-focus behavior is changed.
 
 
-After physical menu input is accepted, the next smallest gate is graphical
+With basic physical menu input now accepted, the next smallest gate is graphical
 loopback login to an empty character-selection screen using PostgreSQL/DbServer;
 MapServer and world entry can follow later. Update the retained-signature 0.7
 package so its imported generation, Wine prefix and prepared caches survive.

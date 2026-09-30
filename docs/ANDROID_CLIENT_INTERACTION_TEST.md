@@ -1,5 +1,21 @@
 # COH Client Interaction 0.7.0
 
+## September 30 device result — no repeat menu session requested
+
+Touch and right-stick pointer movement, A-click and text entry were confirmed
+by the user; saved Android captures show `COHINPUT` with Settings open. Cleanup
+passed. The original session remains failed because its final guest capture was
+black after closing Settings. Loading artwork and shader compilation support a
+graphics reload; return to the menu and B's separate effect were not proven.
+See the [review](android-evidence/client-interaction-thor-review-20260930.json).
+Keep this installation and its imported data for a future same-signature update.
+The procedure below is the historical one-session test, not a request to rerun it.
+
+For future integrated checks, avoid changing graphics controls just to prove
+pointer input. Settings' red X can reapply graphics settings. If checking B,
+press it while Settings is still open and observe its effect before another
+action; do not combine red-X close and B as one observation.
+
 Actual client startup passed on your Thor. This next step checks whether touch,
 text and the built-in controller operate the game's menus in one session.
 The accepted Atlas, display and startup tests stay complete. This app starts no

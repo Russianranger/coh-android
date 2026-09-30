@@ -69,6 +69,85 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         require(REQUIRED <= set(self.ctx.report['asset_sha256']),
                 'Interactive guest helper is missing from the pinned input inventory')
 
+    def finish_observation(self, launch, registry_output, deadline):
+        """Retain transient blank frames without extending the interaction window."""
+        started = time.monotonic()
+        settling = {'status': 'checking', 'captures': [], 'blank_capture_count': 0,
+                    'initial_budget_seconds': round(max(0, deadline-started), 3),
+                    'retry_interval_seconds': 5, 'retained_blank_capture_limit': 3}
+        self.ctx.report['final_frame_settling'] = settling
+
+        def processes_alive():
+            self.ctx.check()
+            require(self.client.process.poll() is None,
+                    'Actual CoH client exited during startup or observation')
+            require(self.xserver.process.poll() is None, 'Owned presentation display exited')
+
+        def current_evidence():
+            processes_alive()
+            output, current_launch, console = self.observe_console()
+            require(current_launch == launch and console is not None,
+                    'Actual CoH client identity disappeared during final observation')
+            windows = self.observer.windows()
+            self.ctx.report['observed_windows'] = windows
+            evidence = startup_evidence(output, registry_output, windows, current_launch)
+            self.ctx.report.update(evidence)
+            require(evidence['startup_observed'] and evidence['renderer_initialized']
+                    and evidence['all_data_loaded'],
+                    'Actual CoH window or startup evidence disappeared during observation')
+            return evidence
+
+        try:
+            while True:
+                current_evidence()
+                # The normal terminal snapshot is still taken at the original
+                # deadline. A retry must start and finish within that deadline.
+                retry = bool(settling['captures'])
+                require(not retry or time.monotonic() < deadline,
+                        'Observed client desktop remained blank until the interaction deadline')
+                target = self.capture_dir / 'client-observed.ppm'
+                shot = self.observer.capture(target)
+                shot.update(session_id=self.args.session_id, captured_utc=base.utc())
+                nonblank = shot['distinct_colors_capped'] >= 8
+                if not nonblank:
+                    settling['blank_capture_count'] += 1
+                    # Preserve the first two blanks and the latest blank. All
+                    # attempt hashes/times stay in the report; raw PPM retention
+                    # must fit the existing support archive's evidence reserve.
+                    if settling['blank_capture_count'] > settling['retained_blank_capture_limit']:
+                        previous_blank = settling['captures'][-1]
+                        (self.capture_dir / previous_blank['path']).unlink()
+                        previous_blank['retained'] = False
+                    retained = self.capture_dir / ('client-settling-%03d.ppm' % settling['blank_capture_count'])
+                    target.rename(retained)
+                    shot['path'] = retained.name
+                settling['captures'].append(dict(shot, retained=True,
+                    elapsed_seconds=round(time.monotonic()-started, 3)))
+                # Recheck the complete console, exact-PID window and live
+                # processes after capture, including on a visually good frame.
+                evidence = current_evidence()
+                require(not retry or time.monotonic() <= deadline,
+                        'Final client frame exceeded the interaction deadline')
+                if nonblank:
+                    self.captures.append(shot)
+                    self.ctx.report['screenshots'] = self.captures
+                    settling['status'] = 'settled'
+                    return evidence
+                require(time.monotonic() < deadline,
+                        'Observed client desktop remained blank until the interaction deadline')
+                settling['status'] = 'waiting_for_nonblank_frame'
+                self.ctx.event('stage', status='running', message='Waiting for the client graphics to settle',
+                               blank_captures=settling['blank_capture_count'])
+                next_capture = min(deadline, time.monotonic() + 5)
+                while time.monotonic() < next_capture:
+                    processes_alive()
+                    time.sleep(max(0, min(.1, next_capture-time.monotonic())))
+        except Exception:
+            settling['status'] = 'failed'
+            raise
+        finally:
+            settling['elapsed_seconds'] = round(time.monotonic()-started, 3)
+
     def execute(self):
         require(not self.finish_path.exists() and not self.finish_path.is_symlink(),
                 "Stale interaction finish request must be removed before launch")
@@ -170,13 +249,8 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                             self.ctx.event('client_interaction_finishing', session_id=self.args.session_id,
                                            client_pid=launch['pid'], completion_reason=reason)
                             self.ctx.report['observation_seconds'] = round(elapsed, 3)
-                            shot = self.capture('client-observed')
-                            require(shot and shot['distinct_colors_capped'] >= 8, 'Observed client desktop became blank')
-                            # Logs may grow during the registry query/capture.
-                            # A fresh check forbids acceptance after truncation
-                            # even though ordinary detection is on the 5s poll.
-                            self.ctx.check()
-                            self.observe_console()
+                            evidence = self.finish_observation(launch, registry_output, deadline)
+                            self.ctx.report['observation_seconds'] = round(time.monotonic()-ready_at, 3)
                             self.ctx.report.update(interaction_session_completed=True, input_effect_verified=False,
                                 interaction_completion_reason=reason)
                             self.ctx.passed(**evidence, bounded_live_observation=True,
