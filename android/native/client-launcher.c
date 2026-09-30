@@ -126,13 +126,25 @@ int main(int argc, char **argv) {
     DWORD code;
     size_t index;
     const char *flags=generate ? " -createbins -nogui 1 -console 1 -noaudio 1 -verbose 1 -physics 0" :
-        " -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
+        " -nogui 1 -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
     if ((argc!=4 && !generate) || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
     for(index=0; index<32; index++) if(!strchr("0123456789abcdef",argv[1][index])) return 64;
     if(strlen(executable)+strlen(flags)+1>sizeof(command)) return 64;
     strcpy(command, executable); strcat(command,flags);
     if(!DuplicateHandle(GetCurrentProcess(),saved[1],GetCurrentProcess(),&pipe,0,FALSE,DUPLICATE_SAME_ACCESS)) return 69;
-    AllocConsole();
+    /* Wine's initial shell console may be only a sentinel. Make a real parent
+       console for the client's explicit AttachConsole(ATTACH_PARENT_PROCESS).
+       Its -nogui option changes native diagnostic UI, not the game renderer or
+       data validation. Already attached, it preserves inherited pipe stdio
+       instead of reopening unbuffered CONOUT$. Keep cache generation exact. */
+    if(generate) AllocConsole();
+    else {
+        FreeConsole();
+        if(!AllocConsole()) {
+            snprintf(message,sizeof(message),"COH_CLIENT_CONSOLE_ERROR_V1 %lu\n",(unsigned long)GetLastError());
+            output(pipe,message); CloseHandle(pipe); return 70;
+        }
+    }
     if(GetConsoleWindow()) ShowWindow(GetConsoleWindow(),SW_HIDE);
     SetStdHandle(STD_INPUT_HANDLE,saved[0]); SetStdHandle(STD_OUTPUT_HANDLE,saved[1]); SetStdHandle(STD_ERROR_HANDLE,saved[2]);
     for(index=0; index<3; index++) {
@@ -150,26 +162,30 @@ int main(int argc, char **argv) {
     output(pipe,message);
     CloseHandle(pi.hThread);
     owned_pid=pi.dwProcessId;
-    /* A GUI child starts detached from its parent's console. Once its own
-       AllocConsole/freopen runs, attach and read the actual screen buffer. */
-    FreeConsole();
+    /* Normal mode holds the real parent console until the child attaches to
+       it explicitly. Cache generation keeps the previous attach-to-child path.
+       In either case, verify exact child membership before observing it. */
+    if(generate) FreeConsole();
     deadline=GetTickCount64()+20*60*1000;
     while(WaitForSingleObject(pi.hProcess,500)==WAIT_TIMEOUT) {
         if(GetTickCount64()>=deadline) { CloseHandle(pi.hProcess); CloseHandle(pipe); return 67; }
-        if(!attached && AttachConsole(pi.dwProcessId)) {
+        if(!attached && (!generate || AttachConsole(pi.dwProcessId))) {
             DWORD ids[32],number,j;
             int owned=0;
             number=GetConsoleProcessList(ids,32);
             if(number && number<=32) for(j=0;j<number;j++) if(ids[j]==pi.dwProcessId) owned=1;
-            if(!owned) { FreeConsole(); continue; }
+            if(!owned) { if(generate) FreeConsole(); continue; }
             screen=CreateFileA("CONOUT$",GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
-            if(screen==INVALID_HANDLE_VALUE) { FreeConsole(); continue; }
+            if(screen==INVALID_HANDLE_VALUE) { if(generate) FreeConsole(); continue; }
             attached=1;
             if(GetConsoleWindow()) ShowWindowAsync(GetConsoleWindow(),SW_HIDE);
             snprintf(message,sizeof(message),"COH_CLIENT_CONSOLE_V1 {\"session_id\":\"%s\",\"pid\":%lu,\"attached\":true}\n",argv[1],(unsigned long)pi.dwProcessId);
             output(pipe,message);
         }
         if(attached) console_capture(screen,pipe);
+        /* -nogui briefly shows the diagnostic console after attaching. */
+        if(!generate && GetConsoleWindow() && IsWindowVisible(GetConsoleWindow()))
+            ShowWindowAsync(GetConsoleWindow(),SW_HIDE);
         if(!generate) EnumWindows(position_owned_window,0);
     }
     if(attached) { console_capture(screen,pipe); CloseHandle(screen); FreeConsole(); }

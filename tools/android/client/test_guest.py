@@ -160,6 +160,70 @@ class ConsoleBudgetTests(unittest.TestCase):
             self.assertEqual(diagnostic.ctx.report['client_console']['sha256'], hashlib.sha256(exported).hexdigest())
 
 
+class StartupObservationTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        self.elapsed = 0.0
+        def sleep(seconds): self.elapsed = round(self.elapsed + seconds, 6)
+        clock = SimpleNamespace(monotonic=lambda: self.elapsed, sleep=sleep)
+        patched = patch.object(guest, 'time', clock); patched.start(); self.addCleanup(patched.stop)
+        patched = patch.object(guest.base, 'validate_runtime_probe', return_value={})
+        patched.start(); self.addCleanup(patched.stop)
+        observer = Mock()
+        observer.windows.return_value = [{'title': 'City of Heroes : PID: 44',
+            'mapped': True, 'width': 800, 'height': 600}]
+        patched = patch.object(guest, 'XObserver', return_value=observer)
+        patched.start(); self.addCleanup(patched.stop)
+        self.output = (guest.LAUNCH_MARKER + json.dumps({'session_id': SESSION, 'pid': 44}) + '\n'
+            + guest.CONSOLE_MARKER + json.dumps({'session_id': SESSION, 'pid': 44, 'attached': True})
+            + '\nRenderer initialization complete\nLoaded all data!\n')
+        self.registry = '    GameProgress    REG_SZ    game_mainLoop\n'
+        diagnostic = guest.ClientStartupDiagnostic.__new__(guest.ClientStartupDiagnostic)
+        diagnostic.args = SimpleNamespace(wine=root/'wine', assets=root, session_id=SESSION,
+            startup_timeout_seconds=900, observation_seconds=5)
+        diagnostic.work = root
+        diagnostic.presentation_socket = root/'view.sock'
+        diagnostic.wine_env = {'DISPLAY': ':100'}
+        diagnostic.startup_complete = False
+        diagnostic.initialize = Mock(); diagnostic.start_wine = Mock()
+        diagnostic.mark_wine_ready = Mock(); diagnostic.save_evidence = Mock()
+        diagnostic.capture = Mock(return_value={'distinct_colors_capped': 16})
+        diagnostic.xserver = Mock(); diagnostic.xserver.process.poll.return_value = None
+        child = Mock(); child.process.poll.return_value = None
+        child.text.side_effect = lambda: self.output
+        diagnostic.ctx = Mock(report={})
+        diagnostic.ctx.start.return_value = child
+        diagnostic.ctx.run.side_effect = lambda label, *a, **kw: {
+            'output': self.registry if label == 'client-progress-registry' else ''}
+        self.diagnostic = diagnostic
+
+    def test_missing_console_fails_at_120_seconds_between_progress_polls(self):
+        self.output = guest.LAUNCH_MARKER + json.dumps({'session_id': SESSION, 'pid': 44}) + '\n'
+        self.registry = ''
+        # A slow progress query makes 120 seconds fall between five-second polls.
+        run = self.diagnostic.ctx.run.side_effect
+        def delayed_registry(label, *args, **kwargs):
+            if label == 'client-progress-registry': self.elapsed += .2
+            return run(label, *args, **kwargs)
+        self.diagnostic.ctx.run.side_effect = delayed_registry
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'within 120 seconds'):
+            self.diagnostic.execute()
+        self.assertEqual(self.elapsed, 120.0)
+        self.assertFalse(self.diagnostic.startup_complete)
+
+    def test_truncation_arriving_during_final_capture_cannot_pass(self):
+        def capture(label):
+            if label == 'client-observed': self.output += 'COH_CLIENT_CONSOLE_TRUNCATED_V1\n'
+            return {'distinct_colors_capped': 16}
+        self.diagnostic.capture.side_effect = capture
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'exceeded observation budget'):
+            self.diagnostic.execute()
+        self.assertFalse(self.diagnostic.startup_complete)
+        self.assertFalse(any(call.kwargs.get('bounded_live_observation')
+                             for call in self.diagnostic.ctx.passed.call_args_list))
+
+
 class WorktreeTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)

@@ -44,6 +44,17 @@ missing-texture warnings. It did not exhaust the startup deadline, and cleanup
 was complete. The next wrapper increases bounded observation capacity, preserves
 all failure/readiness checks, and reuses the exact verified caches. See the
 [observation-budget receipt](android-evidence/client-startup-hosted-36710174172.json).
+Run `36711916066` then retained the complete 5.79 MB console capture but reached
+the 900-second startup limit just after mission-maker data, at the start of
+player geometry preload. NPC and costume checks consumed about 514 seconds;
+the main loop was not reached and cleanup was complete. See the
+[full-budget receipt](android-evidence/client-startup-hosted-36711916066.json).
+The next wrapper reduces repeated parsing of the same diagnostic log and uses
+the client's native-diagnostic-UI mode to preserve direct pipe logging. This
+changes native prompts and the small initial splash, while retaining actual
+game window creation, graphics, data loading and texture validation. It needs
+fresh hosted qualification; no phone rerun is requested for failed candidates.
+See the [console profile review](android-evidence/client-console-profile-20260930.md).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

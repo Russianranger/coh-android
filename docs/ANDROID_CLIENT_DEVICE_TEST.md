@@ -44,5 +44,10 @@ Visual review establishes what the game screen actually shows. This build
 starts no game server and does not establish login, world entry, controller
 input, audio, hardware acceleration or playable performance.
 
+Native Windows diagnostic prompts are recorded as text in this profile.
+The game's own graphics, loading and data checks remain enabled. See the
+[console profile review](android-evidence/client-console-profile-20260930.md)
+for the exact diagnostic behavior changes.
+
 Runtime installation, asset import and generated caches persist for later
 launches. There is no need to repeat setup or import after this one run.

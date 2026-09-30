@@ -616,6 +616,16 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         self.ctx.report['screenshots'] = self.captures
         return record
 
+    def observe_console(self):
+        output = self.client.text()
+        launch = parse_launch(output, self.args.session_id)
+        if launch:
+            self.ctx.report.update(client_process_started=True, client_launch=launch)
+        console = console_identity(output, launch)
+        self.ctx.report['client_console_observation'] = console
+        require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in output, 'Actual client console exceeded observation budget')
+        return output, launch, console
+
     def execute(self):
         self.initialize()
         self.start_wine()
@@ -643,8 +653,10 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         self.capture('before-client')
         self.ctx.event('client_display_ready', session_id=self.args.session_id, width=800, height=600,
                        socket_path=str(self.presentation_socket), startup_timeout_seconds=self.args.startup_timeout_seconds)
-        # The GUI client allocates and redirects to its own console. The helper
-        # attaches to that exact child and copies its screen buffer to our pipe.
+        # The launcher's -nogui diagnostic-UI profile preserves the actual game
+        # window, renderer and data validation, while suppressing native dialogs
+        # and splash UI. It keeps inherited log pipes and observes the owned
+        # child's console as a fallback; game code and assets remain unchanged.
         command = [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
                    base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
         previous = Path.cwd()
@@ -658,6 +670,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         next_registry = next_progress = 0
         registry_output = ''
         ready_at = None
+        console = None
         try:
             while True:
                 self.ctx.check()
@@ -665,13 +678,12 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 require(self.xserver.process.poll() is None, 'Owned presentation display exited')
                 now = time.monotonic()
                 require(now < deadline, 'Actual CoH startup exceeded its bounded deadline')
-                output = self.client.text()
-                launch = parse_launch(output, self.args.session_id)
-                if launch:
-                    self.ctx.report.update(client_process_started=True, client_launch=launch)
-                console = console_identity(output, launch)
-                self.ctx.report['client_console_observation'] = console
-                require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in output, 'Actual client console exceeded observation budget')
+                # Decoding and scanning a growing multi-MiB log at 10Hz steals
+                # startup time. Use the existing five-second evidence poll;
+                # stop/process/overall/overflow checks above remain at 100ms.
+                # Refresh at the console deadline even between progress polls.
+                if now >= next_progress or (console is None and now - started >= 120):
+                    output, launch, console = self.observe_console()
                 require(console is not None or now - started < 120,
                         'Could not attach to actual client console within 120 seconds')
                 if now >= next_progress:
@@ -698,6 +710,11 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                                                    startup_elapsed_seconds=round(ready_at-started, 3))
                             shot = self.capture('client-observed')
                             require(shot and shot['distinct_colors_capped'] >= 8, 'Observed client desktop became blank')
+                            # Logs may grow during the registry query/capture.
+                            # A fresh check forbids acceptance after truncation
+                            # even though ordinary detection is on the 5s poll.
+                            self.ctx.check()
+                            self.observe_console()
                             self.ctx.passed(**evidence, bounded_live_observation=True)
                             self.startup_complete = True
                             return
