@@ -83,6 +83,16 @@ class EvidenceTests(unittest.TestCase):
             setattr(broken, field, value)
             with self.assertRaises(guest.base.DiagnosticError): guest.ppm_from_ximage(broken)
 
+    def test_console_attachment_belongs_to_current_child(self):
+        launch = {'session_id': SESSION, 'pid': 44}
+        marker = guest.CONSOLE_MARKER + json.dumps(dict(launch, attached=True))
+        self.assertTrue(guest.console_identity(marker, launch)['attached'])
+        self.assertIsNone(guest.console_identity('', launch))
+        for output, identity in [(marker+'\n'+marker, launch), (marker, None),
+                (marker, dict(launch, pid=45)), (marker, dict(launch, session_id='f'*32)),
+                (marker.replace('true', 'false'), launch)]:
+            with self.assertRaises(guest.base.DiagnosticError): guest.console_identity(output, identity)
+
     def test_no_producer_gameplay_claims(self):
         result = guest.startup_evidence('Loaded all data!', '', [], None)
         self.assertFalse(result['menu_visual_validated'])
@@ -137,6 +147,24 @@ class WorktreeTests(unittest.TestCase):
         target = work/'CityOfHeroes.exe'; target.chmod(0o600); target.write_bytes(b'changed')
         with self.assertRaisesRegex(guest.base.DiagnosticError,'Cached client binary'):
             guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+
+    def test_cache_inventory_excludes_inputs_and_stops_at_bound(self):
+        private = self.root / 'private'
+        cache = private / 'data' / 'bin'
+        cache.mkdir(parents=True)
+        (private / 'data' / 'defs').mkdir()
+        (private / 'data' / 'defs' / 'input.def').write_bytes(b'not inventoried')
+        (cache / 'first.bin').write_bytes(b'123')
+        (cache / 'second.bin').write_bytes(b'12345')
+        result = guest.cache_inventory(private, guest.time.monotonic()+3)
+        self.assertFalse(result['truncated'])
+        self.assertEqual({row['path'] for row in result['files']}, {'data/bin/first.bin','data/bin/second.bin'})
+        self.assertEqual(sum(row['bytes'] for row in result['files']), 8)
+        limited = guest.cache_inventory(private, guest.time.monotonic()+3, entry_limit=1)
+        self.assertTrue(limited['truncated'])
+        self.assertEqual(len(limited['files']), 1)
+        (cache / 'linked.bin').symlink_to(cache / 'first.bin')
+        with self.assertRaises(guest.base.DiagnosticError): guest.cache_inventory(private, guest.time.monotonic()+3)
 
     def test_archive_traversal_server_and_wrong_donor_rejected(self):
         for name in ['../outside', 'MapServer.exe']:

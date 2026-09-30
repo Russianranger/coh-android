@@ -186,6 +186,7 @@ jobs:
           --archive out/client-assets.zip
           --build-report out/client/client-apk-build-report.json
           --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
+          --startup-timeout-seconds 300
           --work out/client-host --evidence out/client-evidence
       - uses: actions/upload-artifact@v4
         if: always()

@@ -112,13 +112,15 @@ def observe_rfb(connection,session,process,deadline,evidence):
             'connected_outside_proot':True,'android_surface_validated':False,'gameplay_validated':False}
 
 
-def make_command(work,assets,proot,session,data):
+def make_command(work,assets,proot,session,data,startup_timeout_seconds=900):
+    require(type(startup_timeout_seconds) is int and 120<=startup_timeout_seconds<=900,
+            "Host client startup timeout must be 120 to 900 seconds")
     command,env=transport.make_command(work,assets,proot,session)
     command[command.index('/opt/coh/presentation_diagnostic.py')]='/opt/coh/client_startup_diagnostic.py'
     where=command.index('--duration-seconds');del command[where:where+2]
     (work/'rootfs/game-import').mkdir()
     where=command.index('-w');command[where:where]=['-b',str(data.parent)+':/game-import']
-    command+=['--game-data','/game-import/data','--startup-timeout-seconds','900','--observation-seconds','30']
+    command+=['--game-data','/game-import/data','--startup-timeout-seconds',str(startup_timeout_seconds),'--observation-seconds','30']
     if '--timeout-seconds' in command:
         command[command.index('--timeout-seconds')+1]='1800'
     else:
@@ -166,14 +168,17 @@ def validate_report(report,session,manifest=None):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for key in ('apk','build-report','proot','work','evidence','archive'):parser.add_argument('--'+key,type=Path,required=True)
-    parser.add_argument('--repository-commit',required=True);args=parser.parse_args()
+    parser.add_argument('--repository-commit',required=True)
+    parser.add_argument('--startup-timeout-seconds',type=int,default=900,choices=range(120,901),metavar='120..900',
+                        help='Host-only actual client startup bound; observation and acceptance are unchanged')
+    args=parser.parse_args()
     require(platform.machine().lower() in ('aarch64','arm64'),'Native ARM64 Linux required')
     require(not args.work.exists(),'Fresh private smoke work required')
     args.work=args.work.resolve();args.proot=args.proot.resolve();args.evidence=args.evidence.resolve()
     args.work.mkdir(parents=True);args.evidence.mkdir(parents=True,exist_ok=True)
     manifest,assets,imports=extract_apk_assets(args.apk,args.work/'apk-assets',args.build_report,args.repository_commit)
     data=import_game_data(imports,args.archive.resolve(),args.work,args.evidence)
-    session=secrets.token_hex(16);command,env=make_command(args.work,assets,args.proot,session,data)
+    session=secrets.token_hex(16);command,env=make_command(args.work,assets,args.proot,session,data,args.startup_timeout_seconds)
     start=time.monotonic();deadline=start+1860;observer=None;failure=None;process=None
     with (args.evidence/'host-client.log').open('w') as log:
         try:
@@ -205,7 +210,8 @@ def main():
             result={'format':1,'status':'failed' if failure else 'passed','scope':'exact_apk_actual_client_native_arm64',
                     'repository_commit':args.repository_commit,'apk_sha256':digest(args.apk),
                     'runtime_manifest_sha256':digest(assets/'runtime-manifest.json'),'import_donor':apk_tool.import_donor(),
-                    'session_id':session,'external_observer':observer,'failure':failure,'elapsed_seconds':round(time.monotonic()-start,3),
+                    'session_id':session,'startup_timeout_seconds':args.startup_timeout_seconds,
+                    'external_observer':observer,'failure':failure,'elapsed_seconds':round(time.monotonic()-start,3),
                     'android_execution_validated':False,'android_surface_validated':False,'gameplay_validated':False}
             (args.evidence/'host-client-report.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))

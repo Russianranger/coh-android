@@ -12,6 +12,13 @@ The next separate **COH Game Client Test 0.6.0** packages the pinned actual
 `CityOfHeroes.exe` and matching DLLs. Reuse the reviewed asset ZIP for one
 private import, then attempt visible game loading/login without a server boot.
 The one-run instructions are in [the client device test](ANDROID_CLIENT_DEVICE_TEST.md).
+The initial actual-client hosted attempt [36700734062](https://github.com/Russianranger/coh-android/actions/runs/36700734062)
+displayed the Freedom loading artwork but timed out before `game_mainLoop`;
+cleanup was complete. Do not deliver that APK as qualified. Its later console
+output was redirected away from the inherited pipe. The next candidate adds
+owned-console capture, correct window placement and bounded cache/activity
+evidence; the exact stalled data-loading stage remains unconfirmed. See the
+[failed startup receipt](android-evidence/client-startup-hosted-36700734062.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

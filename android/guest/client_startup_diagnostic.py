@@ -22,6 +22,7 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import presentation_diagnostic as presentation
+import game_hang_evidence
 base, require = presentation.base, presentation.require
 SCOPE = 'actual_client_startup_guest'
 SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
@@ -32,6 +33,7 @@ REQUIRED = (presentation.REQUIRED - {'presentation-probe.exe'}) | {
     'client_startup_diagnostic.py', 'client-launcher.exe', 'client-runtime.zip'}
 PRIVATE_CACHE_ROOTS = ('bin', 'server/bin', 'geobin')
 LAUNCH_MARKER = 'COH_CLIENT_LAUNCH_V1 '
+CONSOLE_MARKER = 'COH_CLIENT_CONSOLE_V1 '
 MAX_IMAGE_BYTES = 1024*768*4
 
 
@@ -367,6 +369,46 @@ def startup_evidence(output, registry_output, windows, launch):
         'startup_observed': bool(main_loop and actual), 'menu_visual_validated': False}
 
 
+def console_identity(output, launch):
+    values = [json.loads(line[len(CONSOLE_MARKER):]) for line in output.splitlines()
+              if line.startswith(CONSOLE_MARKER)]
+    require(len(values) <= 1, 'Duplicate client console identity')
+    if not values: return None
+    value = values[0]
+    require(launch is not None and isinstance(value, dict)
+            and set(value) == {'session_id', 'pid', 'attached'}
+            and value['session_id'] == launch['session_id']
+            and type(value['pid']) is int and value['pid'] == launch['pid']
+            and value['attached'] is True, 'Client console identity does not match owned launch')
+    return value
+
+
+def cache_inventory(work, deadline, entry_limit=4096):
+    """Inspect only private cache metadata, never walk or copy the loose inputs."""
+    result = {'format': 1, 'sampled_utc': base.utc(), 'entry_limit': entry_limit,
+              'files': [], 'roots': list(PRIVATE_CACHE_ROOTS), 'truncated': False}
+    pending = [work / 'data' / name for name in PRIVATE_CACHE_ROOTS]
+    examined = 0
+    while pending:
+        directory = pending.pop()
+        require(not directory.is_symlink(), 'Linked private cache directory refused')
+        if not directory.exists(): continue
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                if examined >= entry_limit or time.monotonic() >= deadline:
+                    result['truncated'] = True
+                    return result
+                examined += 1
+                require(not entry.is_symlink(), 'Linked private cache entry refused')
+                info = entry.stat(follow_symlinks=False)
+                if stat.S_ISDIR(info.st_mode):
+                    pending.append(Path(entry.path))
+                elif stat.S_ISREG(info.st_mode):
+                    result['files'].append({'path': Path(entry.path).relative_to(work).as_posix(),
+                        'bytes': info.st_size, 'mtime_ns': info.st_mtime_ns})
+    return result
+
+
 class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
     def __init__(self, args, context):
         super().__init__(args, context)
@@ -375,6 +417,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         self.work = None
         self.capture_dir = base.private_dir(args.state / ('client-evidence-' + args.session_id))
         self.captures = []
+        self.startup_complete = False
 
     def initialize(self):
         self.ctx.stage('client_inputs')
@@ -429,8 +472,8 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         self.capture('before-client')
         self.ctx.event('client_display_ready', session_id=self.args.session_id, width=800, height=600,
                        socket_path=str(self.presentation_socket), startup_timeout_seconds=self.args.startup_timeout_seconds)
-        # The helper inherits an existing hidden console and the owned pipe. The
-        # unmodified client's AllocConsole cannot redirect stdout to CONOUT$.
+        # The GUI client allocates and redirects to its own console. The helper
+        # attaches to that exact child and copies its screen buffer to our pipe.
         command = [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
                    base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
         previous = Path.cwd()
@@ -455,6 +498,11 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 launch = parse_launch(output, self.args.session_id)
                 if launch:
                     self.ctx.report.update(client_process_started=True, client_launch=launch)
+                console = console_identity(output, launch)
+                self.ctx.report['client_console_observation'] = console
+                require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in output, 'Actual client console exceeded observation budget')
+                require(console is not None or now - started < 120,
+                        'Could not attach to actual client console within 120 seconds')
                 if now >= next_progress:
                     windows = self.observer.windows()
                     self.ctx.report['observed_windows'] = windows
@@ -480,6 +528,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                             shot = self.capture('client-observed')
                             require(shot and shot['distinct_colors_capped'] >= 8, 'Observed client desktop became blank')
                             self.ctx.passed(**evidence, bounded_live_observation=True)
+                            self.startup_complete = True
                             return
                     else:
                         require(ready_at is None, 'Actual CoH window or startup evidence disappeared during observation')
@@ -503,6 +552,25 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
             try: self.capture('client-final')
             except Exception as exc: self.ctx.report.setdefault('observation_failures', []).append(str(exc))
         if self.work:
+            try:
+                inventory = cache_inventory(self.work, time.monotonic() + 3)
+                target = self.capture_dir / 'private-cache-inventory.json'
+                target.write_text(json.dumps(inventory, indent=2) + '\n', encoding='utf-8')
+                self.ctx.report['private_cache_inventory'] = {'path': target.name,
+                    'files': len(inventory['files']), 'truncated': inventory['truncated']}
+            except Exception as exc:
+                self.ctx.report.setdefault('observation_failures', []).append('Cache inventory: ' + str(exc))
+            if not self.startup_complete and self.wine_started:
+                try:
+                    snapshot = game_hang_evidence.capture_processes(self, time.monotonic() + 6)
+                    target = self.capture_dir / 'owned-processes.json'
+                    payload = json.dumps(snapshot, indent=2) + '\n'
+                    require(len(payload.encode()) <= 1024*1024, 'Owned-process snapshot exceeded bound')
+                    target.write_text(payload, encoding='utf-8')
+                    self.ctx.report['owned_process_snapshot'] = {'path': target.name,
+                        'owned_process_count': snapshot.get('owned_process_count')}
+                except Exception as exc:
+                    self.ctx.report.setdefault('observation_failures', []).append('Owned processes: ' + str(exc))
             logs = self.work / 'logs'
             if logs.is_dir() and not logs.is_symlink():
                 output_dir = self.capture_dir / 'logs'
