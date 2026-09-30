@@ -30,6 +30,14 @@ marker, but correctly failed its output checks because three badge/pophelp
 attributes were absent. The next candidate includes those exact accepted lookup
 files for both cache generation and normal startup. See the
 [cache generation receipt](android-evidence/client-cache-generation-36706745544.json).
+The corrected candidate `a40250b0032bd05a333514920722ddffa4427730` produced
+100 verified caches and a verified 0.6.0 APK in run `36707839624`. Its short
+300-second hosted diagnostic consumed those caches without rebuilding them and
+continued through powers, NPCs and items to FX loading when the diagnostic
+deadline expired. Cleanup was complete. The next qualification uses this exact
+APK and its existing normal 900-second startup budget, with all readiness,
+observation and cleanup checks unchanged; do not rebuild or repeat phone tests.
+See the [cached diagnostic receipt](android-evidence/client-startup-hosted-36707839624.json).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.
