@@ -1,16 +1,20 @@
-name: Thor interactive graphical client candidate
+name: Thor local graphical login candidate
 on:
   workflow_dispatch:
   push:
     paths:
       - 'android/interactive/**'
       - 'android/guest/client_interactive_diagnostic.py'
+      - 'android/guest/client_login_diagnostic.py'
+      - 'android/guest/local_login_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
   pull_request:
     paths:
       - 'android/interactive/**'
       - 'android/guest/client_interactive_diagnostic.py'
+      - 'android/guest/client_login_diagnostic.py'
+      - 'android/guest/local_login_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
 permissions:
@@ -33,6 +37,8 @@ jobs:
           java-version: '17'
       - name: Check actual client packaging, session evidence and package boundaries
         run: python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v
+      - name: Check prepared client cache reuse across package updates
+        run: python3 -m unittest discover -s tools/android/client -p 'test_guest.py' -v
   client-caches:
     if: github.event_name != 'pull_request'
     needs: tooling
@@ -105,6 +111,12 @@ jobs:
           path: out/client-inputs/atlas-apk
           run-id: 36638344040
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/client-inputs/dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
       - name: Recover exact client and accepted import donors
         run: |
           python3 - <<'PYTHON'
@@ -137,13 +149,15 @@ jobs:
         with:
           name: coh-client-generated-caches
           path: out/client-inputs/client-caches
-      - name: Preserve accepted runtime and add qualified graphical client
+      - name: Preserve accepted runtime, client and loopback DbServer inputs
         run: |
           mkdir -p out/client
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/client-inputs/schema
           python3 tools/android/interactive/prepare_assets.py \
             --assets out/client-inputs/runtime --output out/client/runtime \
             --client out/client-inputs/client-package/client-runtime.zip \
             --client-caches out/client-inputs/client-caches/client-caches.zip \
+            --dbserver-package out/client-inputs/dbserver --dbserver-schema out/client-inputs/schema \
             --repository-commit "$GITHUB_SHA" > out/client/assets-preparation.json
       - uses: actions/download-artifact@v4
         with:
@@ -151,7 +165,7 @@ jobs:
           path: out/client-signing
           run-id: 36731428735
           github-token: ${{ github.token }}
-      - name: Build and verify separate COH Client Interaction APK
+      - name: Build and verify same-package COH Local Login APK
         env:
           COH_INTERACTIVE_KEYSTORE_PASSWORD: android
         run: >-
@@ -163,13 +177,13 @@ jobs:
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore out/client-signing/coh-client-interactive.jks
           --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
-          --output out/client/COH-Client-Interaction-0.7.0.apk
+          --output out/client/COH-Local-Login-0.8.0.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-interaction-apk
           path: |
-            out/client/COH-Client-Interaction-0.7.0.apk
-            out/client/COH-Client-Interaction-0.7.0.apk.sha256
+            out/client/COH-Local-Login-0.8.0.apk
+            out/client/COH-Local-Login-0.8.0.apk.sha256
             out/client/interactive-apk-build-report.json
             out/client/assets-preparation.json
           if-no-files-found: error
@@ -230,10 +244,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
-      - name: Exercise exact APK client menus through private Unix RFB
+      - name: Exercise exact APK local login through private Unix RFB
         run: >-
-          python3 tools/android/interactive/host_smoke.py
-          --apk out/client/COH-Client-Interaction-0.7.0.apk
+          python3 tools/android/interactive/login_host_smoke.py
+          --apk out/client/COH-Local-Login-0.8.0.apk
           --archive out/client-assets.zip
           --build-report out/client/interactive-apk-build-report.json
           --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64

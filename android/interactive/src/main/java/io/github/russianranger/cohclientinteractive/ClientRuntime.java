@@ -24,7 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/** Starts the pinned real CoH client in an isolated app runtime; never starts a game server or SQL. */
+/** Runs the pinned CoH client with a persistent local PostgreSQL and DbServer profile. */
 public final class ClientRuntime {
     public interface Listener {
         void onStage(String stage, String detail);
@@ -44,7 +44,7 @@ public final class ClientRuntime {
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
     private static final long MAX_GUEST_ZIP = 160L * 1024 * 1024;
     private static final String PROCESS_INSTANCE = UUID.randomUUID().toString();
-    private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Client Interactive in Android settings, then reopen it.";
+    private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Local Login in Android settings, then reopen it.";
     private static boolean guardInitialized, blocked;
     private static boolean operationActive;
     private final Context context;
@@ -53,6 +53,9 @@ public final class ClientRuntime {
     private final StringBuilder log = new StringBuilder();
     private final List<Map<String, Object>> surfaceSamples = new ArrayList<>();
     private final List<byte[]> surfacePngs = new ArrayList<>();
+    private final List<Map<String, Object>> loginSamples = new ArrayList<>();
+    private final List<byte[]> loginPngs = new ArrayList<>();
+    private volatile long loginObservedUptime = -1, loginFrameWatermark = -1;
     private final List<Map<String, Object>> interactionSamples = new ArrayList<>();
     private final List<byte[]> interactionPngs = new ArrayList<>();
     private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
@@ -180,7 +183,7 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets, then start an interactive client session."
+        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets, then start local login. Existing imported assets do not need reimporting."
                 : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
     }
 
@@ -220,14 +223,14 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Verified game assets are ready. Start an interactive client session next."
+        return new Result(ready, latestReport, ready ? "Verified game assets are ready. Start local login next."
                 : cancelled ? "Asset import stopped; the previous verified content is preserved."
                 : "Asset import failed: " + error);
     }
 
     public Result run(String selectedSession) throws Exception {
         if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
-        begin("client_interaction", selectedSession);
+        begin("client_login", selectedSession);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false;
@@ -238,6 +241,8 @@ public final class ClientRuntime {
             state.mkdirs();
             removePreviousGuestOutput();
             File tmp = new File(operationDir, "tmp"); tmp.mkdirs();
+            File guestHosts = new File(operationDir, "hosts");
+            write(guestHosts, localHosts(android.system.Os.uname().nodename).getBytes(StandardCharsets.US_ASCII));
             File prootTmp = new File(home.getParentFile(), "p").getCanonicalFile(); prootTmp.mkdirs();
             File socketDir = new File(home.getParentFile(), "s").getCanonicalFile(); socketDir.mkdirs();
             android.system.Os.chmod(socketDir.getPath(), 0700);
@@ -262,12 +267,13 @@ public final class ClientRuntime {
                     "-b", new File(generation, "wine").getPath() + ":/opt/wine",
                     "-b", new File(generation, "passwd").getPath() + ":/etc/passwd",
                     "-b", new File(generation, "group").getPath() + ":/etc/group",
+                    "-b", guestHosts.getPath() + ":/etc/hosts",
                     "-w", "/state", "/usr/bin/env", "-i", "HOME=/state", "USER=coh", "LOGNAME=coh",
                     "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
-                    "/usr/bin/python3", "/opt/coh/client_interactive_diagnostic.py", "--state", "/state", "--assets", "/opt/coh",
+                    "/usr/bin/python3", "/opt/coh/client_login_diagnostic.py", "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
-                    "--execution-platform", "android", "--session-id", session,
+                    "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
                     "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
                     "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "180", "--timeout-seconds", "1620"));
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
@@ -276,7 +282,7 @@ public final class ClientRuntime {
             builder.environment().put("PROOT_NO_SECCOMP", "1");
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
-            stage("Starting City of Heroes", "Preparing Wine and the verified client files, then checking the actual client window.");
+            stage("Starting City of Heroes", "Starting the persistent local database and server, then opening the graphical client.");
             check(); child = builder.start(); launched = true; runLaunched = true;
             Process process = child;
             output = new Thread(() -> captureOutput(process), "coh-client-output"); output.start();
@@ -341,21 +347,21 @@ public final class ClientRuntime {
                     error = "The guest completed, but its current-session client evidence did not match this APK.";
                 if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
-                        && inputFailed == 0 && surfaceAccepted(report);
+                        && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted();
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
-                if (guestPassed && !passed && error == null) error = "Client startup incomplete: three current-session PixelCopy captures were not retained while the client window was alive.";
+                if (guestPassed && !passed && error == null) error = "Local login incomplete: three fresh Android captures are required after the server reports the character list.";
                 publish(report, passed, cleanup);
             } finally {
                 child = null; endOperation();
                 if (interrupted) Thread.currentThread().interrupt();
             }
         }
-        String summary = passed ? "Interactive session complete with Android captures and verified cleanup. Input effects require manual review of the exported screenshots; no login or gameplay is claimed."
-                : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? "Interactive session stopped. Export the latest report."
-                : guestPassed ? "Interactive session incomplete. Export the latest report."
-                : "Interactive session failed. Export the latest report.";
-        stage(passed ? "Interactive session complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? "Interactive session stopped"
-                : guestPassed ? "Interactive session incomplete" : "Interactive session failed", summary);
+        String summary = passed ? "Local server login was verified, the server sent the character list, and fresh Android captures and cleanup were recorded. Confirm the character-selection screen in the exported screenshots; world entry remains untested."
+                : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? "Local login check stopped. Export the latest report."
+                : guestPassed ? "Local login check incomplete. Export the latest report."
+                : "Local login check failed. Export the latest report.";
+        stage(passed ? "Local login check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? "Local login check stopped"
+                : guestPassed ? "Local login check incomplete" : "Local login check failed", summary);
         return new Result(passed, latestReport, summary);
     }
 
@@ -503,11 +509,15 @@ public final class ClientRuntime {
                 || captured > SystemClock.uptimeMillis()) return;
         boolean startupSample = surfaceSamples.size() < 3 && (surfaceSamples.isEmpty()
                 || captured - ((Number) surfaceSamples.get(surfaceSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean loginSample = loginObservedUptime >= 0 && captured >= loginObservedUptime
+                && ((Number) sequence).longValue() > loginFrameWatermark && loginSamples.size() < 3
+                && (loginSamples.isEmpty()
+                || captured - ((Number) loginSamples.get(loginSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
         boolean afterInput = inputSent > 0 && captured >= lastInputUptime
                 && ((Number) sequence).longValue() > lastInputFrameWatermark;
         boolean interactionSample = readyDeadlineUptimeMillis > 0 && (interactionSamples.isEmpty()
                 || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
-        if (!startupSample && !interactionSample) return;
+        if (!startupSample && !loginSample && !interactionSample) return;
         try {
             // Bind the retained bytes to the PixelCopy record. The source Surface
             // provides the nonuniform check; the PNG must be a bounded 800x600 image.
@@ -524,6 +534,14 @@ public final class ClientRuntime {
             if (startupSample) {
                 sample.put("archive_path", "android-surface/capture-" + (surfaceSamples.size()+1) + ".png");
                 surfaceSamples.add(sample); surfacePngs.add(png.clone());
+            }
+            if (loginSample) {
+                Map<String,Object> login = new LinkedHashMap<>(sample);
+                login.put("archive_path", "android-login/capture-" + (loginSamples.size()+1) + ".png");
+                login.put("post_login_frame_observed", true);
+                loginSamples.add(login); loginPngs.add(png.clone());
+                if (loginSamples.size() == 3)
+                    stage("Local login verified", "The server sent the character list and fresh Android views were captured. Check the empty character-selection screen, then press Finish.");
             }
             if (interactionSample) {
                 Map<String,Object> interactive = new LinkedHashMap<>(sample);
@@ -642,6 +660,23 @@ public final class ClientRuntime {
                             inputReady = false; discardPendingInputs(session); notifyInputState();
                             stage("Finishing session", "Releasing input and saving the final view before cleanup.");
                         }
+                        if ("client_login_ready".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id")) && observedClientPid > 0
+                                && observedClientPid == event.optLong("client_pid", -1)
+                                && loginObservedUptime < 0 && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                loginObservedUptime = SystemClock.uptimeMillis();
+                                loginFrameWatermark = decodedFrames;
+                                loginSamples.clear(); loginPngs.clear();
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
+                            }
+                            recordLifecycle("local_login_observed");
+                            stage("Local server login observed", "The server sent the character list. Waiting for fresh Android views before Finish.");
+                        }
                         if ("client_interaction_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id")) && observedClientPid > 0
                                 && observedClientPid == event.optLong("client_pid", -1)
@@ -650,7 +685,7 @@ public final class ClientRuntime {
                                 && readyDeadlineUptimeMillis == 0 && !cancelled && !finished) {
                             readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 180000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", "Interact with the menu, then press Finish. The session closes after three minutes.");
+                            stage("Client ready for input", "Log in with COHLOCAL / offline, select the local shard, then wait at the character list. Three minutes remain.");
                         }
                         if ("stage".equals(event.optString("type"))) listener.onStage(event.optString("stage", "Checking display"),
                                 clean(event.optString("message", event.optString("detail", ""))));
@@ -674,8 +709,8 @@ public final class ClientRuntime {
         // The shared pinned input inventory retains its accepted startup scope;
         // the enclosing bundle and current guest result identify interaction.
         if (clientManifest.getInt("format") != 1 || !"actual_client_startup_guest".equals(clientManifest.getString("scope"))
-                || !"actual_client_interaction_guest".equals(manifest.getJSONObject("client_bundle").optString("scope"))
-                || !"client_interactive_diagnostic.py".equals(manifest.getJSONObject("client_bundle").optString("guest_script")))
+                || !"actual_client_login_guest".equals(manifest.getJSONObject("client_bundle").optString("scope"))
+                || !"client_login_diagnostic.py".equals(manifest.getJSONObject("client_bundle").optString("guest_script")))
             throw new IOException("The client package has the wrong scope");
     }
     private void validateInstalled() throws Exception {
@@ -690,7 +725,7 @@ public final class ClientRuntime {
             if (!file.isFile() || file.length() != pin.getLong("bytes") || !sha(file).equals(pin.getString("sha256")))
                 throw new IOException("Runtime integrity check failed: " + name);
         }
-        for (String name : new String[]{"client_interactive_diagnostic.py", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
+        for (String name : new String[]{"client_login_diagnostic.py", "local_login_server.py", "dbserver-package.tar.gz", "dbserver-schema.tar.gz", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
             if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
     }
     private void removePreviousGuestOutput() throws IOException {
@@ -703,11 +738,13 @@ public final class ClientRuntime {
     private boolean guestAccepted(JSONObject report) throws Exception {
         if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
                 && session.equals(report.optString("session_id"))
-                && "actual_client_interaction_guest".equals(report.optString("scope"))
-                && "actual_client_interaction".equals(report.optString("diagnostic_mode"))
+                && "actual_client_login_guest".equals(report.optString("scope"))
+                && "actual_client_login".equals(report.optString("diagnostic_mode"))
                 && "android".equals(report.optString("execution_platform_requested"))
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
-                && Boolean.FALSE.equals(report.opt("postgres_started")) && Boolean.FALSE.equals(report.opt("server_started"))
+                && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
+                && Boolean.FALSE.equals(report.opt("mapserver_started"))
+                && ClientAcceptance.localLoginVerified(jsonValue(report), session, observedClientPid)
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -765,7 +802,8 @@ public final class ClientRuntime {
                 || worktree.optLong("prepared_prerequisite_bytes", -1) != 54948L
                 || worktree.optLong("input_files", -1) != imported.count
                 || worktree.optLong("input_bytes", -1) != imported.bytes) return false;
-        String[] requiredStages = {"client_inputs", "client_private_data", "presentation_display", "wine_initialization",
+        String[] requiredStages = {"client_inputs", "client_private_data", "persistent_server_profile", "postgres_local_login",
+                "presentation_display", "wine_initialization", "local_login_odbc", "local_dbserver_startup",
                 "win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
         JSONArray stages = report.optJSONArray("stages");
         if (stages == null || stages.length() != requiredStages.length) return false;
@@ -773,7 +811,7 @@ public final class ClientRuntime {
             JSONObject stage = stages.getJSONObject(i);
             if (!requiredStages[i].equals(stage.optString("stage")) || !"passed".equals(stage.optString("status"))) return false;
         }
-        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(6);
+        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(10);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
                 || !imported.dataCommit.equals(inputs.optString("data_commit"))
                 || !Boolean.TRUE.equals(startup.opt("bounded_live_observation"))) return false;
@@ -794,6 +832,22 @@ public final class ClientRuntime {
                     startedUptime, endedUptime, clientWindowObservedUptime, clientWindowEndedUptime, clientWindowFrameWatermark);
         }
     }
+    private boolean loginSurfaceAccepted() {
+        synchronized (this) {
+            return ClientAcceptance.surfaceAccepted(loginSamples, session, startedUptime, endedUptime,
+                    loginObservedUptime, clientWindowEndedUptime, loginFrameWatermark);
+        }
+    }
+
+    private static String localHosts(String hostname) throws IOException {
+        if (hostname == null || hostname.isEmpty() || hostname.length() > 253)
+            throw new IOException("Kernel hostname is not a safe hosts-file name");
+        String[] labels = hostname.split("\\.", -1);
+        for (String label : labels)
+            if (!label.matches("[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"))
+                throw new IOException("Kernel hostname is not a safe hosts-file name");
+        return "127.0.0.1 " + String.join(" ", new LinkedHashSet<>(Arrays.asList("localhost", hostname, labels[0]))) + "\n";
+    }
 
     private void publish(JSONObject guest, boolean passed, boolean cleanup) throws IOException {
         try {
@@ -813,7 +867,11 @@ public final class ClientRuntime {
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())
                     .put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
-                    .put("scope", "Bounded interactive City of Heroes menu session through private RFB input and Android PixelCopy; input effects require manual review")
+                    .put("scope", "Local graphical-client authentication and evidence that the server sent the character list, with fresh Android PixelCopy; character-selection visibility requires review")
+                    .put("local_login_verified", passed)
+                    .put("character_selection_visible", false)
+                    .put("login_observed_uptime_ms", loginObservedUptime)
+                    .put("login_frame_watermark", loginFrameWatermark)
                     .put("decoded_frame_count", decodedFrames)
                     .put("client_window_observed_uptime_ms", clientWindowObservedUptime)
                     .put("client_window_frame_watermark", clientWindowFrameWatermark)
@@ -824,6 +882,7 @@ public final class ClientRuntime {
             if (receiverFailure != null) wrapper.put("receiver_error", receiverFailure);
             synchronized (this) {
                 wrapper.put("surface_captures", new JSONArray(surfaceSamples));
+                wrapper.put("login_captures", new JSONArray(loginSamples));
                 wrapper.put("interaction_captures", new JSONArray(interactionSamples));
                 wrapper.put("lifecycle", new JSONArray(lifecycle));
             }
@@ -831,7 +890,7 @@ public final class ClientRuntime {
                     : ("setup".equals(operation) || "import".equals(operation)) ? guest.optString("status", "failed")
                     : guest.optBoolean("passed") ? "client_incomplete" : "failed";
             wrapper.put("status", status);
-            File target = new File(operationDir, "coh-client-test-" + runId + ".zip");
+            File target = new File(operationDir, "coh-local-login-" + runId + ".zip");
             File part = new File(operationDir, "support.zip.part");
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(part))) {
                 if (imported != null) wrapper.put("import", new JSONObject().put("generation", imported.generation)
@@ -840,6 +899,8 @@ public final class ClientRuntime {
                 zipText(out, "android-client-report.json", wrapper.toString(2));
                 synchronized (this) { for (int i=0;i<surfacePngs.size();i++)
                     zipBytes(out, "android-surface/capture-" + (i+1) + ".png", surfacePngs.get(i)); }
+                synchronized (this) { for (int i=0;i<loginPngs.size();i++)
+                    zipBytes(out, "android-login/capture-" + (i+1) + ".png", loginPngs.get(i)); }
                 synchronized (this) { for (int i=0;i<interactionPngs.size();i++)
                     zipBytes(out, (String) interactionSamples.get(i).get("archive_path"), interactionPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
@@ -856,7 +917,7 @@ public final class ClientRuntime {
                 try (InputStream in = context.getAssets().open("atlas/atlas-import.properties")) {
                     zipBytes(out, "atlas-import.properties", read(in, 16384));
                 }
-                if ("client_interaction".equals(operation) && runLaunched) {
+                if ("client_login".equals(operation) && runLaunched) {
                     File file = new File(state, "report.zip");
                     if (file.isFile()) zipFile(out, "guest-report.zip", file, MAX_GUEST_ZIP);
                 }

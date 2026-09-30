@@ -279,29 +279,74 @@ def prepare_worktree(root, data, assets, identity, context):
                          'prerequisites_archive_sha256': prerequisites_sha,
                          'prerequisites_manifest_sha256': prerequisites_manifest_sha,
                          'normalized_mtime_epoch': CACHE_EPOCH}
-    if destination.exists() or destination.is_symlink():
-        require(destination.is_dir() and not destination.is_symlink(), 'Linked client worktree')
-        saved = read_json(marker)
-        require(all(saved.get(k) == v for k, v in expected_identity.items()), 'Client worktree identity differs')
-        require((destination / 'tools').is_dir() and not (destination / 'tools').is_symlink(),
+    def compatible_receipt(saved):
+        # Only the ZIP wrapper provenance may differ. Imported generation,
+        # prepared cache donor, prerequisites and timestamp policy stay exact.
+        return (isinstance(saved, dict)
+                and isinstance(saved.get('package_sha256'), str)
+                and re.fullmatch(r'[0-9a-f]{64}', saved['package_sha256']) is not None
+                and all(saved.get(k) == v for k, v in expected_identity.items() if k != 'package_sha256'))
+
+    def verify_cached_files(candidate):
+        require((candidate / 'tools').is_dir() and not (candidate / 'tools').is_symlink(),
                 'Missing private loose-data discovery marker')
-        require((destination / 'data').is_dir() and not (destination / 'data').is_symlink(), 'Invalid private client data')
+        require((candidate / 'data').is_dir() and not (candidate / 'data').is_symlink(), 'Invalid private client data')
         for name in PRIVATE_CACHE_ROOTS:
-            current = destination / 'data'
+            current = candidate / 'data'
             for part in Path(name).parts:
                 current /= part
                 require(not current.is_symlink(), 'Linked writable cache refused')
         with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
             package = archive_manifest(archive)
         for name, pin in package['files'].items():
-            target = destination / name
+            target = candidate / name
             require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['size']
                     and base.file_hash(target) == pin['sha256'], 'Cached client binary differs: ' + name)
         for name, pin in PREREQUISITES.items():
-            target = destination / name
+            target = candidate / name
             require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['bytes']
                     and base.file_hash(target) == pin['sha256'] and int(target.stat().st_mtime) == CACHE_EPOCH,
                     'Cached client prerequisite differs: ' + name)
+
+    candidate = destination
+    migrated_from = None
+    if not destination.exists() and not destination.is_symlink():
+        # APK wrapper commits change client-runtime.zip's manifest bytes, but
+        # leave the pinned executable/DLL closure unchanged. Reuse one proved
+        # old tree instead of recreating 173,011 input links and losing caches.
+        possible = [path for path in root.iterdir() if re.fullmatch(r'client-work-[0-9a-f]{24}', path.name)]
+        require(len(possible) <= 16, 'Too many client worktrees for bounded reuse')
+        matches = []
+        for previous in possible:
+            require(previous.is_dir() and not previous.is_symlink(), 'Linked client worktree')
+            saved = read_json(previous / 'client-work.json')
+            if not compatible_receipt(saved): continue
+            old_key = hashlib.sha256((identity['receipt_sha256'] + saved['package_sha256']
+                + cache_sha + prerequisites_sha + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
+            require(previous.name == 'client-work-' + old_key, 'Prior client worktree key differs')
+            matches.append(previous)
+        require(len(matches) <= 1, 'Ambiguous compatible client worktrees')
+        if matches:
+            candidate = matches[0]
+            migrated_from = candidate.name
+    if candidate.exists() or candidate.is_symlink():
+        require(candidate.is_dir() and not candidate.is_symlink(), 'Linked client worktree')
+        saved = read_json(candidate / 'client-work.json')
+        require(compatible_receipt(saved), 'Client worktree identity differs')
+        verify_cached_files(candidate)
+        changed_wrapper = saved['package_sha256'] != package_sha
+        if candidate != destination:
+            # Directory rename preserves every private/generated cache byte.
+            # If interrupted before the next atomic marker write, the new
+            # location's old wrapper hash must pass these same checks on retry.
+            os.rename(candidate, destination)
+        if changed_wrapper:
+            previous_sha = saved['package_sha256']
+            saved.update(expected_identity)
+            base.private_write(destination / 'client-work.json', json.dumps(saved, indent=2) + '\n')
+            return destination, dict(saved, reused=True, wrapper_only_migration=True,
+                previous_package_sha256=previous_sha, previous_worktree=migrated_from,
+                generated_cache_bytes_preserved=True)
         return destination, dict(saved, reused=True)
     require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + prerequisites_bytes + 256*1024*1024,
             'Insufficient space for private client links, prepared caches and runtime reserve')

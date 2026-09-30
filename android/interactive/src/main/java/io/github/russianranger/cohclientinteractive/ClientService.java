@@ -52,14 +52,14 @@ public final class ClientService extends Service {
     @Override public void onCreate(){
         super.onCreate();
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH client interaction",NotificationManager.IMPORTANCE_LOW));
+        manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH local login",NotificationManager.IMPORTANCE_LOW));
         blocked=ClientRuntime.cleanupBlocked(this);
         SharedPreferences p=getSharedPreferences(PREFS,MODE_PRIVATE);
         if(p.getBoolean("was_busy",false)){stage="Previous test interrupted";detail="The previous operation did not complete. Review its report before starting another test.";}
         else {stage=p.getString("stage",stage);detail=p.getString("detail",detail);}
         String saved=p.getString("report",null);
         if(saved!=null){try{File f=new File(saved).getCanonicalFile();if(f.isFile()&&f.getPath().startsWith(getFilesDir().getCanonicalPath()+File.separator))report=f;}catch(Exception ignored){}}
-        if(blocked){stage="Cleanup needs attention";detail="Force-stop COH Client Interactive in Android settings, then reopen it before starting more work.";}
+        if(blocked){stage="Cleanup needs attention";detail="Force-stop COH Local Login in Android settings, then reopen it before starting more work.";}
         IntentFilter f=new IntentFilter();f.addAction(Intent.ACTION_SCREEN_OFF);f.addAction(Intent.ACTION_SCREEN_ON);
         if(Build.VERSION.SDK_INT>=33)registerReceiver(screenReceiver,f,Context.RECEIVER_NOT_EXPORTED);else registerReceiver(screenReceiver,f);
     }
@@ -143,11 +143,11 @@ public final class ClientService extends Service {
                 if(destroyed)return;
                 blocked=instance.isCleanupBlocked();busy=false;inputReady=false;finishing=false;
                 report=outcome!=null?outcome.report:instance.getLatestReport();
-                if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Client Interactive in Android settings before reopening.";}
+                if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Local Login in Android settings before reopening.";}
                 else if(stopping){stage="Stopped";detail="The operation stopped. Export the latest report to review cleanup.";}
                 else if(error!=null){stage="Test failed";detail="Export the latest report. "+(error.getMessage()==null?error.getClass().getSimpleName():error.getMessage());}
-                else if(outcome!=null&&outcome.passed){stage=setup?"Runtime ready":importing?"Client data ready":"Interactive session complete";detail=outcome.summary;}
-                else {stage="Interactive session incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
+                else if(outcome!=null&&outcome.passed){stage=setup?"Runtime ready":importing?"Client data ready":"Local login check complete";detail=outcome.summary;}
+                else {stage="Local login check incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
                 runtime=null;
                 getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false).putString("stage",stage).putString("detail",detail).putString("report",report==null?null:report.getPath()).apply();
                 if(wake!=null&&wake.isHeld())wake.release();stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
@@ -157,7 +157,7 @@ public final class ClientService extends Service {
     }
     private Notification notification(){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,ClientActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("COH Client Interactive · "+stage).setContentText(detail).setContentIntent(open).setOngoing(busy).setOnlyAlertOnce(true);
+        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("COH Local Login · "+stage).setContentText(detail).setContentIntent(open).setOngoing(busy).setOnlyAlertOnce(true);
         if(busy&&inputReady)b.addAction(new Notification.Action.Builder(null,"Finish",PendingIntent.getService(this,2,new Intent(this,ClientService.class).setAction(FINISH),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         if(busy)b.addAction(new Notification.Action.Builder(null,"Stop",PendingIntent.getService(this,1,new Intent(this,ClientService.class).setAction(STOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         return b.build();

@@ -63,23 +63,23 @@ public final class ClientActivity extends Activity {
         root.setOnApplyWindowInsetsListener((v,insets)->{v.setPadding(dp(12)+insets.getSystemWindowInsetLeft(),dp(8)+insets.getSystemWindowInsetTop(),dp(12)+insets.getSystemWindowInsetRight(),dp(8)+insets.getSystemWindowInsetBottom());return insets;});
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
-        TextView title=text("COH Client Interaction",22,true);controls.addView(title);
-        controls.addView(text("Touch · keyboard · Thor controls · v0.7.0",12,false));
-        controls.addView(text("Test the CoH login controls. Atlas stays accepted; this check starts no server.",13,false));
-        setup=button("1 · Set up runtime",()->request(ClientService.SETUP));controls.addView(setup);
-        importAssets=button("2 · Import client assets",this::chooseImport);controls.addView(importAssets);
-        run=button("3 · Start interaction check",()->request(ClientService.RUN));controls.addView(run);
+        TextView title=text("COH Local Login",22,true);controls.addView(title);
+        controls.addView(text("Persistent local server · v0.8.0",12,false));
+        controls.addView(text("Connect the graphical client to your local server. Your imported assets and accepted tests carry forward.",13,false));
+        setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
+        importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
+        run=button("2 · Start local login",()->request(ClientService.RUN));controls.addView(run);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
-        typeText=button("Send test text / L3",this::showTextInput);controls.addView(typeText);
+        typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
         stop=button("Abort operation",()->{if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
         export=button("Export latest report",this::chooseExport);controls.addView(export);
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("When input is ready: cancel the Quality/Ultra prompt, tap Account Name and send COHINPUT, then open Settings. Do not log in. Tap Finish when done; the window also ends after 3 minutes.",12,false));
+        controls.addView(text("When input is ready: cancel any Quality/Ultra prompt. Log in with COHLOCAL / offline and select the local shard. At the empty character list, wait for Local login verified, then tap Finish. Do not create a character yet.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
-        TextView caption=text("CITY OF HEROES · INTERACTION CHECK",12,true);right.addView(caption);
+        TextView caption=text("CITY OF HEROES · LOCAL LOGIN",12,true);right.addView(caption);
         FrameLayout viewport=new FrameLayout(this);right.addView(viewport,new LinearLayout.LayoutParams(-1,0,1));
         display=new ClientSurface(this);viewport.addView(display,new FrameLayout.LayoutParams(-1,-1));
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
@@ -121,15 +121,23 @@ public final class ClientActivity extends Activity {
         try {
         EditText field=new EditText(this);field.setSingleLine(true);field.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         field.setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);field.setSaveEnabled(false);
-        field.setFilters(new InputFilter[]{new InputFilter.LengthFilter(ClientInput.MAX_TEXT)});field.setText("COHINPUT");field.selectAll();
-        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Send test text")
-                .setMessage("First tap the game's Account Name field. Send COHINPUT only for this test; do not enter a real account or password.")
-                .setView(field).setNegativeButton("Cancel",null).setPositiveButton("Send",(d,w)->{
+        field.setFilters(new InputFilter[]{new InputFilter.LengthFilter(ClientInput.MAX_TEXT)});field.setText("COHLOCAL");field.selectAll();
+        CheckBox replace=new CheckBox(this);replace.setText("Replace focused game field (Ctrl+A)");replace.setChecked(true);
+        LinearLayout entry=new LinearLayout(this);entry.setOrientation(LinearLayout.VERTICAL);entry.addView(field);entry.addView(replace);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle("Send text to game")
+                .setMessage("First tap the game's Account Name or Password field. Use COHLOCAL for the account and offline for the local test password.")
+                .setView(entry).setNegativeButton("Cancel",null).setPositiveButton("Send",(d,w)->{
                     String value=field.getText().toString();
                     if(!ClientInput.validText(value)){Toast.makeText(this,"Use 1–32 printable English characters.",Toast.LENGTH_SHORT).show();return;}
                     if(!inputActive||service==null)return;
                     boolean queued=true;
-                    for(int i=0;i<value.length();i++){
+                    if(replace.isChecked()) {
+                        queued=service.sendKey(shownSession,0xffe3,true)
+                                && service.sendKey(shownSession,'a',true)
+                                && service.sendKey(shownSession,'a',false)
+                                && service.sendKey(shownSession,0xffe3,false);
+                    }
+                    for(int i=0;queued&&i<value.length();i++){
                         int key=value.charAt(i);
                         if(!service.sendKey(shownSession,key,true)){queued=false;break;}
                         if(!service.sendKey(shownSession,key,false)){queued=false;break;}
@@ -240,7 +248,7 @@ public final class ClientActivity extends Activity {
     private void chooseExport(){
         if(state==null||state.busy||state.report==null||exporting)return;pendingExport=state.report.getPath();
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE);
-        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-client-interaction-"+format.format(new Date())+".zip");
+        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-local-login-"+format.format(new Date())+".zip");
         try{startActivityForResult(intent,EXPORT);}catch(RuntimeException e){pendingExport=null;Toast.makeText(this,"No export destination is available.",Toast.LENGTH_LONG).show();}
     }
     @Override protected void onActivityResult(int request,int result,Intent data){

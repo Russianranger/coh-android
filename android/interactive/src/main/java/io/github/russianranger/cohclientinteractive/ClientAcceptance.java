@@ -8,6 +8,16 @@ import java.util.Set;
 
 /** Pure acceptance checks: a decoded framebuffer alone never proves an Android display. */
 final class ClientAcceptance {
+    static boolean localLoginVerified(Object value, String session, long clientPid) {
+        Map<?, ?> report = object(value), login = object(report.get("local_login"));
+        return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
+                && session.equals(login.get("session_id")) && number(login.get("client_pid"), clientPid)
+                && "android-local-login".equals(login.get("profile"))
+                && yes(login.get("local_login_verified")) && yes(login.get("character_list_sent"))
+                && yes(login.get("local_account_verified")) && yes(login.get("character_list_response_sent"))
+                && yes(login.get("database_preserved"));
+    }
+
     static boolean interactionCompleted(Object value) {
         Map<?, ?> report = object(value);
         Object reason = report.get("interaction_completion_reason");
@@ -30,6 +40,7 @@ final class ClientAcceptance {
         if (Boolean.FALSE.equals(execution.get("diagnostic_initialized")))
             return ((List<?>) children).isEmpty() && Boolean.FALSE.equals(execution.get("wine_started"));
         if (!yes(object(report.get("cleanup")).get("owned_processes_reaped"))) return false;
+        if (yes(report.get("postgres_started")) && !yes(object(report.get("cleanup")).get("postgres_graceful"))) return false;
         if (yes(execution.get("wine_started"))) {
             Map<?, ?> owned = object(report.get("wine_process_cleanup"));
             return yes(object(report.get("cleanup")).get("wine_prefix_stopped"))

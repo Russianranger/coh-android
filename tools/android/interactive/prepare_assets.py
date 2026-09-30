@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Prepare the separate interactive client using the accepted runtime and game inputs."""
+"""Prepare local graphical login using the accepted client, DbServer and schema."""
 from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -29,16 +30,81 @@ RUNTIME_COMMIT = '9dc58f62c58dc4fc5c01288071429bf2aa06d2f4'
 RUNTIME_MANIFEST_SHA256 = 'fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203'
 BASE_MANIFEST = 'accepted-runtime-manifest.json'
 PROBE_MANIFEST = 'client-manifest.json'
-GUEST_SCRIPTS = ('diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
+GUEST_SCRIPTS = ('client_login_diagnostic.py', 'local_login_server.py', 'diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
                  'game_diagnostic.py', 'game_device_diagnostic.py', 'game_evidence.py',
                  'game_hang_evidence.py', 'game_map_progress.py')
-PROBE_FILES = frozenset((*GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
+SERVER_ARCHIVES = frozenset(('dbserver-package.tar.gz', 'dbserver-schema.tar.gz'))
+PROBE_FILES = frozenset((*SERVER_ARCHIVES, *GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
+                         '001-coh-compat.sql', 'psqlodbc_x86.msi',
                          'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip'))
-EXTRA_FILES = frozenset({BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
+EXTRA_FILES = frozenset({*SERVER_ARCHIVES, BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
 HEX40 = re.compile(r'[0-9a-f]{40}\Z')
 HEX64 = re.compile(r'[0-9a-f]{64}\Z')
 NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*\Z')
 MAX_FILE_BYTES = 256 * 1024 * 1024
+
+
+def server_tools():
+    """Load accepted helpers without borrowing another prepare_assets module.
+
+    Existing command-line tools share that name. Preserve the caller's aliases
+    and search path so importing the login packager cannot redirect them.
+    """
+    name = 'coh_login_accepted_dbserver_assets'
+    if name in sys.modules:
+        return sys.modules[name]
+    aliases = ('prepare_assets', 'host_dbserver_smoke')
+    previous = {key: sys.modules.get(key) for key in aliases}
+    search_path = sys.path[:]
+    def load(module_name, path):
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
+        return module
+    try:
+        load('prepare_assets', ROOT/'tools/android/prepare_assets.py')
+        load('host_dbserver_smoke', ROOT/'tools/android/dbserver/host_dbserver_smoke.py')
+        return load(name, ROOT/'tools/android/dbserver/prepare_device_assets.py')
+    except BaseException:
+        sys.modules.pop(name, None)
+        raise
+    finally:
+        sys.path[:] = search_path
+        for key, value in previous.items():
+            if value is None:
+                sys.modules.pop(key, None)
+            else:
+                sys.modules[key] = value
+
+
+def local_server_contract():
+    accepted = server_tools().bundle_contract()
+    return {key: value for key, value in accepted.items()
+            if key not in ('format', 'guest_script', 'android_execution_validated', 'gameplay_validated')} | {
+                'variant': 'normal', 'persistent_profile': 'android-local-login',
+                'mapserver_included': False}
+
+
+def verify_local_server_inputs(package, schema):
+    accepted = server_tools()
+    accepted.accepted_evidence()
+    return accepted.verify_input_payloads(Path(package), Path(schema))
+
+
+def extract_local_server_inputs(assets, output):
+    """Inspect only the exact accepted archives packaged alongside the client."""
+    assets, output = Path(assets), Path(output)
+    require(not output.exists() and not output.is_symlink(), 'Use a fresh server inputs output directory')
+    accepted = server_tools()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.login-server-inputs-', dir=output.parent) as temporary:
+        staging = Path(temporary)/'inputs'; staging.mkdir()
+        accepted.extract_archive(assets/'dbserver-package.tar.gz', staging/'package')
+        accepted.extract_archive(assets/'dbserver-schema.tar.gz', staging/'schema')
+        verify_local_server_inputs(staging/'package', staging/'schema')
+        staging.rename(output)
+    return {'package': output/'package', 'schema': output/'schema'}
 
 
 def require(value, message):
@@ -98,10 +164,10 @@ def pe32(path):
 
 
 def bundle_contract():
-    return {'format':1,'scope':'actual_client_interaction_guest','guest_script':'client_interactive_diagnostic.py',
+    return {'format':1,'scope':'actual_client_login_guest','guest_script':'client_login_diagnostic.py',
             'executable':'CityOfHeroes.exe','reference_run_id':36088012664,
             'width':800,'height':600,'transport':'private_unix_rfb',
-            'server_packages_included':False,'game_assets_external':True,
+            'server_packages_included':True,'local_server':local_server_contract(),'game_assets_external':True,
             'android_execution_validated':False,'gameplay_validated':False}
 
 
@@ -140,14 +206,17 @@ def verify_device_assets(assets, *, repository_commit=None):
     client_package.verify_archive(assets/'client-runtime.zip', repository_commit)
     cache_package.verify_cache_archive(assets/'client-caches.zip')
     prerequisite_package.verify_archive(assets/'client-prerequisites.zip')
+    with tempfile.TemporaryDirectory(prefix='coh-login-server-verify-') as temporary:
+        extract_local_server_inputs(assets, Path(temporary)/'inputs')
     return manifest
 
 
-def prepare(*, assets, output, client, client_caches, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
+def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver_schema, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
     assets, output = Path(assets), Path(output)
     require(isinstance(repository_commit, str) and HEX40.fullmatch(repository_commit), 'Expected exact source commit')
     require(not output.exists() and not output.is_symlink(), 'Use a fresh assets output directory')
     base = verify_base(assets)
+    verify_local_server_inputs(dbserver_package, dbserver_schema)
     require(file_pin(assets/'diagnostic.py') == file_pin(ROOT/'android/guest/diagnostic.py'),
             'Accepted diagnostic.py must remain byte-identical to the current helper')
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -162,6 +231,8 @@ def prepare(*, assets, output, client, client_caches, repository_commit, cc='i68
         cache_package.verify_cache_archive(Path(client_caches))
         shutil.copyfile(client_caches, staging/'client-caches.zip')
         prerequisite_package.prepare(staging/'client-prerequisites.zip')
+        server_tools().write_archive(Path(dbserver_package), staging/'dbserver-package.tar.gz')
+        server_tools().write_archive(Path(dbserver_schema), staging/'dbserver-schema.tar.gz')
         subprocess.run([cc,'-std=c11','-O2','-Wall','-Wextra','-Werror','-static-libgcc','-mconsole',
                         str(ROOT/'android/native/client-launcher.c'),'-luser32','-lkernel32',
                         '-o',str(staging/'client-launcher.exe')],check=True)
@@ -173,7 +244,7 @@ def prepare(*, assets, output, client, client_caches, repository_commit, cc='i68
         manifest = copy.deepcopy(base)
         manifest.update(repository_commit=repository_commit, accepted_base_runtime=base_contract(base),
                         client_bundle=bundle_contract(),
-                        scope='Interactive graphical client candidate inputs; device interaction and gameplay unvalidated')
+                        scope='Local graphical login candidate inputs; device login and gameplay unvalidated')
         manifest['files'].update({name: file_pin(staging/name) for name in sorted(EXTRA_FILES)})
         (staging/'runtime-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
         verify_device_assets(staging, repository_commit=repository_commit)
@@ -182,13 +253,15 @@ def prepare(*, assets, output, client, client_caches, repository_commit, cc='i68
             'runtime_manifest_sha256': digest(output/'runtime-manifest.json'), 'base_file_bytes_preserved': True,
             'native_launcher_windows_libraries': sorted(libraries),
             'native_launcher_source': file_pin(ROOT/'android/native/client-launcher.c'),
-            'client_package_sha256': digest(output/'client-runtime.zip'), 'android_execution_validated': False,
+            'client_package_sha256': digest(output/'client-runtime.zip'),
+            'local_server': local_server_contract(), 'server_input_bytes_preserved': True,
+            'android_execution_validated': False,
             'gameplay_validated': False}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for key in ('assets', 'output', 'client', 'client-caches'): parser.add_argument('--'+key, required=True, type=Path)
+    for key in ('assets', 'output', 'client', 'client-caches', 'dbserver-package', 'dbserver-schema'): parser.add_argument('--'+key, required=True, type=Path)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--cc', default='i686-w64-mingw32-gcc')
     parser.add_argument('--objdump', default='i686-w64-mingw32-objdump')

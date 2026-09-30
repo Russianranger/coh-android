@@ -137,6 +137,7 @@ class ClientEvents:
         self.pending=b''
         self.generation=0
         self.client_pid=None
+        self.login_generation=0
         self.active=self.terminal=False
 
     def poll(self):
@@ -160,6 +161,11 @@ class ClientEvents:
                 self.client_pid=pid
                 self.generation+=1
                 self.active=True
+            elif event.get('type')=='client_login_ready' and event.get('session_id')==self.session:
+                require(self.active and type(event.get('client_pid')) is int and event.get('client_pid')==self.client_pid
+                        and event.get('character_list_sent') is True and self.login_generation==0,
+                        'Invalid or repeated local login event')
+                self.login_generation=1
             elif event.get('type')=='stage' and event.get('stage')=='actual_client_interaction' and event.get('status')=='passed':
                 require(self.client_pid is not None,'Client completion preceded readiness event')
                 self.active=False
@@ -281,12 +287,13 @@ class MenuInteraction:
         self.fresh_frames=0;self.frame_generation=frame.generation
 
 
-def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_path):
+def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_path,interaction_factory=None):
     desktop=client_rfb_handshake(connection);frame=ClientFramebuffer()
     updates=0;fingerprints=[];snapshots=[];last_capture=0;terminal=None;started=time.monotonic()
     resizes=[];events=ClientEvents(event_path,session);captures=[];event_generation=0
     pending_request=False;request_generation=0;failure=None
-    interaction=MenuInteraction(session,evidence,finish_path)
+    interaction=(interaction_factory or MenuInteraction)(session,evidence,finish_path)
+    request_login_generation=0
     while process.poll() is None and time.monotonic()<deadline:
         try:
             events.poll()
@@ -296,6 +303,7 @@ def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_p
             if not pending_request:
                 connection.sendall(struct.pack('!BBHHHH',3,0,0,0,frame.width,frame.height))
                 request_generation=events.generation if events.active else 0
+                request_login_generation=events.login_generation if events.active else 0
                 pending_request=True
             kind=transport.recv_exact(connection,1)[0]
             if kind==2:continue
@@ -334,6 +342,7 @@ def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_p
                         'frame_sequence':updates,'frame_generation':frame.generation,
                         'event_generation':events.generation})
             if events.active and request_generation==events.generation and request_generation>0:
+                frame.request_login_generation=request_login_generation
                 interaction.on_frame(connection,frame,events,updates,captures,now)
             if now-last_capture>=20 and len(snapshots)<60:
                 name=f'client-frame-{len(snapshots):03d}.png';save_png(evidence/name,frame.pixels,frame.width,frame.height)
@@ -378,9 +387,10 @@ def make_command(work,assets,proot,session,data,startup_timeout_seconds=900):
     return command,env
 
 
-def validate_report(report,session,manifest=None):
-    require(report.get('scope')=='actual_client_interaction_guest' and report.get('session_id')==session,'Wrong client session report')
-    require(report.get('diagnostic_mode')=='actual_client_interaction'
+def validate_report(report,session,manifest=None,local_login=False):
+    mode='actual_client_login' if local_login else 'actual_client_interaction'
+    require(report.get('scope')==mode+'_guest' and report.get('session_id')==session,'Wrong client session report')
+    require(report.get('diagnostic_mode')==mode
             and report.get('interaction_session_completed') is True and report.get('input_effect_verified') is False
             and report.get('interaction_completion_reason') in ('finish_requested','interaction_timeout')
             and 30<=report.get('observation_seconds',0)<=190
@@ -390,8 +400,8 @@ def validate_report(report,session,manifest=None):
     require(report.get('cleanup_complete') is True and report.get('wine_process_cleanup',{}).get('complete') is True
             and report.get('wine_process_cleanup',{}).get('remaining')==0
             and report.get('wine_process_cleanup',{}).get('inspection_failures')==0,'Client cleanup incomplete')
-    require(report.get('postgres_started') is False and report.get('gameplay_validated') is False,'Unexpected server/gameplay claim')
-    require(report.get('server_started') is False and report.get('client_process_started') is True
+    require(report.get('postgres_started') is local_login and report.get('gameplay_validated') is False,'Unexpected server/gameplay claim')
+    require(report.get('server_started') is local_login and report.get('client_process_started') is True
             and report.get('startup_observed') is True and report.get('renderer_initialized') is True
             and report.get('all_data_loaded') is True and report.get('client_main_loop_reached') is True
             and report.get('client_window_observed') is True and report.get('observation_seconds',0)>=30,
@@ -400,8 +410,12 @@ def validate_report(report,session,manifest=None):
     require(launch.get('session_id')==session and type(launch.get('pid')) is int and launch['pid']>0,
             'Actual client process session differs')
     stages=report.get('stages',[])
-    require([s.get('stage') for s in stages]==['client_inputs','client_private_data','presentation_display',
-            'wine_initialization','win32_runtime_dll','actual_client_startup','actual_client_interaction']
+    expected_stages=(['client_inputs','client_private_data','persistent_server_profile','postgres_local_login',
+        'presentation_display','wine_initialization','local_login_odbc','local_dbserver_startup',
+        'win32_runtime_dll','actual_client_startup','actual_client_interaction'] if local_login else
+        ['client_inputs','client_private_data','presentation_display','wine_initialization',
+         'win32_runtime_dll','actual_client_startup','actual_client_interaction'])
+    require([s.get('stage') for s in stages]==expected_stages
             and all(s.get('status')=='passed' for s in stages),'Client startup stages incomplete')
     children=report.get('processes',[])
     require(len(children)>=5 and all(type(c.get('exit_code')) is int and c.get('input_closed') is True

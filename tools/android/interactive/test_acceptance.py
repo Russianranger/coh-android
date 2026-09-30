@@ -36,10 +36,24 @@ public final class ClientAcceptanceHost {
     }
     public static void main(String[] args) {
         List<Map<String,Object>> frames=samples(); Map<String,Object> cleanup=cleanup();
+        Map<String,Object> login=map("local_login",map("session_id",SESSION,"client_pid",42,"profile","android-local-login",
+            "local_login_verified",true,"character_list_sent",true,"local_account_verified",true,
+            "character_list_response_sent",true,"database_preserved",true));
         Map<String,Object> interaction=map("interaction_session_completed",true,"input_effect_verified",false,
             "interaction_completion_reason","finish_requested");
         boolean expected=false,actual;
         switch(args[0]) {
+            case "login_valid": expected=true;break;
+            case "login_old_session": at(login,"local_login").put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "login_wrong_pid": at(login,"local_login").put("client_pid",43);break;
+            case "login_fractional_pid": at(login,"local_login").put("client_pid",42.5);break;
+            case "login_wrong_profile": at(login,"local_login").put("profile","old-diagnostic");break;
+            case "login_unproved": at(login,"local_login").put("local_login_verified",false);break;
+            case "login_no_character_list": at(login,"local_login").put("character_list_sent",false);break;
+            case "login_no_account": at(login,"local_login").put("local_account_verified",false);break;
+            case "login_no_response": at(login,"local_login").put("character_list_response_sent",false);break;
+            case "login_not_preserved": at(login,"local_login").put("database_preserved",false);break;
+            case "login_missing": login.clear();break;
             case "interaction_finish": expected=true; break;
             case "interaction_timeout": interaction.put("interaction_completion_reason","interaction_timeout");expected=true;break;
             case "interaction_incomplete": interaction.put("interaction_session_completed",false);break;
@@ -63,6 +77,9 @@ public final class ClientAcceptanceHost {
             case "at_event_frame": frames.get(0).put("sequence",6); break;
             case "fractional_time": frames.get(0).put("captured_elapsed_ms",1000.5); break;
             case "cleanup_valid": expected=true; break;
+            case "cleanup_postgres_stopped": cleanup.put("postgres_started",true);at(cleanup,"cleanup").put("postgres_graceful",true);expected=true;break;
+            case "cleanup_postgres_running": cleanup.put("postgres_started",true);at(cleanup,"cleanup").put("postgres_graceful",false);break;
+            case "cleanup_postgres_missing": cleanup.put("postgres_started",true);break;
             case "cleanup_missing": cleanup.remove("cleanup_execution"); break;
             case "cleanup_orphan": at(cleanup,"wine_process_cleanup").put("remaining",1); break;
             case "cleanup_unreadable": at(cleanup,"wine_process_cleanup").put("inspection_failures",1); break;
@@ -72,7 +89,8 @@ public final class ClientAcceptanceHost {
                 "cleanup_execution",map("diagnostic_initialized",false,"wine_started",false,"owned_child_count",0));expected=true;break;
             default: throw new AssertionError("Unknown fixture");
         }
-        actual=args[0].startsWith("interaction_") ? ClientAcceptance.interactionCompleted(interaction)
+        actual=args[0].startsWith("login_") ? ClientAcceptance.localLoginVerified(login,SESSION,42)
+            : args[0].startsWith("interaction_") ? ClientAcceptance.interactionCompleted(interaction)
             : args[0].startsWith("cleanup_") ? ClientAcceptance.cleanupSafe(cleanup)
             : ClientAcceptance.surfaceAccepted(frames,SESSION,500,4000,1000,3500,6);
         if(actual!=expected) throw new AssertionError(args[0]+" expected="+expected+" actual="+actual);
@@ -99,6 +117,12 @@ class ClientAcceptanceTests(unittest.TestCase):
                      'interaction_unproven_effect', 'interaction_missing_effect', 'interaction_unknown_finish'):
             with self.subTest(mode=mode): self.execute(mode)
 
+    def test_local_login_requires_current_session_protocol_and_persistence(self):
+        for mode in ('login_valid', 'login_old_session', 'login_wrong_pid', 'login_fractional_pid',
+                     'login_wrong_profile', 'login_unproved', 'login_no_character_list',
+                     'login_not_preserved', 'login_missing', 'login_no_account', 'login_no_response'):
+            with self.subTest(mode=mode): self.execute(mode)
+
     def test_frame_boundaries(self):
         for mode in ('valid', 'static_frame', 'stale_session', 'missing_pixelcopy',
                      'missing_png', 'blank_frame', 'bad_hash', 'wrong_size', 'short_span',
@@ -107,7 +131,8 @@ class ClientAcceptanceTests(unittest.TestCase):
 
     def test_cleanup_boundaries(self):
         for mode in ('cleanup_valid', 'cleanup_missing', 'cleanup_orphan', 'cleanup_unreadable',
-                     'cleanup_capture_live', 'cleanup_child_omitted', 'cleanup_no_guest'):
+                     'cleanup_capture_live', 'cleanup_child_omitted', 'cleanup_no_guest',
+                     'cleanup_postgres_stopped', 'cleanup_postgres_running', 'cleanup_postgres_missing'):
             with self.subTest(mode=mode): self.execute(mode)
 
     def execute(self, mode):

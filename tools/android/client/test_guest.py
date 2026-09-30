@@ -259,6 +259,51 @@ class WorktreeTests(unittest.TestCase):
         self.count = patch.object(guest, 'DATA_COUNT', 5); self.count.start(); self.addCleanup(self.count.stop)
         self.size = patch.object(guest, 'DATA_BYTES', 25); self.size.start(); self.addCleanup(self.size.stop)
 
+    def change_wrapper_commit(self):
+        path = self.assets / 'client-runtime.zip'
+        with zipfile.ZipFile(path) as archive:
+            members = {info.filename: archive.read(info) for info in archive.infolist()}
+        manifest = json.loads(members['client-package.json'])
+        manifest['repository_commit'] = 'c' * 40
+        members['client-package.json'] = json.dumps(manifest).encode()
+        with zipfile.ZipFile(path, 'w') as archive:
+            for name, value in members.items(): archive.writestr(name, value)
+
+    def test_wrapper_commit_update_preserves_generated_caches_without_rescanning(self):
+        work, _ = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        generated = work / 'data/bin/generated-after-play.bin'
+        generated.write_bytes(b'valuable generated cache'); before = generated.stat()
+        self.change_wrapper_commit()
+        with patch.object(guest.os, 'scandir', side_effect=AssertionError('Must not rescan input tree')):
+            again, saved = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertNotEqual(work, again); self.assertFalse(work.exists())
+        retained = again / generated.relative_to(work)
+        self.assertEqual(retained.read_bytes(), b'valuable generated cache')
+        self.assertEqual((retained.stat().st_ino, retained.stat().st_mtime_ns), (before.st_ino, before.st_mtime_ns))
+        self.assertTrue(saved['reused']); self.assertTrue(saved['wrapper_only_migration'])
+        self.assertTrue(saved['generated_cache_bytes_preserved'])
+
+    def test_wrapper_migration_validates_binaries_before_mutating(self):
+        work, _ = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        target = work / 'CityOfHeroes.exe'; target.chmod(0o600); target.write_bytes(b'changed')
+        self.change_wrapper_commit()
+        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Cached client binary'):
+            guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertTrue(work.exists())
+        self.assertEqual(len(list(self.work.iterdir())), 1)
+
+    def test_wrapper_migration_recovers_interrupted_receipt_write(self):
+        work, _ = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        (work / 'data/bin/generated.bin').write_bytes(b'keep')
+        self.change_wrapper_commit()
+        with patch.object(guest.base, 'private_write', side_effect=OSError('interrupted atomic marker update')):
+            with self.assertRaises(OSError):
+                guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        with patch.object(guest.os, 'scandir', side_effect=AssertionError('Must not rescan input tree')):
+            again, saved = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
+        self.assertTrue(saved['wrapper_only_migration'])
+        self.assertEqual((again / 'data/bin/generated.bin').read_bytes(), b'keep')
+
     def test_inputs_readonly_caches_isolated_and_repeat_skips_inventory(self):
         work, receipt = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
         self.assertFalse(receipt['reused'])
