@@ -6,6 +6,9 @@
  * Everything else is black. Frames start at 1 and remain visible for 500 ms.
  * The session identifier prevents a previous run/framebuffer certifying a run.
  */
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -72,7 +75,6 @@ static void json_string(const char *value) {
 }
 
 #ifndef COH_PRESENTATION_PROBE_TEST
-#define _WIN32_WINNT 0x0600
 #include <windows.h>
 #include <GL/gl.h>
 
