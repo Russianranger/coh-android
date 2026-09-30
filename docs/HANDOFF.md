@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Physical Thor actual-client startup 0.6.0 is accepted. Interactive client menus are next.**
+**Physical Thor startup is accepted. COH Client Interaction 0.7.0 is hosted-qualified and ready for one device menu session.**
 
 The supplied `coh-game-client-test-20260930-141120.zip` passed the exact shipped
 Java cleanup and PixelCopy acceptance checks. Its pinned actual client reached
@@ -16,6 +16,23 @@ including private-data preparation and Wine initialization. See the
 No repeat startup, Atlas, synthetic presentation, Stop/rerun or screen-lock
 acceptance test is requested.
 
+
+The corrected interactive APK from source
+`fdd0acc492485455ce0fc8b43eb4b406da529ba1`, run
+[`36736910061`](https://github.com/Russianranger/coh-android/actions/runs/36736910061),
+passed all seven guest stages and independent package/session checks. Root visual
+review confirmed that Cancel dismissed the graphics prompt, `COHINPUT` appeared
+in Account Name, and Settings opened. Startup took 362.627 seconds, followed by
+33.543 seconds of live observation; all 27 child records closed, with zero
+remaining processes or inspection failures. The APK is 370,560,140 bytes,
+SHA-256 `8ada2e23cf8cf4986b4faacdff1839233ef6538cf4eb12602d2e11d1cb3d36ca`.
+All 44 automated checks passed. See the
+[hosted interaction receipt](android-evidence/client-interaction-hosted-36736910061.json),
+[package review](android-evidence/client-interaction-package-review-36736910061.json)
+and [one-session device instructions](ANDROID_CLIENT_INTERACTION_TEST.md).
+Android touch and physical Thor controller input remain the next device gate;
+input counts alone do not establish a visible game response.
+
 The next **COH Client Interaction 0.7.0** milestone adds touch, text and basic
 Thor controller menu input, then Finish and verified cleanup in one session.
 It starts no server. The old 0.6.0 development signing key was not retained,
@@ -25,8 +42,8 @@ it and requires its own one-time runtime setup and asset import. The new
 development signing identity is retained, backed up and pinned to certificate
 `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`;
 future builds fail rather than silently generate another certificate.
-The accepted old apps stay installed. Interaction, login, world entry, audio,
-hardware acceleration and playable performance are separate unproven outcomes.
+The accepted old apps stay installed. Physical Android interaction, login, world entry, audio, hardware acceleration
+and playable performance remain separate unproven outcomes.
 
 
 The first interactive hosted candidate, run `36732627939`, passed startup,
@@ -39,6 +56,19 @@ warp and press can leave stored click coordinates stale. The correction sends
 neutral pointer movement before a bounded settling interval and button-down;
 the hosted check also waits for fresh frames before clicks and text entry.
 No game binary, accepted startup gate or window-focus behavior is changed.
+
+
+After physical menu input is accepted, the next smallest gate is graphical
+loopback login to an empty character-selection screen using PostgreSQL/DbServer;
+MapServer and world entry can follow later. Update the retained-signature 0.7
+package so its imported generation, Wine prefix and prepared caches survive.
+Start the server pair once for that client session and initialize a persistent
+server profile once. The accepted Atlas diagnostic dropped its database and
+deleted its run tree during cleanup; it preserved import data and evidence, not
+a resumable `TEST50056` character. Reuse the accepted implementation and receipts,
+not a nonexistent live database or another app's private files. Verify the actual
+client protocol and local `-db` authentication path in a hosted session before
+requesting this later device gate.
 
 
 **Historical hosted qualification for the accepted 0.6.0 build follows.**
