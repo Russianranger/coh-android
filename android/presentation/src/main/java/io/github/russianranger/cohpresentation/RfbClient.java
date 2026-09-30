@@ -24,6 +24,7 @@ public final class RfbClient implements Closeable {
     private final DataOutputStream output;
     private final Listener listener;
     private volatile boolean closed;
+    private boolean updatesReady;
     private int width;
     private int height;
     private int[] pixels;
@@ -40,7 +41,10 @@ public final class RfbClient implements Closeable {
     public void run() throws IOException {
         if (pixels != null) throw new IOException("RFB client cannot be reused");
         handshake();
-        requestUpdate(false);
+        synchronized (this) {
+            updatesReady = true;
+            requestUpdate(false);
+        }
         while (!closed) {
             int message = input.readUnsignedByte();
             switch (message) {
@@ -113,7 +117,7 @@ public final class RfbClient implements Closeable {
         return length;
     }
 
-    private void resize(int nextWidth, int nextHeight) throws IOException {
+    private synchronized void resize(int nextWidth, int nextHeight) throws IOException {
         if (nextWidth < 1 || nextHeight < 1 || nextWidth > MAX_WIDTH || nextHeight > MAX_HEIGHT)
             throw new IOException("RFB framebuffer size exceeds bounds: " + nextWidth + "x" + nextHeight);
         width = nextWidth;
@@ -160,7 +164,13 @@ public final class RfbClient implements Closeable {
         requestUpdate(!resized);
     }
 
-    private void requestUpdate(boolean incremental) throws IOException {
+    /** Request fresh server pixels even when its desktop is static.
+     * Before negotiation, the mandatory initial full request supplies the refresh. */
+    public synchronized void requestFullUpdate() throws IOException {
+        if (updatesReady) requestUpdate(false);
+    }
+
+    private synchronized void requestUpdate(boolean incremental) throws IOException {
         if (closed) return;
         output.writeByte(3);
         output.writeByte(incremental ? 1 : 0);

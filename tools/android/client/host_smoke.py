@@ -119,6 +119,10 @@ def make_command(work,assets,proot,session,data):
     (work/'rootfs/game-import').mkdir()
     where=command.index('-w');command[where:where]=['-b',str(data.parent)+':/game-import']
     command+=['--game-data','/game-import/data','--startup-timeout-seconds','900','--observation-seconds','30']
+    if '--timeout-seconds' in command:
+        command[command.index('--timeout-seconds')+1]='1800'
+    else:
+        command+=['--timeout-seconds','1800']
     return command,env
 
 
@@ -170,7 +174,7 @@ def main():
     manifest,assets,imports=extract_apk_assets(args.apk,args.work/'apk-assets',args.build_report,args.repository_commit)
     data=import_game_data(imports,args.archive.resolve(),args.work,args.evidence)
     session=secrets.token_hex(16);command,env=make_command(args.work,assets,args.proot,session,data)
-    start=time.monotonic();deadline=start+1830;observer=None;failure=None;process=None
+    start=time.monotonic();deadline=start+1860;observer=None;failure=None;process=None
     with (args.evidence/'host-client.log').open('w') as log:
         try:
             process=subprocess.Popen(command,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)

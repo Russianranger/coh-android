@@ -33,10 +33,10 @@ final class ClientAcceptance {
     }
 
     static boolean surfaceAccepted(List<?> samples, String session, long started, long ended,
-                                   long windowObserved, long windowEnded) {
+                                   long windowObserved, long windowEnded, long frameWatermark) {
         if (session == null || !session.matches("[0-9a-f]{32}") || started < 0 || ended < started
                 || windowObserved < started || windowObserved > ended || windowEnded < windowObserved
-                || windowEnded > ended) return false;
+                || windowEnded > ended || frameWatermark < 0) return false;
         Set<Long> times = new HashSet<>();
         long first = Long.MAX_VALUE, last = Long.MIN_VALUE;
         for (Object item : samples) {
@@ -45,12 +45,12 @@ final class ClientAcceptance {
             Object hash = sample.get("png_sha256");
             if (!session.equals(sample.get("session_id")) || !yes(sample.get("pixel_copy_success"))
                     || !yes(sample.get("non_uniform")) || !yes(sample.get("png_verified"))
-                    || !integer(captured) || !integer(sequence) || ((Number) sequence).longValue() < 1
+                    || !integer(captured) || !integer(sequence) || ((Number) sequence).longValue() <= frameWatermark
                     || !(hash instanceof String) || !((String) hash).matches("[0-9a-f]{64}")
                     || !number(sample.get("source_width"), 800) || !number(sample.get("source_height"), 600)) continue;
             long time = ((Number) captured).longValue();
             // A static client menu may legitimately produce the same frame/hash repeatedly.
-            // The evidence is three independent PixelCopy captures while the client window is alive.
+            // Each capture must use pixels received after the client-startup event watermark.
             if (time < windowObserved || time > windowEnded || !times.add(time)) continue;
             first = Math.min(first, time); last = Math.max(last, time);
         }

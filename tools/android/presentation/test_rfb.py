@@ -18,15 +18,33 @@ import java.io.*;
 import java.nio.file.*;
 public final class RfbHarness {
     public static void main(String[] args) throws Exception {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final boolean mutate = args.length > 2;
+        ByteArrayOutputStream output = new ByteArrayOutputStream() {
+            @Override public void write(int value) { super.write(value); Thread.yield(); }
+        };
+        final boolean mutate = args.length > 2 && args[2].equals("mutate");
+        final boolean refresh = args.length > 2 && args[2].equals("refresh");
+        final RfbClient[] reference = new RfbClient[1];
         RfbClient client = new RfbClient(new ByteArrayInputStream(Files.readAllBytes(Paths.get(args[0]))),
                 output, (pixels, w, h, seq) -> {
             StringBuilder line = new StringBuilder("FRAME " + seq + " " + w + " " + h);
             for (int pixel : pixels) line.append(String.format(" %08x", pixel));
             System.out.println(line);
             if (mutate) pixels[0] = 0;
+            if (refresh) {
+                Thread[] writers = new Thread[4];
+                for (int i=0;i<writers.length;i++) {
+                    writers[i] = new Thread(() -> {
+                        for (int count=0;count<100;count++) try { reference[0].requestFullUpdate(); }
+                        catch(IOException failure) { throw new IllegalStateException(failure); }
+                    });
+                    writers[i].start();
+                }
+                for (Thread writer : writers) try { writer.join(); }
+                catch(InterruptedException failure) { throw new IllegalStateException(failure); }
+            }
         });
+        reference[0] = client;
+        if (refresh) client.requestFullUpdate(); // Must not write into the unnegotiated handshake.
         try { client.run(); System.out.println("END closed"); }
         catch (IOException ex) { System.out.println("END " + ex.getClass().getSimpleName() + " " + ex.getMessage()); }
         Files.write(Paths.get(args[1]), output.toByteArray());
@@ -66,13 +84,15 @@ class RfbDecoderTests(unittest.TestCase):
         if hasattr(cls, 'compiled'):
             cls.compiled.cleanup()
 
-    def decode(self, stream, mutate=False):
+    def decode(self, stream, mutate=False, refresh=False):
         with tempfile.TemporaryDirectory(prefix='coh-rfb-fixture-') as tmp:
             fixture, response = Path(tmp) / 'wire', Path(tmp) / 'response'
             fixture.write_bytes(stream)
             command = [self.java, '-Xmx32m', '-cp', self.compiled.name, 'RfbHarness', str(fixture), str(response)]
             if mutate:
                 command.append('mutate')
+            elif refresh:
+                command.append('refresh')
             run = subprocess.run(command, check=True, capture_output=True, text=True, timeout=10)
             lines = run.stdout.splitlines()
             frames = []
@@ -94,6 +114,17 @@ class RfbDecoderTests(unittest.TestCase):
                 first = struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2)
                 following = struct.pack('>BBHHHH', 3, 1, 0, 0, 2, 2)
                 self.assertEqual(prefix + pixel_format + encodings + first + following, sent)
+
+    def test_explicit_full_refresh_requests_are_serialized_after_handshake(self):
+        frames, end, sent = self.decode(init() + update(rect(0, 0, 2, 2, [1, 2, 3, 4])), refresh=True)
+        self.assertEqual(1, len(frames))
+        self.assertIn('EOFException', end)
+        # 46 handshake bytes, mandatory full request, 400 concurrent explicit
+        # refreshes, then the decoder's unchanged incremental follow-up.
+        self.assertEqual(46 + 402 * 10, len(sent))
+        full = struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2)
+        self.assertEqual(full * 401, sent[46:-10])
+        self.assertEqual(struct.pack('>BBHHHH', 3, 1, 0, 0, 2, 2), sent[-10:])
 
     def test_incremental_rectangles_preserve_unchanged_pixels_and_clone_delivery(self):
         stream = init() + update(rect(0, 0, 2, 2, [1, 2, 3, 4])) + update(rect(1, 0, 1, 2, [5, 6]))

@@ -11,6 +11,7 @@ receipt](android-evidence/accepted-presentation-thor-20260930.json).
 The next separate **COH Game Client Test 0.6.0** packages the pinned actual
 `CityOfHeroes.exe` and matching DLLs. Reuse the reviewed asset ZIP for one
 private import, then attempt visible game loading/login without a server boot.
+The one-run instructions are in [the client device test](ANDROID_CLIENT_DEVICE_TEST.md).
 Physical synthetic presentation is closed; do not request another pattern,
 Atlas, Stop/rerun or screen-lock test. Actual client, menu, input, hardware
 acceleration and gameplay claims remain separate.

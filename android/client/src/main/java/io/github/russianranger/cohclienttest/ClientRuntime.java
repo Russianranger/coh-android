@@ -62,7 +62,7 @@ public final class ClientRuntime {
     private volatile int frameWidth, frameHeight;
     private volatile File latestReport;
     private JSONObject manifest, clientManifest;
-    private volatile long observedClientPid = -1;
+    private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
     private String manifestHash, session, operation, runId, error;
     private File generation, operationDir;
     private long startedUptime, endedUptime;
@@ -322,7 +322,8 @@ public final class ClientRuntime {
                 catch (Exception invalid) { error = "Guest acceptance evidence is invalid: " + invalid.getClass().getSimpleName(); }
                 if (launched && processExit == 0 && report.optBoolean("passed") && !guestPassed && error == null)
                     error = "The guest completed, but its current-session client evidence did not match this APK.";
-                passed = guestPassed && cleanup && !cancelled && error == null && surfaceAccepted(report);
+                if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
+                passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null && surfaceAccepted(report);
                 if (guestPassed && !passed && error == null) error = "Client startup incomplete: three current-session PixelCopy captures were not retained while the client window was alive.";
                 publish(report, passed, cleanup);
             } finally {
@@ -357,8 +358,10 @@ public final class ClientRuntime {
                 || png.length < 33 || png.length > 4 * 1024 * 1024
                 || !Boolean.TRUE.equals(record.get("pixel_copy_success"))
                 || !Boolean.TRUE.equals(record.get("non_uniform"))) return;
-        Object stamp = record.get("captured_elapsed_ms");
-        if (!(stamp instanceof Number)) return;
+        Object stamp = record.get("captured_elapsed_ms"), sequence = record.get("sequence");
+        if (!(stamp instanceof Number) || !(sequence instanceof Number) || clientWindowFrameWatermark < 0
+                || ((Number) sequence).doubleValue() != ((Number) sequence).longValue()
+                || ((Number) sequence).longValue() <= clientWindowFrameWatermark) return;
         long captured = ((Number) stamp).longValue();
         if (((Number) stamp).doubleValue() != captured || captured < clientWindowObservedUptime
                 || captured > SystemClock.uptimeMillis()) return;
@@ -414,16 +417,23 @@ public final class ClientRuntime {
                 } catch (IOException e) {
                     try { candidate.close(); } catch (IOException ignored) {}
                     if (socket == candidate) {
-                        // EOF is normal when the producer/display exits. The guest
-                        // exit and strict report gates decide whether that was success.
-                        if (e instanceof EOFException) return;
+                        // Do not silently accept an early disconnect and certify a
+                        // frozen framebuffer. The outer handler allows stdout to
+                        // deliver the already-emitted completion before deciding.
                         throw e;
                     }
                     Thread.sleep(250);
                 }
             }
         } catch (Exception e) {
-            if (!closingReceiver && !cancelled && process.isAlive() && !producerCompleted) receiverFailure = message(e);
+            if (e instanceof EOFException && !closingReceiver && !cancelled && !producerCompleted) {
+                long grace = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+                while (!closingReceiver && !cancelled && !producerCompleted && System.nanoTime() < grace) {
+                    try { Thread.sleep(20); } catch (InterruptedException ignored) { break; }
+                }
+            }
+            if (!closingReceiver && !cancelled && !producerCompleted)
+                receiverFailure = e instanceof EOFException ? "Display socket closed before client observation completed" : message(e);
             else if (producerCompleted) recordLifecycle("display_socket_closed_after_producer: " + message(e));
         } finally { closeReceiver(); }
     }
@@ -451,7 +461,13 @@ public final class ClientRuntime {
                                 clientWindowObservedUptime = SystemClock.uptimeMillis();
                                 clientWindowEndedUptime = -1;
                                 observedClientPid = event.getLong("client_pid");
+                                clientWindowFrameWatermark = decodedFrames;
                                 surfaceSamples.clear(); surfacePngs.clear();
+                            }
+                            RfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the observed client window: " + message(e); }
                             }
                             stage("Client window observed", "Capturing the actual Android display during the automatic 30-second observation.");
                         }
@@ -586,7 +602,7 @@ public final class ClientRuntime {
     private boolean surfaceAccepted(JSONObject report) {
         synchronized (this) {
             return decodedFrames >= 1 && ClientAcceptance.surfaceAccepted(surfaceSamples, session,
-                    startedUptime, endedUptime, clientWindowObservedUptime, clientWindowEndedUptime);
+                    startedUptime, endedUptime, clientWindowObservedUptime, clientWindowEndedUptime, clientWindowFrameWatermark);
         }
     }
 
@@ -607,6 +623,7 @@ public final class ClientRuntime {
                     .put("scope", "Actual pinned City of Heroes client startup observed through a private local display and Android PixelCopy; no gameplay or hardware acceleration claim")
                     .put("decoded_frame_count", decodedFrames)
                     .put("client_window_observed_uptime_ms", clientWindowObservedUptime)
+                    .put("client_window_frame_watermark", clientWindowFrameWatermark)
                     .put("client_window_ended_uptime_ms", clientWindowEndedUptime)
                     .put("source_width", frameWidth).put("source_height", frameHeight)
                     .put("guest", guest);

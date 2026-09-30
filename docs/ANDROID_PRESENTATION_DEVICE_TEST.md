@@ -1,5 +1,9 @@
 # COH Client Test 0.5.0 — visible display test
 
+**Accepted on physical Thor on 2026-09-30:** all 120 surface frames passed in
+128.592 seconds with complete cleanup. These are historical instructions;
+continue with [actual client startup](ANDROID_CLIENT_DEVICE_TEST.md).
+
 The physical Atlas 0.4.4 create/save/restart/resume result is accepted.
 Do not repeat that server run or perform manual Stop/rerun testing for this step.
 Keep the accepted Atlas app installed.
@@ -42,4 +46,5 @@ actual CoH graphical client package and startup.
 The exact signed APK passed the external Unix RFB and guest cleanup check in
 [run 36654262400](https://github.com/Russianranger/coh-android/actions/runs/36654262400).
 All 120 frames were observed; hosted execution took 109.26 seconds. This timing
-is not a physical Thor measurement. Android display evidence remains pending.
+is not a physical Thor measurement. The subsequent physical Thor pass is
+recorded in [the accepted receipt](android-evidence/accepted-presentation-thor-20260930.json).

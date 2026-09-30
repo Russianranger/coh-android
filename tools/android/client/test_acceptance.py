@@ -51,6 +51,8 @@ public final class ClientAcceptanceHost {
             case "after_window": frames.get(2).put("captured_elapsed_ms",3501); break;
             case "duplicate_capture": frames.get(2).put("captured_elapsed_ms",2000); break;
             case "zero_sequence": frames.get(0).put("sequence",0); break;
+            case "pre_event_frame": frames.get(0).put("sequence",5); break;
+            case "at_event_frame": frames.get(0).put("sequence",6); break;
             case "fractional_time": frames.get(0).put("captured_elapsed_ms",1000.5); break;
             case "cleanup_valid": expected=true; break;
             case "cleanup_missing": cleanup.remove("cleanup_execution"); break;
@@ -63,7 +65,7 @@ public final class ClientAcceptanceHost {
             default: throw new AssertionError("Unknown fixture");
         }
         actual=args[0].startsWith("cleanup_") ? ClientAcceptance.cleanupSafe(cleanup)
-            : ClientAcceptance.surfaceAccepted(frames,SESSION,500,4000,1000,3500);
+            : ClientAcceptance.surfaceAccepted(frames,SESSION,500,4000,1000,3500,6);
         if(actual!=expected) throw new AssertionError(args[0]+" expected="+expected+" actual="+actual);
     }
 }
@@ -86,7 +88,7 @@ class ClientAcceptanceTests(unittest.TestCase):
     def test_frame_boundaries(self):
         for mode in ('valid', 'static_frame', 'stale_session', 'missing_pixelcopy',
                      'missing_png', 'blank_frame', 'bad_hash', 'wrong_size', 'short_span',
-                     'before_window', 'after_window', 'duplicate_capture', 'zero_sequence', 'fractional_time'):
+                     'before_window', 'after_window', 'duplicate_capture', 'zero_sequence', 'pre_event_frame', 'at_event_frame', 'fractional_time'):
             with self.subTest(mode=mode): self.execute(mode)
 
     def test_cleanup_boundaries(self):
