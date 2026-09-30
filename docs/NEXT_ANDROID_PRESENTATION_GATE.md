@@ -1,9 +1,11 @@
 # Next Android presentation gate
 
-After the complete physical Atlas create/save/restart/resume test and its
-separate Stop/rerun check pass, implement a visible Wine display in a separate
-client presentation mode. Preserve the accepted server package and its gates.
-Do not repeat the accepted 0.1.5 or 0.2.0 database diagnostics.
+The complete physical Atlas 0.4.4 create/save/restart/resume test passed. The
+user explicitly declined manual Stop/rerun and additional lifecycle testing
+because of the long boot process; those checks remain unvalidated and do not
+block this step. Implement a visible Wine display in a separate client
+presentation mode. Preserve the accepted server package and its gates. Do not
+repeat the accepted server/database diagnostics.
 
 ## Available foundation
 
@@ -13,7 +15,8 @@ Do not repeat the accepted 0.1.5 or 0.2.0 database diagnostics.
 - `android/native/client-probe.c` has the PE32 four-color WGL fixture that
   passed on Thor with Mesa llvmpipe. It currently exits too quickly to verify
   visible presentation, reconnects or sustained frame updates.
-- There is no Android SurfaceView/TextureView or RFB presentation bridge yet.
+- The new separate `android/presentation` app supplies a bounded RFB decoder,
+  SurfaceView and PixelCopy verification. Its physical Android result is pending.
 - The Atlas APK's game package excludes `CityOfHeroes.exe`.
   `tools/android/game/package_game_runtime.py`, `choose_files()`, deliberately
   packages the server/TestClient subset. A visible surface alone will not add
@@ -32,9 +35,11 @@ Do not repeat the accepted 0.1.5 or 0.2.0 database diagnostics.
    and a unique session/frame identity. Verify pixels from an actual Android
    surface capture. Receiving RFB bytes or completing `SwapBuffers` is not
    evidence that a user can see current frames.
-4. Verify surface detach/reconnect during app switching and screen lock, then
-   Stop and a fresh start with complete process cleanup. Include frame
-   freshness, socket and surface lifecycle observations in the support export.
+4. Include frame freshness, socket and surface lifecycle observations and
+   automatic end-of-run cleanup in the support export. The immediate physical
+   test is one foreground presentation run. Do not require manual Stop/rerun,
+   app switching or screen lock before advancing; these remain unvalidated
+   unless separately observed.
 5. Once presentation passes, add the pinned graphical executable and matching
    dependencies through a separately receipted client package profile and
    attempt visible CoH startup. Continue directly to that test rather than

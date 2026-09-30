@@ -1,5 +1,13 @@
 # Thor device acceptance
 
+**Latest: physical Atlas 0.4.4 passed on 2026-09-30 UTC.** All 18 stages, both
+committed saves, exact-character resume and complete owned cleanup are verified.
+See the [receipt](android-evidence/accepted-atlas-test-thor-20260930.json).
+The user skipped manual Stop/rerun and screen-lock testing for this version;
+these remain unvalidated. Advance to the separate visible client presentation
+APK without repeating the long server test. Earlier milestones below retain
+their original scope.
+
 The **real DbServer and Stop/rerun gate passed with 0.2.0** on 2026-09-28.
 Two complete 28-stage passes surround an intentional, cleanly cancelled run.
 See the [device results](ANDROID_SERVER_DEVICE_TEST.md#accepted-thor-results)

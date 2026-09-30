@@ -1,39 +1,36 @@
 # City of Heroes Android handoff
 
-**COH Atlas Test 0.4.4 passed hosted qualification; one full Thor test/export is next.**
-The exact signed APK in [run 36638344040](https://github.com/Russianranger/coh-android/actions/runs/36638344040)
-at `e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce` passed full import and all 18
-create/save/restart/resume stages in 33 minutes 10.8 seconds. Both protocol saves
-committed, the exact character resumed in the same database cluster, and restart
-and final owned cleanup completed with zero inspection failures and zero remaining
-owned processes. Independent review verified the preserved raw evidence and
-replayed Java acceptance compatibility without relabelling the host as Android.
-See the [0.4.4 acceptance receipt](android-evidence/accepted-atlas-test-hosted-36638344040.json).
+**COH Atlas Test 0.4.4 passed on the physical AYN Thor. Visible client presentation is next.**
+The supplied `coh-atlas-test-20260930-003609.zip` verifies all 18 stages in
+55 minutes 52.7 seconds: both protocol saves committed, `TEST50056` resumed in
+the same cluster with 12,345 influence and login count 1 → 2, and all 102 child
+captures closed. Restart and final owned cleanup had zero inspection failures
+and zero remaining processes. The device exercised the EACCES exit recovery;
+the separate ESRCH path was not exercised. The exact original report also passes
+the Java acceptance/cleanup checks and Python capture/startup checks.
+See the [physical acceptance receipt](android-evidence/accepted-atlas-test-thor-20260930.json).
 
-All 149 candidate checks and 65 import checks passed. Of 179 game checks, 172
-passed and seven Windows-only checks were skipped; the qualified MapServer donor
-separately passed all six real native producer checks. The exact APK's 31 payloads,
-14 Java source identities and six guest helpers match their receipts.
+The user explicitly asked to advance without manual Stop/rerun or another long
+server boot. Manual Stop/rerun and screen-lock checks remain **skipped at user
+request, unvalidated** for 0.4.4; they are not prerequisites for the next APK.
+The 177 ms activity visibility gap does not prove sustained background operation.
+Do not request another full Atlas test to close those checks.
 
-The selected `dispatch_progress_v1` profile requires a fresh coherent observation
-with a positive completed-tick count before each startup protocol query, then a coherent
-same-identity after-read, on both first launch and restart. Missing or invalid
-observations cannot reuse cached success. The existing 20-second protocol
-freshness, 30-second observation, shared 600-second DbServer startup budget,
-overall deadline and cancellation remain intact. The narrow 0.4.3 ownership
-correction is retained; live unreadable ownership still fails. Java acceptance
-now checks the selected profile and raw startup evidence, retaining cleanup gates.
+Keep the accepted Atlas app and its private runtime installed. The separate
+**COH Client Test 0.5.0** implements the next [presentation gate](NEXT_ANDROID_PRESENTATION_GATE.md):
+a session-bound animated Wine/OpenGL fixture, app-private Unix RFB, an Android
+SurfaceView, and actual PixelCopy frame verification. It starts no game server
+or SQL service and imports no game data. Its hosted qualification and physical
+Android presentation evidence must be recorded separately; a visible fixture
+does not establish actual CoH menus, world rendering, controls or gameplay.
 
-This qualifies hosted execution only. Complete physical Thor 0.4.4 acceptance,
-Stop/rerun, lifecycle checks and graphical gameplay remain pending. Because the
-CI signing certificate changed, uninstall only the failed **COH Atlas Test 0.4.2**,
-then install **COH-Atlas-Test-0.4.4.apk**, prepare its private runtime and import the
-complete reviewed ZIP. Keep accepted **0.1.5, 0.2.0 and 0.3.0** installed. Run one
-full Thor test and export its report, even on failure. Hold Stop/rerun and lifecycle
-checks until that report's restart/resume and cleanup evidence is reviewed.
+The 0.4.4 exact signed APK remains hosted-qualified in
+[run 36638344040](https://github.com/Russianranger/coh-android/actions/runs/36638344040)
+at `e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce`.
+See the [hosted receipt](android-evidence/accepted-atlas-test-hosted-36638344040.json).
 
 The earlier checkpoints below preserve their original successes and failures.
-Their installation and retry directions are superseded by the 0.4.4 procedure above.
+Their installation and retry directions are superseded by the physical pass and next-step direction above.
 
 **Qualified MapServer diagnostic donor: run 36630872719.**
 Run `36630872719` passed all six real Windows producer contracts and all eighteen

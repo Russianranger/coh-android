@@ -1,0 +1,160 @@
+name: Thor client presentation candidate
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/presentation/**'
+      - 'android/native/presentation-probe.c'
+      - 'android/guest/presentation_diagnostic.py'
+      - 'tools/android/presentation/**'
+      - '.github/workflows/android-presentation.yml'
+  pull_request:
+    paths:
+      - 'android/presentation/**'
+      - 'android/native/presentation-probe.c'
+      - 'android/guest/presentation_diagnostic.py'
+      - 'tools/android/presentation/**'
+      - '.github/workflows/android-presentation.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-presentation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check presentation transport, session evidence and package boundaries
+        run: python3 -m unittest discover -s tools/android/presentation -p 'test_*.py' -v
+  apk:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/presentation-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/presentation-native/arm64-v8a
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Install SDK 35 and PE32 compiler
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686 binutils-mingw-w64-i686
+      - name: Preserve accepted runtime and add presentation fixture
+        run: |
+          mkdir -p out/presentation
+          python3 tools/android/presentation/prepare_assets.py \
+            --assets out/presentation-inputs/runtime --output out/presentation/runtime \
+            --repository-commit "$GITHUB_SHA" > out/presentation/assets-preparation.json
+      - name: Build and verify separate COH Client Test APK
+        run: >-
+          python3 tools/android/presentation/build_apk.py
+          --runtime-assets out/presentation/runtime --native out/presentation-native
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-client-test.jks"
+          --output out/presentation/COH-Client-Test-0.5.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-test-apk
+          path: |
+            out/presentation/COH-Client-Test-0.5.0.apk
+            out/presentation/COH-Client-Test-0.5.0.apk.sha256
+            out/presentation/presentation-apk-build-report.json
+            out/presentation/assets-preparation.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-test-packaging-evidence
+          path: |
+            out/presentation/assets-preparation.json
+            out/presentation/presentation-apk-build-report.json
+            out/presentation/runtime/runtime-manifest.json
+            out/presentation/runtime/presentation-manifest.json
+          if-no-files-found: warn
+  runtime:
+    needs: apk
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-test-apk
+          path: out/presentation
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/presentation-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/presentation-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/presentation-base-runtime
+          --bundle out/presentation-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/presentation/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Observe exact APK native probe through external private Unix RFB
+        run: >-
+          python3 tools/android/presentation/host_smoke.py
+          --apk out/presentation/COH-Client-Test-0.5.0.apk
+          --build-report out/presentation/presentation-apk-build-report.json
+          --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
+          --work out/presentation-host --evidence out/presentation-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-test-arm64-evidence
+          path: |
+            out/presentation-evidence/
+            out/presentation/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn
