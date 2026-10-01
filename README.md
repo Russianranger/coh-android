@@ -1,6 +1,34 @@
 # City of Heroes Android
 
-**COH Atlas Test 0.4.4 passed hosted qualification; one full Thor test/export is next.**
+**COH Local Login 0.8.1 is hosted-qualified and ready for one AYN Thor login session.**
+
+The current [handoff](docs/HANDOFF.md) and
+[one-session device instructions](docs/ANDROID_LOCAL_LOGIN_TEST.md) supersede the
+historical test directions below. The exact signed APK from
+[run 36785793934](https://github.com/Russianranger/coh-android/actions/runs/36785793934)
+at source `1fb4c6057fda579da1913670889922ba8e53bbdc` passed all 11 guest stages,
+including a real saved-Wine-profile refresh and graphical local login.
+Reviewed current-session captures show **Server Used/Total: 0/12** and twelve
+empty Create Character slots. All 112 interactive and client/cache checks passed;
+PostgreSQL shut down gracefully with its database retained, and all owned
+processes closed without inspection failures.
+
+The Thor 0.8.0 report failed before DbServer or game launch because its reused
+Wine profile performed registration that the validator rejected. Version 0.8.1
+reconciles the installed Wine timestamp, accepts Wine's CRLF timestamp format,
+and renews readiness only after the real PE32 probe. Its app identity and signing
+certificate are retained: install it over 0.8.0/0.7.0, refresh runtime if requested,
+and keep the existing imported assets and compatible caches.
+
+Physical Thor Atlas persistence, presentation, client startup and the
+user-confirmed touch/right-stick/A/text menu inputs are already accepted within
+their recorded scope. Their historical test instructions below are not requests
+to repeat them. Physical local login remains pending. Test `COHLOCAL` / `offline`
+once, select `127.0.0.1`, wait for **Local login verified**, then Finish and export
+the report. Character creation, exact-character restart/reopen, local map entry
+and gameplay refinement follow sequentially.
+
+**Historical 0.4.4 hosted checkpoint — its device-test direction has been completed and superseded.**
 The exact signed APK in [run 36638344040](https://github.com/Russianranger/coh-android/actions/runs/36638344040)
 at `e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce` passed full import and all 18
 create/save/restart/resume stages in 33 minutes 10.8 seconds. Both protocol saves
