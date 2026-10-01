@@ -3,7 +3,9 @@ import copy
 import hashlib
 import importlib.util
 import json
+import io
 from pathlib import Path
+import shutil
 import struct
 import tempfile
 from types import SimpleNamespace
@@ -40,6 +42,46 @@ def events():
 
 
 class CharacterReopenHostTests(unittest.TestCase):
+    def test_character_label_ocr_retains_gray_outline_and_requires_exact_name(self):
+        from PIL import Image
+        tsv = ('level\tleft\ttop\twidth\theight\tconf\ttext\n'
+               '5\t69\t24\t187\t24\t70.01\tTHORHERO\n')
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            frame = host.ClientFramebuffer()
+            # A gray outlined edge would be discarded by the dialog threshold.
+            frame.pixels[:] = bytes((130,130,130,0))*(800*600)
+            def recognize(command, **kwargs):
+                self.assertEqual(command, ['tesseract','stdin','stdout','--psm','7','tsv'])
+                rendered = Image.open(io.BytesIO(kwargs['input']))
+                self.assertEqual(rendered.size, (690,69))
+                self.assertEqual(rendered.getpixel((300,30)), 125)
+                return SimpleNamespace(stdout=tsv.encode())
+            with mock.patch.object(character.shutil,'which',return_value='/usr/bin/tesseract'), \
+                 mock.patch.object(character.subprocess,'run',side_effect=recognize), \
+                 mock.patch.object(host,'save_png',side_effect=save):
+                match, stem = character.read_button(frame,root,'THORHERO','name',1,reopen.CHARACTER_REGION)
+            self.assertEqual(match,(154,72,70.01))
+            self.assertEqual(json.loads((root/(stem+'.json')).read_text())['preprocessing'],'inverted_grayscale')
+            for rejected in ('THOAMERG','THORHERD','OTHERHERO','THORHERO2'):
+                self.assertIsNone(character.ocr_button(tsv.replace('THORHERO',rejected),'THORHERO',
+                    reopen.CHARACTER_REGION,offset=reopen.CHARACTER_REGION[:2]))
+            self.assertIsNone(character.ocr_button(tsv.replace('70.01','5'),'THORHERO',
+                reopen.CHARACTER_REGION,offset=reopen.CHARACTER_REGION[:2]))
+
+    @unittest.skipUnless(shutil.which('tesseract'),'retained name-row regression requires tesseract')
+    def test_retained_reopen_name_row_recognizes_literal_thorhero(self):
+        from PIL import Image
+        row = Image.open(Path(__file__).with_name('fixtures')/'character-name-36920583713.png').convert('RGB')
+        self.assertEqual(row.size,(230,23))
+        rendered = Image.new('RGB',(800,600));rendered.paste(row,reopen.CHARACTER_REGION[:2])
+        frame = host.ClientFramebuffer();frame.pixels[:] = rendered.tobytes('raw','BGRX')
+        with tempfile.TemporaryDirectory() as temporary:
+            match, _ = character.read_button(frame,Path(temporary),'THORHERO','retained-name',1,reopen.CHARACTER_REGION)
+        self.assertIsNotNone(match)
+        self.assertEqual(match[:2],(154,72))
+        self.assertGreaterEqual(match[2],20)
+
     def test_world_receipt_works_without_ignored_zip_and_binds_apk_and_private_map_tree(self):
         contract = {'scope':'atlas_world_geometry_texture_supplement', 'archive_pin':{'bytes':20,'sha256':'a'*64},
             'manifest_pin':{'bytes':30,'sha256':'b'*64}, 'file_count':2,'payload_bytes':40,'files_sha256':'c'*64}

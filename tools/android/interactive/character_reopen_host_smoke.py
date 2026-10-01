@@ -22,7 +22,9 @@ spec.loader.exec_module(character)
 host, require = character.host, character.require
 INTERACTION_SECONDS = character.INTERACTION_SECONDS
 OVERALL_SECONDS = character.OVERALL_SECONDS
-CHARACTER_REGION = (80, 40, 360, 150)
+# Pinned Hybrid UI's first selected name row at 800x600. The actual click still
+# comes only from exact recognized THORHERO bounds, never from a fixed point.
+CHARACTER_REGION = (100, 60, 330, 83)
 ATLAS_HELP_REGION = (345, 270, 680, 490)
 WORLD_CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only'
 

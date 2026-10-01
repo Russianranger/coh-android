@@ -1,0 +1,194 @@
+name: Thor saved character reopening with retained exact APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/character-persistence-continuation
+    paths:
+      - 'tools/android/interactive/character_host_smoke.py'
+      - 'tools/android/interactive/character_reopen_host_smoke.py'
+      - 'tools/android/interactive/test_character_host.py'
+      - 'tools/android/interactive/test_character_reopen_host.py'
+      - 'tools/android/interactive/fixtures/**'
+      - '.github/workflows/android-character-reopen-qualified-apk.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-character-reopen-qualified-apk
+  cancel-in-progress: false
+
+jobs:
+  tooling:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install retained name-row regression dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends tesseract-ocr python3-pil
+      - name: Check real host input, reopening and retained name-row fixture
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_host_transport.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_login_host.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_character_host.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_character_reopen_host.py' -v
+
+  runtime:
+    needs: tooling
+    # Reading the already reviewed asset ZIP from its draft release requires
+    # repository write access. This workflow neither builds nor publishes APKs.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: out/client
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+      - name: Bind retained APK, donor artifact and current host harness sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PYTHON'
+          import hashlib, json, os, pathlib, re, subprocess, urllib.request
+          root = pathlib.Path.cwd()
+          donor_commit = '204615c6c4a809d6b814c7174b81448cffea3f7a'
+          workflow = '.github/workflows/android-character-reopen-qualified-apk.yml'
+          apk = {'name': 'COH-Character-Reopen-0.10.0.apk', 'bytes': 590725465,
+                 'sha256': 'ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688'}
+          build = {'name': 'interactive-apk-build-report.json', 'bytes': 38185,
+                   'sha256': '587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f'}
+          artifact = {'id': 11192425448, 'name': 'coh-client-interaction-apk', 'bytes': 553313601,
+                      'sha256': '82a769943a7237465c26d42e419fa54e39ec6ab6010376f566a752a1c47f6a90'}
+          def require(value, message):
+              if not value:
+                  raise ValueError(message)
+          def pin(path):
+              require(path.is_file() and not path.is_symlink(), 'Absent or linked qualification input: '+str(path))
+              with path.open('rb') as stream:
+                  return {'bytes': path.stat().st_size, 'sha256': hashlib.file_digest(stream, 'sha256').hexdigest()}
+          for item in (apk, build):
+              require(pin(root/'out/client'/item['name']) == {key: item[key] for key in ('bytes','sha256')},
+                      'Retained donor bytes differ: '+item['name'])
+          receipt = json.loads((root/'out/client'/build['name']).read_text())
+          require(receipt.get('repository_commit') == donor_commit and receipt.get('apk') == apk['name']
+                  and receipt.get('bytes') == apk['bytes'] and receipt.get('sha256') == apk['sha256']
+                  and receipt.get('application_id') == 'io.github.russianranger.cohclientinteractive'
+                  and receipt.get('version_name') == '0.10.0' and receipt.get('version_code') == 5
+                  and receipt.get('signature_verified') is True and receipt.get('payload_bytes_verified') is True,
+                  'Retained signed APK build receipt differs')
+          request = urllib.request.Request('https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/'+str(artifact['id']),
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json',
+                       'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'coh-android-retained-apk-qualification'})
+          with urllib.request.urlopen(request, timeout=45) as response:
+              remote = json.load(response)
+          origin = remote.get('workflow_run', {})
+          require(remote.get('id') == artifact['id'] and remote.get('name') == artifact['name']
+                  and remote.get('expired') is False and remote.get('size_in_bytes') == artifact['bytes']
+                  and remote.get('digest') == 'sha256:'+artifact['sha256']
+                  and origin.get('id') == 36920583713 and origin.get('head_sha') == donor_commit
+                  and origin.get('repository_id') == origin.get('head_repository_id') == 1368730125,
+                  'Retained donor artifact provenance differs')
+          head = os.environ['GITHUB_SHA']
+          require(re.fullmatch('[0-9a-f]{40}', head) is not None
+                  and subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip() == head,
+                  'Host harness checkout does not match this qualification commit')
+          tracked = subprocess.check_output(['git','ls-files','-z']).decode().rstrip('\0').split('\0')
+          selected = {name for name in tracked if
+              (name.startswith('tools/android/') and (name.endswith('.py') or '/fixtures/' in name))
+              or (name.startswith('android/') and name.endswith(('.py','.java','.c','.h','AndroidManifest.xml')))
+              or name in (workflow, 'tools/fetch_runtime_asset_bundle.py', 'docs/source-manifest.json',
+                  'docs/data-manifest.json', 'assets/reference-inputs-receipt.json',
+                  'assets/reference-inputs-manifest.json', 'assets/character-avatar-defaults-manifest.json',
+                  'assets/atlas-world-supplement-manifest.json')}
+          required = {workflow, 'tools/android/interactive/host_smoke.py',
+              'tools/android/interactive/login_host_smoke.py', 'tools/android/interactive/character_host_smoke.py',
+              'tools/android/interactive/character_reopen_host_smoke.py',
+              'tools/android/interactive/fixtures/character-name-36920583713.png'}
+          require(required <= selected, 'Qualification source inventory lacks its workflow or corrected host driver')
+          files = {name: pin(root/name) for name in sorted(selected)}
+          canonical = json.dumps(files, sort_keys=True, separators=(',', ':')).encode()
+          driver = {'format': 1, 'scope': 'exact_donor_apk_current_host_harness_native_arm64',
+              'repository': os.environ['GITHUB_REPOSITORY'], 'ref': os.environ['GITHUB_REF'],
+              'workflow_path': workflow, 'workflow_run_id': int(os.environ['GITHUB_RUN_ID']),
+              'workflow_run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+              'host_harness_repository_commit': head,
+              'host_harness_repository_tree': subprocess.check_output(['git','rev-parse','HEAD^{tree}'], text=True).strip(),
+              'apk_donor': {'run_id': 36920583713, 'repository_commit': donor_commit,
+                            'apk': apk, 'build_report': build, 'artifact': artifact},
+              'source_manifest': {'format': 1, 'files': files, 'files_sha256': hashlib.sha256(canonical).hexdigest()},
+              'apk_rebuilt': False, 'client_or_server_recompiled': False,
+              'fresh_postgresql_profile': True, 'synthetic_character_rows': False,
+              'qualification_scope': 'two_real_graphical_sessions_with_owned_stack_restart_and_normal_logout'}
+          evidence = root/'out/qualification-evidence/client-evidence'
+          evidence.mkdir(parents=True, exist_ok=True)
+          (evidence/'qualification-driver.json').write_text(json.dumps(driver, indent=2)+'\n')
+          PYTHON
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/client-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/client-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/client-base-runtime
+          --bundle out/client-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/client/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless tesseract-ocr python3-pil
+      - name: Build matching native ARM64 Linux host PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Retain host launcher source and build receipts
+        run: |
+          cp out/client/talloc-source-receipt.json out/qualification-evidence/client-evidence/
+          cp out/android/native/linux-arm64/proot-build-receipt.json out/qualification-evidence/client-evidence/
+      - name: Retrieve the existing reviewed game asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
+      - name: Exercise retained exact APK save and reopening with corrected host OCR
+        run: >-
+          python3 tools/android/interactive/character_reopen_host_smoke.py
+          --apk out/client/COH-Character-Reopen-0.10.0.apk
+          --archive out/client-assets.zip
+          --build-report out/client/interactive-apk-build-report.json
+          --repository-commit 204615c6c4a809d6b814c7174b81448cffea3f7a
+          --proot out/android/native/linux-arm64
+          --startup-timeout-seconds 900 --interaction-seconds 1200 --timeout-seconds 5400
+          --work out/client-host --evidence out/qualification-evidence/client-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-interaction-arm64-evidence
+          path: out/qualification-evidence/
+          if-no-files-found: warn

@@ -164,7 +164,7 @@ def ocr_button(tsv, label, region, scale=3, offset=(0, 0)):
     return max(matches, key=lambda item: item[1]) if matches else None
 
 
-def read_ocr(frame, evidence, step, attempt, region):
+def read_ocr(frame, evidence, step, attempt, region, *, single_line=False):
     require(shutil.which('tesseract') is not None, 'Hosted graphical driver requires tesseract-ocr')
     from PIL import Image
     # Enlarge and threshold the rendered light text for small outlined game
@@ -178,16 +178,23 @@ def read_ocr(frame, evidence, step, attempt, region):
     host.save_png(evidence/(stem+'.png'), pixels)
     rendered = Image.frombytes('RGB', (frame.width, frame.height), bytes(pixels), 'raw', 'BGRX')
     rendered = rendered.crop(region)
-    text = rendered.point(lambda value: 255 if value > 100 else 0).convert('L').point(lambda value: 0 if value > 225 else 255)
+    if single_line:
+        # The selected character's outlined name loses letter edges under the
+        # dialog threshold. Preserve its grayscale detail in the bounded row.
+        text = rendered.convert('L').point(lambda value: 255-value)
+    else:
+        text = rendered.point(lambda value: 255 if value > 100 else 0).convert('L').point(lambda value: 0 if value > 225 else 255)
     text = text.resize(((right-left)*scale, (bottom-top)*scale), Image.Resampling.BICUBIC)
     ppm = io.BytesIO()
     text.save(ppm, format='PPM')
     # Bound OCR CPU use and image size while the client and MapServer share the
     # runner; a full upscaled frame previously exceeded the OCR deadline.
     environment = dict(os.environ, OMP_THREAD_LIMIT='1', OMP_NUM_THREADS='1')
+    psm = 7 if single_line else 11
     (evidence/(stem+'.json')).write_text(json.dumps({'region': list(region), 'scale': scale,
-        'ocr_width': text.width, 'ocr_height': text.height, 'omp_threads': 1, 'timeout_seconds': 30})+'\n')
-    result = subprocess.run(['tesseract', 'stdin', 'stdout', '--psm', '11', 'tsv'], input=ppm.getvalue(),
+        'ocr_width': text.width, 'ocr_height': text.height, 'omp_threads': 1, 'timeout_seconds': 30,
+        'psm': psm, 'preprocessing': 'inverted_grayscale' if single_line else 'thresholded_light_text'})+'\n')
+    result = subprocess.run(['tesseract', 'stdin', 'stdout', '--psm', str(psm), 'tsv'], input=ppm.getvalue(),
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=True, env=environment)
     require(len(result.stdout) <= 1024*1024, 'OCR text exceeds bounded frame evidence')
     tsv = result.stdout.decode('utf-8')
@@ -196,7 +203,7 @@ def read_ocr(frame, evidence, step, attempt, region):
 
 
 def read_button(frame, evidence, label, step, attempt, region):
-    tsv, stem = read_ocr(frame, evidence, step, attempt, region)
+    tsv, stem = read_ocr(frame, evidence, step, attempt, region, single_line=label == CHARACTER)
     return ocr_button(tsv, label, region, scale=3, offset=region[:2]), stem
 
 

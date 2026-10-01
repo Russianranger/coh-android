@@ -1,6 +1,28 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation/save is accepted. The 0.10.0 full hosted run reached visible Atlas geometry and saved its seed, then refused the reopened baseline because native first creation had not persisted its temporary MapId. Apply the narrow baseline fix and qualify reopening; preserve THORHERO.**
+**Current: Thor 0.9.0 creation/save is accepted. The corrected 0.10.0 run preserved its saved character and reached the reopen roster, then stopped on host OCR despite a clearly rendered THORHERO name. Qualify the corrected host driver against the exact retained APK before advancing visible Atlas materials and walking. Preserve THORHERO.**
+
+Run `36920583713` at `204615c6` proves the narrow NULL MapId baseline fix.
+Its seed session passed in 1,845.046 seconds. The second session preserved
+identity, authentication, powers, costume and the exact Atlas SQL position,
+started Atlas and the graphical client, logged in locally, and reached the
+existing character roster. The retained frame clearly shows THORHERO and the
+default costume, but wide-region OCR misread the name as THOAMERG and refused
+selection. No reopened CLIENT_READY, ground recovery or second save was reached.
+Both sessions cleaned up their owned workers normally. See
+[the preserved OCR failure receipt](android-evidence/character-reopen-hosted-36920583713-ocr-failed.json).
+
+The host correction crops the character name row and uses grayscale single-line
+OCR, retaining exact THORHERO matching and clicking only recognized bounds.
+Retained attempts 1, 10 and 21 each recognize THORHERO at 70% confidence.
+The dedicated retained-APK workflow downloads the unchanged signed 0.10.0 APK
+from run `36920583713`, verifies all donor pins, and records the separate host
+driver commit/source inventory. It performs two real sessions with a fresh
+PostgreSQL profile; the failed run did not archive a reusable database cluster.
+It does not rebuild client, server or APK components. The original full-build
+workflow routes bounded host-only pushes to this qualification, avoiding a
+duplicate runtime and rebuild. Reopening remains pending until the normal
+second save, persistence comparison and cleanup pass.
 
 Run `36913457461` at `07eb3ecb` completed with a runtime failure. Its first
 graphical session passed in 1,840.069 seconds, reached CLIENT_READY, displayed
@@ -21,7 +43,7 @@ Pinned native source explains the NULL: first creation assigns MapId in memory
 but writes StaticMapId to SQL; ordinary MapServer saves omit the read-only map
 fields. Reopening an existing character writes its active MapId assignment.
 
-The narrow correction accepts NULL temporary MapId only in the existing
+The now-proven narrow correction accepts NULL temporary MapId only in the existing
 character baseline, while requiring persisted Atlas StaticMapId, exact ID and
 finite coordinates. Post-save live-map verification stays strict. The fresh
 corrected candidate still uses version 0.10.0/code 5: none of the failed 0.10.0
