@@ -29,5 +29,5 @@
   "inspection_failures": 0,
   "host_forced_quit": false,
   "host_forced_kill": false,
-  "correction": "Add the exact pinned world and avatar file counts and decoded payload bytes to the existing finite private MapServer staging allowances. Preserve verified roots, immutable links, schema isolation and cache allowance."
+  "correction": "The exact supplement inventory allowance was necessary but insufficient. Subsequent run 36905387168 exposed PRoot hard-link backing entries; atomic renameat2(RENAME_NOREPLACE) publication removes those extra entries without replacing preserved inputs."
 }

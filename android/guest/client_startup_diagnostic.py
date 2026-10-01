@@ -61,6 +61,25 @@ def read_json(path, limit=1024*1024):
     return json.loads(path.read_text(encoding='utf-8-sig'))
 
 
+def publish_new_regular_file(temporary, target):
+    """Move a completed payload without replacement or PRoot hard-link backing files."""
+    # Refuse linked/existing destinations before entering PRoot's rename hook.
+    # RENAME_NOREPLACE also closes the race with another publisher. Ordinary
+    # rename/replace and hard-link fallbacks would weaken these guarantees.
+    if os.path.lexists(target):
+        raise FileExistsError(17, 'Asset publication destination already exists', os.fspath(target))
+    require(temporary.is_file() and not temporary.is_symlink(),
+            'Asset publication source must be an unlinked regular file')
+    libc = C.CDLL(None, use_errno=True)
+    rename = getattr(libc, 'renameat2', None)
+    require(rename is not None, 'Atomic no-replace asset publication is unavailable')
+    rename.argtypes = (C.c_int, C.c_char_p, C.c_int, C.c_char_p, C.c_uint)
+    rename.restype = C.c_int
+    if rename(-100, os.fsencode(temporary), -100, os.fsencode(target), 1) != 0:
+        error = C.get_errno()
+        raise OSError(error, os.strerror(error), os.fspath(target))
+
+
 def validate_args(args):
     require(re.fullmatch(r'[0-9a-f]{32}', args.session_id) is not None, 'Invalid session identity')
     require(type(args.startup_timeout_seconds) is int and 60 <= args.startup_timeout_seconds <= 900,

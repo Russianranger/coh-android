@@ -185,7 +185,7 @@ def publish_marker(worktree, value):
             output.write(canonical(value)); output.flush(); os.fsync(output.fileno())
         temporary.chmod(0o444)
         os.utime(temporary, (client.CACHE_EPOCH, client.CACHE_EPOCH))
-        os.link(temporary, worktree / MARKER, follow_symlinks=False)
+        client.publish_new_regular_file(temporary, worktree / MARKER)
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -240,7 +240,7 @@ def install(worktree, assets, context):
                 output.write(payloads[name]); output.flush(); os.fsync(output.fileno())
             temporary.chmod(0o444)
             os.utime(temporary, (client.CACHE_EPOCH, client.CACHE_EPOCH))
-            os.link(temporary, target, follow_symlinks=False)
+            client.publish_new_regular_file(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
         require(verify_target(target, manifest['files'][name]), 'World payload publication failed')

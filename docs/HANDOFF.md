@@ -2,17 +2,24 @@
 
 **Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. The 0.10.0 exact-character reopen and Atlas recovery candidate is implemented; APK and hosted qualification are in progress. Preserve THORHERO.**
 
-The initial 0.10.0 APK in run `36901295766` built and signed successfully,
-but hosted qualification stopped before client launch while mirroring the
-private MapServer data. Its old import/cache allowance omitted the pinned
-2,877-file world and 21-file avatar supplements. All world files had installed
-and verified; PostgreSQL, Wine and owned workers stopped cleanly. Preserve the
-[failed receipt](android-evidence/character-reopen-hosted-36901295766-failed.json).
-The correction adds exactly those supplement inventories and payload bytes
-to the existing finite staging bounds, retaining every root, link, immutable
-input and private schema check. The candidate requires a new signed APK and
-hosted run; do not request a Thor test of the failed package. Dependency downloads
-are now bounded and reuse SDK 35 when already present on the runner.
+The first two hosted attempts stopped before client launch while mirroring the
+private MapServer data. The initial staging budget omitted the pinned world and
+avatar supplements; adding their exact inventory exposed the deeper cause:
+PRoot's `--link2symlink` emulates each newly published hard link with hidden
+backing entries. The 2,877 world files therefore left 5,754 extra entries and
+619,311,880 extra bytes of staging accounting. Run `36905387168` refused entry
+180,006 against the corrected 180,005-file cap and stopped all owned workers,
+PostgreSQL and Wine cleanly. Preserve both failed receipts; neither APK is a
+qualified Thor candidate.
+
+World/avatar payloads and the world marker now publish through Linux
+`renameat2(RENAME_NOREPLACE)`, retaining permissions, timestamps and fsync while
+avoiding the emulated hard-link backing files. Existing paths are refused before
+the PRoot rename hook, and the kernel refuses concurrent replacement. Publication
+fails closed if that operation is unavailable. The finite inventory budget still
+includes both pinned supplements. A fresh signed APK and real ARM64 hosted
+qualification are required before the one-session Thor test. Dependency downloads
+are bounded and reuse SDK 35 when already present on the runner.
 
 The next candidate defaults to reopening the existing COHLOCAL / THORHERO ID 1.
 It compares a read-only pre-login baseline with the ordinary committed save,

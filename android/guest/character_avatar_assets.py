@@ -154,8 +154,7 @@ def install(worktree, assets, context):
                 output.write(payloads[name]); output.flush(); os.fsync(output.fileno())
             os.chmod(temporary, 0o444)
             os.utime(temporary, (client.CACHE_EPOCH, client.CACHE_EPOCH))
-            # link is atomic and refuses an existing target, unlike replace.
-            os.link(temporary, target, follow_symlinks=False)
+            client.publish_new_regular_file(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
         require(verify_target(target, manifest['files'][name]), 'Avatar supplement publication failed')
