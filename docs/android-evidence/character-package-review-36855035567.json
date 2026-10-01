@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "apk": "COH-Character-Creation-0.9.0.apk",
+  "run_id": 36855035567,
+  "repository_commit": "19879ed57eb74d4e55aa42c5160c8c539ff5bb6d",
+  "bytes": 386658292,
+  "sha256": "1da4719cf7af825092199c73067fb5fd3423fcaa8543a37d366ad1a0557ed681",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "version_name": "0.9.0",
+  "version_code": 4,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "signature_verified": true,
+  "package_badging_verified": true,
+  "payloads_verified": 44,
+  "runtime_files_verified": 37,
+  "java_sources_verified": 15,
+  "runtime_manifest_sha256": "a65595bcabe5ede2431df72a6d2a089495eae9dfaae2076a38eb06e1c55916c0",
+  "guest_source_closure_verified": true,
+  "exact_MapServer_composite_verified": true,
+  "exact_DbServer_schema_verified": true,
+  "accepted_base_import_bytes_verified": true,
+  "avatar_supplement": {
+    "file_count": 21,
+    "payload_bytes": 2980122,
+    "manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
+    "archive_sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "source_range_provenance_verified": true,
+    "original_import_asset_names_preserved": true
+  },
+  "device_validated": false,
+  "gameplay_validated": false,
+  "gate": "signed_apk_package_integrity",
+  "status": "passed",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36855035567",
+  "visual_qualification_scope": "Package verification does not establish runtime creation/save, Android surface rendering or gameplay.",
+  "evidence": {
+    "independent-apk-verification.json": {
+      "bytes": 1374,
+      "sha256": "1896ceedc6c72547c0144f438dffca0fb2fa4bbc7ac128c47965766670c7bb9c"
+    },
+    "actual-badging.txt": {
+      "bytes": 1361,
+      "sha256": "5b6c80e5373703d1d90ff78e5b8f972e7ac3daeb055ce6b323a2cefc22a9b3b7"
+    },
+    "actual-signature.txt": {
+      "bytes": 975,
+      "sha256": "cd2f9a8dde693544bb38a87456a865b8dcbdd176399fec5c3fca6d7f39518fdd"
+    }
+  }
+}

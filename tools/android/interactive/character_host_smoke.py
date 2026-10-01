@@ -25,6 +25,7 @@ spec.loader.exec_module(login)
 host = login.host
 require = host.require
 INTERACTION_SECONDS = 1200
+LOGIN_STAGE_SECONDS = 180
 OVERALL_SECONDS = 5400
 CLEANUP_GRACE_SECONDS = 180
 CHARACTER_EVIDENCE_LIMIT = 256*1024*1024
@@ -228,7 +229,12 @@ def creation_actions():
 
 
 class CharacterInteraction(host.MenuInteraction):
-    LOGIN_ACTIONS = login.LoginInteraction.ACTIONS
+    # The separate login qualification covers Settings recovery. Enter the
+    # character milestone through ordinary login without opening that optional
+    # window (uiLogin.c only opens it in the Settings button handler).
+    LOGIN_ACTIONS = tuple(action for action in login.LoginInteraction.ACTIONS if action[2] not in {
+        'preposition_settings', 'open_settings', 'preposition_settings_close', 'close_settings_x',
+        'press_b_escape', 'observe_login_after_settings'})
     ACTIONS = LOGIN_ACTIONS + creation_actions()
 
     def __init__(self, session, evidence, finish_path):
@@ -237,8 +243,6 @@ class CharacterInteraction(host.MenuInteraction):
         self.result.update(scope='host_graphical_character_creation_and_ordinary_logout', account='COHLOCAL',
             character_name=CHARACTER, character_creation_visual_validated=False,
             post_login_captures=[], connected_captures=[], post_save_captures=[], ocr_buttons=[])
-        self.login_reference = None
-        self.restored_frames = 0
         self.ocr_position = None
         self.ocr_attempts = 0
         self.last_ocr_at = 0
@@ -257,6 +261,9 @@ class CharacterInteraction(host.MenuInteraction):
     def on_frame(self, connection, frame, events, sequence, captures, now):
         if self.ready_at is None: self.ready_at = now
         require(now-self.ready_at < INTERACTION_SECONDS, 'Host character creation exceeded twenty-minute interaction bound')
+        if self.action <= len(self.LOGIN_ACTIONS):
+            require(now-self.ready_at < LOGIN_STAGE_SECONDS,
+                    'Host character login exceeded 180-second stage bound before fresh character-list proof')
         if len(captures) < 3 or (frame.width, frame.height) != (800, 600): return
         if self.action:
             require(frame.generation == self.frame_generation, 'Client resized during graphical character creation')
@@ -271,15 +278,7 @@ class CharacterInteraction(host.MenuInteraction):
                 self.result['finish_request'] = host.write_finish_request(self.finish_path, self.session, events.client_pid)
             return
         kind, value, name = self.ACTIONS[self.action]
-        if name == 'preposition_settings': self.login_reference = login.LoginInteraction.login_panel(frame.pixels)
-        if kind == 'restore':
-            panel = login.LoginInteraction.login_panel(frame.pixels)
-            difference = sum(abs(a-b) for a, b in zip(panel, self.login_reference))/len(panel)
-            self.restored_frames = self.restored_frames+1 if difference <= 8 else 0
-            if self.restored_frames < 3: return
-            self.result['settings_recovery'] = {'panel_mean_absolute_difference': difference,
-                'fresh_restored_frames': self.restored_frames, 'visual_review_pending': True}
-        elif kind in ('login', 'connected', 'saved'):
+        if kind in ('login', 'connected', 'saved'):
             proof, generation, requested = {
                 'login': ('post_login_captures', events.login_generation, frame.request_login_generation),
                 'connected': ('connected_captures', events.connected_generation, frame.request_connected_generation),
@@ -306,7 +305,7 @@ class CharacterInteraction(host.MenuInteraction):
         elif kind == 'text': fixed_text(connection, value, replace=True)
         elif kind == 'command': fixed_text(connection, value)
         elif kind in ('key', 'escape'): key(connection, 0xff1b if kind == 'escape' else value)
-        else: require(kind == 'restore', 'Unknown graphical action')
+        else: require(False, 'Unknown graphical action')
         if name == 'submit_ordinary_logout':
             self.result['logout_request'] = write_logout_request(self.finish_path.parent/'character-logout.json',
                 self.session, events.client_pid, events.character_id)

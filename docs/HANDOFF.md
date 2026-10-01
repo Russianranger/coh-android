@@ -141,8 +141,41 @@ for this change. The development client also sets `iAmAnArtist` under this stock
 policy; do not claim identical internal group topology or physical visual and
 collision acceptance before runtime review. See the
 [source review](android-evidence/character-atlas-autogroup-policy-source-review-20261001.json).
-The full-budget retry at `cdff43b4` is still running while the production-policy
-candidate is prepared. Neither result is accepted at this checkpoint.
+The [full-budget retry](android-evidence/character-hosted-36852214162-failed.json)
+at `cdff43b4` exhausted its full twenty-minute interaction window while the client
+remained at `AutoGroup..`. Both forearms and hands visibly rendered after Clear,
+alongside the tights, boots and hair. The owned client was still alive; its
+1,641.351-second launcher lifetime was below the new 2,160-second bound.
+No CLIENT_READY or requested ordinary logout/save was obtained. A later server
+logout-timer expiry followed no logout input and is consistent with the normal
+connection timeout, so it is not accepted save evidence. Guest cleanup completed
+with no remaining owned workers, inspection failures or forced host termination.
+The production-policy candidate at `19879ed5`,
+[run 36855035567](android-evidence/character-hosted-36855035567-failed.json),
+failed before login because the external host driver opened Settings and never
+dismissed its overlay. The tiny red-X click failed visibly before Escape was
+sent; fresh frames continued but never matched the restored login panel. No
+credentials were entered, creator opened or Atlas client policy exercised.
+Its full interaction-bound failure therefore does not establish that the Atlas
+policy failed. Cleanup again completed without remaining workers, inspection
+failures or forced host termination.
+
+The signed APK is already built and
+[independently verified](android-evidence/character-package-review-36855035567.json):
+386,658,292 bytes, SHA-256
+`1da4719cf7af825092199c73067fb5fd3423fcaa8543a37d366ad1a0557ed681`.
+The next qualification uses that immutable APK. The corrected character-only
+host driver omits the previously accepted optional Settings probe, preserves
+ordinary login actions, and requires the current login event plus three fresh
+post-event captures within 180 seconds. The login-only driver remains unchanged.
+Full map-ready, ordinary logout and committed-save acceptance remain pending.
+The dedicated `android-character-qualification.yml` workflow checks the exact
+donor run, successful APK job and artifact digest before reusing the APK and
+its build receipt. It records the current external-driver commit separately
+from APK source `19879ed5`; packaged Java/native/guest source closure remains
+checked, and neither the APK nor prepared caches are rebuilt. This host-only
+correction passed all 181 interactive and 27 client/cache tests, including
+failed/forged donor rejection and login event/fresh-frame/deadline regressions.
 All 174 interactive tests passed after the policy change, including an integrated
 Atlas startup regression that rejects tick zero and NotReady, and requires
 advancing completed ticks around the successful current-map protocol query.

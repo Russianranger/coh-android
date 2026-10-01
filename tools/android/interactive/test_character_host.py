@@ -47,6 +47,77 @@ def events():
 
 
 class CharacterHostTests(unittest.TestCase):
+    def test_character_login_omits_optional_settings_probe_and_preserves_login_only_script(self):
+        original = character.login.LoginInteraction.ACTIONS
+        self.assertEqual([action[2] for action in original[2:8]], ['preposition_settings', 'open_settings',
+            'preposition_settings_close', 'close_settings_x', 'press_b_escape', 'observe_login_after_settings'])
+        self.assertEqual(character.CharacterInteraction.LOGIN_ACTIONS, original[:2] + original[8:])
+        self.assertEqual(character.CharacterInteraction.ACTIONS[:len(original)-6], original[:2] + original[8:])
+        self.assertEqual(character.CharacterInteraction.ACTIONS[len(original)-6],
+                         ('login', None, 'wait_character_list'))
+
+    def test_character_login_requires_response_and_three_fresh_post_response_frames(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+            frame = host.ClientFramebuffer()
+            frame.request_login_generation = 0
+            frame.request_connected_generation = frame.request_saved_generation = 0
+            script.action = len(script.LOGIN_ACTIONS)
+            script.ready_at = 0; script.frame_generation = frame.generation
+            proof = SimpleNamespace(client_pid=PID, login_generation=0, connected_generation=0, saved_generation=0)
+            sequence = 0
+            def tick(now):
+                nonlocal sequence
+                sequence += 1
+                script.on_frame(Connection(), frame, proof, sequence, [{}, {}, {}], now)
+            with mock.patch.object(host, 'save_png', side_effect=save):
+                for now in (10, 12, 14): tick(now)
+                self.assertEqual(script.result['post_login_captures'], [])
+                proof.login_generation = 1
+                for now in (16, 18, 20): tick(now)
+                self.assertEqual(script.result['post_login_captures'], [])
+                self.assertEqual(script.action, len(script.LOGIN_ACTIONS))
+                frame.request_login_generation = 1
+                for now in (22, 24):
+                    tick(now)
+                    self.assertEqual(script.action, len(script.LOGIN_ACTIONS))
+                tick(26)
+            self.assertEqual(script.action, len(script.LOGIN_ACTIONS)+1)
+            self.assertEqual(len(script.result['post_login_captures']), 3)
+            self.assertTrue(all(capture['proof_event_generation'] == 1
+                                for capture in script.result['post_login_captures']))
+            self.assertEqual([step['action'] for step in script.result['steps']], ['wait_character_list'])
+            self.assertFalse((root/'finish.json').exists())
+            self.assertFalse((root/'character-logout.json').exists())
+            self.assertFalse(script.result['character_creation_visual_validated'])
+
+    def test_failed_login_stage_stops_at_three_minutes_despite_fresh_overlay_pixels(self):
+        for login_generation, request_generation in ((0, 0), (1, 0), (1, 1)):
+            with self.subTest(login_generation=login_generation, request_generation=request_generation), \
+                    tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+                frame = host.ClientFramebuffer()
+                frame.pixels[:] = bytes((32, 64, 96, 0))*(800*600)
+                frame.request_login_generation = request_generation
+                frame.request_connected_generation = frame.request_saved_generation = 0
+                script.action = len(script.LOGIN_ACTIONS)
+                script.ready_at = 0; script.frame_generation = frame.generation
+                proof = SimpleNamespace(client_pid=PID, login_generation=login_generation,
+                                        connected_generation=0, saved_generation=0)
+                with mock.patch.object(host, 'save_png', side_effect=save):
+                    # One fresh frame is insufficient, even if the response
+                    # event already arrived. Pre-response requests never count.
+                    script.on_frame(Connection(), frame, proof, 1, [{}, {}, {}], 179)
+                    with self.assertRaisesRegex(ValueError, 'login exceeded 180-second stage bound'):
+                        script.on_frame(Connection(), frame, proof, 2, [{}, {}, {}], 180)
+                self.assertLess(len(script.result['post_login_captures']), 3)
+                self.assertEqual(script.action, len(script.LOGIN_ACTIONS))
+                self.assertFalse(script.result['script_completed'])
+                self.assertFalse((root/'finish.json').exists())
+                self.assertFalse((root/'character-logout.json').exists())
+
     def test_avatar_receipt_requires_exact_pins_complete_install_and_original_worktree(self):
         avatar = host.assets_tool.avatar_tools()
         document = json.loads((host.ROOT/'assets'/avatar.MANIFEST).read_text())

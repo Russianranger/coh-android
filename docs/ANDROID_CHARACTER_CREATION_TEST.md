@@ -17,7 +17,7 @@ The existing imported assets stay in place; no additional import is requested.
 1. Install `COH-Character-Creation-0.9.0.apk` over **COH Local Login 0.8.1**.
    Keep the installed app and its storage. Version code 4 retains the same app
    identity and signing key.
-2. Open the app and use **1 · Refresh runtime** if requested. Keep the existing
+2. Open the app and tap **1 · Refresh runtime** after this update. Keep the existing
    imported assets. Wait for **Runtime ready**. An update preserves the private
    database, Wine profile and compatible client caches.
 3. Start character creation once. Keep the app foreground while its private
@@ -30,14 +30,16 @@ The existing imported assets stay in place; no additional import is requested.
    `127.0.0.1`, as in the accepted login session. **Send text / L3** replaces a
    focused text field when its **Replace** option is checked.
 2. Wait for **Local login verified**, then open an empty **Create Character** slot.
-3. Follow the hosted test's selections: **Primal Earth → Science → Ranged →
-   Blaster**. Choose **Archery / Snap Shot**, then **Devices / Web Grenade**.
-   Use the exact name **THORHERO**. Select **Male**. On the **Costume** screen,
+3. On the initial Origin screen, choose **Primal Earth** and **Science** and enter
+   the exact name **THORHERO**. Continue with **Ranged → Blaster**, then choose
+   **Archery / Snap Shot** and **Devices / Web Grenade**.
+   Select **Male**. On the **Costume** screen,
    tap **Clear** at the bottom to reset the randomly selected initial costume.
    Keep the resulting costume and default power colors, then continue to registration.
 4. Press **Play**. Decline the tutorial, choose **Hero** and confirm creation so
    the character enters **Atlas Park**. Leave the game visible until the app
-   confirms the character's Atlas connection and enables **Save character / log out**.
+   shows **Character connected**, enables **Save character / log out**, and the
+   Atlas world visibly renders.
 5. Tap **Save character / log out** once. This enters `/quittologin` through the
    game. Allow the logout countdown to finish without moving or pressing keys.
    Wait for the app to verify committed character records and collect fresh
