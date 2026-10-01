@@ -48,7 +48,8 @@ final class ClientAcceptance {
                 && positiveInteger(character.get("auth_id"))
                 && number(object(report.get("local_login")).get("auth_id"), ((Number) character.get("auth_id")).longValue())
                 && yes(character.get("connected_on_atlas")) && number(character.get("map_id"), 1)
-                && yes(character.get("committed_sql_verified")) && yes(character.get("protocol_logout_verified"))
+                && yes(character.get("committed_sql_verified")) && yes(character.get("requested_logout_observed"))
+                && yes(character.get("logout_timer_observed"))
                 && yes(character.get("disconnected_before_sql")) && Boolean.FALSE.equals(character.get("forced_stop_before_save"));
     }
 

@@ -7,8 +7,10 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import platform
+import re
 import secrets
 import shutil
 import signal
@@ -106,6 +108,28 @@ def fixed_text(connection, value, replace=False):
     for character in value:
         key(connection, ord(character))
         time.sleep(.03)
+
+
+def write_logout_request(path, session, client_pid, character_id):
+    """Publish only after the real command's final Return release was sent."""
+    require(re.fullmatch(r'[0-9a-f]{32}', session) and type(client_pid) is int and client_pid > 0
+            and type(character_id) is int and character_id > 0, 'Logout request identity differs')
+    require(path.parent.is_dir() and not path.parent.is_symlink() and not path.exists() and not path.is_symlink(),
+            'Logout request destination is not fresh and private')
+    value = {'format': 1, 'session_id': session, 'client_pid': client_pid, 'character_id': character_id,
+             'action': 'quittologin', 'sent_utc_ms': int(time.time()*1000)}
+    payload = (json.dumps(value, sort_keys=True)+'\n').encode()
+    temporary = path.with_name(path.name+'.tmp-'+secrets.token_hex(8))
+    try:
+        with temporary.open('xb') as output:
+            os.chmod(temporary, 0o600)
+            output.write(payload)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return value
 
 
 def ocr_button(tsv, label, region, scale=3):
@@ -266,6 +290,9 @@ class CharacterInteraction(host.MenuInteraction):
         elif kind == 'command': fixed_text(connection, value)
         elif kind in ('key', 'escape'): key(connection, 0xff1b if kind == 'escape' else value)
         else: require(kind == 'restore', 'Unknown graphical action')
+        if name == 'submit_ordinary_logout':
+            self.result['logout_request'] = write_logout_request(self.finish_path.parent/'character-logout.json',
+                self.session, events.client_pid, events.character_id)
         self.capture('character-%02d-before-%s' % (self.action, name), frame, events, sequence, now)
         self.result['steps'].append({'action': name, 'session_id': self.session, 'client_pid': events.client_pid,
             'after_frame_sequence': sequence, 'fresh_frames_since_previous_action': self.fresh_frames,
@@ -425,7 +452,7 @@ def validate_report(report, session, manifest):
             and saved['auth_id'] == local.get('auth_id')
             and type(saved.get('map_id')) is int and saved['map_id'] == 1
             and all(saved.get(name) is True for name in ('verified', 'connected_on_atlas',
-                'committed_sql_verified', 'protocol_logout_verified', 'disconnected_before_sql'))
+                'committed_sql_verified', 'requested_logout_observed', 'logout_timer_observed', 'disconnected_before_sql'))
             and saved.get('forced_stop_before_save') is False,
             'Missing ordinary logout and committed graphical character save proof')
     children = report.get('processes', [])
@@ -458,6 +485,13 @@ def validate_observer(observer, report):
     require(script.get('script_completed') is True and len(script['steps']) == len(CharacterInteraction.ACTIONS)
             and script.get('finish_request', {}).get('client_pid') == observer['client_pid']
             and len(script.get('ocr_buttons', [])) == 3, 'Graphical creator script did not finish')
+    logout = script.get('logout_request', {})
+    require(set(logout) == {'format', 'session_id', 'client_pid', 'character_id', 'action', 'sent_utc_ms'}
+            and logout['format'] == 1 and logout['session_id'] == report['session_id']
+            and logout['client_pid'] == observer['client_pid']
+            and logout['character_id'] == report['character_creation']['character_id']
+            and logout['action'] == 'quittologin' and type(logout['sent_utc_ms']) is int and logout['sent_utc_ms'] > 0,
+            'Missing exact successfully sent ordinary logout receipt')
     for name in ('post_login_captures', 'connected_captures', 'post_save_captures'):
         captures = script.get(name, [])
         require(len(captures) == 3 and len({item['frame_sequence'] for item in captures}) == 3

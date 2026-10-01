@@ -82,7 +82,7 @@ class CharacterHostTests(unittest.TestCase):
             frame.pixels[:] = bytes((32, 64, 96, 0))*(800*600)
             frame.request_login_generation = 1
             frame.request_connected_generation = frame.request_saved_generation = 0
-            proof = SimpleNamespace(client_pid=PID, login_generation=1, connected_generation=0, saved_generation=0)
+            proof = SimpleNamespace(client_pid=PID, character_id=7, login_generation=1, connected_generation=0, saved_generation=0)
             connection = Connection()
             clock = [0.0]
             sequence = [0]
@@ -105,6 +105,7 @@ class CharacterHostTests(unittest.TestCase):
                 self.assertEqual(script.action, connected_index)
                 self.assertNotIn('type_ordinary_logout', [step['action'] for step in script.result['steps']])
                 self.assertFalse(finish.exists())
+                self.assertFalse((root/'character-logout.json').exists())
                 proof.connected_generation = 1
                 tick()
                 self.assertEqual(script.result['connected_captures'], [])
@@ -115,6 +116,7 @@ class CharacterHostTests(unittest.TestCase):
                     if script.action == saved_index: break
                 self.assertEqual(script.action, saved_index)
                 self.assertIn('submit_ordinary_logout', [step['action'] for step in script.result['steps']])
+                self.assertEqual(json.loads((root/'character-logout.json').read_text()), script.result['logout_request'])
                 for _ in range(5): tick()
                 self.assertFalse(finish.exists())
                 proof.saved_generation = 1
@@ -137,6 +139,44 @@ class CharacterHostTests(unittest.TestCase):
             text = ''.join(chr(code) for code in keys if code < 128)
             self.assertIn('/quittologin', text)
             self.assertNotIn('/quit\n', text)
+
+    def test_logout_receipt_is_written_only_after_successful_final_return_release(self):
+        for break_release in (False, True):
+            with self.subTest(break_release=break_release), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                receipt = root/'character-logout.json'
+                script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+                script.ready_at = 0
+                script.action = next(i for i, action in enumerate(script.ACTIONS) if action[2] == 'submit_ordinary_logout')
+                frame = host.ClientFramebuffer()
+                script.frame_generation = frame.generation
+                proof = SimpleNamespace(client_pid=PID, character_id=7)
+                checked = []
+
+                class ObserveDelivery(Connection):
+                    def sendall(self, data):
+                        checked.append(not receipt.exists())
+                        if break_release and data == struct.pack('!BBHI', 4, 0, 0, 0xff0d):
+                            raise BrokenPipeError('Final Return release was not delivered')
+                        super().sendall(data)
+
+                connection = ObserveDelivery()
+                with mock.patch.object(host.time, 'sleep'), mock.patch.object(host.time, 'time', return_value=123456.789), \
+                     mock.patch.object(host, 'save_png', side_effect=save):
+                    if break_release:
+                        with self.assertRaises(BrokenPipeError):
+                            script.on_frame(connection, frame, proof, 1, [{}, {}, {}], 5)
+                    else:
+                        script.on_frame(connection, frame, proof, 1, [{}, {}, {}], 5)
+                self.assertEqual(checked, [True, True])
+                self.assertEqual(receipt.exists(), not break_release)
+                if break_release:
+                    self.assertNotIn('logout_request', script.result)
+                else:
+                    self.assertEqual(json.loads(receipt.read_text()), {'format': 1, 'session_id': SESSION,
+                        'client_pid': PID, 'character_id': 7, 'action': 'quittologin', 'sent_utc_ms': 123456789})
+                    self.assertEqual(receipt.stat().st_mode & 0o777, 0o600)
+                    self.assertEqual(list(root.glob('*.tmp-*')), [])
 
     def test_ocr_literal_region_and_button_row_prevent_prose_and_outside_clicks(self):
         header = 'level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n'

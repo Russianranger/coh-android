@@ -23,7 +23,7 @@ def identity(**changes):
 
 def saved(**changes):
     value = dict(identity(), verified=True, committed_sql_verified=True,
-                 protocol_logout_verified=True, disconnected_before_sql=True,
+                 requested_logout_observed=True, logout_timer_observed=True, disconnected_before_sql=True,
                  forced_stop_before_save=False)
     value.update(changes)
     return value
@@ -32,7 +32,7 @@ def saved(**changes):
 class CharacterProofTests(unittest.TestCase):
     def test_save_requires_every_explicit_protocol_and_commit_fact(self):
         self.assertTrue(guest.save_verified(saved(), SESSION))
-        for field in ('verified', 'committed_sql_verified', 'protocol_logout_verified',
+        for field in ('verified', 'committed_sql_verified', 'requested_logout_observed', 'logout_timer_observed',
                       'disconnected_before_sql', 'connected_on_atlas'):
             for value in (False, None, 1, 'true'):
                 with self.subTest(field=field, value=value):
@@ -152,7 +152,8 @@ class CharacterObservationTests(unittest.TestCase):
     def test_save_cannot_switch_character_auth_or_session(self):
         self.connect()
         for changes in ({'character_id': 18}, {'auth_id': 12}, {'session_id': 'f' * 32},
-                        {'protocol_logout_verified': False}, {'forced_stop_before_save': True}):
+                        {'requested_logout_observed': False}, {'logout_timer_observed': False},
+                        {'forced_stop_before_save': True}):
             with self.subTest(changes=changes):
                 self.d.local_server.character_evidence.return_value = saved(**changes)
                 with self.assertRaises(guest.base.DiagnosticError): self.d.observe_console()
@@ -223,6 +224,26 @@ class CharacterBoundsTests(unittest.TestCase):
                 for value in (Path('relative'), Path('/private/../other'), Path('/'), link):
                     with self.subTest(field=field, value=value):
                         with self.assertRaises(guest.base.DiagnosticError): guest.validate_args(self.args(**{field: value}))
+
+    def test_initialize_rejects_stale_logout_receipt_and_links_before_starting_runtime(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            request = root / 'character-logout.json'
+            target = root / 'target.json'; target.write_text('{}')
+            diagnostic = guest.CharacterCreationDiagnostic.__new__(guest.CharacterCreationDiagnostic)
+            diagnostic.args = self.args(state=root)
+            diagnostic.ctx = SimpleNamespace(report={'asset_sha256': dict.fromkeys(guest.REQUIRED, 'pinned')})
+            with patch.object(guest.login.ClientLoginDiagnostic, 'initialize') as parent:
+                for kind in ('file', 'existing_link', 'dangling_link'):
+                    with self.subTest(kind=kind):
+                        if kind == 'file': request.write_text('{}')
+                        else: request.symlink_to(target if kind == 'existing_link' else root / 'missing')
+                        with self.assertRaisesRegex(guest.base.DiagnosticError, 'Stale character logout'):
+                            diagnostic.initialize()
+                        parent.assert_not_called()
+                        request.unlink()
+                diagnostic.initialize()
+                parent.assert_called_once_with()
 
     def test_process_budget_caps_observation_and_retains_ownership_and_checks(self):
         context = guest.CharacterContext.__new__(guest.CharacterContext)

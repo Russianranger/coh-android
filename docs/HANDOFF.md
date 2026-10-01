@@ -25,6 +25,15 @@ are reopening this exact character after restart, then gameplay controls and
 performance. The new flow includes initial map entry only to complete creation
 and save; it does not establish sustained gameplay or hardware acceleration.
 
+The first 0.9.0 [hosted attempt](android-evidence/character-hosted-36801130531-failed.json)
+failed before client launch: Wine could not enumerate directory links in the
+new server data tree. The correction uses real directories and the accepted
+client's individual immutable file-link pattern. It also waits for the real
+client's world-ready record and binds the completed logout command delivery to
+fresh logout-timer and SQL evidence; the unmodified server does not log the
+individual logout packet. Keep the failed candidate's receipt and clean cleanup
+result. No device test of that APK is requested.
+
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 
 **0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**

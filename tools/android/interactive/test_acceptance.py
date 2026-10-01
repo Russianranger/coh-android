@@ -45,7 +45,7 @@ public final class ClientAcceptanceHost {
             "character_id",7,"name","THORHERO","account","COHLOCAL","map_id",1);
         login.put("character_creation",map("verified",true,"session_id",SESSION,"client_pid",42,
             "character_id",7,"name","THORHERO","account","COHLOCAL","auth_id",1,"map_id",1,
-            "committed_sql_verified",true,"protocol_logout_verified",true,"disconnected_before_sql",true,
+            "committed_sql_verified",true,"requested_logout_observed",true,"logout_timer_observed",true,"disconnected_before_sql",true,
             "forced_stop_before_save",false,"connected_on_atlas",true));
         Map<String,Object> interaction=map("interaction_session_completed",true,"input_effect_verified",false,
             "interaction_completion_reason","finish_requested");
@@ -64,7 +64,12 @@ public final class ClientAcceptanceHost {
             case "character_wrong_pid": at(login,"character_creation").put("client_pid",43);break;
             case "character_no_sql": at(login,"character_creation").put("committed_sql_verified",false);break;
             case "character_missing_sql": at(login,"character_creation").remove("committed_sql_verified");break;
-            case "character_no_logout": at(login,"character_creation").remove("protocol_logout_verified");break;
+            case "character_no_logout": at(login,"character_creation").remove("requested_logout_observed");break;
+            case "character_logout_not_requested": at(login,"character_creation").put("requested_logout_observed",false);break;
+            case "character_missing_logout_timer": at(login,"character_creation").remove("logout_timer_observed");break;
+            case "character_no_logout_timer": at(login,"character_creation").put("logout_timer_observed",false);break;
+            case "character_old_protocol_flag_only": at(login,"character_creation").remove("requested_logout_observed");
+                at(login,"character_creation").remove("logout_timer_observed");at(login,"character_creation").put("protocol_logout_verified",true);break;
             case "character_still_connected": at(login,"character_creation").put("disconnected_before_sql",false);break;
             case "character_force_saved": at(login,"character_creation").put("forced_stop_before_save",true);break;
             case "character_missing_stop_proof": at(login,"character_creation").remove("forced_stop_before_save");break;
@@ -180,7 +185,7 @@ class ClientAcceptanceTests(unittest.TestCase):
     def test_character_requires_matching_protocol_save_committed_sql_and_fresh_captures(self):
         cases = ('valid', 'missing', 'unverified', 'wrong_id', 'zero_id', 'fractional_id', 'missing_id',
                  'wrong_name', 'missing_name', 'old_session', 'wrong_pid', 'no_sql', 'missing_sql',
-                 'no_logout', 'still_connected', 'force_saved', 'missing_stop_proof', 'wrong_account',
+                 'no_logout', 'logout_not_requested', 'missing_logout_timer', 'no_logout_timer', 'old_protocol_flag_only', 'still_connected', 'force_saved', 'missing_stop_proof', 'wrong_account',
                  'no_auth_id', 'wrong_auth_id', 'missing_login_auth_id', 'no_atlas', 'missing_atlas', 'wrong_map', 'database_lost', 'no_save_event', 'event_wrong_id',
                  'event_no_id', 'event_old_session', 'event_wrong_pid', 'event_wrong_name', 'event_no_sql',
                  'no_connected_event', 'connected_old_session', 'connected_wrong_pid', 'connected_wrong_id',

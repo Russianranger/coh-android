@@ -465,7 +465,26 @@ public final class ClientRuntime {
     public synchronized boolean requestSaveLogout() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted
                 || characterConnectedEvent == null || characterSavedEvent != null || saveLogoutRequested) return false;
-        if (!queueInput(session, (active, epoch) -> active.sendSaveLogout(epoch))) return false;
+        final String logoutSession = session;
+        final long logoutClientPid = observedClientPid;
+        final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
+        if (!queueInput(logoutSession, (active, epoch) -> {
+            active.sendSaveLogout(epoch);
+            // This receipt records completed command transport, never merely a
+            // button press or queued work. The guest independently checks the
+            // current character's logout timer and committed SQL afterwards.
+            try {
+                byte[] receipt = new JSONObject().put("format", 1).put("session_id", logoutSession)
+                        .put("client_pid", logoutClientPid).put("character_id", logoutCharacterId)
+                        .put("action", "quittologin").put("sent_utc_ms", System.currentTimeMillis())
+                        .toString().getBytes(StandardCharsets.UTF_8);
+                write(new File(state, "character-logout.json"), receipt);
+                recordLifecycle("ordinary_character_logout_delivered");
+            } catch (Exception failure) {
+                recordLifecycle("ordinary_character_logout_receipt_failed");
+                throw new IOException("Could not record completed character logout delivery", failure);
+            }
+        })) return false;
         saveLogoutRequested = true;
         recordLifecycle("ordinary_character_logout_requested");
         stage("Saving character", "The ordinary /quittologin command is queued. Wait for logout and committed database verification, then three fresh Android captures.");
@@ -800,7 +819,7 @@ public final class ClientRuntime {
             if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
     }
     private void removePreviousGuestOutput() throws IOException {
-        for (String name : new String[]{"stop-request", "interaction-finish.json", "latest-report.json", "report.zip"}) {
+        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "latest-report.json", "report.zip"}) {
             File file = new File(state, name);
             if (file.exists() && !file.delete()) throw new IOException("Cannot clear previous guest output: " + name);
         }

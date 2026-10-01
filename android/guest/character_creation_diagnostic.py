@@ -55,7 +55,8 @@ def character_identity(proof, session):
 
 def save_verified(proof, session):
     return (character_identity(proof, session) and proof.get('verified') is True
-        and proof.get('committed_sql_verified') is True and proof.get('protocol_logout_verified') is True
+        and proof.get('committed_sql_verified') is True and proof.get('requested_logout_observed') is True
+        and proof.get('logout_timer_observed') is True
         and proof.get('disconnected_before_sql') is True and proof.get('forced_stop_before_save') is False)
 
 
@@ -82,6 +83,8 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.connected_identity = None
 
     def initialize(self):
+        request = self.args.state / 'character-logout.json'
+        require(not request.exists() and not request.is_symlink(), 'Stale character logout delivery receipt')
         super().initialize()
         require(REQUIRED <= set(self.ctx.report['asset_sha256']),
                 'Character creation inputs missing from the pinned inventory')
@@ -175,6 +178,10 @@ def main(argv=None):
             try: failures = diagnostic.cleanup()
             except Exception as exc: failures = ['Owned cleanup failed: ' + str(exc)]
             context.report['failures'].extend(failures)
+            # Atlas can fail before the inherited client observation block
+            # starts. Preserve the closed server consoles and flushed logs too.
+            try: diagnostic.local_server.collect(diagnostic.capture_dir)
+            except Exception as exc: context.report['failures'].append('Cannot retain server evidence: ' + str(exc))
         closed = all(c.process.poll() is not None and not c.reader.is_alive() and not c.writer.is_alive()
                      for c in context.children)
         context.report.update(finished_utc=base.utc(), cleanup_complete=closed,

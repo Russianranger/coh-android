@@ -20,28 +20,97 @@ PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
 POLL_SECONDS = 15
 MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
+LOGOUT_RECEIPT_LIMIT = 512
+LOGOUT_MAX_AGE_MS = 120000
 
 
 def digest_json(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
-def logout_record(logs):
-    """The live client link's ordinary logout timer precedes entity unlinking.
+def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, now_utc_ms):
+    """Read the input sender's receipt; this is not a network-packet receipt."""
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    except FileNotFoundError:
+        return None
+    try:
+        info = os.fstat(fd)
+        require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                and info.st_nlink == 1 and 0 < info.st_size <= LOGOUT_RECEIPT_LIMIT,
+                'Invalid character logout delivery file')
+        with os.fdopen(fd, 'rb', closefd=False) as source:
+            raw = source.read(LOGOUT_RECEIPT_LIMIT + 1)
+        after = os.fstat(fd)
+        require(len(raw) == info.st_size and len(raw) <= LOGOUT_RECEIPT_LIMIT
+                and (after.st_size, after.st_mtime_ns, after.st_nlink)
+                    == (info.st_size, info.st_mtime_ns, info.st_nlink),
+                'Character logout delivery changed or exceeded bound')
+    finally:
+        os.close(fd)
+    value = json.loads(raw.decode('utf-8'))
+    require(isinstance(value, dict) and set(value) == {
+                'format', 'session_id', 'client_pid', 'character_id', 'action', 'sent_utc_ms'}
+            and type(value['format']) is int and value['format'] == 1
+            and isinstance(value['session_id'], str) and re.fullmatch(r'[0-9a-f]{32}', value['session_id'])
+            and value['session_id'] == session
+            and type(value['client_pid']) is int and value['client_pid'] > 0 and value['client_pid'] == client_pid
+            and type(value['character_id']) is int and value['character_id'] > 0
+            and value['character_id'] == character_id and value['action'] == 'quittologin'
+            and type(value['sent_utc_ms']) is int and type(ready_utc_ms) is int
+            and ready_utc_ms <= value['sent_utc_ms']
+            and 0 <= now_utc_ms - value['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS,
+            'Character logout delivery does not match this ready client or its save window')
+    return value
 
-    Network/crash disconnects deinitialize the link and clear entity.client
-    first, so their later timer cannot produce this live-client LOG_ENT line.
-    Source: svr_tick.c logDisconnect; svr_player.c unload/deinitialize paths.
+
+def logout_follows_delivery(logout, delivery):
+    # The original logger uses FileTimeToLocalFileTime and one-second precision.
+    try:
+        timestamp = int(time.mktime(time.strptime(logout['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+    except (KeyError, OverflowError, ValueError):
+        return False
+    return -999 <= timestamp - delivery['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS
+
+
+def logout_record(logs):
+    """Record the owned entity's live logout timer, not its underlying cause.
+
+    A normal CLIENT_DISCONNECT and a still-linked stalled client can both take
+    this timer path. Explicit command delivery must be bound separately.
     """
-    pattern = re.compile(r'^\d{6} \d{2}:\d{2}:\d{2} (?:-?\d+ )?'
+    pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) (?:-?\d+ )?'
         r'"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
     for name, text in logs:
         if not Path(name).name.casefold().startswith('entity_'): continue
         for line in text[:text.rfind('\n') + 1].splitlines():
-            if pattern.fullmatch(line):
+            match = pattern.fullmatch(line)
+            if match:
                 return {'path': name, 'line_sha256': hashlib.sha256(line.encode()).hexdigest(),
+                    'log_timestamp': match['timestamp'],
                     'reason': 'Logout timer expired', 'account': ACCOUNT, 'name': CHARACTER,
                     'source': 'current_owned_server_entity_log_live_client_logout_timer'}
+    return None
+
+
+def ready_record(logs):
+    """CLIENT_READY runs after the graphical client loads its world assets.
+
+    The earlier DbServer connected flag only records map assignment. This
+    current-session marker is emitted after resumeCharacter accepts CLIENT_READY.
+    """
+    pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) (?:-?\d+ )?'
+        r'"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+        r'127\.0\.0\.1:(?P<port>[1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
+    for name, text in logs:
+        if not Path(name).name.casefold().startswith('entity_'): continue
+        for line in text[:text.rfind('\n') + 1].splitlines():
+            match = pattern.fullmatch(line)
+            if match and int(match['port']) <= 65535:
+                return {'path': name, 'line_sha256': hashlib.sha256(line.encode()).hexdigest(),
+                    'log_timestamp': match['timestamp'], 'account': ACCOUNT, 'name': CHARACTER,
+                    'source': 'current_owned_mapserver_CLIENT_READY_resumeCharacter_success',
+                    'loaded_world_assets': True}
     return None
 
 
@@ -106,7 +175,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.auth_id = None
         self.creation_report = {'session_id': owner.args.session_id, 'account': ACCOUNT,
             'name': CHARACTER, 'map_id': 1, 'verified': False, 'connected_on_atlas': False,
-            'committed_sql_verified': False, 'protocol_logout_verified': False,
+            'committed_sql_verified': False, 'requested_logout_observed': False, 'logout_timer_observed': False,
             'disconnected_before_sql': False, 'forced_stop_before_save': False,
             'reopen_verified': False, 'gameplay_verified': False, 'map_samples': [], 'character_samples': []}
         self.ctx.report['character_creation'] = self.creation_report
@@ -156,17 +225,10 @@ class LocalCharacterServer(login.LocalLoginServer):
         receipt = self.ctx.report.get('client_worktree', {})
         require(receipt.get('imported_inputs_readonly') is True,
                 'Atlas requires the already protected private client worktree')
-        # The large immutable trees are reused without 173,011 new links. All
-        # generated cache roots and the server/configuration subtree are copied
-        # into this owned session; no writable location points into the import.
-        for entry in sorted(source.iterdir()):
-            self.ctx.check()
-            target = self.runtime / 'data' / entry.name
-            require(not entry.is_symlink() or entry.is_file(), 'Unexpected linked client data directory')
-            if entry.name in ('server', 'bin', 'geobin'):
-                self.copy_private_data(entry, target)
-            elif not target.exists():
-                target.symlink_to(entry, target_is_directory=entry.is_dir())
+        # Wine FolderCache does not enumerate directory symlinks as directories.
+        # Mirror actual directories as the accepted client worktree does, then
+        # link individual immutable files. Keep caches/configuration private.
+        staged = self.stage_map_data(source, self.runtime / 'data')
         for name, record in self.map_package['files'].items():
             target = self.runtime / name
             if target.exists():
@@ -177,32 +239,72 @@ class LocalCharacterServer(login.LocalLoginServer):
                 target.chmod(0o400)
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
-            'private_cache_roots': ['bin', 'geobin', 'server/bin']}
+            'private_cache_roots': ['bin', 'geobin', 'server/bin'],
+            'directory_layout': 'real_directories_with_individual_immutable_file_links', **staged}
 
     def copy_private_data(self, source, target):
-        count = total = 0
+        return self.stage_map_data(source, target, force_private=True)
+
+    def stage_map_data(self, source, target, *, force_private=False):
+        """Mirror bounded verified inputs without directory links or source writes.
+
+        The client worktree has real directories and immutable per-file links.
+        Resolve those links only within its two verified roots; each writable
+        cache, server file and dbidmap receives an independent regular copy.
+        """
+        roots = (self.owner.work.resolve(strict=True), self.owner.args.game_data.resolve(strict=True))
+        source, target = Path(source), Path(target)
+        result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
+                  'copied_private_files': 0, 'preserved_schema_files': 0}
         pending = [(source, target)]
+        next_message = time.monotonic() + 5
         while pending:
             self.ctx.check()
             current, destination = pending.pop()
-            if current.is_dir():
-                require(not current.is_symlink(), 'Linked writable source directory refused')
-                require(not destination.is_symlink(), 'Linked private destination refused')
-                destination.mkdir(parents=True, exist_ok=True, mode=0o700)
-                pending.extend((item, destination / item.name) for item in current.iterdir())
-            else:
+            require(not destination.is_symlink(), 'Linked private destination refused')
+            info = current.lstat()
+            relative = current.relative_to(source)
+            private = force_private or bool(relative.parts and relative.parts[0] in ('server', 'bin', 'geobin'))
+            if stat.S_ISDIR(info.st_mode):
                 resolved = current.resolve(strict=True)
-                roots = (self.owner.work.resolve(), self.owner.args.game_data.resolve())
+                require(any(root == resolved or root in resolved.parents for root in roots),
+                        'Map data directory escaped verified roots')
+                require(not destination.exists() or destination.is_dir(), 'Invalid private data directory')
+                destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+                result['directories'] += 1
+                require(result['directories'] <= device.DATA_COUNT + 4096, 'Map directory count exceeded bound')
+                with os.scandir(current) as entries:
+                    pending.extend((Path(entry.path), destination / entry.name) for entry in entries)
+            else:
+                require(stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode), 'Nonregular map input refused')
+                resolved = current.resolve(strict=True)
+                resolved_info = resolved.stat()
                 require(any(root == resolved or root in resolved.parents for root in roots)
-                        and resolved.is_file(), 'Private map copy escaped verified data roots')
-                count += 1; total += resolved.stat().st_size
-                require(count <= device.DATA_COUNT and total <= 1024**3, 'Private server/cache copy exceeded bound')
-                if not destination.exists():
+                        and stat.S_ISREG(resolved_info.st_mode), 'Private map copy escaped verified data roots')
+                result['files'] += 1; result['bytes'] += resolved_info.st_size
+                # Include accepted prerequisites/prepared caches and bounded
+                # generated client caches in addition to the imported inputs.
+                require(result['files'] <= device.DATA_COUNT + 4096
+                        and result['bytes'] <= device.DATA_BYTES + 1024**3,
+                        'Private map data exceeded bound')
+                private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
+                if destination.exists():
+                    require(destination.is_file(), 'Invalid staged schema file')
+                    require(private or base.file_hash(destination) == base.file_hash(resolved),
+                            'Immutable map input conflicts with staged schema')
+                    result['preserved_schema_files'] += 1
+                elif private:
                     shutil.copyfile(resolved, destination)
                     destination.chmod(0o600)
-                    os.utime(destination, ns=(resolved.stat().st_atime_ns, resolved.stat().st_mtime_ns))
+                    os.utime(destination, ns=(resolved_info.st_atime_ns, resolved_info.st_mtime_ns))
+                    result['copied_private_files'] += 1
                 else:
-                    require(destination.is_file() and not destination.is_symlink(), 'Invalid staged schema file')
+                    destination.symlink_to(resolved)
+                    result['linked_immutable_files'] += 1
+            if time.monotonic() >= next_message:
+                self.ctx.event('stage', status='running', message='Preparing Atlas data directories', files=result['files'])
+                next_message = time.monotonic() + 5
+        return result
 
     def start(self):
         super().start()
@@ -275,6 +377,14 @@ class LocalCharacterServer(login.LocalLoginServer):
     def health(self):
         super().health()
         if self.map_process is not None:
+            console = self.map_process.text()
+            crash = re.search(r'Program crash detected|Exception caught: EXCEPTION_[A-Z_]+', console)
+            if crash is not None:
+                self.creation_report['mapserver_crash'] = {
+                    'marker': crash.group(), 'console_offset': crash.start(),
+                    'context': console[max(0, crash.start() - 1000):crash.end() + 1000],
+                    'console_sha256': hashlib.sha256(console.encode()).hexdigest()}
+                require(False, 'Atlas crashed: ' + crash.group() + '; export the server console and report')
             require(self.map_process.process.poll() is None, 'Atlas exited during character creation')
             require(not self.map_process.overflow, 'Atlas console exceeded capture bound')
 
@@ -336,12 +446,22 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['character_samples'].append(sample)
         self.creation_report.update(character_id=identifier, auth_id=self.auth_id)
         if evidence.connected_on_atlas(sample):
-            self.creation_report['connected_on_atlas'] = True
+            self.creation_report['db_map_assignment_observed'] = True
+            ready = ready_record(self.current_logs())
+            if ready is not None and not self.creation_report['connected_on_atlas']:
+                self.creation_report.update(connected_on_atlas=True, client_ready_evidence=ready,
+                    client_ready_observed_utc=base.utc(), client_ready_observed_utc_ms=int(time.time() * 1000))
             return None
         if not self.creation_report['connected_on_atlas'] or sample.get('connected') or sample.get('in_map_transfer'):
             return None
+        client_pid = self.creation_report.get('client_pid')
+        if type(client_pid) is not int or client_pid <= 0: return None
+        delivery = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+            self.owner.args.session_id, client_pid, identifier,
+            self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000))
+        if delivery is None: return None
         logout = logout_record(self.current_logs())
-        if logout is None: return None
+        if logout is None or not logout_follows_delivery(logout, delivery): return None
         rows = {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
                 evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
                 for table, fields in evidence.SELECTED.items()}
@@ -349,14 +469,19 @@ class LocalCharacterServer(login.LocalLoginServer):
         if snapshot is None: return None
         final_progress = self.sample_progress(force=True)
         if not self.live_progress(final_progress): return None
+        # SQL reads can take time; recheck the bounded receipt at the save point.
+        final_delivery = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+            self.owner.args.session_id, client_pid, identifier,
+            self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000))
+        require(final_delivery == delivery, 'Character logout delivery changed during save verification')
         self.snapshot = snapshot
         self.creation_report.update(verified=True, committed_sql_verified=True, disconnected_before_sql=True,
-            protocol_logout_verified=True, forced_stop_before_save=False,
-            protocol_logout_evidence=logout, map_progress_at_save=final_progress,
+            requested_logout_observed=True, logout_timer_observed=True, forced_stop_before_save=False,
+            logout_delivery=delivery, logout_timer_evidence=logout, map_progress_at_save=final_progress,
             saved_utc=base.utc(), snapshot_sha256=digest_json(snapshot),
             table_sha256={name: digest_json(value) for name, value in rows.items()},
             row_counts={name: len(value) for name, value in rows.items()},
-            evidence_scope='fresh_graphical_character_connected_on_atlas_then_disconnected_with_committed_full_character_rows')
+            evidence_scope='fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows')
         return self.creation_report
 
     def collect(self, target):
