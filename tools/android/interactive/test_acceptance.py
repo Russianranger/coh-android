@@ -49,8 +49,79 @@ public final class ClientAcceptanceHost {
             "forced_stop_before_save",false,"connected_on_atlas",true));
         Map<String,Object> interaction=map("interaction_session_completed",true,"input_effect_verified",false,
             "interaction_completion_reason","finish_requested");
+        // Retained from the Thor's successful 2026-10-01 save: the window title
+        // still names Atlas when the rendered screen has returned to login.
+        Map<String,Object> window=map("window_id",20971523,"title",
+            "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 672",
+            "width",800,"height",600,"mapped",true);
+        Object windowPid=672;
+        if (args[0].startsWith("final_")) {
+            at(login,"local_login").put("client_pid",672);
+            at(login,"character_creation").put("client_pid",672);
+            saved.put("client_pid",672);connected.put("client_pid",672);
+        }
         boolean expected=false,actual;
         switch(args[0]) {
+            case "window_retained_atlas": expected=true;break;
+            case "window_menu": window.put("title","City of Heroes : PID: 672");expected=true;break;
+            case "window_whitespace": window.put("title","City of Heroes\t :\tCity_Zones/City_01_01/City_01_01.txt \t PID: \t672");expected=true;break;
+            case "window_backslashes": window.put("title","City of Heroes : City_Zones\\City_01_01\\City_01_01.txt  PID: 672");expected=true;break;
+            case "window_mixed_slashes": window.put("title","City of Heroes : City_Zones/City_01_01\\City_01_01.txt  PID: 672");expected=true;break;
+            case "window_minimum_dimensions": window.put("width",320);window.put("height",240);expected=true;break;
+            case "window_wrong_pid": windowPid=673;break;
+            case "window_zero_pid": windowPid=0;break;
+            case "window_negative_pid": windowPid=-672;break;
+            case "window_fractional_pid": windowPid=672.5;break;
+            case "window_string_pid": windowPid="672";break;
+            case "window_boolean_pid": windowPid=true;break;
+            case "window_missing_pid": windowPid=null;break;
+            case "window_large_pid": windowPid=1L<<32;window.put("title","City of Heroes : PID: 4294967296");break;
+            case "window_pid_suffix": window.put("title",window.get("title")+"0");break;
+            case "window_pid_fraction": window.put("title",window.get("title")+".0");break;
+            case "window_pid_leading_zero": window.put("title","City of Heroes : PID: 0672");break;
+            case "window_wrong_map": window.put("title","City of Heroes : City_Zones/City_02_01/City_02_01.txt  PID: 672");break;
+            case "window_arbitrary_title": window.put("title","Other game : PID: 672");break;
+            case "window_path_prefix": window.put("title","City of Heroes : data/City_Zones/City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_absolute_path": window.put("title","City of Heroes : /City_Zones/City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_drive_path": window.put("title","City of Heroes : C:\\City_Zones\\City_01_01\\City_01_01.txt  PID: 672");break;
+            case "window_path_traversal": window.put("title","City of Heroes : City_Zones/../City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_backslash_traversal": window.put("title","City of Heroes : City_Zones\\..\\City_01_01\\City_01_01.txt  PID: 672");break;
+            case "window_empty_component": window.put("title","City of Heroes : City_Zones//City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_filename_suffix": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.txt.bak  PID: 672");break;
+            case "window_case_changed": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.TXT  PID: 672");break;
+            case "window_trailing_text": window.put("title",window.get("title")+" saved");break;
+            case "window_leading_space": window.put("title"," "+window.get("title"));break;
+            case "window_trailing_space": window.put("title",window.get("title")+" ");break;
+            case "window_newline": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.txt\nPID: 672");break;
+            case "window_missing_title": window.remove("title");break;
+            case "window_nonstring_title": window.put("title",672);break;
+            case "window_long_title": window.put("title",String.join("",Collections.nCopies(1001,"a")));break;
+            case "window_unmapped": window.put("mapped",false);break;
+            case "window_string_mapped": window.put("mapped","true");break;
+            case "window_missing_mapped": window.remove("mapped");break;
+            case "window_small_width": window.put("width",319);break;
+            case "window_small_height": window.put("height",239);break;
+            case "window_fractional_width": window.put("width",800.5);break;
+            case "window_fractional_height": window.put("height",600.5);break;
+            case "window_string_width": window.put("width","800");break;
+            case "window_boolean_height": window.put("height",true);break;
+            case "window_missing_width": window.remove("width");break;
+            case "window_missing_height": window.remove("height");break;
+            case "window_nonfinite_width": window.put("width",Double.POSITIVE_INFINITY);break;
+            case "window_nan_height": window.put("height",Double.NaN);break;
+            case "window_overflow_width": window.put("width",2147483648L);break;
+            case "window_overflow_height": window.put("height",2147483648L);break;
+            case "final_retained_atlas": expected=true;break;
+            case "final_wrong_pid": windowPid=673;break;
+            case "final_wrong_path": window.put("title","City of Heroes : City_Zones/../City_01_01/City_01_01.txt  PID: 672");break;
+            case "final_no_sql": at(login,"character_creation").put("committed_sql_verified",false);break;
+            case "final_no_logout": at(login,"character_creation").put("requested_logout_observed",false);break;
+            case "final_no_timer": at(login,"character_creation").put("logout_timer_observed",false);break;
+            case "final_no_save_event": saved.clear();break;
+            case "final_no_connected_event": connected.clear();break;
+            case "final_no_login": at(login,"local_login").put("local_login_verified",false);break;
+            case "final_no_fresh_capture": frames.get(0).put("sequence",6);break;
+            case "final_no_cleanup": cleanup.put("cleanup_complete",false);break;
             case "character_valid": expected=true;break;
             case "character_missing": login.remove("character_creation");break;
             case "character_unverified": at(login,"character_creation").put("verified",false);break;
@@ -147,7 +218,11 @@ public final class ClientAcceptanceHost {
                 "cleanup_execution",map("diagnostic_initialized",false,"wine_started",false,"owned_child_count",0));expected=true;break;
             default: throw new AssertionError("Unknown fixture");
         }
-        actual=args[0].startsWith("character_") ? ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,42,500,4000,1000,3500,6)
+        actual=args[0].startsWith("window_") ? ClientAcceptance.clientWindowAccepted(window,windowPid)
+            : args[0].startsWith("final_") ? ClientAcceptance.clientWindowAccepted(window,windowPid)
+                && ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,672,500,4000,1000,3500,6)
+                && ClientAcceptance.cleanupSafe(cleanup)
+            : args[0].startsWith("character_") ? ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,42,500,4000,1000,3500,6)
             : args[0].startsWith("login_") ? ClientAcceptance.localLoginVerified(login,SESSION,42)
             : args[0].startsWith("interaction_") ? ClientAcceptance.interactionCompleted(interaction)
             : args[0].startsWith("cleanup_") ? ClientAcceptance.cleanupSafe(cleanup)
@@ -181,6 +256,24 @@ class ClientAcceptanceTests(unittest.TestCase):
                      'login_wrong_profile', 'login_unproved', 'login_no_character_list',
                      'login_not_preserved', 'login_missing', 'login_no_account', 'login_no_response'):
             with self.subTest(mode=mode): self.execute(mode)
+
+    def test_owned_window_accepts_menu_or_exact_atlas_title(self):
+        cases = ('retained_atlas', 'menu', 'whitespace', 'backslashes', 'mixed_slashes', 'minimum_dimensions',
+                 'wrong_pid', 'zero_pid', 'negative_pid', 'fractional_pid', 'string_pid', 'boolean_pid',
+                 'missing_pid', 'large_pid', 'pid_suffix', 'pid_fraction', 'pid_leading_zero', 'wrong_map',
+                 'arbitrary_title', 'path_prefix', 'absolute_path', 'drive_path', 'path_traversal',
+                 'backslash_traversal', 'empty_component', 'filename_suffix', 'case_changed', 'trailing_text',
+                 'leading_space', 'trailing_space', 'newline', 'missing_title', 'nonstring_title', 'long_title',
+                 'unmapped', 'string_mapped', 'missing_mapped', 'small_width', 'small_height',
+                 'fractional_width', 'fractional_height', 'string_width', 'boolean_height', 'missing_width',
+                 'missing_height', 'nonfinite_width', 'nan_height', 'overflow_width', 'overflow_height')
+        for case in cases:
+            with self.subTest(case=case): self.execute('window_' + case)
+
+    def test_retained_atlas_title_still_requires_character_capture_and_cleanup_proofs(self):
+        for case in ('retained_atlas', 'wrong_pid', 'wrong_path', 'no_sql', 'no_logout', 'no_timer',
+                     'no_save_event', 'no_connected_event', 'no_login', 'no_fresh_capture', 'no_cleanup'):
+            with self.subTest(case=case): self.execute('final_' + case)
 
     def test_character_requires_matching_protocol_save_committed_sql_and_fresh_captures(self):
         cases = ('valid', 'missing', 'unverified', 'wrong_id', 'zero_id', 'fractional_id', 'missing_id',

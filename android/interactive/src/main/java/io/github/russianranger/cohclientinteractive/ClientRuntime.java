@@ -860,9 +860,7 @@ public final class ClientRuntime {
         boolean actualWindow = false;
         for (int i=0;i<windows.length();i++) {
             JSONObject window = windows.getJSONObject(i);
-            if (("City of Heroes : PID: " + observedClientPid).equals(window.optString("title"))
-                    && Boolean.TRUE.equals(window.opt("mapped")) && window.optInt("width") >= 320
-                    && window.optInt("height") >= 240) actualWindow = true;
+            if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid)) actualWindow = true;
         }
         if (!actualWindow) return false;
         JSONObject hashes = report.optJSONObject("asset_sha256"), pins = manifest.getJSONObject("files");

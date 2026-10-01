@@ -1,6 +1,34 @@
 # City of Heroes Android handoff
 
-**Current: 0.9.0 passed hosted creation/save; one Thor session is next. Atlas scenery remains incomplete.**
+**Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. Preserve THORHERO; Atlas scenery/collision and exact-character reopen are next.**
+
+The user completed `coh-character-creation-20261001-162621.zip` on Android 13 / AYN
+Thor and confirmed the default Male costume, visible character/UI, normal save
+and return from the game. The [device review](android-evidence/character-creation-thor-20261001.json)
+accepts this session without another boot. Native evidence verifies COHLOCAL,
+THORHERO ID 1, current CLIENT_READY, requested `/quittologin`, the live logout
+timer and committed rows (`ents=1`, `ents2=1`, `powers=7`, `costumeparts=14`).
+All 17 Android PNG records and four SQL table hashes were checked; three fresh
+post-save captures show the login screen. Cleanup completed with zero remaining
+owned workers and zero inspection failures.
+
+The original wrapper remains `client_incomplete`: its final window check accepts
+only the login title, whereas the same PID 672 retains
+`City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 672` after entering
+Atlas. The corrective Android source accepts that exact map title with the owned
+PID and valid mapped window dimensions. It preserves every import/asset,
+SQL/logout, fresh capture and cleanup requirement. All 188 interactive tests
+passed, including the actual retained title and rejection regressions. This fix
+is for the next APK; the installed 0.9.0 report and uploaded evidence are unchanged.
+
+The scene is still an empty flat backdrop with a visible avatar and HUD.
+Native position records show THORHERO falling to Y=-2000 before ordinary logout,
+and the logout location is map 1 `(106.453125, -2000, -114.453125)`. This is a real
+world/collision issue, separate from the reporting bug; its complete cause is
+not established. Keep the existing database and character. The next candidate
+must reopen this exact saved character, resolve Atlas geometry/collision and
+provide safe relocation of the retained character if required. No character
+deletion, recreation or SQL synthesis, and no repeat creation-only device test.
 
 The delivered signed APK is from source `bc4d750deab00f0fdbbd084b32b563aa3abdddce`,
 [run 36862027713](https://github.com/Russianranger/coh-android/actions/runs/36862027713),
@@ -18,9 +46,8 @@ Atlas reaches its HUD and welcome, but the scenery is black without visible
 ground or buildings; the in-world avatar is a dark silhouette. Missing Atlas
 geometry is consistent with this result, but sole cause is not proved. This is
 creation/connection/save qualification, not rendered Atlas or playable gameplay.
-Follow the [one-session Thor instructions](ANDROID_CHARACTER_CREATION_TEST.md),
-including runtime refresh and an exact visible COHLOCAL check. Continue the
-normal save when Character connected is confirmed, even if scenery is black.
+The [one-session Thor instructions](ANDROID_CHARACTER_CREATION_TEST.md) are now
+historical reference: their creation/save session is accepted above.
 
 The user confirmed local login and supplied `coh-local-login-20261001-010523.zip`.
 Independent review matched the 0.8.1 APK and runtime identities, verified all
@@ -30,7 +57,7 @@ inputs, preserved database/profile/assets/caches and clean owned cleanup are
 recorded in the [acceptance receipt](android-evidence/local-login-thor-20261001.json).
 The session ended at its 180-second interaction limit. No repeat is requested.
 
-The next candidate retains package `io.github.russianranger.cohclientinteractive`,
+The accepted creation candidate retains package `io.github.russianranger.cohclientinteractive`,
 the accepted signing key and profile `android-local-login`. It adds the accepted
 Atlas MapServer package because actual character data is sent during the map
 handoff. The new target is graphical creation of **THORHERO**, a first connection
@@ -39,11 +66,11 @@ power and costume records. The interaction window is 1,200 seconds. No existing
 character is deleted or synthesized in SQL. A preexisting THORHERO stops this
 creation-only candidate while preserving its data.
 
-Thor 0.9.0 qualification remains pending until its exported report is reviewed.
-The next work includes reopening this exact character after restart, Atlas
-scenery asset closure, then gameplay controls and performance. Initial map entry
-completes creation/save; it does not establish sustained gameplay or hardware
-acceleration. The following 0.9.0 attempt notes preserve historical checkpoints.
+Thor 0.9.0 creation/save qualification is accepted by the device review above.
+Exact-character reopen, Atlas scenery/collision asset closure, gameplay controls
+and performance remain pending. Initial map entry completes creation/save; it
+does not establish sustained gameplay or hardware acceleration. The following
+0.9.0 attempt notes preserve historical checkpoints.
 
 The first 0.9.0 [hosted attempt](android-evidence/character-hosted-36801130531-failed.json)
 failed before client launch: Wine could not enumerate directory links in the

@@ -1,5 +1,13 @@
 # COH Character Creation 0.9.0 — one Thor session
 
+**Completed on Thor:** the user created and saved THORHERO in
+`coh-character-creation-20261001-162621.zip`. The
+[device review](android-evidence/character-creation-thor-20261001.json) accepts
+creation, initial Atlas connection and ordinary committed save despite the
+wrapper's final window-title validation bug. No repeat of these steps is needed.
+Preserve the app storage and existing character. The instructions below remain
+historical reference; the creation-only candidate stops on a preexisting THORHERO.
+
 The signed candidate passed hosted graphical creation, first Atlas connection
 and ordinary logout/save in run **36862027713**, at APK and driver source
 `bc4d750deab00f0fdbbd084b32b563aa3abdddce`. Its size is **386,658,292 bytes** and

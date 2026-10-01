@@ -8,6 +8,23 @@ import java.util.Set;
 
 /** Pure acceptance checks: a decoded framebuffer alone never proves an Android display. */
 final class ClientAcceptance {
+    static boolean clientWindowAccepted(Object value, Object clientPid) {
+        Map<?, ?> window = object(value);
+        Object title = window.get("title"), width = window.get("width"), height = window.get("height");
+        if (!positiveInteger(clientPid) || ((Number) clientPid).longValue() >= (1L << 32)
+                || !(title instanceof String) || ((String) title).length() > 1000
+                || !yes(window.get("mapped")) || !integer(width) || !integer(height)
+                || ((Number) width).longValue() < 320 || ((Number) height).longValue() < 240
+                || ((Number) width).longValue() > Integer.MAX_VALUE
+                || ((Number) height).longValue() > Integer.MAX_VALUE) return false;
+        // The same owned window keeps its Atlas title after ordinary logout.
+        // Only this milestone's exact relative map path may supplement the menu
+        // title; arbitrary maps, traversal and text following the PID cannot pass.
+        return ((String) title).matches("City of Heroes[ \\t]+:[ \\t]+"
+                + "(?:City_Zones[\\\\/]City_01_01[\\\\/]City_01_01\\.txt[ \\t]+)?PID:[ \\t]+"
+                + ((Number) clientPid).longValue());
+    }
+
     static boolean localLoginVerified(Object value, String session, long clientPid) {
         Map<?, ?> report = object(value), login = object(report.get("local_login"));
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
