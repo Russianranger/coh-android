@@ -86,6 +86,31 @@ class EvidenceTests(unittest.TestCase):
         windows[0]['mapped'] = False
         self.assertFalse(guest.startup_evidence(output, registry, windows, launch)['startup_observed'])
 
+    def test_world_map_title_retains_exact_owned_pid_and_canonical_path(self):
+        output = 'Renderer initialization complete\nLoaded all data!\n'
+        registry = '    GameProgress    REG_SZ    game_mainLoop\n'
+        launch = {'session_id': SESSION, 'pid': 656}
+        title = 'City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656'
+        window = {'window_id': 20971523, 'title': title, 'mapped': True, 'width': 800, 'height': 600}
+        evidence = guest.startup_evidence(output, registry, [window], launch)
+        self.assertTrue(evidence['startup_observed'])
+        self.assertEqual(evidence['client_windows'], [window])
+        for invalid in [title.replace('656', '657'), title.replace('656', '6560'),
+                title.replace('.txt', '.exe'), title.replace('City_Zones/', '../City_Zones/'),
+                title.replace('City_Zones/', '/City_Zones/'), title.replace('City_Zones/', 'maps/../City_Zones/'),
+                title.replace('City_Zones/', 'C:/City_Zones/'), title.replace('/', '\\'),
+                title.replace('  PID:', ' PID:'), title+' extra', title+'\n',
+                'Other game : City_Zones/City_01_01/City_01_01.txt  PID: 656']:
+            with self.subTest(title=invalid):
+                result = guest.startup_evidence(output, registry, [dict(window, title=invalid)], launch)
+                self.assertFalse(result['client_window_observed'])
+        for identity in [None, {'pid': True}, {'pid': '656'}, {'pid': 0}]:
+            with self.subTest(identity=identity):
+                self.assertFalse(guest.current_client_title(title, identity))
+        for changed in [dict(window, mapped=False), dict(window, width=1)]:
+            self.assertFalse(guest.startup_evidence(output, registry, [changed], launch)['startup_observed'])
+        self.assertFalse(guest.startup_evidence(output, '', [window], launch)['startup_observed'])
+
     def test_marker_is_single_session_bound_and_strict_pid(self):
         text = guest.LAUNCH_MARKER + json.dumps({'session_id': SESSION, 'pid': 44})
         self.assertEqual(guest.parse_launch(text, SESSION)['pid'], 44)

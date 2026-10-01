@@ -77,7 +77,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("When input is ready: log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero and skip the tutorial. When the world appears, tap Save character / log out once. Wait for Saved character verified, then tap Finish. You have 20 minutes after input becomes ready.",12,false));
+        controls.addView(text("When input is ready: log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero. Choose Male and tap Clear on the Costume screen before continuing. Skip the tutorial. When the world appears, tap Save character / log out once. Wait for Saved character verified, then tap Finish. You have 20 minutes after input becomes ready.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · CHARACTER CREATION",12,true);right.addView(caption);

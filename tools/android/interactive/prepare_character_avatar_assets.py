@@ -13,12 +13,12 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE = 'character-avatar-defaults.zip'
 MANIFEST = 'character-avatar-defaults-manifest.json'
-ARCHIVE_PIN = {'bytes': 1064863, 'sha256': '4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1'}
-MANIFEST_PIN = {'bytes': 18138, 'sha256': 'a308e160b43df57856935ed241bd5cbae09f7b159fa8788ccf7ba81b893279c8'}
+ARCHIVE_PIN = {'bytes': 1722790, 'sha256': '8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2'}
+MANIFEST_PIN = {'bytes': 27130, 'sha256': '373330af26e834205ecf8d367d0c5be3c3c7ca5b5d64558e61489e450ad47ce1'}
 SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
 DATA = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 SCOPE = 'default_male_avatar_supplement'
-FILE_COUNT, PAYLOAD_BYTES = 13, 1787064
+FILE_COUNT, PAYLOAD_BYTES = 20, 2737564
 
 
 def require(value, message):

@@ -17,6 +17,26 @@ import character_avatar_assets as avatar
 import character_creation_diagnostic as guest
 
 
+# This list and aggregate metadata pin describe the original shipped supplement.
+# Keep them fixed so upgrading the package cannot silently replace its 13 files.
+LEGACY_FILES = (
+    'data/player_library/male_boot.geo',
+    'data/player_library/male_pants.geo',
+    'data/player_library/male_shirt.geo',
+    'data/player_library/v_male_head.geo',
+    'data/texture_library/players/avatar/male/chest/leather/chest_leather_03.texture',
+    'data/texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture',
+    'data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture',
+    'data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture',
+    'data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture',
+    'data/texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture',
+    'data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture',
+    'data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture',
+    'data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture',
+)
+LEGACY_FILES_SHA256 = '7128786c6d28bf4f43e63e03db7dc18fd001e0e915fb8851f328989ad9281240'
+
+
 class AvatarAssetsTests(unittest.TestCase):
     def setUp(self):
         self.root = Path(self.enterContext(tempfile.TemporaryDirectory()))
@@ -25,7 +45,7 @@ class AvatarAssetsTests(unittest.TestCase):
         self.manifest = json.loads((self.assets/avatar.MANIFEST).read_text())
         self.first = sorted(avatar.ALLOWED)[0]
 
-    def test_all_thirteen_assets_install_and_reuse_without_import_cache_or_identity_changes(self):
+    def test_all_twenty_assets_install_and_reuse_without_import_cache_or_identity_changes(self):
         imported = self.root/'import'; imported.mkdir()
         original = imported/'original.geo'; original.write_bytes(b'import unchanged')
         (self.work/'data/original.geo').symlink_to(original)
@@ -33,7 +53,8 @@ class AvatarAssetsTests(unittest.TestCase):
         cache = self.work/'data/bin/generated.bin'; cache.parent.mkdir(); cache.write_bytes(b'preserved cache')
         prior = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in (original, marker, cache)}
         first = avatar.install(self.work, self.assets, self.context)
-        self.assertEqual((first['installed_files'], first['reused_files'], first['payload_bytes']), (13, 0, 1787064))
+        self.assertEqual((first['installed_files'], first['reused_files'], first['payload_bytes']),
+                         (20, 0, avatar.PAYLOAD_BYTES))
         for name, pin in self.manifest['files'].items():
             path = self.work/name; info = path.lstat()
             self.assertTrue(stat.S_ISREG(info.st_mode)); self.assertEqual(info.st_nlink, 1)
@@ -43,9 +64,38 @@ class AvatarAssetsTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), pin['sha256'])
         inodes = {name: (self.work/name).stat().st_ino for name in avatar.ALLOWED}
         second = avatar.install(self.work, self.assets, self.context)
-        self.assertEqual((second['installed_files'], second['reused_files']), (0, 13))
+        self.assertEqual((second['installed_files'], second['reused_files']), (0, 20))
         self.assertEqual(inodes, {name: (self.work/name).stat().st_ino for name in avatar.ALLOWED})
         self.assertEqual(prior, {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in prior})
+        self.assertFalse((self.work/'character-avatar-applied.json').exists())
+
+    def test_upgrade_reuses_original_thirteen_bytes_and_installs_only_seven_new_files(self):
+        legacy_pins = {name: self.manifest['files'][name] for name in LEGACY_FILES}
+        encoded = json.dumps(legacy_pins, sort_keys=True, separators=(',', ':')).encode()
+        self.assertEqual(hashlib.sha256(encoded).hexdigest(), LEGACY_FILES_SHA256)
+        _, payloads = avatar.package(self.assets)
+        # Reproduce the old install's immutable files without calling the new installer.
+        for name in LEGACY_FILES:
+            target = self.work/name; target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(payloads[name]); target.chmod(0o444)
+            os.utime(target, (avatar.client.CACHE_EPOCH,)*2)
+        imported = self.root/'imported.geo'; imported.write_bytes(b'original imported bytes')
+        (self.work/'data/original.geo').symlink_to(imported)
+        identity = self.work/'client-work.json'; identity.write_text('{"original_identity":true}\n')
+        cache = self.work/'data/bin/generated.bin'; cache.parent.mkdir(); cache.write_bytes(b'private cache')
+        def snapshot(paths):
+            return {path: (path.read_bytes(), path.stat().st_ino, path.stat().st_mode,
+                           path.stat().st_mtime_ns) for path in paths}
+        before = snapshot([*(self.work/name for name in LEGACY_FILES), imported, identity, cache])
+        proof = avatar.install(self.work, self.assets, self.context)
+        self.assertEqual((proof['installed_files'], proof['reused_files'], proof['file_count']), (7, 13, 20))
+        self.assertEqual(before, snapshot(before))
+        self.assertEqual(set(payloads), set(avatar.ALLOWED))
+        for name, content in payloads.items():
+            self.assertEqual((self.work/name).read_bytes(), content)
+        self.assertFalse(proof['imported_files_modified'])
+        self.assertFalse(proof['cache_files_modified'])
+        self.assertFalse(proof['worktree_identity_modified'])
         self.assertFalse((self.work/'character-avatar-applied.json').exists())
 
     def test_conflicting_existing_asset_is_preserved_and_no_other_file_is_installed(self):
@@ -107,11 +157,11 @@ class AvatarAssetsTests(unittest.TestCase):
         def check():
             nonlocal checks
             checks += 1
-            if checks == 16: raise avatar.client.base.Cancelled('test cancellation')
+            if checks == len(avatar.ALLOWED) + 3: raise avatar.client.base.Cancelled('test cancellation')
         with self.assertRaises(avatar.client.base.Cancelled):
             avatar.install(self.work, self.assets, SimpleNamespace(check=check))
         proof = avatar.install(self.work, self.assets, self.context)
-        self.assertEqual((proof['installed_files'], proof['reused_files']), (11, 2))
+        self.assertEqual((proof['installed_files'], proof['reused_files']), (18, 2))
         self.assertFalse(list(self.work.rglob('.avatar-pending-*')))
 
     def test_character_initialize_installs_only_after_parent_prepares_worktree(self):
@@ -121,10 +171,10 @@ class AvatarAssetsTests(unittest.TestCase):
         d.ctx = SimpleNamespace(report={'asset_sha256': {name: 'pinned' for name in guest.REQUIRED}})
         def parent_initialize(): d.work = self.work
         with patch.object(guest.login.ClientLoginDiagnostic, 'initialize', side_effect=parent_initialize), \
-                patch.object(guest.avatar, 'install', return_value={'installed_files':13}) as install:
+                patch.object(guest.avatar, 'install', return_value={'installed_files':20}) as install:
             d.initialize()
         install.assert_called_once_with(self.work, self.assets, d.ctx)
-        self.assertEqual(d.ctx.report['character_avatar_supplement']['installed_files'], 13)
+        self.assertEqual(d.ctx.report['character_avatar_supplement']['installed_files'], 20)
 
 
 if __name__ == '__main__': unittest.main()

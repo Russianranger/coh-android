@@ -1,15 +1,19 @@
 {
   "archive": {
-    "bytes": 1064863,
+    "bytes": 1722790,
     "filename": "character-avatar-defaults.zip",
-    "sha256": "4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1"
+    "sha256": "8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2"
   },
   "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
-  "file_count": 13,
+  "file_count": 20,
   "files": {
     "data/player_library/male_boot.geo": {
       "bytes": 156354,
       "sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39"
+    },
+    "data/player_library/male_hair.geo": {
+      "bytes": 478622,
+      "sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121"
     },
     "data/player_library/male_pants.geo": {
       "bytes": 126338,
@@ -31,6 +35,10 @@
       "bytes": 175132,
       "sha256": "8ee6bb5d97e1b4cc5b01b5c3c26ba19092102fb7c63d1014f13db3ce30e49524"
     },
+    "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture": {
+      "bytes": 175122,
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4"
+    },
     "data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture": {
       "bytes": 87765,
       "sha256": "fad0d3d62bfbf6082628ecebc69efd6c70dc4eb660391f433a32c5811adbc6e8"
@@ -38,6 +46,10 @@
     "data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture": {
       "bytes": 44010,
       "sha256": "de99856a5548e19fb498f0de0869e2ed5f84c623e72beb099536d8f42cbbfc18"
+    },
+    "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture": {
+      "bytes": 87760,
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f"
     },
     "data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture": {
       "bytes": 87766,
@@ -47,6 +59,10 @@
       "bytes": 87771,
       "sha256": "e5bf27a331ca60864a5a71c877c534e5b85a1ba5c0a35e972d344d8e11bb87a2"
     },
+    "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture": {
+      "bytes": 87765,
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6"
+    },
     "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture": {
       "bytes": 87768,
       "sha256": "5faea4292552aef8b8d3a41ac9f09663ae21ad05c1dc88a8e6fddaa8b9a44fd7"
@@ -54,6 +70,18 @@
     "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture": {
       "bytes": 87773,
       "sha256": "b8df4147c6d62a006fcd0e5020da7de0b3b44c4eb16b414ed4d6bf92a06c261b"
+    },
+    "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture": {
+      "bytes": 87767,
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture": {
+      "bytes": 22228,
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d"
+    },
+    "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture": {
+      "bytes": 11236,
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6"
     },
     "data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture": {
       "bytes": 22164,
@@ -63,9 +91,9 @@
   "format": 1,
   "gameplay_validated": false,
   "installation": "Only missing private client worktree files; imported assets, client prerequisites and prepared caches unchanged",
-  "payload_bytes": 1787064,
+  "payload_bytes": 2737564,
   "provenance": {
-    "checked_at_utc": "2026-10-01T02:33:33.041946+00:00",
+    "checked_at_utc": "2026-10-01T03:24:24.496793+00:00",
     "entries": {
       "data/player_library/male_boot.geo": {
         "cached_header_id": 1013,
@@ -92,6 +120,32 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
         "stored_bytes": 92197,
         "stored_sha256": "f8208d20202c718055b09e88f4a3a4cc7b0b9d2aa4aef11d3104ac11dde28ab6"
+      },
+      "data/player_library/male_hair.geo": {
+        "cached_header_id": 1021,
+        "compressed": true,
+        "geometry_header": {
+          "baseline_loader_accepts_version": true,
+          "data_block_bounds_verified": true,
+          "header_decompression_verified": true,
+          "header_uncompressed_bytes": 87260,
+          "runtime_compatibility": "unverified",
+          "version": 8
+        },
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "7b91a4d01b9b5de8ff743cee9a173b21",
+        "offset": 44612128,
+        "path": "player_library/MALE_HAIR.geo",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1.pigg",
+        "source_archive_bytes": 87459151,
+        "source_content_range": "bytes 44612128-44943865/87459151",
+        "source_etag": "\"a600c69a37213e53b6a909d4c36a3c16\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:23:40 GMT",
+        "source_metadata_sha256": "a67da824945e3f015bbdf1faa4e10c172b90c068000f9499041db2d50ff4c4f4",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+        "stored_bytes": 331738,
+        "stored_sha256": "a42af4911d4549f958b9d8000c280f037ba305d2e91493cf960c31291ef24f35"
       },
       "data/player_library/male_pants.geo": {
         "cached_header_id": 1025,
@@ -207,6 +261,24 @@
         "stored_bytes": 10298,
         "stored_sha256": "1cd4719c759d9126445234e47003894fe58dfd563428c874e9d99a8e3246aac3"
       },
+      "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture": {
+        "cached_header_id": 2805,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "1f84f42c0812ce398d0458221776136e",
+        "offset": 173354070,
+        "path": "texture_library/PLAYERS/AVATAR/Male/Chest/Tights/Chest_tights.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 173354070-173470086/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 116017,
+        "stored_sha256": "522d3a90e426ab93e275a46916274f12be7f45d69143f77fae6c4730cb9e8a94"
+      },
       "data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture": {
         "cached_header_id": 2933,
         "compressed": true,
@@ -242,6 +314,24 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
         "stored_bytes": 3373,
         "stored_sha256": "2ebae2505a4be558bdf686121f23cd4edad6b21bc6f58a7db02bd17748b306ce"
+      },
+      "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture": {
+        "cached_header_id": 2945,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "589ab234b5cc78f4ce636aa91e78f15e",
+        "offset": 179995264,
+        "path": "texture_library/PLAYERS/AVATAR/Male/Hips/Tights/hips_tights.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 179995264-180057037/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 61774,
+        "stored_sha256": "45e6d5a3024f6b0189bdd929d5d0b423e542c9d290e598e043e611856f596f53"
       },
       "data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture": {
         "cached_header_id": 3089,
@@ -279,6 +369,24 @@
         "stored_bytes": 3724,
         "stored_sha256": "b23dd006cedc1efea4fc964a1c5981d4284d5e01cc1ec72190e7cdb500ec6169"
       },
+      "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture": {
+        "cached_header_id": 3106,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "8b4aa506160b6e7745d59061df13992c",
+        "offset": 186864300,
+        "path": "texture_library/PLAYERS/AVATAR/Super_Shared/Boots/boot_smooth_01.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 186864300-186928047/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 63748,
+        "stored_sha256": "a6bd4013e674560affddd2e4d42537eb637e8ed06b8785c1d01c72cd1b050e89"
+      },
       "data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture": {
         "cached_header_id": 3449,
         "compressed": true,
@@ -315,6 +423,60 @@
         "stored_bytes": 3618,
         "stored_sha256": "9515c1556b13317e863ac8d4b8d10177621ffb34c24aef62c97bb8f576faac3e"
       },
+      "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture": {
+        "cached_header_id": 3461,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "6d8a5f95fbd16ca1975885007aee07ec",
+        "offset": 191662353,
+        "path": "texture_library/PLAYERS/AVATAR/Super_Shared/Gloves/glove_smooth_01.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 191662353-191726373/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 64021,
+        "stored_sha256": "608ee63d55fb11b6a5466050cf5d2686d851495cf6b0f4f6e627e2dc62f8744b"
+      },
+      "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture": {
+        "cached_header_id": 3517,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "ca4014570e43d52b2c2029036360b014",
+        "offset": 193095073,
+        "path": "texture_library/PLAYERS/AVATAR/Super_Shared/Hair/Hair_Style_01a.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 193095073-193112287/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 17215,
+        "stored_sha256": "e94bf6c001a1bd588cf199f931090d6e9dd36cc2264d1283f08fa93bb02f64d2"
+      },
+      "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture": {
+        "cached_header_id": 3519,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "690264198bfc9584ab12028a42614a40",
+        "offset": 193130802,
+        "path": "texture_library/PLAYERS/AVATAR/Super_Shared/Hair/Hair_Style_01b.texture",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 193130802-193139272/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "b69ab9b31a6cae789e9d53d47dd8c54dca8a06bd52aaacf2247ddcf4c34c3802",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 8471,
+        "stored_sha256": "d4820f69ada953ac9e929dac6d17a45917fed12105fb74a5ecb2d46779f3b6ed"
+      },
       "data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture": {
         "cached_header_id": 353,
         "compressed": true,
@@ -341,5 +503,5 @@
   "runtime_visual_validated": false,
   "scope": "default_male_avatar_supplement",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
-  "visual_scope": "Default male leather costume geometry and textures only; other bodies and costume choices remain incomplete"
+  "visual_scope": "Male Clear/reset tights costume with smooth boots and gloves plus martial-arts hair, and retained leather costume assets only; other bodies and costume choices remain incomplete"
 }

@@ -56,18 +56,18 @@ class CharacterHostTests(unittest.TestCase):
                     'normalized_mtime_epoch': 1767225600}
         key = hashlib.sha256(('a'*64+'b'*64+'c'*64+'d'*64+'1767225600').encode()).hexdigest()[:24]
         receipt = {'format': 1, 'scope': document['scope'], 'manifest_sha256': avatar.MANIFEST_PIN['sha256'],
-            'archive_sha256': avatar.ARCHIVE_PIN['sha256'], 'file_count': 13, 'payload_bytes': 1787064,
-            'installed_files': 13, 'reused_files': 0, 'worktree': 'client-work-'+key,
+            'archive_sha256': avatar.ARCHIVE_PIN['sha256'], 'file_count': avatar.FILE_COUNT, 'payload_bytes': avatar.PAYLOAD_BYTES,
+            'installed_files': avatar.FILE_COUNT, 'reused_files': 0, 'worktree': 'client-work-'+key,
             'files': document['files'], 'normalized_mtime_epoch': 1767225600,
             'imported_files_modified': False, 'worktree_identity_modified': False, 'cache_files_modified': False,
             'runtime_visual_validated': False, 'visual_scope': document['visual_scope']}
         report = {'character_avatar_supplement': receipt, 'client_worktree': worktree}
         character.validate_avatar_supplement(report, inventory)
         reused = copy.deepcopy(report)
-        reused['character_avatar_supplement'].update(installed_files=0, reused_files=13)
+        reused['character_avatar_supplement'].update(installed_files=0, reused_files=avatar.FILE_COUNT)
         character.validate_avatar_supplement(reused, inventory)
         for name, value in [('manifest_sha256', '0'*64), ('archive_sha256', '0'*64), ('payload_bytes', 1),
-                ('file_count', 12), ('installed_files', True), ('reused_files', 13), ('files', {}),
+                ('file_count', avatar.FILE_COUNT-1), ('installed_files', True), ('reused_files', avatar.FILE_COUNT), ('files', {}),
                 ('worktree', 'client-work-other'), ('imported_files_modified', True),
                 ('worktree_identity_modified', True), ('cache_files_modified', True), ('runtime_visual_validated', True)]:
             with self.subTest(name=name):
@@ -174,6 +174,14 @@ class CharacterHostTests(unittest.TestCase):
                 self.assertTrue(finish.exists())
             self.assertTrue(script.result['script_completed'])
             self.assertFalse(script.result['character_creation_visual_validated'])
+            actions = [step['action'] for step in script.result['steps']]
+            reset = actions.index('clear_random_costume')
+            self.assertEqual(actions[reset-2:reset+3], ['body_next', 'preposition_clear_random_costume',
+                'clear_random_costume', 'preposition_accept_default_costume', 'accept_default_costume'])
+            self.assertLess(actions.index('accept_default_costume'), actions.index('register_play'))
+            self.assertEqual([button['label'] for button in script.result['ocr_buttons']], ['No', 'Hero', 'Yes'])
+            self.assertIn(struct.pack('!BBHH', 5, 1, 211, 555), connection.sent)
+            self.assertIn(struct.pack('!BBHH', 5, 0, 211, 555), connection.sent)
             self.assertEqual(len(script.result['post_save_captures']), 3)
             self.assertEqual(json.loads(finish.read_text()), {'format': 1, 'session_id': SESSION,
                 'client_pid': PID, 'action': 'finish_interaction'})

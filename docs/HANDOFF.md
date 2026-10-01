@@ -67,16 +67,40 @@ live snapshots with closed logs. Its support-evidence budget is 256 MiB with a
 passed 168 interactive tests, 26 client/cache tests and the full Java compile.
 Hosted creation, save and avatar rendering still require a passing runtime run.
 
-The following candidate adds a pinned 13-file supplement for the default Male
-body and costume. A bounded source audit recovered only the missing entries from
-the original project's `stage1.pigg`, `stage1c.pigg` and `stage1e.pigg` donors;
+The [13-file avatar attempt](android-evidence/character-hosted-36807202335-failed.json)
+at source `80e776f30de896605b6db4101baa5ab16957a29a` hit the same confirmation
+OCR and log-export failures, with full graceful cleanup. All 13 supplement files
+installed correctly, but screenshots show a head and fragmented white torso,
+without a complete body. Source review explains why: entering the costume screen
+applies a random preset. This run selected Military, whose parts were absent.
+The normal **Clear** control resets to deterministic tights, smooth gloves/boots
+and Martial Arts hair, without a confirmation or another random choice. The next
+candidate adds that explicit test step and its seven missing asset dependencies;
+partial installation or a partial preview is not a visual qualification.
+
+The current candidate contains a pinned 20-file supplement for the Male body
+and the costume selected by **Clear**. A bounded source audit recovered only
+the missing entries from the original project's PIGG donors;
 [entry integrity and format checks](android-evidence/character-avatar-source-review-20261001.json)
-passed. The 1,064,863-byte ZIP adds 1,787,064 bytes to the private client worktree,
+passed. The 1,722,790-byte ZIP adds 2,737,564 bytes to the private client worktree,
 preserving the imported archive, client prerequisites, cache identity and saved
 profile. Installation rechecks all files on reuse and refuses conflicting files
-or links. Default-male rendering and character saving still require hosted
+or links. The 13-to-20-file upgrade also preserves the original files' inodes,
+bytes, modes and timestamps. Male rendering after reset and character saving still require hosted
 qualification; other bodies and costume choices remain outside this small
-supplement. The next Thor instructions use the default Male body and costume.
+supplement. The next Thor instructions explicitly use **Male → Costume → Clear**.
+
+The [confirmation retry](android-evidence/character-hosted-36809680532-failed.json)
+at source `b17457ec83aa705b1c265f8d511da08b5823c382` passed all three dialog OCR
+steps and delivered the final Yes. DbServer then reported THORHERO assigned to
+map 1, loaded and connected. The guest stopped during world loading because the
+client changed its window title to include the map path; the inherited check
+accepted only the menu title. The same owned client and display were still
+running. No CLIENT_READY, rendered Atlas environment or ordinary logout/save is
+accepted. Full bounded server logs were retained, PostgreSQL stopped gracefully,
+and zero owned workers or inspection failures remained. The next candidate
+recognizes the source's two PID-bound title forms and preserves rejection of
+unrelated windows, while retaining the existing renderer and startup checks.
 
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 

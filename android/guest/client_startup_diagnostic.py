@@ -571,8 +571,7 @@ def parse_launch(output, session):
 
 def startup_evidence(output, registry_output, windows, launch):
     main_loop = bool(re.search(r'(?mi)^\s*GameProgress\s+REG_SZ\s+game_mainLoop\s*$', registry_output))
-    title = 'City of Heroes : PID: ' + str(launch['pid']) if launch else None
-    actual = [row for row in windows if row['title'] == title and row['mapped']
+    actual = [row for row in windows if current_client_title(row['title'], launch) and row['mapped']
               and row['width'] >= 320 and row['height'] >= 240]
     gl = {}
     for field, label in [('vendor', 'Vendor'), ('renderer', 'Renderer'), ('gl_version', 'Version')]:
@@ -585,6 +584,21 @@ def startup_evidence(output, registry_output, windows, launch):
         'all_data_loaded': 'Loaded all data!' in output, 'client_main_loop_reached': main_loop,
         'client_window_observed': bool(actual), 'client_windows': actual,
         'startup_observed': bool(main_loop and actual), 'menu_visual_validated': False}
+
+
+def current_client_title(title, launch):
+    """Match the owned client's menu or canonical map title without losing its PID."""
+    if (not isinstance(title, str) or len(title) > 1000 or not isinstance(launch, dict)
+            or type(launch.get('pid')) is not int or not 0 < launch['pid'] < 2**32):
+        return False
+    pid = str(launch['pid'])
+    if title == 'City of Heroes : PID: ' + pid:
+        return True
+    # Entering a map changes the title while the same mapped X window and
+    # launched Windows PID remain alive. Accept only a relative game map path,
+    # then the observed two-space separator and exact current PID suffix.
+    return re.fullmatch(r'City of Heroes : (?:[A-Za-z0-9_-]+/)+[A-Za-z0-9_-]+\.txt  PID: '
+                        + pid, title) is not None
 
 
 def console_identity(output, launch):

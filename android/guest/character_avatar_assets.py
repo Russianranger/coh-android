@@ -14,22 +14,29 @@ import client_startup_diagnostic as client
 require = client.require
 MANIFEST = 'character-avatar-defaults-manifest.json'
 ARCHIVE = 'character-avatar-defaults.zip'
-MANIFEST_SHA256 = 'a308e160b43df57856935ed241bd5cbae09f7b159fa8788ccf7ba81b893279c8'
-ARCHIVE_SHA256 = '4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1'
-ARCHIVE_BYTES, PAYLOAD_BYTES = 1064863, 1787064
+MANIFEST_SHA256 = '373330af26e834205ecf8d367d0c5be3c3c7ca5b5d64558e61489e450ad47ce1'
+ARCHIVE_SHA256 = '8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2'
+ARCHIVE_BYTES, PAYLOAD_BYTES = 1722790, 2737564
 ALLOWED = frozenset({
     'data/player_library/male_boot.geo',
+    'data/player_library/male_hair.geo',
     'data/player_library/male_pants.geo',
     'data/player_library/male_shirt.geo',
     'data/player_library/v_male_head.geo',
     'data/texture_library/players/avatar/male/chest/leather/chest_leather_03.texture',
     'data/texture_library/players/avatar/male/chest/leather/chest_leather_03_mask.texture',
+    'data/texture_library/players/avatar/male/chest/tights/chest_tights.texture',
     'data/texture_library/players/avatar/male/hips/leather/hips_leather_03.texture',
     'data/texture_library/players/avatar/male/hips/leather/hips_leather_03_mask.texture',
+    'data/texture_library/players/avatar/male/hips/tights/hips_tights.texture',
     'data/texture_library/players/avatar/super_shared/boots/boot_leather_03.texture',
     'data/texture_library/players/avatar/super_shared/boots/boot_leather_03_mask.texture',
+    'data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture',
     'data/texture_library/players/avatar/super_shared/gloves/glove_leather_03.texture',
     'data/texture_library/players/avatar/super_shared/gloves/glove_leather_03_mask.texture',
+    'data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture',
+    'data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture',
+    'data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture',
     'data/texture_library/v_players/avatar/super_shared/patterns/face/face_v_asym_eyes_01.texture',
 })
 
@@ -111,7 +118,7 @@ def install(worktree, assets, context):
     real_directory(worktree / 'data')
     manifest, payloads = package(assets)
     directories, verified = {}, {}
-    # Preflight all 13 destinations before writing any payload. Case aliases
+    # Preflight every destination before writing any payload. Case aliases
     # are conflicts because Wine can resolve names without regard to case.
     for name in sorted(ALLOWED):
         context.check()

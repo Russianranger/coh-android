@@ -1,8 +1,8 @@
 {
   "format": 1,
-  "reviewed_at_utc": "2026-10-01T02:37:56.405165+00:00",
+  "reviewed_at_utc": "2026-10-01T03:25:49.606884+00:00",
   "status": "selected_asset_source_integrity_and_package_byte_identity_verified",
-  "scope": "13 missing default male avatar files; no rendering or gameplay acceptance",
+  "scope": "20 male avatar files: original 13 plus seven dependencies for deterministic Clear/reset tights, smooth boots/gloves and martial-arts hair; no rendering or gameplay acceptance",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
   "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
   "source_catalog": "docs/asset-availability.json",
@@ -45,26 +45,27 @@
     "tools/inspect_piggs.py"
   ],
   "source_provenance_manifest": "assets/character-avatar-defaults-manifest.json",
-  "source_provenance_manifest_sha256": "a308e160b43df57856935ed241bd5cbae09f7b159fa8788ccf7ba81b893279c8",
+  "source_provenance_manifest_sha256": "373330af26e834205ecf8d367d0c5be3c3c7ca5b5d64558e61489e450ad47ce1",
   "package": {
     "path": "assets/character-avatar-defaults.zip",
-    "bytes": 1064863,
-    "sha256": "4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1",
-    "entry_count": 13,
-    "payload_bytes": 1787064
+    "bytes": 1722790,
+    "sha256": "8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2",
+    "entry_count": 20,
+    "payload_bytes": 2737564
   },
   "checks": {
-    "exact_13_target_path_to_donor_mapping": true,
+    "exact_20_target_path_to_donor_mapping": true,
     "range_boundaries_and_nonoverlap": true,
     "stable_etag_across_metadata_and_payload": true,
     "bounded_zlib_exact_size_eof_no_trailing_data": true,
     "all_pigg_table_md5s": true,
     "all_payload_sha256s": true,
     "zip_exact_entry_set_regular_files_and_byte_identity": true,
-    "four_geometry_headers_version_8_accepted_by_pinned_loader": true,
-    "nine_texture_tx2_dds_headers_and_mip_sizes": true
+    "five_geometry_headers_version_8_accepted_by_pinned_loader": true,
+    "fifteen_texture_tx2_dds_headers_and_mip_sizes": true,
+    "original_13_payload_pins_and_provenance_unchanged": true
   },
-  "source_payload_bytes_downloaded": 1064020,
+  "source_payload_bytes_downloaded": 1727004,
   "entries": [
     {
       "path": "data/player_library/male_boot.geo",
@@ -269,6 +270,117 @@
         "dds_mip_payload_size_verified": true,
         "embedded_path_matches": true
       }
+    },
+    {
+      "path": "data/texture_library/players/avatar/male/chest/tights/chest_tights.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 175122,
+      "sha256": "ef660db028f4bf7138ad43701190ef8ece8937cc57d8573efcab262a96070cb4",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT5",
+        "width": 256,
+        "height": 512,
+        "mip_count": 10,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/texture_library/players/avatar/male/hips/tights/hips_tights.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 87760,
+      "sha256": "cf440577f6fd90e9ea287dab99ff0dc48e438d86203d45bf8844be5aa8cb950f",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT5",
+        "width": 256,
+        "height": 256,
+        "mip_count": 9,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/texture_library/players/avatar/super_shared/boots/boot_smooth_01.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 87765,
+      "sha256": "7916525785ffb2bd8c49fcf594031a1b98b114fbefe848772f35e082b3d1e5e6",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT5",
+        "width": 256,
+        "height": 256,
+        "mip_count": 9,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 87767,
+      "sha256": "f202b49d35c92c943d1a9852985e68d6d762f49cec87cdbd7170c3ba8cd88363",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT5",
+        "width": 256,
+        "height": 256,
+        "mip_count": 9,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/texture_library/players/avatar/super_shared/hair/hair_style_01a.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 22228,
+      "sha256": "b6321e1a282ec99986e21e83af49167d67b5a831fdff0ccbd2627d1ec8f0989d",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT5",
+        "width": 128,
+        "height": 128,
+        "mip_count": 8,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/texture_library/players/avatar/super_shared/hair/hair_style_01b.texture",
+      "source_archive": "stage1c.pigg",
+      "bytes": 11236,
+      "sha256": "fd7786d3379b51ad11c5aeb40f23bc9db60472f7ca2bfeb4fda61ef279d8bba6",
+      "pigg_entry_md5_verified": true,
+      "texture_envelope": {
+        "version": "TX2",
+        "dds_format": "DXT1",
+        "width": 128,
+        "height": 128,
+        "mip_count": 8,
+        "dds_mip_payload_size_verified": true,
+        "embedded_path_matches": true
+      }
+    },
+    {
+      "path": "data/player_library/male_hair.geo",
+      "source_archive": "stage1.pigg",
+      "bytes": 478622,
+      "sha256": "48cd27799ffe17cfc0276c7bb0add6d469a03dba5ec1d6d6f74723ee4f98f121",
+      "pigg_entry_md5_verified": true,
+      "geometry_envelope": {
+        "version": 8,
+        "baseline_loader_accepts_version": true,
+        "runtime_compatibility": "unverified",
+        "header_uncompressed_bytes": 87260,
+        "header_decompression_verified": true,
+        "data_block_bounds_verified": true
+      }
     }
   ],
   "limits": {
@@ -279,5 +391,138 @@
     "gameplay_verified": false,
     "all_body_types_or_costume_choices_covered": false
   },
-  "next_gate": "Hosted client rendering of the default male costume and actual character create, Atlas entry, normal logout and SQL save; this receipt does not claim those passes."
+  "next_gate": "Hosted client rendering of the default male costume and actual character create, Atlas entry, normal logout and SQL save; this receipt does not claim those passes.",
+  "expansion": {
+    "observed_run": 36807202335,
+    "cause": "Creator randomly selects an initial costume preset; Military preset required assets outside the original leather supplement. Normal Clear/reset deterministically selects index-zero tights, smooth boots/gloves and martial-arts hair.",
+    "additional_files": 7,
+    "additional_source_payload_bytes": 662984,
+    "additional_uncompressed_bytes": 950500,
+    "original_13_zip_sha256": "4676f4f55fdca4df50815174d7cd57190e007084d83cb420037ab88942c87ef1",
+    "original_13_zip_payload_bytes": 1787064
+  },
+  "clear_selection_review": {
+    "source_ui": "upstream/ouroboros/Game/src/UI/uiCostume.c",
+    "source_body": "upstream/ouroboros/Game/src/UI/Hybrid/uiBody.c",
+    "source_data": [
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/regions.ctm",
+        "bytes": 9898,
+        "sha256": "49df4141bdcb14b9a060de2bc13e94816e58697a75dbd586d38e9134bb40503f"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/head/menu_standard.ctm",
+        "bytes": 35943,
+        "sha256": "77a2adb4d0324b3fb35460fb6edd6117aee48356ae28696a0d2c7f0be6629406"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_standard.ctm",
+        "bytes": 19886,
+        "sha256": "ea40c0786fcfa6b1a2046e7562cc26e7f0ad1205721d56acdc0db354018bc52f"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/head/inc_heads_standard_patterns.ctm",
+        "bytes": 6576,
+        "sha256": "787fda388e917f66e34fdbdc3b01f07c750e58f4f34a17c3d6b4a15c39a5dd9d"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/head/inc_hair.ctm",
+        "bytes": 13253,
+        "sha256": "f39b91a97e15eb93261b43770748a18a1842c2ea565f3f556f6905be095e23ed"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/upper/menu_tight.ctm",
+        "bytes": 18096,
+        "sha256": "703d6720fcaec918883808d13eaf189cc9e3c336e0bf7b9e2c82e86232264691"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/upper/inc_chest_patterns.ctm",
+        "bytes": 8051,
+        "sha256": "37cbd8793cba9f5f224e0e7a5fdb232ca7c59769cf4c55c8a34519635673e22c"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/lower/menu_tight.ctm",
+        "bytes": 19095,
+        "sha256": "ee16f5ae950884d2689c7dd2dd993c99826dad5e0fcd0aa643b6a36419e2c38f"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/male/all/lower/inc_tight_patterns.ctm",
+        "bytes": 8372,
+        "sha256": "a2f4f1373063686605093cdbd6f460a89ce1dc0b66f90723e7cc13e68d6e32df"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/common/male_gloves.ctm",
+        "bytes": 118815,
+        "sha256": "c191a4725ebfc32c606f86dcd63e805d2fb43bcb706f494d14e0a22e00406410"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/common/male_boots.ctm",
+        "bytes": 88495,
+        "sha256": "4903e6e94cdf37fc35805e1f287c5b7d6fe5bd430afb5bd48a1f99c7f4b6affb"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/common/patterns_gloves_01.ctm",
+        "bytes": 3832,
+        "sha256": "ac961ea949db618a86b6b2752506b77bc9fe2cf474802d9315e3076a66f59b03"
+      },
+      {
+        "path": "upstream/i24/data/menu/costume/localized/common/patterns_boots_01.ctm",
+        "bytes": 5665,
+        "sha256": "caa14c5ce9a1170cae705914a711d2a983519c5cc0e760df15b5f7524f7cdcdb"
+      }
+    ],
+    "selection": "Male / All; normal Clear calls resetCostume(0), selecting first allowed bone/info/mask indices. The creator has already consumed its one initial random preset.",
+    "first_parts": [
+      {
+        "body_part": "Head",
+        "geometry": "V_MALE_HEAD.GEO/GEO_Head_V_Asym_Standard",
+        "texture1": "Face_Skin_V_Head_06",
+        "texture2": "none",
+        "note": "Geometry retained from original supplement; skin texture already in accepted imported assets."
+      },
+      {
+        "body_part": "Hair",
+        "geometry": "MALE_HAIR.GEO/GEO_HAIR_MARTIAL_ARTS_01",
+        "texture1": "HAIR_Style_01a",
+        "texture2": "HAIR_Style_01b"
+      },
+      {
+        "body_part": "Chest",
+        "geometry": "MALE_SHIRT.GEO/GEO_Chest_Tight",
+        "texture1": "CHEST_tights",
+        "texture2_selection": "mask index 0"
+      },
+      {
+        "body_part": "Pants",
+        "geometry": "MALE_PANTS.GEO/GEO_Hips_Tight",
+        "texture1": "HIPS_tights",
+        "texture2_selection": "mask index 0"
+      },
+      {
+        "body_part": "Gloves",
+        "geometry_selection": "Smooth",
+        "texture1": "GLOVE_smooth_01",
+        "texture2_selection": "mask index 0"
+      },
+      {
+        "body_part": "Boots",
+        "geometry_selection": "Smooth",
+        "texture1": "BOOT_smooth_01",
+        "texture2_selection": "mask index 0"
+      }
+    ],
+    "new_hair_header_contains_required_model_name": true,
+    "first_mask_blocks": {
+      "male/all/head/inc_heads_standard_patterns.ctm": "Mask\n\t\t\t\tCOV 1\n\t\t\t\tDisplayName \"P4035132623\"\n\t\t\t\tName \"none\"\n\t\t\tEnd",
+      "male/all/upper/inc_chest_patterns.ctm": "Mask\n\t\t\tDisplayName \"P4035132623\"\n\t\t\tName \"none\"\n\t\tEnd",
+      "male/all/lower/inc_tight_patterns.ctm": "Mask\n\t\t\t\tDisplayName \"P4035132623\"\n\t\t\t\tName \"none\"\n\t\t\tEnd",
+      "common/patterns_gloves_01.ctm": "Mask\n\t\t\t\tDisplayName \"P4035132623\"\n\t\t\t\tName \"None\"\n\t\t\tEnd",
+      "common/patterns_boots_01.ctm": "Mask\n\t\t\t\tDisplayName \"P4035132623\"\n\t\t\t\tName \"None\"\n\t\t\tEnd"
+    },
+    "observed_run_first_error_group_matches_seven_added_files": true,
+    "observed_run_first_error_group_repetitions": 6,
+    "observed_run_later_random_military_group_repetitions": 640,
+    "observed_white_texture_cause": "Requested CHEST_skin_bare and GLOVE_skin_bare from the randomly chosen Military preset were absent; the pinned loader uses white when a requested texture is missing.",
+    "runtime_clear_result": "Not yet tested in this source review."
+  }
 }

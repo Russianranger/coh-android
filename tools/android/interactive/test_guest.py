@@ -113,6 +113,17 @@ class InteractionTests(unittest.TestCase):
         with self.assertRaisesRegex(guest.base.DiagnosticError,'disappeared'):self.d.execute()
         self.assertFalse(self.d.startup_complete)
 
+    def test_live_client_menu_to_world_title_transition_keeps_interaction_alive(self):
+        windows=self.observer.windows.return_value
+        world='City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 44'
+        self.observer.windows.side_effect=lambda:windows if self.elapsed<5 else [dict(windows[0],title=world)]
+        self.d.execute()
+        self.assertEqual(self.elapsed,180)
+        self.assertTrue(self.d.startup_complete)
+        self.assertEqual(self.d.ctx.report['interaction_completion_reason'],'interaction_timeout')
+        self.assertEqual(self.d.ctx.report['client_windows'][0]['title'],world)
+        self.assertEqual([e[1] for e in self.events].count('client_interaction_ready'),1)
+
     def test_final_capture_rechecks_complete_console(self):
         original=self.observer.capture.side_effect
         def capture(path):

@@ -7,9 +7,9 @@ Local login on Thor is already accepted. This session creates **THORHERO**, ente
 Atlas Park and saves through the game's ordinary logout. Exact-character reopen
 after a restart is the following milestone.
 
-This candidate includes a small verified supplement for the **default Male body
-and costume**. Its rendering is part of hosted qualification. Keep those defaults
-for this test; other bodies and costume choices need broader asset coverage.
+This candidate includes a small verified supplement for the **Male body and the
+costume selected by Clear**. Its rendering is part of hosted qualification. Use
+that reset for this test; other bodies and costume choices need broader asset coverage.
 The existing imported assets stay in place; no additional import is requested.
 
 ## Update
@@ -32,8 +32,9 @@ The existing imported assets stay in place; no additional import is requested.
 2. Wait for **Local login verified**, then open an empty **Create Character** slot.
 3. Follow the hosted test's selections: **Primal Earth → Science → Ranged →
    Blaster**. Choose **Archery / Snap Shot**, then **Devices / Web Grenade**.
-   Use the exact name **THORHERO**. Select **Male**, retain the default costume
-   and power colors, and continue to registration.
+   Use the exact name **THORHERO**. Select **Male**. On the **Costume** screen,
+   tap **Clear** at the bottom to reset the randomly selected initial costume.
+   Keep the resulting costume and default power colors, then continue to registration.
 4. Press **Play**. Decline the tutorial, choose **Hero** and confirm creation so
    the character enters **Atlas Park**. Leave the game visible until the app
    confirms the character's Atlas connection and enables **Save character / log out**.

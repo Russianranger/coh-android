@@ -209,6 +209,9 @@ def creation_actions():
     actions += click_steps('powers_next', 757, 579)
     actions += click_steps('select_male_body', 82, 195)
     actions += click_steps('body_next', 757, 579)
+    # Costume entry chooses a random preset. The ordinary Clear button calls
+    # resetCostume(0), restoring the pinned basic pieces without another dialog.
+    actions += click_steps('clear_random_costume', 211, 555)
     actions += click_steps('accept_default_costume', 757, 579)
     actions += click_steps('accept_default_power_colors', 757, 579)
     actions += click_steps('register_play', 757, 579)
