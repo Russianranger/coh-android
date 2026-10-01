@@ -47,6 +47,26 @@ costume rendering or gameplay claims; this candidate keeps the existing assets
 and targets registration, Atlas environment loading and ordinary logout/save.
 No extra import or device test is requested for this failed candidate.
 
+The subsequent [protocol-flow attempt](android-evidence/character-hosted-36805992804-failed.json),
+run 36805992804 at source `335688677eb1fe67e31089b35b3f685bebaf04f6`,
+started Atlas and verified login, declined the tutorial and selected Hero.
+Its final frame shows the creation confirmation with the pointer covering Yes;
+host OCR reported `Rendered Yes button not found`. The guest also failed its
+inherited 2 MiB server-log bound during observation and evidence collection.
+No character map connection or committed save was proved. This time the guest
+report was retained and confirms graceful PostgreSQL shutdown, stopped Wine,
+zero remaining owned workers or inspection failures, and preserved database;
+the host needed no forced quit or kill. Keep this failed result separate from
+qualification of the later avatar-supplement candidate.
+
+The next retry parks the pointer outside each dialog before OCR and waits for a
+fresh settled frame. Character mode now retains complete bounded server logs in
+one archive with per-file hashes and redaction metadata; final cleanup replaces
+live snapshots with closed logs. Its support-evidence budget is 256 MiB with a
+260 MiB ZIP guard, while login-only defaults remain unchanged. Local validation
+passed 168 interactive tests, 26 client/cache tests and the full Java compile.
+Hosted creation, save and avatar rendering still require a passing runtime run.
+
 The following candidate adds a pinned 13-file supplement for the default Male
 body and costume. A bounded source audit recovered only the missing entries from
 the original project's `stage1.pigg`, `stage1c.pigg` and `stage1e.pigg` donors;

@@ -833,7 +833,9 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         return super().cleanup()
 
 
-def persist_report(args, context, capture_dir):
+def persist_report(args, context, capture_dir, *, evidence_limit=None):
+    if evidence_limit is None:
+        evidence_limit = CLIENT_EVIDENCE_LIMIT
     document = json.dumps(base.redacted_value(context.report, context.secrets), indent=2) + '\n'
     require(len(document.encode()) <= 2*1024*1024, 'Client report exceeded bound')
     base.private_write(args.state / 'latest-report.json', document)
@@ -852,7 +854,7 @@ def persist_report(args, context, capture_dir):
                         if not path.is_file(): continue
                         size = path.stat().st_size
                         count += 1; total += size
-                        require(count <= 70 and total <= CLIENT_EVIDENCE_LIMIT, 'Capture export exceeded bound')
+                        require(count <= 70 and total <= evidence_limit, 'Capture export exceeded bound')
                         archive.write(path, 'client-evidence/' + path.relative_to(capture_dir).as_posix())
             handle.flush(); os.fsync(handle.fileno())
         os.replace(temporary, target)

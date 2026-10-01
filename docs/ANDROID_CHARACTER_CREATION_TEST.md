@@ -30,9 +30,10 @@ The existing imported assets stay in place; no additional import is requested.
    `127.0.0.1`, as in the accepted login session. **Send text / L3** replaces a
    focused text field when its **Replace** option is checked.
 2. Wait for **Local login verified**, then open an empty **Create Character** slot.
-3. Choose **Primal Earth**, an origin, archetype and powers. Use the exact name
-   **THORHERO**. Continue through body, costume and power colors to registration.
-   Select **Male** and retain the default costume and power colors for this test.
+3. Follow the hosted test's selections: **Primal Earth → Science → Ranged →
+   Blaster**. Choose **Archery / Snap Shot**, then **Devices / Web Grenade**.
+   Use the exact name **THORHERO**. Select **Male**, retain the default costume
+   and power colors, and continue to registration.
 4. Press **Play**. Decline the tutorial, choose **Hero** and confirm creation so
    the character enters **Atlas Park**. Leave the game visible until the app
    confirms the character's Atlas connection and enables **Save character / log out**.

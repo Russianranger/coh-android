@@ -266,6 +266,31 @@ class CharacterHostTests(unittest.TestCase):
             self.assertEqual(json.loads((root/'tutorial-ocr-02.json').read_text())['region'], [220, 230, 580, 465])
             self.assertFalse((root/'tutorial-ocr-02.tsv').exists())
 
+    def test_dialog_ocr_waits_for_fresh_settled_frame_after_parking_cursor(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+            script.ready_at = 0
+            script.action = next(i for i, action in enumerate(script.ACTIONS)
+                                 if action[2] == 'clear_cursor_before_confirm_creation')
+            frame = host.ClientFramebuffer()
+            script.frame_generation = frame.generation
+            proof = SimpleNamespace(client_pid=PID)
+            connection = Connection()
+            with mock.patch.object(host, 'save_png', side_effect=save), \
+                 mock.patch.object(host.time, 'monotonic', return_value=5), \
+                 mock.patch.object(character, 'read_button', return_value=((359, 322, 95), 'unobscured-yes')) as recognize:
+                script.on_frame(connection, frame, proof, 1, [{}, {}, {}], 5)
+                self.assertEqual(connection.sent, [struct.pack('!BBHH', 5, 0, 600, 100)])
+                script.on_frame(connection, frame, proof, 1, [{}, {}, {}], 8)  # Old framebuffer.
+                script.on_frame(connection, frame, proof, 2, [{}, {}, {}], 6)  # Not settled yet.
+                recognize.assert_not_called()
+                script.on_frame(connection, frame, proof, 3, [{}, {}, {}], 8)
+                recognize.assert_called_once()
+            self.assertEqual(script.result['ocr_buttons'][0]['label'], 'Yes')
+            self.assertEqual(script.result['steps'][-1]['after_frame_sequence'], 3)
+            self.assertEqual(connection.sent[-1], struct.pack('!BBHH', 5, 0, 359, 322))
+
     def test_failure_cleanup_waits_for_guest_report_before_export(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -323,6 +348,29 @@ class CharacterHostTests(unittest.TestCase):
             rejected = character.export_guest_evidence(state, second, SESSION)
             self.assertEqual(rejected['files'], [])
             self.assertIn('Linked guest evidence refused', rejected['errors'][0])
+
+    def test_export_retains_larger_character_evidence_but_keeps_byte_bound(self):
+        for archive in (False, True):
+            for size in (150, 261):
+                with self.subTest(archive=archive, mebibytes=size), tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    state = root/'state'; state.mkdir()
+                    evidence = root/'evidence'; evidence.mkdir()
+                    if archive: source = state/'report.zip'
+                    else:
+                        captures = state/('client-evidence-'+SESSION); captures.mkdir()
+                        source = captures/'character-server-logs.zip'
+                    with source.open('wb') as stream: stream.truncate(size*1024*1024)
+                    with mock.patch.object(character.shutil, 'copyfile') as copied:
+                        result = character.export_guest_evidence(state, evidence, SESSION)
+                    if size == 150:
+                        copied.assert_called_once()
+                        self.assertEqual(len(result['files']), 1)
+                        self.assertEqual(result['errors'], [])
+                    else:
+                        copied.assert_not_called()
+                        self.assertEqual(result['files'], [])
+                        self.assertIn('exceeded export bound', result['errors'][0])
 
     def test_observer_retains_pre_save_request_generation_when_event_arrives_with_pixels(self):
         with tempfile.TemporaryDirectory() as temporary:

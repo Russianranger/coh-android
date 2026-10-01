@@ -9,6 +9,7 @@ import shutil
 import socket
 import stat
 import time
+import zipfile
 
 import local_login_server as login
 import game_device_diagnostic as device
@@ -22,6 +23,9 @@ MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
 LOGOUT_RECEIPT_LIMIT = 512
 LOGOUT_MAX_AGE_MS = 120000
+SERVER_LOG_FILE_LIMIT = 16 * 1024 * 1024
+SERVER_LOG_TOTAL_LIMIT = 64 * 1024 * 1024
+SERVER_LOG_COUNT_LIMIT = 128
 
 
 def digest_json(value):
@@ -501,10 +505,94 @@ class LocalCharacterServer(login.LocalLoginServer):
         return self.creation_report
 
     def collect(self, target):
-        super().collect(target)
+        # Atlas has substantially more diagnostics than the login-only mode.
+        # Keep its bounded complete logs in one member of the outer support ZIP.
+        # Do not widen the accepted login-only collector's two-MiB limit.
+        if self.process is not None:
+            text = base.redact(self.process.text(), self.ctx.secrets)
+            require(len(text.encode()) <= 2 * 1024 * 1024, 'Server console evidence exceeded bound')
+            base.private_write(target / 'local-dbserver-console.txt', text)
         if self.map_process is not None:
             raw = base.redact(self.map_process.text(), self.ctx.secrets).encode()
             require(len(raw) <= 16 * 1024 * 1024, 'Atlas console evidence exceeded export bound')
             base.private_write(target / 'character-atlas-console.txt', raw.decode())
         if self.snapshot is not None:
             base.private_write(target / 'character-saved-snapshot.json', json.dumps(self.snapshot, indent=2) + '\n')
+        self.collect_server_logs(target)
+
+    def collect_server_logs(self, target):
+        require(target.is_dir() and not target.is_symlink(), 'Linked server evidence directory refused')
+        paths = [] if self.runtime is None else sorted(self.runtime.rglob('*.log'))
+        require(len(paths) <= SERVER_LOG_COUNT_LIMIT, 'Character server log count exceeded bound')
+        destination = target / 'character-server-logs.zip'
+        require(not destination.is_symlink(), 'Linked server log archive refused')
+        temporary = target / ('character-server-logs.tmp-' + base.secrets.token_hex(8))
+        closed_sources = all(child is None or child.process.poll() is not None
+                             for child in (self.process, self.map_process))
+        manifest = {'format': 1, 'scope': 'current_owned_character_server_logs',
+            'session_id': self.owner.args.session_id, 'truncated': False, 'files': {},
+            'collection_phase': 'closed_server_logs' if closed_sources else 'live_snapshot'}
+        source_total = exported_total = after_total = 0
+        try:
+            with temporary.open('xb') as output:
+                os.chmod(temporary, 0o600)
+                with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+                    for path in paths:
+                        # current_logs() already rejects linked leaves; preserve
+                        # that protection and also reject linked parents/owners.
+                        current = path.parent
+                        while True:
+                            require(current.is_dir() and not current.is_symlink(), 'Linked server log directory refused')
+                            if current == self.runtime: break
+                            require(self.runtime in current.parents, 'Server log path escaped its owned runtime')
+                            current = current.parent
+                        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+                        try:
+                            before = os.fstat(descriptor)
+                            require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1
+                                    and before.st_uid == os.geteuid() and before.st_size <= SERVER_LOG_FILE_LIMIT,
+                                    'Invalid or oversized character server log')
+                            with os.fdopen(descriptor, 'rb', closefd=False) as source:
+                                raw = source.read(before.st_size)
+                            after = os.fstat(descriptor)
+                            require(after.st_nlink == 1 and after.st_uid == before.st_uid
+                                    and len(raw) == before.st_size <= after.st_size <= SERVER_LOG_FILE_LIMIT
+                                    and (not closed_sources or after.st_size == before.st_size),
+                                    'Character server log changed or exceeded bound while reading')
+                        finally:
+                            os.close(descriptor)
+                        # Preserve every non-secret byte, including non-UTF8
+                        # legacy log text. Redaction is the only transformation.
+                        redacted = base.redact(raw.decode('utf-8', errors='surrogateescape'),
+                            self.ctx.secrets).encode('utf-8', errors='surrogateescape')
+                        source_total += len(raw); exported_total += len(redacted); after_total += after.st_size
+                        require(source_total <= SERVER_LOG_TOTAL_LIMIT
+                                and after_total <= SERVER_LOG_TOTAL_LIMIT
+                                and exported_total <= SERVER_LOG_TOTAL_LIMIT
+                                and len(redacted) <= SERVER_LOG_FILE_LIMIT,
+                                'Character server logs exceeded export bound')
+                        name = path.relative_to(self.runtime).as_posix()
+                        manifest['files'][name] = {'source_bytes': len(raw),
+                            'source_sha256': hashlib.sha256(raw).hexdigest(), 'exported_bytes': len(redacted),
+                            'exported_sha256': hashlib.sha256(redacted).hexdigest(),
+                            'source_bytes_after_read': after.st_size,
+                            'appended_bytes_after_snapshot': after.st_size - before.st_size,
+                            'redacted': raw != redacted, 'truncated': False}
+                        archive.writestr(name, redacted)
+                    manifest.update(file_count=len(paths), source_bytes=source_total,
+                                    source_bytes_after_read=after_total, exported_bytes=exported_total)
+                    document = json.dumps(manifest, indent=2) + '\n'
+                    require(len(document.encode()) <= 128 * 1024, 'Server log manifest exceeded bound')
+                    archive.writestr('manifest.json', document)
+                output.flush(); os.fsync(output.fileno())
+            require(temporary.stat().st_size <= SERVER_LOG_TOTAL_LIMIT + 1024 * 1024,
+                    'Character server log archive exceeded bound')
+            os.replace(temporary, destination)
+        finally:
+            temporary.unlink(missing_ok=True)
+        self.ctx.report['character_server_logs'] = {'path': destination.name,
+            'bytes': destination.stat().st_size, 'sha256': base.file_hash(destination),
+            'manifest_sha256': hashlib.sha256(document.encode()).hexdigest(),
+            'file_count': len(paths), 'source_bytes': source_total, 'exported_bytes': exported_total,
+            'source_bytes_after_read': after_total, 'collection_phase': manifest['collection_phase'],
+            'truncated': False, 'redacted_files': sum(item['redacted'] for item in manifest['files'].values())}

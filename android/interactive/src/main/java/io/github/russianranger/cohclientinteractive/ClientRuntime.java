@@ -42,7 +42,7 @@ public final class ClientRuntime {
     }
 
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
-    private static final long MAX_GUEST_ZIP = 160L * 1024 * 1024;
+    private static final long MAX_GUEST_ZIP = 260L * 1024 * 1024;
     private static final String PROCESS_INSTANCE = UUID.randomUUID().toString();
     private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Character Creation in Android settings, then reopen it.";
     private static boolean guardInitialized, blocked;

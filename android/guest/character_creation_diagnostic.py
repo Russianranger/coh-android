@@ -19,6 +19,7 @@ CHARACTER_NAME = 'THORHERO'
 INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
+CHARACTER_EVIDENCE_LIMIT = 256 * 1024 * 1024
 REQUIRED = login.REQUIRED | {'character_creation_diagnostic.py', 'local_character_server.py',
     'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST}
 
@@ -202,7 +203,8 @@ def main(argv=None):
             context.report['status'] = 'failed'
             if not context.report['failures']: context.report['failures'].append('Required character save or cleanup was not proved')
         if validated:
-            try: interactive.persist_report(args, context, diagnostic.capture_dir if diagnostic else None)
+            try: interactive.persist_report(args, context, diagnostic.capture_dir if diagnostic else None,
+                                            evidence_limit=CHARACTER_EVIDENCE_LIMIT)
             except Exception as exc:
                 context.report.update(status='failed', passed=False)
                 context.report['failures'].append('Cannot persist character report: ' + str(exc))

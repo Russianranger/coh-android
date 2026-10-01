@@ -27,6 +27,7 @@ require = host.require
 INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
 CLEANUP_GRACE_SECONDS = 180
+CHARACTER_EVIDENCE_LIMIT = 256*1024*1024
 CHARACTER = 'THORHERO'
 
 
@@ -212,7 +213,10 @@ def creation_actions():
     actions += click_steps('accept_default_power_colors', 757, 579)
     actions += click_steps('register_play', 757, 579)
     for label, name in (('No', 'skip_tutorial'), ('Hero', 'choose_hero'), ('Yes', 'confirm_creation')):
-        actions += [('ocr_move', (label, (220, 230, 580, 465)), 'preposition_'+name),
+        # Hero's old button position overlaps the following Yes label. Park
+        # outside the dialog and obtain a fresh settled frame before reading it.
+        actions += [('move', (600, 100), 'clear_cursor_before_'+name),
+                    ('ocr_move', (label, (220, 230, 580, 465)), 'preposition_'+name),
                     ('ocr_click', None, name)]
     actions += [('connected', None, 'wait_atlas_connection'),
                 ('key', 0xff0d, 'open_chat'), ('command', '/quittologin', 'type_ordinary_logout'),
@@ -576,7 +580,7 @@ def stop_guest(process, state):
 def export_guest_evidence(state, evidence, session):
     """Retain atomic reports, or the current session's collected support files."""
     result = {'files': [], 'fallback_used': False, 'errors': []}
-    for name, limit in (('latest-report.json', 2*1024*1024), ('report.zip', 148*1024*1024)):
+    for name, limit in (('latest-report.json', 2*1024*1024), ('report.zip', CHARACTER_EVIDENCE_LIMIT+4*1024*1024)):
         source = state/name
         try:
             require(not source.is_symlink(), 'Linked guest report refused')
@@ -602,7 +606,7 @@ def export_guest_evidence(state, evidence, session):
             if not path.is_file(): continue
             files.append(path)
             total += path.stat().st_size
-            require(len(files) <= 70 and total <= 144*1024*1024, 'Guest evidence exceeded export bound')
+            require(len(files) <= 70 and total <= CHARACTER_EVIDENCE_LIMIT, 'Guest evidence exceeded export bound')
         result['fallback_used'] = True
         for source in files:
             relative = Path('guest-evidence')/source.relative_to(captures)
