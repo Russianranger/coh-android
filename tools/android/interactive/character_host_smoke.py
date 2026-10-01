@@ -30,6 +30,9 @@ OVERALL_SECONDS = 5400
 CLEANUP_GRACE_SECONDS = 180
 CHARACTER_EVIDENCE_LIMIT = 256*1024*1024
 CHARACTER = 'THORHERO'
+KEY_SETTLE_SECONDS = .3
+ACCOUNT_ENTRY_ATTEMPTS = 3
+ACCOUNT_REGION = (505, 230, 766, 251)
 
 
 class CharacterEvents:
@@ -97,20 +100,26 @@ class CharacterEvents:
 
 def key(connection, code):
     connection.sendall(struct.pack('!BBHI', 4, 1, 0, code))
-    time.sleep(.12)
+    time.sleep(KEY_SETTLE_SECONDS)
     connection.sendall(struct.pack('!BBHI', 4, 0, 0, code))
+    time.sleep(KEY_SETTLE_SECONDS)
 
 
-def fixed_text(connection, value, replace=False):
+def select_all(connection):
+    # Release any prior owned modifier, then allow DirectInput to sample Ctrl
+    # before its A edit key. Text entry must follow a separate fresh-frame gate.
+    connection.sendall(struct.pack('!BBHI', 4, 0, 0, 0xffe3))
+    time.sleep(KEY_SETTLE_SECONDS)
+    connection.sendall(struct.pack('!BBHI', 4, 1, 0, 0xffe3))
+    time.sleep(KEY_SETTLE_SECONDS)
+    key(connection, ord('a'))
+    connection.sendall(struct.pack('!BBHI', 4, 0, 0, 0xffe3))
+
+
+def fixed_text(connection, value):
     require(value in ('COHLOCAL', 'offline', CHARACTER, '/quittologin'), 'Unexpected graphical fixture text')
-    if replace:
-        connection.sendall(struct.pack('!BBHI', 4, 1, 0, 0xffe3))
-        key(connection, ord('a'))
-        connection.sendall(struct.pack('!BBHI', 4, 0, 0, 0xffe3))
-        time.sleep(.12)
     for character in value:
         key(connection, ord(character))
-        time.sleep(.03)
 
 
 def write_logout_request(path, session, client_pid, character_id):
@@ -152,7 +161,7 @@ def ocr_button(tsv, label, region, scale=3, offset=(0, 0)):
     return max(matches, key=lambda item: item[1]) if matches else None
 
 
-def read_button(frame, evidence, label, step, attempt, region):
+def read_ocr(frame, evidence, step, attempt, region):
     require(shutil.which('tesseract') is not None, 'Hosted graphical driver requires tesseract-ocr')
     from PIL import Image
     # Enlarge and threshold the rendered light text for small outlined game
@@ -180,12 +189,43 @@ def read_button(frame, evidence, label, step, attempt, region):
     require(len(result.stdout) <= 1024*1024, 'OCR text exceeds bounded frame evidence')
     tsv = result.stdout.decode('utf-8')
     (evidence/(stem+'.tsv')).write_text(tsv)
-    match = ocr_button(tsv, label, region, scale=scale, offset=(left, top))
-    return match, stem
+    return tsv, stem
+
+
+def read_button(frame, evidence, label, step, attempt, region):
+    tsv, stem = read_ocr(frame, evidence, step, attempt, region)
+    return ocr_button(tsv, label, region, scale=3, offset=region[:2]), stem
+
+
+def ocr_account(tsv):
+    """Require the entire recognized field, including every nonempty word."""
+    words = []
+    for row in csv.DictReader(io.StringIO(tsv), delimiter='\t'):
+        text = (row.get('text') or '').strip()
+        if not text: continue
+        try:
+            if int(row['level']) != 5 or not 20 <= float(row['conf']) <= 100: return False
+        except (KeyError, TypeError, ValueError): return False
+        words.append(text)
+    return words == ['COHLOCAL']
+
+
+def read_rendered_account(frame, evidence, step, attempt):
+    tsv, stem = read_ocr(frame, evidence, step, attempt, ACCOUNT_REGION)
+    return ocr_account(tsv), stem
 
 
 def click_steps(name, x, y):
     return [('move', (x, y), 'preposition_'+name), ('click', (x, y), name)]
+
+
+def character_login_actions():
+    actions = [action for action in login.LoginInteraction.ACTIONS if action[2] not in {
+        'preposition_settings', 'open_settings', 'preposition_settings_close', 'close_settings_x',
+        'press_b_escape', 'observe_login_after_settings'}]
+    before_submit = next(index for index, action in enumerate(actions) if action[2] == 'preposition_login')
+    actions.insert(before_submit, ('account', None, 'verify_rendered_account'))
+    return tuple(actions)
 
 
 def creation_actions():
@@ -232,9 +272,7 @@ class CharacterInteraction(host.MenuInteraction):
     # The separate login qualification covers Settings recovery. Enter the
     # character milestone through ordinary login without opening that optional
     # window (uiLogin.c only opens it in the Settings button handler).
-    LOGIN_ACTIONS = tuple(action for action in login.LoginInteraction.ACTIONS if action[2] not in {
-        'preposition_settings', 'open_settings', 'preposition_settings_close', 'close_settings_x',
-        'press_b_escape', 'observe_login_after_settings'})
+    LOGIN_ACTIONS = character_login_actions()
     ACTIONS = LOGIN_ACTIONS + creation_actions()
 
     def __init__(self, session, evidence, finish_path):
@@ -242,11 +280,19 @@ class CharacterInteraction(host.MenuInteraction):
         self.result.pop('test_marker')
         self.result.update(scope='host_graphical_character_creation_and_ordinary_logout', account='COHLOCAL',
             character_name=CHARACTER, character_creation_visual_validated=False,
-            post_login_captures=[], connected_captures=[], post_save_captures=[], ocr_buttons=[])
+            post_login_captures=[], connected_captures=[], post_save_captures=[], ocr_buttons=[],
+            account_entry_checks=[], text_selection_frames=[])
+        self.text_selection_action = None
         self.ocr_position = None
         self.ocr_attempts = 0
         self.last_ocr_at = 0
         self.last_proof_capture = {}
+
+    def wait_for_fresh_input_frames(self, sequence, frame):
+        self.last_action_at = time.monotonic()
+        self.fresh_frames = 0
+        self.watermark = sequence
+        self.frame_generation = frame.generation
 
     def proof_frames(self, name, event_generation, request_generation, frame, events, sequence, now):
         if event_generation != 1 or request_generation != 1: return False
@@ -270,7 +316,8 @@ class CharacterInteraction(host.MenuInteraction):
             if sequence <= self.watermark: return
             self.watermark = sequence
             self.fresh_frames += 1
-            required = 2 if self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] in ('click', 'ocr_click') else 1
+            required = 2 if self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] in (
+                'click', 'ocr_click', 'text', 'account') else 1
             if self.fresh_frames < required or now-self.last_action_at < 2: return
         if self.action == len(self.ACTIONS):
             if 'finish_request' not in self.result:
@@ -284,6 +331,22 @@ class CharacterInteraction(host.MenuInteraction):
                 'connected': ('connected_captures', events.connected_generation, frame.request_connected_generation),
                 'saved': ('post_save_captures', events.saved_generation, frame.request_saved_generation)}[kind]
             if not self.proof_frames(proof, generation, requested, frame, events, sequence, now): return
+        elif kind == 'account':
+            attempt = len(self.result['account_entry_checks'])+1
+            accepted, stem = read_rendered_account(frame, self.evidence, name, attempt)
+            self.result['account_entry_checks'].append({'attempt': attempt, 'accepted': accepted,
+                'expected_account': 'COHLOCAL', 'evidence': stem, 'frame_sequence': sequence,
+                'frame_generation': frame.generation, 'session_id': self.session, 'client_pid': events.client_pid})
+            if not accepted:
+                require(attempt < ACCOUNT_ENTRY_ATTEMPTS,
+                        'Rendered account did not match COHLOCAL after three bounded replacement attempts')
+                # Replay focus and replacement for both fixed fields; never
+                # submit a misspelled account or append another attempted name.
+                self.action = next(index for index, action in enumerate(self.LOGIN_ACTIONS)
+                                   if action[2] == 'preposition_account')
+                self.text_selection_action = None
+                self.wait_for_fresh_input_frames(sequence, frame)
+                return
         elif kind == 'ocr_move':
             if now-self.last_ocr_at < 2: return
             self.last_ocr_at = now
@@ -302,7 +365,17 @@ class CharacterInteraction(host.MenuInteraction):
             self.ocr_attempts = 0
         elif kind == 'move': host.pointer_move(connection, *value)
         elif kind == 'click': host.pointer_click(connection, *value)
-        elif kind == 'text': fixed_text(connection, value, replace=True)
+        elif kind == 'text':
+            if self.text_selection_action is None:
+                select_all(connection)
+                self.text_selection_action = self.action
+                self.result['text_selection_frames'].append({'action': name, 'frame_sequence': sequence,
+                    'frame_generation': frame.generation, 'session_id': self.session, 'client_pid': events.client_pid})
+                self.wait_for_fresh_input_frames(sequence, frame)
+                return
+            require(self.text_selection_action == self.action, 'Text selection belongs to another graphical action')
+            fixed_text(connection, value)
+            self.text_selection_action = None
         elif kind == 'command': fixed_text(connection, value)
         elif kind in ('key', 'escape'): key(connection, 0xff1b if kind == 'escape' else value)
         else: require(False, 'Unknown graphical action')
@@ -531,7 +604,19 @@ def validate_observer(observer, report):
             observer.get('failure') or 'Missing character observer completion')
     require(observer.get('client_pid') == report['client_launch']['pid'], 'Observed graphical client identity differs')
     script = observer['interaction_script']
-    require(script.get('script_completed') is True and len(script['steps']) == len(CharacterInteraction.ACTIONS)
+    checks = script.get('account_entry_checks', [])
+    require(1 <= len(checks) <= ACCOUNT_ENTRY_ATTEMPTS
+            and all(check.get('accepted') is False for check in checks[:-1])
+            and checks[-1].get('accepted') is True
+            and all(check.get('attempt') == index+1 and check.get('expected_account') == 'COHLOCAL'
+                    and check.get('session_id') == report['session_id']
+                    and check.get('client_pid') == observer['client_pid'] for index, check in enumerate(checks)),
+            'Missing exact rendered-account evidence before login')
+    names = [action[2] for action in CharacterInteraction.ACTIONS]
+    retry_start, account_check = names.index('preposition_account'), names.index('verify_rendered_account')
+    expected_steps = names[:retry_start] + names[retry_start:account_check]*len(checks) + names[account_check:]
+    require(script.get('script_completed') is True
+            and [step['action'] for step in script['steps']] == expected_steps
             and script.get('finish_request', {}).get('client_pid') == observer['client_pid']
             and len(script.get('ocr_buttons', [])) == 3, 'Graphical creator script did not finish')
     logout = script.get('logout_request', {})

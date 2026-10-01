@@ -51,10 +51,107 @@ class CharacterHostTests(unittest.TestCase):
         original = character.login.LoginInteraction.ACTIONS
         self.assertEqual([action[2] for action in original[2:8]], ['preposition_settings', 'open_settings',
             'preposition_settings_close', 'close_settings_x', 'press_b_escape', 'observe_login_after_settings'])
-        self.assertEqual(character.CharacterInteraction.LOGIN_ACTIONS, original[:2] + original[8:])
-        self.assertEqual(character.CharacterInteraction.ACTIONS[:len(original)-6], original[:2] + original[8:])
-        self.assertEqual(character.CharacterInteraction.ACTIONS[len(original)-6],
+        expected = original[:2] + original[8:14] + (('account', None, 'verify_rendered_account'),) + original[14:]
+        self.assertEqual(character.CharacterInteraction.LOGIN_ACTIONS, expected)
+        self.assertEqual(character.CharacterInteraction.ACTIONS[:len(expected)], expected)
+        self.assertEqual(character.CharacterInteraction.ACTIONS[len(expected)],
                          ('login', None, 'wait_character_list'))
+
+    def test_field_replacement_waits_for_two_fresh_frames_after_focus_and_modifier_release(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+            script.action = next(index for index, action in enumerate(script.ACTIONS) if action[2] == 'replace_account')
+            script.ready_at = 0
+            frame = host.ClientFramebuffer(); script.frame_generation = frame.generation
+            proof = SimpleNamespace(client_pid=PID)
+            connection = Connection()
+            with mock.patch.object(host.time, 'sleep'), mock.patch.object(host.time, 'monotonic', return_value=4), \
+                    mock.patch.object(host, 'save_png', side_effect=save):
+                script.on_frame(connection, frame, proof, 1, [{}, {}, {}], 2)
+                self.assertEqual(connection.sent, [])  # Only one fresh focus frame.
+                script.on_frame(connection, frame, proof, 2, [{}, {}, {}], 4)
+                self.assertEqual(connection.sent[-1], struct.pack('!BBHI', 4, 0, 0, 0xffe3))
+                self.assertFalse(any(packet == struct.pack('!BBHI', 4, 1, 0, ord('C')) for packet in connection.sent))
+                script.on_frame(connection, frame, proof, 2, [{}, {}, {}], 6)  # Same request cannot count.
+                script.on_frame(connection, frame, proof, 3, [{}, {}, {}], 6)
+                self.assertEqual(script.result['steps'], [])  # Only one post-release frame.
+                script.on_frame(connection, frame, proof, 4, [{}, {}, {}], 8)
+            self.assertEqual([step['action'] for step in script.result['steps']], ['replace_account'])
+            self.assertEqual(script.result['text_selection_frames'][0]['frame_sequence'], 2)
+            self.assertEqual(script.result['steps'][0]['after_frame_sequence'], 4)
+            self.assertEqual(connection.sent.count(struct.pack('!BBHI', 4, 1, 0, ord('C'))), 2)
+            self.assertIsNone(script.text_selection_action)
+
+    def test_key_edges_and_modifier_selection_settle_before_following_input(self):
+        connection = Connection()
+        with mock.patch.object(host.time, 'sleep') as pause:
+            character.select_all(connection)
+        self.assertEqual(connection.sent, [struct.pack('!BBHI', 4, down, 0, code) for code, down in
+            [(0xffe3, 0), (0xffe3, 1), (ord('a'), 1), (ord('a'), 0), (0xffe3, 0)]])
+        self.assertEqual(pause.call_args_list, [mock.call(character.KEY_SETTLE_SECONDS)]*4)
+        connection.sent.clear()
+        with mock.patch.object(host.time, 'sleep') as pause:
+            character.fixed_text(connection, 'COHLOCAL')
+        self.assertEqual(len(connection.sent), 16)
+        self.assertEqual(pause.call_args_list, [mock.call(character.KEY_SETTLE_SECONDS)]*16)
+
+    def test_account_ocr_rejects_missing_first_letter_extra_text_and_low_confidence(self):
+        header = 'level\tleft\ttop\twidth\theight\tconf\ttext\n'
+        for value, confidence, expected in [('COHLOCAL', 95, True), ('OHLOCAL', 95, False),
+                ('COHLOCALI', 95, False), ('COHLOCALOTHER', 95, False), ('COHLOCAL', 5, False)]:
+            with self.subTest(value=value, confidence=confidence):
+                tsv = header + f'5\t15\t15\t210\t30\t{confidence}\t{value}\n'
+                self.assertEqual(character.ocr_account(tsv), expected)
+
+    def test_account_ocr_requires_whole_crop_and_rejects_separate_extra_words(self):
+        header = 'level\tconf\ttext\n'
+        for words in [['COHLOCAL', 'OTHER'], ['OTHER', 'COHLOCAL'], ['COH', 'LOCAL'],
+                      ['COHLOCAL', 'COHLOCAL'], ['COHLOCAL.'], ['cohlocal'], []]:
+            with self.subTest(words=words):
+                self.assertFalse(character.ocr_account(header + ''.join(f'5\t95\t{word}\n' for word in words)))
+        for confidence in ['5', 'nan', 'inf', 'invalid', '101']:
+            self.assertFalse(character.ocr_account(header + f'5\t{confidence}\tCOHLOCAL\n'))
+        self.assertFalse(character.ocr_account(header + '5\t95\tCOHLOCAL\n5\t5\tOTHER\n'))
+        self.assertTrue(character.ocr_account(header + '1\t-1\t\n5\t95\tCOHLOCAL\n'))
+
+    def test_misspelled_account_replacement_retries_are_bounded_and_precede_submission(self):
+        for succeeds in (True, False):
+            with self.subTest(succeeds=succeeds), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                script = character.CharacterInteraction(SESSION, root, root/'finish.json')
+                frame = host.ClientFramebuffer()
+                frame.request_login_generation = frame.request_connected_generation = frame.request_saved_generation = 0
+                proof = SimpleNamespace(client_pid=PID, login_generation=0, connected_generation=0, saved_generation=0)
+                connection = Connection(); clock = [0.0]
+                recognitions = [False, False, succeeds]
+                with mock.patch.object(host.time, 'monotonic', side_effect=lambda: clock[0]), \
+                        mock.patch.object(host.time, 'sleep', side_effect=lambda seconds: clock.__setitem__(0, clock[0]+seconds)), \
+                        mock.patch.object(host, 'save_png', side_effect=save), \
+                        mock.patch.object(character, 'read_rendered_account', side_effect=lambda *_args: (recognitions.pop(0), 'account-ocr')):
+                    failed = False
+                    for sequence in range(1, 100):
+                        clock[0] += 2
+                        try:
+                            script.on_frame(connection, frame, proof, sequence, [{}, {}, {}], clock[0])
+                        except ValueError as error:
+                            self.assertFalse(succeeds)
+                            self.assertIn('COHLOCAL after three bounded replacement attempts', str(error))
+                            failed = True
+                            break
+                        if any(step['action'] == 'submit_local_login' for step in script.result['steps']): break
+                self.assertEqual(failed, not succeeds)
+                checks = script.result['account_entry_checks']
+                self.assertEqual([check['accepted'] for check in checks], [False, False, succeeds])
+                steps = [step['action'] for step in script.result['steps']]
+                self.assertEqual(steps.count('replace_account'), 3)
+                self.assertEqual(steps.count('replace_dummy_password'), 3)
+                self.assertEqual('submit_local_login' in steps, succeeds)
+                if succeeds:
+                    submitted = next(step for step in script.result['steps'] if step['action'] == 'submit_local_login')
+                    self.assertLess(checks[-1]['frame_sequence'], submitted['after_frame_sequence'])
+                self.assertFalse((root/'finish.json').exists())
+                self.assertFalse((root/'character-logout.json').exists())
 
     def test_character_login_requires_response_and_three_fresh_post_response_frames(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -208,6 +305,7 @@ class CharacterHostTests(unittest.TestCase):
             with mock.patch.object(host.time, 'monotonic', side_effect=lambda: clock[0]), \
                  mock.patch.object(host.time, 'sleep', side_effect=lambda seconds: clock.__setitem__(0, clock[0]+seconds)), \
                  mock.patch.object(host, 'save_png', side_effect=save), \
+                 mock.patch.object(character, 'read_rendered_account', return_value=(True, 'whole-account-ocr')), \
                  mock.patch.object(character, 'read_button', return_value=((350, 340, 95), 'actual-frame-ocr')):
                 connected_index = next(i for i, action in enumerate(script.ACTIONS) if action[0] == 'connected')
                 for _ in range(230):
@@ -256,6 +354,16 @@ class CharacterHostTests(unittest.TestCase):
             self.assertEqual(len(script.result['post_save_captures']), 3)
             self.assertEqual(json.loads(finish.read_text()), {'format': 1, 'session_id': SESSION,
                 'client_pid': PID, 'action': 'finish_interaction'})
+            observer = {'failure': None, 'terminal_event_observed': True, 'client_pid': PID,
+                        'interaction_script': script.result}
+            report = {'session_id': SESSION, 'client_launch': {'pid': PID},
+                      'character_creation': {'character_id': 7}}
+            character.validate_observer(observer, report)
+            for changes in ({'accepted': False}, {'expected_account': 'OHLOCAL'}, {'client_pid': PID+1}):
+                invalid = copy.deepcopy(observer)
+                invalid['interaction_script']['account_entry_checks'][-1].update(changes)
+                with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, 'rendered-account evidence'):
+                    character.validate_observer(invalid, report)
             keys = [struct.unpack('!BBHI', data)[3] for data in connection.sent if data[0] == 4 and data[1] == 1]
             text = ''.join(chr(code) for code in keys if code < 128)
             self.assertIn('/quittologin', text)

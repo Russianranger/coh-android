@@ -1,6 +1,26 @@
 # City of Heroes Android handoff
 
-**Current: Thor local login is accepted; qualify 0.9.0 for graphical character creation and saving.**
+**Current: 0.9.0 passed hosted creation/save; one Thor session is next. Atlas scenery remains incomplete.**
+
+The delivered signed APK is from source `bc4d750deab00f0fdbbd084b32b563aa3abdddce`,
+[run 36862027713](https://github.com/Russianranger/coh-android/actions/runs/36862027713),
+386,658,292 bytes, SHA-256
+`001e1dc4db87f1184814a8f75a33953504d6ee06b238490a8c26c71c4ca7f963`.
+Independent [package](android-evidence/character-package-review-36862027713.json)
+and [hosted](android-evidence/character-hosted-36862027713.json) reviews passed.
+The Male/Clear creator renders its full body and both hands. The owned client
+reached CLIENT_READY on Atlas, submitted `/quittologin`, ran the live logout
+timer and committed one ents row, one ents2 row, seven power rows and fourteen
+costume-part rows. Three fresh host captures follow login, connection and save;
+the final view returns to login. Cleanup completed with no remaining workers.
+
+Atlas reaches its HUD and welcome, but the scenery is black without visible
+ground or buildings; the in-world avatar is a dark silhouette. Missing Atlas
+geometry is consistent with this result, but sole cause is not proved. This is
+creation/connection/save qualification, not rendered Atlas or playable gameplay.
+Follow the [one-session Thor instructions](ANDROID_CHARACTER_CREATION_TEST.md),
+including runtime refresh and an exact visible COHLOCAL check. Continue the
+normal save when Character connected is confirmed, even if scenery is black.
 
 The user confirmed local login and supplied `coh-local-login-20261001-010523.zip`.
 Independent review matched the 0.8.1 APK and runtime identities, verified all
@@ -19,11 +39,11 @@ power and costume records. The interaction window is 1,200 seconds. No existing
 character is deleted or synthesized in SQL. A preexisting THORHERO stops this
 creation-only candidate while preserving its data.
 
-Candidate implementation and hosted qualification are in progress. Do not call
-this device-qualified until its report has been reviewed. The next milestones
-are reopening this exact character after restart, then gameplay controls and
-performance. The new flow includes initial map entry only to complete creation
-and save; it does not establish sustained gameplay or hardware acceleration.
+Thor 0.9.0 qualification remains pending until its exported report is reviewed.
+The next work includes reopening this exact character after restart, Atlas
+scenery asset closure, then gameplay controls and performance. Initial map entry
+completes creation/save; it does not establish sustained gameplay or hardware
+acceleration. The following 0.9.0 attempt notes preserve historical checkpoints.
 
 The first 0.9.0 [hosted attempt](android-evidence/character-hosted-36801130531-failed.json)
 failed before client launch: Wine could not enumerate directory links in the
@@ -179,6 +199,24 @@ failed/forged donor rejection and login event/fresh-frame/deadline regressions.
 All 174 interactive tests passed after the policy change, including an integrated
 Atlas startup regression that rejects tick zero and NotReady, and requires
 advancing completed ticks around the successful current-map protocol query.
+
+The [immutable retry](android-evidence/character-hosted-36862027663-failed.json)
+at driver `bc4d750d` reached an empty character list using **OHLOCAL**: the host
+lost the initial C during typing. Exact COHLOCAL identity proof correctly failed
+at the new 180-second login bound. No character or Atlas client policy was tested
+in that retry. Its already-verified source-19879ed5 APK remains unchanged.
+The parallel normal run at the same driver did enter COHLOCAL and passed the
+full flow; its reviewed APK and scope are the current result above.
+
+The subsequent host-only typing correction separates focus and Ctrl-release
+from text by fresh frames, uses longer key settles and requires the entire
+rendered account field to read COHLOCAL before submitting login. Replacements
+are bounded to three attempts within the existing login deadline. All 186
+interactive tests passed; the 27 client/cache checks remain unchanged and passed.
+Actual OCR rejects the failed OHLOCAL frame and accepts a correct COHLOCAL frame.
+This correction changes no packaged APK payload. It is a future host-driver
+improvement, not the tested `bc4d750d` driver: the historical passed report lacks
+the newer OCR receipt fields and must remain bound to its original validator.
 
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 
