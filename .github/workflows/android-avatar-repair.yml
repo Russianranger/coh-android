@@ -1,0 +1,209 @@
+name: Thor saved-avatar reuse repair from published APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/character-persistence-continuation
+    paths:
+      - 'android/guest/character_avatar_assets.py'
+      - 'tools/android/interactive/test_character_avatar_assets.py'
+      - 'tools/android/interactive/qualify_avatar_repair.py'
+      - 'tools/android/interactive/build_avatar_repair_apk.py'
+      - 'tools/android/interactive/test_avatar_repair_package.py'
+      - 'docs/COH-Atlas-Gameplay-0.11.1-testing.txt'
+      - '.github/workflows/android-avatar-repair.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-avatar-repair
+  cancel-in-progress: false
+
+jobs:
+  tooling:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify avatar migration and exact derivative trust boundaries
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_character_avatar_assets.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_avatar_repair_package.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_classify_interactive_change.py' -v
+
+  migration:
+    needs: tooling
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: out/donor-evidence
+          run-id: 36937373454
+          github-token: ${{ github.token }}
+      - name: Download the exact existing published APK
+        run: >-
+          python3 tools/android/interactive/build_avatar_repair_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.0.apk
+      - name: Verify donor and extract accepted PRoot source receipts
+        run: >-
+          python3 tools/android/interactive/build_avatar_repair_apk.py prepare-qualification
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.0.apk
+          --donor-build-report out/donor-evidence/atlas-gameplay-apk-build-report.json
+          --output out/accepted-source-receipts
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover pinned talloc source without rebuilding the Android runtime
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/accepted-source-receipts
+          --bundle out/accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/source-cache/talloc-2.4.3.tar.gz
+          > out/talloc-source-receipt.json
+      - name: Install native PRoot build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk
+      - name: Build the matching native ARM64 Linux PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/source-cache/talloc-2.4.3.tar.gz
+      - name: Stage the exact unchanged avatar archive and manifest
+        run: |
+          python3 - <<'PYTHON'
+          import pathlib, zipfile
+          output = pathlib.Path('out/avatar-assets')
+          output.mkdir()
+          with zipfile.ZipFile('out/donor/COH-Atlas-Gameplay-0.11.0.apk') as archive:
+              for name in ('character-avatar-defaults.zip', 'character-avatar-defaults-manifest.json'):
+                  (output/name).write_bytes(archive.read('assets/runtime/'+name))
+          PYTHON
+      - name: Reproduce legacy PRoot files, repair once and reopen twice
+        run: |
+          export PROOT_LOADER="$PWD/out/android/native/linux-arm64/proot-loader"
+          export PROOT_TMP_DIR="$RUNNER_TEMP"
+          export PROOT_NO_SECCOMP=1
+          timeout 180s out/android/native/linux-arm64/proot --link2symlink --kill-on-exit -i 1000:1000 -r / \
+            /usr/bin/python3 "$PWD/tools/android/interactive/qualify_avatar_repair.py" \
+            --assets "$PWD/out/avatar-assets" --state "$PWD/out/avatar-reuse-fixture" \
+            --output "$PWD/out/avatar-repair-qualification.json" \
+            --donor-apk-sha256 e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924 \
+            --repository-commit "$GITHUB_SHA"
+          python3 - <<'PYTHON'
+          import json, pathlib
+          receipt = pathlib.Path('out/avatar-repair-qualification.json')
+          data = json.loads(receipt.read_text())
+          data['native_proot_build'] = json.loads(pathlib.Path('out/android/native/linux-arm64/proot-build-receipt.json').read_text())
+          receipt.write_text(json.dumps(data, indent=2)+'\n')
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-avatar-repair-arm64-evidence
+          path: |
+            out/avatar-repair-qualification.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+            out/talloc-source-receipt.json
+          if-no-files-found: error
+
+  apk:
+    needs: migration
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: out/donor-evidence
+          run-id: 36937373454
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-avatar-repair-arm64-evidence
+          path: out/qualification
+      - name: Download the same exact published donor APK
+        run: >-
+          python3 tools/android/interactive/build_avatar_repair_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.0.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Ensure the existing Android package tools
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Package only the qualified helper and verification metadata repair
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_avatar_repair_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.0.apk
+          --donor-build-report out/donor-evidence/atlas-gameplay-apk-build-report.json
+          --qualification out/qualification/avatar-repair-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/avatar-repair/COH-Atlas-Gameplay-0.11.1.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-avatar-repair-packaging-evidence
+          path: |
+            out/avatar-repair/avatar-repair-apk-build-report.json
+            out/avatar-repair/COH-Atlas-Gameplay-0.11.1.apk.sha256
+            out/avatar-repair/COH-Atlas-Gameplay-0.11.1-testing.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-avatar-repair-apk
+          path: out/avatar-repair/
+          if-no-files-found: error
+      - name: Publish the retained-signer corrective APK after focused migration qualification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_avatar_repair_apk.py publish
+          --apk out/avatar-repair/COH-Atlas-Gameplay-0.11.1.apk
+          --build-report out/avatar-repair/avatar-repair-apk-build-report.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --qualification out/qualification/avatar-repair-qualification.json
+      - name: Remove retained signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

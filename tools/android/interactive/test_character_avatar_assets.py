@@ -47,6 +47,80 @@ class AvatarAssetsTests(unittest.TestCase):
         self.manifest = json.loads((self.assets/avatar.MANIFEST).read_text())
         self.first = sorted(avatar.ALLOWED)[0]
 
+    def moved_legacy_links(self, label):
+        old = self.root / label / ('client-work-' + 'a' * 24)
+        new = old.with_name('client-work-' + 'b' * 24)
+        (old / 'data').mkdir(parents=True)
+        _, payloads = avatar.package(self.assets)
+        for index, name in enumerate(sorted(avatar.ALLOWED)):
+            target = old / name; target.parent.mkdir(parents=True, exist_ok=True)
+            intermediate = target.parent / ('.l2s..avatar-pending-%08x0001' % index)
+            backing = intermediate.with_name(intermediate.name + '.0001')
+            backing.write_bytes(payloads[name]); backing.chmod(0o444)
+            os.utime(backing, (avatar.client.CACHE_EPOCH,) * 2)
+            intermediate.symlink_to(backing)
+            target.symlink_to(intermediate)
+        marker = old / 'client-work.json'; marker.write_bytes(b'preserved identity')
+        cache = old / 'data/bin/generated.bin'; cache.parent.mkdir(); cache.write_bytes(b'preserved cache')
+        old.rename(new)
+        return new
+
+    def test_moved_legacy_emulated_links_are_materialized_once_without_backing_entries(self):
+        work = self.moved_legacy_links('moved')
+        with self.assertRaises(OSError) as error:
+            avatar.verify_target(work / self.first, self.manifest['files'][self.first])
+        self.assertEqual(error.exception.errno, 40)
+        preserved = {path: (path.read_bytes(), path.stat().st_ino, path.stat().st_mtime_ns)
+                     for path in (work / 'client-work.json', work / 'data/bin/generated.bin')}
+        proof = avatar.install(work, self.assets, self.context)
+        self.assertEqual((proof['installed_files'], proof['reused_files'], proof['legacy_repaired_files']), (0, 21, 21))
+        self.assertFalse(list(work.rglob('.l2s.*')))
+        self.assertEqual(preserved, {path: (path.read_bytes(), path.stat().st_ino, path.stat().st_mtime_ns)
+                                     for path in preserved})
+        self.assertTrue(all(avatar.verify_target(work / name, pin) for name, pin in self.manifest['files'].items()))
+        second = avatar.install(work, self.assets, self.context)
+        self.assertEqual((second['installed_files'], second['reused_files'], second['legacy_repaired_files']), (0, 21, 0))
+
+    def test_cancelled_legacy_cleanup_is_completed_on_retry(self):
+        work = self.moved_legacy_links('cancelled')
+        checks = 0
+        def check():
+            nonlocal checks
+            checks += 1
+            if checks == 43:
+                raise avatar.client.base.Cancelled('after atomic replacement, before cleanup')
+        with self.assertRaises(avatar.client.base.Cancelled):
+            avatar.install(work, self.assets, SimpleNamespace(check=check))
+        self.assertEqual(len(list(work.rglob('.l2s.*'))), 42)
+        proof = avatar.install(work, self.assets, self.context)
+        self.assertEqual((proof['installed_files'], proof['reused_files'], proof['legacy_repaired_files']), (0, 21, 0))
+        self.assertFalse(list(work.rglob('.l2s.*')))
+
+    def test_invalid_legacy_chains_fail_preflight_without_replacing_any_leaf(self):
+        for change in ('bytes', 'mode', 'timestamp', 'chain', 'external_backing', 'old_worktree'):
+            with self.subTest(change=change):
+                work = self.moved_legacy_links(change)
+                target = work / self.first
+                old_value = os.readlink(target)
+                intermediate = target.parent / Path(old_value).name
+                backing = intermediate.with_name(intermediate.name + '.0001')
+                if change == 'bytes':
+                    backing.chmod(0o600); backing.write_bytes(b'incorrect'); backing.chmod(0o444)
+                    os.utime(backing, (avatar.client.CACHE_EPOCH,) * 2)
+                elif change == 'mode': backing.chmod(0o600)
+                elif change == 'timestamp': os.utime(backing, (avatar.client.CACHE_EPOCH + 1,) * 2)
+                elif change == 'chain':
+                    intermediate.unlink(); intermediate.symlink_to('/untrusted/external')
+                elif change == 'external_backing':
+                    external = self.root / 'external.geo'; external.write_bytes(backing.read_bytes())
+                    backing.unlink(); backing.symlink_to(external)
+                else:
+                    target.unlink(); target.symlink_to(old_value.replace('a' * 24, 'bad-worktree'))
+                links = {name: os.readlink(work / name) for name in avatar.ALLOWED}
+                with self.assertRaises((avatar.client.base.DiagnosticError, OSError)):
+                    avatar.install(work, self.assets, self.context)
+                self.assertEqual(links, {name: os.readlink(work / name) for name in avatar.ALLOWED})
+
     def test_all_twenty_one_assets_install_and_reuse_without_import_cache_or_identity_changes(self):
         imported = self.root/'import'; imported.mkdir()
         original = imported/'original.geo'; original.write_bytes(b'import unchanged')

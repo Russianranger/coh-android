@@ -24,6 +24,13 @@ SHELL_ONLY = frozenset({
     'tools/android/interactive/test_input.py',
     'tools/android/interactive/build_atlas_gameplay_apk.py',
     'tools/android/interactive/test_atlas_gameplay_package.py',
+    'tools/android/interactive/build_avatar_repair_apk.py',
+    'tools/android/interactive/test_avatar_repair_package.py',
+    'tools/android/interactive/qualify_avatar_repair.py',
+    'android/guest/character_avatar_assets.py',
+    'tools/android/interactive/test_character_avatar_assets.py',
+    '.github/workflows/android-avatar-repair.yml',
+    'docs/COH-Atlas-Gameplay-0.11.1-testing.txt',
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/test_classify_interactive_change.py',
     '.github/workflows/android-atlas-gameplay.yml',
@@ -41,6 +48,7 @@ SHELL_ONLY = frozenset({
     'tools/android/interactive/test_atlas_world_package.py',
     'docs/android-evidence/atlas-world-reopen-reviewed.json',
     'docs/android-evidence/character-reopen-hosted-36920583713-ocr-failed.json',
+    'docs/android-evidence/thor-0.11.0-reopen-failed-20261001.json',
 })
 
 

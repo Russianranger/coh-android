@@ -1,6 +1,43 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation/save remains accepted. The unchanged signed 0.10.0 APK now passes two real ARM64 graphical sessions, reopening, native ground recovery, second save and persistence. Atlas materials and walking/jump controls in 0.11.0 are implemented and its retained-signer APK is published. The next action is the focused Thor test. Preserve THORHERO and app data.**
+**Current: physical Thor 0.11.0 saved-character reopening failed before game startup. Physical Atlas rendering and Return to safe ground are explicitly untested, as clarified by the user. Thor 0.9.0 creation/save remains accepted; the healthy hosted 0.10.0 two-session gate remains preserved. Repair the reused legacy avatar links narrowly, then deliver a corrective APK and resume the physical test. Preserve THORHERO and app data.**
+
+The user's `coh-atlas-gameplay-20261001-233407.zip` contains a 0.11.0
+`character_reopen` failure after about 2.5 seconds. Inputs, the reused private
+worktree, persistent server profile and durable PostgreSQL startup passed.
+The first avatar verification then failed with `Errno 40` at
+`data/player_library/male_boot.geo`. Wine, DbServer, Atlas and the game client
+never started; no rendering, ground recovery, movement or normal second save
+was reached. The report records preexisting character ID 1. PostgreSQL stopped
+gracefully and Android verified cleanup. See
+[the physical failure receipt](android-evidence/thor-0.11.0-reopen-failed-20261001.json).
+
+The accepted older avatar installer used `os.link` under PRoot
+`--link2symlink`. Its two hidden backing entries embed absolute paths. A later
+wrapper-only directory rename preserves bytes but breaks those embedded paths;
+strict `O_NOFOLLOW` then reports the observed `ELOOP`. The corrective helper
+recognizes only the relocated old avatar publisher's exact link layout,
+verifies the pinned payload, mode, timestamp and ownership, and atomically
+materializes its logical leaf. Verified hidden backing entries are removed
+before MapServer staging. Imported files, caches, worktree identity and the
+saved database are untouched. Focused qualification must reproduce this with
+the actual pinned ARM64 PRoot; source-equivalent unit tests alone do not close
+that gate. Physical results remain pending after hosted repair qualification.
+
+The corrective checkpoint adds 13 avatar installer regression cases, including
+the moved emulated-link layout, refused invalid chains and cleanup retry. The
+new retained-donor packaging boundaries pass 12 tests; routing passes its
+focused check. Independent extraction of the actual published 0.11.0 APK
+verified all donor pins and exactly three revised payloads: the avatar helper,
+client verification manifest and runtime verification manifest. The other 48
+APK members, including the DEX, are retained. The bounded
+`android-avatar-repair.yml` workflow must first reproduce the legacy failure,
+repair and retry under native ARM64 PRoot, then package/sign/publish 0.11.1
+(version code 7) using the retained key. No Wine/server/world rebuild or passed
+two-session graphical requalification is requested. At this checkpoint that
+workflow and corrective APK are pending. Resume physical testing with
+[the 0.11.1 instructions](COH-Atlas-Gameplay-0.11.1-testing.txt) only after
+publication succeeds.
 
 The retained-APK [run `36929550592`](https://github.com/Russianranger/coh-android/actions/runs/36929550592)
 passed tooling and the full native ARM64 runtime on host-driver commit `f7c6c3a6`.
@@ -44,10 +81,11 @@ until the focused Thor test. After accepting that report, reopen the movement-sa
 position and qualify sustained Atlas movement/collision before first power/combat
 work; that is new gameplay coverage, not a repeat of the accepted creation gate.
 
-This delivery completes the current development milestone. Preserve the
+The earlier publication completed packaging, while the physical report now
+requires the avatar reuse correction above. Preserve the
 accepted physical 0.9.0 behavior and the healthy hosted 0.10.0 reopening gate.
-Do not re-run either gate merely for completeness. Await the single focused
-0.11.0 Thor report covering scenery, neutral movement stop, jump/camera,
+Do not re-run either gate merely for completeness. Resume with the corrective
+candidate's single focused Thor report covering reopening, scenery, neutral movement stop, jump/camera,
 ground contact and normal save. Fix the exact observed defect next; after
 initial world/movement acceptance, advance collision completeness, map beaconing
 and native NPC/gameplay behavior sequentially.

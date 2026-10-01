@@ -1,0 +1,49 @@
+{
+  "android_cleanup_verified": true,
+  "app_version": "0.11.0",
+  "attachment": {
+    "bytes": 651868,
+    "filename": "coh-atlas-gameplay-20261001-233407.zip",
+    "member_count": 10,
+    "sha256": "70166b34932b2967b8eb1dd422b0d0cc6a18d5de894a3f270c3b81b4e070b23a"
+  },
+  "cleanup": {
+    "owned_processes_reaped": true,
+    "postgres_graceful": true,
+    "wine_prefix_stopped": false
+  },
+  "cleanup_execution": {
+    "diagnostic_initialized": true,
+    "owned_child_count": 10,
+    "wine_started": false
+  },
+  "client_worktree_package_sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
+  "client_worktree_reused": true,
+  "diagnosis": "Old avatar os.link publication under pinned PRoot --link2symlink leaves absolute hidden backing chains. Wrapper-only worktree directory rename leaves those links stale. Strict O_NOFOLLOW detects ELOOP on male_boot.geo. Actual ARM64 traced fixture qualification required for repair.",
+  "failures": [
+    "[Errno 40] Too many levels of symbolic links: '/state/diagnostic/client-work-4483815f86920f17c06fc43d/data/player_library/male_boot.geo'"
+  ],
+  "format": 1,
+  "last_passed_stage": "postgres_local_login",
+  "physical_android_repair_validated": false,
+  "physical_gates": {
+    "atlas_rendering": "not_tested",
+    "normal_second_save": "not_reached",
+    "reopen_saved_character": "failed_before_game_start",
+    "return_to_ground": "not_tested",
+    "walking_jump_collision": "not_tested"
+  },
+  "postgres_durability_verified": true,
+  "processes_started": {
+    "client_process_started": false,
+    "mapserver_started": false,
+    "postgres_started": true,
+    "server_started": false
+  },
+  "repair_scope": "Verify only recognized relocated pinned avatar chains, materialize their logical leaves and remove verified backing entries. Preserve database, imports, worktree identity and generated caches.",
+  "run_id": "1790897641930-d429e0a78fcd",
+  "runtime_manifest_sha256": "d2268a4f2fefd507819b1d82b455d54a8e99df1500e5bc3895320604dfd97695",
+  "saved_character_before_id": 1,
+  "scope": "physical_thor_0.11.0_failed_saved_character_reopen",
+  "session_id": "6afe2bf0d11043aab78d656ffcf2fdb4"
+}
