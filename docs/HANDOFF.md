@@ -1,6 +1,32 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. The 0.10.0 exact-character reopen and Atlas recovery candidate is implemented; APK and hosted qualification are in progress. Preserve THORHERO.**
+**Current: Thor 0.9.0 creation/save is accepted. The 0.10.0 full hosted run reached visible Atlas geometry and saved its seed, then refused the reopened baseline because native first creation had not persisted its temporary MapId. Apply the narrow baseline fix and qualify reopening; preserve THORHERO.**
+
+Run `36913457461` at `07eb3ecb` completed with a runtime failure. Its first
+graphical session passed in 1,840.069 seconds, reached CLIENT_READY, displayed
+Atlas ground/stairs/statue/building geometry, and committed rows 1/1/7/14.
+Native position stayed around `(106.45, 0.25, -114.45)` rather than falling to
+Y=-2000. World surfaces and the avatar remain poorly textured/lit; this is
+visible geometry, not complete graphics or device gameplay acceptance.
+
+The second session reused PostgreSQL/Wine and all world/avatar files. Its read-only position after
+normal DbServer startup was `MapId=NULL`,
+`StaticMapId=1`, `(106.454605, 0.251066, -114.45343)`. The pre-entry guard
+incorrectly required the temporary live map to be 1 and stopped before launching
+Atlas/client. The outer RFB error is a consequence of that guest refusal. Both
+sessions shut down PostgreSQL/Wine gracefully with no surviving owned workers.
+See [the preserved failed receipt](android-evidence/character-reopen-hosted-36913457461-failed.json).
+
+Pinned native source explains the NULL: first creation assigns MapId in memory
+but writes StaticMapId to SQL; ordinary MapServer saves omit the read-only map
+fields. Reopening an existing character writes its active MapId assignment.
+
+The narrow correction accepts NULL temporary MapId only in the existing
+character baseline, while requiring persisted Atlas StaticMapId, exact ID and
+finite coordinates. Post-save live-map verification stays strict. The fresh
+corrected candidate still uses version 0.10.0/code 5: none of the failed 0.10.0
+APKs has been delivered for a Thor test. Existing creation, imports, costume,
+powers and runtime components remain unchanged.
 
 The first two hosted attempts stopped before client launch while mirroring the
 private MapServer data. The initial staging budget omitted the pinned world and

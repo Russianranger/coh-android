@@ -180,6 +180,44 @@ class ReopenServerTests(unittest.TestCase):
         self.assertTrue(d.sql.call_args.args[0].startswith('SELECT'))
         self.assertEqual(d.sql.call_count, 1)
 
+    def test_baseline_accepts_observed_first_creation_null_active_map_and_keeps_saved_atlas_position(self):
+        d = self.instance()
+        self.position.update(mapid=None, posx=106.454605, posy=.251066, posz=-114.45343)
+        expected = copy.deepcopy(self.position)
+        before = copy.deepcopy(self.rows)
+        d.capture_baseline()
+        self.assertEqual(d.creation_report['baseline']['saved_position'], expected)
+        self.assertEqual(self.position, expected)
+        self.assertEqual(self.rows, before)
+        self.assertTrue(d.creation_report['existing_character_verified'])
+        self.assertFalse(d.creation_report['sql_game_mutations_performed'])
+        self.assertEqual(d.sql.call_count, 1)
+        self.assertTrue(d.sql.call_args.args[0].startswith('SELECT'))
+        with self.assertRaises(server.base.DiagnosticError): d.character_position()
+
+    def test_baseline_still_rejects_other_maps_missing_static_map_bool_ids_and_invalid_positions(self):
+        changes = [('mapid', value) for value in (0, 2, True, '1')]
+        changes += [('staticmapid', value) for value in (None, 0, 2, True, '1')]
+        changes += [('containerid', value) for value in (None, 2, True, '1')]
+        changes += [('posy', value) for value in (None, True, float('nan'), float('inf'), 1000001)]
+        for field, value in changes:
+            d = self.instance(); self.position['mapid'] = None; self.position[field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(server.base.DiagnosticError):
+                d.capture_baseline()
+            self.assertFalse(d.creation_report['existing_character_verified'])
+
+    def test_save_requires_assigned_atlas_map_after_accepting_null_first_creation_baseline(self):
+        d = self.instance(); self.position['mapid'] = None
+        rows = self.prepare_ground_and_logout(d)
+        for active_map in (None, 0, 2, True, '1'):
+            self.position['mapid'] = active_map
+            with self.subTest(active_map=active_map), self.assertRaises(server.base.DiagnosticError):
+                d.validate_saved_rows(rows, self.inventory)
+            self.assertFalse(d.creation_report.get('committed_safe_position_verified', False))
+        self.position['mapid'] = 1
+        self.assertEqual(d.validate_saved_rows(rows, self.inventory)['login_count'], 2)
+        self.assertTrue(d.creation_report['committed_safe_position_verified'])
+
     def test_reopen_refuses_absent_duplicate_changed_or_additional_local_character(self):
         for change in ('absent', 'duplicate', 'id', 'name', 'account', 'extra'):
             d = self.instance(); values = copy.deepcopy(self.inventory)

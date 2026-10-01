@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "repository": "Russianranger/coh-android",
+  "repository_commit": "07eb3ecb6c14747f08fd6125523dbbb347fd5de8",
+  "run_id": 36913457461,
+  "status": "failed_reopen_baseline_after_successful_world_seed",
+  "artifact": {
+    "id": 11190238715,
+    "bytes": 77090491,
+    "sha256": "0dfad14f5ad6924570ff806908a9098d105f6db59d51eeff2b63b1f46b9f59cb"
+  },
+  "host_report": {
+    "bytes": 155113,
+    "sha256": "d6a1a571e1d9078084ab2deac75e9437b95367e3e41df2cc9437b42769a3672a"
+  },
+  "creation_guest_report": {
+    "bytes": 158582,
+    "sha256": "13c5da9761fed574b033c9d665b7c09de8b90e5357288a4c5387720b34317d3b"
+  },
+  "reopen_guest_report": {
+    "bytes": 69361,
+    "sha256": "b0199a0e51268295b3b32df78f66b7ded75fd89a0ed97f4f523952562ba15748"
+  },
+  "creation_seed": {
+    "passed": true,
+    "elapsed_seconds": 1840.069,
+    "committed_sql_verified": true,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "snapshot_sha256": "7f8c92a0ab27094cbb3136da0840413d0c23ae3847a8b3332cb216dfef752b76",
+    "visible_world_geometry": true,
+    "full_world_textures_validated": false,
+    "physical_android_world_validated": false,
+    "reviewed_image": {
+      "name": "client-evidence/creation/connected_captures-001.png",
+      "bytes": 262316,
+      "sha256": "f93e33539487b53bb98981cb3b61b4943bccd68821d5ca2b34a75ce2a5bc7a33"
+    }
+  },
+  "reopen_failure": {
+    "stage": "local_dbserver_startup",
+    "guest_failure": [
+      "Existing character map or position differs from Atlas"
+    ],
+    "outer_host_failure": "Private RFB transport ended before client startup observation completed",
+    "client_launched": false,
+    "baseline_position_read": {
+      "containerid": 1,
+      "mapid": null,
+      "staticmapid": 1,
+      "posx": 106.454605,
+      "posy": 0.251066,
+      "posz": -114.45343
+    },
+    "cause": "The pre-entry position guard requires MapId=1 although native first creation assigns MapId in memory without persisting it. StaticMapId=1 and grounded coordinates are saved correctly. Reopening an existing character persists its active assignment; post-save validation remains strict."
+  },
+  "cleanup": {
+    "creation": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "reopen": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "reopen_qualified": false,
+  "device_test_requested": false,
+  "next_fix": "Allow an unassigned live map only for the pre-login baseline. Keep current Atlas live-map requirements for ordinary committed save; preserve character state.",
+  "native_source_explanation": {
+    "manifest": "docs/source-manifest.json",
+    "files": {
+      "upstream/i24/code/DBServer/clientcomm.c": "First creation assigns MapId and StaticMapId in memory, but creation cmd_buf persists StaticMapId only (1544-1554). Existing-character setNewMap uses write_sql=true (2092).",
+      "upstream/i24/code/MapServer/container/containerloadsave.c": "Map IDs are read-only (2240-2246) and ordinary packageEnt starts after them (4221)."
+    }
+  }
+}

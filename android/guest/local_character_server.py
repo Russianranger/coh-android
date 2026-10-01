@@ -761,7 +761,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             self.schema['expected_attributes'], auth_id, existing_identity=identity, expected_login_count=count)
         require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
         self.baseline_snapshot = snapshot
-        position = self.character_position()
+        position = self.character_position(allow_unassigned_active_map=True)
         self.creation_report.update(existing_character_verified=True,
             baseline_character_count=len(self.baseline), baseline_identity_sha256=digest_json(self.baseline),
             before_login_count=count,
@@ -797,14 +797,18 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return {'reopen_verified': True, 'existing_character_verified': True,
                 'preserved_existing_identity': True, 'native_client_ready_observed': True}
 
-    def character_position(self):
+    def character_position(self, *, allow_unassigned_active_map=False):
         values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
                               ('containerid',), 'containerid=' + str(self.CHARACTER_ID))
         require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
                 'Existing character position snapshot differs')
         value = values[0]
+        # Before login, MapId is an active assignment and may be SQL NULL.
+        # StaticMapId retains the saved Atlas destination. Only the read-only
+        # baseline accepts that unassigned state; connected save still needs 1.
+        assigned_to_atlas = type(value['mapid']) is int and value['mapid'] == 1
         require(type(value['containerid']) is int and value['containerid'] == self.CHARACTER_ID
-                and type(value['mapid']) is int and value['mapid'] == 1
+                and (assigned_to_atlas or allow_unassigned_active_map and value['mapid'] is None)
                 and type(value['staticmapid']) is int and value['staticmapid'] == 1
                 and all(type(value[key]) in (int, float) and math.isfinite(value[key])
                         and abs(value[key]) <= 1000000 for key in ('posx', 'posy', 'posz')),
