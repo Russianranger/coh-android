@@ -176,10 +176,17 @@ jobs:
           test -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar"
           test -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar"
       - name: Install PE32 compiler with bounded downloads
-        timeout-minutes: 5
+        timeout-minutes: 8
         run: |
+          # Azure's package mirror can throttle large compiler packages. Keep
+          # Ubuntu's existing signed sources, using its canonical mirror.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
           timeout 120s sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update -qq
-          timeout 240s sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y --no-install-recommends gcc-mingw-w64-i686 binutils-mingw-w64-i686
+          timeout 360s sudo apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y --no-install-recommends gcc-mingw-w64-i686-posix binutils-mingw-w64-i686
+          command -v i686-w64-mingw32-gcc
+          command -v i686-w64-mingw32-objdump
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-generated-caches

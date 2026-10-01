@@ -21,6 +21,12 @@ includes both pinned supplements. A fresh signed APK and real ARM64 hosted
 qualification are required before the one-session Thor test. Dependency downloads
 are bounded and reuse SDK 35 when already present on the runner.
 
+
+Run `36909118523` passed tooling and prepared caches but its bounded compiler
+install timed out on a throttled Azure Ubuntu mirror before APK packaging.
+The build now uses Ubuntu's canonical signed mirror and only the required
+MinGW POSIX compiler variant, with an eight-minute overall step bound.
+
 The next candidate defaults to reopening the existing COHLOCAL / THORHERO ID 1.
 It compares a read-only pre-login baseline with the ordinary committed save,
 preserves identity, powers and costume, and requires LoginCount to increment
