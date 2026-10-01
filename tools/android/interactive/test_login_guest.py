@@ -1,6 +1,7 @@
 """The persistent profile must survive cleanup and prove this launch's login."""
 import io
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -29,10 +30,19 @@ class LauncherPolicyTests(unittest.TestCase):
         cls.temporary = tempfile.TemporaryDirectory(); root = Path(cls.temporary.name)
         source = (ROOT / 'android/native/client-launcher.c').read_text()
         policy = source[source.index('static const char *launch_policy('):source.index('int main(int argc, char **argv)')]
+        # Compile the production deadline expression/condition with a fake
+        # monotonic clock, so a policy-only change cannot hide a fixed main-loop
+        # bound that still consumes character interaction time during startup.
+        deadline = re.search(r'    deadline=([^;]+);', source).group(1)
+        expired = re.search(r'        if\((GetTickCount64\(\)>=deadline)\)', source).group(1)
         harness = ('#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n' + policy
+            + 'static unsigned long long clock_ms=123456; '
+            + 'static unsigned long long GetTickCount64(void) { return clock_ms; }\n'
             + 'int main(int argc,char **argv) { int generate=-1; const char *value; '
-            + 'if(argc<2)return 2; value=launch_policy(atoi(argv[1]),argc>2?argv[2]:NULL,&generate); '
-            + 'printf("%d|%s",generate,value?value:"INVALID"); return 0; }\n')
+            + 'unsigned long lifetime_ms=0; unsigned long long deadline; '
+            + 'if(argc<2)return 2; value=launch_policy(atoi(argv[1]),argc>2?argv[2]:NULL,&generate,&lifetime_ms); '
+            + 'deadline=' + deadline + '; if(argc>3)clock_ms+=strtoull(argv[3],NULL,10); '
+            + 'printf("%d|%lu|%s|%d",generate,lifetime_ms,value?value:"INVALID",' + expired + '); return 0; }\n')
         path = root / 'policy.c'; path.write_text(harness)
         cls.binary = root / 'policy'
         subprocess.run([compiler, '-std=c11', '-Wall', '-Wextra', '-Werror', str(path), '-o', str(cls.binary)], check=True)
@@ -41,13 +51,28 @@ class LauncherPolicyTests(unittest.TestCase):
     def tearDownClass(cls):
         if hasattr(cls, 'temporary'): cls.temporary.cleanup()
 
-    def test_native_override_only_for_explicit_local_login(self):
-        for arguments, expected in [(['4'], '0|'), (['5','--generate-caches'], '1|'),
-                (['5','--local-login'], '0| -noversioncheck 1'), (['5','--unknown'], '0|INVALID'),
-                (['5'], '0|INVALID'), (['3'], '0|INVALID'), (['6','--local-login'], '0|INVALID')]:
+    def test_native_override_and_longer_lifetime_are_scoped_to_explicit_profiles(self):
+        for arguments, expected in [(['4'], '0|1200000||0'), (['5','--generate-caches'], '1|1200000||0'),
+                (['5','--local-login'], '0|1200000| -noversioncheck 1|0'),
+                (['5','--character-creation'], '0|2160000| -noversioncheck 1|0'),
+                (['5','--unknown'], '0|1200000|INVALID|0'), (['5'], '0|1200000|INVALID|0'),
+                (['3'], '0|1200000|INVALID|0'), (['6','--local-login'], '0|1200000|INVALID|0'),
+                (['6','--character-creation'], '0|1200000|INVALID|0')]:
             with self.subTest(arguments=arguments):
                 actual = subprocess.check_output([str(self.binary), *arguments], text=True)
                 self.assertEqual(actual, expected)
+
+    def test_character_deadline_retains_post_startup_interaction_and_stays_bounded(self):
+        # The failed hosted run spent 419s reaching the menu. Also cover the
+        # permitted 900s startup plus 1200s interaction and 60s finish grace.
+        for elapsed_ms, expired in [(1200000, 0), ((419+1200)*1000, 0),
+                                    ((900+1200)*1000, 0), (2160000-1, 0), (2160000, 1)]:
+            with self.subTest(elapsed_ms=elapsed_ms):
+                value = subprocess.check_output([str(self.binary), '5', '--character-creation', str(elapsed_ms)], text=True)
+                self.assertEqual(value, f'0|2160000| -noversioncheck 1|{expired}')
+        for mode in ('--local-login', '--generate-caches'):
+            value = subprocess.check_output([str(self.binary), '5', mode, '1200000'], text=True)
+            self.assertTrue(value.endswith('|1'))
 
     def test_guest_mode_hook_preserves_default_and_scopes_local_login(self):
         args = SimpleNamespace(wine=Path('/wine'), assets=Path('/assets'), session_id=SESSION)

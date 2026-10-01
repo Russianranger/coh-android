@@ -1,8 +1,8 @@
 {
   "format": 1,
-  "reviewed_at_utc": "2026-10-01T03:25:49.606884+00:00",
+  "reviewed_at_utc": "2026-10-01T10:51:11.480137+00:00",
   "status": "selected_asset_source_integrity_and_package_byte_identity_verified",
-  "scope": "20 male avatar files: original 13 plus seven dependencies for deterministic Clear/reset tights, smooth boots/gloves and martial-arts hair; no rendering or gameplay acceptance",
+  "scope": "21 male avatar files: original 20 plus missing smooth forearm/hand geometry for deterministic Clear/reset; no complete rendering or gameplay acceptance",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
   "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
   "source_catalog": "docs/asset-availability.json",
@@ -45,27 +45,29 @@
     "tools/inspect_piggs.py"
   ],
   "source_provenance_manifest": "assets/character-avatar-defaults-manifest.json",
-  "source_provenance_manifest_sha256": "373330af26e834205ecf8d367d0c5be3c3c7ca5b5d64558e61489e450ad47ce1",
+  "source_provenance_manifest_sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7",
   "package": {
     "path": "assets/character-avatar-defaults.zip",
-    "bytes": 1722790,
-    "sha256": "8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2",
-    "entry_count": 20,
-    "payload_bytes": 2737564
+    "bytes": 1842488,
+    "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29",
+    "entry_count": 21,
+    "payload_bytes": 2980122
   },
   "checks": {
-    "exact_20_target_path_to_donor_mapping": true,
     "range_boundaries_and_nonoverlap": true,
     "stable_etag_across_metadata_and_payload": true,
     "bounded_zlib_exact_size_eof_no_trailing_data": true,
     "all_pigg_table_md5s": true,
     "all_payload_sha256s": true,
     "zip_exact_entry_set_regular_files_and_byte_identity": true,
-    "five_geometry_headers_version_8_accepted_by_pinned_loader": true,
     "fifteen_texture_tx2_dds_headers_and_mip_sizes": true,
-    "original_13_payload_pins_and_provenance_unchanged": true
+    "original_13_payload_pins_and_provenance_unchanged": true,
+    "exact_21_target_path_to_donor_mapping": true,
+    "six_geometry_headers_version_8_accepted_by_pinned_loader": true,
+    "original_20_payload_pins_and_provenance_unchanged": true,
+    "smooth_left_and_right_forearm_geometry_names_in_new_header": true
   },
-  "source_payload_bytes_downloaded": 1727004,
+  "source_payload_bytes_downloaded": 1847195,
   "entries": [
     {
       "path": "data/player_library/male_boot.geo",
@@ -381,6 +383,21 @@
         "header_decompression_verified": true,
         "data_block_bounds_verified": true
       }
+    },
+    {
+      "path": "data/player_library/male_glove.geo",
+      "source_archive": "stage1.pigg",
+      "bytes": 242558,
+      "sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f",
+      "pigg_entry_md5_verified": true,
+      "geometry_envelope": {
+        "version": 8,
+        "baseline_loader_accepts_version": true,
+        "runtime_compatibility": "unverified",
+        "header_uncompressed_bytes": 41024,
+        "header_decompression_verified": true,
+        "data_block_bounds_verified": true
+      }
     }
   ],
   "limits": {
@@ -524,5 +541,26 @@
     "observed_run_later_random_military_group_repetitions": 640,
     "observed_white_texture_cause": "Requested CHEST_skin_bare and GLOVE_skin_bare from the randomly chosen Military preset were absent; the pinned loader uses white when a requested texture is missing.",
     "runtime_clear_result": "Not yet tested in this source review."
+  },
+  "forearm_completion": {
+    "observed_run": 36846149988,
+    "observation": "Post-Clear screenshots show tights, hair and boots; both forearms/hands are absent. The installed 20-file inventory excludes male_glove.geo.",
+    "default_selector_source": "upstream/i24/data/menu/costume/localized/common/male_gloves.ctm index-zero Smooth / smooth_01 / mask",
+    "body_part_source": "upstream/i24/data/defs/ui/bodyparts.bp Gloves: two bones, LARM geometry, GLOVE base and texture prefix",
+    "name_construction_source": "upstream/ouroboros/Game/src/entity/costume_client.c doChangeGeo",
+    "required_models": [
+      "MALE_GLOVE.GEO_LarmR_Smooth",
+      "MALE_GLOVE.GEO_LarmL_Smooth"
+    ],
+    "models_in_decompressed_geo_header": [
+      "GEO_LarmR_Smooth",
+      "GEO_LarmL_Smooth"
+    ],
+    "existing_texture": "data/texture_library/players/avatar/super_shared/gloves/glove_smooth_01.texture",
+    "additional_files": 1,
+    "additional_source_payload_bytes": 120191,
+    "additional_uncompressed_bytes": 242558,
+    "original_20_file_pins_sha256": "f80befcb13dce3be586f3091cb7617c7e8c1ab1cf2348bfe5546a76bda242539",
+    "runtime_visual_validated": false
   }
 }

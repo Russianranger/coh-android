@@ -16,8 +16,8 @@ class AvatarPackageTests(unittest.TestCase):
     def test_reviewed_payload_and_honest_provenance(self):
         document = package.verify(package.ROOT/'assets'/package.ARCHIVE,
                                   package.ROOT/'assets'/package.MANIFEST)
-        self.assertEqual(20, len(document['files']))
-        self.assertEqual(2737564, sum(item['bytes'] for item in document['files'].values()))
+        self.assertEqual(21, len(document['files']))
+        self.assertEqual(2980122, sum(item['bytes'] for item in document['files'].values()))
         self.assertFalse(document['provenance']['source_archive_sha256_verified'])
         contract = package.bundle_contract()
         for flag in ('imported_assets_modified', 'prepared_caches_modified',

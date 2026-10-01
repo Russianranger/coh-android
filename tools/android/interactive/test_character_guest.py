@@ -205,6 +205,23 @@ class CharacterBoundsTests(unittest.TestCase):
         result.update(changes)
         return SimpleNamespace(**result)
 
+    def test_native_character_mode_and_report_match_without_changing_local_login(self):
+        d = guest.CharacterCreationDiagnostic.__new__(guest.CharacterCreationDiagnostic)
+        d.args = SimpleNamespace(wine=Path('/wine'), assets=Path('/assets'), session_id=SESSION)
+        d.work = Path('/work')
+        default = guest.interactive.ClientInteractiveDiagnostic.launcher_command(d)
+        self.assertEqual(d.launcher_command(), default + ['--character-creation'])
+        self.assertEqual(guest.login.ClientLoginDiagnostic.launcher_command(d), default + ['--local-login'])
+        policy = {'native_launcher_mode': '--local-login', 'protocol_version_check_retained': True}
+        def parent_init(owner, args, context):
+            owner.local_server = SimpleNamespace(report={'version_policy': policy})
+        with patch.object(guest.login.ClientLoginDiagnostic, '__init__', parent_init), \
+                patch.object(guest.character, 'LocalCharacterServer', return_value=SimpleNamespace(report={})):
+            initialized = guest.CharacterCreationDiagnostic(None, None)
+        self.assertEqual(initialized.local_server.report['version_policy'],
+                         dict(policy, native_launcher_mode='--character-creation'))
+        self.assertEqual(policy['native_launcher_mode'], '--local-login')
+
     def test_fixed_creator_budget_does_not_allow_short_unbounded_or_boolean_values(self):
         guest.validate_args(self.args()); guest.validate_args(self.args(startup_timeout_seconds=60))
         invalid = {'session_id': ['', 'g'*32, 'a'*31, 'A'*32, None],

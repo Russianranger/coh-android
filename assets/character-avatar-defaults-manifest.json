@@ -1,15 +1,19 @@
 {
   "archive": {
-    "bytes": 1722790,
+    "bytes": 1842488,
     "filename": "character-avatar-defaults.zip",
-    "sha256": "8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2"
+    "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
   },
   "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
-  "file_count": 20,
+  "file_count": 21,
   "files": {
     "data/player_library/male_boot.geo": {
       "bytes": 156354,
       "sha256": "40c0b72e845bb44e1b875044c8e5bb53819f428b248fa7d620bb1077c46e0e39"
+    },
+    "data/player_library/male_glove.geo": {
+      "bytes": 242558,
+      "sha256": "e88c4f3e340766329b04b2a6544b277e4de312427fbf77badc828acbbfd3a16f"
     },
     "data/player_library/male_hair.geo": {
       "bytes": 478622,
@@ -91,9 +95,9 @@
   "format": 1,
   "gameplay_validated": false,
   "installation": "Only missing private client worktree files; imported assets, client prerequisites and prepared caches unchanged",
-  "payload_bytes": 2737564,
+  "payload_bytes": 2980122,
   "provenance": {
-    "checked_at_utc": "2026-10-01T03:24:24.496793+00:00",
+    "checked_at_utc": "2026-10-01T10:51:11.480137+00:00",
     "entries": {
       "data/player_library/male_boot.geo": {
         "cached_header_id": 1013,
@@ -120,6 +124,32 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
         "stored_bytes": 92197,
         "stored_sha256": "f8208d20202c718055b09e88f4a3a4cc7b0b9d2aa4aef11d3104ac11dde28ab6"
+      },
+      "data/player_library/male_glove.geo": {
+        "cached_header_id": 1020,
+        "compressed": true,
+        "geometry_header": {
+          "baseline_loader_accepts_version": true,
+          "data_block_bounds_verified": true,
+          "header_decompression_verified": true,
+          "header_uncompressed_bytes": 41024,
+          "runtime_compatibility": "unverified",
+          "version": 8
+        },
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "29783b105da9825c2e3a19dbbefcd230",
+        "offset": 44491937,
+        "path": "player_library/MALE_GLOVE.geo",
+        "runtime_compatibility": "unverified",
+        "source_archive": "stage1.pigg",
+        "source_archive_bytes": 87459151,
+        "source_content_range": "bytes 44491937-44612127/87459151",
+        "source_etag": "\"a600c69a37213e53b6a909d4c36a3c16\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:23:40 GMT",
+        "source_metadata_sha256": "a67da824945e3f015bbdf1faa4e10c172b90c068000f9499041db2d50ff4c4f4",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1.pigg",
+        "stored_bytes": 120191,
+        "stored_sha256": "462c17b15717317a4dcb8dda43fda1891760f40d18b21d3681a98668eefb220d"
       },
       "data/player_library/male_hair.geo": {
         "cached_header_id": 1021,

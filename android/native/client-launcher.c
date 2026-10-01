@@ -118,25 +118,33 @@ static int quoted(char *out, size_t limit, const char *text) {
 /* Only the explicit private fake-auth login profile may request the game's
    supported development-stamp override. The DbServer wire-protocol check and
    our pinned binary/data validation are unchanged. */
-static const char *launch_policy(int argc, const char *mode, int *generate) {
+static const char *launch_policy(int argc, const char *mode, int *generate, unsigned long *lifetime_ms) {
     *generate=0;
+    *lifetime_ms=20*60*1000;
     if(argc==4) return "";
     if(argc!=5 || !mode) return NULL;
     if(!strcmp(mode,"--generate-caches")) { *generate=1; return ""; }
     if(!strcmp(mode,"--local-login")) return " -noversioncheck 1";
+    /* Character creation permits 900s startup, 1200s interaction after ready,
+       and 60s final observation. Other profiles retain their accepted bound. */
+    if(!strcmp(mode,"--character-creation")) {
+        *lifetime_ms=36*60*1000;
+        return " -noversioncheck 1";
+    }
     return NULL;
 }
 int main(int argc, char **argv) {
     HANDLE saved[3]={GetStdHandle(STD_INPUT_HANDLE), GetStdHandle(STD_OUTPUT_HANDLE), GetStdHandle(STD_ERROR_HANDLE)};
     HANDLE pipe=NULL, screen=INVALID_HANDLE_VALUE;
     ULONGLONG deadline;
+    unsigned long lifetime_ms;
     int attached=0, generate=0;
     STARTUPINFOA si;
     PROCESS_INFORMATION pi;
     char command[4096], executable[2048], message[512];
     DWORD code;
     size_t index;
-    const char *policy=launch_policy(argc,argc==5 ? argv[4] : NULL,&generate);
+    const char *policy=launch_policy(argc,argc==5 ? argv[4] : NULL,&generate,&lifetime_ms);
     const char *flags=generate ? " -createbins -nogui 1 -console 1 -noaudio 1 -verbose 1 -physics 0" :
         " -nogui 1 -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
     if (!policy || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
@@ -178,9 +186,16 @@ int main(int argc, char **argv) {
        it explicitly. Cache generation keeps the previous attach-to-child path.
        In either case, verify exact child membership before observing it. */
     if(generate) FreeConsole();
-    deadline=GetTickCount64()+20*60*1000;
+    deadline=GetTickCount64()+lifetime_ms;
     while(WaitForSingleObject(pi.hProcess,500)==WAIT_TIMEOUT) {
-        if(GetTickCount64()>=deadline) { CloseHandle(pi.hProcess); CloseHandle(pipe); return 67; }
+        if(GetTickCount64()>=deadline) {
+            if(attached) console_capture(screen,pipe);
+            snprintf(message,sizeof(message),"COH_CLIENT_LAUNCHER_TIMEOUT_V1 {\"session_id\":\"%s\",\"pid\":%lu,\"lifetime_ms\":%lu,\"deadline_tick_ms\":%llu}\n",
+                argv[1],(unsigned long)pi.dwProcessId,lifetime_ms,(unsigned long long)deadline);
+            output(pipe,message);
+            if(attached) { CloseHandle(screen); FreeConsole(); }
+            CloseHandle(pi.hProcess); CloseHandle(pipe); return 67;
+        }
         if(!attached && (!generate || AttachConsole(pi.dwProcessId))) {
             DWORD ids[32],number,j;
             int owned=0;

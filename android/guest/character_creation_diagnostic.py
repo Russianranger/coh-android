@@ -78,11 +78,15 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
     def __init__(self, args, context):
         super().__init__(args, context)
         version_policy = dict(self.local_server.report['version_policy'])
+        version_policy['native_launcher_mode'] = '--character-creation'
         self.local_server = character.LocalCharacterServer(self)
         self.local_server.report['version_policy'] = version_policy
         self.connected_announced = False
         self.saved_announced = False
         self.connected_identity = None
+
+    def launcher_command(self):
+        return interactive.ClientInteractiveDiagnostic.launcher_command(self) + ['--character-creation']
 
     def initialize(self):
         request = self.args.state / 'character-logout.json'

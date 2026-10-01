@@ -78,7 +78,7 @@ and Martial Arts hair, without a confirmation or another random choice. The next
 candidate adds that explicit test step and its seven missing asset dependencies;
 partial installation or a partial preview is not a visual qualification.
 
-The current candidate contains a pinned 20-file supplement for the Male body
+That candidate contained a pinned 20-file supplement for the Male body
 and the costume selected by **Clear**. A bounded source audit recovered only
 the missing entries from the original project's PIGG donors;
 [entry integrity and format checks](android-evidence/character-avatar-source-review-20261001.json)
@@ -101,6 +101,33 @@ accepted. Full bounded server logs were retained, PostgreSQL stopped gracefully,
 and zero owned workers or inspection failures remained. The next candidate
 recognizes the source's two PID-bound title forms and preserves rejection of
 unrelated windows, while retaining the existing renderer and startup checks.
+
+The [owned-window retry](android-evidence/character-hosted-36846149988-failed.json)
+at source `e00f04970fa438864c08c339e5f6c65515b7ecdc` kept the map-title window
+observed and delivered the same creation steps. Clear rendered textured tights,
+boots and head/hair, but the forearms and hands were absent. The native launcher
+then returned 67 at its inherited 1,200-second deadline from launch; the guest's
+1,200-second interaction window starts after client readiness, reached at
+419.223 seconds. This cutoff is not evidence that the game process crashed.
+The last console stage was `AutoGroup..` during map loading. No CLIENT_READY,
+rendered Atlas or ordinary logout/save is accepted. Guest cleanup completed
+without forced host termination, remaining owned workers or inspection failures.
+The next correction gives only character mode a 2,160-second launcher bound
+(900 startup + 1,200 interaction + 60 completion grace), and adds the missing
+smooth glove geometry using its source-pinned donor entry.
+
+The corrected supplement contains 21 files in a 1,842,488-byte ZIP, adding
+2,980,122 bytes to the private worktree. Its only new file is
+`data/player_library/male_glove.geo`, containing the two Smooth forearm/hand
+models used by Clear; the matching glove texture was already included.
+The source entry MD5 and decoded GEO model names were checked, and all original
+20 file bytes and provenance records remain unchanged. Installation tests cover
+both 13-to-21 and 20-to-21 upgrades without replacing accepted files or changing
+the import, worktree identity or caches. Visual completeness and the full
+creation/save milestone still require the corrected hosted run.
+The combined correction passed all 173 interactive and 27 client/cache tests.
+Independent review checked the exact glove model names, previous file pins and
+provenance, strict launcher modes and the production deadline regression.
 
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 

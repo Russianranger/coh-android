@@ -14,11 +14,12 @@ import client_startup_diagnostic as client
 require = client.require
 MANIFEST = 'character-avatar-defaults-manifest.json'
 ARCHIVE = 'character-avatar-defaults.zip'
-MANIFEST_SHA256 = '373330af26e834205ecf8d367d0c5be3c3c7ca5b5d64558e61489e450ad47ce1'
-ARCHIVE_SHA256 = '8a6b7b5c88bf6a8183516615e28a34dbf9e7221a904c9a43f857fcf5b912c5e2'
-ARCHIVE_BYTES, PAYLOAD_BYTES = 1722790, 2737564
+MANIFEST_SHA256 = '2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7'
+ARCHIVE_SHA256 = '03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29'
+ARCHIVE_BYTES, PAYLOAD_BYTES = 1842488, 2980122
 ALLOWED = frozenset({
     'data/player_library/male_boot.geo',
+    'data/player_library/male_glove.geo',
     'data/player_library/male_hair.geo',
     'data/player_library/male_pants.geo',
     'data/player_library/male_shirt.geo',
