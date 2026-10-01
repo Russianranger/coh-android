@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation/save remains accepted. The unchanged signed 0.10.0 APK now passes two real ARM64 graphical sessions, reopening, native ground recovery, second save and persistence. The next implemented milestone is Atlas materials and walking/jump controls in 0.11.0; its APK build/publication and focused Thor test follow this gate. Preserve THORHERO and app data.**
+**Current: Thor 0.9.0 creation/save remains accepted. The unchanged signed 0.10.0 APK now passes two real ARM64 graphical sessions, reopening, native ground recovery, second save and persistence. Atlas materials and walking/jump controls in 0.11.0 are implemented and its retained-signer APK is published. The next action is the focused Thor test. Preserve THORHERO and app data.**
 
 The retained-APK [run `36929550592`](https://github.com/Russianranger/coh-android/actions/runs/36929550592)
 passed tooling and the full native ARM64 runtime on host-driver commit `f7c6c3a6`.
@@ -14,6 +14,30 @@ Ordinary `/stuck` produced fresh stable native positions near `(106.45, 0.25,
 -114.45)` over 30 seconds; the second normal save committed that Atlas position
 with MapId/StaticMapId 1. Both sessions stopped all owned workers.
 See [the reviewed gate receipt](android-evidence/atlas-world-reopen-reviewed.json).
+
+The [0.11.0 release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.0)
+is published from code commit `1649e807d2b2310170e775c53bafa24cd932638a`.
+[Build/publication run `36937373454`](https://github.com/Russianranger/coh-android/actions/runs/36937373454)
+passed its actual qualification gate, Java/D8/resource build, payload comparison,
+package badging, retained-key signing and release upload verification. The APK
+is 595,099,993 bytes with SHA-256
+`e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924`.
+All three public assets are present: APK, checksum and focused testing notes.
+Independent packaging review confirmed exactly five world-bound payload changes
+and two Java UI/input changes, unchanged native/client/server payloads and the
+same application ID/signing certificate. The complete build receipt and release
+pins are retained under `publication` in
+[the material receipt](android-evidence/atlas-material-inputs-0.11.0.json).
+Both legacy workflows passed tooling and skipped duplicate APK/runtime jobs.
+PR #1 remains draft and main remains `04d62616`.
+
+This delivery completes the current development milestone. Preserve the
+accepted physical 0.9.0 behavior and the healthy hosted 0.10.0 reopening gate.
+Do not re-run either gate merely for completeness. Await the single focused
+0.11.0 Thor report covering scenery, neutral movement stop, jump/camera,
+ground contact and normal save. Fix the exact observed defect next; after
+initial world/movement acceptance, advance collision completeness, map beaconing
+and native NPC/gameplay behavior sequentially.
 
 Manual inspection confirms the avatar, ground, stairs, statue and building
 geometry in the reopened Atlas frame. Materials remain flat or poorly textured,
@@ -55,6 +79,8 @@ cover only reopening, visible Atlas materials, a brief walk/jump/camera check,
 then normal save and export. Do not repeat character customization.
 
 
+The following resolved regression notes preserve the path to the passed gate.
+
 Run `36920583713` at `204615c6` proves the narrow NULL MapId baseline fix.
 Its seed session passed in 1,845.046 seconds. The second session preserved
 identity, authentication, powers, costume and the exact Atlas SQL position,
@@ -74,8 +100,9 @@ driver commit/source inventory. It performs two real sessions with a fresh
 PostgreSQL profile; the failed run did not archive a reusable database cluster.
 It does not rebuild client, server or APK components. The original full-build
 workflow routes bounded host-only pushes to this qualification, avoiding a
-duplicate runtime and rebuild. Reopening remains pending until the normal
-second save, persistence comparison and cleanup pass.
+duplicate runtime and rebuild. At that point, reopening remained pending until the normal
+second save, persistence comparison and cleanup passed. Run `36929550592` above
+now satisfies this gate.
 
 Run `36913457461` at `07eb3ecb` completed with a runtime failure. Its first
 graphical session passed in 1,840.069 seconds, reached CLIENT_READY, displayed
@@ -118,8 +145,9 @@ World/avatar payloads and the world marker now publish through Linux
 avoiding the emulated hard-link backing files. Existing paths are refused before
 the PRoot rename hook, and the kernel refuses concurrent replacement. Publication
 fails closed if that operation is unavailable. The finite inventory budget still
-includes both pinned supplements. A fresh signed APK and real ARM64 hosted
-qualification are required before the one-session Thor test. Dependency downloads
+includes both pinned supplements. These changes required a fresh signed APK and real ARM64 hosted
+qualification before the one-session Thor test; the retained-APK gate above
+now completes that qualification. Dependency downloads
 are bounded and reuse SDK 35 when already present on the runner.
 
 
