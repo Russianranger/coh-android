@@ -1,8 +1,10 @@
 """Graphical creator identity, ordinary logout ordering and image freshness."""
 import importlib.util
+import io
 import json
 from pathlib import Path
 import struct
+import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -188,6 +190,99 @@ class CharacterHostTests(unittest.TestCase):
         result = character.ocr_button(header+'\n'.join(rows), 'No', (220, 230, 580, 465))
         self.assertEqual(result, (413, 342, 80.0))
         self.assertIsNone(character.ocr_button(header+'\n'.join(rows), 'Yes', (220, 230, 580, 465)))
+
+    def test_dialog_ocr_crops_frame_limits_threads_and_restores_click_coordinates(self):
+        from PIL import Image
+        tsv = ('level\tleft\ttop\twidth\theight\tconf\ttext\n'
+               '5\t651\t243\t30\t30\t95.6\tNo\n')
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            frame = host.ClientFramebuffer()
+
+            def recognize(command, **kwargs):
+                self.assertTrue((root/'tutorial-ocr-01.png').is_file())
+                self.assertEqual(Image.open(io.BytesIO(kwargs['input'])).size, (1080, 705))
+                self.assertEqual(kwargs['env']['OMP_THREAD_LIMIT'], '1')
+                self.assertEqual(kwargs['env']['OMP_NUM_THREADS'], '1')
+                self.assertEqual(kwargs['timeout'], 30)
+                return SimpleNamespace(stdout=tsv.encode())
+
+            with mock.patch.object(character.shutil, 'which', return_value='/usr/bin/tesseract'), \
+                 mock.patch.object(character.subprocess, 'run', side_effect=recognize), \
+                 mock.patch.object(host, 'save_png', side_effect=save):
+                point, stem = character.read_button(frame, root, 'No', 'tutorial', 1, (220, 230, 580, 465))
+            self.assertEqual(point, (442, 316, 95.6))
+            self.assertEqual((root/(stem+'.tsv')).read_text(), tsv)
+
+    def test_ocr_timeout_retains_original_frame_and_attempt_geometry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with mock.patch.object(character.shutil, 'which', return_value='/usr/bin/tesseract'), \
+                 mock.patch.object(character.subprocess, 'run', side_effect=subprocess.TimeoutExpired('tesseract', 30)), \
+                 mock.patch.object(host, 'save_png', side_effect=save):
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    character.read_button(host.ClientFramebuffer(), root, 'No', 'tutorial', 2, (220, 230, 580, 465))
+            self.assertTrue((root/'tutorial-ocr-02.png').is_file())
+            self.assertEqual(json.loads((root/'tutorial-ocr-02.json').read_text())['region'], [220, 230, 580, 465])
+            self.assertFalse((root/'tutorial-ocr-02.tsv').exists())
+
+    def test_failure_cleanup_waits_for_guest_report_before_export(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state = root/'state'; state.mkdir()
+            evidence = root/'evidence'; evidence.mkdir()
+            process = mock.Mock()
+            process.poll.return_value = None
+
+            def finish(timeout):
+                self.assertEqual(timeout, 180)
+                self.assertEqual((state/'stop-request').read_text(), 'stop\n')
+                (state/'latest-report.json').write_text('{"status":"cancelled"}')
+                (state/'report.zip').write_bytes(b'completed-atomic-support-archive')
+                process.poll.return_value = 2
+                return 2
+
+            process.wait.side_effect = finish
+            cleanup = character.stop_guest(process, state)
+            export = character.export_guest_evidence(state, evidence, SESSION)
+            process.send_signal.assert_not_called()
+            process.kill.assert_not_called()
+            self.assertTrue(cleanup['process_reaped'])
+            self.assertFalse(cleanup['forced_quit'])
+            self.assertEqual(export['files'], ['latest-report.json', 'report.zip'])
+            self.assertFalse(export['fallback_used'])
+
+    def test_failure_cleanup_escalation_retains_only_current_collected_evidence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            state = root/'state'; state.mkdir()
+            evidence = root/'evidence'; evidence.mkdir()
+            captures = state/('client-evidence-'+SESSION); captures.mkdir()
+            (captures/'local-dbserver-logs.txt').write_text('redacted entity records')
+            (state/'private-config.txt').write_text('must not export')
+            stale = state/('client-evidence-'+'f'*32); stale.mkdir()
+            (stale/'stale.txt').write_text('must not export')
+            process = mock.Mock()
+            process.poll.return_value = None
+
+            def finish(timeout):
+                if timeout != 5: raise subprocess.TimeoutExpired('guest', timeout)
+                process.poll.return_value = -9
+                return -9
+
+            process.wait.side_effect = finish
+            cleanup = character.stop_guest(process, state)
+            export = character.export_guest_evidence(state, evidence, SESSION)
+            self.assertEqual(process.wait.call_args_list, [mock.call(timeout=180), mock.call(timeout=15), mock.call(timeout=5)])
+            self.assertTrue(cleanup['forced_quit'] and cleanup['forced_kill'] and cleanup['process_reaped'])
+            self.assertTrue(export['fallback_used'])
+            self.assertEqual(export['files'], ['guest-evidence/local-dbserver-logs.txt'])
+            self.assertEqual((evidence/'guest-evidence/local-dbserver-logs.txt').read_text(), 'redacted entity records')
+            (captures/'private-link.txt').symlink_to(state/'private-config.txt')
+            second = root/'second'; second.mkdir()
+            rejected = character.export_guest_evidence(state, second, SESSION)
+            self.assertEqual(rejected['files'], [])
+            self.assertIn('Linked guest evidence refused', rejected['errors'][0])
 
     def test_observer_retains_pre_save_request_generation_when_event_arrives_with_pixels(self):
         with tempfile.TemporaryDirectory() as temporary:

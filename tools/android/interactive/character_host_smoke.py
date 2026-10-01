@@ -26,6 +26,7 @@ host = login.host
 require = host.require
 INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
+CLEANUP_GRACE_SECONDS = 180
 CHARACTER = 'THORHERO'
 
 
@@ -132,15 +133,15 @@ def write_logout_request(path, session, client_pid, character_id):
     return value
 
 
-def ocr_button(tsv, label, region, scale=3):
+def ocr_button(tsv, label, region, scale=3, offset=(0, 0)):
     """Find a literal rendered button label; never infer progress from color."""
     left, top, right, bottom = region
     matches = []
     for row in csv.DictReader(io.StringIO(tsv), delimiter='\t'):
         try:
             text = row['text'].strip().strip('.,:;!?[](){}<>|').casefold()
-            x = (int(row['left'])+int(row['width'])/2)/scale
-            y = (int(row['top'])+int(row['height'])/2)/scale
+            x = offset[0] + (int(row['left'])+int(row['width'])/2)/scale
+            y = offset[1] + (int(row['top'])+int(row['height'])/2)/scale
             confidence = float(row['conf'])
         except (KeyError, TypeError, ValueError): continue
         if text == label.casefold() and confidence >= 20 and left <= x <= right and top <= y <= bottom:
@@ -156,19 +157,28 @@ def read_button(frame, evidence, label, step, attempt, region):
     # fonts. Retain the original color PNG for actual visual inspection.
     scale = 3
     pixels = frame.pixels
+    left, top, right, bottom = region
+    require(all(type(value) is int for value in region) and 0 <= left < right <= frame.width
+            and 0 <= top < bottom <= frame.height, 'OCR region is outside the actual framebuffer')
+    stem = '%s-ocr-%02d' % (step, attempt)
+    host.save_png(evidence/(stem+'.png'), pixels)
     rendered = Image.frombytes('RGB', (frame.width, frame.height), bytes(pixels), 'raw', 'BGRX')
+    rendered = rendered.crop(region)
     text = rendered.point(lambda value: 255 if value > 100 else 0).convert('L').point(lambda value: 0 if value > 225 else 255)
-    text = text.resize((frame.width*scale, frame.height*scale), Image.Resampling.BICUBIC)
+    text = text.resize(((right-left)*scale, (bottom-top)*scale), Image.Resampling.BICUBIC)
     ppm = io.BytesIO()
     text.save(ppm, format='PPM')
+    # Bound OCR CPU use and image size while the client and MapServer share the
+    # runner; a full upscaled frame previously exceeded the OCR deadline.
+    environment = dict(os.environ, OMP_THREAD_LIMIT='1', OMP_NUM_THREADS='1')
+    (evidence/(stem+'.json')).write_text(json.dumps({'region': list(region), 'scale': scale,
+        'ocr_width': text.width, 'ocr_height': text.height, 'omp_threads': 1, 'timeout_seconds': 30})+'\n')
     result = subprocess.run(['tesseract', 'stdin', 'stdout', '--psm', '11', 'tsv'], input=ppm.getvalue(),
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20, check=True)
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=True, env=environment)
     require(len(result.stdout) <= 1024*1024, 'OCR text exceeds bounded frame evidence')
     tsv = result.stdout.decode('utf-8')
-    stem = '%s-ocr-%02d' % (step, attempt)
     (evidence/(stem+'.tsv')).write_text(tsv)
-    host.save_png(evidence/(stem+'.png'), pixels)
-    match = ocr_button(tsv, label, region)
+    match = ocr_button(tsv, label, region, scale=scale, offset=(left, top))
     return match, stem
 
 
@@ -502,6 +512,76 @@ def validate_observer(observer, report):
                 'Missing fresh current-client proof images: '+name)
 
 
+def stop_guest(process, state):
+    """Allow bounded evidence collection and report persistence after cancellation."""
+    result = {'stop_requested': False, 'grace_seconds': CLEANUP_GRACE_SECONDS,
+              'forced_quit': False, 'forced_kill': False, 'errors': []}
+    if process is not None and process.poll() is None:
+        try:
+            (state/'stop-request').write_text('stop\n')
+            result['stop_requested'] = True
+        except OSError as error:
+            result['errors'].append('Cannot request guest stop: '+str(error))
+        try:
+            try: process.wait(timeout=CLEANUP_GRACE_SECONDS)
+            except subprocess.TimeoutExpired:
+                result['forced_quit'] = True
+                process.send_signal(signal.SIGQUIT)
+                try: process.wait(timeout=15)
+                except subprocess.TimeoutExpired:
+                    result['forced_kill'] = True
+                    process.kill()
+                    process.wait(timeout=5)
+        except (OSError, subprocess.SubprocessError) as error:
+            # Cleanup errors must not prevent retention of the original
+            # observer failure and support evidence already written by guest.
+            result['errors'].append('Guest stop failed: '+str(error))
+    result['process_reaped'] = process is None or process.poll() is not None
+    return result
+
+
+def export_guest_evidence(state, evidence, session):
+    """Retain atomic reports, or the current session's collected support files."""
+    result = {'files': [], 'fallback_used': False, 'errors': []}
+    for name, limit in (('latest-report.json', 2*1024*1024), ('report.zip', 148*1024*1024)):
+        source = state/name
+        try:
+            require(not source.is_symlink(), 'Linked guest report refused')
+            if not source.is_file(): continue
+            require(source.stat().st_size <= limit, 'Guest report exceeded export bound')
+            shutil.copyfile(source, evidence/name)
+            result['files'].append(name)
+        except (OSError, ValueError) as error:
+            result['errors'].append(name+': '+str(error))
+    if 'report.zip' in result['files']:
+        return result
+    # Guest-produced evidence is bounded and server logs have already passed its
+    # credential redaction. Never traverse the live runtime, database, or config.
+    captures = state/('client-evidence-'+session)
+    try:
+        require(not captures.is_symlink(), 'Linked guest evidence directory refused')
+        if not captures.is_dir(): return result
+        paths = sorted(captures.rglob('*'))
+        require(len(paths) <= 140, 'Guest evidence entry count exceeded bound')
+        files, total = [], 0
+        for path in paths:
+            require(not path.is_symlink(), 'Linked guest evidence refused')
+            if not path.is_file(): continue
+            files.append(path)
+            total += path.stat().st_size
+            require(len(files) <= 70 and total <= 144*1024*1024, 'Guest evidence exceeded export bound')
+        result['fallback_used'] = True
+        for source in files:
+            relative = Path('guest-evidence')/source.relative_to(captures)
+            target = evidence/relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target)
+            result['files'].append(relative.as_posix())
+    except (OSError, ValueError) as error:
+        result['errors'].append('Guest evidence fallback: '+str(error))
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('apk', 'build-report', 'proot', 'work', 'evidence', 'archive'):
@@ -543,20 +623,13 @@ def main():
             failure = {'type': type(error).__name__, 'message': str(error)}
             raise
         finally:
-            if process is not None and process.poll() is None:
-                (args.work/'state/stop-request').write_text('stop\n')
-                try: process.wait(timeout=35)
-                except subprocess.TimeoutExpired:
-                    process.send_signal(signal.SIGQUIT)
-                    try: process.wait(timeout=10)
-                    except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=5)
-            for name in ('latest-report.json', 'report.zip'):
-                source = args.work/'state'/name
-                if source.is_file(): shutil.copyfile(source, args.evidence/name)
+            cleanup = stop_guest(process, args.work/'state')
+            export = export_guest_evidence(args.work/'state', args.evidence, session)
             result = {'format': 1, 'status': 'failed' if failure else 'passed',
                 'scope': 'exact_apk_graphical_character_creation_native_arm64', 'repository_commit': args.repository_commit,
                 'apk_sha256': host.digest(args.apk), 'runtime_manifest_sha256': host.digest(assets/'runtime-manifest.json'),
                 'session_id': session, 'external_observer': observer, 'failure': failure,
+                'host_cleanup': cleanup, 'guest_evidence_export': export,
                 'elapsed_seconds': round(time.monotonic()-start, 3), 'android_execution_validated': False,
                 'android_surface_validated': False, 'character_creation_visual_validated': False,
                 'gameplay_validated': False}

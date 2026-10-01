@@ -73,23 +73,44 @@ def logout_follows_delivery(logout, delivery):
     return -999 <= timestamp - delivery['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS
 
 
+def entity_records(logs):
+    """Yield IMPORTANT records from the two stock owned-server log routes.
+
+    The embedded DbServer log server adds the Atlas map instance/host/DbServer
+    prefix. If its connection fails, UtilitiesLib writes locally with level 0.
+    """
+    pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
+        r'(?:(?P<local_level>0)|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
+        r'(?P<message>[^\r\n]+)$')
+    for name, text in logs:
+        path = Path(name)
+        if path.parent == Path('logs/mapserver') and path.name == 'entity.log':
+            route = 'local_mapserver'
+        elif (path.parent == Path('logs/dbserver')
+                and re.fullmatch(r'entity_[0-9][0-9_-]*\.log', path.name)):
+            route = 'embedded_dbserver_logserver'
+        else:
+            continue
+        for line in text[:text.rfind('\n') + 1].splitlines():
+            match = pattern.fullmatch(line)
+            if match is None or (match['local_level'] is not None) != (route == 'local_mapserver'):
+                continue
+            yield match['message'], {'path': name, 'line_sha256': hashlib.sha256(line.encode()).hexdigest(),
+                'log_timestamp': match['timestamp'], 'log_route': route,
+                'map_instance': match['map_instance']}
+
+
 def logout_record(logs):
     """Record the owned entity's live logout timer, not its underlying cause.
 
     A normal CLIENT_DISCONNECT and a still-linked stalled client can both take
     this timer path. Explicit command delivery must be bound separately.
     """
-    pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) (?:-?\d+ )?'
-        r'"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
-    for name, text in logs:
-        if not Path(name).name.casefold().startswith('entity_'): continue
-        for line in text[:text.rfind('\n') + 1].splitlines():
-            match = pattern.fullmatch(line)
-            if match:
-                return {'path': name, 'line_sha256': hashlib.sha256(line.encode()).hexdigest(),
-                    'log_timestamp': match['timestamp'],
-                    'reason': 'Logout timer expired', 'account': ACCOUNT, 'name': CHARACTER,
-                    'source': 'current_owned_server_entity_log_live_client_logout_timer'}
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ \[Disconnect:Logout timer expired\] [^\r\n]+$')
+    for message, record in entity_records(logs):
+        if pattern.fullmatch(message):
+            return dict(record, reason='Logout timer expired', account=ACCOUNT, name=CHARACTER,
+                source='current_owned_server_entity_log_live_client_logout_timer')
     return None
 
 
@@ -99,18 +120,13 @@ def ready_record(logs):
     The earlier DbServer connected flag only records map assignment. This
     current-session marker is emitted after resumeCharacter accepts CLIENT_READY.
     """
-    pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) (?:-?\d+ )?'
-        r'"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ Connection:ResumeCharacter from '
         r'127\.0\.0\.1:(?P<port>[1-9][0-9]{0,4}) AuthName "COHLOCAL"(?: [^\r\n]*)?$')
-    for name, text in logs:
-        if not Path(name).name.casefold().startswith('entity_'): continue
-        for line in text[:text.rfind('\n') + 1].splitlines():
-            match = pattern.fullmatch(line)
-            if match and int(match['port']) <= 65535:
-                return {'path': name, 'line_sha256': hashlib.sha256(line.encode()).hexdigest(),
-                    'log_timestamp': match['timestamp'], 'account': ACCOUNT, 'name': CHARACTER,
-                    'source': 'current_owned_mapserver_CLIENT_READY_resumeCharacter_success',
-                    'loaded_world_assets': True}
+    for message, record in entity_records(logs):
+        match = pattern.fullmatch(message)
+        if match and int(match['port']) <= 65535:
+            return dict(record, account=ACCOUNT, name=CHARACTER,
+                source='current_owned_mapserver_CLIENT_READY_resumeCharacter_success', loaded_world_assets=True)
     return None
 
 

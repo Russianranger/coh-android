@@ -39,6 +39,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Install image dependency for graphical driver tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-pil
       - name: Check actual client packaging, session evidence and package boundaries
         run: python3 -m unittest discover -s tools/android/interactive -p 'test_*.py' -v
       - name: Check prepared client cache reuse across package updates

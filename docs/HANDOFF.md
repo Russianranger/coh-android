@@ -34,6 +34,19 @@ fresh logout-timer and SQL evidence; the unmodified server does not log the
 individual logout packet. Keep the failed candidate's receipt and clean cleanup
 result. No device test of that APK is requested.
 
+The second 0.9.0 [hosted attempt](android-evidence/character-hosted-36802634099-failed.json),
+run 36802634099 at source `ae8054d6430c194e32344f47678e134395419046`,
+started Atlas, verified local login and reached the creator's Register page for
+THORHERO. Host OCR timed out after 20 seconds on the actual tutorial Yes/No
+prompt. No character creation, character map entry or committed save is accepted.
+PostgreSQL stopped gracefully, but the host killed PRoot before a final guest
+report was exported, so full cleanup is unverified. The male avatar preview was
+absent, with missing geometry and texture errors: base avatar geometry/textures
+are outside the accepted import. Avatar assets remain separate work before
+costume rendering or gameplay claims; this candidate keeps the existing assets
+and targets registration, Atlas environment loading and ordinary logout/save.
+No extra import or device test is requested for this failed candidate.
+
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 
 **0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**

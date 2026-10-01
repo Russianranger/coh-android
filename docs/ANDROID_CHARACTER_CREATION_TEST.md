@@ -7,6 +7,12 @@ Local login on Thor is already accepted. This session creates **THORHERO**, ente
 Atlas Park and saves through the game's ordinary logout. Exact-character reopen
 after a restart is the following milestone.
 
+Known asset limitation: the default male avatar preview is currently invisible
+because its base geometry and textures are absent from the accepted import.
+This candidate keeps the existing assets and targets registration, Atlas
+environment loading and logout/save. Costume rendering requires separate asset
+work; no additional import is requested for this milestone.
+
 ## Update
 
 1. Install `COH-Character-Creation-0.9.0.apk` over **COH Local Login 0.8.1**.
@@ -36,8 +42,8 @@ after a restart is the following milestone.
    Wait for the app to verify committed character records and collect fresh
    Android captures. The expected game screen after logout is the login screen.
 6. When enabled, tap **Finish and save report**. Wait for completion and cleanup,
-   then **Export latest report** and send the ZIP. Include whether THORHERO
-   appeared in Atlas Park and whether the app confirmed its save.
+   then **Export latest report** and send the ZIP. Include whether the Atlas Park
+   environment appeared and whether the app confirmed the character's save.
 
 The interaction window lasts twenty minutes after input becomes ready. The app
 requires the same session's map connection, ordinary logout, committed database

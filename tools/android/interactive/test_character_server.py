@@ -28,8 +28,8 @@ def fixture():
     return rows, inventory, attributes
 
 
-LOGOUT = '261001 01:30:00 1 "THORHERO:COHLOCAL" 0 [Disconnect:Logout timer expired] Science Class_Blaster, Level:1\n'
-READY = '261001 01:29:50 1 "THORHERO:COHLOCAL" 0 Connection:ResumeCharacter from 127.0.0.1:41001 AuthName "COHLOCAL" ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0\n'
+LOGOUT = '261001 01:30:00 0 "THORHERO:COHLOCAL" 0 [Disconnect:Logout timer expired] Science Class_Blaster, Level:1\n'
+READY = '261001 01:29:50 0 "THORHERO:COHLOCAL" 0 Connection:ResumeCharacter from 127.0.0.1:41001 AuthName "COHLOCAL" ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0\n'
 CONNECTED = '42 Name THORHERO Auth COHLOCAL Ip 127.0.0.1 MapId 1 SmapId 1\n'
 CLOCK = time.mktime(time.strptime('261001 01:30:00', '%y%m%d %H:%M:%S'))
 SESSION = '0123456789abcdef0123456789abcdef'
@@ -82,6 +82,25 @@ class CharacterSnapshotTests(unittest.TestCase):
 
 
 class LogoutTests(unittest.TestCase):
+    def test_routed_atlas_records_and_local_fallback_match_stock_logger_formats(self):
+        for parser, line in ((server.ready_record, READY), (server.logout_record, LOGOUT)):
+            local = parser([('logs/mapserver/entity.log', line)])
+            self.assertEqual(local['log_route'], 'local_mapserver')
+            routed = line[:16] + 'City_01_01_1:127.0.0.1:127.0.0.1 ' + line[18:].rstrip('\n') + ' BuildNumber: dev\n'
+            good = parser([('logs/dbserver/entity_2026-10-01-01-00-00.log', routed)])
+            self.assertEqual(good['log_route'], 'embedded_dbserver_logserver')
+            self.assertEqual(good['map_instance'], 'City_01_01_1')
+            for name, bad in [('logs/mapserver/entity.log', routed),
+                    ('logs/dbserver/entity_2026-10-01-01-00-00.log', line),
+                    ('other/entity_2026-10-01-01-00-00.log', routed),
+                    ('logs/dbserver/entity_2026-10-01-01-00-00.log', routed.replace('City_01_01', 'City_02_01')),
+                    ('logs/dbserver/entity_2026-10-01-01-00-00.log', routed.replace('City_01_01_1:', 'City_01_01_2:')),
+                    ('logs/dbserver/entity_2026-10-01-01-00-00.log', routed.replace('127.0.0.1:', '192.0.2.1:', 1)),
+                    ('logs/dbserver/entity_2026-10-01-01-00-00.log', routed.replace(':127.0.0.1 ', ':192.0.2.1 ', 1)),
+                    ('logs/mapserver/entity.log', line.replace(' 0 "THORHERO', ' 1 "THORHERO', 1))]:
+                with self.subTest(parser=parser.__name__, name=name, bad=bad):
+                    self.assertIsNone(parser([(name, bad)]))
+
     def receipt(self):
         return {'format': 1, 'session_id': SESSION, 'client_pid': 123, 'character_id': 42,
                 'action': 'quittologin', 'sent_utc_ms': 90000}
@@ -118,31 +137,31 @@ class LogoutTests(unittest.TestCase):
                 server.read_logout_delivery(path, SESSION, 123, 42, 10000, 100000)
 
     def test_timer_must_follow_delivered_command_with_second_precision(self):
-        logout = server.logout_record([('logs/entity_261001.log', LOGOUT)])
+        logout = server.logout_record([('logs/mapserver/entity.log', LOGOUT)])
         for offset, expected in [(-120001, False), (-120000, True), (-5000, True), (999, True), (1000, False)]:
             delivery = dict(self.receipt(), sent_utc_ms=int(CLOCK*1000) + offset)
             self.assertEqual(server.logout_follows_delivery(logout, delivery), expected)
 
     def test_client_ready_requires_own_character_loopback_and_complete_entity_line(self):
-        good = server.ready_record([('logs/entity_261001.log', READY)])
+        good = server.ready_record([('logs/mapserver/entity.log', READY)])
         self.assertEqual(good['log_timestamp'], '261001 01:29:50')
         self.assertTrue(good['loaded_world_assets'])
-        for name, line in [('logs/chat_261001.log', READY), ('logs/entity_261001.log', READY.rstrip('\n')),
-                ('logs/entity_261001.log', READY.replace('THORHERO', 'OTHER')),
-                ('logs/entity_261001.log', READY.replace('COHLOCAL', 'OTHER')),
-                ('logs/entity_261001.log', READY.replace('127.0.0.1', '192.0.2.1')),
-                ('logs/entity_261001.log', READY.replace('41001', '65536')),
-                ('logs/entity_261001.log', 'chat says: ' + READY)]:
+        for name, line in [('logs/chat_261001.log', READY), ('logs/mapserver/entity.log', READY.rstrip('\n')),
+                ('logs/mapserver/entity.log', READY.replace('THORHERO', 'OTHER')),
+                ('logs/mapserver/entity.log', READY.replace('COHLOCAL', 'OTHER')),
+                ('logs/mapserver/entity.log', READY.replace('127.0.0.1', '192.0.2.1')),
+                ('logs/mapserver/entity.log', READY.replace('41001', '65536')),
+                ('logs/mapserver/entity.log', 'chat says: ' + READY)]:
             with self.subTest(name=name, line=line): self.assertIsNone(server.ready_record([(name, line)]))
 
     def test_only_complete_owned_entity_live_logout_record_counts(self):
-        good = [('logs/entity_261001.log', LOGOUT)]
+        good = [('logs/mapserver/entity.log', LOGOUT)]
         self.assertEqual(server.logout_record(good)['reason'], 'Logout timer expired')
-        for name, line in [('logs/chat_261001.log', LOGOUT), ('logs/entity_261001.log', LOGOUT.rstrip('\n')),
-                ('logs/entity_261001.log', LOGOUT.replace('THORHERO','OTHER')),
-                ('logs/entity_261001.log', LOGOUT.replace('COHLOCAL','OTHER')),
-                ('logs/entity_261001.log', LOGOUT.replace('Logout timer expired','NetLink was closed')),
-                ('logs/entity_261001.log', 'chat says: ' + LOGOUT)]:
+        for name, line in [('logs/chat_261001.log', LOGOUT), ('logs/mapserver/entity.log', LOGOUT.rstrip('\n')),
+                ('logs/mapserver/entity.log', LOGOUT.replace('THORHERO','OTHER')),
+                ('logs/mapserver/entity.log', LOGOUT.replace('COHLOCAL','OTHER')),
+                ('logs/mapserver/entity.log', LOGOUT.replace('Logout timer expired','NetLink was closed')),
+                ('logs/mapserver/entity.log', 'chat says: ' + LOGOUT)]:
             with self.subTest(name=name, line=line): self.assertIsNone(server.logout_record([(name,line)]))
 
 
@@ -160,7 +179,7 @@ class CharacterLifecycleTests(unittest.TestCase):
             'available': True, 'tick_completed': 7, 'unchanged_seconds': 0})
         value.inventory = Mock(return_value=inventory)
         value.query = Mock(return_value=CONNECTED)
-        value.current_logs = Mock(return_value=[('logs/entity_261001.log', READY + LOGOUT)])
+        value.current_logs = Mock(return_value=[('logs/mapserver/entity.log', READY + LOGOUT)])
         value.sql_rows = Mock(side_effect=lambda table, *_args: rows[table])
         return value
 
@@ -196,7 +215,7 @@ class CharacterLifecycleTests(unittest.TestCase):
         self.assertIsNone(value.character_evidence())
         self.assertTrue(value.creation_report['db_map_assignment_observed'])
         self.assertFalse(value.creation_report['connected_on_atlas'])
-        value.character_next = 0; value.current_logs.return_value = [('logs/entity_261001.log', READY)]
+        value.character_next = 0; value.current_logs.return_value = [('logs/mapserver/entity.log', READY)]
         self.assertIsNone(value.character_evidence())
         self.assertTrue(value.creation_report['connected_on_atlas'])
         self.assertEqual(value.creation_report['client_ready_evidence']['log_timestamp'], '261001 01:29:50')
@@ -230,7 +249,7 @@ class CharacterLifecycleTests(unittest.TestCase):
         value = self.instance(); value.character_evidence(); value.character_next = 0
         self.deliver(value)
         value.query.return_value = 'invalid container request\n'
-        value.current_logs.return_value = [('logs/entity_261001.log',LOGOUT.replace('Logout timer expired','NetLink was closed'))]
+        value.current_logs.return_value = [('logs/mapserver/entity.log',LOGOUT.replace('Logout timer expired','NetLink was closed'))]
         self.assertIsNone(value.character_evidence()); value.sql_rows.assert_not_called()
         self.assertFalse(value.creation_report['verified'])
 
