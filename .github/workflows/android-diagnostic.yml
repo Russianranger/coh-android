@@ -15,16 +15,24 @@ jobs:
   tooling:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    outputs:
+      runtime_required: ${{ steps.changes.outputs.runtime_required }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
+      - name: Route bounded host fixes and gameplay updates without rebuilding DbServer
+        id: changes
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_interactive_change.py
       - name: Check app lifecycle, device policy and immutable bundle contracts
         run: |
           python3 -m unittest discover -s tools/android -p 'test_*.py' -v
           python3 -m unittest discover -s tools/android/dbserver -p 'test_*.py' -v
   apk:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.tooling.outputs.runtime_required != 'false'
     needs: tooling
     runs-on: ubuntu-24.04
     timeout-minutes: 20

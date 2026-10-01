@@ -76,8 +76,9 @@
   "native_source_explanation": {
     "manifest": "docs/source-manifest.json",
     "files": {
-      "upstream/i24/code/DBServer/clientcomm.c": "First creation assigns MapId and StaticMapId in memory, but creation cmd_buf persists StaticMapId only (1544-1554). Existing-character setNewMap uses write_sql=true (2092).",
-      "upstream/i24/code/MapServer/container/containerloadsave.c": "Map IDs are read-only (2240-2246) and ordinary packageEnt starts after them (4221)."
+      "upstream/ouroboros/DBServer/src/clientcomm.c": "First creation assigns MapId and StaticMapId in memory, but creation cmd_buf persists StaticMapId only (1544-1554). Existing-character setNewMap uses write_sql=true (2092).",
+      "upstream/ouroboros/DBServer/src/mapxfer.c": "Active map entry assigns MapId and persists it when write_sql is set (413-419).",
+      "upstream/ouroboros/MapServer/src/container/containerloadsave.c": "Map IDs are read-only (2240-2246) and ordinary packageEnt starts after them (4221)."
     }
   }
 }

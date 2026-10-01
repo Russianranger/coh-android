@@ -25,12 +25,64 @@ class WorldPackageTests(unittest.TestCase):
 
     def test_reviewed_payload_preserves_import_avatar_and_honest_provenance(self):
         document = world.read_manifest(world.ROOT / 'assets' / world.MANIFEST)
-        self.assertEqual((len(document['files']), document['payload_bytes']), (2877, 309655940))
+        self.assertEqual((len(document['files']), document['payload_bytes']), (2904, 318611871))
         self.assertEqual(document['dependency_review']['atlas_makeover_geometry_files'], 37)
         self.assertFalse(document['provenance']['source_archives_fully_downloaded'])
         self.assertFalse(document['provenance']['source_archive_sha256_verified'])
         self.assertFalse(document['dependency_review']['complete_global_world_asset_closure'])
         self.assertLess(world.ARCHIVE_PIN['bytes'], world.MAX_ARCHIVE_BYTES)
+
+    def test_recorded_material_extension_preserves_all_existing_world_payloads(self):
+        document = world.read_manifest(world.ROOT / 'assets' / world.MANIFEST)
+        additions = world.material_extension_files(document)
+        self.assertEqual(len(additions), 27)
+        self.assertEqual(sum(document['files'][name]['bytes'] for name in additions), 8955931)
+        old = {name: row for name, row in document['files'].items() if name not in additions}
+        self.assertEqual(hashlib.sha256(world.canonical(old)).hexdigest(), world.BASE_FILES_SHA256)
+        self.assertEqual(len(old), 2877)
+        targets = {Path(name).stem for name in additions}
+        self.assertTrue({'ap_cityhall_concrete_01_ns', 'male_statue_atlas_ao',
+            'statue_globe_02_n', 'plaza_concrete_linedslab_02_z'}.issubset(targets))
+
+    def test_material_extension_rejects_baseline_mutation_and_unrequested_texture(self):
+        original = world.read_manifest(world.ROOT / 'assets' / world.MANIFEST)
+        changed = json.loads(json.dumps(original))
+        existing = next(name for name in changed['files'] if name not in changed['material_extension']['files'])
+        changed['files'][existing]['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'preserved baseline'):
+            world.material_extension_files(changed)
+        changed = json.loads(json.dumps(original))
+        name = next(iter(changed['material_extension']['files']))
+        changed['material_extension']['files'][name][0]['alias'] = 'X_Unrequested_NPC_Costume'
+        with self.assertRaisesRegex(ValueError, 'recorded texture edge'):
+            world.material_extension_files(changed)
+
+    def test_verified_baseline_extension_reuses_exact_original_deflate_and_order(self):
+        old = self.entry('data/texture_library/atlas-base.texture', b'preserved original diffuse' * 30)
+        extra = self.entry('data/texture_library/atlas-normal.texture', b'recorded normal map' * 20)
+        files = {name: {'bytes': row['bytes'], 'sha256': row['sha256']} for name, row, stored in (old, extra)}
+        with tempfile.TemporaryDirectory() as temp:
+            base, extended, full = (Path(temp) / name for name in ('base.zip', 'extended.zip', 'full.zip'))
+            world.write_donor_zip(base, [old])
+            with patch.object(world, 'material_extension_files', return_value={extra[0]}), \
+                    patch.object(world, 'BASE_ARCHIVE_PIN', world.pin(base)), \
+                    patch.object(world, 'BASE_FILE_COUNT', 1):
+                world.extend_donor_zip(extended, base, {'files': files}, [extra])
+            world.write_donor_zip(full, [extra, old])
+            self.assertEqual(extended.read_bytes(), full.read_bytes())
+            with zipfile.ZipFile(extended) as archive:
+                self.assertEqual(archive.read(old[0]), b'preserved original diffuse' * 30)
+                self.assertEqual(archive.read(extra[0]), b'recorded normal map' * 20)
+
+    def test_changed_baseline_archive_is_rejected_before_material_network_access(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); archive = root / world.ARCHIVE; manifest = root / world.MANIFEST
+            baseline = root / 'unaccepted-base.zip'; baseline.write_bytes(b'other archive')
+            document = world.read_manifest(world.ROOT / 'assets' / world.MANIFEST)
+            with patch.object(world, 'read_manifest', return_value=document):
+                with self.assertRaisesRegex(ValueError, 'Baseline Atlas archive differs'):
+                    world.materialize(archive, manifest, root=root, base_archive=baseline,
+                        downloader=lambda group: self.fail('network must not run before base verification'))
 
     def test_original_deflate_and_stored_members_read_with_zipfile_and_have_reproducible_order(self):
         entries = [self.entry('data/object_library/atlas.geo', b'ground triangles' * 30),

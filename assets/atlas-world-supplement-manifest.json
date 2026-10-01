@@ -1,8 +1,8 @@
 {
   "archive": {
-    "bytes": 203438405,
+    "bytes": 207803201,
     "filename": "atlas-world-supplement.zip",
-    "sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60"
+    "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
   },
   "cache_refresh": {
     "accepted_cache_archive_modified": false,
@@ -567,7 +567,7 @@
     ],
     "limits": "Global root-name discovery includes unrelated maps/interiors. Composite names are definitions, not .texture files. 47 legacy leaf names remain unmatched outside the Atlas makeover geometry; runtime visuals/collision remain unqualified.",
     "observed_missing_mapserver_geometry_files": 485,
-    "resolved_supplied_texture_files": 2389,
+    "resolved_supplied_texture_files": 2416,
     "supplied_geometry_files": 488,
     "texture_trick_added_dependency_names": 402,
     "unresolved_legacy_texture_leaf_names": [
@@ -620,7 +620,7 @@
       "wrhs_roof_panel_02"
     ]
   },
-  "file_count": 2877,
+  "file_count": 2904,
   "files": {
     "data/object_library/buildings/elements/bldg_lights/bldg_lights.geo": {
       "bytes": 15140,
@@ -4974,57 +4974,113 @@
       "bytes": 175094,
       "sha256": "526bb4379a5d3cbb66c97e7e30a15a4dcf181f1ae13876114f31337712da364f"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": {
+      "bytes": 175099,
+      "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_d.texture": {
       "bytes": 44032,
       "sha256": "bc867c40347326bc29e3bf5ab90e3092a697352fb3358bb06593407d4d1af30b"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": {
+      "bytes": 44033,
+      "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_d.texture": {
       "bytes": 87706,
       "sha256": "db7e837731d3a104bd2d7faf5be9ced67b396157fd62b7d9ca69bbb8957e0688"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": {
+      "bytes": 175147,
+      "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_d.texture": {
       "bytes": 22170,
       "sha256": "726ee47e726807d5932173bb8ff67f1eec8769480bd46a20bac52a721e12b95e"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": {
+      "bytes": 44075,
+      "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_d.texture": {
       "bytes": 44026,
       "sha256": "79889f3e6b5a9701d0d6a499e90d98c2ac52f97a39380cae4f2360231c059413"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": {
+      "bytes": 87787,
+      "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_d.texture": {
       "bytes": 87706,
       "sha256": "e98634421f37cb7d7dcec69d68d520dc9c431f379d49f6e23cfcfbea12f78c31"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": {
+      "bytes": 175147,
+      "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_d.texture": {
       "bytes": 699388,
       "sha256": "ce650604dec1bf3cafd28bb521fa3c23c2e4c4264d80d9b2b946261e997ab5f9"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": {
+      "bytes": 1398509,
+      "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01.texture": {
       "bytes": 175097,
       "sha256": "cabbb5c2f6efeed02e7b2b0fdef391454b0288684c427a99812f643200bbf5d2"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": {
+      "bytes": 349932,
+      "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01.texture": {
       "bytes": 175094,
       "sha256": "525c5e862f966c58a194f5bdf918e1c51294fe1deac1479c742129d7947474f7"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": {
+      "bytes": 349929,
+      "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_d.texture": {
       "bytes": 44021,
       "sha256": "0cebca48417da3213ec8d88f704eb7e28ea38075277e06b3212505feff95d033"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": {
+      "bytes": 11254,
+      "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_d.texture": {
       "bytes": 44023,
       "sha256": "07bcf9dce25c119efef91062f33efe29be65f380b916d32001185110e435576c"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": {
+      "bytes": 22248,
+      "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_d.texture": {
       "bytes": 44026,
       "sha256": "a53a1c116d75c036e729de1867301f85d1296693233993835e03741d90cc04b5"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": {
+      "bytes": 87787,
+      "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_01_d.texture": {
       "bytes": 44026,
       "sha256": "833e21916c7a8beeb2cd1faf191c132ac7cb1da8a972a7147a0748f8e1e44085"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": {
+      "bytes": 44024,
+      "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_d.texture": {
       "bytes": 175097,
       "sha256": "cc1515dae6d179139686fd0627177701a8ef78a1436193a53d715196ddd0dcb0"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": {
+      "bytes": 349930,
+      "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_automarks_decals_01_b.texture": {
       "bytes": 1398516,
@@ -5034,9 +5090,17 @@
       "bytes": 349939,
       "sha256": "bd5213acf90ff7012f5864b5c888ee6bada047fa779a5377039beccbfc5cfb12"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": {
+      "bytes": 349939,
+      "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_b.texture": {
       "bytes": 1398507,
       "sha256": "64351cdb3970d12bca33e83c767a611f426871b55dfcf8072d0bdc94ed770c80"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": {
+      "bytes": 1398507,
+      "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_decal_mask_01.texture": {
       "bytes": 349933,
@@ -5054,6 +5118,10 @@
       "bytes": 349933,
       "sha256": "7765d030ef9b3e15f588a0fd4f3b7a1bdb2a2d211572483c4f63ef09ac4f95df"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": {
+      "bytes": 175099,
+      "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/decals/grime/ap_grime_decal_01_b.texture": {
       "bytes": 1398506,
       "sha256": "7c9ee0f2b4387695675b1adb52d0d5676f6d61f61c4b2b85c1cf39cf683e49ed"
@@ -5061,6 +5129,14 @@
     "data/texture_library/world/city_zones/atlas_park_makeover/decals/grime/ap_grime_decal_dark_01_b.texture": {
       "bytes": 1398511,
       "sha256": "e84adf9c4d922321959bfe100e93e01cd4d58b005a97d7e201a305ff0abc3f11"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": {
+      "bytes": 44027,
+      "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": {
+      "bytes": 349930,
+      "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362"
     },
     "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_dc.texture": {
       "bytes": 349931,
@@ -5070,9 +5146,17 @@
       "bytes": 1398499,
       "sha256": "fa7b657ecdfaf259b3ff77a1941570a606f6623eaad5fae5c724ef6e2f935ace"
     },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": {
+      "bytes": 1398500,
+      "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336"
+    },
     "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_b.texture": {
       "bytes": 349932,
       "sha256": "89b4f5324d504f67a087e2a3b6bcd7fa21fbb83704a30d6f637a18b1f2cc795d"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": {
+      "bytes": 349933,
+      "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9"
     },
     "data/texture_library/world/city_zones/carnival_outdoor/carnival_gntmask01.texture": {
       "bytes": 175081,
@@ -5214,6 +5298,10 @@
       "bytes": 44021,
       "sha256": "cbe4c6465fc829103d2c754efe14aa90270cf61099357802c5254063c9c79ef8"
     },
+    "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": {
+      "bytes": 175084,
+      "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205"
+    },
     "data/texture_library/world/city_zones/hero_statues/male/statue_globe_01_d.texture": {
       "bytes": 87769,
       "sha256": "12c0a44019a766d41bacf2d1f313a01e02e9398d8b12b80b6d136c14641fe01b"
@@ -5241,6 +5329,10 @@
     "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_d.texture": {
       "bytes": 524669,
       "sha256": "a6d32c7d920598bda51c771bd2681af5c1283a20167e85784c17e3227cdea718"
+    },
+    "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": {
+      "bytes": 175187,
+      "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15"
     },
     "data/texture_library/world/city_zones/hero_statues/shared/statue_glove_p.texture": {
       "bytes": 44008,
@@ -5666,9 +5758,17 @@
       "bytes": 87764,
       "sha256": "f1bc23efd08a5db2939aec22a2516e7dd2aa2ef0fa1f54d62289a2e352448772"
     },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": {
+      "bytes": 349908,
+      "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1"
+    },
     "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_d.texture": {
       "bytes": 349910,
       "sha256": "be4c259caaec3ec3d167242a1262ba15d93901490a8fbbdba7b37c8b6952d55d"
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": {
+      "bytes": 349910,
+      "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081"
     },
     "data/texture_library/world/city_zones/praetoria/nature/alas_trees_lod_d.texture": {
       "bytes": 87767,
@@ -5677,6 +5777,10 @@
     "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_a.texture": {
       "bytes": 44002,
       "sha256": "c6500c1309c23cc127a32b8b09f69b3e79536d379c833b4650aa09819569a387"
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": {
+      "bytes": 349906,
+      "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f"
     },
     "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_lod_d.texture": {
       "bytes": 22230,
@@ -5785,6 +5889,10 @@
     "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_d.texture": {
       "bytes": 175100,
       "sha256": "b6dadfefa145cc7830b0b2d33fb695283b4158e6d7ee1faec00e848a58cc6162"
+    },
+    "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": {
+      "bytes": 175100,
+      "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82"
     },
     "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_pooltile_01_d.texture": {
       "bytes": 44027,
@@ -12134,7 +12242,249 @@
   "format": 1,
   "gameplay_validated": false,
   "installation": "Only missing private client worktree files, mirrored into the owned private server tree; imported assets/avatar/prepared-cache donor unchanged",
-  "payload_bytes": 309655940,
+  "material_extension": {
+    "baseline_archive_pin": {
+      "bytes": 203438405,
+      "sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60"
+    },
+    "baseline_file_count": 2877,
+    "baseline_files_sha256": "c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d",
+    "baseline_manifest_sha256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+    "baseline_payload_bytes": 309655940,
+    "baseline_payloads_preserved": true,
+    "file_count": 27,
+    "files": {
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": [
+        {
+          "alias": "x_AP_dirty_concrete_01",
+          "console_line": "Texture Trick \"x_AP_dirty_concrete_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        },
+        {
+          "alias": "x_AP_dirty_brick_floor_01",
+          "console_line": "Texture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        },
+        {
+          "alias": "X_AP_Drity_Asphalt_01",
+          "console_line": "Texture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_BaseConcrete_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_BaseConcrete_01\" references missing texture \"ap_cityhall_baseconcrete_01_ns\".",
+          "target": "ap_cityhall_baseconcrete_01_ns"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Border_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_01\" references missing texture \"AP_CityHall_Border_01_NS\".",
+          "target": "AP_CityHall_Border_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Border_02",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_02\" references missing texture \"AP_CityHall_Border_02_NS\".",
+          "target": "AP_CityHall_Border_02_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Border_03",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_03\" references missing texture \"AP_CityHall_Border_03_NS\".",
+          "target": "AP_CityHall_Border_03_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Border_04",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_04\" references missing texture \"AP_CityHall_Border_04_NS\".",
+          "target": "AP_CityHall_Border_04_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Concrete_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Concrete_01\" references missing texture \"AP_CityHall_Concrete_01_NS\".",
+          "target": "AP_CityHall_Concrete_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Details_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Details_01\" references missing texture \"AP_CityHall_Details_01_NS\".",
+          "target": "AP_CityHall_Details_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Dome_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Dome_01\" references missing texture \"AP_CityHall_Dome_01_NS\".",
+          "target": "AP_CityHall_Dome_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Gold_D",
+          "console_line": "Texture Trick \"X_AP_CityHall_Gold_D\" references missing texture \"AP_CityHall_Gold_NS\".",
+          "target": "AP_CityHall_Gold_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Marble",
+          "console_line": "Texture Trick \"X_AP_CityHall_Marble\" references missing texture \"AP_CityHall_Marble_NS\".",
+          "target": "AP_CityHall_Marble_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Pillar_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Pillar_01\" references missing texture \"AP_CityHall_Pillar_01_NS\".",
+          "target": "AP_CityHall_Pillar_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Plaque_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Plaque_01\" references missing texture \"AP_CityHall_Plaque_NS\".",
+          "target": "AP_CityHall_Plaque_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": [
+        {
+          "alias": "X_AP_CityHall_Tiles",
+          "console_line": "Texture Trick \"X_AP_CityHall_Tiles\" references missing texture \"AP_CityHall_Tiles_01_NS\".",
+          "target": "AP_CityHall_Tiles_01_NS"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": [
+        {
+          "alias": "x_AP_oilstains_decal_01",
+          "console_line": "Texture Trick \"x_AP_oilstains_decal_01\" references missing texture \"AP_oilstains_decal_01_n.tga\".",
+          "target": "AP_oilstains_decal_01_n.tga"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": [
+        {
+          "alias": "x_AP_crack_decal_01",
+          "console_line": "Texture Trick \"x_AP_crack_decal_01\" references missing texture \"AP_crack_decal_01_n\".",
+          "target": "AP_crack_decal_01_n"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": [
+        {
+          "alias": "x_AP_grass_decal_01",
+          "console_line": "Texture Trick \"x_AP_grass_decal_01\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_02",
+          "console_line": "Texture Trick \"x_AP_grass_decal_02\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_03",
+          "console_line": "Texture Trick \"x_AP_grass_decal_03\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_04",
+          "console_line": "Texture Trick \"x_AP_grass_decal_04\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": [
+        {
+          "alias": "X_Door_Atlas_Generic_Double",
+          "console_line": "Texture Trick \"X_Door_Atlas_Generic_Double\" references missing texture \"Door_Atlas_Generic_Double_D\".",
+          "target": "Door_Atlas_Generic_Double_D"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": [
+        {
+          "alias": "x_AP_agapanthus",
+          "console_line": "Texture Trick \"x_AP_agapanthus\" references missing texture \"AP_agapanthus_01_b.tga\".",
+          "target": "AP_agapanthus_01_b.tga"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": [
+        {
+          "alias": "x_AP_ivy_01",
+          "console_line": "Texture Trick \"x_AP_ivy_01\" references missing texture \"AP_ivy_01_dc\".",
+          "target": "AP_ivy_01_dc"
+        }
+      ],
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": [
+        {
+          "alias": "x_AP_ivy_creepers_01",
+          "console_line": "Texture Trick \"x_AP_ivy_creepers_01\" references missing texture \"AP_ivy_creepers_01_dc\".",
+          "target": "AP_ivy_creepers_01_dc"
+        }
+      ],
+      "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": [
+        {
+          "alias": "X_Male_Statue_Atlas_01",
+          "console_line": "Texture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_AO\".",
+          "target": "Male_Statue_Atlas_AO"
+        }
+      ],
+      "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": [
+        {
+          "alias": "X_Male_Statue_Atlas_Globe_01",
+          "console_line": "Texture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_N\".",
+          "target": "Statue_Globe_02_N"
+        }
+      ],
+      "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": [
+        {
+          "alias": "X_AP_treeleaf01",
+          "console_line": "Texture Trick \"X_AP_treeleaf01\" references missing texture \"Alas_tree01_d\".",
+          "target": "Alas_tree01_d"
+        }
+      ],
+      "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": [
+        {
+          "alias": "X_AP_treelroots01",
+          "console_line": "Texture Trick \"X_AP_treelroots01\" references missing texture \"Alas_treebase_n\".",
+          "target": "Alas_treebase_n"
+        }
+      ],
+      "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": [
+        {
+          "alias": "X_AP_rock01",
+          "console_line": "Texture Trick \"X_AP_rock01\" references missing texture \"AP_rock01_d.tga\".",
+          "target": "AP_rock01_d.tga"
+        }
+      ],
+      "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": [
+        {
+          "alias": "X_AP_Asphalt_01",
+          "console_line": "Texture Trick \"X_AP_Asphalt_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+          "target": "Plaza_Concrete_LinedSlab_02_Z"
+        },
+        {
+          "alias": "X_AP_BrickTile_01",
+          "console_line": "Texture Trick \"X_AP_BrickTile_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+          "target": "Plaza_Concrete_LinedSlab_02_Z"
+        }
+      ]
+    },
+    "full_material_or_world_closure": false,
+    "missing_only": true,
+    "payload_bytes": 8955931,
+    "runtime_visual_validated": false,
+    "scope": "recorded_atlas_cityhall_statue_plaza_material_dependencies",
+    "source_console_bytes": 38814681,
+    "source_console_sha256": "6587e51ea90570ba520aab496db5c79ea823bed71684d25b3b9bc8fb5eaf4756",
+    "source_repository_commit": "07eb3ecb6c14747f08fd6125523dbbb347fd5de8",
+    "source_run_id": 36913457461
+  },
+  "payload_bytes": 318611871,
   "provenance": {
     "archive_compressor": "original donor DEFLATE streams reused; fixed classic ZIP headers; no recompression",
     "checked_at_utc": "2026-10-01T17:19:00.649605+00:00",
@@ -43848,6 +44198,25 @@
         "stored_bytes": 130988,
         "stored_sha256": "cd83cd1c92fea04de067979195e20c4ce1997e98ef132b5961209a009066ade6"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": {
+        "bytes": 175099,
+        "cached_header_id": 685,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "f80e46abb9405fe6e0354f7c8dd8acfe",
+        "offset": 28587090,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityBlocks/AP_ConcreteGrunge_01_d.texture",
+        "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 128080,
+        "stored_sha256": "73275f64e648527be9d007cc7bf1a4353ffc07b76c5da2a683ba3465854a071b"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_d.texture": {
         "bytes": 44032,
         "cached_header_id": 686,
@@ -43866,6 +44235,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 29271,
         "stored_sha256": "2d929dc89f10901acfbf8fc33142f296031bc58b4628b9c15044d47619feda8e"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": {
+        "bytes": 44033,
+        "cached_header_id": 687,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "f7bd06b99cb371d817329760821c7846",
+        "offset": 28744441,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_BaseConcrete_01_NS.texture",
+        "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 27297,
+        "stored_sha256": "3b61b12fe9dd767b2037bd88c23951de2fb6ef39f73370ea3654d7dda05e071b"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_d.texture": {
         "bytes": 87706,
@@ -43886,6 +44274,25 @@
         "stored_bytes": 54176,
         "stored_sha256": "034038101a247590b884ca1fefe84861c5f91bd27651768e7c18edc2f6084ea1"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": {
+        "bytes": 175147,
+        "cached_header_id": 689,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "870dd839b172b100fc2e84b2091d216b",
+        "offset": 28825914,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_01_NS.texture",
+        "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 121238,
+        "stored_sha256": "5ecb281f069485db779d7be9bae45f6e43971abec7b6b076c9377e7636a8803f"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_d.texture": {
         "bytes": 22170,
         "cached_header_id": 690,
@@ -43904,6 +44311,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 16214,
         "stored_sha256": "eed0eebeff9e1b2bf38712d8e464f47ddd63d7585a0962e06d835c84117ccc8c"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": {
+        "bytes": 44075,
+        "cached_header_id": 691,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "b243f12f616eeed1ab33de9d1f751724",
+        "offset": 28963366,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_02_NS.texture",
+        "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 31578,
+        "stored_sha256": "fdb4a6db823a97dadcdf642373c90eb7727d195923a2ba956de34e8adf9aa70c"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_d.texture": {
         "bytes": 44026,
@@ -43924,6 +44350,25 @@
         "stored_bytes": 30358,
         "stored_sha256": "a5062d742599555ca5242483c06759f8fbadfa1d2af360c976cd46e305ae89c3"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": {
+        "bytes": 87787,
+        "cached_header_id": 693,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "befe2da7ddf299ba70a9fc727664f929",
+        "offset": 29025302,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_03_NS.texture",
+        "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 68709,
+        "stored_sha256": "700ce109da86d5444880979f837c05275e5a8fd28e6bfbafa3d33aaaaf4681c5"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_d.texture": {
         "bytes": 87706,
         "cached_header_id": 694,
@@ -43942,6 +44387,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 56196,
         "stored_sha256": "16bd07fdf9424456c4446115bb6864bf2985d574d65ff59927ed6cebefadf9b2"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": {
+        "bytes": 175147,
+        "cached_header_id": 695,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3a082e38e31a914d9c9c27bc85129969",
+        "offset": 29150207,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_04_NS.texture",
+        "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 105287,
+        "stored_sha256": "4280dfccdfccf003b2071072f011d729485952a6c147fb89fbdb13c550d34078"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_d.texture": {
         "bytes": 699388,
@@ -43962,6 +44426,25 @@
         "stored_bytes": 492882,
         "stored_sha256": "7edbc797fabb9fcbfcbdb8a8e3c467055611cec4e8cfc134bfe06f7faa61d577"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": {
+        "bytes": 1398509,
+        "cached_header_id": 697,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "ced9663ed560464737b92632374cba6c",
+        "offset": 29748376,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Concrete_01_NS.texture",
+        "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 29748376-30897869/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 1149494,
+        "stored_sha256": "8833da66197ac73e6f2b3c58e6a24f32f904d9d079be88df2bd5f95a225543bd"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01.texture": {
         "bytes": 175097,
         "cached_header_id": 698,
@@ -43980,6 +44463,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 117961,
         "stored_sha256": "7146e2863f21aae620408cc97197286b73d0318202e1c72ef1aed74f3168cf30"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": {
+        "bytes": 349932,
+        "cached_header_id": 700,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "91dd18dc3ebcd9d88c478f3dd202d9b2",
+        "offset": 31018106,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Details_01_NS.texture",
+        "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31018106-31259941/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 241836,
+        "stored_sha256": "9019d0df3db5127b34132701c92743ffcfc692b16bf962c87814d57bb8d98a50"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01.texture": {
         "bytes": 175094,
@@ -44000,6 +44502,25 @@
         "stored_bytes": 135449,
         "stored_sha256": "31b9e3fff7775c3b40453773521ec875d44d42cf4c5200c47c6d1f29b47b5d29"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": {
+        "bytes": 349929,
+        "cached_header_id": 702,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "0e7420b6b321c3ae5d84a2f75f1ed55d",
+        "offset": 31395391,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Dome_01_NS.texture",
+        "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31395391-31605582/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 210192,
+        "stored_sha256": "24beb3d573e3634fb89bbf860a3cd3579011da53fb7d99b3cd8df8e13db97dbd"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_d.texture": {
         "bytes": 44021,
         "cached_header_id": 703,
@@ -44018,6 +44539,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 32066,
         "stored_sha256": "a7e39d5c30aa7326221d790cf6d96876dfce205e60b152007b1f35970cb9045a"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": {
+        "bytes": 11254,
+        "cached_header_id": 704,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "fbe2e23d4e3e675488f36b413f414884",
+        "offset": 31637649,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Gold_NS.texture",
+        "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 3884,
+        "stored_sha256": "0cc2ecf97d5880d2e865ccfb45c193fdb4abb8638ff850dee535e42ae25e0f14"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_d.texture": {
         "bytes": 44023,
@@ -44038,6 +44578,25 @@
         "stored_bytes": 32738,
         "stored_sha256": "36eacb2f78deab85f3acd6846b962de49730d30ddbc7ace14610630805d75f54"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": {
+        "bytes": 22248,
+        "cached_header_id": 706,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3a392fc0173f4c551caf8bf24d9c0490",
+        "offset": 31674271,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Marble_NS.texture",
+        "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 12335,
+        "stored_sha256": "1f56c7b843c7fbd4484201ada938e5b10663435d39145d3ebf111d81a89f622b"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_d.texture": {
         "bytes": 44026,
         "cached_header_id": 707,
@@ -44056,6 +44615,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 26798,
         "stored_sha256": "d844582db6973739d39be22679d19be7b2a7ccb104683d346e5de8f1e8b6d1a7"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": {
+        "bytes": 87787,
+        "cached_header_id": 708,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "66bdde2d758a05d8f22ba5daf65cd8b2",
+        "offset": 31713404,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Pillar_01_NS.texture",
+        "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 52940,
+        "stored_sha256": "848d4912801f27d1975d606a2726eb8e83ae32d5cdd6a81edc7bc51b8466d893"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_01_d.texture": {
         "bytes": 44026,
@@ -44076,6 +44654,25 @@
         "stored_bytes": 34125,
         "stored_sha256": "f72c0a2fc4a1cc2563b83fd9a96d967261139a60deb22f7d84fe797dedc9ca58"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": {
+        "bytes": 44024,
+        "cached_header_id": 710,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "1eadcaaa4fd9176fca6716b2fea5fb72",
+        "offset": 31800469,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Plaque_NS.texture",
+        "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 17896,
+        "stored_sha256": "5a60418ad848ea8529a64e7cf9b2e1e440127504dee0de5294cb467b752e87ff"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_d.texture": {
         "bytes": 175097,
         "cached_header_id": 711,
@@ -44094,6 +44691,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 123172,
         "stored_sha256": "cf0d197edc42058ce410f5353cc20afdb935160da0a021b3f513369e9ac0e521"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": {
+        "bytes": 349930,
+        "cached_header_id": 712,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "5bf0bcb74c010781605880f06df56053",
+        "offset": 31941537,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Tiles_01_NS.texture",
+        "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31941537-32203955/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 262419,
+        "stored_sha256": "ae186d3f57105eb6831d920c8014d87dabd01035e57db179a622a3eea530e554"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_automarks_decals_01_b.texture": {
         "bytes": 1398516,
@@ -44133,6 +44749,25 @@
         "stored_bytes": 158527,
         "stored_sha256": "a0006b8a7b2a9926669ebc68125252ae4241af79b949f8a466a61ac7c1e8e9ba"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": {
+        "bytes": 349939,
+        "cached_header_id": 145,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "80cd8344deaaf6e97d3e961e6d6b4d1a",
+        "offset": 11556513,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Auto_Marks/AP_oilstains_decal_01_n.texture",
+        "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388",
+        "source_archive": "stage2c.pigg",
+        "source_archive_bytes": 98053608,
+        "source_content_range": "bytes 11216605-13843617/98053608",
+        "source_etag": "\"ff04ac39150a1dfbf95a525592bac23d\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:35 GMT",
+        "source_metadata_sha256": "4488fef97114839957a4834125ca3805871dfa06269a4707c80ab6d89dc12298",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+        "stored_bytes": 155351,
+        "stored_sha256": "915fd28f331e2688b806e8d45edd38c242ce20a4e976dc50868a3784e7082bc6"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_b.texture": {
         "bytes": 1398507,
         "cached_header_id": 146,
@@ -44151,6 +44786,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
         "stored_bytes": 692741,
         "stored_sha256": "013a3fff9649b0d898075ff49f12d87acf177ae52de88b31ee02fd39a5459b8e"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": {
+        "bytes": 1398507,
+        "cached_header_id": 147,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "60635b37f1b2893adf77781005f8c648",
+        "offset": 12404605,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Cracks/AP_crack_decal_01_n.texture",
+        "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f",
+        "source_archive": "stage2c.pigg",
+        "source_archive_bytes": 98053608,
+        "source_content_range": "bytes 11216605-13843617/98053608",
+        "source_etag": "\"ff04ac39150a1dfbf95a525592bac23d\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:35 GMT",
+        "source_metadata_sha256": "4488fef97114839957a4834125ca3805871dfa06269a4707c80ab6d89dc12298",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+        "stored_bytes": 180800,
+        "stored_sha256": "03886f927218367b9d16ca85faa9c021decebbe01f8501f9af42f7479934409c"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_decal_mask_01.texture": {
         "bytes": 349933,
@@ -44228,6 +44882,25 @@
         "stored_bytes": 160765,
         "stored_sha256": "47c0117d6b59c68b8cf71d222b735ae1690743b954136a908937e3184e32ec10"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": {
+        "bytes": 175099,
+        "cached_header_id": 717,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "7c47296468db4bb9570d98ec73c22587",
+        "offset": 32814880,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Grass/AP_grass_detail_01_b.texture",
+        "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 32814880-32964580/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 149701,
+        "stored_sha256": "d4a60412677d02c35dbbb6ba1750f7b4e052c95eb1c8b435fa1aced8c09b8c84"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/decals/grime/ap_grime_decal_01_b.texture": {
         "bytes": 1398506,
         "cached_header_id": 148,
@@ -44265,6 +44938,44 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
         "stored_bytes": 557758,
         "stored_sha256": "87d304ac3780f91001b262c95d4187a8dc62c6f9d295b159d31fc361b255e9ad"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": {
+        "bytes": 44027,
+        "cached_header_id": 0,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "39bc08c40acccd969cd27597c5ad311b",
+        "offset": 424560,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Doors/Door_Atlas_Generic_Double_D.texture",
+        "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca",
+        "source_archive": "texWorldCZ.pigg",
+        "source_archive_bytes": 184436277,
+        "source_content_range": "bytes 424560-441855/184436277",
+        "source_etag": "\"bef8e01b6cfc0a86c2f56a0e835a4f65\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:31:52 GMT",
+        "source_metadata_sha256": "9eb787e0d8d0df99b22e791ec17e896611883ac62e2178ddfd283a5d7c659a8f",
+        "source_url": "https://dists.thunderspy.org/piggs/texWorldCZ.pigg",
+        "stored_bytes": 17296,
+        "stored_sha256": "014b86d69d3807943328f6b62c6eb23120b0f532857ddba59b7d1672a1e644a4"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": {
+        "bytes": 349930,
+        "cached_header_id": 718,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "c4cd4befee00dc0bdf3604e5905ae99a",
+        "offset": 32964581,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_agapanthus_01_b.texture",
+        "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 32964581-33017923/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 53343,
+        "stored_sha256": "36e0cd2300faa4283a16fa270b486f48183eb7485f884801e56085ac5619a7ec"
       },
       "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_dc.texture": {
         "bytes": 349931,
@@ -44304,6 +45015,25 @@
         "stored_bytes": 373183,
         "stored_sha256": "17898af44476d3d470b5442d8dcd42233d29effe6408ce43e023c6038ca39442"
       },
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": {
+        "bytes": 1398500,
+        "cached_header_id": 721,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "80976dc1721e7e273da20be9084da50d",
+        "offset": 33447590,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_ivy_01_dc.texture",
+        "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 33447590-33832819/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 385230,
+        "stored_sha256": "16c36edb4b3956fce1573bd4309d415833c25194a09c6ff9a4783dbe466199aa"
+      },
       "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_b.texture": {
         "bytes": 349932,
         "cached_header_id": 722,
@@ -44322,6 +45052,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 39486,
         "stored_sha256": "085077f97231dbdb273c3128eb37cd6fb4fb72b790848ba272151803ce09f537"
+      },
+      "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": {
+        "bytes": 349933,
+        "cached_header_id": 723,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "ccfdc641c19b7c593bd27981919b59b2",
+        "offset": 33872306,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_ivy_creepers_01_dc.texture",
+        "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 33872306-33926224/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 53919,
+        "stored_sha256": "3345617164e13b57fbb6c3a3e6beb3393784be3a7a62a49843f2979a3d66a525"
       },
       "data/texture_library/world/city_zones/carnival_outdoor/carnival_gntmask01.texture": {
         "bytes": 175081,
@@ -44988,6 +45737,25 @@
         "stored_bytes": 36157,
         "stored_sha256": "0274d1e64f6e4b3bbadc25c406c3291ec6f504a45db3593375ce221b67ec65f4"
       },
+      "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": {
+        "bytes": 175084,
+        "cached_header_id": 892,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "0213142eee0b7833228b1e1b75dfa506",
+        "offset": 41004337,
+        "path": "texture_library/WORLD/City_Zones/Hero_Statues/Male/Male_Statue_Atlas_AO.texture",
+        "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 41004337-41088631/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 84295,
+        "stored_sha256": "9c61612c1efa9265e73a7ba9dd24a2a2f5b77d5c9c8185eabb04e01cd203f751"
+      },
       "data/texture_library/world/city_zones/hero_statues/male/statue_globe_01_d.texture": {
         "bytes": 87769,
         "cached_header_id": 902,
@@ -45120,6 +45888,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 316300,
         "stored_sha256": "7ebcc11e4005581b917e6101d11435818b7cea05f7edec7dada05c8bc67359c1"
+      },
+      "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": {
+        "bytes": 175187,
+        "cached_header_id": 914,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "37d1da95095661983758bbe4bcc52c44",
+        "offset": 43091139,
+        "path": "texture_library/WORLD/City_Zones/Hero_Statues/Shared/Statue_Globe_02_N.texture",
+        "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 43091139-43207504/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 116366,
+        "stored_sha256": "2215ac859fe84f9c3dee5154c8a55b55addc4cba52cc6067fec38c913f74544a"
       },
       "data/texture_library/world/city_zones/hero_statues/shared/statue_glove_p.texture": {
         "bytes": 44008,
@@ -47135,6 +47922,25 @@
         "stored_bytes": 29132,
         "stored_sha256": "7ca75a33321737bdc9aab77892147b36a5c3448788b8818ebb1bd25754731a1d"
       },
+      "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": {
+        "bytes": 349908,
+        "cached_header_id": 1130,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3de1a253b7ac540e5a4e9e44a8b9eeef",
+        "offset": 54841457,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/Alas_tree01_d.texture",
+        "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 54137306-55192437/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 90191,
+        "stored_sha256": "a685cc8cd8c15a50cf42575b5aaee4d0bcd454f8031a656aea96b7e42322c239"
+      },
       "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_d.texture": {
         "bytes": 349910,
         "cached_header_id": 1131,
@@ -47153,6 +47959,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 260790,
         "stored_sha256": "ca076a401df977d0592b594b358a280450934883a739ebd67450978a19471f59"
+      },
+      "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": {
+        "bytes": 349910,
+        "cached_header_id": 1132,
+        "compressed": false,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "c88cbabbaf65139f954677ceaeeace28",
+        "offset": 55192438,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/Alas_treebase_n.texture",
+        "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 55192438-55542347/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 349910,
+        "stored_sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081"
       },
       "data/texture_library/world/city_zones/praetoria/nature/alas_trees_lod_d.texture": {
         "bytes": 87767,
@@ -47191,6 +48016,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 22257,
         "stored_sha256": "795866654b5d970f3467c1953c829b91459fd8fcdacf8782be5bb22536b81213"
+      },
+      "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": {
+        "bytes": 349906,
+        "cached_header_id": 1135,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "cf6a3269d10d2baf7b79bd864e95dcd6",
+        "offset": 55598084,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/AP_rock01_d.texture",
+        "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 55542348-56247492/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 180604,
+        "stored_sha256": "2b8366b28779f1339c87737bba41849aea19209900470983d2f2a75f7e18d597"
       },
       "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_lod_d.texture": {
         "bytes": 22230,
@@ -47704,6 +48548,25 @@
         "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
         "stored_bytes": 127101,
         "stored_sha256": "99b5955af0a6ed294d20cd95c0047accdae3ef6164def333197045c21c7e0351"
+      },
+      "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": {
+        "bytes": 175100,
+        "cached_header_id": 1160,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "364c7f9219da3c580d027401a9069695",
+        "offset": 58021791,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Concrete_LinedSlab_02_Z.texture",
+        "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 58021791-58129357/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 107567,
+        "stored_sha256": "194ede250c8bdc5df45aa33d76d6ba76620ee73e4240515d8566f252878cdd2b"
       },
       "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_pooltile_01_d.texture": {
         "bytes": 44027,
@@ -77847,5 +78710,5 @@
   "runtime_visual_validated": false,
   "scope": "atlas_world_geometry_texture_supplement",
   "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
-  "visual_scope": "Atlas geometry and resolved direct/composite texture dependencies; ground, collision, rendering and gameplay require runtime qualification"
+  "visual_scope": "Atlas geometry and resolved direct/composite texture dependencies; ground, collision, rendering and gameplay require runtime qualification; recorded Atlas City Hall/statue/plaza shader/decal inputs added after visible geometry review; texture/lighting appearance still needs runtime inspection"
 }

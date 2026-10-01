@@ -61,6 +61,53 @@ public class InputHarness {
           ref[0].sendPointer(-5,900,1);ref[0].sendPointer(1,0,4);
           ref[0].sendKey('A',true);ref[0].sendKey(0xff52,true);ref[0].releaseAllInputs();
           ref[0].releaseAllInputs(); // A second release must not invent held keys/buttons.
+        } else if(mode.startsWith("walking_")) {
+          ClientInput.KeyOwners owners=new ClientInput.KeyOwners();
+          ClientInput.WalkingKeys walking=new ClientInput.WalkingKeys();
+          ClientInput.KeySender sender=(key,down)->{try{ref[0].sendKey(key,down);return true;}
+            catch(IOException failure){throw new IllegalStateException(failure);}};
+          if(mode.equals("walking_hysteresis")) {
+            walking.update(1,-1,false,owners,sender); // Menu/recovery does not move the character.
+            walking.update(0,-0.34f,true,owners,sender);
+            walking.update(0,-0.35f,true,owners,sender);
+            walking.update(0,-1,true,owners,sender);
+            walking.update(0,-0.25f,true,owners,sender);
+            walking.update(0,-0.19f,true,owners,sender);
+            walking.update(0.5f,-0.5f,true,owners,sender);
+            walking.update(-0.5f,0.5f,true,owners,sender); // Opposites release before replacement.
+            walking.update(Float.NaN,Float.POSITIVE_INFINITY,true,owners,sender);
+          } else if(mode.equals("walking_shared_owners")) {
+            owners.press(42,'w',sender); // Hardware keyboard and stick share one remote W.
+            walking.update(0,-1,true,owners,sender);
+            owners.press(120001,'w',sender); // Touch pad becomes its third owner.
+            owners.press(120001,'w',sender); // Holding a control does not repeat key-down.
+            owners.release(42,sender);walking.update(0,0,true,owners,sender);
+            owners.release(120001,sender);
+            owners.press(99,' ',sender);owners.press(120005,' ',sender);
+            owners.release(99,sender);owners.release(120005,sender);
+          } else if(mode.equals("walking_disable_and_reset")) {
+            walking.update(1,-1,true,owners,sender);
+            walking.update(1,-1,false,owners,sender); // Save/recovery/focus gate releases both keys.
+            walking.update(1,-1,false,owners,sender);
+            walking.update(1,-1,true,owners,sender);
+            walking.reset();owners.clear();ref[0].releaseAllInputs(); // Activity lifecycle release.
+            walking.update(1,-1,true,owners,sender); // Fresh ownership after focus/session restart.
+            walking.update(0,0,true,owners,sender);
+          } else if(mode.equals("walking_rejected_press")) {
+            ClientInput.KeySender rejected=(key,down)->false;
+            owners.press(42,'w',rejected);check(!owners.contains(42));
+            owners.press(42,'w',sender);check(owners.contains(42));owners.release(42,sender);
+          } else if(mode.equals("walking_rejected_stick_retry")) {
+            final int[] attempts={0};
+            ClientInput.KeySender rejectFirst=(key,down)->{
+              attempts[0]++;return attempts[0]>1 && sender.send(key,down);
+            };
+            walking.update(0,-1,true,owners,rejectFirst);check(!owners.contains(110001));
+            walking.update(0,-1,true,owners,rejectFirst);check(owners.contains(110001));
+            walking.update(0,-1,true,owners,rejectFirst);check(attempts[0]==2);
+            walking.update(0,0,true,owners,rejectFirst);check(!owners.contains(110001));
+            check(attempts[0]==3);
+          }
         } else if(mode.equals("save_logout")) {
           long before=System.nanoTime();ref[0].sendSaveLogout(ref[0].inputEpoch());
           check(System.nanoTime()-before>=3_000_000_000L);
@@ -201,6 +248,30 @@ class InputTests(unittest.TestCase):
         self.assertEqual([struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2), pointer(0, 0, 1), pointer(1, 0, 1),
                           pointer(4, 1, 0), key(65, 1), key(0xff52, 1), key(65, 0),
                           key(0xff52, 0), pointer(0, 1, 0), struct.pack('>BBHHHH', 3, 1, 0, 0, 2, 2)], messages)
+
+    def walking_keys(self, mode):
+        messages = self.messages(self.run_harness(mode))
+        return [(struct.unpack('>I', message[4:])[0], message[1]) for message in messages if message[0] == 4]
+
+    def test_walking_deadzone_hysteresis_diagonal_reversal_and_nonfinite_release(self):
+        self.assertEqual([(ord(key), down) for key, down in
+            [('w',1),('w',0),('w',1),('d',1),('w',0),('d',0),('s',1),('a',1),('s',0),('a',0)]],
+            self.walking_keys('walking_hysteresis'))
+
+    def test_stick_touch_keyboard_and_jump_share_keys_without_duplicates_or_early_release(self):
+        self.assertEqual([(ord('w'),1),(ord('w'),0),(ord(' '),1),(ord(' '),0)],
+                         self.walking_keys('walking_shared_owners'))
+
+    def test_walking_disable_and_lifecycle_reset_release_keys_and_allow_fresh_ownership(self):
+        self.assertEqual([(ord(key), down) for _ in range(3) for key, down in
+                         [('w',1),('d',1),('w',0),('d',0)]],
+                         self.walking_keys('walking_disable_and_reset'))
+
+    def test_rejected_key_press_does_not_leave_an_unsent_local_owner(self):
+        self.assertEqual([(ord('w'),1),(ord('w'),0)], self.walking_keys('walking_rejected_press'))
+
+    def test_rejected_stick_press_retries_on_same_sample_without_repeating_accepted_press(self):
+        self.assertEqual([(ord('w'),1),(ord('w'),0)], self.walking_keys('walking_rejected_stick_retry'))
 
     def test_save_logout_sends_exact_ordinary_chat_command_without_ctrl_a(self):
         messages = self.messages(self.run_harness('save_logout'))

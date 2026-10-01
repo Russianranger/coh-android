@@ -28,6 +28,7 @@ SHELL_ONLY = frozenset({
     'tools/android/interactive/test_classify_interactive_change.py',
     '.github/workflows/android-atlas-gameplay.yml',
     '.github/workflows/android-client-interactive.yml',
+    '.github/workflows/android-diagnostic.yml',
     'docs/COH-Atlas-Gameplay-0.11.0-testing.txt',
     'docs/ANDROID_ATLAS_GAMEPLAY_TEST.md',
     'docs/HANDOFF.md',

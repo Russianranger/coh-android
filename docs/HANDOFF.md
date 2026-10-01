@@ -1,6 +1,59 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation/save is accepted. The corrected 0.10.0 run preserved its saved character and reached the reopen roster, then stopped on host OCR despite a clearly rendered THORHERO name. Qualify the corrected host driver against the exact retained APK before advancing visible Atlas materials and walking. Preserve THORHERO.**
+**Current: Thor 0.9.0 creation/save remains accepted. The unchanged signed 0.10.0 APK now passes two real ARM64 graphical sessions, reopening, native ground recovery, second save and persistence. The next implemented milestone is Atlas materials and walking/jump controls in 0.11.0; its APK build/publication and focused Thor test follow this gate. Preserve THORHERO and app data.**
+
+The retained-APK [run `36929550592`](https://github.com/Russianranger/coh-android/actions/runs/36929550592)
+passed tooling and the full native ARM64 runtime on host-driver commit `f7c6c3a6`.
+The APK is byte-identical to run `36920583713` / source `204615c6`; no client,
+server, native library or APK was rebuilt for the host OCR correction.
+Independent review checked all 355 artifact members, 195 source pins, both
+raw SQL/report/observer contracts, native CLIENT_READY and normal logout lines,
+27 proof PNGs, ten raw PPMs and graceful cleanup. The same THORHERO ID 1 retained
+seven powers and fourteen costume parts; LoginCount incremented from 1 to 2.
+Ordinary `/stuck` produced fresh stable native positions near `(106.45, 0.25,
+-114.45)` over 30 seconds; the second normal save committed that Atlas position
+with MapId/StaticMapId 1. Both sessions stopped all owned workers.
+See [the reviewed gate receipt](android-evidence/atlas-world-reopen-reviewed.json).
+
+Manual inspection confirms the avatar, ground, stairs, statue and building
+geometry in the reopened Atlas frame. Materials remain flat or poorly textured,
+and native UI still reports an unbeaconed map. This proves visible geometry and
+recovery, not complete graphics, NPC pathfinding or physical gameplay acceptance.
+
+The sequential 0.11.0 milestone adds only 27 texture targets named in the
+retained material/shader warnings, preserving all 2,877 existing world files.
+The revised supplement is 2,904 files / 318,611,871 decoded bytes. Exact public
+range reconstruction fetched 4,357,758 bytes and reproduced its pinned ZIP;
+[the material receipt](android-evidence/atlas-material-inputs-0.11.0.json) records
+all old-payload preservation and new source/header checks. The finite MapServer
+staging cap accounts for exactly the extra 27 files / 8,955,931 payload bytes.
+
+The new Android controls map the left stick to forward/back and strafe, X to
+jump, and held on-screen movement buttons to the same keys. Movement becomes
+available only after native ground verification and fresh Android views. Keys
+share ownership with keyboard/touch, use stick hysteresis, and release on neutral,
+focus/dialog/disconnect/save transitions. Existing right-stick cursor, A click,
+text input, D-pad and shoulder mouse-look behavior are preserved. Saving checks
+the latest stable position after walking; stand still for 60 seconds and request
+Save within ten minutes of Return to safe ground.
+
+The gameplay builder retains the exact qualified APK backend and signing key.
+Only two Java UI/input files may differ, and only five APK world-bound payloads
+may change: the supplement ZIP/manifest, six immutable helper pins and their two
+verification manifests. New materials and the complete 0.11.0 APK remain
+host/device-unvalidated. The original reopening and legacy DbServer workflows
+route these bounded derivatives to the gameplay builder; unknown/backend changes
+and manual dispatches still request full qualification. No repeat seed/reopen or
+unchanged DbServer rebuild is needed for this milestone.
+
+Install the new candidate as an in-place update from accepted 0.9.0, keep the
+private database/Wine/imports and THORHERO, and Refresh runtime once. Accepted
+0.9.0 has no world marker; its first missing-only world install narrowly refreshes
+private Atlas/affected geometry caches. No marker migration or cache-archive
+replacement is needed. The focused [0.11.0 Thor instructions](COH-Atlas-Gameplay-0.11.0-testing.txt)
+cover only reopening, visible Atlas materials, a brief walk/jump/camera check,
+then normal save and export. Do not repeat character customization.
+
 
 Run `36920583713` at `204615c6` proves the narrow NULL MapId baseline fix.
 Its seed session passed in 1,845.046 seconds. The second session preserved

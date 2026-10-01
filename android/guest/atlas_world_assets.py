@@ -15,10 +15,10 @@ import client_startup_diagnostic as client
 require = client.require
 MANIFEST = 'atlas-world-supplement-manifest.json'
 ARCHIVE = 'atlas-world-supplement.zip'
-MANIFEST_SHA256 = '2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203'
-ARCHIVE_SHA256 = '499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60'
-ARCHIVE_BYTES, PAYLOAD_BYTES, FILE_COUNT = 203438405, 309655940, 2877
-FILES_SHA256 = 'c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d'
+MANIFEST_SHA256 = '204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86'
+ARCHIVE_SHA256 = 'c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f'
+ARCHIVE_BYTES, PAYLOAD_BYTES, FILE_COUNT = 207803201, 318611871, 2904
+FILES_SHA256 = '1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4'
 SCOPE = 'atlas_world_geometry_texture_supplement'
 CACHE_POLICY = 'once_per_world_manifest_private_atlas_geobin_and_supplemented_object_library_only'
 MARKER = 'atlas-world-installed.json'
