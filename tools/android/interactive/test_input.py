@@ -42,12 +42,14 @@ public class InputHarness {
       System.out.println("mapping passed"); return;
     }
     final java.util.concurrent.CountDownLatch neutralSent=new java.util.concurrent.CountDownLatch(1);
+    final java.util.concurrent.CountDownLatch commandKeySent=new java.util.concurrent.CountDownLatch(1);
     ByteArrayOutputStream output=new ByteArrayOutputStream(){
       private int flushed;
       @Override public void write(int value){super.write(value);Thread.yield();}
       @Override public synchronized void flush(){
         byte[] bytes=toByteArray();
         if(bytes.length-flushed==6 && bytes[flushed]==5 && bytes[flushed+1]==0)neutralSent.countDown();
+        if(bytes.length-flushed==8 && bytes[flushed]==4 && bytes[flushed+1]==1)commandKeySent.countDown();
         flushed=bytes.length;
       }
     };
@@ -59,6 +61,17 @@ public class InputHarness {
           ref[0].sendPointer(-5,900,1);ref[0].sendPointer(1,0,4);
           ref[0].sendKey('A',true);ref[0].sendKey(0xff52,true);ref[0].releaseAllInputs();
           ref[0].releaseAllInputs(); // A second release must not invent held keys/buttons.
+        } else if(mode.equals("save_logout")) {
+          long before=System.nanoTime();ref[0].sendSaveLogout(ref[0].inputEpoch());
+          check(System.nanoTime()-before>=3_000_000_000L);
+        } else if(mode.equals("cancel_logout")) {
+          final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
+          Thread pending=new Thread(()->{try{ref[0].sendSaveLogout(epoch);}
+            catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
+            catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();check(commandKeySent.await(1,java.util.concurrent.TimeUnit.SECONDS));
+          ref[0].cancelPendingInput();pending.join(1000);check(!pending.isAlive()&&cancelled[0]);
+          ref[0].releaseAllInputs();
         } else if(mode.equals("concurrent")) {
           Thread[] writers=new Thread[4];
           for(int i=0;i<4;i++){final int id=i;writers[i]=new Thread(()->{
@@ -184,6 +197,16 @@ class InputTests(unittest.TestCase):
         self.assertEqual([struct.pack('>BBHHHH', 3, 0, 0, 0, 2, 2), pointer(0, 0, 1), pointer(1, 0, 1),
                           pointer(4, 1, 0), key(65, 1), key(0xff52, 1), key(65, 0),
                           key(0xff52, 0), pointer(0, 1, 0), struct.pack('>BBHHHH', 3, 1, 0, 0, 2, 2)], messages)
+
+    def test_save_logout_sends_exact_ordinary_chat_command_without_ctrl_a(self):
+        messages = self.messages(self.run_harness('save_logout'))
+        keys = [0xff0d] + list(map(ord, '/quittologin')) + [0xff0d]
+        self.assertEqual([struct.pack('>BBHI', 4, down, 0, key) for key in keys for down in (1, 0)],
+                         messages[1:-1])
+
+    def test_save_logout_cancellation_releases_partial_command_key(self):
+        messages = self.messages(self.run_harness('cancel_logout'))
+        self.assertEqual([struct.pack('>BBHI', 4, down, 0, 0xff0d) for down in (1, 0)], messages[1:-1])
 
     def test_input_and_refresh_writes_do_not_interleave(self):
         messages = self.messages(self.run_harness('concurrent'))

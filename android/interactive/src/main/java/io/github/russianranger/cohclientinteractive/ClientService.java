@@ -15,14 +15,14 @@ public final class ClientService extends Service {
     private static final int NOTICE=61;
     public interface Listener { void onState(State state); void onFrame(int[] pixels,int width,int height,long sequence); }
     public static final class State {
-        public final boolean busy, blocked, inputReady, finishing;
+        public final boolean busy, blocked, inputReady, finishing, characterSaved, canSaveLogout;
         public final long inputSent, inputFailed, readyDeadlineUptimeMillis;
         public final String stage, detail, session, log;
         public final File report;
         public final int certified;
-        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,long inputSent,long inputFailed,long deadline) {
+        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,boolean characterSaved,boolean canSaveLogout,long inputSent,long inputFailed,long deadline) {
             this.busy=busy;this.blocked=blocked;this.stage=stage;this.detail=detail;this.session=session;this.log=log;this.report=report;this.certified=certified;this.inputReady=inputReady;this.finishing=finishing;
-            this.inputSent=inputSent;this.inputFailed=inputFailed;this.readyDeadlineUptimeMillis=deadline;
+            this.characterSaved=characterSaved;this.canSaveLogout=canSaveLogout;this.inputSent=inputSent;this.inputFailed=inputFailed;this.readyDeadlineUptimeMillis=deadline;
         }
     }
     public final class LocalBinder extends Binder { public ClientService service(){return ClientService.this;} }
@@ -34,7 +34,7 @@ public final class ClientService extends Service {
     private final StringBuilder logs=new StringBuilder();
     private volatile ClientRuntime runtime;
     private volatile boolean busy, stopping, destroyed;
-    private boolean blocked, uiVisible, inputReady, finishing;
+    private boolean blocked, uiVisible, inputReady, finishing, characterSaved, canSaveLogout;
     private long inputSent, inputFailed, readyDeadlineUptimeMillis;
     private String stage="Ready", detail="Set up the runtime, import the reviewed assets, then launch CoH.", session="";
     private File report;
@@ -52,14 +52,15 @@ public final class ClientService extends Service {
     @Override public void onCreate(){
         super.onCreate();
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH local login",NotificationManager.IMPORTANCE_LOW));
+        manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH character creation",NotificationManager.IMPORTANCE_LOW));
         blocked=ClientRuntime.cleanupBlocked(this);
         SharedPreferences p=getSharedPreferences(PREFS,MODE_PRIVATE);
         if(p.getBoolean("was_busy",false)){stage="Previous test interrupted";detail="The previous operation did not complete. Review its report before starting another test.";}
-        else {stage=p.getString("stage",stage);detail=p.getString("detail",detail);}
+        else {stage=p.getString("stage",stage);detail=p.getString("detail",detail);
+            certified=p.getInt("certified",0);inputSent=p.getLong("input_sent",0);inputFailed=p.getLong("input_failed",0);}
         String saved=p.getString("report",null);
         if(saved!=null){try{File f=new File(saved).getCanonicalFile();if(f.isFile()&&f.getPath().startsWith(getFilesDir().getCanonicalPath()+File.separator))report=f;}catch(Exception ignored){}}
-        if(blocked){stage="Cleanup needs attention";detail="Force-stop COH Local Login in Android settings, then reopen it before starting more work.";}
+        if(blocked){stage="Cleanup needs attention";detail="Force-stop COH Character Creation in Android settings, then reopen it before starting more work.";}
         IntentFilter f=new IntentFilter();f.addAction(Intent.ACTION_SCREEN_OFF);f.addAction(Intent.ACTION_SCREEN_ON);
         if(Build.VERSION.SDK_INT>=33)registerReceiver(screenReceiver,f,Context.RECEIVER_NOT_EXPORTED);else registerReceiver(screenReceiver,f);
     }
@@ -79,6 +80,10 @@ public final class ClientService extends Service {
     public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(selectedSession);}
     /** Our own text dialog keeps the queued target-field tap before releasing held input. */
     public void releaseInput(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.releaseAllInputs(selectedSession);}
+    public boolean requestSaveLogout(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&canSaveLogout&&active!=null&&active.requestSaveLogout();
+    }
     public boolean finish(String selectedSession){return session.equals(selectedSession)&&requestFinish();}
     public boolean requestFinish(){
         ClientRuntime active=runtime;
@@ -88,7 +93,7 @@ public final class ClientService extends Service {
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
-    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,inputSent,inputFailed,readyDeadlineUptimeMillis);}
+    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis);}
     private void publish(){if(destroyed)return;State s=snapshot();for(Listener l:new ArrayList<>(listeners))l.onState(s);}
     private void deliverFrame(Listener l){Frame value=frame;if(value!=null)l.onFrame(value.pixels,value.width,value.height,value.sequence);}
     private void queueFrame(int[] pixels,int width,int height,long sequence){
@@ -119,20 +124,20 @@ public final class ClientService extends Service {
         if(busy||ClientRuntime.cleanupBlocked(this)){blocked=ClientRuntime.cleanupBlocked(this);if(blocked){stage="Cleanup needs attention";detail="Export the report, force-stop this app in Android settings, then reopen.";publish();}return START_NOT_STICKY;}
         final android.net.Uri importUri=intent.getData();
         if(IMPORT.equals(action)&&importUri==null)return START_NOT_STICKY;
-        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
+        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=RUN.equals(action)?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
-        detail=SETUP.equals(action)?"Download and unpack the private runtime once.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Preparing Wine and the actual CoH client. No server is started.";
+        detail=SETUP.equals(action)?"Download and unpack the private runtime once.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).remove("report").apply();
         startForeground(NOTICE,notification());
-        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");wake.acquire(45*60*1000L);
+        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");wake.acquire(95*60*1000L);
         publish();
         final boolean setup=SETUP.equals(action), importing=IMPORT.equals(action);final String selectedSession=session;
         ClientRuntime instance=new ClientRuntime(this,new ClientRuntime.Listener(){
             @Override public void onStage(String name,String text){main.post(()->{if(!busy||destroyed)return;if(!stopping&&!finishing){stage=name;detail=text;}publish();notifyStatus();});}
             @Override public void onLog(String text){main.post(()->{if(destroyed)return;logs.append(text).append('\n');if(logs.length()>6000)logs.delete(0,logs.length()-6000);publish();});}
             @Override public void onFrame(int[] pixels,int width,int height,long sequence){queueFrame(pixels,width,height,sequence);}
-            @Override public void onInputState(boolean ready,boolean ending,long sent,long failed,long deadline){main.post(()->{if(!busy||destroyed)return;inputReady=ready;finishing=ending;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;publish();});}
+            @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean saveAvailable,long sent,long failed,long deadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;publish();if(noticeChanged)notifyStatus();});}
         });
         runtime=instance;instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
@@ -143,13 +148,13 @@ public final class ClientService extends Service {
                 if(destroyed)return;
                 blocked=instance.isCleanupBlocked();busy=false;inputReady=false;finishing=false;
                 report=outcome!=null?outcome.report:instance.getLatestReport();
-                if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Local Login in Android settings before reopening.";}
+                if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Character Creation in Android settings before reopening.";}
                 else if(stopping){stage="Stopped";detail="The operation stopped. Export the latest report to review cleanup.";}
                 else if(error!=null){stage="Test failed";detail="Export the latest report. "+(error.getMessage()==null?error.getClass().getSimpleName():error.getMessage());}
-                else if(outcome!=null&&outcome.passed){stage=setup?"Runtime ready":importing?"Client data ready":"Local login check complete";detail=outcome.summary;}
-                else {stage="Local login check incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
+                else if(outcome!=null&&outcome.passed){stage=setup?"Runtime ready":importing?"Client data ready":"Character creation check complete";detail=outcome.summary;}
+                else {stage="Character creation check incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
                 runtime=null;
-                getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false).putString("stage",stage).putString("detail",detail).putString("report",report==null?null:report.getPath()).apply();
+                getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false).putString("stage",stage).putString("detail",detail).putString("report",report==null?null:report.getPath()).putInt("certified",certified).putLong("input_sent",inputSent).putLong("input_failed",inputFailed).apply();
                 if(wake!=null&&wake.isHeld())wake.release();stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
             });
         });
@@ -157,8 +162,8 @@ public final class ClientService extends Service {
     }
     private Notification notification(){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,ClientActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("COH Local Login · "+stage).setContentText(detail).setContentIntent(open).setOngoing(busy).setOnlyAlertOnce(true);
-        if(busy&&inputReady)b.addAction(new Notification.Action.Builder(null,"Finish",PendingIntent.getService(this,2,new Intent(this,ClientService.class).setAction(FINISH),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
+        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle("COH Character Creation · "+stage).setContentText(detail).setContentIntent(open).setOngoing(busy).setOnlyAlertOnce(true);
+        if(busy&&inputReady&&characterSaved)b.addAction(new Notification.Action.Builder(null,"Finish",PendingIntent.getService(this,2,new Intent(this,ClientService.class).setAction(FINISH),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         if(busy)b.addAction(new Notification.Action.Builder(null,"Stop",PendingIntent.getService(this,1,new Intent(this,ClientService.class).setAction(STOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         return b.build();
     }

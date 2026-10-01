@@ -27,25 +27,26 @@ class InteractivePackageTests(unittest.TestCase):
     def test_separate_app_and_version_are_enforced(self):
         manifest=build.ROOT/'android/interactive/src/main/AndroidManifest.xml'
         build.verify_source_manifest(manifest)
-        self.assertEqual('COH-Local-Login-0.8.1.apk',build.APK_NAME)
+        self.assertEqual('COH-Character-Creation-0.9.0.apk',build.APK_NAME)
         with tempfile.TemporaryDirectory() as temporary:
             path=Path(temporary)/'AndroidManifest.xml';text=manifest.read_text()
             for changed in (text.replace('cohclientinteractive','cohclienttest'),
-                            text.replace('versionName="0.8.1"','versionName="0.8.0"'),
-                            text.replace('versionCode="3"','versionCode="2"')):
+                            text.replace('versionName="0.9.0"','versionName="0.8.1"'),
+                            text.replace('versionCode="4"','versionCode="3"')):
                 path.write_text(changed)
                 with self.assertRaisesRegex(ValueError,'identity'):build.verify_source_manifest(path)
 
     def test_guest_inventory_contains_both_helpers_and_accepted_inputs(self):
         self.assertIn('client_startup_diagnostic.py',assets.PROBE_FILES)
         self.assertIn('client_interactive_diagnostic.py',assets.PROBE_FILES)
-        self.assertTrue({'client_login_diagnostic.py','local_login_server.py',
+        self.assertTrue({'character_creation_diagnostic.py','local_character_server.py','game-package.tar.gz',
+                         'client_login_diagnostic.py','local_login_server.py',
                          'dbserver-package.tar.gz','dbserver-schema.tar.gz',
                          '001-coh-compat.sql','psqlodbc_x86.msi'}<=assets.PROBE_FILES)
         self.assertTrue(assets.bundle_contract()['server_packages_included'])
         self.assertTrue({'client-runtime.zip','client-caches.zip','client-prerequisites.zip','client-launcher.exe'}<=assets.PROBE_FILES)
-        self.assertEqual('actual_client_login_guest',assets.bundle_contract()['scope'])
-        self.assertEqual('client_login_diagnostic.py',assets.bundle_contract()['guest_script'])
+        self.assertEqual('actual_character_creation_guest',assets.bundle_contract()['scope'])
+        self.assertEqual('character_creation_diagnostic.py',assets.bundle_contract()['guest_script'])
         self.assertEqual('client-manifest.json',assets.PROBE_MANIFEST)
         self.assertEqual('fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203',assets.RUNTIME_MANIFEST_SHA256)
 

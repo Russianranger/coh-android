@@ -70,6 +70,7 @@ def profile_record(path):
 
 
 class LocalLoginServer:
+    require_empty_account = True
     def __init__(self, owner):
         self.owner, self.ctx = owner, owner.ctx
         self.profile = owner.root / PROFILE
@@ -197,6 +198,19 @@ class LocalLoginServer:
         base.private_write(marker, json.dumps(dict(PROFILE_IDENTITY, initialized=True)) + '\n')
         self.report['profile_initialized'] = True
 
+    def prepare_runtime(self):
+        """Make a fresh owned server tree; subclasses may add game data here."""
+        d = self.owner
+        self.runtime = d.root / ('local-login-server-' + d.args.session_id)
+        require(not self.runtime.exists() and not self.runtime.is_symlink(), 'Server session path already exists')
+        self.runtime.mkdir(mode=0o700)
+        (self.runtime / 'data').mkdir(mode=0o700); (self.runtime / 'tools').mkdir(mode=0o700)
+        for name in self.package['variants']['normal']['files']:
+            shutil.copyfile(self.package_dir / 'normal' / name, self.runtime / name)
+        for name in self.schema['files']:
+            target = self.runtime / name; target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            shutil.copyfile(self.schema_dir / name, target)
+
     def start(self):
         d = self.owner
         self.ctx.stage('local_login_odbc')
@@ -213,15 +227,7 @@ class LocalLoginServer:
             + ';SSLmode=disable;ByteaAsLongVarBinary=0;UseServerSidePrepare=0;')
         self.ctx.passed(**driver)
         self.ctx.stage('local_dbserver_startup')
-        self.runtime = d.root / ('local-login-server-' + d.args.session_id)
-        require(not self.runtime.exists() and not self.runtime.is_symlink(), 'Server session path already exists')
-        self.runtime.mkdir(mode=0o700)
-        (self.runtime / 'data').mkdir(mode=0o700); (self.runtime / 'tools').mkdir(mode=0o700)
-        for name in self.package['variants']['normal']['files']:
-            shutil.copyfile(self.package_dir / 'normal' / name, self.runtime / name)
-        for name in self.schema['files']:
-            target = self.runtime / name; target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-            shutil.copyfile(self.schema_dir / name, target)
+        self.prepare_runtime()
         config = self.runtime / 'data/server/db/servers.cfg'
         base.private_write(config, game.game_config(config.read_text(), DATABASE, connection))
         self.config = config
@@ -306,8 +312,9 @@ class LocalLoginServer:
         row = self.sql("SELECT containerid || '|' || authname FROM dbo.shardaccounts WHERE lower(authname)=lower('COHLOCAL') ORDER BY containerid;", game=True)
         require(row == str(auth_id) + '|' + ACCOUNT, 'Local account SQL identity differs from current login')
         count = self.sql('SELECT count(*) FROM dbo.ents WHERE authid=' + str(auth_id) + ';', game=True)
-        require(count == '0', 'Local login milestone requires an empty character account')
-        return {'auth_id': auth_id, 'account': ACCOUNT, 'character_count': 0,
+        require(re.fullmatch(r'[0-9]+', count) is not None, 'Invalid local account character count')
+        require(not self.require_empty_account or count == '0', 'Local login milestone requires an empty character account')
+        return {'auth_id': auth_id, 'account': ACCOUNT, 'character_count': int(count),
             'local_login_verified': True, 'local_account_verified': True,
             'character_list_sent': True, 'character_list_response_sent': True,
             'character_selection_visual_pending': True, 'character_selection_visual_validated': False,

@@ -30,7 +30,7 @@ public final class ClientRuntime {
         void onStage(String stage, String detail);
         void onLog(String line);
         void onFrame(int[] argb, int width, int height, long sequence);
-        void onInputState(boolean ready, boolean finishing, long sent, long failed, long deadline);
+        void onInputState(boolean ready, boolean finishing, boolean characterSaved, boolean canSaveLogout, long sent, long failed, long deadline);
     }
     public static final class Result {
         public final boolean passed;
@@ -44,7 +44,7 @@ public final class ClientRuntime {
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
     private static final long MAX_GUEST_ZIP = 160L * 1024 * 1024;
     private static final String PROCESS_INSTANCE = UUID.randomUUID().toString();
-    private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Local Login in Android settings, then reopen it.";
+    private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Character Creation in Android settings, then reopen it.";
     private static boolean guardInitialized, blocked;
     private static boolean operationActive;
     private final Context context;
@@ -56,6 +56,12 @@ public final class ClientRuntime {
     private final List<Map<String, Object>> loginSamples = new ArrayList<>();
     private final List<byte[]> loginPngs = new ArrayList<>();
     private volatile long loginObservedUptime = -1, loginFrameWatermark = -1;
+    private final List<Map<String, Object>> characterSamples = new ArrayList<>();
+    private final List<byte[]> characterPngs = new ArrayList<>();
+    private volatile long characterObservedUptime = -1, characterFrameWatermark = -1;
+    private volatile JSONObject characterSavedEvent, characterConnectedEvent;
+    private volatile boolean saveLogoutRequested;
+    private volatile boolean characterSavedReady;
     private final List<Map<String, Object>> interactionSamples = new ArrayList<>();
     private final List<byte[]> interactionPngs = new ArrayList<>();
     private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
@@ -183,7 +189,7 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets, then start local login. Existing imported assets do not need reimporting."
+        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets, then start character creation. Existing imported assets do not need reimporting."
                 : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
     }
 
@@ -223,14 +229,14 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Verified game assets are ready. Start local login next."
+        return new Result(ready, latestReport, ready ? "Verified game assets are ready. Start character creation next."
                 : cancelled ? "Asset import stopped; the previous verified content is preserved."
                 : "Asset import failed: " + error);
     }
 
     public Result run(String selectedSession) throws Exception {
         if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
-        begin("client_login", selectedSession);
+        begin("character_creation", selectedSession);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false;
@@ -271,27 +277,27 @@ public final class ClientRuntime {
                     "-w", "/state", "/usr/bin/env", "-i", "HOME=/state", "USER=coh", "LOGNAME=coh",
                     "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
-                    "/usr/bin/python3", "/opt/coh/client_login_diagnostic.py", "--state", "/state", "--assets", "/opt/coh",
+                    "/usr/bin/python3", "/opt/coh/character_creation_diagnostic.py", "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
                     "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
-                    "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "180", "--timeout-seconds", "1620"));
+                    "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "1200", "--timeout-seconds", "5400"));
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
             builder.environment().put("PROOT_NO_SECCOMP", "1");
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
-            stage("Starting City of Heroes", "Starting the persistent local database and server, then opening the graphical client.");
+            stage("Starting City of Heroes", "Starting the persistent local database, DbServer and Atlas, then opening the graphical client.");
             check(); child = builder.start(); launched = true; runLaunched = true;
             Process process = child;
             output = new Thread(() -> captureOutput(process), "coh-client-output"); output.start();
             receiver = new Thread(() -> receiveFrames(process, socketFile), "coh-client-frames"); receiver.start();
-            long deadline = System.nanoTime() + TimeUnit.MINUTES.toNanos(28);
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5500);
             while (!process.waitFor(200, TimeUnit.MILLISECONDS)) {
                 check();
                 if (receiverFailure != null) throw new IOException("Local display connection failed: " + receiverFailure);
-                if (System.nanoTime() > deadline) throw new IOException("Client startup exceeded its 28 minute limit");
+                if (System.nanoTime() > deadline) throw new IOException("Character creation exceeded its 5500 second runtime limit");
             }
             processExit = process.exitValue();
             output.join(2000); check();
@@ -347,21 +353,21 @@ public final class ClientRuntime {
                     error = "The guest completed, but its current-session client evidence did not match this APK.";
                 if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
-                        && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted();
+                        && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
-                if (guestPassed && !passed && error == null) error = "Local login incomplete: three fresh Android captures are required after the server reports the character list.";
+                if (guestPassed && !passed && error == null) error = "Character save incomplete: matching committed SQL evidence and three fresh Android captures after the save event are required.";
                 publish(report, passed, cleanup);
             } finally {
                 child = null; endOperation();
                 if (interrupted) Thread.currentThread().interrupt();
             }
         }
-        String summary = passed ? "Local server login was verified, the server sent the character list, and fresh Android captures and cleanup were recorded. Confirm the character-selection screen in the exported screenshots; world entry remains untested."
-                : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? "Local login check stopped. Export the latest report."
-                : guestPassed ? "Local login check incomplete. Export the latest report."
-                : "Local login check failed. Export the latest report.";
-        stage(passed ? "Local login check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? "Local login check stopped"
-                : guestPassed ? "Local login check incomplete" : "Local login check failed", summary);
+        String summary = passed ? "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation."
+                : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? "Character creation check stopped. Export the latest report."
+                : guestPassed ? "Character creation check incomplete. Export the latest report."
+                : "Character creation check failed. Export the latest report.";
+        stage(passed ? "Character creation check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? "Character creation check stopped"
+                : guestPassed ? "Character creation check incomplete" : "Character creation check failed", summary);
         return new Result(passed, latestReport, summary);
     }
 
@@ -421,7 +427,7 @@ public final class ClientRuntime {
     }
     private void notifyInputState() {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
-                finishRequested && !finished, inputSent, inputFailed, readyDeadlineUptimeMillis);
+                finishRequested && !finished, characterSavedReady, characterConnectedEvent != null && !saveLogoutRequested && characterSavedEvent == null, inputSent, inputFailed, readyDeadlineUptimeMillis);
     }
     private synchronized void inputFailure(String detail) {
         inputFailed++; inputReady = false; cancelPendingInput();
@@ -456,8 +462,23 @@ public final class ClientRuntime {
             catch (RejectedExecutionException closed) { /* Socket closure in cleanup terminates the session. */ }
         }
     }
+    public synchronized boolean requestSaveLogout() {
+        if (!inputReady || finished || finishRequested || cancelled || producerCompleted
+                || characterConnectedEvent == null || characterSavedEvent != null || saveLogoutRequested) return false;
+        if (!queueInput(session, (active, epoch) -> active.sendSaveLogout(epoch))) return false;
+        saveLogoutRequested = true;
+        recordLifecycle("ordinary_character_logout_requested");
+        stage("Saving character", "The ordinary /quittologin command is queued. Wait for logout and committed database verification, then three fresh Android captures.");
+        notifyInputState();
+        return true;
+    }
+
     public synchronized boolean requestFinish() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted || observedClientPid < 1) return false;
+        if (!characterSavedReady) {
+            stage("Waiting for saved character", "Finish becomes available after THORHERO is committed to the database and three fresh Android views are captured.");
+            return false;
+        }
         finishRequested = true; inputReady = false; cancelPendingInput();
         inputWorker.getQueue().clear(); notifyInputState();
         try {
@@ -513,11 +534,15 @@ public final class ClientRuntime {
                 && ((Number) sequence).longValue() > loginFrameWatermark && loginSamples.size() < 3
                 && (loginSamples.isEmpty()
                 || captured - ((Number) loginSamples.get(loginSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
+        boolean characterSample = characterObservedUptime >= 0 && captured >= characterObservedUptime
+                && ((Number) sequence).longValue() > characterFrameWatermark && characterSamples.size() < 3
+                && (characterSamples.isEmpty()
+                || captured - ((Number) characterSamples.get(characterSamples.size()-1).get("captured_elapsed_ms")).longValue() >= 1000);
         boolean afterInput = inputSent > 0 && captured >= lastInputUptime
                 && ((Number) sequence).longValue() > lastInputFrameWatermark;
         boolean interactionSample = readyDeadlineUptimeMillis > 0 && (interactionSamples.isEmpty()
                 || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
-        if (!startupSample && !loginSample && !interactionSample) return;
+        if (!startupSample && !loginSample && !characterSample && !interactionSample) return;
         try {
             // Bind the retained bytes to the PixelCopy record. The source Surface
             // provides the nonuniform check; the PNG must be a bounded 800x600 image.
@@ -541,7 +566,19 @@ public final class ClientRuntime {
                 login.put("post_login_frame_observed", true);
                 loginSamples.add(login); loginPngs.add(png.clone());
                 if (loginSamples.size() == 3)
-                    stage("Local login verified", "The server sent the character list and fresh Android views were captured. Check the empty character-selection screen, then press Finish.");
+                    stage("Local login verified", "Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified.");
+            }
+            if (characterSample) {
+                Map<String,Object> saved = new LinkedHashMap<>(sample);
+                saved.put("archive_path", "android-character/capture-" + (characterSamples.size()+1) + ".png");
+                saved.put("post_character_save_frame_observed", true);
+                saved.put("character_id", characterSavedEvent.getLong("character_id"));
+                characterSamples.add(saved); characterPngs.add(png.clone());
+                if (characterSamples.size() == 3) {
+                    characterSavedReady = true;
+                    stage("Saved character verified", "THORHERO was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
+                    notifyInputState();
+                }
             }
             if (interactionSample) {
                 Map<String,Object> interactive = new LinkedHashMap<>(sample);
@@ -675,19 +712,53 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the logged-in client: " + message(e); }
                             }
                             recordLifecycle("local_login_observed");
-                            stage("Local server login observed", "The server sent the character list. Waiting for fresh Android views before Finish.");
+                            stage("Local server login observed", "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
+                        }
+                        if (ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid)
+                                && characterConnectedEvent == null && loginObservedUptime >= 0
+                                && !cancelled && !finished && !producerCompleted) {
+                            characterConnectedEvent = event;
+                            recordLifecycle("character_connected_observed");
+                            stage("Character connected", "THORHERO connected to Atlas. Once the world appears, tap Save character / log out once to verify ordinary character persistence.");
+                            notifyInputState();
+                        }
+                        if (ClientAcceptance.characterSavedEvent(jsonValue(event), session, observedClientPid)
+                                && characterObservedUptime < 0 && loginObservedUptime >= 0
+                                && characterConnectedEvent != null
+                                && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
+                                && !cancelled && !finished && !producerCompleted) {
+                            synchronized (this) {
+                                characterSavedEvent = event;
+                                characterObservedUptime = SystemClock.uptimeMillis();
+                                characterFrameWatermark = decodedFrames;
+                                characterSamples.clear(); characterPngs.clear();
+                            }
+                            InteractiveRfbClient activeDecoder = decoder;
+                            if (activeDecoder != null) {
+                                try { activeDecoder.requestFullUpdate(); }
+                                catch (IOException e) { receiverFailure = "Cannot refresh the saved character: " + message(e); }
+                            }
+                            recordLifecycle("character_saved_observed");
+                            stage("Character saved", "THORHERO is committed to the local database. Waiting for three fresh Android views before Finish.");
                         }
                         if ("client_interaction_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id")) && observedClientPid > 0
                                 && observedClientPid == event.optLong("client_pid", -1)
                                 && event.optInt("minimum_observation_seconds", -1) == 30
-                                && event.optInt("interaction_timeout_seconds", -1) == 180
+                                && event.optInt("interaction_timeout_seconds", -1) == 1200
                                 && readyDeadlineUptimeMillis == 0 && !cancelled && !finished) {
-                            readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 180000;
+                            readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
-                            stage("Client ready for input", "Log in with COHLOCAL / offline, select the local shard, then wait at the character list. Three minutes remain.");
+                            stage("Client ready for input", "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
-                        if ("stage".equals(event.optString("type"))) listener.onStage(event.optString("stage", "Checking display"),
+                        // Keep the actionable save/Finish instruction visible while
+                        // the guest continues its generic five-second live heartbeat.
+                        boolean interactionHeartbeat = "stage".equals(event.optString("type"))
+                                && "running".equals(event.optString("status"))
+                                && "actual_client_interaction".equals(event.optString("stage"));
+                        if ("stage".equals(event.optString("type"))
+                                && !(interactionHeartbeat && (characterSavedReady || characterConnectedEvent != null)))
+                            listener.onStage(event.optString("stage", "Checking display"),
                                 clean(event.optString("message", event.optString("detail", ""))));
                     } catch (Exception ignored) {}
                     line(text + (omitted ? " [line truncated]" : "")); omitted = false;
@@ -709,8 +780,8 @@ public final class ClientRuntime {
         // The shared pinned input inventory retains its accepted startup scope;
         // the enclosing bundle and current guest result identify interaction.
         if (clientManifest.getInt("format") != 1 || !"actual_client_startup_guest".equals(clientManifest.getString("scope"))
-                || !"actual_client_login_guest".equals(manifest.getJSONObject("client_bundle").optString("scope"))
-                || !"client_login_diagnostic.py".equals(manifest.getJSONObject("client_bundle").optString("guest_script")))
+                || !"actual_character_creation_guest".equals(manifest.getJSONObject("client_bundle").optString("scope"))
+                || !"character_creation_diagnostic.py".equals(manifest.getJSONObject("client_bundle").optString("guest_script")))
             throw new IOException("The client package has the wrong scope");
     }
     private void validateInstalled() throws Exception {
@@ -725,7 +796,7 @@ public final class ClientRuntime {
             if (!file.isFile() || file.length() != pin.getLong("bytes") || !sha(file).equals(pin.getString("sha256")))
                 throw new IOException("Runtime integrity check failed: " + name);
         }
-        for (String name : new String[]{"client_login_diagnostic.py", "local_login_server.py", "dbserver-package.tar.gz", "dbserver-schema.tar.gz", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
+        for (String name : new String[]{"character_creation_diagnostic.py", "local_login_server.py", "dbserver-package.tar.gz", "dbserver-schema.tar.gz", "client-manifest.json", "client-runtime.zip", "client-caches.zip", "client-prerequisites.zip", "client-launcher.exe"})
             if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
     }
     private void removePreviousGuestOutput() throws IOException {
@@ -738,13 +809,13 @@ public final class ClientRuntime {
     private boolean guestAccepted(JSONObject report) throws Exception {
         if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
                 && session.equals(report.optString("session_id"))
-                && "actual_client_login_guest".equals(report.optString("scope"))
-                && "actual_client_login".equals(report.optString("diagnostic_mode"))
+                && "actual_character_creation_guest".equals(report.optString("scope"))
+                && "actual_character_creation".equals(report.optString("diagnostic_mode"))
                 && "android".equals(report.optString("execution_platform_requested"))
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
-                && Boolean.FALSE.equals(report.opt("mapserver_started"))
-                && ClientAcceptance.localLoginVerified(jsonValue(report), session, observedClientPid)
+                && Boolean.TRUE.equals(report.opt("mapserver_started"))
+                && ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid)
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -757,7 +828,7 @@ public final class ClientRuntime {
             if (!Boolean.TRUE.equals(report.opt(key))) return false;
         double observed = report.optDouble("observation_seconds", -1);
         double elapsed = report.optDouble("startup_elapsed_seconds", -1);
-        if (!Double.isFinite(observed) || observed < 30 || observed > 190
+        if (!Double.isFinite(observed) || observed < 30 || observed > 1210
                 || !Double.isFinite(elapsed) || elapsed < 0 || elapsed > 900) return false;
         JSONObject launch = report.optJSONObject("client_launch");
         if (launch == null || !session.equals(launch.optString("session_id")) || observedClientPid < 1
@@ -804,14 +875,14 @@ public final class ClientRuntime {
                 || worktree.optLong("input_bytes", -1) != imported.bytes) return false;
         String[] requiredStages = {"client_inputs", "client_private_data", "persistent_server_profile", "postgres_local_login",
                 "presentation_display", "wine_initialization", "local_login_odbc", "local_dbserver_startup",
-                "win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
+                "local_atlas_startup", "win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
         JSONArray stages = report.optJSONArray("stages");
         if (stages == null || stages.length() != requiredStages.length) return false;
         for (int i=0;i<requiredStages.length;i++) {
             JSONObject stage = stages.getJSONObject(i);
             if (!requiredStages[i].equals(stage.optString("stage")) || !"passed".equals(stage.optString("status"))) return false;
         }
-        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(10);
+        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(11);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
                 || !imported.dataCommit.equals(inputs.optString("data_commit"))
                 || !Boolean.TRUE.equals(startup.opt("bounded_live_observation"))) return false;
@@ -836,6 +907,14 @@ public final class ClientRuntime {
         synchronized (this) {
             return ClientAcceptance.surfaceAccepted(loginSamples, session, startedUptime, endedUptime,
                     loginObservedUptime, clientWindowEndedUptime, loginFrameWatermark);
+        }
+    }
+
+    private boolean characterSurfaceAccepted(JSONObject report) throws Exception {
+        synchronized (this) {
+            return characterSavedReady && ClientAcceptance.characterCreationAccepted(jsonValue(report), jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
         }
     }
 
@@ -867,8 +946,14 @@ public final class ClientRuntime {
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())
                     .put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
-                    .put("scope", "Local graphical-client authentication and evidence that the server sent the character list, with fresh Android PixelCopy; character-selection visibility requires review")
-                    .put("local_login_verified", passed)
+                    .put("scope", "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
+                    .put("character_creation_verified", passed)
+                    .put("character_saved_event", characterSavedEvent == null ? JSONObject.NULL : characterSavedEvent)
+                    .put("character_connected_event", characterConnectedEvent == null ? JSONObject.NULL : characterConnectedEvent)
+                    .put("save_logout_requested", saveLogoutRequested)
+                    .put("character_saved_observed_uptime_ms", characterObservedUptime)
+                    .put("character_saved_frame_watermark", characterFrameWatermark)
                     .put("character_selection_visible", false)
                     .put("login_observed_uptime_ms", loginObservedUptime)
                     .put("login_frame_watermark", loginFrameWatermark)
@@ -883,6 +968,7 @@ public final class ClientRuntime {
             synchronized (this) {
                 wrapper.put("surface_captures", new JSONArray(surfaceSamples));
                 wrapper.put("login_captures", new JSONArray(loginSamples));
+                wrapper.put("character_captures", new JSONArray(characterSamples));
                 wrapper.put("interaction_captures", new JSONArray(interactionSamples));
                 wrapper.put("lifecycle", new JSONArray(lifecycle));
             }
@@ -890,7 +976,7 @@ public final class ClientRuntime {
                     : ("setup".equals(operation) || "import".equals(operation)) ? guest.optString("status", "failed")
                     : guest.optBoolean("passed") ? "client_incomplete" : "failed";
             wrapper.put("status", status);
-            File target = new File(operationDir, "coh-local-login-" + runId + ".zip");
+            File target = new File(operationDir, "coh-character-creation-" + runId + ".zip");
             File part = new File(operationDir, "support.zip.part");
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(part))) {
                 if (imported != null) wrapper.put("import", new JSONObject().put("generation", imported.generation)
@@ -901,6 +987,8 @@ public final class ClientRuntime {
                     zipBytes(out, "android-surface/capture-" + (i+1) + ".png", surfacePngs.get(i)); }
                 synchronized (this) { for (int i=0;i<loginPngs.size();i++)
                     zipBytes(out, "android-login/capture-" + (i+1) + ".png", loginPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<characterPngs.size();i++)
+                    zipBytes(out, "android-character/capture-" + (i+1) + ".png", characterPngs.get(i)); }
                 synchronized (this) { for (int i=0;i<interactionPngs.size();i++)
                     zipBytes(out, (String) interactionSamples.get(i).get("archive_path"), interactionPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
@@ -917,7 +1005,7 @@ public final class ClientRuntime {
                 try (InputStream in = context.getAssets().open("atlas/atlas-import.properties")) {
                     zipBytes(out, "atlas-import.properties", read(in, 16384));
                 }
-                if ("client_login".equals(operation) && runLaunched) {
+                if ("character_creation".equals(operation) && runLaunched) {
                     File file = new File(state, "report.zip");
                     if (file.isFile()) zipFile(out, "guest-report.zip", file, MAX_GUEST_ZIP);
                 }

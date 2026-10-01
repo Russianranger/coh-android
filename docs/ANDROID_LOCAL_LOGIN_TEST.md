@@ -1,5 +1,8 @@
 # COH Local Login 0.8.1 — one Thor session
 
+> Completed on Thor. The [October 1 acceptance](android-evidence/local-login-thor-20261001.json)
+> supersedes the device-test request below; retain these instructions as history.
+
 Corrected build from source `1fb4c6057fda579da1913670889922ba8e53bbdc`:
 [run 36785793934](https://github.com/Russianranger/coh-android/actions/runs/36785793934).
 Hosted saved-profile refresh and graphical-login qualification passed. Root

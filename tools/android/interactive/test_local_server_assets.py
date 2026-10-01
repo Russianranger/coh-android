@@ -26,7 +26,15 @@ class LocalServerAssetsTests(unittest.TestCase):
         self.assertEqual(evidence['schema_manifest_sha256'], contract['schema_manifest_sha256'])
         self.assertEqual('normal', contract['variant'])
         self.assertEqual('device', contract['listener_policy'])
-        self.assertFalse(contract['mapserver_included'])
+        self.assertTrue(contract['mapserver_included'])
+        self.assertEqual('android-local-login', contract['persistent_profile'])
+        map_contract = contract['mapserver']
+        assets.mapserver_tools().accepted_evidence(assets.MAPSERVER_PROFILE)
+        self.assertEqual(36630872719, map_contract['package_run_id'])
+        self.assertEqual('dispatch_progress_v1', map_contract['mapserver_progress_profile'])
+        self.assertEqual('ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd', map_contract['package_manifest_sha256'])
+        self.assertEqual('52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb', map_contract['mapserver_progress_producer']['mapserver_sha256'])
+        self.assertEqual('5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864', map_contract['archive_pin']['sha256'])
 
     def test_import_loader_preserves_an_existing_prepare_assets_module(self):
         marker = types.ModuleType('unrelated_prepare_assets')
@@ -43,6 +51,48 @@ class LocalServerAssetsTests(unittest.TestCase):
             sys.modules.pop(cache_name, None)
             if previous_cache is not None:
                 sys.modules[cache_name] = previous_cache
+
+    def test_mapserver_loader_preserves_existing_helper_modules_and_search_path(self):
+        markers = {name: types.ModuleType('unrelated_' + name)
+                   for name in ('prepare_assets', 'host_dbserver_smoke', 'host_game_smoke')}
+        cache_name = 'coh_character_accepted_atlas_assets'
+        previous_cache = sys.modules.pop(cache_name, None)
+        try:
+            with mock.patch.dict(sys.modules, markers):
+                before = sys.path[:]
+                tools = assets.mapserver_tools()
+                self.assertEqual(before, sys.path)
+                for name, module in markers.items():
+                    self.assertIs(module, sys.modules[name])
+                self.assertEqual(36630872719, tools.MAPSERVER_PROGRESS_RUN_ID)
+        finally:
+            sys.modules.pop(cache_name, None)
+            if previous_cache is not None:
+                sys.modules[cache_name] = previous_cache
+
+    def test_modified_mapserver_manifest_fails_before_binary_verification(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary)
+            receipt = assets.ROOT/'docs/android-evidence/mapserver-progress-package-36630872719.json'
+            (package/'game-package.json').write_bytes(receipt.read_bytes()+b' ')
+            with self.assertRaisesRegex(ValueError, 'exact accepted MapServer composite manifest'):
+                assets.verify_mapserver_package(package)
+
+    def test_modified_mapserver_archive_fails_before_extraction(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            archive = root/'game-package.tar.gz'; archive.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'MapServer archive bytes differ'):
+                assets.extract_mapserver_archive(archive, root/'output')
+            self.assertFalse((root/'output').exists())
+
+    def test_wrong_atlas_apk_cannot_donate_an_archive(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            apk = root/'wrong.apk'; apk.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'Atlas APK bytes differ'):
+                assets.recover_mapserver_archive(apk, root/'game-package.tar.gz')
+            self.assertFalse((root/'game-package.tar.gz').exists())
 
     def test_modified_package_receipt_fails_before_binary_verification(self):
         with tempfile.TemporaryDirectory() as temporary:

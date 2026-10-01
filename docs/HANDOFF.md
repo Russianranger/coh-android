@@ -1,5 +1,32 @@
 # City of Heroes Android handoff
 
+**Current: Thor local login is accepted; qualify 0.9.0 for graphical character creation and saving.**
+
+The user confirmed local login and supplied `coh-local-login-20261001-010523.zip`.
+Independent review matched the 0.8.1 APK and runtime identities, verified all
+14 Android PNG and four guest image records, and reviewed the empty 0/12
+character-selection screen. Three post-login Android captures, 272 successful
+inputs, preserved database/profile/assets/caches and clean owned cleanup are
+recorded in the [acceptance receipt](android-evidence/local-login-thor-20261001.json).
+The session ended at its 180-second interaction limit. No repeat is requested.
+
+The next candidate retains package `io.github.russianranger.cohclientinteractive`,
+the accepted signing key and profile `android-local-login`. It adds the accepted
+Atlas MapServer package because actual character data is sent during the map
+handoff. The new target is graphical creation of **THORHERO**, a first connection
+to map 1, ordinary logout and read-only verification of committed character,
+power and costume records. The interaction window is 1,200 seconds. No existing
+character is deleted or synthesized in SQL. A preexisting THORHERO stops this
+creation-only candidate while preserving its data.
+
+Candidate implementation and hosted qualification are in progress. Do not call
+this device-qualified until its report has been reviewed. The next milestones
+are reopening this exact character after restart, then gameplay controls and
+performance. The new flow includes initial map entry only to complete creation
+and save; it does not establish sustained gameplay or hardware acceleration.
+
+**Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
+
 **0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**
 
 Qualified source `1fb4c6057fda579da1913670889922ba8e53bbdc`,

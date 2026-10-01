@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare local graphical login using the accepted client, DbServer and schema."""
+"""Prepare graphical character creation with accepted client and server donors."""
 from __future__ import annotations
 import argparse
 import copy
@@ -13,6 +13,7 @@ import struct
 import subprocess
 import tempfile
 import sys
+import zipfile
 # The accepted helpers use their own sibling imports. Keep those imports local
 # to initialization; their path changes must not redirect interactive discovery.
 _import_path = sys.path[:]
@@ -30,10 +31,13 @@ RUNTIME_COMMIT = '9dc58f62c58dc4fc5c01288071429bf2aa06d2f4'
 RUNTIME_MANIFEST_SHA256 = 'fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203'
 BASE_MANIFEST = 'accepted-runtime-manifest.json'
 PROBE_MANIFEST = 'client-manifest.json'
-GUEST_SCRIPTS = ('client_login_diagnostic.py', 'local_login_server.py', 'diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
+GUEST_SCRIPTS = ('character_creation_diagnostic.py', 'local_character_server.py', 'client_login_diagnostic.py', 'local_login_server.py', 'diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
                  'game_diagnostic.py', 'game_device_diagnostic.py', 'game_evidence.py',
                  'game_hang_evidence.py', 'game_map_progress.py')
-SERVER_ARCHIVES = frozenset(('dbserver-package.tar.gz', 'dbserver-schema.tar.gz'))
+SERVER_ARCHIVES = frozenset(('dbserver-package.tar.gz', 'dbserver-schema.tar.gz', 'game-package.tar.gz'))
+MAPSERVER_PROFILE = 'dispatch_progress_v1'
+ATLAS_RECEIPT = ROOT/'docs/android-evidence/atlas-test-apk-build-36638344040.json'
+ATLAS_RECEIPT_SHA256 = '39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea'
 PROBE_FILES = frozenset((*SERVER_ARCHIVES, *GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
                          '001-coh-compat.sql', 'psqlodbc_x86.msi',
                          'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip'))
@@ -78,12 +82,114 @@ def server_tools():
                 sys.modules[key] = value
 
 
+
+def mapserver_tools():
+    """Load the accepted composite verifier with its original sibling imports."""
+    name = 'coh_character_accepted_atlas_assets'
+    if name in sys.modules:
+        return sys.modules[name]
+    aliases = ('prepare_assets', 'host_dbserver_smoke', 'host_game_smoke')
+    previous = {key: sys.modules.get(key) for key in aliases}
+    search_path = sys.path[:]
+    def load(module_name, path):
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
+        return module
+    try:
+        sys.path.insert(0, str(ROOT/'tools/android/game'))
+        load('prepare_assets', ROOT/'tools/android/prepare_assets.py')
+        load('host_dbserver_smoke', ROOT/'tools/android/dbserver/host_dbserver_smoke.py')
+        load('host_game_smoke', ROOT/'tools/android/game/host_game_smoke.py')
+        # The verifier imports these lazily. Resolve their exact siblings while
+        # its private search path is active, then restore the caller's path.
+        import package_loopback_game
+        import package_mapserver_progress
+        return load(name, ROOT/'tools/android/atlasgame/prepare_device_assets.py')
+    except BaseException:
+        sys.modules.pop(name, None)
+        raise
+    finally:
+        sys.path[:] = search_path
+        for key, value in previous.items():
+            if value is None:
+                sys.modules.pop(key, None)
+            else:
+                sys.modules[key] = value
+
+
+def accepted_mapserver_receipt():
+    require(digest(ATLAS_RECEIPT) == ATLAS_RECEIPT_SHA256, 'Accepted Atlas build receipt differs')
+    receipt = read_json(ATLAS_RECEIPT)
+    require(receipt.get('repository_commit') == 'e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce',
+            'Accepted Atlas source identity differs')
+    return receipt
+
+
+def mapserver_contract():
+    accepted = mapserver_tools().bundle_contract(MAPSERVER_PROFILE)
+    keys = ('package_run_id', 'package_repository_commit', 'package_manifest_sha256',
+            'package_archive', 'mapserver_progress_profile', 'mapserver_progress_producer',
+            'dbserver_profile', 'game_listener_profile')
+    return {key: accepted[key] for key in keys} | {
+        'archive_pin': accepted_mapserver_receipt()['payloads']['assets/runtime/game-package.tar.gz'],
+        'apk_donor_run_id': 36638344040,
+        'apk_donor_sha256': accepted_mapserver_receipt()['sha256']}
+
+
+def verify_mapserver_package(package):
+    """Verify the selected MapServer and every unchanged supporting dependency."""
+    accepted = mapserver_tools()
+    accepted.accepted_evidence(MAPSERVER_PROFILE)
+    contract = mapserver_contract()
+    package = Path(package)
+    require(digest(package/'game-package.json') == contract['package_manifest_sha256'],
+            'Requires the exact accepted MapServer composite manifest')
+    manifest = accepted.game.verify_package(package, dbserver_profile='loopback',
+        game_listener_profile='loopback', mapserver_progress_profile=MAPSERVER_PROFILE)
+    require(manifest.get('repository_commit') == contract['package_repository_commit'],
+            'Accepted MapServer composite commit differs')
+    accepted.verify_progress_identity(manifest, contract)
+    return manifest
+
+
+def extract_mapserver_archive(archive, output):
+    archive, output = Path(archive), Path(output)
+    require(archive.is_file() and not archive.is_symlink()
+            and file_pin(archive) == mapserver_contract()['archive_pin'],
+            'Accepted MapServer archive bytes differ')
+    server_tools().extract_archive(archive, output)
+    return verify_mapserver_package(output)
+
+
+def recover_mapserver_archive(apk, output):
+    """Copy the accepted compressed bytes; do not rebuild its composite package."""
+    apk, output = Path(apk), Path(output)
+    receipt = accepted_mapserver_receipt()
+    require(apk.is_file() and not apk.is_symlink()
+            and file_pin(apk) == {'bytes': receipt['bytes'], 'sha256': receipt['sha256']},
+            'Accepted Atlas APK bytes differ')
+    require(not output.exists() and not output.is_symlink(), 'Use a fresh MapServer archive output')
+    with zipfile.ZipFile(apk) as donor:
+        names = donor.namelist()
+        require(len(names) == len(set(names)), 'Duplicate accepted Atlas APK member')
+        member = 'assets/runtime/game-package.tar.gz'
+        require(donor.getinfo(member).file_size == mapserver_contract()['archive_pin']['bytes'],
+                'Accepted MapServer archive size differs')
+        with donor.open(member) as source, output.open('xb') as target:
+            shutil.copyfileobj(source, target, 1024 * 1024)
+    with tempfile.TemporaryDirectory(prefix='coh-mapserver-donor-') as temporary:
+        extract_mapserver_archive(output, Path(temporary)/'package')
+    return mapserver_contract()
+
+
 def local_server_contract():
     accepted = server_tools().bundle_contract()
     return {key: value for key, value in accepted.items()
             if key not in ('format', 'guest_script', 'android_execution_validated', 'gameplay_validated')} | {
                 'variant': 'normal', 'persistent_profile': 'android-local-login',
-                'mapserver_included': False}
+                'mapserver_included': True, 'mapserver': mapserver_contract()}
 
 
 def verify_local_server_inputs(package, schema):
@@ -103,8 +209,9 @@ def extract_local_server_inputs(assets, output):
         accepted.extract_archive(assets/'dbserver-package.tar.gz', staging/'package')
         accepted.extract_archive(assets/'dbserver-schema.tar.gz', staging/'schema')
         verify_local_server_inputs(staging/'package', staging/'schema')
+        extract_mapserver_archive(assets/'game-package.tar.gz', staging/'game-package')
         staging.rename(output)
-    return {'package': output/'package', 'schema': output/'schema'}
+    return {'package': output/'package', 'schema': output/'schema', 'game_package': output/'game-package'}
 
 
 def require(value, message):
@@ -164,7 +271,7 @@ def pe32(path):
 
 
 def bundle_contract():
-    return {'format':1,'scope':'actual_client_login_guest','guest_script':'client_login_diagnostic.py',
+    return {'format':1,'scope':'actual_character_creation_guest','guest_script':'character_creation_diagnostic.py',
             'executable':'CityOfHeroes.exe','reference_run_id':36088012664,
             'width':800,'height':600,'transport':'private_unix_rfb',
             'server_packages_included':True,'local_server':local_server_contract(),'game_assets_external':True,
@@ -211,7 +318,7 @@ def verify_device_assets(assets, *, repository_commit=None):
     return manifest
 
 
-def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver_schema, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
+def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver_schema, mapserver_apk, repository_commit, cc='i686-w64-mingw32-gcc', objdump='i686-w64-mingw32-objdump'):
     assets, output = Path(assets), Path(output)
     require(isinstance(repository_commit, str) and HEX40.fullmatch(repository_commit), 'Expected exact source commit')
     require(not output.exists() and not output.is_symlink(), 'Use a fresh assets output directory')
@@ -233,6 +340,7 @@ def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver
         prerequisite_package.prepare(staging/'client-prerequisites.zip')
         server_tools().write_archive(Path(dbserver_package), staging/'dbserver-package.tar.gz')
         server_tools().write_archive(Path(dbserver_schema), staging/'dbserver-schema.tar.gz')
+        recover_mapserver_archive(mapserver_apk, staging/'game-package.tar.gz')
         subprocess.run([cc,'-std=c11','-O2','-Wall','-Wextra','-Werror','-static-libgcc','-mconsole',
                         str(ROOT/'android/native/client-launcher.c'),'-luser32','-lkernel32',
                         '-o',str(staging/'client-launcher.exe')],check=True)
@@ -244,7 +352,7 @@ def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver
         manifest = copy.deepcopy(base)
         manifest.update(repository_commit=repository_commit, accepted_base_runtime=base_contract(base),
                         client_bundle=bundle_contract(),
-                        scope='Local graphical login candidate inputs; device login and gameplay unvalidated')
+                        scope='Graphical character creation candidate inputs; device character creation and gameplay unvalidated')
         manifest['files'].update({name: file_pin(staging/name) for name in sorted(EXTRA_FILES)})
         (staging/'runtime-manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
         verify_device_assets(staging, repository_commit=repository_commit)
@@ -261,7 +369,7 @@ def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for key in ('assets', 'output', 'client', 'client-caches', 'dbserver-package', 'dbserver-schema'): parser.add_argument('--'+key, required=True, type=Path)
+    for key in ('assets', 'output', 'client', 'client-caches', 'dbserver-package', 'dbserver-schema', 'mapserver-apk'): parser.add_argument('--'+key, required=True, type=Path)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--cc', default='i686-w64-mingw32-gcc')
     parser.add_argument('--objdump', default='i686-w64-mingw32-objdump')

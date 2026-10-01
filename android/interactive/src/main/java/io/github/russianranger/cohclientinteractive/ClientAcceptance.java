@@ -18,6 +18,48 @@ final class ClientAcceptance {
                 && yes(login.get("database_preserved"));
     }
 
+    static boolean characterConnectedEvent(Object value, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
+                && "character_connected".equals(event.get("type"))
+                && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
+                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1);
+    }
+
+    static boolean characterSavedEvent(Object value, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
+                && "character_saved".equals(event.get("type"))
+                && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
+                && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
+                && yes(event.get("committed_sql_verified"));
+    }
+
+    static boolean characterCreationVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid) {
+        Map<?, ?> report = object(value), character = object(report.get("character_creation")), event = object(savedEvent);
+        return localLoginVerified(value, session, clientPid) && characterSavedEvent(savedEvent, session, clientPid)
+                && characterConnectedEvent(connectedEvent, session, clientPid)
+                && number(event.get("character_id"), ((Number) object(connectedEvent).get("character_id")).longValue())
+                && yes(character.get("verified")) && session.equals(character.get("session_id"))
+                && number(character.get("client_pid"), clientPid) && positiveInteger(character.get("character_id"))
+                && number(character.get("character_id"), ((Number) event.get("character_id")).longValue())
+                && "THORHERO".equals(character.get("name")) && "COHLOCAL".equals(character.get("account"))
+                && positiveInteger(character.get("auth_id"))
+                && number(object(report.get("local_login")).get("auth_id"), ((Number) character.get("auth_id")).longValue())
+                && yes(character.get("connected_on_atlas")) && number(character.get("map_id"), 1)
+                && yes(character.get("committed_sql_verified")) && yes(character.get("protocol_logout_verified"))
+                && yes(character.get("disconnected_before_sql")) && Boolean.FALSE.equals(character.get("forced_stop_before_save"));
+    }
+
+    static boolean characterCreationAccepted(Object value, Object savedEvent, Object connectedEvent,
+                                               List<?> samples, String session, long clientPid,
+                                               long started, long ended, long savedObserved,
+                                               long windowEnded, long frameWatermark) {
+        return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid)
+                && surfaceAccepted(samples, session, started, ended, savedObserved, windowEnded, frameWatermark);
+    }
+
     static boolean interactionCompleted(Object value) {
         Map<?, ?> report = object(value);
         Object reason = report.get("interaction_completion_reason");
@@ -82,6 +124,9 @@ final class ClientAcceptance {
     private static boolean integer(Object value) {
         return value instanceof Number && Double.isFinite(((Number) value).doubleValue())
                 && ((Number) value).doubleValue() == ((Number) value).longValue();
+    }
+    private static boolean positiveInteger(Object value) {
+        return integer(value) && ((Number) value).longValue() > 0;
     }
     private static boolean number(Object value, long expected) {
         return integer(value) && ((Number) value).longValue() == expected;

@@ -1,4 +1,4 @@
-name: Thor local graphical login candidate
+name: Thor graphical character creation candidate
 on:
   workflow_dispatch:
   push:
@@ -7,6 +7,8 @@ on:
       - 'android/guest/client_interactive_diagnostic.py'
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
+      - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
   pull_request:
@@ -15,6 +17,8 @@ on:
       - 'android/guest/client_interactive_diagnostic.py'
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
+      - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
 permissions:
@@ -149,7 +153,7 @@ jobs:
         with:
           name: coh-client-generated-caches
           path: out/client-inputs/client-caches
-      - name: Preserve accepted runtime, client and loopback DbServer inputs
+      - name: Preserve accepted runtime, client, DbServer and MapServer inputs
         run: |
           mkdir -p out/client
           python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/client-inputs/schema
@@ -158,6 +162,7 @@ jobs:
             --client out/client-inputs/client-package/client-runtime.zip \
             --client-caches out/client-inputs/client-caches/client-caches.zip \
             --dbserver-package out/client-inputs/dbserver --dbserver-schema out/client-inputs/schema \
+            --mapserver-apk out/client-inputs/atlas-apk/COH-Atlas-Test-0.4.4.apk \
             --repository-commit "$GITHUB_SHA" > out/client/assets-preparation.json
       - uses: actions/download-artifact@v4
         with:
@@ -165,7 +170,7 @@ jobs:
           path: out/client-signing
           run-id: 36731428735
           github-token: ${{ github.token }}
-      - name: Build and verify same-package COH Local Login APK
+      - name: Build and verify same-package COH Character Creation APK
         env:
           COH_INTERACTIVE_KEYSTORE_PASSWORD: android
         run: >-
@@ -177,13 +182,13 @@ jobs:
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore out/client-signing/coh-client-interactive.jks
           --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
-          --output out/client/COH-Local-Login-0.8.1.apk
+          --output out/client/COH-Character-Creation-0.9.0.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-interaction-apk
           path: |
-            out/client/COH-Local-Login-0.8.1.apk
-            out/client/COH-Local-Login-0.8.1.apk.sha256
+            out/client/COH-Character-Creation-0.9.0.apk
+            out/client/COH-Character-Creation-0.9.0.apk.sha256
             out/client/interactive-apk-build-report.json
             out/client/assets-preparation.json
           if-no-files-found: error
@@ -204,7 +209,7 @@ jobs:
       contents: write
       actions: read
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 45
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -235,7 +240,7 @@ jobs:
       - name: Install host runtime dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless tesseract-ocr python3-pil
       - name: Build matching native ARM64 PRoot
         run: >-
           python3 tools/android/build_proot.py --target linux-arm64
@@ -244,14 +249,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
-      - name: Exercise exact APK local login through private Unix RFB
+      - name: Exercise exact APK character creation through private Unix RFB
         run: >-
-          python3 tools/android/interactive/login_host_smoke.py
-          --apk out/client/COH-Local-Login-0.8.1.apk
+          python3 tools/android/interactive/character_host_smoke.py
+          --apk out/client/COH-Character-Creation-0.9.0.apk
           --archive out/client-assets.zip
           --build-report out/client/interactive-apk-build-report.json
           --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64
-          --startup-timeout-seconds 900 --warm-prefix-refresh
+          --startup-timeout-seconds 900 --interaction-seconds 1200 --timeout-seconds 5400
           --work out/client-host --evidence out/client-evidence
       - uses: actions/upload-artifact@v4
         if: always()

@@ -211,6 +211,22 @@ public final class InteractiveRfbClient implements Closeable {
         writeKey(keysym, down);
     }
 
+    /** Ordinary game logout, queued as one command so touch/key events cannot interleave. */
+    public synchronized void sendSaveLogout(long expectedEpoch) throws IOException {
+        tapCommandKey(0xff0d, expectedEpoch);
+        awaitInputTime(System.nanoTime() + 350_000_000L, expectedEpoch);
+        String command = "/quittologin";
+        for (int i = 0; i < command.length(); i++) tapCommandKey(command.charAt(i), expectedEpoch);
+        tapCommandKey(0xff0d, expectedEpoch);
+    }
+
+    private void tapCommandKey(int key, long expectedEpoch) throws IOException {
+        sendKey(key, true, expectedEpoch);
+        awaitInputTime(System.nanoTime() + 120_000_000L, expectedEpoch);
+        sendKey(key, false, expectedEpoch);
+        awaitInputTime(System.nanoTime() + 120_000_000L, expectedEpoch);
+    }
+
     private void writeKey(int keysym, boolean down) throws IOException {
         output.writeByte(4);
         output.writeByte(down ? 1 : 0);
