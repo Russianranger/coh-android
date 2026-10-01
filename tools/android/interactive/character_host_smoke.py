@@ -59,43 +59,46 @@ class CharacterEvents:
             try: event = json.loads(line)
             except (ValueError, UnicodeDecodeError): continue
             if not isinstance(event, dict): continue
-            kind = event.get('type')
-            if kind == 'stage' and event.get('stage') == 'actual_client_interaction' and event.get('status') == 'passed':
-                require(self.saved_generation == 1, 'Character completion preceded committed save')
-                self.active = False
-                self.terminal = True
-                continue
-            if event.get('session_id') != self.session: continue
-            if kind == 'client_interaction_ready':
-                pid = event.get('client_pid')
-                require(type(pid) is int and pid > 0 and self.generation == 0 and not self.terminal,
-                        'Invalid or repeated character client readiness')
-                self.client_pid = pid
-                self.generation = 1
-                self.active = True
-            elif kind in ('client_login_ready', 'character_connected', 'character_saved'):
-                require(self.active and type(event.get('client_pid')) is int
-                        and event['client_pid'] == self.client_pid,
-                        'Character event client identity differs or followed completion')
-                if kind == 'client_login_ready':
-                    require(self.login_generation == 0 and event.get('character_list_sent') is True,
-                            'Invalid or repeated local login event')
-                    self.login_generation = 1
-                elif kind == 'character_connected':
-                    require(self.login_generation == 1 and self.connected_generation == 0
-                            and event.get('name') == CHARACTER and event.get('account') == 'COHLOCAL'
-                            and type(event.get('character_id')) is int and event['character_id'] > 0
-                            and type(event.get('map_id')) is int and event['map_id'] == 1,
-                            'Invalid or repeated connected character event')
-                    self.character_id = event['character_id']
-                    self.connected_generation = 1
-                else:
-                    require(self.connected_generation == 1 and self.saved_generation == 0
-                            and event.get('name') == CHARACTER
-                            and type(event.get('character_id')) is int and event['character_id'] == self.character_id
-                            and event.get('committed_sql_verified') is True,
-                            'Invalid or repeated committed character save event')
-                    self.saved_generation = 1
+            self.consume(event)
+
+    def consume(self, event):
+        kind = event.get('type')
+        if kind == 'stage' and event.get('stage') == 'actual_client_interaction' and event.get('status') == 'passed':
+            require(self.saved_generation == 1, 'Character completion preceded committed save')
+            self.active = False
+            self.terminal = True
+            return
+        if event.get('session_id') != self.session: return
+        if kind == 'client_interaction_ready':
+            pid = event.get('client_pid')
+            require(type(pid) is int and pid > 0 and self.generation == 0 and not self.terminal,
+                    'Invalid or repeated character client readiness')
+            self.client_pid = pid
+            self.generation = 1
+            self.active = True
+        elif kind in ('client_login_ready', 'character_connected', 'character_saved'):
+            require(self.active and type(event.get('client_pid')) is int
+                    and event['client_pid'] == self.client_pid,
+                    'Character event client identity differs or followed completion')
+            if kind == 'client_login_ready':
+                require(self.login_generation == 0 and event.get('character_list_sent') is True,
+                        'Invalid or repeated local login event')
+                self.login_generation = 1
+            elif kind == 'character_connected':
+                require(self.login_generation == 1 and self.connected_generation == 0
+                        and event.get('name') == CHARACTER and event.get('account') == 'COHLOCAL'
+                        and type(event.get('character_id')) is int and event['character_id'] > 0
+                        and type(event.get('map_id')) is int and event['map_id'] == 1,
+                        'Invalid or repeated connected character event')
+                self.character_id = event['character_id']
+                self.connected_generation = 1
+            else:
+                require(self.connected_generation == 1 and self.saved_generation == 0
+                        and event.get('name') == CHARACTER
+                        and type(event.get('character_id')) is int and event['character_id'] == self.character_id
+                        and event.get('committed_sql_verified') is True,
+                        'Invalid or repeated committed character save event')
+                self.saved_generation = 1
 
 
 def key(connection, code):
@@ -294,6 +297,12 @@ class CharacterInteraction(host.MenuInteraction):
         self.watermark = sequence
         self.frame_generation = frame.generation
 
+    def fixture_text(self, connection, value):
+        fixed_text(connection, value)
+
+    def custom_action(self, kind, value, name, connection, frame, events, sequence, now):
+        return False
+
     def proof_frames(self, name, event_generation, request_generation, frame, events, sequence, now):
         if event_generation != 1 or request_generation != 1: return False
         captures = self.result[name]
@@ -317,7 +326,7 @@ class CharacterInteraction(host.MenuInteraction):
             self.watermark = sequence
             self.fresh_frames += 1
             required = 2 if self.action < len(self.ACTIONS) and self.ACTIONS[self.action][0] in (
-                'click', 'ocr_click', 'text', 'account') else 1
+                'click', 'ocr_click', 'optional_ocr_click', 'text', 'account') else 1
             if self.fresh_frames < required or now-self.last_action_at < 2: return
         if self.action == len(self.ACTIONS):
             if 'finish_request' not in self.result:
@@ -325,11 +334,13 @@ class CharacterInteraction(host.MenuInteraction):
                 self.result['finish_request'] = host.write_finish_request(self.finish_path, self.session, events.client_pid)
             return
         kind, value, name = self.ACTIONS[self.action]
-        if kind in ('login', 'connected', 'saved'):
+        if kind in ('login', 'connected', 'saved', 'relocated'):
             proof, generation, requested = {
                 'login': ('post_login_captures', events.login_generation, frame.request_login_generation),
                 'connected': ('connected_captures', events.connected_generation, frame.request_connected_generation),
-                'saved': ('post_save_captures', events.saved_generation, frame.request_saved_generation)}[kind]
+                'saved': ('post_save_captures', events.saved_generation, frame.request_saved_generation),
+                'relocated': ('world_after_stuck_captures', getattr(events, 'relocated_generation', 0),
+                              getattr(frame, 'request_relocated_generation', 0))}[kind]
             if not self.proof_frames(proof, generation, requested, frame, events, sequence, now): return
         elif kind == 'account':
             attempt = len(self.result['account_entry_checks'])+1
@@ -374,10 +385,11 @@ class CharacterInteraction(host.MenuInteraction):
                 self.wait_for_fresh_input_frames(sequence, frame)
                 return
             require(self.text_selection_action == self.action, 'Text selection belongs to another graphical action')
-            fixed_text(connection, value)
+            self.fixture_text(connection, value)
             self.text_selection_action = None
-        elif kind == 'command': fixed_text(connection, value)
+        elif kind == 'command': self.fixture_text(connection, value)
         elif kind in ('key', 'escape'): key(connection, 0xff1b if kind == 'escape' else value)
+        elif self.custom_action(kind, value, name, connection, frame, events, sequence, now): pass
         else: require(False, 'Unknown graphical action')
         if name == 'submit_ordinary_logout':
             self.result['logout_request'] = write_logout_request(self.finish_path.parent/'character-logout.json',
@@ -393,13 +405,13 @@ class CharacterInteraction(host.MenuInteraction):
         self.frame_generation = frame.generation
 
 
-def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_path,interaction_factory=None):
+def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_path,interaction_factory=None,event_factory=None):
     desktop=host.client_rfb_handshake(connection);frame=host.ClientFramebuffer()
     updates=0;fingerprints=[];snapshots=[];last_capture=0;terminal=None;started=time.monotonic()
-    resizes=[];events=CharacterEvents(event_path,session);captures=[];event_generation=0
+    resizes=[];events=(event_factory or CharacterEvents)(event_path,session);captures=[];event_generation=0
     pending_request=False;request_generation=0;failure=None
     interaction=(interaction_factory or CharacterInteraction)(session,evidence,finish_path)
-    request_login_generation=request_connected_generation=request_saved_generation=0
+    request_login_generation=request_connected_generation=request_saved_generation=request_relocated_generation=0
     while process.poll() is None and time.monotonic()<deadline:
         try:
             events.poll()
@@ -412,6 +424,7 @@ def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_p
                 request_login_generation=events.login_generation if events.active else 0
                 request_connected_generation=events.connected_generation if events.active else 0
                 request_saved_generation=events.saved_generation if events.active else 0
+                request_relocated_generation=getattr(events, 'relocated_generation', 0) if events.active else 0
                 pending_request=True
             kind=host.transport.recv_exact(connection,1)[0]
             if kind==2:continue
@@ -453,6 +466,7 @@ def observe_rfb(connection,session,process,deadline,evidence,event_path,finish_p
                 frame.request_login_generation=request_login_generation
                 frame.request_connected_generation=request_connected_generation
                 frame.request_saved_generation=request_saved_generation
+                frame.request_relocated_generation=request_relocated_generation
                 interaction.on_frame(connection,frame,events,updates,captures,now)
             if now-last_capture>=20 and len(snapshots)<280:
                 name=f'client-frame-{len(snapshots):03d}.png';host.save_png(evidence/name,frame.pixels,frame.width,frame.height)

@@ -1,4 +1,4 @@
-name: Thor graphical character creation candidate
+name: Thor graphical saved character reopen candidate
 on:
   workflow_dispatch:
   push:
@@ -8,9 +8,13 @@ on:
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
       - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/character_reopen_diagnostic.py'
+      - 'android/guest/atlas_world_assets.py'
       - 'android/guest/character_avatar_assets.py'
       - 'assets/character-avatar-defaults.zip'
       - 'assets/character-avatar-defaults-manifest.json'
+      - 'assets/atlas-world-supplement.zip'
+      - 'assets/atlas-world-supplement-manifest.json'
       - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
@@ -21,9 +25,13 @@ on:
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
       - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/character_reopen_diagnostic.py'
+      - 'android/guest/atlas_world_assets.py'
       - 'android/guest/character_avatar_assets.py'
       - 'assets/character-avatar-defaults.zip'
       - 'assets/character-avatar-defaults-manifest.json'
+      - 'assets/atlas-world-supplement.zip'
+      - 'assets/atlas-world-supplement-manifest.json'
       - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
@@ -165,6 +173,21 @@ jobs:
           path: out/client-inputs/client-caches
       - name: Verify pinned default-male avatar supplement
         run: python3 tools/android/interactive/prepare_character_avatar_assets.py --verify
+      - name: Reconstruct the pinned Atlas world supplement
+        run: |
+          mkdir -p out/client
+          python3 tools/android/interactive/prepare_atlas_world_assets.py --materialize \
+            > out/client/atlas-world-materialization.json
+      - name: Verify pinned separate Atlas world supplement
+        run: python3 tools/android/interactive/prepare_atlas_world_assets.py --verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-world-supplement
+          path: |
+            assets/atlas-world-supplement.zip
+            assets/atlas-world-supplement-manifest.json
+            out/client/atlas-world-materialization.json
+          if-no-files-found: error
       - name: Preserve accepted runtime, client, DbServer and MapServer inputs
         run: |
           mkdir -p out/client
@@ -182,7 +205,7 @@ jobs:
           path: out/client-signing
           run-id: 36731428735
           github-token: ${{ github.token }}
-      - name: Build and verify same-package COH Character Creation APK
+      - name: Build and verify same-package COH Character Reopen APK
         env:
           COH_INTERACTIVE_KEYSTORE_PASSWORD: android
         run: >-
@@ -194,15 +217,16 @@ jobs:
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore out/client-signing/coh-client-interactive.jks
           --expected-cert-sha256 92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282
-          --output out/client/COH-Character-Creation-0.9.0.apk
+          --output out/client/COH-Character-Reopen-0.10.0.apk
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-interaction-apk
           path: |
-            out/client/COH-Character-Creation-0.9.0.apk
-            out/client/COH-Character-Creation-0.9.0.apk.sha256
+            out/client/COH-Character-Reopen-0.10.0.apk
+            out/client/COH-Character-Reopen-0.10.0.apk.sha256
             out/client/interactive-apk-build-report.json
             out/client/assets-preparation.json
+            out/client/atlas-world-materialization.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: always()
@@ -210,6 +234,7 @@ jobs:
           name: coh-client-interaction-packaging-evidence
           path: |
             out/client/assets-preparation.json
+            out/client/atlas-world-materialization.json
             out/client/interactive-apk-build-report.json
             out/client/runtime/runtime-manifest.json
             out/client/runtime/client-manifest.json
@@ -261,10 +286,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/client-assets.zip --release-asset-id 588984151
-      - name: Exercise exact APK character creation through private Unix RFB
+      - name: Exercise exact APK character save and reopening through private Unix RFB
         run: >-
-          python3 tools/android/interactive/character_host_smoke.py
-          --apk out/client/COH-Character-Creation-0.9.0.apk
+          python3 tools/android/interactive/character_reopen_host_smoke.py
+          --apk out/client/COH-Character-Reopen-0.10.0.apk
           --archive out/client-assets.zip
           --build-report out/client/interactive-apk-build-report.json
           --repository-commit "$GITHUB_SHA" --proot out/android/native/linux-arm64

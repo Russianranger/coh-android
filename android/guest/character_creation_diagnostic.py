@@ -21,7 +21,8 @@ OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
 CHARACTER_EVIDENCE_LIMIT = 256 * 1024 * 1024
 REQUIRED = login.REQUIRED | {'character_creation_diagnostic.py', 'local_character_server.py',
-    'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST}
+    'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST,
+    'atlas_world_assets.py', 'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
 
 
 def validate_args(args):
@@ -75,11 +76,19 @@ class CharacterContext(login.LoginContext):
 
 
 class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
+    REPORT_KEY = 'character_creation'
+    REQUIRED = REQUIRED
+    identity_verified = staticmethod(character_identity)
+    proof_verified = staticmethod(save_verified)
+
+    def make_server(self):
+        return character.LocalCharacterServer(self)
+
     def __init__(self, args, context):
         super().__init__(args, context)
         version_policy = dict(self.local_server.report['version_policy'])
         version_policy['native_launcher_mode'] = '--character-creation'
-        self.local_server = character.LocalCharacterServer(self)
+        self.local_server = self.make_server()
         self.local_server.report['version_policy'] = version_policy
         self.connected_announced = False
         self.saved_announced = False
@@ -92,9 +101,13 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         request = self.args.state / 'character-logout.json'
         require(not request.exists() and not request.is_symlink(), 'Stale character logout delivery receipt')
         super().initialize()
-        require(REQUIRED <= set(self.ctx.report['asset_sha256']),
+        require(self.REQUIRED <= set(self.ctx.report['asset_sha256']),
                 'Character creation inputs missing from the pinned inventory')
         self.ctx.report['character_avatar_supplement'] = avatar.install(self.work, self.args.assets, self.ctx)
+        # Missing world inputs are installed in this private client tree. Atlas
+        # staging mirrors them into the private server tree before map launch.
+        import atlas_world_assets as world
+        self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
 
     def observe_console(self):
         output, launch, console = super().observe_console()
@@ -102,9 +115,9 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 or self.observer is None or not self.ctx.report.get('startup_observed')):
             return output, launch, console
         proof = self.local_server.character_evidence()
-        current = self.ctx.report.get('character_creation', {})
+        current = self.ctx.report.get(self.REPORT_KEY, {})
         if current.get('connected_on_atlas') is True and not self.connected_announced:
-            require(character_identity(current, self.args.session_id), 'Connected character identity differs')
+            require(self.identity_verified(current, self.args.session_id), 'Connected character identity differs')
             require(current['auth_id'] == self.local_server.report.get('auth_id'),
                     'Created character does not belong to this local login')
             self.connected_identity = (current['character_id'], current['auth_id'])
@@ -112,9 +125,9 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             self.connected_announced = True
             self.ctx.event('character_connected', session_id=self.args.session_id, client_pid=launch['pid'],
                 character_id=current['character_id'], name=CHARACTER_NAME, account=login.server.ACCOUNT,
-                map_id=1)
+                map_id=1, **self.connected_event_data(current))
         if proof is not None:
-            require(self.connected_announced and save_verified(proof, self.args.session_id),
+            require(self.connected_announced and self.proof_verified(proof, self.args.session_id),
                     'Graphical character protocol save is incomplete')
             require((proof['character_id'], proof['auth_id']) == self.connected_identity,
                     'Saved character differs from the observed graphical connection')
@@ -131,18 +144,25 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 current.update(proof, client_pid=launch['pid'], verified_utc=base.utc(), client_capture=shot)
                 self.saved_announced = True
                 self.ctx.event('character_saved', session_id=self.args.session_id, client_pid=launch['pid'],
-                    character_id=proof['character_id'], name=CHARACTER_NAME, committed_sql_verified=True)
+                    character_id=proof['character_id'], name=CHARACTER_NAME, committed_sql_verified=True,
+                    **self.saved_event_data(proof))
         return output, launch, console
 
     def finish_observation(self, launch, registry_output, deadline):
-        proof = self.ctx.report.get('character_creation', {})
-        require(self.saved_announced and save_verified(proof, self.args.session_id)
+        proof = self.ctx.report.get(self.REPORT_KEY, {})
+        require(self.saved_announced and self.proof_verified(proof, self.args.session_id)
                 and proof.get('client_pid') == launch['pid'],
                 'Character save was not verified; export this session without another boot')
         return super().finish_observation(launch, registry_output, deadline)
 
+    def connected_event_data(self, proof):
+        return {}
 
-def main(argv=None):
+    def saved_event_data(self, proof):
+        return {}
+
+
+def run(argv, diagnostic_type, scope, mode):
     parser = argparse.ArgumentParser(description=__doc__)
     for name, default in [('state', '/state'), ('assets', '/opt/coh'), ('pg-bin', '/opt/coh/pgsql/bin'),
                           ('wine', '/opt/wine/bin/wine'), ('wineserver', '/opt/wine/bin/wineserver'),
@@ -160,7 +180,7 @@ def main(argv=None):
     base.OUTPUT_LIMIT = interactive.CLIENT_OUTPUT_LIMIT
     os.umask(0o077)
     context = CharacterContext(args.state, args.timeout_seconds)
-    context.report.update(scope=SCOPE, diagnostic_mode='actual_character_creation', session_id=args.session_id,
+    context.report.update(scope=scope, diagnostic_mode=mode, session_id=args.session_id,
         execution_platform_requested=args.execution_platform, postgres_started=False, server_started=False,
         mapserver_started=False, game_validated=False, menu_visual_validated=False,
         android_surface_validated=False, hardware_acceleration_validated=False,
@@ -172,7 +192,7 @@ def main(argv=None):
     try:
         validate_args(args); validated = True
         context.check()
-        diagnostic = CharacterCreationDiagnostic(args, context)
+        diagnostic = diagnostic_type(args, context)
         diagnostic.execute()
         context.report['status'] = 'passed'
     except base.Cancelled as exc:
@@ -202,7 +222,7 @@ def main(argv=None):
             and context.report.get('local_login', {}).get('character_list_sent') is True
             and context.report.get('local_login', {}).get('database_preserved') is True
             and context.report.get('mapserver_started') is True
-            and save_verified(context.report.get('character_creation'), args.session_id))
+            and diagnostic_type.proof_verified(context.report.get(diagnostic_type.REPORT_KEY), args.session_id))
         if context.report['status'] == 'passed' and not context.report['passed']:
             context.report['status'] = 'failed'
             if not context.report['failures']: context.report['failures'].append('Required character save or cleanup was not proved')
@@ -217,6 +237,10 @@ def main(argv=None):
         context.event('result', status=context.report['status'], passed=context.report['passed'],
                       report='/state/latest-report.json', failures=context.report['failures'])
     return 0 if context.report['passed'] else 2 if context.report['status'] == 'cancelled' else 1
+
+
+def main(argv=None):
+    return run(argv, CharacterCreationDiagnostic, SCOPE, 'actual_character_creation')
 
 
 if __name__ == '__main__': sys.exit(main())

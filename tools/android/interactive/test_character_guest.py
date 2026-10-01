@@ -252,7 +252,8 @@ class CharacterBoundsTests(unittest.TestCase):
             diagnostic.work = root / 'work'
             diagnostic.ctx = SimpleNamespace(report={'asset_sha256': dict.fromkeys(guest.REQUIRED, 'pinned')})
             with patch.object(guest.login.ClientLoginDiagnostic, 'initialize') as parent, \
-                    patch.object(guest.avatar, 'install', return_value={}) as supplement:
+                    patch.object(guest.avatar, 'install', return_value={}) as supplement, \
+                    patch.dict(sys.modules, atlas_world_assets=SimpleNamespace(install=Mock(return_value={}))) as modules:
                 for kind in ('file', 'existing_link', 'dangling_link'):
                     with self.subTest(kind=kind):
                         if kind == 'file': request.write_text('{}')
@@ -265,6 +266,8 @@ class CharacterBoundsTests(unittest.TestCase):
                 diagnostic.initialize()
                 parent.assert_called_once_with()
                 supplement.assert_called_once_with(diagnostic.work, diagnostic.args.assets, diagnostic.ctx)
+                modules['atlas_world_assets'].install.assert_called_once_with(
+                    diagnostic.work, diagnostic.args.assets, diagnostic.ctx)
 
     def test_process_budget_caps_observation_and_retains_ownership_and_checks(self):
         context = guest.CharacterContext.__new__(guest.CharacterContext)

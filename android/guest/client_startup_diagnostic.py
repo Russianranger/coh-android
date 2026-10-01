@@ -86,7 +86,10 @@ def verify_assets(assets):
         require(isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', name)
                 and name not in ('.', '..') and isinstance(expected, dict), 'Unsafe client inventory entry')
         path = assets / name
-        limit = CACHE_BYTES_LIMIT if name == 'client-caches.zip' else 128*1024*1024
+        # This exact world supplement is independently pinned by its manifest
+        # and runtime helper; unrelated payloads keep their existing cap.
+        limit = (CACHE_BYTES_LIMIT if name == 'client-caches.zip' else
+                 256*1024*1024 if name == 'atlas-world-supplement.zip' else 128*1024*1024)
         require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= limit,
                 'Missing, linked or oversized client input: ' + name)
         digest = expected.get('sha256')

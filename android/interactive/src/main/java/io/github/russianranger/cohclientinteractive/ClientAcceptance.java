@@ -54,7 +54,11 @@ final class ClientAcceptance {
     }
 
     static boolean characterCreationVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid) {
-        Map<?, ?> report = object(value), character = object(report.get("character_creation")), event = object(savedEvent);
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_creation");
+    }
+
+    private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key) {
+        Map<?, ?> report = object(value), character = object(report.get(key)), event = object(savedEvent);
         return localLoginVerified(value, session, clientPid) && characterSavedEvent(savedEvent, session, clientPid)
                 && characterConnectedEvent(connectedEvent, session, clientPid)
                 && number(event.get("character_id"), ((Number) object(connectedEvent).get("character_id")).longValue())
@@ -76,6 +80,52 @@ final class ClientAcceptance {
                                                long windowEnded, long frameWatermark) {
         return characterCreationVerified(value, savedEvent, connectedEvent, session, clientPid)
                 && surfaceAccepted(samples, session, started, ended, savedObserved, windowEnded, frameWatermark);
+    }
+
+    static boolean characterReopenConnectedEvent(Object value, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return characterConnectedEvent(value, session, clientPid)
+                && number(event.get("character_id"), 1) && number(event.get("baseline_character_id"), 1)
+                && yes(event.get("reopen_verified")) && yes(event.get("existing_character_verified"));
+    }
+
+    static boolean characterRelocatedEvent(Object value, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
+                && "character_relocated".equals(event.get("type"))
+                && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
+                && number(event.get("character_id"), 1) && "THORHERO".equals(event.get("name"))
+                && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1)
+                && yes(event.get("ordinary_stuck_observed")) && yes(event.get("on_atlas_safe_position"))
+                && yes(event.get("stable_ground_verified"));
+    }
+
+    static boolean characterReopenVerified(Object value, Object savedEvent, Object connectedEvent,
+                                           String session, long clientPid) {
+        Map<?, ?> reopen = object(object(value).get("character_reopen"));
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_reopen")
+                && characterReopenConnectedEvent(connectedEvent, session, clientPid)
+                && yes(reopen.get("reopen_verified")) && yes(reopen.get("existing_character_verified"))
+                && yes(reopen.get("preserved_existing_identity")) && yes(reopen.get("native_client_ready_observed"))
+                && yes(reopen.get("powers_preserved")) && yes(reopen.get("costume_preserved"))
+                && yes(reopen.get("ordinary_stuck_observed")) && yes(reopen.get("on_atlas_safe_position"))
+                && yes(reopen.get("stable_ground_verified"))
+                && yes(reopen.get("selected_rows_preserved")) && yes(reopen.get("committed_safe_position_verified"))
+                && number(reopen.get("before_character_id"), 1) && number(reopen.get("baseline_character_id"), 1)
+                && number(reopen.get("character_id"), 1);
+    }
+
+    static boolean characterReopenAccepted(Object value, Object savedEvent, Object connectedEvent,
+                                           Object relocatedEvent, List<?> connectedSamples, List<?> relocationSamples, List<?> savedSamples, String session, long clientPid,
+                                           long started, long ended, long connectedObserved, long connectedFrameWatermark,
+                                           long relocatedObserved, long relocatedFrameWatermark,
+                                           long savedObserved, long windowEnded, long savedFrameWatermark) {
+        return characterReopenVerified(value, savedEvent, connectedEvent, session, clientPid)
+                && characterRelocatedEvent(relocatedEvent, session, clientPid)
+                && connectedObserved >= started && relocatedObserved >= connectedObserved && savedObserved >= relocatedObserved
+                && surfaceAccepted(connectedSamples, session, started, ended, connectedObserved, relocatedObserved, connectedFrameWatermark)
+                && surfaceAccepted(relocationSamples, session, started, ended, relocatedObserved, savedObserved, relocatedFrameWatermark)
+                && surfaceAccepted(savedSamples, session, started, ended, savedObserved, windowEnded, savedFrameWatermark);
     }
 
     static boolean interactionCompleted(Object value) {

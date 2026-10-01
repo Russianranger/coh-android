@@ -60,6 +60,24 @@ public final class ClientAcceptanceHost {
             at(login,"character_creation").put("client_pid",672);
             saved.put("client_pid",672);connected.put("client_pid",672);
         }
+        List<Map<String,Object>> connectedFrames=samples(), relocationFrames=samples();
+        Map<String,Object> relocated=map("type","character_relocated","session_id",SESSION,"client_pid",42,
+            "character_id",1,"name","THORHERO","account","COHLOCAL","map_id",1,
+            "ordinary_stuck_observed",true,"on_atlas_safe_position",true,"stable_ground_verified",true);
+        if (args[0].startsWith("reopen_")) {
+            Map<String,Object> reopen=new LinkedHashMap<>(at(login,"character_creation"));
+            reopen.put("character_id",1);reopen.put("before_character_id",1);reopen.put("baseline_character_id",1);
+            for(String flag:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
+                    "native_client_ready_observed","powers_preserved","costume_preserved","ordinary_stuck_observed",
+                    "on_atlas_safe_position","stable_ground_verified","selected_rows_preserved","committed_safe_position_verified"}) reopen.put(flag,true);
+            login.put("character_reopen",reopen);login.remove("character_creation");
+            saved.put("character_id",1);connected.put("character_id",1);connected.put("baseline_character_id",1);
+            connected.put("reopen_verified",true);connected.put("existing_character_verified",true);
+            for(int i=0;i<3;i++) {
+                relocationFrames.get(i).put("captured_elapsed_ms",4000L+i*1000);
+                frames.get(i).put("captured_elapsed_ms",7000L+i*1000);
+            }
+        }
         boolean expected=false,actual;
         switch(args[0]) {
             case "window_retained_atlas": expected=true;break;
@@ -122,6 +140,63 @@ public final class ClientAcceptanceHost {
             case "final_no_login": at(login,"local_login").put("local_login_verified",false);break;
             case "final_no_fresh_capture": frames.get(0).put("sequence",6);break;
             case "final_no_cleanup": cleanup.put("cleanup_complete",false);break;
+            case "reopen_valid": expected=true;break;
+            case "reopen_missing": login.remove("character_reopen");break;
+            case "reopen_creation_only": login.put("character_creation",login.remove("character_reopen"));break;
+            case "reopen_new_character": at(login,"character_reopen").put("character_id",2);break;
+            case "reopen_wrong_baseline": at(login,"character_reopen").put("baseline_character_id",2);break;
+            case "reopen_wrong_before": at(login,"character_reopen").put("before_character_id",2);break;
+            case "reopen_unproved_existing": at(login,"character_reopen").remove("existing_character_verified");break;
+            case "reopen_unproved_reopen": at(login,"character_reopen").put("reopen_verified",false);break;
+            case "reopen_identity_changed": at(login,"character_reopen").put("preserved_existing_identity",false);break;
+            case "reopen_costume_changed": at(login,"character_reopen").put("costume_preserved",false);break;
+            case "reopen_powers_changed": at(login,"character_reopen").put("powers_preserved",false);break;
+            case "reopen_no_selected_rows": at(login,"character_reopen").remove("selected_rows_preserved");break;
+            case "reopen_selected_rows_changed": at(login,"character_reopen").put("selected_rows_preserved",false);break;
+            case "reopen_selected_rows_null": at(login,"character_reopen").put("selected_rows_preserved",null);break;
+            case "reopen_no_safe_commit": at(login,"character_reopen").remove("committed_safe_position_verified");break;
+            case "reopen_bad_safe_commit": at(login,"character_reopen").put("committed_safe_position_verified",false);break;
+            case "reopen_safe_commit_null": at(login,"character_reopen").put("committed_safe_position_verified",null);break;
+            case "reopen_no_stuck": at(login,"character_reopen").remove("ordinary_stuck_observed");break;
+            case "reopen_no_safe_ground": at(login,"character_reopen").put("on_atlas_safe_position",false);break;
+            case "reopen_unstable_ground": at(login,"character_reopen").put("stable_ground_verified",false);break;
+            case "reopen_no_relocation_event": relocated.clear();break;
+            case "reopen_relocation_old_session": relocated.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_relocation_wrong_pid": relocated.put("client_pid",43);break;
+            case "reopen_relocation_wrong_character": relocated.put("character_id",2);break;
+            case "reopen_relocation_wrong_account": relocated.put("account","OLDACCOUNT");break;
+            case "reopen_relocation_wrong_map": relocated.put("map_id",2);break;
+            case "reopen_relocation_no_stuck": relocated.remove("ordinary_stuck_observed");break;
+            case "reopen_relocation_no_ground": relocated.put("on_atlas_safe_position",false);break;
+            case "reopen_relocation_unstable": relocated.put("stable_ground_verified",false);break;
+            case "reopen_no_relocation_captures": relocationFrames.clear();break;
+            case "reopen_two_relocation_captures": relocationFrames.remove(0);break;
+            case "reopen_pre_relocation_capture": relocationFrames.get(0).put("captured_elapsed_ms",3999);break;
+            case "reopen_pre_relocation_frame": relocationFrames.get(0).put("sequence",6);break;
+            case "reopen_late_relocation_capture": relocationFrames.get(2).put("captured_elapsed_ms",7001);break;
+            case "reopen_blank_relocation_capture": relocationFrames.get(0).put("non_uniform",false);break;
+            case "reopen_no_native_ready": at(login,"character_reopen").remove("native_client_ready_observed");break;
+            case "reopen_event_new_character": connected.put("baseline_character_id",2);break;
+            case "reopen_event_no_existing": connected.remove("existing_character_verified");break;
+            case "reopen_event_no_reopen": connected.put("reopen_verified",false);break;
+            case "reopen_event_old_session": connected.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_event_wrong_pid": connected.put("client_pid",43);break;
+            case "reopen_no_logout": at(login,"character_reopen").put("requested_logout_observed",false);break;
+            case "reopen_no_timer": at(login,"character_reopen").put("logout_timer_observed",false);break;
+            case "reopen_no_sql": at(login,"character_reopen").put("committed_sql_verified",false);break;
+            case "reopen_no_auth": at(login,"local_login").put("auth_id",2);break;
+            case "reopen_forced_save": at(login,"character_reopen").put("forced_stop_before_save",true);break;
+            case "reopen_no_connection_captures": connectedFrames.clear();break;
+            case "reopen_two_connection_captures": connectedFrames.remove(0);break;
+            case "reopen_pre_connection_capture": connectedFrames.get(0).put("captured_elapsed_ms",999);break;
+            case "reopen_pre_connection_frame": connectedFrames.get(0).put("sequence",6);break;
+            case "reopen_stale_connection_capture": connectedFrames.get(0).put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_blank_connection_capture": connectedFrames.get(0).put("non_uniform",false);break;
+            case "reopen_late_connection_capture": connectedFrames.get(2).put("captured_elapsed_ms",4001);break;
+            case "reopen_pre_save_capture": frames.get(0).put("captured_elapsed_ms",6999);break;
+            case "reopen_pre_save_frame": frames.get(0).put("sequence",6);break;
+            case "reopen_two_save_captures": frames.remove(0);break;
+            case "reopen_save_event_mismatch": saved.put("character_id",2);break;
             case "character_valid": expected=true;break;
             case "character_missing": login.remove("character_creation");break;
             case "character_unverified": at(login,"character_creation").put("verified",false);break;
@@ -222,6 +297,7 @@ public final class ClientAcceptanceHost {
             : args[0].startsWith("final_") ? ClientAcceptance.clientWindowAccepted(window,windowPid)
                 && ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,672,500,4000,1000,3500,6)
                 && ClientAcceptance.cleanupSafe(cleanup)
+            : args[0].startsWith("reopen_") ? ClientAcceptance.characterReopenAccepted(login,saved,connected,relocated,connectedFrames,relocationFrames,frames,SESSION,42,500,11000,1000,6,4000,6,7000,10000,6)
             : args[0].startsWith("character_") ? ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,42,500,4000,1000,3500,6)
             : args[0].startsWith("login_") ? ClientAcceptance.localLoginVerified(login,SESSION,42)
             : args[0].startsWith("interaction_") ? ClientAcceptance.interactionCompleted(interaction)
@@ -286,6 +362,22 @@ class ClientAcceptanceTests(unittest.TestCase):
                  'two_captures', 'pre_save_frame', 'pre_save_capture', 'stale_capture_session', 'blank_capture')
         for case in cases:
             with self.subTest(case=case): self.execute('character_' + case)
+
+    def test_reopen_requires_prior_identity_unchanged_costume_and_two_fresh_capture_sets(self):
+        cases = ('valid', 'missing', 'creation_only', 'new_character', 'wrong_baseline', 'wrong_before',
+                 'unproved_existing', 'unproved_reopen', 'identity_changed', 'costume_changed', 'powers_changed',
+                 'no_native_ready', 'no_selected_rows', 'selected_rows_changed', 'selected_rows_null',
+                 'no_safe_commit', 'bad_safe_commit', 'safe_commit_null', 'no_stuck', 'no_safe_ground', 'unstable_ground', 'no_relocation_event',
+                 'relocation_old_session', 'relocation_wrong_pid', 'relocation_wrong_character',
+                 'relocation_wrong_account', 'relocation_wrong_map', 'relocation_no_stuck', 'relocation_no_ground',
+                 'relocation_unstable', 'no_relocation_captures', 'two_relocation_captures', 'pre_relocation_capture',
+                 'pre_relocation_frame', 'late_relocation_capture', 'blank_relocation_capture', 'event_new_character', 'event_no_existing', 'event_no_reopen',
+                 'event_old_session', 'event_wrong_pid', 'no_logout', 'no_timer', 'no_sql', 'no_auth', 'forced_save',
+                 'no_connection_captures', 'two_connection_captures', 'pre_connection_capture',
+                 'pre_connection_frame', 'stale_connection_capture', 'blank_connection_capture',
+                 'late_connection_capture', 'pre_save_capture', 'pre_save_frame', 'two_save_captures', 'save_event_mismatch')
+        for case in cases:
+            with self.subTest(case=case): self.execute('reopen_' + case)
 
     def test_frame_boundaries(self):
         for mode in ('valid', 'static_frame', 'stale_session', 'missing_pixelcopy',

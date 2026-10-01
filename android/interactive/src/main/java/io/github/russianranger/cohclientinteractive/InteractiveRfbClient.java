@@ -213,9 +213,19 @@ public final class InteractiveRfbClient implements Closeable {
 
     /** Ordinary game logout, queued as one command so touch/key events cannot interleave. */
     public synchronized void sendSaveLogout(long expectedEpoch) throws IOException {
+        sendChatCommand("/quittologin", expectedEpoch);
+    }
+
+    /** Ordinary access-zero recovery; never directly edits a character's stored position. */
+    public synchronized void sendReturnToSafeGround(long expectedEpoch) throws IOException {
+        sendChatCommand("/stuck", expectedEpoch);
+    }
+
+    private void sendChatCommand(String command, long expectedEpoch) throws IOException {
+        requireCurrentInput(expectedEpoch);
+        releaseAllInputs();
         tapCommandKey(0xff0d, expectedEpoch);
         awaitInputTime(System.nanoTime() + 350_000_000L, expectedEpoch);
-        String command = "/quittologin";
         for (int i = 0; i < command.length(); i++) tapCommandKey(command.charAt(i), expectedEpoch);
         tapCommandKey(0xff0d, expectedEpoch);
     }

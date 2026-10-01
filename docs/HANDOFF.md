@@ -1,6 +1,42 @@
 # City of Heroes Android handoff
 
-**Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. Preserve THORHERO; Atlas scenery/collision and exact-character reopen are next.**
+**Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. The 0.10.0 exact-character reopen and Atlas recovery candidate is implemented; APK and hosted qualification are in progress. Preserve THORHERO.**
+
+The next candidate defaults to reopening the existing COHLOCAL / THORHERO ID 1.
+It compares a read-only pre-login baseline with the ordinary committed save,
+preserves identity, powers and costume, and requires LoginCount to increment
+once. Its pinned Atlas supplement adds missing geometry and referenced textures
+to the private client/server trees. A one-time refresh removes only affected
+private compiled map caches; the original import and accepted cache archive are
+preserved. The large supplement ZIP is reconstructed from exact reviewed public
+PIGG ranges rather than committed as a Git blob.
+
+The [static world review](android-evidence/atlas-world-static-review-20261001.json)
+verified exact reconstruction of the 203,438,405-byte ZIP, all 2,877 decoded
+files (309,655,940 bytes), a complete first install and repeat reuse, and narrow
+cache refresh. The 4,209,334-byte manifest records 488 geometry and 2,389 texture
+files with no accepted-import/avatar overlap. These are static checks; runtime
+appearance and recovery still require the candidate's hosted/device evidence.
+The complete install replay also used the accepted import's original directory
+case plan, preserving all 741 existing directory spellings and inodes. The
+[Android compile](android-evidence/character-reopen-android-compile-20261001.json)
+passed resource linking, all 15 Java sources and D8 bytecode generation using
+the official checksum-verified SDK 35 platform and build tools.
+
+After native connection and three fresh Android views, the app enables
+**Return to safe ground**, delivering ordinary `/stuck`. It requires two fresh,
+stable native positions at least 25 seconds apart, then three fresh Android
+views before enabling ordinary save/logout. The committed safe position and
+preserved selected rows are required before three fresh post-save captures
+enable Finish. Stable native position is a bounded recovery check; actual Atlas
+appearance needs visual inspection, and full collision/gameplay remain pending.
+
+The hosted candidate creates a seed through the actual graphical client, saves,
+fully stops the owned stack, then reopens and saves the same character through
+a second real session with the same PostgreSQL/Wine profile. This hosted seed
+does not change the accepted Thor test. The user's next test is only the
+[one-session reopen flow](ANDROID_CHARACTER_REOPEN_TEST.md), with the existing
+character and app storage preserved.
 
 The user completed `coh-character-creation-20261001-162621.zip` on Android 13 / AYN
 Thor and confirmed the default Male costume, visible character/UI, normal save

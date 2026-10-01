@@ -25,9 +25,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 APP_ID = "io.github.russianranger.cohclientinteractive"
 LAUNCHER = APP_ID + ".ClientActivity"
-VERSION_NAME = "0.9.0"
-VERSION_CODE = 4
-APK_NAME = f"COH-Character-Creation-{VERSION_NAME}.apk"
+VERSION_NAME = "0.10.0"
+VERSION_CODE = 5
+APK_NAME = f"COH-Character-Reopen-{VERSION_NAME}.apk"
 ANDROID = "{http://schemas.android.com/apk/res/android}"
 NATIVE_NAMES = frozenset({"libproot.so", "libproot-loader.so"})
 NATIVE_MEMBERS = frozenset("lib/arm64-v8a/" + name for name in NATIVE_NAMES)
@@ -449,9 +449,9 @@ def main():
             "signing_alias": args.alias, "expected_signer_certificate_sha256": args.expected_cert_sha256,
             "package_badging_verified": True, "badging": badging,
             "payload_bytes_verified": True, "device_validated": False, "gameplay_validated": False,
-            "candidate_role": "physical_thor_actual_character_creation_test",
-            "scope": "Pinned CityOfHeroes graphical character creation with persistent DbServer profile and accepted MapServer; device character creation and gameplay remain unvalidated",
-            "installation": "In-place update to Client Interaction with the retained signing identity. Reuses imported assets, Wine prefix, and client caches; starts persistent local PostgreSQL and DbServer.",
+            "candidate_role": "physical_thor_actual_character_reopen_test",
+            "scope": "Pinned CityOfHeroes saved character reopening with persistent DbServer profile, accepted MapServer and separate Atlas world supplement; device reopening and gameplay remain unvalidated",
+            "installation": "In-place update to Character Creation 0.9.0 with the retained signing identity. Refresh runtime after updating; preserve THORHERO, the existing private database, imported assets, Wine prefix and prepared client caches.",
         }
         (args.output.parent / "interactive-apk-build-report.json").write_text(json.dumps(report, indent=2) + "\n")
         args.output.with_suffix(".apk.sha256").write_text(report["sha256"] + "  " + args.output.name + "\n")

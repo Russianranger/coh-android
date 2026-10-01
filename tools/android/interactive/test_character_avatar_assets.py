@@ -191,12 +191,26 @@ class AvatarAssetsTests(unittest.TestCase):
         state = self.root/'state'; state.mkdir()
         d.args = SimpleNamespace(state=state, assets=self.assets)
         d.ctx = SimpleNamespace(report={'asset_sha256': {name: 'pinned' for name in guest.REQUIRED}})
-        def parent_initialize(): d.work = self.work
+        order = []
+        def parent_initialize():
+            d.work = self.work
+            order.append('parent')
+        def install_avatar(*_args):
+            order.append('avatar')
+            return {'installed_files': 21}
+        def install_world(*_args):
+            order.append('world')
+            return {'installed_files': 0}
+        world = SimpleNamespace(install=Mock(side_effect=install_world))
         with patch.object(guest.login.ClientLoginDiagnostic, 'initialize', side_effect=parent_initialize), \
-                patch.object(guest.avatar, 'install', return_value={'installed_files':21}) as install:
+                patch.object(guest.avatar, 'install', side_effect=install_avatar) as install, \
+                patch.dict(sys.modules, atlas_world_assets=world):
             d.initialize()
         install.assert_called_once_with(self.work, self.assets, d.ctx)
         self.assertEqual(d.ctx.report['character_avatar_supplement']['installed_files'], 21)
+        world.install.assert_called_once_with(self.work, self.assets, d.ctx)
+        self.assertEqual(d.ctx.report['atlas_world_supplement'], {'installed_files': 0})
+        self.assertEqual(order, ['parent', 'avatar', 'world'])
 
 
 if __name__ == '__main__': unittest.main()

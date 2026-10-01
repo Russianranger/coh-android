@@ -2,6 +2,7 @@
 """Owned Atlas service and read-only proof of one graphical character save."""
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -23,6 +24,7 @@ MAP_STARTUP_SECONDS = 2400
 SNAPSHOT_LIMIT = 2 * 1024 * 1024
 LOGOUT_RECEIPT_LIMIT = 512
 LOGOUT_MAX_AGE_MS = 120000
+RELOCATION_MAX_AGE_MS = 600000
 SERVER_LOG_FILE_LIMIT = 16 * 1024 * 1024
 SERVER_LOG_TOTAL_LIMIT = 64 * 1024 * 1024
 SERVER_LOG_COUNT_LIMIT = 128
@@ -32,7 +34,8 @@ def digest_json(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
-def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, now_utc_ms):
+def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, now_utc_ms, *,
+                         action='quittologin', max_age_ms=LOGOUT_MAX_AGE_MS):
     """Read the input sender's receipt; this is not a network-packet receipt."""
     try:
         fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
@@ -60,12 +63,57 @@ def read_logout_delivery(path, session, client_pid, character_id, ready_utc_ms, 
             and value['session_id'] == session
             and type(value['client_pid']) is int and value['client_pid'] > 0 and value['client_pid'] == client_pid
             and type(value['character_id']) is int and value['character_id'] > 0
-            and value['character_id'] == character_id and value['action'] == 'quittologin'
+            and value['character_id'] == character_id and value['action'] == action
             and type(value['sent_utc_ms']) is int and type(ready_utc_ms) is int
             and ready_utc_ms <= value['sent_utc_ms']
-            and 0 <= now_utc_ms - value['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS,
+            and 0 <= now_utc_ms - value['sent_utc_ms'] <= max_age_ms,
             'Character logout delivery does not match this ready client or its save window')
     return value
+
+
+def native_position_records(logs):
+    """Read current owned Atlas entity physics observations, including bad Y."""
+    number = r'-?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?'
+    pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ PeriodicInfo pos=<('
+        + number + '),(' + number + '),(' + number + r')> [^\r\n]+$')
+    result = {}
+    for message, record in entity_records(logs):
+        match = pattern.fullmatch(message)
+        if match is None:
+            continue
+        coordinates = [float(value) for value in match.groups()]
+        require(all(math.isfinite(value) and abs(value) <= 1000000 for value in coordinates),
+                'Native character position is nonfinite or out of bounds')
+        utc_ms = int(time.mktime(time.strptime(record['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+        value = dict(record, position=coordinates, utc_ms=utc_ms, account=ACCOUNT, name=CHARACTER,
+            source='current_owned_mapserver_periodic_entity_physics_position')
+        # A local logger and embedded logserver can retain the same observation.
+        # They must agree, and two routes never count as two physical samples.
+        require(utc_ms not in result or result[utc_ms]['position'] == coordinates,
+                'Ambiguous native character positions at one timestamp')
+        result[utc_ms] = value
+    return [result[key] for key in sorted(result)]
+
+
+def stable_ground_evidence(logs, delivery, now_utc_ms, *, max_age_ms=180000):
+    values = [value for value in native_position_records(logs)
+              if value['utc_ms'] >= delivery['sent_utc_ms']]
+    if len(values) < 2:
+        return None
+    before, after = values[-2:]
+    elapsed = after['utc_ms'] - before['utc_ms']
+    if not (25000 <= elapsed <= 90000 and 0 <= now_utc_ms - after['utc_ms'] <= max_age_ms):
+        return None
+    first, last = before['position'], after['position']
+    if not (all(abs(value[0]) <= 100000 and abs(value[2]) <= 100000 and -100 < value[1] < 10000
+                for value in (first, last))
+            and abs(first[1] - last[1]) <= .5
+            and math.hypot(first[0] - last[0], first[2] - last[2]) <= 2):
+        return None
+    return {'verified': True, 'samples': [before, after], 'elapsed_ms': elapsed,
+        'position': last, 'ordinary_command': 'stuck',
+        'scope': 'two_current_native_physics_positions_stable_above_fall_boundary_after_ordinary_stuck',
+        'full_collision_geometry_verified': False}
 
 
 def logout_follows_delivery(logout, delivery):
@@ -134,8 +182,9 @@ def ready_record(logs):
     return None
 
 
-def validate_character_rows(rows, baseline, inventory, attributes, auth_id):
-    """Reject provisional name-only rows and bind every child to the new player."""
+def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
+                            existing_identity=None, expected_login_count=1):
+    """Reject provisional rows and bind every child to the observed player."""
     require(isinstance(rows, dict) and set(rows) == set(evidence.SELECTED), 'Character snapshot tables differ')
     evidence.validate_attributes(attributes)
     require(type(auth_id) is int and auth_id > 0, 'Character account identity is missing')
@@ -144,14 +193,21 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id):
     require(len(parents) == 1, 'Character name is ambiguous')
     parent = parents[0]
     identifier = parent.get('containerid')
-    require(type(identifier) is int and identifier > 0 and identifier not in {r['containerid'] for r in baseline},
-            'Character was present before this graphical session')
+    require(type(identifier) is int and identifier > 0, 'Character ID is invalid')
+    if existing_identity is None:
+        require(identifier not in {r['containerid'] for r in baseline},
+                'Character was present before this graphical session')
+    else:
+        require(evidence._same({key: parent[key] for key in evidence.IDENTITY_FIELDS}, existing_identity)
+                and sum(evidence._same(row, existing_identity) for row in baseline) == 1,
+                'Existing character identity differs from the preserved baseline')
     require(parent.get('name') == CHARACTER and parent.get('authname') == ACCOUNT
             and parent.get('authid') == auth_id, 'Character/account SQL identity differs')
     if not parent.get('class') or not parent.get('origin') or not parent.get('logincount'):
         return None
-    require(type(parent['logincount']) is int and parent['logincount'] == 1,
-            'Character must have exactly its first map login')
+    require(type(expected_login_count) is int and 0 < expected_login_count < 2**31
+            and type(parent['logincount']) is int and parent['logincount'] == expected_login_count,
+            'Character LoginCount differs from the required graphical session')
     known = {row['id'] for row in attributes['attributes']}
     for table, selected in evidence.SELECTED.items():
         fields = set(selected) | ({'logincount'} if table == 'ents' else set())
@@ -175,14 +231,19 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id):
                         or type(value) is int and value > 0 and value in known,
                         'Character attribute is absent from the accepted mapping: ' + table + '.' + field)
     new_identity = {key: parent[key] for key in evidence.IDENTITY_FIELDS}
-    current = [row for row in inventory if row['containerid'] != identifier]
-    require(current == baseline and inventory == sorted(baseline + [new_identity], key=lambda r: r['containerid']),
-            'Existing character identities changed or unexpected characters were created')
-    return {'identity': new_identity, 'login_count': 1, 'rows': rows}
+    if existing_identity is None:
+        current = [row for row in inventory if row['containerid'] != identifier]
+        require(current == baseline and inventory == sorted(baseline + [new_identity], key=lambda r: r['containerid']),
+                'Existing character identities changed or unexpected characters were created')
+    else:
+        require(evidence._same(inventory, baseline),
+                'Character inventory changed while reopening the preserved character')
+    return {'identity': new_identity, 'login_count': expected_login_count, 'rows': rows}
 
 
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
+    REPORT_KEY = 'character_creation'
     def __init__(self, owner):
         super().__init__(owner)
         self.map_process = None
@@ -198,7 +259,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             'committed_sql_verified': False, 'requested_logout_observed': False, 'logout_timer_observed': False,
             'disconnected_before_sql': False, 'forced_stop_before_save': False,
             'reopen_verified': False, 'gameplay_verified': False, 'map_samples': [], 'character_samples': []}
-        self.ctx.report['character_creation'] = self.creation_report
+        self.ctx.report[self.REPORT_KEY] = self.creation_report
 
     def payloads(self):
         super().payloads()
@@ -328,11 +389,17 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def start(self):
         super().start()
+        self.capture_baseline()
+        self.start_map()
+
+    def capture_baseline(self):
         self.baseline = self.inventory()
         require(not any(row['name'].casefold() == CHARACTER.casefold() for row in self.baseline),
                 'THORHERO already exists; it was preserved. Export this report instead of deleting it.')
         self.creation_report.update(baseline_character_count=len(self.baseline),
                                     baseline_identity_sha256=digest_json(self.baseline))
+
+    def start_map(self):
         self.ctx.stage('local_atlas_startup')
         game.check_game_port(7001, socket.SOCK_DGRAM)
         baseline = evidence.parse_map_status(self.query(['-getstatus', '1', '1'], 'atlas-baseline'), allow_missing=True)
@@ -379,7 +446,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
                     return
             if now >= next_message:
-                self.ctx.event('stage', status='running', message='Preparing Atlas Park for character creation')
+                self.ctx.event('stage', status='running', message='Preparing Atlas Park for the character session')
                 next_message = now + 5
             time.sleep(.2)
 
@@ -444,6 +511,31 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.auth_id = proof['auth_id']
         return proof
 
+    def verify_current_identity(self, identity, inventory):
+        identifier = identity['containerid']
+        require(type(identifier) is int and identifier > 0 and identity.get('authname') == ACCOUNT
+                and identity.get('authid') == self.auth_id
+                and identifier not in {row['containerid'] for row in self.baseline},
+                'Created character identity differs from this graphical session')
+
+    def character_rows(self, identifier):
+        return {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
+                evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
+                for table, fields in evidence.SELECTED.items()}
+
+    def validate_saved_rows(self, rows, inventory):
+        return validate_character_rows(rows, self.baseline, inventory,
+                                       self.schema['expected_attributes'], self.auth_id)
+
+    def connection_metadata(self):
+        return {}
+
+    def saved_metadata(self, snapshot):
+        return {}
+
+    def observe_connected_character(self):
+        pass
+
     def character_evidence(self):
         if self.creation_report['verified']: return self.creation_report
         now = time.monotonic()
@@ -459,10 +551,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(len(candidates) == 1, 'Ambiguous THORHERO identity')
         identity = candidates[0]
         identifier = identity['containerid']
-        require(type(identifier) is int and identifier > 0 and identity.get('authname') == ACCOUNT
-                and identity.get('authid') == self.auth_id
-                and identifier not in {row['containerid'] for row in self.baseline},
-                'Created character identity differs from this graphical session')
+        self.verify_current_identity(identity, inventory)
         sample = evidence.parse_character_status(self.query(['-getstatus', '3', str(identifier)], 'player-status'),
             identifier, CHARACTER, ACCOUNT, allow_missing=True)
         after = self.sample_progress(force=True)
@@ -476,7 +565,10 @@ class LocalCharacterServer(login.LocalLoginServer):
             ready = ready_record(self.current_logs())
             if ready is not None and not self.creation_report['connected_on_atlas']:
                 self.creation_report.update(connected_on_atlas=True, client_ready_evidence=ready,
-                    client_ready_observed_utc=base.utc(), client_ready_observed_utc_ms=int(time.time() * 1000))
+                    client_ready_observed_utc=base.utc(), client_ready_observed_utc_ms=int(time.time() * 1000),
+                    **self.connection_metadata())
+            if self.creation_report['connected_on_atlas']:
+                self.observe_connected_character()
             return None
         if not self.creation_report['connected_on_atlas'] or sample.get('connected') or sample.get('in_map_transfer'):
             return None
@@ -488,10 +580,8 @@ class LocalCharacterServer(login.LocalLoginServer):
         if delivery is None: return None
         logout = logout_record(self.current_logs())
         if logout is None or not logout_follows_delivery(logout, delivery): return None
-        rows = {table: self.sql_rows(table, tuple(fields) + (('logincount',) if table == 'ents' else ()),
-                evidence.ROW_KEYS[table], 'containerid=' + str(identifier))
-                for table, fields in evidence.SELECTED.items()}
-        snapshot = validate_character_rows(rows, self.baseline, inventory, self.schema['expected_attributes'], self.auth_id)
+        rows = self.character_rows(identifier)
+        snapshot = self.validate_saved_rows(rows, inventory)
         if snapshot is None: return None
         final_progress = self.sample_progress(force=True)
         if not self.live_progress(final_progress): return None
@@ -508,6 +598,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             table_sha256={name: digest_json(value) for name, value in rows.items()},
             row_counts={name: len(value) for name, value in rows.items()},
             evidence_scope='fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows')
+        self.creation_report.update(self.saved_metadata(snapshot))
         return self.creation_report
 
     def collect(self, target):
@@ -602,3 +693,183 @@ class LocalCharacterServer(login.LocalLoginServer):
             'file_count': len(paths), 'source_bytes': source_total, 'exported_bytes': exported_total,
             'source_bytes_after_read': after_total, 'collection_phase': manifest['collection_phase'],
             'truncated': False, 'redacted_files': sum(item['redacted'] for item in manifest['files'].values())}
+
+
+class LocalCharacterReopenServer(LocalCharacterServer):
+    """Reopen one preserved real player; SQL is evidence and never a game input."""
+    REPORT_KEY = 'character_reopen'
+    CHARACTER_ID = 1
+
+    def __init__(self, owner):
+        super().__init__(owner)
+        self.baseline_snapshot = None
+        self.creation_report.update(before_character_id=self.CHARACTER_ID,
+            baseline_character_id=self.CHARACTER_ID, existing_character_verified=False,
+            preserved_existing_identity=False, powers_preserved=False, costume_preserved=False,
+            native_client_ready_observed=False, ordinary_stuck_observed=False,
+            on_atlas_safe_position=False, stable_ground_verified=False,
+            operation='reopen_existing_character')
+
+    def initialize(self):
+        # Refuse a missing or interrupted profile before the parent can create
+        # its cluster, role, compatibility schema, or marker. Creation remains
+        # an explicit separate entry point and is never a reopen fallback.
+        marker = self.profile / 'profile.json'
+        require(not self.profile.is_symlink() and self.profile.is_dir(),
+                'Existing character profile is missing; do not create a replacement')
+        record = login.profile_record(marker)
+        require(record['initialized'] is True and (self.profile / 'pgdata' / 'PG_VERSION').is_file()
+                and not (self.profile / 'pgdata').is_symlink()
+                and (self.profile / 'credentials.json').is_file()
+                and not (self.profile / 'credentials.json').is_symlink(),
+                'Existing character profile is incomplete; preserve it and export the report')
+        super().initialize()
+        require(self.report.get('profile_reused') is True,
+                'Character reopen requires the reused persistent profile')
+
+    def capture_baseline(self):
+        self.baseline = self.inventory()
+        candidates = [row for row in self.baseline
+                      if row.get('name', '').casefold() == CHARACTER.casefold()
+                      or row.get('containerid') == self.CHARACTER_ID]
+        require(len(candidates) == 1, 'Expected exactly the existing THORHERO ID 1; preserve all characters')
+        identity = candidates[0]
+        auth_id = identity.get('authid')
+        require(type(identity.get('containerid')) is int and identity['containerid'] == self.CHARACTER_ID
+                and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
+                and type(auth_id) is int and 0 < auth_id <= 4294967295,
+                'Preserved THORHERO identity differs from the accepted local character')
+        require([row for row in self.baseline if row.get('authid') == auth_id] == [identity],
+                'Reopen requires exactly the existing COHLOCAL character')
+        account = self.sql("SELECT containerid || '|' || authname FROM dbo.shardaccounts "
+            "WHERE lower(authname)=lower('COHLOCAL') ORDER BY containerid;", game=True)
+        require(account == str(auth_id) + '|' + ACCOUNT, 'Preserved character account differs from SQL')
+        rows = self.character_rows(self.CHARACTER_ID)
+        parents = rows.get('ents', [])
+        require(len(parents) == 1 and type(parents[0].get('logincount')) is int
+                and 0 < parents[0]['logincount'] < 2**31 - 1,
+                'Existing character has no accepted committed login baseline')
+        count = parents[0]['logincount']
+        snapshot = validate_character_rows(rows, self.baseline, self.baseline,
+            self.schema['expected_attributes'], auth_id, existing_identity=identity, expected_login_count=count)
+        require(snapshot is not None, 'Existing character powers/costume are incomplete; do not synthesize them')
+        self.baseline_snapshot = snapshot
+        position = self.character_position()
+        self.creation_report.update(existing_character_verified=True,
+            baseline_character_count=len(self.baseline), baseline_identity_sha256=digest_json(self.baseline),
+            before_login_count=count,
+            baseline={'character_id': self.CHARACTER_ID, 'auth_id': auth_id,
+                'identity_sha256': digest_json(identity), 'snapshot_sha256': digest_json(snapshot),
+                'table_sha256': {name: digest_json(value) for name, value in rows.items()},
+                'row_counts': {name: len(value) for name, value in rows.items()},
+                'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
+            sql_game_mutations_performed=False)
+        self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
+            character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
+            existing_character_verified=True, before_login_count=count)
+
+    def login_evidence(self):
+        proof = super().login_evidence()
+        if proof is not None:
+            require(self.baseline_snapshot is not None
+                    and proof['auth_id'] == self.baseline_snapshot['identity']['authid']
+                    and proof['character_count'] == 1,
+                    'Current graphical login differs from the preserved character account')
+        return proof
+
+    def verify_current_identity(self, identity, inventory):
+        require(self.baseline_snapshot is not None
+                and evidence._same(identity, self.baseline_snapshot['identity'])
+                and evidence._same(inventory, self.baseline)
+                and self.auth_id == identity['authid'],
+                'Reopened character or inventory differs from its preserved baseline')
+
+    def connection_metadata(self):
+        require(self.baseline_snapshot is not None and self.creation_report['existing_character_verified'] is True,
+                'Reopened connection lacks a committed existing character baseline')
+        return {'reopen_verified': True, 'existing_character_verified': True,
+                'preserved_existing_identity': True, 'native_client_ready_observed': True}
+
+    def character_position(self):
+        values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
+                              ('containerid',), 'containerid=' + str(self.CHARACTER_ID))
+        require(len(values) == 1 and set(values[0]) == {'containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'},
+                'Existing character position snapshot differs')
+        value = values[0]
+        require(type(value['containerid']) is int and value['containerid'] == self.CHARACTER_ID
+                and type(value['mapid']) is int and value['mapid'] == 1
+                and type(value['staticmapid']) is int and value['staticmapid'] == 1
+                and all(type(value[key]) in (int, float) and math.isfinite(value[key])
+                        and abs(value[key]) <= 1000000 for key in ('posx', 'posy', 'posz')),
+                'Existing character map or position differs from Atlas')
+        return value
+
+    def relocation_delivery(self):
+        client_pid = self.creation_report.get('client_pid')
+        if type(client_pid) is not int or client_pid <= 0:
+            return None
+        return read_logout_delivery(self.owner.args.state / 'character-relocation.json',
+            self.owner.args.session_id, client_pid, self.CHARACTER_ID,
+            self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000),
+            action='stuck', max_age_ms=RELOCATION_MAX_AGE_MS)
+
+    def observe_connected_character(self):
+        delivery = self.relocation_delivery()
+        if delivery is None:
+            return
+        ground = stable_ground_evidence(self.current_logs(), delivery, int(time.time() * 1000))
+        if ground is None:
+            return
+        self.creation_report.update(ordinary_stuck_observed=True, on_atlas_safe_position=True,
+            stable_ground_verified=True, relocation_delivery=delivery, ground_evidence=ground)
+        if 'ground_observed_utc_ms' not in self.creation_report:
+            self.creation_report.update(ground_observed_utc=base.utc(),
+                                        ground_observed_utc_ms=int(time.time() * 1000))
+
+    def validate_saved_rows(self, rows, inventory):
+        require(self.baseline_snapshot is not None, 'Existing character baseline is missing')
+        before = self.baseline_snapshot
+        after = validate_character_rows(rows, self.baseline, inventory,
+            self.schema['expected_attributes'], self.auth_id,
+            existing_identity=before['identity'], expected_login_count=before['login_count'] + 1)
+        if after is None:
+            return None
+        for table in evidence.SELECTED:
+            previous = before['rows'][table]
+            current = after['rows'][table]
+            if table == 'ents':
+                previous = [{key: value for key, value in row.items() if key != 'logincount'} for row in previous]
+                current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
+            require(evidence._same(previous, current),
+                    'Committed existing character rows changed after reopen: ' + table)
+        require(self.creation_report.get('stable_ground_verified') is True,
+                'Existing character was not observed stable after ordinary recovery')
+        delivery = self.relocation_delivery()
+        require(delivery == self.creation_report.get('relocation_delivery'),
+                'Ordinary recovery delivery changed before save')
+        ground = stable_ground_evidence(self.current_logs(), delivery, int(time.time() * 1000), max_age_ms=300000)
+        require(ground is not None, 'Native character position fell or became stale before save')
+        logout = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+            self.owner.args.session_id, self.creation_report['client_pid'], self.CHARACTER_ID,
+            self.creation_report['ground_observed_utc_ms'], int(time.time() * 1000))
+        require(logout is not None, 'Save was not requested after stable native recovery')
+        position = self.character_position()
+        current_position = [position[key] for key in ('posx', 'posy', 'posz')]
+        require(-100 < position['posy'] < 10000
+                and all(abs(a-b) <= 2 for a, b in zip(current_position, ground['position'])),
+                'Committed character position differs from the stable native recovery')
+        self.creation_report.update(ground_evidence=ground, saved_position=position,
+                                    committed_safe_position_verified=True)
+        return after
+
+    def saved_metadata(self, snapshot):
+        return {'preserved_existing_identity': True, 'powers_preserved': True, 'costume_preserved': True,
+            'selected_rows_preserved': True, 'login_count': snapshot['login_count'],
+            'before_login_count': self.baseline_snapshot['login_count'],
+            'evidence_scope': 'existing_committed_character_native_ready_then_requested_logout_and_preserved_committed_rows'}
+
+    def collect(self, target):
+        super().collect(target)
+        if self.baseline_snapshot is not None:
+            base.private_write(target / 'character-reopen-before-snapshot.json',
+                               json.dumps(self.baseline_snapshot, indent=2) + '\n')

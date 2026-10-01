@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 
-/** Bounded touch, keyboard and Thor controller session for graphical character creation. */
+/** Bounded touch, keyboard and Thor controller session for reopening an existing character. */
 public final class ClientActivity extends Activity {
     private static final int EXPORT=11,NOTIFY=12,IMPORT=13;
     private final ExecutorService exporter=Executors.newSingleThreadExecutor();
@@ -27,7 +27,7 @@ public final class ClientActivity extends Activity {
     private ClientService.State state;
     private ClientSurface display;
     private TextView status,detail,counter,logs;
-    private Button setup,importAssets,run,stop,export,finish,typeText,saveLogout;
+    private Button setup,importAssets,run,stop,export,finish,typeText,returnGround,saveLogout;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final Map<Integer,Integer> heldKeys=new LinkedHashMap<>();
@@ -54,7 +54,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -63,12 +63,13 @@ public final class ClientActivity extends Activity {
         root.setOnApplyWindowInsetsListener((v,insets)->{v.setPadding(dp(12)+insets.getSystemWindowInsetLeft(),dp(8)+insets.getSystemWindowInsetTop(),dp(12)+insets.getSystemWindowInsetRight(),dp(8)+insets.getSystemWindowInsetBottom());return insets;});
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
-        TextView title=text("COH Character Creation",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.9.0",12,false));
-        controls.addView(text("Create THORHERO and verify the character is saved in your local server. Your imported assets carry forward.",13,false));
+        TextView title=text("COH Character Reopen",22,true);controls.addView(title);
+        controls.addView(text("Persistent local server · v0.10.0",12,false));
+        controls.addView(text("Reopen your saved THORHERO and verify its identity, powers and costume survive another ordinary save. Keep your app data and imported assets.",13,false));
         setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
-        run=button("2 · Start character creation",()->request(ClientService.RUN));controls.addView(run);
+        run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
+        returnGround=button("Return to safe ground",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
         saveLogout=button("Save character / log out",()->{releaseControls();if(service!=null)service.requestSaveLogout();});controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
@@ -77,10 +78,10 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("When input is ready: log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero. Choose Male and tap Clear on the Costume screen before continuing. Skip the tutorial. When the world appears, tap Save character / log out once. Wait for Saved character verified, then tap Finish. You have 20 minutes after input becomes ready.",12,false));
+        controls.addView(text("Refresh runtime once after this update. When input is ready: verify COHLOCAL / offline, select your existing THORHERO and click Enter Game. Do not create or delete a character or change its costume. Wait for Saved character reopened, dismiss the Welcome popup with OK, then tap Return to safe ground once and stay still. After Atlas position verified, inspect Atlas, your character and the UI, then tap Save character / log out once. Wait for Saved character verified, then tap Finish and export the report. You have 20 minutes after input becomes ready.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
-        TextView caption=text("CITY OF HEROES · CHARACTER CREATION",12,true);right.addView(caption);
+        TextView caption=text("CITY OF HEROES · SAVED CHARACTER",12,true);right.addView(caption);
         FrameLayout viewport=new FrameLayout(this);right.addView(viewport,new LinearLayout.LayoutParams(-1,0,1));
         display=new ClientSurface(this);viewport.addView(display,new FrameLayout.LayoutParams(-1,-1));
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
@@ -91,7 +92,7 @@ public final class ClientActivity extends Activity {
         });
         right.addView(text("Tap / drag · Right stick: cursor · A: click · B: Esc · Shoulders: right click · D-pad: arrows · L3: text",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -104,7 +105,7 @@ public final class ClientActivity extends Activity {
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
-        finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);saveLogout.setEnabled(enabled&&next.canSaveLogout);
+        finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);returnGround.setEnabled(enabled&&next.canReturnGround);saveLogout.setEnabled(enabled&&next.canSaveLogout);
     }
     private void setTextIfChanged(TextView view,String value){if(!android.text.TextUtils.equals(view.getText(),value))view.setText(value);}
     private void updateCounter(){
@@ -249,7 +250,7 @@ public final class ClientActivity extends Activity {
     private void chooseExport(){
         if(state==null||state.busy||state.report==null||exporting)return;pendingExport=state.report.getPath();
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE);
-        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-character-creation-"+format.format(new Date())+".zip");
+        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-character-reopen-"+format.format(new Date())+".zip");
         try{startActivityForResult(intent,EXPORT);}catch(RuntimeException e){pendingExport=null;Toast.makeText(this,"No export destination is available.",Toast.LENGTH_LONG).show();}
     }
     @Override protected void onActivityResult(int request,int result,Intent data){

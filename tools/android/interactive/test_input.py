@@ -64,9 +64,13 @@ public class InputHarness {
         } else if(mode.equals("save_logout")) {
           long before=System.nanoTime();ref[0].sendSaveLogout(ref[0].inputEpoch());
           check(System.nanoTime()-before>=3_000_000_000L);
-        } else if(mode.equals("cancel_logout")) {
+        } else if(mode.equals("return_ground") || mode.equals("return_ground_held")) {
+          if(mode.equals("return_ground_held")) ref[0].sendKey(0xffe3,true);
+          long before=System.nanoTime();ref[0].sendReturnToSafeGround(ref[0].inputEpoch());
+          check(System.nanoTime()-before>=2_000_000_000L);
+        } else if(mode.equals("cancel_logout") || mode.equals("cancel_return_ground")) {
           final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
-          Thread pending=new Thread(()->{try{ref[0].sendSaveLogout(epoch);}
+          Thread pending=new Thread(()->{try{if(mode.equals("cancel_return_ground"))ref[0].sendReturnToSafeGround(epoch);else ref[0].sendSaveLogout(epoch);}
             catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
             catch(IOException error){throw new IllegalStateException(error);}});
           pending.start();check(commandKeySent.await(1,java.util.concurrent.TimeUnit.SECONDS));
@@ -206,6 +210,17 @@ class InputTests(unittest.TestCase):
 
     def test_save_logout_cancellation_releases_partial_command_key(self):
         messages = self.messages(self.run_harness('cancel_logout'))
+        self.assertEqual([struct.pack('>BBHI', 4, down, 0, 0xff0d) for down in (1, 0)], messages[1:-1])
+
+    def test_return_to_safe_ground_sends_exact_access_zero_stuck_command(self):
+        keys = [0xff0d] + list(map(ord, '/stuck')) + [0xff0d]
+        expected = [struct.pack('>BBHI', 4, down, 0, key) for key in keys for down in (1, 0)]
+        self.assertEqual(expected, self.messages(self.run_harness('return_ground'))[1:-1])
+        held = self.messages(self.run_harness('return_ground_held'))[1:-1]
+        self.assertEqual([struct.pack('>BBHI', 4, down, 0, 0xffe3) for down in (1, 0)] + expected, held)
+
+    def test_return_to_safe_ground_cancellation_releases_partial_command_key(self):
+        messages = self.messages(self.run_harness('cancel_return_ground'))
         self.assertEqual([struct.pack('>BBHI', 4, down, 0, 0xff0d) for down in (1, 0)], messages[1:-1])
 
     def test_input_and_refresh_writes_do_not_interleave(self):
