@@ -7,11 +7,10 @@ Local login on Thor is already accepted. This session creates **THORHERO**, ente
 Atlas Park and saves through the game's ordinary logout. Exact-character reopen
 after a restart is the following milestone.
 
-Known asset limitation: the default male avatar preview is currently invisible
-because its base geometry and textures are absent from the accepted import.
-This candidate keeps the existing assets and targets registration, Atlas
-environment loading and logout/save. Costume rendering requires separate asset
-work; no additional import is requested for this milestone.
+This candidate includes a small verified supplement for the **default Male body
+and costume**. Its rendering is part of hosted qualification. Keep those defaults
+for this test; other bodies and costume choices need broader asset coverage.
+The existing imported assets stay in place; no additional import is requested.
 
 ## Update
 
@@ -33,7 +32,7 @@ work; no additional import is requested for this milestone.
 2. Wait for **Local login verified**, then open an empty **Create Character** slot.
 3. Choose **Primal Earth**, an origin, archetype and powers. Use the exact name
    **THORHERO**. Continue through body, costume and power colors to registration.
-   Default appearance is sufficient for this save test.
+   Select **Male** and retain the default costume and power colors for this test.
 4. Press **Play**. Decline the tutorial, choose **Hero** and confirm creation so
    the character enters **Atlas Park**. Leave the game visible until the app
    confirms the character's Atlas connection and enables **Save character / log out**.

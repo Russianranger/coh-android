@@ -8,6 +8,9 @@ on:
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
       - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/character_avatar_assets.py'
+      - 'assets/character-avatar-defaults.zip'
+      - 'assets/character-avatar-defaults-manifest.json'
       - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
@@ -18,6 +21,9 @@ on:
       - 'android/guest/client_login_diagnostic.py'
       - 'android/guest/local_login_server.py'
       - 'android/guest/character_creation_diagnostic.py'
+      - 'android/guest/character_avatar_assets.py'
+      - 'assets/character-avatar-defaults.zip'
+      - 'assets/character-avatar-defaults-manifest.json'
       - 'android/guest/local_character_server.py'
       - 'tools/android/interactive/**'
       - '.github/workflows/android-client-interactive.yml'
@@ -157,6 +163,8 @@ jobs:
         with:
           name: coh-client-generated-caches
           path: out/client-inputs/client-caches
+      - name: Verify pinned default-male avatar supplement
+        run: python3 tools/android/interactive/prepare_character_avatar_assets.py --verify
       - name: Preserve accepted runtime, client, DbServer and MapServer inputs
         run: |
           mkdir -p out/client

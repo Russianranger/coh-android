@@ -232,8 +232,10 @@ class CharacterBoundsTests(unittest.TestCase):
             target = root / 'target.json'; target.write_text('{}')
             diagnostic = guest.CharacterCreationDiagnostic.__new__(guest.CharacterCreationDiagnostic)
             diagnostic.args = self.args(state=root)
+            diagnostic.work = root / 'work'
             diagnostic.ctx = SimpleNamespace(report={'asset_sha256': dict.fromkeys(guest.REQUIRED, 'pinned')})
-            with patch.object(guest.login.ClientLoginDiagnostic, 'initialize') as parent:
+            with patch.object(guest.login.ClientLoginDiagnostic, 'initialize') as parent, \
+                    patch.object(guest.avatar, 'install', return_value={}) as supplement:
                 for kind in ('file', 'existing_link', 'dangling_link'):
                     with self.subTest(kind=kind):
                         if kind == 'file': request.write_text('{}')
@@ -241,9 +243,11 @@ class CharacterBoundsTests(unittest.TestCase):
                         with self.assertRaisesRegex(guest.base.DiagnosticError, 'Stale character logout'):
                             diagnostic.initialize()
                         parent.assert_not_called()
+                        supplement.assert_not_called()
                         request.unlink()
                 diagnostic.initialize()
                 parent.assert_called_once_with()
+                supplement.assert_called_once_with(diagnostic.work, diagnostic.args.assets, diagnostic.ctx)
 
     def test_process_budget_caps_observation_and_retains_ownership_and_checks(self):
         context = guest.CharacterContext.__new__(guest.CharacterContext)

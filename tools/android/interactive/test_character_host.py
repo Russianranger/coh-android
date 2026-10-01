@@ -1,4 +1,6 @@
 """Graphical creator identity, ordinary logout ordering and image freshness."""
+import copy
+import hashlib
 import importlib.util
 import io
 import json
@@ -45,6 +47,44 @@ def events():
 
 
 class CharacterHostTests(unittest.TestCase):
+    def test_avatar_receipt_requires_exact_pins_complete_install_and_original_worktree(self):
+        avatar = host.assets_tool.avatar_tools()
+        document = json.loads((host.ROOT/'assets'/avatar.MANIFEST).read_text())
+        inventory = {'files': {avatar.ARCHIVE: avatar.ARCHIVE_PIN, avatar.MANIFEST: avatar.MANIFEST_PIN}}
+        worktree = {'import': {'receipt_sha256': 'a'*64}, 'package_sha256': 'b'*64,
+                    'cache_archive_sha256': 'c'*64, 'prerequisites_archive_sha256': 'd'*64,
+                    'normalized_mtime_epoch': 1767225600}
+        key = hashlib.sha256(('a'*64+'b'*64+'c'*64+'d'*64+'1767225600').encode()).hexdigest()[:24]
+        receipt = {'format': 1, 'scope': document['scope'], 'manifest_sha256': avatar.MANIFEST_PIN['sha256'],
+            'archive_sha256': avatar.ARCHIVE_PIN['sha256'], 'file_count': 13, 'payload_bytes': 1787064,
+            'installed_files': 13, 'reused_files': 0, 'worktree': 'client-work-'+key,
+            'files': document['files'], 'normalized_mtime_epoch': 1767225600,
+            'imported_files_modified': False, 'worktree_identity_modified': False, 'cache_files_modified': False,
+            'runtime_visual_validated': False, 'visual_scope': document['visual_scope']}
+        report = {'character_avatar_supplement': receipt, 'client_worktree': worktree}
+        character.validate_avatar_supplement(report, inventory)
+        reused = copy.deepcopy(report)
+        reused['character_avatar_supplement'].update(installed_files=0, reused_files=13)
+        character.validate_avatar_supplement(reused, inventory)
+        for name, value in [('manifest_sha256', '0'*64), ('archive_sha256', '0'*64), ('payload_bytes', 1),
+                ('file_count', 12), ('installed_files', True), ('reused_files', 13), ('files', {}),
+                ('worktree', 'client-work-other'), ('imported_files_modified', True),
+                ('worktree_identity_modified', True), ('cache_files_modified', True), ('runtime_visual_validated', True)]:
+            with self.subTest(name=name):
+                changed = copy.deepcopy(report)
+                changed['character_avatar_supplement'][name] = value
+                with self.assertRaises(ValueError): character.validate_avatar_supplement(changed, inventory)
+        with self.assertRaisesRegex(ValueError, 'Missing character avatar'):
+            character.validate_avatar_supplement({'client_worktree': worktree}, inventory)
+        changed = copy.deepcopy(inventory)
+        changed['files'][avatar.ARCHIVE]['sha256'] = '0'*64
+        with self.assertRaisesRegex(ValueError, 'avatar inputs differ'):
+            character.validate_avatar_supplement(report, changed)
+        changed = copy.deepcopy(report)
+        changed['client_worktree']['cache_archive_sha256'] = 'f'*64
+        with self.assertRaisesRegex(ValueError, 'another worktree'):
+            character.validate_avatar_supplement(changed, inventory)
+
     def test_save_requires_current_ready_login_atlas_identity_and_committed_sql(self):
         ready, login, connected, saved = events()
         invalid = [([], connected), ([ready], connected), ([ready, login], saved),

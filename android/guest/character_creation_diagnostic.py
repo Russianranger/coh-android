@@ -11,6 +11,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import client_login_diagnostic as login
 import local_character_server as character
+import character_avatar_assets as avatar
 
 base, require, interactive = login.base, login.require, login.interactive
 SCOPE = 'actual_character_creation_guest'
@@ -19,7 +20,7 @@ INTERACTION_SECONDS = 1200
 OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
 REQUIRED = login.REQUIRED | {'character_creation_diagnostic.py', 'local_character_server.py',
-                             'game-package.tar.gz'}
+    'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST}
 
 
 def validate_args(args):
@@ -88,6 +89,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         super().initialize()
         require(REQUIRED <= set(self.ctx.report['asset_sha256']),
                 'Character creation inputs missing from the pinned inventory')
+        self.ctx.report['character_avatar_supplement'] = avatar.install(self.work, self.args.assets, self.ctx)
 
     def observe_console(self):
         output, launch, console = super().observe_console()

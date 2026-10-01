@@ -39,7 +39,8 @@ class InteractivePackageTests(unittest.TestCase):
     def test_guest_inventory_contains_both_helpers_and_accepted_inputs(self):
         self.assertIn('client_startup_diagnostic.py',assets.PROBE_FILES)
         self.assertIn('client_interactive_diagnostic.py',assets.PROBE_FILES)
-        self.assertTrue({'character_creation_diagnostic.py','local_character_server.py','game-package.tar.gz',
+        self.assertTrue({'character_avatar_assets.py','character-avatar-defaults.zip',
+                         'character-avatar-defaults-manifest.json','character_creation_diagnostic.py','local_character_server.py','game-package.tar.gz',
                          'client_login_diagnostic.py','local_login_server.py',
                          'dbserver-package.tar.gz','dbserver-schema.tar.gz',
                          '001-coh-compat.sql','psqlodbc_x86.msi'}<=assets.PROBE_FILES)

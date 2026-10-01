@@ -31,21 +31,32 @@ RUNTIME_COMMIT = '9dc58f62c58dc4fc5c01288071429bf2aa06d2f4'
 RUNTIME_MANIFEST_SHA256 = 'fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203'
 BASE_MANIFEST = 'accepted-runtime-manifest.json'
 PROBE_MANIFEST = 'client-manifest.json'
-GUEST_SCRIPTS = ('character_creation_diagnostic.py', 'local_character_server.py', 'client_login_diagnostic.py', 'local_login_server.py', 'diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
+GUEST_SCRIPTS = ('character_avatar_assets.py', 'character_creation_diagnostic.py', 'local_character_server.py', 'client_login_diagnostic.py', 'local_login_server.py', 'diagnostic.py', 'presentation_diagnostic.py', 'client_startup_diagnostic.py', 'client_interactive_diagnostic.py', 'dbserver_diagnostic.py',
                  'game_diagnostic.py', 'game_device_diagnostic.py', 'game_evidence.py',
                  'game_hang_evidence.py', 'game_map_progress.py')
 SERVER_ARCHIVES = frozenset(('dbserver-package.tar.gz', 'dbserver-schema.tar.gz', 'game-package.tar.gz'))
 MAPSERVER_PROFILE = 'dispatch_progress_v1'
 ATLAS_RECEIPT = ROOT/'docs/android-evidence/atlas-test-apk-build-36638344040.json'
 ATLAS_RECEIPT_SHA256 = '39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea'
-PROBE_FILES = frozenset((*SERVER_ARCHIVES, *GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
+AVATAR_FILES = frozenset(('character-avatar-defaults.zip', 'character-avatar-defaults-manifest.json'))
+PROBE_FILES = frozenset((*AVATAR_FILES, *SERVER_ARCHIVES, *GUEST_SCRIPTS, 'runtime-lock.json', 'runtime-probe.exe', 'probe.dll',
                          '001-coh-compat.sql', 'psqlodbc_x86.msi',
                          'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip'))
-EXTRA_FILES = frozenset({*SERVER_ARCHIVES, BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
+EXTRA_FILES = frozenset({*AVATAR_FILES, *SERVER_ARCHIVES, BASE_MANIFEST, PROBE_MANIFEST, 'client-launcher.exe', 'client-runtime.zip', 'client-caches.zip', 'client-prerequisites.zip', *GUEST_SCRIPTS} - {'diagnostic.py'})
 HEX40 = re.compile(r'[0-9a-f]{40}\Z')
 HEX64 = re.compile(r'[0-9a-f]{64}\Z')
 NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*\Z')
 MAX_FILE_BYTES = 256 * 1024 * 1024
+
+
+def avatar_tools():
+    name = 'coh_character_avatar_package'
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).with_name('prepare_character_avatar_assets.py'))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        sys.modules[name] = module
+    return sys.modules[name]
 
 
 def server_tools():
@@ -275,6 +286,7 @@ def bundle_contract():
             'executable':'CityOfHeroes.exe','reference_run_id':36088012664,
             'width':800,'height':600,'transport':'private_unix_rfb',
             'server_packages_included':True,'local_server':local_server_contract(),'game_assets_external':True,
+            'avatar_supplement':avatar_tools().bundle_contract(),
             'android_execution_validated':False,'gameplay_validated':False}
 
 
@@ -313,6 +325,7 @@ def verify_device_assets(assets, *, repository_commit=None):
     client_package.verify_archive(assets/'client-runtime.zip', repository_commit)
     cache_package.verify_cache_archive(assets/'client-caches.zip')
     prerequisite_package.verify_archive(assets/'client-prerequisites.zip')
+    avatar_tools().verify(assets/'character-avatar-defaults.zip', assets/'character-avatar-defaults-manifest.json')
     with tempfile.TemporaryDirectory(prefix='coh-login-server-verify-') as temporary:
         extract_local_server_inputs(assets, Path(temporary)/'inputs')
     return manifest
@@ -338,6 +351,7 @@ def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver
         cache_package.verify_cache_archive(Path(client_caches))
         shutil.copyfile(client_caches, staging/'client-caches.zip')
         prerequisite_package.prepare(staging/'client-prerequisites.zip')
+        avatar_tools().prepare(staging)
         server_tools().write_archive(Path(dbserver_package), staging/'dbserver-package.tar.gz')
         server_tools().write_archive(Path(dbserver_schema), staging/'dbserver-schema.tar.gz')
         recover_mapserver_archive(mapserver_apk, staging/'game-package.tar.gz')
@@ -363,6 +377,7 @@ def prepare(*, assets, output, client, client_caches, dbserver_package, dbserver
             'native_launcher_source': file_pin(ROOT/'android/native/client-launcher.c'),
             'client_package_sha256': digest(output/'client-runtime.zip'),
             'local_server': local_server_contract(), 'server_input_bytes_preserved': True,
+            'avatar_supplement': avatar_tools().bundle_contract(),
             'android_execution_validated': False,
             'gameplay_validated': False}
 

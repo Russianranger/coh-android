@@ -1,0 +1,130 @@
+"""The small avatar supplement must never replace imported or cached data."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import sys
+import tempfile
+from types import SimpleNamespace
+import unittest
+from unittest.mock import Mock, patch
+
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / 'android/guest'))
+import character_avatar_assets as avatar
+import character_creation_diagnostic as guest
+
+
+class AvatarAssetsTests(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        self.work = self.root/'client-work-example'; (self.work/'data').mkdir(parents=True)
+        self.assets = ROOT/'assets'; self.context = SimpleNamespace(check=Mock())
+        self.manifest = json.loads((self.assets/avatar.MANIFEST).read_text())
+        self.first = sorted(avatar.ALLOWED)[0]
+
+    def test_all_thirteen_assets_install_and_reuse_without_import_cache_or_identity_changes(self):
+        imported = self.root/'import'; imported.mkdir()
+        original = imported/'original.geo'; original.write_bytes(b'import unchanged')
+        (self.work/'data/original.geo').symlink_to(original)
+        marker = self.work/'client-work.json'; marker.write_text('{"original_identity":true}\n')
+        cache = self.work/'data/bin/generated.bin'; cache.parent.mkdir(); cache.write_bytes(b'preserved cache')
+        prior = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in (original, marker, cache)}
+        first = avatar.install(self.work, self.assets, self.context)
+        self.assertEqual((first['installed_files'], first['reused_files'], first['payload_bytes']), (13, 0, 1787064))
+        for name, pin in self.manifest['files'].items():
+            path = self.work/name; info = path.lstat()
+            self.assertTrue(stat.S_ISREG(info.st_mode)); self.assertEqual(info.st_nlink, 1)
+            self.assertEqual(stat.S_IMODE(info.st_mode), 0o444)
+            self.assertEqual(info.st_mtime, avatar.client.CACHE_EPOCH)
+            self.assertEqual(len(path.read_bytes()), pin['bytes'])
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), pin['sha256'])
+        inodes = {name: (self.work/name).stat().st_ino for name in avatar.ALLOWED}
+        second = avatar.install(self.work, self.assets, self.context)
+        self.assertEqual((second['installed_files'], second['reused_files']), (0, 13))
+        self.assertEqual(inodes, {name: (self.work/name).stat().st_ino for name in avatar.ALLOWED})
+        self.assertEqual(prior, {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in prior})
+        self.assertFalse((self.work/'character-avatar-applied.json').exists())
+
+    def test_conflicting_existing_asset_is_preserved_and_no_other_file_is_installed(self):
+        path = self.work/self.first; path.parent.mkdir(parents=True); path.write_bytes(b'existing')
+        with self.assertRaises(avatar.client.base.DiagnosticError): avatar.install(self.work, self.assets, self.context)
+        self.assertEqual(path.read_bytes(), b'existing')
+        self.assertEqual(sum((self.work/name).exists() for name in avatar.ALLOWED), 1)
+
+    def test_reuse_detects_changed_bytes_mode_timestamp_and_hardlinks(self):
+        for change in ('content', 'mode', 'timestamp', 'hardlink'):
+            with self.subTest(change=change):
+                work = self.root/change; (work/'data').mkdir(parents=True)
+                avatar.install(work, self.assets, self.context); path = work/self.first
+                if change == 'content':
+                    path.chmod(0o600); raw = bytearray(path.read_bytes()); raw[-1] ^= 1
+                    path.write_bytes(raw); path.chmod(0o444)
+                    os.utime(path, (avatar.client.CACHE_EPOCH, avatar.client.CACHE_EPOCH))
+                elif change == 'mode': path.chmod(0o600)
+                elif change == 'timestamp': os.utime(path, (avatar.client.CACHE_EPOCH+1,)*2)
+                else: os.link(path, work/'linked-copy')
+                with self.assertRaises(avatar.client.base.DiagnosticError): avatar.install(work, self.assets, self.context)
+
+    def test_target_and_parent_symlinks_cannot_modify_external_files(self):
+        external = self.root/'external'; external.mkdir()
+        original = external/'male_boot.geo'; original.write_bytes(b'untouched')
+        for kind in ('target', 'parent', 'dangling_parent'):
+            with self.subTest(kind=kind):
+                work = self.root/kind; (work/'data').mkdir(parents=True)
+                if kind == 'target':
+                    (work/'data/player_library').mkdir(); (work/self.first).symlink_to(original)
+                else: (work/'data/player_library').symlink_to(external if kind == 'parent' else external/'missing')
+                with self.assertRaises((avatar.client.base.DiagnosticError, OSError)):
+                    avatar.install(work, self.assets, self.context)
+                self.assertEqual(original.read_bytes(), b'untouched')
+                self.assertFalse((work/'data/texture_library').exists())
+
+    def test_case_only_aliases_and_duplicate_case_names_are_refused(self):
+        for kind in ('parent', 'target', 'duplicate'):
+            with self.subTest(kind=kind):
+                work = self.root/kind; (work/'data').mkdir(parents=True)
+                if kind == 'parent': (work/'data/PLAYER_LIBRARY').mkdir()
+                else:
+                    (work/'data/player_library').mkdir()
+                    (work/'data/player_library/MALE_BOOT.geo').write_bytes(b'alias')
+                    if kind == 'duplicate': (work/self.first).write_bytes(b'other')
+                with self.assertRaisesRegex(avatar.client.base.DiagnosticError, 'Case-conflicting'):
+                    avatar.install(work, self.assets, self.context)
+
+    def test_pinned_archive_and_manifest_tampering_fail_before_install(self):
+        for changed in (avatar.ARCHIVE, avatar.MANIFEST):
+            assets = self.root/changed; assets.mkdir()
+            for name in (avatar.ARCHIVE, avatar.MANIFEST): shutil.copyfile(self.assets/name, assets/name)
+            path = assets/changed; raw = bytearray(path.read_bytes()); raw[-1] ^= 1; path.write_bytes(raw)
+            with self.assertRaises(avatar.client.base.DiagnosticError): avatar.install(self.work, assets, self.context)
+            self.assertFalse(any((self.work/name).exists() for name in avatar.ALLOWED))
+
+    def test_interrupted_install_reuses_completed_files_on_retry(self):
+        checks = 0
+        def check():
+            nonlocal checks
+            checks += 1
+            if checks == 16: raise avatar.client.base.Cancelled('test cancellation')
+        with self.assertRaises(avatar.client.base.Cancelled):
+            avatar.install(self.work, self.assets, SimpleNamespace(check=check))
+        proof = avatar.install(self.work, self.assets, self.context)
+        self.assertEqual((proof['installed_files'], proof['reused_files']), (11, 2))
+        self.assertFalse(list(self.work.rglob('.avatar-pending-*')))
+
+    def test_character_initialize_installs_only_after_parent_prepares_worktree(self):
+        d = guest.CharacterCreationDiagnostic.__new__(guest.CharacterCreationDiagnostic)
+        state = self.root/'state'; state.mkdir()
+        d.args = SimpleNamespace(state=state, assets=self.assets)
+        d.ctx = SimpleNamespace(report={'asset_sha256': {name: 'pinned' for name in guest.REQUIRED}})
+        def parent_initialize(): d.work = self.work
+        with patch.object(guest.login.ClientLoginDiagnostic, 'initialize', side_effect=parent_initialize), \
+                patch.object(guest.avatar, 'install', return_value={'installed_files':13}) as install:
+            d.initialize()
+        install.assert_called_once_with(self.work, self.assets, d.ctx)
+        self.assertEqual(d.ctx.report['character_avatar_supplement']['installed_files'], 13)
+
+
+if __name__ == '__main__': unittest.main()

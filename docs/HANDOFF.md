@@ -47,6 +47,17 @@ costume rendering or gameplay claims; this candidate keeps the existing assets
 and targets registration, Atlas environment loading and ordinary logout/save.
 No extra import or device test is requested for this failed candidate.
 
+The following candidate adds a pinned 13-file supplement for the default Male
+body and costume. A bounded source audit recovered only the missing entries from
+the original project's `stage1.pigg`, `stage1c.pigg` and `stage1e.pigg` donors;
+[entry integrity and format checks](android-evidence/character-avatar-source-review-20261001.json)
+passed. The 1,064,863-byte ZIP adds 1,787,064 bytes to the private client worktree,
+preserving the imported archive, client prerequisites, cache identity and saved
+profile. Installation rechecks all files on reuse and refuses conflicting files
+or links. Default-male rendering and character saving still require hosted
+qualification; other bodies and costume choices remain outside this small
+supplement. The next Thor instructions use the default Male body and costume.
+
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 
 **0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**

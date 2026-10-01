@@ -421,12 +421,45 @@ def make_command(work, assets, proot, session, data, startup_timeout_seconds=900
     return command, environment
 
 
+def validate_avatar_supplement(report, manifest):
+    avatar = host.assets_tool.avatar_tools()
+    contract = avatar.bundle_contract()
+    require(all(manifest.get('files', {}).get(name) == pin for name, pin in
+                ((avatar.ARCHIVE, contract['archive_pin']), (avatar.MANIFEST, contract['manifest_pin']))),
+            'Character avatar inputs differ from the reviewed package')
+    pinned = avatar.verify(host.ROOT/'assets'/avatar.ARCHIVE, host.ROOT/'assets'/avatar.MANIFEST)
+    receipt = report.get('character_avatar_supplement')
+    require(isinstance(receipt, dict), 'Missing character avatar supplement receipt')
+    expected = {'format': 1, 'scope': contract['scope'],
+        'manifest_sha256': contract['manifest_pin']['sha256'], 'archive_sha256': contract['archive_pin']['sha256'],
+        'file_count': contract['file_count'], 'payload_bytes': contract['payload_bytes'], 'files': pinned['files'],
+        'normalized_mtime_epoch': 1767225600, 'imported_files_modified': False,
+        'worktree_identity_modified': False, 'cache_files_modified': False,
+        'runtime_visual_validated': False, 'visual_scope': pinned['visual_scope']}
+    require(set(receipt) == set(expected) | {'installed_files', 'reused_files', 'worktree'}
+            and all(type(receipt.get(name)) is type(value) and receipt[name] == value for name, value in expected.items()),
+            'Character avatar supplement identity or preservation proof differs')
+    require(all(type(receipt[name]) is int and 0 <= receipt[name] <= contract['file_count']
+                for name in ('installed_files', 'reused_files'))
+            and receipt['installed_files']+receipt['reused_files'] == contract['file_count'],
+            'Character avatar supplement installation count differs')
+    worktree = report.get('client_worktree', {})
+    identities = [worktree.get('import', {}).get('receipt_sha256'), worktree.get('package_sha256'),
+                  worktree.get('cache_archive_sha256'), worktree.get('prerequisites_archive_sha256')]
+    require(all(isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value) for value in identities)
+            and worktree.get('normalized_mtime_epoch') == expected['normalized_mtime_epoch'],
+            'Missing original client worktree identity for avatar supplement')
+    key = hashlib.sha256((''.join(identities)+str(expected['normalized_mtime_epoch'])).encode()).hexdigest()[:24]
+    require(receipt['worktree'] == 'client-work-'+key, 'Character avatar supplement was installed into another worktree')
+
+
 def validate_report(report, session, manifest):
     require(report.get('scope') == 'actual_character_creation_guest'
             and report.get('diagnostic_mode') == 'actual_character_creation'
             and report.get('session_id') == session, 'Wrong character session report')
     require(report.get('passed') is True and report.get('status') == 'passed' and report.get('failures') == [],
             'Graphical character creation did not pass')
+    validate_avatar_supplement(report, manifest)
     require(report.get('interaction_session_completed') is True and report.get('input_effect_verified') is False
             and report.get('interaction_completion_reason') == 'finish_requested'
             and 30 <= report.get('observation_seconds', 0) <= INTERACTION_SECONDS+10
