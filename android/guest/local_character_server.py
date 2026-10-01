@@ -343,8 +343,14 @@ class LocalCharacterServer(login.LocalLoginServer):
             progress.ENVIRONMENT: base.windows_path(self.map_progress_path)})
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
-            '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1'],
+            '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
+            '-donotautogroup'],
             env=environment)
+        # Use the native production grouping policy. The stock world packet
+        # delivers this same flag to the client before it loads Atlas; geometry,
+        # collision initialization and CLIENT_READY validation remain required.
+        self.creation_report['map_autogroup_policy'] = {'native_option': '-donotautogroup',
+            'configured_do_not_auto_group': True, 'policy_basis': 'native_production_default'}
         self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
         deadline = min(self.ctx.deadline, time.monotonic() + MAP_STARTUP_SECONDS)
         next_query = next_message = 0

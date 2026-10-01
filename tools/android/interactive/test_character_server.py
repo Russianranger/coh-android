@@ -8,7 +8,7 @@ import tempfile
 import time
 from types import SimpleNamespace
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
@@ -182,6 +182,50 @@ class CharacterLifecycleTests(unittest.TestCase):
         value.current_logs = Mock(return_value=[('logs/mapserver/entity.log', READY + LOGOUT)])
         value.sql_rows = Mock(side_effect=lambda table, *_args: rows[table])
         return value
+
+    def test_character_map_uses_native_production_grouping_and_retains_live_readiness_guards(self):
+        value = self.instance()
+        value.runtime = value.owner.args.state / 'runtime'
+        value.owner.args.wine = Path('/wine')
+        value.owner.wine_env = {'DISPLAY': ':1', 'PRIVATE_SESSION': SESSION}
+        value.ctx.check = Mock(); value.ctx.stage = Mock(); value.ctx.event = Mock(); value.ctx.passed = Mock()
+        value.ctx.deadline = 10000
+        child = Mock(); value.ctx.start = Mock(return_value=child)
+        value.inventory.return_value = []
+        status = f'1 {server.evidence.MAP_PATH} S: 0/0 Ip: 127.0.0.1:7001 Mem: 0\n'
+        value.query.side_effect = ['invalid container request\n', status.rstrip('\n') + ' NotReady 1\n', status]
+        def tick(number):
+            return {'available': True, 'tick_completed': number, 'unchanged_seconds': 0}
+        value.sample_progress.side_effect = [None, tick(0), None, tick(1), tick(2), None, tick(3), tick(4)]
+        bindings = {'loopback_only': True, 'udp_port': 7001}
+        with patch.object(server.login.LocalLoginServer, 'start') as parent, \
+                patch.object(server.game, 'check_game_port') as port, \
+                patch.object(server.evidence, 'game_listener_bindings', return_value=bindings), \
+                patch.object(server.progress, 'compare_records') as compare, \
+                patch.object(server.time, 'monotonic', side_effect=[0, 1, 7, 68]), \
+                patch.object(server.time, 'sleep'):
+            value.start()
+        parent.assert_called_once_with()
+        port.assert_called_once_with(7001, server.socket.SOCK_DGRAM)
+        value.ctx.start.assert_called_once_with('local-character-atlas', ['/usr/bin/env',
+            '--chdir=' + str(value.runtime), Path('/wine'), server.base.windows_path(value.runtime / 'MapServer.exe'),
+            '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
+            '-donotautogroup'], env=dict(value.owner.wine_env, **{server.evidence.GAME_LOOPBACK_ENV: '1',
+                server.progress.ENVIRONMENT: server.base.windows_path(value.runtime / 'character-atlas-progress.bin')}))
+        self.assertIs(value.map_process, child)
+        self.assertEqual(value.creation_report['map_autogroup_policy'], {'native_option': '-donotautogroup',
+            'configured_do_not_auto_group': True, 'policy_basis': 'native_production_default'})
+        self.assertEqual(value.query.call_args_list, [call(['-getstatus', '1', '1'], 'atlas-baseline'),
+            call(['-getstatus', '1', '1'], 'atlas-ready'), call(['-getstatus', '1', '1'], 'atlas-ready')])
+        self.assertEqual([sample['ready'] for sample in value.creation_report['map_samples']], [False, True])
+        self.assertTrue(value.creation_report['map_startup_guard']['requires_completed_tick_before_protocol'])
+        self.assertTrue(value.creation_report['map_startup_guard']['passed'])
+        compare.assert_called_once_with(tick(4), tick(3))
+        self.assertTrue(value.creation_report['map_ready'])
+        self.assertTrue(value.ctx.report['mapserver_started'])
+        self.assertTrue(value.report['mapserver_started'])
+        value.ctx.passed.assert_called_once_with(atlas_ready=True,
+            map=server.evidence.parse_map_status(status), loopback_only=True)
 
     def deliver(self, value):
         self.clock.return_value = CLOCK + 1

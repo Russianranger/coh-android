@@ -129,6 +129,24 @@ The combined correction passed all 173 interactive and 27 client/cache tests.
 Independent review checked the exact glove model names, previous file pins and
 provenance, strict launcher modes and the production deadline regression.
 
+Source review also found an existing native MapServer option for the costly
+`AutoGroup..` stage: **`-donotautogroup`**. Production servers already default to
+this setting; the development server used by character mode does not. The stock
+world packet sends the setting to the client before map loading, so both sides
+use the same load policy. The next candidate requests this option only for its
+owned Atlas launch and records the policy in its report. Normal map parsing,
+tracker activation, welding, collision setup, CLIENT_READY and ordinary
+logout/committed-save gates remain. No binaries or imported assets are rebuilt
+for this change. The development client also sets `iAmAnArtist` under this stock
+policy; do not claim identical internal group topology or physical visual and
+collision acceptance before runtime review. See the
+[source review](android-evidence/character-atlas-autogroup-policy-source-review-20261001.json).
+The full-budget retry at `cdff43b4` is still running while the production-policy
+candidate is prepared. Neither result is accepted at this checkpoint.
+All 174 interactive tests passed after the policy change, including an integrated
+Atlas startup regression that rejects tick zero and NotReady, and requires
+advancing completed ticks around the successful current-map protocol query.
+
 **Historical hosted 0.8.1 qualification — the following device instruction is superseded by the accepted report above.**
 
 **0.8.1 passed the hosted saved-Wine-profile refresh regression and graphical local login. It is ready for one Thor login session as an in-place update.**
