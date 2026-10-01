@@ -101,10 +101,10 @@ class CharacterMapDataTests(unittest.TestCase):
         with self.assertRaisesRegex(server.base.DiagnosticError, 'Nonregular'):
             self.value.stage_map_data(self.source, self.target)
         (self.source/'fifo').unlink(); self.immutable('one.def')
-        with patch.object(server.device, 'DATA_COUNT', -4096):
+        with patch.object(server.device, 'DATA_COUNT', -4096 - server.world.FILE_COUNT - len(server.avatar.ALLOWED)):
             with self.assertRaisesRegex(server.base.DiagnosticError, 'count exceeded bound'):
                 self.value.stage_map_data(self.source, self.target)
-        with patch.object(server.device, 'DATA_BYTES', -1024**3):
+        with patch.object(server.device, 'DATA_BYTES', -1024**3 - server.world.PAYLOAD_BYTES - server.avatar.PAYLOAD_BYTES):
             with self.assertRaisesRegex(server.base.DiagnosticError, 'data exceeded bound'):
                 self.value.stage_map_data(self.source, self.target)
 

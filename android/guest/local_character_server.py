@@ -16,6 +16,8 @@ import local_login_server as login
 import game_device_diagnostic as device
 import game_evidence as evidence
 import game_map_progress as progress
+import atlas_world_assets as world
+import character_avatar_assets as avatar
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
 PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
@@ -335,6 +337,11 @@ class LocalCharacterServer(login.LocalLoginServer):
         """
         roots = (self.owner.work.resolve(strict=True), self.owner.args.game_data.resolve(strict=True))
         source, target = Path(source), Path(target)
+        # Imported inputs and generated caches retain their accepted allowance.
+        # The verified missing-only supplements are additional immutable files,
+        # not generated cache entries; budget their exact pinned inventories too.
+        max_files = device.DATA_COUNT + 4096 + world.FILE_COUNT + len(avatar.ALLOWED)
+        max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
         pending = [(source, target)]
@@ -353,7 +360,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 require(not destination.exists() or destination.is_dir(), 'Invalid private data directory')
                 destination.mkdir(parents=True, exist_ok=True, mode=0o700)
                 result['directories'] += 1
-                require(result['directories'] <= device.DATA_COUNT + 4096, 'Map directory count exceeded bound')
+                require(result['directories'] <= max_files, 'Map directory count exceeded bound')
                 with os.scandir(current) as entries:
                     pending.extend((Path(entry.path), destination / entry.name) for entry in entries)
             else:
@@ -365,9 +372,9 @@ class LocalCharacterServer(login.LocalLoginServer):
                 result['files'] += 1; result['bytes'] += resolved_info.st_size
                 # Include accepted prerequisites/prepared caches and bounded
                 # generated client caches in addition to the imported inputs.
-                require(result['files'] <= device.DATA_COUNT + 4096
-                        and result['bytes'] <= device.DATA_BYTES + 1024**3,
-                        'Private map data exceeded bound')
+                require(result['files'] <= max_files and result['bytes'] <= max_bytes,
+                        'Private map data exceeded bound: files=' + str(result['files']) + '/' + str(max_files)
+                        + ', bytes=' + str(result['bytes']) + '/' + str(max_bytes))
                 private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
                 if destination.exists():
                     require(destination.is_file(), 'Invalid staged schema file')

@@ -13,6 +13,8 @@ from unittest.mock import Mock, call, patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import local_character_server as server
+import atlas_world_assets as world_assets
+import character_avatar_assets as avatar_assets
 
 
 def fixture():
@@ -333,6 +335,81 @@ class CharacterLifecycleTests(unittest.TestCase):
             self.assertFalse((target/'source.txt').is_symlink())
             (target/'source.txt').write_text('private changed')
             self.assertEqual(raw.read_text(),'immutable')
+
+    def map_staging_fixture(self):
+        directory = self.enterContext(tempfile.TemporaryDirectory())
+        root = Path(directory); work = root/'work'; imported = root/'import'
+        work.mkdir(); imported.mkdir()
+        source = work/'data'; source.mkdir()
+        value = self.instance(); value.owner.work = work; value.owner.args.game_data = imported
+        value.ctx.check = Mock(); value.ctx.event = Mock()
+        self.enterContext(patch.object(server.device, 'DATA_COUNT', 1))
+        self.enterContext(patch.object(server.device, 'DATA_BYTES', 1))
+        self.enterContext(patch.object(world_assets, 'FILE_COUNT', 3))
+        self.enterContext(patch.object(world_assets, 'PAYLOAD_BYTES', 32))
+        self.enterContext(patch.object(avatar_assets, 'ALLOWED', frozenset({'avatar-a', 'avatar-b'})))
+        self.enterContext(patch.object(avatar_assets, 'PAYLOAD_BYTES', 8))
+        return value, source, root
+
+    @staticmethod
+    def readonly_map_file(source, name, content=b'x'):
+        path = source/name; path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content); path.chmod(0o400)
+        return path
+
+    def map_count_inputs(self, source):
+        self.readonly_map_file(source, 'imported.txt')
+        # Exhaust the existing prerequisite/generated-cache allowance first.
+        # The verified supplements must still have their own finite allowance.
+        for index in range(4096):
+            self.readonly_map_file(source, f'bin/cache-{index}.bin')
+        for index in range(3):
+            self.readonly_map_file(source, f'textures/world-{index}.texture')
+        for index in range(2):
+            self.readonly_map_file(source, f'costumes/avatar-{index}.geo')
+
+    def test_verified_world_and_avatar_fit_above_previous_map_file_allowance(self):
+        value, source, root = self.map_staging_fixture()
+        self.map_count_inputs(source)
+        result = value.stage_map_data(source, root/'staged')
+        self.assertGreater(result['files'], 1 + 4096)
+        self.assertEqual(result['files'], 1 + 4096 + 3 + 2)
+        self.assertEqual(result['copied_private_files'], 4096)
+        self.assertEqual(result['linked_immutable_files'], 6)
+        self.assertTrue((root/'staged/textures/world-0.texture').is_symlink())
+        self.assertEqual((source/'textures/world-0.texture').read_bytes(), b'x')
+        self.assertFalse((root/'staged/bin/cache-0.bin').is_symlink())
+        (root/'staged/bin/cache-0.bin').write_bytes(b'private regenerated cache')
+        self.assertEqual((source/'bin/cache-0.bin').read_bytes(), b'x')
+
+    def test_map_file_limit_accepts_exact_known_inputs_and_rejects_one_extra(self):
+        value, source, root = self.map_staging_fixture()
+        self.map_count_inputs(source)
+        self.assertEqual(value.stage_map_data(source, root/'at-limit')['files'], 4102)
+        self.readonly_map_file(source, 'unaccounted.texture')
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'Private map data exceeded bound'):
+            value.stage_map_data(source, root/'over-limit')
+
+    def test_map_byte_limit_accepts_exact_supplement_allowance_and_rejects_one_extra(self):
+        value, source, root = self.map_staging_fixture()
+        # A read-only sparse input exercises real stat/containment/staging without
+        # allocating or copying the one-GiB generated-cache byte allowance.
+        path = source/'world.geometry'
+        old_limit = 1 + 1024**3
+        new_limit = old_limit + 32 + 8
+        with path.open('wb') as stream:
+            stream.truncate(new_limit)
+        path.chmod(0o400)
+        staged = value.stage_map_data(source, root/'at-byte-limit')
+        self.assertEqual(staged['bytes'], new_limit)
+        self.assertGreater(staged['bytes'], old_limit)
+        self.assertTrue((root/'at-byte-limit/world.geometry').is_symlink())
+        path.chmod(0o600)
+        with path.open('r+b') as stream:
+            stream.truncate(new_limit + 1)
+        path.chmod(0o400)
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'Private map data exceeded bound'):
+            value.stage_map_data(source, root/'over-byte-limit')
 
     def test_map_manifest_must_match_qualified_donor(self):
         with tempfile.TemporaryDirectory() as directory:

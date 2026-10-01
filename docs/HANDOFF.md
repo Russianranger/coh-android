@@ -2,6 +2,18 @@
 
 **Current: Thor 0.9.0 creation, Atlas connection and ordinary save are accepted. The 0.10.0 exact-character reopen and Atlas recovery candidate is implemented; APK and hosted qualification are in progress. Preserve THORHERO.**
 
+The initial 0.10.0 APK in run `36901295766` built and signed successfully,
+but hosted qualification stopped before client launch while mirroring the
+private MapServer data. Its old import/cache allowance omitted the pinned
+2,877-file world and 21-file avatar supplements. All world files had installed
+and verified; PostgreSQL, Wine and owned workers stopped cleanly. Preserve the
+[failed receipt](android-evidence/character-reopen-hosted-36901295766-failed.json).
+The correction adds exactly those supplement inventories and payload bytes
+to the existing finite staging bounds, retaining every root, link, immutable
+input and private schema check. The candidate requires a new signed APK and
+hosted run; do not request a Thor test of the failed package. Dependency downloads
+are now bounded and reuse SDK 35 when already present on the runner.
+
 The next candidate defaults to reopening the existing COHLOCAL / THORHERO ID 1.
 It compares a read-only pre-login baseline with the ordinary committed save,
 preserves identity, powers and costume, and requires LoginCount to increment
