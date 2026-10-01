@@ -31,6 +31,19 @@ pins are retained under `publication` in
 Both legacy workflows passed tooling and skipped duplicate APK/runtime jobs.
 PR #1 remains draft and main remains `04d62616`.
 
+A separate continuation review downloaded the **public release APK itself**
+and independently matched its complete digest to the signed build receipt.
+Every packaged payload pin, shipped Java source pin and preserved backend source
+pin matched. All 2,904 decoded world files passed their recorded hashes; all
+2,877 original world files were preserved and exactly 27 texture files were
+added. The public testing notes also match the build pin. No passed runtime or
+controller test was re-run, and no new APK was built. See
+[the public-download review](android-evidence/atlas-gameplay-publication-36937373454.json).
+The new materials' appearance and physical walking/jump/collision remain pending
+until the focused Thor test. After accepting that report, reopen the movement-saved
+position and qualify sustained Atlas movement/collision before first power/combat
+work; that is new gameplay coverage, not a repeat of the accepted creation gate.
+
 This delivery completes the current development milestone. Preserve the
 accepted physical 0.9.0 behavior and the healthy hosted 0.10.0 reopening gate.
 Do not re-run either gate merely for completeness. Await the single focused
