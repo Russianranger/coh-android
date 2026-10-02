@@ -295,7 +295,8 @@
     }
   },
   "preserved_boundary": {
-    "native_libraries_client_server_world_avatar_and_other44donor_payloads_byte_identical": true,
+    "all_44_unmodified_donor_payloads_byte_identical": true,
+    "includes_native_libraries_client_server_world_and_avatar": true,
     "ground_observer_and_normal_save_identity_commit_guards_retained": true,
     "android_resources_byte_identical": true,
     "java_or_dex_recompiled": true,
