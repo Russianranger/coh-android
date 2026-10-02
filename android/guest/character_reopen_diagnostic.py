@@ -91,7 +91,8 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
         if (self.connected_announced and isinstance(ready, dict)
                 and type(proof.get('client_ready_observed_utc_ms')) is int
                 and 'native_ready_to_observation_ms' not in metrics):
-            native_ms = int(time.mktime(time.strptime(ready['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+            native_ms = (ready['utc_ms'] if type(ready.get('utc_ms')) is int else
+                int(time.mktime(time.strptime(ready['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000))
             metrics['native_ready_to_observation_ms'] = proof['client_ready_observed_utc_ms'] - native_ms
         if (self.connected_announced and proof.get('stable_ground_verified') is True
                 and not getattr(self, 'relocated_announced', False)):

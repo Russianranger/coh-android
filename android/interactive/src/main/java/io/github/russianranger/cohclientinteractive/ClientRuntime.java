@@ -100,6 +100,7 @@ public final class ClientRuntime {
     private JSONObject manifest, clientManifest;
     private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
     private String manifestHash, session, operation, runId, error;
+    private String graphicsProfileRequested="standard";
     private File generation, operationDir;
     private long startedUptime, endedUptime;
     private int processExit = -1;
@@ -124,6 +125,14 @@ public final class ClientRuntime {
     public static synchronized boolean cleanupBlocked(Context context) {
         initializeGuard(context.getApplicationContext());
         return blocked;
+    }
+    public static boolean performanceGraphicsEnabled(Context context) {
+        return context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getBoolean("performance-graphics", true);
+    }
+    public static void setPerformanceGraphicsEnabled(Context context, boolean enabled) {
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putBoolean("performance-graphics", enabled).apply();
     }
     public boolean isCleanupBlocked() { return cleanupBlocked(context); }
     private static File guard(Context context) { return new File(context.getFilesDir(), "client/cleanup-guard.json"); }
@@ -260,6 +269,7 @@ public final class ClientRuntime {
         reopen = reopening;
         if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
+        graphicsProfileRequested=performanceGraphicsEnabled(context)?"performance":"standard";
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false;
@@ -300,6 +310,7 @@ public final class ClientRuntime {
                     "-w", "/state", "/usr/bin/env", "-i", "HOME=/state", "USER=coh", "LOGNAME=coh",
                     "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
+                    "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -1145,6 +1156,7 @@ public final class ClientRuntime {
                     .put("cleanup_blocked", isCleanupBlocked()).put("cancelled", cancelled)
                     .put("gameplay_validated", false).put("game_rendering_validated", false)
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
+                    .put("graphics_profile_requested", graphicsProfileRequested)
                     .put("input_effect_verified", false).put("input_events_sent", inputSent).put("input_events_failed", inputFailed)
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())

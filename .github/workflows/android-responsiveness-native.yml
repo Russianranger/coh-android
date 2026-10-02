@@ -1,0 +1,96 @@
+name: Native responsiveness candidates without repeating gameplay gates
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/android-responsiveness-native.yml'
+      - 'patches/character-events/**'
+      - 'patches/client-texture-index/**'
+      - 'patches/client-graphics/**'
+      - 'database/character-events/**'
+      - 'database/client-texture-index/**'
+      - 'database/client-graphics/**'
+      - 'tools/prepare_character_events_source.py'
+      - 'tools/prepare_client_texture_source.py'
+      - 'tools/prepare_client_graphics_source.py'
+      - 'tools/android/interactive/package_responsiveness_native.py'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-responsiveness-native
+  cancel-in-progress: false
+
+jobs:
+  native:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify immediate native event producer with independent observer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/game/test_character_events.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/native.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\native.cmd 2>&1 | Tee-Object out/contracts/native.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native character event contracts failed' }
+      - name: Stage the exact native overlay chain and cache schema proof
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_responsiveness_native.py stage --output out/responsiveness-source
+          if ($LASTEXITCODE -ne 0) { throw 'Native responsiveness staging failed' }
+      - name: Build only the new Game and MapServer candidates
+        working-directory: out/responsiveness-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Native responsiveness configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Native responsiveness build failed' }
+      - name: Package new executables with source receipts and PE import evidence
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_responsiveness_native.py package
+          --directory out/responsiveness-source/out/build/vs2026/bin/OptDebug
+          --source out/responsiveness-source
+          --cache out/responsiveness-source/out/build/vs2026/CMakeCache.txt
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/native-responsiveness
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-responsiveness-native
+          path: out/native-responsiveness/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-responsiveness-native-build-evidence
+          path: |
+            out/contracts/
+            out/responsiveness-source/*build-input.json
+            out/responsiveness-source/responsiveness-source-input.json
+            out/responsiveness-source/out/build/vs2026/CMakeCache.txt
+            out/responsiveness-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/native-responsiveness/native-responsiveness-build.json
+          if-no-files-found: warn

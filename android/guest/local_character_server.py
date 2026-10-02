@@ -19,6 +19,7 @@ import game_map_progress as progress
 import atlas_world_assets as world
 import character_avatar_assets as avatar
 import character_server_data_cache as server_data_cache
+import native_character_events as character_events
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
 PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
@@ -109,8 +110,8 @@ def native_position_records(logs):
     return [result[key] for key in sorted(result)]
 
 
-def stable_ground_evidence(logs, delivery, now_utc_ms, *, max_age_ms=180000):
-    values = [value for value in native_position_records(logs)
+def stable_ground_evidence(logs, delivery, now_utc_ms, *, max_age_ms=180000, positions=None):
+    values = [value for value in (native_position_records(logs) if positions is None else positions)
               if value['utc_ms'] >= delivery['sent_utc_ms']]
     if len(values) < 2:
         return None
@@ -278,30 +279,41 @@ class LocalCharacterServer(login.LocalLoginServer):
     def payloads(self):
         super().payloads()
         archive = self.owner.args.assets / 'game-package.tar.gz'
-        destination = self.owner.root / ('character-map-payload-' + device.MAP_PROGRESS_PACKAGE_SHA256[:16])
+        receipt_path = self.owner.args.assets / 'native-responsiveness.json'
+        candidate_receipt = dbserver.load_json(receipt_path, 4 * 1024 * 1024) if receipt_path.exists() else None
+        payload_key = base.file_hash(archive) if candidate_receipt is not None else device.MAP_PROGRESS_PACKAGE_SHA256
+        destination = self.owner.root / ('character-map-payload-' + payload_key[:16])
         require(not destination.is_symlink(), 'Linked Atlas payload refused')
         if not destination.exists():
             pending = self.owner.root / ('character-map-pending-' + base.secrets.token_hex(8))
             try:
                 login.extract_regular(archive, pending)
-                self.verify_map_payload(pending)
+                self.verify_map_payload(pending, candidate_receipt)
                 pending.rename(destination)
             finally:
                 if pending.exists(): shutil.rmtree(pending)
-        self.map_package = self.verify_map_payload(destination)
+        self.map_package = self.verify_map_payload(destination, candidate_receipt)
         self.map_package_dir = destination
+        self.map_manifest_sha256 = base.file_hash(destination / 'game-package.json')
         self.map_contract = game.mapserver_progress_contract(self.map_package)
         self.creation_report['mapserver_producer'] = self.map_contract['producer']
 
     @staticmethod
-    def verify_map_payload(directory):
+    def verify_map_payload(directory, candidate_receipt=None):
         path = directory / 'game-package.json'
-        require(path.is_file() and not path.is_symlink()
-                and base.file_hash(path) == device.MAP_PROGRESS_PACKAGE_SHA256,
-                'Atlas package differs from the device-qualified progress donor')
+        require(path.is_file() and not path.is_symlink(), 'Missing or linked Atlas package receipt')
         package = dbserver.load_json(path)
-        require(package.get('repository_commit') == device.MAP_PROGRESS_COMMIT
-                and package.get('source_commit') == device.SOURCE_COMMIT
+        candidate = 'native_responsiveness' in package
+        if candidate:
+            import native_responsiveness_contract as native_candidate
+            require(candidate_receipt is not None
+                    and native_candidate.embedded_receipt(package) == native_candidate.validate_receipt(candidate_receipt),
+                    'Atlas candidate differs from the installed source receipt')
+        else:
+            require(candidate_receipt is None and base.file_hash(path) == device.MAP_PROGRESS_PACKAGE_SHA256
+                    and package.get('repository_commit') == device.MAP_PROGRESS_COMMIT,
+                    'Atlas package differs from the device-qualified progress donor')
+        require(package.get('source_commit') == device.SOURCE_COMMIT
                 and package.get('data_commit') == device.DATA_COMMIT
                 and package.get('postgresql_persistence_fixture') is False,
                 'Atlas package provenance or fixture mode differs')
@@ -309,7 +321,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         game.game_loopback_contract(package)
         game.game_listener_contract(package)
         contract = game.mapserver_progress_contract(package)
-        require(contract['producer'] == device.MAP_PROGRESS_PRODUCER, 'Atlas progress producer differs')
+        require(candidate or contract['producer'] == device.MAP_PROGRESS_PRODUCER, 'Atlas progress producer differs')
         for name in package['files']: base.verify_pe32(directory / name)
         return package
 
@@ -336,7 +348,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             'world_manifest_sha256': world.MANIFEST_SHA256, 'world_archive_sha256': world.ARCHIVE_SHA256,
             'avatar_manifest_sha256': avatar.MANIFEST_SHA256, 'avatar_archive_sha256': avatar.ARCHIVE_SHA256,
             'schema_manifest_sha256': dbserver.DEVICE_SCHEMA_MANIFEST,
-            'map_manifest_sha256': device.MAP_PROGRESS_PACKAGE_SHA256}
+            'map_manifest_sha256': getattr(self, 'map_manifest_sha256', device.MAP_PROGRESS_PACKAGE_SHA256)}
         self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
                                                             self.owner.args.session_id, self.ctx)
         if self.data_cache.checkout(self.runtime / 'data'):
@@ -462,6 +474,13 @@ class LocalCharacterServer(login.LocalLoginServer):
         require(not self.map_progress_path.exists(), 'Stale Atlas progress file')
         environment = dict(self.owner.wine_env, **{evidence.GAME_LOOPBACK_ENV: '1',
             progress.ENVIRONMENT: base.windows_path(self.map_progress_path)})
+        event_contract = self.immediate_event_contract()
+        if event_contract is not None:
+            character_events.validate_contract(event_contract)
+            environment[character_events.ENVIRONMENT] = self.owner.args.session_id
+            self.creation_report['immediate_native_events'] = {'enabled': True,
+                'contract': event_contract, 'legacy_sorted_logs_used_for_ready_or_ground': False}
+        self.map_launch_utc_ms = int(time.time() * 1000)
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
@@ -590,6 +609,37 @@ class LocalCharacterServer(login.LocalLoginServer):
     def observe_connected_character(self):
         pass
 
+    def immediate_event_contract(self):
+        package = getattr(self, 'map_package', {})
+        return package.get('inputs', {}).get('mapserver_progress', {}).get('events_contract')
+
+    def current_native_events(self):
+        if self.immediate_event_contract() is None:
+            return None  # Retained legacy donors keep their existing proof path.
+        current = self.sample_progress(force=True)
+        if not self.live_progress(current):
+            return []
+        require(self.map_process is not None and self.map_process.process.poll() is None,
+                'Immediate native event producer is no longer owned and running')
+        values = character_events.records(self.map_process.text(), session=self.owner.args.session_id,
+            progress=current, launch_utc_ms=self.map_launch_utc_ms,
+            now_utc_ms=int(time.time() * 1000), db_id=self.creation_report['character_id'],
+            auth_id=self.auth_id)
+        self.creation_report['immediate_native_events'].update(event_count=len(values),
+            latest_event=values[-1] if values else None, observed_utc_ms=int(time.time() * 1000))
+        return values
+
+    def native_ready_record(self):
+        values = self.current_native_events()
+        return (ready_record(self.current_logs()) if values is None
+                else character_events.latest_ready(values))
+
+    def native_ground_evidence(self, delivery, *, max_age_ms=180000):
+        values = self.current_native_events()
+        return stable_ground_evidence(self.current_logs() if values is None else [], delivery,
+            int(time.time() * 1000), max_age_ms=max_age_ms,
+            positions=None if values is None else character_events.positions_after_ready(values))
+
     def character_evidence(self):
         if self.creation_report['verified']: return self.creation_report
         now = time.monotonic()
@@ -616,7 +666,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report.update(character_id=identifier, auth_id=self.auth_id)
         if evidence.connected_on_atlas(sample):
             self.creation_report['db_map_assignment_observed'] = True
-            ready = ready_record(self.current_logs())
+            ready = self.native_ready_record()
             if ready is not None and not self.creation_report['connected_on_atlas']:
                 self.creation_report.update(connected_on_atlas=True, client_ready_evidence=ready,
                     client_ready_observed_utc=base.utc(), client_ready_observed_utc_ms=int(time.time() * 1000),
@@ -948,7 +998,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         delivery = self.relocation_delivery()
         if delivery is None:
             return
-        ground = stable_ground_evidence(self.current_logs(), delivery, int(time.time() * 1000))
+        ground = self.native_ground_evidence(delivery)
         if ground is None:
             return
         self.creation_report.update(ordinary_stuck_observed=True, on_atlas_safe_position=True,
@@ -978,7 +1028,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         delivery = self.relocation_delivery()
         require(delivery == self.creation_report.get('relocation_delivery'),
                 'Ordinary recovery delivery changed before save')
-        ground = stable_ground_evidence(self.current_logs(), delivery, int(time.time() * 1000), max_age_ms=300000)
+        ground = self.native_ground_evidence(delivery, max_age_ms=300000)
         require(ground is not None, 'Native character position fell or became stale before save')
         logout = read_logout_delivery(self.owner.args.state / 'character-logout.json',
             self.owner.args.session_id, self.creation_report['client_pid'], self.CHARACTER_ID,

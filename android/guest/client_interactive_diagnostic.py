@@ -19,11 +19,12 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import client_startup_diagnostic as startup
+import client_attempt_retry as attempt_retry
 from client_startup_diagnostic import (base, require, XObserver, startup_evidence,
     CLIENT_OUTPUT_LIMIT, persist_report)
 
 SCOPE = 'actual_client_interaction_guest'
-REQUIRED = startup.REQUIRED | {'client_interactive_diagnostic.py'}
+REQUIRED = startup.REQUIRED | {'client_interactive_diagnostic.py', 'client_attempt_retry.py'}
 PROGRESS_POLL_SECONDS = 5
 
 
@@ -164,17 +165,9 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         return [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
                 base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
 
-    def execute(self):
-        require(not self.finish_path.exists() and not self.finish_path.is_symlink(),
-                "Stale interaction finish request must be removed before launch")
-        self.initialize()
-        self.start_wine()
-        self.ctx.stage('win32_runtime_dll')
-        result = self.ctx.run('runtime-probe', [self.args.wine,
-            base.windows_path(self.args.assets / 'runtime-probe.exe')], timeout=60, env=self.wine_env)
-        self.ctx.passed(**base.validate_runtime_probe(result['output']))
-        self.mark_wine_ready()
-        # Consume any previous registry progress before the new client starts.
+    def reset_client_startup_inputs(self):
+        # Every attempt gets an empty registry watermark and private client logs.
+        # Failed-attempt evidence is archived before this method is used again.
         self.ctx.run('client-progress-reset', [self.args.wine, 'reg', 'delete',
             r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/f', '/reg:32'],
             timeout=8, env=self.wine_env, check=False)
@@ -188,6 +181,26 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         if previous_logs.exists():
             require(previous_logs.is_dir(), 'Client logs path must be a directory')
             shutil.rmtree(previous_logs)
+
+    def launch_client_attempt(self, *, label='actual-coh-client'):
+        previous = Path.cwd()
+        try:
+            os.chdir(self.work)
+            self.client = self.ctx.start(label, self.launcher_command(), env=self.wine_env)
+        finally:
+            os.chdir(previous)
+
+    def execute(self):
+        require(not self.finish_path.exists() and not self.finish_path.is_symlink(),
+                "Stale interaction finish request must be removed before launch")
+        self.initialize()
+        self.start_wine()
+        self.ctx.stage('win32_runtime_dll')
+        result = self.ctx.run('runtime-probe', [self.args.wine,
+            base.windows_path(self.args.assets / 'runtime-probe.exe')], timeout=60, env=self.wine_env)
+        self.ctx.passed(**base.validate_runtime_probe(result['output']))
+        self.mark_wine_ready()
+        self.reset_client_startup_inputs()
         self.ctx.stage('actual_client_startup')
         self.observer = XObserver(self.wine_env['DISPLAY'])
         self.capture('before-client')
@@ -197,19 +210,14 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         # window, renderer and data validation, while suppressing native dialogs
         # and splash UI. It keeps inherited log pipes and observes the owned
         # child's console as a fallback; game code and assets remain unchanged.
-        command = self.launcher_command()
-        previous = Path.cwd()
-        try:
-            os.chdir(self.work)
-            self.client = self.ctx.start('actual-coh-client', command, env=self.wine_env)
-        finally:
-            os.chdir(previous)
+        self.launch_client_attempt()
         started = time.monotonic()
         self.launcher_started_monotonic = started
         self.ctx.report['client_launcher_timing'] = {'started_utc': base.utc(),
             'started_monotonic': started, 'source': 'current_owned_launcher_start_returned',
             'startup_timeout_seconds': self.args.startup_timeout_seconds}
         deadline = started + self.args.startup_timeout_seconds
+        retries = attempt_retry.ClientAttemptRetry(self, started, deadline)
         next_registry = next_progress = 0
         registry_output = ''
         ready_at = None
@@ -218,7 +226,13 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         try:
             while True:
                 self.ctx.check()
-                require(self.client.process.poll() is None, 'Actual CoH client exited during startup or observation')
+                if self.client.process.poll() is not None:
+                    if retries.prepare(ready_at):
+                        next_registry = next_progress = 0
+                        registry_output = ''
+                        console = None
+                        continue
+                    require(False, 'Actual CoH client exited during startup or observation')
                 require(self.xserver.process.poll() is None, 'Owned presentation display exited')
                 now = time.monotonic()
                 require(ready_at is not None or now < deadline,
@@ -228,11 +242,12 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                 # stop/process/overall/overflow checks above remain at 100ms.
                 # Refresh at the console deadline even between progress polls.
                 poll_due = now >= next_progress
-                if poll_due or (console is None and now - started >= 120):
+                if poll_due or (console is None and now - retries.started >= 120):
                     observed_at = time.monotonic()
                     output, launch, console = self.observe_console()
+                    retries.observe_launch(launch)
                     self.record_observer_timing('console_and_native_readiness', observed_at)
-                require(console is not None or now - started < 120,
+                require(console is not None or now - retries.started < 120,
                         'Could not attach to actual client console within 120 seconds')
                 if ready_at is not None:
                     deadline = self.interaction_deadline(deadline, launch)

@@ -21,7 +21,7 @@ OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
 CHARACTER_EVIDENCE_LIMIT = 256 * 1024 * 1024
 REQUIRED = login.REQUIRED | {'character_creation_diagnostic.py', 'local_character_server.py',
-    'character_server_data_cache.py',
+    'character_server_data_cache.py', 'texture_header_index.py',
     'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST,
     'atlas_world_assets.py', 'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
 
@@ -109,6 +109,23 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         # staging mirrors them into the private server tree before map launch.
         import atlas_world_assets as world
         self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
+        # Only the explicit new executable can consume this optional index.
+        # The preserved stock startup/creation entry points keep their path.
+        if not self.ctx.report.get('native_responsiveness_candidate'):
+            return
+        import texture_header_index
+        try:
+            index_receipt, index_env = texture_header_index.prepare(self.work,
+                self.ctx.report['import_identity'], self.client_executable_sha256, self.ctx)
+            self.ctx.report['texture_header_index'] = index_receipt
+            self.wine_env.update(index_env)
+        except (ValueError, OSError) as error:
+            # Optional optimization failure retains the ordinary native path.
+            for key in ('COH_TEXTURE_HEADER_PACK', 'COH_TEXTURE_HEADER_ID', 'COH_TEXTURE_DIAGNOSTIC_DEDUP'):
+                self.wine_env.pop(key, None)
+            self.ctx.report['texture_header_index'] = {'enabled': False, 'native_fallback_available': True,
+                                                       'reason': str(error)[:300]}
+            self.ctx.event('log', label='texture-header-index', message='Ordinary texture header reads: ' + str(error)[:300])
 
     def observe_console(self):
         output, launch, console = super().observe_console()

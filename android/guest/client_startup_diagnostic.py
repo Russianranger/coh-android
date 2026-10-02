@@ -24,6 +24,7 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import presentation_diagnostic as presentation
 import game_hang_evidence
+import native_responsiveness_contract as native_candidate
 base, require = presentation.base, presentation.require
 SCOPE = 'actual_client_startup_guest'
 SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
@@ -142,7 +143,7 @@ def import_identity(data):
             'contract_sha256': values['contract.sha256'], 'file_count': DATA_COUNT, 'total_bytes': DATA_BYTES}
 
 
-def archive_manifest(archive):
+def archive_manifest(archive, assets=None):
     entries = archive.infolist()
     require(len(entries) == 22 and len({e.filename.casefold() for e in entries}) == 22,
             'Unexpected client package entry count or duplicate')
@@ -162,8 +163,15 @@ def archive_manifest(archive):
             and set(name for name in files if name.lower().endswith('.exe')) == {'CityOfHeroes.exe'}
             and all(name == 'CityOfHeroes.exe' or name.lower().endswith('.dll') for name in files),
             'Client package must contain only the pinned client and its DLL closure')
-    require(files['CityOfHeroes.exe'].get('sha256') == EXE_SHA
-            and files['CityOfHeroes.exe'].get('size') == 9432576, 'Unqualified graphical executable')
+    if 'native_responsiveness' in manifest:
+        require(assets is not None, 'Native client candidate requires the installed source receipt')
+        receipt = read_json(Path(assets) / 'native-responsiveness.json', 4 * 1024 * 1024)
+        native_candidate.client_contract(manifest, receipt)
+        require(receipt['retained_cache']['executable_sha256'] == EXE_SHA,
+                'Native candidate changed prepared-cache donor history')
+    else:
+        require(files['CityOfHeroes.exe'].get('sha256') == EXE_SHA
+                and files['CityOfHeroes.exe'].get('size') == 9432576, 'Unqualified graphical executable')
     for name, expected in files.items():
         require(isinstance(expected, dict) and re.fullmatch(r'[0-9a-f]{64}', expected.get('sha256', ''))
                 and type(expected.get('size')) is int and archive.getinfo(name).file_size == expected['size']
@@ -288,6 +296,14 @@ def prepare_worktree(root, data, assets, identity, context):
         _, prerequisites_manifest_sha = prerequisites_manifest(archive)
     with zipfile.ZipFile(assets / 'client-caches.zip') as archive:
         caches = cache_manifest(archive)
+    with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
+        package = archive_manifest(archive, assets)
+    candidate_receipt = (native_candidate.embedded_receipt(package)
+                         if 'native_responsiveness' in package else None)
+    if candidate_receipt is not None:
+        require(candidate_receipt['retained_cache']['archive'] == {
+                    'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
+                'Native client candidate requires the exact retained prepared caches')
     require(caches['prerequisites_manifest_sha256'] == prerequisites_manifest_sha,
             'Prepared caches were generated with different client prerequisites')
     cache_bytes = sum(pin['bytes'] for pin in caches['files'].values())
@@ -309,7 +325,7 @@ def prepare_worktree(root, data, assets, identity, context):
                 and re.fullmatch(r'[0-9a-f]{64}', saved['package_sha256']) is not None
                 and all(saved.get(k) == v for k, v in expected_identity.items() if k != 'package_sha256'))
 
-    def verify_cached_files(candidate):
+    def verify_cached_files(candidate, allow_native_upgrade=False):
         require((candidate / 'tools').is_dir() and not (candidate / 'tools').is_symlink(),
                 'Missing private loose-data discovery marker')
         require((candidate / 'data').is_dir() and not (candidate / 'data').is_symlink(), 'Invalid private client data')
@@ -318,17 +334,23 @@ def prepare_worktree(root, data, assets, identity, context):
             for part in Path(name).parts:
                 current /= part
                 require(not current.is_symlink(), 'Linked writable cache refused')
-        with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
-            package = archive_manifest(archive)
+        upgrade = False
         for name, pin in package['files'].items():
             target = candidate / name
-            require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['size']
-                    and base.file_hash(target) == pin['sha256'], 'Cached client binary differs: ' + name)
+            require(target.is_file() and not target.is_symlink(), 'Linked or missing cached client binary: ' + name)
+            actual = {'size': target.stat().st_size, 'sha256': base.file_hash(target)}
+            if actual != {'size': pin['size'], 'sha256': pin['sha256']}:
+                require(allow_native_upgrade and candidate_receipt is not None
+                        and name == 'CityOfHeroes.exe'
+                        and actual == {'size': 9432576, 'sha256': EXE_SHA},
+                        'Cached client binary differs: ' + name)
+                upgrade = True
         for name, pin in PREREQUISITES.items():
             target = candidate / name
             require(target.is_file() and not target.is_symlink() and target.stat().st_size == pin['bytes']
                     and base.file_hash(target) == pin['sha256'] and int(target.stat().st_mtime) == CACHE_EPOCH,
                     'Cached client prerequisite differs: ' + name)
+        return upgrade
 
     candidate = destination
     migrated_from = None
@@ -355,8 +377,25 @@ def prepare_worktree(root, data, assets, identity, context):
         require(candidate.is_dir() and not candidate.is_symlink(), 'Linked client worktree')
         saved = read_json(candidate / 'client-work.json')
         require(compatible_receipt(saved), 'Client worktree identity differs')
-        verify_cached_files(candidate)
         changed_wrapper = saved['package_sha256'] != package_sha
+        upgrade = verify_cached_files(candidate, allow_native_upgrade=changed_wrapper)
+        if upgrade:
+            # Replace only the exact previous donor executable. Imported data,
+            # DLLs and generated cache bytes have already passed their checks.
+            temporary = candidate / ('client-upgrade-' + base.secrets.token_hex(8) + '.tmp')
+            try:
+                with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
+                    with archive.open('CityOfHeroes.exe') as source, temporary.open('xb') as output:
+                        shutil.copyfileobj(source, output, 1024 * 1024)
+                pin = package['files']['CityOfHeroes.exe']
+                require(temporary.stat().st_size == pin['size'] and base.file_hash(temporary) == pin['sha256'],
+                        'Native client upgrade bytes differ')
+                base.verify_pe32(temporary)
+                temporary.chmod(0o400)
+                os.replace(temporary, candidate / 'CityOfHeroes.exe')
+            finally:
+                if temporary.exists(): temporary.unlink()
+            verify_cached_files(candidate)
         if candidate != destination:
             # Directory rename preserves every private/generated cache byte.
             # If interrupted before the next atomic marker write, the new
@@ -366,7 +405,8 @@ def prepare_worktree(root, data, assets, identity, context):
             previous_sha = saved['package_sha256']
             saved.update(expected_identity)
             base.private_write(destination / 'client-work.json', json.dumps(saved, indent=2) + '\n')
-            return destination, dict(saved, reused=True, wrapper_only_migration=True,
+            return destination, dict(saved, reused=True, wrapper_only_migration=not upgrade,
+                native_executable_upgraded=upgrade,
                 previous_package_sha256=previous_sha, previous_worktree=migrated_from,
                 generated_cache_bytes_preserved=True)
         return destination, dict(saved, reused=True)
@@ -440,7 +480,7 @@ def prepare_worktree(root, data, assets, identity, context):
                 os.chmod(target, 0o600)
                 os.utime(target, (CACHE_EPOCH, CACHE_EPOCH), follow_symlinks=False)
         with zipfile.ZipFile(assets / 'client-runtime.zip') as archive:
-            package = archive_manifest(archive)
+            package = archive_manifest(archive, assets)
             for name, pin in package['files'].items():
                 context.check()
                 target = staging / name
@@ -684,8 +724,20 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         require(not self.presentation_socket.exists() and not self.presentation_socket.is_symlink(), 'Socket already exists')
         identity = import_identity(self.args.game_data)
         self.ctx.report['import_identity'] = identity
+        with zipfile.ZipFile(self.args.assets / 'client-runtime.zip') as archive:
+            package = archive_manifest(archive, self.args.assets)
+        self.client_executable_sha256 = package['files']['CityOfHeroes.exe']['sha256']
+        if 'native_responsiveness' in package:
+            candidate = native_candidate.embedded_receipt(package)
+            self.ctx.report['native_responsiveness_candidate'] = {
+                'repository_commit': candidate['repository_commit'],
+                'receipt_sha256': native_candidate.canonical_sha(candidate),
+                'runtime_execution_validated': False,
+                'prepared_cache_donor_executable_sha256': EXE_SHA,
+                'prepared_cache_schema_changed': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
-                        source_commit=SOURCE, data_commit=DATA, client_executable_sha256=EXE_SHA)
+                        source_commit=SOURCE, data_commit=DATA,
+                        client_executable_sha256=self.client_executable_sha256)
         self.ctx.stage('client_private_data')
         self.work, receipt = prepare_worktree(self.root, self.args.game_data, self.args.assets, identity, self.ctx)
         self.ctx.report['client_worktree'] = receipt

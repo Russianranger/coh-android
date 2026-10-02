@@ -246,6 +246,13 @@ def mapserver_progress_contract(package):
     require(profile == MAP_PROGRESS_PROFILE, 'Unknown MapServer progress profile')
     require(package.get('dbserver_profile') == 'loopback' and package.get('game_listener_profile') == 'loopback',
             'MapServer progress requires both explicit loopback profiles')
+    if 'native_responsiveness' in package:
+        import native_responsiveness_contract as native_candidate
+        candidate = native_candidate.events_progress_contract(package)
+        require(candidate['contract'] == map_progress_module().validate_contract(
+                    candidate['contract'], source=True),
+                'Native candidate changed the accepted progress ABI')
+        return candidate
     donor = package.get('inputs', {}).get('mapserver_progress', {})
     manifest = donor.get('manifest', {})
     require(donor.get('repository_commit') == manifest.get('repository_commit') == package.get('repository_commit')

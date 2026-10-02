@@ -28,6 +28,7 @@ public final class ClientActivity extends Activity {
     private ClientSurface display;
     private TextView status,detail,counter,logs;
     private Button setup,importAssets,run,stop,export,finish,typeText,returnGround,saveLogout;
+    private CheckBox performanceGraphics;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
@@ -70,6 +71,12 @@ public final class ClientActivity extends Activity {
         controls.addView(text("Reopen your saved THORHERO, recover to Atlas ground and try walking, jumping and the camera. Keep your app data, imported assets, costume and powers.",13,false));
         setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
+        performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
+        performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
+        performanceGraphics.setChecked(ClientRuntime.performanceGraphicsEnabled(this));
+        performanceGraphics.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPerformanceGraphicsEnabled(this,checked));
+        controls.addView(performanceGraphics);
+        controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
         run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
         returnGround=button("Return to safe ground",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
@@ -146,7 +153,7 @@ public final class ClientActivity extends Activity {
     @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
     private void render(ClientService.State next){
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
-        boolean idle=!next.busy&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&next.report!=null&&!exporting);
+        boolean idle=!next.busy&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);performanceGraphics.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&next.report!=null&&!exporting);
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);

@@ -115,6 +115,14 @@ static int quoted(char *out, size_t limit, const char *text) {
     while(slashes) { out[used++]='\\'; out[used++]='\\'; slashes--; }
     out[used++]='"'; out[used]=0; return 1;
 }
+/* Only the interactive character profile applies the launch-only native
+   graphics overlay. Other diagnostic/cache profiles retain their baseline. */
+static const char *graphics_policy(int argc, const char *mode, const char *selected) {
+    if(selected && strcmp(selected,"standard") && strcmp(selected,"performance")) return NULL;
+    if(argc==5 && mode && !strcmp(mode,"--character-creation") && selected && !strcmp(selected,"performance"))
+        return "performance";
+    return "standard";
+}
 /* Only the explicit private fake-auth login profile may request the game's
    supported development-stamp override. The DbServer wire-protocol check and
    our pinned binary/data validation are unchanged. */
@@ -145,12 +153,14 @@ int main(int argc, char **argv) {
     DWORD code;
     size_t index;
     const char *policy=launch_policy(argc,argc==5 ? argv[4] : NULL,&generate,&lifetime_ms);
+    const char *graphics=graphics_policy(argc,argc==5 ? argv[4] : NULL,getenv("COH_CLIENT_GRAPHICS_PROFILE"));
     const char *flags=generate ? " -createbins -nogui 1 -console 1 -noaudio 1 -verbose 1 -physics 0" :
         " -nogui 1 -fullscreen 1 -screen 800 600 -noaudio 1 -auth 127.0.0.1 -db 127.0.0.1 -quicklogin 0 -maxfps 10 -maxMenuFps 10 -maxInactiveFps 10 -stopinactivedisplay 0 -shader_init_logging 1 -nofilechangecheck 1 -physics 0 -verbose 1";
-    if (!policy || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
+    if (!policy || !graphics || strlen(argv[1])!=32 || !quoted(executable,sizeof(executable),argv[2])) return 64;
     for(index=0; index<32; index++) if(!strchr("0123456789abcdef",argv[1][index])) return 64;
     if(strlen(executable)+strlen(flags)+strlen(policy)+1>sizeof(command)) return 64;
     strcpy(command, executable); strcat(command,flags); strcat(command,policy);
+    if(!SetEnvironmentVariableA("COH_CLIENT_GRAPHICS_PROFILE",graphics)) return 65;
     if(!DuplicateHandle(GetCurrentProcess(),saved[1],GetCurrentProcess(),&pipe,0,FALSE,DUPLICATE_SAME_ACCESS)) return 69;
     /* Wine's initial shell console may be only a sentinel. Make a real parent
        console for the client's explicit AttachConsole(ATTACH_PARENT_PROCESS).
@@ -179,6 +189,9 @@ int main(int argc, char **argv) {
         output(pipe,message); return 66;
     }
     snprintf(message,sizeof(message),"COH_CLIENT_LAUNCH_V1 {\"session_id\":\"%s\",\"pid\":%lu}\n",argv[1],(unsigned long)pi.dwProcessId);
+    output(pipe,message);
+    snprintf(message,sizeof(message),"COH_CLIENT_GRAPHICS_PROFILE_V1 {\"session_id\":\"%s\",\"pid\":%lu,\"profile\":\"%s\"}\n",
+        argv[1],(unsigned long)pi.dwProcessId,graphics);
     output(pipe,message);
     CloseHandle(pi.hThread);
     owned_pid=pi.dwProcessId;

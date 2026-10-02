@@ -96,11 +96,50 @@ SHELL_ONLY = frozenset({
     'tools/android/interactive/fixtures/session-window-0.11.3-character_reopen_diagnostic.py',
 })
 
+# These explicit paths use the separately receipted native responsiveness
+# workflow. It rebuilds Game and MapServer and checks their retained dependency
+# closure; the historical full donor pipeline must not publish over that build.
+RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-responsiveness.yml',
+    '.github/workflows/android-responsiveness-native.yml',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/game_diagnostic.py',
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/native_character_events.py',
+    'android/guest/texture_header_index.py',
+    'android/guest/client_attempt_retry.py',
+    'android/native/client-launcher.c',
+    'tools/prepare_character_events_source.py',
+    'tools/test_prepare_character_events_source.py',
+    'tools/prepare_client_graphics_source.py',
+    'tools/prepare_client_texture_source.py',
+    'tools/test_prepare_client_texture_source.py',
+    'tools/android/game/test_character_events.py',
+    'tools/android/interactive/build_responsiveness_apk.py',
+    'tools/android/interactive/package_responsiveness_native.py',
+    'tools/android/interactive/qualify_responsiveness.py',
+    'tools/android/interactive/test_responsiveness_package.py',
+    'tools/android/interactive/test_client_attempt_retry.py',
+    'tools/android/interactive/test_graphics_profile.py',
+    'tools/android/interactive/test_native_client_upgrade.py',
+    'tools/android/interactive/test_texture_header_index.py',
+    'patches/character-events/0001-character-events.patch',
+    'database/character-events/overlay/MapServer/src/svr/wine_character_events.h',
+    'database/character-events/overlay/MapServer/src/svr/wine_character_events.c',
+    'database/character-events/tests/events_contract.c',
+    'patches/client-graphics/0001-reversible-performance-profile.patch',
+    'database/client-graphics/overlay/Game/src/graphics/cohAndroidGraphicsProfile.h',
+    'patches/client-texture-index/0001-index-texture-headers.patch',
+    'database/client-texture-index/overlay/Game/src/render/coh_texture_header_index.h',
+    'docs/COH-Atlas-Gameplay-0.11.5-testing.txt',
+    'docs/android-evidence/responsiveness-0.11.5-publication.json',
+})
+
 
 def runtime_required(event, before, head, parent, names):
     return not (event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and before != '0' * 40 and before == parent and head != before
-        and names and set(names) <= SHELL_ONLY)
+        and names and set(names) <= SHELL_ONLY | RESPONSIVENESS_ONLY)
 
 
 def main():

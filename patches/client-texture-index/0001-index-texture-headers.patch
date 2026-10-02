@@ -1,0 +1,310 @@
+--- a/Game/src/render/tex.c
++++ b/Game/src/render/tex.c
+@@ -4,6 +4,7 @@
+ #include "render/thread/ogl.h"
+ #include <utilitieslib/utils/file.h>
+ #include "render/tex.h"
++#include "render/coh_texture_header_index.h"
+ #include "graphics/jpeg.h"
+ #include "cmdparse/cmdgame.h"
+ #include "UI/uiConsole.h"
+@@ -1221,6 +1222,85 @@
+ static char *basefolder=NULL;
+ static int tex_load_header_count;
+ 
++/* Opt-in immutable-generation header index. Released immediately after the
++ * initial scan so live reload and later LWC stages always read current files. */
++static CohTextureHeaderIndex coh_texture_index;
++static unsigned char *coh_texture_index_data;
++static unsigned int coh_texture_index_hits, coh_texture_index_fallbacks;
++static void cohTextureIndexBegin(void)
++{
++    const char *path = getenv("COH_TEXTURE_HEADER_PACK");
++    const char *identity = getenv("COH_TEXTURE_HEADER_ID");
++    FILE *input;
++    long bytes;
++    if (!path || !identity || sizeof(TextureFileHeader) != COH_THI_TEXTURE_STRUCT_BYTES)
++        return;
++    if (!fileIsAbsolutePath(path)) return;
++    input = fileOpen(path, "rbR");
++    if (!input) return;
++    fseek(input, 0, SEEK_END);
++    bytes = ftell(input);
++    fseek(input, 0, SEEK_SET);
++    if (bytes >= 64 && bytes <= COH_THI_MAX_BYTES) {
++        coh_texture_index_data = malloc(bytes);
++        if (coh_texture_index_data && fread(coh_texture_index_data, 1, bytes, input) == bytes &&
++            cohThiParse(&coh_texture_index, coh_texture_index_data, bytes, identity)) {
++            printf("COH_TEXTURE_INDEX_V1 ready records=%u bytes=%ld\n", coh_texture_index.count, bytes);
++        } else {
++            cohThiFree(&coh_texture_index);
++            SAFE_FREE(coh_texture_index_data);
++            printf("COH_TEXTURE_INDEX_V1 invalid; ordinary texture reads retained\n");
++        }
++    }
++    fclose(input);
++}
++static void cohTextureIndexEnd(void)
++{
++    if (coh_texture_index.count)
++        printf("COH_TEXTURE_INDEX_V1 hits=%u ordinary_reads=%u\n", coh_texture_index_hits, coh_texture_index_fallbacks);
++    cohThiFree(&coh_texture_index);
++    SAFE_FREE(coh_texture_index_data);
++}
++
++/* The native fallback and all validation still run. Only duplicate reporting
++ * for the same missing texture in the same file is bounded during each stage. */
++static StashTable coh_missing_texture_diagnostics;
++static unsigned int coh_missing_texture_duplicates;
++static int coh_missing_texture_active;
++void texMissingDiagnosticBegin(void)
++{
++    const char *enabled = getenv("COH_TEXTURE_DIAGNOSTIC_DEDUP");
++    coh_missing_texture_active = enabled && strcmp(enabled, "1") == 0;
++    coh_missing_texture_duplicates = 0;
++    if (!coh_missing_texture_active) return;
++    if (!coh_missing_texture_diagnostics)
++        coh_missing_texture_diagnostics = stashTableCreateWithStringKeys(1024, StashDeepCopyKeys);
++    else stashTableClear(coh_missing_texture_diagnostics);
++}
++int texMissingDiagnosticShouldReport(const char *filename, const char *name)
++{
++    char key[2048];
++    int seen;
++    if (!coh_missing_texture_active || !filename || !name ||
++        strlen(filename) + strlen(name) + 2 >= sizeof(key)) return 1;
++    sprintf(key, "%s|%s", filename, name);
++    if (stashFindInt(coh_missing_texture_diagnostics, key, &seen)) {
++        ++coh_missing_texture_duplicates;
++        return 0;
++    }
++    if (stashGetValidElementCount(coh_missing_texture_diagnostics) < 8192)
++        stashAddInt(coh_missing_texture_diagnostics, key, 1, false);
++    return 1;
++}
++void texMissingDiagnosticEnd(const char *stage)
++{
++    if (coh_missing_texture_active)
++        printf("COH_TEXTURE_DIAGNOSTICS_V1 stage=%s duplicate_records=%u first_records=%u\n",
++            stage, coh_missing_texture_duplicates, stashGetValidElementCount(coh_missing_texture_diagnostics));
++    coh_missing_texture_active = 0;
++}
++
++
+ // texFillInBind: called from main thread only at load time
+ int texFillInBind(char *filename, BasicTexture *bind) {
+     TextureFileHeader tfh;
+@@ -1231,7 +1311,8 @@
+     char *s;
+     int numread=0,logging, sizeRemaining;
+     StashElement    element;
+-    FILE *tex_file;
++    FILE *tex_file = NULL;
++    const CohTextureHeaderEntry *indexed_header;
+     char        buf[1000];
+ 
+     #define MAX_HEADER_SIZE 1024 // largest texture header we expect to run across (fyi largest so far is 570 as of 1/13/11)
+@@ -1242,34 +1323,42 @@
+ 
+     bind->flags &= ~(TEX_ALPHA|TEX_BUMPMAP|TEX_TGA|TEX_DDS|TEX_JPEG); // clear flags set in this function
+ 
+-    logging = fileSetLogging(0);
+-    tex_file = fileOpen(filename, "rbR");
+-    fileSetLogging(logging);
+-    if (!tex_file) {
+-        Errorf("Error opening texture file '%s'!", filename);
++    indexed_header = cohThiFind(&coh_texture_index, filename);
++    if (indexed_header) {
++        memcpy(&tfh, indexed_header->header, sizeof(tfh));
++        ++coh_texture_index_hits;
++    } else {
++        if (coh_texture_index.count) ++coh_texture_index_fallbacks;
++        logging = fileSetLogging(0);
++        tex_file = fileOpen(filename, "rbR");
++        fileSetLogging(logging);
++        if (!tex_file) {
++            Errorf("Error opening texture file '%s'!", filename);
++            return 1;
++        }
++        numread = fread(&tfh, 1, sizeof(tfh), tex_file);
++        if (numread < sizeof(tfh)) {
++            fclose(tex_file);
++            Errorf("Error loading texture file '%s'!", filename);
++            return 1;
++        }
++    }
++    tex_load_header_count++;
++    curData = extradata;
++    sizeRemaining = tfh.header_size - sizeof(tfh);
++    if (tfh.header_size <= sizeof(tfh) || sizeRemaining > MAX_HEADER_SIZE) {
++        if (tex_file) fclose(tex_file);
++        Errorf("Error loading texture file '%s'! Invalid texture header size.", filename);
+         return 1;
+     }
+-
+-    tex_load_header_count++;
+-
+-    // Read the data
+-    numread=fread(&tfh, 1, sizeof(tfh), tex_file);
+-    if (numread<sizeof(tfh)) {
+-        Errorf("Error loading texture file '%s'!", filename);
+-        return 1;
+-    }
+-
+-    curData = extradata;
+-    assert(tfh.header_size > sizeof(tfh));
+-    sizeRemaining = tfh.header_size - sizeof(tfh); // header_size includes base TextureFileHeader
+-    if (sizeRemaining > MAX_HEADER_SIZE) {
+-        Errorf("Error loading texture file '%s'!  Too large of cached mipmap data, need to bump MAX_HEADER_SIZE.", filename);
+-        return 1;
+-    }
+-
+-    // read remaining texture header data
+-    numread=fread(curData, 1, sizeRemaining, tex_file);
+-    if (numread < sizeRemaining) {
++    if (indexed_header) {
++        memcpy(curData, indexed_header->header + sizeof(tfh), sizeRemaining);
++        numread = sizeRemaining;
++    } else {
++        numread = fread(curData, 1, sizeRemaining, tex_file);
++    }
++    if (tex_file) fclose(tex_file);
++    if (numread < sizeRemaining || !memchr(curData, 0, sizeRemaining)) {
+         Errorf("Error loading texture file '%s'!", filename);
+         return 1;
+     }
+@@ -1288,7 +1377,7 @@
+         }
+     }
+ 
+-    fclose(tex_file);
++    // Header input already closed above.
+ 
+     //Get bind->file_pos and bind->file_bytes ints
+     bind->file_pos = tfh.header_size;
+@@ -1675,7 +1764,9 @@
+     g_basicTextures_ht = stashTableCreateWithStringKeys(estimatedBinds, StashDeepCopyKeys);
+     g_compositeTextures_ht = stashTableCreateWithStringKeys(estimatedBinds, StashDefault); // Shallow copy
+ 
++    cohTextureIndexBegin();
+     texScanForTexHeaders(true);
++    cohTextureIndexEnd();
+ 
+     // Add callback for re-loading textures
+     FolderCacheSetCallback(FOLDER_CACHE_CALLBACK_UPDATE_AND_DELETE, "texture_library/*.texture", reloadTextureCallback);
+--- a/Game/src/render/tex.h
++++ b/Game/src/render/tex.h
+@@ -6,6 +6,10 @@
+ #include "render/thread/rt_state.h"
+ #include "render/texEnums.h"
+ 
++
++void texMissingDiagnosticBegin(void);
++int texMissingDiagnosticShouldReport(const char *filename, const char *name);
++void texMissingDiagnosticEnd(const char *stage);
+ 
+ #define MAX_TEX_SIZE 1024
+ #define MAX_MIP_CACHE_SIZE 128 // Largest size of mip map that could be cached/preloaded (actual size is probably 8x8)
+--- a/Common/gameComm/NPC.c
++++ b/Common/gameComm/NPC.c
+@@ -147,6 +147,7 @@
+ #if CLIENT
+ #include "gameData/BodyPart.h"
+ #include "entity/costume_client.h"
++#include "render/tex.h"
+ #include "cmdparse/cmdgame.h"
+ int npcReadDefFilesVerifyTextures(void)
+ {
+@@ -154,6 +155,7 @@
+ 
+     if (isProductionMode() || game_state.create_bins || quickload)
+         return 1;
++    texMissingDiagnosticBegin();
+ 
+     // For each NPC definition...
+     for(NPCCursor = eaSize(&npcDefList.npcDefs)-1; NPCCursor >= 0; NPCCursor--)
+@@ -188,16 +190,17 @@
+                     continue;
+ 
+                 determineTextureNames(bodyPart, &costume->appearance, part->pchTex1, part->pchTex2, SAFESTR(tmp), SAFESTR(tmp1), &found1, &found2);
+-                if (!found1) {
++                if (!found1 && texMissingDiagnosticShouldReport(npc->fileName, tmp)) {
+                     ErrorFilenamef(npc->fileName, "CUSTOM TEXTURE ERROR: texture not found: %s\nNPC: %s\nBone: %s\nEntType: %s\n", tmp, npc->name, bodyPart->name, costume->appearance.entTypeFile);
+                 }
+-                if (!found2) {
++                if (!found2 && texMissingDiagnosticShouldReport(npc->fileName, tmp1)) {
+                     ErrorFilenamef(npc->fileName, "CUSTOM TEXTURE ERROR: texture not found: %s\nNPC: %s\nBone: %s\nEntType: %s\n", tmp1, npc->name, bodyPart->name, costume->appearance.entTypeFile);
+                 }
+             }
+         }
+     }
+ 
++    texMissingDiagnosticEnd("npc");
+     return 1;
+ }
+ #endif
+--- a/Common/gameData/costume_data.c
++++ b/Common/gameData/costume_data.c
+@@ -26,6 +26,7 @@
+ 
+ #if CLIENT
+     #include "cmdparse/cmdgame.h"
++    #include "render/tex.h"
+     #include "UI/uiCostume.h"
+     #include "UI/uiTailor.h"
+     #include "UI/uiDialog.h"
+@@ -974,6 +975,7 @@
+     return 1;
+ #endif
+ 
++    texMissingDiagnosticBegin();
+     for( i = eaSize(&costumeMaster->bodySet)-1; i >= 0; i-- )
+     {
+         const CostumeBodySet *bodySet = costumeMaster->bodySet[i];
+@@ -1014,10 +1016,10 @@
+                                 if (bad) {
+                                     //printf("");
+                                 }
+-                                if (!found1 && stricmp(texSet->texName1, "none")!=0 && !quickload) {
++                                if (!found1 && stricmp(texSet->texName1, "none")!=0 && !quickload && texMissingDiagnosticShouldReport(bset->filename, tmp)) {
+                                     ErrorFilenamef(bset->filename, "Player texture 1 '%s' (%s) not found (%s.%s.%s.%s)", tmp, texSet->texName1, originSet->name, rset->name, bset->name, gset->bodyPartName);
+                                 }
+-                                if (!found2 && stricmp(texSet->texName2, "mask")!=0 && !quickload) {
++                                if (!found2 && stricmp(texSet->texName2, "mask")!=0 && !quickload && texMissingDiagnosticShouldReport(bset->filename, tmp1)) {
+                                     ErrorFilenamef(bset->filename, "Player texture 2 '%s' (%s) not found (%s.%s.%s.%s)", tmp1, texSet->texName2, originSet->name, rset->name, bset->name, gset->bodyPartName);
+                                 }
+                             }
+@@ -1027,6 +1029,7 @@
+             }
+         }
+     }
++    texMissingDiagnosticEnd("costume");
+     return 1;
+ }
+ 
+--- a/Common/seq/tricks.c
++++ b/Common/seq/tricks.c
+@@ -1262,6 +1262,7 @@
+ {
+     int i, num;
+ 
++    texMissingDiagnosticBegin();
+     num = eaSize(&trick_list.texopts);
+     for (i=0; i<num; i++) 
+     {
+@@ -1290,11 +1291,14 @@
+                     eaCreate(&texopt_delayedLoad);
+                 eaPush(&texopt_delayedLoad, texopt);
+             } else {
+-                ErrorFilenamef(texopt->file_name, "Texture Trick \"%s\" references missing texture \"%s\".",
++                if (texMissingDiagnosticShouldReport(texopt->file_name, missingTexName))
++                    ErrorFilenamef(texopt->file_name, "Texture Trick \"%s\" references missing texture \"%s\".",
+                     texopt->name, missingTexName);
+             }
+         }
+     }
++
++    texMissingDiagnosticEnd("tricks");
+ 
+     if( LWC_IsActive() && texopt_delayedLoad) {
+         printf("trickCreateTextures: added %d / %d tricks to delayed load list\n", eaSize(&texopt_delayedLoad), num);
