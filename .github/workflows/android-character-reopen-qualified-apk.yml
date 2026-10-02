@@ -10,7 +10,7 @@ on:
       - 'tools/android/interactive/character_reopen_host_smoke.py'
       - 'tools/android/interactive/test_character_host.py'
       - 'tools/android/interactive/test_character_reopen_host.py'
-      - 'tools/android/interactive/fixtures/**'
+      - 'tools/android/interactive/fixtures/character-name-36920583713.png'
       - '.github/workflows/android-character-reopen-qualified-apk.yml'
 
 permissions:
@@ -19,7 +19,9 @@ permissions:
 
 concurrency:
   group: android-character-reopen-qualified-apk
-  cancel-in-progress: false
+  # A routing-only correction may supersede an accidentally queued duplicate.
+  # Ordinary host-driver qualifications keep their existing non-cancelling policy.
+  cancel-in-progress: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[skip retained runtime]') }}
 
 jobs:
   tooling:
@@ -44,6 +46,7 @@ jobs:
           python3 -m unittest discover -s tools/android/interactive -p 'test_character_reopen_host.py' -v
 
   runtime:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip retained runtime]')
     needs: tooling
     # Reading the already reviewed asset ZIP from its draft release requires
     # repository write access. This workflow neither builds nor publishes APKs.
