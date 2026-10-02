@@ -1,6 +1,33 @@
 # City of Heroes Android handoff
 
-**Current: physical Thor 0.11.0 saved-character reopening failed before game startup. Physical Atlas rendering and Return to safe ground are explicitly untested, as clarified by the user. Thor 0.9.0 creation/save remains accepted; the healthy hosted 0.10.0 two-session gate remains preserved. Repair the reused legacy avatar links narrowly, then deliver a corrective APK and resume the physical test. Preserve THORHERO and app data.**
+**Current: the corrective 0.11.1 APK is published after focused native ARM64 PRoot avatar migration qualification passed. Physical Thor 0.11.0 reopening failed before game startup; physical Atlas rendering and Return to safe ground are explicitly untested, as clarified by the user. The next action is the focused 0.11.1 Thor test. Physical 0.9.0 creation/save and the healthy hosted 0.10.0 two-session gate remain preserved. Keep THORHERO and app data.**
+
+[Download COH Atlas Gameplay 0.11.1](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.1/COH-Atlas-Gameplay-0.11.1.apk)
+as an in-place update, then Refresh runtime once and Reopen saved THORHERO.
+Do not clear storage, reimport data or create a replacement character.
+[Run `36944389469`](https://github.com/Russianranger/coh-android/actions/runs/36944389469)
+at `34b763a5518e3fa3740c197c0e824c17da088536` passed all three jobs:
+tooling (15 installer regressions, 12 package boundary tests and routing),
+actual native ARM64 PRoot migration, and retained-signer packaging/publication.
+The migration reproduced ELOOP, verified/repaired 21 old avatar files,
+reused all 21 on repeat, removed hidden backing entries, preserved sentinel
+state and passed six refused-invalid cases plus both interrupted-repair retries.
+
+The public APK is 595,104,089 bytes with SHA-256
+`f4e30c728046771cb91beece46fb54663b0fcd57a28b8e055f6fc8918dd3c899`.
+It retains application ID `io.github.russianranger.cohclientinteractive` and
+signer `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`,
+and advances to version code 7. Independent download review verified the
+complete public APK digest and every payload pin against the signed build.
+Only the avatar helper and its client/runtime verification manifests change;
+Android package version metadata is updated. The DEX, resources, world,
+native runtime, client and server remain byte-identical to published 0.11.0.
+See [the complete reviewed qualification/publication receipt](android-evidence/avatar-repair-36944389469-reviewed.json)
+and [the focused physical instructions](COH-Atlas-Gameplay-0.11.1-testing.txt).
+The existing screen heading still says v0.11.0 because the controls are retained;
+Android app version and exported reports identify the new 0.11.1 candidate.
+No physical reopening, rendering, ground recovery or gameplay acceptance is
+claimed by this hosted file-migration check.
 
 The user's `coh-atlas-gameplay-20261001-233407.zip` contains a 0.11.0
 `character_reopen` failure after about 2.5 seconds. Inputs, the reused private
@@ -8,7 +35,9 @@ worktree, persistent server profile and durable PostgreSQL startup passed.
 The first avatar verification then failed with `Errno 40` at
 `data/player_library/male_boot.geo`. Wine, DbServer, Atlas and the game client
 never started; no rendering, ground recovery, movement or normal second save
-was reached. The report records preexisting character ID 1. PostgreSQL stopped
+was reached. The report records `before_character_id=1` but leaves
+`existing_character_verified=false`; this attempt did not verify reopening.
+PostgreSQL stopped
 gracefully and Android verified cleanup. See
 [the physical failure receipt](android-evidence/thor-0.11.0-reopen-failed-20261001.json).
 
@@ -22,7 +51,8 @@ materializes its logical leaf. Verified hidden backing entries are removed
 before MapServer staging. Imported files, caches, worktree identity and the
 saved database are untouched. Focused qualification must reproduce this with
 the actual pinned ARM64 PRoot; source-equivalent unit tests alone do not close
-that gate. Physical results remain pending after hosted repair qualification.
+that gate. The successful run above now closes that focused repair gate;
+physical results remain pending.
 
 The corrective checkpoint adds 15 avatar installer regression cases, including
 the moved emulated-link layout, refused invalid chains and cleanup retry. The
@@ -34,10 +64,9 @@ APK members, including the DEX, are retained. The bounded
 `android-avatar-repair.yml` workflow must first reproduce the legacy failure,
 repair and retry under native ARM64 PRoot, then package/sign/publish 0.11.1
 (version code 7) using the retained key. No Wine/server/world rebuild or passed
-two-session graphical requalification is requested. At this checkpoint that
-workflow and corrective APK are pending. Resume physical testing with
-[the 0.11.1 instructions](COH-Atlas-Gameplay-0.11.1-testing.txt) only after
-publication succeeds.
+two-session graphical requalification is requested. The workflow and corrective
+publication now pass. Resume physical testing with
+[the 0.11.1 instructions](COH-Atlas-Gameplay-0.11.1-testing.txt).
 
 Focused ARM64 run `36943167422` built the matching PRoot successfully but
 stopped the migration gate on a hidden `.l2s..avatar-pending-*.0001` file's
@@ -49,8 +78,8 @@ order can reverse across fork. Ordinary payload reads
 still require the mapped guest owner; only the exact recognized legacy backing
 names may use the real-owner check. The fixture compares the same underlying
 owner across this virtual stat difference and preserves detailed failure
-tracebacks. A focused retry is required; the 0.10.0 graphical gate stays closed
-and is not repeated.
+tracebacks. The successful focused retry above fulfills that requirement;
+the completed 0.10.0 graphical gate is not repeated.
 
 Retry `36943898161` at `fa104426` passed the checked 21-file repair and exact
 payload/metadata comparison, then caught physically remaining intermediate
@@ -112,7 +141,7 @@ ground contact and normal save. Fix the exact observed defect next; after
 initial world/movement acceptance, advance collision completeness, map beaconing
 and native NPC/gameplay behavior sequentially.
 
-Manual inspection confirms the avatar, ground, stairs, statue and building
+Earlier hosted frame inspection confirms the avatar, ground, stairs, statue and building
 geometry in the reopened Atlas frame. Materials remain flat or poorly textured,
 and native UI still reports an unbeaconed map. This proves visible geometry and
 recovery, not complete graphics, NPC pathfinding or physical gameplay acceptance.

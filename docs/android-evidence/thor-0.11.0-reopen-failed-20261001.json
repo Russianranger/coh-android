@@ -19,6 +19,15 @@
   },
   "client_worktree_package_sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
   "client_worktree_reused": true,
+  "corrective_publication": {
+    "native_arm64_avatar_migration_qualified": true,
+    "physical_test_pending": true,
+    "public_apk_sha256": "f4e30c728046771cb91beece46fb54663b0fcd57a28b8e055f6fc8918dd3c899",
+    "repository_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+    "reviewed_receipt": "avatar-repair-36944389469-reviewed.json",
+    "version": "0.11.1",
+    "workflow_run_id": 36944389469
+  },
   "diagnosis": "Old avatar os.link publication under pinned PRoot --link2symlink leaves absolute hidden backing chains. Wrapper-only worktree directory rename leaves those links stale. Strict O_NOFOLLOW detects ELOOP on male_boot.geo. Actual ARM64 traced fixture qualification required for repair.",
   "existing_character_verified": false,
   "failures": [
