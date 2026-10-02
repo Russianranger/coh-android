@@ -16,18 +16,23 @@ public final class ClientService extends Service {
     public interface Listener { void onState(State state); void onFrame(int[] pixels,int width,int height,long sequence); }
     public static final class State {
         public final boolean busy, blocked, inputReady, finishing, characterSaved, canReturnGround, canSaveLogout;
-        public final long inputSent, inputFailed, readyDeadlineUptimeMillis;
-        public final String stage, detail, session, log;
+        public final long inputSent, inputFailed, readyDeadlineUptimeMillis, saveDeadlineUptimeMillis, movementDeadlineUptimeMillis;
+        public final String stage, detail, session, log, sessionPhase;
         public final File report;
         public final int certified;
-        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,boolean characterSaved,boolean canReturnGround,boolean canSaveLogout,long inputSent,long inputFailed,long deadline) {
+        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,boolean characterSaved,boolean canReturnGround,boolean canSaveLogout,long inputSent,long inputFailed,long deadline,String phase,long saveDeadline,long movementDeadline) {
             this.busy=busy;this.blocked=blocked;this.stage=stage;this.detail=detail;this.session=session;this.log=log;this.report=report;this.certified=certified;this.inputReady=inputReady;this.finishing=finishing;
-            this.characterSaved=characterSaved;this.canReturnGround=canReturnGround;this.canSaveLogout=canSaveLogout;this.inputSent=inputSent;this.inputFailed=inputFailed;this.readyDeadlineUptimeMillis=deadline;
+            this.characterSaved=characterSaved;this.canReturnGround=canReturnGround;this.canSaveLogout=canSaveLogout;this.inputSent=inputSent;this.inputFailed=inputFailed;this.readyDeadlineUptimeMillis=deadline;this.sessionPhase=phase;this.saveDeadlineUptimeMillis=saveDeadline;this.movementDeadlineUptimeMillis=movementDeadline;
         }
     }
     public final class LocalBinder extends Binder { public ClientService service(){return ClientService.this;} }
     private final LocalBinder binder=new LocalBinder();
     private final Handler main=new Handler(Looper.getMainLooper());
+    private final Runnable sessionDeadlineTick=new Runnable(){@Override public void run(){
+        if(destroyed)return;
+        ClientRuntime active=runtime;if(busy&&active!=null)active.enforceSessionDeadlines();
+        main.postDelayed(this,1000);
+    }};
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private final List<Listener> listeners=new ArrayList<>();
     private final AtomicBoolean framePending=new AtomicBoolean();
@@ -35,7 +40,8 @@ public final class ClientService extends Service {
     private volatile ClientRuntime runtime;
     private volatile boolean busy, stopping, destroyed;
     private boolean blocked, uiVisible, inputReady, finishing, characterSaved, canReturnGround, canSaveLogout;
-    private long inputSent, inputFailed, readyDeadlineUptimeMillis;
+    private long inputSent, inputFailed, readyDeadlineUptimeMillis, saveDeadlineUptimeMillis, movementDeadlineUptimeMillis;
+    private String sessionPhase="menu";
     private String stage="Ready", detail="Set up the runtime, import the reviewed assets, then launch CoH.", session="";
     private File report;
     private int certified;
@@ -50,7 +56,7 @@ public final class ClientService extends Service {
         @Override public void onReceive(Context context,Intent intent){ lifecycle("screen_event="+intent.getAction()); if(Intent.ACTION_SCREEN_OFF.equals(intent.getAction()))discardPendingInputs(); }
     };
     @Override public void onCreate(){
-        super.onCreate();
+        super.onCreate();main.post(sessionDeadlineTick);
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH saved character",NotificationManager.IMPORTANCE_LOW));
         blocked=ClientRuntime.cleanupBlocked(this);
@@ -97,7 +103,7 @@ public final class ClientService extends Service {
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
-    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis);}
+    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis,sessionPhase,saveDeadlineUptimeMillis,movementDeadlineUptimeMillis);}
     private void publish(){if(destroyed)return;State s=snapshot();for(Listener l:new ArrayList<>(listeners))l.onState(s);}
     private void deliverFrame(Listener l){Frame value=frame;if(value!=null)l.onFrame(value.pixels,value.width,value.height,value.sequence);}
     private void queueFrame(int[] pixels,int width,int height,long sequence){
@@ -128,7 +134,7 @@ public final class ClientService extends Service {
         if(busy||ClientRuntime.cleanupBlocked(this)){blocked=ClientRuntime.cleanupBlocked(this);if(blocked){stage="Cleanup needs attention";detail="Export the report, force-stop this app in Android settings, then reopen.";publish();}return START_NOT_STICKY;}
         final android.net.Uri importUri=intent.getData();
         if(IMPORT.equals(action)&&importUri==null)return START_NOT_STICKY;
-        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
+        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||CREATE.equals(action))?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
         detail=SETUP.equals(action)?"Download and unpack the private runtime once.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
@@ -141,7 +147,7 @@ public final class ClientService extends Service {
             @Override public void onStage(String name,String text){main.post(()->{if(!busy||destroyed)return;if(!stopping&&!finishing){stage=name;detail=text;}publish();notifyStatus();});}
             @Override public void onLog(String text){main.post(()->{if(destroyed)return;logs.append(text).append('\n');if(logs.length()>6000)logs.delete(0,logs.length()-6000);publish();});}
             @Override public void onFrame(int[] pixels,int width,int height,long sequence){queueFrame(pixels,width,height,sequence);}
-            @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean returnAvailable,boolean saveAvailable,long sent,long failed,long deadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canReturnGround=returnAvailable;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;publish();if(noticeChanged)notifyStatus();});}
+            @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean returnAvailable,boolean saveAvailable,long sent,long failed,long deadline,String phase,long saveDeadline,long movementDeadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canReturnGround=returnAvailable;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;sessionPhase=phase;saveDeadlineUptimeMillis=saveDeadline;movementDeadlineUptimeMillis=movementDeadline;publish();if(noticeChanged)notifyStatus();});}
         });
         runtime=instance;instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
@@ -172,5 +178,5 @@ public final class ClientService extends Service {
         return b.build();
     }
     private void notifyStatus(){if(busy)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
-    @Override public void onDestroy(){destroyed=true;ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
+    @Override public void onDestroy(){destroyed=true;main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
 }

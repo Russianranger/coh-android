@@ -62,6 +62,23 @@ SHELL_ONLY = frozenset({
     'docs/android-evidence/thor-0.11.2-interior-movement-save-passed-20261002.json',
     'docs/android-evidence/thor-0.11.2-outdoor-observed-save-incomplete-20261002.json',
     'docs/COH-Atlas-Gameplay-0.11.2-saved-position-outdoor-testing.txt',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/character_reopen_diagnostic.py',
+    'android/guest/character_session_budget.py',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java',
+    'tools/android/interactive/build_session_window_apk.py',
+    'tools/android/interactive/qualify_session_window.py',
+    'tools/android/interactive/test_session_window_package.py',
+    'tools/android/interactive/test_session_budget_guest.py',
+    'tools/android/interactive/test_session_budget_java.py',
+    'tools/android/interactive/audit_atlas_beacon_inputs.py',
+    'tools/android/interactive/test_atlas_beacon_inputs.py',
+    '.github/workflows/android-session-window.yml',
+    'docs/android-evidence/atlas-beacon-input-preflight.json',
+    'docs/android-evidence/session-window-0.11.3-publication.json',
+    'docs/COH-Atlas-Gameplay-0.11.3-testing.txt',
 })
 
 

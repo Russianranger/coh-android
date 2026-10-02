@@ -17,8 +17,8 @@ class QualificationRoutingTests(unittest.TestCase):
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),
             ('push', 'c' * 40, known), ('push', '0' * 40, known),
             ('push', parent, []),
-            ('push', parent, known + ['android/guest/character_reopen_diagnostic.py']),
-            ('push', parent, known + ['android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java']),
+            ('push', parent, known + ['android/native/client-launcher.c']),
+            ('push', parent, known + ['android/guest/diagnostic.py']),
             ('push', parent, known + ['assets/reference-inputs-manifest.json']),
             ('push', parent, known + ['android/interactive/src/main/AndroidManifest.xml']),
         ):

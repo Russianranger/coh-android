@@ -1,5 +1,39 @@
 # City of Heroes Android handoff
 
+**Current development: implementing 0.11.3 phase-aware Atlas play and normal-save windows on the existing continuation branch. The prior physical interior controls, persistence and observed outdoor route remain accepted. The next APK changes Android deadline display/input cutoff and guest deadline hooks only; native runtime, client/server, world/avatar, signer and all normal-save identity/receipt/SQL guards remain retained. Physical deadline behavior and a newly saved outdoor position still require a focused test. Beacon input preflight completed with `no_input`: no generated graph is supplied or qualified. PR #1 remains draft; main stays 04d62616.**
+
+The menu allowance remains 1200 seconds. A current validated native connection
+receives a one-shot allowance up to 1200 seconds, capped at actual launcher start
+plus 2040 seconds and overall-operation deadline minus 120 seconds. A current
+ordinary `/stuck` receipt anchors movement/save/proof deadlines at 6/7/10 minutes.
+The last minute before Save is reserved for neutral standing; the following
+three minutes are reserved for the existing normal logout, SQL proof and Finish.
+Caps can shorten the visible window. Duplicate events cannot renew it, expired
+phases cannot revive it, and the Android shell binds the UTC deadlines to uptime.
+Android independently caps event admission at its display announcement plus
+35 minutes, allowing at most one minute between announcement and launcher start;
+the guest's actual emitted policy cap remains 34 minutes before the native
+36-minute launcher lifetime. Menu/creation behavior and normal-save validators
+are unchanged. Input cutoff releases held movement/camera inputs and preserves
+a queued ordinary Save command. No automatic logout is requested.
+
+[0.11.3 focused testing notes](COH-Atlas-Gameplay-0.11.3-testing.txt) request a
+brief route to a safe outdoor spot, preferably more than 30 units from a door,
+60 seconds standing still, normal Save before its cutoff, then verified Finish
+and report export. A later reopen can assess the new outdoor saved coordinate.
+The existing native cold-load timeout remains in place. The update does not
+claim to fix the inferred cold-login watchdog or complete materials/collision.
+
+[Beacon input preflight](android-evidence/atlas-beacon-input-preflight.json)
+audits six supplied inventories and pins the loader's expected Atlas v8 graph
+and v9 date-sidecar/CRC inputs. Zero generated graphs were found. Optional
+supplied files can receive bounded prefix/hash/sidecar checks but always remain
+unqualified until provenance, full structure, loaded-world CRC and native graph
+loading are established. No fake graph, NPC readiness or combat acceptance is
+claimed. Publication and independent public-byte review will be recorded below.
+
+Previous physical evidence checkpoint follows:
+
 **Current: physical 0.11.2 now verifies the prior movement-save survived reopening, normal City Hall door emergence, traversal into outdoor Atlas, usable outdoor rendering and no clipping on the user's tested route. The earlier interior movement/camera/jump and normal-save gate remains accepted. The latest export is correctly failed because the 20-minute menu-based interaction budget expired without a requested outdoor save; cleanup passed. Next development should provide a bounded gameplay/save window after world readiness, trace cold-login loading timeouts and qualify genuine Atlas beacon inputs before NPC/powers/combat. Complete materials/collision and a new outdoor save/reopen remain pending. main stays 04d62616 and PR #1 stays draft.**
 
 The returned `coh-atlas-gameplay-20261002-125646.zip` proves the entire SQL

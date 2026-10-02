@@ -62,6 +62,10 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         super().__init__(args, context)
         self.finish_path = args.state / 'interaction-finish.json'
 
+    def interaction_deadline(self, deadline, launch):
+        """Modes may bound a validated phase; ordinary menu/creation stay fixed."""
+        return deadline
+
     def initialize(self):
         # The input contract deliberately retains its accepted startup scope;
         # verify_assets hashes every listed file, including this extra entry.
@@ -193,6 +197,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         finally:
             os.chdir(previous)
         started = time.monotonic()
+        self.launcher_started_monotonic = started
         deadline = started + self.args.startup_timeout_seconds
         next_registry = next_progress = 0
         registry_output = ''
@@ -215,6 +220,8 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     output, launch, console = self.observe_console()
                 require(console is not None or now - started < 120,
                         'Could not attach to actual client console within 120 seconds')
+                if ready_at is not None:
+                    deadline = self.interaction_deadline(deadline, launch)
                 if now >= next_progress or (ready_at is not None and now >= deadline):
                     windows = self.observer.windows()
                     self.ctx.report['observed_windows'] = windows
@@ -242,6 +249,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                             self.ctx.event('client_interaction_ready', session_id=self.args.session_id,
                                 client_pid=launch['pid'], minimum_observation_seconds=self.args.observation_seconds,
                                 interaction_timeout_seconds=self.args.interaction_seconds)
+                        deadline = self.interaction_deadline(deadline, launch)
                         if finish_request is None:
                             finish_request = read_finish_request(self.finish_path, self.args.session_id, launch['pid'])
                             if finish_request is not None:

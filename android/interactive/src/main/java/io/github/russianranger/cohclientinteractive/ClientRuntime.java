@@ -30,7 +30,7 @@ public final class ClientRuntime {
         void onStage(String stage, String detail);
         void onLog(String line);
         void onFrame(int[] argb, int width, int height, long sequence);
-        void onInputState(boolean ready, boolean finishing, boolean characterSaved, boolean canReturnGround, boolean canSaveLogout, long sent, long failed, long deadline);
+        void onInputState(boolean ready, boolean finishing, boolean characterSaved, boolean canReturnGround, boolean canSaveLogout, long sent, long failed, long deadline, String phase, long saveDeadline, long movementDeadline);
     }
     public static final class Result {
         public final boolean passed;
@@ -77,6 +77,10 @@ public final class ClientRuntime {
             new ArrayBlockingQueue<Runnable>(128), runnable -> new Thread(runnable, "coh-interactive-input"));
     private volatile boolean inputReady, finishRequested;
     private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
+    private final ClientSessionBudget sessionBudget = new ClientSessionBudget();
+    private final List<Map<String,Object>> sessionBudgetEvents = new ArrayList<>();
+    private volatile long launcherBudgetStartedUptime = -1, relocationSentUtcMillis;
+    private volatile boolean deadlineInputSuppressed, interactionReadyObserved;
     private long lastInputUptime = -1, lastInputFrameWatermark = -1, interactionCaptureId, lastInputRefresh;
     private long lastCapturedInputCount = -1;
     private boolean finishCaptureRetained;
@@ -405,15 +409,36 @@ public final class ClientRuntime {
     private interface InputWrite { void write(InteractiveRfbClient active, long epoch) throws IOException; }
     public boolean sendPointer(String selectedSession, int x, int y, int mask) {
         if (x < 0 || y < 0 || mask < 0 || mask > 7) return false;
-        return queueInput(selectedSession, (active, epoch) -> active.sendPointer(x, y, mask, epoch));
+        return queueInput(selectedSession, (active, epoch) -> active.sendPointer(x, y, mask, epoch), true);
     }
     public boolean sendKey(String selectedSession, int keysym, boolean down) {
         if (keysym <= 0) return false;
-        return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch));
+        return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
     }
-    private synchronized boolean queueInput(String selectedSession, InputWrite action) {
+    private boolean gameplayInputAllowed() {
+        return !reopen || sessionBudget.revision() < 2
+                || (!saveLogoutRequested && sessionBudget.canMove(SystemClock.uptimeMillis()));
+    }
+    /** Release held inputs even if the activity is paused when its movement cutoff arrives. */
+    public synchronized void enforceSessionDeadlines() {
+        if (!reopen || sessionBudget.revision() < 2 || deadlineInputSuppressed
+                || sessionBudget.canMove(SystemClock.uptimeMillis()) || finished || producerCompleted) return;
+        deadlineInputSuppressed = true;
+        // A queued normal save releases held input before typing its command.
+        // Do not cancel that command as the preceding movement window closes.
+        if (!saveLogoutRequested) discardPendingInputs(session);
+        recordLifecycle("session_movement_deadline_reached");
+        if (!saveLogoutRequested && characterSavedEvent == null)
+            stage("Stand still before saving", "The movement window has ended. Keep controls released for 60 seconds, then request Save before its countdown expires.");
+        notifyInputState();
+    }
+    private boolean queueInput(String selectedSession, InputWrite action) {
+        return queueInput(selectedSession, action, false);
+    }
+    private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay) {
         if (!inputReady || finishRequested || finished || cancelled || producerCompleted
                 || session == null || !session.equals(selectedSession)
+                || (gameplay && !gameplayInputAllowed())
                 || (reopen && stuckRequested && !relocationCapturedReady)) return false;
         InteractiveRfbClient queuedDecoder = decoder;
         if (queuedDecoder == null) return false;
@@ -423,7 +448,8 @@ public final class ClientRuntime {
         try {
             inputWorker.execute(() -> {
                 InteractiveRfbClient active = decoder;
-                if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder) return;
+                if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder
+                        || (gameplay && !gameplayInputAllowed())) return;
                 try {
                     // The executor and decoder both serialize writes. Never retain
                     // key values or typed text in the evidence archive.
@@ -450,7 +476,10 @@ public final class ClientRuntime {
     }
     private void notifyInputState() {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
-                finishRequested && !finished, characterSavedReady, reopen && connectedCapturedReady && !stuckRequested && !saveLogoutRequested, characterConnectedEvent != null && (!reopen || relocationCapturedReady) && !saveLogoutRequested && characterSavedEvent == null, inputSent, inputFailed, readyDeadlineUptimeMillis);
+                finishRequested && !finished, characterSavedReady,
+                reopen && sessionBudget.revision() >= 1 && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
+                characterConnectedEvent != null && (!reopen || (relocationCapturedReady && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
         inputFailed++; inputReady = false; cancelPendingInput();
@@ -473,7 +502,10 @@ public final class ClientRuntime {
     private void queueRelease(String selectedSession, boolean discard) {
         if (session == null || !session.equals(selectedSession) || finished || inputWorker.isShutdown()) return;
         if (finishRequested) return; // The queued Finish already releases input before writing its request.
-        if (discard) { cancelPendingInput(); inputWorker.getQueue().clear(); }
+        // Once accepted, normal Save owns its input epoch until delivery.
+        // Surface disable/focus release must not interrupt the typed command;
+        // explicit Stop and transport failure still cancel it separately.
+        if (discard && !saveLogoutRequested) { cancelPendingInput(); inputWorker.getQueue().clear(); }
         if (decoder == null || clientWindowObservedUptime < 0) return;
         try { inputWorker.execute(this::releaseOnInputWorker); }
         catch (RejectedExecutionException full) {
@@ -487,7 +519,7 @@ public final class ClientRuntime {
     }
     public synchronized boolean requestReturnToSafeGround() {
         if (!reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
-                || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
+                || sessionBudget.revision() < 1 || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
                 || saveLogoutRequested || characterSavedEvent != null) return false;
         final String relocationSession = session;
         final long relocationClientPid = observedClientPid;
@@ -495,11 +527,13 @@ public final class ClientRuntime {
         if (!queueInput(relocationSession, (active, epoch) -> {
             active.sendReturnToSafeGround(epoch);
             try {
+                long sentUtc = System.currentTimeMillis();
                 byte[] receipt = new JSONObject().put("format", 1).put("session_id", relocationSession)
                         .put("client_pid", relocationClientPid).put("character_id", relocationCharacterId)
-                        .put("action", "stuck").put("sent_utc_ms", System.currentTimeMillis())
+                        .put("action", "stuck").put("sent_utc_ms", sentUtc)
                         .toString().getBytes(StandardCharsets.UTF_8);
                 write(new File(state, "character-relocation.json"), receipt);
+                relocationSentUtcMillis = sentUtc;
                 recordLifecycle("ordinary_character_relocation_delivered");
             } catch (Exception failure) {
                 throw new IOException("Could not record completed character recovery delivery", failure);
@@ -514,11 +548,18 @@ public final class ClientRuntime {
 
     public synchronized boolean requestSaveLogout() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted
-                || characterConnectedEvent == null || (reopen && !relocationCapturedReady) || characterSavedEvent != null || saveLogoutRequested) return false;
+                || characterConnectedEvent == null || (reopen && (!relocationCapturedReady || !sessionBudget.canSave(SystemClock.uptimeMillis()))) || characterSavedEvent != null || saveLogoutRequested) return false;
         final String logoutSession = session;
         final long logoutClientPid = observedClientPid;
         final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
         if (!queueInput(logoutSession, (active, epoch) -> {
+            if (reopen && !sessionBudget.canSave(SystemClock.uptimeMillis())) {
+                saveLogoutRequested = false;
+                recordLifecycle("ordinary_character_logout_deadline_expired_before_delivery");
+                stage("Save window expired", "The save command was not delivered before its cutoff. Export this session after cleanup.");
+                notifyInputState();
+                throw new InteractiveRfbClient.InputCancelledException();
+            }
             active.sendSaveLogout(epoch);
             // This receipt records completed command transport, never merely a
             // button press or queued work. The guest independently checks the
@@ -665,7 +706,7 @@ public final class ClientRuntime {
                 relocationSamples.add(relocated); relocationPngs.add(png.clone());
                 if (relocationSamples.size() == 3) {
                     relocationCapturedReady = true;
-                    stage("Atlas position verified", "The server observed two stable positions after /stuck and three fresh Android views were captured. Inspect Atlas, then tap Save character / log out once. Avoid moving during the logout countdown.");
+                    stage("Atlas position verified", "The server observed two stable positions after /stuck and three fresh Android views were captured. Follow the movement and Save countdowns below. Release controls for 60 seconds before Save; keep still through logout, then tap Finish after Saved character verified.");
                     notifyInputState();
                 }
             }
@@ -771,6 +812,12 @@ public final class ClientRuntime {
                     String text = pending.toString(); pending.setLength(0);
                     if (!omitted) try {
                         JSONObject event = new JSONObject(text);
+                        if ("client_display_ready".equals(event.optString("type"))
+                                && session.equals(event.optString("session_id"))
+                                && event.optInt("width", -1) == 800 && event.optInt("height", -1) == 600
+                                && event.optInt("startup_timeout_seconds", -1) == 900
+                                && launcherBudgetStartedUptime < 0 && !cancelled && !finished)
+                            launcherBudgetStartedUptime = SystemClock.uptimeMillis();
                         if ("client_startup_observed".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id")) && event.optLong("client_pid", -1) > 0) {
                             synchronized (this) {
@@ -869,13 +916,35 @@ public final class ClientRuntime {
                             recordLifecycle("character_saved_observed");
                             stage("Character saved", "THORHERO is committed to the local database. Waiting for three fresh Android views before Finish.");
                         }
+                        if (reopen && "character_session_budget".equals(event.optString("type"))
+                                && !cancelled && !finished && !producerCompleted) {
+                            long now = SystemClock.uptimeMillis();
+                            // The display event precedes Wine launcher startup. Allow
+                            // up to one minute of transport/setup here; the guest's
+                            // actual emitted deadline is capped at launcher +34min.
+                            long hardCap = Math.min(startedUptime + 5400000,
+                                    launcherBudgetStartedUptime < 0 ? now : launcherBudgetStartedUptime + 2100000);
+                            @SuppressWarnings("unchecked") Map<String,Object> value = (Map<String,Object>)jsonValue(event);
+                            if (sessionBudget.apply(value, session, observedClientPid,
+                                    characterConnectedEvent != null, characterRelocatedEvent != null,
+                                    relocationSentUtcMillis, System.currentTimeMillis(), now, hardCap)) {
+                                synchronized (this) { sessionBudgetEvents.add(value); }
+                                readyDeadlineUptimeMillis = sessionBudget.deadline();
+                                recordLifecycle("character_session_budget_" + sessionBudget.phase());
+                                notifyInputState();
+                            } else {
+                                recordLifecycle("character_session_budget_rejected");
+                                stage("Session deadline not verified", "The current character's phase deadline could not be verified. Save remains guarded by the current session evidence; export this session after cleanup if it stays unavailable.");
+                            }
+                        }
                         if ("client_interaction_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id")) && observedClientPid > 0
                                 && observedClientPid == event.optLong("client_pid", -1)
                                 && event.optInt("minimum_observation_seconds", -1) == 30
                                 && event.optInt("interaction_timeout_seconds", -1) == 1200
-                                && readyDeadlineUptimeMillis == 0 && !cancelled && !finished) {
-                            readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 1200000;
+                                && !interactionReadyObserved && !cancelled && !finished) {
+                            interactionReadyObserved = true;
+                            if (sessionBudget.revision() == 0) readyDeadlineUptimeMillis = SystemClock.uptimeMillis() + 1200000;
                             inputReady = true; recordLifecycle("interaction_ready"); notifyInputState();
                             stage("Client ready for input", reopen ? "Log in with COHLOCAL / offline, select the existing THORHERO and click Enter Game. Do not create or delete a character. Twenty minutes remain." : "Log in with COHLOCAL / offline. Create THORHERO as a Primal Earth Hero, skip the tutorial, and wait for Saved character verified. Twenty minutes remain.");
                         }
@@ -1080,6 +1149,12 @@ public final class ClientRuntime {
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())
                     .put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
+                    .put("session_budget_revision", sessionBudget.revision()).put("session_budget_phase", sessionBudget.phase())
+                    .put("session_budget_events", new JSONArray(sessionBudgetEvents))
+                    .put("save_request_deadline_uptime_ms", sessionBudget.saveDeadline())
+                    .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
+                    .put("relocation_sent_utc_ms", relocationSentUtcMillis)
+                    .put("deadline_input_suppressed", deadlineInputSuppressed)
                     .put("scope", reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)

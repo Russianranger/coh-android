@@ -35,13 +35,13 @@ public final class ClientActivity extends Activity {
     private final List<Button> movementButtons=new ArrayList<>();
     private final Set<Integer> heldButtons=new HashSet<>();
     private float rightX,rightY;
-    private boolean inputActive,textDialogVisible,movementSuppressed;
+    private boolean inputActive,textDialogVisible,movementSuppressed,deadlineMovementSuppressed;
     private AlertDialog activeTextDialog;
     private long lastTick;
     private final Runnable inputTick=new Runnable(){@Override public void run(){
         long now=SystemClock.uptimeMillis();float elapsed=Math.min(64,Math.max(0,now-lastTick));lastTick=now;
-        if(inputActive&&hasWindowFocus()&&!textDialogVisible&&(rightX!=0||rightY!=0))display.movePointer(rightX*elapsed*0.55f,rightY*elapsed*0.55f);
-        updateCounter();inputHandler.postDelayed(this,32);
+        if(gameInputOpen()&&hasWindowFocus()&&!textDialogVisible&&(rightX!=0||rightY!=0))display.movePointer(rightX*elapsed*0.55f,rightY*elapsed*0.55f);
+        refreshDeadlineControls();updateCounter();inputHandler.postDelayed(this,32);
     }};
     private boolean bound,exporting,captureEnabled,importWaiting;
     private String pendingExport,pendingAction,shownSession="";
@@ -66,7 +66,7 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.11.0",12,false));
+        controls.addView(text("Persistent local server · v0.11.3",12,false));
         controls.addView(text("Reopen your saved THORHERO, recover to Atlas ground and try walking, jumping and the camera. Keep your app data, imported assets, costume and powers.",13,false));
         setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
@@ -84,7 +84,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Refresh runtime once after this update. Log in with COHLOCAL / offline and enter the existing THORHERO. Keep its costume and powers. Dismiss Welcome/help (choose None on the helper prompt), tap Return to safe ground once and stay still until Atlas position verified. Inspect Atlas ground and buildings, then walk briefly with the left stick or held movement buttons. X jumps; right stick moves the cursor and shoulders hold right click to turn the view. Release controls and stand still for at least 60 seconds before Save character / log out. After Saved character verified, tap Finish and export. Request Save within 10 minutes of Return to safe ground.",12,false));
+        controls.addView(text("Refresh runtime once after this update. Log in with COHLOCAL / offline and enter the existing THORHERO. Keep its costume and powers. Dismiss Welcome/help (choose None on the helper prompt), tap Return to safe ground once and stay still until Atlas position verified. Inspect Atlas ground and buildings, then walk briefly with the left stick or held movement buttons. X jumps; right stick moves the cursor and shoulders hold right click to turn the view. Release controls and stand still for at least 60 seconds before Save character / log out. After Saved character verified, tap Finish and export. Follow the movement and Save countdowns. Movement stops 6 minutes after Return to safe ground; request Save before 7 minutes. Three further minutes are reserved for save verification and Finish.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -93,7 +93,7 @@ public final class ClientActivity extends Activity {
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
-            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!textDialogVisible);}
+            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!textDialogVisible&&!movementSuppressed);}
             @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
         });
         right.addView(text("After Atlas position verified: Left stick: WASD · X: jump · Right stick: cursor · A: click · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text",12,false));
@@ -123,7 +123,15 @@ public final class ClientActivity extends Activity {
             return true;
         });return b;
     }
-    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&hasWindowFocus();}
+    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&hasWindowFocus()&&movementWindowOpen();}
+    private boolean movementWindowOpen(){return state!=null&&(state.movementDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.movementDeadlineUptimeMillis);}
+    private boolean gameInputOpen(){return inputActive&&movementWindowOpen()&&!movementSuppressed;}
+    private void refreshDeadlineControls(){
+        if(state==null)return;
+        if(!movementWindowOpen()&&!deadlineMovementSuppressed){deadlineMovementSuppressed=true;releaseControls(!movementSuppressed);refreshMovementControls();}
+        display.setInputEnabled(gameInputOpen());typeText.setEnabled(gameInputOpen());
+        saveLogout.setEnabled(inputActive&&state.canSaveLogout&&(state.saveDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.saveDeadlineUptimeMillis));
+    }
     private void refreshMovementControls(){
         boolean enabled=canWalk();
         if(!enabled){walkingKeys.update(0,0,false,heldKeys,this::sendOwnedKey);for(int owner=120001;owner<=120005;owner++)releaseKey(owner);releaseKey(KeyEvent.KEYCODE_BUTTON_X);}
@@ -139,22 +147,34 @@ public final class ClientActivity extends Activity {
     private void render(ClientService.State next){
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         boolean idle=!next.busy&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&next.report!=null&&!exporting);
-        if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;display.setSession(shownSession);}
+        if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
         finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);returnGround.setEnabled(enabled&&next.canReturnGround);saveLogout.setEnabled(enabled&&next.canSaveLogout);
-        refreshMovementControls();
+        refreshMovementControls();refreshDeadlineControls();
     }
     private void setTextIfChanged(TextView view,String value){if(!android.text.TextUtils.equals(view.getText(),value))view.setText(value);}
     private void updateCounter(){
         if(state==null||counter==null)return;
         long remaining=state.readyDeadlineUptimeMillis>0?Math.max(0,(state.readyDeadlineUptimeMillis-SystemClock.uptimeMillis()+999)/1000):0;
+        String timing="";
+        if(state.inputReady){
+            long now=SystemClock.uptimeMillis();
+            if(state.characterSaved)timing="\nSaved character verified · tap Finish now";
+            else if(state.saveDeadlineUptimeMillis>0){
+                long movement=Math.max(0,(state.movementDeadlineUptimeMillis-now+999)/1000);
+                long save=Math.max(0,(state.saveDeadlineUptimeMillis-now+999)/1000);
+                timing=save==0?"\nSave window expired · export after cleanup":movement==0?
+                        "\nStand still · Save cutoff in "+save+"s":
+                        "\nMove for up to "+movement+"s · Save cutoff in "+save+"s";
+                timing+="\nSave proof and Finish: "+remaining+"s remaining";
+            }else timing="\n"+("connected".equals(state.sessionPhase)?"Character connected":"Login window")+" · "+remaining+"s remaining";
+        }
         setTextIfChanged(counter,"Android captures: "+state.certified+" · Inputs sent: "+state.inputSent
-                +(state.inputFailed>0?" · Input failures: "+state.inputFailed:"")
-                +(state.inputReady?"\nInput ready · "+remaining+"s remaining":""));
+                +(state.inputFailed>0?" · Input failures: "+state.inputFailed:"")+timing);
     }
     private void showTextInput(){
-        if(!inputActive||service==null||textDialogVisible)return;
+        if(!gameInputOpen()||service==null||textDialogVisible)return;
         // This app-owned dialog must not discard the preceding account-field tap
         // while its neutral preposition is settling on the input worker.
         textDialogVisible=true;releaseControls();refreshMovementControls();
@@ -218,7 +238,7 @@ public final class ClientActivity extends Activity {
     }
     @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus)releaseControls();refreshMovementControls();}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
-        if(!inputActive||textDialogVisible||service==null)return super.dispatchKeyEvent(event);
+        if(!gameInputOpen()||textDialogVisible||service==null)return super.dispatchKeyEvent(event);
         int code=event.getKeyCode();boolean down=event.getAction()==KeyEvent.ACTION_DOWN;
         if(event.getAction()!=KeyEvent.ACTION_DOWN&&event.getAction()!=KeyEvent.ACTION_UP)return super.dispatchKeyEvent(event);
         boolean gamepad=(event.getSource()&InputDevice.SOURCE_GAMEPAD)==InputDevice.SOURCE_GAMEPAD;
@@ -248,7 +268,7 @@ public final class ClientActivity extends Activity {
         if(down)pressKey(code,keysym);else releaseKey(code);return true;
     }
     @Override public boolean onGenericMotionEvent(MotionEvent event){
-        if(!inputActive||textDialogVisible||(event.getSource()&InputDevice.SOURCE_JOYSTICK)!=InputDevice.SOURCE_JOYSTICK)
+        if(!gameInputOpen()||textDialogVisible||(event.getSource()&InputDevice.SOURCE_JOYSTICK)!=InputDevice.SOURCE_JOYSTICK)
             return super.onGenericMotionEvent(event);
         InputDevice device=event.getDevice();
         int xAxis=device!=null&&device.getMotionRange(MotionEvent.AXIS_Z,event.getSource())!=null?MotionEvent.AXIS_Z:MotionEvent.AXIS_RX;

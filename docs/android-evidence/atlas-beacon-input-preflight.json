@@ -1,0 +1,168 @@
+{
+  "authentic_generated_graph_verified": false,
+  "authored_placement_layer": {
+    "is_generated_combat_graph": false,
+    "path": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_beacons.txt",
+    "sha256": "dbf3d22a747c4c4d24fe09c52d03adeaad7b1ce8b875e72acf0b16f08f2885f1",
+    "snapshot_pin_verified": true
+  },
+  "format": 1,
+  "generation_routes": {
+    "bounded_one_map_generator_ready": false,
+    "chat_commands_active": {
+      "beacongenerate": false,
+      "beaconprocess": false,
+      "beaconprocessforced": false,
+      "beaconprocessnpc": true,
+      "beaconprocesstraffic": true,
+      "beaconreadfile": true
+    },
+    "matching_runtime_generator_qualified": false,
+    "native_beaconizer_argument_handlers": [
+      "-beaconallownovodex",
+      "-beaconautoserver",
+      "-beaconclient",
+      "-beaconclientsubserver",
+      "-beacondatatoolsrootpath",
+      "-beaconforcerebuild",
+      "-beaconmasterserver",
+      "-beaconnonetstart",
+      "-beacononepassonly",
+      "-beaconproductionmode",
+      "-beaconrequestcachedir",
+      "-beaconrequestserver",
+      "-beaconserver",
+      "-beaconsymstore",
+      "-beaconusemasterserver",
+      "-beaconworkduringuseractivity"
+    ],
+    "note": "Source Beaconizer client/server modes exist; no runnable one-map generator is qualified by this audit."
+  },
+  "installer": {
+    "existing_world_supplement_accepts_bcn": false,
+    "requires_separate_server_only_verified_input_installer": true
+  },
+  "inventories": [
+    {
+      "entries": 5995,
+      "generated_beacon_files": [],
+      "path": "docs/source-manifest.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 1563386,
+        "sha256": "df129dbc3c7446bbd1dc134a0ef9ddac1586f789dfa4819d87b26f4fddb8582e"
+      },
+      "scope": "source_snapshot"
+    },
+    {
+      "entries": 156297,
+      "generated_beacon_files": [],
+      "path": "docs/data-manifest.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 44476275,
+        "sha256": "4519387d9d51dbfca5686fdb87b17ed40640d4494bc7bf7d320345423152383d"
+      },
+      "scope": "text_data_snapshot"
+    },
+    {
+      "entries": 16721,
+      "generated_beacon_files": [],
+      "path": "assets/reference-inputs-manifest.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 3832869,
+        "sha256": "cf96742b1b65306356df69d065fcfb5bda0986ec8700d47ae1422452a1c0db7f"
+      },
+      "scope": "accepted_binary_asset_inventory"
+    },
+    {
+      "entries": 2904,
+      "generated_beacon_files": [],
+      "path": "assets/atlas-world-supplement-manifest.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 4258210,
+        "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+      },
+      "scope": "shipped_atlas_geometry_texture_inventory"
+    },
+    {
+      "entries": 100,
+      "generated_beacon_files": [],
+      "path": "docs/android-evidence/client-cache-manifest-36707839624.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 20195,
+        "sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352"
+      },
+      "scope": "accepted_client_cache_inventory"
+    },
+    {
+      "entries": 25,
+      "generated_beacon_files": [],
+      "path": "docs/android-evidence/mapserver-progress-package-36630872719.json",
+      "physical_archive_bytes_inspected": false,
+      "pin": {
+        "bytes": 181680,
+        "sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd"
+      },
+      "scope": "accepted_mapserver_package_metadata"
+    }
+  ],
+  "limitations": [
+    "Inventory metadata inspected; archived APK/runtime payload bytes are not re-extracted.",
+    "Authored placements and generated client caches do not prove a native combat beacon graph.",
+    "A genuine BCN plus its v9 sidecar, provenance and actual loaded-world CRC remain required."
+  ],
+  "loaded_world_crc_verified": false,
+  "native_contract": {
+    "compatibility_check": "beaconDoesTheBeaconFileMatchTheMap separately calculates full map CRC and reads the .date sidecar.",
+    "current_file": "server/maps/City_Zones/City_01_01/City_01_01.txt.v8.bcn",
+    "current_write_version": 8,
+    "date_crc_is_not_a_graph_content_hash": true,
+    "date_fields": [
+      "S32 version",
+      "U32 latestDataFileTime",
+      "U32 fullMapCRC"
+    ],
+    "date_sidecar": "server/maps/City_Zones/City_01_01/City_01_01.txt.v8.bcn.date",
+    "date_version": 9,
+    "map_crc_route": "beaconCalculateMapCRC -> beaconGetMapCRC(0, 0, printFullInfo)",
+    "normal_beaconReload_checks_date_crc": false,
+    "read_versions": [
+      6,
+      7,
+      8
+    ],
+    "world": "maps/City_Zones/City_01_01/City_01_01.txt"
+  },
+  "native_graph_load_verified": false,
+  "next_steps": [
+    "Acquire a genuine Atlas v8 BCN and matching v9 date sidecar with donor/generator evidence.",
+    "Or qualify the native Beaconizer route for one pinned Atlas map under a bounded runtime.",
+    "Verify native graph reading, full-map CRC compatibility and server-only installation before NPC/combat."
+  ],
+  "preflight_completed": true,
+  "runtime_or_apk_modified": false,
+  "scope": "atlas_beacon_input_preflight_only",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "source_pins": {
+    "MapServer/src/beacon/beaconClientServer.c": {
+      "bytes": 84246,
+      "sha256": "c70a29546564c6ff9688dd1487e22c64a4ba06db68d9fc09c8874d98f192b8fb",
+      "snapshot_pin_verified": true
+    },
+    "MapServer/src/beacon/beaconFile.c": {
+      "bytes": 79037,
+      "sha256": "2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60",
+      "snapshot_pin_verified": true
+    },
+    "MapServer/src/cmdparse/cmdserver.c": {
+      "bytes": 531734,
+      "sha256": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "snapshot_pin_verified": true
+    }
+  },
+  "status": "no_input"
+}

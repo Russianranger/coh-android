@@ -2,13 +2,15 @@
 """Reopen preserved THORHERO, recover through /stuck, and save normally."""
 from pathlib import Path
 import sys
+import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import character_creation_diagnostic as creation
+import character_session_budget as session_budget
 
 base, require, character = creation.base, creation.require, creation.character
 SCOPE = 'actual_character_reopen_guest'
-REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'atlas_world_assets.py',
+REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_session_budget.py', 'atlas_world_assets.py',
                               'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
 
 
@@ -53,6 +55,32 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     def saved_event_data(self, proof):
         return {'reopen_verified': True, 'powers_preserved': True, 'costume_preserved': True,
                 'preserved_existing_identity': True, 'stable_ground_verified': True}
+
+    def interaction_deadline(self, deadline, launch):
+        if not self.connected_announced:
+            return deadline
+        proof = self.ctx.report.get(self.REPORT_KEY, {})
+        require(self.identity_verified(proof, self.args.session_id)
+                and isinstance(launch, dict) and proof.get('client_pid') == launch.get('pid'),
+                'Reopen phase budget lacks the current validated graphical character')
+        now, utc_ms = time.monotonic(), int(time.time() * 1000)
+        if not hasattr(self, 'session_budget'):
+            require(session_budget.finite_seconds(deadline) and now < deadline,
+                    'Native connection arrived after the current menu deadline')
+            self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
+                self.launcher_started_monotonic, self.ctx.deadline)
+        events = [self.session_budget.connected(proof, now, utc_ms)]
+        if getattr(self, 'relocated_announced', False):
+            if self.session_budget.revision < 2:
+                require(now < self.session_budget.deadline,
+                        'Ground verification arrived after the current connected deadline')
+            events.append(self.session_budget.grounded(proof, now, utc_ms))
+        for event in events:
+            if event is not None:
+                budgets = self.ctx.report.setdefault('character_session_budgets', [])
+                budgets.append(dict(event))
+                self.ctx.event('character_session_budget', **event)
+        return self.session_budget.deadline
 
     def observe_console(self):
         result = super().observe_console()
