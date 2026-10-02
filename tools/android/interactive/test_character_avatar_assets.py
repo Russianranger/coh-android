@@ -96,6 +96,25 @@ class AvatarAssetsTests(unittest.TestCase):
         self.assertEqual((proof['installed_files'], proof['reused_files'], proof['legacy_repaired_files']), (0, 21, 0))
         self.assertFalse(list(work.rglob('.l2s.*')))
 
+    def test_real_owner_check_is_limited_to_recognized_legacy_backing_files(self):
+        work = self.moved_legacy_links('mapped-owner')
+        target = work / self.first
+        backing = target.parent / (Path(os.readlink(target)).name + '.0001')
+        uid = backing.stat().st_uid
+        pin = self.manifest['files'][self.first]
+        with patch.object(avatar.os, 'geteuid', return_value=uid + 1), \
+                patch.object(avatar.client.base.WineProcessOwner, 'status', return_value={'uid': uid}):
+            self.assertTrue(avatar.verify_target(backing, pin, legacy_backing=True))
+            with self.assertRaises(avatar.client.base.DiagnosticError):
+                avatar.verify_target(backing, pin)
+            ordinary = work / 'ordinary.geo'; ordinary.write_bytes(b'ordinary')
+            with self.assertRaisesRegex(avatar.client.base.DiagnosticError, 'limited to legacy'):
+                avatar.read_regular(ordinary, 100, installed=True, legacy_backing=True)
+        with patch.object(avatar.os, 'geteuid', return_value=uid + 1), \
+                patch.object(avatar.client.base.WineProcessOwner, 'status', return_value={'uid': uid + 2}):
+            with self.assertRaises(avatar.client.base.DiagnosticError):
+                avatar.verify_target(backing, pin, legacy_backing=True)
+
     def test_invalid_legacy_chains_fail_preflight_without_replacing_any_leaf(self):
         for change in ('bytes', 'mode', 'timestamp', 'chain', 'external_backing', 'old_worktree'):
             with self.subTest(change=change):

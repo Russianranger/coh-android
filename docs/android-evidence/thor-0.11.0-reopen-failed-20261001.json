@@ -20,8 +20,23 @@
   "client_worktree_package_sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335",
   "client_worktree_reused": true,
   "diagnosis": "Old avatar os.link publication under pinned PRoot --link2symlink leaves absolute hidden backing chains. Wrapper-only worktree directory rename leaves those links stale. Strict O_NOFOLLOW detects ELOOP on male_boot.geo. Actual ARM64 traced fixture qualification required for repair.",
+  "existing_character_verified": false,
   "failures": [
     "[Errno 40] Too many levels of symbolic links: '/state/diagnostic/client-work-4483815f86920f17c06fc43d/data/player_library/male_boot.geo'"
+  ],
+  "focused_repair_attempts": [
+    {
+      "artifact_bytes": 2463,
+      "artifact_id": 11201142348,
+      "artifact_sha256": "398c7536cac0a3f4398564e13d9459639a22004ebaf793c34612386c81f0dbde",
+      "commit": "2b1c35e1022a802c9e6bf3c43a5d28dd9abcd020",
+      "corrective_apk_built": false,
+      "diagnosis": "Pinned PRoot l2s stat replaces guest owner UID with host owner. Dedicated backing reader must verify real process owner or its mapped guest UID. General asset reads remain strict.",
+      "migration_failure": "Invalid avatar supplement file: .l2s..avatar-pending-hwzo2r2v0001.0001",
+      "native_arm64_proot_build": "passed",
+      "run_id": 36943167422,
+      "status": "failed"
+    }
   ],
   "format": 1,
   "last_passed_stage": "postgres_local_login",
@@ -41,9 +56,9 @@
     "server_started": false
   },
   "repair_scope": "Verify only recognized relocated pinned avatar chains, materialize their logical leaves and remove verified backing entries. Preserve database, imports, worktree identity and generated caches.",
+  "reported_before_character_id": 1,
   "run_id": "1790897641930-d429e0a78fcd",
   "runtime_manifest_sha256": "d2268a4f2fefd507819b1d82b455d54a8e99df1500e5bc3895320604dfd97695",
-  "saved_character_before_id": 1,
   "scope": "physical_thor_0.11.0_failed_saved_character_reopen",
   "session_id": "6afe2bf0d11043aab78d656ffcf2fdb4"
 }

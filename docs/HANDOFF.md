@@ -24,7 +24,7 @@ saved database are untouched. Focused qualification must reproduce this with
 the actual pinned ARM64 PRoot; source-equivalent unit tests alone do not close
 that gate. Physical results remain pending after hosted repair qualification.
 
-The corrective checkpoint adds 13 avatar installer regression cases, including
+The corrective checkpoint adds 14 avatar installer regression cases, including
 the moved emulated-link layout, refused invalid chains and cleanup retry. The
 new retained-donor packaging boundaries pass 12 tests; routing passes its
 focused check. Independent extraction of the actual published 0.11.0 APK
@@ -38,6 +38,19 @@ two-session graphical requalification is requested. At this checkpoint that
 workflow and corrective APK are pending. Resume physical testing with
 [the 0.11.1 instructions](COH-Atlas-Gameplay-0.11.1-testing.txt) only after
 publication succeeds.
+
+Focused ARM64 run `36943167422` built the matching PRoot successfully but
+stopped the migration gate on a hidden `.l2s..avatar-pending-*.0001` file's
+owner check; no corrective APK was built or published. Pinned PRoot's hidden
+backing stat hook restores the physical host UID after guest UID mapping.
+The narrow backing-file reader now accepts the mapped owner or the same real
+UID from `/proc/self/status` as existing owned-process cleanup, since extension
+order can reverse across fork. Ordinary payload reads
+still require the mapped guest owner; only the exact recognized legacy backing
+names may use the real-owner check. The fixture compares the same underlying
+owner across this virtual stat difference and preserves detailed failure
+tracebacks. A focused retry is required; the 0.10.0 graphical gate stays closed
+and is not repeated.
 
 The retained-APK [run `36929550592`](https://github.com/Russianranger/coh-android/actions/runs/36929550592)
 passed tooling and the full native ARM64 runtime on host-driver commit `f7c6c3a6`.

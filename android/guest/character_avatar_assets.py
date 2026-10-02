@@ -44,14 +44,26 @@ ALLOWED = frozenset({
 })
 
 
-def read_regular(path, limit, *, installed=False):
+def read_regular(path, limit, *, installed=False, legacy_backing=False):
     """Read bounded owned bytes without following links or accepting hard links."""
+    if legacy_backing:
+        require(installed and path.name.endswith('.0001')
+                and LEGACY_LINK.fullmatch(path.name[:-5]) is not None,
+                'Real-owner read is limited to legacy avatar backing files')
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         before = os.fstat(fd)
+        # PRoot's l2s stat hook restores the real host UID for hidden backing
+        # files after guest UID mapping. Only the recognized legacy backing
+        # reader uses the same real-owner identity as owned-process cleanup.
+        owner_uids = {os.geteuid()}
+        if legacy_backing:
+            owner_uids.add(client.base.WineProcessOwner.status(Path('/proc/self'))['uid'])
         require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1
-                and before.st_uid == os.geteuid() and 0 < before.st_size <= limit,
-                'Invalid avatar supplement file: ' + path.name)
+                and before.st_uid in owner_uids and 0 < before.st_size <= limit,
+                'Invalid avatar supplement file: ' + path.name
+                + f' (mode={before.st_mode:o}, links={before.st_nlink}, owner={before.st_uid},'
+                  f' expected_owners={sorted(owner_uids)}, bytes={before.st_size})')
         if installed:
             require(stat.S_IMODE(before.st_mode) == 0o444 and int(before.st_mtime) == client.CACHE_EPOCH,
                     'Avatar supplement permissions or timestamp differ: ' + path.name)
@@ -105,9 +117,9 @@ def real_directory(path):
         require(stat.S_ISDIR(info.st_mode), 'Linked or non-directory avatar destination refused')
 
 
-def verify_target(path, pin):
+def verify_target(path, pin, *, legacy_backing=False):
     try:
-        raw = read_regular(path, pin['bytes'], installed=True)
+        raw = read_regular(path, pin['bytes'], installed=True, legacy_backing=legacy_backing)
     except FileNotFoundError:
         return False
     require(len(raw) == pin['bytes'] and hashlib.sha256(raw).hexdigest() == pin['sha256'],
@@ -141,7 +153,7 @@ def legacy_target(target, worktree, pin):
     final_value = os.readlink(intermediate)
     require(final_value == value + '.0001', 'Legacy avatar backing chain differs')
     backing = target.parent / (old.name + '.0001')
-    require(verify_target(backing, pin), 'Missing legacy avatar backing file')
+    require(verify_target(backing, pin, legacy_backing=True), 'Missing legacy avatar backing file')
     return (value, intermediate, final_value, backing)
 
 
@@ -158,7 +170,7 @@ def legacy_orphans(worktree, verified, repairs, manifest):
         names = [name for name in ALLOWED if (worktree / name).parent == parent]
         require(len(backing_names) <= len(names), 'Too many legacy avatar backing files')
         for backing in backing_names:
-            raw = read_regular(backing, PAYLOAD_BYTES, installed=True)
+            raw = read_regular(backing, PAYLOAD_BYTES, installed=True, legacy_backing=True)
             matching = [name for name in names if manifest['files'][name] == {
                 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}]
             require(len(matching) == 1, 'Unrecognized legacy avatar backing bytes')
@@ -232,7 +244,7 @@ def install(worktree, assets, context):
             if name in repairs:
                 value, intermediate, final_value, backing = repairs[name]
                 require(os.readlink(target) == value and os.readlink(intermediate) == final_value
-                        and verify_target(backing, manifest['files'][name]),
+                        and verify_target(backing, manifest['files'][name], legacy_backing=True),
                         'Legacy avatar chain changed before replacement')
                 # Only this verified stale leaf is replaced. rename does not
                 # follow it; fresh/missing files still use RENAME_NOREPLACE.
@@ -250,7 +262,7 @@ def install(worktree, assets, context):
     for name, intermediate, backing in leftovers:
         context.check()
         require(verify_target(worktree / name, manifest['files'][name])
-                and verify_target(backing, manifest['files'][name]), 'Avatar repair cleanup differs')
+                and verify_target(backing, manifest['files'][name], legacy_backing=True), 'Avatar repair cleanup differs')
         if os.path.lexists(intermediate):
             intermediate.unlink()
             removed += 1

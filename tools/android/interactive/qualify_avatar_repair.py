@@ -58,9 +58,11 @@ def payload_identity(path):
         info = os.fstat(descriptor)
         with os.fdopen(descriptor, 'rb', closefd=False) as source:
             raw = source.read(avatar.PAYLOAD_BYTES + 1)
+        real_uid = avatar.client.base.WineProcessOwner.status(Path('/proc/self'))['uid']
+        check(info.st_uid in (os.geteuid(), real_uid), 'Fixture file owner differs from this process')
         return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(),
                 'mode': stat.S_IMODE(info.st_mode), 'mtime_ns': info.st_mtime_ns,
-                'uid': info.st_uid, 'nlink': info.st_nlink}
+                'real_owner_uid': real_uid, 'nlink': info.st_nlink}
     finally:
         os.close(descriptor)
 
@@ -313,8 +315,9 @@ def main():
     try:
         receipt = qualify(args)
     except Exception as error:
+        import traceback
         receipt = {'format': 1, 'scope': SCOPE, 'status': 'failed',
-                   'error': str(error), 'machine': platform.machine(),
+                   'error': str(error), 'traceback': traceback.format_exc(), 'machine': platform.machine(),
                    'guest_uid': os.geteuid(), 'gameplay_validated': False}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
