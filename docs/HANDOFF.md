@@ -1,6 +1,42 @@
 # City of Heroes Android handoff
 
-**Current: physical 0.11.1 successfully reopened existing THORHERO and showed City Hall scenery, but Return to safe ground never unlocked inputs. Native /stuck reached the exact authored City Hall interior spawn (123.5, -768, -579); the observer incorrectly required Y > -100. The published 0.11.2 correction uses Atlas's native -2000 fallback floor plus one unit of clearance for both live and saved-position checks. Physical movement, jump/camera, collision, normal movement-save and saved-position reopening remain pending. main stays 04d62616 and PR #1 stays draft.**
+**Current: the physical 0.11.2 Thor run passed ground verification, movement, camera, jump, usable City Hall interior rendering, normal movement-save and cleanup. THORHERO ID 1 / COHLOCAL, seven powers and fourteen costume parts were preserved. The new committed Atlas position is (133.92833, -768, -594.64825). Next, reopen that movement-saved position before /stuck, then qualify sustained movement, local collision and outdoor Atlas scenery using the same APK. Saved-position restoration, complete outdoor materials/collision, beaconing and native NPC/powers/combat remain pending. main stays 04d62616 and PR #1 stays draft.**
+
+The returned `coh-atlas-gameplay-20261002-115211.zip` passed the composite
+existing-character recovery and normal-save gate with zero failed input sends.
+The user explicitly reports successful movement, camera and jump and adequate
+interior rendering. The screenshots show the City Hall floor, walls, columns
+and character and the **Atlas position verified** status with movement enabled.
+This accepts the focused physical input/interior gate; the report's broad
+automated gameplay/controller/rendering booleans remain false by design and
+are not reclassified as automatic visual or gameplay proof.
+
+Native evidence and committed SQL independently support the normal save.
+The prior saved position was (123.5, -768, -579); the character moved about
+18.80 horizontal units to (133.92833, -768, -594.64825). Two native observations
+at 11:46:30 and 11:47:00 UTC agree at their two-decimal precision. The real
+`/quittologin` receipt precedes **Logout timer expired** at 11:47:12 UTC,
+followed by the committed-save proof at 11:49:07 UTC. LoginCount advanced
+2 to 3; identity, selected entity fields, powers and costume remained intact.
+Three fresh Android PixelCopy captures after each connection, ground event
+and save match their exported PNG hashes and exceed the corresponding frame
+watermarks. Guest and Android cleanup passed with no remaining owned workers.
+See [the accepted physical receipt](android-evidence/thor-0.11.2-interior-movement-save-passed-20261002.json).
+
+Use [the saved-position and outdoor procedure](COH-Atlas-Gameplay-0.11.2-saved-position-outdoor-testing.txt)
+on the already installed 0.11.2 APK. Preserve the existing runtime and character.
+Leave controls neutral for 60 seconds after gameplay appears and capture the
+initial view **before** Return to safe ground. The current app's reopening
+status verifies identity and native readiness, not coordinate restoration;
+review the initial native records against baseline SQL separately. Then use
+one ordinary recovery command to unlock movement, test a bounded City Hall
+route and the ordinary exit into outdoor Atlas, and perform another normal
+save. Complete the route and 60-second neutral settling within the existing
+ten-minute recovery window. No new APK, character creation or hosted game
+session is required for this gate.
+
+The following preserves the 0.11.1 failure diagnosis and 0.11.2 publication
+history. Its pending focused movement/save retry is now accepted above.
 
 The returned `coh-atlas-gameplay-20261002-095609.zip` records native connection
 and existing identity verification for THORHERO ID 1 / COHLOCAL. Baseline
@@ -50,17 +86,17 @@ and skipped the unchanged runtime. The broad wildcard had queued old run
 graphical session started. No accepted character seed/reopen session was
 repeated. Preserve that failure receipt as a routing issue, not as evidence
 against the separately successful 0.11.2 observer/package publication.
-[The focused physical procedure](COH-Atlas-Gameplay-0.11.2-testing.txt) is an
-in-place update and one runtime refresh. Retry ground verification, brief
-movement/neutral stop, jump/camera and normal save in one physical session.
-If ground verification still does not finish within two minutes, abort and
-export rather than waiting for the ten-minute receipt expiry. After acceptance,
-reopen the movement-saved position and test sustained collision/outdoor scenery
-before map beaconing or native NPC/powers/combat.
+[The original focused physical procedure](COH-Atlas-Gameplay-0.11.2-testing.txt)
+was the in-place update and one runtime refresh used for the now accepted
+ground verification, brief movement, jump/camera and normal-save gate. Its
+installation/refresh step should not be repeated for the next saved-position
+and outdoor test. Sustained collision/outdoor scenery precedes map beaconing
+or native NPC/powers/combat.
 
 The following preserves the completed 0.11.1 publication and earlier history.
-Its formerly pending physical reopening is now accepted as described above;
-full outdoor rendering and physical gameplay are still pending.
+Its formerly pending physical reopening and focused interior input/save gate
+are now accepted as described above; sustained outdoor rendering/collision
+and NPC/powers/combat remain pending.
 
 [Download COH Atlas Gameplay 0.11.1](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.1/COH-Atlas-Gameplay-0.11.1.apk)
 as an in-place update, then Refresh runtime once and Reopen saved THORHERO.

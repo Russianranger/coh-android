@@ -59,6 +59,8 @@ SHELL_ONLY = frozenset({
     '.github/workflows/android-ground-repair.yml',
     'docs/COH-Atlas-Gameplay-0.11.2-testing.txt',
     'docs/android-evidence/thor-0.11.1-ground-verifier-failed-20261002.json',
+    'docs/android-evidence/thor-0.11.2-interior-movement-save-passed-20261002.json',
+    'docs/COH-Atlas-Gameplay-0.11.2-saved-position-outdoor-testing.txt',
 })
 
 
