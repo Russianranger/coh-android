@@ -1,0 +1,153 @@
+{
+  "format": 1,
+  "scope": "physical_AYN_Thor_0.11.1_reopening_passed_ground_verifier_blocked_movement",
+  "upload": {
+    "name": "coh-atlas-gameplay-20261002-095609.zip",
+    "sha256": "6f857ddfacbc429c59b9e642382b7c781a712779ce141ba31acdb780b3e9d44f"
+  },
+  "app_version": "0.11.1",
+  "session_id": "43bc8f5e788342bfb0d0bd6a1f813213",
+  "candidate_commit": "34b763a5518e3fa3740c197c0e824c17da088536",
+  "branch_head_at_review": "42e86564f3479de1105f3d0961aece0f71e20ffd",
+  "physical": {
+    "existing_character_reopened": true,
+    "native_client_ready": true,
+    "native_character_id": 1,
+    "rendering": "User reports mostly rendered scenery; screenshots show City Hall interior. Full outdoor materials and collision remain pending.",
+    "native_stable_recovered_position": [
+      123.5,
+      -768.0,
+      -579.0
+    ],
+    "ground_verifier_accepted": false,
+    "movement_jump_camera_tested": false,
+    "save_requested": false,
+    "normal_save_verified": false,
+    "movement_saved_position_reopened": false
+  },
+  "defect": {
+    "live_and_committed_predicate": "-100 < Y < 10000",
+    "recovered_native_y": -768,
+    "authored_spawn": {
+      "path": "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt",
+      "spawn_property": "spn_cthl_inside_fr_outside01",
+      "spawn_group": "grp93994",
+      "spawn_property_line": 68169,
+      "translation_chain": [
+        {
+          "parent": "grp9112131",
+          "line": 68202,
+          "translation": [
+            -8.5,
+            0,
+            -7
+          ]
+        },
+        {
+          "parent": "grp9112132",
+          "line": 68220,
+          "translation": [
+            0,
+            0,
+            68
+          ]
+        },
+        {
+          "parent": "grp9112133",
+          "line": 68237,
+          "translation": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "parent": "grp9112134",
+          "line": 68254,
+          "translation": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "parent": "grp91012",
+          "line": 68268,
+          "translation": [
+            0,
+            -799.931458,
+            0
+          ]
+        },
+        {
+          "parent": "grp141198",
+          "line": 101355,
+          "translation": [
+            -83.063049,
+            23.360718,
+            344.957153
+          ]
+        },
+        {
+          "parent": "grp_Geometry",
+          "line": 113570,
+          "translation": [
+            -296.317322,
+            -417.42926,
+            -280.957397
+          ]
+        },
+        {
+          "parent": "root",
+          "line": 113580,
+          "translation": [
+            511.380371,
+            426,
+            -703.999756
+          ]
+        }
+      ],
+      "all_chain_rotations_zero": true,
+      "composed_position": [
+        123.5,
+        -768,
+        -579
+      ],
+      "sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28"
+    },
+    "late_failure": [
+      "Character logout delivery does not match this ready client or its save window"
+    ],
+    "mechanism": "Valid below-zero City Hall spawn rejected until the 600-second recovery receipt window expired; common receipt reader used a logout error message."
+  },
+  "preservation": {
+    "baseline_row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "baseline_saved_position": {
+      "containerid": 1,
+      "mapid": null,
+      "staticmapid": 1,
+      "posx": 106.454605,
+      "posy": -2000,
+      "posz": -114.45343
+    },
+    "sql_game_mutations_performed": false,
+    "cleanup_verified": true,
+    "final_preserved_rows_comparison_completed": false
+  },
+  "correction": {
+    "effective_native_fallback_floor": -2000,
+    "minimum_clearance_units": 1,
+    "accepted_y": "-1999 < Y < 10000",
+    "shared_by": "live stable observation and committed-save observer",
+    "native_source": "upstream/ouroboros/Common/entity/entworldcoll.c GroundHeight",
+    "scope": "Fresh two-sample numerical recovery; full collision remains a physical gate",
+    "game_assets_and_server_changed": false
+  },
+  "fixture": "tools/android/interactive/fixtures/thor-ground-0.11.1-20261002.log",
+  "replay_receipt_is_synthetic": true
+}

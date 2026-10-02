@@ -49,6 +49,16 @@ SHELL_ONLY = frozenset({
     'docs/android-evidence/atlas-world-reopen-reviewed.json',
     'docs/android-evidence/character-reopen-hosted-36920583713-ocr-failed.json',
     'docs/android-evidence/thor-0.11.0-reopen-failed-20261001.json',
+    'android/guest/local_character_server.py',
+    'tools/android/interactive/test_ground_repair.py',
+    'tools/android/interactive/qualify_ground_repair.py',
+    'tools/android/interactive/build_ground_repair_apk.py',
+    'tools/android/interactive/test_ground_repair_package.py',
+    'tools/android/interactive/fixtures/thor-ground-0.11.1-20261002.log',
+    'tools/android/interactive/fixtures/thor-ground-0.11.1-20261002.json',
+    '.github/workflows/android-ground-repair.yml',
+    'docs/COH-Atlas-Gameplay-0.11.2-testing.txt',
+    'docs/android-evidence/thor-0.11.1-ground-verifier-failed-20261002.json',
 })
 
 

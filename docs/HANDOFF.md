@@ -1,6 +1,49 @@
 # City of Heroes Android handoff
 
-**Current: the corrective 0.11.1 APK is published after focused native ARM64 PRoot avatar migration qualification passed. Physical Thor 0.11.0 reopening failed before game startup; physical Atlas rendering and Return to safe ground are explicitly untested, as clarified by the user. The next action is the focused 0.11.1 Thor test. Physical 0.9.0 creation/save and the healthy hosted 0.10.0 two-session gate remain preserved. Keep THORHERO and app data.**
+**Current: physical 0.11.1 successfully reopened existing THORHERO and showed City Hall scenery, but Return to safe ground never unlocked inputs. Native /stuck reached the exact authored City Hall interior spawn (123.5, -768, -579); the observer incorrectly required Y > -100. The focused 0.11.2 correction uses Atlas's native -2000 fallback floor plus one unit of clearance for both live and saved-position checks. Physical movement, jump/camera, collision, normal movement-save and saved-position reopening remain pending. main stays 04d62616 and PR #1 stays draft.**
+
+The returned `coh-atlas-gameplay-20261002-095609.zip` records native connection
+and existing identity verification for THORHERO ID 1 / COHLOCAL. Baseline
+SQL contains seven powers and fourteen costume parts. `/stuck` moved the
+character from the -2000 synthetic floor to City Hall's authored interior
+spawn, then the native logger repeated that exact position every 30 seconds.
+The old verifier rejected negative elevations below -100 in both the live
+and committed-save observers, so it never announced character_relocated.
+Controls and save remained disabled until the recovery receipt expired;
+the shared receipt reader's generic logout/save-window error is secondary.
+The final report therefore fails the composite gate despite successful
+physical reopening. No requested normal save was performed. Cleanup passed.
+See [the physical failure receipt](android-evidence/thor-0.11.1-ground-verifier-failed-20261002.json).
+
+The source correction changes only `local_character_server.py`: a shared
+height predicate rejects Atlas's synthetic -2000 fall floor with one unit
+of clearance, accepts genuine subterranean Atlas rooms, and keeps the
+existing identity, owned log route, freshness, latest-pair stability and
+SQL position matching. Two numerical observations do not prove all collision
+geometry; that remains explicitly false in the evidence. Eight new regressions
+replay unmodified physical native records and exercise save/identity/fallback
+boundaries, alongside the fourteen existing observer regressions. The receipt
+used for archived replay is labeled synthetic because the original private
+delivery file was not exported. No new hosted game session is claimed.
+
+The dedicated `android-ground-repair.yml` packages a 0.11.2 derivative of
+the exact published 0.11.1 APK, retaining the PRoot avatar repair, DEX, resources,
+world, native libraries, client/server binaries, application ID and signer.
+Only the observer and its client/runtime verification manifests may differ;
+Android package metadata advances to version code 8. No unchanged server
+rebuild, character creation or hosted seed/reopen gate is requested.
+Publication is pending until its focused workflow passes.
+[The focused physical procedure](COH-Atlas-Gameplay-0.11.2-testing.txt) is an
+in-place update and one runtime refresh. Retry ground verification, brief
+movement/neutral stop, jump/camera and normal save in one physical session.
+If ground verification still does not finish within two minutes, abort and
+export rather than waiting for the ten-minute receipt expiry. After acceptance,
+reopen the movement-saved position and test sustained collision/outdoor scenery
+before map beaconing or native NPC/powers/combat.
+
+The following preserves the completed 0.11.1 publication and earlier history.
+Its formerly pending physical reopening is now accepted as described above;
+full outdoor rendering and physical gameplay are still pending.
 
 [Download COH Atlas Gameplay 0.11.1](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.1/COH-Atlas-Gameplay-0.11.1.apk)
 as an in-place update, then Refresh runtime once and Reopen saved THORHERO.

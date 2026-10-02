@@ -30,6 +30,17 @@ RELOCATION_MAX_AGE_MS = 600000
 SERVER_LOG_FILE_LIMIT = 16 * 1024 * 1024
 SERVER_LOG_TOTAL_LIMIT = 64 * 1024 * 1024
 SERVER_LOG_COUNT_LIMIT = 128
+# entworldcoll.c:GroundHeight uses min(-2000, scene_info.minHeight) as a
+# synthetic floor when the downward geometry query misses. Atlas also has
+# real interiors below Y=0 (City Hall is around -768). Absolute altitude is
+# not ground contact; reject the fallback floor while retaining the existing
+# two fresh, stable native observations and the separate physical collision gate.
+NATIVE_FALL_FLOOR_Y = -2000.0
+FALL_FLOOR_CLEARANCE = 1.0
+
+
+def above_native_fall_floor(y):
+    return NATIVE_FALL_FLOOR_Y + FALL_FLOOR_CLEARANCE < y < 10000
 
 
 def digest_json(value):
@@ -107,7 +118,7 @@ def stable_ground_evidence(logs, delivery, now_utc_ms, *, max_age_ms=180000):
     if not (25000 <= elapsed <= 90000 and 0 <= now_utc_ms - after['utc_ms'] <= max_age_ms):
         return None
     first, last = before['position'], after['position']
-    if not (all(abs(value[0]) <= 100000 and abs(value[2]) <= 100000 and -100 < value[1] < 10000
+    if not (all(abs(value[0]) <= 100000 and abs(value[2]) <= 100000 and above_native_fall_floor(value[1])
                 for value in (first, last))
             and abs(first[1] - last[1]) <= .5
             and math.hypot(first[0] - last[0], first[2] - last[2]) <= 2):
@@ -866,7 +877,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         require(logout is not None, 'Save was not requested after stable native recovery')
         position = self.character_position()
         current_position = [position[key] for key in ('posx', 'posy', 'posz')]
-        require(-100 < position['posy'] < 10000
+        require(above_native_fall_floor(position['posy'])
                 and all(abs(a-b) <= 2 for a, b in zip(current_position, ground['position'])),
                 'Committed character position differs from the stable native recovery')
         self.creation_report.update(ground_evidence=ground, saved_position=position,
