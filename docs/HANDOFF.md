@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Current: physical 0.11.1 successfully reopened existing THORHERO and showed City Hall scenery, but Return to safe ground never unlocked inputs. Native /stuck reached the exact authored City Hall interior spawn (123.5, -768, -579); the observer incorrectly required Y > -100. The focused 0.11.2 correction uses Atlas's native -2000 fallback floor plus one unit of clearance for both live and saved-position checks. Physical movement, jump/camera, collision, normal movement-save and saved-position reopening remain pending. main stays 04d62616 and PR #1 stays draft.**
+**Current: physical 0.11.1 successfully reopened existing THORHERO and showed City Hall scenery, but Return to safe ground never unlocked inputs. Native /stuck reached the exact authored City Hall interior spawn (123.5, -768, -579); the observer incorrectly required Y > -100. The published 0.11.2 correction uses Atlas's native -2000 fallback floor plus one unit of clearance for both live and saved-position checks. Physical movement, jump/camera, collision, normal movement-save and saved-position reopening remain pending. main stays 04d62616 and PR #1 stays draft.**
 
 The returned `coh-atlas-gameplay-20261002-095609.zip` records native connection
 and existing identity verification for THORHERO ID 1 / COHLOCAL. Baseline
@@ -32,7 +32,24 @@ world, native libraries, client/server binaries, application ID and signer.
 Only the observer and its client/runtime verification manifests may differ;
 Android package metadata advances to version code 8. No unchanged server
 rebuild, character creation or hosted seed/reopen gate is requested.
-Publication is pending until its focused workflow passes.
+[Publication run 36994687459](https://github.com/Russianranger/coh-android/actions/runs/36994687459)
+passed both observer and APK jobs at `7e2f44b122417192ec1d9dd6d973b27b594e0a82`.
+The public signed APK is 595,104,089 bytes, SHA-256
+`1e8b9ffd09dcfa6967685e31b1ccbff1acf200b892614e6ec2f6092d533e8adb`.
+Independent public-download review checked all payload pins and ZIP CRC,
+unchanged DEX/resources and the exact three-member derivative boundary.
+The complete build receipt and review are archived in the physical failure
+receipt's corrective_publication section. Ten qualification source pins
+match the packaged code commit; the 22 observer and 13 packaging tests passed.
+[Download COH Atlas Gameplay 0.11.2](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.2/COH-Atlas-Gameplay-0.11.2.apk).
+
+Commit `88c8b9a9` narrows the old retained-reopening fixture wildcard to its
+original name-row image. Its routing-only run `36994935181` passed tooling
+and skipped the unchanged runtime. The broad wildcard had queued old run
+`36994687391`; it failed the retained 0.10.0 Java-source boundary before a
+graphical session started. No accepted character seed/reopen session was
+repeated. Preserve that failure receipt as a routing issue, not as evidence
+against the separately successful 0.11.2 observer/package publication.
 [The focused physical procedure](COH-Atlas-Gameplay-0.11.2-testing.txt) is an
 in-place update and one runtime refresh. Retry ground verification, brief
 movement/neutral stop, jump/camera and normal save in one physical session.
