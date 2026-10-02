@@ -1,6 +1,81 @@
 # City of Heroes Android handoff
 
-**Current: the physical 0.11.2 Thor run passed ground verification, movement, camera, jump, usable City Hall interior rendering, normal movement-save and cleanup. THORHERO ID 1 / COHLOCAL, seven powers and fourteen costume parts were preserved. The new committed Atlas position is (133.92833, -768, -594.64825). Next, reopen that movement-saved position before /stuck, then qualify sustained movement, local collision and outdoor Atlas scenery using the same APK. Saved-position restoration, complete outdoor materials/collision, beaconing and native NPC/powers/combat remain pending. main stays 04d62616 and PR #1 stays draft.**
+**Current: physical 0.11.2 now verifies the prior movement-save survived reopening, normal City Hall door emergence, traversal into outdoor Atlas, usable outdoor rendering and no clipping on the user's tested route. The earlier interior movement/camera/jump and normal-save gate remains accepted. The latest export is correctly failed because the 20-minute menu-based interaction budget expired without a requested outdoor save; cleanup passed. Next development should provide a bounded gameplay/save window after world readiness, trace cold-login loading timeouts and qualify genuine Atlas beacon inputs before NPC/powers/combat. Complete materials/collision and a new outdoor save/reopen remain pending. main stays 04d62616 and PR #1 stays draft.**
+
+The returned `coh-atlas-gameplay-20261002-125646.zip` proves the entire SQL
+baseline equals the previous accepted saved snapshot, SHA-256
+`be69e921dfafb584ae0fd263693a6f43eb6f1577125dfa5b17b4852576071362`.
+THORHERO ID 1 / COHLOCAL, LoginCount 3, seven powers, fourteen costume parts
+and the committed position (133.92833, -768, -594.64825) survived the restart.
+Initial native records repeat that position at their two-decimal precision.
+The user reports the same initial nearby City Hall location, then successful
+exit into outdoor Atlas with decent rendering and no observed clipping.
+Native periodic records confirm stable outdoor ground near (132.82, 44.04,
+-597.78). This accepts the observed route and usable exterior presentation,
+while broad terrain/collision coverage and complete materials remain pending.
+See [the outdoor observation and incomplete-save receipt](android-evidence/thor-0.11.2-outdoor-observed-save-incomplete-20261002.json).
+
+Native resume intentionally moved the character to (132.5, -768, -576)
+before `/stuck`: `resumeCharacter()` calls `prepEntForEntryIntoMap()` with
+`EE_USE_EMERGE_LOCATION_IF_NEARBY`. It finds an emergence marker within
+30 units and places the player at an authored auxiliary door exit; the
+City Hall door transforms give the exact observed coordinate. This is normal
+door behavior, not a persistence defect. A later exact outdoor coordinate
+test should save more than 30 units from a doorway. The latest run did not
+request another save, so no newly committed exterior position is claimed.
+
+The first cold MapServer connection began at 12:36:07 UTC; world loading
+continued through actor-spore initialization at 12:38:29 before the client
+returned to login with **Lost connection to server** around 12:38:32.
+`commLinkLooksDead()` uses a 120-second stale-link threshold during loading,
+and `commCheck()` contains the matching return-to-login branch. The successful
+retry took about 115 seconds. These facts support a cold-load watchdog
+diagnosis, but the export contains no explicit 120-second alarm. The later
+**Unknown auth code: -1** disconnect is not evidence of a MapServer crash.
+Do not add an unqualified `-notimeout` bypass or reset the preserved profile.
+
+The diagnostic's 1200-second interaction budget started at menu/input
+readiness, 12:34:42 UTC. Connection observation arrived at 12:44:54 and
+ground verification at 12:49:01, leaving only 5 minutes 41 seconds before
+the 12:54:42 Android deadline. The guest emitted `interaction_timeout`
+at 12:54:51, then correctly failed **Character save was not verified**.
+No Save character / log out or Finish request was sent. The display-closure
+error accompanies producer shutdown; cleanup completed with no remaining
+owned workers or inspection failures. The prior successful normal save is
+not invalidated by this unfinished new save.
+
+All 20 retained Android PNG hashes match their files, with three fresh frames
+after connection and ground verification. Those retained frames show the
+interior/EXIT doorway. The guest final frame shows outdoor statue, plaza,
+buildings and vegetation, with purple/overbright surfaces and a white sky
+still visible. The user's physical observations support delivery to Thor;
+no fresh retained outdoor Android PixelCopy proof is claimed. The attached
+06:45 interior screenshot duplicates the previous run and is excluded from
+new outdoor evidence.
+
+Next implementation scope:
+
+1. Give the reopened character a phase-aware, bounded gameplay/save budget
+   after native connection/ground verification. Synchronize the Android
+   countdown with the guest deadline and retain the overall runtime cap.
+   Reserve time for the existing 60-second neutral wait and normal logout;
+   keep recovery-receipt age, identity, stable-ground and SQL save checks.
+2. Investigate the cold world-loading watchdog using the archived timings;
+   preserve native timeout behavior until a bounded correction is qualified.
+   Do not rerun the accepted physical route solely for this diagnosis.
+3. Audit authentic generated Atlas beacon data or a bounded one-map generator.
+   No generated `.bcn` is in the repository/shipped package; the authored
+   beacon layer is placement data, not the combat graph. The generation chat
+   commands are disabled in the native command table, so there is no supported
+   manual `/beacongenerate` or `/beaconprocess` procedure for the current APK.
+   The native loader expects `server/maps/City_Zones/City_01_01/City_01_01.txt.v8.bcn`
+   and uses map CRC/date metadata. A genuine graph needs a separate verified
+   server-only installer: the current world supplement accepts only geometry
+   and textures. Prove graph loading and CRC compatibility before NPC/combat.
+
+No APK was changed or published for this evidence checkpoint. The earlier
+saved-position/outdoor procedure below is historical; no unchanged Thor boot
+is requested. The previous interior acceptance and publication are preserved.
 
 The returned `coh-atlas-gameplay-20261002-115211.zip` passed the composite
 existing-character recovery and normal-save gate with zero failed input sends.
