@@ -1,5 +1,73 @@
 # City of Heroes Android handoff
 
+**Current: 0.11.5 is published and implements the user-authorized non-GPU performance recommendations. Native immediate ready/position events, a batched texture-header index with normal-loading fallback, transient minimum graphics, and one bounded pre-menu early-client retry are implemented. Native compilation, focused CI packaging and independent public APK verification passed; no device speedup is claimed. Broader warm-server reuse across completed sessions is still pending.**
+
+The physical 0.11.4 export `coh-atlas-gameplay-20261002-172722.zip` showed no
+noticeable improvement: interactive startup took 29m54.324s, versus about
+29m28s in the accepted 0.11.3 run. Cold data preparation cost 401.760s; Atlas
+startup took 639.458s and client startup 583.631s. Client texture headers alone
+took 133.526s. Native ready and ground observations arrived through the old
+60-second logger queue with measured delays of 62.346s and 71.260s. These
+measurements motivated native work rather than another host-only derivative.
+
+The new native event channel is session/PID/main-thread/SQL-identity bound and
+flushed immediately. It retains completed MapServer ticks, two actual stable
+positions 25–90 seconds apart, ordinary `/stuck`, fall checks and three fresh
+Android views. Logout/save still uses its original normal countdown and SQL
+proof. The indexed texture header/name/mip pack preserves full textures and
+prepared Parse6 caches, validates import/executable/inventory identity, and
+falls back to normal reads when unavailable or invalid. Repeated missing-file
+diagnostics are deduplicated within load stages; validation is retained.
+
+The default-on performance checkbox applies the existing minimum native
+quality preset and 0.75 world render scale at the next launch. Saved graphics
+preferences are captured before the overlay and restored before persistence;
+unchecking it restores the normal profile. Rendering remains llvmpipe, with
+800x600 UI and the existing 10 FPS cap. Actual loading/FPS improvements await
+a short physical comparison using [0.11.5 notes](COH-Atlas-Gameplay-0.11.5-testing.txt).
+
+Warm service reuse in this candidate is limited to one natural client early
+exit before interactive menu/login, within the same active operation. It
+requires proven client shutdown, unchanged SQL rows, live owned servers and
+current MapServer ticks; retry gets a fresh attempt ID within the original
+startup deadline. Finish/Stop still shut all owned services down. This is
+not a fix for every later login-menu bounce or cold session start. GPU
+acceleration remains deferred by the user.
+
+[Published 0.11.5 APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.5/COH-Atlas-Gameplay-0.11.5.apk)
+was assembled from `bfa5a3da01789c634bdcab8e2d7134f71f54fe24` in
+[APK run 37049707089](https://github.com/Russianranger/coh-android/actions/runs/37049707089).
+Both observer and APK jobs passed. The separate
+[native run 37048610759](https://github.com/Russianranger/coh-android/actions/runs/37048610759)
+built Game and MapServer from `0ddd27dfaddf9ac53a6a65548c8199bced767fbe` after the
+real Win32 flushed-event fixture and exact overlay staging passed. Received
+Windows PG LF/CRLF provenance is validated without relabelling its source chain.
+No full native gameplay/physical milestone is repeated. Focused qualification
+passes **195 checks**, authenticates the exact 0.11.4 donor's 50 payloads and all
+16 Java sources, and binds **120 source files**. The full local interactive suite
+passes **434 tests** without skips.
+
+The public APK is **595,194,816 bytes**, SHA-256
+`5ba95d45bfbe0a2cda74bb632b80d1499058f5c8b40c48d9d422a9304cdb9941`.
+Its complete download matches the build and release asset pins. Independent
+v2/v3 signatures, the full signed content digest, ZIP CRC, binary app/version
+manifest, all **55 payloads**, qualified source closure and native-container
+comparison against the exact donor pass. Only Game, MapServer, the launcher,
+six explicitly allowed guest helpers and their manifests change; four guest
+helpers plus a native receipt are added. DbServer, DLLs, prepared caches, imported
+world/avatar assets, Android native libraries, resources, app ID and signer remain
+retained. Only Activity/Runtime Java sources change for graphics preference and
+launch environment. See [the publication receipt](android-evidence/responsiveness-0.11.5-publication.json).
+
+PR #1 remains draft and main is independently confirmed at
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Install over the existing app, refresh
+runtime once, retain imports and THORHERO, and use the short comparison notes plus
+ordinary Save/Finish. Physical speed gains and the saved exterior-position reopen
+remain unverified. Broader persistent warm-server lifecycle work remains pending;
+GPU acceleration is deferred by the user.
+
+The prior published checkpoint follows:
+
 **Current: 0.11.4 is published for the user's startup/readiness priority. The bounded derivative removes whole-data-tree log scans, reuses completed owned private server data on later starts, and buffers RFB input. Focused host qualification, CI packaging and independent public APK checks passed; physical timing and gameplay-FPS gains remain unverified. Physical 0.11.3 outdoor movement, usable presentation, phase deadlines and ordinary save/Finish/cleanup remain accepted. THORHERO, seven powers and fourteen costume parts are preserved; the saved exterior position awaits a subsequent reopen. PR #1 remains draft; main stays 04d62616.**
 
 The accepted run spent about 29 minutes 28 seconds reaching the interactive menu.
