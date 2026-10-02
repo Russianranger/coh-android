@@ -1,0 +1,307 @@
+{
+  "format": 1,
+  "milestone": "session_window_0.11.3_publication",
+  "status": "passed",
+  "reviewed_utc": "2026-10-02T13:57:54.408886+00:00",
+  "scope": "Published software package, signer, exact donor boundaries and host-only qualification. New physical deadline behavior and outdoor save/reopen remain untested.",
+  "repository": "Russianranger/coh-android",
+  "repository_commit": "97565b0c28ba27ef79e70d4c04dddb1a8383ec1f",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "version_name": "0.11.3",
+  "version_code": 9,
+  "workflow": {
+    "run_id": 37015136168,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37015136168",
+    "head_commit": "97565b0c28ba27ef79e70d4c04dddb1a8383ec1f",
+    "branch": "codex/character-persistence-continuation",
+    "path": ".github/workflows/android-session-window.yml",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job_id": 110864029692,
+        "name": "observer",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 110864376557,
+        "name": "apk",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "native_runtime_gate_executed": false
+  },
+  "release": {
+    "release_id": 401856896,
+    "tag": "coh-atlas-gameplay-v0.11.3",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.3",
+    "repository_commit": "97565b0c28ba27ef79e70d4c04dddb1a8383ec1f",
+    "draft": false,
+    "prerelease": true,
+    "published_at": "2026-10-02T13:48:30Z",
+    "assets": [
+      {
+        "asset_id": 605709932,
+        "name": "COH-Atlas-Gameplay-0.11.3-testing.txt",
+        "bytes": 2045,
+        "sha256": "de8a5789cf8d7809453c0794292b0d17702b607d586a15e12373803796133b22",
+        "state": "uploaded",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.3/COH-Atlas-Gameplay-0.11.3-testing.txt"
+      },
+      {
+        "asset_id": 605709301,
+        "name": "COH-Atlas-Gameplay-0.11.3.apk",
+        "bytes": 595108273,
+        "sha256": "3c97d5c85092ec9aec88de405cea92a91c760db379cdbf66a244714687f35dfd",
+        "state": "uploaded",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.3/COH-Atlas-Gameplay-0.11.3.apk"
+      },
+      {
+        "asset_id": 605709918,
+        "name": "COH-Atlas-Gameplay-0.11.3.apk.sha256",
+        "bytes": 96,
+        "sha256": "6d8478dc52c28fb308a774f15eda900f8d73fac6bb4d8d6920b5c0790e56a110",
+        "state": "uploaded",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.3/COH-Atlas-Gameplay-0.11.3.apk.sha256"
+      }
+    ]
+  },
+  "raw_receipts": {
+    "build_report": {
+      "name": "session-window-apk-build-report.json",
+      "bytes": 57142,
+      "sha256": "4967e83deff3da231c4bfd3e0f6aa4d83b29669e6b014051c1dd0b196b08a248"
+    },
+    "qualification": {
+      "name": "session-window-qualification.json",
+      "bytes": 19950,
+      "sha256": "bb01276c2cf99761fc96faa439cdb8afb3aa6032fcfc82e080d616bddee8ae89"
+    },
+    "testing_notes": {
+      "name": "COH-Atlas-Gameplay-0.11.3-testing.txt",
+      "bytes": 2045,
+      "sha256": "de8a5789cf8d7809453c0794292b0d17702b607d586a15e12373803796133b22"
+    },
+    "checksum": {
+      "name": "COH-Atlas-Gameplay-0.11.3.apk.sha256",
+      "bytes": 96,
+      "sha256": "6d8478dc52c28fb308a774f15eda900f8d73fac6bb4d8d6920b5c0790e56a110"
+    }
+  },
+  "host_qualification": {
+    "scope": "phase_aware_session_and_save_window",
+    "tests_run": 102,
+    "test_suites": {
+      "test_session_budget_guest": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_budget_java": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0,
+        "independent_java_scenarios_run": 89
+      },
+      "test_character_reopen_guest": {
+        "tests_run": 14,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_ground_repair": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_acceptance": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_window_package": {
+        "tests_run": 13,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_atlas_beacon_inputs": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0
+      }
+    },
+    "checks": {
+      "guest_budget_regressions_passed": true,
+      "java_budget_regressions_passed": true,
+      "ground_and_save_guards_preserved": true,
+      "phase_identity_and_deadline_caps_preserved": true
+    },
+    "policy": {
+      "menu_seconds": 1200,
+      "connected_seconds": 1200,
+      "launcher_cap_seconds": 2040,
+      "overall_reserve_seconds": 120,
+      "recovery_age_ms": 600000,
+      "save_request_age_ms": 420000,
+      "neutral_reserve_ms": 60000,
+      "save_proof_reserve_ms": 180000
+    },
+    "qualified_source_files": 61,
+    "source_closure_pins_match_current_repository": true,
+    "native_runtime_booted": false,
+    "physical_gameplay_validated": false,
+    "beacon_input_preflight": {
+      "status": "no_input",
+      "native_graph_load_verified": false,
+      "authentic_generated_graph_verified": false,
+      "loaded_world_crc_verified": false
+    }
+  },
+  "independent_public_apk_review": {
+    "format": 1,
+    "status": "passed",
+    "repository_commit": "97565b0c28ba27ef79e70d4c04dddb1a8383ec1f",
+    "apk": {
+      "name": "COH-Atlas-Gameplay-0.11.3.apk",
+      "bytes": 595108273,
+      "sha256": "3c97d5c85092ec9aec88de405cea92a91c760db379cdbf66a244714687f35dfd"
+    },
+    "build_receipt": {
+      "bytes": 57142,
+      "sha256": "4967e83deff3da231c4bfd3e0f6aa4d83b29669e6b014051c1dd0b196b08a248"
+    },
+    "donor_apk": {
+      "bytes": 595104089,
+      "sha256": "1e8b9ffd09dcfa6967685e31b1ccbff1acf200b892614e6ec2f6092d533e8adb"
+    },
+    "donor_build_receipt": {
+      "bytes": 38378,
+      "sha256": "408618a7e8d71219f1547accc7e8b5169661edd48bc4ac5ffd9985c01aad2812"
+    },
+    "signing": {
+      "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+      "schemes": [
+        {
+          "scheme": "v2",
+          "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+          "signature_algorithms": [
+            "0x103"
+          ],
+          "sdk_bounds": null,
+          "signed_data_zero_trailer_bytes": 4,
+          "cryptographic_signed_data_signature_verified": true
+        },
+        {
+          "scheme": "v3",
+          "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+          "signature_algorithms": [
+            "0x103"
+          ],
+          "sdk_bounds": [
+            24,
+            2147483647
+          ],
+          "signed_data_zero_trailer_bytes": 0,
+          "cryptographic_signed_data_signature_verified": true
+        }
+      ],
+      "whole_apk_chunked_content_digest_verified": true,
+      "content_chunks": 570,
+      "content_digests": {
+        "sha256": "44459b42439e3f4c49ba91507d2b9b120821c8160ea44db5e3846e1ba43e42ce"
+      }
+    },
+    "binary_android_manifest": {
+      "package": "io.github.russianranger.cohclientinteractive",
+      "version_name": "0.11.3",
+      "version_code": 9,
+      "minimum_sdk": 26,
+      "target_sdk": 35
+    },
+    "payload_count": 49,
+    "actual_replaced_payloads": [
+      "assets/runtime/character_reopen_diagnostic.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "actual_added_payloads": [
+      "assets/runtime/character_session_budget.py"
+    ],
+    "recompiled_dex": {
+      "bytes": 222800,
+      "sha256": "425c0007367988c2d63c30ac05d344abf6a0ed7820a07797bb81bc81f0c71117"
+    },
+    "donor_dex": {
+      "bytes": 214940,
+      "sha256": "c5263ced7f01ab885d0c5ad8f9bf4f83d13612739fe734f66640edc5a521171f"
+    },
+    "retained_android_resources": {
+      "resources.arsc": {
+        "bytes": 852,
+        "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+      },
+      "res/drawable/ic_coh_client.xml": {
+        "bytes": 1000,
+        "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+      }
+    },
+    "all_public_payloads_match_build_receipt": true,
+    "all_payloads_except_reviewed_guest_manifest_changes_equal_donor": true,
+    "zip_crc_and_unique_inventory_verified": true,
+    "compressed_runtime_archives_retained_without_recompression": true,
+    "qualified_source_files": 61,
+    "qualified_source_closure_matches_current_bytes": true,
+    "host_regression_tests": 102,
+    "native_runtime_booted_for_this_update": false,
+    "physical_gameplay_validated_for_this_update": false,
+    "limitations": "Independent public APK signature/content/source audit. No native boot or physical test repeated. Phase-aware budget behavior, outdoor normal save/reopen, full outdoor materials and generated beacon graph acceptance remain pending.",
+    "binary_manifest_only_version_name_and_code_changed": true,
+    "client_manifest_only_helper_pins_changed": true,
+    "runtime_manifest_only_helper_client_pins_commit_and_scope_changed": true,
+    "public_guest_helpers_equal_qualified_source_bytes": true,
+    "java_source_closure": {
+      "compiled_authored_sources": 16,
+      "actual_changed_sources": [
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java"
+      ],
+      "actual_added_sources": [
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java"
+      ],
+      "unrelated_original_sources_and_source_android_manifest_match_authenticated_donor": true
+    },
+    "verification_method": {
+      "apk_signing_block": "Independently parse APKv2 and APKv3 blocks; verify each RSA PKCS#1 v1.5 SHA-256 signature over the complete signed-data bytes with the DER certificate public key; require the exact retained certificate digest and matching public key. The v2 four-zero signed-data trailer is included in the verified signature.",
+      "whole_apk_digest": "Recompute the APK scheme chunked SHA-256 digest over data before the signing block, the central directory, and EOCD with its central-directory offset rewritten to the signing-block start.",
+      "archive": "Stream every ZIP member through SHA-256 to EOF (CRC verified), require unique exact member inventory and stored nested archives, then compare all49payloads and both resources against the immutable donor and published build receipt.",
+      "manifest": "Independently decode binary Android XML; compare every start element/attribute to donor with only versionName/versionCode revised.",
+      "source": "Compare all61qualified source pins and reviewed Java/guest source bytes to the hosted receipt; no native or physical execution.",
+      "crypto_library": "cryptography46.0.0",
+      "signing_key_material_accessed": false
+    }
+  },
+  "preserved_boundary": {
+    "native_libraries_client_server_world_avatar_and_other44donor_payloads_byte_identical": true,
+    "ground_observer_and_normal_save_identity_commit_guards_retained": true,
+    "android_resources_byte_identical": true,
+    "java_or_dex_recompiled": true,
+    "native_client_server_recompiled": false,
+    "native_runtime_requalification_executed": false,
+    "physical_gameplay_validated_for_this_update": false
+  },
+  "limitations": "Independent public APK signature/content/source audit. No native boot or physical test repeated. Phase-aware budget behavior, outdoor normal save/reopen, full outdoor materials and generated beacon graph acceptance remain pending."
+}

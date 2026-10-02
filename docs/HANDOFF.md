@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Current development: implementing 0.11.3 phase-aware Atlas play and normal-save windows on the existing continuation branch. The prior physical interior controls, persistence and observed outdoor route remain accepted. The next APK changes Android deadline display/input cutoff and guest deadline hooks only; native runtime, client/server, world/avatar, signer and all normal-save identity/receipt/SQL guards remain retained. Physical deadline behavior and a newly saved outdoor position still require a focused test. Beacon input preflight completed with `no_input`: no generated graph is supplied or qualified. PR #1 remains draft; main stays 04d62616.**
+**Current: published 0.11.3 with phase-aware Atlas play and normal-save windows on the existing continuation branch. The prior physical interior controls, persistence and observed outdoor route remain accepted. This APK changes Android deadline display/input cutoff and guest deadline hooks only; native runtime, client/server, world/avatar, signer and all normal-save identity/receipt/SQL guards remain retained. Physical deadline behavior and a newly saved outdoor position still require a focused test. Beacon input preflight completed with `no_input`: no generated graph is supplied or qualified. PR #1 remains draft; main stays 04d62616.**
 
 The menu allowance remains 1200 seconds. A current validated native connection
 receives a one-shot allowance up to 1200 seconds, capped at actual launcher start
@@ -30,11 +30,36 @@ and v9 date-sidecar/CRC inputs. Zero generated graphs were found. Optional
 supplied files can receive bounded prefix/hash/sidecar checks but always remain
 unqualified until provenance, full structure, loaded-world CRC and native graph
 loading are established. No fake graph, NPC readiness or combat acceptance is
-claimed. Publication and independent public-byte review will be recorded below.
+claimed. [Published 0.11.3 APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.3/COH-Atlas-Gameplay-0.11.3.apk)
+was built from `97565b0c28ba27ef79e70d4c04dddb1a8383ec1f` in
+[run 37015136168](https://github.com/Russianranger/coh-android/actions/runs/37015136168).
+Its observer and APK jobs passed. The exact focused receipt passes 102 unittest
+methods plus 89 Java protocol scenarios and binds 61 source files. The complete
+Android source closure (16 sources) compiled; only Runtime, Service and Activity
+changed and the budget class was added. APK size is 595,108,273 bytes and SHA-256
+is `3c97d5c85092ec9aec88de405cea92a91c760db379cdbf66a244714687f35dfd`.
+The public download matches this complete pin. Independent RSA/SHA-256 v2 and
+v3 signature checks and the full 570-chunk APK content digest passed. [The publication review receipt](android-evidence/session-window-0.11.3-publication.json)
+records the independent signing/content/payload review. The existing app ID,
+signer, native libraries/client/server, world/avatar assets and unrelated Java
+sources are retained. Four existing guest/verification payloads change, one new
+budget module is added, and the Android DEX is recompiled. Resources are unchanged.
+
+The previous full client/DbServer native gates did not repeat: push tooling runs
+37015135666 and 37015135634 passed and their native runtime/APK/cache jobs were
+skipped. The historical 0.11.0 gameplay publication workflow also triggered on
+Activity and failed closed at its old donor-source boundary, as expected for this
+new derivative; it did not boot a native runtime or replace an old release. The
+new 0.11.3 workflow passed its own exact current-source and donor boundaries.
+
+Next: collect the focused 0.11.3 normal outdoor save report, then assess the saved
+outdoor coordinate on a later reopen. In parallel, qualify a bounded genuine
+one-map graph generator and provenance/loaded-world CRC before installing an
+Atlas beacon graph. NPC/powers/combat still follow genuine graph loading.
 
 Previous physical evidence checkpoint follows:
 
-**Current: physical 0.11.2 now verifies the prior movement-save survived reopening, normal City Hall door emergence, traversal into outdoor Atlas, usable outdoor rendering and no clipping on the user's tested route. The earlier interior movement/camera/jump and normal-save gate remains accepted. The latest export is correctly failed because the 20-minute menu-based interaction budget expired without a requested outdoor save; cleanup passed. Next development should provide a bounded gameplay/save window after world readiness, trace cold-login loading timeouts and qualify genuine Atlas beacon inputs before NPC/powers/combat. Complete materials/collision and a new outdoor save/reopen remain pending. main stays 04d62616 and PR #1 stays draft.**
+**Previous physical checkpoint: 0.11.2 verifies the prior movement-save survived reopening, normal City Hall door emergence, traversal into outdoor Atlas, usable outdoor rendering and no clipping on the user's tested route. The earlier interior movement/camera/jump and normal-save gate remains accepted. The latest export is correctly failed because the 20-minute menu-based interaction budget expired without a requested outdoor save; cleanup passed. Next development should provide a bounded gameplay/save window after world readiness, trace cold-login loading timeouts and qualify genuine Atlas beacon inputs before NPC/powers/combat. Complete materials/collision and a new outdoor save/reopen remain pending. main stays 04d62616 and PR #1 stays draft.**
 
 The returned `coh-atlas-gameplay-20261002-125646.zip` proves the entire SQL
 baseline equals the previous accepted saved snapshot, SHA-256
