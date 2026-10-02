@@ -1,5 +1,52 @@
 # City of Heroes Android handoff
 
+**Current: 0.11.6 repairs the immediate 0.11.5 reopen packaging failure and reduces Android runtime-extraction allocation pressure. The public APK and retained signer have been independently verified. Game/MapServer binaries and their existing performance changes are reused exactly; no new native build or physical performance gain is claimed. PR #1 remains draft; main stays 04d62616.**
+
+The supplied `coh-atlas-gameplay-20261002-203058.zip` failed in less than a
+second at `persistent_server_profile`: `Server payload archive metadata differs`.
+All 26 members of the published game tar had nonzero timestamps, contrary to the
+unchanged guest extractor's canonical metadata contract. Reproducing the exact
+public APK rejects the first file before any PostgreSQL, DbServer, MapServer,
+Wine or client process starts. The failed operation did not open the persistent
+character database. See [the failure evidence](android-evidence/thor-0.11.5-reopen-preflight-failed-20261002.json).
+
+The writer now produces zero timestamps and preserves the strict extractor.
+Before signing and again before publication, the actual guest consumer extracts
+all three server archives; a JSON/hash-only check cannot substitute for this
+proof. Focused qualification passed **118 tests** and binds **116 source files**.
+The exact completed native build from run 37048610759 is reused and both actual
+Game/MapServer executable bytes are compared against public 0.11.5. Historical
+full native/runtime pipelines remain skipped for this bounded repair.
+
+Android tar extraction now reuses one 64 KiB copy buffer per archive, replacing
+one 1 MiB allocation per member. A 1,002-member extraction fixture with a 32 MiB
+Java heap reduced measured collections from 125 to 1 with identical extracted
+bytes. This verifies allocation pressure, not a device crash cause or speedup.
+The attachment contained no refresh crash trace. Android 11+ reports now include
+up to four own-app historical exit records at the next completed operation,
+without trace streams; unavailable exit history cannot block the report.
+
+[Download 0.11.6](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.6/COH-Atlas-Gameplay-0.11.6.apk).
+Built from `6557a21dbd696c9ac8e9b9344a0e8d7553d5a345` in
+[run 37063509202](https://github.com/Russianranger/coh-android/actions/runs/37063509202),
+with both observer and APK jobs successful. The public download is
+**595,194,816 bytes**, SHA-256
+`c8a0b2801c6f4ea80ef6df17f7e66f0a90b0ad128ef86fbb39d94c6d54182895`.
+Independent v2/v3 signatures and the full 570-chunk content digest, all 55
+payload hashes, every ZIP entry CRC, binary app/version manifest and actual
+packaged guest extraction pass. The retained native files and qualified source
+closure match their expected bytes.
+
+Install over the existing app, preserve imports and THORHERO, refresh runtime once,
+then reopen. Use the [short 0.11.6 checks](COH-Atlas-Gameplay-0.11.6-testing.txt)
+with ordinary Save/verified/Finish; the accepted long camera/jump tests need not
+be repeated. First cold server and texture-index work still take time. Device
+startup/FPS gains and saved exterior-position reopening remain unverified.
+GPU acceleration and broader cross-session warm-server lifecycle work remain
+pending. See [publication evidence](android-evidence/reopen-repair-0.11.6-publication.json).
+
+The prior published checkpoint follows:
+
 **Current: 0.11.5 is published and implements the user-authorized non-GPU performance recommendations. Native immediate ready/position events, a batched texture-header index with normal-loading fallback, transient minimum graphics, and one bounded pre-menu early-client retry are implemented. Native compilation, focused CI packaging and independent public APK verification passed; no device speedup is claimed. Broader warm-server reuse across completed sessions is still pending.**
 
 The physical 0.11.4 export `coh-atlas-gameplay-20261002-172722.zip` showed no
