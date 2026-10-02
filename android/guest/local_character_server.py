@@ -18,6 +18,7 @@ import game_evidence as evidence
 import game_map_progress as progress
 import atlas_world_assets as world
 import character_avatar_assets as avatar
+import character_server_data_cache as server_data_cache
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
 PROFILE, ACCOUNT, CHARACTER = login.PROFILE, login.ACCOUNT, 'THORHERO'
@@ -313,6 +314,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         return package
 
     def prepare_runtime(self):
+        prepared_at = time.monotonic()
         super().prepare_runtime()
         source = self.owner.work / 'data'
         require(source.is_dir() and not source.is_symlink(), 'Verified private client data is missing')
@@ -322,7 +324,30 @@ class LocalCharacterServer(login.LocalLoginServer):
         # Wine FolderCache does not enumerate directory symlinks as directories.
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
-        staged = self.stage_map_data(source, self.runtime / 'data')
+        source_info = source.stat()
+        identity = {'format': 1, 'source_data': str(source.resolve(strict=True)),
+            'source_device': source_info.st_dev, 'source_inode': source_info.st_ino,
+            'source_roots': [{'path': str(root.resolve(strict=True)),
+                              'identity': server_data_cache.fingerprint(root.resolve(strict=True), directory=True)}
+                             for root in (self.owner.work, self.owner.args.game_data)],
+            'client_work_receipt_sha256': base.file_hash(self.owner.work / 'client-work.json'),
+            'client_inputs': {key: receipt[key] for key in ('import', 'cache_archive_sha256',
+                'prerequisites_archive_sha256', 'prerequisites_manifest_sha256', 'normalized_mtime_epoch')},
+            'world_manifest_sha256': world.MANIFEST_SHA256, 'world_archive_sha256': world.ARCHIVE_SHA256,
+            'avatar_manifest_sha256': avatar.MANIFEST_SHA256, 'avatar_archive_sha256': avatar.ARCHIVE_SHA256,
+            'schema_manifest_sha256': dbserver.DEVICE_SCHEMA_MANIFEST,
+            'map_manifest_sha256': device.MAP_PROGRESS_PACKAGE_SHA256}
+        self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
+                                                            self.owner.args.session_id, self.ctx)
+        if self.data_cache.checkout(self.runtime / 'data'):
+            for name in self.schema['files']:
+                server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name,
+                                                                  self.runtime / name, self.runtime)
+            staged = dict(self.data_cache.record['stats'], linked_immutable_files=0,
+                          copied_private_files=0, preserved_schema_files=len(self.schema['files']))
+        else:
+            staged = self.stage_map_data(source, self.runtime / 'data', cache_recorder=self.data_cache)
+            self.data_cache.seal(self.runtime / 'data', staged)
         for name, record in self.map_package['files'].items():
             target = self.runtime / name
             if target.exists():
@@ -334,12 +359,19 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
             'private_cache_roots': ['bin', 'geobin', 'server/bin'],
-            'directory_layout': 'real_directories_with_individual_immutable_file_links', **staged}
+            'directory_layout': 'real_directories_with_individual_immutable_file_links',
+            'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
+            'server_data_cache': self.data_cache.summary, **staged}
+
+    def cleanup_config(self):
+        super().cleanup_config()
+        if hasattr(self, 'data_cache'):
+            self.data_cache.release(self.runtime / 'data', self.owner.cleanup_status)
 
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
 
-    def stage_map_data(self, source, target, *, force_private=False):
+    def stage_map_data(self, source, target, *, force_private=False, cache_recorder=None):
         """Mirror bounded verified inputs without directory links or source writes.
 
         The client worktree has real directories and immutable per-file links.
@@ -370,6 +402,8 @@ class LocalCharacterServer(login.LocalLoginServer):
                         'Map data directory escaped verified roots')
                 require(not destination.exists() or destination.is_dir(), 'Invalid private data directory')
                 destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+                if cache_recorder is not None:
+                    cache_recorder.observe(relative, destination, None, private)
                 result['directories'] += 1
                 require(result['directories'] <= max_files, 'Map directory count exceeded bound')
                 with os.scandir(current) as entries:
@@ -387,6 +421,8 @@ class LocalCharacterServer(login.LocalLoginServer):
                         'Private map data exceeded bound: files=' + str(result['files']) + '/' + str(max_files)
                         + ', bytes=' + str(result['bytes']) + '/' + str(max_bytes))
                 private = private or current.suffix.casefold() == '.dbidmap' or bool(resolved_info.st_mode & 0o222)
+                if cache_recorder is not None:
+                    cache_recorder.observe(relative, destination, resolved, private)
                 if destination.exists():
                     require(destination.is_file(), 'Invalid staged schema file')
                     require(private or base.file_hash(destination) == base.file_hash(resolved),
@@ -635,10 +671,83 @@ class LocalCharacterServer(login.LocalLoginServer):
             base.private_write(target / 'character-saved-snapshot.json', json.dumps(self.snapshot, indent=2) + '\n')
         self.collect_server_logs(target)
 
+    def server_log_paths(self):
+        """Enumerate the owned logger tree, never the immutable game data tree.
+
+        Both native services write below logs/. Root-level logs are retained
+        too, but traversing data/ to find them made a readiness poll visit about
+        177,000 unrelated files on the accepted physical 0.11.3 run.
+        """
+        if self.runtime is None:
+            return [], {'directories': 0, 'entries': 0}
+        require(not self.runtime.is_symlink(), 'Linked server log runtime refused')
+        if not self.runtime.exists():
+            return [], {'directories': 0, 'entries': 0}
+        paths, counts = [], {'directories': 0, 'entries': 0}
+        pending = [(self.runtime, False)]
+        while pending:
+            directory, recursive = pending.pop()
+            descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            try:
+                info = os.fstat(descriptor)
+                require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid(),
+                        'Invalid or foreign character server log directory')
+                counts['directories'] += 1
+                require(counts['directories'] <= SERVER_LOG_COUNT_LIMIT,
+                        'Character server log directory count exceeded bound')
+                with os.scandir(descriptor) as entries:
+                    for entry in entries:
+                        counts['entries'] += 1
+                        require(counts['entries'] <= 4096,
+                                'Character server log directory entries exceeded bound')
+                        path = directory / entry.name
+                        if entry.name.endswith('.log'):
+                            paths.append(path)
+                            require(len(paths) <= SERVER_LOG_COUNT_LIMIT,
+                                    'Character server log count exceeded bound')
+                        elif recursive or entry.name == 'logs':
+                            require(not entry.is_symlink(), 'Linked server log directory refused')
+                            if entry.is_dir(follow_symlinks=False):
+                                pending.append((path, True))
+            finally:
+                os.close(descriptor)
+        return sorted(paths), counts
+
+    def current_logs(self):
+        """Read bounded snapshots from the current owned native logger tree."""
+        started = time.monotonic()
+        paths, counts = self.server_log_paths()
+        total, records = 0, []
+        for path in paths:
+            descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+            try:
+                before = os.fstat(descriptor)
+                require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1
+                        and before.st_uid == os.geteuid() and before.st_size <= SERVER_LOG_FILE_LIMIT,
+                        'Invalid or oversized character server log')
+                total += before.st_size
+                require(total <= SERVER_LOG_TOTAL_LIMIT, 'Character server logs exceeded bound')
+                with os.fdopen(descriptor, 'rb', closefd=False) as source:
+                    raw = source.read(before.st_size)
+                after = os.fstat(descriptor)
+                require(after.st_nlink == 1 and after.st_uid == before.st_uid
+                        and len(raw) == before.st_size <= after.st_size <= SERVER_LOG_FILE_LIMIT,
+                        'Character server log changed or exceeded bound while reading')
+            finally:
+                os.close(descriptor)
+            records.append((path.relative_to(self.runtime).as_posix(), raw.decode('utf-8', errors='replace')))
+        metrics = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault('native_log_reads',
+            {'scope': 'owned_runtime_root_and_complete_logs_subtree', 'reads': 0, 'total_ms': 0, 'max_ms': 0})
+        elapsed_ms = round((time.monotonic() - started) * 1000, 3)
+        metrics.update(reads=metrics['reads'] + 1, last_ms=elapsed_ms,
+            total_ms=round(metrics['total_ms'] + elapsed_ms, 3), max_ms=max(metrics['max_ms'], elapsed_ms),
+            last_files=len(paths), last_bytes=total, last_directories=counts['directories'],
+            last_entries=counts['entries'])
+        return records
+
     def collect_server_logs(self, target):
         require(target.is_dir() and not target.is_symlink(), 'Linked server evidence directory refused')
-        paths = [] if self.runtime is None else sorted(self.runtime.rglob('*.log'))
-        require(len(paths) <= SERVER_LOG_COUNT_LIMIT, 'Character server log count exceeded bound')
+        paths, _ = self.server_log_paths()
         destination = target / 'character-server-logs.zip'
         require(not destination.is_symlink(), 'Linked server log archive refused')
         temporary = target / ('character-server-logs.tmp-' + base.secrets.token_hex(8))

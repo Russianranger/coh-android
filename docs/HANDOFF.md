@@ -1,6 +1,47 @@
 # City of Heroes Android handoff
 
-**Current: physical 0.11.3 outdoor movement, usable Atlas presentation, phase-deadline uptake/input cutoff, ordinary outdoor save, Finish and cleanup passed on AYN Thor. THORHERO identity, seven powers and fourteen costume parts remain preserved. The new committed exterior position still awaits a subsequent reopen. Startup/readiness latency, complete materials/minimap/collision and genuine beacon/NPC/combat gates remain open. Retain installed 0.11.3; this evidence checkpoint changes no APK or native runtime. Beacon preflight remains `no_input`. PR #1 remains draft; main stays 04d62616.**
+**Current development: startup/readiness performance is the user's priority. The bounded 0.11.4 derivative removes whole-data-tree log scans, reuses completed owned private server data on later starts, and buffers RFB input. Focused host qualification passed and publication is in progress; physical timing and gameplay-FPS gains remain unverified. Physical 0.11.3 outdoor movement, usable presentation, phase deadlines and ordinary save/Finish/cleanup remain accepted. THORHERO, seven powers and fourteen costume parts are preserved; the saved exterior position awaits a subsequent reopen. PR #1 remains draft; main stays 04d62616.**
+
+The accepted run spent about 29 minutes 28 seconds reaching the interactive menu.
+Repeated readiness queries then walked roughly 177,000 private data files to find
+logs, and server preparation rebuilt the entire private data tree each session.
+The performance pass narrows current-session log reads to owned root logs and the
+owned logs subtree. Poll cadence is measured from poll start; timing reports retain
+launcher start, observer costs and the original ground-verification samples.
+Current native identity, complete-record, stable-ground, SQL save and deadline
+checks remain required.
+
+Private data reuse is limited to the same source/import/runtime identities after
+proven owned-process and Wine shutdown with credential configuration removed.
+Session executables, configuration and logs are fresh. Interrupted or invalid
+cache generations remain preserved and are bypassed with fresh preparation.
+The first launch after the APK/runtime update still constructs the new cache;
+later same-generation starts can retain generated private MapServer caches and
+avoid recreating the imported leaves. Old unreceipted 0.11.3 trees are not adopted.
+
+RFB input now uses a bounded 64 KiB buffer. The deterministic full 800x600 plus
+incremental-frame fixture reduces underlying reads from 658 to 31 with identical
+pixels, requests, sequence ownership and cancellation behavior. This measures
+transport overhead, not game FPS. Native rendering still uses software llvmpipe;
+the observed world rate was well below the existing 10 FPS launcher cap. Native
+renderer, cap, display resolution, Surface capture and frame-proof paths remain
+unchanged. Device improvement must be assessed from a short comparison run,
+using [0.11.4 testing notes](COH-Atlas-Gameplay-0.11.4-testing.txt), rather than
+replaying the accepted long movement/camera/jump milestone.
+
+The focused derivative qualification passes 186 unittest methods plus 89 Java
+budget scenarios and binds 85 source files. It authenticates the exact published
+0.11.3 APK, its 49 payloads, all sixteen Java sources and the four immutable
+lineage receipts. Full interactive discovery also passes all 393 tests. The
+historical 0.11.3 transform test now uses byte/hash-pinned published helper fixtures
+with its original positive and negative assertions; no test suite is filtered.
+The required host cache fixture creates 4,002 links cold and zero warm, with 25
+directory checks (0.824119 / 0.004263 seconds on this host). These are fixture
+measurements, not Thor startup timings. Historical 0.11.2/0.11.3 publication
+workflows remain manually dispatchable; the new derivative has its own exact
+retained-donor workflow. Native/physical milestones are not repeated for this pass.
+
+The physical 0.11.3 checkpoint follows:
 
 The returned `coh-atlas-gameplay-20261002-145320.zip` independently confirms
 normal `/quittologin` delivery at 14:50:24.531 UTC, native logout timer expiry

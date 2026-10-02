@@ -2,19 +2,6 @@ name: Thor Atlas ground observer correction from published APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/character-persistence-continuation
-    paths:
-      - 'android/guest/local_character_server.py'
-      - 'tools/android/interactive/test_character_reopen_guest.py'
-      - 'tools/android/interactive/test_ground_repair.py'
-      - 'tools/android/interactive/fixtures/thor-ground-0.11.1-20261002.*'
-      - 'tools/android/interactive/qualify_ground_repair.py'
-      - 'tools/android/interactive/build_ground_repair_apk.py'
-      - 'tools/android/interactive/test_ground_repair_package.py'
-      - 'docs/COH-Atlas-Gameplay-0.11.2-testing.txt'
-      - '.github/workflows/android-ground-repair.yml'
 
 permissions:
   contents: read

@@ -21,6 +21,7 @@ OVERALL_SECONDS = 5400
 MAX_CHILDREN = 512
 CHARACTER_EVIDENCE_LIMIT = 256 * 1024 * 1024
 REQUIRED = login.REQUIRED | {'character_creation_diagnostic.py', 'local_character_server.py',
+    'character_server_data_cache.py',
     'game-package.tar.gz', 'character_avatar_assets.py', avatar.ARCHIVE, avatar.MANIFEST,
     'atlas_world_assets.py', 'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
 

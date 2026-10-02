@@ -80,6 +80,20 @@ SHELL_ONLY = frozenset({
     'docs/android-evidence/session-window-0.11.3-publication.json',
     'docs/android-evidence/thor-0.11.3-outdoor-movement-save-passed-20261002.json',
     'docs/COH-Atlas-Gameplay-0.11.3-testing.txt',
+    'android/guest/character_creation_diagnostic.py',
+    'android/guest/character_server_data_cache.py',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java',
+    'tools/android/interactive/test_character_readiness.py',
+    'tools/android/interactive/test_rfb_buffered_input.py',
+    'tools/android/interactive/test_server_worktree_reuse.py',
+    'tools/android/interactive/build_startup_perf_apk.py',
+    'tools/android/interactive/qualify_startup_perf.py',
+    'tools/android/interactive/test_startup_perf_package.py',
+    '.github/workflows/android-startup-perf.yml',
+    'docs/COH-Atlas-Gameplay-0.11.4-testing.txt',
+    'docs/android-evidence/startup-perf-0.11.4-publication.json',
+    'tools/android/interactive/fixtures/session-window-0.11.3-client_interactive_diagnostic.py',
+    'tools/android/interactive/fixtures/session-window-0.11.3-character_reopen_diagnostic.py',
 })
 
 

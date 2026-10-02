@@ -1,5 +1,6 @@
 """Session-window source/payload boundaries and retained-signer publication."""
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -12,6 +13,21 @@ import zipfile
 SPEC = importlib.util.spec_from_file_location("session_window_package", Path(__file__).with_name("build_session_window_apk.py"))
 repair = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(repair)
+
+# Published 0.11.3 APK payloads, verified against its immutable build receipt:
+# session-window-apk-build-report.json SHA256
+# 4967e83deff3da231c4bfd3e0f6aa4d83b29669e6b014051c1dd0b196b08a248.
+# Later observer changes must not replace this historical derivative's input.
+SESSION_WINDOW_FIXTURE_PINS = {
+    "client_interactive_diagnostic.py": {
+        "bytes": 21380,
+        "sha256": "b029df4ba2233450f913deb96f0abe7771634a1836c846a5437b005a796917ea",
+    },
+    "character_reopen_diagnostic.py": {
+        "bytes": 5662,
+        "sha256": "243f3a8f261d301b19d55a21a909d5076f2505e7f98dd38b4d0d89aee85159b3",
+    },
+}
 
 
 def qualified():
@@ -132,7 +148,10 @@ class NarrowDerivativeTests(unittest.TestCase):
         # Reversing the reviewed additions must leave the complete original
         # diagnostic. Any save-proof or initialization edit then fails closed.
         for name in repair.HELPERS:
-            current = (repair.ROOT / "android/guest" / name).read_bytes()
+            fixture = Path(__file__).with_name("fixtures") / ("session-window-0.11.3-" + name)
+            current = fixture.read_bytes()
+            self.assertEqual({"bytes": len(current), "sha256": hashlib.sha256(current).hexdigest()},
+                             SESSION_WINDOW_FIXTURE_PINS[name])
             if name == "client_interactive_diagnostic.py":
                 donor = current.replace(repair.CLIENT_DEADLINE_HOOK, b"", 1)
                 donor = donor.replace(b"        self.launcher_started_monotonic = started\n", b"", 1)

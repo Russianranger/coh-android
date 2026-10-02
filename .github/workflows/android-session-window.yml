@@ -2,26 +2,6 @@ name: Thor phase-aware Atlas gameplay and save windows from published APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/character-persistence-continuation
-    paths:
-      - 'android/guest/client_interactive_diagnostic.py'
-      - 'android/guest/character_reopen_diagnostic.py'
-      - 'android/guest/character_session_budget.py'
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java'
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java'
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java'
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java'
-      - 'tools/android/interactive/qualify_session_window.py'
-      - 'tools/android/interactive/build_session_window_apk.py'
-      - 'tools/android/interactive/test_session_window_package.py'
-      - 'tools/android/interactive/test_session_budget_guest.py'
-      - 'tools/android/interactive/test_session_budget_java.py'
-      - 'tools/android/interactive/audit_atlas_beacon_inputs.py'
-      - 'tools/android/interactive/test_atlas_beacon_inputs.py'
-      - 'docs/COH-Atlas-Gameplay-0.11.3-testing.txt'
-      - '.github/workflows/android-session-window.yml'
 
 permissions:
   contents: read

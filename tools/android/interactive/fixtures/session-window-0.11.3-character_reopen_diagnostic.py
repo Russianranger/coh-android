@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Reopen preserved THORHERO, recover through /stuck, and save normally."""
 from pathlib import Path
-import copy
 import sys
 import time
 
@@ -86,13 +85,6 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     def observe_console(self):
         result = super().observe_console()
         proof = self.ctx.report.get(self.REPORT_KEY, {})
-        ready = proof.get('client_ready_evidence')
-        metrics = self.ctx.report.setdefault('character_observer_metrics', {})
-        if (self.connected_announced and isinstance(ready, dict)
-                and type(proof.get('client_ready_observed_utc_ms')) is int
-                and 'native_ready_to_observation_ms' not in metrics):
-            native_ms = int(time.mktime(time.strptime(ready['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
-            metrics['native_ready_to_observation_ms'] = proof['client_ready_observed_utc_ms'] - native_ms
         if (self.connected_announced and proof.get('stable_ground_verified') is True
                 and not getattr(self, 'relocated_announced', False)):
             require(self.identity_verified(proof, self.args.session_id)
@@ -101,21 +93,6 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
                     and proof.get('client_pid') == result[1]['pid'],
                     'Stable character recovery differs from the current graphical connection')
             self.relocated_announced = True
-            # Save revalidates the latest two physics samples. Preserve the
-            # original gate evidence separately so its observed latency remains
-            # reviewable after that later validation replaces ground_evidence.
-            ground = proof.get('ground_evidence')
-            if isinstance(ground, dict):
-                metrics = self.ctx.report.setdefault('character_observer_metrics', {})
-                metrics['initial_ground_evidence'] = copy.deepcopy(ground)
-                metrics['ground_observed_utc_ms'] = proof.get('ground_observed_utc_ms')
-                samples = ground.get('samples')
-                if (isinstance(samples, list) and samples
-                        and isinstance(samples[-1], dict)
-                        and type(samples[-1].get('utc_ms')) is int
-                        and type(proof.get('ground_observed_utc_ms')) is int):
-                    metrics['last_native_ground_sample_to_event_ms'] = (
-                        proof['ground_observed_utc_ms'] - samples[-1]['utc_ms'])
             self.ctx.event('character_relocated', session_id=self.args.session_id,
                 client_pid=proof['client_pid'], character_id=proof['character_id'],
                 name=creation.CHARACTER_NAME, account=creation.login.server.ACCOUNT, map_id=1,

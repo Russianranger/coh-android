@@ -1,6 +1,7 @@
 package io.github.russianranger.cohclientinteractive;
 
 import java.io.Closeable;
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,7 +47,9 @@ public final class InteractiveRfbClient implements Closeable {
 
     public InteractiveRfbClient(InputStream input, OutputStream output, Listener listener) {
         if (input == null || output == null || listener == null) throw new NullPointerException();
-        this.input = new DataInputStream(input);
+        // Raw rectangles arrive row by row. Bound read-ahead so those small
+        // decoder reads do not each require a local-socket read.
+        this.input = new DataInputStream(new BufferedInputStream(input, 64 * 1024));
         this.output = new DataOutputStream(output);
         this.listener = listener;
     }

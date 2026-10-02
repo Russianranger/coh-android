@@ -24,7 +24,6 @@ from client_startup_diagnostic import (base, require, XObserver, startup_evidenc
 
 SCOPE = 'actual_client_interaction_guest'
 REQUIRED = startup.REQUIRED | {'client_interactive_diagnostic.py'}
-PROGRESS_POLL_SECONDS = 5
 
 
 def validate_args(args):
@@ -66,13 +65,6 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
     def interaction_deadline(self, deadline, launch):
         """Modes may bound a validated phase; ordinary menu/creation stay fixed."""
         return deadline
-
-    def record_observer_timing(self, name, started):
-        metrics = self.ctx.report.setdefault('client_observer_metrics', {}).setdefault(name,
-            {'calls': 0, 'total_ms': 0, 'max_ms': 0})
-        elapsed_ms = round((time.monotonic() - started) * 1000, 3)
-        metrics.update(calls=metrics['calls'] + 1, last_ms=elapsed_ms,
-            total_ms=round(metrics['total_ms'] + elapsed_ms, 3), max_ms=max(metrics['max_ms'], elapsed_ms))
 
     def initialize(self):
         # The input contract deliberately retains its accepted startup scope;
@@ -206,9 +198,6 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             os.chdir(previous)
         started = time.monotonic()
         self.launcher_started_monotonic = started
-        self.ctx.report['client_launcher_timing'] = {'started_utc': base.utc(),
-            'started_monotonic': started, 'source': 'current_owned_launcher_start_returned',
-            'startup_timeout_seconds': self.args.startup_timeout_seconds}
         deadline = started + self.args.startup_timeout_seconds
         next_registry = next_progress = 0
         registry_output = ''
@@ -227,27 +216,20 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                 # startup time. Use the existing five-second evidence poll;
                 # stop/process/overall/overflow checks above remain at 100ms.
                 # Refresh at the console deadline even between progress polls.
-                poll_due = now >= next_progress
-                if poll_due or (console is None and now - started >= 120):
-                    observed_at = time.monotonic()
+                if now >= next_progress or (console is None and now - started >= 120):
                     output, launch, console = self.observe_console()
-                    self.record_observer_timing('console_and_native_readiness', observed_at)
                 require(console is not None or now - started < 120,
                         'Could not attach to actual client console within 120 seconds')
                 if ready_at is not None:
                     deadline = self.interaction_deadline(deadline, launch)
-                if poll_due or (ready_at is not None and time.monotonic() >= deadline):
-                    window_started = time.monotonic()
+                if now >= next_progress or (ready_at is not None and now >= deadline):
                     windows = self.observer.windows()
-                    self.record_observer_timing('window_identity', window_started)
                     self.ctx.report['observed_windows'] = windows
                     if now >= next_registry:
-                        registry_started = time.monotonic()
                         registry = self.ctx.run('client-progress-registry', [self.args.wine, 'reg', 'query',
                             r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/reg:32'],
                             timeout=8, env=self.wine_env, check=False)
                         registry_output = registry['output']
-                        self.record_observer_timing('progress_registry', registry_started)
                         next_registry = time.monotonic() + 20
                     evidence = startup_evidence(output, registry_output, windows, launch)
                     self.ctx.report.update(evidence)
@@ -293,10 +275,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                                    else 'Interactive City of Heroes menu session', elapsed_seconds=int(now-started),
                                    renderer_initialized=evidence['renderer_initialized'],
                                    client_main_loop_reached=evidence['client_main_loop_reached'])
-                    # Keep the five-second cadence measured from poll start.
-                    # A slow native query must not add another idle five seconds
-                    # before the next current evidence inspection.
-                    next_progress = now + PROGRESS_POLL_SECONDS
+                    next_progress = time.monotonic() + 5
                 time.sleep(.1)
         finally:
             self.save_evidence()
