@@ -9,6 +9,7 @@ import gzip
 import io
 import os
 from pathlib import Path
+import re
 import stat
 import subprocess
 import tarfile
@@ -112,6 +113,29 @@ class ArchiveTests(unittest.TestCase):
         self.assertEqual(stat.S_IMODE(copy.stat().st_mode), 0o755)
         copy.write_bytes(b'changed')
         self.assertEqual(original.read_bytes(), b'shared bytes')
+
+    def test_many_small_members_use_bounded_heap_without_per_file_copy_allocations(self):
+        # Run the production parser under a fixed collector and a small heap.
+        # The former one-MiB-per-member allocation performs over 100 collections
+        # here, despite the tiny payload. A reused buffer leaves filesystem/path
+        # bookkeeping as the only material per-file heap work.
+        entries = [member(f'lib/file-{index:04d}', str(index).encode()) for index in range(1000)]
+        large = bytes(range(256)) * 513
+        entries.extend([member('empty', b''), member('large', large)])
+        self.archive.write_bytes(gzip.compress(archive_bytes(entries)))
+        result = subprocess.run(['java', '-Xms32m', '-Xmx32m', '-XX:+UseSerialGC',
+                                 '-cp', str(self.classes), CLASS, str(self.archive),
+                                 str(self.destination), 'measure-gc'],
+                                text=True, capture_output=True, timeout=180)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('COH_RUNTIME_EXTRACT_V1 PASS', result.stdout)
+        count = re.search(r'COH_RUNTIME_EXTRACTION_GC_COUNT (\d+)', result.stdout)
+        self.assertIsNotNone(count, result.stdout)
+        self.assertLessEqual(int(count.group(1)), 20, result.stdout)
+        for index in range(1000):
+            self.assertEqual((self.destination/f'lib/file-{index:04d}').read_bytes(), str(index).encode())
+        self.assertEqual((self.destination/'empty').read_bytes(), b'')
+        self.assertEqual((self.destination/'large').read_bytes(), large)
 
     def test_rejects_regular_and_pax_traversal(self):
         for index, name in enumerate(['../outside', '/absolute', 'one/../../outside', 'one\\outside']):

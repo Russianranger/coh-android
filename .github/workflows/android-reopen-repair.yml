@@ -1,26 +1,28 @@
-name: Thor startup readiness and software rendering improvements
+name: Thor runtime refresh and character reopen repair
 
 on:
   workflow_dispatch:
-    inputs:
-      native_run:
-        description: Successful native responsiveness workflow run
-        type: string
-        default: '37048610759'
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/android-reopen-repair.yml'
+      - 'tools/android/interactive/build_reopen_repair_apk.py'
+      - 'tools/android/interactive/qualify_reopen_repair.py'
+      - 'tools/android/interactive/test_reopen_repair_package.py'
+      - 'docs/COH-Atlas-Gameplay-0.11.6-testing.txt'
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: android-responsiveness-apk
+  group: android-reopen-repair-apk
   cancel-in-progress: false
 
 env:
-  # Filled with the exact separately completed native build before this
-  # workflow's first publication push. The native source receipts are checked
-  # again against this checkout; shell-only edits cannot relabel build history.
-  NATIVE_RUN: ${{ inputs.native_run || '37048610759' }}
+  # Reuse the exact Game/MapServer artifact already published in 0.11.5.
+  # This repair does not compile either target or replace native build history.
+  NATIVE_RUN: '37048610759'
 
 jobs:
   observer:
@@ -47,11 +49,11 @@ jobs:
           python3 - <<'PYTHON'
           import json, os, pathlib, re, urllib.request
           identifier = os.environ['NATIVE_RUN']
-          if re.fullmatch('[1-9][0-9]+', identifier) is None:
+          if identifier != '37048610759':
               raise ValueError('A completed exact native responsiveness run is required')
           base = 'https://api.github.com/repos/Russianranger/coh-android/actions'
           headers = {'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json',
-                     'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'coh-responsiveness-build'}
+                     'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'coh-reopen-repair-build'}
           def get(path):
               with urllib.request.urlopen(urllib.request.Request(base+path, headers=headers), timeout=45) as response:
                   return json.load(response)
@@ -60,7 +62,7 @@ jobs:
                   and run['path'] == '.github/workflows/android-responsiveness-native.yml'
                   and run['head_repository']['full_name'] == 'Russianranger/coh-android'
                   and run['head_branch'] == 'codex/character-persistence-continuation'
-                  and re.fullmatch('[0-9a-f]{40}', run['head_sha'])):
+                  and run['head_sha'] == '0ddd27dfaddf9ac53a6a65548c8199bced767fbe'):
               raise ValueError('Native responsiveness build identity or completion differs')
           jobs = get('/runs/'+identifier+'/jobs')['jobs']
           if not any(job['name'] == 'native' and job['conclusion'] == 'success' for job in jobs):
@@ -82,21 +84,26 @@ jobs:
           github-token: ${{ github.token }}
       - name: Download and pin the public 0.11.4 APK
         run: >-
-          python3 tools/android/interactive/build_responsiveness_apk.py download-donor
+          python3 tools/android/interactive/build_reopen_repair_apk.py download-donor
           --output out/donor/COH-Atlas-Gameplay-0.11.4.apk
-      - name: Qualify immediate events, indexed headers, graphics preferences, retries and retained guards
+      - name: Download and pin public 0.11.5 to reproduce its immediate reopen failure
         run: >-
-          python3 tools/android/interactive/qualify_responsiveness.py
+          python3 tools/android/interactive/build_reopen_repair_apk.py download-prior
+          --output out/prior/COH-Atlas-Gameplay-0.11.5.apk
+      - name: Qualify actual guest extraction, bounded Android refresh buffers and retained guards
+        run: >-
+          python3 tools/android/interactive/qualify_reopen_repair.py
           --repository-commit "$GITHUB_SHA"
           --donor-apk out/donor/COH-Atlas-Gameplay-0.11.4.apk
           --donor-build-report out/donor-evidence/startup-perf-apk-build-report.json
-          --output out/responsiveness-qualification.json
+          --prior-apk out/prior/COH-Atlas-Gameplay-0.11.5.apk
+          --output out/reopen-repair-qualification.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coh-responsiveness-observer-evidence
+          name: coh-reopen-repair-observer-evidence
           path: |
-            out/responsiveness-qualification.json
+            out/reopen-repair-qualification.json
             out/native-run-provenance.json
           if-no-files-found: error
 
@@ -133,7 +140,7 @@ jobs:
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
-          name: coh-responsiveness-observer-evidence
+          name: coh-reopen-repair-observer-evidence
           path: out/qualification
       - uses: actions/download-artifact@v4
         with:
@@ -143,9 +150,13 @@ jobs:
           github-token: ${{ github.token }}
       - name: Download the exact public donor APK
         run: >-
-          python3 tools/android/interactive/build_responsiveness_apk.py download-donor
+          python3 tools/android/interactive/build_reopen_repair_apk.py download-donor
           --output out/donor/COH-Atlas-Gameplay-0.11.4.apk
-      - name: Build the source-bound Win32 launcher
+      - name: Download the exact failing 0.11.5 APK for native reuse and rejection proof
+        run: >-
+          python3 tools/android/interactive/build_reopen_repair_apk.py download-prior
+          --output out/prior/COH-Atlas-Gameplay-0.11.5.apk
+      - name: Build the unchanged source-bound Win32 launcher
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends gcc-mingw-w64-i686
@@ -161,14 +172,15 @@ jobs:
              [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
             timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
           fi
-      - name: Compile the graphics profile shell and package explicit native candidates
+      - name: Compile the refresh repair shell and package the retained native candidates
         env:
           COH_INTERACTIVE_KEYSTORE_PASSWORD: android
         run: >-
-          python3 tools/android/interactive/build_responsiveness_apk.py build
+          python3 tools/android/interactive/build_reopen_repair_apk.py build
           --donor-apk out/donor/COH-Atlas-Gameplay-0.11.4.apk
           --donor-build-report out/donor-evidence/startup-perf-apk-build-report.json
-          --qualification out/qualification/responsiveness-qualification.json
+          --prior-apk out/prior/COH-Atlas-Gameplay-0.11.5.apk
+          --qualification out/qualification/reopen-repair-qualification.json
           --native-package out/native-responsiveness
           --native-commit "${{ needs.observer.outputs.native_commit }}"
           --launcher out/launcher/client-launcher.exe
@@ -176,31 +188,32 @@ jobs:
           --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
-          --output out/responsiveness/COH-Atlas-Gameplay-0.11.5.apk
+          --output out/reopen-repair/COH-Atlas-Gameplay-0.11.6.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-responsiveness-packaging-evidence
+          name: coh-reopen-repair-packaging-evidence
           path: |
-            out/responsiveness/responsiveness-apk-build-report.json
-            out/responsiveness/COH-Atlas-Gameplay-0.11.5.apk.sha256
-            out/responsiveness/COH-Atlas-Gameplay-0.11.5-testing.txt
+            out/reopen-repair/reopen-repair-apk-build-report.json
+            out/reopen-repair/COH-Atlas-Gameplay-0.11.6.apk.sha256
+            out/reopen-repair/COH-Atlas-Gameplay-0.11.6-testing.txt
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-responsiveness-apk
-          path: out/responsiveness/
+          name: coh-reopen-repair-apk
+          path: out/reopen-repair/
           if-no-files-found: error
-      - name: Publish the retained-signer candidate after focused qualification
+      - name: Publish the retained-signer extraction repair after focused qualification
         env:
           GH_TOKEN: ${{ github.token }}
         run: >-
-          python3 tools/android/interactive/build_responsiveness_apk.py publish
-          --apk out/responsiveness/COH-Atlas-Gameplay-0.11.5.apk
-          --build-report out/responsiveness/responsiveness-apk-build-report.json
+          python3 tools/android/interactive/build_reopen_repair_apk.py publish
+          --apk out/reopen-repair/COH-Atlas-Gameplay-0.11.6.apk
+          --build-report out/reopen-repair/reopen-repair-apk-build-report.json
           --donor-apk out/donor/COH-Atlas-Gameplay-0.11.4.apk
           --donor-build-report out/donor-evidence/startup-perf-apk-build-report.json
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
-          --qualification out/qualification/responsiveness-qualification.json
+          --prior-apk out/prior/COH-Atlas-Gameplay-0.11.5.apk
+          --qualification out/qualification/reopen-repair-qualification.json
       - name: Remove retained signing material
         if: always()
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

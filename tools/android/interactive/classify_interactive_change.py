@@ -96,10 +96,21 @@ SHELL_ONLY = frozenset({
     'tools/android/interactive/fixtures/session-window-0.11.3-character_reopen_diagnostic.py',
 })
 
-# These explicit paths use the separately receipted native responsiveness
-# workflow. It rebuilds Game and MapServer and checks their retained dependency
-# closure; the historical full donor pipeline must not publish over that build.
+# These explicit paths use the separately receipted responsiveness or repair
+# workflow. Repairs reuse the verified Game and MapServer build; the historical
+# full donor pipeline must not publish over those dedicated releases.
 RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-reopen-repair.yml',
+    'tools/android/interactive/build_reopen_repair_apk.py',
+    'tools/android/interactive/qualify_reopen_repair.py',
+    'tools/android/interactive/test_reopen_repair_package.py',
+    'tools/android/interactive/test_process_exit_history.py',
+    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java',
+    'tools/android/test_archive.py',
+    'tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java',
+    'docs/COH-Atlas-Gameplay-0.11.6-testing.txt',
+    'docs/android-evidence/reopen-repair-0.11.6-publication.json',
+    'docs/android-evidence/thor-0.11.5-reopen-preflight-failed-20261002.json',
     '.github/workflows/android-responsiveness.yml',
     '.github/workflows/android-responsiveness-native.yml',
     'android/guest/client_startup_diagnostic.py',

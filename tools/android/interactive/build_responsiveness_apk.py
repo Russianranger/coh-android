@@ -45,6 +45,9 @@ REPORT_NAME = 'responsiveness-apk-build-report.json'
 NOTES_NAME = 'COH-Atlas-Gameplay-0.11.5-testing.txt'
 NOTES = ROOT/'docs'/NOTES_NAME
 RELEASE_TAG = 'coh-atlas-gameplay-v0.11.5'
+RELEASE_NAME = 'COH Atlas Gameplay 0.11.5 — startup readiness and software rendering improvements'
+BUILD_SCOPE = 'Explicit native responsiveness candidate: immediate native character events, compact texture headers, transient graphics profile and one owned client retry; data, avatar, DbServer, CRT, prepared cache donor and software renderer retained; physical timings and FPS pending'
+CLIENT_OR_SERVER_RECOMPILED = True
 HELPERS = frozenset(('local_character_server.py', 'client_interactive_diagnostic.py',
     'client_startup_diagnostic.py', 'game_diagnostic.py', 'character_creation_diagnostic.py',
     'character_reopen_diagnostic.py'))
@@ -186,6 +189,48 @@ def encoded(value):
     return (json.dumps(value, indent=2)+'\n').encode()
 
 
+def write_game_archive(path, members):
+    """Use the canonical metadata required by the actual guest unpacker."""
+    with tarfile.open(path, 'w:gz', compresslevel=6) as archive:
+        for name, raw in sorted(members.items()):
+            info = tarfile.TarInfo(name)
+            info.size = len(raw)
+            info.mode = 0o644
+            info.uid = info.gid = info.mtime = 0
+            info.uname = info.gname = ''
+            archive.addfile(info, io.BytesIO(raw))
+
+
+def verify_server_archives(assets):
+    """Exercise the guest's real extraction gate before packaging or publishing.
+
+    Inner payload hashes alone do not prove that the guest accepts tar metadata.
+    This preflight never opens a database or starts a native process.
+    """
+    from local_login_server import extract_regular
+    records = {}
+    with tempfile.TemporaryDirectory(prefix='coh-server-archive-preflight-') as temporary:
+        for name in ('dbserver-package.tar.gz', 'dbserver-schema.tar.gz', 'game-package.tar.gz'):
+            source = Path(assets)/name
+            pin = builder().file_pin(source)
+            destination = Path(temporary)/name
+            extract_regular(source, destination)
+            files = [path for path in destination.rglob('*') if path.is_file()]
+            records[name] = dict(pin, file_count=len(files),
+                                 extracted_bytes=sum(path.stat().st_size for path in files))
+    return {'format': 1, 'status': 'passed', 'archives': records}
+
+
+def verify_apk_server_archives(apk):
+    with tempfile.TemporaryDirectory(prefix='coh-apk-server-preflight-') as temporary:
+        assets = Path(temporary)
+        with zipfile.ZipFile(apk) as archive:
+            for name in ('dbserver-package.tar.gz', 'dbserver-schema.tar.gz', 'game-package.tar.gz'):
+                with archive.open('assets/runtime/'+name) as source, (assets/name).open('xb') as target:
+                    shutil.copyfileobj(source, target, 64*1024)
+        return verify_server_archives(assets)
+
+
 def apply_native(assets, native_directory, launcher, donor, commit, native_commit=None):
     base = builder()
     build = native_package.validate_package(native_directory, native_commit or commit)
@@ -244,10 +289,7 @@ def apply_native(assets, native_directory, launcher, donor, commit, native_commi
     require(not game['dependency_report']['unresolved'], 'New MapServer imports exceed retained DLL closure')
     games['MapServer.exe'] = (native_directory/'MapServer.exe').read_bytes()
     games['game-package.json'] = encoded(game)
-    with tarfile.open(assets/'game-package.tar.gz', 'w:gz', compresslevel=6) as archive:
-        for name, raw in sorted(games.items()):
-            info = tarfile.TarInfo(name); info.size = len(raw); info.mode = 0o644; info.mtime = 1767225600
-            archive.addfile(info, io.BytesIO(raw))
+    write_game_archive(assets/'game-package.tar.gz', games)
     shutil.copyfile(launcher, assets/'client-launcher.exe')
     (assets/'native-responsiveness.json').write_bytes(encoded(receipt))
     native_contract.client_contract(client, receipt)
@@ -285,6 +327,7 @@ def extract_and_repair(apk, donor, destination, commit, native_directory, launch
             require(not (assets/name).exists(), 'New guest helper collides with donor')
         shutil.copyfile(source, assets/name)
     native, game = apply_native(assets, native_directory, launcher, donor, commit, native_commit)
+    verify_server_archives(assets)
     updates = {name: base.file_pin(assets/name) for name in HELPERS|GUEST_ADDITIONS|NATIVE_PAYLOADS|{'native-responsiveness.json'}}
     client['files'].update(updates)
     (assets/'client-manifest.json').write_bytes(encoded(client))
@@ -465,10 +508,11 @@ def build(args):
             "qualification": qualification, "qualification_receipt": base.file_pin(args.qualification),
             "native_responsiveness": native, "native_package_receipt": base.file_pin(args.native_package / "native-responsiveness-build.json"),
             "native_launcher": base.file_pin(args.launcher), "testing_notes": base.file_pin(args.testing_notes),
-            "native_libraries_changed": False, "client_or_server_recompiled": True, "java_or_dex_recompiled": True,
+            "native_libraries_changed": False, "client_or_server_recompiled": CLIENT_OR_SERVER_RECOMPILED, "java_or_dex_recompiled": True,
             "world_assets_changed": False, "prepared_cache_archive_changed": False, "dbserver_changed": False,
             "graphics_driver_changed": False, "physical_gameplay_validated": False,
-            "scope": "Explicit native responsiveness candidate: immediate native character events, compact texture headers, transient graphics profile and one owned client retry; data, avatar, DbServer, CRT, prepared cache donor and software renderer retained; physical timings and FPS pending"}
+            "scope": BUILD_SCOPE,
+            "server_payload_extraction_preflight": verify_apk_server_archives(args.output)}
         (args.output.parent / REPORT_NAME).write_text(json.dumps(report, indent=2) + "\n")
         args.output.with_suffix(".apk.sha256").write_text(report["sha256"] + "  " + APK_NAME + "\n")
         shutil.copyfile(args.testing_notes, args.output.parent / NOTES_NAME)
@@ -493,7 +537,7 @@ def publish_release(api, report, assets, notes):
     body = notes+'\n\nAPK SHA-256: `'+report['sha256']+'`.\n'
     body += '[Focused native build and responsiveness qualification](https://github.com/'+REPOSITORY+'/actions/runs/'+os.environ.get('GITHUB_RUN_ID', '')+').\n'
     release = api.request('/releases', {'tag_name': RELEASE_TAG, 'target_commitish': report['repository_commit'],
-        'name': 'COH Atlas Gameplay 0.11.5 — startup readiness and software rendering improvements',
+        'name': RELEASE_NAME,
         'body': body, 'draft': True, 'prerelease': True, 'generate_release_notes': False, 'make_latest': 'false'}, method='POST')
     require(type(release.get('id')) is int and release.get('draft') is True and release.get('prerelease') is True
             and release.get('tag_name') == RELEASE_TAG, 'Unexpected created responsiveness release')
@@ -531,11 +575,14 @@ def publish(args):
             and report.get('java_sources') == sources and report.get('changed_java_sources') == changes
             and report.get('added_java_sources') == []
             and all(report.get(key) is True for key in ('signature_verified', 'package_badging_verified',
-                'payload_bytes_verified', 'client_or_server_recompiled', 'java_or_dex_recompiled'))
+                'payload_bytes_verified', 'java_or_dex_recompiled'))
+            and report.get('client_or_server_recompiled') is CLIENT_OR_SERVER_RECOMPILED
             and all(report.get(key) is False for key in ('native_libraries_changed', 'world_assets_changed',
                 'prepared_cache_archive_changed', 'dbserver_changed', 'graphics_driver_changed', 'physical_gameplay_validated')),
             'Responsiveness build receipt differs')
     base.checked_file(args.apk, report)
+    require(verify_apk_server_archives(args.apk) == report.get('server_payload_extraction_preflight'),
+            'Published APK does not pass the actual guest server extraction gate')
     verify_derivative(args.apk, donor, report['payloads'], report['recompiled_dex'])
     for name in HELPERS|GUEST_ADDITIONS:
         require(report['payloads']['assets/runtime/'+name] == base.file_pin(ROOT/'android/guest'/name),

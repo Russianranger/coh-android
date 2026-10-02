@@ -1,9 +1,11 @@
 """Reject unreviewed native, cache-history, data and publication changes."""
 import copy
 import hashlib
+import io
 import json
 from pathlib import Path
 import tempfile
+import tarfile
 import unittest
 from unittest import mock
 import urllib.error
@@ -118,6 +120,44 @@ class NativeContractTests(unittest.TestCase):
 
 
 class PackagingTests(unittest.TestCase):
+    def test_generated_game_archive_passes_actual_guest_extraction_with_identical_bytes(self):
+        from local_login_server import extract_regular
+        members = {'CrashRpt.dll': b'fixture dll bytes', 'MapServer.exe': b'fixture exe bytes',
+                   'game-package.json': b'{"fixture":true}\n', 'empty.txt': b''}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'game-package.tar.gz'
+            package.write_game_archive(path, members)
+            destination = Path(directory)/'extracted'
+            extract_regular(path, destination)
+            self.assertEqual({p.name: p.read_bytes() for p in destination.iterdir()}, members)
+
+    def test_previous_released_timestamp_is_rejected_by_real_guest_preflight(self):
+        import diagnostic
+        with tempfile.TemporaryDirectory() as directory:
+            assets = Path(directory)
+            for name in ('dbserver-package.tar.gz', 'dbserver-schema.tar.gz'):
+                package.write_game_archive(assets/name, {'fixture.txt': b'unchanged'})
+            with tarfile.open(assets/'game-package.tar.gz', 'w:gz') as archive:
+                member = tarfile.TarInfo('CrashRpt.dll')
+                member.size = 4; member.mode = 0o644; member.mtime = 1767225600
+                archive.addfile(member, io.BytesIO(b'test'))
+            with self.assertRaisesRegex(diagnostic.DiagnosticError, 'Server payload archive metadata differs'):
+                package.verify_server_archives(assets)
+
+    def test_preflight_checks_every_server_archive_and_records_actual_extraction(self):
+        with tempfile.TemporaryDirectory() as directory:
+            assets = Path(directory)
+            names = ('dbserver-package.tar.gz', 'dbserver-schema.tar.gz', 'game-package.tar.gz')
+            for name in names:
+                package.write_game_archive(assets/name, {'fixture.txt': name.encode(), 'empty.txt': b''})
+            value = package.verify_server_archives(assets)
+            self.assertEqual(value['status'], 'passed')
+            self.assertEqual(set(value['archives']), set(names))
+            for name, record in value['archives'].items():
+                self.assertEqual(record['file_count'], 2)
+                self.assertEqual(record['extracted_bytes'], len(name))
+                self.assertEqual(record['sha256'], hashlib.sha256((assets/name).read_bytes()).hexdigest())
+
     def test_windows_pg_encoding_provenance_is_preserved_and_unknown_hash_refused(self):
         pg = prepare_runtime.expected_pg_receipt(ROOT, json.loads((ROOT/'upstream-lock.json').read_text()))
         for name in pg['overlay_sha256']:

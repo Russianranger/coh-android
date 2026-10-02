@@ -65,6 +65,10 @@ final class TarExtractor {
         List<String[]> links=new ArrayList<>(); long total=0; int count=0; String longName=null,longLink=null;
         Map<String,String> globalPax=new HashMap<>(), localPax=new HashMap<>();
         boolean pendingPax=false;
+        // Reuse the copy buffer for every regular member. The runtime contains
+        // thousands of small files; allocating one MiB for each file previously
+        // put several GiB of short-lived arrays through the Android heap.
+        byte[] copyBuffer=new byte[65536];
         try(InputStream in=new BufferedInputStream(new GZIPInputStream(new FileInputStream(archive)),1024*1024)) {
             byte[] header=new byte[512];
             while(true) {
@@ -120,7 +124,7 @@ final class TarExtractor {
                     if(type=='0'||type=='\0') {
                         if(size>root.getUsableSpace()-128L*1024*1024)throw new IOException("Not enough storage to unpack runtime");
                         parents(dest);
-                        try(OutputStream out=Files.newOutputStream(dest.toPath(),StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS)){transfer(in,out,size);}
+                        try(OutputStream out=Files.newOutputStream(dest.toPath(),StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS)){transfer(in,out,size,copyBuffer);}
                         Os.chmod(dest.getPath(),(mode&0111)!=0?0755:0644);
                     } else if(type=='5') {
                         if(size!=0)throw new IOException("Malformed directory entry");
@@ -208,7 +212,15 @@ final class TarExtractor {
         }
         return values;
     }
-    static void transfer(InputStream in,OutputStream out,long size)throws IOException {byte[] b=new byte[1024*1024];while(size>0){if(Thread.currentThread().isInterrupted())throw new InterruptedIOException("Runtime extraction cancelled");int n=in.read(b,0,(int)Math.min(size,b.length));if(n<0)throw new EOFException("Truncated runtime archive");out.write(b,0,n);size-=n;}}
+    static void transfer(InputStream in,OutputStream out,long size)throws IOException {transfer(in,out,size,new byte[65536]);}
+    private static void transfer(InputStream in,OutputStream out,long size,byte[] buffer)throws IOException {
+        while(size>0) {
+            cancelled();
+            int n=in.read(buffer,0,(int)Math.min(size,buffer.length));
+            if(n<0)throw new EOFException("Truncated runtime archive");
+            out.write(buffer,0,n);size-=n;
+        }
+    }
     static void full(InputStream in,byte[] b,int length)throws IOException {int offset=0;while(offset<length){cancelled();int n=in.read(b,offset,length-offset);if(n<0)throw new EOFException("Truncated runtime archive");offset+=n;}}
     static void skip(InputStream in,long n)throws IOException {while(n-->0){cancelled();if(in.read()<0)throw new EOFException("Truncated runtime archive padding");}}
     static String text(byte[] b,int at,int length){int end=at;while(end<at+length&&b[end]!=0)end++;return new String(b,at,end-at,StandardCharsets.UTF_8);}

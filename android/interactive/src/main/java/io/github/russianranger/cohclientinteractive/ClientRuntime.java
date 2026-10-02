@@ -1142,12 +1142,48 @@ public final class ClientRuntime {
         return "127.0.0.1 " + String.join(" ", new LinkedHashSet<>(Arrays.asList("localhost", hostname, labels[0]))) + "\n";
     }
 
+    private static JSONObject historicalProcessExits(Context context) throws Exception {
+        JSONObject result=new JSONObject().put("maximum_records",4).put("records",new JSONArray())
+                .put("own_processes_only",true).put("trace_streams_requested",false);
+        if(Build.VERSION.SDK_INT<30)return result.put("status","unsupported_api");
+        try { return ProcessExitHistory.collect(context,result); }
+        catch(RuntimeException e) {
+            // Exit history is optional evidence. A vendor/service failure must
+            // never prevent the current operation's report from being saved.
+            return result.put("status","unavailable").put("records",new JSONArray())
+                    .put("error_class",e.getClass().getSimpleName());
+        }
+    }
+    /** Isolates Android 11 classes from the supported Android 8-10 path. */
+    private static final class ProcessExitHistory {
+        static JSONObject collect(Context context,JSONObject result) throws Exception {
+            android.app.ActivityManager manager=(android.app.ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+            if(manager==null)return result.put("status","unavailable");
+            String ownPackage=context.getPackageName();
+            List<android.app.ApplicationExitInfo> history=manager.getHistoricalProcessExitReasons(ownPackage,0,4);
+            JSONArray records=new JSONArray();
+            if(history!=null)for(int i=0;i<Math.min(history.size(),4);i++) {
+                android.app.ApplicationExitInfo info=history.get(i);
+                if(info==null)continue;
+                String processName=info.getProcessName();
+                if(processName==null||!(processName.equals(ownPackage)||processName.startsWith(ownPackage+":")))continue;
+                records.put(new JSONObject().put("timestamp_utc_ms",info.getTimestamp())
+                        .put("reason",info.getReason()).put("status",info.getStatus())
+                        .put("importance",info.getImportance()).put("pss_kib",info.getPss())
+                        .put("rss_kib",info.getRss()).put("pid",info.getPid())
+                        .put("process_name",processName.substring(0,Math.min(processName.length(),160))));
+            }
+            return result.put("status","available").put("records",records);
+        }
+    }
+
     private void publish(JSONObject guest, boolean passed, boolean cleanup) throws IOException {
         try {
             JSONObject wrapper = new JSONObject().put("format", 1).put("operation", operation).put("run_id", runId)
                     .put("session_id", session == null ? JSONObject.NULL : session).put("app_id", context.getPackageName())
                     .put("app_version", appVersion()).put("android_sdk", Build.VERSION.SDK_INT)
                     .put("android_uid", android.os.Process.myUid()).put("device", Build.MANUFACTURER + " " + Build.MODEL)
+                    .put("android_process_exit_history",historicalProcessExits(context))
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
