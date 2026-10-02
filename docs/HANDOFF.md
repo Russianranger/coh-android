@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Current development: startup/readiness performance is the user's priority. The bounded 0.11.4 derivative removes whole-data-tree log scans, reuses completed owned private server data on later starts, and buffers RFB input. Focused host qualification passed and publication is in progress; physical timing and gameplay-FPS gains remain unverified. Physical 0.11.3 outdoor movement, usable presentation, phase deadlines and ordinary save/Finish/cleanup remain accepted. THORHERO, seven powers and fourteen costume parts are preserved; the saved exterior position awaits a subsequent reopen. PR #1 remains draft; main stays 04d62616.**
+**Current: 0.11.4 is published for the user's startup/readiness priority. The bounded derivative removes whole-data-tree log scans, reuses completed owned private server data on later starts, and buffers RFB input. Focused host qualification, CI packaging and independent public APK checks passed; physical timing and gameplay-FPS gains remain unverified. Physical 0.11.3 outdoor movement, usable presentation, phase deadlines and ordinary save/Finish/cleanup remain accepted. THORHERO, seven powers and fourteen costume parts are preserved; the saved exterior position awaits a subsequent reopen. PR #1 remains draft; main stays 04d62616.**
 
 The accepted run spent about 29 minutes 28 seconds reaching the interactive menu.
 Repeated readiness queries then walked roughly 177,000 private data files to find
@@ -32,7 +32,8 @@ replaying the accepted long movement/camera/jump milestone.
 The focused derivative qualification passes 186 unittest methods plus 89 Java
 budget scenarios and binds 85 source files. It authenticates the exact published
 0.11.3 APK, its 49 payloads, all sixteen Java sources and the four immutable
-lineage receipts. Full interactive discovery also passes all 393 tests. The
+lineage receipts. CI interactive discovery passes 393 executed tests, with one
+existing Tesseract-dependent test skipped (394 methods). The
 historical 0.11.3 transform test now uses byte/hash-pinned published helper fixtures
 with its original positive and negative assertions; no test suite is filtered.
 The required host cache fixture creates 4,002 links cold and zero warm, with 25
@@ -40,6 +41,31 @@ directory checks (0.824119 / 0.004263 seconds on this host). These are fixture
 measurements, not Thor startup timings. Historical 0.11.2/0.11.3 publication
 workflows remain manually dispatchable; the new derivative has its own exact
 retained-donor workflow. Native/physical milestones are not repeated for this pass.
+
+[Published 0.11.4 APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.4/COH-Atlas-Gameplay-0.11.4.apk)
+was built from `97c5ece986c9ba91825844e648d728ee310ed732` in
+[run 37030944557](https://github.com/Russianranger/coh-android/actions/runs/37030944557).
+Both observer and APK jobs passed. The public APK is 595,116,556 bytes, SHA-256
+`8f5a398f15adc4d94ed1137817a7db696bafa3c03aa0e7a54638e5570bfb0fa3`.
+Its complete download matches the build and GitHub release pins; ZIP CRC,
+independent v2/v3 RSA signatures and the full 570-chunk content digest pass.
+All 50 payloads match the build receipt. Six existing guest/verification payloads
+change, one cache helper is added, and DEX is recompiled with only the exact
+bounded RFB source wrapper changed. Other Java sources, resources, signer,
+application ID, native runtime/client/server and world/avatar bytes are retained.
+See [the publication receipt](android-evidence/startup-perf-0.11.4-publication.json).
+The actual CI cache fixture records 4,002 to zero link creations and 25 directory
+checks, taking 1.085236 / 0.005661 seconds on that host; it is not a device timing.
+Generic push tooling runs 37030944503 and 37030944442 passed with all native,
+cache-build and APK jobs skipped. No accepted native or physical gate repeated.
+
+Next: use the short 0.11.4 readiness/frame-pace comparison and normal Save/Finish
+to establish a completed data-cache generation. A later necessary reopen can
+compare warm startup and the saved exterior position. Reports now distinguish
+preparation, native readiness and observer costs. Native client/Atlas loading and
+software-renderer FPS remain targets beyond the removed host overhead; no device
+speedup is accepted until the new export is reviewed. Genuine beacon generation,
+NPC pathing/combat and complete materials/minimap remain separate pending gates.
 
 The physical 0.11.3 checkpoint follows:
 
