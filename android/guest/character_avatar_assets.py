@@ -185,8 +185,12 @@ def legacy_orphans(worktree, verified, repairs, manifest):
                 with os.scandir(parent) as entries:
                     linked = next(item.is_symlink() for item in entries if item.name == Path(name).name)
                 require(not linked, 'Orphan avatar destination is linked')
-                if os.path.lexists(intermediate):
-                    old_final = legacy_parent(os.readlink(intermediate), worktree, parent.relative_to(worktree))
+                try:
+                    remaining_link = os.readlink(intermediate)
+                except FileNotFoundError:
+                    pass
+                else:
+                    old_final = legacy_parent(remaining_link, worktree, parent.relative_to(worktree))
                     require(old_final.name == backing.name, 'Orphan avatar backing chain differs')
             result.append((name, intermediate, backing))
     return result
@@ -263,8 +267,13 @@ def install(worktree, assets, context):
         context.check()
         require(verify_target(worktree / name, manifest['files'][name])
                 and verify_target(backing, manifest['files'][name], legacy_backing=True), 'Avatar repair cleanup differs')
-        if os.path.lexists(intermediate):
+        # PRoot can return ENOENT from lstat on this physically present broken
+        # intermediate. Use unlink itself, which does not dereference it.
+        try:
             intermediate.unlink()
+        except FileNotFoundError:
+            pass
+        else:
             removed += 1
         backing.unlink()
         removed += 1

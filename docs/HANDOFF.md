@@ -24,7 +24,7 @@ saved database are untouched. Focused qualification must reproduce this with
 the actual pinned ARM64 PRoot; source-equivalent unit tests alone do not close
 that gate. Physical results remain pending after hosted repair qualification.
 
-The corrective checkpoint adds 14 avatar installer regression cases, including
+The corrective checkpoint adds 15 avatar installer regression cases, including
 the moved emulated-link layout, refused invalid chains and cleanup retry. The
 new retained-donor packaging boundaries pass 12 tests; routing passes its
 focused check. Independent extraction of the actual published 0.11.0 APK
@@ -51,6 +51,15 @@ names may use the real-owner check. The fixture compares the same underlying
 owner across this virtual stat difference and preserves detailed failure
 tracebacks. A focused retry is required; the 0.10.0 graphical gate stays closed
 and is not repeated.
+
+Retry `36943898161` at `fa104426` passed the checked 21-file repair and exact
+payload/metadata comparison, then caught physically remaining intermediate
+links. PRoot's virtual `lstat` reports those broken intermediates as missing,
+so `lexists` cannot determine their physical presence. Cleanup now unlinks only
+the preflighted intermediates directly and handles actual ENOENT, then removes
+their verified backing files. Orphan preflight likewise uses bounded readlink
+instead of virtual lstat. The added regression reproduces this missing-stat
+view. No APK was built or published by either failed focused attempt.
 
 The retained-APK [run `36929550592`](https://github.com/Russianranger/coh-android/actions/runs/36929550592)
 passed tooling and the full native ARM64 runtime on host-driver commit `f7c6c3a6`.

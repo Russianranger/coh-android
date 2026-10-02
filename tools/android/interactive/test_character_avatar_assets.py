@@ -96,6 +96,19 @@ class AvatarAssetsTests(unittest.TestCase):
         self.assertEqual((proof['installed_files'], proof['reused_files'], proof['legacy_repaired_files']), (0, 21, 0))
         self.assertFalse(list(work.rglob('.l2s.*')))
 
+    def test_cleanup_removes_intermediates_even_when_proot_lstat_reports_missing(self):
+        work = self.moved_legacy_links('virtual-stat')
+        native = os.lstat
+        def virtual_stat(path, *args, **kwargs):
+            if avatar.LEGACY_LINK.fullmatch(Path(path).name):
+                raise FileNotFoundError(2, 'PRoot stale backing stat', str(path))
+            return native(path, *args, **kwargs)
+        with patch.object(avatar.os, 'lstat', side_effect=virtual_stat):
+            proof = avatar.install(work, self.assets, self.context)
+        self.assertEqual(proof['legacy_repaired_files'], 21)
+        self.assertEqual(proof['legacy_backing_files_removed'], 42)
+        self.assertFalse(list(work.rglob('.l2s.*')))
+
     def test_real_owner_check_is_limited_to_recognized_legacy_backing_files(self):
         work = self.moved_legacy_links('mapped-owner')
         target = work / self.first

@@ -36,6 +36,20 @@
       "native_arm64_proot_build": "passed",
       "run_id": 36943167422,
       "status": "failed"
+    },
+    {
+      "artifact_bytes": 2645,
+      "artifact_id": 11200609481,
+      "artifact_sha256": "9705124ee7d93f8ccb0be6bb0807675b60ccc1c0411bcad3d77ad60fc555b187",
+      "commit": "fa1044269db207d446d748353f48c529842979ef",
+      "corrective_apk_built": false,
+      "diagnosis": "PRoot virtual lstat reports broken intermediate links absent. Preverified intermediate cleanup must use direct unlink and handle actual ENOENT.",
+      "exact_payload_and_metadata_comparison": "passed",
+      "migration_failure": "Repair left private staging backing entries",
+      "native_arm64_proot_build": "passed",
+      "repaired_files": 21,
+      "run_id": 36943898161,
+      "status": "failed"
     }
   ],
   "format": 1,
