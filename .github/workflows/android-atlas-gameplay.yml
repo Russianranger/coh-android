@@ -2,21 +2,6 @@ name: Thor Atlas gameplay candidate from qualified backend
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - codex/character-persistence-continuation
-    paths:
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java'
-      - 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java'
-      - 'tools/android/interactive/build_atlas_gameplay_apk.py'
-      - 'tools/android/interactive/test_atlas_gameplay_package.py'
-      - 'tools/android/interactive/test_input.py'
-      - 'android/guest/atlas_world_assets.py'
-      - 'tools/android/interactive/prepare_atlas_world_assets.py'
-      - 'assets/atlas-world-supplement-manifest.json'
-      - 'docs/COH-Atlas-Gameplay-0.11.0-testing.txt'
-      - 'docs/android-evidence/atlas-world-reopen-reviewed.json'
-      - '.github/workflows/android-atlas-gameplay.yml'
 
 permissions:
   contents: read

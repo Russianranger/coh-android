@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**Current: The physical 0.11.6 run passes existing-character reopen, ordinary save and cleanup. The user accepts the smoother client as adequate for testing. Server startup remains slow and optimization is deferred with a target of five minutes or less. The 0.12.0 stationary-contact candidate removes mandatory ground recovery, keeps its optional button, and records bounded contact views/native initiation evidence. Source qualification passes; APK publication is pending. PR #1 remains draft; main stays 04d62616.**
+**Current: The physical 0.11.6 run passes existing-character reopen, ordinary save and cleanup. The user accepts the smoother client as adequate for testing. Server startup remains slow and optimization is deferred with a target of five minutes or less. The 0.12.0 stationary-contact candidate removes mandatory ground recovery, keeps its optional button, and records bounded contact views/native initiation evidence. The public APK, retained signer and exact payload/source closure are independently verified. PR #1 remains draft; main stays 04d62616.**
 
 The supplied `coh-atlas-gameplay-20261002-214857.zip` verifies THORHERO ID 1 /
 COHLOCAL, seven power rows and fourteen costume rows, ordinary logout and
@@ -52,6 +52,25 @@ extraction of all three server archives remains required before signing and
 publication. Device contact interaction and normal save without recovery remain
 unverified until the next export. The accepted long camera/jump/ground tests
 must not be repeated solely for this checkpoint.
+
+Published [0.12.0](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.12.0)
+from source commit `1791a3203ecf662191f2d6e3401cfa9ea4692004` in successful
+[run 37071344940](https://github.com/Russianranger/coh-android/actions/runs/37071344940).
+The public APK is **595203099 bytes**, SHA-256
+`4a507d7d59b3af07be74de4bf47e39b8fd09ac86266a34c4fefd756fb442ee7c`,
+version code 13, with the same app ID and signer. Independent verification passes
+both v2/v3 signatures, the complete 570-chunk APK digest, all 63 ZIP CRCs,
+56 payload hashes, 84 published source pins and the actual 161-check CI receipt.
+Exactly 50 donor payloads remain unchanged; all three raw server archives and
+their actual packaged guest extraction match public 0.11.6. The public notes,
+checksum, asset metadata and release body also close to the build receipt. See
+[the publication receipt](android-evidence/contact-interaction-0.12.0-publication.json).
+
+The superseded 0.11.0 Atlas workflow also triggered on the modern UI edit and
+rejected a changed historical workflow pin before compiling or publishing an APK.
+It is now manual-only, matching the earlier superseded responsiveness workflow;
+the dedicated 0.12.0 release workflow completed successfully. This routing change
+does not alter the published APK. PR #1 remains draft and main remains unchanged.
 
 The prior published checkpoint follows:
 
