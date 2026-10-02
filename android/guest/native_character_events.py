@@ -2,10 +2,27 @@
 """Immediate native observations from the current owned Atlas console pipe."""
 import hashlib
 import math
+import os
 import re
 import time
 
-import diagnostic as base
+if os.name == 'nt':
+    # Windows builds qualify this portable parser and the real Win32 producer.
+    # The owned Linux runtime has fcntl/proc dependencies, so it is intentionally
+    # not imported here. Keep identical fail-closed guard semantics on Windows;
+    # Android/Linux still raises the original diagnostic.DiagnosticError type.
+    from types import SimpleNamespace
+
+    class DiagnosticError(RuntimeError):
+        pass
+
+    def require(condition, message):
+        if not condition:
+            raise DiagnosticError(message)
+
+    base = SimpleNamespace(DiagnosticError=DiagnosticError, require=require)
+else:
+    import diagnostic as base
 
 ENVIRONMENT = 'COH_WINE_CHARACTER_EVENTS_SESSION'
 PREFIX = 'COH_CHARACTER_EVENT_V1 '

@@ -13,11 +13,13 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
+        candidate = sorted(change.SHELL_ONLY | change.RESPONSIVENESS_ONLY)
+        self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),
             ('push', 'c' * 40, known), ('push', '0' * 40, known),
             ('push', parent, []),
-            ('push', parent, known + ['android/native/client-launcher.c']),
+            ('push', parent, candidate + ['android/native/unreviewed-renderer.c']),
             ('push', parent, known + ['android/guest/diagnostic.py']),
             ('push', parent, known + ['assets/reference-inputs-manifest.json']),
             ('push', parent, known + ['android/interactive/src/main/AndroidManifest.xml']),

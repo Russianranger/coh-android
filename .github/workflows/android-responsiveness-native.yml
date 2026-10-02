@@ -16,6 +16,8 @@ on:
       - 'tools/prepare_client_texture_source.py'
       - 'tools/prepare_client_graphics_source.py'
       - 'tools/android/interactive/package_responsiveness_native.py'
+      - 'tools/android/game/test_character_events.py'
+      - 'android/guest/native_character_events.py'
 
 permissions:
   contents: read

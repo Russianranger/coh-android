@@ -16,7 +16,10 @@ OVERLAY_FILE = 'Game/src/render/coh_texture_header_index.h'
 
 
 def digest(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    # Git's Windows checkout policy may introduce CRLF. Bind the exact native
+    # source text with normalized LF so hosted Windows and Linux verifiers agree;
+    # the immutable upstream snapshot itself is never rewritten.
+    return hashlib.sha256(Path(path).read_bytes().replace(b'\r\n', b'\n')).hexdigest()
 
 
 def expected_texture_receipt(root=ROOT):
@@ -31,7 +34,7 @@ def expected_texture_receipt(root=ROOT):
         for name in FILES:
             target = staged / name
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(root / 'upstream/ouroboros' / name, target)
+            target.write_bytes((root / 'upstream/ouroboros' / name).read_bytes().replace(b'\r\n', b'\n'))
         apply_patch(staged, patch)
         outputs = {name: digest(staged / name) for name in FILES}
     return {'format': 1, 'role': 'opt_in_client_texture_header_index',
@@ -51,11 +54,17 @@ def apply_texture_overlay(source, root=ROOT):
     for name, sha in receipt['source_sha256'].items():
         if (source / name).is_symlink() or digest(source / name) != sha:
             raise ValueError('Texture source closure differs: ' + name)
+    # Normalize only verified copies in the disposable staging tree. LF patch
+    # contexts otherwise fail against a Windows CRLF checkout even though the
+    # source text and source receipt are equivalent.
+    for name in FILES:
+        path = source / name
+        path.write_bytes(path.read_bytes().replace(b'\r\n', b'\n'))
     apply_patch(source, (root / PATCH).read_bytes().replace(b'\r\n', b'\n'))
     target = source / OVERLAY_FILE
     if target.exists():
         raise ValueError('Texture overlay would overwrite a source file')
-    target.write_bytes((root / OVERLAY / OVERLAY_FILE).read_bytes())
+    target.write_bytes((root / OVERLAY / OVERLAY_FILE).read_bytes().replace(b'\r\n', b'\n'))
     if any(digest(source / name) != sha for name, sha in receipt['patched_sha256'].items()):
         raise ValueError('Patched texture source closure differs')
     (source / RECEIPT).write_text(json.dumps(receipt, indent=2) + '\n')

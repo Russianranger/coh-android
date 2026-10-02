@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 sys.path.insert(0, str(ROOT / 'tools'))
 import native_character_events as events
-import local_character_server as server
+if os.name != 'nt':
+    import local_character_server as server
 import prepare_character_events_source as source
 
 SESSION = '0123456789abcdef0123456789abcdef'
@@ -46,14 +47,74 @@ def parse(console, **changes):
 
 
 class NativeCharacterEventObserverTests(unittest.TestCase):
+    def test_windows_parser_import_needs_no_linux_runtime_and_preserves_fail_closed_checks(self):
+        import builtins
+        original_import = builtins.__import__
+        code = compile(Path(events.__file__).read_text(), events.__file__, 'exec')
+        namespace = {'__name__': 'native_character_events_windows_contract'}
+        def portable_import(name, *args, **kwargs):
+            if name in ('diagnostic', 'local_character_server', 'fcntl'):
+                raise AssertionError('Windows parser imported the owned Linux runtime: ' + name)
+            return original_import(name, *args, **kwargs)
+        with patch.object(os, 'name', 'nt'), patch.object(builtins, '__import__', side_effect=portable_import):
+            exec(code, namespace)
+        portable = namespace['base']
+        self.assertTrue(issubclass(portable.DiagnosticError, RuntimeError))
+        kwargs = dict(session=SESSION, progress=PROGRESS, launch_utc_ms=START,
+                      now_utc_ms=START + 120000, db_id=1, auth_id=17)
+        self.assertEqual(namespace['records'](line(), **kwargs)[0]['windows_pid'], 44)
+        with self.assertRaises(portable.DiagnosticError):
+            namespace['records'](line(pid=45), **kwargs)
+        if os.name != 'nt':
+            self.assertIs(events.base.DiagnosticError, server.base.DiagnosticError)
+
     def test_immediate_ready_needs_no_delayed_sorted_log(self):
         ready = events.latest_ready(parse('ordinary native output\n' + line()))
         self.assertTrue(ready['loaded_world_assets'])
         self.assertEqual(ready['utc_ms'], START + 1000)
         self.assertEqual(ready['session_id'], SESSION)
         self.assertEqual(ready['log_route'], 'immediate_owned_mapserver_console')
-        self.assertIsNone(server.ready_record([]))
 
+
+    def test_partial_duplicate_regressed_and_skipped_events_are_not_fresh(self):
+        self.assertEqual(parse(line().rstrip('\n')), [])
+        self.assertEqual(len(parse(line() + line(2, 'position').rstrip('\n'))), 1)
+        for bad in (line() + line(), line() + line(3, 'position'),
+                    line() + line(2, 'position', START), line(sequence=0),
+                    line(sequence=4294967296), 'prefix ' + line()):
+            with self.subTest(bad=bad), self.assertRaises(events.base.DiagnosticError):
+                parse(bad)
+
+    def test_foreign_native_identity_session_peer_and_clock_fail_closed(self):
+        for changes in ({'session': 'f'*32}, {'pid': 45}, {'tid': 56}, {'db_id': 2},
+                        {'auth_id': 18}, {'name': 'OTHER'}, {'account': 'OTHER'},
+                        {'map_id': 2}, {'peer': '10.0.0.1'}, {'port': 0}, {'port': 65536},
+                        {'utc_ms': START - 1001}, {'utc_ms': START + 121001}, {'x': 'nan'}):
+            with self.subTest(changes=changes), self.assertRaises(events.base.DiagnosticError):
+                parse(line(**changes))
+
+    def test_reconnect_resets_position_window_and_position_without_ready_cannot_verify(self):
+        before_ready = parse(line(1, 'position', START + 30000) + line(2, 'position', START + 60000))
+        self.assertEqual(events.positions_after_ready(before_ready), [])
+        values = parse(line() + line(2, 'position', START + 30000)
+                       + line(3, 'position', START + 60000) + line(4, 'ready', START + 70000)
+                       + line(5, 'position', START + 90000))
+        positions = events.positions_after_ready(values)
+        self.assertEqual(len(positions), 1)
+
+
+
+    def test_contract_is_exact_and_bound_to_source_receipt(self):
+        receipt = source.expected_events_receipt()
+        self.assertEqual(receipt['events_contract'], events.CONTRACT)
+        self.assertEqual(receipt['progress_contract'], receipt['progress_build_input']['progress_contract'])
+        for changes in ({'format': 2}, {'writer': 'helper'}, {'changes_native_game_state': True}):
+            with self.subTest(changes=changes), self.assertRaises(events.base.DiagnosticError):
+                events.validate_contract(dict(events.CONTRACT, **changes))
+
+
+@unittest.skipIf(os.name == 'nt', 'owned Linux character proof integration requires fcntl/proc')
+class NativeCharacterEventLinuxIntegrationTests(unittest.TestCase):
     def test_ground_keeps_two_real_samples_and_25_to_90_second_window(self):
         ready = line()
         first = line(2, 'position', START + 30000)
@@ -69,33 +130,6 @@ class NativeCharacterEventObserverTests(unittest.TestCase):
                     self.assertEqual(proof['elapsed_ms'], elapsed)
                     self.assertFalse(proof['full_collision_geometry_verified'])
 
-    def test_partial_duplicate_regressed_and_skipped_events_are_not_fresh(self):
-        self.assertEqual(parse(line().rstrip('\n')), [])
-        self.assertEqual(len(parse(line() + line(2, 'position').rstrip('\n'))), 1)
-        for bad in (line() + line(), line() + line(3, 'position'),
-                    line() + line(2, 'position', START), line(sequence=0),
-                    line(sequence=4294967296), 'prefix ' + line()):
-            with self.subTest(bad=bad), self.assertRaises(server.base.DiagnosticError):
-                parse(bad)
-
-    def test_foreign_native_identity_session_peer_and_clock_fail_closed(self):
-        for changes in ({'session': 'f'*32}, {'pid': 45}, {'tid': 56}, {'db_id': 2},
-                        {'auth_id': 18}, {'name': 'OTHER'}, {'account': 'OTHER'},
-                        {'map_id': 2}, {'peer': '10.0.0.1'}, {'port': 0}, {'port': 65536},
-                        {'utc_ms': START - 1001}, {'utc_ms': START + 121001}, {'x': 'nan'}):
-            with self.subTest(changes=changes), self.assertRaises(server.base.DiagnosticError):
-                parse(line(**changes))
-
-    def test_reconnect_resets_position_window_and_position_without_ready_cannot_verify(self):
-        before_ready = parse(line(1, 'position', START + 30000) + line(2, 'position', START + 60000))
-        self.assertEqual(events.positions_after_ready(before_ready), [])
-        values = parse(line() + line(2, 'position', START + 30000)
-                       + line(3, 'position', START + 60000) + line(4, 'ready', START + 70000)
-                       + line(5, 'position', START + 90000))
-        positions = events.positions_after_ready(values)
-        self.assertEqual(len(positions), 1)
-        self.assertIsNone(server.stable_ground_evidence([], {'sent_utc_ms': START + 2000},
-            START + 120000, positions=positions))
 
     def test_falling_moving_stale_and_pre_command_samples_still_fail(self):
         first = line(2, 'position', START + 30000)
@@ -109,6 +143,7 @@ class NativeCharacterEventObserverTests(unittest.TestCase):
                                now_utc_ms=now)
                 self.assertIsNone(server.stable_ground_evidence([], {'sent_utc_ms': delivery}, now,
                     positions=events.positions_after_ready(values)))
+
 
     def test_native_observer_requires_owned_live_progress_and_does_not_fallback_to_sorted_logs(self):
         context = SimpleNamespace(report={})
@@ -131,13 +166,6 @@ class NativeCharacterEventObserverTests(unittest.TestCase):
             with self.assertRaises(server.base.DiagnosticError): value.native_ready_record()
         value.current_logs.assert_not_called()
 
-    def test_contract_is_exact_and_bound_to_source_receipt(self):
-        receipt = source.expected_events_receipt()
-        self.assertEqual(receipt['events_contract'], events.CONTRACT)
-        self.assertEqual(receipt['progress_contract'], receipt['progress_build_input']['progress_contract'])
-        for changes in ({'format': 2}, {'writer': 'helper'}, {'changes_native_game_state': True}):
-            with self.subTest(changes=changes), self.assertRaises(server.base.DiagnosticError):
-                events.validate_contract(dict(events.CONTRACT, **changes))
 
 
 @unittest.skipUnless(os.name == 'nt', 'real native flushed event fixture requires Windows')

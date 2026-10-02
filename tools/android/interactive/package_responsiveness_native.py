@@ -42,10 +42,26 @@ def source_receipts(directory):
     for key, (module_name, receipt_name, expected_name) in INPUTS.items():
         module = importlib.import_module(module_name)
         actual = read_json(directory / receipt_name)
-        expected = getattr(module, expected_name)()
+        expected = expected_source_receipt(key, actual)
         require(actual == expected, 'Native overlay source receipt differs: ' + key)
         records[key] = actual
     return records
+
+
+def expected_source_receipt(key, received):
+    """Preserve enumerated Windows PG source encodings, never relabel history.
+
+    The original game/progress chain accepts only its independently hashed
+    LF/CRLF PG C/H overlay variants and recomputes every enclosing digest.
+    New performance overlays retain their exact normalized source contracts.
+    """
+    module_name, _, expected_name = INPUTS[key]
+    factory = getattr(importlib.import_module(module_name), expected_name)
+    if key == 'character_events':
+        require(isinstance(received, dict) and isinstance(received.get('progress_build_input'), dict),
+                'Missing received native progress source receipt')
+        return factory(progress_build_input=received['progress_build_input'])
+    return factory()
 
 
 def schema_pins(directory=None):
@@ -113,11 +129,14 @@ def validate_package(directory, commit):
             and document.get('postgresql_persistence_fixture') is False
             and document.get('runtime_execution_validated') is False
             and document.get('build_targets') == ['Game', 'MapServer']
-            and document.get('schema_sources_sha256') == schema_pins(), 'Native build identity differs')
+            and document.get('schema_sources_sha256') == schema_pins()
+            and re.fullmatch(r'https://github\.com/Russianranger/coh-android/actions/runs/[1-9][0-9]+',
+                             str(document.get('run_url', ''))), 'Native build identity differs')
     require(set(path.name for path in directory.iterdir()) == {'CityOfHeroes.exe', 'MapServer.exe', 'native-responsiveness-build.json'},
             'Unexpected native package member')
     for name, (module_name, _, expected_name) in INPUTS.items():
-        require(document.get('build_inputs', {}).get(name) == getattr(importlib.import_module(module_name), expected_name)(),
+        received = document.get('build_inputs', {}).get(name)
+        require(received == expected_source_receipt(name, received),
                 'Native build source overlay changed: ' + name)
     require(set(document.get('files', {})) == {'CityOfHeroes.exe', 'MapServer.exe'}, 'Native executable inventory differs')
     for name, record in document['files'].items():
