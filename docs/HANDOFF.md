@@ -1,6 +1,58 @@
 # City of Heroes Android handoff
 
-**Current: published 0.11.3 with phase-aware Atlas play and normal-save windows on the existing continuation branch. The prior physical interior controls, persistence and observed outdoor route remain accepted. This APK changes Android deadline display/input cutoff and guest deadline hooks only; native runtime, client/server, world/avatar, signer and all normal-save identity/receipt/SQL guards remain retained. Physical deadline behavior and a newly saved outdoor position still require a focused test. Beacon input preflight completed with `no_input`: no generated graph is supplied or qualified. PR #1 remains draft; main stays 04d62616.**
+**Current: physical 0.11.3 outdoor movement, usable Atlas presentation, phase-deadline uptake/input cutoff, ordinary outdoor save, Finish and cleanup passed on AYN Thor. THORHERO identity, seven powers and fourteen costume parts remain preserved. The new committed exterior position still awaits a subsequent reopen. Startup/readiness latency, complete materials/minimap/collision and genuine beacon/NPC/combat gates remain open. Retain installed 0.11.3; this evidence checkpoint changes no APK or native runtime. Beacon preflight remains `no_input`. PR #1 remains draft; main stays 04d62616.**
+
+The returned `coh-atlas-gameplay-20261002-145320.zip` independently confirms
+normal `/quittologin` delivery at 14:50:24.531 UTC, native logout timer expiry
+at 14:50:27, committed SQL verification at 14:52:01.321, guest receipt of Finish at
+14:52:19.993 and complete cleanup at 14:53:14.783. The committed exterior
+position is **(104.47185, 31.959229, -531.55786)**. ID 1 / COHLOCAL and all
+selected rows remain identical except the expected LoginCount 4 to 5. The
+canonical saved selected-row snapshot is
+`648b7ca2368748f0bbd5020e7bcd99a6a1b9e040728ac8f73cb525ff323123e0`;
+positions are verified by a separate SQL query and matching native records.
+See [the physical outdoor movement/save receipt](android-evidence/thor-0.11.3-outdoor-movement-save-passed-20261002.json).
+
+The initial interior is explained by the previous committed position
+(133.92833, -768, -594.64825), which still matched the accepted interior save.
+The previous outdoor run requested no new normal save. Native resume then chose
+the authored nearby-door auxiliary exit (134.5, -768, -575); this is normal
+door emergence, with no reset or persistence defect indicated. The prior
+selected-row snapshot differs from this run's baseline only in LoginCount 3 to 4.
+Do not claim that the new outdoor position has already survived another restart.
+
+All 23 exported Android PNG hashes, sizes and dimensions match; connection,
+ground and save each have three fresh sequences after their event watermarks.
+They show City Hall, outdoor Atlas Plaza and the login screen after logout.
+The user's new screenshots and report accept outdoor movement and usable
+presentation. Prior camera/jump and tested-route no-clipping acceptance remains
+retained. Flat white ground, purple/blue surfaces, UI placeholders and **Map
+Unavailable** remain visible, so complete materials/minimap and broad collision
+coverage are not accepted. Automated rendering/controller/input-effect flags
+remain false; user acceptance is recorded separately. Runtime/identity manifests
+match published 0.11.3, without claiming independent installed-APK byte attestation.
+
+The delivered `/stuck` at 14:44:14.313 anchors movement/Save/proof deadlines at
+14:50:14.313 / 14:51:14.313 / 14:54:14.313. Revision 2 shortened the connected
+allowance; no renewal or expiry revival occurred. Android recorded input cutoff
+558 ms after its deadline, and normal Save delivery arrived 49.782 seconds before
+the Save cutoff. Finish and cleanup completed before final expiry. This run also
+finished before the original menu deadline, so expired-phase behavior was not
+exercised physically. A complete 60-second all-controls-neutral interval is not
+proven: the last retained ordinary input preceded Save delivery by 44.728 seconds
+and could have been a cursor/release event. Current stable native samples and
+ordinary committed-save proof passed; retain the 60-second neutral test guidance.
+
+Responsiveness remains a concrete next target. Guest start to interactive menu
+took about 29 minutes 28 seconds: Wine refresh 64 seconds, private data/DbServer
+7 minutes 16 seconds, Atlas 10 minutes 43 seconds and client startup 9 minutes
+38 seconds. `/stuck` delivery to ground observation took 1 minute 55 seconds,
+followed by 2.217 seconds for fresh Android frames. The final pre-save ground
+samples at 14:49:45/14:50:15 are refreshed evidence and must not be attributed to
+the initial 14:46:09 ground event. This run has no cold-login watchdog/auth failure
+or disconnect before normal logout. Do not import the prior failure diagnosis
+as a new failure, or blame all user waiting on disabled controls: native records
+already show outdoor traversal before `/stuck` was requested.
 
 The menu allowance remains 1200 seconds. A current validated native connection
 receives a one-shot allowance up to 1200 seconds, capped at actual launcher start
@@ -11,7 +63,7 @@ three minutes are reserved for the existing normal logout, SQL proof and Finish.
 Caps can shorten the visible window. Duplicate events cannot renew it, expired
 phases cannot revive it, and the Android shell binds the UTC deadlines to uptime.
 Android independently caps event admission at its display announcement plus
-35 minutes, allowing at most one minute between announcement and launcher start;
+35 minutes, providing one minute of headroom between announcement and launcher start;
 the guest's actual emitted policy cap remains 34 minutes before the native
 36-minute launcher lifetime. Menu/creation behavior and normal-save validators
 are unchanged. Input cutoff releases held movement/camera inputs and preserves
@@ -52,10 +104,14 @@ Activity and failed closed at its old donor-source boundary, as expected for thi
 new derivative; it did not boot a native runtime or replace an old release. The
 new 0.11.3 workflow passed its own exact current-source and donor boundaries.
 
-Next: collect the focused 0.11.3 normal outdoor save report, then assess the saved
-outdoor coordinate on a later reopen. In parallel, qualify a bounded genuine
-one-map graph generator and provenance/loaded-world CRC before installing an
-Atlas beacon graph. NPC/powers/combat still follow genuine graph loading.
+Next: use the archived startup/readiness timeline to reduce expensive preparation
+and observation latency while preserving existing data, cache, normal-save and
+native guards. Assess the newly saved exterior coordinate on a later necessary
+reopen; do not repeat the accepted long physical/native gates solely to record
+this checkpoint. Qualify a bounded genuine one-map graph generator, provenance,
+full structure and loaded-world CRC before installing an Atlas beacon graph.
+NPC pathing/powers/combat still follow genuine graph loading. Rendering/minimap
+completeness is a separate gate; beacon data alone does not qualify it.
 
 Previous physical evidence checkpoint follows:
 

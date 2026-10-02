@@ -78,6 +78,7 @@ SHELL_ONLY = frozenset({
     '.github/workflows/android-session-window.yml',
     'docs/android-evidence/atlas-beacon-input-preflight.json',
     'docs/android-evidence/session-window-0.11.3-publication.json',
+    'docs/android-evidence/thor-0.11.3-outdoor-movement-save-passed-20261002.json',
     'docs/COH-Atlas-Gameplay-0.11.3-testing.txt',
 })
 
