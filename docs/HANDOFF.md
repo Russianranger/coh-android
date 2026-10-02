@@ -1,5 +1,60 @@
 # City of Heroes Android handoff
 
+**Current: The physical 0.11.6 run passes existing-character reopen, ordinary save and cleanup. The user accepts the smoother client as adequate for testing. Server startup remains slow and optimization is deferred with a target of five minutes or less. The 0.12.0 stationary-contact candidate removes mandatory ground recovery, keeps its optional button, and records bounded contact views/native initiation evidence. Source qualification passes; APK publication is pending. PR #1 remains draft; main stays 04d62616.**
+
+The supplied `coh-atlas-gameplay-20261002-214857.zip` verifies THORHERO ID 1 /
+COHLOCAL, seven power rows and fourteen costume rows, ordinary logout and
+committed SQL save, verified Finish and clean owned-process shutdown. The
+user reports smoother, tolerable client play; no sustained FPS benchmark or
+complete terrain/materials acceptance is claimed. See [the accepted physical
+checkpoint](android-evidence/thor-0.11.6-client-accepted-20261002.json).
+
+Session start to DbServer readiness took **10m57s**; Atlas server readiness took
+**21m50s**, followed by **9m46s** of client startup. First-use server data staging
+cost 411.258s. These measurements support the user's unchanged-server-startup
+assessment. Future server work should target **at most 300 seconds from session
+start to Atlas server readiness**, including required preparation. This work is
+explicitly deferred; GPU acceleration remains deferred as well.
+
+The next playable checkpoint is ordinary stationary-contact interaction.
+Ms. Liberty beside the Atlas statue and City Representative inside City Hall
+are authored `PL_StandStill` contacts. The pinned client's cursor/A-left-click
+path sends `CLIENTINP_TOUCH_NPC` to normal contact dialogue processing without
+requiring a beacon graph. F is Follow, so no invented Interact binding or chat
+command is introduced. Use the [short 0.12.0 checks](COH-Atlas-Gameplay-0.12.0-testing.txt)
+to open a readable dialog, record its view, read an information response and
+close it normally before Save/Finish. Task acceptance, training, moving NPC
+pathing, combat and authentic generated beacon loading remain later milestones.
+
+Movement and normal Save now become available after current native connection,
+a bounded play/save budget and three fresh Android views. Return to safe ground
+is optional; when requested it still pauses controls until the actual ordinary
+`/stuck` receipt, stable native positions and fresh views are verified. Normal
+save requires current native Atlas position matching committed SQL, identity,
+powers/costume and selected-row preservation, normal logout/disconnection and
+fresh saved-character views. A skipped recovery has explicitly false ground
+claims. Optional recovery cannot extend the previously established deadline.
+
+Capture contact dialog retains three fresh 800x600 PixelCopy views per manual
+request, with at most three requests, current session/PID/character binding,
+strict frame/time watermarks and a two-minute request limit. Optional owned
+native `ContactInteract` initiation/response records are read once at export,
+never in readiness polling. Those logs precede dialog generation and do not
+prove that a visible dialog or mission/combat effect succeeded. The user supplies
+that assessment. Native contact-state persistence is outside the protected
+identity/power/costume selected rows; no database writes are made by observers.
+
+Focused qualification passes **161 checks** and binds **84 source files**.
+The candidate retains all native/container, renderer, world/avatar and prepared
+cache bytes from the exact public 0.11.6 APK; five Java sources and three guest
+helpers change, and one bounded contact-evidence helper is added. Actual guest
+extraction of all three server archives remains required before signing and
+publication. Device contact interaction and normal save without recovery remain
+unverified until the next export. The accepted long camera/jump/ground tests
+must not be repeated solely for this checkpoint.
+
+The prior published checkpoint follows:
+
 **Current: 0.11.6 repairs the immediate 0.11.5 reopen packaging failure and reduces Android runtime-extraction allocation pressure. The public APK and retained signer have been independently verified. Game/MapServer binaries and their existing performance changes are reused exactly; no new native build or physical performance gain is claimed. PR #1 remains draft; main stays 04d62616.**
 
 The supplied `coh-atlas-gameplay-20261002-203058.zip` failed in less than a

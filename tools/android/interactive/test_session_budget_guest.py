@@ -31,7 +31,8 @@ def proof():
 
 def recovered(sent_seconds=1285):
     value = proof()
-    value.update(ordinary_stuck_observed=True, on_atlas_safe_position=True,
+    value.update(recovery_requested=True, recovery_verified=True,
+        ordinary_stuck_observed=True, on_atlas_safe_position=True,
         stable_ground_verified=True, relocation_delivery={
             'format': 1, 'session_id': SESSION, 'client_pid': PID, 'character_id': 1,
             'action': 'stuck', 'sent_utc_ms': UTC_START + sent_seconds * 1000})
@@ -85,8 +86,8 @@ class SessionBudgetGuestTests(unittest.TestCase):
         self.assertIsNone(budget.connected(proof(), 1100, UTC_START + 1100000))
         self.assertEqual(budget.deadline, first)
         self.assertEqual(len(budget.events), 1)
-        self.assertEqual(event['save_request_deadline_utc_ms'], 0)
-        self.assertEqual(event['movement_deadline_utc_ms'], 0)
+        self.assertEqual(event['save_request_deadline_utc_ms'], event['deadline_utc_ms'] - 180000)
+        self.assertEqual(event['movement_deadline_utc_ms'], event['deadline_utc_ms'] - 240000)
 
     def test_ground_receipt_is_one_shot_and_cannot_be_replaced_or_renewed(self):
         budget, _ = self.connect()
@@ -189,7 +190,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
             diagnostic.ctx.event.assert_not_called()
 
     def test_slow_ground_poll_cannot_revive_expired_connected_phase(self):
-        for now, accepted in ((1599.999, True), (1600, False), (1600.001, False)):
+        for now, accepted in ((1200, True), (1600, False), (1600.001, False)):
             diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
             diagnostic.args = SimpleNamespace(session_id=SESSION)
             value = proof(); value['client_ready_observed_utc_ms'] = UTC_START + 400000
@@ -200,19 +201,44 @@ class SessionBudgetGuestTests(unittest.TestCase):
             with patch.object(reopen.time, 'monotonic', return_value=400), \
                  patch.object(reopen.time, 'time', return_value=(UTC_START + 400000) / 1000):
                 self.assertEqual(diagnostic.interaction_deadline(1802, {'pid': PID}), 1600)
-            value = recovered(1550); value['client_ready_observed_utc_ms'] = UTC_START + 400000
+            value = recovered(1150); value['client_ready_observed_utc_ms'] = UTC_START + 400000
             diagnostic.ctx.report['character_reopen'] = value
             diagnostic.relocated_announced = True
             with self.subTest(poll_returned=now), \
                  patch.object(reopen.time, 'monotonic', return_value=now), \
                  patch.object(reopen.time, 'time', return_value=(UTC_START + int(now * 1000)) / 1000):
                 if accepted:
-                    self.assertEqual(diagnostic.interaction_deadline(1600, {'pid': PID}), 2040)
+                    self.assertEqual(diagnostic.interaction_deadline(1600, {'pid': PID}), 1600)
                 else:
                     with self.assertRaisesRegex(Exception, 'current connected deadline'):
                         diagnostic.interaction_deadline(1600, {'pid': PID})
             self.assertEqual(diagnostic.session_budget.revision, 2 if accepted else 1)
             self.assertEqual(diagnostic.ctx.event.call_count, 2 if accepted else 1)
+
+    def test_connection_grants_finite_play_and_save_without_recovery(self):
+        budget, event = self.connect(now=900)
+        self.assertEqual(event['phase'], 'connected')
+        self.assertEqual(event['movement_deadline_utc_ms'], event['save_request_deadline_utc_ms'] - 60000)
+        self.assertEqual(event['save_request_deadline_utc_ms'], event['deadline_utc_ms'] - 180000)
+        self.assertNotIn('stable_ground_verified', event)
+        self.assertNotIn('ordinary_stuck_observed', event)
+        self.assertIsNone(budget.receipt)
+
+    def test_optional_recovery_can_shorten_but_never_extend_connected_window(self):
+        budget, _ = self.connect(now=400)
+        recovered_proof = recovered(1150)
+        recovered_proof['client_ready_observed_utc_ms'] = UTC_START + 400000
+        first_end = budget.deadline
+        event = budget.grounded(recovered_proof, 1200, UTC_START + 1200000)
+        self.assertEqual(budget.deadline, first_end)
+        self.assertTrue(event['recovery_verified'])
+        self.assertEqual(event['deadline_utc_ms'], UTC_START + 1600000)
+
+    def test_connection_arriving_without_reserves_fails_without_granting_budget(self):
+        budget = self.budget(operation_deadline=1574)
+        with self.assertRaisesRegex(ValueError, 'neutral wait'):
+            budget.connected(proof(), 1214, UTC_START + 1214000)
+        self.assertEqual(budget.revision, 0)
 
 
 if __name__ == '__main__':

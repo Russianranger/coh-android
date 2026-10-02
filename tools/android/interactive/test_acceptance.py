@@ -63,11 +63,13 @@ public final class ClientAcceptanceHost {
         List<Map<String,Object>> connectedFrames=samples(), relocationFrames=samples();
         Map<String,Object> relocated=map("type","character_relocated","session_id",SESSION,"client_pid",42,
             "character_id",1,"name","THORHERO","account","COHLOCAL","map_id",1,
+            "recovery_requested",true,"recovery_verified",true,
             "ordinary_stuck_observed",true,"on_atlas_safe_position",true,"stable_ground_verified",true);
         if (args[0].startsWith("reopen_")) {
             Map<String,Object> reopen=new LinkedHashMap<>(at(login,"character_creation"));
             reopen.put("character_id",1);reopen.put("before_character_id",1);reopen.put("baseline_character_id",1);
             for(String flag:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
+                    "recovery_requested","recovery_verified","committed_native_position_verified",
                     "native_client_ready_observed","powers_preserved","costume_preserved","ordinary_stuck_observed",
                     "on_atlas_safe_position","stable_ground_verified","selected_rows_preserved","committed_safe_position_verified"}) reopen.put(flag,true);
             login.put("character_reopen",reopen);login.remove("character_creation");
@@ -76,6 +78,11 @@ public final class ClientAcceptanceHost {
             for(int i=0;i<3;i++) {
                 relocationFrames.get(i).put("captured_elapsed_ms",4000L+i*1000);
                 frames.get(i).put("captured_elapsed_ms",7000L+i*1000);
+            }
+            if (args[0].startsWith("reopen_normal_")) {
+                for (String flag : new String[]{"recovery_requested", "recovery_verified", "ordinary_stuck_observed",
+                        "on_atlas_safe_position", "stable_ground_verified", "committed_safe_position_verified"}) reopen.put(flag,false);
+                relocated.clear(); relocationFrames.clear();
             }
         }
         boolean expected=false,actual;
@@ -141,6 +148,18 @@ public final class ClientAcceptanceHost {
             case "final_no_fresh_capture": frames.get(0).put("sequence",6);break;
             case "final_no_cleanup": cleanup.put("cleanup_complete",false);break;
             case "reopen_valid": expected=true;break;
+            case "reopen_normal_valid": expected=true;break;
+            case "reopen_normal_no_position_commit": at(login,"character_reopen").remove("committed_native_position_verified");break;
+            case "reopen_normal_recovery_claim": at(login,"character_reopen").put("recovery_verified",true);break;
+            case "reopen_normal_fake_ground_claim": at(login,"character_reopen").put("stable_ground_verified",true);break;
+            case "reopen_normal_missing_request_status": at(login,"character_reopen").remove("recovery_requested");break;
+            case "reopen_normal_request_is_string": at(login,"character_reopen").put("recovery_requested","false");break;
+            case "reopen_normal_missing_connected_captures": connectedFrames.clear();break;
+            case "reopen_normal_missing_saved_captures": frames.clear();break;
+            case "reopen_normal_changed_power": at(login,"character_reopen").put("powers_preserved",false);break;
+            case "reopen_normal_force_saved": at(login,"character_reopen").put("forced_stop_before_save",true);break;
+            case "reopen_missing_recovery_verified": at(login,"character_reopen").remove("recovery_verified");break;
+            case "reopen_no_native_position_commit": at(login,"character_reopen").remove("committed_native_position_verified");break;
             case "reopen_missing": login.remove("character_reopen");break;
             case "reopen_creation_only": login.put("character_creation",login.remove("character_reopen"));break;
             case "reopen_new_character": at(login,"character_reopen").put("character_id",2);break;
@@ -367,6 +386,7 @@ class ClientAcceptanceTests(unittest.TestCase):
         cases = ('valid', 'missing', 'creation_only', 'new_character', 'wrong_baseline', 'wrong_before',
                  'unproved_existing', 'unproved_reopen', 'identity_changed', 'costume_changed', 'powers_changed',
                  'no_native_ready', 'no_selected_rows', 'selected_rows_changed', 'selected_rows_null',
+                 'missing_recovery_verified', 'no_native_position_commit',
                  'no_safe_commit', 'bad_safe_commit', 'safe_commit_null', 'no_stuck', 'no_safe_ground', 'unstable_ground', 'no_relocation_event',
                  'relocation_old_session', 'relocation_wrong_pid', 'relocation_wrong_character',
                  'relocation_wrong_account', 'relocation_wrong_map', 'relocation_no_stuck', 'relocation_no_ground',
@@ -378,6 +398,12 @@ class ClientAcceptanceTests(unittest.TestCase):
                  'late_connection_capture', 'pre_save_capture', 'pre_save_frame', 'two_save_captures', 'save_event_mismatch')
         for case in cases:
             with self.subTest(case=case): self.execute('reopen_' + case)
+
+    def test_normal_reopen_without_recovery_requires_native_save_and_two_android_capture_sets(self):
+        for case in ('valid', 'no_position_commit', 'recovery_claim', 'fake_ground_claim', 'missing_request_status',
+                     'request_is_string', 'missing_connected_captures', 'missing_saved_captures',
+                     'changed_power', 'force_saved'):
+            with self.subTest(case=case): self.execute('reopen_normal_' + case)
 
     def test_frame_boundaries(self):
         for mode in ('valid', 'static_frame', 'stale_session', 'missing_pixelcopy',

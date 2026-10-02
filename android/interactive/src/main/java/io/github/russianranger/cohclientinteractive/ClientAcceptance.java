@@ -96,6 +96,7 @@ final class ClientAcceptance {
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
                 && number(event.get("character_id"), 1) && "THORHERO".equals(event.get("name"))
                 && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1)
+                && yes(event.get("recovery_requested")) && yes(event.get("recovery_verified"))
                 && yes(event.get("ordinary_stuck_observed")) && yes(event.get("on_atlas_safe_position"))
                 && yes(event.get("stable_ground_verified"));
     }
@@ -108,11 +109,22 @@ final class ClientAcceptance {
                 && yes(reopen.get("reopen_verified")) && yes(reopen.get("existing_character_verified"))
                 && yes(reopen.get("preserved_existing_identity")) && yes(reopen.get("native_client_ready_observed"))
                 && yes(reopen.get("powers_preserved")) && yes(reopen.get("costume_preserved"))
-                && yes(reopen.get("ordinary_stuck_observed")) && yes(reopen.get("on_atlas_safe_position"))
-                && yes(reopen.get("stable_ground_verified"))
-                && yes(reopen.get("selected_rows_preserved")) && yes(reopen.get("committed_safe_position_verified"))
+                && yes(reopen.get("selected_rows_preserved")) && yes(reopen.get("committed_native_position_verified"))
+                && optionalRecoveryVerified(reopen)
                 && number(reopen.get("before_character_id"), 1) && number(reopen.get("baseline_character_id"), 1)
                 && number(reopen.get("character_id"), 1);
+    }
+
+    private static boolean optionalRecoveryVerified(Map<?, ?> reopen) {
+        if (Boolean.FALSE.equals(reopen.get("recovery_requested")))
+            return Boolean.FALSE.equals(reopen.get("recovery_verified"))
+                    && Boolean.FALSE.equals(reopen.get("ordinary_stuck_observed"))
+                    && Boolean.FALSE.equals(reopen.get("on_atlas_safe_position"))
+                    && Boolean.FALSE.equals(reopen.get("stable_ground_verified"))
+                    && Boolean.FALSE.equals(reopen.get("committed_safe_position_verified"));
+        return yes(reopen.get("recovery_requested")) && yes(reopen.get("recovery_verified"))
+                && yes(reopen.get("ordinary_stuck_observed")) && yes(reopen.get("on_atlas_safe_position"))
+                && yes(reopen.get("stable_ground_verified")) && yes(reopen.get("committed_safe_position_verified"));
     }
 
     static boolean characterReopenAccepted(Object value, Object savedEvent, Object connectedEvent,
@@ -120,12 +132,17 @@ final class ClientAcceptance {
                                            long started, long ended, long connectedObserved, long connectedFrameWatermark,
                                            long relocatedObserved, long relocatedFrameWatermark,
                                            long savedObserved, long windowEnded, long savedFrameWatermark) {
-        return characterReopenVerified(value, savedEvent, connectedEvent, session, clientPid)
-                && characterRelocatedEvent(relocatedEvent, session, clientPid)
-                && connectedObserved >= started && relocatedObserved >= connectedObserved && savedObserved >= relocatedObserved
+        if (!characterReopenVerified(value, savedEvent, connectedEvent, session, clientPid)
+                || connectedObserved < started || savedObserved < connectedObserved
+                || !surfaceAccepted(savedSamples, session, started, ended, savedObserved, windowEnded, savedFrameWatermark)) return false;
+        boolean requested = yes(object(object(value).get("character_reopen")).get("recovery_requested"));
+        if (!requested)
+            return surfaceAccepted(connectedSamples, session, started, ended, connectedObserved,
+                    savedObserved, connectedFrameWatermark);
+        return characterRelocatedEvent(relocatedEvent, session, clientPid)
+                && relocatedObserved >= connectedObserved && savedObserved >= relocatedObserved
                 && surfaceAccepted(connectedSamples, session, started, ended, connectedObserved, relocatedObserved, connectedFrameWatermark)
-                && surfaceAccepted(relocationSamples, session, started, ended, relocatedObserved, savedObserved, relocatedFrameWatermark)
-                && surfaceAccepted(savedSamples, session, started, ended, savedObserved, windowEnded, savedFrameWatermark);
+                && surfaceAccepted(relocationSamples, session, started, ended, relocatedObserved, savedObserved, relocatedFrameWatermark);
     }
 
     static boolean interactionCompleted(Object value) {

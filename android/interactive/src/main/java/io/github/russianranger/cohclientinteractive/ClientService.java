@@ -94,6 +94,14 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&canSaveLogout&&active!=null&&active.requestSaveLogout();
     }
+    public boolean canCaptureContact(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.canCaptureContact();
+    }
+    public boolean requestContactCapture(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.requestContactCapture();
+    }
     public boolean finish(String selectedSession){return session.equals(selectedSession)&&requestFinish();}
     public boolean requestFinish(){
         ClientRuntime active=runtime;

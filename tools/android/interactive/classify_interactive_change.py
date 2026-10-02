@@ -100,6 +100,19 @@ SHELL_ONLY = frozenset({
 # workflow. Repairs reuse the verified Game and MapServer build; the historical
 # full donor pipeline must not publish over those dedicated releases.
 RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-contact-interaction.yml',
+    'android/guest/stationary_contact_evidence.py',
+    'tools/android/interactive/build_contact_interaction_apk.py',
+    'tools/android/interactive/qualify_contact_interaction.py',
+    'tools/android/interactive/test_contact_interaction_package.py',
+    'tools/android/interactive/test_contact_capture.py',
+    'tools/android/interactive/test_stationary_contact_evidence.py',
+    'tools/android/interactive/test_acceptance.py',
+    'tools/android/interactive/test_character_reopen_guest.py',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java',
+    'docs/COH-Atlas-Gameplay-0.12.0-testing.txt',
+    'docs/android-evidence/thor-0.11.6-client-accepted-20261002.json',
+    'docs/android-evidence/contact-interaction-0.12.0-publication.json',
     '.github/workflows/android-reopen-repair.yml',
     'tools/android/interactive/build_reopen_repair_apk.py',
     'tools/android/interactive/qualify_reopen_repair.py',

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reopen preserved THORHERO, recover through /stuck, and save normally."""
+"""Reopen preserved THORHERO and save normally; /stuck is optional recovery."""
 from pathlib import Path
 import copy
 import sys
@@ -11,7 +11,8 @@ import character_session_budget as session_budget
 
 base, require, character = creation.base, creation.require, creation.character
 SCOPE = 'actual_character_reopen_guest'
-REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_session_budget.py', 'atlas_world_assets.py',
+REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_session_budget.py',
+                              'stationary_contact_evidence.py', 'atlas_world_assets.py',
                               'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
 
 
@@ -27,8 +28,14 @@ def character_identity(proof, session):
 def save_verified(proof, session):
     if not (character_identity(proof, session) and creation.save_verified(proof, session)
             and all(proof.get(key) is True for key in ('powers_preserved', 'costume_preserved',
-                'selected_rows_preserved', 'ordinary_stuck_observed', 'on_atlas_safe_position',
-                'stable_ground_verified', 'committed_safe_position_verified'))):
+                'selected_rows_preserved', 'committed_native_position_verified'))
+            and type(proof.get('recovery_requested')) is bool
+            and (proof['recovery_requested'] is False and all(proof.get(key) is False for key in (
+                    'recovery_verified', 'ordinary_stuck_observed', 'on_atlas_safe_position',
+                    'stable_ground_verified', 'committed_safe_position_verified'))
+                or proof['recovery_requested'] is True and all(proof.get(key) is True for key in (
+                    'recovery_verified', 'ordinary_stuck_observed', 'on_atlas_safe_position',
+                    'stable_ground_verified', 'committed_safe_position_verified')))):
         return False
     before, after = proof.get('before_login_count'), proof.get('login_count')
     return type(before) is int and 0 < before < 2**31 - 1 and type(after) is int and after == before + 1
@@ -55,7 +62,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
 
     def saved_event_data(self, proof):
         return {'reopen_verified': True, 'powers_preserved': True, 'costume_preserved': True,
-                'preserved_existing_identity': True, 'stable_ground_verified': True}
+                'preserved_existing_identity': True,
+                'committed_native_position_verified': True,
+                'recovery_requested': proof['recovery_requested'],
+                'recovery_verified': proof['recovery_verified']}
 
     def interaction_deadline(self, deadline, launch):
         if not self.connected_announced:
@@ -94,7 +104,8 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             native_ms = (ready['utc_ms'] if type(ready.get('utc_ms')) is int else
                 int(time.mktime(time.strptime(ready['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000))
             metrics['native_ready_to_observation_ms'] = proof['client_ready_observed_utc_ms'] - native_ms
-        if (self.connected_announced and proof.get('stable_ground_verified') is True
+        if (self.connected_announced and proof.get('recovery_requested') is True
+                and proof.get('recovery_verified') is True and proof.get('stable_ground_verified') is True
                 and not getattr(self, 'relocated_announced', False)):
             require(self.identity_verified(proof, self.args.session_id)
                     and proof.get('ordinary_stuck_observed') is True
@@ -120,6 +131,7 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             self.ctx.event('character_relocated', session_id=self.args.session_id,
                 client_pid=proof['client_pid'], character_id=proof['character_id'],
                 name=creation.CHARACTER_NAME, account=creation.login.server.ACCOUNT, map_id=1,
+                recovery_requested=True, recovery_verified=True,
                 ordinary_stuck_observed=True, on_atlas_safe_position=True, stable_ground_verified=True)
         return result
 

@@ -32,10 +32,11 @@ public final class SessionBudgetHost {
         value.put("native_client_ready_observed", true); value.put("reopen_verified", true);
         value.put("revision", revision); value.put("phase", revision == 1 ? "connected" : "grounded");
         value.put("generated_utc_ms", generated); value.put("deadline_utc_ms", end);
-        value.put("save_request_deadline_utc_ms", revision == 1 ? 0L : end - 180000);
-        value.put("movement_deadline_utc_ms", revision == 1 ? 0L : end - 240000);
+        value.put("save_request_deadline_utc_ms", end - 180000);
+        value.put("movement_deadline_utc_ms", end - 240000);
         if (revision == 2) {
             value.put("ordinary_stuck_observed", true); value.put("stable_ground_verified", true);
+            value.put("recovery_requested", true); value.put("recovery_verified", true);
         }
         return value;
     }
@@ -57,7 +58,7 @@ public final class SessionBudgetHost {
         check(budget.revision() == 1 && "connected".equals(budget.phase()), "one-way connected phase");
         check(budget.deadline() == CUP + actualEnd - CONNECTED, "connection allowance is capped at actual launcher plus34min");
         check(actualEnd > MENU + 1200000, "regression timeline previously exhausted menu budget");
-        check(!budget.canMove(CUP) && !budget.canSave(CUP), "connection alone cannot bypass ground proof");
+        check(budget.canMove(CUP) && budget.canSave(CUP), "native connection grants ordinary gameplay and save without recovery");
         check(apply(budget, event(2, GROUND, STUCK + 600000), GROUND, GUP, GUP + 3600000), "ground phase accepted");
         check(budget.revision() == 2 && "grounded".equals(budget.phase()), "one-way grounded phase");
         check(budget.movementDeadline() == GUP + STUCK + 360000 - GROUND, "movement ends at recovery plus six minutes");
@@ -136,11 +137,16 @@ public final class SessionBudgetHost {
             case "wrong_phase": value.put("phase", "grounded"); break;
             case "connected_save_nonzero": value.put("save_request_deadline_utc_ms", wall + 60000); break;
             case "connected_movement_nonzero": value.put("movement_deadline_utc_ms", wall + 60000); break;
+            case "connected_save_missing": value.remove("save_request_deadline_utc_ms"); break;
+            case "connected_move_missing": value.remove("movement_deadline_utc_ms"); break;
+            case "connected_save_zero": value.put("save_request_deadline_utc_ms", 0L); break;
+            case "connected_move_zero": value.put("movement_deadline_utc_ms", 0L); break;
+            case "connected_no_reserves": value = event(1, wall, wall + 240000); break;
             case "utc_to_small_uptime": up = 17; cap = 1200017; expected = true; break;
             case "utc_to_large_uptime": up = 900000000000L; cap = up + 1200000; expected = true; break;
             case "future_tolerance_boundary": value.put("generated_utc_ms", wall + 1000); expected = true; break;
             case "future_tolerance_exceeded": value.put("generated_utc_ms", wall + 1001); break;
-            case "freshness_boundary": value.put("generated_utc_ms", wall - 120000); value.put("deadline_utc_ms", wall + 1080000); expected = true; break;
+            case "freshness_boundary": value = event(1, wall - 120000, wall + 1080000); expected = true; break;
             case "stale_event": value.put("generated_utc_ms", wall - 120001); value.put("deadline_utc_ms", wall + 1079999); break;
             case "zero_generated": value.put("generated_utc_ms", 0L); break;
             case "zero_wall": wall = 0; break;
@@ -165,6 +171,9 @@ public final class SessionBudgetHost {
             case "ground_missing_stuck_proof": value.remove("ordinary_stuck_observed"); break;
             case "ground_false_stuck_proof": value.put("ordinary_stuck_observed", false); break;
             case "ground_string_stuck_proof": value.put("ordinary_stuck_observed", "true"); break;
+            case "ground_missing_request_status": value.remove("recovery_requested"); break;
+            case "ground_unverified_recovery": value.put("recovery_verified", false); break;
+            case "ground_deadline_extension": value = event(2, wall, CONNECTED + 1200001); break;
             case "ground_not_observed": grounded = false; break;
             case "ground_wrong_phase": value.put("phase", "connected"); break;
             case "ground_zero_relocation": relocation = 0; break;
@@ -219,7 +228,9 @@ CASES = {
         'string_native_ready', 'missing_reopen_proof', 'false_reopen_proof', 'string_reopen_proof'),
     'integer_protocol_types': ('format_string', 'format_double', 'pid_boolean', 'character_string',
         'map_double', 'revision_double', 'generated_string', 'deadline_double',
-        'connected_save_nonzero', 'connected_movement_nonzero', 'ground_save_string', 'ground_move_double'),
+        'connected_save_nonzero', 'connected_movement_nonzero', 'connected_save_missing',
+        'connected_move_missing', 'connected_save_zero', 'connected_move_zero', 'connected_no_reserves',
+        'ground_save_string', 'ground_move_double'),
     'freshness_and_independent_clocks': ('utc_to_small_uptime', 'utc_to_large_uptime',
         'future_tolerance_boundary', 'future_tolerance_exceeded', 'freshness_boundary', 'stale_event',
         'zero_generated', 'zero_wall', 'negative_wall', 'negative_uptime', 'end_equal_now',
@@ -228,6 +239,7 @@ CASES = {
         'max_generated', 'max_deadline'),
     'ground_reserves_and_recovery_binding': ('ground_expired_connected_phase', 'ground_after_connected_phase', 'ground_missing_ground_proof', 'ground_false_ground_proof',
         'ground_string_ground_proof', 'ground_missing_stuck_proof', 'ground_false_stuck_proof',
+        'ground_missing_request_status', 'ground_unverified_recovery', 'ground_deadline_extension',
         'ground_string_stuck_proof', 'ground_not_observed', 'ground_wrong_phase', 'ground_zero_relocation',
         'ground_future_relocation', 'ground_max_relocation', 'ground_stale_event', 'ground_save_equal_now',
         'ground_save_before_now', 'ground_move_equal_generated', 'ground_move_before_generated',

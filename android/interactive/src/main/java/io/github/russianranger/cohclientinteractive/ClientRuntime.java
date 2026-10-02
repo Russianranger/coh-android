@@ -73,6 +73,10 @@ public final class ClientRuntime {
     private volatile boolean characterSavedReady;
     private final List<Map<String, Object>> interactionSamples = new ArrayList<>();
     private final List<byte[]> interactionPngs = new ArrayList<>();
+    private final ContactCaptureWindow contactCapture = new ContactCaptureWindow();
+    private final List<Map<String,Object>> contactRequests = new ArrayList<>();
+    private final List<Map<String,Object>> contactSamples = new ArrayList<>();
+    private final List<byte[]> contactPngs = new ArrayList<>();
     private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<Runnable>(128), runnable -> new Thread(runnable, "coh-interactive-input"));
     private volatile boolean inputReady, finishRequested;
@@ -426,13 +430,76 @@ public final class ClientRuntime {
         if (keysym <= 0) return false;
         return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
     }
+    /** Bounds manual contact-view evidence; it never proves a native dialog opened. */
+    private static final class ContactCaptureWindow {
+        static final int MAX_REQUESTS=3, FRAMES_PER_REQUEST=3;
+        static final long MAX_AGE_MS=120000;
+        private String session;
+        private long pid, requested, deadline, watermark, lastCapture=-1, lastSequence=-1;
+        private int batch, count;
+        boolean canRequest(long now) {
+            return now>=0 && now>=requested && (lastCapture<0 || now>=lastCapture) && batch<MAX_REQUESTS
+                    && (batch==0 || count==FRAMES_PER_REQUEST || now>deadline);
+        }
+        boolean request(String selectedSession,long selectedPid,long characterId,long now,long sequence) {
+            if(selectedSession==null || !selectedSession.matches("[0-9a-f]{32}") || selectedPid<=0
+                    || selectedPid>4294967295L || characterId!=1 || now>Long.MAX_VALUE-MAX_AGE_MS
+                    || sequence<0 || !canRequest(now))return false;
+            session=selectedSession;pid=selectedPid;requested=now;deadline=now+MAX_AGE_MS;
+            watermark=sequence;lastCapture=lastSequence=-1;count=0;batch++;
+            return true;
+        }
+        boolean accepts(String selectedSession,long selectedPid,long characterId,long captured,long sequence) {
+            return batch>0 && count<FRAMES_PER_REQUEST && session.equals(selectedSession) && pid==selectedPid
+                    && characterId==1 && captured>requested && captured<=deadline && sequence>watermark
+                    && sequence>lastSequence && (lastCapture<0 || captured-lastCapture>=1000);
+        }
+        boolean accept(String selectedSession,long selectedPid,long characterId,long captured,long sequence) {
+            if(!accepts(selectedSession,selectedPid,characterId,captured,sequence))return false;
+            lastCapture=captured;lastSequence=sequence;count++;return true;
+        }
+        int batch(){return batch;}
+        int count(){return count;}
+    }
+    public synchronized boolean canCaptureContact() {
+        return reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
+                && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
+                && sessionBudget.canMove(SystemClock.uptimeMillis())
+                && contactCapture.canRequest(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean requestContactCapture() {
+        if(!canCaptureContact())return false;
+        long now=SystemClock.uptimeMillis();
+        if(!contactCapture.request(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),now,decodedFrames))return false;
+        Map<String,Object> request=new LinkedHashMap<>();
+        request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+        request.put("batch",contactCapture.batch());request.put("requested_uptime_ms",now);
+        request.put("frame_watermark",decodedFrames);request.put("dialog_semantics_verified",false);
+        contactRequests.add(request);
+        recordLifecycle("stationary_contact_view_capture_requested batch="+contactCapture.batch());
+        requestContactFullUpdate();
+        stage("Capturing contact view", "Keep the contact dialog visible while three fresh Android views are captured. Read a response, then close it normally and Save before the countdown expires.");
+        notifyInputState();return true;
+    }
+    private void requestContactFullUpdate() {
+        final InteractiveRfbClient expected=decoder;
+        final String expectedSession=session;
+        if(expected==null || inputWorker.isShutdown())return;
+        try { inputWorker.execute(()->{
+            if(decoder!=expected || !expectedSession.equals(session) || finished || cancelled || producerCompleted)return;
+            try { expected.requestFullUpdate(); }
+            catch(IOException failure) { inputFailure("Contact view refresh failed"); }
+        }); }
+        catch(RejectedExecutionException unavailable) { recordLifecycle("contact_view_refresh_queue_unavailable"); }
+    }
     private boolean gameplayInputAllowed() {
-        return !reopen || sessionBudget.revision() < 2
+        return !reopen || sessionBudget.revision() < 1
                 || (!saveLogoutRequested && sessionBudget.canMove(SystemClock.uptimeMillis()));
     }
     /** Release held inputs even if the activity is paused when its movement cutoff arrives. */
     public synchronized void enforceSessionDeadlines() {
-        if (!reopen || sessionBudget.revision() < 2 || deadlineInputSuppressed
+        if (!reopen || sessionBudget.revision() < 1 || deadlineInputSuppressed
                 || sessionBudget.canMove(SystemClock.uptimeMillis()) || finished || producerCompleted) return;
         deadlineInputSuppressed = true;
         // A queued normal save releases held input before typing its command.
@@ -488,8 +555,8 @@ public final class ClientRuntime {
     private void notifyInputState() {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
                 finishRequested && !finished, characterSavedReady,
-                reopen && sessionBudget.revision() >= 1 && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
-                characterConnectedEvent != null && (!reopen || (relocationCapturedReady && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
+                characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
                 inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
@@ -530,7 +597,7 @@ public final class ClientRuntime {
     }
     public synchronized boolean requestReturnToSafeGround() {
         if (!reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
-                || sessionBudget.revision() < 1 || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
+                || !sessionBudget.canMove(SystemClock.uptimeMillis()) || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
                 || saveLogoutRequested || characterSavedEvent != null) return false;
         final String relocationSession = session;
         final long relocationClientPid = observedClientPid;
@@ -559,7 +626,7 @@ public final class ClientRuntime {
 
     public synchronized boolean requestSaveLogout() {
         if (!inputReady || finished || finishRequested || cancelled || producerCompleted
-                || characterConnectedEvent == null || (reopen && (!relocationCapturedReady || !sessionBudget.canSave(SystemClock.uptimeMillis()))) || characterSavedEvent != null || saveLogoutRequested) return false;
+                || characterConnectedEvent == null || (reopen && (!connectedCapturedReady || (stuckRequested && !relocationCapturedReady) || !sessionBudget.canSave(SystemClock.uptimeMillis()))) || characterSavedEvent != null || saveLogoutRequested) return false;
         final String logoutSession = session;
         final long logoutClientPid = observedClientPid;
         final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
@@ -671,7 +738,10 @@ public final class ClientRuntime {
                 && ((Number) sequence).longValue() > lastInputFrameWatermark;
         boolean interactionSample = readyDeadlineUptimeMillis > 0 && (interactionSamples.isEmpty()
                 || (afterInput && inputSent > lastCapturedInputCount) || (finishRequested && !finishCaptureRetained));
-        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample) return;
+        boolean contactSample = characterConnectedEvent!=null && !saveLogoutRequested && characterSavedEvent==null
+                && (!stuckRequested || relocationCapturedReady) && sessionBudget.canMove(SystemClock.uptimeMillis())
+                && contactCapture.accepts(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue());
+        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample) return;
         try {
             // Bind the retained bytes to the PixelCopy record. The source Surface
             // provides the nonuniform check; the PNG must be a bounded 800x600 image.
@@ -685,6 +755,18 @@ public final class ClientRuntime {
             sample.put("png_sha256", digest);
             sample.put("png_verified", true);
             sample.put("png_bytes", png.length);
+            if (contactSample && contactCapture.accept(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue())) {
+                Map<String,Object> contact = new LinkedHashMap<>(sample);
+                contact.put("client_pid",observedClientPid);contact.put("character_id",1);
+                contact.put("batch",contactCapture.batch());contact.put("dialog_semantics_verified",false);
+                contact.put("archive_path","android-contact/capture-"+(contactSamples.size()+1)+".png");
+                contactSamples.add(contact);contactPngs.add(png.clone());
+                if(contactCapture.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
+                if(contactCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST) {
+                    stage("Contact view captured", "Three fresh Android views were saved for review. Confirm the NPC and readable dialog, choose a normal response or Goodbye, then release controls for 60 seconds before Save.");
+                    notifyInputState();
+                }
+            }
             if (startupSample) {
                 sample.put("archive_path", "android-surface/capture-" + (surfaceSamples.size()+1) + ".png");
                 surfaceSamples.add(sample); surfacePngs.add(png.clone());
@@ -705,7 +787,7 @@ public final class ClientRuntime {
                 connectedSamples.add(connected); connectedPngs.add(png.clone());
                 if (connectedSamples.size() == 3) {
                     connectedCapturedReady = true;
-                    stage("Saved character reopened", "The same THORHERO connected to Atlas and three fresh Android views were captured. Dismiss the Welcome popup with OK, tap Return to safe ground once, then stay still while the server verifies its position. Inspect the scenery, character and UI after recovery.");
+                    stage("Atlas ready for contact interaction", "THORHERO connected and fresh Android views were captured. Dismiss help, approach Ms. Liberty by the Atlas statue or City Representative inside City Hall, point at the NPC and press A/click to talk. Capture the contact dialog. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
             }
@@ -888,7 +970,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "The existing THORHERO connected to Atlas. Waiting for three fresh Android views before Return to safe ground becomes available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? "The existing THORHERO connected to Atlas. Waiting for fresh Android views and the bounded session window before movement, contact interaction and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if (reopen && stuckRequested && connectedCapturedReady && characterRelocatedEvent == null
@@ -1121,7 +1203,7 @@ public final class ClientRuntime {
 
     private boolean characterSurfaceAccepted(JSONObject report) throws Exception {
         synchronized (this) {
-            if (reopen) return characterSavedReady && connectedCapturedReady && relocationCapturedReady
+            if (reopen) return characterSavedReady && connectedCapturedReady && (!stuckRequested || relocationCapturedReady)
                     && ClientAcceptance.characterReopenAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), jsonValue(characterRelocatedEvent), connectedSamples, relocationSamples, characterSamples, session, observedClientPid,
                     startedUptime, endedUptime, connectedObservedUptime, connectedFrameWatermark, relocatedObservedUptime, relocatedFrameWatermark,
@@ -1236,6 +1318,19 @@ public final class ClientRuntime {
                 wrapper.put("connected_captures", new JSONArray(connectedSamples));
                 wrapper.put("relocation_captures", new JSONArray(relocationSamples));
                 wrapper.put("interaction_captures", new JSONArray(interactionSamples));
+                List<Map<String,Object>> requests = new ArrayList<>();
+                for(Map<String,Object> original:contactRequests) {
+                    Map<String,Object> request=new LinkedHashMap<>(original);
+                    int count=0;
+                    for(Map<String,Object> capture:contactSamples)if(original.get("batch").equals(capture.get("batch")))count++;
+                    request.put("fresh_views_captured",count);request.put("capture_complete",count==ContactCaptureWindow.FRAMES_PER_REQUEST);
+                    requests.add(request);
+                }
+                wrapper.put("stationary_contact",new JSONObject().put("capture_requests",new JSONArray(requests))
+                        .put("captures",new JSONArray(contactSamples)).put("maximum_requests",ContactCaptureWindow.MAX_REQUESTS)
+                        .put("frames_per_request",ContactCaptureWindow.FRAMES_PER_REQUEST).put("dialog_semantics_verified",false)
+                        .put("native_interaction_effect_verified",false).put("user_visual_assessment_required",true));
+                wrapper.put("recovery_requested",stuckRequested).put("recovery_verified",stuckRequested&&relocationCapturedReady);
                 wrapper.put("lifecycle", new JSONArray(lifecycle));
             }
             String status = isCleanupBlocked() ? "cleanup_failed" : cancelled ? "cancelled" : passed ? "passed"
@@ -1261,6 +1356,8 @@ public final class ClientRuntime {
                     zipBytes(out, "android-character/capture-" + (i+1) + ".png", characterPngs.get(i)); }
                 synchronized (this) { for (int i=0;i<interactionPngs.size();i++)
                     zipBytes(out, (String) interactionSamples.get(i).get("archive_path"), interactionPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<contactPngs.size();i++)
+                    zipBytes(out, (String) contactSamples.get(i).get("archive_path"), contactPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
                 if (manifest != null) zipText(out, "runtime-manifest.json", manifest.toString(2));
                 if (generation != null) {

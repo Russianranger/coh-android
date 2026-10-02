@@ -24,6 +24,7 @@ def reopened(**changes):
         native_client_ready_observed=True, powers_preserved=True, costume_preserved=True,
         selected_rows_preserved=True, ordinary_stuck_observed=True, on_atlas_safe_position=True,
         stable_ground_verified=True, committed_safe_position_verified=True,
+        recovery_requested=True, recovery_verified=True, committed_native_position_verified=True,
         before_login_count=1, login_count=2)
     result.update(changes)
     return result
@@ -50,6 +51,7 @@ class ReopenProofTests(unittest.TestCase):
         self.assertTrue(guest.save_verified(reopened(), SESSION))
         for field in ('existing_character_verified', 'reopen_verified', 'preserved_existing_identity',
                 'native_client_ready_observed', 'powers_preserved', 'costume_preserved',
+                'recovery_verified', 'committed_native_position_verified',
                 'selected_rows_preserved', 'ordinary_stuck_observed', 'on_atlas_safe_position',
                 'stable_ground_verified', 'committed_safe_position_verified'):
             for value in (None, False, 1, 'true'):
@@ -62,6 +64,17 @@ class ReopenProofTests(unittest.TestCase):
             self.assertFalse(guest.save_verified(reopened(before_login_count=before, login_count=after), SESSION))
         self.assertFalse(guest.save_verified(None, SESSION))
 
+    def test_normal_save_needs_no_recovery_or_ground_claim(self):
+        value = reopened(recovery_requested=False, recovery_verified=False,
+            ordinary_stuck_observed=False, on_atlas_safe_position=False,
+            stable_ground_verified=False, committed_safe_position_verified=False)
+        self.assertTrue(guest.save_verified(value, SESSION))
+        for field, invalid in (('recovery_requested', None), ('recovery_requested', 0),
+                              ('recovery_verified', True), ('stable_ground_verified', True),
+                              ('committed_native_position_verified', False)):
+            with self.subTest(field=field, value=invalid):
+                self.assertFalse(guest.save_verified(dict(value, **{field: invalid}), SESSION))
+
     def test_relocation_event_emits_once_only_for_current_connected_character(self):
         d = guest.CharacterReopenDiagnostic.__new__(guest.CharacterReopenDiagnostic)
         d.args = SimpleNamespace(session_id=SESSION)
@@ -72,6 +85,7 @@ class ReopenProofTests(unittest.TestCase):
             d.observe_console(); d.observe_console()
         d.ctx.event.assert_called_once_with('character_relocated', session_id=SESSION, client_pid=44,
             character_id=1, name='THORHERO', account='COHLOCAL', map_id=1,
+            recovery_requested=True, recovery_verified=True,
             ordinary_stuck_observed=True, on_atlas_safe_position=True, stable_ground_verified=True)
         d.relocated_announced = False
         for field, value in (('client_pid', 45), ('session_id', 'f'*32), ('ordinary_stuck_observed', False)):
@@ -255,6 +269,93 @@ class ReopenServerTests(unittest.TestCase):
         metadata = d.saved_metadata(snapshot)
         self.assertTrue(metadata['powers_preserved']); self.assertTrue(metadata['costume_preserved'])
         self.assertEqual(metadata['before_login_count'], 1)
+
+    def prepare_normal_logout(self, d):
+        d.capture_baseline(); d.auth_id = 77
+        d.creation_report.update(d.connection_metadata(), connected_on_atlas=True, client_pid=44,
+            character_id=1, auth_id=77, client_ready_observed_utc_ms=stamp('261001 01:29:50'))
+        # One actual position is enough for ordinary save: no stable pair or
+        # recovery command is manufactured. City Hall is below zero altitude.
+        raw = position('261001 01:31:00', '106.45,-768,-114.45')
+        d.current_logs = Mock(return_value=[(LOG_NAME, READY + raw)])
+        d.observe_connected_character()
+        logout = dict(format=1, session_id=SESSION, client_pid=44, character_id=1,
+                      action='quittologin', sent_utc_ms=stamp('261001 01:31:20'))
+        (d.owner.args.state/'character-logout.json').write_text(json.dumps(logout))
+        self.clock.return_value = stamp('261001 01:31:40')/1000
+        self.position['posy'] = -768
+        self.rows['ents'][0]['logincount'] = 2
+        return copy.deepcopy(self.rows)
+
+    def test_ordinary_save_without_stuck_keeps_native_position_and_existing_rows(self):
+        d = self.instance(); rows = self.prepare_normal_logout(d)
+        result = d.validate_saved_rows(rows, self.inventory)
+        self.assertEqual(result['login_count'], 2)
+        self.assertTrue(d.creation_report['committed_native_position_verified'])
+        self.assertFalse(d.creation_report['recovery_requested'])
+        self.assertFalse(d.creation_report['recovery_verified'])
+        self.assertFalse(d.creation_report['stable_ground_verified'])
+        self.assertFalse(d.creation_report.get('committed_safe_position_verified', False))
+        self.assertEqual(d.creation_report['saved_position']['posy'], -768)
+
+    def test_normal_save_rejects_missing_stale_fall_floor_mismatched_or_foreign_native_position(self):
+        for failure in ('missing', 'stale', 'future', 'floor', 'mismatch', 'identity', 'powers', 'map'):
+            d = self.instance(); rows = self.prepare_normal_logout(d)
+            if failure == 'missing': d.current_logs.return_value = [(LOG_NAME, READY)]
+            if failure == 'stale': d.current_logs.return_value = [(LOG_NAME, READY + position('261001 01:29:00'))]
+            if failure == 'future': d.current_logs.return_value = [(LOG_NAME, READY + position('261001 01:31:25'))]
+            if failure == 'floor': d.current_logs.return_value = [(LOG_NAME, READY + position('261001 01:31:00', '106.45,-2000,-114.45'))]
+            if failure == 'mismatch': self.position['posx'] += 10
+            if failure == 'identity': d.current_logs.return_value = [(LOG_NAME, READY + position('261001 01:31:00', name='OTHER'))]
+            if failure == 'powers': rows['powers'][0]['uniqueid'] += 1
+            if failure == 'map': self.position['mapid'] = 2
+            with self.subTest(failure=failure), self.assertRaises(server.base.DiagnosticError):
+                d.validate_saved_rows(rows, self.inventory)
+            self.assertFalse(d.creation_report['committed_native_position_verified'])
+
+    def test_explicit_recovery_cannot_fall_back_to_normal_save_when_unverified_or_receipt_replayed(self):
+        d = self.instance(); rows = self.prepare_normal_logout(d)
+        receipt = dict(format=1, session_id=SESSION, client_pid=44, character_id=1,
+                       action='stuck', sent_utc_ms=STUCK_MS)
+        path = d.owner.args.state/'character-relocation.json'
+        path.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'requested ordinary recovery'):
+            d.validate_saved_rows(rows, self.inventory)
+        self.assertTrue(d.creation_report['recovery_requested'])
+        self.assertFalse(d.creation_report['committed_native_position_verified'])
+        receipt['session_id'] = 'f' * 32; path.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'delivery does not match'):
+            d.validate_saved_rows(rows, self.inventory)
+
+    def test_optional_contact_export_failure_preserves_save_proof_and_never_adds_sql(self):
+        d = self.instance(); rows = self.prepare_normal_logout(d)
+        d.validate_saved_rows(rows, self.inventory)
+        accepted = copy.deepcopy(d.creation_report)
+        d.current_logs.side_effect = OSError('read failed')
+        target = d.owner.args.state / 'export'; target.mkdir()
+        sql_calls = d.sql.call_count
+        with patch.object(server.LocalCharacterServer, 'collect'):
+            d.collect(target)
+        self.assertEqual(d.creation_report, accepted)
+        self.assertEqual(d.sql.call_count, sql_calls)
+        self.assertEqual(d.ctx.report['stationary_contact']['status'], 'unavailable')
+        self.assertEqual(d.ctx.report['stationary_contact']['records'], [])
+        self.assertTrue((target / 'character-reopen-before-snapshot.json').is_file())
+        self.assertIn('stationary_contact_evidence.py', guest.REQUIRED)
+        self.assertNotIn('stationary_contact_evidence.py', guest.creation.REQUIRED)
+
+    @patch.object(server.progress, 'compare_records')
+    def test_full_normal_logout_pipeline_without_recovery_retains_committed_identity_and_native_position(self, _compare):
+        d = self.instance(); self.prepare_normal_logout(d)
+        d.health = Mock()
+        d.sample_progress = Mock(return_value={'available': True, 'tick_completed': 7, 'unchanged_seconds': 0})
+        d.query = Mock(return_value='invalid container request\n')
+        d.current_logs.return_value[0] = (LOG_NAME, d.current_logs.return_value[0][1] + LOGOUT)
+        proof = d.character_evidence()
+        self.assertTrue(guest.save_verified(proof, SESSION))
+        self.assertTrue(proof['disconnected_before_sql'])
+        self.assertFalse(proof['recovery_requested'])
+        self.assertEqual(proof['table_sha256']['powers'], proof['baseline']['table_sha256']['powers'])
 
     @patch.object(server.progress, 'compare_records')
     def test_full_ordinary_logout_pipeline_binds_native_connection_recovery_and_saved_identity(self, _compare):

@@ -885,6 +885,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             preserved_existing_identity=False, powers_preserved=False, costume_preserved=False,
             native_client_ready_observed=False, ordinary_stuck_observed=False,
             on_atlas_safe_position=False, stable_ground_verified=False,
+            recovery_requested=False, recovery_verified=False,
+            committed_native_position_verified=False, committed_safe_position_verified=False,
             operation='reopen_existing_character')
 
     def initialize(self):
@@ -998,10 +1000,14 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         delivery = self.relocation_delivery()
         if delivery is None:
             return
+        previous = self.creation_report.get('relocation_delivery')
+        require(previous is None or previous == delivery,
+                'Ordinary recovery delivery changed after request')
+        self.creation_report.update(recovery_requested=True, relocation_delivery=delivery)
         ground = self.native_ground_evidence(delivery)
         if ground is None:
             return
-        self.creation_report.update(ordinary_stuck_observed=True, on_atlas_safe_position=True,
+        self.creation_report.update(recovery_verified=True, ordinary_stuck_observed=True, on_atlas_safe_position=True,
             stable_ground_verified=True, relocation_delivery=delivery, ground_evidence=ground)
         if 'ground_observed_utc_ms' not in self.creation_report:
             self.creation_report.update(ground_observed_utc=base.utc(),
@@ -1023,24 +1029,49 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
             require(evidence._same(previous, current),
                     'Committed existing character rows changed after reopen: ' + table)
-        require(self.creation_report.get('stable_ground_verified') is True,
-                'Existing character was not observed stable after ordinary recovery')
         delivery = self.relocation_delivery()
-        require(delivery == self.creation_report.get('relocation_delivery'),
-                'Ordinary recovery delivery changed before save')
-        ground = self.native_ground_evidence(delivery, max_age_ms=300000)
-        require(ground is not None, 'Native character position fell or became stale before save')
+        requested = self.creation_report.get('recovery_requested') is True or delivery is not None
+        self.creation_report['recovery_requested'] = requested
+        ground = None
+        ready_ms = self.creation_report['client_ready_observed_utc_ms']
+        if requested:
+            require(self.creation_report.get('recovery_verified') is True
+                    and self.creation_report.get('stable_ground_verified') is True,
+                    'Existing character was not observed stable after requested ordinary recovery')
+            require(delivery is not None and delivery == self.creation_report.get('relocation_delivery'),
+                    'Ordinary recovery delivery changed before save')
+            ground = self.native_ground_evidence(delivery, max_age_ms=300000)
+            require(ground is not None, 'Native character position fell or became stale before save')
+            ready_ms = self.creation_report['ground_observed_utc_ms']
         logout = read_logout_delivery(self.owner.args.state / 'character-logout.json',
             self.owner.args.session_id, self.creation_report['client_pid'], self.CHARACTER_ID,
-            self.creation_report['ground_observed_utc_ms'], int(time.time() * 1000))
-        require(logout is not None, 'Save was not requested after stable native recovery')
+            ready_ms, int(time.time() * 1000))
+        require(logout is not None, 'Save was not requested after the current native connection or optional recovery')
+        values = self.current_native_events()
+        positions = (native_position_records(self.current_logs()) if values is None
+                     else character_events.positions_after_ready(values))
+        # This proves the native position committed by ordinary logout, not
+        # stable ground or collision geometry. No recovery command is needed.
+        positions = [value for value in positions
+                     if self.creation_report['client_ready_observed_utc_ms'] <= value['utc_ms']
+                     <= logout['sent_utc_ms'] + 999]
+        native = positions[-1] if positions else None
+        require(native is not None and -999 <= logout['sent_utc_ms'] - native['utc_ms'] <= 180000
+                and all(type(value) in (int, float) and math.isfinite(value)
+                        and abs(value) <= 1000000 for value in native['position'])
+                and above_native_fall_floor(native['position'][1]),
+                'No fresh valid native Atlas position before ordinary logout')
         position = self.character_position()
         current_position = [position[key] for key in ('posx', 'posy', 'posz')]
         require(above_native_fall_floor(position['posy'])
-                and all(abs(a-b) <= 2 for a, b in zip(current_position, ground['position'])),
-                'Committed character position differs from the stable native recovery')
-        self.creation_report.update(ground_evidence=ground, saved_position=position,
-                                    committed_safe_position_verified=True)
+                and all(abs(a-b) <= 2 for a, b in zip(current_position, native['position'])),
+                'Committed character position differs from the current native Atlas observation')
+        if requested:
+            require(all(abs(a-b) <= 2 for a, b in zip(current_position, ground['position'])),
+                    'Committed character position differs from the stable native recovery')
+            self.creation_report.update(ground_evidence=ground, committed_safe_position_verified=True)
+        self.creation_report.update(saved_position=position, saved_native_position_evidence=native,
+                                    committed_native_position_verified=True)
         return after
 
     def saved_metadata(self, snapshot):
@@ -1054,3 +1085,18 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if self.baseline_snapshot is not None:
             base.private_write(target / 'character-reopen-before-snapshot.json',
                                json.dumps(self.baseline_snapshot, indent=2) + '\n')
+        # Export-only optional diagnostics. No extra readiness polling, SQL
+        # queries or native inputs are introduced by stationary contact proof.
+        try:
+            import stationary_contact_evidence as contact_evidence
+            contact = contact_evidence.collect(self.current_logs(), self.creation_report,
+                session=self.owner.args.session_id, client_pid=self.creation_report.get('client_pid'),
+                now_utc_ms=int(time.time() * 1000))
+        except Exception as error:
+            contact = {'format': 1, 'optional': True, 'status': 'unavailable', 'records': [],
+                'native_initiation_observed': False, 'native_response_observed': False,
+                'dialogue_visual_verified': False,
+                'reason': 'Optional contact collection unavailable: ' + type(error).__name__}
+        contact['collection_phase'] = self.ctx.report.get('character_server_logs', {}).get(
+            'collection_phase', 'unavailable')
+        self.ctx.report['stationary_contact'] = contact

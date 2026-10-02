@@ -25,7 +25,7 @@ def utc_milliseconds(value):
 
 
 class SessionBudget:
-    """One native connection and one receipt-bound recovery may set deadlines."""
+    """Connection grants a finite play/save window; optional recovery can shorten it."""
     def __init__(self, session_id, client_pid, launcher_started, operation_deadline):
         require(isinstance(session_id, str) and re.fullmatch(r'[0-9a-f]{32}', session_id)
                 and type(client_pid) is int and 0 < client_pid <= 4294967295,
@@ -75,7 +75,8 @@ class SessionBudget:
             'movement_deadline_utc_ms': movement_ms, 'native_client_ready_observed': True,
             'reopen_verified': True}
         if phase == 'grounded':
-            value.update(ordinary_stuck_observed=True, stable_ground_verified=True)
+            value.update(recovery_requested=True, recovery_verified=True,
+                         ordinary_stuck_observed=True, stable_ground_verified=True)
         self.events.append(value)
         return dict(value)
 
@@ -86,14 +87,21 @@ class SessionBudget:
             return None
         deadline = min(now + CONNECTED_SECONDS, self.hardcap)
         require(deadline > now, 'Native connection arrived after the reserved session lifetime')
+        finish_ms = now_utc_ms + int(round((deadline - now) * 1000))
+        save_ms = finish_ms - SAVE_PROOF_RESERVE_MS
+        movement_ms = save_ms - NEUTRAL_RESERVE_MS
+        require(now_utc_ms < movement_ms < save_ms < finish_ms,
+                'Connected budget is exhausted before neutral wait and ordinary save reserves')
         self.revision, self.deadline = 1, deadline
-        return self.event('connected', now, now_utc_ms, deadline)
+        return self.event('connected', now, now_utc_ms, deadline,
+                          save_ms=save_ms, movement_ms=movement_ms)
 
     def grounded(self, proof, now, now_utc_ms):
         self.clocks(now, now_utc_ms)
         self.identity(proof)
         require(self.revision >= 1 and all(proof.get(key) is True for key in (
-                    'ordinary_stuck_observed', 'on_atlas_safe_position', 'stable_ground_verified')),
+                    'recovery_requested', 'recovery_verified', 'ordinary_stuck_observed',
+                    'on_atlas_safe_position', 'stable_ground_verified')),
                 'Ground budget requires current ordinary recovery and stable native evidence')
         receipt = proof.get('relocation_delivery')
         ready_ms = proof.get('client_ready_observed_utc_ms')
@@ -110,7 +118,8 @@ class SessionBudget:
         if self.revision == 2:
             require(receipt == self.receipt, 'Ground budget recovery receipt changed after acceptance')
             return None
-        hardcap_ms = now_utc_ms + int(round((self.hardcap - now) * 1000))
+        require(now < self.deadline, 'Ground budget cannot revive the expired connected deadline')
+        hardcap_ms = now_utc_ms + int(round((min(self.hardcap, self.deadline) - now) * 1000))
         finish_ms = min(receipt['sent_utc_ms'] + RECOVERY_MAX_AGE_MS, hardcap_ms)
         save_ms = min(receipt['sent_utc_ms'] + SAVE_REQUEST_AGE_MS,
                       finish_ms - SAVE_PROOF_RESERVE_MS)

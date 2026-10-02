@@ -11,8 +11,8 @@ public final class ClientSessionBudget {
     public synchronized long deadline() { return deadline; }
     public synchronized long saveDeadline() { return saveDeadline; }
     public synchronized long movementDeadline() { return movementDeadline; }
-    public synchronized boolean canMove(long now) { return revision == 2 && now < movementDeadline; }
-    public synchronized boolean canSave(long now) { return revision == 2 && now < saveDeadline; }
+    public synchronized boolean canMove(long now) { return revision >= 1 && now < movementDeadline; }
+    public synchronized boolean canSave(long now) { return revision >= 1 && now < saveDeadline; }
 
     private static long integer(Object value) {
         return value instanceof Integer || value instanceof Long ? ((Number)value).longValue() : -1;
@@ -37,15 +37,18 @@ public final class ClientSessionBudget {
                 || wallNow - generated > 120000 || end <= wallNow || end - generated > 1200000
                 || end - wallNow > hardCapUptime - uptimeNow) return false;
         if (next == 1) {
-            if (!"connected".equals(event.get("phase")) || save != 0 || movement != 0) return false;
+            if (!"connected".equals(event.get("phase")) || save <= wallNow || movement <= generated
+                    || movement != save - 60000 || end - save != 180000) return false;
         } else {
             if (!"grounded".equals(event.get("phase")) || !grounded || deadline <= uptimeNow || relocationSentUtc <= 0
                     || relocationSentUtc > wallNow + 1000 || wallNow - relocationSentUtc > 600000
                     || !Boolean.TRUE.equals(event.get("ordinary_stuck_observed"))
                     || !Boolean.TRUE.equals(event.get("stable_ground_verified"))
+                    || !Boolean.TRUE.equals(event.get("recovery_requested"))
+                    || !Boolean.TRUE.equals(event.get("recovery_verified"))
                     || save <= wallNow || movement <= generated || movement != save - 60000
                     || save > relocationSentUtc + 420000 || end > relocationSentUtc + 600000
-                    || end - save != 180000) return false;
+                    || end - save != 180000 || end - wallNow > deadline - uptimeNow) return false;
         }
         deadline = uptimeNow + end - wallNow;
         saveDeadline = save == 0 ? 0 : uptimeNow + save - wallNow;
