@@ -1,16 +1,50 @@
 # City of Heroes Android handoff
 
-**Storage continuation (October 3, 2026): The user is currently testing the
-published 0.13.0 task/save gate and reports 57.44 GB of internal app storage.
-The authorized 0.13.1 pass adds idle-only storage inspection and explicitly
-selected cleanup of verified older runtimes, component downloads and older
-completed reports. It preserves every 0.13.0 runtime payload byte, all saved
-character/database/Wine/server-cache state, all imports, the latest gameplay
-report and the newest three report directories. No runtime refresh, reimport
-or repeated gameplay test is required. Publication and device cleanup results
-are pending. The current test must finish/export before installing this update.**
+**Current storage publication (October 3, 2026): 0.13.1 is published and independently
+verified from `5252595717a1965a76251d4110725185bbcbbe20`. It adds idle-only storage
+inspection and explicitly reviewed cleanup for the user-reported 57.44 GB app
+usage. [Run 37129906760](https://github.com/Russianranger/coh-android/actions/runs/37129906760)
+passed both jobs: 384 host checks across 28 suites, no skips and 201 source pins.
+PR #1 remains draft on the same continuation; main remains 04d62616. Device
+cleanup and actual recovered space remain unmeasured. The current 0.13.0
+physical task/save test is underway and must finish/export before this update.**
 
-**Current publication (October 3, 2026): 0.13.0 is published and independently
+[Download the storage update](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.1)
+with [its instructions](COH-Atlas-Gameplay-0.13.1-testing.txt).
+Public APK: 675,288,850 bytes, SHA-256
+`7652106de29838389b012aee802ccb784c6fc956dffe66d566773e1eb40bd9d3`.
+It adds only 20,480 bytes to the previous APK. All 65 runtime payloads and the
+runtime/client manifest bytes are exactly 0.13.0, retaining the signer,
+93 startup caches, 5,878 animation pack and all task/input/save behavior.
+No runtime refresh, reimport, new native preload or repeated physical test is
+required. [Publication receipt](android-evidence/storage-cleanup-0.13.1-publication.json).
+
+Runtime setup creates a new `m2/runtime-<manifest SHA prefix>` for changed
+manifests and previously retained older full Linux/Wine/PostgreSQL/asset trees.
+Component downloads and completed support-report directories also accumulate.
+These are candidates rather than a measured attribution of the 57.44 GB.
+Storage and cleanup → Scan storage reports actual allocated blocks and apparent
+file lengths. Review selected cleanup lists categories, paths and estimates;
+Clean selected performs deletion only after a complete unchanged rescan and
+verified current runtime. Unknown or unsafe identities disable or exclude
+cleanup. Errors stop remaining deletion and report partial progress. The
+separate JSON export preserves the latest gameplay report. Scan/cleanup/export
+share idle operation ownership with gameplay/setup/import; fd-anchored deletion
+and literal symlink digests guard path changes. Scans have entry/depth/time and
+memory bounds; partial scans cannot authorize deletion.
+
+All `client/state` (character/PostgreSQL/Wine, cache/worktree anchors, raw
+evidence), all imported generations, current runtime, protected symlink targets,
+latest report and newest three report directories remain protected. Cached
+component removal can require a future download on a genuine runtime change.
+No automatic pruning occurs. The device inventory and Android Settings figures
+before/after cleanup will guide any later state/evidence retention work.
+Independent downloaded-public-byte audit passes every payload/DEX/ZIP CRC,
+actual server archive extraction, original animation envelope/header closure,
+official v2/v3 signer, alignment/ABI/version and version-only binary manifest
+changes. Original 0.13.0 publication and accepted gameplay progress remain below.
+
+**Retained gameplay publication (October 3, 2026): 0.13.0 is published and independently
 verified from `53c885896e9b4d838be0f36a1f09237f04c08a00`. It implements the newly
 authorized option 9 and the task acceptance/command-completion/ordinary-save
 gate. [Run 37125084672](https://github.com/Russianranger/coh-android/actions/runs/37125084672)
