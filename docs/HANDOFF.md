@@ -1,6 +1,8 @@
 # City of Heroes Android handoff
 
-**Current recovery work (October 3, 2026): the user reported 62 GB app storage,
+**Current recovery publication (October 3, 2026): 0.13.2 is published and
+independently verified from `c0d10f8cd873449962f5a723d489b9ead18642d0`.
+The user reported 62 GB app storage,
 a storage scan crash after about two minutes, a subsequent gameplay crash, and
 then uninstalled the app. Setup and import succeeded on the new installation;
 the uploaded reopen run failed before PostgreSQL, Wine/server or client startup
@@ -11,7 +13,7 @@ the missing-profile refusal. No pre-uninstall crash trace or exit reason survive
 in this bundle; do not call the earlier crash an established OOM or regression
 of the accepted gameplay milestones. Diagnostic exports are not SQL backups.
 
-The 0.13.2 Android recovery derivative is being qualified on the existing
+The 0.13.2 Android recovery derivative is qualified on the existing
 continuation, retaining all 65 runtime payloads, manifest bytes and signing key.
 Storage traversal now streams descriptor-anchored entries; cleanup planning
 uses a bounded on-disk postorder journal instead of retaining every node in
@@ -38,9 +40,29 @@ prior physical acceptance remains accepted. Install the update in place, keep
 the successful setup/import, export the storage/setup receipts and fresh creator
 save report, and stop before another long task run. See the
 [0.13.2 instructions](COH-Atlas-Gameplay-0.13.2-testing.txt). Device recovery and
-storage reclamation remain pending; publication details will be added after CI
-and the downloaded public APK are verified. Main remains 04d62616 and PR #1
+storage reclamation remain pending. Main remains 04d62616 and PR #1
 remains draft on `codex/character-persistence-continuation`.
+
+[CI 37147463123](https://github.com/Russianranger/coh-android/actions/runs/37147463123)
+passed qualification and APK/publication: **489 checks, 32 suites, zero skips,
+209 source pins and all 18 Java sources compiled against Android 35.** Native
+animation/task packaging and the historical 0.13.1 publication jobs were
+correctly skipped. The public APK was downloaded separately and passed every
+actual payload/DEX/resource digest and ZIP CRC, exact manifest conservation,
+real server archive extraction, official retained v2/v3 signer, alignment,
+ABI/version and version-only Android binary manifest comparison.
+[Publication receipt](android-evidence/storage-recovery-0.13.2-publication.json).
+
+[Download 0.13.2](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.2/COH-Atlas-Gameplay-0.13.2.apk).
+Public APK: **675,301,138 bytes**, only 12,288 bytes larger than 0.13.1;
+SHA-256 `28e3eda8dbc3982bc42d42dee6ab4f35e985d96af31bff4a2c691b806a207e1f`.
+The user-reported 62 GB concerns installed data, not a multi-gigabyte APK.
+The host stress scan/deletion covers 300,000 lazy entries and 1,000 hard-link
+pairs under a 48 MiB heap. The repeated-setup fixture preserves five identical
+setups' runtime bytes/inodes/mtime with zero extraction/copy/download work.
+Neither fixture establishes Thor scan responsiveness, actual reclamation or
+the cause of the deleted installation's crashes. Existing runtimes/imports and
+accepted physical milestones must remain intact.
 
 **Previous storage publication (October 3, 2026): 0.13.1 is published and independently
 verified from `5252595717a1965a76251d4110725185bbcbbe20`. It adds idle-only storage
@@ -48,8 +70,9 @@ inspection and explicitly reviewed cleanup for the user-reported 57.44 GB app
 usage. [Run 37129906760](https://github.com/Russianranger/coh-android/actions/runs/37129906760)
 passed both jobs: 384 host checks across 28 suites, no skips and 201 source pins.
 PR #1 remains draft on the same continuation; main remains 04d62616. Device
-cleanup and actual recovered space remain unmeasured. The current 0.13.0
-physical task/save test is underway and must finish/export before this update.**
+cleanup and actual recovered space remained unmeasured at publication. The
+0.13.0 physical task/save test was then underway; the subsequent crashes and
+uninstall are recorded in the current recovery findings above.**
 
 [Download the storage update](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.1)
 with [its instructions](COH-Atlas-Gameplay-0.13.1-testing.txt).
