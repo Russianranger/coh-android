@@ -48,8 +48,9 @@ TEST_MODULES = (
 PATH_SUITES = (
     ('startup_client_worktree_regressions', 'tools/android/client/test_guest.py', 27),
     ('startup_tar_extractor_regressions', 'tools/android/test_archive.py', 26),
-    ('startup_native_server_cache_observer', 'tools/android/atlasgame/test_prepare_server_caches.py', 10),
+    ('startup_native_server_cache_observer', 'tools/android/atlasgame/test_prepare_server_caches.py', 18),
     ('startup_native_server_message_sources', 'tools/android/atlasgame/test_server_message_source_contract.py', 11),
+    ('startup_published_server_cache_consumption', 'tools/android/atlasgame/test_qualify_published_server_caches.py', 19),
 )
 
 # These sources establish the native cache layout, dependency dates, actual TSR
@@ -73,6 +74,7 @@ NATIVE_CACHE_CONTRACT_FILES = (
 )
 GENERATOR_SOURCE_FILES = (
     'tools/android/atlasgame/prepare_server_caches.py',
+    'tools/android/atlasgame/qualify_published_server_caches.py',
     'tools/android/atlasgame/server_message_source_contract.py',
     'tools/android/atlasgame/prepare_device_assets.py',
     'tools/android/client/package_client_runtime.py',

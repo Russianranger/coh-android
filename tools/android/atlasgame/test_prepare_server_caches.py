@@ -191,6 +191,30 @@ class ServerCacheNativeObserverTests(unittest.TestCase):
             finally:
                 holder.terminate(); holder.wait(timeout=10); holder.stdout.close()
 
+    def test_packaged_wine_base_selection_honors_run_user_and_owned_fallback_receipt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); prefix = root / 'prefix'; prefix.mkdir()
+            run_user = root / 'run-user'; run_user.mkdir(mode=0o700)
+            self.assertEqual(generator.prefix_server_base(prefix, {}, run_user), run_user / 'wine')
+            run_user.rmdir()
+            receipt = prefix / 'wineserver'; receipt.write_text('wine-Ab123z'); receipt.chmod(0o400)
+            self.assertEqual(generator.prefix_server_base(prefix, {'TMPDIR': str(root)}, run_user), root / 'wine-Ab123z')
+            receipt.chmod(0o600)
+            with self.assertRaises(ValueError): generator.prefix_server_base(prefix, {}, run_user)
+            receipt.write_text('../escape'); receipt.chmod(0o400)
+            with self.assertRaises(ValueError): generator.prefix_server_base(prefix, {}, run_user)
+            receipt.unlink(); run_user.symlink_to(prefix, target_is_directory=True)
+            with self.assertRaises(ValueError): generator.prefix_server_base(prefix, {}, run_user)
+
+    def test_missing_actual_prefix_lock_never_proves_quiescence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); prefix = root / 'prefix'; prefix.mkdir()
+            base = root / 'wine'
+            with self.assertRaises(ValueError): generator.prove_prefix_server_unlocked(prefix, base)
+            base.mkdir(mode=0o700)
+            info = prefix.stat(); server = base / f'server-{info.st_dev:x}-{info.st_ino:x}'; server.mkdir(mode=0o700)
+            with self.assertRaises(ValueError): generator.prove_prefix_server_unlocked(prefix, base)
+
 
 if __name__ == '__main__':
     unittest.main()

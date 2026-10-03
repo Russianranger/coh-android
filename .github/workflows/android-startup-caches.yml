@@ -1,32 +1,8 @@
 name: Thor exact server caches and stable startup reuse
 on:
+  # 0.12.1 is already immutable and publicly verified. Host-only evidence
+  # corrections use android-startup-cache-evidence.yml without another build.
   workflow_dispatch:
-  push:
-    branches: [codex/character-persistence-continuation]
-    paths:
-      - '.github/workflows/android-startup-caches.yml'
-      - 'tools/android/interactive/build_startup_caches_apk.py'
-      - 'tools/android/interactive/qualify_startup_caches.py'
-      - 'tools/android/atlasgame/prepare_server_caches.py'
-      - 'tools/android/atlasgame/server_message_source_contract.py'
-      - 'tools/android/atlasgame/test_server_message_source_contract.py'
-      - 'android/native/server-cache-launcher.c'
-      - 'docs/COH-Atlas-Gameplay-0.12.1-testing.txt'
-      - 'tools/android/interactive/qualify_runtime_timestamps.py'
-      - 'tools/android/interactive/test_*cache*.py'
-      - 'tools/android/interactive/test_*worktree*.py'
-      - 'tools/android/interactive/test_wine_refresh.py'
-      - 'tools/android/interactive/test_texture_header_index.py'
-      - 'tools/android/interactive/test_runtime_timestamps.py'
-      - 'tools/android/test_archive.py'
-      - 'android/runtime-lock.json'
-      - 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java'
-      - 'android/guest/client_startup_diagnostic.py'
-      - 'android/guest/character_server_data_cache.py'
-      - 'android/guest/local_character_server.py'
-      - 'android/guest/texture_header_index.py'
-      - 'android/guest/server_cache_package.py'
-      - 'android/guest/server_message_cache_format.py'
 permissions:
   contents: read
   actions: read

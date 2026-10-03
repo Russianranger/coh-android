@@ -28,6 +28,14 @@ def synthetic_raw_proof(directory):
     manifest = synthetic_archive(archive)
     runtime = directory/'synthetic-runtime'
     wine_prefix = directory/'synthetic-wine-prefix'
+    wine_prefix.mkdir(mode=0o700)
+    wine_base = directory/'synthetic-wineserver'
+    wine_base.mkdir(mode=0o700)
+    prefix_stat = wine_prefix.stat()
+    wine_server = wine_base/f'server-{prefix_stat.st_dev:x}-{prefix_stat.st_ino:x}'
+    wine_server.mkdir(mode=0o700)
+    (wine_server/'lock').write_bytes(b'')
+    cleanup = observer.prove_prefix_server_unlocked(wine_prefix, server_base=wine_base)
     phases = {}
     for stage in ('generation', 'consumption'):
         evidence = directory/'evidence'/stage
@@ -53,11 +61,11 @@ def synthetic_raw_proof(directory):
         (evidence/'wine-helpers-stop.log').write_bytes(b'')
         observer.write_json(evidence/'wine-helpers-stop.json', {'format': 1,
             'kill_exit_code': 0, 'wait_exit_code': 0, 'normal_launcher_exit_observed_first': True,
-            'status': 'no_prefix_server_directory', 'prefix': str(wine_prefix),
-            'server_directory': str(directory/'synthetic-wineserver')})
+            **cleanup})
     evidence = directory/'evidence/consumption'
     trace_file = evidence/'trace.1234'
-    trace_file.write_text(''.join('read(3<'+str(runtime/name)+'>, "fixture", '+
+    trace_file.write_text('openat(AT_FDCWD, "'+str(wine_server/'lock')+'", O_RDWR) = 9<'+
+        str(wine_server/'lock')+'>\n'+''.join('read(3<'+str(runtime/name)+'>, "fixture", '+
         str(record['bytes'])+') = '+str(record['bytes'])+'\n'
         for name, record in manifest['files'].items()))
     sources = observer.archive_source_paths(archive, manifest['files'])

@@ -358,28 +358,59 @@ def wine_path(path):
     return 'Z:' + str(Path(path).resolve()).replace('/', '\\')
 
 
-def prove_prefix_server_unlocked(prefix, server_base=None):
-    """Check Wine's per-prefix device/inode lock, not a process-name guess.
+def prefix_server_base(prefix, environment=None, run_user_directory=None):
+    """Resolve the packaged Debian/Ubuntu Wine temporary-directory contract.
 
-    Wine9 server/request.c uses /tmp/.wine-UID/server-DEV-INODE/lock and a
-    POSIX write lock on its first byte. -k may return1 when this lock is already
-    absent. A successful nonblocking lock independently proves quiescence.
+    The temporary-directory.patch first uses /run/user/UID/wine. Its fallback
+    records a randomized TMPDIR basename in the owned prefix/wineserver file.
+    Unpatched upstream Wine9 uses /tmp/.wine-UID. These paths are distinct;
+    absence at an unrelated upstream path never proves the packaged lock free.
     """
+    environment = os.environ if environment is None else environment
+    run_user = Path(run_user_directory) if run_user_directory is not None else Path('/run/user') / str(os.geteuid())
+    if os.path.lexists(run_user):
+        entry = run_user.lstat()
+        require(stat.S_ISDIR(entry.st_mode) and entry.st_uid == os.geteuid() and not entry.st_mode & 0o077,
+                'Unowned, linked or public Wine run-user directory refused')
+        # The packaged server selects this accessible user directory even
+        # when its wine child is absent. The caller then fails closed.
+        return run_user / 'wine'
+    receipt = Path(prefix) / 'wineserver'
+    if os.path.lexists(receipt):
+        descriptor = os.open(receipt, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            entry = os.fstat(descriptor)
+            require(stat.S_ISREG(entry.st_mode) and entry.st_nlink == 1 and entry.st_uid == os.geteuid()
+                    and stat.S_IMODE(entry.st_mode) == 0o400 and 0 < entry.st_size <= 128,
+                    'Invalid packaged Wine temporary-directory receipt')
+            name = os.read(descriptor, 129).decode('ascii')
+            require(re.fullmatch(r'wine-[A-Za-z0-9]{6}', name), 'Unsafe Wine temporary-directory basename')
+        finally:
+            os.close(descriptor)
+        temporary = Path(environment.get('TMPDIR', '/tmp'))
+        require(temporary.is_absolute(), 'Nonabsolute Wine TMPDIR refused')
+        return temporary / name
+    return Path('/tmp') / ('.wine-' + str(os.geteuid()))
+
+
+def prove_prefix_server_unlocked(prefix, server_base=None, environment=None):
+    """Require Wine's real first-byte POSIX lock to exist and be unheld."""
     prefix = Path(prefix)
     info = prefix.lstat()
     require(prefix.is_absolute() and stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid(),
             'Unowned or linked Wine prefix cleanup refused')
-    base = Path(server_base) if server_base is not None else Path('/tmp') / ('.wine-' + str(os.geteuid()))
+    require(all(stat.S_ISDIR(path.lstat().st_mode) for path in prefix.parents), 'Linked Wine prefix ancestor refused')
+    base = Path(server_base) if server_base is not None else prefix_server_base(prefix, environment)
+    require(base.is_absolute() and all(stat.S_ISDIR(path.lstat().st_mode) for path in base.parents),
+            'Linked Wine server ancestor refused')
     server = base / f'server-{info.st_dev:x}-{info.st_ino:x}'
     for path in (base, server):
-        if not os.path.lexists(path):
-            return {'status': 'no_prefix_server_directory', 'prefix': str(prefix), 'server_directory': str(server)}
+        require(os.path.lexists(path), 'Actual Wine prefix server directory missing')
         entry = path.lstat()
         require(stat.S_ISDIR(entry.st_mode) and entry.st_uid == os.geteuid() and not entry.st_mode & 0o077,
                 'Unowned or linked Wine server directory refused')
     lock = server / 'lock'
-    if not os.path.lexists(lock):
-        return {'status': 'no_prefix_server_lock', 'prefix': str(prefix), 'server_directory': str(server)}
+    require(os.path.lexists(lock), 'Actual Wine prefix server lock missing')
     descriptor = os.open(lock, os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         entry = os.fstat(descriptor)
@@ -392,7 +423,7 @@ def prove_prefix_server_unlocked(prefix, server_base=None):
     return {'status': 'prefix_server_lock_unheld', 'prefix': str(prefix), 'server_directory': str(server)}
 
 
-def stop_owned_prefix(environment, directory):
+def stop_owned_prefix(environment, directory, *, normal_launcher_exit_observed_first=True):
     with (directory / 'wine-helpers-stop.log').open('wb') as log:
         killed = subprocess.run(['wineserver', '-k'], env=environment, check=False,
                                 stdout=log, stderr=subprocess.STDOUT, timeout=30)
@@ -403,9 +434,10 @@ def stop_owned_prefix(environment, directory):
     # Empty-output status1 is the documented no-lock-owner case; diagnostics or
     # a still-held lock remain failures. The native launcher has already ended.
     require((directory / 'wine-helpers-stop.log').stat().st_size == 0, 'Wine prefix cleanup emitted diagnostics')
-    proof = prove_prefix_server_unlocked(environment['WINEPREFIX'])
+    proof = prove_prefix_server_unlocked(environment['WINEPREFIX'], environment=environment)
     write_json(directory / 'wine-helpers-stop.json', {'format': 1, 'kill_exit_code': killed.returncode,
-               'wait_exit_code': waited.returncode, 'normal_launcher_exit_observed_first': True, **proof})
+               'wait_exit_code': waited.returncode,
+               'normal_launcher_exit_observed_first': normal_launcher_exit_observed_first, **proof})
 
 
 def run_phase(args, runtime, launcher, environment, output, stage, identity, trace=False):
@@ -541,7 +573,7 @@ def verify_generated_package(directory):
                 and cleanup.get('format') == 1 and cleanup.get('kill_exit_code') in (0, 1)
                 and cleanup.get('wait_exit_code') == 0
                 and cleanup.get('normal_launcher_exit_observed_first') is True
-                and cleanup.get('status') in ('no_prefix_server_directory', 'no_prefix_server_lock', 'prefix_server_lock_unheld')
+                and cleanup.get('status') == 'prefix_server_lock_unheld'
                 and cleanup.get('prefix') == prefix and isinstance(cleanup.get('server_directory'), str)
                 and Path(cleanup['server_directory']).is_absolute()
                 and (evidence / 'wine-helpers-stop.log').read_bytes() == b'',
