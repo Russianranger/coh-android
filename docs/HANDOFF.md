@@ -1,38 +1,60 @@
 # City of Heroes Android handoff
 
-**Current authorized development (October 3, 2026): option 9 and the next task
-acceptance/completion/save gate are implemented for candidate 0.13.0. Publication
-is pending required host checks and actual loose/cold-packed/warm-packed stock
-MapServer consumption qualification. No new physical result is claimed.**
+**Current publication (October 3, 2026): 0.13.0 is published and independently
+verified from `53c885896e9b4d838be0f36a1f09237f04c08a00`. It implements the newly
+authorized option 9 and the task acceptance/command-completion/ordinary-save
+gate. [Run 37125084672](https://github.com/Russianranger/coh-android/actions/runs/37125084672)
+passed all three jobs. PR #1 remains draft on the same continuation branch;
+main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. New physical task/save and
+Thor startup results are pending; all accepted milestones below remain valid.**
 
-The new server-private Pig v2 pack preserves all 5,878 retained animation files,
-names, timestamps, cached native headers and bodies; original loose animations
-remain the fallback. It installs outside the stable server data cache, so the
-accepted 93 definition/message bins and cache identity remain unchanged. No
-native client/server rebuild or FEX upgrade is included. The measured sequencer
-interval contains CPU work as well as file reads; a Thor timing gain is pending.
+[Download 0.13.0](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.0)
+with [the new testing instructions](COH-Atlas-Gameplay-0.13.0-testing.txt).
+Public APK is 675,268,370 bytes, SHA-256
+`18cffb361df26076c10f9c020548f384d10c21f8462ed06e77e9cae5c00de4d1`.
+See [the publication receipt](android-evidence/task-gate-0.13.0-publication.json).
 
-The new gate opens Matthew Habashy's ordinary dialogue through a fixed stock
-`/contactdialog` helper. The user manually accepts **What Was Lost / Part One:
-Demons and Gangsters** (`Mission1`, five Hellions), captures its accepted journal
-view, and invokes the fixed stock `/completetask 0` helper. Native task/arc logs,
-owned command receipts, authored SQL attribute mappings, one active task and
-actual bounded reward credit must agree before the completion event. Three
-fresh captures of each phase are required before ordinary Save. The completed
-same-task state and credited XP/contact points must persist with preserved
-identity, class/origin/level, powers and costume. The previous final-logout
-position correction is included. Combat, missing-NPC clicking, reward turn-in
-and later story progression are not required or claimed. Existing tasks are
-preserved and never cleared or replaced to make this gate pass.
+The server-private Pig v2 pack preserves all 5,878 retained animation files,
+names, timestamps, cached native headers and bodies. Its 97,084,456 bytes have
+SHA-256 `465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b`.
+Original loose animations remain the fallback. Installation outside the stable
+server data cache retains all accepted 93 definition/message bins and cache
+identity. Native client/server, runtime, driver, world/avatar data and Wine
+component timestamps are unchanged. No FEX upgrade or other startup option is
+included in this pass.
 
-Only task-profile private logging enables stock entity level 2 for Storyarc:Add;
-legacy reopen behavior remains unchanged. SQL remains read-only game evidence.
-The dedicated workflow retains the exact 0.12.1 donor/native/runtime/world
-payloads, qualifies the new sources and animation consumption before signing,
-and publishes a new 0.13.0 release without changing old releases or main.
-See [0.13.0 instructions](COH-Atlas-Gameplay-0.13.0-testing.txt). The accepted
+Actual stock MapServer loose, cold-packed and warm-packed preloads completed
+normally with exact cache/input conservation, packed animation content reads,
+no loose animation reads in packed phases and traced Wine-prefix quiescence.
+Native proof is reverified before build and publication. Traced host preload
+intervals were 232.204s / 192.199s / 191.128s. These establish host consumption
+and a host improvement; they do not predict Thor savings. Original inventory
+byte preservation does not assert all tracks were selected during preload.
+
+The new gate opens Matthew Habashy's ordinary dialogue through the fixed stock
+`/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact` helper. The user
+manually accepts **What Was Lost / Part One: Demons and Gangsters** (`Mission1`,
+five Hellions), captures its accepted journal view, and invokes the fixed stock
+`/completetask 0` helper once. Native task/arc logs, owned command receipts,
+authored SQL attribute mappings, one active task and actual bounded reward
+credit must agree before completion. Three fresh captures of each phase are
+required before ordinary Save. The same completed task state and credited
+XP/contact points must persist with preserved identity, class/origin/level,
+powers and costume. The previous final-logout position correction is included.
+Combat, missing-NPC clicking, reward turn-in and later story progression are
+not required or claimed. Existing tasks are never cleared or replaced to make
+this gate pass. Keep the current profile, imports and THORHERO; refresh runtime
+once, perform this new gate, then Finish/export after Saved character verified.
+
+Only the task profile's private logging enables stock entity level 2 for
+Storyarc:Add; legacy reopen behavior remains unchanged. SQL remains read-only
+game evidence. Host qualification passes **308 checks across 24 suites with no
+skips and 190 source pins**. Independent actual public-byte verification passes
+all 65 payloads, DEX/CRC, donor conservation, original animation/header closure,
+real guest archive extraction, retained official v2/v3 signer, alignment,
+ABI/version, version-only binary manifest changes and public release assets,
+checksum and instructions. Public 0.12.1 remains unchanged. The accepted
 physical checkpoint below remains authoritative and must not be repeated.
-
 
 **Current physical checkpoint (October 3, 2026): The user accepts the 0.12.1
 startup improvement and ordinary NPC contact/dialogue test. Sunstorm and Merit
@@ -40,7 +62,7 @@ Reward Informant opened readable dialogue and processed normal responses.
 Ms. Liberty remains an incomplete female costume asset defect, not a reason to
 repeat the accepted general contact test. The app's failed result came from a
 stale position comparison during ordinary save. A narrow observer correction
-and regression replay are prepared on this continuation branch; the published
+and regression replay are included in the published 0.13.0 update; the published
 0.12.1 APK remains unchanged. PR #1 stays draft and main stays 04d62616.**
 
 The supplied `coh-atlas-gameplay-20261003-110806.zip` binds the Thor session
@@ -97,13 +119,13 @@ requirements in later asset work. Her specific interaction and complete NPC
 rendering remain unverified. Missing animations are not claimed.
 
 The observer correction passes **88 focused checks**, including exact native and
-authored data contract pins, with no skips. It is a source-only correction for
-the next packaged update; the installed/public 0.12.1 behavior is not changed.
+authored data contract pins, with no skips. The correction is now packaged in 0.13.0;
+the installed/public 0.12.1 behavior is not changed.
 
 See [the physical acceptance and diagnostic receipt](android-evidence/thor-0.12.1-contact-startup-accepted-20261003.json).
 Preserve prior accepted camera/jump/outdoor/recovery and persistence milestones.
-The next new gameplay gate remains bounded task acceptance/completion/save,
-using the corrected observer in its next packaged build; this does not require
+The next new gameplay gate is bounded task acceptance/completion/save,
+using the corrected observer in the published 0.13.0 build; this does not require
 replaying accepted contact dialogue. Current published 0.12.1 remains available.
 
 The retained publication checkpoint follows:
