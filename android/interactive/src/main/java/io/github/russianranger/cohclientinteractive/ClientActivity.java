@@ -21,13 +21,13 @@ import java.util.concurrent.*;
 
 /** Bounded touch, keyboard and Thor controller session for initial Atlas gameplay. */
 public final class ClientActivity extends Activity {
-    private static final int EXPORT=11,NOTIFY=12,IMPORT=13;
+    private static final int EXPORT=11,NOTIFY=12,IMPORT=13,STORAGE_EXPORT=14;
     private final ExecutorService exporter=Executors.newSingleThreadExecutor();
     private ClientService service;
     private ClientService.State state;
     private ClientSurface display;
     private TextView status,detail,counter,logs;
-    private Button setup,importAssets,run,stop,export,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
+    private Button setup,importAssets,run,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private CheckBox performanceGraphics;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -46,6 +46,11 @@ public final class ClientActivity extends Activity {
     }};
     private boolean bound,exporting,captureEnabled,importWaiting;
     private String pendingExport,pendingAction,shownSession="";
+    private String pendingStorageExport;
+    private android.net.Uri pendingExportDestination;
+    private String pendingExportSource;
+    private boolean storageDialogRequested;
+    private AlertDialog storageDialog;
     private android.net.Uri pendingImport;
     private final ClientService.Listener listener=new ClientService.Listener(){
         @Override public void onState(ClientService.State value){render(value);}
@@ -56,20 +61,20 @@ public final class ClientActivity extends Activity {
         @Override public void onCaptureError(String error){if(service!=null)service.recordCertificationError(error);}
     };
     private final ServiceConnection connection=new ServiceConnection(){
-        @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();}
+        @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();dispatchPendingExport();}
         @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if(saved!=null){pendingExport=saved.getString("export");pendingAction=saved.getString("action");importWaiting=saved.getBoolean("import_waiting",false);String selected=saved.getString("import_uri");if(selected!=null)pendingImport=android.net.Uri.parse(selected);}
+        if(saved!=null){pendingExport=saved.getString("export");pendingStorageExport=saved.getString("storage_export");pendingExportSource=saved.getString("export_source");String destination=saved.getString("export_destination");if(destination!=null)pendingExportDestination=android.net.Uri.parse(destination);pendingAction=saved.getString("action");importWaiting=saved.getBoolean("import_waiting",false);String selected=saved.getString("import_uri");if(selected!=null)pendingImport=android.net.Uri.parse(selected);}
         LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.HORIZONTAL);root.setBackgroundColor(Color.rgb(9,19,30));root.setPadding(dp(12),dp(8),dp(12),dp(8));
         root.setOnApplyWindowInsetsListener((v,insets)->{v.setPadding(dp(12)+insets.getSystemWindowInsetLeft(),dp(8)+insets.getSystemWindowInsetTop(),dp(12)+insets.getSystemWindowInsetRight(),dp(8)+insets.getSystemWindowInsetBottom());return insets;});
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.13.0",12,false));
+        controls.addView(text("Persistent local server · v0.13.1",12,false));
         controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
-        setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
+        setup=button("Set up runtime (new install only)",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
@@ -93,10 +98,11 @@ public final class ClientActivity extends Activity {
         controls.addView(movementButton("Jump",' ',120005));
         stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
         export=button("Export latest report",this::chooseExport);controls.addView(export);
+        storage=button("Storage and cleanup",this::showStorage);controls.addView(storage);
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Refresh runtime once after this update, then log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
+        controls.addView(text("Keep your existing runtime and imported data after this update; new installations need setup and import. Log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -110,7 +116,7 @@ public final class ClientActivity extends Activity {
         });
         right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -169,7 +175,9 @@ public final class ClientActivity extends Activity {
     @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
     private void render(ClientService.State next){
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
-        boolean idle=!next.busy&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);performanceGraphics.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&next.report!=null&&!exporting);
+        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);performanceGraphics.setEnabled(idle);storage.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
+        if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
+        if(storageDialogRequested&&!next.storageBusy&&idle){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
@@ -314,14 +322,14 @@ public final class ClientActivity extends Activity {
     }
 
     private void request(String action){
-        if(state==null||state.busy||state.blocked)return;
+        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
         if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){pendingAction=action;requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},NOTIFY);return;}
         launch(action);
     }
     private void launch(String action){try{Intent intent=new Intent(this,ClientService.class).setAction(action);if(ClientService.IMPORT.equals(action)){intent.setData(pendingImport);intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);}startForegroundService(intent);}catch(RuntimeException e){Toast.makeText(this,"Could not start. Return to this screen and retry.",Toast.LENGTH_LONG).show();}}
     @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] results){super.onRequestPermissionsResult(request,permissions,results);if(request==NOTIFY&&pendingAction!=null){String action=pendingAction;pendingAction=null;launch(action);}}
     private void chooseImport(){
-        if(state==null||state.busy||state.blocked)return;
+        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
         Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try{startActivityForResult(intent,IMPORT);}catch(RuntimeException e){Toast.makeText(this,"No file picker is available.",Toast.LENGTH_LONG).show();}
     }
@@ -329,22 +337,75 @@ public final class ClientActivity extends Activity {
         // A document result can arrive before the recreated Activity has rebound.
         if(!importWaiting||service==null||state==null)return;
         importWaiting=false;
-        if(state.busy||state.blocked){Toast.makeText(this,"Wait until the current operation has finished, then select the asset ZIP again.",Toast.LENGTH_LONG).show();return;}
+        if(state.busy||state.storageBusy||state.reportExporting||state.blocked||ClientRuntime.operationInProgress()){Toast.makeText(this,"Wait until the current operation has finished, then select the asset ZIP again.",Toast.LENGTH_LONG).show();return;}
         request(ClientService.IMPORT);
     }
+    private static String storageBytes(long bytes){
+        if(bytes<1024)return bytes+" B";double value=bytes;String[] units={"B","KiB","MiB","GiB","TiB"};int unit=0;
+        while(value>=1024&&unit<units.length-1){value/=1024;unit++;}return String.format(Locale.ROOT,"%.2f %s",value,units[unit]);
+    }
+    private void showStorage(){
+        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
+        if(storageDialog!=null)storageDialog.dismiss();
+        final StorageAudit.Plan plan=state.storagePlan;
+        LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(16),dp(8),dp(16),dp(8));
+        TextView message=new TextView(this);message.setText(state.storageStatus+"\nThese totals cover private app files; Android also counts the installed APK and its cache. Allocated size counts storage blocks once; apparent size can include shared files. Character data, current runtime, imported assets and startup caches are protected.");body.addView(message);
+        final Map<String,CheckBox> choices=new LinkedHashMap<>();
+        if(plan!=null){
+            TextView totals=new TextView(this);totals.setText("\nTotal allocated: "+storageBytes(plan.allocatedBytes)+"\nTotal apparent: "+storageBytes(plan.apparentBytes)+"\nEstimated removable: "+storageBytes(plan.reclaimableBytes)+"\nEntries inspected: "+plan.entryCount);body.addView(totals);
+            if(!plan.errors.isEmpty()){TextView errors=new TextView(this);StringBuilder text=new StringBuilder("\nScan notes:");for(int i=0;i<Math.min(3,plan.errors.size());i++)text.append("\n").append(plan.errors.get(i));errors.setText(text.toString());body.addView(errors);}
+            for(StorageAudit.Category category:plan.categories){
+                String description=category.label+"\nAllocated: "+storageBytes(category.allocatedBytes)+" · Apparent: "+storageBytes(category.apparentBytes)+"\nRemovable: "+storageBytes(category.reclaimableBytes);
+                if(plan.cleanupAllowed&&category.candidateCount>0&&Arrays.asList("old_runtime","downloads","old_reports").contains(category.id)){
+                    CheckBox choice=new CheckBox(this);choice.setText(description);choice.setChecked(false);choices.put(category.id,choice);body.addView(choice);
+                }else{TextView line=new TextView(this);line.setText(description+" · protected");line.setPadding(0,dp(8),0,dp(8));body.addView(line);}
+            }
+        }
+        Button scan=new Button(this);scan.setText("Scan storage");scan.setOnClickListener(v->{storageDialog.dismiss();storageDialogRequested=true;request(ClientService.STORAGE_SCAN);});body.addView(scan);
+        Button clean=new Button(this);clean.setText("Review selected cleanup");clean.setEnabled(plan!=null&&plan.cleanupAllowed&&!choices.isEmpty());clean.setOnClickListener(v->{
+            Set<String> selected=new LinkedHashSet<>();for(Map.Entry<String,CheckBox> choice:choices.entrySet())if(choice.getValue().isChecked())selected.add(choice.getKey());
+            if(selected.isEmpty()){Toast.makeText(this,"Select a disposable category first.",Toast.LENGTH_LONG).show();return;}
+            StringBuilder review=new StringBuilder("Remove these disposable files from the reviewed scan?\n");long reclaimable=0;
+            for(StorageAudit.Category category:plan.categories)if(selected.contains(category.id)){review.append("\n").append(category.label).append(": ").append(category.candidateCount).append(" candidates · ").append(storageBytes(category.reclaimableBytes));reclaimable+=category.reclaimableBytes;}
+            int shown=0,total=0;for(StorageAudit.Candidate candidate:plan.candidates)if(selected.contains(candidate.categoryId)){total++;if(shown++<12)review.append("\n").append(candidate.path);}
+            if(total>12)review.append("\n").append(total-12).append(" more candidates are listed in the storage report.");
+            review.append("\n\nEstimated space recoverable: ").append(storageBytes(reclaimable)).append(". Current runtime, character database, imported assets and startup caches remain protected. Old support reports selected here will be removed.");
+            new AlertDialog.Builder(this).setTitle("Confirm selected cleanup").setMessage(review.toString()).setNegativeButton("Cancel",null).setPositiveButton("Clean selected",(dialog,which)->{
+                if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
+                storageDialog.dismiss();storageDialogRequested=true;
+                Intent intent=new Intent(this,ClientService.class).setAction(ClientService.STORAGE_CLEAN).putExtra("storage_snapshot",plan.snapshotId).putExtra("storage_categories",selected.toArray(new String[0]));
+                try{startForegroundService(intent);}catch(RuntimeException e){storageDialogRequested=false;Toast.makeText(this,"Could not start cleanup. Scan again and retry.",Toast.LENGTH_LONG).show();}
+            }).show();
+        });body.addView(clean);
+        Button exportStorage=new Button(this);exportStorage.setText("Export storage report");exportStorage.setEnabled(state.storageReport!=null);exportStorage.setOnClickListener(v->{storageDialog.dismiss();chooseStorageExport();});body.addView(exportStorage);
+        ScrollView scroll=new ScrollView(this);scroll.addView(body);storageDialog=new AlertDialog.Builder(this).setTitle("Storage and cleanup").setView(scroll).setNegativeButton("Close",null).create();storageDialog.show();
+    }
     private void chooseExport(){
-        if(state==null||state.busy||state.report==null||exporting)return;pendingExport=state.report.getPath();
+        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.report==null||exporting||ClientRuntime.operationInProgress())return;pendingExport=state.report.getPath();
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE);
         SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-atlas-gameplay-"+format.format(new Date())+".zip");
         try{startActivityForResult(intent,EXPORT);}catch(RuntimeException e){pendingExport=null;Toast.makeText(this,"No export destination is available.",Toast.LENGTH_LONG).show();}
     }
+    private void chooseStorageExport(){
+        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.storageReport==null||exporting||ClientRuntime.operationInProgress())return;pendingStorageExport=state.storageReport.getPath();
+        Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/json").addCategory(Intent.CATEGORY_OPENABLE);
+        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-storage-"+format.format(new Date())+".json");
+        try{startActivityForResult(intent,STORAGE_EXPORT);}catch(RuntimeException e){pendingStorageExport=null;Toast.makeText(this,"No export destination is available.",Toast.LENGTH_LONG).show();}
+    }
     @Override protected void onActivityResult(int request,int result,Intent data){
         super.onActivityResult(request,result,data);
         if(request==IMPORT){if(result==RESULT_OK&&data!=null&&data.getData()!=null){pendingImport=data.getData();try{getContentResolver().takePersistableUriPermission(pendingImport,Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(SecurityException ignored){}importWaiting=true;dispatchPendingImport();}return;}
-        if(request!=EXPORT)return;String selected=pendingExport;pendingExport=null;
-        if(result!=RESULT_OK||data==null||data.getData()==null||selected==null)return;final android.net.Uri uri=data.getData();exporting=true;if(state!=null)render(state);
-        exporter.execute(()->{String message;try(InputStream in=new FileInputStream(selected);OutputStream out=getContentResolver().openOutputStream(uri,"w")){if(out==null)throw new IOException("No export stream");byte[] buffer=new byte[65536];int n;while((n=in.read(buffer))!=-1)out.write(buffer,0,n);message="Report exported";}catch(Exception e){message="Export failed. Try another destination.";}final String finish=message;runOnUiThread(()->{exporting=false;if(state!=null)render(state);Toast.makeText(this,finish,Toast.LENGTH_LONG).show();});});
+        if(request!=EXPORT&&request!=STORAGE_EXPORT)return;String selected=request==EXPORT?pendingExport:pendingStorageExport;if(request==EXPORT)pendingExport=null;else pendingStorageExport=null;
+        if(result!=RESULT_OK||data==null||data.getData()==null||selected==null)return;pendingExportSource=selected;pendingExportDestination=data.getData();dispatchPendingExport();
     }
-    @Override protected void onSaveInstanceState(Bundle out){out.putString("export",pendingExport);out.putString("action",pendingAction);out.putString("import_uri",pendingImport==null?null:pendingImport.toString());out.putBoolean("import_waiting",importWaiting);super.onSaveInstanceState(out);}
-    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();exporter.shutdown();super.onDestroy();}
+    private void dispatchPendingExport(){
+        if(service==null||pendingExportSource==null||pendingExportDestination==null||exporting)return;
+        final ClientService ownerService=service;final String selected=pendingExportSource;final android.net.Uri uri=pendingExportDestination;pendingExportSource=null;pendingExportDestination=null;
+        final Object owner;try{owner=ownerService.beginReportExport(new File(selected));}catch(IOException e){Toast.makeText(this,"Wait for the current operation, then export again.",Toast.LENGTH_LONG).show();return;}
+        exporting=true;if(state!=null)render(state);
+        try{exporter.execute(()->{String message;try(InputStream in=new FileInputStream(selected);OutputStream out=getContentResolver().openOutputStream(uri,"w")){if(out==null)throw new IOException("No export stream");byte[] buffer=new byte[65536];int n;while((n=in.read(buffer))!=-1)out.write(buffer,0,n);message="Report exported";}catch(Exception e){message="Export failed. Try another destination.";}finally{ownerService.endReportExport(owner);}final String finish=message;runOnUiThread(()->{exporting=false;if(state!=null)render(state);Toast.makeText(this,finish,Toast.LENGTH_LONG).show();});});}
+        catch(RuntimeException e){ownerService.endReportExport(owner);exporting=false;if(state!=null)render(state);Toast.makeText(this,"Export could not start. Try again.",Toast.LENGTH_LONG).show();}
+    }
+    @Override protected void onSaveInstanceState(Bundle out){out.putString("export",pendingExport);out.putString("storage_export",pendingStorageExport);out.putString("export_source",pendingExportSource);out.putString("export_destination",pendingExportDestination==null?null:pendingExportDestination.toString());out.putString("action",pendingAction);out.putString("import_uri",pendingImport==null?null:pendingImport.toString());out.putBoolean("import_waiting",importWaiting);super.onSaveInstanceState(out);}
+    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();if(storageDialog!=null)storageDialog.dismiss();exporter.shutdown();super.onDestroy();}
 }

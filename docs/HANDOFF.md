@@ -1,5 +1,15 @@
 # City of Heroes Android handoff
 
+**Storage continuation (October 3, 2026): The user is currently testing the
+published 0.13.0 task/save gate and reports 57.44 GB of internal app storage.
+The authorized 0.13.1 pass adds idle-only storage inspection and explicitly
+selected cleanup of verified older runtimes, component downloads and older
+completed reports. It preserves every 0.13.0 runtime payload byte, all saved
+character/database/Wine/server-cache state, all imports, the latest gameplay
+report and the newest three report directories. No runtime refresh, reimport
+or repeated gameplay test is required. Publication and device cleanup results
+are pending. The current test must finish/export before installing this update.**
+
 **Current publication (October 3, 2026): 0.13.0 is published and independently
 verified from `53c885896e9b4d838be0f36a1f09237f04c08a00`. It implements the newly
 authorized option 9 and the task acceptance/command-completion/ordinary-save

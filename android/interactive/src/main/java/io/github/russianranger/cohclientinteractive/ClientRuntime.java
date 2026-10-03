@@ -48,6 +48,7 @@ public final class ClientRuntime {
     private static final String BLOCK_MESSAGE = "Runtime cleanup needs attention. Force-stop COH Character Reopen in Android settings, then reopen it.";
     private static boolean guardInitialized, blocked;
     private static boolean operationActive;
+    private static Object storageOwner;
     private final Context context;
     private final Listener listener;
     private final File home, work, state;
@@ -148,6 +149,24 @@ public final class ClientRuntime {
                 .edit().putBoolean("performance-graphics", enabled).apply();
     }
     public boolean isCleanupBlocked() { return cleanupBlocked(context); }
+    /** Shared ownership keeps storage work and report export away from a live guest. */
+    public static synchronized Object acquireStorage(Context context) throws IOException {
+        if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
+        return acquireIdleStorage();
+    }
+    public static synchronized Object acquireReportExport(Context context) throws IOException {
+        // A failed test's report remains exportable while destructive cleanup is blocked.
+        return acquireIdleStorage();
+    }
+    private static Object acquireIdleStorage() throws IOException {
+        if (operationActive) throw new IOException("Wait for the current operation to finish");
+        Object owner = new Object(); storageOwner = owner; operationActive = true;
+        return owner;
+    }
+    public static synchronized void releaseStorage(Object owner) {
+        if (owner != null && owner == storageOwner) { storageOwner = null; operationActive = false; }
+    }
+    public static synchronized boolean operationInProgress() { return operationActive; }
     private static File guard(Context context) { return new File(context.getFilesDir(), "client/cleanup-guard.json"); }
     private static synchronized void initializeGuard(Context context) {
         if (guardInitialized) return;

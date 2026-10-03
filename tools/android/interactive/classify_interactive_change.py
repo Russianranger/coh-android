@@ -100,6 +100,17 @@ SHELL_ONLY = frozenset({
 # workflow. Repairs reuse the verified Game and MapServer build; the historical
 # full donor pipeline must not publish over those dedicated releases.
 RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-storage-cleanup.yml',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java',
+    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java',
+    'tools/android/interactive/build_storage_cleanup_apk.py',
+    'tools/android/interactive/qualify_storage_cleanup.py',
+    'tools/android/interactive/test_storage_cleanup_package.py',
+    'tools/android/interactive/test_storage_audit.py',
+    'tools/android/interactive/test_storage_ui.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'docs/COH-Atlas-Gameplay-0.13.1-testing.txt',
     '.github/workflows/android-task-gate.yml',
     'android/guest/task_gate_evidence.py',
     'android/guest/task-gate.json',

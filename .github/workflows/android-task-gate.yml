@@ -34,8 +34,23 @@ concurrency:
   group: android-task-gate-publication
   cancel-in-progress: false
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      task_required: ${{ steps.route.outputs.task_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Route byte-preserving Android storage updates to their own workflow
+        id: route
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
   observer:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: changes
+    if: needs.changes.outputs.task_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -69,9 +84,10 @@ jobs:
           if-no-files-found: error
           retention-days: 90
   server-animations:
+    needs: changes
     # Reading the already reviewed draft asset is authorized. This isolated job
     # never publishes or replaces either donor or previously prepared caches.
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    if: needs.changes.outputs.task_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     permissions:
       contents: write
       actions: read
@@ -128,8 +144,8 @@ jobs:
           compression-level: 6
           retention-days: 90
   apk:
-    needs: [observer, server-animations]
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: [changes, observer, server-animations]
+    if: needs.changes.outputs.task_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     permissions:
       contents: write
       actions: read
