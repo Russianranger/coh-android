@@ -1,20 +1,9 @@
 name: Thor actual graphical client startup candidate
+# Superseded historical donor pipeline. Current continuation publication uses
+# android-startup-caches.yml and preserves the published 0.12.0 donor.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'android/client/**'
-      - 'android/native/client-launcher.c'
-      - 'android/guest/client_startup_diagnostic.py'
-      - 'tools/android/client/**'
-      - '.github/workflows/android-client-startup.yml'
-  pull_request:
-    paths:
-      - 'android/client/**'
-      - 'android/native/client-launcher.c'
-      - 'android/guest/client_startup_diagnostic.py'
-      - 'tools/android/client/**'
-      - '.github/workflows/android-client-startup.yml'
+
 permissions:
   contents: read
   actions: read

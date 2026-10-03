@@ -1,0 +1,40 @@
+COH Atlas Gameplay 0.12.1 — prepared server caches and stable startup reuse
+
+Install over the existing app. Preserve app data, imports and THORHERO.
+Refresh runtime once after updating; no reimport or clean installation is needed.
+Reopen saved THORHERO and log in with COHLOCAL / offline.
+
+This update prepares exact MapServer Parse6 and English server message caches,
+keeps verified client/server data in place across wrapper updates, and preserves
+trusted Wine component timestamps. Existing device-generated bins are retained.
+The first transition may still perform genuine Wine registration. The five-minute
+server target is not yet a measured Thor result; GPU acceleration remains deferred.
+
+The pending contact test is unchanged:
+1. Approach Ms. Liberty beside the Atlas statue (or City Representative inside
+   City Hall). Stand close, aim the cursor at the NPC and press A/left-click.
+   F remains Follow.
+2. If a readable dialog appears, tap Capture contact dialog and wait for Contact
+   view captured. Read an information response, then close with Goodbye or B/Esc.
+   Skip task acceptance and training during this focused test.
+3. Release controls and stand still for 60 seconds. Tap Save character / log out
+   before the countdown expires; wait for Saved character verified, then Finish.
+   Return to safe ground is optional and is not required for normal Save.
+4. Export the complete support ZIP. Include the Refresh runtime export too if
+   it reported a failure. Report the NPC, whether opening/text/response/closing
+   worked, and whether normal Save/Finish succeeded.
+
+The ZIP must contain the full report and owned native logs, contact screenshots,
+startup stage timings, server cache seed/reuse receipt, Wine registration/probe,
+persistence row checks and cleanup. No separate adb/logcat capture is needed
+unless a failure leaves the app unable to produce its normal export.
+
+Pass: readable contact dialogue and response, normal close, verified ordinary
+save without recovery, preserved THORHERO and clean Finish. Compare server-ready
+elapsed time with the accepted 21m50s baseline; report the measured value without
+assuming a five-minute pass. Client loading time is separate from server readiness.
+Fail: inability to reopen, missing/broken dialogue, save/identity or cleanup failure,
+or native cache compatibility rejection without successful ordinary source fallback.
+Export failures as-is; keep all data. No accepted camera/jump/outdoor/recovery tests
+need repeating. Next after the contact pass is a bounded task accept/complete/save
+checkpoint, with moving NPC pathing and combat requiring their own later evidence.

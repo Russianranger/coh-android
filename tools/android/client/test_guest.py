@@ -301,7 +301,7 @@ class WorktreeTests(unittest.TestCase):
         self.change_wrapper_commit()
         with patch.object(guest.os, 'scandir', side_effect=AssertionError('Must not rescan input tree')):
             again, saved = guest.prepare_worktree(self.work,self.data,self.assets,self.identity,self.context)
-        self.assertNotEqual(work, again); self.assertFalse(work.exists())
+        self.assertEqual(work, again); self.assertTrue(work.exists())
         retained = again / generated.relative_to(work)
         self.assertEqual(retained.read_bytes(), b'valuable generated cache')
         self.assertEqual((retained.stat().st_ino, retained.stat().st_mtime_ns), (before.st_ino, before.st_mtime_ns))

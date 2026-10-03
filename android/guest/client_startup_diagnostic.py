@@ -108,7 +108,7 @@ def verify_assets(assets):
         path = assets / name
         # This exact world supplement is independently pinned by its manifest
         # and runtime helper; unrelated payloads keep their existing cap.
-        limit = (CACHE_BYTES_LIMIT if name == 'client-caches.zip' else
+        limit = (CACHE_BYTES_LIMIT if name in ('client-caches.zip', 'server-caches.zip') else
                  256*1024*1024 if name == 'atlas-world-supplement.zip' else 128*1024*1024)
         require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= limit,
                 'Missing, linked or oversized client input: ' + name)
@@ -287,6 +287,23 @@ def verify_cache_envelope(path, pin):
         require(source.tell() + body == pin['bytes'], 'Prepared cache body length differs')
 
 
+def native_closure_identity(package):
+    """Bind actual verified native files, without ZIP/build-wrapper provenance."""
+    return {'source_commit': package.get('source_commit'), 'data_commit': package.get('data_commit'),
+            'files': package['files']}
+
+
+def worktree_data_identity(receipt):
+    """The immutable data/cache contract; refreshing a wrapper is not new data."""
+    return {key: receipt[key] for key in ('format', 'source_data', 'import',
+        'cache_archive_sha256', 'prerequisites_archive_sha256',
+        'prerequisites_manifest_sha256', 'normalized_mtime_epoch')}
+
+
+def identity_sha256(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
 def prepare_worktree(root, data, assets, identity, context):
     """Protect imported leaves, create one reusable thin tree, isolate all caches."""
     package_sha = base.file_hash(assets / 'client-runtime.zip')
@@ -308,19 +325,19 @@ def prepare_worktree(root, data, assets, identity, context):
             'Prepared caches were generated with different client prerequisites')
     cache_bytes = sum(pin['bytes'] for pin in caches['files'].values())
     prerequisites_bytes = sum(pin['bytes'] for pin in PREREQUISITES.values())
-    key = hashlib.sha256((identity['receipt_sha256'] + package_sha + cache_sha + prerequisites_sha
-                         + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
-    destination = root / ('client-work-' + key)
-    marker = destination / 'client-work.json'
     expected_identity = {'format': 1, 'source_data': str(data), 'import': identity,
                          'package_sha256': package_sha, 'cache_archive_sha256': cache_sha,
                          'prerequisites_archive_sha256': prerequisites_sha,
                          'prerequisites_manifest_sha256': prerequisites_manifest_sha,
                          'normalized_mtime_epoch': CACHE_EPOCH}
+    content_sha = identity_sha256({'data': worktree_data_identity(expected_identity),
+                                  'native': native_closure_identity(package)})
+    destination = root / ('client-work-' + content_sha[:24])
     def compatible_receipt(saved):
         # Only the ZIP wrapper provenance may differ. Imported generation,
         # prepared cache donor, prerequisites and timestamp policy stay exact.
         return (isinstance(saved, dict)
+                and type(saved.get('format')) is int
                 and isinstance(saved.get('package_sha256'), str)
                 and re.fullmatch(r'[0-9a-f]{64}', saved['package_sha256']) is not None
                 and all(saved.get(k) == v for k, v in expected_identity.items() if k != 'package_sha256'))
@@ -365,9 +382,14 @@ def prepare_worktree(root, data, assets, identity, context):
             require(previous.is_dir() and not previous.is_symlink(), 'Linked client worktree')
             saved = read_json(previous / 'client-work.json')
             if not compatible_receipt(saved): continue
-            old_key = hashlib.sha256((identity['receipt_sha256'] + saved['package_sha256']
-                + cache_sha + prerequisites_sha + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
-            require(previous.name == 'client-work-' + old_key, 'Prior client worktree key differs')
+            if 'worktree_key' in saved or 'content_identity_sha256' in saved:
+                require(saved.get('worktree_key') == previous.name
+                        and re.fullmatch(r'[0-9a-f]{64}', str(saved.get('content_identity_sha256'))),
+                        'Prior stable client worktree key differs')
+            else:
+                old_key = hashlib.sha256((identity['receipt_sha256'] + saved['package_sha256']
+                    + cache_sha + prerequisites_sha + str(CACHE_EPOCH)).encode()).hexdigest()[:24]
+                require(previous.name == 'client-work-' + old_key, 'Prior client worktree key differs')
             matches.append(previous)
         require(len(matches) <= 1, 'Ambiguous compatible client worktrees')
         if matches:
@@ -377,6 +399,7 @@ def prepare_worktree(root, data, assets, identity, context):
         require(candidate.is_dir() and not candidate.is_symlink(), 'Linked client worktree')
         saved = read_json(candidate / 'client-work.json')
         require(compatible_receipt(saved), 'Client worktree identity differs')
+        previous_receipt_sha = base.file_hash(candidate / 'client-work.json')
         changed_wrapper = saved['package_sha256'] != package_sha
         upgrade = verify_cached_files(candidate, allow_native_upgrade=changed_wrapper)
         if upgrade:
@@ -396,19 +419,29 @@ def prepare_worktree(root, data, assets, identity, context):
             finally:
                 if temporary.exists(): temporary.unlink()
             verify_cached_files(candidate)
-        if candidate != destination:
-            # Directory rename preserves every private/generated cache byte.
-            # If interrupted before the next atomic marker write, the new
-            # location's old wrapper hash must pass these same checks on retry.
-            os.rename(candidate, destination)
-        if changed_wrapper:
+        # Existing server links and receipts name this exact root, including
+        # regular world/avatar supplements. Keep that verified root in place;
+        # renaming it would leave absolute immutable links pointing nowhere.
+        destination = candidate
+        lineage = saved.get('verified_legacy_receipts', [])
+        require(isinstance(lineage, list) and len(lineage) <= 16
+                and all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value)
+                        for value in lineage), 'Invalid client worktree receipt lineage')
+        metadata_changed = (changed_wrapper or saved.get('content_identity_sha256') != content_sha
+                            or saved.get('worktree_key') != destination.name)
+        if metadata_changed:
+            previous_verified = dict(saved)
             previous_sha = saved['package_sha256']
             saved.update(expected_identity)
+            saved.update(content_identity_sha256=content_sha, worktree_key=destination.name,
+                         verified_legacy_receipts=list(dict.fromkeys(lineage + [previous_receipt_sha]))[-16:])
             base.private_write(destination / 'client-work.json', json.dumps(saved, indent=2) + '\n')
             return destination, dict(saved, reused=True, wrapper_only_migration=not upgrade,
                 native_executable_upgraded=upgrade,
                 previous_package_sha256=previous_sha, previous_worktree=migrated_from,
-                generated_cache_bytes_preserved=True)
+                previous_client_work_receipt_sha256=previous_receipt_sha,
+                previous_verified_client_worktree=previous_verified,
+                source_root_preserved=True, generated_cache_bytes_preserved=True)
         return destination, dict(saved, reused=True)
     require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + prerequisites_bytes + 256*1024*1024,
             'Insufficient space for private client links, prepared caches and runtime reserve')
@@ -494,7 +527,9 @@ def prepare_worktree(root, data, assets, identity, context):
                      imported_input_bytes_unchanged=True, imported_metadata_normalized=True,
                      prepared_cache_files=len(caches['files']), prepared_cache_bytes=cache_bytes,
                      prepared_prerequisite_files=len(PREREQUISITES), prepared_prerequisite_bytes=prerequisites_bytes,
-                     writable_cache_roots=list(PRIVATE_CACHE_ROOTS))
+                     writable_cache_roots=list(PRIVATE_CACHE_ROOTS),
+                     content_identity_sha256=content_sha, worktree_key=destination.name,
+                     verified_legacy_receipts=[])
         base.private_write(staging / 'client-work.json', json.dumps(saved, indent=2) + '\n')
         os.rename(staging, destination)
         return destination, dict(saved, reused=False)

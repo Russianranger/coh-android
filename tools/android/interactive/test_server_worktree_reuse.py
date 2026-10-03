@@ -50,7 +50,7 @@ class ServerWorktreeReuseTests(unittest.TestCase):
 
     def make(self, sequence):
         value = server.LocalCharacterServer.__new__(server.LocalCharacterServer)
-        args = SimpleNamespace(game_data=self.imported, session_id=f'{sequence:032x}')
+        args = SimpleNamespace(game_data=self.imported, assets=self.root / 'assets', session_id=f'{sequence:032x}')
         value.owner = SimpleNamespace(root=self.root, work=self.work, args=args,
             cleanup_status={'wine_prefix_stopped': True, 'owned_processes_reaped': True})
         value.ctx = SimpleNamespace(report={'client_worktree': dict(self.receipt)}, check=Mock(), event=Mock())
@@ -78,6 +78,147 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         value.config = value.runtime / 'data/server/db/servers.cfg'
         value.config.write_text('Password=owned-secret')
         value.cleanup_config()
+
+    def make_legacy_cache(self, value):
+        """Represent the actual v1 closed receipt, without a fresh input mirror."""
+        record = json.loads(value.data_cache.marker.read_text())
+        identity = dict(record['identity'], format=1,
+            client_work_receipt_sha256=server.base.file_hash(self.work / 'client-work.json'),
+            map_manifest_sha256=getattr(value, 'map_manifest_sha256', server.device.MAP_PROGRESS_PACKAGE_SHA256))
+        identity.pop('native_closure_sha256'); identity.pop('server_cache_compatibility_sha256')
+        key = hashlib.sha256(cache.canonical(identity)).hexdigest()[:24]
+        record.update(identity=identity, key=key)
+        old = self.root / ('character-server-data-' + key)
+        value.data_cache.path.rename(old)
+        (old / 'cache.json').write_text(json.dumps(record))
+        value.data_cache.pointer.unlink()
+        return old, record
+
+    def test_wrapper_receipt_refresh_keeps_server_key_and_generated_private_bins(self):
+        supplement = self.data / 'texture_library/msliberty.texture'
+        supplement.parent.mkdir(); supplement.write_bytes(b'immutable supplement'); supplement.chmod(0o444)
+        first = self.make(1); self.prepare(first)
+        data_inode = (first.runtime / 'data').stat().st_ino
+        (first.runtime / 'data/server/bin').mkdir(exist_ok=True)
+        generated = first.runtime / 'data/server/bin/contacts.bin'; generated.write_bytes(b'private generated contacts')
+        self.close(first)
+        (self.work / 'client-work.json').write_text('{"verified":"new-wrapper"}\n')
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('wrapper rebuilt server data')):
+            result = self.prepare(second)
+        self.assertEqual(first.data_cache.key, second.data_cache.key)
+        self.assertEqual((second.runtime / 'data').stat().st_ino, data_inode)
+        self.assertEqual((second.runtime / 'data/server/bin/contacts.bin').read_bytes(), b'private generated contacts')
+        self.assertEqual((second.runtime / 'data/texture_library/msliberty.texture').read_bytes(), b'immutable supplement')
+        self.assertTrue(result['server_data_cache']['reused'])
+        self.close(second)
+
+    def test_clean_legacy_cache_migrates_in_place_and_keeps_original_source_links(self):
+        supplement = self.data / 'texture_library/a.texture'
+        supplement.parent.mkdir(); supplement.write_bytes(b'root-stays'); supplement.chmod(0o444)
+        first = self.make(1); self.prepare(first)
+        (first.runtime / 'data/bin/native.bin').write_bytes(b'native private bytes')
+        data_inode = (first.runtime / 'data').stat().st_ino
+        self.close(first)
+        old, record = self.make_legacy_cache(first)
+        self.receipt['verified_legacy_receipts'] = [record['identity']['client_work_receipt_sha256']]
+        (self.work / 'client-work.json').write_text('{"verified":"wrapper-refreshed"}\n')
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('legacy donor mirrored inputs')):
+            result = self.prepare(second)
+        self.assertTrue(result['server_data_cache']['legacy_generation_migrated'])
+        self.assertEqual(second.data_cache.path, old)
+        self.assertEqual((second.runtime / 'data').stat().st_ino, data_inode)
+        self.assertEqual((second.runtime / 'data/bin/native.bin').read_bytes(), b'native private bytes')
+        self.assertEqual((second.runtime / 'data/texture_library/a.texture').resolve(), supplement)
+        self.assertEqual((second.runtime / 'data/server/db/schema.def').read_bytes(),
+                         (self.schema_dir / 'data/server/db/schema.def').read_bytes())
+        self.close(second)
+        third = self.make(3)
+        with patch.object(third, 'stage_map_data', side_effect=AssertionError('new pointer lost migrated donor')):
+            self.assertTrue(self.prepare(third)['server_data_cache']['reused'])
+        self.assertEqual(third.data_cache.path, old)
+        self.close(third)
+
+    def test_interrupted_legacy_rekey_before_checkout_recovers_closed_generation(self):
+        first = self.make(1); self.prepare(first); self.close(first)
+        old, record = self.make_legacy_cache(first)
+        current = self.make(2)
+        # Construct the same new identity through the real orchestration, but
+        # interrupt after the atomic migration marker and before taking a lease.
+        original = cache.ServerDataCache.read
+        def interrupt_after_rekey(value):
+            if value.path == old and value.identity.get('format') == 2:
+                raise server.base.Cancelled('interrupted before checkout')
+            return original(value)
+        with patch.object(cache.ServerDataCache, 'read', interrupt_after_rekey):
+            with self.assertRaises(server.base.Cancelled): self.prepare(current)
+        changed = json.loads((old / 'cache.json').read_text())
+        self.assertEqual(changed['status'], 'closed'); self.assertIsNone(changed['owner'])
+        self.assertEqual(changed['identity']['format'], 2)
+        again = self.make(3)
+        with patch.object(again, 'stage_map_data', side_effect=AssertionError('interrupted migration rebuilt inputs')):
+            result = self.prepare(again)
+        self.assertTrue(result['server_data_cache']['interrupted_migration_recovered'])
+        self.assertEqual(again.data_cache.path, old)
+        self.close(again)
+
+    def test_legacy_map_wrapper_is_qualified_by_actual_old_native_closure_and_corruption_refuses_it(self):
+        for sequence, corrupt in enumerate((False, True), start=1):
+            with self.subTest(corrupt=corrupt):
+                self.receipt['cache_archive_sha256'] = f'{sequence + 20:064x}'
+                old_payload = self.root / ('character-map-payload-' + f'{sequence:016x}')
+                old_payload.mkdir()
+                binary = (self.map_dir / 'MapServer.exe').read_bytes()
+                (old_payload / 'MapServer.exe').write_bytes(binary)
+                old_package = {'format': 1, 'repository_commit': f'{sequence:040x}',
+                    'source_commit': server.device.SOURCE_COMMIT, 'data_commit': server.device.DATA_COMMIT,
+                    'files': {'MapServer.exe': {'bytes': len(binary), 'sha256': hashlib.sha256(binary).hexdigest()}}}
+                marker = old_payload / 'game-package.json'; marker.write_text(json.dumps(old_package))
+                first = self.make(sequence * 2)
+                first.map_package = old_package
+                first.map_manifest_sha256 = server.base.file_hash(marker)
+                self.prepare(first)
+                (first.runtime / 'data/bin/native.bin').write_bytes(b'kept across wrapper')
+                self.close(first); old, record = self.make_legacy_cache(first)
+                if corrupt:
+                    (old_payload / 'MapServer.exe').write_bytes(b'foreign old native payload')
+                second = self.make(sequence * 2 + 1)
+                second.map_package = dict(old_package, repository_commit='f' * 40)
+                second.map_manifest_sha256 = 'd' * 64
+                result = self.prepare(second)
+                self.assertEqual(result['server_data_cache']['reused'], not corrupt)
+                if corrupt:
+                    self.assertTrue((old / 'data').is_dir())
+                    self.assertFalse((second.runtime / 'data/bin/native.bin').exists())
+                else:
+                    self.assertEqual((second.runtime / 'data/bin/native.bin').read_bytes(), b'kept across wrapper')
+                    self.assertEqual(second.data_cache.path, old)
+                self.close(second)
+
+    def test_changed_native_or_unproved_legacy_client_receipt_preserves_donor_and_stages_fresh(self):
+        for sequence, mutation in enumerate(('native', 'client_receipt', 'owner'), start=1):
+            with self.subTest(mutation=mutation):
+                self.receipt['cache_archive_sha256'] = f'{sequence:064x}'
+                first = self.make(sequence * 2); self.prepare(first); self.close(first)
+                old, record = self.make_legacy_cache(first)
+                if mutation == 'native':
+                    (self.map_dir / 'MapServer.exe').write_bytes(b'new actual native bytes')
+                    # Different actual wrapper hash forces bounded native proof,
+                    # with no qualified matching old payload available.
+                    record['identity']['map_manifest_sha256'] = 'a' * 64
+                elif mutation == 'client_receipt':
+                    record['identity']['client_work_receipt_sha256'] = 'e' * 64
+                else:
+                    record.update(status='checked_out', owner={'session_id': 'f' * 32, 'target': '/old-owned-session'})
+                record['key'] = hashlib.sha256(cache.canonical(record['identity'])).hexdigest()[:24]
+                (old / 'cache.json').write_text(json.dumps(record))
+                preserved = (old / 'cache.json').read_bytes()
+                second = self.make(sequence * 2 + 1); result = self.prepare(second)
+                self.assertFalse(result['server_data_cache']['reused'])
+                self.assertEqual((old / 'cache.json').read_bytes(), preserved)
+                self.assertTrue((old / 'data').is_dir())
+                self.close(second)
 
     def test_clean_second_session_reuses_directory_and_generated_cache_but_resets_schema(self):
         first = self.make(1); cold = self.prepare(first)

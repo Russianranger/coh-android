@@ -10,18 +10,32 @@ package io.github.russianranger.cohdiagnostic;
 
 import android.system.Os;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 /** Extracts GNU/USTAR/PAX runtimes; all links are deferred until regular files finish. */
 final class TarExtractor {
     private static final int MAX_PAX_BYTES=1024*1024, MAX_PATH_BYTES=16384;
     private static final long MAX_MEMBER_BYTES=8L*1024*1024*1024, MAX_TOTAL_BYTES=10L*1024*1024*1024;
+    private static final class ArchiveLink {
+        final String name,target;
+        final char type;
+        final FileTime modified;
+        ArchiveLink(String name,String target,char type,FileTime modified) {
+            this.name=name;this.target=target;this.type=type;this.modified=modified;
+        }
+    }
     interface Progress {void update(int count);}
     private static void cancelled() throws InterruptedIOException {
         if(Thread.currentThread().isInterrupted())throw new InterruptedIOException("Runtime extraction cancelled");
@@ -60,9 +74,44 @@ final class TarExtractor {
         noSymlinkAncestors(dest.toPath().getParent());
         Files.createDirectories(dest.toPath().getParent());
     }
+    private static FileTime memberTime(byte[] header,String paxTime) throws IOException {
+        try {
+            if(paxTime!=null) {
+                // PAX times are decimal seconds. Bound both parsing work and
+                // the representable nanosecond value; do not accept exponents.
+                if(paxTime.length()>64||!paxTime.matches("-?[0-9]+(?:\\.[0-9]+)?"))
+                    throw new IOException("Invalid PAX modification time");
+                long nanos=new BigDecimal(paxTime).movePointRight(9)
+                        .setScale(0,RoundingMode.FLOOR).longValueExact();
+                // Java/Android metadata providers may silently clamp dates
+                // before the Unix epoch. Refuse them instead of changing them.
+                if(nanos<0)throw new IOException("Unsupported pre-epoch PAX modification time");
+                return FileTime.from(nanos,TimeUnit.NANOSECONDS);
+            }
+            long seconds=octal(header,136,12);
+            if(seconds<0)throw new IOException("Invalid tar modification time");
+            return FileTime.from(Math.multiplyExact(seconds,1000000000L),TimeUnit.NANOSECONDS);
+        } catch(ArithmeticException|NumberFormatException e) {
+            throw new IOException("Archive modification time exceeds limits",e);
+        }
+    }
+    private static void setModifiedTime(Path path,FileTime time,boolean directory) throws IOException {
+        cancelled();
+        noSymlinkAncestors(path.getParent());
+        BasicFileAttributes attributes=Files.readAttributes(path,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS);
+        if(directory?!attributes.isDirectory():!attributes.isRegularFile())
+            throw new IOException("Runtime metadata target changed type");
+        BasicFileAttributeView view=Files.getFileAttributeView(path,BasicFileAttributeView.class,LinkOption.NOFOLLOW_LINKS);
+        if(view==null)throw new IOException("Runtime modification times are unsupported");
+        // Android may retain only microseconds. Wine uses whole INF seconds;
+        // provider precision must not be confused with a new extraction date.
+        view.setTimes(time,null,null);
+    }
     static void extract(File archive,File root,Progress progress) throws Exception {
         root=staging(root);
-        List<String[]> links=new ArrayList<>(); long total=0; int count=0; String longName=null,longLink=null;
+        List<ArchiveLink> links=new ArrayList<>();
+        Map<Path,FileTime> directoryTimes=new LinkedHashMap<>();
+        long total=0; int count=0; String longName=null,longLink=null;
         Map<String,String> globalPax=new HashMap<>(), localPax=new HashMap<>();
         boolean pendingPax=false;
         // Reuse the copy buffer for every regular member. The runtime contains
@@ -95,6 +144,7 @@ final class TarExtractor {
                 String name=text(header,0,100), prefix=text(header,345,155), link=text(header,157,100);
                 if(!prefix.isEmpty())name=prefix+"/"+name;
                 boolean metadata=type=='x'||type=='g'||type=='L'||type=='K';
+                FileTime modified=null;
                 if(!metadata) {
                     if(longName!=null){name=longName;longName=null;} if(longLink!=null){link=longLink;longLink=null;}
                     String value=paxValue(localPax,globalPax,"path"); if(value!=null)name=value;
@@ -102,6 +152,7 @@ final class TarExtractor {
                     value=paxValue(localPax,globalPax,"size"); if(value!=null)size=paxSize(value);
                     value=paxValue(localPax,globalPax,"hdrcharset");
                     if(value!=null&&!value.equals("ISO-IR 10646 2000 UTF-8"))throw new IOException("Unsupported PAX header encoding");
+                    modified=memberTime(header,paxValue(localPax,globalPax,"mtime"));
                     localPax.clear();pendingPax=false;
                 }
                 if(size<0||size>MAX_MEMBER_BYTES || (total+=size)>MAX_TOTAL_BYTES || ++count>400000)throw new IOException("Runtime archive exceeds limits");
@@ -126,11 +177,13 @@ final class TarExtractor {
                         parents(dest);
                         try(OutputStream out=Files.newOutputStream(dest.toPath(),StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS)){transfer(in,out,size,copyBuffer);}
                         Os.chmod(dest.getPath(),(mode&0111)!=0?0755:0644);
+                        setModifiedTime(dest.toPath(),modified,false);
                     } else if(type=='5') {
                         if(size!=0)throw new IOException("Malformed directory entry");
                         Files.createDirectories(dest.toPath());
+                        directoryTimes.put(dest.toPath(),modified);
                     }
-                    else if(type=='1'||type=='2') {if(size!=0)throw new IOException("Malformed link");links.add(new String[]{name,link,String.valueOf(type)});}
+                    else if(type=='1'||type=='2') {if(size!=0)throw new IOException("Malformed link");links.add(new ArchiveLink(name,link,type,modified));}
                     else throw new IOException("Unsupported runtime tar member; use the release runtime archive (type "+type+")");
                 }
                 skip(in,(512-size%512)%512); if(count%500==0)progress.update(count);
@@ -139,26 +192,32 @@ final class TarExtractor {
         // All links are deferred: archive data can never write through a symlink.
         // Copy hardlink bytes rather than creating filesystem hardlinks. This also
         // avoids Android hardlink restrictions and preserves independent files.
-        for(String[] link:links)if(link[2].equals("1")) {
+        for(ArchiveLink link:links)if(link.type=='1') {
             cancelled();
-            File dest=path(root,link[0]),source=path(root,link[1]);parents(dest);
+            File dest=path(root,link.name),source=path(root,link.target);parents(dest);
             if(!Files.isRegularFile(source.toPath(),LinkOption.NOFOLLOW_LINKS)
                     ||Files.exists(dest.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Invalid hardlink");
             long size=Files.size(source.toPath());
             if((total+=size)>MAX_TOTAL_BYTES)throw new IOException("Runtime archive copies exceed limits");
             if(size>root.getUsableSpace()-128L*1024*1024)throw new IOException("Not enough storage to copy runtime hardlink");
-            Files.copy(source.toPath(),dest.toPath());
+            Files.copy(source.toPath(),dest.toPath(),LinkOption.NOFOLLOW_LINKS);
             cancelled();
             Os.chmod(dest.getPath(),Files.isExecutable(source.toPath())?0755:0644);
+            setModifiedTime(dest.toPath(),link.modified,false);
         }
-        for(String[] link:links)if(link[2].equals("2")) {
+        for(ArchiveLink link:links)if(link.type=='2') {
             cancelled();
-            File dest=path(root,link[0]);parents(dest);
+            File dest=path(root,link.name);parents(dest);
             // Keep guest absolute targets absolute; PRoot resolves them in its
             // rootfs. Never follow these links in the Android installer.
-            if(link[1].isEmpty()||link[1].indexOf('\0')>=0||Files.exists(dest.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Invalid symlink");
-            Os.symlink(link[1],dest.getPath());
+            if(link.target.isEmpty()||link.target.indexOf('\0')>=0||Files.exists(dest.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Invalid symlink");
+            Os.symlink(link.target,dest.getPath());
         }
+        // Children and deferred links change directory dates. Apply explicit
+        // archive directory times last, deepest first, without following links.
+        List<Path> directories=new ArrayList<>(directoryTimes.keySet());
+        directories.sort((a,b)->Integer.compare(b.getNameCount(),a.getNameCount()));
+        for(Path directory:directories)setModifiedTime(directory,directoryTimes.get(directory),true);
         cancelled();
         progress.update(count);
     }
@@ -203,7 +262,7 @@ final class TarExtractor {
             // These extensions alter the file's data layout, unlike metadata such
             // as timestamps, ownership and xattrs. Never extract them as plain data.
             if(key.startsWith("GNU.sparse.")||key.startsWith("GNU.volume.")||key.equals("SCHILY.realsize")||key.equals("SCHILY.filetype"))throw new IOException("Unsupported sparse or multivolume runtime archive");
-            if(key.equals("path")||key.equals("linkpath")||key.equals("size")||key.equals("hdrcharset")) {
+            if(key.equals("path")||key.equals("linkpath")||key.equals("size")||key.equals("hdrcharset")||key.equals("mtime")) {
                 if(value.indexOf('\0')>=0)throw new IOException("Invalid PAX value");
                 if((key.equals("path")||key.equals("linkpath"))&&end-equals-2>MAX_PATH_BYTES)throw new IOException("Archive path is too long");
                 values.put(key,value);

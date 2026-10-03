@@ -7,6 +7,7 @@ from pathlib import Path
 import hashlib
 import json
 import os
+import re
 import stat
 import struct
 import time
@@ -18,6 +19,7 @@ MAX_BYTES = 64 * 1024 * 1024
 MAX_HEADER = 1056
 PACK = 'coh-texture-header-index.bin'
 MARKER = 'coh-texture-header-index.json'
+IDENTITY_POLICY = 'verified_client_content_v1'
 
 
 def require(value, message):
@@ -29,12 +31,43 @@ def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
 
 
+def worktree_identity(client):
+    """Use the already verified data/native closure, excluding wrapper lineage."""
+    from client_startup_diagnostic import worktree_data_identity
+    content = client.get('content_identity_sha256')
+    require(isinstance(content, str) and re.fullmatch(r'[0-9a-f]{64}', content),
+            'Missing verified client content identity')
+    try:
+        data = worktree_data_identity(client)
+    except KeyError as error:
+        raise ValueError('Incomplete verified client data identity') from error
+    return {'content_identity_sha256': content, 'data_contract': data}
+
+
+def pack_identity(client_identity, import_identity, executable_sha256, inventory_sha):
+    return hashlib.sha256(canonical({'format': FORMAT, 'import': import_identity,
+        'client_executable_sha256': executable_sha256, 'client_work': client_identity,
+        'texture_inventory_sha256': inventory_sha})).hexdigest()
+
+
+def rebind_legacy_pack(contents, old_identity, identity, records):
+    """Rebind only the envelope; an exactly proved old payload stays unchanged."""
+    require(contents[:8] == b'COHTHI1\0' and 64 <= len(contents) <= MAX_BYTES,
+            'Invalid previous texture pack envelope')
+    require(struct.unpack_from('<IIIIII', contents, 8) == (
+                FORMAT, 32, records, len(contents) - 64, zlib.crc32(contents[64:]), 0)
+            and contents[32:64] == bytes.fromhex(old_identity),
+            'Previous texture pack identity or checksum differs')
+    return contents[:32] + bytes.fromhex(identity) + contents[64:]
+
+
 def texture_inputs(work, context):
     data = work / 'data'
     root = data / 'texture_library'
     require(root.is_dir() and not root.is_symlink(), 'Private texture directory unavailable')
     marker = work / 'client-work.json'
-    require(marker.is_file() and not marker.is_symlink(), 'Missing verified client worktree')
+    require(marker.is_file() and not marker.is_symlink() and marker.stat().st_size <= 1024**2,
+            'Missing or oversized verified client worktree')
     client = json.loads(marker.read_bytes())
     imported = Path(client['source_data']).resolve()
     inventory, records = [], []
@@ -121,36 +154,67 @@ def prepare(work, import_identity, executable_sha256, context):
     started = time.monotonic()
     work = Path(work)
     records, inventory_sha, client = texture_inputs(work, context)
-    identity = hashlib.sha256(canonical({'format': FORMAT, 'import': import_identity,
-        'client_executable_sha256': executable_sha256, 'client_work': client,
-        'texture_inventory_sha256': inventory_sha})).hexdigest()
+    stable_client = worktree_identity(client)
+    require(stable_client['data_contract']['import'] == import_identity,
+            'Texture import identity differs from verified client worktree')
+    identity = pack_identity(stable_client, import_identity, executable_sha256, inventory_sha)
     target, marker = work / PACK, work / MARKER
     expected = {'format': FORMAT, 'identity': identity, 'records': len(records),
-                'inventory_sha256': inventory_sha, 'client_executable_sha256': executable_sha256}
+                'inventory_sha256': inventory_sha, 'client_executable_sha256': executable_sha256,
+                'identity_policy': IDENTITY_POLICY,
+                'client_content_identity_sha256': stable_client['content_identity_sha256']}
     saved = None
+    migrated = False
     if (marker.is_file() and not marker.is_symlink() and marker.stat().st_size < 16384
             and target.is_file() and not target.is_symlink() and 64 <= target.stat().st_size <= MAX_BYTES):
         try:
             candidate = json.loads(marker.read_bytes())
-            if (all(candidate.get(key) == value for key, value in expected.items())
-                    and candidate.get('bytes') == target.stat().st_size
-                    and candidate.get('sha256') == hashlib.sha256(target.read_bytes()).hexdigest()):
+            require(isinstance(candidate, dict), 'Invalid previous texture index receipt')
+            contents = target.read_bytes()
+            valid_payload = (candidate.get('bytes') == len(contents)
+                             and candidate.get('sha256') == hashlib.sha256(contents).hexdigest())
+            if valid_payload and all(candidate.get(key) == value for key, value in expected.items()):
                 saved = candidate
-        except (ValueError, OSError):
+            elif valid_payload:
+                # prepare_worktree supplies this snapshot only after checking
+                # the previous native/prerequisite closure. It is report-only,
+                # never recursive metadata persisted in client-work.json.
+                report = getattr(context, 'report', {}).get('client_worktree', {})
+                previous = report.get('previous_verified_client_worktree')
+                if (report.get('wrapper_only_migration') is True
+                        and report.get('source_root_preserved') is True
+                        and isinstance(previous, dict)):
+                    from client_startup_diagnostic import worktree_data_identity
+                    legacy = pack_identity(previous, import_identity, executable_sha256, inventory_sha)
+                    legacy_expected = {'format': FORMAT, 'identity': legacy, 'records': len(records),
+                        'inventory_sha256': inventory_sha, 'client_executable_sha256': executable_sha256}
+                    if (worktree_data_identity(previous) == stable_client['data_contract']
+                            and all(candidate.get(key) == value for key, value in legacy_expected.items())):
+                        contents = rebind_legacy_pack(contents, legacy, identity, len(records))
+                        _, after, after_client = texture_inputs(work, context)
+                        require(after == inventory_sha and worktree_identity(after_client) == stable_client,
+                                'Texture generation changed while migrating index')
+                        saved = dict(candidate, **expected, sha256=hashlib.sha256(contents).hexdigest())
+                        atomic_write(target, contents)
+                        atomic_write(marker, canonical(saved) + b'\n')
+                        migrated = True
+        except (ValueError, OSError, KeyError, TypeError):
             pass
     reused = saved is not None
     if saved is None:
         context.event('stage', status='running', message='Indexing immutable texture headers', records=len(records))
         contents, header_sha = make_pack(records, identity, context)
         # Reject a concurrent mutation rather than publish a mixed generation.
-        _, after, _ = texture_inputs(work, context)
-        require(after == inventory_sha, 'Texture generation changed while indexing')
+        _, after, after_client = texture_inputs(work, context)
+        require(after == inventory_sha and worktree_identity(after_client) == stable_client,
+                'Texture generation changed while indexing')
         saved = dict(expected, bytes=len(contents), sha256=hashlib.sha256(contents).hexdigest(),
                      original_header_bytes_sha256=header_sha)
         require(not target.is_symlink() and not marker.is_symlink(), 'Linked texture index output refused')
         atomic_write(target, contents)
         atomic_write(marker, canonical(saved) + b'\n')
     receipt = dict(saved, reused=reused, preparation_seconds=round(time.monotonic() - started, 3),
+                   legacy_identity_migrated=migrated,
                    native_file_opens_avoidable=len(records), original_texture_files_unchanged=True,
                    native_fallback_available=True)
     environment = {'COH_TEXTURE_HEADER_PACK': 'Z:' + str(target).replace('/', '\\'),

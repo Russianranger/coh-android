@@ -19,6 +19,7 @@ import game_map_progress as progress
 import atlas_world_assets as world
 import character_avatar_assets as avatar
 import character_server_data_cache as server_data_cache
+import server_cache_package
 import native_character_events as character_events
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
@@ -337,20 +338,25 @@ class LocalCharacterServer(login.LocalLoginServer):
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
         source_info = source.stat()
-        identity = {'format': 1, 'source_data': str(source.resolve(strict=True)),
+        identity = {'format': 2, 'source_data': str(source.resolve(strict=True)),
             'source_device': source_info.st_dev, 'source_inode': source_info.st_ino,
             'source_roots': [{'path': str(root.resolve(strict=True)),
                               'identity': server_data_cache.fingerprint(root.resolve(strict=True), directory=True)}
                              for root in (self.owner.work, self.owner.args.game_data)],
-            'client_work_receipt_sha256': base.file_hash(self.owner.work / 'client-work.json'),
             'client_inputs': {key: receipt[key] for key in ('import', 'cache_archive_sha256',
                 'prerequisites_archive_sha256', 'prerequisites_manifest_sha256', 'normalized_mtime_epoch')},
             'world_manifest_sha256': world.MANIFEST_SHA256, 'world_archive_sha256': world.ARCHIVE_SHA256,
             'avatar_manifest_sha256': avatar.MANIFEST_SHA256, 'avatar_archive_sha256': avatar.ARCHIVE_SHA256,
             'schema_manifest_sha256': dbserver.DEVICE_SCHEMA_MANIFEST,
-            'map_manifest_sha256': getattr(self, 'map_manifest_sha256', device.MAP_PROGRESS_PACKAGE_SHA256)}
+            'server_cache_compatibility_sha256': hashlib.sha256(
+                server_data_cache.canonical(server_cache_package.compatibility_identity())).hexdigest(),
+            'native_closure_sha256': hashlib.sha256(server_data_cache.canonical({
+                'source_commit': self.map_package.get('source_commit', device.SOURCE_COMMIT),
+                'data_commit': self.map_package.get('data_commit', device.DATA_COMMIT),
+                'files': self.map_package['files']})).hexdigest()}
         self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
-                                                            self.owner.args.session_id, self.ctx)
+            self.owner.args.session_id, self.ctx,
+            legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
         if self.data_cache.checkout(self.runtime / 'data'):
             for name in self.schema['files']:
                 server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name,
@@ -368,12 +374,80 @@ class LocalCharacterServer(login.LocalLoginServer):
             else:
                 shutil.copyfile(self.map_package_dir / name, target)
                 target.chmod(0o400)
+        try:
+            donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
+                                                                          self.runtime / 'MapServer.exe')
+            self.creation_report['prepared_server_caches'] = server_cache_package.install(
+                self.owner.args.assets / server_cache_package.ARCHIVE, self.runtime / 'data',
+                donor_identity, context=self.ctx)
+        except (ValueError, OSError) as failure:
+            # Derived caches are optional. Exact native/source mismatches leave
+            # existing generated bins and the ordinary loader fully in charge.
+            self.creation_report['prepared_server_caches'] = {'format': 1,
+                'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
             'private_cache_roots': ['bin', 'geobin', 'server/bin'],
             'directory_layout': 'real_directories_with_individual_immutable_file_links',
             'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
             'server_data_cache': self.data_cache.summary, **staged}
+
+    def legacy_data_identity_matches(self, previous, current, receipt):
+        """Qualify wrapper-only legacy keys without moving their source root.
+
+        A legacy key contained the complete client/MapServer wrapper receipts.
+        Bind its old client receipt to the fully checked worktree lineage, and
+        prove the old native closure rather than trusting wrapper equivalence.
+        The cache's normal closed-owner/immutable/private checks run afterward.
+        """
+        if not isinstance(previous, dict):
+            return False
+        added = {'native_closure_sha256', 'server_cache_compatibility_sha256'}
+        expected = set(current) - added
+        expected.update(('client_work_receipt_sha256', 'map_manifest_sha256'))
+        if set(previous) != expected or type(previous.get('format')) is not int or previous['format'] != 1:
+            return False
+        if any(previous.get(key) != value for key, value in current.items()
+               if key not in added | {'format'}):
+            return False
+        known = receipt.get('verified_legacy_receipts', [])
+        if not isinstance(known, list) or len(known) > 16 or any(
+                not isinstance(value, str) or not re.fullmatch('[0-9a-f]{64}', value) for value in known):
+            return False
+        known = set(known) | {base.file_hash(self.owner.work / 'client-work.json')}
+        if previous.get('client_work_receipt_sha256') not in known:
+            return False
+        old_manifest = previous.get('map_manifest_sha256')
+        if not isinstance(old_manifest, str) or not re.fullmatch('[0-9a-f]{64}', old_manifest):
+            return False
+        if old_manifest == getattr(self, 'map_manifest_sha256', device.MAP_PROGRESS_PACKAGE_SHA256):
+            return True  # The current payload has already passed its full pins.
+        candidates = []
+        for path in self.owner.root.iterdir():
+            if re.fullmatch('character-map-payload-[0-9a-f]{16}', path.name):
+                candidates.append(path)
+                if len(candidates) > 16:
+                    return False
+        for path in candidates:
+            self.ctx.check()
+            try:
+                if server_data_cache.fingerprint(path, directory=True)['uid'] != self.owner.root.stat().st_uid:
+                    continue
+                marker = path / 'game-package.json'
+                if server_data_cache.fingerprint(marker)['bytes'] > 4 * 1024**2 or base.file_hash(marker) != old_manifest:
+                    continue
+                package = dbserver.load_json(marker, 4 * 1024**2)
+                native = {'source_commit': package.get('source_commit'),
+                          'data_commit': package.get('data_commit'), 'files': package.get('files')}
+                if hashlib.sha256(server_data_cache.canonical(native)).hexdigest() != current['native_closure_sha256']:
+                    continue
+                dbserver.verify_inventory(path, package['files'], manifest='game-package.json', binary=True)
+                return True
+            except base.Cancelled:
+                raise
+            except (base.DiagnosticError, OSError, ValueError, TypeError, KeyError):
+                continue
+        return False
 
     def cleanup_config(self):
         super().cleanup_config()

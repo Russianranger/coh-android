@@ -1,40 +1,9 @@
 name: Thor graphical saved character reopen candidate
+# Superseded historical donor pipeline. Current continuation publication uses
+# android-startup-caches.yml and preserves the published 0.12.0 donor.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'android/interactive/**'
-      - 'android/guest/client_interactive_diagnostic.py'
-      - 'android/guest/client_login_diagnostic.py'
-      - 'android/guest/local_login_server.py'
-      - 'android/guest/character_creation_diagnostic.py'
-      - 'android/guest/character_reopen_diagnostic.py'
-      - 'android/guest/atlas_world_assets.py'
-      - 'android/guest/character_avatar_assets.py'
-      - 'assets/character-avatar-defaults.zip'
-      - 'assets/character-avatar-defaults-manifest.json'
-      - 'assets/atlas-world-supplement.zip'
-      - 'assets/atlas-world-supplement-manifest.json'
-      - 'android/guest/local_character_server.py'
-      - 'tools/android/interactive/**'
-      - '.github/workflows/android-client-interactive.yml'
-  pull_request:
-    paths:
-      - 'android/interactive/**'
-      - 'android/guest/client_interactive_diagnostic.py'
-      - 'android/guest/client_login_diagnostic.py'
-      - 'android/guest/local_login_server.py'
-      - 'android/guest/character_creation_diagnostic.py'
-      - 'android/guest/character_reopen_diagnostic.py'
-      - 'android/guest/atlas_world_assets.py'
-      - 'android/guest/character_avatar_assets.py'
-      - 'assets/character-avatar-defaults.zip'
-      - 'assets/character-avatar-defaults-manifest.json'
-      - 'assets/atlas-world-supplement.zip'
-      - 'assets/atlas-world-supplement-manifest.json'
-      - 'android/guest/local_character_server.py'
-      - 'tools/android/interactive/**'
-      - '.github/workflows/android-client-interactive.yml'
+
 permissions:
   contents: read
   actions: read

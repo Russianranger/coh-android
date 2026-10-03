@@ -121,6 +121,44 @@ class WineRefreshTests(unittest.TestCase):
         self.assertEqual(self.runner.wine_initialization['state'], 'failed')
         self.assertFalse(self.marker.exists())
 
+    def test_real_runtime_change_requires_registration_with_unchanged_inf_date(self):
+        self.ready_prefix(self.INF_MTIME)
+        (self.assets / 'runtime-lock.json').write_text('{"runtime":"genuine-new-archive"}\n')
+        self.fake_wine(self.REGISTRATION)
+        receipt = self.initialize()
+        self.assertFalse(receipt['prior_ready_prefix'])
+        self.assertFalse(receipt['ready_prefix_reused'])
+        self.assertTrue(receipt['update_timestamp_removed'])
+        self.assertEqual(receipt['registration_processes'], 3)
+        self.assertEqual(receipt['wow64_registration_processes'], 1)
+        self.assertEqual(receipt['registration_passes'], 1)
+        self.assertTrue(receipt['registration_timestamp_verified'])
+        self.assertFalse(self.marker.exists())  # Real PE32 proof still publishes readiness later.
+        self.assertEqual(self.sentinel.read_text(), 'keep existing settings\n')
+        self.assertEqual(self.cache.read_bytes(), b'existing generated game cache\x00')
+
+    def test_actual_archive_epoch_zero_migrates_then_reuses_and_still_repairs_real_upgrades(self):
+        # The hash-pinned runtime-fex-v3 archive actually stores wine.inf at
+        # Unix epoch zero. Zero is a valid numeric stamp, never a missing proof.
+        os.utime(self.inf, (0, 0))
+        for previous, upgraded, registrations in ((self.INF_MTIME, False, 3),
+                                                   (0, False, 0), (0, True, 3)):
+            with self.subTest(previous=previous, real_upgrade=upgraded):
+                self.ready_prefix(previous)
+                if upgraded:
+                    (self.assets / 'runtime-lock.json').write_text('{"runtime":"genuine-new-archive"}\n')
+                self.fake_wine(self.REGISTRATION if registrations else '002c:trace:wineboot:main Operation done\n',
+                               expected_timestamp=0 if not registrations else None, result_timestamp=0)
+                receipt = self.initialize()
+                expected = (3, 1, 1) if registrations else (0, 0, 0)
+                self.assertEqual(expected, tuple(receipt[key] for key in
+                    ('registration_processes', 'wow64_registration_processes', 'registration_passes')))
+                self.assertEqual(0, receipt['update_timestamp_content_after'])
+                self.assertTrue(receipt['registration_timestamp_verified'])
+                self.assertEqual(not registrations, receipt['ready_prefix_reused'])
+                self.assertFalse(self.marker.exists(), 'The actual PE32 probe must renew readiness')
+                self.assertEqual('keep existing settings\n', self.sentinel.read_text())
+                self.assertEqual(b'existing generated game cache\x00', self.cache.read_bytes())
     def test_failed_08_consumed_marker_requires_normal_single_pass_repair(self):
         self.timestamp.write_text(f'{self.INF_MTIME}\n')
         self.fake_wine(self.REGISTRATION)

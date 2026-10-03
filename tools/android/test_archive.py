@@ -36,18 +36,19 @@ def extract_archive(classes, archive, destination, cancel_after=None):
     return subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
 
 
-def member(name, data=b'payload', kind=tarfile.REGTYPE, target='', mode=0o644):
+def member(name, data=b'payload', kind=tarfile.REGTYPE, target='', mode=0o644, mtime=0):
     entry = tarfile.TarInfo(name)
     entry.type, entry.linkname, entry.mode = kind, target, mode
+    entry.mtime = mtime
     entry.size = len(data) if kind == tarfile.REGTYPE else 0
     return entry, data
 
 
-def archive_bytes(entries, format=tarfile.PAX_FORMAT):
+def archive_bytes(entries, format=tarfile.PAX_FORMAT, pax_headers=None):
     output = io.BytesIO()
-    with tarfile.open(fileobj=output, mode='w', format=format) as archive:
+    with tarfile.open(fileobj=output, mode='w', format=format, pax_headers=pax_headers) as archive:
         for entry, data in entries:
-            archive.addfile(entry, io.BytesIO(data) if entry.isreg() else None)
+            archive.addfile(entry, io.BytesIO(data) if entry.size else None)
     return output.getvalue()
 
 
@@ -103,6 +104,97 @@ class ArchiveTests(unittest.TestCase):
         entry.pax_headers = {'path': 'usr/share/'+'日本語'*20, 'size': str(len(payload)), 'mtime': '1.5'}
         self.run_archive(archive_bytes([(entry, payload)]))
         self.assertEqual((self.destination/entry.pax_headers['path']).read_bytes(), payload)
+        self.assertEqual((self.destination/entry.pax_headers['path']).stat().st_mtime_ns, 1500000000)
+
+    def test_same_wine_archive_keeps_inf_time_across_fresh_generations(self):
+        epoch = 1767225600
+        data = archive_bytes([member('share/wine/wine.inf', b'[Version]\n', mtime=epoch)],
+                             format=tarfile.USTAR_FORMAT)
+        first = self.destination
+        self.run_archive(data)
+        self.destination = self.base/'next-generation'
+        self.run_archive(data)
+        for generation in (first, self.destination):
+            inf = generation/'share/wine/wine.inf'
+            self.assertEqual(inf.read_bytes(), b'[Version]\n')
+            self.assertEqual(inf.stat().st_mtime_ns, epoch*1000000000)
+        self.assertFalse(os.path.samefile(first/'share/wine/wine.inf',
+                                        self.destination/'share/wine/wine.inf'))
+
+    def test_directory_dates_are_restored_after_children_and_deferred_links(self):
+        self.run_archive(archive_bytes([
+            member('.', kind=tarfile.DIRTYPE, mtime=100),
+            member('parent', kind=tarfile.DIRTYPE, mtime=200),
+            member('parent/sub', kind=tarfile.DIRTYPE, mtime=300),
+            member('parent/sub/file', mtime=400),
+            member('parent/sub/copy', kind=tarfile.LNKTYPE, target='parent/sub/file', mtime=500),
+            member('parent/link', kind=tarfile.SYMTYPE, target='/guest/target', mtime=600),
+            member('parent', kind=tarfile.DIRTYPE, mtime=700)], format=tarfile.USTAR_FORMAT))
+        for name, seconds in [('.', 100), ('parent', 700), ('parent/sub', 300),
+                              ('parent/sub/file', 400), ('parent/sub/copy', 500)]:
+            self.assertEqual((self.destination/name).stat().st_mtime_ns, seconds*1000000000, name)
+        self.assertEqual(os.readlink(self.destination/'parent/link'), '/guest/target')
+
+    def test_pax_time_global_local_and_empty_override_precedence(self):
+        override, data = member('override', mtime=22)
+        override.pax_headers = {'mtime': '2.1234567899'}
+        suppress, other = member('suppress', mtime=33)
+        suppress.pax_headers = {'mtime': ''}
+        self.run_archive(archive_bytes([member('global'), (override, data), (suppress, other),
+                                       member('global-again')], pax_headers={'mtime': '1.125000001'}))
+        for name, nanos in [('global', 1125000001), ('override', 2123456789),
+                            ('suppress', 33000000000), ('global-again', 1125000001)]:
+            self.assertEqual((self.destination/name).stat().st_mtime_ns, nanos, name)
+
+    def test_empty_global_pax_time_removes_override_for_following_members(self):
+        reset = tarfile.TarInfo('GlobalTimeReset')
+        reset.type, reset.size = tarfile.XGLTYPE, 9
+        self.run_archive(archive_bytes([member('global'), (reset, b'9 mtime=\n'),
+                                       member('header-time', mtime=88)],
+                                      pax_headers={'mtime': '1.125000001'}))
+        self.assertEqual((self.destination/'global').stat().st_mtime_ns, 1125000001)
+        self.assertEqual((self.destination/'header-time').stat().st_mtime_ns, 88000000000)
+
+    def test_pax_hardlink_metadata_preserves_independent_files(self):
+        copy, empty = member('copy', kind=tarfile.LNKTYPE, target='original')
+        copy.pax_headers = {'mtime': '5.125000001'}
+        original, payload = member('original')
+        original.pax_headers = {'mtime': '1.000000001'}
+        self.run_archive(archive_bytes([(copy, empty), (original, payload)]))
+        self.assertEqual((self.destination/'original').stat().st_mtime_ns, 1000000001)
+        self.assertEqual((self.destination/'copy').stat().st_mtime_ns, 5125000001)
+        self.assertFalse(os.path.samefile(self.destination/'original', self.destination/'copy'))
+
+    def test_archive_metadata_does_not_follow_guest_symlink(self):
+        outside = self.base/'outside'
+        outside.write_bytes(b'keep external bytes')
+        os.utime(outside, ns=(1234567890, 1234567890))
+        self.run_archive(archive_bytes([member('alias', kind=tarfile.SYMTYPE, target=str(outside), mtime=1),
+                                       member('.', kind=tarfile.DIRTYPE, mtime=2)]))
+        self.assertEqual(outside.read_bytes(), b'keep external bytes')
+        self.assertEqual(outside.stat().st_mtime_ns, 1234567890)
+
+    def test_rejects_invalid_or_unrepresentable_pax_times(self):
+        for index, value in enumerate(['NaN', 'Infinity', '1e9', '+1', '1.', '--1', '-1.000000001',
+                                       '9223372036.854775808', '-9223372036.854775809', '9'*65]):
+            with self.subTest(value=value):
+                self.destination = self.base/f'invalid-time-{index}'
+                entry, payload = member('file')
+                entry.pax_headers = {'mtime': value}
+                result = self.run_archive(archive_bytes([(entry, payload)]), success=False)
+                self.assertIn('time', result.stderr)
+                self.assertFalse((self.destination/'file').exists())
+
+    def test_rejects_invalid_negative_and_overflowing_ustar_times(self):
+        for index, value in enumerate([b'9', b'-1', b'777777777777']):
+            with self.subTest(value=value):
+                self.destination = self.base/f'invalid-header-time-{index}'
+                raw = bytearray(archive_bytes([member('file')], format=tarfile.USTAR_FORMAT))
+                raw[136:148] = value.ljust(12, b'\0')
+                checksum = sum(raw[:148]) + 8*32 + sum(raw[156:512])
+                raw[148:156] = f'{checksum:06o}\0 '.encode('ascii')
+                self.run_archive(bytes(raw), success=False)
+                self.assertFalse((self.destination/'file').exists())
 
     def test_forward_hardlink_is_independent_copy(self):
         self.run_archive(archive_bytes([member('copy', kind=tarfile.LNKTYPE, target='original'),

@@ -59,10 +59,11 @@ def real_path(root, name, *, directory=False):
 
 class ServerDataCache:
     """Directory rename preserves private cache bytes; session logs remain fresh."""
-    def __init__(self, root, identity, session, context):
+    def __init__(self, root, identity, session, context, *, legacy_identity_validator=None):
         require(isinstance(identity, dict) and identity and isinstance(session, str)
                 and re.fullmatch(r'[0-9a-f]{32}', session), 'Invalid Atlas cache identity')
         self.root, self.identity, self.session, self.ctx = Path(root), identity, session, context
+        self.legacy_identity_validator = legacy_identity_validator
         fingerprint(self.root, directory=True)
         require(isinstance(identity.get('source_roots'), list) and len(identity['source_roots']) == 2,
                 'Atlas cache lacks both verified source roots')
@@ -93,7 +94,7 @@ class ServerDataCache:
                 require(isinstance(selected, dict) and set(selected) == {'format', 'key', 'generation'}
                         and type(selected['format']) is int and selected['format'] == 1
                         and selected['key'] == self.key and isinstance(selected['generation'], str)
-                        and re.fullmatch('character-server-data-' + self.key + '(?:-[0-9a-f]{32})?',
+                        and re.fullmatch('character-server-data-[0-9a-f]{24}(?:-[0-9a-f]{32})?',
                                          selected['generation']), 'Atlas cache pointer identity differs')
                 self.path = self.root / selected['generation']
             except (base.DiagnosticError, OSError, ValueError, TypeError, KeyError):
@@ -222,10 +223,84 @@ class ServerDataCache:
                             private_entries_checked=examined, private_bytes=total,
                             immutable_anchors=record['anchors'])
 
+    def select_compatible_generation(self):
+        """Rekey one proved closed generation in place; never rebase source links.
+
+        The callback qualifies old wrapper receipts and the actual native
+        closure. Normal read/verify still checks ownership, immutable roots,
+        directory receipts, anchors and every private entry. An interrupted
+        atomic marker refresh can be recovered before its new pointer exists.
+        """
+        if self.pointer_invalid or self.legacy_identity_validator is None:
+            return False
+        possible = []
+        for path in self.root.iterdir():
+            if re.fullmatch('character-server-data-[0-9a-f]{24}(?:-[0-9a-f]{32})?', path.name):
+                possible.append(path)
+                if len(possible) > 16:
+                    self.summary['migration_refused'] = 'cache_generation_limit_reached'
+                    return False
+        matches = []
+        for path in possible:
+            self.ctx.check()
+            try:
+                require(fingerprint(path, directory=True)['uid'] == self.root.stat().st_uid,
+                        'Atlas migration directory owner changed')
+                marker = path / 'cache.json'
+                info = marker.lstat()
+                require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                        and 0 < info.st_size <= MARKER_LIMIT, 'Invalid Atlas migration marker')
+                raw = json.loads(marker.read_text())
+                old_identity = raw.get('identity') if isinstance(raw, dict) else None
+                if not isinstance(old_identity, dict):
+                    continue
+                recovered = old_identity == self.identity and raw.get('key') == self.key
+                if not recovered and not self.legacy_identity_validator(old_identity):
+                    continue
+                probe = ServerDataCache(self.root, old_identity, self.session, self.ctx)
+                probe.path, probe.marker = path, marker
+                record = probe.read()
+                probe.verify(path / 'data', record)
+                config = real_path(path / 'data', CONFIG)
+                require(not config.exists() and not config.is_symlink(),
+                        'Closed Atlas migration retained credential configuration')
+                matches.append((path, record, recovered))
+            except base.Cancelled:
+                raise
+            except (base.DiagnosticError, OSError, ValueError, TypeError, KeyError):
+                # An optimization donor is optional. Preserve malformed or
+                # incompatible generations and use the existing full mirror.
+                continue
+        if len(matches) != 1:
+            if matches:
+                self.summary['migration_refused'] = 'ambiguous_compatible_generations'
+            elif possible:
+                self.summary['migration_refused'] = 'no_qualified_closed_generation'
+            self.summary['migration_candidates_examined'] = len(possible)
+            return False
+        path, record, recovered = matches[0]
+        record.update(identity=self.identity, key=self.key)
+        original_path = self.path
+        self.path, self.marker = path, path / 'cache.json'
+        try:
+            self.write(record)  # One fsync + atomic metadata replacement; no tree move.
+        except base.Cancelled:
+            raise
+        except (base.DiagnosticError, OSError) as failure:
+            self.path, self.marker = original_path, original_path / 'cache.json'
+            self.summary['migration_refused'] = str(failure)
+            return False
+        self.summary.update(legacy_generation_migrated=not recovered,
+                            interrupted_migration_recovered=recovered,
+                            source_link_targets_preserved=True, migrated_generation=path.name)
+        return True
+
     def checkout(self, target):
         """Only a clean receipt can donate data; never inspect prior session trees."""
         started = time.monotonic()
         target = Path(target)
+        if not self.path.exists() and not self.path.is_symlink():
+            self.select_compatible_generation()
         if not self.path.exists() and not self.path.is_symlink():
             if self.generation_limit_reached:
                 self.disabled = True

@@ -1,5 +1,16 @@
 # City of Heroes Android handoff
 
+**Continuation update (October 3, 2026): The user has now authorized startup research
+options 1, 2, 8 and 3 while the physical contact test is still pending. A 0.12.1
+candidate implements exact server/message caches, stable client/server data roots
+and trusted Wine component timestamps. New native cache qualification and APK
+publication are required; the completed 0.12.0 release is retained. No physical
+startup improvement or five-minute target is claimed yet. GPU work remains
+deferred. See [the implementation scope](ANDROID_STARTUP_CACHE_REUSE.md) and
+[the short pending contact test](COH-Atlas-Gameplay-0.12.1-testing.txt).**
+
+The published 0.12.0 checkpoint follows (its startup deferral is superseded above):
+
 **Current: The physical 0.11.6 run passes existing-character reopen, ordinary save and cleanup. The user accepts the smoother client as adequate for testing. Server startup remains slow and optimization is deferred with a target of five minutes or less. The 0.12.0 stationary-contact candidate removes mandatory ground recovery, keeps its optional button, and records bounded contact views/native initiation evidence. The public APK, retained signer and exact payload/source closure are independently verified. PR #1 remains draft; main stays 04d62616.**
 
 The supplied `coh-atlas-gameplay-20261002-214857.zip` verifies THORHERO ID 1 /
