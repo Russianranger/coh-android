@@ -1,5 +1,39 @@
 # City of Heroes Android handoff
 
+**Current authorized development (October 3, 2026): option 9 and the next task
+acceptance/completion/save gate are implemented for candidate 0.13.0. Publication
+is pending required host checks and actual loose/cold-packed/warm-packed stock
+MapServer consumption qualification. No new physical result is claimed.**
+
+The new server-private Pig v2 pack preserves all 5,878 retained animation files,
+names, timestamps, cached native headers and bodies; original loose animations
+remain the fallback. It installs outside the stable server data cache, so the
+accepted 93 definition/message bins and cache identity remain unchanged. No
+native client/server rebuild or FEX upgrade is included. The measured sequencer
+interval contains CPU work as well as file reads; a Thor timing gain is pending.
+
+The new gate opens Matthew Habashy's ordinary dialogue through a fixed stock
+`/contactdialog` helper. The user manually accepts **What Was Lost / Part One:
+Demons and Gangsters** (`Mission1`, five Hellions), captures its accepted journal
+view, and invokes the fixed stock `/completetask 0` helper. Native task/arc logs,
+owned command receipts, authored SQL attribute mappings, one active task and
+actual bounded reward credit must agree before the completion event. Three
+fresh captures of each phase are required before ordinary Save. The completed
+same-task state and credited XP/contact points must persist with preserved
+identity, class/origin/level, powers and costume. The previous final-logout
+position correction is included. Combat, missing-NPC clicking, reward turn-in
+and later story progression are not required or claimed. Existing tasks are
+preserved and never cleared or replaced to make this gate pass.
+
+Only task-profile private logging enables stock entity level 2 for Storyarc:Add;
+legacy reopen behavior remains unchanged. SQL remains read-only game evidence.
+The dedicated workflow retains the exact 0.12.1 donor/native/runtime/world
+payloads, qualifies the new sources and animation consumption before signing,
+and publishes a new 0.13.0 release without changing old releases or main.
+See [0.13.0 instructions](COH-Atlas-Gameplay-0.13.0-testing.txt). The accepted
+physical checkpoint below remains authoritative and must not be repeated.
+
+
 **Current physical checkpoint (October 3, 2026): The user accepts the 0.12.1
 startup improvement and ordinary NPC contact/dialogue test. Sunstorm and Merit
 Reward Informant opened readable dialogue and processed normal responses.

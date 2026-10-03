@@ -27,7 +27,7 @@ public final class ClientActivity extends Activity {
     private ClientService.State state;
     private ClientSurface display;
     private TextView status,detail,counter,logs;
-    private Button setup,importAssets,run,stop,export,finish,typeText,returnGround,saveLogout,captureContact;
+    private Button setup,importAssets,run,stop,export,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private CheckBox performanceGraphics;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -57,7 +57,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -67,8 +67,8 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.12.0",12,false));
-        controls.addView(text("Reopen THORHERO and talk to a stationary Atlas contact. Keep your app data, imported assets, costume and powers.",13,false));
+        controls.addView(text("Persistent local server · v0.13.0",12,false));
+        controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
         setup=button("1 · Refresh runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
@@ -80,6 +80,10 @@ public final class ClientActivity extends Activity {
         run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
         returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
         captureContact=button("Capture contact dialog",()->{releaseControls();if(service!=null)service.requestContactCapture();});controls.addView(captureContact);
+        openTaskContact=button("Open task contact",()->{releaseControls();if(service!=null)service.requestOpenTaskContact();});controls.addView(openTaskContact);
+        captureAcceptedTask=button("Capture accepted task",()->{releaseControls();if(service!=null)service.requestTaskCapture(false);});controls.addView(captureAcceptedTask);
+        completeTask=button("Complete accepted task",()->{releaseControls();if(service!=null)service.requestCompleteAcceptedTask();});controls.addView(completeTask);
+        captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
@@ -92,7 +96,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Refresh runtime once after this update, then log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, movement and Save are available. Return to safe ground is optional if stuck. Approach Ms. Liberty by the Atlas statue, or City Representative inside City Hall. Move close, point directly at the NPC and press A/click to talk. When a readable dialog opens, tap Capture contact dialog and keep it visible until Contact view captured. Choose a normal response or Goodbye; B closes dialogs. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export.",12,false));
+        controls.addView(text("Refresh runtime once after this update, then log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -106,7 +110,7 @@ public final class ClientActivity extends Activity {
         });
         right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);refreshMovementControls();
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -134,14 +138,22 @@ public final class ClientActivity extends Activity {
     private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&hasWindowFocus()&&movementWindowOpen();}
     private boolean movementWindowOpen(){return state!=null&&(state.movementDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.movementDeadlineUptimeMillis);}
     private boolean gameInputOpen(){return inputActive&&movementWindowOpen()&&!movementSuppressed;}
+    private void disableTaskControls(){openTaskContact.setEnabled(false);captureAcceptedTask.setEnabled(false);completeTask.setEnabled(false);captureCompletedTask.setEnabled(false);}
     private void refreshDeadlineControls(){
         if(captureContact!=null)captureContact.setEnabled(inputActive&&service!=null&&state!=null
                 &&state.canSaveLogout&&!state.characterSaved&&!textDialogVisible&&hasWindowFocus()
                 &&movementWindowOpen()&&service.canCaptureContact());
+        boolean taskAvailable=inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved
+                &&!textDialogVisible&&hasWindowFocus()&&movementWindowOpen();
+        if(openTaskContact!=null)openTaskContact.setEnabled(taskAvailable&&service.canOpenTaskContact());
+        if(captureAcceptedTask!=null)captureAcceptedTask.setEnabled(taskAvailable&&service.canCaptureTask(false));
+        if(completeTask!=null)completeTask.setEnabled(taskAvailable&&service.canCompleteAcceptedTask());
+        if(captureCompletedTask!=null)captureCompletedTask.setEnabled(taskAvailable&&service.canCaptureTask(true));
         if(state==null)return;
         if(!movementWindowOpen()&&!deadlineMovementSuppressed){deadlineMovementSuppressed=true;releaseControls(!movementSuppressed);refreshMovementControls();}
         display.setInputEnabled(gameInputOpen());typeText.setEnabled(gameInputOpen());
-        saveLogout.setEnabled(inputActive&&state.canSaveLogout&&(state.saveDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.saveDeadlineUptimeMillis));
+        saveLogout.setEnabled(inputActive&&state.canSaveLogout&&service!=null&&service.canRequestSaveLogout()
+                &&(state.saveDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.saveDeadlineUptimeMillis));
     }
     private void refreshMovementControls(){
         boolean enabled=canWalk();
@@ -161,7 +173,7 @@ public final class ClientActivity extends Activity {
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
-        finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);returnGround.setEnabled(enabled&&next.canReturnGround);saveLogout.setEnabled(enabled&&next.canSaveLogout);
+        finish.setEnabled(enabled&&next.characterSaved);typeText.setEnabled(enabled);returnGround.setEnabled(enabled&&next.canReturnGround);saveLogout.setEnabled(enabled&&next.canSaveLogout&&service!=null&&service.canRequestSaveLogout());
         refreshMovementControls();refreshDeadlineControls();
     }
     private void setTextIfChanged(TextView view,String value){if(!android.text.TextUtils.equals(view.getText(),value))view.setText(value);}

@@ -100,6 +100,20 @@ SHELL_ONLY = frozenset({
 # workflow. Repairs reuse the verified Game and MapServer build; the historical
 # full donor pipeline must not publish over those dedicated releases.
 RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-task-gate.yml',
+    'android/guest/task_gate_evidence.py',
+    'android/guest/task-gate.json',
+    'android/guest/server_animation_package.py',
+    'tools/android/atlasgame/prepare_server_animations.py',
+    'tools/android/atlasgame/test_server_animations.py',
+    'tools/android/interactive/build_task_gate_apk.py',
+    'tools/android/interactive/qualify_task_gate.py',
+    'tools/android/interactive/test_task_gate_package.py',
+    'tools/android/interactive/test_task_gate_evidence.py',
+    'tools/android/interactive/test_task_gate_native_contract.py',
+    'tools/android/interactive/test_task_gate_integration.py',
+    'tools/android/interactive/test_task_gate_java.py',
+    'docs/COH-Atlas-Gameplay-0.13.0-testing.txt',
     '.github/workflows/android-contact-interaction.yml',
     'android/guest/stationary_contact_evidence.py',
     'tools/android/interactive/build_contact_interaction_apk.py',

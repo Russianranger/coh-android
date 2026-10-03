@@ -1,0 +1,221 @@
+name: Thor task acceptance command completion and animation pack
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-task-gate.yml
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java
+      - android/guest/local_character_server.py
+      - android/guest/character_reopen_diagnostic.py
+      - android/guest/stationary_contact_evidence.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/task-gate.json
+      - docs/COH-Atlas-Gameplay-0.13.0-testing.txt
+      - tools/android/interactive/build_task_gate_apk.py
+      - tools/android/interactive/qualify_task_gate.py
+      - tools/android/interactive/test_task_gate_package.py
+      - tools/android/atlasgame/prepare_server_animations.py
+      - tools/android/atlasgame/test_server_animations.py
+      - android/guest/task_gate_evidence.py
+      - android/guest/server_animation_package.py
+      - tools/android/interactive/test_task_gate_evidence.py
+      - tools/android/interactive/test_task_gate_native_contract.py
+      - tools/android/interactive/test_task_gate_integration.py
+      - tools/android/interactive/test_task_gate_java.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-task-gate-publication
+  cancel-in-progress: false
+jobs:
+  observer:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-caches-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37116009802
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.12.1 donor
+        run: python3 tools/android/interactive/build_task_gate_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.1.apk
+      - name: Qualify task command evidence and retained save input cache guards
+        run: >-
+          python3 tools/android/interactive/qualify_task_gate.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.1.apk
+          --donor-build-report out/donor-evidence/startup-caches-apk-build-report.json
+          --output out/task-gate-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-task-gate-observer-evidence
+          path: out/task-gate-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  server-animations:
+    # Reading the already reviewed draft asset is authorized. This isolated job
+    # never publishes or replaces either donor or previously prepared caches.
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: out/native-donor-evidence
+          run-id: 37071344940
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-caches-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37116009802
+          github-token: ${{ github.token }}
+      - name: Recover exact retained native and public cache inputs
+        run: |
+          python3 tools/android/interactive/build_startup_caches_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          python3 tools/android/interactive/build_task_gate_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.1.apk
+      - name: Install stock MapServer consumption qualification tools
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends wine wine32:i386 wine64 gcc-mingw-w64-i686 strace xvfb xauth
+      - name: Fetch exact reviewed asset inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/reviewed-assets.zip --release-asset-id 588984151
+      - name: Prove loose fallback and packed cold warm native consumption
+        run: >-
+          xvfb-run -a python3 tools/android/atlasgame/prepare_server_animations.py
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.0.apk
+          --donor-build-report out/native-donor-evidence/contact-interaction-apk-build-report.json
+          --published-apk out/donor/COH-Atlas-Gameplay-0.12.1.apk
+          --asset-archive out/reviewed-assets.zip
+          --work out/server-animation-work --output out/server-animations
+          --repository-commit "$GITHUB_SHA" --timeout-seconds 1800
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-prepared-server-animations
+          path: out/server-animations/
+          if-no-files-found: warn
+          compression-level: 6
+          retention-days: 90
+  apk:
+    needs: [observer, server-animations]
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-caches-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37116009802
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-task-gate-observer-evidence
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-prepared-server-animations
+          path: out/server-animations
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.12.1 donor
+        run: python3 tools/android/interactive/build_task_gate_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.12.1.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build qualified retained signer task and animation update
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_task_gate_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.1.apk
+          --donor-build-report out/donor-evidence/startup-caches-apk-build-report.json
+          --qualification out/task-gate-qualification.json
+          --server-animations out/server-animations
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/task-gate/COH-Atlas-Gameplay-0.13.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-task-gate-packaging-evidence
+          path: |
+            out/task-gate/task-gate-apk-build-report.json
+            out/task-gate/COH-Atlas-Gameplay-0.13.0-testing.txt
+            out/task-gate/COH-Atlas-Gameplay-0.13.0.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-task-gate-apk
+          path: out/task-gate/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_task_gate_apk.py publish
+          --apk out/task-gate/COH-Atlas-Gameplay-0.13.0.apk
+          --build-report out/task-gate/task-gate-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.12.1.apk
+          --donor-build-report out/donor-evidence/startup-caches-apk-build-report.json
+          --server-animations out/server-animations
+          --qualification out/task-gate-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

@@ -94,6 +94,10 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&canSaveLogout&&active!=null&&active.requestSaveLogout();
     }
+    public boolean canRequestSaveLogout(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&canSaveLogout&&active!=null&&active.canRequestSaveLogout();
+    }
     public boolean canCaptureContact(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&active!=null&&active.canCaptureContact();
@@ -101,6 +105,30 @@ public final class ClientService extends Service {
     public boolean requestContactCapture(){
         ClientRuntime active=runtime;
         return busy&&uiVisible&&inputReady&&active!=null&&active.requestContactCapture();
+    }
+    public boolean canCaptureTask(boolean completed){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.canCaptureTask(completed);
+    }
+    public boolean canOpenTaskContact(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.canOpenTaskContact();
+    }
+    public boolean requestOpenTaskContact(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.requestOpenTaskContact();
+    }
+    public boolean requestTaskCapture(boolean completed){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.requestTaskCapture(completed);
+    }
+    public boolean canCompleteAcceptedTask(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.canCompleteAcceptedTask();
+    }
+    public boolean requestCompleteAcceptedTask(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&active!=null&&active.requestCompleteAcceptedTask();
     }
     public boolean finish(String selectedSession){return session.equals(selectedSession)&&requestFinish();}
     public boolean requestFinish(){

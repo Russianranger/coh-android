@@ -224,6 +224,16 @@ public final class InteractiveRfbClient implements Closeable {
         sendChatCommand("/stuck", expectedEpoch);
     }
 
+    /** Stock local task completion for the single task independently bound by the guest. */
+    public synchronized void sendCompleteAcceptedTask(long expectedEpoch) throws IOException {
+        sendChatCommand("/completetask 0", expectedEpoch);
+    }
+
+    /** Opens one pinned authored contact; the player still chooses and accepts the task. */
+    public synchronized void sendOpenTaskContact(long expectedEpoch) throws IOException {
+        sendChatCommand("/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact", expectedEpoch);
+    }
+
     private void sendChatCommand(String command, long expectedEpoch) throws IOException {
         requireCurrentInput(expectedEpoch);
         releaseAllInputs();

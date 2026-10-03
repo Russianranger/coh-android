@@ -77,6 +77,15 @@ public final class ClientRuntime {
     private final List<Map<String,Object>> contactRequests = new ArrayList<>();
     private final List<Map<String,Object>> contactSamples = new ArrayList<>();
     private final List<byte[]> contactPngs = new ArrayList<>();
+    private volatile JSONObject taskAcceptedEvent, taskCompletedEvent, taskCompletionReceipt;
+    private volatile boolean taskCompletionRequested;
+    private volatile boolean taskContactRequested;
+    private volatile JSONObject taskContactReceipt;
+    private final ContactCaptureWindow taskAcceptedCapture = new ContactCaptureWindow();
+    private final ContactCaptureWindow taskCompletedCapture = new ContactCaptureWindow();
+    private final List<Map<String,Object>> taskCaptureRequests = new ArrayList<>();
+    private final List<Map<String,Object>> taskSamples = new ArrayList<>();
+    private final List<byte[]> taskPngs = new ArrayList<>();
     private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<Runnable>(128), runnable -> new Thread(runnable, "coh-interactive-input"));
     private volatile boolean inputReady, finishRequested;
@@ -393,15 +402,19 @@ public final class ClientRuntime {
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
                         && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
-                if (guestPassed && !passed && error == null) error = "Character save incomplete: matching committed SQL evidence and three fresh Android captures after the save event are required.";
+                if (guestPassed && !passed && error == null) error = taskGateRequired()
+                        ? "Task gate incomplete: matching native and SQL task completion, accepted/completed task views, ordinary save evidence and fresh Android save captures are required."
+                        : "Character save incomplete: matching committed SQL evidence and three fresh Android captures after the save event are required.";
                 publish(report, passed, cleanup);
             } finally {
                 child = null; endOperation();
                 if (interrupted) Thread.currentThread().interrupt();
             }
         }
-        String label = reopen ? "Character reopen" : "Character creation";
-        String summary = passed ? (reopen
+        String label = taskGateRequired() ? "Task save" : reopen ? "Character reopen" : "Character creation";
+        String summary = passed ? (taskGateRequired()
+                ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
+                : reopen
                 ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the Atlas view; rendering and gameplay require separate visual validation."
                 : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
@@ -492,6 +505,95 @@ public final class ClientRuntime {
             catch(IOException failure) { inputFailure("Contact view refresh failed"); }
         }); }
         catch(RejectedExecutionException unavailable) { recordLifecycle("contact_view_refresh_queue_unavailable"); }
+    }
+    private boolean taskControlsAvailable() {
+        return taskGateRequired() && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
+                && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
+                && sessionBudget.canMove(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean canCaptureTask(boolean completed) {
+        if(!taskControlsAvailable())return false;
+        return completed ? taskCompletedEvent!=null && taskCompletionReceipt!=null
+                && taskCompletedCapture.canRequest(SystemClock.uptimeMillis())
+                : taskAcceptedEvent!=null && !taskCompletionRequested
+                && taskAcceptedCapture.canRequest(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean canOpenTaskContact() {
+        return taskControlsAvailable() && !taskContactRequested && taskAcceptedEvent==null && !taskCompletionRequested;
+    }
+    public synchronized boolean requestOpenTaskContact() {
+        if(!canOpenTaskContact())return false;
+        final String selectedSession=session;
+        final long selectedPid=observedClientPid;
+        if(!queueInput(selectedSession,(active,epoch)->{
+            if(!taskControlsAvailable() || taskAcceptedEvent!=null)
+                throw new InteractiveRfbClient.InputCancelledException();
+            active.sendOpenTaskContact(epoch);
+            try {
+                JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
+                        .put("client_pid",selectedPid).put("character_id",1).put("action","contactdialog")
+                        .put("contact_path","Contacts/Atlas_Park/Matthew_Habashy.contact")
+                        .put("commands",new JSONArray().put("/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact"))
+                        .put("sent_utc_ms",System.currentTimeMillis()).put("native_effect_verified",false);
+                write(new File(state,"character-task-contact.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                taskContactReceipt=receipt;
+                recordLifecycle("task_contact_dialog_delivered");
+            } catch(Exception failure) { throw new IOException("Could not record task contact command delivery",failure); }
+            stage("Task contact dialog sent","Choose Matthew Habashy's first offered task, What Was Lost / Part One: Demons and Gangsters, and accept it yourself. Close the dialog, open the Tasks journal, and wait for Accepted task verified. The task mentions five Hellions; the completion command avoids that combat.");
+        },true))return false;
+        taskContactRequested=true;
+        recordLifecycle("task_contact_dialog_requested");
+        stage("Opening task contact","The fixed stock contactdialog command is queued. Keep game dialogs closed and controls released while it types. This opens Matthew Habashy without relying on his model; it does not accept a task.");
+        notifyInputState();return true;
+    }
+    public synchronized boolean requestTaskCapture(boolean completed) {
+        if(!canCaptureTask(completed))return false;
+        ContactCaptureWindow window=completed?taskCompletedCapture:taskAcceptedCapture;
+        JSONObject event=completed?taskCompletedEvent:taskAcceptedEvent;
+        long now=SystemClock.uptimeMillis();
+        if(!window.request(session,observedClientPid,1,now,decodedFrames))return false;
+        try {
+            Map<String,Object> request=new LinkedHashMap<>();
+            request.put("session_id",session);request.put("client_pid",observedClientPid);request.put("character_id",1);
+            request.put("phase",completed?"completed":"accepted");request.put("batch",window.batch());
+            request.put("requested_uptime_ms",now);request.put("frame_watermark",decodedFrames);
+            request.put("task",jsonValue(event.getJSONObject("task")));request.put("dialog_semantics_verified",false);
+            taskCaptureRequests.add(request);
+        } catch(Exception failure) { inputFailure("Could not bind task capture identity");return false; }
+        recordLifecycle(completed?"completed_task_view_capture_requested":"accepted_task_view_capture_requested");
+        requestContactFullUpdate();
+        stage(completed?"Capturing completed task":"Capturing accepted task",
+                "Keep the matching task journal entry visible while three fresh Android views are captured.");
+        notifyInputState();return true;
+    }
+    public synchronized boolean canCompleteAcceptedTask() {
+        return taskControlsAvailable() && taskAcceptedEvent!=null && taskCompletedEvent==null
+                && !taskCompletionRequested && taskAcceptedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST;
+    }
+    public synchronized boolean requestCompleteAcceptedTask() {
+        if(!canCompleteAcceptedTask())return false;
+        final JSONObject accepted=taskAcceptedEvent;
+        final String selectedSession=session;
+        final long selectedPid=observedClientPid;
+        if(!queueInput(selectedSession,(active,epoch)->{
+            if(!taskControlsAvailable() || accepted!=taskAcceptedEvent || taskCompletedEvent!=null)
+                throw new InteractiveRfbClient.InputCancelledException();
+            active.sendCompleteAcceptedTask(epoch);
+            try {
+                JSONObject receipt=new JSONObject().put("format",1).put("session_id",selectedSession)
+                        .put("client_pid",selectedPid).put("character_id",1).put("action","completetask")
+                        .put("task_index",0).put("task",accepted.getJSONObject("task"))
+                        .put("sent_utc_ms",System.currentTimeMillis());
+                write(new File(state,"character-task-completion.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                taskCompletionReceipt=receipt;
+                recordLifecycle("accepted_task_completion_delivered");
+            } catch(Exception failure) { throw new IOException("Could not record completed task command delivery",failure); }
+        },true))return false;
+        taskCompletionRequested=true;
+        recordLifecycle("accepted_task_completion_requested");
+        stage("Completing accepted task","The stock /completetask 0 command is queued for the single verified task. Wait for native and SQL completion verification, then capture its completed journal entry.");
+        notifyInputState();return true;
     }
     private boolean gameplayInputAllowed() {
         return !reopen || sessionBudget.revision() < 1
@@ -624,17 +726,36 @@ public final class ClientRuntime {
         return true;
     }
 
+    /** Save readiness is separate from the connected-session capability used for movement and task input. */
+    public synchronized boolean canRequestSaveLogout() {
+        return inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+                && characterConnectedEvent != null && (!reopen || (connectedCapturedReady
+                && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis())))
+                && characterSavedEvent == null && !saveLogoutRequested && taskSaveReady();
+    }
+    private boolean taskSaveReady() {
+        if(!taskGateRequired())return true;
+        if(taskContactReceipt==null || taskCompletionReceipt==null)return false;
+        try {
+            return ClientAcceptance.taskSaveReady(jsonValue(taskAcceptedEvent),jsonValue(taskCompletedEvent),
+                    taskAcceptedCapture.count(),taskCompletedCapture.count(),session,observedClientPid);
+        } catch(Exception malformed) {return false;}
+    }
     public synchronized boolean requestSaveLogout() {
-        if (!inputReady || finished || finishRequested || cancelled || producerCompleted
-                || characterConnectedEvent == null || (reopen && (!connectedCapturedReady || (stuckRequested && !relocationCapturedReady) || !sessionBudget.canSave(SystemClock.uptimeMillis()))) || characterSavedEvent != null || saveLogoutRequested) return false;
+        if(!canRequestSaveLogout())return false;
         final String logoutSession = session;
         final long logoutClientPid = observedClientPid;
         final long logoutCharacterId = characterConnectedEvent.optLong("character_id", -1);
         if (!queueInput(logoutSession, (active, epoch) -> {
-            if (reopen && !sessionBudget.canSave(SystemClock.uptimeMillis())) {
+            if ((reopen && !sessionBudget.canSave(SystemClock.uptimeMillis())) || !taskSaveReady()) {
                 saveLogoutRequested = false;
-                recordLifecycle("ordinary_character_logout_deadline_expired_before_delivery");
-                stage("Save window expired", "The save command was not delivered before its cutoff. Export this session after cleanup.");
+                if(!taskSaveReady()) {
+                    recordLifecycle("ordinary_character_logout_task_gate_incomplete_before_delivery");
+                    stage("Task views required before Save", "Wait for matching accepted and completed task verification and capture both task journal views before saving.");
+                } else {
+                    recordLifecycle("ordinary_character_logout_deadline_expired_before_delivery");
+                    stage("Save window expired", "The save command was not delivered before its cutoff. Export this session after cleanup.");
+                }
                 notifyInputState();
                 throw new InteractiveRfbClient.InputCancelledException();
             }
@@ -741,7 +862,11 @@ public final class ClientRuntime {
         boolean contactSample = characterConnectedEvent!=null && !saveLogoutRequested && characterSavedEvent==null
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canMove(SystemClock.uptimeMillis())
                 && contactCapture.accepts(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue());
-        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample) return;
+        boolean acceptedTaskSample=taskControlsAvailable() && taskAcceptedEvent!=null && !taskCompletionRequested
+                && taskAcceptedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
+        boolean completedTaskSample=taskControlsAvailable() && taskCompletedEvent!=null && taskCompletionReceipt!=null
+                && taskCompletedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
+        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample && !acceptedTaskSample && !completedTaskSample) return;
         try {
             // Bind the retained bytes to the PixelCopy record. The source Surface
             // provides the nonuniform check; the PNG must be a bounded 800x600 image.
@@ -755,6 +880,26 @@ public final class ClientRuntime {
             sample.put("png_sha256", digest);
             sample.put("png_verified", true);
             sample.put("png_bytes", png.length);
+            if(acceptedTaskSample || completedTaskSample) {
+                boolean completed=completedTaskSample;
+                ContactCaptureWindow window=completed?taskCompletedCapture:taskAcceptedCapture;
+                JSONObject event=completed?taskCompletedEvent:taskAcceptedEvent;
+                if(window.accept(session,observedClientPid,1,captured,((Number)sequence).longValue())) {
+                    Map<String,Object> task=new LinkedHashMap<>(sample);
+                    task.put("client_pid",observedClientPid);task.put("character_id",1);
+                    task.put("phase",completed?"completed":"accepted");task.put("batch",window.batch());
+                    task.put("task",jsonValue(event.getJSONObject("task")));task.put("dialog_semantics_verified",false);
+                    task.put("archive_path","android-task/"+(completed?"completed":"accepted")+"-capture-"+(taskSamples.size()+1)+".png");
+                    taskSamples.add(task);taskPngs.add(png.clone());
+                    if(window.count()<ContactCaptureWindow.FRAMES_PER_REQUEST)requestContactFullUpdate();
+                    else {
+                        stage(completed?"Completed task view captured":"Accepted task view captured",
+                                completed?"Three completed-task views were saved for review. Release controls for 60 seconds, then Save character / log out and Finish after verification."
+                                        :"Three accepted-task views were saved for review. Close the journal and contact dialog with B, then tap Complete accepted task once.");
+                        notifyInputState();
+                    }
+                }
+            }
             if (contactSample && contactCapture.accept(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue())) {
                 Map<String,Object> contact = new LinkedHashMap<>(sample);
                 contact.put("client_pid",observedClientPid);contact.put("character_id",1);
@@ -787,7 +932,7 @@ public final class ClientRuntime {
                 connectedSamples.add(connected); connectedPngs.add(png.clone());
                 if (connectedSamples.size() == 3) {
                     connectedCapturedReady = true;
-                    stage("Atlas ready for contact interaction", "THORHERO connected and fresh Android views were captured. Dismiss help, approach Ms. Liberty by the Atlas statue or City Representative inside City Hall, point at the NPC and press A/click to talk. Capture the contact dialog. Return to safe ground is optional if stuck.");
+                    stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
             }
@@ -989,6 +1134,22 @@ public final class ClientRuntime {
                             }
                             recordLifecycle("character_relocation_verified");
                             stage("Stable Atlas position observed", "The server verified stable ground after /stuck. Waiting for three fresh Android views before Save becomes available.");
+                        }
+                        if(taskAcceptedEvent==null && taskControlsAvailable()
+                                && ClientAcceptance.taskEvent(jsonValue(event),"character_task_accepted",session,observedClientPid)) {
+                            taskAcceptedEvent=event;
+                            recordLifecycle("accepted_task_verified");
+                            stage("Accepted task verified","The guest bound one current task to its native Task:Add and SQL state. Open that task in the journal and tap Capture accepted task.");
+                            notifyInputState();
+                        }
+                        if(taskCompletedEvent==null && taskCompletionRequested && taskAcceptedEvent!=null
+                                && taskControlsAvailable()
+                                && ClientAcceptance.taskEvent(jsonValue(event),"character_task_completed",session,observedClientPid)
+                                && ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(event.getJSONObject("task")))) {
+                            taskCompletedEvent=event;
+                            recordLifecycle("accepted_task_completion_verified");
+                            stage("Task completion verified","The same accepted task completed through the stock command and current SQL state. Open its completed journal entry and tap Capture completed task; no combat is required.");
+                            notifyInputState();
                         }
                         if (ClientAcceptance.characterSavedEvent(jsonValue(event), session, observedClientPid)
                                 && characterObservedUptime < 0 && loginObservedUptime >= 0
@@ -1204,6 +1365,7 @@ public final class ClientRuntime {
     private boolean characterSurfaceAccepted(JSONObject report) throws Exception {
         synchronized (this) {
             if (reopen) return characterSavedReady && connectedCapturedReady && (!stuckRequested || relocationCapturedReady)
+                    && (!taskGateRequired() || taskGateAccepted(report))
                     && ClientAcceptance.characterReopenAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), jsonValue(characterRelocatedEvent), connectedSamples, relocationSamples, characterSamples, session, observedClientPid,
                     startedUptime, endedUptime, connectedObservedUptime, connectedFrameWatermark, relocatedObservedUptime, relocatedFrameWatermark,
@@ -1212,6 +1374,22 @@ public final class ClientRuntime {
                     jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
                     characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
         }
+    }
+    private boolean taskGateRequired() {
+        return manifest!=null && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
+    }
+    private boolean taskGateAccepted(JSONObject report) throws Exception {
+        JSONObject proof=report.optJSONObject("task_gate");
+        if(proof==null || !Boolean.TRUE.equals(proof.opt("verified")) || taskContactReceipt==null
+                || !session.equals(proof.optString("session_id")) || proof.optLong("client_pid",-1)!=observedClientPid
+                || proof.optLong("character_id",-1)!=1
+                || taskAcceptedEvent==null || taskCompletedEvent==null || taskCompletionReceipt==null
+                || !ClientAcceptance.taskEvent(jsonValue(taskAcceptedEvent),"character_task_accepted",session,observedClientPid)
+                || !ClientAcceptance.taskEvent(jsonValue(taskCompletedEvent),"character_task_completed",session,observedClientPid)
+                || !ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(taskCompletedEvent.getJSONObject("task")))
+                || !ClientAcceptance.sameTaskIdentity(jsonValue(taskAcceptedEvent.getJSONObject("task")),jsonValue(proof.optJSONObject("task"))))return false;
+        return taskAcceptedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST
+                && taskCompletedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST;
     }
 
     private static String localHosts(String hostname) throws IOException {
@@ -1285,7 +1463,7 @@ public final class ClientRuntime {
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)
                     .put("deadline_input_suppressed", deadlineInputSuppressed)
-                    .put("scope", reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("scope", taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)
@@ -1330,6 +1508,29 @@ public final class ClientRuntime {
                         .put("captures",new JSONArray(contactSamples)).put("maximum_requests",ContactCaptureWindow.MAX_REQUESTS)
                         .put("frames_per_request",ContactCaptureWindow.FRAMES_PER_REQUEST).put("dialog_semantics_verified",false)
                         .put("native_interaction_effect_verified",false).put("user_visual_assessment_required",true));
+                List<Map<String,Object>> taskRequests=new ArrayList<>();
+                for(Map<String,Object> original:taskCaptureRequests) {
+                    Map<String,Object> request=new LinkedHashMap<>(original);
+                    int count=0;
+                    for(Map<String,Object> capture:taskSamples)
+                        if(original.get("phase").equals(capture.get("phase")) && original.get("batch").equals(capture.get("batch")))count++;
+                    request.put("fresh_views_captured",count);request.put("capture_complete",count==ContactCaptureWindow.FRAMES_PER_REQUEST);
+                    taskRequests.add(request);
+                }
+                wrapper.put("task_gate",new JSONObject()
+                        .put("required",taskGateRequired())
+                        .put("verified",taskGateRequired() && taskGateAccepted(guest))
+                        .put("contact_requested",taskContactRequested)
+                        .put("contact_delivered_receipt",taskContactReceipt==null?JSONObject.NULL:taskContactReceipt)
+                        .put("accepted_event",taskAcceptedEvent==null?JSONObject.NULL:taskAcceptedEvent)
+                        .put("completed_event",taskCompletedEvent==null?JSONObject.NULL:taskCompletedEvent)
+                        .put("completion_requested",taskCompletionRequested)
+                        .put("completion_delivered_receipt",taskCompletionReceipt==null?JSONObject.NULL:taskCompletionReceipt)
+                        .put("capture_requests",new JSONArray(taskRequests)).put("captures",new JSONArray(taskSamples))
+                        .put("maximum_requests_per_phase",ContactCaptureWindow.MAX_REQUESTS)
+                        .put("frames_per_request",ContactCaptureWindow.FRAMES_PER_REQUEST)
+                        .put("dialog_semantics_verified",false).put("user_visual_assessment_required",true)
+                        .put("combat_verified",false).put("mission_map_verified",false));
                 wrapper.put("recovery_requested",stuckRequested).put("recovery_verified",stuckRequested&&relocationCapturedReady);
                 wrapper.put("lifecycle", new JSONArray(lifecycle));
             }
@@ -1358,6 +1559,8 @@ public final class ClientRuntime {
                     zipBytes(out, (String) interactionSamples.get(i).get("archive_path"), interactionPngs.get(i)); }
                 synchronized (this) { for (int i=0;i<contactPngs.size();i++)
                     zipBytes(out, (String) contactSamples.get(i).get("archive_path"), contactPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<taskPngs.size();i++)
+                    zipBytes(out, (String) taskSamples.get(i).get("archive_path"), taskPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
                 if (manifest != null) zipText(out, "runtime-manifest.json", manifest.toString(2));
                 if (generation != null) {

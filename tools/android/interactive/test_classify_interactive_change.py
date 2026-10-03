@@ -26,3 +26,14 @@ class QualificationRoutingTests(unittest.TestCase):
         ):
             with self.subTest(event=event, before=before, files=files):
                 self.assertTrue(change.runtime_required(event, before, head, parent, files))
+
+
+    def test_task_derivative_routes_to_its_own_workflow_but_unknown_native_edits_do_not(self):
+        paths = ['.github/workflows/android-task-gate.yml',
+            'android/guest/task_gate_evidence.py', 'android/guest/server_animation_package.py',
+            'android/guest/task-gate.json',
+            'tools/android/atlasgame/prepare_server_animations.py',
+            'tools/android/interactive/test_task_gate_integration.py']
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, paths))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            paths+['upstream/ouroboros/MapServer/src/svr/svrinit.c']))

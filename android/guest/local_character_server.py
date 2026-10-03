@@ -431,6 +431,17 @@ class LocalCharacterServer(login.LocalLoginServer):
             # existing generated bins and the ordinary loader fully in charge.
             self.creation_report['prepared_server_caches'] = {'format': 1,
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
+        # The stock Pig reader can consume unchanged animation bytes without
+        # moving or invalidating the preserved server data/cache generation.
+        # An invalid present package fails preparation; never launch a bad pig.
+        animation = self.owner.args.assets / 'server-animations.pigg'
+        animation_manifest = self.owner.args.assets / 'server-animation-manifest.json'
+        if animation.exists() or animation_manifest.exists():
+            import server_animation_package
+            installed = server_animation_package.install(animation, animation_manifest,
+                self.runtime, context=self.ctx)
+            self.creation_report['server_animation_pack'] = installed
+            self.ctx.report['server_animation_pack'] = installed
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
             'private_cache_roots': ['bin', 'geobin', 'server/bin'],
@@ -1147,7 +1158,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if table == 'ents':
                 previous = [{key: value for key, value in row.items() if key != 'logincount'} for row in previous]
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
-            require(evidence._same(previous, current),
+            require(self.saved_selected_rows_match(table, previous, current),
                     'Committed existing character rows changed after reopen: ' + table)
         delivery = self.relocation_delivery()
         requested = self.creation_report.get('recovery_requested') is True or delivery is not None
@@ -1210,6 +1221,10 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                                     committed_native_position_verified=True)
         return after
 
+    def saved_selected_rows_match(self, table, previous, current):
+        """The retained reopen profile permits only its normal LoginCount change."""
+        return evidence._same(previous, current)
+
     def saved_metadata(self, snapshot):
         return {'preserved_existing_identity': True, 'powers_preserved': True, 'costume_preserved': True,
             'selected_rows_preserved': True, 'login_count': snapshot['login_count'],
@@ -1236,3 +1251,149 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         contact['collection_phase'] = self.ctx.report.get('character_server_logs', {}).get(
             'collection_phase', 'unavailable')
         self.ctx.report['stationary_contact'] = contact
+
+
+class LocalCharacterTaskReopenServer(LocalCharacterReopenServer):
+    """One authored manual task; stock command effect and SQL are separate proof."""
+
+    def __init__(self, owner):
+        super().__init__(owner)
+        import task_gate_evidence
+        self.task_evidence = task_gate_evidence
+        self.task_baseline = None
+        self.task_accepted = None
+        self.task_completed = None
+        self.task_sql_next = 0
+        self.task_sql_reads = 0
+        self.task_saved = None
+        self.creation_report['task_gate_required'] = True
+        self.ctx.report['task_gate'] = task_gate_evidence._result('pending')
+
+    def prepare_runtime(self):
+        super().prepare_runtime()
+        # Stock DbServer distributes these category levels to its MapServer.
+        # Only entity's deprecated Storyarc:Add supplies the runtime arc handle.
+        # Preserve the existing logging policy in every retained entry point.
+        config = self.runtime / 'data/server/db/servers.cfg'
+        text = config.read_text()
+        text = re.sub(r'(?im)^\s*SetLogLevel\s+(?:entity|rewards|admin)\s+[^\r\n]*\r?\n?', '', text)
+        base.private_write(config, text.rstrip() + '\nSetLogLevel entity 2\n'
+            'SetLogLevel rewards 0\nSetLogLevel admin 0\n')
+        self.ctx.report['task_gate']['native_logging'] = {
+            'entity': 2, 'rewards': 0, 'admin': 0, 'task_profile_only': True}
+
+    def task_rows(self):
+        self.task_sql_reads += 1
+        require(self.task_sql_reads <= 40, 'Task SQL observation exceeded its bounded read budget')
+        return {table: self.sql_rows(table, fields,
+                    ('containerid',) if table == 'ents' else ('containerid', 'subid'),
+                    'containerid=' + str(self.CHARACTER_ID))
+                for table, fields in self.task_evidence.SELECTED.items()}
+
+    def capture_baseline(self):
+        super().capture_baseline()
+        self.task_baseline = self.task_rows()
+        require(not self.task_baseline['tasks'],
+            'Existing tasks were preserved; the one-task diagnostic requires an empty task journal')
+        level = self.baseline_snapshot['rows']['ents'][0]['level']
+        require(level is None or type(level) is int and 0 <= level <= 9,
+            'The authored diagnostic contact requires the preserved level 1-10 Hero')
+        self.ctx.report['task_gate'].update(baseline_task_count=0,
+            baseline_sql=self.task_baseline, baseline_sql_sha256=digest_json(self.task_baseline),
+            sql_game_mutations_performed=False)
+
+    def observe_connected_character(self):
+        super().observe_connected_character()
+        proof = self.creation_report
+        pid = proof.get('client_pid')
+        if type(pid) is not int or pid <= 0 or self.task_completed is not None:
+            return
+        now = time.monotonic()
+        if now < self.task_sql_next:
+            return
+        module = self.task_evidence
+        identity = dict(session=self.owner.args.session_id, client_pid=pid,
+                        now_utc_ms=int(time.time() * 1000))
+        accepted = self.task_accepted
+        receipt_path = self.owner.args.state / ('character-task-contact.json' if accepted is None
+                                                else 'character-task-completion.json')
+        receipt = module.read_delivery(receipt_path, proof, accepted=accepted, **identity)
+        if receipt is None:
+            return
+        logs = self.current_logs()
+        # Avoid four extra SQL subprocesses on every ordinary movement poll.
+        # Query only after this session's stock native task action is visible.
+        native = module.records(logs, proof['client_ready_observed_utc_ms'], identity['now_utc_ms'])
+        needed = 'add' if accepted is None else 'success'
+        if native is None or not any(row['kind'] == needed for row in native):
+            return
+        self.task_sql_next = now + POLL_SECONDS
+        before = self.sample_progress(force=True)
+        if not self.live_progress(before):
+            return
+        rows = self.task_rows()
+        self.ctx.check(); self.health()
+        after = self.sample_progress(force=True)
+        if not self.live_progress(after):
+            return
+        progress.compare_records(after, before)
+        identity['now_utc_ms'] = int(time.time() * 1000)
+        require(module.read_delivery(receipt_path, proof, accepted=accepted, **identity) == receipt,
+            'Task helper delivery changed during SQL observation')
+        if accepted is None:
+            observed = module.observe_acceptance(logs, proof, rows,
+                baseline_rows=self.task_baseline, attributes=self.schema['expected_attributes']['attributes'],
+                setup_receipt=receipt, **identity)
+            if observed.get('task_accepted_verified') is True:
+                self.task_accepted = observed
+        else:
+            observed = module.observe_completion(logs, proof, accepted, receipt, rows, **identity)
+            if observed.get('task_completed_verified') is True:
+                self.task_completed = observed
+        self.ctx.report['task_gate'].update(observed,
+            accepted=self.task_accepted, completed=self.task_completed,
+            sql_observation_batches=self.task_sql_reads)
+
+    def saved_selected_rows_match(self, table, previous, current):
+        if table != 'ents':
+            return super().saved_selected_rows_match(table, previous, current)
+        completed = self.task_completed
+        if not (isinstance(completed, dict) and completed.get('reward_credit_verified') is True
+                and completed.get('task_completed_verified') is True):
+            return super().saved_selected_rows_match(table, previous, current)
+        if len(previous) != 1 or len(current) != 1:
+            return False
+        expected = completed['expected_saved_reward_values']
+        reward_fields = ('experiencepoints', 'influencepoints')
+        # NULL is the stock serialization of zero. Every other selected field,
+        # including level/class/origin, powers and costume, retains strict proof.
+        if any(field not in current[0] or current[0][field] is not None
+                and type(current[0][field]) is not int
+                or (current[0].get(field) or 0) != expected[field] for field in reward_fields):
+            return False
+        return evidence._same(
+            [{key: value for key, value in previous[0].items() if key not in reward_fields}],
+            [{key: value for key, value in current[0].items() if key not in reward_fields}])
+
+    def validate_saved_rows(self, rows, inventory):
+        require(self.task_accepted is not None and self.task_completed is not None,
+            'Accept and command-complete the authored task before ordinary Save')
+        return super().validate_saved_rows(rows, inventory)
+
+    def character_evidence(self):
+        proof = super().character_evidence()
+        if proof is None:
+            return None
+        if self.task_saved is None:
+            rows = self.task_rows()
+            saved = self.task_evidence.verify_saved(self.current_logs(), proof,
+                self.task_accepted, self.task_completed, rows,
+                session=self.owner.args.session_id, client_pid=proof['client_pid'],
+                now_utc_ms=int(time.time() * 1000), ordinary_save_verified=proof['verified'] is True)
+            self.ctx.report['task_gate'].update(saved, accepted=self.task_accepted,
+                completed=self.task_completed, sql_observation_batches=self.task_sql_reads)
+            require(saved.get('verified') is True,
+                'Completed task was not verified in the ordinary committed save: ' + saved.get('reason', 'missing proof'))
+            self.task_saved = saved
+        proof['task_gate_verified'] = True
+        return proof

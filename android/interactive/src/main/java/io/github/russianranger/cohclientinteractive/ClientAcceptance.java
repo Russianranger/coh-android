@@ -202,6 +202,42 @@ final class ClientAcceptance {
         return times.size() >= 3 && last - first >= 2000;
     }
 
+    static boolean taskIdentity(Object value) {
+        Map<?, ?> task = object(value);
+        Object name = task.get("name"), context = task.get("context"), subhandle = task.get("subhandle");
+        return name instanceof String && ((String) name).matches("[ -~]{1,256}")
+                && integer(context) && ((Number) context).longValue() != 0
+                && ((Number) context).longValue() >= Integer.MIN_VALUE && ((Number) context).longValue() <= Integer.MAX_VALUE
+                && integer(subhandle) && ((Number) subhandle).longValue() >= 0
+                && ((Number) subhandle).longValue() <= Integer.MAX_VALUE && number(task.get("task_index"), 0);
+    }
+
+    static boolean sameTaskIdentity(Object first, Object second) {
+        Map<?, ?> a = object(first), b = object(second);
+        return taskIdentity(a) && taskIdentity(b) && a.get("name").equals(b.get("name"))
+                && number(b.get("context"), ((Number) a.get("context")).longValue())
+                && number(b.get("subhandle"), ((Number) a.get("subhandle")).longValue());
+    }
+
+    static boolean taskEvent(Object value, String type, String session, long clientPid) {
+        Map<?, ?> event = object(value);
+        return ("character_task_accepted".equals(type) || "character_task_completed".equals(type))
+                && session != null && session.matches("[0-9a-f]{32}") && clientPid > 0 && clientPid <= 4294967295L
+                && type.equals(event.get("type")) && session.equals(event.get("session_id"))
+                && number(event.get("client_pid"), clientPid) && number(event.get("character_id"), 1)
+                && number(event.get("active_task_count"), 1)
+                && yes(event.get("native_task_verified")) && yes(event.get("sql_task_verified"))
+                && positiveInteger(event.get("observed_utc_ms")) && taskIdentity(event.get("task"));
+    }
+
+    static boolean taskSaveReady(Object accepted, Object completed, int acceptedViews, int completedViews,
+                                 String session, long clientPid) {
+        return acceptedViews == 3 && completedViews == 3
+                && taskEvent(accepted, "character_task_accepted", session, clientPid)
+                && taskEvent(completed, "character_task_completed", session, clientPid)
+                && sameTaskIdentity(object(accepted).get("task"), object(completed).get("task"));
+    }
+
     private static Map<?, ?> object(Object value) {
         return value instanceof Map ? (Map<?, ?>) value : Collections.emptyMap();
     }

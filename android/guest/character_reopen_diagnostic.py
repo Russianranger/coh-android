@@ -29,6 +29,7 @@ def save_verified(proof, session):
     if not (character_identity(proof, session) and creation.save_verified(proof, session)
             and all(proof.get(key) is True for key in ('powers_preserved', 'costume_preserved',
                 'selected_rows_preserved', 'committed_native_position_verified'))
+            and (proof.get('task_gate_required') is not True or proof.get('task_gate_verified') is True)
             and type(proof.get('recovery_requested')) is bool
             and (proof['recovery_requested'] is False and all(proof.get(key) is False for key in (
                     'recovery_verified', 'ordinary_stuck_observed', 'on_atlas_safe_position',
@@ -48,12 +49,29 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     proof_verified = staticmethod(save_verified)
 
     def make_server(self):
+        if (self.args.assets / 'task-gate.json').exists():
+            return character.LocalCharacterTaskReopenServer(self)
         return character.LocalCharacterReopenServer(self)
 
     def initialize(self):
         request = self.args.state / 'character-relocation.json'
         require(not request.exists() and not request.is_symlink(), 'Stale character recovery delivery receipt')
         super().initialize()
+        if self.ctx.report.get('character_reopen', {}).get('task_gate_required') is True:
+            added = {'task-gate.json', 'task_gate_evidence.py', 'server_animation_package.py',
+                     'server-animations.pigg', 'server-animation-manifest.json'}
+            require(added <= set(self.ctx.report['asset_sha256']),
+                    'Task milestone inputs are missing from the verified runtime inventory')
+            expected = {'format': 1, 'scope': 'manual_authored_task_command_completion_and_ordinary_save',
+                'required': True, 'contact_path': 'Contacts/Atlas_Park/Matthew_Habashy.contact',
+                'task_name': 'Mission1', 'task_index': 0, 'completion_command': '/completetask 0',
+                'reward_turn_in_required': False}
+            config = creation.login.server.dbserver.load_json(self.args.assets / 'task-gate.json', 4096)
+            require(config == expected, 'Task milestone profile differs from its finite reviewed contract')
+            for name in ('character-task-contact.json', 'character-task-completion.json'):
+                path = self.args.state / name
+                require(not path.exists() and not path.is_symlink(), 'Stale task helper delivery receipt')
+            self.ctx.report['task_gate_required'] = True
 
     def connected_event_data(self, proof):
         return {'reopen_verified': True, 'baseline_character_id': proof['baseline_character_id'],
@@ -96,6 +114,22 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     def observe_console(self):
         result = super().observe_console()
         proof = self.ctx.report.get(self.REPORT_KEY, {})
+        if self.connected_announced and proof.get('task_gate_required') is True:
+            gate = self.ctx.report.get('task_gate', {})
+            for phase in ('accepted', 'completed'):
+                observed = gate.get(phase)
+                announced = 'task_' + phase + '_announced'
+                if isinstance(observed, dict) and not getattr(self, announced, False):
+                    require(observed.get('task_' + phase + '_verified') is True
+                        and observed.get('session_id') == self.args.session_id
+                        and observed.get('client_pid') == proof.get('client_pid')
+                        and observed.get('character_id') == 1,
+                        'Task milestone event differs from this native graphical character')
+                    self.ctx.event('character_task_' + phase, session_id=self.args.session_id,
+                        client_pid=proof['client_pid'], character_id=1,
+                        **{key: observed[key] for key in ('task', 'observed_utc_ms',
+                            'active_task_count', 'native_task_verified', 'sql_task_verified')})
+                    setattr(self, announced, True)
         ready = proof.get('client_ready_evidence')
         metrics = self.ctx.report.setdefault('character_observer_metrics', {})
         if (self.connected_announced and isinstance(ready, dict)
