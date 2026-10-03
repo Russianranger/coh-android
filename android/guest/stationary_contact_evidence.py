@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Optional, read-only initiation evidence for two authored stationary contacts.
+"""Optional, read-only initiation evidence for authored Atlas contacts.
 
 Call once with the owned server's bounded log snapshots at report collection.
 These native logs precede dialogue generation and cannot prove visible dialogue,
@@ -25,15 +25,29 @@ DATA_CONTRACT_FILES = (
     'data/scripts.loc/supergroupcontacts/msliberty.npc',
     'data/scripts.loc/contacts/level_1/city_representative.npc',
     'data/menu/defaultkey/defaultkeybindings.kb',
+    'data/scripts.loc/contacts/kheldian/sunstorm.npc',
+    'data/scripts.loc/spawndefs/infonpcs/meritinfo_npc_atlas_d0_v0.spawndef',
+    'data/texts/english/contacts/kheldian/kheldiancontacts.def.ms',
+    'data/texts/english/spawndefs/infonpcs/merit_reward_info_npcs.xls.ms',
 )
 CONTACTS = {
     'Ms. Liberty': {'npc_definition': 'SuperGroupContacts/MsLiberty.npc',
                     'contact_definition': 'SuperGroupContacts/MsLiberty.contact'},
     'City Representative': {'npc_definition': 'Contacts/Level_1/City_Representative.npc',
                            'contact_definition': 'Contacts/Level_1/City_Representative.contact'},
+    'Sunstorm': {'npc_definition': 'Contacts/Kheldian/Sunstorm.npc',
+                'contact_definition': 'Contacts/Kheldian/Sunstorm.contact'},
+    'Merit Reward Informant': {
+        'spawn_definition': 'Spawndefs/InfoNPCs/MeritInfo_NPC_Atlas_D0_V0.spawndef',
+        'script_name': 'InfoNPC', 'dialog_definition': 'MeritReward',
+        'dialog_start_page': 'MeritRewardsIntro', 'script_response_route_qualified': False},
 }
 SUFFIX = (r' ExpLevel:(?P<level>[1-9][0-9]{0,2}), AlignmentNum:(?P<alignment>[0-9]{1,2}), '
-          r'Archetype:(?P<archetype>Class_[A-Za-z0-9_]{1,80}), Incarnate:(?P<incarnate>[01])')
+          r'Archetype:(?P<archetype>Class_[A-Za-z0-9_]{1,80}), Incarnate:(?P<incarnate>[01])'
+          # The stock logger appends this bounded diagnostic field. Its values
+          # do not prove a date/build identity and never enter contact proof.
+          r'(?: BuildNumber: (?:dev: )?[0-9]{1,5}-[0-9]{1,5}-[0-9]{1,5}'
+          r' [0-9]{1,5}:[0-9]{1,5}:[0-9]{1,5})?')
 PREFIX = r'^"THORHERO:COHLOCAL" (?P<teamup>-?[0-9]{1,10}) '
 OPEN = re.compile(PREFIX + r'ContactInteract:GenericOpen Initiating interaction with contact '
     r'(?P<handle>[1-9][0-9]{0,9}) \((?P<name>[^\r\n()]{1,80})\)' + SUFFIX + '$')
@@ -162,6 +176,11 @@ count as separate interactions. Invalid optional inputs are unavailable evidence
                 if active is None or handle != active[0] or utc_ms < active[2] or link > 0x7fffffff:
                     continue
                 name = active[1]
+                # Scripted InfoNPC responses use contact zero; the positive
+                # same-handle proof here cannot bind that route. Preserve its
+                # genuine GenericOpen only, with no invented response chain.
+                if CONTACTS[name].get('script_response_route_qualified') is False:
+                    continue
             key = (utc_ms, message)
             if key in seen:
                 continue

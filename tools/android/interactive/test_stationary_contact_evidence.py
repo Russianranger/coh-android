@@ -75,6 +75,47 @@ class StationaryContactEvidenceTests(unittest.TestCase):
                     'combat_verified', 'sql_game_mutations_performed'):
             self.assertFalse(result[key])
 
+    def test_stock_build_number_suffix_retains_sunstorm_initiation_and_close(self):
+        # Exact observed stock diagnostic suffixes are not valid dates. Their
+        # presence must not hide an otherwise genuine own-player interaction.
+        raw = line(12, message(handle='285', name='Sunstorm')
+            + ' BuildNumber: dev: 0003-00-00 02:00:01')
+        raw += line(15, message('response', handle='285')
+            + ' BuildNumber: dev: 56528-18-00 64206:64206:35728')
+        result = collect([(EMBEDDED, raw)])
+        self.assertEqual([record['kind'] for record in result['records']], ['initiation', 'response'])
+        self.assertTrue(result['native_response_observed'])
+        self.assertEqual(result['records'][0]['npc_name'], 'Sunstorm')
+        self.assertEqual(result['records'][1]['response_link'], 3)
+        self.assertFalse(result['dialogue_visual_verified'])
+        for suffix in (' BuildNumber: unexpected', ' BuildNumber: dev: 123456-00-00 01:02:03',
+                       ' BuildNumber: dev: 01-02-03 01:02:03 injected'):
+            with self.subTest(suffix=suffix):
+                self.assertEqual(collect([(EMBEDDED, line(body=message() + suffix))])['records'], [])
+
+    def test_merit_initiation_does_not_invent_binding_for_script_contact_zero_responses(self):
+        raw = line(12, message(handle='623', name='Merit Reward Informant')
+            + ' BuildNumber: dev: 0000-00-00 00:00:00')
+        raw += line(12, '"THORHERO:COHLOCAL" 0 ContactInteract:Script Starting dialog tree '
+            'interaction with entity ent:1c3a00000710, using tree MeritReward starting on page '
+            'MeritRewardsIntro ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0'
+            ' BuildNumber: dev: 0000-00-00 00:00:00')
+        raw += line(15, message('response', handle='0', link='640551894')
+            + ' BuildNumber: dev: 60881-18-00 01:00:00')
+        result = collect([(EMBEDDED, raw)])
+        self.assertEqual(len(result['records']), 1)
+        self.assertEqual(result['records'][0]['npc_name'], 'Merit Reward Informant')
+        self.assertEqual(result['records'][0]['script_name'], 'InfoNPC')
+        self.assertFalse(result['records'][0]['script_response_route_qualified'])
+        self.assertTrue(result['native_initiation_observed'])
+        self.assertFalse(result['native_response_observed'])
+        self.assertFalse(result['dialogue_visual_verified'])
+        # A forged positive same-handle response cannot qualify this known
+        # script route either, including when the Script line is missing.
+        raw = line(12, message(handle='623', name='Merit Reward Informant'))
+        raw += line(15, message('response', handle='623'))
+        self.assertFalse(collect([(EMBEDDED, raw)])['native_response_observed'])
+
     def test_local_and_embedded_logger_duplicates_do_not_count_as_two_interactions(self):
         raw = line(12) + line(15, message('response'))
         local = line(12, local=True) + line(15, message('response'), local=True)
@@ -208,6 +249,19 @@ class StationaryContactEvidenceTests(unittest.TestCase):
         for path in evidence.DATA_CONTRACT_FILES[1:3]:
             self.assertRegex(texts[path], r'\bAI\s+PL_StandStill\b')
             self.assertRegex(texts[path], r'\bContact\s+[^\r\n]+\.contact\b')
+        sunstorm = texts['data/scripts.loc/contacts/kheldian/sunstorm.npc']
+        self.assertRegex(sunstorm, r'\bAI\s+PL_StandStill\b')
+        self.assertIn('Contact Contacts/Kheldian/Sunstorm.contact', sunstorm)
+        self.assertIn('"P93035954" "Sunstorm"',
+            texts['data/texts/english/contacts/kheldian/kheldiancontacts.def.ms'])
+        merit = texts['data/scripts.loc/spawndefs/infonpcs/meritinfo_npc_atlas_d0_v0.spawndef']
+        self.assertIn('ScriptName InfoNPC', merit)
+        self.assertIn('var Dialog = "MeritReward"', merit)
+        self.assertIn('var DialogStartPage = "MeritRewardsIntro"', merit)
+        self.assertIn('AI_InActive <<PL_Observing>>', merit)
+        self.assertIn('"P125385772" "Merit Reward Informant"',
+            texts['data/texts/english/spawndefs/infonpcs/merit_reward_info_npcs.xls.ms'])
+        self.assertFalse(evidence.CONTACTS['Merit Reward Informant']['script_response_route_qualified'])
         self.assertRegex(texts['data/menu/defaultkey/defaultkeybindings.kb'], r'key\s+f\s+command\s+follow')
 
 

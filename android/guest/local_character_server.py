@@ -182,6 +182,52 @@ def logout_record(logs):
     return None
 
 
+def native_logout_position(logs, delivery, ready_utc_ms, now_utc_ms):
+    """Read the terminal position paired with this ordinary logout timer.
+
+    The stock 30-second PeriodicInfo observation can precede the player's last
+    movement. The stock logout location instead records the entity being saved.
+    Keep the same owned routes/identity and require the timer and location in
+    order in one route at the same native timestamp. Duplicate logger routes
+    must agree; this observation alone never proves SQL commit or connection.
+    """
+    number = character_events.NUMBER
+    timer_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+        r'\[Disconnect:Logout timer expired\] [^\r\n]+$')
+    position_pattern = re.compile(r'^"THORHERO:COHLOCAL" -?\d+ '
+        r'Logout location : map (?P<map_id>[1-9][0-9]*) '
+        r'\((?P<x>' + number + r') (?P<y>' + number + r') (?P<z>' + number + r')\) [^\r\n]+$')
+    observations = []
+    for path, text in logs:
+        timer = None
+        for message, route in entity_records([(path, text)]):
+            if timer_pattern.fullmatch(message):
+                timer = route
+                continue
+            match = position_pattern.fullmatch(message)
+            if match is None or timer is None or match['map_id'] != '1':
+                continue
+            if route['log_timestamp'] != timer['log_timestamp']:
+                continue
+            utc_ms = int(time.mktime(time.strptime(route['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+            if not (ready_utc_ms <= utc_ms <= now_utc_ms
+                    and -999 <= utc_ms - delivery['sent_utc_ms'] <= LOGOUT_MAX_AGE_MS):
+                continue
+            coordinates = [float(match[key]) for key in ('x', 'y', 'z')]
+            require(all(math.isfinite(value) and abs(value) <= 1000000 for value in coordinates)
+                    and above_native_fall_floor(coordinates[1]),
+                    'Native logout position is nonfinite, out of bounds or at the fall floor')
+            observations.append(dict(route, utc_ms=utc_ms, position=coordinates,
+                map_id=1, account=ACCOUNT, name=CHARACTER, logout_timer_evidence=timer,
+                source='current_owned_server_entity_log_ordinary_logout_position'))
+    if not observations:
+        return None
+    first = observations[0]
+    require(all(value['utc_ms'] == first['utc_ms'] and value['position'] == first['position']
+                for value in observations), 'Ambiguous native character logout positions')
+    return first
+
+
 def ready_record(logs):
     """CLIENT_READY runs after the graphical client loads its world assets.
 
@@ -1137,6 +1183,22 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 'No fresh valid native Atlas position before ordinary logout')
         position = self.character_position()
         current_position = [position[key] for key in ('posx', 'posy', 'posz')]
+        # Retain the fresh periodic/native producer gate above. Prefer the
+        # actual stock logout location when it is present: it includes final
+        # movement between the 30-second sample and ordinary logout. A stale
+        # SQL position matching the earlier sample must still be refused.
+        # Retained donors lacking that stock line keep the prior proof path.
+        terminal = native_logout_position(self.current_logs(), logout,
+            self.creation_report['client_ready_observed_utc_ms'], int(time.time() * 1000))
+        if terminal is not None:
+            terminal.update(session_id=self.owner.args.session_id,
+                db_id=self.CHARACTER_ID, auth_id=self.auth_id,
+                client_pid=self.creation_report['client_pid'],
+                connection_binding='previously_validated_current_session_reopen_connection',
+                native_log_contains_character_db_id=False,
+                native_log_contains_session_or_client_pid=False,
+                prior_native_position_evidence=native)
+            native = terminal
         require(above_native_fall_floor(position['posy'])
                 and all(abs(a-b) <= 2 for a, b in zip(current_position, native['position'])),
                 'Committed character position differs from the current native Atlas observation')

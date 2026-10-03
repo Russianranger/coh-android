@@ -1,5 +1,79 @@
 # City of Heroes Android handoff
 
+**Current physical checkpoint (October 3, 2026): The user accepts the 0.12.1
+startup improvement and ordinary NPC contact/dialogue test. Sunstorm and Merit
+Reward Informant opened readable dialogue and processed normal responses.
+Ms. Liberty remains an incomplete female costume asset defect, not a reason to
+repeat the accepted general contact test. The app's failed result came from a
+stale position comparison during ordinary save. A narrow observer correction
+and regression replay are prepared on this continuation branch; the published
+0.12.1 APK remains unchanged. PR #1 stays draft and main stays 04d62616.**
+
+The supplied `coh-atlas-gameplay-20261003-110806.zip` binds the Thor session
+`cb216f7fcefc4ad1b4e9f059b2128df8`. The six exported contact PNGs have verified
+hashes and two completed, identity-bound capture batches. Native logs show
+Sunstorm opening at 11:04:20 UTC and closing at 11:04:42, and Merit Reward
+Informant opening its `MeritReward` script at 11:05:40, processing an information
+response at 11:05:55 and closing at 11:06:07. The user's extra screenshot shows
+its information page after the initial page. The Patriot exploration badge is
+visible and user-attested; its persistence is not independently established.
+Mission acceptance/completion, training, NPC pathing and combat remain separate.
+
+| Measured endpoint | 0.12.1 from session start |
+| --- | --- |
+| DbServer ready | 10m45.471s |
+| Atlas server ready | 14m35.812s |
+| Client menu/main loop | 23m56.276s |
+| Local login verified | 24m15.587s |
+| THORHERO connected | 25m39.175s |
+
+The accepted 0.11.6 server baseline was 21m50s; this run reaches Atlas about
+7m14s earlier. The user's approximate 24-25-minute boot and 4-5-minute perceived
+improvement are retained alongside the measured endpoints. All 93 shipped
+server caches appear in native loader traces; 91 were seeded and two existing
+bins retained. First-use server staging still costs 410.218s and client startup
+556.981s. Wine's expected first-transition registration costs 65.423s. The new
+server data cache was returned after owned cleanup with credentials removed,
+so a later ordinary run can qualify reuse. No warm-start timing or five-minute
+server-target pass is claimed; no extra startup-only physical run is required.
+
+The false save rejection compared committed SQL against the 11:06:08 periodic
+sample `(121.10, -768, -702.51)`. Ordinary logout expired and disconnected at
+11:06:37; its final native position `(112.468750, -768, -660.765625)` agrees with
+SQL `(112.461586, -768, -660.7662)` at 11:07:48, within 0.008 units. Independent
+SQL-log analysis preserves the selected `ents`/`ents2` rows, seven powers and
+fourteen costume parts except expected LoginCount 7 to 8. Original failed flags
+are retained: no Saved-character-verified event or Finish occurred. Cleanup
+passed. The fix prefers the final own-player, map-1, same-route/same-timestamp
+ordinary-logout location while retaining fresh native producer, request/session,
+protected-row, SQL, fall-floor and optional-recovery gates. A regression uses
+real exported log lines and explicitly synthetic delivery time because the
+private command receipt was not exported. It does not fabricate physical proof.
+
+The optional contact observer also missed stock `BuildNumber` suffixes and the
+two NPCs outside its original name list. It now recognizes bounded stock
+suffixes and the pinned authored Sunstorm/information-NPC contracts. Merit script
+responses use contact handle zero; those are deliberately unclaimed by this
+ordinary-handle observer. Visible dialogue/progression remains user-assessed.
+
+Ms. Liberty's live client log reports missing female pants, chest, head, boots,
+hair, belt and shoulder geometry plus textures; the retained avatar supplement
+covers default male assets. Supply/verify her complete matching costume
+requirements in later asset work. Her specific interaction and complete NPC
+rendering remain unverified. Missing animations are not claimed.
+
+The observer correction passes **88 focused checks**, including exact native and
+authored data contract pins, with no skips. It is a source-only correction for
+the next packaged update; the installed/public 0.12.1 behavior is not changed.
+
+See [the physical acceptance and diagnostic receipt](android-evidence/thor-0.12.1-contact-startup-accepted-20261003.json).
+Preserve prior accepted camera/jump/outdoor/recovery and persistence milestones.
+The next new gameplay gate remains bounded task acceptance/completion/save,
+using the corrected observer in its next packaged build; this does not require
+replaying accepted contact dialogue. Current published 0.12.1 remains available.
+
+The retained publication checkpoint follows:
+
 **Current (October 3, 2026): 0.12.1 is published and independently verified. It
 implements the authorized startup options 1, 2, 8 and 3: exact server/English
 message caches, stable verified client/server data roots and cache identities,
