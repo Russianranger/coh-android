@@ -100,6 +100,17 @@ SHELL_ONLY = frozenset({
 # workflow. Repairs reuse the verified Game and MapServer build; the historical
 # full donor pipeline must not publish over those dedicated releases.
 RESPONSIVENESS_ONLY = frozenset({
+    '.github/workflows/android-storage-recovery.yml',
+    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
+    'tools/android/interactive/build_storage_recovery_apk.py',
+    'tools/android/interactive/qualify_storage_recovery.py',
+    'tools/android/interactive/test_storage_recovery_package.py',
+    'tools/android/interactive/test_fresh_profile_recovery.py',
+    'tools/android/interactive/test_runtime_setup_reuse.py',
+    'tools/android/interactive/test_storage_recovery_ui.py',
+    'docs/COH-Atlas-Gameplay-0.13.2-testing.txt',
+    'docs/android-evidence/storage-recovery-0.13.2-publication.json',
+    'docs/android-evidence/thor-0.13.1-reinstall-failure-20261003.json',
     '.github/workflows/android-storage-cleanup.yml',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java',
     'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java',

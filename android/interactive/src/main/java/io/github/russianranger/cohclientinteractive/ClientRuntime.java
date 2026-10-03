@@ -41,6 +41,9 @@ public final class ClientRuntime {
         }
     }
 
+    /** A missing app-private profile is different from an interrupted or saved profile. */
+    public enum ProfileState { ABSENT, READY, PRESERVE }
+
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
     private static final long MAX_GUEST_ZIP = 260L * 1024 * 1024;
     private static final long MAX_WORLD_IDENTITY = 8L * 1024 * 1024;
@@ -167,6 +170,62 @@ public final class ClientRuntime {
         if (owner != null && owner == storageOwner) { storageOwner = null; operationActive = false; }
     }
     public static synchronized boolean operationInProgress() { return operationActive; }
+    /** Read at most two small identity files; never walk imported assets or a database. */
+    public static ProfileState characterProfileState(Context context) {
+        try { return inspectCharacterProfile(new StorageFiles(context.getApplicationContext().getFilesDir())); }
+        catch (Exception unreadable) { return ProfileState.PRESERVE; }
+    }
+    static ProfileState inspectCharacterProfile(StorageAudit.Fs files) throws IOException {
+        String path = "";
+        for (String component : new String[]{"client", "state", "diagnostic", "android-local-login"}) {
+            path = path.isEmpty() ? component : path + "/" + component;
+            StorageAudit.Stat entry = files.stat(path);
+            if (entry == null) return ProfileState.ABSENT;
+            if (entry.kind != StorageAudit.Kind.DIRECTORY) return ProfileState.PRESERVE;
+        }
+        String profile = "client/state/diagnostic/android-local-login";
+        if (!profileEntry(files, profile + "/profile.json", StorageAudit.Kind.FILE, 4096)
+                || !profileEntry(files, profile + "/pgdata", StorageAudit.Kind.DIRECTORY, 0)
+                || !profileEntry(files, profile + "/pgdata/PG_VERSION", StorageAudit.Kind.FILE, 32)
+                || !profileEntry(files, profile + "/credentials.json", StorageAudit.Kind.FILE, 4096))
+            return ProfileState.PRESERVE;
+        Map<String,Object> marker = files.json(files.read(profile + "/profile.json", 4096));
+        Map<String,Object> identity = new LinkedHashMap<>();
+        identity.put("format", 1); identity.put("purpose", "persistent_local_login");
+        identity.put("profile", "android-local-login"); identity.put("database", "coh_local_android");
+        identity.put("source_commit", "0b75ade0c801735e10c5798f641948a45cc50488");
+        identity.put("data_commit", "d51533ec8e6a9cf726b9214968077a05fdcf19f3");
+        identity.put("package_manifest_sha256", "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6");
+        identity.put("schema_manifest_sha256", "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92");
+        identity.put("initialized", Boolean.TRUE);
+        if (!identity.equals(marker)) return ProfileState.PRESERVE;
+        Map<String,Object> credentials = files.json(files.read(profile + "/credentials.json", 4096));
+        if (!credentials.keySet().equals(new HashSet<>(Arrays.asList("cohdiag_admin", "cohtest"))))
+            return ProfileState.PRESERVE;
+        for (Object credential : credentials.values())
+            if (!(credential instanceof String) || !((String)credential).matches("[0-9a-f]{64}"))
+                return ProfileState.PRESERVE;
+        return ProfileState.READY;
+    }
+    private static boolean profileEntry(StorageAudit.Fs files, String path, StorageAudit.Kind kind, int bound) throws IOException {
+        StorageAudit.Stat entry = files.stat(path);
+        return entry != null && entry.kind == kind && (kind == StorageAudit.Kind.DIRECTORY
+                || entry.links == 1 && entry.size > 0 && entry.size <= bound);
+    }
+    public static String profileRecoveryMessage(ProfileState profile) {
+        if (profile == ProfileState.ABSENT)
+            return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
+        if (profile == ProfileState.READY)
+            return "The existing character database is present. Reopen THORHERO to continue the task check.";
+        return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
+    }
+    private void requireCharacterProfile(boolean reopening) throws IOException {
+        ProfileState profile = characterProfileState(context);
+        if (reopening && profile != ProfileState.READY)
+            throw new IOException(profileRecoveryMessage(profile));
+        if (!reopening && profile != ProfileState.ABSENT)
+            throw new IOException("Fresh creation was refused because character profile data already exists. " + profileRecoveryMessage(profile));
+    }
     private static File guard(Context context) { return new File(context.getFilesDir(), "client/cleanup-guard.json"); }
     private static synchronized void initializeGuard(Context context) {
         if (guardInitialized) return;
@@ -235,6 +294,15 @@ public final class ClientRuntime {
         } catch (Exception e) {
             error = message(e); report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
         } finally {
+            DiagnosticRuntime completedInstaller = installer;
+            if (completedInstaller != null) {
+                try {
+                    JSONObject receipt = completedInstaller.getSetupReceipt();
+                    if (receipt != null) report.put("runtime_setup", receipt);
+                } catch (Exception telemetryFailure) {
+                    report.put("runtime_setup_recording_error", telemetryFailure.getClass().getSimpleName());
+                }
+            }
             installer = null;
             synchronized (this) {
                 finished = true;
@@ -243,7 +311,7 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets, then reopen THORHERO. Existing imported assets do not need reimporting."
+        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets if needed. " + profileRecoveryMessage(characterProfileState(context))
                 : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
     }
 
@@ -283,7 +351,7 @@ public final class ClientRuntime {
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Verified game assets are ready. Reopen THORHERO next."
+        return new Result(ready, latestReport, ready ? "Verified game assets are ready. " + profileRecoveryMessage(characterProfileState(context))
                 : cancelled ? "Asset import stopped; the previous verified content is preserved."
                 : "Asset import failed: " + error);
     }
@@ -292,8 +360,11 @@ public final class ClientRuntime {
         return runCharacter(selectedSession, true);
     }
 
-    /** Retained creation entry point; the visible next milestone always reopens. */
+    /** Explicit first-install creation; never a fallback for an existing or partial database. */
     public Result runCreation(String selectedSession) throws Exception {
+        return runFreshCreation(selectedSession);
+    }
+    public Result runFreshCreation(String selectedSession) throws Exception {
         return runCharacter(selectedSession, false);
     }
 
@@ -306,6 +377,9 @@ public final class ClientRuntime {
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false;
         try {
+            // The operation lock is held. Detect a missing/partial profile before
+            // runtime hashing, thin worktree staging, or any Wine/SQL process.
+            requireCharacterProfile(reopen);
             loadManifest(); check(); validateInstalled();
             imported = importer().inspect();
             if (imported == null) throw new IOException("Import the pinned Atlas assets before starting the client");
@@ -1395,7 +1469,7 @@ public final class ClientRuntime {
         }
     }
     private boolean taskGateRequired() {
-        return manifest!=null && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
+        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
     }
     private boolean taskGateAccepted(JSONObject report) throws Exception {
         JSONObject proof=report.optJSONObject("task_gate");
@@ -1472,6 +1546,8 @@ public final class ClientRuntime {
                     .put("gameplay_validated", false).put("game_rendering_validated", false)
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
                     .put("graphics_profile_requested", graphicsProfileRequested)
+                    .put("fresh_profile_creation_requested", !reopen && "character_creation".equals(operation))
+                    .put("character_profile_state", characterProfileState(context).name())
                     .put("input_effect_verified", false).put("input_events_sent", inputSent).put("input_events_failed", inputFailed)
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())

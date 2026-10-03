@@ -25,7 +25,7 @@ public final class StorageAuditHost {
   }
   static class Fs implements StorageAudit.Fs {
     final TreeMap<String,Entry> files=new TreeMap<>();final Map<String,Map<String,Object>> json=new HashMap<>();
-    final Map<String,Map<String,Object>> reports=new HashMap<>();long ino=100,time=1791040000000L;int removed=0;String failDelete,failStat,mutateOnList;List<String> aliases=Arrays.asList("/private","/android-alias/private");
+    final Map<String,Map<String,Object>> reports=new HashMap<>();long ino=100,time=1791040000000L;int removed=0;String failDelete,failStat,mutateOnList;final List<File> journals=new ArrayList<>();List<String> aliases=Arrays.asList("/private","/android-alias/private");
     Fs(){dir("");dir("m2");dir("client");dir("client/state");dir("client-import");}
     void dir(String path){if(files.containsKey(path))return;if(!path.isEmpty())dir(parent(path));files.put(path,new Entry(StorageAudit.Kind.DIRECTORY,ino++,128,1));}
     Entry file(String path,long size,long blocks){dir(parent(path));Entry e=new Entry(StorageAudit.Kind.FILE,ino++,size,blocks);files.put(path,e);return e;}
@@ -66,7 +66,42 @@ public final class StorageAuditHost {
     }
     @Override public void unlink(String path)throws IOException{if(files.get(path).kind==StorageAudit.Kind.DIRECTORY)throw new IOException("directory");delete(path);}
     @Override public void rmdir(String path)throws IOException{for(String name:files.keySet())if(!name.equals(path)&&parent(name).equals(path))throw new IOException("not empty");delete(path);}
+    @Override public File cleanupJournal()throws IOException{File f=StorageAudit.Fs.super.cleanupJournal();journals.add(f);return f;}
     @Override public long nowMillis(){return time;}
+  }
+  /** Lazy metadata tree: no fixture objects/paths retained for ordinary entries. */
+  static class StreamingFs extends Fs {
+    String branch;int count,paired,failIndex=-1;boolean reverse;final BitSet gone=new BitSet();
+    void large(String path,int entries,int sharedPairs){branch=path;count=entries;paired=sharedPairs*2;dir(path);}
+    int virtualIndex(String path) {
+      if(branch==null||!path.startsWith(branch+"/f"))return -1;
+      try{int i=Integer.parseInt(path.substring(branch.length()+2));return i>=0&&i<count?i:-1;}catch(NumberFormatException e){return -1;}
+    }
+    @Override public StorageAudit.Stat stat(String path)throws IOException {
+      int i=virtualIndex(path);if(i<0)return super.stat(path);
+      if(!files.containsKey(branch)||gone.get(i))return null;
+      int other=i<paired?(i^1):-1;int removed=other>=0&&gone.get(other)?1:0;
+      return new StorageAudit.Stat(StorageAudit.Kind.FILE,5,10000000L+(other>=0?i/2:i),other>=0?2-removed:1,100,1,1,1+removed);
+    }
+    @Override public List<String> list(String path)throws IOException {
+      if(path.equals(branch))throw new IOException("Large directories must stream without retaining a member list");
+      return super.list(path);
+    }
+    @Override public void visitDirectory(String path,StorageAudit.NameVisitor visitor)throws IOException {
+      if(!path.equals(branch)){super.visitDirectory(path,visitor);return;}
+      reverse=!reverse;
+      for(int n=0;n<count;n++){int i=reverse?count-n-1:n;if(!gone.get(i))visitor.visit("f"+i);}
+    }
+    @Override public void unlink(String path)throws IOException {
+      int i=virtualIndex(path);if(i<0){super.unlink(path);return;}
+      if(i==failIndex)throw new IOException("Injected streaming delete failure");
+      if(gone.get(i))throw new IOException("Virtual entry already removed");
+      gone.set(i);removed++;files.get(branch).modified++;
+    }
+    @Override public void rmdir(String path)throws IOException {
+      if(path.equals(branch)&&gone.cardinality()!=count)throw new IOException("Virtual directory is not empty");
+      super.rmdir(path);
+    }
   }
   static class Fixture {
     Fs fs=new Fs();String current=fs.runtime("current",true),old=fs.runtime("old",false);
@@ -118,6 +153,86 @@ public final class StorageAuditHost {
     case "partial_failure":{StorageAudit.Plan p=f.scan();f.fs.failDelete=f.old+"/assets/old.zip";StorageAudit.CleanupResult r=f.clean(p,"old_runtime");need(!r.completed&&r.skippedCount==1&&!r.errors.isEmpty()&&f.fs.files.containsKey(f.old));need(r.reclaimedBytes<=candidate(p,f.old).reclaimableBytes);break;}
     case "protected_socket":{Entry e=f.fs.file("client/state/unused.sock",0,0);e.kind=StorageAudit.Kind.OTHER;StorageAudit.Plan p=f.scan();need(p.complete&&p.cleanupAllowed);e=f.fs.file(f.old+"/rootfs/socket",0,0);e.kind=StorageAudit.Kind.OTHER;need(candidate(f.scan(),f.old)==null);break;}
     case "report_json_bounded":{for(int i=0;i<300;i++)f.fs.file("m2/downloads/base-"+String.format("%064x",i)+".tar.gz",100,1);StorageAudit.Plan p=f.scan();String json=p.toJson();need(json.startsWith("{")&&json.contains("\"candidate_details_truncated\":true")&&json.length()<150000);break;}
+    case "streaming_large_scan_cleanup": {
+      StreamingFs large=new StreamingFs();f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      large.large(f.old+"/rootfs/large",300000,1000);
+      final int[] checkpoints={0};
+      StorageAudit.Plan p=StorageAudit.scan(large,f.digest,StorageAudit.Limits.defaults(),(phase,entries,path,elapsed)->checkpoints[0]++);
+      need(p.complete&&p.cleanupAllowed&&p.entryCount>300000&&checkpoints[0]>=2);
+      long reclaim=candidate(p,f.old).reclaimableBytes;
+      StorageAudit.CleanupResult r=f.clean(p,"old_runtime");
+      if(!r.completed)throw new AssertionError(r.errors.toString());
+      need(large.journals.stream().noneMatch(File::exists));
+      need(r.deletedCount>300000&&r.reclaimedBytes==reclaim&&large.gone.cardinality()==300000&&!large.files.containsKey(f.old));break;
+    }
+    case "streaming_partial_cleanup": {
+      StreamingFs large=new StreamingFs();f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      large.large(f.old+"/rootfs/large",150000,250);large.failIndex=75000;
+      StorageAudit.Plan p=f.scan();StorageAudit.CleanupResult r=f.clean(p,"old_runtime");
+      need(!r.completed&&!r.errors.isEmpty()&&r.skippedCount==1&&r.deletedCount>1000&&large.gone.cardinality()>1000);
+      need(large.files.containsKey(f.old)&&large.files.containsKey(f.current)&&r.reclaimedBytes<=candidate(p,f.old).reclaimableBytes);
+      need(large.journals.stream().noneMatch(File::exists));break;
+    }
+    case "shared_inode_budget": {
+      StreamingFs large=new StreamingFs();f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      large.large(f.old+"/rootfs/large",120000,60000);
+      StorageAudit.Plan p=f.scan();need(!p.complete&&!p.cleanupAllowed&&p.reclaimableBytes==0&&large.removed==0);
+      need(p.errors.toString().contains("shared-inode")||p.errors.toString().contains("memory budget"));break;
+    }
+    case "streaming_journal_disk_budget": {
+      StreamingFs large=new StreamingFs();f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      String deep=f.old+"/rootfs/"+String.join("/",Collections.nCopies(5,"n".repeat(200)));
+      large.large(deep,150000,0);StorageAudit.Plan p=f.scan();need(p.complete&&p.cleanupAllowed);
+      StorageAudit.CleanupResult r=f.clean(p,"old_runtime");
+      need(!r.completed&&r.deletedCount==0&&r.errors.toString().contains("disk budget"));
+      need(large.journals.stream().noneMatch(File::exists)&&large.files.containsKey(f.old));break;
+    }
+    case "progress_cancels_scan": {
+      StreamingFs large=new StreamingFs(){@Override public long nowMillis(){return time++;}};f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      large.large(f.old+"/rootfs/large",30000,0);
+      StorageAudit.Plan p=StorageAudit.scan(large,f.digest,StorageAudit.Limits.defaults(),(phase,entries,path,elapsed)->{
+        if(phase.equals("scanning files")&&entries>1000)throw new InterruptedIOException("Storage work cancelled by user");
+      });
+      need(!p.complete&&!p.cleanupAllowed&&p.entryCount<30000&&p.errors.toString().contains("cancelled")&&large.removed==0);break;
+    }
+    case "progress_cancels_cleanup": {
+      StreamingFs large=new StreamingFs(){@Override public long nowMillis(){return time++;}};f.fs=large;
+      f.current=large.runtime("current",true);f.old=large.runtime("old",false);
+      f.digest=new String(large.files.get(f.current+"/ready.json").bytes,StandardCharsets.UTF_8).substring(6);
+      large.large(f.old+"/rootfs/large",30000,200);StorageAudit.Plan p=f.scan();
+      StorageAudit.CleanupResult r=StorageAudit.cleanup(large,p,Set.of("old_runtime"),StorageAudit.Limits.defaults(),(phase,entries,path,elapsed)->{
+        if(phase.equals("removing reviewed files")&&entries>1000)throw new InterruptedIOException("Storage work cancelled by user");
+      });
+      need(!r.completed&&r.deletedCount>1000&&r.deletedCount<30000&&r.errors.toString().contains("cancelled"));
+      need(large.journals.stream().noneMatch(File::exists)&&large.files.containsKey(f.current));break;
+    }
+    case "heap_budget": {
+      StorageAudit.Plan p=f.scan();need(!p.complete&&!p.cleanupAllowed&&p.errors.toString().contains("memory budget"));break;
+    }
+    case "stream_order_independent": {
+      final Fs old=f.fs;f.fs=new Fs(){boolean reverse;
+        @Override public void visitDirectory(String path,StorageAudit.NameVisitor visitor)throws IOException {
+          List<String> members=old.list(path);reverse=!reverse;if(reverse)Collections.reverse(members);
+          for(String name:members)visitor.visit(name);
+        }
+        @Override public StorageAudit.Stat stat(String p)throws IOException{return old.stat(p);}
+        @Override public byte[] read(String p,int n)throws IOException{return old.read(p,n);}
+        @Override public Map<String,Object> json(byte[] b)throws IOException{return old.json(b);}
+        @Override public String readLink(String p)throws IOException{return old.readLink(p);}
+        @Override public List<String> list(String p)throws IOException{return old.list(p);}
+      };
+      StorageAudit.Plan first=f.scan(),second=f.scan();need(first.complete&&first.snapshotId.equals(second.snapshotId));break;
+    }
     case "large_tree":{for(int i=0;i<15000;i++)f.fs.file(f.old+"/rootfs/files/f"+i,100,1);StorageAudit.Plan p=f.scan();need(p.complete&&p.entryCount>15000);StorageAudit.CleanupResult r=f.clean(p,"old_runtime");need(r.completed&&r.deletedCount>15000);break;}
     default:throw new AssertionError(args[0]);
     }
@@ -141,7 +256,8 @@ class StorageAuditTests(unittest.TestCase):
         cls.work.cleanup()
 
     def scenario(self, name):
-        result = subprocess.run(['java', '-Xmx128m', '-cp', str(self.root), 'io.github.russianranger.cohclientinteractive.StorageAuditHost', name], capture_output=True, text=True, timeout=45)
+        heap = '16m' if name == 'heap_budget' else '48m' if name.startswith('streaming_') else '128m'
+        result = subprocess.run(['java', '-Xmx' + heap, '-cp', str(self.root), 'io.github.russianranger.cohclientinteractive.StorageAuditHost', name], capture_output=True, text=True, timeout=90)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
@@ -155,6 +271,9 @@ SCENARIOS = [
     'cross_candidate_reference', 'scan_error', 'entry_limit', 'changed_during_scan',
     'stale_file', 'stale_pointer', 'new_reference_after_scan', 'protected_selection',
     'partial_failure', 'protected_socket', 'report_json_bounded', 'large_tree',
+    'streaming_large_scan_cleanup', 'streaming_partial_cleanup', 'shared_inode_budget',
+    'heap_budget', 'stream_order_independent', 'streaming_journal_disk_budget',
+    'progress_cancels_scan', 'progress_cancels_cleanup',
 ]
 for _scenario in SCENARIOS:
     setattr(StorageAuditTests, 'test_' + _scenario, lambda self, name=_scenario: self.scenario(name))

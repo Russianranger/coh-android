@@ -26,8 +26,8 @@ public final class ClientActivity extends Activity {
     private ClientService service;
     private ClientService.State state;
     private ClientSurface display;
-    private TextView status,detail,counter,logs;
-    private Button setup,importAssets,run,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
+    private TextView status,detail,counter,logs,profileStatus;
+    private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private CheckBox performanceGraphics;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
@@ -62,7 +62,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();dispatchPendingExport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -72,7 +72,7 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.13.1",12,false));
+        controls.addView(text("Persistent local server · v0.13.2",12,false));
         controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
         setup=button("Set up runtime (new install only)",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
@@ -83,6 +83,8 @@ public final class ClientActivity extends Activity {
         controls.addView(performanceGraphics);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
         run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
+        createFresh=button("Create fresh THORHERO",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
+        profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
         returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
         captureContact=button("Capture contact dialog",()->{releaseControls();if(service!=null)service.requestContactCapture();});controls.addView(captureContact);
         openTaskContact=button("Open task contact",()->{releaseControls();if(service!=null)service.requestOpenTaskContact();});controls.addView(openTaskContact);
@@ -102,7 +104,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Keep your existing runtime and imported data after this update; new installations need setup and import. Log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
+        controls.addView(text("Keep your current runtime and imported data after this update; setup and import do not restore a character database deleted by uninstalling. If no saved profile exists, use Create fresh THORHERO, create the character in the game, then Save character / log out and Finish. Reopen saved THORHERO resumes the task gate after that save. Log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -116,7 +118,7 @@ public final class ClientActivity extends Activity {
         });
         right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -173,9 +175,35 @@ public final class ClientActivity extends Activity {
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     @Override protected void onStart(){super.onStart();lastTick=SystemClock.uptimeMillis();inputHandler.post(inputTick);bound=bindService(new Intent(this,ClientService.class),connection,BIND_AUTO_CREATE);}
     @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
+    private boolean profileIdle(ClientService.State next){
+        return next!=null&&service!=null&&!next.busy&&!next.storageBusy&&!next.reportExporting
+                &&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();
+    }
+    private boolean canCreateFreshProfile(ClientService.State next){
+        return profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.ABSENT;
+    }
+    private void refreshProfileControls(ClientService.State next){
+        run.setEnabled(profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.READY);
+        createFresh.setVisibility(next.profileState==ClientRuntime.ProfileState.ABSENT?View.VISIBLE:View.GONE);
+        createFresh.setEnabled(canCreateFreshProfile(next));
+        setTextIfChanged(profileStatus,next.profileNote);
+    }
+    private void confirmFreshProfile(){
+        if(!canCreateFreshProfile(state))return;
+        new AlertDialog.Builder(this).setTitle("Create fresh THORHERO?")
+                .setMessage("This installation has no saved profile. Runtime setup and asset import do not restore a character database deleted by uninstalling. Start native character creation using your current runtime and imported assets, log in with COHLOCAL / offline and create THORHERO. Save character / log out, then Finish and export. Reopen saved THORHERO resumes task testing after that save.")
+                .setNegativeButton("Cancel",null).setPositiveButton("Start character creation",(dialog,which)->{
+                    // The profile or operation may change while this confirmation is open.
+                    if(canCreateFreshProfile(state))request(ClientService.CREATE);
+                }).show();
+    }
+    private void refreshAbortControl(ClientService.State next){
+        stop.setEnabled(next.busy||next.storageBusy);
+        stop.setText(next.storageBusy?"Cancel storage scan / cleanup":"Abort operation");
+    }
     private void render(ClientService.State next){
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
-        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);run.setEnabled(idle);performanceGraphics.setEnabled(idle);storage.setEnabled(idle);stop.setEnabled(next.busy);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
+        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&!next.storageBusy&&idle){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}

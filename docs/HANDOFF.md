@@ -1,6 +1,48 @@
 # City of Heroes Android handoff
 
-**Current storage publication (October 3, 2026): 0.13.1 is published and independently
+**Current recovery work (October 3, 2026): the user reported 62 GB app storage,
+a storage scan crash after about two minutes, a subsequent gameplay crash, and
+then uninstalled the app. Setup and import succeeded on the new installation;
+the uploaded reopen run failed before PostgreSQL, Wine/server or client startup
+because the saved character profile was absent.**
+[Reviewed evidence](android-evidence/thor-0.13.1-reinstall-failure-20261003.json)
+pins the upload. Its 289.23-second client worktree preparation completed before
+the missing-profile refusal. No pre-uninstall crash trace or exit reason survives
+in this bundle; do not call the earlier crash an established OOM or regression
+of the accepted gameplay milestones. Diagnostic exports are not SQL backups.
+
+The 0.13.2 Android recovery derivative is being qualified on the existing
+continuation, retaining all 65 runtime payloads, manifest bytes and signing key.
+Storage traversal now streams descriptor-anchored entries; cleanup planning
+uses a bounded on-disk postorder journal instead of retaining every node in
+memory. Fixed inode/memory limits fail closed. Progress is persisted every five
+seconds and on phase changes; cancellation retains ownership until the worker
+finishes, and interruption diagnostics include the last checkpoint plus bounded
+own-process Android exit reasons. An incomplete or interrupted scan cannot
+authorize cleanup. Current state/import/cache protection is unchanged.
+
+Same-manifest runtime setup already reuses its installed generation. The known
+cumulative mechanism is retained full generations across changed manifests,
+along with downloads and reports; the source alone does not attribute the
+62 GB or prove a new full copy per setup of the same build. New setup receipts
+distinguish reuse from installation and record bounded generation counts,
+downloads, extraction/copy counters and filesystem available bytes. Filesystem
+available-byte differences are not an allocated per-app inventory.
+
+Missing-profile reopen is refused before expensive guest staging. The UI offers
+explicit fresh THORHERO creation only when the entire profile is absent; an
+existing, incomplete, linked or unreadable profile is protected. The guarded
+native creation route uses ordinary logout/save. The task gate remains required
+on subsequent reopen. Only this deleted installation needs fresh creation;
+prior physical acceptance remains accepted. Install the update in place, keep
+the successful setup/import, export the storage/setup receipts and fresh creator
+save report, and stop before another long task run. See the
+[0.13.2 instructions](COH-Atlas-Gameplay-0.13.2-testing.txt). Device recovery and
+storage reclamation remain pending; publication details will be added after CI
+and the downloaded public APK are verified. Main remains 04d62616 and PR #1
+remains draft on `codex/character-persistence-continuation`.
+
+**Previous storage publication (October 3, 2026): 0.13.1 is published and independently
 verified from `5252595717a1965a76251d4110725185bbcbbe20`. It adds idle-only storage
 inspection and explicitly reviewed cleanup for the user-reported 57.44 GB app
 usage. [Run 37129906760](https://github.com/Russianranger/coh-android/actions/runs/37129906760)

@@ -7,6 +7,48 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_recovery_routes_away_from_historical_task_and_cleanup_publications(self):
+        for marker in change.RECOVERY_SOURCES:
+            with self.subTest(marker=marker):
+                names = [marker, change.JAVA+'StorageAudit.java',
+                    change.JAVA+'ClientService.java',
+                    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java']
+                self.assertFalse(change.task_required('push','a'*40,'b'*40,'a'*40,names))
+                self.assertFalse(change.cleanup_required('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_historical_storage_change_still_qualifies_its_own_publication(self):
+        names = [change.JAVA+'StorageAudit.java', change.JAVA+'ClientActivity.java']
+        self.assertFalse(change.task_required('push','a'*40,'b'*40,'a'*40,names))
+        self.assertTrue(change.cleanup_required('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_recovery_cannot_hide_native_or_unknown_changes(self):
+        known = sorted(change.RECOVERY_SOURCES)
+        for other in ('android/guest/local_character_server.py',
+                'upstream/ouroboros/Common/seq/animtrack.c',
+                'android/interactive/src/main/AndroidManifest.xml', 'unknown.txt'):
+            with self.subTest(other=other):
+                names = known+[other]
+                self.assertTrue(change.task_required('push','a'*40,'b'*40,'a'*40,names))
+                self.assertTrue(change.cleanup_required('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_recovery_ambiguous_history_and_dispatch_cannot_skip_historical_checks(self):
+        known = sorted(change.RECOVERY_SOURCES)
+        for event,before,head,parent in (
+                ('workflow_dispatch','a'*40,'b'*40,'a'*40),
+                ('push','0'*40,'b'*40,'0'*40),
+                ('push','c'*40,'b'*40,'a'*40),
+                ('push','a'*40,'a'*40,'a'*40)):
+            self.assertTrue(change.task_required(event,before,head,parent,known))
+            self.assertTrue(change.cleanup_required(event,before,head,parent,known))
+
+    def test_cleanup_workflow_obeys_recovery_routing_before_qualification(self):
+        workflow = Path(__file__).resolve().parents[3]/'.github/workflows/android-storage-cleanup.yml'
+        text = workflow.read_text()
+        self.assertIn('cleanup_required: ${{ steps.scope.outputs.cleanup_required }}', text)
+        self.assertIn('needs: [changes, qualify]', text)
+        self.assertEqual(text.count("needs.changes.outputs.cleanup_required != 'false'"), 2)
+        self.assertIn('fetch-depth: 2', text)
+
     def test_direct_storage_commit_uses_exact_retained_runtime_workflow(self):
         self.assertFalse(change.task_required('push','a'*40,'b'*40,'a'*40,sorted(change.ALLOWED)))
         self.assertFalse(change.task_required('push','a'*40,'b'*40,'a'*40,

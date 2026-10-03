@@ -1,0 +1,62 @@
+COH Atlas Gameplay 0.13.2 — bounded storage and fresh-profile recovery
+
+Install this update over the app you have now. Keep its data, prepared runtime
+and imported assets. Every one of the 65 runtime/server/client payloads is
+identical to 0.13.1 and 0.13.0. This update needs no runtime refresh or reimport.
+Do not uninstall or clear app storage to recover a failed scan.
+
+The uploaded connection log came from a saved-character reopen after uninstall.
+Uninstall removed the private COHLOCAL / THORHERO character database. Runtime
+setup and asset import do not restore that database. An exported gameplay ZIP
+is diagnostic evidence, not a database restore. If you have an external database
+backup, preserve it before creating a replacement profile.
+
+Fresh installation recovery (only because the prior installation was deleted):
+1. If the new installation already completed runtime setup and asset import,
+   keep both. The screen checks the profile before starting guest processes.
+   With no profile, Reopen saved THORHERO stays disabled and Create fresh
+   THORHERO appears. Confirm Start character creation when you are ready.
+2. Use COHLOCAL / offline. Create THORHERO in the native game screen, enter
+   Atlas Park, then use Save character / log out. Wait for its ordinary saved
+   character confirmation, tap Finish, and export the gameplay ZIP.
+3. Stop and send the fresh creator-save ZIP for review before another long
+   reopen/task run. A successful saved profile enables Reopen saved THORHERO.
+   The existing task acceptance, /completetask 0 completion and ordinary-save
+   gate remains available there. Its contact/journal capture instructions are
+   unchanged; this update does not request another long task run yet.
+   Prior accepted physical milestones do not need repetition. This creator
+   run replaces the database removed by uninstall.
+
+Storage inspection (idle app; no game/server run required):
+1. Note Android Settings' app storage usage. Open Storage and cleanup and tap
+   Scan storage. The new scan streams metadata and stores its cleanup journal
+   on disk. It has fixed memory limits, progress, cancellation and an exported
+   outcome if it is interrupted. A limited or incomplete scan disables cleanup.
+2. Let the scan finish, or tap Cancel storage scan / cleanup if you need to
+   stop it. If it fails or reaches a limit, export the storage report. Keep the
+   app installed; unknown or unverified files are never selected for deletion.
+3. Review measured allocated and apparent bytes. The scan covers private app
+   files; Android also counts the installed APK, managed caches and other data.
+   Its totals need not match Android Settings exactly. No link target is walked.
+4. Select only the disposable categories you want removed and tap Review
+   selected cleanup. Inspect the candidate paths and estimate before Clean
+   selected. Current runtime, imported assets, character database, Wine state,
+   startup caches and newest gameplay reports remain protected. Changed files
+   invalidate the reviewed plan; a delete error stops and reports partial work.
+5. Export storage report and send the JSON with Android's before/after totals.
+   Report how many entries were scanned, whether it finished or was cancelled,
+   and whether the screen/app remained responsive. Actual recovered gigabytes
+   are determined by that scan; host tests do not establish device reclamation.
+
+Runtime setup growth check (short; does not boot Wine/server/client):
+If setup is already complete, run Set up runtime once. The unchanged manifest
+must reuse the same prepared directory. Its report now records whether setup
+reused a generation and component downloads plus before/after storage bounds.
+Send its exported gameplay/support ZIP and Android's before/after storage usage.
+This check does not replace the storage scan. A normal small new support report
+can still increase storage; it must not produce another full runtime generation.
+
+Send the storage JSON, runtime setup ZIP and fresh creator-save ZIP for review before another long reopen/task run. If any
+operation fails, export its available report before another attempt. No new
+server startup speed claim is made: the animation pack, exact 93 definition/
+message caches and all native qualification remain inherited by byte identity.

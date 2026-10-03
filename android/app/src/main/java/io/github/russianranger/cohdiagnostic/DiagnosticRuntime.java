@@ -46,6 +46,7 @@ public final class DiagnosticRuntime {
     private boolean dbServerRequested;
     private String operationMode="setup";
     private JSONObject hostsEvidence;
+    private JSONObject setupReceipt;
 
     public DiagnosticRuntime(Context context, Listener listener) {
         this(context,listener,new DiagnosticOutcome());
@@ -59,6 +60,10 @@ public final class DiagnosticRuntime {
         reports=new DiagnosticReports(home);
     }
     public File getLatestReport() { return reports.target; }
+    /** Compact setup evidence; never inventories, prunes or launches the runtime. */
+    public JSONObject getSetupReceipt() throws Exception {
+        return setupReceipt==null?null:new JSONObject(setupReceipt.toString());
+    }
     private String appVersion() {
         try{return context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName;}
         catch(Exception ignored){return "unknown";}
@@ -133,12 +138,15 @@ public final class DiagnosticRuntime {
                 if(code>=300&&code<400){String location=c.getHeaderField("Location");c.disconnect();if(location==null)throw new IOException("Missing download redirect");url=new URL(url,location);continue;}
                 if(code!=200)throw new IOException("Runtime download failed (HTTP "+code+")");
                 long total=0,last=0;
+                if(setupReceipt!=null)setupReceipt.put("download_started",true);
                 try(InputStream in=c.getInputStream();OutputStream out=new FileOutputStream(part)) {
                     byte[] buffer=new byte[1024*1024];int n;
                     while((n=in.read(buffer))!=-1){check();total+=n;if(total>expected)throw new IOException("Runtime download too large");out.write(buffer,0,n);
                         if(total-last>=4*1024*1024){listener.onStage("Downloading "+name,total/1048576+" / "+expected/1048576+" MiB");last=total;}}
                 } finally {c.disconnect();connection=null;}
-                verify(part,pin);Files.move(part.toPath(),dest.toPath(),StandardCopyOption.REPLACE_EXISTING);return dest;
+                verify(part,pin);Files.move(part.toPath(),dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                if(setupReceipt!=null)setupReceipt.put("downloaded_archive_bytes",Math.addExact(setupReceipt.getLong("downloaded_archive_bytes"),total));
+                return dest;
             }
             throw new IOException("Too many runtime redirects");
         } finally {if(part.exists())part.delete();HttpURLConnection c=connection;if(c!=null)c.disconnect();connection=null;}
@@ -149,12 +157,25 @@ public final class DiagnosticRuntime {
     public void setupRuntime() throws Exception {
         CleanupGuard.requireClear();
         JSONObject report=new JSONObject();
+        long usableBefore=home.getParentFile().getUsableSpace();
+        setupReceipt=new JSONObject().put("format",1).put("mode","checking").put("reused",false)
+                .put("installation_started",false).put("runtime_activated",false)
+                .put("download_started",false).put("downloaded_archive_bytes",0L)
+                .put("extraction_started",false).put("archives_extracted",0)
+                .put("runtime_payload_files_copied",0).put("runtime_contents_inventory_performed",false)
+                .put("automatic_cleanup_performed",false);
         try {
             loadManifest();check();
+            long assetBytes=0;
+            JSONObject pinnedFiles=manifest.getJSONObject("files");
+            for(Iterator<String> names=pinnedFiles.keys();names.hasNext();)assetBytes=Math.addExact(assetBytes,pinnedFiles.getJSONObject(names.next()).getLong("bytes"));
+            setupReceipt.put("generation",generation.getName()).put("runtime_manifest_sha256",manifestHash)
+                    .put("packaged_runtime_asset_logical_bytes",assetBytes);
             if(!Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a"))throw new IOException("This diagnostic requires an ARM64 device");
             File ready=new File(generation,"ready.json");
             if(ready.isFile()&&new JSONObject(new String(read(ready,16384),StandardCharsets.UTF_8)).getString("manifest_sha256").equals(manifestHash)) {
-                validateInstalled();stage("Runtime ready","The pinned runtime is already installed");
+                validateInstalled();setupReceipt.put("mode","reused").put("reused",true);
+                stage("Runtime ready","The pinned runtime is already installed; no runtime files were added");
             } else {
                 if(home.getUsableSpace()<5L*1024*1024*1024)throw new IOException("Keep at least 5 GiB free for runtime setup");
                 JSONObject lock;
@@ -162,13 +183,17 @@ public final class DiagnosticRuntime {
                 File base=download(lock.getJSONObject("base"),"database environment");
                 File wine=download(lock.getJSONObject("wine"),"Windows runtime");
                 File staging=new File(home,generation.getName()+".staging");
+                setupReceipt.put("installation_started",true);
                 if(staging.exists())TarExtractor.remove(staging);staging.mkdirs();
                 try {
                     File root=new File(staging,"rootfs"), win=new File(staging,"wine"), pg=new File(staging,"pg"), assets=new File(staging,"assets");
                     root.mkdirs();win.mkdirs();pg.mkdirs();assets.mkdirs();
                     stage("Unpacking runtime","Preparing the private database environment");
-                    TarExtractor.extract(base,root,n->listener.onStage("Unpacking environment",n+" files"));check();
-                    TarExtractor.extract(wine,win,n->listener.onStage("Unpacking Windows runtime",n+" files"));check();
+                    setupReceipt.put("extraction_started",true);
+                    TarExtractor.extract(base,root,n->listener.onStage("Unpacking environment",n+" files"));
+                    setupReceipt.put("archives_extracted",1);check();
+                    TarExtractor.extract(wine,win,n->listener.onStage("Unpacking Windows runtime",n+" files"));
+                    setupReceipt.put("archives_extracted",2);check();
                     JSONObject files=manifest.getJSONObject("files");
                     for(Iterator<String> it=files.keys();it.hasNext();) {
                         String name=it.next(); if(!name.matches("[A-Za-z0-9_.-]+"))throw new IOException("Unsafe package member");
@@ -177,13 +202,17 @@ public final class DiagnosticRuntime {
                             TarExtractor.transfer(in,out,files.getJSONObject(name).getLong("bytes"));if(in.read()!=-1)throw new IOException("Package member grew");
                         }
                         verify(dest,files.getJSONObject(name));check();
+                        setupReceipt.put("runtime_payload_files_copied",setupReceipt.getInt("runtime_payload_files_copied")+1);
                     }
                     try(InputStream in=context.getAssets().open("runtime/runtime-manifest.json")){write(new File(assets,"runtime-manifest.json"),read(in,MAX_REPORT));}
                     TarExtractor.extract(new File(assets,"postgresql-runtime.tar.gz"),pg,n->listener.onStage("Unpacking PostgreSQL",n+" files"));
+                    setupReceipt.put("archives_extracted",3);
                     if(files.has("dbserver-package.tar.gz")&&files.has("dbserver-schema.tar.gz")) {
                         stage("Unpacking real DbServer","Preparing the isolated server test inputs");
                         TarExtractor.extract(new File(assets,"dbserver-package.tar.gz"),new File(staging,"dbserver"),n->listener.onStage("Unpacking DbServer",n+" files"));
+                        setupReceipt.put("archives_extracted",4);
                         TarExtractor.extract(new File(assets,"dbserver-schema.tar.gz"),new File(staging,"schema"),n->listener.onStage("Unpacking server schema",n+" files"));
+                        setupReceipt.put("archives_extracted",5);
                     }
                     required(root,"usr/bin/python3");required(root,"usr/bin/Xtigervnc");required(win,"bin/wine");required(win,"bin/wineserver");
                     required(pg,"opt/coh/pgsql/bin/postgres");required(pg,"opt/coh/pgsql/bin/initdb");
@@ -194,12 +223,31 @@ public final class DiagnosticRuntime {
                     write(new File(staging,"ready.json"),new JSONObject().put("manifest_sha256",manifestHash).toString().getBytes(StandardCharsets.UTF_8));
                     check();if(generation.exists())TarExtractor.remove(generation);
                     if(!staging.renameTo(generation))throw new IOException("Cannot activate runtime");
+                    setupReceipt.put("runtime_activated",true);
                 } finally {if(staging.exists())TarExtractor.remove(staging);}
-                validateInstalled();stage("Runtime ready","Setup complete. Run diagnostics next.");
+                validateInstalled();setupReceipt.put("mode","installed");stage("Runtime ready","Setup complete. Run diagnostics next.");
             }
             report.put("status","setup_complete").put("passed",false).put("scope","Runtime installation only; run the diagnostic before claiming execution");
-        } catch(Exception e) {report.put("status",outcome.cancelled()?"cancelled":"failed").put("error",clean(String.valueOf(e.getMessage())));throw e;}
-        finally {support(report,false);}
+        } catch(Exception e) {setupReceipt.put("mode",outcome.cancelled()?"cancelled":"failed");report.put("status",outcome.cancelled()?"cancelled":"failed").put("error",clean(String.valueOf(e.getMessage())));throw e;}
+        finally {
+            int generations=0,entries=0;boolean complete=true;
+            try(java.nio.file.DirectoryStream<java.nio.file.Path> names=Files.newDirectoryStream(home.toPath())) {
+                for(java.nio.file.Path name:names) {
+                    if(++entries>512){complete=false;break;}
+                    if(name.getFileName().toString().matches("runtime-[0-9a-f]{16}")
+                            &&Files.isDirectory(name,java.nio.file.LinkOption.NOFOLLOW_LINKS))generations++;
+                }
+            } catch(IOException|SecurityException ignored){complete=false;}
+            long usableAfter=home.getParentFile().getUsableSpace();
+            setupReceipt.put("storage_observation",new JSONObject()
+                    .put("scope","shared_filesystem_available_space_only; not app allocated usage")
+                    .put("shared_filesystem_usable_bytes_before",usableBefore)
+                    .put("shared_filesystem_usable_bytes_after",usableAfter)
+                    .put("shared_filesystem_usable_bytes_change",usableAfter-usableBefore)
+                    .put("runtime_generation_directories",generations).put("generation_count_complete",complete)
+                    .put("directory_entry_limit",512));
+            report.put("runtime_setup",setupReceipt);support(report,false);
+        }
     }
     private void validateInstalled() throws Exception {
         required(generation,"rootfs/usr/bin/python3");required(generation,"wine/bin/wine");required(generation,"pg/opt/coh/pgsql/bin/postgres");

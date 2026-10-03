@@ -5,6 +5,7 @@ import android.content.*;
 import android.os.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,6 +15,8 @@ import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** Foreground ownership for runtime setup, verified asset import and bounded client startup. */
 public final class ClientService extends Service {
@@ -31,10 +34,13 @@ public final class ClientService extends Service {
         public final StorageAudit.Plan storagePlan;
         public final String storageStatus;
         public final File storageReport;
-        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,boolean characterSaved,boolean canReturnGround,boolean canSaveLogout,long inputSent,long inputFailed,long deadline,String phase,long saveDeadline,long movementDeadline,boolean storageBusy,boolean reportExporting,StorageAudit.Plan storagePlan,String storageStatus,File storageReport) {
+        public final ClientRuntime.ProfileState profileState;
+        public final String profileNote;
+        State(boolean busy,boolean blocked,String stage,String detail,String session,String log,File report,int certified,boolean inputReady,boolean finishing,boolean characterSaved,boolean canReturnGround,boolean canSaveLogout,long inputSent,long inputFailed,long deadline,String phase,long saveDeadline,long movementDeadline,boolean storageBusy,boolean reportExporting,StorageAudit.Plan storagePlan,String storageStatus,File storageReport,ClientRuntime.ProfileState profileState,String profileNote) {
             this.busy=busy;this.blocked=blocked;this.stage=stage;this.detail=detail;this.session=session;this.log=log;this.report=report;this.certified=certified;this.inputReady=inputReady;this.finishing=finishing;
             this.characterSaved=characterSaved;this.canReturnGround=canReturnGround;this.canSaveLogout=canSaveLogout;this.inputSent=inputSent;this.inputFailed=inputFailed;this.readyDeadlineUptimeMillis=deadline;this.sessionPhase=phase;this.saveDeadlineUptimeMillis=saveDeadline;this.movementDeadlineUptimeMillis=movementDeadline;
             this.storageBusy=storageBusy;this.reportExporting=reportExporting;this.storagePlan=storagePlan;this.storageStatus=storageStatus;this.storageReport=storageReport;
+            this.profileState=profileState;this.profileNote=profileNote;
         }
     }
     public final class LocalBinder extends Binder { public ClientService service(){return ClientService.this;} }
@@ -56,6 +62,10 @@ public final class ClientService extends Service {
     private StorageAudit.Plan storagePlan;
     private String storageStatus="Scan storage after the current test has finished.";
     private File storageReport;
+    private final AtomicBoolean storageStopRequested=new AtomicBoolean();
+    private volatile byte[] storageRecoveryReserve;
+    private ClientRuntime.ProfileState profileState=ClientRuntime.ProfileState.PRESERVE;
+    private String profileNote="Checking the saved profile…";
     private boolean blocked, uiVisible, inputReady, finishing, characterSaved, canReturnGround, canSaveLogout;
     private long inputSent, inputFailed, readyDeadlineUptimeMillis, saveDeadlineUptimeMillis, movementDeadlineUptimeMillis;
     private String sessionPhase="menu";
@@ -87,6 +97,8 @@ public final class ClientService extends Service {
         String storagePath=storage.getString("report",null);
         if(storagePath!=null)try{File f=new File(storagePath);File parent=new File(getCacheDir().getCanonicalFile(),"storage-tools");if(Files.isRegularFile(f.toPath(),LinkOption.NOFOLLOW_LINKS)&&f.getCanonicalFile().getParentFile().equals(parent))storageReport=f;}catch(Exception ignored){}
         storageStatus=storage.getString("status",storageStatus);
+        recoverStorageOperation(storage);
+        refreshProfileState();
         if(blocked){stage="Cleanup needs attention";detail="Force-stop COH Character Reopen in Android settings, then reopen it before starting more work.";}
         IntentFilter f=new IntentFilter();f.addAction(Intent.ACTION_SCREEN_OFF);f.addAction(Intent.ACTION_SCREEN_ON);
         if(Build.VERSION.SDK_INT>=33)registerReceiver(screenReceiver,f,Context.RECEIVER_NOT_EXPORTED);else registerReceiver(screenReceiver,f);
@@ -160,7 +172,8 @@ public final class ClientService extends Service {
         publish();notifyStatus();return true;
     }
     private void lifecycle(String event){ClientRuntime r=runtime;if(r!=null&&busy)r.recordLifecycle(event);}
-    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis,sessionPhase,saveDeadlineUptimeMillis,movementDeadlineUptimeMillis,storageBusy,reportExporting,storagePlan,storageStatus,storageReport);}
+    private void refreshProfileState(){profileState=ClientRuntime.characterProfileState(this);profileNote=ClientRuntime.profileRecoveryMessage(profileState);}
+    private State snapshot(){return new State(busy,blocked,stage,detail,session,logs.toString(),report,certified,inputReady,finishing,characterSaved,canReturnGround,canSaveLogout,inputSent,inputFailed,readyDeadlineUptimeMillis,sessionPhase,saveDeadlineUptimeMillis,movementDeadlineUptimeMillis,storageBusy,reportExporting,storagePlan,storageStatus,storageReport,profileState,profileNote);}
     private void publish(){if(destroyed)return;State s=snapshot();for(Listener l:new ArrayList<>(listeners))l.onState(s);}
     private void deliverFrame(Listener l){Frame value=frame;if(value!=null)l.onFrame(value.pixels,value.width,value.height,value.sequence);}
     private void queueFrame(int[] pixels,int width,int height,long sequence){
@@ -218,6 +231,65 @@ public final class ClientService extends Service {
         if(previous!=null){Arrays.sort(previous,(a,b)->Long.compare(b.lastModified(),a.lastModified()));int kept=0;for(File path:previous){if(!Files.isRegularFile(path.toPath(),LinkOption.NOFOLLOW_LINKS))continue;if(path.equals(target)||kept++<2)continue;Files.deleteIfExists(path.toPath());}}
         return target;
     }
+    private JSONObject storageProcessExits(){
+        JSONObject result=new JSONObject();JSONArray records=new JSONArray();
+        try{
+            result.put("maximum_records",4).put("own_processes_only",true).put("trace_streams_requested",false).put("records",records);
+            if(Build.VERSION.SDK_INT<30)return result.put("status","unsupported_api");
+            ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+            if(manager==null)return result.put("status","unavailable");
+            for(ApplicationExitInfo info:manager.getHistoricalProcessExitReasons(getPackageName(),0,4)){
+                String description=info.getDescription();
+                if(description!=null&&description.length()>240)description=description.substring(0,240);
+                records.put(new JSONObject().put("timestamp_utc_ms",info.getTimestamp()).put("pid",info.getPid())
+                        .put("reason",info.getReason()).put("status",info.getStatus()).put("importance",info.getImportance())
+                        .put("pss_kib",info.getPss()).put("rss_kib",info.getRss()).put("description",description));
+            }
+            return result.put("status","available");
+        }catch(Exception ignored){try{result.put("status","unavailable");}catch(Exception ignoredAgain){}return result;}
+    }
+    private void recoverStorageOperation(SharedPreferences preferences){
+        if(!preferences.getBoolean("was_busy",false))return;
+        storagePlan=null;storageBusy=false;
+        storageStatus="Previous storage operation was interrupted. Export the storage report for its last progress and Android exit reason.";
+        try{
+            String checkpoint=preferences.getString("progress","{}");
+            if(checkpoint.length()>16384)checkpoint="{}";
+            JSONObject recovered=new JSONObject(checkpoint).put("format",2).put("status","interrupted")
+                    .put("scope","app_private_storage_operation_diagnostic").put("cleanup_allowed",false)
+                    .put("android_process_exit_history",storageProcessExits());
+            storageReport=writeStorageReport(recovered.toString());
+        }catch(Exception ignored){storageStatus="Previous storage operation was interrupted. Its checkpoint could not be exported; scan again when idle.";}
+        preferences.edit().putBoolean("was_busy",false).putString("status",storageStatus)
+                .putString("report",storageReport==null?null:storageReport.getPath()).apply();
+    }
+    private void checkpointStorage(String mode,String phase,int entries,String path,long elapsed) throws IOException {
+        if(storageStopRequested.get())throw new InterruptedIOException("Storage operation cancelled");
+        try{
+            Runtime vm=Runtime.getRuntime();
+            String boundedPath=path==null?"":path.substring(0,Math.min(2048,path.length()));
+            JSONObject checkpoint=new JSONObject().put("format",2).put("scope","app_private_storage_operation_diagnostic")
+                    .put("status","running").put("mode",mode).put("phase",phase).put("entries",entries)
+                    .put("last_relative_path",boundedPath).put("elapsed_ms",elapsed).put("updated_utc_ms",System.currentTimeMillis())
+                    .put("java_heap_used_bytes",vm.totalMemory()-vm.freeMemory()).put("java_heap_limit_bytes",vm.maxMemory())
+                    .put("native_heap_allocated_bytes",Debug.getNativeHeapAllocatedSize()).put("cleanup_allowed",false);
+            if(!getSharedPreferences("storage_ui",MODE_PRIVATE).edit().putBoolean("was_busy",true)
+                    .putString("progress",checkpoint.toString()).commit())throw new IOException("Storage checkpoint could not be saved");
+            String message=phase+" · "+entries+" entries · "+elapsed/1000+"s";
+            main.post(()->{if(destroyed)return;storageStatus=message;publish();notifyStatus();});
+        }catch(IOException e){throw e;}
+        catch(Exception e){throw new IOException("Storage checkpoint could not be saved",e);}
+    }
+    private File storageFailureReport(String message) throws IOException {
+        try{
+            String checkpoint=getSharedPreferences("storage_ui",MODE_PRIVATE).getString("progress","{}");
+            if(checkpoint.length()>16384)checkpoint="{}";
+            return writeStorageReport(new JSONObject(checkpoint).put("format",2).put("status","stopped")
+                    .put("error",message.substring(0,Math.min(240,message.length()))).put("cleanup_allowed",false)
+                    .put("android_process_exit_history",storageProcessExits()).toString());
+        }catch(IOException e){throw e;}
+        catch(Exception e){throw new IOException("Storage failure report could not be saved",e);}
+    }
     private void startStorage(Intent intent,boolean cleaning){
         if(destroyed||busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()||ClientRuntime.cleanupBlocked(this))return;
         final StorageAudit.Plan reviewed=storagePlan;
@@ -230,29 +302,47 @@ public final class ClientService extends Service {
         }
         final Object owner;
         try{owner=ClientRuntime.acquireStorage(this);}catch(IOException e){storageStatus=e.getMessage();publish();return;}
-        storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being changed…";
+        storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being changed…";
         final PowerManager.WakeLock storageWake;
         try{storageWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:storage");}
         catch(RuntimeException e){ClientRuntime.releaseStorage(owner);storageBusy=false;storageStatus="Could not start storage work. Reopen this screen and retry.";publish();return;}
         try{startForeground(NOTICE,notification());storageWake.acquire(40*60*1000L);publish();worker.execute(()->{
-            StorageAudit.Plan plan=null;File saved=null;String result;
+            StorageAudit.Plan plan=null;File saved=null;String result=null;
             try{
-                StorageFiles fs=new StorageFiles(getFilesDir());StorageAudit.Limits limits=StorageAudit.Limits.defaults();
-                if(cleaning){StorageAudit.CleanupResult cleanup=StorageAudit.cleanup(fs,reviewed,selected,limits);saved=writeStorageReport(cleanup.toJson());plan=cleanup.afterPlan;result=cleanup.stalePlan?"Storage changed after review. No cleanup was started; review the fresh scan.":cleanup.completed?"Cleanup finished: "+cleanup.deletedCount+" entries removed. Review the fresh totals and export its report.":"Cleanup stopped before all selected files were removed. Review the fresh totals and export its report.";}
-                else{plan=StorageAudit.scan(fs,currentManifestSha(),limits);saved=writeStorageReport(plan.toJson());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
-            }catch(Exception e){result="Storage operation stopped: "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage());}
-            finally{ClientRuntime.releaseStorage(owner);if(storageWake.isHeld())storageWake.release();}
+                storageRecoveryReserve=new byte[128*1024];
+                String mode=cleaning?"cleanup":"scan";checkpointStorage(mode,"Starting",0,"",0);
+                StorageAudit.ProgressListener progress=(phase,entries,path,elapsed)->checkpointStorage(mode,phase,entries,path,elapsed);
+                StorageFiles fs=new StorageFiles(getFilesDir(),getCacheDir());StorageAudit.Limits limits=StorageAudit.Limits.defaults();
+                if(cleaning){StorageAudit.CleanupResult cleanup=StorageAudit.cleanup(fs,reviewed,selected,limits,progress);saved=writeStorageReport(cleanup.toJson());plan=cleanup.afterPlan;result=cleanup.stalePlan?"Storage changed after review. No cleanup was started; review the fresh scan.":cleanup.completed?"Cleanup finished: "+cleanup.deletedCount+" entries removed. Review the fresh totals and export its report.":"Cleanup stopped before all selected files were removed. Review the fresh totals and export its report.";}
+                else{plan=StorageAudit.scan(fs,currentManifestSha(),limits,progress);saved=writeStorageReport(plan.toJson());result=plan.cleanupAllowed?"Storage scan complete. Select disposable categories to review cleanup.":plan.complete?"Storage scan complete. Cleanup is unavailable; export the report for details.":"Storage scan incomplete. Cleanup is unavailable; export the storage report.";}
+            }catch(OutOfMemoryError e){plan=null;storageRecoveryReserve=null;result="Storage operation stopped at its memory limit. Export the storage report.";try{saved=storageFailureReport(result);}catch(Exception ignored){} }
+            catch(Exception e){plan=null;result="Storage operation stopped: "+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage());try{saved=storageFailureReport(result);}catch(Exception ignored){} }
+            finally{
+                storageRecoveryReserve=null;
+                try{if(result!=null)getSharedPreferences("storage_ui",MODE_PRIVATE).edit().putBoolean("was_busy",saved==null).putString("status",result)
+                        .putString("report",saved==null?null:saved.getPath()).commit();}
+                finally{ClientRuntime.releaseStorage(owner);if(storageWake.isHeld())storageWake.release();}
+            }
             final StorageAudit.Plan completed=plan;final File reportFile=saved;final String message=result;
-            main.post(()->{storageBusy=false;if(destroyed)return;storagePlan=completed;if(reportFile!=null)storageReport=reportFile;storageStatus=message;getSharedPreferences("storage_ui",MODE_PRIVATE).edit().putString("report",storageReport==null?null:storageReport.getPath()).putString("status",storageStatus).apply();stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
+            main.post(()->{storageBusy=false;if(destroyed)return;storagePlan=completed;storageReport=reportFile;storageStatus=message;stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
         });}catch(RuntimeException e){ClientRuntime.releaseStorage(owner);if(storageWake.isHeld())storageWake.release();storageBusy=false;storageStatus="Could not start storage work. Reopen this screen and retry.";stopForeground(STOP_FOREGROUND_REMOVE);publish();}
     }
     @Override public int onStartCommand(Intent intent,int flags,int startId){
         String action=intent==null?null:intent.getAction();
         if(STORAGE_SCAN.equals(action)||STORAGE_CLEAN.equals(action)){startStorage(intent,STORAGE_CLEAN.equals(action));return START_NOT_STICKY;}
         if(FINISH.equals(action)){requestFinish();return START_NOT_STICKY;}
+        if(STOP.equals(action)&&storageBusy){storageStopRequested.set(true);storageStatus="Cancelling storage work; waiting for owned file operations to finish…";publish();notifyStatus();return START_NOT_STICKY;}
         if(STOP.equals(action)){ClientRuntime r=runtime;if(busy&&!stopping&&r!=null&&r.requestStop()){stopping=true;stage="Stopping";detail="Waiting for the client and Wine to close.";publish();notifyStatus();}return START_NOT_STICKY;}
         if(!SETUP.equals(action)&&!IMPORT.equals(action)&&!RUN.equals(action)&&!CREATE.equals(action))return START_NOT_STICKY;
         if(busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()||ClientRuntime.cleanupBlocked(this)){blocked=ClientRuntime.cleanupBlocked(this);if(blocked){stage="Cleanup needs attention";detail="Export the report, force-stop this app in Android settings, then reopen.";publish();}return START_NOT_STICKY;}
+        if(RUN.equals(action)||CREATE.equals(action)){
+            refreshProfileState();
+            if((CREATE.equals(action)&&profileState!=ClientRuntime.ProfileState.ABSENT)
+                    ||(RUN.equals(action)&&profileState!=ClientRuntime.ProfileState.READY)){
+                stage=profileState==ClientRuntime.ProfileState.ABSENT?"Saved profile missing":"Saved profile needs attention";
+                detail=profileNote;publish();return START_NOT_STICKY;
+            }
+        }
         final android.net.Uri importUri=intent.getData();
         if(IMPORT.equals(action)&&importUri==null)return START_NOT_STICKY;
         storagePlan=null;
@@ -274,11 +364,12 @@ public final class ClientService extends Service {
         runtime=instance;instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;
-            try{result=setup?instance.setup():importing?instance.importAssets(importUri):(creating?instance.runCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
+            try{result=setup?instance.setup():importing?instance.importAssets(importUri):(creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
             final ClientRuntime.Result outcome=result;final Exception error=failure;
             main.post(()->{
                 if(destroyed)return;
                 blocked=instance.isCleanupBlocked();busy=false;inputReady=false;finishing=false;
+                refreshProfileState();
                 report=outcome!=null?outcome.report:instance.getLatestReport();
                 if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Character Reopen in Android settings before reopening.";}
                 else if(stopping){stage="Stopped";detail="The operation stopped. Export the latest report to review cleanup.";}
@@ -296,9 +387,9 @@ public final class ClientService extends Service {
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,ClientActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle(storageBusy?"COH storage":"COH Character Reopen · "+stage).setContentText(storageBusy?storageStatus:detail).setContentIntent(open).setOngoing(busy||storageBusy).setOnlyAlertOnce(true);
         if(busy&&inputReady&&characterSaved)b.addAction(new Notification.Action.Builder(null,"Finish",PendingIntent.getService(this,2,new Intent(this,ClientService.class).setAction(FINISH),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
-        if(busy)b.addAction(new Notification.Action.Builder(null,"Stop",PendingIntent.getService(this,1,new Intent(this,ClientService.class).setAction(STOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
+        if(busy||storageBusy)b.addAction(new Notification.Action.Builder(null,storageBusy?"Cancel storage work":"Stop",PendingIntent.getService(this,1,new Intent(this,ClientService.class).setAction(STOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         return b.build();
     }
-    private void notifyStatus(){if(busy)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
-    @Override public void onDestroy(){destroyed=true;main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
+    private void notifyStatus(){if(busy||storageBusy)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
+    @Override public void onDestroy(){destroyed=true;if(storageBusy)storageStopRequested.set(true);main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
 }

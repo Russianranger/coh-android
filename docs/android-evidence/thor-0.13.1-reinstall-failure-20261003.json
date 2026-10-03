@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "scope": "uploaded_thor_0131_reinstall_reopen_failure_review",
+  "status": "reviewed",
+  "review_date_utc": "2026-10-03",
+  "repository_head_before_recovery": "1885a1e5b07ce2b236c23c33f7b501aed0065933",
+  "upload": {
+    "name": "coh-atlas-gameplay-20261003-184203.zip",
+    "bytes": 976215,
+    "sha256": "2d14770a7f621b99662c03fa712cb83612660cceb29d09713538bb401e112301",
+    "top_level_zip_entries": 12,
+    "diagnostic_bundle_not_database_backup": true
+  },
+  "device": {
+    "name": "AYN AYN Thor",
+    "app_version": "0.13.1",
+    "android_sdk": 33,
+    "run_id": "1791052605697-cf3bf0bac938",
+    "session_id": "5237970d804e4f0e9c815a137b4641e8"
+  },
+  "runtime_manifest_sha256": "bf96a52f3b5e5a093839e0eed272edadc82e6e2e8eea7b9262b4e65f4f5b4add",
+  "exact_failure": [
+    "Existing character profile is missing; do not create a replacement"
+  ],
+  "failure_before_any_guest_process": true,
+  "started": {
+    "postgres_started": false,
+    "server_started": false,
+    "mapserver_started": false,
+    "client_process_started": false
+  },
+  "import": {
+    "file_count": 173011,
+    "total_bytes": 2977730517,
+    "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+    "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+  },
+  "worktree": {
+    "linked_files": 173005,
+    "copied_writable_files": 6,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "reused": false
+  },
+  "worktree_preparation_seconds": 289.227786,
+  "cleanup_verified": true,
+  "cleanup_blocked": false,
+  "android_process_exit_history": {
+    "maximum_records": 4,
+    "records": [],
+    "own_processes_only": true,
+    "trace_streams_requested": false,
+    "status": "available"
+  },
+  "user_report": {
+    "storage_gb_before_uninstall": 62,
+    "storage_scan_crashed_after_minutes_approximately": 2,
+    "subsequent_gameplay_crashed_before_uninstall": true,
+    "uninstalled_app": true,
+    "runtime_setup_and_import_completed_on_new_installation": true,
+    "runtime_setup_increases_storage_observed": true
+  },
+  "interpretation": {
+    "reopen_cause": "Saved profile absent after uninstall; setup/import do not recreate the private PostgreSQL character database.",
+    "earlier_storage_or_gameplay_crash_cause": "Not established: the uploaded bundle is after uninstall and contains no prior crash trace or retained Android exit record.",
+    "runtime_growth": "Source confirms full runtime generations retained after manifest changes; same-manifest setup already reuses its generation. Device attribution of the 62 GB and growth per setup requires a successful storage inventory and setup receipts.",
+    "accepted_prior_gameplay_milestones": "Preserved; fresh creation is only recovery of the deleted installation.",
+    "old_character_restore": "The diagnostic ZIP contains no database backup and cannot reconstruct the deleted character."
+  },
+  "next_scope": [
+    "Stream storage entries and keep cleanup journal on disk with bounded memory.",
+    "Persist compact progress and own Android exit reasons across interrupted storage work.",
+    "Expose cancellation while retaining the shared operation owner until cleanup finishes.",
+    "Diagnose same-manifest setup reuse and generation/download/extraction growth.",
+    "Refuse missing-profile reopen before expensive worktree staging.",
+    "Offer explicit absent-only fresh native character creation and ordinary save, preserving existing or incomplete profiles.",
+    "Keep all 65 public runtime payloads and existing task gate bytes unchanged."
+  ],
+  "physical_storage_cleanup_validated": false,
+  "physical_fresh_profile_recovery_validated": false,
+  "new_runtime_setup_growth_measured_on_device": false
+}

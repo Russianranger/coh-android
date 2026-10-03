@@ -19,12 +19,21 @@ public final class StorageFiles implements StorageAudit.Fs {
     private final File root;
     private final StorageAudit.Stat rootIdentity;
     private final List<String> rootAliases;
+    private final File cache;
+    private final StorageAudit.Stat cacheIdentity;
     public StorageFiles(File filesDirectory) throws IOException {
+        this(filesDirectory,new File(filesDirectory.getParentFile(),"cache"));
+    }
+    public StorageFiles(File filesDirectory,File cacheDirectory) throws IOException {
         // Android's trusted Context.getFilesDir() may contain /data/user/0 aliases.
         // Canonicalize that API-provided root once; individual inventory paths never resolve links.
         root=filesDirectory.getCanonicalFile();
         rootAliases=Collections.unmodifiableList(new ArrayList<>(new LinkedHashSet<>(Arrays.asList(root.getPath(),filesDirectory.getAbsolutePath()))));
         rootIdentity=lstat(root);if(rootIdentity==null||rootIdentity.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("App files directory is unavailable");
+        cache=cacheDirectory.getCanonicalFile();
+        if(!cache.getParentFile().equals(root.getParentFile())||!cache.getName().equals("cache"))throw new IOException("Storage scratch cache is outside the application");
+        cacheIdentity=lstat(cache);if(cacheIdentity==null||cacheIdentity.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("App cache directory is unavailable");
+        discardOwnedJournals();
     }
     private File file(String relative) throws IOException {
         if(relative==null||relative.startsWith("/")||relative.indexOf('\0')>=0)throw new IOException("Unsafe storage path");
@@ -69,26 +78,83 @@ public final class StorageFiles implements StorageAudit.Fs {
         } catch(ErrnoException e){throw new IOException("Cannot inspect private storage link",e);}
     }
     @Override public List<String> list(String relative) throws IOException {
+        List<String> names=new ArrayList<>();
+        visitDirectory(relative,name->{
+            // Policy identification needs only small top-level lists. Full inventory uses the iterator directly.
+            if(names.size()>=50000)throw new IOException("Storage identity directory entry limit reached");
+            names.add(name);
+        });
+        return names;
+    }
+    @Override public void visitDirectory(String relative,StorageAudit.NameVisitor visitor) throws IOException {
         File directory=file(relative);StorageAudit.Stat before=lstat(directory);
         if(before==null||before.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("Cannot list a linked storage directory");
-        List<String> names=new ArrayList<>();FileDescriptor descriptor=null;
+        FileDescriptor descriptor=null;int count=0;
         try {
             descriptor=Os.open(directory.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);
             if(!before.same(stat(Os.fstat(descriptor))))throw new IOException("Opened inventory directory changed");
             try(ParcelFileDescriptor held=ParcelFileDescriptor.dup(descriptor);
                     DirectoryStream<Path> stream=Files.newDirectoryStream(Paths.get("/proc/self/fd/"+held.getFd()))) {
                 for(Path member:stream) {
-                    if(names.size()>=2000000)throw new IOException("Directory entry limit reached");
-                    if((names.size()&1023)==0) {
-                        Runtime vm=Runtime.getRuntime();if(vm.maxMemory()-(vm.totalMemory()-vm.freeMemory())<24L*1024*1024)
-                            throw new IOException("Directory listing reached its memory budget");
+                    if(++count>2000000)throw new IOException("Directory entry limit reached");
+                    if((count&1023)==0) {
+                        Runtime vm=Runtime.getRuntime();
+                        if(vm.maxMemory()-(vm.totalMemory()-vm.freeMemory())<8L*1024*1024) {
+                            vm.gc();if(vm.maxMemory()-(vm.totalMemory()-vm.freeMemory())<8L*1024*1024)
+                                throw new IOException("Directory iteration reached its memory budget");
+                        }
                     }
-                    names.add(member.getFileName().toString());
+                    visitor.visit(member.getFileName().toString());
                 }
             }
             if(!before.same(lstat(file(relative))))throw new IOException("Storage directory changed while listing");
-            return names;
         } catch(ErrnoException e){throw new IOException("Cannot open inventory directory without following links",e);}
+        finally{if(descriptor!=null)try{Os.close(descriptor);}catch(ErrnoException ignored){}}
+    }
+    private File journals(boolean create) throws IOException {
+        if(!cacheIdentity.sameDirectory(lstat(cache)))throw new IOException("App storage scratch cache changed");
+        File tools=new File(cache,"storage-tools"),directory=new File(tools,"journals");
+        if(create) {
+            if(lstat(tools)==null&&!tools.mkdir())throw new IOException("Cannot create storage scratch directory");
+            if(lstat(tools)==null||lstat(tools).kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("Storage scratch parent is linked");
+            if(lstat(directory)==null&&!directory.mkdir())throw new IOException("Cannot create cleanup journal directory");
+        }
+        StorageAudit.Stat parent=lstat(tools);if(parent==null)return null;
+        if(parent.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("Storage scratch parent is linked");
+        StorageAudit.Stat identity=lstat(directory);if(identity==null)return null;
+        if(identity.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("Storage journal directory is linked");
+        return directory;
+    }
+    /** The caller holds the idle storage lock; only abandoned files owned by this tool are removed. */
+    private void discardOwnedJournals() throws IOException {
+        File directory=journals(false);if(directory==null)return;
+        StorageAudit.Stat before=lstat(directory);int count=0;FileDescriptor descriptor=null;
+        try {
+            descriptor=Os.open(directory.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);
+            if(!before.sameDirectory(stat(Os.fstat(descriptor))))throw new IOException("Opened journal recovery directory changed");
+            try(ParcelFileDescriptor held=ParcelFileDescriptor.dup(descriptor);
+                    DirectoryStream<Path> stream=Files.newDirectoryStream(Paths.get("/proc/self/fd/"+held.getFd()))) {
+                for(Path entry:stream) {
+                    if(++count>1024)throw new IOException("Storage journal recovery entry limit reached");
+                    String name=entry.getFileName().toString();
+                    if(!name.matches("coh-storage-[0-9a-f-]{36}\\.journal"))continue;
+                    StorageAudit.Stat stat=lstat(entry.toFile());
+                    if(stat==null||stat.kind!=StorageAudit.Kind.FILE||stat.links!=1)continue;
+                    if(!before.sameDirectory(lstat(journals(false))))throw new IOException("Storage journal directory changed during recovery");
+                    Files.delete(entry);
+                }
+            }
+        } catch(ErrnoException failure){throw new IOException("Cannot anchor private journal recovery",failure);}
+        finally{if(descriptor!=null)try{Os.close(descriptor);}catch(ErrnoException ignored){}}
+    }
+    @Override public File cleanupJournal() throws IOException {
+        File directory=journals(true),target=new File(directory,"coh-storage-"+UUID.randomUUID()+".journal");FileDescriptor descriptor=null;
+        try {
+            descriptor=Os.open(target.getPath(),OsConstants.O_WRONLY|OsConstants.O_CREAT|OsConstants.O_EXCL|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC,0600);
+            StorageAudit.Stat stat=stat(Os.fstat(descriptor));
+            if(stat.kind!=StorageAudit.Kind.FILE||stat.links!=1)throw new IOException("Cleanup journal is not a private file");
+            return target;
+        } catch(ErrnoException e){throw new IOException("Cannot create bounded private cleanup journal",e);}
         finally{if(descriptor!=null)try{Os.close(descriptor);}catch(ErrnoException ignored){}}
     }
     @Override public byte[] read(String relative,int limit) throws IOException {
