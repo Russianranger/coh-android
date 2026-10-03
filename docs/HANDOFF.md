@@ -1,13 +1,56 @@
 # City of Heroes Android handoff
 
-**Continuation update (October 3, 2026): The user has now authorized startup research
-options 1, 2, 8 and 3 while the physical contact test is still pending. A 0.12.1
-candidate implements exact server/message caches, stable client/server data roots
-and trusted Wine component timestamps. New native cache qualification and APK
-publication are required; the completed 0.12.0 release is retained. No physical
-startup improvement or five-minute target is claimed yet. GPU work remains
-deferred. See [the implementation scope](ANDROID_STARTUP_CACHE_REUSE.md) and
-[the short pending contact test](COH-Atlas-Gameplay-0.12.1-testing.txt).**
+**Current (October 3, 2026): 0.12.1 is published and independently verified. It
+implements the authorized startup options 1, 2, 8 and 3: exact server/English
+message caches, stable verified client/server data roots and cache identities,
+and trusted Wine component timestamps. Native client/server, world/avatar,
+client caches, driver and contact behavior remain retained. Physical Thor
+startup timing, contact dialogue and ordinary Save without recovery remain
+pending; no five-minute startup or device speedup is claimed. GPU work remains
+deferred. PR #1 remains draft and main stays 04d62616.**
+
+[Download 0.12.1](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.1/COH-Atlas-Gameplay-0.12.1.apk).
+Published from `1fcabfa28f1f32a8c78de2cac496d6647fd376a9` in
+[run 37116009802](https://github.com/Russianranger/coh-android/actions/runs/37116009802),
+with all four jobs successful. The public APK is **625,055,087 bytes**, SHA-256
+`fee8880a53916e4ff746d67c8a6ab22f3f0cf2ab7779198cef59035ef4d6bf29`,
+version code 14, with the existing app ID and signer. Independent v2/v3 signature,
+public payload/CRC, retained-byte and release checks pass. Focused qualification
+passes **344 checks** and binds **199 source files**. See
+[the publication receipt](android-evidence/startup-caches-0.12.1-publication.json)
+and [the implementation scope](ANDROID_STARTUP_CACHE_REUSE.md).
+
+The exact **29,825,263-byte** cache archive contains **90 Parse6 caches and three
+English MessageStores**. Hosted native generation and consumption reached
+preload, retained identifier files, exited normally and completed bounded Wine
+waiting. Independent consumption evidence shows all 93 cache files read,
+unchanged cache bytes, no scoped source-content reads and no cache writes.
+An additional host-only Wine helper-lock observer inspected the stock `/tmp`
+directory while this Ubuntu host used `/run/user/1001/wine`; that extra lock-path
+claim is invalid. It does not invalidate the native exit, wait, identifier,
+cache-hash or consumption evidence and is not embedded in the APK. A corrected,
+consumption-only supplemental check of the exact public cache bytes passed in
+[run 37117800033](https://github.com/Russianranger/coh-android/actions/runs/37117800033)
+at `71e4568b5af32c394867e9f779f4d27ee898cf60`. Two independent audits verify
+37 source pins, 96 evidence files, all 93 cache reads, unchanged identifiers,
+cache bytes and normalized dates, and no scoped source reads or cache writes.
+The actual traced `/run/user/1001/wine/server-801-9c3091` lock is unheld after
+initialization and after normal owned native exit; bounded `wineserver -w` returns
+zero with empty diagnostics. Corrected host qualification passes **365 checks**
+and binds **202 source files**, separately from the original APK qualification.
+This adds independent consumption quiescence evidence; it does not retroactively
+observe the original generation lock or replace runtime timestamp proof.
+Public APK/cache bytes and original qualification/build reports remain unchanged.
+
+Install over the existing app, preserve imports and THORHERO, and refresh runtime
+once. Follow the
+[short 0.12.1 contact test](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.1/COH-Atlas-Gameplay-0.12.1-testing.txt)
+with ordinary Save and verified Finish. Return to Safe Ground remains optional;
+F remains Follow. The accepted 0.11.6 camera, jump, outdoor, persistence and
+safe-ground tests must not be repeated solely to reconfirm them. The startup
+target remains at most 300 seconds from session start through Atlas server
+readiness, including required preparation; this build has no physical timing
+result yet.
 
 The published 0.12.0 checkpoint follows (its startup deferral is superseded above):
 
