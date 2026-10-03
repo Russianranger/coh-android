@@ -231,7 +231,8 @@ class StartupCacheIntegrationTests(unittest.TestCase):
         self.close(second)
 
     def test_raw_native_observer_recomputes_scope_identity_errors_and_acceptance_claims(self):
-        for case in ('source_scope', 'invocation_identity', 'hidden_error', 'physical_claim'):
+        for case in ('source_scope', 'invocation_identity', 'hidden_error', 'physical_claim',
+                     'non_epoch_cache'):
             directory = self.root/('raw-proof-'+case)
             manifest, report = synthetic_raw_proof(directory)
             self.assertEqual(manifest, observer.verify_generated_package(directory))
@@ -246,8 +247,12 @@ class StartupCacheIntegrationTests(unittest.TestCase):
             elif case == 'hidden_error':
                 (directory/'evidence/generation/stderr.log').write_bytes(b'Invalid power definition\n')
                 report['evidence_files'] = observer.evidence_pins(directory)
-            else:
+            elif case == 'physical_claim':
                 report['physical_startup_timing_validated'] = True
+            else:
+                for snapshot in report['cache_snapshots'].values():
+                    for record in snapshot.values():
+                        record['mtime_ns'] += 1000000000
             observer.write_json(directory/observer.REPORT, report)
             with self.subTest(case=case), self.assertRaises(ValueError):
                 observer.verify_generated_package(directory)

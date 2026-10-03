@@ -45,6 +45,7 @@ GENERATOR_SOURCES = (
     'tools/generate_runtime_data.py', 'tools/android/presentation/host_smoke.py',
     'android/guest/atlas_world_assets.py', 'android/guest/character_avatar_assets.py',
     'android/guest/client_startup_diagnostic.py', 'android/guest/presentation_diagnostic.py',
+    'android/guest/local_login_server.py',
     'android/guest/game_hang_evidence.py', 'android/guest/native_responsiveness_contract.py',
     'android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java',
     'tools/android/atlas/java/io/github/russianranger/cohatlas/HostImport.java',
@@ -55,6 +56,7 @@ GENERATOR_SOURCES = (
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/error.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/log.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/serialize.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/components/StringTable.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/language/MessageStore.c',
@@ -166,6 +168,19 @@ def normalize_data(data):
     return count
 
 
+def prepare_runtime_layout(runtime):
+    """Match LocalLoginServer's isolated data+tools native auto-discovery shape."""
+    runtime = Path(runtime)
+    require(runtime.is_dir() and not runtime.is_symlink()
+            and (runtime / 'data').is_dir() and not (runtime / 'data').is_symlink(),
+            'Expected isolated native runtime/data layout')
+    require(not (runtime / 'gamedatadir.txt').exists() and not (runtime / 'tools').exists(),
+            'Fresh bounded native discovery layout required')
+    (runtime / 'tools').mkdir(mode=0o700)
+    return {'format': 1, 'cwd': str(runtime.resolve()), 'data_directory': 'data',
+            'tools_directory': 'tools', 'tools_entries': 0, 'external_data_roots': False}
+
+
 def data_snapshot(data):
     result = {}
     for current, dirs, files in os.walk(data):
@@ -205,7 +220,12 @@ def phase_receipt(stdout, stderr, stage, session, returncode, identifiers_unchan
     # ErrorvInternal immediately invokes serverErrorfCallback in this exact
     # source; development-mode callback emits printf_stderr before any later
     # server dialog queue. Do not mislabel its unused queue flag as an error drain.
-    benign = re.compile(r'^(?:started .+|detected QuickEdit mode.*)$')
+    # svr_init.c's registered exit callback and log.c's normal shutdown emit
+    # these two lines even on exit(0). Only the fixed TSR2 argument sequence is
+    # accepted; auto-discovery/data errors remain unconditionally forbidden.
+    benign = re.compile(r'^(?:started .+|detected QuickEdit mode.*|'
+                        r'Quitting: [^\r\n]*[\\/]MapServer\.exe\s+-tsr2 -assertmode 8256\s*|'
+                        r'Flushing log files to disk)$')
     unknown_stderr = [line for line in stderr.decode('utf-8', 'replace').replace('\r', '').splitlines()
                       if line.strip() and not benign.fullmatch(line)]
     require(not unknown_stderr, 'Unclassified native/Wine stderr: ' + repr(unknown_stderr[:8]))
@@ -348,6 +368,14 @@ def run_phase(args, runtime, launcher, environment, output, stage, identity, tra
                     completed = True
                 time.sleep(0.1)
             returncode = process.wait(timeout=10)
+            # Only after the real launcher/tracer has exited: never infer its
+            # successful termination from the earlier child EXIT event and
+            # risk killing the launcher during normal process teardown.
+            with (directory / 'wine-helpers-stop.log').open('wb') as log:
+                subprocess.run(['wineserver', '-k'], env=environment, check=True,
+                               stdout=log, stderr=subprocess.STDOUT, timeout=30)
+                subprocess.run(['wineserver', '-w'], env=environment, check=True,
+                               stdout=log, stderr=subprocess.STDOUT, timeout=30)
         finally:
             if process.poll() is None:
                 os.killpg(process.pid, signal.SIGTERM)
@@ -394,6 +422,18 @@ def archive_source_paths(path, files):
 
 def cache_state(runtime, files):
     return {name: {**pin(runtime / name), 'mtime_ns': (runtime / name).stat().st_mtime_ns} for name in files}
+
+
+def normalize_shipped_cache_dates(runtime, files):
+    """Qualify the exact EPOCH date shape used by the Android missing-only seed."""
+    for name in files:
+        require(package.safe_cache(name), 'Unsafe selected cache normalization path')
+        path = Path(runtime) / name
+        info = path.lstat()
+        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == os.geteuid(),
+                'Nonprivate selected cache normalization leaf')
+        os.chmod(path, 0o600)
+        os.utime(path, ns=(package.EPOCH * 10**9, package.EPOCH * 10**9))
 
 
 def evidence_pins(output):
@@ -447,6 +487,9 @@ def verify_generated_package(directory):
             and {name: {key: record[key] for key in ('bytes', 'sha256')} for name, record in report['cache_snapshots']['before'].items()}
                 == {name: {key: record[key] for key in ('bytes', 'sha256')} for name, record in manifest['files'].items()},
             'Native consumed cache bytes/timestamps changed')
+    require(all(record.get('mtime_ns') == package.EPOCH * 10**9
+                for record in report['cache_snapshots']['before'].values()),
+            'Native consumption did not exercise the shipped normalized cache dates')
     consumption = {**read_json(evidence / 'phase-receipt.json'), 'cache_files_unchanged': True,
                    **{key: trace[key] for key in ('cache_content_reads', 'cache_writes', 'source_content_reads')},
                    'trace_receipt_sha256': hashlib.sha256(package.canonical(trace)).hexdigest()}
@@ -480,6 +523,8 @@ def main():
     world.install(runtime, assets, context); avatar.install(runtime, assets, context)
     normalize_data(data)
     identity = package.build_expected_identity(data, runtime / 'MapServer.exe')
+    layout = prepare_runtime_layout(runtime)
+    write_json(args.output / 'evidence/native-runtime-layout.json', layout)
     launcher = args.work / 'server-cache-launcher.exe'
     with (args.output / 'evidence/launcher-build.log').open('wb') as log:
         subprocess.run(['i686-w64-mingw32-gcc', '-O2', '-Wall', '-Wextra', '-Werror', '-static-libgcc',
@@ -498,7 +543,13 @@ def main():
     identifiers['generation_after'] = package.identifier_snapshot(data); noncache['generation_after'] = data_snapshot(data)
     require(noncache['generation_before'] == noncache['generation_after'], 'Native generation changed noncache inputs')
     files, sources = selected_caches(runtime)
+    normalize_shipped_cache_dates(runtime, files)
     before = cache_state(runtime, files)
+    # Establish services outside strace's descendant tree again after the
+    # generation prefix cleanup. The same prefix and cache bytes are retained.
+    with (args.output / 'evidence/wine-reinitialization.log').open('wb') as log:
+        subprocess.run([args.wine, 'wineboot', '--init'], env=environment, stdout=log, stderr=subprocess.STDOUT,
+                       check=True, timeout=180)
     identifiers['consumption_before'] = package.identifier_snapshot(data); noncache['consumption_before'] = data_snapshot(data)
     consumption = run_phase(args, runtime, launcher, environment, args.output, 'consumption', identity, trace=True)
     identifiers['consumption_after'] = package.identifier_snapshot(data); noncache['consumption_after'] = data_snapshot(data)

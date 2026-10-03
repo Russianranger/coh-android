@@ -47,9 +47,27 @@ class ServerCacheNativeObserverTests(unittest.TestCase):
     def test_native_error_immediate_callback_and_fileerror_are_not_hidden(self):
         for stdout, stderr in ((phase_stdout(), b'Spawn has invalid power\n'),
                                (b'ERRORLOG FILEERROR: defs/broken.powers\n' + phase_stdout(), b''),
+                               (phase_stdout(), b'Could not find appropriate game data dir\n'),
                                (phase_stdout() + b'COH_SERVER_CACHE_TIMEOUT_V1\n', b'')):
             with self.subTest(stdout=stdout, stderr=stderr), self.assertRaises(ValueError):
                 generator.phase_receipt(stdout, stderr, 'generation', '1' * 32, 0, True)
+
+    def test_exact_normal_tsr_exit_diagnostics_are_classified_only_after_success(self):
+        diagnostics = b'Quitting: Z:\\private\\runtime\\MapServer.exe  -tsr2 -assertmode 8256 \nFlushing log files to disk\n'
+        self.assertEqual(generator.phase_receipt(phase_stdout(), diagnostics, 'generation', '1' * 32, 0, True)
+                         ['native_exit_code'], 0)
+        for stderr in (diagnostics.replace(b'-tsr2', b'-production'), diagnostics + b'Could not find appropriate game data dir\n'):
+            with self.assertRaises(ValueError):
+                generator.phase_receipt(phase_stdout(), stderr, 'generation', '1' * 32, 0, True)
+
+    def test_host_layout_matches_guest_empty_tools_discovery_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); (root / 'data').mkdir()
+            receipt = generator.prepare_runtime_layout(root)
+            self.assertTrue((root / 'tools').is_dir())
+            self.assertEqual(list((root / 'tools').iterdir()), [])
+            self.assertFalse(receipt['external_data_roots'])
+            with self.assertRaises(ValueError): generator.prepare_runtime_layout(root)
 
     def trace(self, lines):
         with tempfile.TemporaryDirectory() as directory:
@@ -108,6 +126,19 @@ class ServerCacheNativeObserverTests(unittest.TestCase):
             self.assertEqual(before, generator.data_snapshot(data))
             leaf.write_bytes(b'changed')
             self.assertNotEqual(before, generator.data_snapshot(data))
+
+    def test_native_consumption_dates_match_android_seed_without_touching_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); cache = root / 'data/server/bin/messages-en.bin'
+            cache.parent.mkdir(parents=True); cache.write_bytes(b'cache bytes')
+            source = root / 'data/source.ms'; source.write_bytes(b'source'); original = source.stat().st_mtime_ns
+            files = {'data/server/bin/messages-en.bin': {}}
+            before = generator.pin(cache)
+            generator.normalize_shipped_cache_dates(root, files)
+            self.assertEqual(generator.cache_state(root, files)['data/server/bin/messages-en.bin']['mtime_ns'],
+                             generator.package.EPOCH * 10**9)
+            self.assertEqual(generator.pin(cache), before)
+            self.assertEqual(source.stat().st_mtime_ns, original)
 
     def test_forbidden_definition_scope_is_derived_from_cache_payload_not_claimed_report(self):
         fixture_path = generator.ROOT / 'tools/android/interactive/test_server_cache_package.py'
