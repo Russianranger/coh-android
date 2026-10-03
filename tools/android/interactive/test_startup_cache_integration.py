@@ -27,6 +27,7 @@ def synthetic_raw_proof(directory):
     archive = directory/donor.ARCHIVE
     manifest = synthetic_archive(archive)
     runtime = directory/'synthetic-runtime'
+    wine_prefix = directory/'synthetic-wine-prefix'
     phases = {}
     for stage in ('generation', 'consumption'):
         evidence = directory/'evidence'/stage
@@ -48,7 +49,12 @@ def synthetic_raw_proof(directory):
         observer.write_json(evidence/'phase-receipt.json', phase)
         observer.write_json(evidence/'invocation.json', {'stage': stage, 'session_id': '1'*32,
             'identity': manifest['identity'], 'runtime_host_path': str(runtime),
-            'timezone': 'UTC', 'wine_debug': '-all'})
+            'timezone': 'UTC', 'wine_debug': '-all', 'wine_prefix': str(wine_prefix)})
+        (evidence/'wine-helpers-stop.log').write_bytes(b'')
+        observer.write_json(evidence/'wine-helpers-stop.json', {'format': 1,
+            'kill_exit_code': 0, 'wait_exit_code': 0, 'normal_launcher_exit_observed_first': True,
+            'status': 'no_prefix_server_directory', 'prefix': str(wine_prefix),
+            'server_directory': str(directory/'synthetic-wineserver')})
     evidence = directory/'evidence/consumption'
     trace_file = evidence/'trace.1234'
     trace_file.write_text(''.join('read(3<'+str(runtime/name)+'>, "fixture", '+
@@ -65,6 +71,8 @@ def synthetic_raw_proof(directory):
         value.update(native_generation=phases['generation'], native_consumption=phases['consumption'])
     manifest = synthetic_archive(archive, mutate=proofs)
     observer.write_json(directory/donor.MANIFEST, manifest)
+    observer.write_json(directory/'evidence/generated-cache-inventory.json',
+                        {'files': manifest['files'], 'source_paths': sources})
     launcher = directory/'evidence/server-cache-launcher.exe'
     launcher.write_bytes(b'SYNTHETIC OBSERVER FIXTURE; NOT AN EXECUTABLE')
     snapshot = {name: {**{key: record[key] for key in ('bytes', 'sha256')},
@@ -232,7 +240,7 @@ class StartupCacheIntegrationTests(unittest.TestCase):
 
     def test_raw_native_observer_recomputes_scope_identity_errors_and_acceptance_claims(self):
         for case in ('source_scope', 'invocation_identity', 'hidden_error', 'physical_claim',
-                     'non_epoch_cache'):
+                     'non_epoch_cache', 'premature_cleanup'):
             directory = self.root/('raw-proof-'+case)
             manifest, report = synthetic_raw_proof(directory)
             self.assertEqual(manifest, observer.verify_generated_package(directory))
@@ -249,6 +257,12 @@ class StartupCacheIntegrationTests(unittest.TestCase):
                 report['evidence_files'] = observer.evidence_pins(directory)
             elif case == 'physical_claim':
                 report['physical_startup_timing_validated'] = True
+            elif case == 'premature_cleanup':
+                path = directory/'evidence/consumption/wine-helpers-stop.json'
+                receipt = observer.read_json(path)
+                receipt['normal_launcher_exit_observed_first'] = False
+                observer.write_json(path, receipt)
+                report['evidence_files'] = observer.evidence_pins(directory)
             else:
                 for snapshot in report['cache_snapshots'].values():
                     for record in snapshot.values():

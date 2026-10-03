@@ -8,6 +8,8 @@ checks are allowed. Exported trace/log bytes are rechecked before APK packaging.
 """
 from __future__ import annotations
 import argparse
+import fcntl
+import functools
 import hashlib
 import importlib.util
 import json
@@ -37,6 +39,7 @@ MAX_LOG = 64 * 1024 * 1024
 MAX_TRACE = 1024 * 1024 * 1024
 GENERATOR_SOURCES = (
     'tools/android/atlasgame/prepare_server_caches.py',
+    'tools/android/atlasgame/server_message_source_contract.py',
     'android/native/server-cache-launcher.c',
     'android/guest/server_cache_package.py', 'android/guest/server_message_cache_format.py',
     'tools/android/client/host_smoke.py', 'tools/android/client/build_apk.py',
@@ -52,6 +55,7 @@ GENERATOR_SOURCES = (
     'upstream/ouroboros/MapServer/src/svr/svr_init.c',
     'upstream/ouroboros/MapServer/src/serverError.c',
     'upstream/ouroboros/MapServer/src/storyarc/storyarcutil.c',
+    'upstream/ouroboros/MapServer/src/language/langServerUtil.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/error.c',
     'upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c',
@@ -244,10 +248,25 @@ def phase_receipt(stdout, stderr, stage, session, returncode, identifiers_unchan
                               'stderr_unclassified_lines': 0, 'queued_error_drain_claimed': False}}
 
 
+@functools.lru_cache(maxsize=32)
+def trace_runtime_prefix(runtime):
+    return str(Path(runtime).resolve()).replace('\\', '/').casefold() + '/'
+
+
+@functools.lru_cache(maxsize=1)
+def message_source_contract():
+    source = Path(__file__).with_name('server_message_source_contract.py')
+    spec = importlib.util.spec_from_file_location('qualified_native_message_source_contract', source)
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    return module
+
+
 def relative_trace_path(raw, runtime):
     """Only direct regular host data leaves; Wine paths use the existing Z: drive."""
     raw = raw.removesuffix(' (deleted)')
-    prefix = str(Path(runtime).resolve()).replace('\\', '/').casefold() + '/'
+    if not raw.startswith('/'):
+        return None
+    prefix = trace_runtime_prefix(str(runtime))
     value = raw.replace('\\', '/').casefold()
     if value.startswith(prefix):
         relative = value[len(prefix):]
@@ -310,7 +329,7 @@ def trace_receipt(paths, runtime, files, source_paths, identifier_files=()):
                         reads[cache_names[name]] += amount
                     elif name in identifiers:
                         identifier_reads[name] = identifier_reads.get(name, 0) + amount
-                    elif name in sources or (name.startswith('data/texts/') and name.endswith(('.ms', '.types'))):
+                    elif name in sources or message_source_contract().is_persisted_source(name):
                         source_reads[name] = source_reads.get(name, 0) + amount
                 # fileAlloc currently fread()s cache payloads. A future mapped
                 # source reader must not escape the no-source-content proof.
@@ -319,7 +338,7 @@ def trace_receipt(paths, runtime, files, source_paths, identifier_files=()):
                         name = relative_trace_path(raw, runtime)
                         if name in identifiers:
                             identifier_reads[name] = identifier_reads.get(name, 0) + 1
-                        elif name in sources or (name and name.startswith('data/texts/') and name.endswith(('.ms', '.types'))):
+                        elif name in sources or (name and message_source_contract().is_persisted_source(name)):
                             source_reads[name] = source_reads.get(name, 0) + 1
                 if re.search(r'\b(?:rename|renameat|renameat2|unlink|unlinkat)\(', line) and re.search(r'\)\s*=\s*0(?:\s|$)', line):
                     for raw in re.findall(r'"([^"\n]+)"', line):
@@ -328,6 +347,7 @@ def trace_receipt(paths, runtime, files, source_paths, identifier_files=()):
     require(trace_pins, 'Missing strace content evidence')
     return {'format': 1, 'observer': 'strace-successful-fd-content-reads-and-writes',
             'runtime_host_path': str(Path(runtime).resolve()), 'trace_files': trace_pins,
+            'message_source_contract': json.loads(package.canonical(message_source_contract().persisted_source_contract())),
             'cache_content_reads': reads,
             'identifier_content_reads': [{'path': name, 'bytes': value} for name, value in sorted(identifier_reads.items())],
             'source_content_reads': [{'path': name, 'bytes': value} for name, value in sorted(source_reads.items())],
@@ -336,6 +356,56 @@ def trace_receipt(paths, runtime, files, source_paths, identifier_files=()):
 
 def wine_path(path):
     return 'Z:' + str(Path(path).resolve()).replace('/', '\\')
+
+
+def prove_prefix_server_unlocked(prefix, server_base=None):
+    """Check Wine's per-prefix device/inode lock, not a process-name guess.
+
+    Wine9 server/request.c uses /tmp/.wine-UID/server-DEV-INODE/lock and a
+    POSIX write lock on its first byte. -k may return1 when this lock is already
+    absent. A successful nonblocking lock independently proves quiescence.
+    """
+    prefix = Path(prefix)
+    info = prefix.lstat()
+    require(prefix.is_absolute() and stat.S_ISDIR(info.st_mode) and info.st_uid == os.geteuid(),
+            'Unowned or linked Wine prefix cleanup refused')
+    base = Path(server_base) if server_base is not None else Path('/tmp') / ('.wine-' + str(os.geteuid()))
+    server = base / f'server-{info.st_dev:x}-{info.st_ino:x}'
+    for path in (base, server):
+        if not os.path.lexists(path):
+            return {'status': 'no_prefix_server_directory', 'prefix': str(prefix), 'server_directory': str(server)}
+        entry = path.lstat()
+        require(stat.S_ISDIR(entry.st_mode) and entry.st_uid == os.geteuid() and not entry.st_mode & 0o077,
+                'Unowned or linked Wine server directory refused')
+    lock = server / 'lock'
+    if not os.path.lexists(lock):
+        return {'status': 'no_prefix_server_lock', 'prefix': str(prefix), 'server_directory': str(server)}
+    descriptor = os.open(lock, os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        entry = os.fstat(descriptor)
+        require(stat.S_ISREG(entry.st_mode) and entry.st_nlink == 1 and entry.st_uid == os.geteuid(),
+                'Invalid Wine prefix lock leaf')
+        fcntl.lockf(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB, 1, 0, os.SEEK_SET)
+        fcntl.lockf(descriptor, fcntl.LOCK_UN, 1, 0, os.SEEK_SET)
+    finally:
+        os.close(descriptor)
+    return {'status': 'prefix_server_lock_unheld', 'prefix': str(prefix), 'server_directory': str(server)}
+
+
+def stop_owned_prefix(environment, directory):
+    with (directory / 'wine-helpers-stop.log').open('wb') as log:
+        killed = subprocess.run(['wineserver', '-k'], env=environment, check=False,
+                                stdout=log, stderr=subprocess.STDOUT, timeout=30)
+        require(killed.returncode in (0, 1), 'Owned Wine prefix stop failed')
+        waited = subprocess.run(['wineserver', '-w'], env=environment, check=True,
+                                stdout=log, stderr=subprocess.STDOUT, timeout=30)
+        require(waited.returncode == 0, 'Owned Wine prefix wait failed')
+    # Empty-output status1 is the documented no-lock-owner case; diagnostics or
+    # a still-held lock remain failures. The native launcher has already ended.
+    require((directory / 'wine-helpers-stop.log').stat().st_size == 0, 'Wine prefix cleanup emitted diagnostics')
+    proof = prove_prefix_server_unlocked(environment['WINEPREFIX'])
+    write_json(directory / 'wine-helpers-stop.json', {'format': 1, 'kill_exit_code': killed.returncode,
+               'wait_exit_code': waited.returncode, 'normal_launcher_exit_observed_first': True, **proof})
 
 
 def run_phase(args, runtime, launcher, environment, output, stage, identity, trace=False):
@@ -348,7 +418,8 @@ def run_phase(args, runtime, launcher, environment, output, stage, identity, tra
                    'trace=read,pread64,mmap,mmap2,write,pwrite64,openat,close,rename,renameat,renameat2,unlink,unlinkat', *command]
     write_json(directory / 'invocation.json', {'session_id': session, 'stage': stage, 'command': command,
                'runtime_host_path': str(runtime), 'identity': identity, 'timeout_seconds': args.timeout_seconds,
-               'timezone': environment['TZ'], 'wine_debug': environment['WINEDEBUG']})
+               'timezone': environment['TZ'], 'wine_debug': environment['WINEDEBUG'],
+               'wine_prefix': environment['WINEPREFIX']})
     before = package.identifier_snapshot(runtime / 'data')
     started = time.monotonic()
     with (directory / 'stdout.log').open('wb') as stdout, (directory / 'stderr.log').open('wb') as stderr:
@@ -371,11 +442,8 @@ def run_phase(args, runtime, launcher, environment, output, stage, identity, tra
             # Only after the real launcher/tracer has exited: never infer its
             # successful termination from the earlier child EXIT event and
             # risk killing the launcher during normal process teardown.
-            with (directory / 'wine-helpers-stop.log').open('wb') as log:
-                subprocess.run(['wineserver', '-k'], env=environment, check=True,
-                               stdout=log, stderr=subprocess.STDOUT, timeout=30)
-                subprocess.run(['wineserver', '-w'], env=environment, check=True,
-                               stdout=log, stderr=subprocess.STDOUT, timeout=30)
+            require(returncode == 0, 'Native launcher/tracer failed before Wine cleanup')
+            stop_owned_prefix(environment, directory)
         finally:
             if process.poll() is None:
                 os.killpg(process.pid, signal.SIGTERM)
@@ -467,6 +535,17 @@ def verify_generated_package(directory):
                                    stage, invocation['session_id'], recorded['launcher_exit_code'],
                                    report['identifier_snapshots'][stage + '_before'] == report['identifier_snapshots'][stage + '_after'])
         require(all(recorded.get(key) == value for key, value in recomputed.items()), 'Native completion/error proof differs')
+        cleanup = read_json(evidence / 'wine-helpers-stop.json')
+        prefix = invocation.get('wine_prefix')
+        require(isinstance(prefix, str) and Path(prefix).is_absolute()
+                and cleanup.get('format') == 1 and cleanup.get('kill_exit_code') in (0, 1)
+                and cleanup.get('wait_exit_code') == 0
+                and cleanup.get('normal_launcher_exit_observed_first') is True
+                and cleanup.get('status') in ('no_prefix_server_directory', 'no_prefix_server_lock', 'prefix_server_lock_unheld')
+                and cleanup.get('prefix') == prefix and isinstance(cleanup.get('server_directory'), str)
+                and Path(cleanup['server_directory']).is_absolute()
+                and (evidence / 'wine-helpers-stop.log').read_bytes() == b'',
+                'Owned Wine prefix cleanup proof differs')
         require(report['identifier_snapshots'][stage + '_before'] == manifest['identity']['identifier_files'],
                 'Native identifier snapshot differs from accepted donor identity')
         require(report['noncache_snapshots'][stage + '_before'] == report['noncache_snapshots'][stage + '_after'],
@@ -478,6 +557,8 @@ def verify_generated_package(directory):
     require(invocation.get('timezone') == 'UTC' and invocation.get('wine_debug') == '-all', 'Native timezone/debug contract differs')
     sources = archive_source_paths(directory / package.ARCHIVE, manifest['files'])
     require(report.get('source_paths') == sources, 'Native forbidden source scope differs from actual Parse6 dependencies')
+    require(read_json(directory / 'evidence/generated-cache-inventory.json') == {'files': manifest['files'], 'source_paths': sources},
+            'Native generated candidate inventory differs from final archive')
     trace = trace_receipt(evidence.glob('trace.*'), invocation['runtime_host_path'], manifest['files'], sources,
                           manifest['identity']['identifier_files'])
     require(trace == read_json(evidence / 'trace-receipt.json'), 'Native consumption trace proof differs')
@@ -543,6 +624,9 @@ def main():
     identifiers['generation_after'] = package.identifier_snapshot(data); noncache['generation_after'] = data_snapshot(data)
     require(noncache['generation_before'] == noncache['generation_after'], 'Native generation changed noncache inputs')
     files, sources = selected_caches(runtime)
+    # This diagnostic inventory is not a qualified donor or consumption claim.
+    # Retain the exact selected dependency scope before the second native phase.
+    write_json(args.output / 'evidence/generated-cache-inventory.json', {'files': files, 'source_paths': sources})
     normalize_shipped_cache_dates(runtime, files)
     before = cache_state(runtime, files)
     # Establish services outside strace's descendant tree again after the

@@ -8,6 +8,8 @@ on:
       - 'tools/android/interactive/build_startup_caches_apk.py'
       - 'tools/android/interactive/qualify_startup_caches.py'
       - 'tools/android/atlasgame/prepare_server_caches.py'
+      - 'tools/android/atlasgame/server_message_source_contract.py'
+      - 'tools/android/atlasgame/test_server_message_source_contract.py'
       - 'android/native/server-cache-launcher.c'
       - 'docs/COH-Atlas-Gameplay-0.12.1-testing.txt'
       - 'tools/android/interactive/qualify_runtime_timestamps.py'

@@ -6,6 +6,9 @@ import sys
 import tempfile
 import unittest
 import zipfile
+import os
+import subprocess
+from unittest import mock
 
 MODULE = Path(__file__).with_name('prepare_server_caches.py')
 spec = importlib.util.spec_from_file_location('qualified_server_cache_generator_tests', MODULE)
@@ -87,14 +90,23 @@ class ServerCacheNativeObserverTests(unittest.TestCase):
 
     def test_trace_source_payload_and_mapped_message_reads_detected(self):
         result = self.trace('read(4</private/runtime/data/defs/powers/sample.powers>, "bad", 3) = 3\n'
-                            'mmap(NULL, 4096, PROT_READ, MAP_PRIVATE, 5</private/runtime/data/texts/English/foo.ms>, 0) = 0xabc\n')
+                            'mmap(NULL, 4096, PROT_READ, MAP_PRIVATE, 5</private/runtime/data/texts/English/Contacts/foo.ms>, 0) = 0xabc\n')
         self.assertEqual(len(result['source_content_reads']), 2)
         self.assertEqual(result['cache_content_reads']['data/server/bin/powers.bin'], 0)
+
+    def test_persisted_message_scope_covers_non_ms_leaf_but_allows_uncached_command(self):
+        result = self.trace('read(5</private/runtime/data/texts/English/powers.txt>, "abc", 3) = 3\n'
+                            'read(5</private/runtime/data/texts/English/Contacts/custom.def>, "ab", 2) = 2\n'
+                            'read(5</private/runtime/data/texts/English/Contacts/saved.BAK>, "a", 1) = 1\n'
+                            'read(5</private/runtime/data/texts/English/cmdMessagesServer.ms>, "a", 1) = 1\n')
+        self.assertEqual(result['source_content_reads'], [
+            {'path': 'data/texts/english/contacts/custom.def', 'bytes': 2},
+            {'path': 'data/texts/english/powers.txt', 'bytes': 3}])
 
     def test_trace_i386_mmap2_and_resumed_source_reads_detected(self):
         result = self.trace('read(4</private/runtime/data/defs/powers/sample.powers>,  <unfinished ...>\n'
                             '<... read resumed>"bad", 3) = 3\n'
-                            'mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE, 5</private/runtime/data/texts/English/foo.ms>, 0) = 0xabc\n')
+                            'mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE, 5</private/runtime/data/texts/English/Contacts/foo.ms>, 0) = 0xabc\n')
         self.assertEqual(len(result['source_content_reads']), 2)
         self.assertEqual(result['source_content_reads'][0]['bytes'], 3)
         self.assertEqual(self.trace('read(4</private/runtime/data/defs/powers/sample.powers>, <unfinished ...>\n'
@@ -148,6 +160,36 @@ class ServerCacheNativeObserverTests(unittest.TestCase):
             archive = Path(directory) / 'cache.zip'; manifest = fixture.synthetic_archive(archive)
             self.assertEqual(generator.archive_source_paths(archive, manifest['files']),
                              ['data/defs/powers/test.powers'])
+
+    def test_empty_absent_wineserver_cleanup_requires_wait_and_unheld_lock(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            env = {'WINEPREFIX': str(root / 'owned-prefix')}
+            with mock.patch.object(generator.subprocess, 'run', side_effect=[
+                    subprocess.CompletedProcess(['wineserver', '-k'], 1), subprocess.CompletedProcess(['wineserver', '-w'], 0)]), \
+                 mock.patch.object(generator, 'prove_prefix_server_unlocked', return_value={'status': 'prefix_server_lock_unheld'}):
+                generator.stop_owned_prefix(env, root)
+                self.assertEqual(json.loads((root / 'wine-helpers-stop.json').read_text())['kill_exit_code'], 1)
+            with mock.patch.object(generator.subprocess, 'run', return_value=subprocess.CompletedProcess(['wineserver'], 2)):
+                with self.assertRaises(ValueError): generator.stop_owned_prefix(env, root)
+            with mock.patch.object(generator.subprocess, 'run', side_effect=[
+                    subprocess.CompletedProcess(['wineserver', '-k'], 1), subprocess.CompletedProcess(['wineserver', '-w'], 1)]):
+                with self.assertRaises(ValueError): generator.stop_owned_prefix(env, root)
+
+    def test_prefix_quiescence_uses_real_posix_first_byte_lock(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); prefix = root / 'prefix'; prefix.mkdir()
+            base = root / 'server-base'; base.mkdir(mode=0o700)
+            info = prefix.stat(); server = base / f'server-{info.st_dev:x}-{info.st_ino:x}'; server.mkdir(mode=0o700)
+            lock = server / 'lock'; lock.write_bytes(b''); lock.chmod(0o600)
+            self.assertEqual(generator.prove_prefix_server_unlocked(prefix, base)['status'], 'prefix_server_lock_unheld')
+            code = 'import fcntl,sys,time; f=open(sys.argv[1],"r+"); fcntl.lockf(f,fcntl.LOCK_EX,1); print("locked",flush=True); time.sleep(30)'
+            holder = subprocess.Popen([sys.executable, '-c', code, str(lock)], stdout=subprocess.PIPE, text=True)
+            try:
+                self.assertEqual(holder.stdout.readline().strip(), 'locked')
+                with self.assertRaises(BlockingIOError): generator.prove_prefix_server_unlocked(prefix, base)
+            finally:
+                holder.terminate(); holder.wait(timeout=10); holder.stdout.close()
 
 
 if __name__ == '__main__':
