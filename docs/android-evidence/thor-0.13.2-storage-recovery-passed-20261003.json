@@ -1,0 +1,365 @@
+{
+  "format": 1,
+  "scope": "physical_thor_fresh_profile_creation_committed_save_and_storage_inventory",
+  "status": "accepted_with_documented_scope",
+  "review_date_utc": "2026-10-03",
+  "source_commit": "c0d10f8cd873449962f5a723d489b9ead18642d0",
+  "repository_head_before_acceptance": "2d2c2662a0ec93b1c0cf83c9895e73c770267631",
+  "runtime_repository_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+  "uploads": {
+    "gameplay": {
+      "name": "coh-atlas-gameplay-20261003-234820.zip",
+      "bytes": 12419229,
+      "sha256": "fa8c7f0732388baf2f864f099273b6ccc38bee6b497ce8367a569f39a23ad604"
+    },
+    "storage": {
+      "name": "coh-storage-20261003-235001.json",
+      "bytes": 2810,
+      "sha256": "cff516d85893a65e06e3aa2733a546cf8515914fc676f62d7d4a953fbc65d3c6"
+    }
+  },
+  "user_assessment": "Everything worked including storage, still need to do the tasks",
+  "device": {
+    "name": "AYN AYN Thor",
+    "android_sdk": 33,
+    "app_version": "0.13.2"
+  },
+  "runtime_manifest_sha256": "bf96a52f3b5e5a093839e0eed272edadc82e6e2e8eea7b9262b4e65f4f5b4add",
+  "creation": {
+    "run_id": "1791069403776-dac0e76500fd",
+    "session_id": "b560a87a4ed24f47a3ed816f49ac41ab",
+    "android_passed": true,
+    "guest_passed": true,
+    "guest_failures": [],
+    "operation": "character_creation",
+    "fresh_creation_requested": true,
+    "profile_state": "READY",
+    "local_login_verified": true,
+    "character_creation_verified": true,
+    "character_saved_event": {
+      "type": "character_saved",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-03T23:48:01.486823+00:00",
+      "session_id": "b560a87a4ed24f47a3ed816f49ac41ab",
+      "client_pid": 664,
+      "character_id": 1,
+      "name": "THORHERO",
+      "committed_sql_verified": true
+    },
+    "connected_event": {
+      "type": "character_connected",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-03T23:46:00.924167+00:00",
+      "session_id": "b560a87a4ed24f47a3ed816f49ac41ab",
+      "client_pid": 664,
+      "character_id": 1,
+      "name": "THORHERO",
+      "account": "COHLOCAL",
+      "map_id": 1
+    },
+    "creation_proof": {
+      "verified": true,
+      "connected_on_atlas": true,
+      "committed_sql_verified": true,
+      "requested_logout_observed": true,
+      "logout_timer_observed": true,
+      "disconnected_before_sql": true,
+      "forced_stop_before_save": false,
+      "baseline_character_count": 0,
+      "character_id": 1
+    },
+    "saved_snapshot_identity": {
+      "containerid": 1,
+      "authid": 1353310574,
+      "authname": "COHLOCAL",
+      "name": "THORHERO"
+    },
+    "saved_snapshot_rows": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "saved_snapshot_file_sha256": "3aadad2b9ba0b05296572a838520407254c880e84504c764c6b416074ad8bcf1",
+    "fresh_post_save_android_captures": 3,
+    "finish_requested": true,
+    "input_events_sent": 896,
+    "input_events_failed": 0,
+    "cleanup_verified": true,
+    "cleanup_blocked": false,
+    "guest_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "character_reopen_verified_in_this_run": false
+  },
+  "storage": {
+    "scope": "app_private_storage_inventory",
+    "snapshot_id": "01c6eec4ee02c5bada80663aa929c580857b7f2db1952700168a1172c4085805",
+    "scanned_utc_ms": 1791071315103,
+    "complete": true,
+    "current_runtime_verified": true,
+    "cleanup_allowed": true,
+    "entry_count": 578696,
+    "apparent_bytes": 10420223294,
+    "allocated_bytes": 10878041088,
+    "reclaimable_bytes": 673447424,
+    "errors": [],
+    "categories": [
+      {
+        "id": "current_runtime",
+        "label": "Current runtime",
+        "removable": false,
+        "apparent_bytes": 3766338053,
+        "allocated_bytes": 3808651264,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "old_runtime",
+        "label": "Verified older runtimes",
+        "removable": true,
+        "apparent_bytes": 0,
+        "allocated_bytes": 0,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "runtime_other",
+        "label": "Unverified runtime files and staging",
+        "removable": false,
+        "apparent_bytes": 18085,
+        "allocated_bytes": 18944,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "downloads",
+        "label": "Runtime download cache",
+        "removable": true,
+        "apparent_bytes": 671806366,
+        "allocated_bytes": 672477184,
+        "reclaimable_bytes": 672477184,
+        "candidate_count": 2
+      },
+      {
+        "id": "old_reports",
+        "label": "Older completed test reports",
+        "removable": true,
+        "apparent_bytes": 968427,
+        "allocated_bytes": 970240,
+        "reclaimable_bytes": 970240,
+        "candidate_count": 1
+      },
+      {
+        "id": "reports_kept",
+        "label": "Recent and protected test reports",
+        "removable": false,
+        "apparent_bytes": 14390933,
+        "allocated_bytes": 14425600,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "client_state",
+        "label": "Character, server data, Wine and client caches",
+        "removable": false,
+        "apparent_bytes": 2945347180,
+        "allocated_bytes": 2932779008,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "client_import",
+        "label": "Imported client and server assets",
+        "removable": false,
+        "apparent_bytes": 3021336833,
+        "allocated_bytes": 3448696832,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      },
+      {
+        "id": "other",
+        "label": "Other protected app files",
+        "removable": false,
+        "apparent_bytes": 17417,
+        "allocated_bytes": 22016,
+        "reclaimable_bytes": 0,
+        "candidate_count": 0
+      }
+    ],
+    "candidate_count": 3,
+    "candidates": [
+      {
+        "path": "m2/downloads/database environment-08c639c26506dc6fbd15464bec475337087bb23cb7c0c5ace2db5240ee36424f.tar.gz",
+        "category": "downloads",
+        "apparent_bytes": 353710639,
+        "allocated_bytes": 354062336,
+        "reclaimable_bytes": 354062336
+      },
+      {
+        "path": "m2/downloads/Windows runtime-030f38066af7b786c142e199cb84adec037840b0f029338849e43f99203a93e1.tar.gz",
+        "category": "downloads",
+        "apparent_bytes": 318095727,
+        "allocated_bytes": 318414848,
+        "reclaimable_bytes": 318414848
+      },
+      {
+        "path": "client/reports/1791052396138-6dab84b665cf",
+        "category": "old_reports",
+        "apparent_bytes": 968427,
+        "allocated_bytes": 970240,
+        "reclaimable_bytes": 970240
+      }
+    ],
+    "protected": "All client/state and client-import, the current runtime, latest report and newest three report directories",
+    "physical_inventory_accepted": true,
+    "user_reports_storage_worked": true,
+    "cleanup_execution_receipt_uploaded": false,
+    "measured_deleted_entries": null,
+    "measured_reclaimed_bytes": null,
+    "android_settings_before_after_uploaded": false,
+    "former_62gb_installation_attribution": "Not measurable from this post-uninstall inventory."
+  },
+  "startup_observation": {
+    "scope": "first_profile_creation_run; timings not a controlled before-after comparison",
+    "guest_started_utc": "2026-10-03T23:16:44.766036+00:00",
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "elapsed_seconds": 0.423223,
+        "finished_seconds_after_guest_start": 0.429654
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "elapsed_seconds": 0.152628,
+        "finished_seconds_after_guest_start": 0.582517
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed",
+        "elapsed_seconds": 6.628592,
+        "finished_seconds_after_guest_start": 7.211567
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed",
+        "elapsed_seconds": 0.390593,
+        "finished_seconds_after_guest_start": 7.602998
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed",
+        "elapsed_seconds": 0.26647,
+        "finished_seconds_after_guest_start": 189.269002
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed",
+        "elapsed_seconds": 64.871812,
+        "finished_seconds_after_guest_start": 254.1413
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed",
+        "elapsed_seconds": 4.303594,
+        "finished_seconds_after_guest_start": 258.445338
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "status": "passed",
+        "elapsed_seconds": 479.573764,
+        "finished_seconds_after_guest_start": 738.019954
+      },
+      {
+        "stage": "local_atlas_startup",
+        "status": "passed",
+        "elapsed_seconds": 198.115537,
+        "finished_seconds_after_guest_start": 936.195732
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "status": "passed",
+        "elapsed_seconds": 0.56849,
+        "finished_seconds_after_guest_start": 936.765485
+      },
+      {
+        "stage": "actual_client_startup",
+        "status": "passed",
+        "elapsed_seconds": 607.048626,
+        "finished_seconds_after_guest_start": 1546.194244
+      },
+      {
+        "stage": "actual_client_interaction",
+        "status": "passed",
+        "elapsed_seconds": 338.901228,
+        "finished_seconds_after_guest_start": 1885.096172
+      }
+    ],
+    "atlas_readiness_seconds_from_guest_start": 936.195732,
+    "client_startup_gate_seconds_from_guest_start": 1546.194244,
+    "worktree_reused": true,
+    "wine_prefix_reused": false,
+    "server_animation_pack": {
+      "format": 1,
+      "installed": true,
+      "reused": false,
+      "pigg": {
+        "animation_count": 5878,
+        "bytes": 97084456,
+        "metadata_bytes": 8703726,
+        "original_animation_bytes": 88380730,
+        "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+      },
+      "loose_inputs_preserved": true,
+      "fallback": "ordinary_loose_animation_loader"
+    },
+    "physical_animation_speedup_established": false
+  },
+  "task_gate": {
+    "required": false,
+    "verified": false,
+    "contact_requested": false,
+    "contact_delivered_receipt": null,
+    "accepted_event": null,
+    "completed_event": null,
+    "completion_requested": false,
+    "completion_delivered_receipt": null,
+    "capture_requests": [],
+    "captures": [],
+    "maximum_requests_per_phase": 3,
+    "frames_per_request": 3,
+    "dialog_semantics_verified": false,
+    "user_visual_assessment_required": true,
+    "combat_verified": false,
+    "mission_map_verified": false
+  },
+  "acceptance": {
+    "fresh_deleted_installation_character_recovery_accepted": true,
+    "ordinary_character_save_accepted": true,
+    "graceful_operation_cleanup_accepted": true,
+    "storage_inventory_at_device_scale_accepted": true,
+    "storage_deletion_measured": false,
+    "runtime_setup_reuse_receipt_uploaded": false,
+    "new_character_reopen_accepted": false,
+    "task_acceptance_completion_save_accepted": false,
+    "prior_accepted_gameplay_milestones_preserved": true
+  },
+  "next_gate": {
+    "apk": "0.13.2 already installed",
+    "runtime_refresh_required": false,
+    "asset_reimport_required": false,
+    "new_apk_required": false,
+    "new_character_creation_required": false,
+    "scope": "Reopen the saved THORHERO, accept one authored task, fixed stock command completion, fresh accepted/completed captures, ordinary save and export.",
+    "instructions": "Use only the numbered task steps in docs/COH-Atlas-Gameplay-0.13.0-testing.txt; skip its historical install/refresh paragraph.",
+    "task": "What Was Lost / Part One: Demons and Gangsters",
+    "contact": "Matthew Habashy",
+    "completion_command": "/completetask 0",
+    "repeat_accepted_movement_contact_recovery_or_storage_tests": false,
+    "reward_turn_in_combat_or_mission_map_required": false
+  }
+}

@@ -1,5 +1,51 @@
 # City of Heroes Android handoff
 
+**Latest physical acceptance (October 3, 2026, 23:48–23:50 UTC): 0.13.2 fresh
+character recovery and storage inventory passed on Thor. The user reports
+“Everything worked including storage, still need to do the tasks.”**
+[Accepted evidence](android-evidence/thor-0.13.2-storage-recovery-passed-20261003.json)
+pins both uploaded files. Android and guest creation reports both passed with
+no guest failures. THORHERO entered Atlas, ordinary logout/timer was observed,
+the character was disconnected before read-only SQL proof, and committed rows
+contain one character, seven power rows and fourteen costume parts. Three fresh
+post-save Android captures passed; Finish and graceful PostgreSQL/Wine/owned
+process cleanup completed, with no cleanup block. The profile is READY. Treat
+the deleted installation recovery as complete; do not recreate the character.
+
+Storage inventory completed without errors over **578,696 entries**, verified
+the current runtime and allowed reviewed cleanup. Allocated app files total
+**10,878,041,088 bytes (10.88 GB)**: current runtime 3.81 GB, protected character/
+server/Wine/cache state 2.93 GB, and protected imports 3.45 GB. There are no older
+runtime generations in this fresh installation. Only two recognized component
+downloads and one older report are candidates, totaling **673,447,424 bytes
+(673.4 MB)**. This upload is an inventory, not a cleanup-execution receipt:
+the user accepts storage functionality, but deleted entries and actual freed
+bytes are not measured. Do not call the former 62 GB installation explained or
+its missing data reclaimed by this scan. No further scan/recovery repeat is
+needed for the task gate. A setup reuse receipt was not included in these files;
+keep quantitative repeated-setup growth unclaimed.
+
+This first-profile run reached Atlas readiness at **15m36.196s** after guest
+launch and the client startup gate at **25m46.194s**. Client data worktree reuse
+took 0.153s; initial Wine setup took 64.872s, DbServer startup 479.574s, Atlas
+startup 198.116s and client startup 607.049s. The 5,878-animation pack installed
+and loose fallback inputs remained preserved. These are phase observations,
+not a controlled option 9 speedup comparison. Preserve prior startup findings.
+
+**Next and only pending gameplay gate: on the already installed 0.13.2, Reopen
+saved THORHERO, manually accept Matthew Habashy's What Was Lost / Part One:
+Demons and Gangsters, capture the accepted journal, use Complete accepted task
+once (`/completetask 0`), capture the completed journal, then ordinary Save,
+Finish and export.** Use the numbered task steps in
+[0.13.0 task instructions](COH-Atlas-Gameplay-0.13.0-testing.txt), skipping its
+historical install/Refresh runtime paragraph. No new APK, runtime refresh,
+reimport, separate reopen test, character recreation or repeated movement,
+contact, ground-recovery or storage tests are required. The creator run had
+`task_gate.required=false`; it establishes no task acceptance/completion/save
+result. The task gate remains required on reopen. Combat, mission maps and
+contact reward turn-in remain outside this gate. Main remains preserved and
+PR #1 remains draft on the existing continuation.
+
 **Current recovery publication (October 3, 2026): 0.13.2 is published and
 independently verified from `c0d10f8cd873449962f5a723d489b9ead18642d0`.
 The user reported 62 GB app storage,
@@ -40,7 +86,8 @@ prior physical acceptance remains accepted. Install the update in place, keep
 the successful setup/import, export the storage/setup receipts and fresh creator
 save report, and stop before another long task run. See the
 [0.13.2 instructions](COH-Atlas-Gameplay-0.13.2-testing.txt). Device recovery and
-storage reclamation remain pending. Main remains 04d62616 and PR #1
+storage inventory are now accepted above; measured reclamation remains pending.
+Main remains 04d62616 and PR #1
 remains draft on `codex/character-persistence-continuation`.
 
 [CI 37147463123](https://github.com/Russianranger/coh-android/actions/runs/37147463123)
