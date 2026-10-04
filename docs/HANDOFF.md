@@ -1,6 +1,55 @@
 # City of Heroes Android handoff
 
-**0.13.7 device improvement accepted; 0.13.8 client loading/visual repair in development (October 4, 2026 UTC).**
+**0.13.8 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.8/COH-Atlas-Gameplay-0.13.8.apk)
+from APK source `17751a759240181f962d5b5ded962cf13b364e24` on the existing
+`codex/character-persistence-continuation` branch and open draft PR #1.
+`main` remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+[Dedicated CI 37206208480](https://github.com/Russianranger/coh-android/actions/runs/37206208480)
+passed all three jobs, **708 checks / 43 suites / zero skips / 261 source pins**,
+all three real PostgreSQL transaction fixtures, official SDK version and v2/v3
+signature checks with the existing signer, and publication.
+
+The public APK is **701,495,575 bytes**, **1,363,968 bytes** above 0.13.7;
+SHA-256 `5cd4235aa0772b219b9d2efb21bd37435a3676eea5cc36f1b31d39e1c7320076`.
+[Publication receipt](android-evidence/client-loading-0.13.8-publication.json)
+records an independent public download and checks every one of the **71 payloads**:
+**61 retained / 10 replaced / zero added**. It verifies the actual new Game PE,
+20 unchanged client DLLs, retained DbServer/MapServer, all 5,878 animation tracks,
+323 visual leaves including all 290 old leaves unchanged, the new DEX, 17
+unchanged authored Java sources, and setup memory protections. Local SDK
+reverification was not performed; official CI checks bind to this identical
+public APK SHA-256.
+
+The native Game was built and qualified on Win32 at
+`f42ebb46675213809018b4f9825d13eb1cd6e952`, successful Windows job
+[111443757374](https://github.com/Russianranger/coh-android/actions/runs/37204837499/job/111443757374).
+Five-round copy benchmarks and stock secure-CRT equivalence, explicit-length,
+null/OOM and enabled profiling checks passed under `/O2 /Oy- /MT /TC`.
+The original run later failed receipt aggregation, after 697 host checks passed,
+because `test_acceptance` was missing from the suite registry. The corrected
+publication run registers that suite and guards check composition; it reuses
+the exact four-file native artifact **11304751532**, retains its original
+commit/run identity, and does not claim a second native compilation. The audit
+binds the original ZIP to its GitHub API digest and all three immutable native
+source files. Game SHA-256 is
+`ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b`.
+The initial pre-build Windows staging failure was fixed by exact Git reverse
+application instead of newline-altering reverse patching; no failed build was
+published.
+
+Install over the existing app and run **Set up runtime once**, preserving
+imports, THORHERO, database and completed tasks. Follow the
+[focused timing/visual instructions](COH-Atlas-Gameplay-0.13.8-testing.txt):
+one reopen with the same preset, separate server/client/login-to-world timing,
+far/near vegetation and nearby Hellion appearance, then Abort, owned cleanup
+and export. The first added-texture inventory rebuild is expected and must be
+timed separately from Game startup. No repeated task/save, creation, storage,
+combat, reinstall, reimport or second boot is required. **Physical 0.13.8
+startup savings and visual correctness remain pending.** Software llvmpipe and
+broader missing assets remain open.
+
+**0.13.7 device improvement accepted and preserved (October 4, 2026 UTC).**
 The [current device receipt](android-evidence/client-visual-0.13.7-device-result.json)
 pins the supplied `coh-atlas-gameplay-20261004-121800.zip` and six screenshots.
 The user accepts server startup at approximately **6 minutes**, actual client
@@ -17,7 +66,7 @@ installation adds 290 files in **3.446s**; animation binding/verification takes
 index has **11,612 hits / zero ordinary reads**; regeneration takes **38.941s**,
 with **37.460s** of serial waiting. The complete Atlas-ready-to-launcher gap is
 **59.068s**. Sequencer loading falls to **53.764s** from 95.325s; powers remain
-approximately **54.048s**, FX info **29.694s**, grouplibs **19.427s** and the
+approximately **54.048s**, FX info **29.694s**, grouplibs **19.433s** and the
 map metadata/client NPC interval **23.649s**. Warm generated particle/behavior/
 cape caches also improve. Do not attribute the entire client improvement to
 animation mounting or claim these phase boundaries isolate pure decoding.
@@ -41,7 +90,7 @@ limited aggro/incoming-damage observation; full combat remains unqualified.
 The current console still reports 391 missing GEO files and 1,422 texture errors;
 this next bounded repair cannot promise every NPC/world asset is complete.
 
-The 0.13.8 candidate expands the existing visual supplement to **323 files**,
+The published 0.13.8 pass expands the existing visual supplement to **323 files**,
 preserving all old 290 leaf bytes and adding **8 THUG GEO files / 25 textures**,
 **2,646,051 decoded bytes**. All 19 requested hostile model names are present in
 stock geometry tables. The preserved Atlas bushes' `X_P_BushLODs` uses the
@@ -52,14 +101,14 @@ inventory rebuilds the header index; this preparation is separate from client
 startup. The manifest retains unresolved original collar/legacy-texture gaps.
 
 A separate, Game-only native layer retains the previous startup producer and
-cache schema history. The candidate replaces known-length string allocation
+cache schema history. This layer replaces known-length string allocation
 copies with `memcpy` after stock `strlen`, only under
 `COH_CLIENT_KNOWN_STRING_COPY=1`; explicit-length copies keep stock secure CRT
 behavior. `COH_CLIENT_BIN_PROFILE=1` distinguishes opening/CRC, source-freshness
 checks and BIN decoding. CRC, date checks, parser tables, allocation/free policy,
 DLLs and server executables are preserved. Two small-stack decoder prototypes
-were slower in host measurements and were not selected. The new copy path must
-pass source-bound Win32 equivalence and representative benchmarks before APK
+were slower in host measurements and were not selected. The new copy path passed
+source-bound Win32 equivalence and representative benchmarks before APK
 publication; device client savings remain unqualified. The guest recognizes the
 exact immediate producer, upgrades only Game in place, and preserves generated
 caches and absolute server links. Android DEX is recompiled solely for the two
