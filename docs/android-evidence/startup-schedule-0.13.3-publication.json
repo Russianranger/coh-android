@@ -1,0 +1,163 @@
+{
+  "format": 1,
+  "status": "published_and_independently_payload_verified",
+  "scope": "source_bound_atlas_startup_preparation_options_7_13_18_4",
+  "review_date_utc": "2026-10-04",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "source_commit": "dee916f80e9e336f374f31228535afdbe2c928ca",
+  "retained_native_source_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pr_number": 1,
+  "pr_remains_draft": true,
+  "workflow": {
+    "run_id": 37167835800,
+    "conclusion": "success",
+    "jobs": [
+      "native",
+      "qualify",
+      "apk"
+    ],
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37167835800"
+  },
+  "release": {
+    "tag": "coh-atlas-gameplay-v0.13.3",
+    "prerelease": true,
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.3/COH-Atlas-Gameplay-0.13.3.apk",
+    "testing_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.3/COH-Atlas-Gameplay-0.13.3-testing.txt"
+  },
+  "apk": {
+    "version_name": "0.13.3",
+    "version_code": 18,
+    "bytes": 676108222,
+    "sha256": "2626dcabcc9d69bfd1b9ad723e9748746df77e93d565a0fb1740eeff4b516709",
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "size_increase_over_0_13_2_bytes": 807084
+  },
+  "build_report": {
+    "bytes": 1504652,
+    "sha256": "e23644cd8d52dbd4a734c29fd3fd89364b2ff00024c6cb9a3a30721eea6df7f6"
+  },
+  "qualification_report": {
+    "bytes": 59119,
+    "sha256": "d3f09fe50f984f7bb19c2635174d42933b3665d42a10c360ac6b2e065760bb20"
+  },
+  "native_manifest": {
+    "bytes": 26786,
+    "sha256": "640ead93c503b818a9fd45535552ddb2ff6e83d7da85f0aae2cd77072f3f8e5f"
+  },
+  "native_executable": {
+    "bytes": 1663488,
+    "sha256": "539afab70c6d57aef4b2230e607e218c7a77d31de7ad10ad89f0253f5c1a09d3",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "host_checks": {
+    "tests_run": 331,
+    "suite_count": 23,
+    "source_pin_count": 141,
+    "skips": 0,
+    "checks": {
+      "world_supplement_reuse_identity_and_invalidation_verified": true,
+      "atlas_first_texture_schedule_and_failure_cleanup_verified": true,
+      "guarded_native_manual_atlas_launcher_wait_verified": true,
+      "retained_save_task_storage_profile_and_cache_guards_verified": true,
+      "source_bound_payload_and_actual_archive_extraction_verified": true
+    }
+  },
+  "changed_payloads": [
+    "assets/runtime/atlas_world_assets.py",
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/local_login_server.py",
+    "assets/runtime/runtime-manifest.json",
+    "assets/runtime/startup-dbserver-manifest.json",
+    "assets/runtime/startup-dbserver.exe"
+  ],
+  "retained": {
+    "donor_version": "0.13.2",
+    "baseline_archives_unchanged": true,
+    "Game_and_MapServer_unchanged": true,
+    "Android_DEX_and_resources_unchanged": true,
+    "authored_Java_sources": 18,
+    "prepared_definition_and_message_caches_unchanged": true,
+    "server_animation_pack_unchanged": true,
+    "world_and_avatar_archives_unchanged": true,
+    "graphics_driver_unchanged": true,
+    "persistent_profile_and_import_identities_unchanged": true
+  },
+  "independent_public_verification": {
+    "download_sha256_matches_CI_build_and_GitHub_asset_digest": true,
+    "payload_digests_verified": 67,
+    "zip_crcs_verified": true,
+    "exact_authored_helpers_and_native_supplement_verified": true,
+    "actual_retained_server_archive_extraction_verified": true,
+    "Android_DEX_and_resources_byte_identity_verified": true,
+    "runtime_verification_manifest_matches_build_report": true,
+    "signature_scope": "CI official apksigner verification is bound to the identical independently downloaded public SHA-256; no separate local apksigner run claimed",
+    "audit_script": {
+      "path": "tools/android/interactive/audit_startup_schedule_public.py",
+      "bytes": 6656,
+      "sha256": "5ce9338aa549e4e18930b7442cd018d17cb29f4f4dac7f55c0f6368923a24224"
+    },
+    "audit_result": {
+      "format": 1,
+      "status": "passed",
+      "repository_commit": "dee916f80e9e336f374f31228535afdbe2c928ca",
+      "apk": {
+        "bytes": 676108222,
+        "sha256": "2626dcabcc9d69bfd1b9ad723e9748746df77e93d565a0fb1740eeff4b516709"
+      },
+      "payload_digests_verified": 67,
+      "zip_crcs_verified": true,
+      "retained_Android_DEX_and_resources_verified": true,
+      "actual_retained_server_archive_extraction_verified": true,
+      "source_qualification_and_native_supplement_verified": true,
+      "runtime_matches_build_report": true,
+      "client_manifest_pin": {
+        "bytes": 7676,
+        "sha256": "9ab055a91c4077e2baa1982b2e79f0c91f9aa9be16723a21494f64c7fcc9ea58"
+      },
+      "native_key_serialization_order": [
+        "startup-dbserver-manifest.json",
+        "startup-dbserver.exe"
+      ],
+      "ordering_adapter_changes_values_or_guard_set": false,
+      "signature_scope": "CI official SDK signature/version checks bound to identical downloaded public SHA-256; no local SDK rerun",
+      "physical_startup_timing_validated": false
+    },
+    "additional_companion_tests": 4
+  },
+  "activation": {
+    "one_runtime_setup_required": true,
+    "old_generation_retained_for_rollback_and_reviewed_cleanup": true,
+    "asset_reimport_required": false,
+    "uninstall_or_character_recreation_required": false,
+    "same_manifest_repeated_setup_reuses_generation": true
+  },
+  "physical_acceptance": {
+    "startup_speedup_qualified": false,
+    "at_most_300_seconds_Atlas_target_achieved": false,
+    "prior_manual_task_acceptance_preserved": true,
+    "prior_save_movement_dialogue_storage_and_profile_recovery_acceptance_preserved": true,
+    "next_test": "One existing-character startup/connection timing session and gameplay export; no repeated task, movement, ground or storage gate."
+  },
+  "baseline_receipt": "startup-schedule-0.13.3-baseline.json",
+  "testing_instructions": "../COH-Atlas-Gameplay-0.13.3-testing.txt",
+  "publication_checker_note": {
+    "issue": "Frozen producer/checker inserts added native manifest keys using hash-dependent frozenset order. Semantically equal JSON can serialize differently in a new checker process. Actual published client bytes match their runtime pin.",
+    "companion_remedy": "Preserve the actual published insertion order while retaining the exact allowed update set, every value and all original derivative guards. Frozen producer and APK unchanged.",
+    "next_release_tooling_follow_up": "Sort new update keys in both producer and checker when preparing the next release."
+  }
+}

@@ -1,5 +1,32 @@
 # City of Heroes Android handoff
 
+**0.13.3 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.3/COH-Atlas-Gameplay-0.13.3.apk)
+from startup source `dee916f80e9e336f374f31228535afdbe2c928ca`.
+[CI run 37167835800](https://github.com/Russianranger/coh-android/actions/runs/37167835800)
+passed Windows native build, qualification and retained-signer publication:
+**331 tests / 23 suites / zero skips / 141 source pins**. Public APK is
+**676,108,222 bytes**, only **807,084 bytes** larger than 0.13.2; SHA-256
+`2626dcabcc9d69bfd1b9ad723e9748746df77e93d565a0fb1740eeff4b516709`.
+[Publication receipt](android-evidence/startup-schedule-0.13.3-publication.json)
+records the actual downloaded 67-payload audit, ZIP CRCs, retained DEX/resources,
+server archive extraction and native/source pins. CI official SDK signature and
+version checks are bound to these identical public bytes; no separate local SDK
+rerun is claimed. The normal Win32 DbServer supplement is the only native rebuild.
+
+Install over the existing app, **Set up runtime once**, then do one saved-hero
+startup/connection timing session and export. Keep assets/profile; preserve all
+accepted gameplay/storage/recovery gates. No new physical speedup is claimed.
+
+Publication tooling follow-up: the frozen 0.13.3 manifest producer/checker uses
+frozenset insertion order for its two new native keys. A new
+`tools/android/interactive/audit_startup_schedule_public.py` companion preserves
+the actual client manifest's order without changing values, allowed updates or
+original derivative guards; four mutation/order checks and independent review
+passed. The actual client hash matches its runtime pin. Sort added keys in both
+producer/checker for the next release; do not rebuild or replace this APK solely
+for this checker serialization issue.
+
 **Current authorized priority (October 4, 2026 UTC): reduce server startup
 further before the next gameplay milestone.** The user selected options **7
 (avoid decoding unchanged world assets), 13 (skip the unused local Launcher
@@ -7,13 +34,13 @@ wait), 18 (overlap independent preparation) and 4 (move client texture indexing
 after server readiness)**. Preserve the accepted manual task and all earlier
 physical gates; do not restart the proposed progression sequence yet.
 
-The 0.13.3 candidate uses a pinned world reuse receipt, a narrowly guarded
+The published 0.13.3 uses a pinned world reuse receipt, a narrowly guarded
 DbServer manual-Atlas launcher-wait bypass, and a single texture preparation
 worker after actual Atlas readiness which overlaps only the independent PE32
 runtime probe. Server and client heavy initialization remain serial, and the
 worker joins before client launch or cleanup. Game, MapServer, renderer,
 imported content, prepared definition/message caches and the animation pack
-remain retained. This candidate has not yet established physical speedup.
+remain retained. This build has not yet established physical speedup.
 
 [Prior warm-run baseline](android-evidence/startup-schedule-0.13.3-baseline.json)
 pins the uploaded 0.13.2 reopen: Atlas readiness **11m22.726s** from guest start,
