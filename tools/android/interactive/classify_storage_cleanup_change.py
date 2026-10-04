@@ -58,6 +58,24 @@ STARTUP_ALLOWED = STARTUP_SOURCES | frozenset({
     'docs/android-evidence/startup-schedule-0.13.3-baseline.json',
     'docs/android-evidence/startup-schedule-0.13.3-publication.json',
 })
+RECEIPT_SOURCES = frozenset({
+    '.github/workflows/android-task-receipt-cleanup.yml',
+    'tools/android/interactive/build_task_receipt_cleanup_apk.py',
+    'tools/android/interactive/qualify_task_receipt_cleanup.py',
+    'tools/android/interactive/test_task_receipt_cleanup_package.py',
+    'tools/android/interactive/test_task_receipt_cleanup.py',
+    JAVA+'ClientRuntime.java',
+    'android/guest/character_reopen_diagnostic.py',
+})
+RECEIPT_ALLOWED = RECEIPT_SOURCES | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-Atlas-Gameplay-0.13.4-testing.txt', 'docs/HANDOFF.md',
+    'docs/android-evidence/startup-schedule-0.13.3-reopen-blocked.json',
+    'docs/android-evidence/task-receipt-cleanup-0.13.4-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -85,21 +103,28 @@ def startup_push(event, before, head, parent, names):
         and set(names) & STARTUP_SOURCES)
 
 
+def receipt_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, RECEIPT_ALLOWED)
+        and set(names) & RECEIPT_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
-        or startup_push(event, before, head, parent, names))
+        or startup_push(event, before, head, parent, names)
+        or receipt_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
     """Keep historical 0.13.1 publication out of a qualified recovery derivative."""
     return not ((bounded_push(event, before, head, parent, names)
-        and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names))
+        and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names)
+        or receipt_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
     """The newer source-bound startup derivative owns only its explicit scope."""
-    return not startup_push(event, before, head, parent, names)
+    return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names))
 
 
 def main():

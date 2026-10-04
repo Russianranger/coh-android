@@ -1,5 +1,31 @@
 # City of Heroes Android handoff
 
+**Latest device result: 0.13.3 Reopen stopped on a stale task-helper receipt;
+PostgreSQL login passed (October 4, 2026 UTC).**
+[Failure receipt](android-evidence/startup-schedule-0.13.3-reopen-blocked.json)
+pins `coh-atlas-gameplay-20261004-021301.zip`. The installed runtime and native
+supplement match published 0.13.3. Persistent profile and client worktree were
+reused, PostgreSQL durability/admin/fixture checks passed, and owned cleanup
+plus graceful database shutdown passed. Wine, DbServer, Atlas and graphical
+client never started; this result cannot qualify the startup speedup.
+
+`ClientRuntime.removePreviousGuestOutput()` omitted the two fixed transient
+outputs `character-task-contact.json` and `character-task-completion.json`.
+The retained guest correctly refused a leftover receipt. The export does not
+include that receipt's exact filename or previous session, so do not infer
+either. Retire these session outputs under the existing prelaunch operation
+lock and retain all current-session delivery/save/readiness guards.
+
+The accepted manual-task run also recorded a task row, while the old one-task
+diagnostic requires an empty journal. The approved next activity is startup
+timing, so explicitly select ordinary saved-character Reopen, preserve existing
+task rows and do not reopen the accepted task gate. The 0.13.4 correction is implemented with an explicit startup-only flag;
+**374 checks / 25 suites / zero skips / 148 source pins** passed locally.
+CI publication remains pending. Native startup optimizations and all earlier
+physical acceptances remain retained. Changed reopen helper
+requires one runtime setup; no reinstall, data clear, import or character
+recreation is justified. [Continuation instructions](COH-Atlas-Gameplay-0.13.4-testing.txt).
+
 **0.13.3 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.3/COH-Atlas-Gameplay-0.13.3.apk)
 from startup source `dee916f80e9e336f374f31228535afdbe2c928ca`.

@@ -11,6 +11,7 @@ import character_session_budget as session_budget
 
 base, require, character = creation.base, creation.require, creation.character
 SCOPE = 'actual_character_reopen_guest'
+STARTUP_SCOPE = 'actual_character_startup_timing_guest'
 REQUIRED = creation.REQUIRED | {'character_reopen_diagnostic.py', 'character_session_budget.py',
                               'stationary_contact_evidence.py', 'atlas_world_assets.py',
                               'atlas-world-supplement.zip', 'atlas-world-supplement-manifest.json'}
@@ -43,17 +44,25 @@ def save_verified(proof, session):
 
 
 class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
+    STARTUP_ONLY = False
     REPORT_KEY = 'character_reopen'
     REQUIRED = REQUIRED
     identity_verified = staticmethod(character_identity)
     proof_verified = staticmethod(save_verified)
 
     def make_server(self):
+        if self.STARTUP_ONLY:
+            return character.LocalCharacterReopenServer(self)
         if (self.args.assets / 'task-gate.json').exists():
             return character.LocalCharacterTaskReopenServer(self)
         return character.LocalCharacterReopenServer(self)
 
     def initialize(self):
+        self.ctx.report['startup_only_reopen'] = self.STARTUP_ONLY
+        if self.STARTUP_ONLY:
+            self.ctx.report.update(task_gate_required=False,
+                startup_validation_scope='saved_character_startup_connection_timing_only',
+                task_qualification_requested=False)
         request = self.args.state / 'character-relocation.json'
         require(not request.exists() and not request.is_symlink(), 'Stale character recovery delivery receipt')
         super().initialize()
@@ -170,8 +179,26 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
         return result
 
 
+class StartupOnlyCharacterReopenDiagnostic(CharacterReopenDiagnostic):
+    """Explicit timing entry point; retain strict saved identity and ordinary save proof."""
+    STARTUP_ONLY = True
+
+
+def parse_reopen_arguments(argv):
+    # Preserve the creator's shared parser and forward every retained argument.
+    # Only this reopen entry point accepts the explicit startup-only switch.
+    parser = creation.argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    parser.add_argument('--startup-only', action='store_true')
+    selected, remaining = parser.parse_known_args(sys.argv[1:] if argv is None else argv)
+    return selected.startup_only, remaining
+
+
 def main(argv=None):
-    return creation.run(argv, CharacterReopenDiagnostic, SCOPE, 'actual_character_reopen')
+    startup_only, remaining = parse_reopen_arguments(argv)
+    return creation.run(remaining,
+        StartupOnlyCharacterReopenDiagnostic if startup_only else CharacterReopenDiagnostic,
+        STARTUP_SCOPE if startup_only else SCOPE,
+        'actual_character_startup_timing' if startup_only else 'actual_character_reopen')
 
 
 if __name__ == '__main__':

@@ -9,6 +9,12 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_receipt_cleanup_reuses_native_build_and_unknown_changes_remain_closed(self):
+        names = sorted(change.RECEIPT_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            names+['android/native/unreviewed-startup.c']))
+
     def test_exact_startup_derivative_routes_to_its_native_and_apk_pipeline(self):
         names = sorted(change.STARTUP_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))

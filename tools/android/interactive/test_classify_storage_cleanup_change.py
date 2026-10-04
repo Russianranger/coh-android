@@ -7,6 +7,16 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
+        names = sorted(change.RECEIPT_ALLOWED)
+        for function in (change.task_required, change.cleanup_required, change.recovery_required):
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+            for other in ('android/guest/local_character_server.py',
+                    change.JAVA+'ClientActivity.java', 'upstream/ouroboros/DBServer/src/dbinit.c'):
+                with self.subTest(function=function.__name__, other=other):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+            self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_startup_routes_away_from_all_three_historical_publications(self):
         names = sorted(change.STARTUP_ALLOWED)
         for function in (change.task_required, change.cleanup_required, change.recovery_required):

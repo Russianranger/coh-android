@@ -422,6 +422,7 @@ public final class ClientRuntime {
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
                     "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
                     "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "1200", "--timeout-seconds", "5400"));
+            if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
@@ -1025,7 +1026,9 @@ public final class ClientRuntime {
                 connectedSamples.add(connected); connectedPngs.add(png.clone());
                 if (connectedSamples.size() == 3) {
                     connectedCapturedReady = true;
-                    stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
+                    if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
+                        stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
+                    else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
             }
@@ -1347,17 +1350,35 @@ public final class ClientRuntime {
             if (!files.has(name)) throw new IOException("Client runtime payload is missing: " + name);
     }
     private void removePreviousGuestOutput() throws IOException {
-        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "character-relocation.json", "latest-report.json", "report.zip"}) {
-            File file = new File(state, name);
-            if (file.exists() && !file.delete()) throw new IOException("Cannot clear previous guest output: " + name);
+        retirePreviousGuestOutput(new StorageFiles(home.getParentFile()));
+    }
+    /** Retire only fixed session outputs, never any profile/cache/import directory. */
+    static void retirePreviousGuestOutput(StorageAudit.Fs files) throws IOException {
+        StorageAudit.Stat parent = files.stat("client/state");
+        if (parent == null || parent.kind != StorageAudit.Kind.DIRECTORY)
+            throw new IOException("Private guest output directory is unavailable");
+        Map<String,StorageAudit.Stat> previous = new LinkedHashMap<>();
+        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "character-relocation.json", "latest-report.json", "report.zip", "character-task-contact.json", "character-task-completion.json"}) {
+            String path = "client/state/" + name;
+            StorageAudit.Stat entry = files.stat(path);
+            if (entry == null) continue;
+            if (entry.kind != StorageAudit.Kind.FILE && entry.kind != StorageAudit.Kind.SYMLINK)
+                throw new IOException("Cannot clear unsafe previous guest output: " + name);
+            previous.put(path, entry);
         }
+        // Validate every fixed member first. remove() anchors the verified parent
+        // and unlinks a symlink itself, including a dangling link, without following it.
+        for (Map.Entry<String,StorageAudit.Stat> entry : previous.entrySet())
+            files.remove(entry.getKey(), entry.getValue(), parent);
     }
 
     private boolean guestAccepted(JSONObject report) throws Exception {
         if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
                 && session.equals(report.optString("session_id"))
-                && (reopen ? "actual_character_reopen_guest" : "actual_character_creation_guest").equals(report.optString("scope"))
-                && (reopen ? "actual_character_reopen" : "actual_character_creation").equals(report.optString("diagnostic_mode"))
+                && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing_guest" : "actual_character_reopen_guest" : "actual_character_creation_guest").equals(report.optString("scope"))
+                && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing" : "actual_character_reopen" : "actual_character_creation").equals(report.optString("diagnostic_mode"))
+                && (!reopen || !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))
+                    || Boolean.TRUE.equals(report.opt("startup_only_reopen")) && Boolean.FALSE.equals(report.opt("task_gate_required")))
                 && "android".equals(report.optString("execution_platform_requested"))
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
@@ -1469,7 +1490,8 @@ public final class ClientRuntime {
         }
     }
     private boolean taskGateRequired() {
-        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
+        return reopen && manifest!=null && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))
+                && Boolean.TRUE.equals(manifest.opt("task_gate_required"));
     }
     private boolean taskGateAccepted(JSONObject report) throws Exception {
         JSONObject proof=report.optJSONObject("task_gate");
@@ -1547,6 +1569,7 @@ public final class ClientRuntime {
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
                     .put("graphics_profile_requested", graphicsProfileRequested)
                     .put("fresh_profile_creation_requested", !reopen && "character_creation".equals(operation))
+                    .put("startup_only_reopen", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                     .put("character_profile_state", characterProfileState(context).name())
                     .put("input_effect_verified", false).put("input_events_sent", inputSent).put("input_events_failed", inputFailed)
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
@@ -1558,7 +1581,7 @@ public final class ClientRuntime {
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)
                     .put("deadline_input_suppressed", deadlineInputSuppressed)
-                    .put("scope", taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
+                    .put("scope", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "Saved THORHERO startup and connection timing only; existing tasks are preserved and task qualification is not requested. Stop produces timing evidence, not an ordinary save or gameplay pass." : taskGateRequired() ? "Manually accept one authored task, complete it through the stock command, and persist its completed state by ordinary THORHERO logout with fresh accepted/completed Android views; combat, mission maps and reward turn-in remain unvalidated" : reopen ? "Reopen the existing COHLOCAL THORHERO with preserved identity, powers and costume and fresh Android PixelCopy after native connection and ordinary save; rendering, movement and gameplay remain separately assessed" : "Graphical creation and committed SQL persistence of THORHERO with fresh Android PixelCopy after the save event; world rendering, movement and gameplay remain unvalidated")
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)

@@ -1,0 +1,141 @@
+name: Thor same-profile startup-only reopen and task receipt cleanup
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-task-receipt-cleanup.yml
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/guest/character_reopen_diagnostic.py
+      - tools/android/interactive/build_task_receipt_cleanup_apk.py
+      - tools/android/interactive/qualify_task_receipt_cleanup.py
+      - tools/android/interactive/test_task_receipt_cleanup_package.py
+      - tools/android/interactive/test_task_receipt_cleanup.py
+      - docs/COH-Atlas-Gameplay-0.13.4-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-task-receipt-cleanup-publication
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-schedule-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37167835800
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.3 donor
+        run: python3 tools/android/interactive/build_task_receipt_cleanup_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.3.apk
+      - name: Qualify explicit startup-only reopening and retained save/native guards
+        run: >-
+          python3 tools/android/interactive/qualify_task_receipt_cleanup.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.3.apk
+          --donor-build-report out/donor-evidence/startup-schedule-apk-build-report.json
+          --output out/task-receipt-cleanup-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-task-receipt-cleanup-qualification
+          path: out/task-receipt-cleanup-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [qualify]
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-schedule-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37167835800
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-task-receipt-cleanup-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.3 donor
+        run: python3 tools/android/interactive/build_task_receipt_cleanup_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.3.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the startup-only wrapper retaining all native and data payloads
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_task_receipt_cleanup_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.3.apk
+          --donor-build-report out/donor-evidence/startup-schedule-apk-build-report.json
+          --qualification out/task-receipt-cleanup-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/task-receipt-cleanup/COH-Atlas-Gameplay-0.13.4.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-task-receipt-cleanup-packaging-evidence
+          path: |
+            out/task-receipt-cleanup/task-receipt-cleanup-apk-build-report.json
+            out/task-receipt-cleanup/COH-Atlas-Gameplay-0.13.4-testing.txt
+            out/task-receipt-cleanup/COH-Atlas-Gameplay-0.13.4.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-task-receipt-cleanup-apk
+          path: out/task-receipt-cleanup/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.4 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_task_receipt_cleanup_apk.py publish
+          --apk out/task-receipt-cleanup/COH-Atlas-Gameplay-0.13.4.apk
+          --build-report out/task-receipt-cleanup/task-receipt-cleanup-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.3.apk
+          --donor-build-report out/donor-evidence/startup-schedule-apk-build-report.json
+          --qualification out/task-receipt-cleanup-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

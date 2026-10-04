@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_storage_cleanup_change import STARTUP_ALLOWED
+from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED
 
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
@@ -195,7 +195,7 @@ RESPONSIVENESS_ONLY = frozenset({
     'docs/COH-Atlas-Gameplay-0.11.5-testing.txt',
     'docs/android-evidence/responsiveness-0.11.5-publication.json',
 })
-RESPONSIVENESS_ONLY |= STARTUP_ALLOWED
+RESPONSIVENESS_ONLY |= STARTUP_ALLOWED | RECEIPT_ALLOWED
 
 
 def runtime_required(event, before, head, parent, names):
