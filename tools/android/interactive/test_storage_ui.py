@@ -68,6 +68,7 @@ class ClientRuntime {
     enum ProfileState {ABSENT,READY,PRESERVE}
     static boolean operationActive, blocked;
     static Object storageOwner;
+    static Object setupFinalizationOwner;
     static ProfileState profile=ProfileState.ABSENT;
     static final String BLOCK_MESSAGE="blocked";
     static boolean cleanupBlocked(Context context){return blocked;}
@@ -129,7 +130,7 @@ class HostService extends Context {
     static final int NOTICE=61,STOP_FOREGROUND_REMOVE=1,START_NOT_STICKY=2;
     static final String POWER_SERVICE="power",ACTIVITY_SERVICE="activity",NOTIFICATION_SERVICE="notice",CHANNEL="client";
     static final String SETUP="setup",IMPORT="import",RUN="run",CREATE="create",STOP="stop",FINISH="finish",STORAGE_SCAN="scan",STORAGE_CLEAN="clean";
-    boolean destroyed,busy,storageBusy,reportExporting,foregroundFails,stopping,inputReady,characterSaved;
+    boolean destroyed,busy,storageBusy,reportExporting,foregroundFails,stopping,inputReady,characterSaved,setupWorkerOwnsWake;
     PowerManager.WakeLock wake;final Runnable sessionDeadlineTick=()->{};final Object screenReceiver=new Object();final List<Object> listeners=new ArrayList<>();
     final AtomicBoolean storageStopRequested=new AtomicBoolean();byte[] storageRecoveryReserve;
     ClientRuntime runtime;ClientRuntime.ProfileState profileState=ClientRuntime.ProfileState.ABSENT;String profileNote="",stage="",detail="";boolean blocked;

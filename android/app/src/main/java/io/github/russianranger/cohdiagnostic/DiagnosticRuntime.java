@@ -1,7 +1,9 @@
 package io.github.russianranger.cohdiagnostic;
 
 import android.content.Context;
+import android.app.ActivityManager;
 import android.os.Build;
+import android.os.SystemClock;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
@@ -47,6 +49,9 @@ public final class DiagnosticRuntime {
     private String operationMode="setup";
     private JSONObject hostsEvidence;
     private JSONObject setupReceipt;
+    private SetupMemoryGuard setupControl;
+    private boolean setupCleanupDeferred;
+    private String setupPhase="Checking runtime",setupDetail="Checking the installed runtime and available memory";
 
     public DiagnosticRuntime(Context context, Listener listener) {
         this(context,listener,new DiagnosticOutcome());
@@ -89,7 +94,27 @@ public final class DiagnosticRuntime {
         if(log.length()>MAX_LOG)log.delete(0, log.length()-(int)MAX_LOG);
         listener.onLog(text);
     }
-    private void stage(String name,String detail) { listener.onStage(name,detail); line(name+": "+detail); }
+    private void stage(String name,String detail) {
+        if(setupControl!=null){setupPhase=name;setupDetail=detail;}
+        listener.onStage(name,detail); line(name+": "+detail);
+    }
+    private void setupProgress(String name,String detail) {
+        setupPhase=name;setupDetail=detail;listener.onStage(name,detail);
+    }
+    private SetupMemoryGuard setupMemoryControl() {
+        ActivityManager manager=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();
+        Runtime vm=Runtime.getRuntime();
+        return new SetupMemoryGuard(()->{
+            if(manager==null)throw new IOException("Android memory service is unavailable");
+            manager.getMemoryInfo(memory);
+            return new SetupMemoryGuard.Sample(memory.availMem,memory.totalMem,memory.threshold,memory.lowMemory,
+                    vm.totalMemory()-vm.freeMemory(),vm.maxMemory());
+        },SystemClock::uptimeMillis,Thread::sleep,this::check,paused->{
+            if(paused)listener.onStage("Waiting for memory","Runtime setup is paused while Android memory is low. Stop remains available; the previous runtime and saved profile are preserved.");
+            else listener.onStage(setupPhase,setupDetail);
+        });
+    }
     private static byte[] read(File file,long limit) throws IOException {
         try(InputStream in=new FileInputStream(file)){return read(in,limit);}
     }
@@ -106,7 +131,13 @@ public final class DiagnosticRuntime {
     private static String hex(byte[] bytes) {StringBuilder b=new StringBuilder();for(byte v:bytes)b.append(String.format(Locale.ROOT,"%02x",v&255));return b.toString();}
     private String sha(File file) throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");
-        try(InputStream in=new FileInputStream(file)){byte[] buffer=new byte[1024*1024];int n;while((n=in.read(buffer))!=-1){check();digest.update(buffer,0,n);}}
+        try(InputStream in=new FileInputStream(file)) {
+            byte[] buffer=new byte[65536];int n;
+            while(true) {
+                check();if(setupControl!=null)setupControl.beforeIo();n=in.read(buffer);if(n<0)break;
+                if(setupControl!=null)setupControl.read(n);digest.update(buffer,0,n);
+            }
+        }
         return hex(digest.digest());
     }
     private void loadManifest() throws Exception {
@@ -139,10 +170,14 @@ public final class DiagnosticRuntime {
                 if(code!=200)throw new IOException("Runtime download failed (HTTP "+code+")");
                 long total=0,last=0;
                 if(setupReceipt!=null)setupReceipt.put("download_started",true);
-                try(InputStream in=c.getInputStream();OutputStream out=new FileOutputStream(part)) {
-                    byte[] buffer=new byte[1024*1024];int n;
-                    while((n=in.read(buffer))!=-1){check();total+=n;if(total>expected)throw new IOException("Runtime download too large");out.write(buffer,0,n);
-                        if(total-last>=4*1024*1024){listener.onStage("Downloading "+name,total/1048576+" / "+expected/1048576+" MiB");last=total;}}
+                try(InputStream in=c.getInputStream();FileOutputStream out=new FileOutputStream(part)) {
+                    byte[] buffer=new byte[65536];int n;
+                    try {
+                        while(true){check();if(setupControl!=null)setupControl.beforeIo();n=in.read(buffer);if(n<0)break;
+                            if(setupControl!=null)setupControl.read(n);total+=n;if(total>expected)throw new IOException("Runtime download too large");out.write(buffer,0,n);
+                            if(setupControl!=null)setupControl.written(n,()->out.getFD().sync());
+                            if(total-last>=4*1024*1024){setupProgress("Downloading "+name,total/1048576+" / "+expected/1048576+" MiB");last=total;}}
+                    } finally {if(setupControl!=null){out.getFD().sync();setupControl.synced();}}
                 } finally {c.disconnect();connection=null;}
                 verify(part,pin);Files.move(part.toPath(),dest.toPath(),StandardCopyOption.REPLACE_EXISTING);
                 if(setupReceipt!=null)setupReceipt.put("downloaded_archive_bytes",Math.addExact(setupReceipt.getLong("downloaded_archive_bytes"),total));
@@ -163,9 +198,11 @@ public final class DiagnosticRuntime {
                 .put("download_started",false).put("downloaded_archive_bytes",0L)
                 .put("extraction_started",false).put("archives_extracted",0)
                 .put("runtime_payload_files_copied",0).put("runtime_contents_inventory_performed",false)
-                .put("automatic_cleanup_performed",false);
+                .put("automatic_cleanup_performed",false).put("staging_cleanup_deferred",false);
+        setupCleanupDeferred=false;
         try {
             loadManifest();check();
+            setupControl=setupMemoryControl();setupControl.admit();
             long assetBytes=0;
             JSONObject pinnedFiles=manifest.getJSONObject("files");
             for(Iterator<String> names=pinnedFiles.keys();names.hasNext();)assetBytes=Math.addExact(assetBytes,pinnedFiles.getJSONObject(names.next()).getLong("bytes"));
@@ -174,44 +211,54 @@ public final class DiagnosticRuntime {
             if(!Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a"))throw new IOException("This diagnostic requires an ARM64 device");
             File ready=new File(generation,"ready.json");
             if(ready.isFile()&&new JSONObject(new String(read(ready,16384),StandardCharsets.UTF_8)).getString("manifest_sha256").equals(manifestHash)) {
+                stage("Verifying installed runtime","Checking pinned runtime assets without adding runtime files");
                 validateInstalled();setupReceipt.put("mode","reused").put("reused",true);
-                stage("Runtime ready","The pinned runtime is already installed; no runtime files were added");
             } else {
                 if(home.getUsableSpace()<5L*1024*1024*1024)throw new IOException("Keep at least 5 GiB free for runtime setup");
                 JSONObject lock;
                 try(InputStream in=context.getAssets().open("runtime/runtime-lock.json")){lock=new JSONObject(new String(read(in,65536),StandardCharsets.UTF_8));}
+                stage("Checking runtime archives","Checking or downloading the pinned database and Windows runtime archives");
                 File base=download(lock.getJSONObject("base"),"database environment");
                 File wine=download(lock.getJSONObject("wine"),"Windows runtime");
                 File staging=new File(home,generation.getName()+".staging");
                 setupReceipt.put("installation_started",true);
-                if(staging.exists())TarExtractor.remove(staging);staging.mkdirs();
+                if(staging.exists())TarExtractor.remove(staging,setupControl);staging.mkdirs();
                 try {
                     File root=new File(staging,"rootfs"), win=new File(staging,"wine"), pg=new File(staging,"pg"), assets=new File(staging,"assets");
                     root.mkdirs();win.mkdirs();pg.mkdirs();assets.mkdirs();
                     stage("Unpacking runtime","Preparing the private database environment");
                     setupReceipt.put("extraction_started",true);
-                    TarExtractor.extract(base,root,n->listener.onStage("Unpacking environment",n+" files"));
+                    TarExtractor.extract(base,root,n->setupProgress("Unpacking environment",n+" files"),setupControl);
                     setupReceipt.put("archives_extracted",1);check();
-                    TarExtractor.extract(wine,win,n->listener.onStage("Unpacking Windows runtime",n+" files"));
+                    stage("Unpacking Windows runtime","Preparing the pinned Windows environment");
+                    TarExtractor.extract(wine,win,n->setupProgress("Unpacking Windows runtime",n+" files"),setupControl);
                     setupReceipt.put("archives_extracted",2);check();
                     JSONObject files=manifest.getJSONObject("files");
+                    stage("Copying runtime assets","Copying and verifying the packaged runtime assets");
+                    long copied=0;
                     for(Iterator<String> it=files.keys();it.hasNext();) {
                         String name=it.next(); if(!name.matches("[A-Za-z0-9_.-]+"))throw new IOException("Unsafe package member");
                         File dest=new File(assets,name);
-                        try(InputStream in=context.getAssets().open("runtime/"+name);OutputStream out=new FileOutputStream(dest)) {
-                            TarExtractor.transfer(in,out,files.getJSONObject(name).getLong("bytes"));if(in.read()!=-1)throw new IOException("Package member grew");
+                        setupControl.beforeIo();
+                        try(InputStream in=context.getAssets().open("runtime/"+name);FileOutputStream out=new FileOutputStream(dest)) {
+                            TarExtractor.transfer(in,out,files.getJSONObject(name).getLong("bytes"),setupControl);if(in.read()!=-1)throw new IOException("Package member grew");
                         }
+                        stage("Verifying runtime asset",name);
                         verify(dest,files.getJSONObject(name));check();
                         setupReceipt.put("runtime_payload_files_copied",setupReceipt.getInt("runtime_payload_files_copied")+1);
+                        copied=Math.addExact(copied,files.getJSONObject(name).getLong("bytes"));
+                        stage("Copying runtime assets",copied/1048576+" / "+assetBytes/1048576+" MiB verified");
                     }
                     try(InputStream in=context.getAssets().open("runtime/runtime-manifest.json")){write(new File(assets,"runtime-manifest.json"),read(in,MAX_REPORT));}
-                    TarExtractor.extract(new File(assets,"postgresql-runtime.tar.gz"),pg,n->listener.onStage("Unpacking PostgreSQL",n+" files"));
+                    stage("Unpacking PostgreSQL","Preparing the pinned PostgreSQL environment");
+                    TarExtractor.extract(new File(assets,"postgresql-runtime.tar.gz"),pg,n->setupProgress("Unpacking PostgreSQL",n+" files"),setupControl);
                     setupReceipt.put("archives_extracted",3);
                     if(files.has("dbserver-package.tar.gz")&&files.has("dbserver-schema.tar.gz")) {
                         stage("Unpacking real DbServer","Preparing the isolated server test inputs");
-                        TarExtractor.extract(new File(assets,"dbserver-package.tar.gz"),new File(staging,"dbserver"),n->listener.onStage("Unpacking DbServer",n+" files"));
+                        TarExtractor.extract(new File(assets,"dbserver-package.tar.gz"),new File(staging,"dbserver"),n->setupProgress("Unpacking DbServer",n+" files"),setupControl);
                         setupReceipt.put("archives_extracted",4);
-                        TarExtractor.extract(new File(assets,"dbserver-schema.tar.gz"),new File(staging,"schema"),n->listener.onStage("Unpacking server schema",n+" files"));
+                        stage("Unpacking server schema","Preparing the pinned server schema");
+                        TarExtractor.extract(new File(assets,"dbserver-schema.tar.gz"),new File(staging,"schema"),n->setupProgress("Unpacking server schema",n+" files"),setupControl);
                         setupReceipt.put("archives_extracted",5);
                     }
                     required(root,"usr/bin/python3");required(root,"usr/bin/Xtigervnc");required(win,"bin/wine");required(win,"bin/wineserver");
@@ -220,16 +267,38 @@ public final class DiagnosticRuntime {
                     write(new File(staging,"passwd"),"root:x:0:0:root:/root:/bin/sh\ncoh:x:1000:1000:COH:/state:/bin/sh\nnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin\n".getBytes(StandardCharsets.UTF_8));
                     write(new File(staging,"group"),"root:x:0:\ncoh:x:1000:\nnogroup:x:65534:\n".getBytes(StandardCharsets.UTF_8));
                     for(String dir:new String[]{"opt/coh","opt/coh/pgsql","opt/coh-dbserver","opt/coh-schema","opt/wine","state","tmp"})new File(root,dir).mkdirs();
+                    stage("Activating runtime","Finishing the verified runtime generation");
+                    setupControl.checkpoint();
                     write(new File(staging,"ready.json"),new JSONObject().put("manifest_sha256",manifestHash).toString().getBytes(StandardCharsets.UTF_8));
-                    check();if(generation.exists())TarExtractor.remove(generation);
+                    check();setupControl.checkpoint();if(generation.exists())TarExtractor.remove(generation,setupControl);
                     if(!staging.renameTo(generation))throw new IOException("Cannot activate runtime");
                     setupReceipt.put("runtime_activated",true);
-                } finally {if(staging.exists())TarExtractor.remove(staging);}
-                validateInstalled();setupReceipt.put("mode","installed");stage("Runtime ready","Setup complete. Run diagnostics next.");
+                } catch(OutOfMemoryError failure) {setupCleanupDeferred=true;throw failure;}
+                finally {
+                    if(staging.exists()) {
+                        if(setupCleanupDeferred||setupControl.cleanupShouldDefer()||outcome.cancelled()||Thread.currentThread().isInterrupted()) {
+                            setupCleanupDeferred=true;
+                            // A deferred private staging tree never carries a
+                            // success marker, including a Stop at publication.
+                            Files.deleteIfExists(new File(staging,"ready.json").toPath());
+                        }
+                        else TarExtractor.remove(staging);
+                    }
+                }
+                stage("Verifying installed runtime","Checking the activated runtime assets");
+                validateInstalled();setupReceipt.put("mode","installed");
             }
+            setupControl.finishWrites();
+            stage("Runtime ready",setupReceipt.optBoolean("reused")?"The pinned runtime is already installed; no runtime files were added":"Setup complete. Run diagnostics next.");
             report.put("status","setup_complete").put("passed",false).put("scope","Runtime installation only; run the diagnostic before claiming execution");
         } catch(Exception e) {setupReceipt.put("mode",outcome.cancelled()?"cancelled":"failed");report.put("status",outcome.cancelled()?"cancelled":"failed").put("error",clean(String.valueOf(e.getMessage())));throw e;}
         finally {
+            if(generation!=null&&new File(home,generation.getName()+".staging").exists()
+                    &&(setupCleanupDeferred||outcome.cancelled()||Thread.currentThread().isInterrupted()
+                    ||setupControl!=null&&setupControl.cleanupShouldDefer()))setupCleanupDeferred=true;
+            setupReceipt.put("staging_cleanup_deferred",setupCleanupDeferred);
+            if(setupControl!=null)setupReceipt.put("setup_memory_control",new JSONObject(setupControl.receipt()));
+            setupControl=null;
             int generations=0,entries=0;boolean complete=true;
             try(java.nio.file.DirectoryStream<java.nio.file.Path> names=Files.newDirectoryStream(home.toPath())) {
                 for(java.nio.file.Path name:names) {

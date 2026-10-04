@@ -1,5 +1,50 @@
 # City of Heroes Android handoff
 
+**Current continuation: runtime setup memory protection (October 4, 2026 UTC).**
+The user reports that running 0.13.4 Set up runtime interrupted all apps. No new
+log bundle accompanied this report: neither Android LMK nor a precise failing
+phase is confirmed. [Recorded report](android-evidence/setup-memory-0.13.4-user-report.json).
+Accepted storage recovery and manual task completion remain accepted; do not
+reset the profile or repeat those gates to diagnose this setup failure.
+
+The next wrapper, 0.13.5, adds setup memory headroom checks, bounded pauses and
+safe refusal under persistent pressure, bounded I/O/synchronization, effective
+Stop during extraction, and interruption checkpoints with own Android exit
+history. It retains the exact 0.13.4 runtime manifest and all 67 runtime payloads;
+no additional runtime generation is required solely by this wrapper update.
+A completed 0.13.4 generation is reused, while an interrupted staging operation
+must complete verification before activation. Do not uninstall, clear data,
+reimport assets or recreate THORHERO. Request only setup and its report before
+another long Reopen; no device safety/speedup or system-wide LMK immunity is
+claimed. [Setup-only instructions](COH-Atlas-Gameplay-0.13.5-testing.txt).
+
+Local qualification passed **467 checks / 29 suites / zero skips / 160 source
+pins**, including production guard, real archive cancellation, installer reuse
+and publication refusal, Service heap/ownership/recovery and all retained prior
+guards. All 19 authored Java sources are receipted (six changes plus one setup
+guard). CI wrapper/signature/publication verification is pending; no native
+rebuild or physical setup qualification is claimed.
+
+The setup controller checks at admission, bounded I/O (1 MiB aggregate reads and
+writes) or 250 ms between cooperative checkpoints. It keeps 512 MiB–1 GiB above
+Android's low-memory threshold, adds 64 MiB resume hysteresis, and checks Java
+heap headroom. A single pressure wait is limited to 15 seconds, with a 60-second
+operation total. Memory-service/clock failure refuses further setup I/O. Stream
+buffers are 64 KiB; every regular output file is synced at close, active large
+files at 8 MiB, and cumulative 8 MiB write windows are paced by 25 ms. These are
+cooperative limits: blocked OS I/O is not forcibly preempted and polling cannot
+guarantee prevention of a system process kill.
+
+Stop, persistent pressure, unavailable memory telemetry and heap exhaustion
+leave only owned unactivated staging for a later admitted retry; its ready
+marker is removed. Cleanup streams no-follow entries with depth/entry limits.
+No protected profile, SQL data, import or prior runtime generation is retired.
+Setup phases and original app version are durably checkpointed with bounded
+records; interruption recovery exports the last phase and at most four own
+Android process-exit records. The setup reservation spans terminal evidence and
+wake cleanup, including same-process Service replacement, before another
+operation can start. Surface frame arrays/bitmap are released before setup.
+
 **0.13.4 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.4/COH-Atlas-Gameplay-0.13.4.apk)
 from source `6d16acf8330774e5fee4c0410c9cc56746d60b58`.
@@ -31,7 +76,7 @@ static copy to the active mode on the next UI pass. Task controls are gated off
 for the explicit startup-only mode. Do not replace/rebuild this qualified APK
 solely for that legacy explanatory copy.
 
-**Latest device result: 0.13.3 Reopen stopped on a stale task-helper receipt;
+**Prior device result: 0.13.3 Reopen stopped on a stale task-helper receipt;
 PostgreSQL login passed (October 4, 2026 UTC).**
 [Failure receipt](android-evidence/startup-schedule-0.13.3-reopen-blocked.json)
 pins `coh-atlas-gameplay-20261004-021301.zip`. The installed runtime and native

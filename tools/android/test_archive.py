@@ -20,13 +20,14 @@ ROOT = Path(__file__).resolve().parents[2]
 HOST = Path(__file__).resolve().parent / 'java'
 CLASS = 'io.github.russianranger.cohdiagnostic.ExtractRuntimeHost'
 SOURCE = ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java'
+CONTROL = SOURCE.with_name('SetupMemoryGuard.java')
 
 
 def compile_extractor(classes):
     classes = Path(classes)
     classes.mkdir(parents=True, exist_ok=True)
     subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
-                    '-d', str(classes), str(SOURCE), *map(str, sorted(HOST.rglob('*.java')))], check=True)
+                    '-d', str(classes), str(SOURCE), str(CONTROL), *map(str, sorted(HOST.rglob('*.java')))], check=True)
 
 
 def extract_archive(classes, archive, destination, cancel_after=None):
@@ -228,6 +229,51 @@ class ArchiveTests(unittest.TestCase):
             self.assertEqual((self.destination/f'lib/file-{index:04d}').read_bytes(), str(index).encode())
         self.assertEqual((self.destination/'empty').read_bytes(), b'')
         self.assertEqual((self.destination/'large').read_bytes(), large)
+
+    def test_operation_token_stops_inside_large_regular_member_without_interrupt(self):
+        payload=b'bounded token fixture'*65536
+        result=self.run_archive(archive_bytes([member('large',payload)]),success=False,cancel_after='token-member')
+        self.assertIn('Operation token stopped extraction',result.stderr)
+        self.assertIn('thread_interrupted=false',result.stdout)
+        self.assertGreater((self.destination/'large').stat().st_size,0)
+        self.assertLessEqual((self.destination/'large').stat().st_size,65536)
+        self.assertIn('syncs=1 dirty=0',result.stdout)
+
+    def test_operation_token_stops_inside_deferred_hardlink_copy(self):
+        payload=b'independent copy fixture'*65536
+        result=self.run_archive(archive_bytes([member('copy',kind=tarfile.LNKTYPE,target='original'),
+                                               member('original',payload)]),success=False,cancel_after='token-hardlink')
+        self.assertIn('thread_interrupted=false',result.stdout)
+        self.assertEqual((self.destination/'original').read_bytes(),payload)
+        self.assertEqual((self.destination/'copy').stat().st_size,65536)
+        self.assertIn('syncs=2 dirty=0',result.stdout)
+
+    def test_low_memory_admission_precedes_staging_and_recovery_resumes_real_parser(self):
+        data=archive_bytes([member('large',b'preserved bytes')])
+        result=self.run_archive(data,success=False,cancel_after='memory-low')
+        self.assertFalse(self.destination.exists())
+        self.assertIn('written=0 syncs=0 dirty=0',result.stdout)
+        self.assertIn('paused=15000',result.stdout)
+        self.run_archive(data,cancel_after='memory-recover')
+        self.assertEqual((self.destination/'large').read_bytes(),b'preserved bytes')
+
+    def test_pressure_stop_mid_member_keeps_partial_writes_bounded_and_synced(self):
+        payload=b'memory pressure fixture'*65536
+        result=self.run_archive(archive_bytes([member('large',payload)]),success=False,cancel_after='memory-member')
+        self.assertIn('memory_pressure_stopped',result.stdout)
+        self.assertIn('paused=15000',result.stdout)
+        self.assertIn('syncs=1 dirty=0',result.stdout)
+        self.assertLessEqual((self.destination/'large').stat().st_size,1024*1024)
+
+    def test_streamed_staging_removal_preserves_foreign_symlink_target(self):
+        self.destination.mkdir()
+        for index in range(2000):(self.destination/f'leaf-{index}').write_bytes(b'x')
+        foreign=self.base/'foreign';foreign.mkdir();(foreign/'saved-profile').write_bytes(b'keep')
+        (self.destination/'foreign-link').symlink_to(foreign,target_is_directory=True)
+        result=extract_archive(self.classes,self.archive,self.destination,'remove')
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertFalse(self.destination.exists())
+        self.assertEqual((foreign/'saved-profile').read_bytes(),b'keep')
 
     def test_rejects_regular_and_pax_traversal(self):
         for index, name in enumerate(['../outside', '/absolute', 'one/../../outside', 'one\\outside']):

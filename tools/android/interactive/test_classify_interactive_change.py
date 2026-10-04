@@ -9,6 +9,27 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_setup_wrapper_reuses_runtime_for_its_exact_known_scope(self):
+        names = sorted(change.SETUP_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('android/native/unreviewed-setup.c',
+                'upstream/ouroboros/DBServer/src/dbinit.c', 'android/guest/diagnostic.py',
+                'android/interactive/src/main/AndroidManifest.xml', 'unreviewed.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_setup_dispatch_and_ambiguous_history_request_runtime(self):
+        names = sorted(change.SETUP_ALLOWED)
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+
     def test_receipt_cleanup_reuses_native_build_and_unknown_changes_remain_closed(self):
         names = sorted(change.RECEIPT_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))

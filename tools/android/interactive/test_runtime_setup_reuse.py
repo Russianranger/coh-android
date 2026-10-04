@@ -13,8 +13,11 @@ from test_storage_ui import production_method
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java'
+CONTROL = SOURCE.with_name('SetupMemoryGuard.java')
+CLASS = 'io.github.russianranger.cohdiagnostic.RuntimeSetupHost'
 
 HOST = r'''
+package io.github.russianranger.cohdiagnostic;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +30,7 @@ class JSONObject {
     private static int serial;
     final Map<String,Object> values=new LinkedHashMap<>();
     JSONObject(){}
+    JSONObject(Map<String,Object> values){this.values.putAll(values);}
     JSONObject(String raw)throws IOException {
         JSONObject original=encoded.get(raw);
         if(original==null)throw new IOException("Invalid host fixture JSON");
@@ -40,6 +44,7 @@ class JSONObject {
     long getLong(String key){return ((Number)get(key)).longValue();}
     int getInt(String key){return ((Number)get(key)).intValue();}
     boolean has(String key){return values.containsKey(key);}
+    boolean optBoolean(String key){return Boolean.TRUE.equals(values.get(key));}
     Iterator<String> keys(){return values.keySet().iterator();}
     public String toString(){String token="host-json-"+(++serial);encoded.put(token,this);return token;}
 }
@@ -67,6 +72,10 @@ class TarExtractor {
     static void transfer(InputStream in,OutputStream out,long size)throws IOException {
         byte[] bytes=new byte[1024];while(size>0){int count=in.read(bytes,0,(int)Math.min(size,bytes.length));if(count<0)throw new EOFException();out.write(bytes,0,count);size-=count;}
     }
+    static void transfer(InputStream in,FileOutputStream out,long size,SetupMemoryGuard control)throws IOException {
+        byte[] bytes=new byte[1024];while(size>0){control.beforeIo();int count=in.read(bytes,0,(int)Math.min(size,bytes.length));if(count<0)throw new EOFException();control.read(count);out.write(bytes,0,count);control.written(count,()->out.getFD().sync());size-=count;}
+        out.getFD().sync();control.synced();
+    }
     static void file(File root,String name,String text)throws IOException {File target=new File(root,name);target.getParentFile().mkdirs();Files.write(target.toPath(),text.getBytes(StandardCharsets.UTF_8));}
     static void extract(File archive,File destination,Progress progress)throws Exception {
         extracted++;destination.mkdirs();
@@ -78,12 +87,14 @@ class TarExtractor {
         if(name.equals("dbserver")||name.equals("schema"))file(destination,"fixture",name);
         progress.update(1);
     }
+    static void extract(File archive,File destination,Progress progress,SetupMemoryGuard control)throws Exception {control.checkpoint();extract(archive,destination,progress);}
     static void remove(File root)throws IOException {
         Files.walkFileTree(root.toPath(),new SimpleFileVisitor<Path>(){
             public FileVisitResult visitFile(Path file,BasicFileAttributes attrs)throws IOException{Files.delete(file);return FileVisitResult.CONTINUE;}
             public FileVisitResult postVisitDirectory(Path dir,IOException failure)throws IOException{if(failure!=null)throw failure;Files.delete(dir);return FileVisitResult.CONTINUE;}
         });
     }
+    static void remove(File root,SetupMemoryGuard control)throws IOException {control.beforeIo();remove(root);}
 }
 class HostInstaller {
     static final long MAX_REPORT=2L*1024*1024;
@@ -94,6 +105,10 @@ class HostInstaller {
     JSONObject manifest,setupReceipt,published;
     String manifestHash;
     boolean cancelled;
+    boolean memoryLow,memoryUnavailable,pressureOnAssets,cancelOnAssets,cancelOnHash,memoryAfterReady;
+    long clockMillis;
+    boolean setupCleanupDeferred;
+    SetupMemoryGuard setupControl;
     HttpURLConnection connection;
     int supports;
     final List<String> stages=new ArrayList<>();
@@ -101,7 +116,17 @@ class HostInstaller {
     final Listener listener=(name,detail)->{};
     HostInstaller(File files,HostContext context){home=new File(files,"m2");state=new File(home,"state");this.context=context;TarExtractor.owner=this;}
     String appVersion(){return "fixture";}
-    void stage(String name,String text){stages.add(text);}
+    void stage(String name,String text){
+        stages.add(text);
+        if(name.equals("Copying runtime assets")&&pressureOnAssets){memoryLow=true;clockMillis+=250;}
+        if(name.equals("Copying runtime assets")&&cancelOnAssets||name.equals("Verifying runtime asset")&&cancelOnHash){cancelled=true;outcome.cancelled=true;}
+    }
+    void setupProgress(String name,String text){stage(name,text);}
+    SetupMemoryGuard setupMemoryControl(){return new SetupMemoryGuard(()->{
+        if(memoryUnavailable)throw new IOException("fixture memory sensor unavailable");
+        boolean low=memoryLow||memoryAfterReady&&new File(home,generation.getName()+".staging/ready.json").exists();
+        return new SetupMemoryGuard.Sample(low?0:3L<<30,4L<<30,128L<<20,low,16L<<20,64L<<20);
+    },()->clockMillis,millis->clockMillis+=millis,this::check);}
     static String clean(String text){return text;}
     void support(JSONObject report,boolean passed)throws IOException{supports++;published=report;File target=new File(home,"reports/setup-"+supports+".json");write(target,"bounded setup metadata".getBytes(StandardCharsets.UTF_8));}
     PRODUCTION_METHODS
@@ -153,7 +178,24 @@ public class RuntimeSetupHost {
             File old=new File(installer.home,"runtime-0000000000000000");TarExtractor.file(old,"ready.json","owned old generation");
             Map<String,String> profileBefore=snapshot(profile),importBefore=snapshot(imported),oldBefore=snapshot(old);
             String scenario=args[0];
-            if(scenario.equals("download")) {
+            if(scenario.equals("memory_low")||scenario.equals("memory_unknown")) {
+                installer.memoryLow=scenario.equals("memory_low");installer.memoryUnavailable=scenario.equals("memory_unknown");
+                reject(installer::setupRuntime,scenario.equals("memory_low")?"memory remained low":"memory information is unavailable");
+                need(TarExtractor.extracted==0&&!installer.generation.exists(),"memory admission started installation");
+                need(!Boolean.TRUE.equals(installer.getSetupReceipt().get("installation_started"))&&!Boolean.TRUE.equals(installer.getSetupReceipt().get("runtime_activated")),"memory admission claimed installation");
+            }
+            else if(scenario.equals("pressure_copy")||scenario.equals("asset_stop")||scenario.equals("hash_stop")||scenario.equals("pressure_ready")) {
+                installer.pressureOnAssets=scenario.equals("pressure_copy");installer.cancelOnAssets=scenario.equals("asset_stop");installer.cancelOnHash=scenario.equals("hash_stop");installer.memoryAfterReady=scenario.equals("pressure_ready");
+                reject(installer::setupRuntime,scenario.startsWith("pressure")?"memory remained low":"Diagnostic stopped");
+                File partial=new File(installer.home,installer.generation.getName()+".staging");
+                need(!installer.generation.exists()&&partial.isDirectory()&&!new File(partial,"ready.json").exists(),"interrupted staging was activated or marked ready");
+                JSONObject receipt=installer.getSetupReceipt();
+                need(Boolean.TRUE.equals(receipt.get("staging_cleanup_deferred"))&&!Boolean.TRUE.equals(receipt.get("runtime_activated")),"missing safe staging deferral");
+                if(!scenario.equals("pressure_ready"))need(TarExtractor.extracted==2&&receipt.getInt("runtime_payload_files_copied")==0,"abort passed requested copy/hash boundary");
+                HostInstaller retry=new HostInstaller(files,context);retry.setupRuntime();
+                need(retry.generation.isDirectory()&&!partial.exists(),"healthy retry did not retire only owned staging and activate");
+            }
+            else if(scenario.equals("download")) {
                 JSONObject lock=new JSONObject(new String(context.assets.get("runtime/runtime-lock.json"),StandardCharsets.UTF_8));
                 File cached=new File(installer.home,"downloads/database environment-"+lock.getJSONObject("base").getString("sha256")+".tar.gz");cached.delete();
                 URL.setURLStreamHandlerFactory(protocol->protocol.equals("https")?new URLStreamHandler(){protected URLConnection openConnection(URL url){return new MockHttp(url);}}:null);
@@ -172,7 +214,10 @@ public class RuntimeSetupHost {
             else if(scenario.equals("guard")){CleanupGuard.blocked=true;reject(installer::setupRuntime,"cleanup blocked");need(TarExtractor.extracted==0&&installer.supports==0&&installer.getSetupReceipt()==null,"blocked setup touched installation");}
             else if(scenario.equals("cancel")||scenario.equals("extract_failure")) {
                 TarExtractor.failAt=2;TarExtractor.cancelling=scenario.equals("cancel");reject(installer::setupRuntime,"fixture extraction stopped");
-                need(!installer.generation.exists()&&!new File(installer.home,installer.generation.getName()+".staging").exists(),"partial runtime retained");
+                File partial=new File(installer.home,installer.generation.getName()+".staging");
+                need(!installer.generation.exists()&&partial.exists()==scenario.equals("cancel"),"partial runtime cleanup or deferral");
+                need(!new File(partial,"ready.json").exists(),"deferred staging retained success marker");
+                need(Boolean.TRUE.equals(installer.getSetupReceipt().get("staging_cleanup_deferred"))==scenario.equals("cancel"),"staging cleanup deferral receipt");
                 need(installer.getSetupReceipt().getString("mode").equals(scenario.equals("cancel")?"cancelled":"failed"),"failure mode");
                 need(installer.getSetupReceipt().getInt("archives_extracted")==1&&!Boolean.TRUE.equals(installer.getSetupReceipt().get("runtime_activated")),"false extraction success");
             } else {
@@ -241,7 +286,7 @@ class RuntimeSetupReuseTests(unittest.TestCase):
         target = cls.classes / 'RuntimeSetupHost.java'
         target.write_text(java)
         result = subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
-                                 '-d', str(cls.classes), str(target)], capture_output=True, text=True)
+                                 '-d', str(cls.classes), str(target), str(CONTROL)], capture_output=True, text=True)
         if result.returncode:
             raise AssertionError(result.stderr)
 
@@ -252,7 +297,7 @@ class RuntimeSetupReuseTests(unittest.TestCase):
     def check(self, *scenarios):
         for scenario in scenarios:
             with self.subTest(scenario=scenario):
-                result = subprocess.run(['java', '-Xmx64m', '-cp', str(self.classes), 'RuntimeSetupHost', scenario],
+                result = subprocess.run(['java', '-Xmx64m', '-cp', str(self.classes), CLASS, scenario],
                                         capture_output=True, text=True, timeout=20)
                 self.assertEqual(0, result.returncode, result.stderr)
                 self.assertEqual('PASS ' + scenario, result.stdout.strip())
@@ -281,7 +326,7 @@ class RuntimeSetupReuseTests(unittest.TestCase):
     def test_wrong_abi_or_cleanup_guard_prevents_installation(self):
         self.check('abi', 'guard')
 
-    def test_failed_or_cancelled_staging_is_removed_without_touching_previous_data(self):
+    def test_failure_cleanup_and_prompt_cancel_deferral_preserve_previous_data(self):
         self.check('cancel', 'extract_failure')
 
     def test_generation_count_is_bounded_and_does_not_follow_symlinks(self):
@@ -289,6 +334,15 @@ class RuntimeSetupReuseTests(unittest.TestCase):
 
     def test_setup_receipt_is_a_defensive_copy(self):
         self.check('copy')
+
+    def test_pressure_or_unknown_memory_prevents_installation_and_preserves_user_data(self):
+        self.check('memory_low','memory_unknown')
+
+    def test_stop_inside_asset_copy_or_hash_defers_only_unactivated_staging_and_retry_recovers(self):
+        self.check('asset_stop','hash_stop')
+
+    def test_pressure_at_copy_or_ready_boundary_never_activates_partial_generation(self):
+        self.check('pressure_copy','pressure_ready')
 
 
 if __name__ == '__main__':

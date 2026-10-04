@@ -202,6 +202,7 @@ public final class ClientActivity extends Activity {
         stop.setText(next.storageBusy?"Cancel storage scan / cleanup":"Abort operation");
     }
     private void render(ClientService.State next){
+        if(next.busy&&next.session.isEmpty())display.clearFrames();
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}

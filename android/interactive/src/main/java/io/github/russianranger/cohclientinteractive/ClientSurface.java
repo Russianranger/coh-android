@@ -141,6 +141,18 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         });
     }
 
+    /** UI-thread release before setup/import; queued old frames cannot restore it. */
+    public void clearFrames() {
+        if (Looper.myLooper() != Looper.getMainLooper())
+            throw new IllegalStateException("Clear client frames on the UI thread");
+        releaseInput();
+        synchronized (pendingLock) { session = null; pending = null; }
+        lastFrame = null;
+        main.removeCallbacks(captureTimer);
+        captureTimerPosted = false;
+        if (displayed != null) { displayed.recycle(); displayed = null; }
+    }
+
     public void setCaptureListener(Listener listener) {
         this.listener = listener;
         main.post(() -> {

@@ -76,6 +76,33 @@ RECEIPT_ALLOWED = RECEIPT_SOURCES | frozenset({
     'docs/android-evidence/startup-schedule-0.13.3-reopen-blocked.json',
     'docs/android-evidence/task-receipt-cleanup-0.13.4-publication.json',
 })
+SETUP_SOURCES = frozenset({
+    '.github/workflows/android-setup-memory.yml',
+    'tools/android/interactive/build_setup_memory_apk.py',
+    'tools/android/interactive/qualify_setup_memory.py',
+    'tools/android/interactive/test_setup_memory_package.py',
+    'tools/android/interactive/test_setup_service.py',
+    'tools/android/test_setup_memory_guard.py',
+    JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
+    JAVA+'ClientActivity.java', JAVA+'ClientSurface.java',
+    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
+    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java',
+    'android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java',
+})
+SETUP_ALLOWED = SETUP_SOURCES | frozenset({
+    '.github/workflows/android-task-receipt-cleanup.yml',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/test_archive.py',
+    'tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java',
+    'tools/android/interactive/test_runtime_setup_reuse.py',
+    'tools/android/interactive/test_storage_ui.py',
+    'docs/COH-Atlas-Gameplay-0.13.5-testing.txt', 'docs/HANDOFF.md',
+    'docs/android-evidence/setup-memory-0.13.4-user-report.json',
+    'docs/android-evidence/setup-memory-0.13.5-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -108,29 +135,43 @@ def receipt_push(event, before, head, parent, names):
         and set(names) & RECEIPT_SOURCES)
 
 
+def setup_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, SETUP_ALLOWED)
+        and set(names) & SETUP_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
         or startup_push(event, before, head, parent, names)
-        or receipt_push(event, before, head, parent, names))
+        or receipt_push(event, before, head, parent, names)
+        or setup_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
     """Keep historical 0.13.1 publication out of a qualified recovery derivative."""
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names)
-        or receipt_push(event, before, head, parent, names))
+        or receipt_push(event, before, head, parent, names)
+        or setup_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
     """The newer source-bound startup derivative owns only its explicit scope."""
-    return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names))
+    return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names)
+        or setup_push(event, before, head, parent, names))
+
+
+def receipt_required(event, before, head, parent, names):
+    """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
+    return not setup_push(event, before, head, parent, names)
 
 
 def main():
     required = True
     cleanup = True
     recovery = True
+    receipt = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -141,12 +182,15 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         recovery = recovery_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        receipt = receipt_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('task_required='+str(required).lower()+'\n')
         output.write('cleanup_required='+str(cleanup).lower()+'\n')
         output.write('recovery_required='+str(recovery).lower()+'\n')
+        output.write('receipt_required='+str(receipt).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

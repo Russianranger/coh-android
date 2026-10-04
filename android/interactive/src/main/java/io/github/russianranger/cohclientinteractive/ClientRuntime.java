@@ -119,6 +119,9 @@ public final class ClientRuntime {
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
     private File generation, operationDir;
+    private boolean operationOwned;
+    private static Object setupFinalizationOwner;
+    private Object setupReservation;
     private long startedUptime, endedUptime;
     private int processExit = -1;
 
@@ -162,14 +165,32 @@ public final class ClientRuntime {
         return acquireIdleStorage();
     }
     private static Object acquireIdleStorage() throws IOException {
-        if (operationActive) throw new IOException("Wait for the current operation to finish");
+        if (operationActive || setupFinalizationOwner != null) throw new IOException("Wait for the current operation to finish");
         Object owner = new Object(); storageOwner = owner; operationActive = true;
         return owner;
     }
     public static synchronized void releaseStorage(Object owner) {
         if (owner != null && owner == storageOwner) { storageOwner = null; operationActive = false; }
     }
-    public static synchronized boolean operationInProgress() { return operationActive; }
+    public static synchronized boolean operationInProgress() { return operationActive || setupFinalizationOwner != null; }
+    static synchronized Object acquireSetupReservation(Context context) throws IOException {
+        if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
+        if (operationActive || setupFinalizationOwner != null) throw new IOException("Wait for the current operation to finish");
+        setupFinalizationOwner = new Object();
+        return setupFinalizationOwner;
+    }
+    static synchronized boolean setupFinalizationInProgress() { return setupFinalizationOwner != null; }
+    static synchronized boolean ownsSetupReservation(Object owner) { return owner != null && owner == setupFinalizationOwner; }
+    static synchronized void releaseSetupReservation(Object owner) {
+        if (owner != null && owner == setupFinalizationOwner) setupFinalizationOwner = null;
+    }
+    void attachSetupReservation(Object owner) {
+        synchronized (ClientRuntime.class) {
+            if (owner == null || owner != setupFinalizationOwner || operationOwned)
+                throw new IllegalStateException("Runtime setup reservation changed");
+            setupReservation = owner;
+        }
+    }
     /** Read at most two small identity files; never walk imported assets or a database. */
     public static ProfileState characterProfileState(Context context) {
         try { return inspectCharacterProfile(new StorageFiles(context.getApplicationContext().getFilesDir())); }
@@ -256,8 +277,11 @@ public final class ClientRuntime {
     private synchronized void begin(String kind, String selectedSession) throws Exception {
         synchronized (ClientRuntime.class) {
             if (cleanupBlocked(context)) throw new IOException(BLOCK_MESSAGE);
-            if (operationActive) throw new IOException("A client operation is already running");
+            if (operationActive || (setupFinalizationOwner != null
+                    && (setupReservation != setupFinalizationOwner || !"setup".equals(kind))))
+                throw new IOException("A client operation is already running");
             operationActive = true;
+            operationOwned = true;
         }
         operation = kind; session = selectedSession;
         runId = System.currentTimeMillis() + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
@@ -266,53 +290,70 @@ public final class ClientRuntime {
         latestReport = null;
         File pointer = new File(work, "latest-report.txt");
         if (pointer.exists() && !pointer.delete()) {
-            synchronized (ClientRuntime.class) { operationActive = false; }
+            synchronized (ClientRuntime.class) { operationActive = false; operationOwned = false; }
             throw new IOException("Cannot invalidate the previous support report");
         }
         recordLifecycle("operation_" + kind + "_started");
     }
     private void endOperation() {
-        finished = true; inputReady = false; inputWorker.shutdownNow();
-        synchronized (ClientRuntime.class) { operationActive = false; }
+        try { finished = true; inputReady = false; inputWorker.shutdownNow(); }
+        finally { synchronized (ClientRuntime.class) {
+            if (operationOwned) { operationActive = false; operationOwned = false; }
+        } }
     }
     public File getLatestReport() { return latestReport; }
 
     public Result setup() throws Exception {
-        begin("setup", null);
-        JSONObject report = new JSONObject();
         boolean ready = false;
         try {
-            loadManifest(); check();
-            installer = new DiagnosticRuntime(context, new DiagnosticRuntime.Listener() {
-                public void onStage(String name, String detail) { stage(name, detail); }
-                public void onLog(String text) { line(text); }
-            });
-            check(); installer.setupRuntime(); check();
-            report.put("status", "setup_complete").put("passed", false)
-                    .put("scope", "Runtime installation only; no display or game execution claimed");
-            ready = true;
-        } catch (Exception e) {
-            error = message(e); report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
-        } finally {
-            DiagnosticRuntime completedInstaller = installer;
-            if (completedInstaller != null) {
-                try {
-                    JSONObject receipt = completedInstaller.getSetupReceipt();
-                    if (receipt != null) report.put("runtime_setup", receipt);
-                } catch (Exception telemetryFailure) {
-                    report.put("runtime_setup_recording_error", telemetryFailure.getClass().getSimpleName());
+            // The ownership boundary includes begin/report allocation and every
+            // evidence path: even a setup heap failure must release this owner.
+            begin("setup", null);
+            JSONObject report = new JSONObject();
+            boolean heapFailed = false;
+            try {
+                loadManifest(); check();
+                installer = new DiagnosticRuntime(context, new DiagnosticRuntime.Listener() {
+                    public void onStage(String name, String detail) { stage(name, detail); }
+                    public void onLog(String text) { line(text); }
+                });
+                check(); installer.setupRuntime(); check();
+                report.put("status", "setup_complete").put("passed", false)
+                        .put("scope", "Runtime installation only; no display or game execution claimed");
+                ready = true;
+            } catch (Exception e) {
+                error = message(e); report.put("status", cancelled ? "cancelled" : "failed").put("passed", false).put("error", error);
+            } catch (OutOfMemoryError failure) {
+                heapFailed = true;
+                throw failure;
+            } finally {
+                // The service releases its reserve and writes compact recovery
+                // evidence. Avoid masking the original heap failure with export.
+                if (!heapFailed) {
+                DiagnosticRuntime completedInstaller = installer;
+                if (completedInstaller != null) {
+                    try {
+                        JSONObject receipt = completedInstaller.getSetupReceipt();
+                        if (receipt != null) report.put("runtime_setup", receipt);
+                    } catch (Exception telemetryFailure) {
+                        report.put("runtime_setup_recording_error", telemetryFailure.getClass().getSimpleName());
+                    }
+                }
+                installer = null;
+                synchronized (this) {
+                    finished = true;
+                    if (cancelled) { ready = false; report.put("status", "cancelled").put("passed", false); }
+                }
+                endedUptime = SystemClock.uptimeMillis();
+                publish(report, false, false);
                 }
             }
+            return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets if needed. " + profileRecoveryMessage(characterProfileState(context))
+                    : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
+        } finally {
             installer = null;
-            synchronized (this) {
-                finished = true;
-                if (cancelled) { ready = false; report.put("status", "cancelled").put("passed", false); }
-            }
-            endedUptime = SystemClock.uptimeMillis();
-            try { publish(report, false, false); } finally { endOperation(); }
+            endOperation();
         }
-        return new Result(ready, latestReport, ready ? "Runtime ready. Import the pinned Atlas assets if needed. " + profileRecoveryMessage(characterProfileState(context))
-                : cancelled ? "Runtime setup stopped. Export the latest report." : "Runtime setup failed: " + error);
     }
 
     private AtlasAssetImporter importer() throws IOException {
@@ -1529,6 +1570,9 @@ public final class ClientRuntime {
                     .put("error_class",e.getClass().getSimpleName());
         }
     }
+    static JSONObject setupProcessExitHistory(Context context) throws Exception {
+        return historicalProcessExits(context);
+    }
     /** Isolates Android 11 classes from the supported Android 8-10 path. */
     private static final class ProcessExitHistory {
         static JSONObject collect(Context context,JSONObject result) throws Exception {
@@ -1559,6 +1603,7 @@ public final class ClientRuntime {
                     .put("app_version", appVersion()).put("android_sdk", Build.VERSION.SDK_INT)
                     .put("android_uid", android.os.Process.myUid()).put("device", Build.MANUFACTURER + " " + Build.MODEL)
                     .put("android_process_exit_history",historicalProcessExits(context))
+                    .put("runtime_setup_service",ClientService.setupMemoryEvidence(context))
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
@@ -1680,6 +1725,7 @@ public final class ClientRuntime {
                 synchronized (this) { for (int i=0;i<taskPngs.size();i++)
                     zipBytes(out, (String) taskSamples.get(i).get("archive_path"), taskPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
+                zipText(out, "runtime-setup-service.json", ClientService.setupMemoryEvidence(context).toString());
                 if (manifest != null) zipText(out, "runtime-manifest.json", manifest.toString(2));
                 if (generation != null) {
                     File assets = new File(generation, "assets");

@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,6 +50,7 @@ public final class ClientService extends Service {
     private final Handler main=new Handler(Looper.getMainLooper());
     private final Runnable sessionDeadlineTick=new Runnable(){@Override public void run(){
         if(destroyed)return;
+        refreshFinishedSetup();
         ClientRuntime active=runtime;if(busy&&active!=null)active.enforceSessionDeadlines();
         main.postDelayed(this,1000);
     }};
@@ -64,6 +67,15 @@ public final class ClientService extends Service {
     private File storageReport;
     private final AtomicBoolean storageStopRequested=new AtomicBoolean();
     private volatile byte[] storageRecoveryReserve;
+    private volatile byte[] setupRecoveryReserve;
+    private volatile boolean setupWorkerOwnsWake;
+    private boolean waitingForSetupFinalization;
+    private volatile File setupFailureReport;
+    private long setupStartedUtc, lastSetupCheckpointUptime;
+    private String lastSetupPhase="";
+    private String setupAppVersion="unknown",setupAppId="";
+    private static final String SETUP_PREFS="runtime_setup_ui";
+    private static final int MAX_SETUP_EVIDENCE=16384;
     private ClientRuntime.ProfileState profileState=ClientRuntime.ProfileState.PRESERVE;
     private String profileNote="Checking the saved profile…";
     private boolean blocked, uiVisible, inputReady, finishing, characterSaved, canReturnGround, canSaveLogout;
@@ -93,6 +105,7 @@ public final class ClientService extends Service {
             certified=p.getInt("certified",0);inputSent=p.getLong("input_sent",0);inputFailed=p.getLong("input_failed",0);}
         String saved=p.getString("report",null);
         if(saved!=null){try{File f=new File(saved).getCanonicalFile();if(f.isFile()&&f.getPath().startsWith(getFilesDir().getCanonicalPath()+File.separator))report=f;}catch(Exception ignored){}}
+        recoverSetupOperation();
         SharedPreferences storage=getSharedPreferences("storage_ui",MODE_PRIVATE);
         String storagePath=storage.getString("report",null);
         if(storagePath!=null)try{File f=new File(storagePath);File parent=new File(getCacheDir().getCanonicalFile(),"storage-tools");if(Files.isRegularFile(f.toPath(),LinkOption.NOFOLLOW_LINKS)&&f.getCanonicalFile().getParentFile().equals(parent))storageReport=f;}catch(Exception ignored){}
@@ -248,6 +261,168 @@ public final class ClientService extends Service {
             return result.put("status","available");
         }catch(Exception ignored){try{result.put("status","unavailable");}catch(Exception ignoredAgain){}return result;}
     }
+    /** One bounded durable setup checkpoint, also included in ordinary support ZIPs. */
+    public static JSONObject setupMemoryEvidence(Context context) {
+        try {
+            String raw=context.getSharedPreferences(SETUP_PREFS,MODE_PRIVATE).getString("progress",null);
+            if(raw==null)return new JSONObject().put("status","not_recorded");
+            if(raw.length()>MAX_SETUP_EVIDENCE)return new JSONObject().put("status","checkpoint_exceeded_bound");
+            return new JSONObject(raw);
+        } catch(Exception ignored) {
+            try{return new JSONObject().put("status","unavailable");}catch(Exception impossible){return new JSONObject();}
+        }
+    }
+    private String setupAppVersion() {
+        try {
+            String version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;
+            return version==null?"unknown":version.substring(0,Math.min(80,version.length()));
+        } catch(Exception ignored){return "unknown";}
+    }
+    private synchronized void checkpointSetup(String phase,String text,String status,boolean force) throws IOException {
+        long now=SystemClock.uptimeMillis();
+        String boundedPhase=phase==null?"":phase.substring(0,Math.min(80,phase.length()));
+        if(!force&&boundedPhase.equals(lastSetupPhase)&&now-lastSetupCheckpointUptime<5000)return;
+        try {
+            Runtime vm=Runtime.getRuntime();
+            JSONObject value=new JSONObject().put("format",1).put("scope","runtime_setup_service_diagnostic")
+                    .put("application_id",setupAppId).put("app_version",setupAppVersion).put("android_sdk",Build.VERSION.SDK_INT)
+                    .put("device",(Build.MANUFACTURER+" "+Build.MODEL).substring(0,Math.min(160,(Build.MANUFACTURER+" "+Build.MODEL).length())))
+                    .put("status",status).put("phase",boundedPhase)
+                    .put("detail",text==null?"":text.substring(0,Math.min(240,text.length())))
+                    .put("started_utc_ms",setupStartedUtc).put("updated_utc_ms",System.currentTimeMillis())
+                    .put("elapsed_ms",Math.max(0,System.currentTimeMillis()-setupStartedUtc))
+                    .put("pid",android.os.Process.myPid()).put("java_heap_used_bytes",vm.totalMemory()-vm.freeMemory())
+                    .put("java_heap_limit_bytes",vm.maxMemory()).put("native_heap_allocated_bytes",Debug.getNativeHeapAllocatedSize())
+                    .put("game_execution_requested",false).put("runtime_cleanup_requested",false);
+            String raw=value.toString();
+            if(raw.length()>MAX_SETUP_EVIDENCE)throw new IOException("Setup checkpoint exceeded its bound");
+            if(!getSharedPreferences(SETUP_PREFS,MODE_PRIVATE).edit().putBoolean("was_busy","running".equals(status))
+                    .putString("progress",raw).commit())throw new IOException("Setup checkpoint could not be saved");
+            lastSetupCheckpointUptime=now;lastSetupPhase=boundedPhase;
+        } catch(IOException failure){throw failure;}
+        catch(Exception failure){throw new IOException("Setup checkpoint could not be saved",failure);}
+    }
+    private File writeSetupRecoveryReport(JSONObject evidence) throws IOException {
+        try {
+            String raw=evidence.toString();
+            if(raw.length()>MAX_SETUP_EVIDENCE)throw new IOException("Setup evidence exceeded its bound");
+            File base=getFilesDir().getCanonicalFile(),client=new File(base,"client"),reports=new File(client,"reports");
+            File directory=new File(reports,"setup-recovery-"+System.currentTimeMillis()+"-"+UUID.randomUUID().toString());
+            for(File path:new File[]{client,reports,directory}) {
+                if(Files.exists(path.toPath(),LinkOption.NOFOLLOW_LINKS)&&!Files.isDirectory(path.toPath(),LinkOption.NOFOLLOW_LINKS))
+                    throw new IOException("Setup evidence directory is linked or invalid");
+                if(!Files.exists(path.toPath(),LinkOption.NOFOLLOW_LINKS))Files.createDirectory(path.toPath());
+            }
+            File target=new File(directory,"support.zip");
+            try(ZipOutputStream out=new ZipOutputStream(Files.newOutputStream(target.toPath(),StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS))) {
+                out.putNextEntry(new ZipEntry("runtime-setup-service.json"));out.write(raw.getBytes(StandardCharsets.UTF_8));out.closeEntry();
+                JSONObject wrapper=new JSONObject().put("format",1).put("operation","setup_recovery").put("passed",false)
+                        .put("app_id",evidence.optString("application_id")).put("app_version",evidence.optString("app_version"))
+                        .put("gameplay_validated",false).put("runtime_setup_service",evidence);
+                out.putNextEntry(new ZipEntry("wrapper.json"));out.write(wrapper.toString().getBytes(StandardCharsets.UTF_8));out.closeEntry();
+            }
+            return target;
+        } catch(IOException failure){throw failure;}
+        catch(Exception failure){throw new IOException("Setup recovery report could not be saved",failure);}
+    }
+    private void recoverSetupOperation() {
+        SharedPreferences preferences=getSharedPreferences(SETUP_PREFS,MODE_PRIVATE);
+        if(!preferences.getBoolean("was_busy",false))return;
+        if(ClientRuntime.setupFinalizationInProgress()) {
+            waitingForSetupFinalization=true;
+            stage="Previous runtime setup finishing";
+            detail="Waiting for the previous setup worker to stop safely.";
+            return;
+        }
+        stage="Previous runtime setup interrupted";
+        detail="Setup did not complete. Export the report for its last phase and this app's Android exit reason.";
+        try {
+            JSONObject recovered=setupMemoryEvidence(this).put("status","interrupted")
+                    .put("recovered_utc_ms",System.currentTimeMillis())
+                    .put("android_process_exit_history",ClientRuntime.setupProcessExitHistory(this));
+            String raw=recovered.toString();
+            if(raw.length()>MAX_SETUP_EVIDENCE)throw new IOException("Recovered setup evidence exceeded its bound");
+            report=writeSetupRecoveryReport(recovered);
+            preferences.edit().putBoolean("was_busy",false).putString("progress",raw).commit();
+            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false)
+                    .putString("stage",stage).putString("detail",detail).putString("report",report.getPath()).commit();
+        } catch(Exception ignored) {
+            detail="Setup did not complete. Its last checkpoint will be included in the next support report.";
+        }
+    }
+    private ClientRuntime.Result executeSetup(ClientRuntime instance) throws Exception {
+        try {
+            setupRecoveryReserve=new byte[128*1024];
+            checkpointSetup("Starting","Preparing the pinned runtime","running",true);
+            ClientRuntime.Result result=instance.setup();
+            checkpointSetup("Finished",result.summary,result.passed?"complete":"stopped",true);
+            return result;
+        } catch(OutOfMemoryError failure) {
+            setupRecoveryReserve=null;
+            String message="Runtime setup stopped at its Java memory limit. Close other apps and export the report before retrying.";
+            try {
+                checkpointSetup(lastSetupPhase,message,"java_heap_exhausted",true);
+                setupFailureReport=writeSetupRecoveryReport(setupMemoryEvidence(this));
+            } catch(Exception|OutOfMemoryError ignored) { /* The last durable phase remains available after restart. */ }
+            throw new IOException(message);
+        } finally { setupRecoveryReserve=null; }
+    }
+    private File validSetupReport(String path) throws IOException {
+        if(path==null||path.length()>4096)return null;
+        File selected=new File(path);
+        if(!Files.isRegularFile(selected.toPath(),LinkOption.NOFOLLOW_LINKS))return null;
+        File client=new File(getFilesDir().getCanonicalFile(),"client"),reports=new File(client,"reports");
+        if(!Files.isDirectory(client.toPath(),LinkOption.NOFOLLOW_LINKS)||!Files.isDirectory(reports.toPath(),LinkOption.NOFOLLOW_LINKS))return null;
+        File canonical=selected.getCanonicalFile();
+        String prefix=reports.getCanonicalPath()+File.separator;
+        return canonical.getPath().startsWith(prefix)?canonical:null;
+    }
+    private void refreshFinishedSetup() {
+        if(!waitingForSetupFinalization||ClientRuntime.setupFinalizationInProgress())return;
+        waitingForSetupFinalization=false;
+        SharedPreferences preferences=getSharedPreferences(PREFS,MODE_PRIVATE);
+        stage=preferences.getString("stage","Runtime setup stopped");
+        detail=preferences.getString("detail","Export the latest report before retrying.");
+        try{report=validSetupReport(preferences.getString("report",null));}catch(IOException ignored){report=null;}
+        publish();
+    }
+    private void finishSetupWorker(PowerManager.WakeLock operationWake,Exception failure,Object owner,ClientRuntime.Result result,File sourceReport) {
+        setupRecoveryReserve=null;
+        try {
+            if(ClientRuntime.ownsSetupReservation(owner)) {
+                if(failure!=null&&"running".equals(setupMemoryEvidence(this).optString("status")))
+                    checkpointSetup(lastSetupPhase,failure.getMessage(),"stopped",true);
+                String terminalStage=stopping?"Stopped":failure!=null?"Runtime setup stopped":result!=null&&result.passed?"Runtime ready":"Runtime setup incomplete";
+                String terminalDetail=stopping?"The operation stopped. Export the latest report to review cleanup.":failure!=null?"Export the latest report. "+(failure.getMessage()==null?failure.getClass().getSimpleName():failure.getMessage()):result==null?"Export the latest report.":result.summary;
+                terminalDetail=terminalDetail.substring(0,Math.min(600,terminalDetail.length()));
+                File terminalReport=setupFailureReport!=null?setupFailureReport:result!=null?result.report:sourceReport;
+                getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false)
+                        .putString("stage",terminalStage).putString("detail",terminalDetail)
+                        .putString("report",terminalReport==null?null:terminalReport.getPath()).commit();
+            }
+        } catch(Exception|OutOfMemoryError ignored) { /* Keep the last durable checkpoint. */ }
+        finally {
+            try { if(operationWake!=null&&operationWake.isHeld())operationWake.release(); }
+            finally {
+                setupWorkerOwnsWake=false;
+                ClientRuntime.releaseSetupReservation(owner);
+                // This volatile admission flag is last: a following setup cannot
+                // acquire its wake before all of the old owner's writes finish.
+                busy=false;
+            }
+        }
+    }
+    private void failedOperationDispatch(boolean setup,PowerManager.WakeLock operationWake,Object owner) {
+        try {
+            busy=false;runtime=null;inputReady=false;finishing=false;
+            stage="Operation could not start";detail="Close other apps and export the latest report before retrying.";
+            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false).putString("stage",stage).putString("detail",detail).apply();
+            stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
+        } finally {
+            if(setup)finishSetupWorker(operationWake,new IOException("Runtime setup could not be dispatched"),owner,null,null);
+            else if(operationWake!=null&&operationWake.isHeld())operationWake.release();
+        }
+    }
     private void recoverStorageOperation(SharedPreferences preferences){
         if(!preferences.getBoolean("was_busy",false))return;
         storagePlan=null;storageBusy=false;
@@ -332,7 +507,7 @@ public final class ClientService extends Service {
         if(STORAGE_SCAN.equals(action)||STORAGE_CLEAN.equals(action)){startStorage(intent,STORAGE_CLEAN.equals(action));return START_NOT_STICKY;}
         if(FINISH.equals(action)){requestFinish();return START_NOT_STICKY;}
         if(STOP.equals(action)&&storageBusy){storageStopRequested.set(true);storageStatus="Cancelling storage work; waiting for owned file operations to finish…";publish();notifyStatus();return START_NOT_STICKY;}
-        if(STOP.equals(action)){ClientRuntime r=runtime;if(busy&&!stopping&&r!=null&&r.requestStop()){stopping=true;stage="Stopping";detail="Waiting for the client and Wine to close.";publish();notifyStatus();}return START_NOT_STICKY;}
+        if(STOP.equals(action)){ClientRuntime r=runtime;if(busy&&!stopping&&r!=null&&r.requestStop()){stopping=true;stage="Stopping";detail=setupWorkerOwnsWake?"Waiting for runtime setup to stop safely.":"Waiting for the client and Wine to close.";publish();notifyStatus();}return START_NOT_STICKY;}
         if(!SETUP.equals(action)&&!IMPORT.equals(action)&&!RUN.equals(action)&&!CREATE.equals(action))return START_NOT_STICKY;
         if(busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()||ClientRuntime.cleanupBlocked(this)){blocked=ClientRuntime.cleanupBlocked(this);if(blocked){stage="Cleanup needs attention";detail="Export the report, force-stop this app in Android settings, then reopen.";publish();}return START_NOT_STICKY;}
         if(RUN.equals(action)||CREATE.equals(action)){
@@ -345,42 +520,54 @@ public final class ClientService extends Service {
         }
         final android.net.Uri importUri=intent.getData();
         if(IMPORT.equals(action)&&importUri==null)return START_NOT_STICKY;
+        final boolean setup=SETUP.equals(action), importing=IMPORT.equals(action), creating=CREATE.equals(action);final String selectedSession;
+        final Object setupOwner;
+        try{setupOwner=setup?ClientRuntime.acquireSetupReservation(this):null;}
+        catch(IOException failure){stage="Previous operation finishing";detail=failure.getMessage();publish();return START_NOT_STICKY;}
+        PowerManager.WakeLock dispatchWake=null;
+        try {
         storagePlan=null;
         busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||CREATE.equals(action))?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
-        detail=SETUP.equals(action)?"Download and unpack the private runtime once.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
+        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).remove("report").apply();
+        selectedSession=session;
+        if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}
         startForeground(NOTICE,notification());
-        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");wake.acquire(95*60*1000L);
+        wake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:operation");dispatchWake=wake;wake.acquire(95*60*1000L);
+        final PowerManager.WakeLock operationWake=dispatchWake;
         publish();
-        final boolean setup=SETUP.equals(action), importing=IMPORT.equals(action), creating=CREATE.equals(action);final String selectedSession=session;
         ClientRuntime instance=new ClientRuntime(this,new ClientRuntime.Listener(){
-            @Override public void onStage(String name,String text){main.post(()->{if(!busy||destroyed)return;if(!stopping&&!finishing){stage=name;detail=text;}publish();notifyStatus();});}
+            @Override public void onStage(String name,String text){if(setup)try{checkpointSetup(name,text,"running",false);}catch(IOException failure){throw new IllegalStateException("Setup checkpoint could not be saved",failure);}main.post(()->{if(!busy||destroyed)return;if(!stopping&&!finishing){stage=name;detail=text;}publish();notifyStatus();});}
             @Override public void onLog(String text){main.post(()->{if(destroyed)return;logs.append(text).append('\n');if(logs.length()>6000)logs.delete(0,logs.length()-6000);publish();});}
             @Override public void onFrame(int[] pixels,int width,int height,long sequence){queueFrame(pixels,width,height,sequence);}
             @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean returnAvailable,boolean saveAvailable,long sent,long failed,long deadline,String phase,long saveDeadline,long movementDeadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canReturnGround=returnAvailable;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;sessionPhase=phase;saveDeadlineUptimeMillis=saveDeadline;movementDeadlineUptimeMillis=movementDeadline;publish();if(noticeChanged)notifyStatus();});}
         });
+        if(setup)instance.attachSetupReservation(setupOwner);
         runtime=instance;instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;
-            try{result=setup?instance.setup():importing?instance.importAssets(importUri):(creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
+            try{result=setup?executeSetup(instance):importing?instance.importAssets(importUri):(creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
+            finally{if(setup)finishSetupWorker(operationWake,failure,setupOwner,result,instance.getLatestReport());}
             final ClientRuntime.Result outcome=result;final Exception error=failure;
             main.post(()->{
-                if(destroyed)return;
+                if(destroyed||runtime!=instance)return;
                 blocked=instance.isCleanupBlocked();busy=false;inputReady=false;finishing=false;
                 refreshProfileState();
-                report=outcome!=null?outcome.report:instance.getLatestReport();
+                report=setup&&setupFailureReport!=null?setupFailureReport:outcome!=null?outcome.report:instance.getLatestReport();
                 if(blocked){stage="Cleanup needs attention";detail="Export the report, then force-stop COH Character Reopen in Android settings before reopening.";}
                 else if(stopping){stage="Stopped";detail="The operation stopped. Export the latest report to review cleanup.";}
-                else if(error!=null){stage="Test failed";detail="Export the latest report. "+(error.getMessage()==null?error.getClass().getSimpleName():error.getMessage());}
+                else if(error!=null){stage=setup?"Runtime setup stopped":"Test failed";detail="Export the latest report. "+(error.getMessage()==null?error.getClass().getSimpleName():error.getMessage());}
                 else if(outcome!=null&&outcome.passed){stage=setup?"Runtime ready":importing?"Client data ready":creating?"Character creation check complete":"Character reopen check complete";detail=outcome.summary;}
-                else {stage=creating?"Character creation check incomplete":"Character reopen check incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
+                else {stage=setup?"Runtime setup incomplete":creating?"Character creation check incomplete":"Character reopen check incomplete";detail=outcome==null?"Export the latest report.":outcome.summary;}
                 runtime=null;
                 getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",false).putString("stage",stage).putString("detail",detail).putString("report",report==null?null:report.getPath()).putInt("certified",certified).putLong("input_sent",inputSent).putLong("input_failed",inputFailed).apply();
-                if(wake!=null&&wake.isHeld())wake.release();stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
+                if(operationWake!=null&&operationWake.isHeld())operationWake.release();stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
             });
         });
+        } catch(RuntimeException failure){failedOperationDispatch(setup,dispatchWake,setupOwner);}
+        catch(OutOfMemoryError failure){if(!setup)throw failure;setupRecoveryReserve=null;failedOperationDispatch(true,dispatchWake,setupOwner);}
         return START_NOT_STICKY;
     }
     private Notification notification(){
@@ -391,5 +578,5 @@ public final class ClientService extends Service {
         return b.build();
     }
     private void notifyStatus(){if(busy||storageBusy)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
-    @Override public void onDestroy(){destroyed=true;if(storageBusy)storageStopRequested.set(true);main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
+    @Override public void onDestroy(){destroyed=true;if(storageBusy)storageStopRequested.set(true);main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(!setupWorkerOwnsWake&&wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
 }

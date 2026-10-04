@@ -1,12 +1,109 @@
 import importlib.util
+import contextlib
+import io
 from pathlib import Path
+import subprocess
+import tempfile
 import unittest
+from unittest import mock
 
 spec=importlib.util.spec_from_file_location('storage_change',Path(__file__).with_name('classify_storage_cleanup_change.py'))
 change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_actual_candidate_change_set_routes_to_the_setup_workflow(self):
+        from classify_interactive_change import runtime_required
+        root = Path(__file__).resolve().parents[3]
+        names = set(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD'], cwd=root).decode().split('\0'))
+        names.update(subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard', '-z'], cwd=root).decode().split('\0'))
+        names.discard('')
+        if not names:
+            names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
+            names.discard('')
+        self.assertTrue(names, 'Candidate source change evidence required')
+        self.assertLessEqual(names, change.SETUP_ALLOWED, 'Candidate contains an unclassified publication path')
+        fixture = 'tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java'
+        self.assertIn(fixture, change.SETUP_ALLOWED)
+        for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required,
+                runtime_required):
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, sorted(names)))
+
+    def test_setup_wrapper_routes_its_exact_scope_away_from_all_four_old_releases(self):
+        names = sorted(change.SETUP_ALLOWED)
+        for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required):
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for marker in change.SETUP_SOURCES:
+                    self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, [marker]))
+
+    def test_setup_scope_cannot_hide_guest_native_manifest_or_unrelated_java_edits(self):
+        names = sorted(change.SETUP_ALLOWED)
+        for other in ('android/guest/character_reopen_diagnostic.py', 'android/guest/local_character_server.py',
+                'upstream/ouroboros/DBServer/src/dbinit.c', 'android/native/client-launcher.c',
+                'android/interactive/src/main/AndroidManifest.xml', change.JAVA+'ClientInput.java',
+                'tools/android/interactive/build_task_receipt_cleanup_apk.py', 'unreviewed.py'):
+            for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required):
+                with self.subTest(other=other, function=function.__name__):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_setup_requires_direct_parent_push_and_a_setup_source(self):
+        names = sorted(change.SETUP_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md']),
+                ('push', 'a'*40, 'b'*40, 'a'*40,
+                    ['tools/android/interactive/classify_storage_cleanup_change.py'])):
+            for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required):
+                with self.subTest(event=event, before=before, files=files, function=function.__name__):
+                    self.assertTrue(function(event, before, head, parent, files))
+        for historical in (change.ALLOWED, change.STARTUP_ALLOWED, change.RECEIPT_ALLOWED):
+            self.assertTrue(change.receipt_required('push', 'a'*40, 'b'*40, 'a'*40, sorted(historical)))
+
+    def test_setup_scope_has_only_the_six_changed_java_sources_and_one_addition(self):
+        diagnostic = 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/'
+        self.assertEqual({name for name in change.SETUP_ALLOWED if name.startswith('android/') and name.endswith('.java')}, {
+            change.JAVA+'ClientRuntime.java', change.JAVA+'ClientService.java',
+            change.JAVA+'ClientActivity.java', change.JAVA+'ClientSurface.java',
+            diagnostic+'DiagnosticRuntime.java', diagnostic+'TarExtractor.java', diagnostic+'SetupMemoryGuard.java'})
+
+    def test_receipt_workflow_obeys_setup_routing_and_keeps_manual_dispatch(self):
+        root = Path(__file__).resolve().parents[3]
+        text = (root/'.github/workflows/android-task-receipt-cleanup.yml').read_text()
+        self.assertIn('receipt_required: ${{ steps.scope.outputs.receipt_required }}', text)
+        self.assertIn('needs: changes', text)
+        self.assertIn('needs: [changes, qualify]', text)
+        self.assertEqual(text.count("needs.changes.outputs.receipt_required != 'false'"), 2)
+        self.assertIn('fetch-depth: 2', text)
+        self.assertIn('COH_PUSH_BEFORE: ${{ github.event.before }}', text)
+        self.assertIn('workflow_dispatch:', text)
+
+    def test_classifier_emits_receipt_gate_and_defaults_to_required_without_history(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)/'outputs'
+            environment = {'GITHUB_OUTPUT': str(output), 'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40}
+            values = ['a'*40, 'b'*40, b'tools/android/interactive/build_setup_memory_apk.py\0']
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
+                'recovery_required=false\nreceipt_required=false\n')
+            output.unlink()
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
+                'recovery_required=true\nreceipt_required=true\n')
+
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)
         for function in (change.task_required, change.cleanup_required, change.recovery_required):
@@ -112,6 +209,6 @@ class StorageRoutingTests(unittest.TestCase):
             ('push','c'*40,'b'*40,'a'*40,known),
             ('push','a'*40,'a'*40,'a'*40,known),
             ('push','a'*40,'b'*40,'a'*40,[]),
-            ('push','a'*40,'b'*40,'a'*40,[change.JAVA+'ClientActivity.java']),
+            ('push','a'*40,'b'*40,'a'*40,[change.JAVA+'ClientInput.java']),
             ('push','a'*40,'b'*40,'a'*40,['docs/HANDOFF.md'])):
             self.assertTrue(change.task_required(event,before,head,parent,names))
