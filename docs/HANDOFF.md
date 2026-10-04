@@ -1,5 +1,36 @@
 # City of Heroes Android handoff
 
+**0.13.4 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.4/COH-Atlas-Gameplay-0.13.4.apk)
+from source `6d16acf8330774e5fee4c0410c9cc56746d60b58`.
+[CI 37171443387](https://github.com/Russianranger/coh-android/actions/runs/37171443387)
+passed qualification and wrapper packaging, with no native build:
+**374 checks / 25 suites / zero skips / 148 source pins**. APK is
+**676,108,222 bytes**, the same size as 0.13.3; SHA-256
+`5cfd2cd929467f1797d72a142cd39999c3d5dbceee65a02d4baf7bba287f2052`.
+[Publication receipt](android-evidence/task-receipt-cleanup-0.13.4-publication.json)
+records the actual public download, all 67 payload digests, 64 retained payloads,
+corrected DEX/resources, exact server archive extraction, source pins and public
+checksum/instructions. CI official SDK signature/version checks are bound to
+identical public bytes; no separate local SDK rerun is claimed. The signer is
+retained. One Java source/DEX, the reopen helper and its two manifests change;
+all native payloads and the four prior startup improvements remain exact.
+
+Install over the app, **Set up runtime once**, then **Reopen saved THORHERO** as
+an explicit startup-only connection/timing check. Existing journal rows are
+preserved and no task qualification is requested. Stop and export after
+connection; a cancelled verdict without ordinary Save is timing evidence, not
+an ordinary-save or gameplay pass. No reinstall, import or completed physical
+gate repetition is required. [Testing instructions](COH-Atlas-Gameplay-0.13.4-testing.txt).
+The prior generation remains available for rollback and reviewed storage cleanup.
+Actual device startup improvement and the <=300-second target remain open.
+
+The retained activity's static explanatory paragraphs still describe the old
+task test. Follow the new startup-only status and 0.13.4 instructions; adapt that
+static copy to the active mode on the next UI pass. Task controls are gated off
+for the explicit startup-only mode. Do not replace/rebuild this qualified APK
+solely for that legacy explanatory copy.
+
 **Latest device result: 0.13.3 Reopen stopped on a stale task-helper receipt;
 PostgreSQL login passed (October 4, 2026 UTC).**
 [Failure receipt](android-evidence/startup-schedule-0.13.3-reopen-blocked.json)
@@ -21,7 +52,7 @@ diagnostic requires an empty journal. The approved next activity is startup
 timing, so explicitly select ordinary saved-character Reopen, preserve existing
 task rows and do not reopen the accepted task gate. The 0.13.4 correction is implemented with an explicit startup-only flag;
 **374 checks / 25 suites / zero skips / 148 source pins** passed locally.
-CI publication remains pending. Native startup optimizations and all earlier
+CI publication passed. Native startup optimizations and all earlier
 physical acceptances remain retained. Changed reopen helper
 requires one runtime setup; no reinstall, data clear, import or character
 recreation is justified. [Continuation instructions](COH-Atlas-Gameplay-0.13.4-testing.txt).
