@@ -1,6 +1,27 @@
 # City of Heroes Android handoff
 
-**0.13.9 bounded continuation in qualification (October 4, 2026 UTC).**
+**0.13.9 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.9/COH-Atlas-Gameplay-0.13.9.apk)
+from APK source `7e905d6a9241848b4635a069a962c42382a9a200`, version **0.13.9 / code 24**,
+on the existing `codex/character-persistence-continuation` branch.
+[Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.9)
+is a published prerelease. [Dedicated CI 37233136368](https://github.com/Russianranger/coh-android/actions/runs/37233136368)
+passed all three jobs: **742 checks / 46 suites / zero skips / 276 source pins**,
+all three real PostgreSQL transaction fixtures, official SDK version and v2/v3
+signature verification with the existing signer, and publication.
+
+The public APK is **701,679,895 bytes**, **184,320 bytes** above 0.13.8;
+SHA-256 `64644f8b82c7bde63304bc36009043dccacc171e5cae8df9d537cbadf4d60b9d`.
+[Publication receipt](android-evidence/client-streaming-0.13.9-publication.json)
+records an independent public download, matching release API and formal build
+digests, all **71 payloads: 64 retained / 7 replaced / zero added**, all 276
+qualification source pins, and all 5,878 original animation tracks. It checks
+the exact immediate 0.13.8 Game/client DLLs, DEX/resources, server/cache lineage,
+all 323 prior visual leaves and the six additions. Local SDK/signature
+reverification was not performed; official CI checks bind to this identical
+public APK SHA-256. The following documentation checkpoint is a descendant of
+the APK source and does not imply another APK/native compilation.
+
 The live repository was first confirmed at `af7e6a52926f842044b3115ae4729809df8997a2`;
 0.13.8 was already published and has not been recreated. Read-only exact
 candidate discovery is committed at `17f46d5e26fb04ef3411348c525343bc76013bdf`.
@@ -8,7 +29,7 @@ Continue the same branch and open draft PR #1; main remains
 `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. No newer physical 0.13.8 result
 was found. Preserve the accepted 0.13.7 device result and all prior milestones.
 
-The next wrapper preserves the exact public 0.13.8 APK Game/client ZIP, 20 DLLs,
+This wrapper preserves the exact public 0.13.8 APK Game/client ZIP, 20 DLLs,
 corrected Android DEX/resources and 19 Java sources, DbServer/MapServer and server
 packs, cache schemas, graphics and all animation tracks. It changes three guest
 helpers, append-only visual payloads and two verification manifests only.
@@ -50,7 +71,19 @@ Physical startup/streaming/visual success remains pending. Preserve BIN phase
 instrumentation; do not bypass freshness or change native decoder/cache formats
 without new device timing. Repeated `Reading Car_*.txt` log lines are not proof
 of repeated disk reads: stock seqLoad logs before its in-memory cache lookup.
-Publication/host qualification will be recorded here once complete.
+The complete new outer `coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip`, including its
+unchanged nested `guest-report.zip`, is the next required physical evidence;
+export after Abort and owned cleanup. Include the three timings and far/near
+screenshots. An intentional cancellation from Abort is expected. The baseline
+pass is the existing hero reaching Atlas with prior assets intact, clean owned
+worker shutdown, no package-validation error and no material startup regression.
+Accept an improvement only from observed timing/visual results. A crash, failed
+Atlas entry, missing previously working assets, cleanup failure or repeatable
+material regression is a failure; export that attempt without clearing data.
+Broader NPC/world/FX coverage, `GEO_Collar_MAGIC`, unresolved material aliases
+and distant white-object causes remain open. Software llvmpipe remains active.
+Do not repeat accepted character/task/save/combat/storage gates or claim a
+hardware graphics or complete combat milestone from this wrapper.
 
 **0.13.8 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.8/COH-Atlas-Gameplay-0.13.8.apk)
