@@ -103,6 +103,44 @@ SETUP_ALLOWED = SETUP_SOURCES | frozenset({
     'docs/android-evidence/setup-memory-0.13.4-user-report.json',
     'docs/android-evidence/setup-memory-0.13.5-publication.json',
 })
+BUNDLE_SOURCES = frozenset({
+    '.github/workflows/android-startup-bundle.yml',
+    'tools/android/interactive/build_startup_bundle_apk.py',
+    'tools/android/interactive/qualify_startup_bundle.py',
+    'tools/android/interactive/test_startup_bundle_package.py',
+    'tools/android/interactive/package_startup_bundle_dbserver.py',
+    'tools/android/interactive/test_startup_bundle_dbserver.py',
+    'tools/android/interactive/test_startup_bundle_save.py',
+    'tools/android/interactive/package_startup_bundle_client.py',
+    'tools/android/interactive/test_startup_bundle_client.py',
+    'patches/startup-bundle/0001-pg-cancelled-child-insert.patch',
+    'patches/startup-bundle-client/0001-verified-texture-root.patch',
+    'database/startup-bundle-client/overlay/Game/src/render/coh_texture_header_root.h',
+    'android/guest/character_creation_diagnostic.py',
+    'android/guest/character_server_data_cache.py',
+    'android/guest/texture_header_index.py',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/local_character_server.py',
+})
+BUNDLE_ALLOWED = BUNDLE_SOURCES | frozenset({
+    '.github/workflows/android-startup-schedule.yml',
+    '.github/workflows/android-setup-memory.yml',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/interactive/test_character_readiness.py',
+    'tools/android/interactive/test_server_worktree_reuse.py',
+    'tools/android/interactive/test_texture_header_index.py',
+    'tools/android/interactive/test_native_client_upgrade.py',
+    'tools/android/interactive/test_responsiveness_package.py',
+    'tools/android/interactive/test_setup_memory_package.py',
+    'docs/COH-Atlas-Gameplay-0.13.6-testing.txt', 'docs/HANDOFF.md',
+    'docs/android-evidence/startup-bundle-0.13.5-device-result.json',
+    'docs/android-evidence/startup-bundle-0.13.6-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -121,6 +159,7 @@ ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
 
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
+        and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0'*40 and before == parent and head != before
         and names and set(names) <= allowed)
 
@@ -140,12 +179,18 @@ def setup_push(event, before, head, parent, names):
         and set(names) & SETUP_SOURCES)
 
 
+def bundle_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, BUNDLE_ALLOWED)
+        and set(names) & BUNDLE_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
         or startup_push(event, before, head, parent, names)
         or receipt_push(event, before, head, parent, names)
-        or setup_push(event, before, head, parent, names))
+        or setup_push(event, before, head, parent, names)
+        or bundle_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
@@ -153,18 +198,28 @@ def cleanup_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names)
         or receipt_push(event, before, head, parent, names)
-        or setup_push(event, before, head, parent, names))
+        or setup_push(event, before, head, parent, names)
+        or bundle_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
     """The newer source-bound startup derivative owns only its explicit scope."""
     return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names)
-        or setup_push(event, before, head, parent, names))
+        or setup_push(event, before, head, parent, names)
+        or bundle_push(event, before, head, parent, names))
 
 
 def receipt_required(event, before, head, parent, names):
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
-    return not setup_push(event, before, head, parent, names)
+    return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names))
+
+
+def schedule_required(event, before, head, parent, names):
+    return not bundle_push(event, before, head, parent, names)
+
+
+def setup_required(event, before, head, parent, names):
+    return not bundle_push(event, before, head, parent, names)
 
 
 def main():
@@ -172,6 +227,8 @@ def main():
     cleanup = True
     recovery = True
     receipt = True
+    schedule = True
+    setup = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -184,6 +241,10 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         receipt = receipt_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        schedule = schedule_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        setup = setup_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
@@ -191,6 +252,8 @@ def main():
         output.write('cleanup_required='+str(cleanup).lower()+'\n')
         output.write('recovery_required='+str(recovery).lower()+'\n')
         output.write('receipt_required='+str(receipt).lower()+'\n')
+        output.write('schedule_required='+str(schedule).lower()+'\n')
+        output.write('setup_required='+str(setup).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

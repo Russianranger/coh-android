@@ -9,6 +9,31 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_bundle_routes_only_exact_explicit_native_and_guest_paths_to_its_own_pipeline(self):
+        names = sorted(change.BUNDLE_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('upstream/ouroboros/DBServer/src/container_sql.c',
+                'upstream/ouroboros/Game/src/render/tex.c', 'android/guest/local_login_server.py',
+                'patches/startup-bundle/unreviewed.patch', 'android/native/client-launcher.c',
+                'assets/server-cache-manifest.json', 'android/interactive/src/main/AndroidManifest.xml',
+                'unreviewed.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_bundle_dispatch_and_invalid_or_ambiguous_history_request_full_runtime(self):
+        names = sorted(change.BUNDLE_ALLOWED)
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'invalid', 'a'*40),
+                ('push', 'a'*40, None, 'a'*40),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+
     def test_setup_wrapper_reuses_runtime_for_its_exact_known_scope(self):
         names = sorted(change.SETUP_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -46,7 +71,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted(change.SHELL_ONLY | change.RESPONSIVENESS_ONLY)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),

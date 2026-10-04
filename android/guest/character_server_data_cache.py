@@ -16,6 +16,8 @@ MARKER_LIMIT = 8 * 1024**2
 DIRECTORY_LIMIT = 20000
 PRIVATE_ENTRY_LIMIT = 16384
 PRIVATE_BYTES_LIMIT = 2 * 1024**3
+CHANGED_DIRECTORY_LIMIT = 64
+CHANGED_ENTRY_LIMIT = 20000
 PRIVATE_ROOTS = ('bin', 'geobin', 'server')
 CONFIG = 'server/db/servers.cfg'
 STATS = {'files', 'bytes', 'directories', 'linked_immutable_files',
@@ -153,11 +155,86 @@ class ServerDataCache:
             'Atlas cache inventory differs')
         return value
 
+    def verify_changed_directories(self, data, record, changed, directory_names):
+        """Prove changed parent metadata without accepting changed input links.
+
+        Private DB-ID map replacement or a native directory timestamp update
+        can change the parent of otherwise unchanged immutable inputs. The
+        already qualified source tree supplies its exact direct-child layout;
+        every child must remain a recorded real directory, a receipt-listed
+        private regular file, or the original read-only source link. This is
+        bounded to changed parents, never a second whole-data-tree mirror.
+        """
+        require(len(changed) <= CHANGED_DIRECTORY_LIMIT,
+                'Changed Atlas directory validation bound exceeded')
+        source = Path(self.identity['source_data'])
+        source_identity = fingerprint(source, directory=True)
+        require(source_identity['device'] == self.identity['source_device']
+                and source_identity['inode'] == self.identity['source_inode'],
+                'Atlas cache source data changed')
+        roots = [Path(value['path']) for value in self.identity['source_roots']]
+        require(any(root == source or root in source.parents for root in roots),
+                'Atlas cache source data escaped verified roots')
+        private_names = set(record['private_files'])
+        owner_uid = self.root.stat().st_uid
+        examined = 0
+        for row, observed_mtime in changed:
+            self.ctx.check()
+            name = row['path']
+            self.summary['changed_directory_under_validation'] = name or '.'
+            original = real_path(source, name, directory=True)
+            target = Path(data) / name
+            expected = set()
+            with os.scandir(original) as entries:
+                for entry in entries:
+                    self.ctx.check()
+                    examined += 1
+                    require(examined <= CHANGED_ENTRY_LIMIT,
+                            'Changed Atlas directory entry bound exceeded')
+                    expected.add(entry.name)
+            actual = set()
+            with os.scandir(target) as entries:
+                for entry in entries:
+                    self.ctx.check()
+                    examined += 1
+                    require(examined <= CHANGED_ENTRY_LIMIT,
+                            'Changed Atlas directory entry bound exceeded')
+                    actual.add(entry.name)
+                    relative = (Path(name) / entry.name).as_posix()
+                    require(entry.name in expected,
+                            'Unexpected immutable Atlas entry: ' + relative)
+                    original_path = original / entry.name
+                    original_info = original_path.lstat()
+                    info = entry.stat(follow_symlinks=False)
+                    if stat.S_ISDIR(original_info.st_mode):
+                        require(stat.S_ISDIR(info.st_mode)
+                                and info.st_uid == owner_uid
+                                and (relative in directory_names or relative in PRIVATE_ROOTS),
+                                'Immutable Atlas child directory changed: ' + relative)
+                    elif relative in private_names:
+                        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+                                and info.st_uid == owner_uid,
+                                'Private Atlas child file changed: ' + relative)
+                    else:
+                        resolved = original_path.resolve(strict=True)
+                        resolved_info = resolved.stat()
+                        require(stat.S_ISLNK(info.st_mode)
+                                and os.readlink(entry.path) == str(resolved)
+                                and any(root == resolved or root in resolved.parents for root in roots)
+                                and stat.S_ISREG(resolved_info.st_mode)
+                                and not resolved_info.st_mode & 0o222,
+                                'Immutable Atlas child link changed: ' + relative)
+            require(actual == expected, 'Immutable Atlas child layout changed: ' + (name or '.'))
+            require(target.lstat().st_mtime_ns == observed_mtime,
+                    'Immutable Atlas directory changed during validation: ' + (name or '.'))
+        self.summary.pop('changed_directory_under_validation', None)
+        return examined
+
     def verify(self, data, record):
         require(fingerprint(data, directory=True) == record['data_identity'], 'Atlas cache data root changed')
         owner_uid = self.root.stat().st_uid
         require(record['data_identity']['uid'] == owner_uid, 'Atlas cache data owner differs')
-        names = []
+        names, changed = [], []
         for row in record['directories']:
             self.ctx.check()
             require(isinstance(row, dict) and set(row) == {'path', 'device', 'inode', 'uid', 'mtime_ns'}
@@ -170,8 +247,11 @@ class ServerDataCache:
             path = Path(data) / row['path']
             fingerprint(path, directory=True)
             info = path.lstat()
-            require((info.st_dev, info.st_ino, info.st_uid, info.st_mtime_ns) ==
-                    (row['device'], row['inode'], row['uid'], row['mtime_ns']), 'Immutable Atlas directory changed')
+            require((info.st_dev, info.st_ino, info.st_uid) ==
+                    (row['device'], row['inode'], row['uid']),
+                    'Immutable Atlas directory changed: ' + (row['path'] or '.'))
+            if info.st_mtime_ns != row['mtime_ns']:
+                changed.append((row, info.st_mtime_ns))
             names.append(row['path'])
         require(len(names) == len(set(names)), 'Duplicate Atlas cache directory receipt')
         directory_names = set(names)
@@ -181,6 +261,8 @@ class ServerDataCache:
                 parent = Path(name).parent.as_posix()
                 require(('' if parent == '.' else parent) in directory_names,
                         'Incomplete immutable Atlas directory receipt')
+        changed_entries = (self.verify_changed_directories(data, record, changed, directory_names)
+                           if changed else 0)
         for row in record['anchors']:
             require(isinstance(row, dict) and set(row) == {'path', 'source', 'source_identity', 'sha256'}
                     and relative_name(row['path']) and isinstance(row['source'], str)
@@ -196,10 +278,12 @@ class ServerDataCache:
                     and not Path(row['source']).stat().st_mode & 0o222
                     and base.file_hash(Path(row['source'])) == row['sha256'], 'Atlas immutable anchor changed')
         for name in record['private_files']:
-            fingerprint(real_path(data, name))
+            require(fingerprint(real_path(data, name))['uid'] == owner_uid,
+                    'Private Atlas cache file owner changed: ' + name)
         examined = total = 0
         for name in PRIVATE_ROOTS:
             root = real_path(data, name, directory=True)
+            require(root.lstat().st_uid == owner_uid, 'Private Atlas cache root owner changed: ' + name)
             pending = [root]
             while pending:
                 self.ctx.check()
@@ -219,9 +303,18 @@ class ServerDataCache:
                                     'Private Atlas cache file owner changed')
                             total += info.st_size
                             require(total <= PRIVATE_BYTES_LIMIT, 'Private Atlas cache byte bound exceeded')
+        # Update only parent timestamps whose entire exact child layout passed,
+        # after all anchors and private entries passed as well. Checkout
+        # atomically writes the qualified receipt before taking ownership.
+        # Release keeps this pre-launch baseline and does no new input walk.
+        for row, observed_mtime in changed:
+            row['mtime_ns'] = observed_mtime
         self.summary.update(immutable_directory_checks=len(names), immutable_anchor_checks=len(record['anchors']),
                             private_entries_checked=examined, private_bytes=total,
-                            immutable_anchors=record['anchors'])
+                            immutable_anchors=record['anchors'],
+                            changed_parent_directory_checks=len(changed),
+                            changed_parent_entry_checks=changed_entries,
+                            changed_parent_paths=[row['path'] or '.' for row, _ in changed])
 
     def select_compatible_generation(self):
         """Rekey one proved closed generation in place; never rebase source links.

@@ -96,12 +96,66 @@ def client_contract(package, receipt=None):
     require(receipt is None or candidate == validate_receipt(receipt),
             'Client package and installed candidate receipts differ')
     expected = dict(candidate['retained_native_files']['client'])
-    expected['CityOfHeroes.exe'] = candidate['files']['CityOfHeroes.exe']
+    executable = candidate['files']['CityOfHeroes.exe']
+    if 'startup_bundle_client' in package:
+        executable = startup_bundle_client_contract(package, candidate)
+    expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
             and package.get('android_execution_validated') is False and package.get('gameplay_validated') is False,
             'Client candidate changed its retained DLL closure')
-    return candidate['files']['CityOfHeroes.exe']
+    return executable
+
+
+def startup_bundle_client_contract(package, candidate=None):
+    """A new client producer wraps the frozen receipt; MapServer stays frozen."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    wrapper = package.get('startup_bundle_client')
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+            'base_responsiveness_receipt_sha256', 'base_client_executable'}
+            and wrapper['base_responsiveness_receipt_sha256'] == canonical_sha(candidate)
+            and wrapper['base_client_executable'] == candidate['files']['CityOfHeroes.exe'],
+            'Startup client must retain the exact frozen native producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+            and manifest.get('format') == 1
+            and manifest.get('role') == 'verified_root_client_startup_supplement'
+            and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+            and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+            and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+            and manifest.get('build_targets') == ['Game']
+            and manifest.get('postgresql_persistence_fixture') is False
+            and manifest.get('runtime_execution_validated') is False
+            and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and manifest.get('retained_native_dependencies_changed') is False
+            and manifest.get('retained_source_inputs') == candidate['build_inputs']
+            and manifest.get('schema_sources_sha256') == candidate['retained_cache']['schema_sources_sha256']
+            and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+            'Startup client source, dependency or cache provenance differs')
+    build = manifest.get('build_input', {})
+    require(isinstance(build, dict) and build.get('format') == 1
+            and build.get('role') == manifest['role'] and build.get('source_commit') == SOURCE
+            and build.get('base_texture_build_input') == candidate['build_inputs']['client_texture']
+            and candidate['build_inputs']['client_texture'].get('texture_header_struct_bytes') == 32
+            and build.get('build_targets') == ['Game']
+            and build.get('configuration') == 'OptDebug' and build.get('architecture') == 'Win32'
+            and all(build.get(key) is False for key in ('parse6_schema_changes', 'full_texture_asset_changes',
+                'graphics_profile_changes', 'gameplay_validation_changes', 'runtime_execution_validated'))
+            and build.get('verified_root_environment') == 'COH_TEXTURE_HEADER_ROOT'
+            and build.get('missing_texture_reporting') == {'environment_variable': 'COH_STARTUP_DIAGNOSTIC_BOUND',
+                'enabled_value': '1', 'disabled_by_default': True, 'sample_limit_per_stage': 1024,
+                'retained_key_limit_per_stage': 8192, 'all_validation_retained': True}
+            and build.get('source_sha256') == {'Game/src/render/tex.c':
+                candidate['build_inputs']['client_texture'].get('patched_sha256', {}).get('Game/src/render/tex.c')}
+            and set(build.get('patched_sha256', {})) == {'Game/src/render/tex.c'}
+            and set(build.get('overlay_sha256', {})) == {'Game/src/render/coh_texture_header_root.h'}
+            and all(HEX64.fullmatch(str(value)) for field in ('patched_sha256', 'overlay_sha256')
+                    for value in build[field].values())
+            and HEX64.fullmatch(str(build.get('patch_sha256', ''))),
+            'Startup client layer changed validation or native source scope')
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(record != candidate['files']['CityOfHeroes.exe'], 'Startup client derivative is unchanged')
+    return record
 
 
 def events_progress_contract(package):

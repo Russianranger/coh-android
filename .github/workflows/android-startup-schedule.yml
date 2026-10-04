@@ -27,8 +27,22 @@ concurrency:
   group: android-startup-schedule-publication
   cancel-in-progress: false
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      schedule_required: ${{ steps.scope.outputs.schedule_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
   native:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: changes
+    if: needs.changes.outputs.schedule_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: windows-2025-vs2026
     timeout-minutes: 55
     steps:
@@ -102,8 +116,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
   qualify:
-    needs: native
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: [changes, native]
+    if: needs.changes.outputs.schedule_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -142,8 +156,8 @@ jobs:
           if-no-files-found: error
           retention-days: 90
   apk:
-    needs: [native, qualify]
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: [changes, native, qualify]
+    if: needs.changes.outputs.schedule_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     permissions:
       contents: write
       actions: read

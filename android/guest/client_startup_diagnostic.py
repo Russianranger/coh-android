@@ -317,6 +317,11 @@ def prepare_worktree(root, data, assets, identity, context):
         package = archive_manifest(archive, assets)
     candidate_receipt = (native_candidate.embedded_receipt(package)
                          if 'native_responsiveness' in package else None)
+    previous_client_record = ({'size': 9432576, 'sha256': EXE_SHA}
+                             if candidate_receipt is not None else None)
+    if 'startup_bundle_client' in package:
+        previous_client = package['startup_bundle_client']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -332,6 +337,29 @@ def prepare_worktree(root, data, assets, identity, context):
                          'normalized_mtime_epoch': CACHE_EPOCH}
     content_sha = identity_sha256({'data': worktree_data_identity(expected_identity),
                                   'native': native_closure_identity(package)})
+    def startup_index_migration_proof(report):
+        # This producer is validated by archive_manifest, and cached files are
+        # verified before every call below. Recompute the old native content
+        # identity from its frozen exact executable/DLL closure, rather than
+        # accepting a prior marker's claimed identity or a generic schema flag.
+        if 'startup_bundle_client' not in package or not report.get('reused'):
+            return report
+        wrapper = package['startup_bundle_client']
+        old_files = dict(package['files'], **{'CityOfHeroes.exe': wrapper['base_client_executable']})
+        old_native = dict(package, files=old_files)
+        old_content = identity_sha256({'data': worktree_data_identity(expected_identity),
+                                      'native': native_closure_identity(old_native)})
+        report['source_root_preserved'] = True
+        report['native_texture_index_migration'] = {
+            'format': 1, 'policy': 'verified_startup_client_layer_v1',
+            'previous_client_identity': {'content_identity_sha256': old_content,
+                'data_contract': worktree_data_identity(expected_identity)},
+            'previous_executable_sha256': wrapper['base_client_executable']['sha256'],
+            'client_executable_sha256': package['files']['CityOfHeroes.exe']['sha256'],
+            'content_identity_sha256': content_sha,
+            'layer_manifest_sha256': wrapper['manifest_sha256'],
+            'texture_header_struct_bytes': 32, 'native_source_closure_verified': True}
+        return report
     destination = root / ('client-work-' + content_sha[:24])
     def compatible_receipt(saved):
         # Only the ZIP wrapper provenance may differ. Imported generation,
@@ -359,7 +387,7 @@ def prepare_worktree(root, data, assets, identity, context):
             if actual != {'size': pin['size'], 'sha256': pin['sha256']}:
                 require(allow_native_upgrade and candidate_receipt is not None
                         and name == 'CityOfHeroes.exe'
-                        and actual == {'size': 9432576, 'sha256': EXE_SHA},
+                        and actual == previous_client_record,
                         'Cached client binary differs: ' + name)
                 upgrade = True
         for name, pin in PREREQUISITES.items():
@@ -436,13 +464,13 @@ def prepare_worktree(root, data, assets, identity, context):
             saved.update(content_identity_sha256=content_sha, worktree_key=destination.name,
                          verified_legacy_receipts=list(dict.fromkeys(lineage + [previous_receipt_sha]))[-16:])
             base.private_write(destination / 'client-work.json', json.dumps(saved, indent=2) + '\n')
-            return destination, dict(saved, reused=True, wrapper_only_migration=not upgrade,
+            return destination, startup_index_migration_proof(dict(saved, reused=True, wrapper_only_migration=not upgrade,
                 native_executable_upgraded=upgrade,
                 previous_package_sha256=previous_sha, previous_worktree=migrated_from,
                 previous_client_work_receipt_sha256=previous_receipt_sha,
                 previous_verified_client_worktree=previous_verified,
-                source_root_preserved=True, generated_cache_bytes_preserved=True)
-        return destination, dict(saved, reused=True)
+                source_root_preserved=True, generated_cache_bytes_preserved=True))
+        return destination, startup_index_migration_proof(dict(saved, reused=True))
     require(shutil.disk_usage(root).free >= DATA_COUNT*4096 + cache_bytes + prerequisites_bytes + 256*1024*1024,
             'Insufficient space for private client links, prepared caches and runtime reserve')
     staging = root / ('client-staging-' + base.secrets.token_hex(12))
@@ -770,6 +798,16 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'runtime_execution_validated': False,
                 'prepared_cache_donor_executable_sha256': EXE_SHA,
                 'prepared_cache_schema_changed': False}
+        if 'startup_bundle_client' in package:
+            wrapper = package['startup_bundle_client']
+            self.ctx.report['startup_bundle_client'] = {
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'replacement_scope': 'CityOfHeroes.exe_only',
+                'prepared_cache_schema_changed': False, 'graphics_profile_changed': False,
+                'runtime_execution_validated': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
                         source_commit=SOURCE, data_commit=DATA,
                         client_executable_sha256=self.client_executable_sha256)

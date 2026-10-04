@@ -12,7 +12,7 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
-    def test_actual_candidate_change_set_routes_to_the_setup_workflow(self):
+    def test_actual_candidate_change_set_routes_only_to_the_startup_bundle_workflow(self):
         from classify_interactive_change import runtime_required
         root = Path(__file__).resolve().parents[3]
         names = set(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD'], cwd=root).decode().split('\0'))
@@ -22,13 +22,74 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        self.assertLessEqual(names, change.SETUP_ALLOWED, 'Candidate contains an unclassified publication path')
-        fixture = 'tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java'
-        self.assertIn(fixture, change.SETUP_ALLOWED)
+        self.assertLessEqual(names, change.BUNDLE_ALLOWED, 'Candidate contains an unclassified publication path')
+        fixture = 'tools/android/interactive/test_startup_bundle_save.py'
+        self.assertIn(fixture, change.BUNDLE_ALLOWED)
         for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required,
-                runtime_required):
+                change.schedule_required, change.setup_required, runtime_required):
             with self.subTest(function=function.__name__):
                 self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, sorted(names)))
+
+    def test_bundle_routes_exact_native_and_guest_scope_away_from_six_old_releases(self):
+        names = sorted(change.BUNDLE_ALLOWED)
+        for function in (change.task_required, change.cleanup_required, change.recovery_required,
+                change.receipt_required, change.schedule_required, change.setup_required):
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for marker in change.BUNDLE_SOURCES:
+                    self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, [marker]))
+
+    def test_bundle_unknown_native_manifest_asset_or_unrelated_java_changes_remain_closed(self):
+        names = sorted(change.BUNDLE_ALLOWED)
+        for other in ('upstream/ouroboros/DBServer/src/container_sql.c',
+                'android/native/client-launcher.c', 'android/guest/local_login_server.py',
+                'patches/startup-bundle/unreviewed.patch',
+                'android/interactive/src/main/AndroidManifest.xml',
+                'assets/server-cache-manifest.json', change.JAVA+'ClientRuntime.java', 'unreviewed.py'):
+            for function in (change.task_required, change.cleanup_required, change.recovery_required,
+                    change.receipt_required, change.schedule_required, change.setup_required):
+                with self.subTest(other=other, function=function.__name__):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_bundle_requires_valid_direct_parent_push_and_a_bundle_source(self):
+        names = sorted(change.BUNDLE_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, None, 'a'*40, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md']),
+                ('push', 'a'*40, 'b'*40, 'a'*40,
+                    ['tools/android/interactive/classify_storage_cleanup_change.py'])):
+            for function in (change.task_required, change.cleanup_required, change.recovery_required,
+                    change.receipt_required, change.schedule_required, change.setup_required):
+                with self.subTest(event=event, before=before, head=head, function=function.__name__):
+                    self.assertTrue(function(event, before, head, parent, files))
+
+    def test_setup_and_schedule_workflows_obey_bundle_routing_and_keep_dispatch(self):
+        root = Path(__file__).resolve().parents[3]
+        for filename, gate in (('android-setup-memory.yml', 'setup_required'),
+                ('android-startup-schedule.yml', 'schedule_required')):
+            with self.subTest(filename=filename):
+                text = (root/'.github/workflows'/filename).read_text()
+                self.assertIn(gate+': ${{ steps.scope.outputs.'+gate+' }}', text)
+                self.assertIn('needs: changes', text)
+                if gate == 'schedule_required':
+                    self.assertIn('needs: [changes, native]', text)
+                    self.assertIn('needs: [changes, native, qualify]', text)
+                    count = 3
+                else:
+                    self.assertIn('needs: [changes, qualify]', text)
+                    count = 2
+                self.assertEqual(text.count("needs.changes.outputs."+gate+" != 'false'"), count)
+                self.assertIn('fetch-depth: 2', text)
+                self.assertIn('COH_PUSH_BEFORE: ${{ github.event.before }}', text)
+                self.assertIn('workflow_dispatch:', text)
 
     def test_setup_wrapper_routes_its_exact_scope_away_from_all_four_old_releases(self):
         names = sorted(change.SETUP_ALLOWED)
@@ -95,14 +156,26 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\n')
             output.unlink()
             with mock.patch.dict(change.os.environ, environment), \
                     mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
-                'recovery_required=true\nreceipt_required=true\n')
+                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\n')
+
+    def test_classifier_emits_all_six_disabled_gates_for_exact_bundle_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)/'outputs'
+            environment = {'GITHUB_OUTPUT': str(output), 'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40}
+            values = ['a'*40, 'b'*40, b'tools/android/interactive/test_startup_bundle_save.py\0']
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\n')
 
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)

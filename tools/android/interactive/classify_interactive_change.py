@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED
+from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED
 
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
@@ -195,13 +195,21 @@ RESPONSIVENESS_ONLY = frozenset({
     'docs/COH-Atlas-Gameplay-0.11.5-testing.txt',
     'docs/android-evidence/responsiveness-0.11.5-publication.json',
 })
-RESPONSIVENESS_ONLY |= STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED
+BUNDLE_MARKERS = BUNDLE_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY |
+                                 STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED)
+RESPONSIVENESS_ONLY |= STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED
 
 
 def runtime_required(event, before, head, parent, names):
+    paths = set(names)
+    # A specifically marked bundle must stay within its reviewed source
+    # closure. Historical allowances cannot hide an additional launcher or
+    # guest change in this derivative's push.
+    allowed = BUNDLE_ALLOWED if paths & BUNDLE_MARKERS else SHELL_ONLY | RESPONSIVENESS_ONLY
     return not (event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
+        and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0' * 40 and before == parent and head != before
-        and names and set(names) <= SHELL_ONLY | RESPONSIVENESS_ONLY)
+        and names and paths <= allowed)
 
 
 def main():

@@ -27,8 +27,22 @@ concurrency:
   group: android-setup-memory-publication
   cancel-in-progress: false
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      setup_required: ${{ steps.scope.outputs.setup_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
   qualify:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: changes
+    if: needs.changes.outputs.setup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -63,8 +77,8 @@ jobs:
           if-no-files-found: error
           retention-days: 90
   apk:
-    needs: [qualify]
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: [changes, qualify]
+    if: needs.changes.outputs.setup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     permissions:
       contents: write
       actions: read

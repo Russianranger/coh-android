@@ -1,6 +1,7 @@
 """Cold/warm Atlas data preparation with owned-process and immutable guards."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -114,6 +115,152 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         self.assertEqual((second.runtime / 'data/server/bin/contacts.bin').read_bytes(), b'private generated contacts')
         self.assertEqual((second.runtime / 'data/texture_library/msliberty.texture').read_bytes(), b'immutable supplement')
         self.assertTrue(result['server_data_cache']['reused'])
+        self.close(second)
+
+    def test_private_id_map_replacement_refreshes_only_proved_parent_layout_at_next_checkout(self):
+        self.source('defs/proficiencyids.dbidmap', 'qualified proficiency ids')
+        self.source('defs/dbidmaps/invsalvage.dbidmap', 'qualified salvage ids')
+        first = self.make(1); self.prepare(first)
+        data = first.runtime / 'data'
+        before = json.loads(first.data_cache.marker.read_text())
+        for name in ('defs/proficiencyids.dbidmap', 'defs/dbidmaps/invsalvage.dbidmap'):
+            path = data / name
+            pending = path.with_name(path.name + '.native-write')
+            pending.write_text('native private ids retained')
+            pending.replace(path)
+        # Native metadata changes to the root need the same exact layout proof;
+        # there is no blanket root timestamp exemption.
+        root_info = data.stat()
+        os.utime(data, ns=(root_info.st_atime_ns, root_info.st_mtime_ns + 1000000))
+        self.close(first)
+        after = json.loads(first.data_cache.marker.read_text())
+        self.assertEqual(after['directories'], before['directories'])
+        self.assertTrue(first.data_cache.summary['returned_after_owned_cleanup'])
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('private IDs rebuilt whole tree')):
+            result = self.prepare(second)
+        self.assertTrue(result['server_data_cache']['reused'])
+        qualified = json.loads(second.data_cache.marker.read_text())
+        changed = {row['path'] for row in qualified['directories']
+                   if row != next(old for old in before['directories'] if old['path'] == row['path'])}
+        self.assertEqual(changed, {'', 'defs', 'defs/dbidmaps'})
+        self.assertEqual(result['server_data_cache']['changed_parent_directory_checks'], 3)
+        self.assertLess(result['server_data_cache']['changed_parent_entry_checks'], 30)
+        self.assertEqual((second.runtime / 'data/defs/dbidmaps/invsalvage.dbidmap').read_text(),
+                         'native private ids retained')
+        self.assertEqual((self.imported / 'defs/dbidmaps/invsalvage.dbidmap').read_text(),
+                         'qualified salvage ids')
+        self.close(second)
+
+    def test_old_closed_receipt_recovers_changed_parent_only_with_exact_original_links(self):
+        self.source('defs/dbidmaps/invsalvage.dbidmap', 'qualified salvage ids')
+        first = self.make(1); self.prepare(first); self.close(first)
+        donor = first.data_cache.path / 'data'
+        marker = first.data_cache.marker.read_bytes()
+        path = donor / 'defs/dbidmaps/invsalvage.dbidmap'
+        pending = path.with_name(path.name + '.native-write')
+        pending.write_text('native retained ids'); pending.replace(path)
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('closed receipt discarded')):
+            result = self.prepare(second)
+        self.assertTrue(result['server_data_cache']['reused'])
+        self.assertEqual(result['server_data_cache']['changed_parent_paths'], ['defs/dbidmaps'])
+        self.assertNotEqual(first.data_cache.marker.read_bytes(), marker)
+        self.close(second)
+
+    def test_changed_parent_does_not_bless_nonanchor_link_tampering_or_unknown_private_files(self):
+        self.source('defs/powers/nonanchor.def', 'qualified nonanchor')
+        for sequence, damage in enumerate(('retarget', 'regular', 'unknown', 'missing'), start=1):
+            with self.subTest(damage=damage):
+                self.receipt['cache_archive_sha256'] = f'{sequence + 40:064x}'
+                first = self.make(sequence * 2); self.prepare(first)
+                data = first.runtime / 'data'
+                leaf = data / 'defs/powers/nonanchor.def'
+                if damage in ('retarget', 'regular', 'missing'):
+                    leaf.unlink()
+                if damage == 'retarget':
+                    leaf.symlink_to(self.imported / 'maps/Atlas/a.txt')
+                elif damage == 'regular':
+                    leaf.write_text('foreign private bytes')
+                elif damage == 'unknown':
+                    (leaf.parent / 'unknown.dbidmap').write_text('unrecorded private output')
+                baseline = json.loads(first.data_cache.marker.read_text())['directories']
+                self.close(first)
+                closed = json.loads(first.data_cache.marker.read_text())
+                self.assertEqual(closed['status'], 'closed')
+                self.assertEqual(closed['directories'], baseline)
+                donor = first.data_cache.path / 'data'
+                self.assertTrue(donor.is_dir())
+                marker = first.data_cache.marker.read_bytes()
+                second = self.make(sequence * 2 + 1)
+                result = self.prepare(second)['server_data_cache']
+                self.assertFalse(result['reused'])
+                self.assertIn('Atlas', result['reuse_refused'])
+                self.assertEqual(first.data_cache.marker.read_bytes(), marker)
+                self.close(second)
+
+    def test_changed_parent_validation_is_bounded_and_cancelled_checkout_preserves_closed_donor(self):
+        first = self.make(1); self.prepare(first)
+        directory = first.runtime / 'data/defs/powers'
+        info = directory.stat()
+        os.utime(directory, ns=(info.st_atime_ns, info.st_mtime_ns + 1000000))
+        self.close(first)
+        second = self.make(2)
+        with patch.object(cache, 'CHANGED_ENTRY_LIMIT', 1):
+            result = self.prepare(second)['server_data_cache']
+        self.assertIn('entry bound', result['reuse_refused'])
+        self.assertEqual(json.loads(first.data_cache.marker.read_text())['status'], 'closed')
+        directory = second.runtime / 'data/defs/powers'
+        info = directory.stat()
+        os.utime(directory, ns=(info.st_atime_ns, info.st_mtime_ns + 1000000))
+        self.close(second)
+        third = self.make(3)
+        third.ctx.check.side_effect = server.base.Cancelled('stop during parent proof')
+        marker = second.data_cache.marker.read_bytes()
+        with self.assertRaises(server.base.Cancelled): self.prepare(third)
+        self.assertEqual(second.data_cache.marker.read_bytes(), marker)
+        self.assertTrue((second.data_cache.path / 'data').is_dir())
+
+    def test_stop_and_expired_operation_release_remains_fast_and_next_checkout_proves_private_parent(self):
+        self.source('defs/dbidmaps/invsalvage.dbidmap', 'qualified salvage ids')
+        first = self.make(1); self.prepare(first)
+        directory = first.runtime / 'data'
+        path = directory / 'defs/dbidmaps/invsalvage.dbidmap'
+        pending = path.with_name(path.name + '.native-write')
+        pending.write_text('retained native ids'); pending.replace(path)
+        baseline = json.loads(first.data_cache.marker.read_text())['directories']
+        # Production Context.check rejects both Stop and an expired operation.
+        # Proven owner shutdown still returns the unchanged pre-launch receipt;
+        # all input validation belongs to the next cancellable checkout.
+        cancelled = server.base.Context(self.root, total_timeout=-1)
+        cancelled.cancel_requested = True
+        with self.assertRaises(server.base.Cancelled): cancelled.check()
+        first.data_cache.ctx = cancelled
+        with patch.object(first.data_cache, 'verify', side_effect=AssertionError('Stop scanned whole data tree')):
+            self.close(first)
+        self.assertEqual(json.loads(first.data_cache.marker.read_text())['directories'], baseline)
+        self.assertTrue(first.data_cache.summary['returned_after_owned_cleanup'])
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('Stop rebuilt closed data')):
+            result = self.prepare(second)['server_data_cache']
+        self.assertTrue(result['reused'])
+        self.assertEqual(result['changed_parent_paths'], ['defs/dbidmaps'])
+        self.close(second)
+
+    def test_empty_private_root_foreign_owner_is_refused_even_with_unchanged_parent_time(self):
+        first = self.make(1); self.prepare(first); self.close(first)
+        foreign = first.data_cache.path / 'data/geobin'
+        observed = foreign.lstat()
+        changed_owner = SimpleNamespace(**{name: getattr(observed, name)
+            for name in ('st_mode', 'st_nlink', 'st_dev', 'st_ino', 'st_size', 'st_mtime_ns')},
+            st_uid=observed.st_uid + 1)
+        original = Path.lstat
+        second = self.make(2)
+        with patch.object(Path, 'lstat', lambda path: changed_owner if path == foreign else original(path)):
+            result = self.prepare(second)['server_data_cache']
+        self.assertFalse(result['reused'])
+        self.assertIn('root owner changed', result['reuse_refused'])
+        self.assertTrue((first.data_cache.path / 'data').is_dir())
         self.close(second)
 
     def test_clean_legacy_cache_migrates_in_place_and_keeps_original_source_links(self):

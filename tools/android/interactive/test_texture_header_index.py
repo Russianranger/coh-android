@@ -1,6 +1,7 @@
 """Cross-language header equivalence, corruption fallback and generation reuse."""
 from pathlib import Path
 import hashlib
+import copy
 import importlib.util
 import json
 import os
@@ -122,6 +123,68 @@ class TextureIndexTests(unittest.TestCase):
         self.assertFalse(after['reused'])
         self.assertFalse(after['legacy_identity_migrated'])
 
+    def native_upgrade_index(self):
+        first, _ = self.prepare()
+        contents = (self.work / module.PACK).read_bytes()
+        old = module.worktree_identity(self.client)
+        self.client['content_identity_sha256'] = 'c' * 64
+        self.write_client()
+        proof = {'format': 1, 'policy': 'verified_startup_client_layer_v1',
+            'previous_client_identity': old, 'previous_executable_sha256': 'b' * 64,
+            'client_executable_sha256': 'd' * 64, 'content_identity_sha256': 'c' * 64,
+            'layer_manifest_sha256': 'e' * 64, 'texture_header_struct_bytes': 32,
+            'native_source_closure_verified': True}
+        return first, contents, Context({'client_worktree': {'source_root_preserved': True,
+            'native_texture_index_migration': proof}})
+
+    def test_exact_native_layer_rebinds_existing_header_payload_without_decoding(self):
+        first, contents, context = self.native_upgrade_index()
+        with mock.patch.object(module, 'make_pack', side_effect=AssertionError('Unexpected header reads')):
+            after, env = self.prepare(exe='d' * 64, context=context)
+        rebound = (self.work / module.PACK).read_bytes()
+        self.assertTrue(after['reused'])
+        self.assertTrue(after['native_layer_identity_migrated'])
+        self.assertEqual(contents[:32], rebound[:32])
+        self.assertEqual(contents[64:], rebound[64:])
+        self.assertEqual(first['original_header_bytes_sha256'], after['original_header_bytes_sha256'])
+        self.assertEqual(bytes.fromhex(env['COH_TEXTURE_HEADER_ID']), rebound[32:64])
+
+    def test_native_rebind_requires_exact_executable_inventory_and_data_proof(self):
+        for changed in ('oldexe', 'newexe', 'oldidentity', 'data', 'schema', 'policy', 'source', 'root', 'inventory'):
+            with self.subTest(changed=changed):
+                self.client['content_identity_sha256'] = '4' * 64
+                self.write_client()
+                first, contents, context = self.native_upgrade_index()
+                proof = context.report['client_worktree']['native_texture_index_migration']
+                if changed == 'oldexe': proof['previous_executable_sha256'] = 'a' * 64
+                if changed == 'newexe': proof['client_executable_sha256'] = 'a' * 64
+                if changed == 'oldidentity': proof['previous_client_identity']['content_identity_sha256'] = 'a' * 64
+                if changed == 'data': proof['previous_client_identity']['data_contract']['cache_archive_sha256'] = 'a' * 64
+                if changed == 'schema': proof['texture_header_struct_bytes'] = 64
+                if changed == 'policy': proof['policy'] = 'generic_same_schema'
+                if changed == 'source': proof['native_source_closure_verified'] = False
+                if changed == 'root': context.report['client_worktree']['source_root_preserved'] = False
+                if changed == 'inventory': (self.work / 'data/texture_library/changed').mkdir(exist_ok=True)
+                after, _ = self.prepare(exe='d' * 64, context=context)
+                self.assertFalse(after['reused'])
+                self.assertFalse(after['native_layer_identity_migrated'])
+
+    def test_interrupted_native_envelope_rename_recovers_without_header_reads(self):
+        first, contents, context = self.native_upgrade_index()
+        atomic_write = module.atomic_write
+        def interrupt(path, data):
+            if path.name == module.MARKER: raise OSError('Interrupted marker publication')
+            return atomic_write(path, data)
+        with mock.patch.object(module, 'atomic_write', side_effect=interrupt), \
+                mock.patch.object(module, 'make_pack', side_effect=AssertionError('Unexpected header reads')):
+            self.prepare(exe='d' * 64, context=context)
+        with mock.patch.object(module, 'make_pack', side_effect=AssertionError('Unexpected header reads')):
+            after, _ = self.prepare(exe='d' * 64, context=context)
+        self.assertTrue(after['reused'])
+        self.assertTrue(after['native_layer_identity_migrated'])
+        self.assertTrue(after['interrupted_envelope_recovered'])
+        self.assertEqual(contents[64:], (self.work / module.PACK).read_bytes()[64:])
+
     def test_legacy_snapshot_or_payload_change_refuses_rebinding(self):
         for changed in ('snapshot', 'payload', 'native_upgrade', 'missing_contract', 'envelope'):
             with self.subTest(changed=changed):
@@ -188,6 +251,8 @@ class TextureIndexTests(unittest.TestCase):
         expected, _ = module.make_pack(records, env['COH_TEXTURE_HEADER_ID'], Context())
         self.assertEqual(expected, pack)
         self.assertIn(b'mip-data', pack)
+        self.assertEqual('Z:' + str(self.work / 'data').replace('/', '\\'), env['COH_TEXTURE_HEADER_ROOT'])
+        self.assertEqual('1', env['COH_STARTUP_DIAGNOSTIC_BOUND'])
         self.assertNotIn(b'original', pack)
 
     def test_executable_and_content_changes_invalidate(self):

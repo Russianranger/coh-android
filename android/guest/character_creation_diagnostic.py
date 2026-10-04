@@ -247,7 +247,8 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             self.ctx.report['texture_header_index'] = index_receipt
             for kind, fields in preparation.events:
                 self.ctx.event(kind, **fields)
-            for key in ('COH_TEXTURE_HEADER_PACK', 'COH_TEXTURE_HEADER_ID', 'COH_TEXTURE_DIAGNOSTIC_DEDUP'):
+            for key in ('COH_TEXTURE_HEADER_PACK', 'COH_TEXTURE_HEADER_ID', 'COH_TEXTURE_DIAGNOSTIC_DEDUP',
+                        'COH_TEXTURE_HEADER_ROOT', 'COH_STARTUP_DIAGNOSTIC_BOUND'):
                 self.wine_env.pop(key, None)
             self.wine_env.update(index_env)
             self.texture_header_preparation = None

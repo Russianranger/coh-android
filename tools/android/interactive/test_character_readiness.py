@@ -272,5 +272,47 @@ class ObserverCadenceTests(unittest.TestCase):
         self.assertEqual(case.d.ctx.report['client_launcher_timing']['source'],
             'current_owned_launcher_start_returned')
 
+    def test_translated_registry_is_not_started_during_incomplete_client_loading(self):
+        case = self.fixture()
+        complete = case.output
+        original = case.d.ctx.run.side_effect
+        queries = []
+        def run(label, *args, **kwargs):
+            if label == 'client-progress-registry': queries.append(case.elapsed)
+            return original(label, *args, **kwargs)
+        case.d.ctx.run.side_effect = run
+        def output():
+            if case.elapsed < 30:
+                return complete.replace('Renderer initialization complete\n', '').replace('Loaded all data!\n', '')
+            if case.elapsed < 60:
+                return complete.replace('Loaded all data!\n', '')
+            return complete
+        case.d.ctx.start.return_value.text.side_effect = output
+        case.finish_when_ready()
+        case.d.execute()
+        self.assertEqual(queries, [60, 80])
+        policy = case.d.ctx.report['client_progress_poll_policy']
+        self.assertEqual(policy['deferred_checks'], 12)
+        self.assertTrue(policy['current_pid_window_and_registry_main_loop_required'])
+        self.assertTrue(case.d.startup_complete)
+        self.assertEqual(case.d.ctx.report['startup_elapsed_seconds'], 60)
+
+    def test_ready_console_still_requires_current_registry_main_loop(self):
+        case = self.fixture()
+        case.registry = '    GameProgress    REG_SZ    game_loadData\n'
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'bounded deadline'):
+            case.d.execute()
+        self.assertFalse(case.d.startup_complete)
+        self.assertFalse(any(kind == 'client_interaction_ready' for _, kind, _ in case.events))
+
+    def test_incomplete_console_keeps_process_failure_checks_before_next_poll(self):
+        case = self.fixture()
+        case.output = case.output.replace('Loaded all data!\n', '')
+        case.d.ctx.start.return_value.process.poll.side_effect = lambda: 3 if case.elapsed >= 1 else None
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'client exited'):
+            case.d.execute()
+        self.assertLess(case.elapsed, 2)
+        self.assertFalse(any(call.args[0] == 'client-progress-registry' for call in case.d.ctx.run.call_args_list))
+
 
 if __name__ == '__main__': unittest.main()

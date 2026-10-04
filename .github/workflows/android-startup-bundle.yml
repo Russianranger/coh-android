@@ -1,0 +1,324 @@
+name: Thor verified startup cache and client lookup bundle
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-startup-bundle.yml
+      - android/guest/character_creation_diagnostic.py
+      - android/guest/character_server_data_cache.py
+      - android/guest/client_interactive_diagnostic.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/native_responsiveness_contract.py
+      - android/guest/local_character_server.py
+      - android/guest/texture_header_index.py
+      - tools/android/interactive/build_startup_bundle_apk.py
+      - tools/android/interactive/qualify_startup_bundle.py
+      - tools/android/interactive/test_startup_bundle_package.py
+      - tools/android/interactive/package_startup_bundle_client.py
+      - tools/android/interactive/test_startup_bundle_client.py
+      - tools/android/interactive/package_startup_bundle_dbserver.py
+      - tools/android/interactive/test_startup_bundle_dbserver.py
+      - tools/android/interactive/test_startup_bundle_save.py
+      - patches/startup-bundle/**
+      - patches/startup-bundle-client/**
+      - database/startup-bundle-client/**
+      - docs/COH-Atlas-Gameplay-0.13.6-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-startup-bundle-publication
+  cancel-in-progress: false
+jobs:
+  dbserver:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/base-dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - name: Stage the exact retained manual-wait chain and narrow save-emission layer
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_startup_bundle_dbserver.py stage --output out/startup-bundle-db-source --base-manifest out/base-dbserver/package-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer staging failed' }
+      - name: Compile and execute retained wait and production save contracts on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_local_launcher_wait.py --require-windows
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_startup_bundle_save.py
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/manual-atlas.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\manual-atlas.cmd 2>&1 | Tee-Object out/contracts/manual-atlas.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Guarded native launcher-wait contracts failed' }
+      - name: Build only the normal DbServer with the narrow PostgreSQL save layer
+        working-directory: out/startup-bundle-db-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer build failed' }
+      - name: Package only DbServer with exact donor dependencies and source receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_startup_bundle_dbserver.py package
+          --source out/startup-bundle-db-source
+          --binary out/startup-bundle-db-source/out/build/vs2026/bin/OptDebug/DbServer.exe
+          --cache out/startup-bundle-db-source/out/build/vs2026/CMakeCache.txt
+          --base-manifest out/base-dbserver/package-manifest.json
+          --repository-commit "$env:GITHUB_SHA"
+          --output out/startup-bundle-dbserver
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-bundle-dbserver
+          path: out/startup-bundle-dbserver/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-startup-bundle-dbserver-build-evidence
+          path: |
+            out/contracts/
+            out/startup-bundle-db-source/startup-dbserver-build-input.json
+            out/startup-bundle-db-source/startup-bundle-dbserver-build-input.json
+            out/startup-bundle-db-source/wine-dbserver-build-input.json
+            out/startup-bundle-db-source/out/build/vs2026/CMakeCache.txt
+            out/startup-bundle-db-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/startup-bundle-dbserver/startup-dbserver-manifest.json
+          if-no-files-found: warn
+          retention-days: 90
+  client:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Stage the frozen native client chain and separate startup layer
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_startup_bundle_client.py stage --output out/startup-bundle-client-source
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup staging failed' }
+      - name: Build only Game retaining the existing MapServer and graphics profile
+        working-directory: out/startup-bundle-client-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup Game build failed' }
+      - name: Package Game with exact source and schema receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_startup_bundle_client.py package
+          --directory out/startup-bundle-client-source/out/build/vs2026/bin/OptDebug
+          --source out/startup-bundle-client-source
+          --cache out/startup-bundle-client-source/out/build/vs2026/CMakeCache.txt
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/startup-bundle-client
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-bundle-client
+          path: out/startup-bundle-client/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-startup-bundle-client-build-evidence
+          path: |
+            out/startup-bundle-client-source/*build-input.json
+            out/startup-bundle-client-source/responsiveness-source-input.json
+            out/startup-bundle-client-source/out/build/vs2026/CMakeCache.txt
+            out/startup-bundle-client-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/startup-bundle-client/startup-bundle-client-manifest.json
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: [dbserver, client]
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-memory-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37174737394
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-bundle-dbserver
+          path: out/startup-bundle-dbserver
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-bundle-client
+          path: out/startup-bundle-client
+      - name: Recover immutable public 0.13.5 donor
+        run: python3 tools/android/interactive/build_startup_bundle_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.5.apk
+      - name: Qualify cache reuse texture lookup PostgreSQL save emission and retained memory guards
+        run: >-
+          python3 tools/android/interactive/qualify_startup_bundle.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.5.apk
+          --donor-build-report out/donor-evidence/setup-memory-apk-build-report.json
+          --native-directory out/startup-bundle-dbserver
+          --client-directory out/startup-bundle-client
+          --output out/startup-bundle-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-startup-bundle-qualification
+          path: out/startup-bundle-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [dbserver, client, qualify]
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-memory-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37174737394
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-bundle-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-bundle-dbserver
+          path: out/startup-bundle-dbserver
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-startup-bundle-client
+          path: out/startup-bundle-client
+      - name: Recover immutable public 0.13.5 donor
+        run: python3 tools/android/interactive/build_startup_bundle_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.5.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the bounded startup derivative retaining the exact memory DEX and native dependencies
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_startup_bundle_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.5.apk
+          --donor-build-report out/donor-evidence/setup-memory-apk-build-report.json
+          --native-directory out/startup-bundle-dbserver
+          --client-directory out/startup-bundle-client
+          --qualification out/startup-bundle-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/startup-bundle/COH-Atlas-Gameplay-0.13.6.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-bundle-packaging-evidence
+          path: |
+            out/startup-bundle/startup-bundle-apk-build-report.json
+            out/startup-bundle/COH-Atlas-Gameplay-0.13.6-testing.txt
+            out/startup-bundle/COH-Atlas-Gameplay-0.13.6.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-startup-bundle-apk
+          path: out/startup-bundle/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.6 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_startup_bundle_apk.py publish
+          --apk out/startup-bundle/COH-Atlas-Gameplay-0.13.6.apk
+          --build-report out/startup-bundle/startup-bundle-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.5.apk
+          --donor-build-report out/donor-evidence/setup-memory-apk-build-report.json
+          --native-directory out/startup-bundle-dbserver
+          --client-directory out/startup-bundle-client
+          --qualification out/startup-bundle-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

@@ -220,6 +220,10 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         retries = attempt_retry.ClientAttemptRetry(self, started, deadline)
         next_registry = next_progress = 0
         registry_output = ''
+        self.ctx.report['client_progress_poll_policy'] = {
+            'policy': 'query_after_current_console_renderer_and_data_ready',
+            'deferred_checks': 0, 'registry_reset_before_launch': True,
+            'current_pid_window_and_registry_main_loop_required': True}
         ready_at = None
         console = None
         finish_request = None
@@ -256,7 +260,17 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     windows = self.observer.windows()
                     self.record_observer_timing('window_identity', window_started)
                     self.ctx.report['observed_windows'] = windows
-                    if now >= next_registry:
+                    # Launching a translated reg.exe repeatedly competes with
+                    # heavy client loading. Its only proof here is main-loop
+                    # entry, so query after this attempt's console has both
+                    # prerequisites. Keep the reset, live PID/window, ordinary
+                    # registry proof and post-readiness checks intact.
+                    registry_due = now >= next_registry
+                    console_ready = ('Renderer initialization complete' in output
+                                     and 'Loaded all data!' in output)
+                    if registry_due and not console_ready:
+                        self.ctx.report['client_progress_poll_policy']['deferred_checks'] += 1
+                    if registry_due and console_ready:
                         registry_started = time.monotonic()
                         registry = self.ctx.run('client-progress-registry', [self.args.wine, 'reg', 'query',
                             r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/reg:32'],

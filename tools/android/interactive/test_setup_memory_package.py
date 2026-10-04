@@ -273,7 +273,7 @@ class SetupMemoryPackagingTests(unittest.TestCase):
         text = (package.ROOT/package.WORKFLOW).read_text()
         self.assertNotIn('windows-', text); self.assertNotIn('cmake ', text); self.assertNotIn('continue-on-error', text)
         self.assertIn('run-id: 37171443387', text); self.assertIn('run-id: 36731428735', text)
-        self.assertIn('needs: [qualify]', text); self.assertIn('0.13.5 release', text)
+        self.assertIn('needs: [changes, qualify]', text); self.assertIn('0.13.5 release', text)
         self.assertEqual(6, len(package.JAVA_CHANGES)); self.assertEqual(1, len(package.JAVA_ADDITIONS))
 
     def test_qualification_source_closure_binds_java_tests_and_routing(self):

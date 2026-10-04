@@ -1,5 +1,51 @@
 # City of Heroes Android handoff
 
+**Current continuation: measured startup/cache/texture and save fixes (October 4, 2026 UTC).**
+The user accepted smooth 0.13.5 runtime setup and supplied both reports
+`coh-atlas-gameplay-20261004-082023.zip` and `coh-atlas-gameplay-20261004-084550.zip`.
+[Device result](android-evidence/startup-bundle-0.13.5-device-result.json) records
+53.918-second setup, no pressure waits, at least 9.515 GB reported available
+memory, and the successful activation. This attempt is accepted; system-wide
+LMK immunity is not claimed. Preserve the setup guard and prior physical gates.
+
+The current startup result reaches the client window at 21m41.695s, login
+observation at 22m10.946s, and the existing THORHERO Atlas connection at
+23m35.398s. PostgreSQL itself takes 0.543s. The misleadingly broad local
+DbServer stage takes 452.302s because an immutable-directory timestamp rejection
+causes 421.648s of server-data staging (176,960 leaves / 9,524 directories).
+Native DbServer console initialization then takes approximately 20s. Its exact
+rejected directory is absent from the old report; do not invent that path.
+
+Client startup takes 582.356s. Its index parses 11,367 texture records but gets
+zero hits and performs all 11,367 ordinary reads; the header phase is about
+137.859s. The source scanner's absolute-path callback versus relative index keys
+is a supported inference, pending the new bounded path diagnostics. About
+48.826s of translated registry queries and 27.63 MB of repetitive texture
+diagnostics are additional measured opportunities. Atlas startup is 195.016s;
+rendering remains llvmpipe, with hardware acceleration a separate open gate.
+
+A new concrete save regression appears after the verified connection: a
+Windows(1,17) INSERT precedes its cancelling DELETE, causing PostgreSQL 23505
+and DbServer exit 3. Save was not acknowledged. Preserve the database and
+accepted earlier saves/tasks; fix the production row-command emission rather
+than deleting the conflicting row, ignoring SQL errors or clearing the profile.
+Owned cleanup and graceful PostgreSQL shutdown passed in this report.
+
+The authorized 0.13.6 pass addresses bounded server-cache changed-parent
+validation, verified-root texture lookup and opt-in missing-texture aggregation,
+registry query deferral, and the narrow cancelled-child INSERT regression.
+Only Game and normal DbServer need native compilation; the retained MapServer,
+renderer libraries, runtime archives, prepared caches, imports and 19 authored
+Java memory-protection sources remain exact. Frozen prior native source layers
+remain unchanged; new patches and receipts describe each supplement separately.
+Local qualification passed **541 checks / 34 suites / zero skips**, with a
+**187-file source closure** and independent safety review. Native compilation,
+real PostgreSQL fixtures and APK publication remain pending CI.
+[Targeted instructions](COH-Atlas-Gameplay-0.13.6-testing.txt) request one runtime
+activation and one preserved-character timing/save session. Do not repeat
+contact, task, combat, movement, storage or character-creation tests. Device
+speedups and the <=300-second readiness target remain unqualified.
+
 **0.13.5 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.5/COH-Atlas-Gameplay-0.13.5.apk)
 from build source `31c8a1722f992e7a8334ef2256b4feaa9ca173be`

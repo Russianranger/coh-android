@@ -165,6 +165,8 @@ def prepare(work, import_identity, executable_sha256, context):
                 'client_content_identity_sha256': stable_client['content_identity_sha256']}
     saved = None
     migrated = False
+    native_migrated = False
+    interrupted_recovered = False
     if (marker.is_file() and not marker.is_symlink() and marker.stat().st_size < 16384
             and target.is_file() and not target.is_symlink() and 64 <= target.stat().st_size <= MAX_BYTES):
         try:
@@ -173,6 +175,17 @@ def prepare(work, import_identity, executable_sha256, context):
             contents = target.read_bytes()
             valid_payload = (candidate.get('bytes') == len(contents)
                              and candidate.get('sha256') == hashlib.sha256(contents).hexdigest())
+            if (not valid_payload and candidate.get('bytes') == len(contents)
+                    and candidate.get('records') == len(records)
+                    and re.fullmatch(r'[0-9a-f]{64}', str(candidate.get('identity', '')))):
+                # A durable envelope rename may precede its marker rename.
+                # Only a byte-exact reverse rebind to the old owned SHA proves
+                # this state; changed header payloads still require regeneration.
+                restored = rebind_legacy_pack(contents, identity, candidate['identity'], len(records))
+                if candidate.get('sha256') == hashlib.sha256(restored).hexdigest():
+                    contents = restored
+                    valid_payload = True
+                    interrupted_recovered = True
             if valid_payload and all(candidate.get(key) == value for key, value in expected.items()):
                 saved = candidate
             elif valid_payload:
@@ -181,7 +194,40 @@ def prepare(work, import_identity, executable_sha256, context):
                 # never recursive metadata persisted in client-work.json.
                 report = getattr(context, 'report', {}).get('client_worktree', {})
                 previous = report.get('previous_verified_client_worktree')
-                if (report.get('wrapper_only_migration') is True
+                native = report.get('native_texture_index_migration')
+                if (report.get('source_root_preserved') is True and isinstance(native, dict)
+                        and set(native) == {'format', 'policy', 'previous_client_identity',
+                            'previous_executable_sha256', 'client_executable_sha256',
+                            'content_identity_sha256', 'layer_manifest_sha256',
+                            'texture_header_struct_bytes', 'native_source_closure_verified'}
+                        and type(native['format']) is int and native['format'] == 1
+                        and native['policy'] == 'verified_startup_client_layer_v1'
+                        and native['native_source_closure_verified'] is True
+                        and native['texture_header_struct_bytes'] == 32
+                        and native['client_executable_sha256'] == executable_sha256
+                        and native['previous_executable_sha256'] != executable_sha256
+                        and native['content_identity_sha256'] == stable_client['content_identity_sha256']
+                        and all(re.fullmatch(r'[0-9a-f]{64}', str(native[key])) for key in
+                            ('previous_executable_sha256', 'client_executable_sha256', 'layer_manifest_sha256'))
+                        and isinstance(native['previous_client_identity'], dict)
+                        and set(native['previous_client_identity']) == {'content_identity_sha256', 'data_contract'}
+                        and re.fullmatch(r'[0-9a-f]{64}', str(native['previous_client_identity']['content_identity_sha256']))
+                        and native['previous_client_identity']['data_contract'] == stable_client['data_contract']):
+                    old = native['previous_client_identity']
+                    old_identity = pack_identity(old, import_identity, native['previous_executable_sha256'], inventory_sha)
+                    old_expected = dict(expected, identity=old_identity,
+                        client_executable_sha256=native['previous_executable_sha256'],
+                        client_content_identity_sha256=old['content_identity_sha256'])
+                    if all(candidate.get(key) == value for key, value in old_expected.items()):
+                        contents = rebind_legacy_pack(contents, old_identity, identity, len(records))
+                        _, after, after_client = texture_inputs(work, context)
+                        require(after == inventory_sha and worktree_identity(after_client) == stable_client,
+                                'Texture generation changed while rebinding native index')
+                        saved = dict(candidate, **expected, sha256=hashlib.sha256(contents).hexdigest())
+                        atomic_write(target, contents)
+                        atomic_write(marker, canonical(saved) + b'\n')
+                        native_migrated = True
+                if (saved is None and report.get('wrapper_only_migration') is True
                         and report.get('source_root_preserved') is True
                         and isinstance(previous, dict)):
                     from client_startup_diagnostic import worktree_data_identity
@@ -215,8 +261,12 @@ def prepare(work, import_identity, executable_sha256, context):
         atomic_write(marker, canonical(saved) + b'\n')
     receipt = dict(saved, reused=reused, preparation_seconds=round(time.monotonic() - started, 3),
                    legacy_identity_migrated=migrated,
+                   native_layer_identity_migrated=native_migrated,
+                   interrupted_envelope_recovered=interrupted_recovered,
                    native_file_opens_avoidable=len(records), original_texture_files_unchanged=True,
                    native_fallback_available=True)
     environment = {'COH_TEXTURE_HEADER_PACK': 'Z:' + str(target).replace('/', '\\'),
-                   'COH_TEXTURE_HEADER_ID': identity, 'COH_TEXTURE_DIAGNOSTIC_DEDUP': '1'}
+                   'COH_TEXTURE_HEADER_ID': identity, 'COH_TEXTURE_DIAGNOSTIC_DEDUP': '1',
+                   'COH_TEXTURE_HEADER_ROOT': 'Z:' + str(work / 'data').replace('/', '\\'),
+                   'COH_STARTUP_DIAGNOSTIC_BOUND': '1'}
     return receipt, environment

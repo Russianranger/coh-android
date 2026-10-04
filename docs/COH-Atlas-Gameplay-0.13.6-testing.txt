@@ -1,0 +1,39 @@
+COH Atlas Gameplay 0.13.6 — startup reuse, texture lookup and save regression
+
+Install this APK over the existing app. Keep app data, imported assets, THORHERO,
+SQL data and existing tasks. Do not uninstall, clear data or reimport assets.
+
+This pass targets the 0.13.5 log's 421.648-second server-tree restaging and
+11,367 texture-index misses. It also defers translated registry queries until
+client data loading completes, bounds opt-in missing-texture diagnostic output,
+and corrects the PostgreSQL cancelled child-row INSERT seen during logout.
+Android setup memory protection and earlier startup/gameplay progress remain.
+Actual device savings and the 300-second server-readiness goal are unqualified.
+
+1. Run Set up runtime once to activate the changed helper/native generation.
+   Keep the successful setup memory guard. If setup closes, reopen and export
+   the recovered report before another retry.
+2. Use Reopen saved THORHERO. Select the same graphics preset as your last run.
+   Note elapsed time at: local server ready, Atlas ready, visible login screen,
+   and THORHERO connected. Export the report if a stage fails; keep its data.
+3. After connection, use Save / logout once. This checks the specific window-row
+   regression in the latest report; no task, combat, NPC, movement or character
+   creation retest is requested. Wait for the current session's committed-save
+   result. If it fails, export immediately; do not reset the database.
+4. Export the report and send it with the observed timings and any visible
+   changes. No second long boot is requested before this report is reviewed.
+
+Important evidence in the report:
+- private_map_data.server_data_cache reused, reuse_refused, changed_parent_paths,
+  changed-parent checks and preparation_elapsed_seconds;
+- COH_TEXTURE_INDEX_V1 ready/hits/ordinary_reads and bounded first-miss paths;
+- missing-texture diagnostic reported/duplicate/suppressed totals;
+- client_progress_poll_policy and progress_registry query count/cost;
+- current owned DbServer/Atlas/client timings, save acknowledgement or SQLSTATE;
+- owned cleanup and PostgreSQL graceful shutdown.
+
+An old unqualified server cache may still require one original staging pass if
+its exact child layout changed. The correction verifies changed directories;
+it does not accept arbitrary edits or erase refused generations. Prior physical
+acceptances remain accepted. The new native Game changes texture-header lookup
+and diagnostic emission only; map, renderer and full texture inputs are retained.

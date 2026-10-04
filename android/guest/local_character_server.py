@@ -60,6 +60,44 @@ def manual_atlas_wait_contract():
         'invalid_request': 'exit_2_before_launcher_wait', 'android_execution_validated': False}
 
 
+
+STARTUP_BUNDLE_ROLE = 'manual_atlas_dbserver_startup_bundle'
+STARTUP_BUNDLE_BASE_EXECUTABLE = {'bytes': 1663488,
+    'sha256': '539afab70c6d57aef4b2230e607e218c7a77d31de7ad10ad89f0253f5c1a09d3'}
+STARTUP_BUNDLE_BASE_BUILD_INPUT_SHA256 = '12f42bdb973c2f5712408f7717bee631e23c9cf73e1e38b2f2be4d2cb943a9c2'
+
+
+def startup_bundle_save_contract():
+    return {'provider': 'PostgreSQL', 'table_type': 'TT_SUBCONTAINER',
+        'scope': 'cancelled_provisional_child_INSERT_only',
+        'match': 'next_command_with_identical_table_pointer_and_SubId_is_DELETE',
+        'retained': ['matched_DELETE', 'all_other_row_commands', 'all_column_updates',
+            'DELETE_then_INSERT_order', 'SQL_Server_provider', 'parent_container_inserts',
+            'FIFO_transaction_commit_before_completion', 'save_ACK_after_SQL_completion',
+            'permanent_failure_rollback_and_exit_without_ACK'],
+        'ignored_SQL_failures': False, 'UPSERT': False, 'schema_migration': False,
+        'profile_reset': False, 'android_execution_validated': False}
+
+
+def startup_bundle_build_input(build_input):
+    """Bind the new row-emitter layer to the exact retained native ancestry."""
+    require(digest_json(build_input) == STARTUP_BUNDLE_BASE_BUILD_INPUT_SHA256,
+            'Startup bundle changed the retained manual Atlas build input')
+    return {'format': 1, 'build_role': STARTUP_BUNDLE_ROLE,
+        'source_commit': build_input['source_commit'],
+        'base_startup_build_input_canonical_sha256': digest_json(build_input),
+        'patch': 'patches/startup-bundle/0001-pg-cancelled-child-insert.patch',
+        'patch_sha256': '36ee0b86fad6207166b6a46a6334b0e9846f90d81140fec49dc187d2fb45a600',
+        'source_sha256': {'DBServer/src/container_sql.c':
+            build_input['base_wine_build_input']['postgresql_build_input']['patched_sha256']['DBServer/src/container_sql.c']},
+        'patched_sha256': {'DBServer/src/container_sql.c':
+            '0becda9957c9cbe35b11fa28d4c62ad63af5f08faf492bd0013746dadfbec4fc'},
+        'unchanged_merger_sha256': '45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e',
+        'built_target': 'DbServer', 'configuration': 'OptDebug', 'architecture': 'Win32',
+        'postgresql_persistence_fixture': False, 'save_contract': startup_bundle_save_contract(),
+        'runtime_validation': 'unverified'}
+
+
 def install_manual_atlas_dbserver(assets, runtime, package):
     """Replace only the fresh owned DbServer after verifying its donor closure."""
     binary = assets / 'startup-dbserver.exe'
@@ -69,7 +107,8 @@ def install_manual_atlas_dbserver(assets, runtime, package):
     require(binary.is_file() and not binary.is_symlink() and manifest.is_file()
             and not manifest.is_symlink(), 'Incomplete or linked manual Atlas DbServer supplement')
     value = dbserver.load_json(manifest, 2 * 1024 * 1024)
-    require(value.get('format') == 1 and value.get('role') == 'manual_atlas_dbserver_startup_supplement'
+    require(value.get('format') == 1 and value.get('role') in
+            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE)
             and dbserver.COMMIT.fullmatch(value.get('repository_commit', ''))
             and value.get('source_commit') == package['source_commit']
             and value.get('base_package_manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
@@ -106,6 +145,14 @@ def install_manual_atlas_dbserver(assets, runtime, package):
                                    *build_input['patched_sha256'].values(),
                                    *build_input['overlay_sha256'].values()]),
             'Manual Atlas DbServer source hashes differ')
+    if value['role'] == STARTUP_BUNDLE_ROLE:
+        require(value.get('base_startup_executable') == STARTUP_BUNDLE_BASE_EXECUTABLE
+                and dbserver.exact_contract(value.get('startup_bundle_build_input'),
+                    startup_bundle_build_input(build_input)),
+                'Startup bundle save layer or retained executable differs')
+    else:
+        require('startup_bundle_build_input' not in value,
+                'Legacy manual Atlas supplement contains an unqualified save layer')
     files = value.get('files', {})
     require(set(files) == {'DbServer.exe'}, 'Manual Atlas supplement contains another native target')
     record = files['DbServer.exe']
@@ -114,6 +161,9 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and record['sha256'] != original['files']['DbServer.exe']['sha256']
             and value.get('dependency_report', {}).get('unresolved') == [],
             'Manual Atlas executable bytes or imports differ')
+    if value['role'] == STARTUP_BUNDLE_ROLE:
+        require(record['sha256'] != STARTUP_BUNDLE_BASE_EXECUTABLE['sha256'],
+                'Startup bundle executable is unchanged from the retained startup supplement')
     require(set(value.get('odbc_imports', [])) >= {'SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare',
             'SQLGetDiagRecA', 'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW'}
             and not set(value['odbc_imports']).intersection({'SQLDriverConnectA', 'SQLExecDirectA',
@@ -131,11 +181,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
                 'Manual Atlas retained runtime library differs: ' + name)
     shutil.copyfile(binary, target)
     require(base.file_hash(target) == record['sha256'], 'Installed manual Atlas executable differs')
-    return {'enabled': True, 'native_ack_observed': False,
+    installed = {'enabled': True, 'native_ack_observed': False,
         'manifest_sha256': base.file_hash(manifest), 'executable_sha256': record['sha256'],
         'repository_commit': value['repository_commit'], 'contract': build_input['launcher_wait'],
         'base_package_archive_changed': False, 'other_native_targets_changed': False,
         'ordinary_fixed_inputs_loopback_dispatch_and_map_readiness_required': True}
+    if value['role'] == STARTUP_BUNDLE_ROLE:
+        installed['startup_bundle_save'] = value['startup_bundle_build_input']['save_contract']
+        installed['startup_bundle_build_input_sha256'] = digest_json(value['startup_bundle_build_input'])
+    return installed
 
 
 def above_native_fall_floor(y):
