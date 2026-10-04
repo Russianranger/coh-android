@@ -206,6 +206,10 @@ def validate_visual_package(directory):
 
 
 def verification_manifests(donor, client, updates, commit):
+    # Build and publication run in separate interpreters. New verification
+    # members must have deterministic insertion order before the retained
+    # non-sorted JSON encoder calculates client/runtime payload hashes.
+    updates = {name: updates[name] for name in sorted(updates)}
     expected_client = copy.deepcopy(client); expected_client['files'].update(updates)
     expected_runtime = copy.deepcopy(donor['runtime_manifest']); expected_runtime['files'].update(updates)
     require(1 <= len(expected_client['files']) <= 64, 'Client manifest exceeds retained frozen verification bound')

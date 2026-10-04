@@ -9,6 +9,9 @@ import contextlib
 import copy
 import hashlib
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -307,6 +310,33 @@ class ClientVisualPackagingTests(unittest.TestCase):
                 mock.patch.object(package, 'validate_qualification', return_value=receipt), \
                 mock.patch.object(package, 'validate_visual_package', return_value={'new': True}):
             with self.assertRaisesRegex(ValueError, 'changed after host qualification'): package.build(args)
+
+    def test_fresh_publication_process_reproduces_exact_client_and_runtime_manifest_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary); _, donor, _, _ = fixture(folder)
+            manifest_input = folder/'manifest-input.json'
+            manifest_input.write_text(json.dumps({'donor': {'runtime_manifest': donor['runtime_manifest']},
+                'client': donor['_client_verification']}))
+            # Production build and publication execute in different interpreters.
+            # These exact helper sets previously inserted new JSON keys in
+            # process-dependent order, changing the client SHA inside runtime.
+            script = """
+import hashlib, json, pathlib, sys
+sys.path.insert(0, sys.argv[1])
+import build_client_visual_apk as package
+value = json.loads(pathlib.Path(sys.argv[2]).read_text())
+updates = {name: {'bytes': 1, 'sha256': 'f'*64}
+    for name in package.HELPERS|package.ADDED_HELPERS|package.VISUAL_ASSETS}
+client, runtime = package.verification_manifests(value['donor'], value['client'], updates, 'a'*40)
+encoded_client, encoded_runtime = map(package.shared.encoded, (client, runtime))
+assert runtime['files']['client-manifest.json'] == {'bytes': len(encoded_client),
+    'sha256': hashlib.sha256(encoded_client).hexdigest()}
+print(json.dumps({'client': encoded_client.decode(), 'runtime': encoded_runtime.decode()}, sort_keys=True))
+"""
+            results = [subprocess.run([sys.executable, '-c', script, str(package.ROOT/'tools/android/interactive'),
+                str(manifest_input)], env=dict(os.environ, PYTHONHASHSEED=str(seed)),
+                capture_output=True, check=True, timeout=30).stdout for seed in (1, 2)]
+            self.assertEqual(results[0], results[1], 'Fresh build/publication processes changed client/runtime manifest bytes')
 
     def test_workflow_has_no_native_or_java_compile_and_uses_exact_qualified_asset(self):
         text = (package.ROOT/package.WORKFLOW).read_text()
