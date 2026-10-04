@@ -1,6 +1,54 @@
 # City of Heroes Android handoff
 
-**Latest physical acceptance (October 3, 2026, 23:48–23:50 UTC): 0.13.2 fresh
+**Latest physical acceptance (October 4, 2026 UTC): manual task acceptance and
+completion passed on Thor in the installed 0.13.2. The user completed the task
+through normal in-game play without the completion helper and explicitly asks
+that this be accepted regardless of the diagnostic verdict.**
+[Acceptance receipt](android-evidence/thor-0.13.2-manual-task-accepted-20261004.json)
+pins `coh-atlas-gameplay-20261004-003136.zip` and preserves the original reports.
+Close manual task acceptance/completion as successful; no repeat is required.
+The user reports that this prevented use of the left-side helper controls.
+Record that as a separate diagnostic UI follow-up, not a failed gameplay gate.
+
+The native connection event confirms the previously saved THORHERO (character
+1, COHLOCAL) reopened on Atlas with preserved identity. The wrapper's narrow
+authored-task observer reported a task outside its finite simple-task contract;
+its accepted/completed events and completion-command receipt were absent. The
+run was cancelled and owned cleanup passed. These diagnostic facts do not
+overturn the user's manual gameplay acceptance or establish a game regression.
+The exact task identity, forced-command path, reward turn-in, combat and mission
+maps are not newly qualified by this acceptance. No ordinary Save or task-specific
+committed SQL proof was captured in this run. Carry task/progression persistence
+into the next ordinary save/reopen checkpoint without repeating the accepted
+manual task. Prior character save/persistence acceptance remains valid.
+
+**Proposed next gameplay sequence, not a previously approved numbered plan:**
+
+1. Remove the helper-control obstruction to normal play and ordinary Save;
+   validate contact reward turn-in/next-task progression and its save/reopen.
+2. Validate training, level/power progression and power-tray behavior.
+3. Qualify authentic generated Atlas beacon provenance, structure, world CRC
+   and native graph loading before claiming moving-NPC pathfinding/combat.
+4. Validate basic combat and power effects, then instanced mission entry,
+   objectives, exit/Atlas return and saved progression.
+5. Validate ordinary graphical zone transfers and persistence across maps.
+6. Complete missing costume assets (including Ms. Liberty), broader terrain,
+   materials/minimap and collision coverage.
+7. Complete offline-app reliability: backup/restore into a clean profile,
+   airplane-mode play, repeated transfers and a sustained two-hour session.
+
+Server startup remains the main performance priority: the <=300-second Atlas
+readiness target is open. Retain shipped options 1, 2, 8, 3 and 9 and the accepted
+startup improvement; the installed animation pack has no controlled physical
+speedup measurement yet. Hardware renderer acceleration remains deferred;
+audio, broader services and eventual native ARM64 conversion remain future
+scope. Do not reopen accepted setup/import, graphical login/creation, ordinary
+save/reopen, movement/camera/jump, indoor/outdoor traversal, contact dialogue,
+storage or fresh-profile recovery milestones. No app changes, runtime refresh,
+asset import or new APK accompany this documentation acceptance. Main remains
+preserved and PR #1 remains draft on the existing continuation branch.
+
+**Prior physical acceptance (October 3, 2026, 23:48–23:50 UTC): 0.13.2 fresh
 character recovery and storage inventory passed on Thor. The user reports
 “Everything worked including storage, still need to do the tasks.”**
 [Accepted evidence](android-evidence/thor-0.13.2-storage-recovery-passed-20261003.json)
@@ -32,19 +80,14 @@ startup 198.116s and client startup 607.049s. The 5,878-animation pack installed
 and loose fallback inputs remained preserved. These are phase observations,
 not a controlled option 9 speedup comparison. Preserve prior startup findings.
 
-**Next and only pending gameplay gate: on the already installed 0.13.2, Reopen
-saved THORHERO, manually accept Matthew Habashy's What Was Lost / Part One:
-Demons and Gangsters, capture the accepted journal, use Complete accepted task
-once (`/completetask 0`), capture the completed journal, then ordinary Save,
-Finish and export.** Use the numbered task steps in
-[0.13.0 task instructions](COH-Atlas-Gameplay-0.13.0-testing.txt), skipping its
-historical install/Refresh runtime paragraph. No new APK, runtime refresh,
-reimport, separate reopen test, character recreation or repeated movement,
-contact, ground-recovery or storage tests are required. The creator run had
-`task_gate.required=false`; it establishes no task acceptance/completion/save
-result. The task gate remains required on reopen. Combat, mission maps and
-contact reward turn-in remain outside this gate. Main remains preserved and
-PR #1 remains draft on the existing continuation.
+The next gate after this recovery receipt was the fixed authored-task path in
+[0.13.0 task instructions](COH-Atlas-Gameplay-0.13.0-testing.txt). The October 4
+manual acceptance above supersedes that request: do not repeat acceptance or
+completion merely to satisfy helper-command receipts. The creator run had
+`task_gate.required=false` and supplied no task proof; the newer user acceptance
+supplies the manual gameplay verdict. Task persistence moves to the next
+progression/save checkpoint. Combat, mission maps and contact reward turn-in
+remain separate scope.
 
 **Current recovery publication (October 3, 2026): 0.13.2 is published and
 independently verified from `c0d10f8cd873449962f5a723d489b9ead18642d0`.
