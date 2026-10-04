@@ -12,7 +12,7 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
-    def test_actual_candidate_change_set_routes_only_to_the_startup_bundle_workflow(self):
+    def test_actual_candidate_change_set_routes_only_to_its_dedicated_workflow(self):
         from classify_interactive_change import runtime_required
         root = Path(__file__).resolve().parents[3]
         names = set(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD'], cwd=root).decode().split('\0'))
@@ -22,13 +22,50 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        self.assertLessEqual(names, change.BUNDLE_ALLOWED, 'Candidate contains an unclassified publication path')
+        allowed = change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)
         for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required,
                 change.schedule_required, change.setup_required, runtime_required):
             with self.subTest(function=function.__name__):
                 self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, sorted(names)))
+
+    def test_client_visual_scope_disables_all_seven_old_publication_gates(self):
+        from classify_interactive_change import runtime_required
+        names = sorted(change.VISUAL_ALLOWED)
+        functions = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required,
+            change.bundle_required, runtime_required)
+        for function in functions:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for marker in change.VISUAL_SOURCES:
+                    self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, [marker]))
+                for other in ('android/guest/character_server_data_cache.py',
+                        'android/guest/local_character_server.py', 'android/guest/client_startup_diagnostic.py',
+                        'android/guest/native_responsiveness_contract.py', change.JAVA+'ClientRuntime.java',
+                        'tools/android/interactive/package_startup_bundle_client.py',
+                        'assets/atlas-world-supplement-manifest.json', 'unreviewed.py'):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+                for event, before, head, parent in (
+                        ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                        ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                        ('push', '0'*40, 'b'*40, '0'*40),
+                        ('push', 'c'*40, 'b'*40, 'a'*40),
+                        ('push', 'a'*40, 'a'*40, 'a'*40)):
+                    self.assertTrue(function(event, before, head, parent, names))
+
+    def test_startup_bundle_workflow_obeys_client_scope_and_keeps_dispatch(self):
+        root = Path(__file__).resolve().parents[3]
+        text = (root/'.github/workflows/android-startup-bundle.yml').read_text()
+        self.assertIn('bundle_required: ${{ steps.scope.outputs.bundle_required }}', text)
+        self.assertEqual(text.count("needs.changes.outputs.bundle_required != 'false'"), 4)
+        self.assertIn('needs: [changes, dbserver, client]', text)
+        self.assertIn('needs: [changes, dbserver, client, qualify]', text)
+        self.assertIn('COH_PUSH_BEFORE: ${{ github.event.before }}', text)
+        self.assertIn('fetch-depth: 2', text)
+        self.assertIn('workflow_dispatch:', text)
 
     def test_bundle_routes_exact_native_and_guest_scope_away_from_six_old_releases(self):
         names = sorted(change.BUNDLE_ALLOWED)
@@ -156,14 +193,14 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\n')
             output.unlink()
             with mock.patch.dict(change.os.environ, environment), \
                     mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
-                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\n')
+                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\n')
 
     def test_classifier_emits_all_six_disabled_gates_for_exact_bundle_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -175,7 +212,7 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\n')
 
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)

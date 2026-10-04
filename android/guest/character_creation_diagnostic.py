@@ -183,8 +183,43 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
                 and self.local_server.creation_report.get('map_ready') is True,
                 'Client texture preparation requires current owned server readiness')
         self.ctx.check()
+        self.prepare_client_visual_inputs()
         self.texture_header_preparation = TextureHeaderPreparation(self)
         self.texture_header_preparation.start()
+
+    def prepare_client_visual_inputs(self):
+        """Expose qualified client-only assets after the owned Atlas is ready.
+
+        Historical wrappers have none of these optional inputs. A present but
+        incomplete bundle is an error, rather than a partially rendered launch.
+        The new release verifier requires the complete, source-pinned bundle.
+        """
+        names = {'client_visual_assets.py', 'client_animation_package.py',
+                 'client-visual-assets.zip', 'client-visual-manifest.json'}
+        present = {name for name in names
+                   if (self.args.assets / name).exists() or (self.args.assets / name).is_symlink()}
+        if not present:
+            return
+        require(present == names, 'Incomplete client visual/animation asset bundle')
+        require(names | {'server-animations.pigg', 'server-animation-manifest.json'}
+                <= set(self.ctx.report.get('asset_sha256', {})),
+                'Client visual/animation bundle is absent from verified asset pins')
+        require(self.local_server.report.get('server_ready') is True
+                and self.local_server.creation_report.get('map_ready') is True,
+                'Client visual/animation preparation requires current owned Atlas readiness')
+        import client_visual_assets
+        import client_animation_package
+        self.ctx.stage('client_visual_assets')
+        visual = client_visual_assets.install(self.work, self.args.assets, self.ctx)
+        self.ctx.report['client_visual_supplement'] = visual
+        self.ctx.passed(**visual)
+        self.ctx.stage('client_animation_pack')
+        animation = client_animation_package.install(
+            self.args.assets / 'server-animations.pigg',
+            self.args.assets / 'server-animation-manifest.json', self.work,
+            assets=self.args.assets, context=self.ctx)
+        self.ctx.report['client_animation_pack'] = animation
+        self.ctx.passed(**animation)
 
     def prepare_texture_header_index(self, context):
         import texture_header_index

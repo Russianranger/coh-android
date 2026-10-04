@@ -141,6 +141,32 @@ BUNDLE_ALLOWED = BUNDLE_SOURCES | frozenset({
     'docs/android-evidence/startup-bundle-0.13.5-device-result.json',
     'docs/android-evidence/startup-bundle-0.13.6-publication.json',
 })
+VISUAL_SOURCES = frozenset({
+    '.github/workflows/android-client-visual.yml',
+    'tools/android/interactive/build_client_visual_apk.py',
+    'tools/android/interactive/qualify_client_visual.py',
+    'tools/android/interactive/prepare_client_visual_assets.py',
+    'tools/android/interactive/client_visual_geometry.py',
+    'tools/android/interactive/test_client_visual_package.py',
+    'tools/android/interactive/test_client_visual_assets.py',
+    'tools/android/interactive/test_client_animation_package.py',
+    'tools/android/interactive/test_client_visual_schedule.py',
+    'android/guest/character_creation_diagnostic.py',
+    'android/guest/client_animation_package.py',
+    'android/guest/client_visual_assets.py',
+    'assets/client-visual-manifest.json',
+})
+VISUAL_ALLOWED = VISUAL_SOURCES | frozenset({
+    '.github/workflows/android-startup-bundle.yml',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/interactive/test_server_worktree_reuse.py', '.gitignore',
+    'docs/COH-Atlas-Gameplay-0.13.7-testing.txt', 'docs/HANDOFF.md',
+    'docs/android-evidence/client-visual-0.13.6-device-result.json',
+    'docs/android-evidence/client-visual-0.13.7-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -184,13 +210,19 @@ def bundle_push(event, before, head, parent, names):
         and set(names) & BUNDLE_SOURCES)
 
 
+def visual_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, VISUAL_ALLOWED)
+        and set(names) & VISUAL_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
         or startup_push(event, before, head, parent, names)
         or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
-        or bundle_push(event, before, head, parent, names))
+        or bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
@@ -199,27 +231,36 @@ def cleanup_required(event, before, head, parent, names):
         and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names)
         or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
-        or bundle_push(event, before, head, parent, names))
+        or bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
     """The newer source-bound startup derivative owns only its explicit scope."""
     return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
-        or bundle_push(event, before, head, parent, names))
+        or bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
 
 
 def receipt_required(event, before, head, parent, names):
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
-    return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names))
+    return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
 
 
 def schedule_required(event, before, head, parent, names):
-    return not bundle_push(event, before, head, parent, names)
+    return not (bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
 
 
 def setup_required(event, before, head, parent, names):
-    return not bundle_push(event, before, head, parent, names)
+    return not (bundle_push(event, before, head, parent, names)
+        or visual_push(event, before, head, parent, names))
+
+
+def bundle_required(event, before, head, parent, names):
+    return not visual_push(event, before, head, parent, names)
 
 
 def main():
@@ -229,6 +270,7 @@ def main():
     receipt = True
     schedule = True
     setup = True
+    bundle = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -245,6 +287,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         setup = setup_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        bundle = bundle_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
@@ -254,6 +298,7 @@ def main():
         output.write('receipt_required='+str(receipt).lower()+'\n')
         output.write('schedule_required='+str(schedule).lower()+'\n')
         output.write('setup_required='+str(setup).lower()+'\n')
+        output.write('bundle_required='+str(bundle).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

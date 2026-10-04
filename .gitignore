@@ -8,3 +8,6 @@ __pycache__/
 /assets/atlas-world-supplement.zip
 /assets/.atlas-world-supplement.zip.*
 /assets/.atlas-world-*/
+
+# Reproduced from selected verified public donor ranges.
+/assets/client-visual-assets.zip

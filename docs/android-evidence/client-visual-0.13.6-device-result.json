@@ -1,0 +1,632 @@
+{
+  "format": 1,
+  "scope": "current_saved_hero_device_startup_texture_index_and_ordinary_save_result_with_remaining_visual_defects",
+  "recorded_utc": "2026-10-04",
+  "tested_version": "0.13.6",
+  "source_branch": "codex/character-persistence-continuation",
+  "branch_head_at_analysis": "f865c9902eec22d20c9e985eff23ad11702961c8",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pull_request": {
+    "number": 1,
+    "state": "open",
+    "draft": true
+  },
+  "bundle": {
+    "name": "coh-atlas-gameplay-20261004-104130.zip",
+    "bytes": 12825493,
+    "sha256": "eb0478f4300378f309ae44bfa813ce69cef36ba76d0715a144312493b2043eb6"
+  },
+  "source_files": [
+    {
+      "path": "android-client-report.json",
+      "bytes": 265106,
+      "sha256": "101edf6e9e8502cec0bb335152ca5f8f8ce928a681d2b7292e2ba2e08377b3fe"
+    },
+    {
+      "path": "guest/latest-report.json",
+      "bytes": 212817,
+      "sha256": "d09a281efd8352041e81d03e27826a160fec78a2a4fe35f8d8339cb2bcb67f34"
+    },
+    {
+      "path": "guest/client-evidence/client-console.log",
+      "bytes": 1187787,
+      "sha256": "bd3aae7860b329d8f0ed6eeb298b569c59f5b08a285fe0fb2568ff776310f3b6"
+    },
+    {
+      "path": "guest/client-evidence/local-dbserver-console.txt",
+      "bytes": 19298,
+      "sha256": "0095f01b42b10c1c6631762edea73d6dc2355a2db7f094254f18642745ba1f07"
+    },
+    {
+      "path": "guest/client-evidence/character-atlas-console.txt",
+      "bytes": 378135,
+      "sha256": "ff08058c3195eccc07cec85db23a12a5c261f62d8affff256ea65e881071ba5c"
+    },
+    {
+      "path": "runtime-setup-service.json",
+      "bytes": 643,
+      "sha256": "75fa4ceba87bbf677b33d15362f0b0fcff1c723b2cc19872d813a4e00ae78f00"
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "Screenshot_20261004-053951.png",
+      "uploaded_copy_name": "01-Screenshot_20261004-053951.png",
+      "bytes": 400084,
+      "sha256": "4ad3cf9f76a81524f7abf60b85ed5950a898ed25488079ffe8cf7da65824a36f",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "name": "Screenshot_20261004-053931.png",
+      "uploaded_copy_name": "02-Screenshot_20261004-053931.png",
+      "bytes": 409523,
+      "sha256": "cd239115a08d519a550b827cbc4f51e1ff3718d75c73eb777b37a017a00a50e5",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "name": "Screenshot_20261004-053912.png",
+      "uploaded_copy_name": "03-Screenshot_20261004-053912.png",
+      "bytes": 366082,
+      "sha256": "b252fe8ed412d6f04a14b7d05b779ba2bd9a2b386870e77d0e9c1bc763a269de",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "name": "Screenshot_20261004-034450.png",
+      "uploaded_copy_name": "04-Screenshot_20261004-034450.png",
+      "bytes": 425530,
+      "sha256": "6dfa6244c73aa9782e7b0624a7c077bbaa4f4539a532340aa8456efb7da1cb28",
+      "width": 1920,
+      "height": 1080,
+      "scope": "older_visual_reference_build_not_independently_identified",
+      "exact_build_authenticated_by_image": false
+    }
+  ],
+  "user_observations": {
+    "server_start_approximate_seconds": 360,
+    "actual_client_start_to_login_approximate_seconds": 450,
+    "login_to_world_including_password_and_hero_selection_approximate_seconds": 105,
+    "server_startup_improvement_accepted": true,
+    "missing_models_and_textures_reported": true,
+    "requested_focus": [
+      "client startup improvements",
+      "remaining missing models and textures",
+      "update handoff"
+    ]
+  },
+  "device": {
+    "name": "AYN AYN Thor",
+    "android_sdk": 33,
+    "graphics_profile": "performance",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "renderer_classification": "software",
+    "hardware_acceleration_validated": false
+  },
+  "identities": {
+    "runtime_manifest_sha256": "45ecff3efe30faa360db6d3911717534f94d5cffa313debef19a013cea1cf50c",
+    "session_id": "f068895fa01549e59d231199c0164b54",
+    "run_id": "1791109408949-c7cc83b3a4cd",
+    "native_client_producer": {
+      "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "manifest_sha256": "c5c3b6ca552a6438162cfa52f6d8573fd44720dddb328e324161162329872fd7",
+      "base_client_executable_sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da",
+      "client_executable_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+      "replacement_scope": "CityOfHeroes.exe_only",
+      "prepared_cache_schema_changed": false,
+      "graphics_profile_changed": false,
+      "runtime_execution_validated": false
+    },
+    "client_content_identity_sha256": "88f43aec2e12dc4056604b3e9d0841f02c320df5914d6d04790662c527448302",
+    "client_worktree": "client-work-285adbfb0389ed61b577b734",
+    "preserved_source_root": true,
+    "preserved_generated_cache_bytes": true,
+    "import": {
+      "generation": "generation-465fcafc89e648ecab66a94b14ad502b",
+      "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    }
+  },
+  "runtime_setup": {
+    "status": "complete",
+    "elapsed_ms": 64918,
+    "java_heap_used_bytes": 16768416,
+    "java_heap_limit_bytes": 268435456,
+    "native_heap_allocated_bytes": 13800128,
+    "game_execution_requested": false,
+    "system_wide_lmk_immunity_claimed": false
+  },
+  "instrumented_timing": {
+    "request_utc": "2026-10-04T10:23:28.949000+00:00",
+    "owned_atlas_ready_utc": "2026-10-04T10:28:58.650164+00:00",
+    "client_launcher_utc": "2026-10-04T10:29:33.849045+00:00",
+    "request_to_owned_atlas_ready_seconds": 329.701164,
+    "atlas_ready_to_client_launcher_seconds": 35.198881,
+    "native_client_startup_observed_seconds": 445.942,
+    "android_seconds_since_request": {
+      "client_window_observed_uptime_ms": 811.059,
+      "login_observed_uptime_ms": 835.329,
+      "character_connected_observed_uptime_ms": 914.032,
+      "character_saved_observed_uptime_ms": 1066.05,
+      "finished_uptime_ms": 1079.056
+    },
+    "android_login_observed_to_character_connected_seconds": 78.703,
+    "interpretation": "Protocol readiness/login/connection observations and user-reported visual/input timings use different boundaries. Do not equate the 78.703-second instrumented login-to-connection interval with the user-reported 105-second visual/input interval."
+  },
+  "guest_stages": [
+    {
+      "stage": "client_inputs",
+      "started_utc": "2026-10-04T10:23:29.677275+00:00",
+      "finished_utc": "2026-10-04T10:23:30.076141+00:00",
+      "elapsed_seconds": 0.398866,
+      "status": "passed"
+    },
+    {
+      "stage": "client_private_data",
+      "started_utc": "2026-10-04T10:23:30.076672+00:00",
+      "finished_utc": "2026-10-04T10:23:30.343636+00:00",
+      "elapsed_seconds": 0.266964,
+      "status": "passed"
+    },
+    {
+      "stage": "persistent_server_profile",
+      "started_utc": "2026-10-04T10:23:30.345199+00:00",
+      "finished_utc": "2026-10-04T10:23:30.891769+00:00",
+      "elapsed_seconds": 0.54657,
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_local_login",
+      "started_utc": "2026-10-04T10:23:30.892300+00:00",
+      "finished_utc": "2026-10-04T10:23:31.382839+00:00",
+      "elapsed_seconds": 0.490539,
+      "status": "passed"
+    },
+    {
+      "stage": "presentation_display",
+      "started_utc": "2026-10-04T10:24:04.909671+00:00",
+      "finished_utc": "2026-10-04T10:24:05.019424+00:00",
+      "elapsed_seconds": 0.109753,
+      "status": "passed"
+    },
+    {
+      "stage": "wine_initialization",
+      "started_utc": "2026-10-04T10:24:05.019862+00:00",
+      "finished_utc": "2026-10-04T10:24:13.836426+00:00",
+      "elapsed_seconds": 8.816564,
+      "status": "passed"
+    },
+    {
+      "stage": "local_login_odbc",
+      "started_utc": "2026-10-04T10:24:13.837136+00:00",
+      "finished_utc": "2026-10-04T10:24:26.983960+00:00",
+      "elapsed_seconds": 13.146824,
+      "status": "passed"
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "started_utc": "2026-10-04T10:24:26.985618+00:00",
+      "finished_utc": "2026-10-04T10:25:07.313965+00:00",
+      "elapsed_seconds": 40.328347,
+      "status": "passed"
+    },
+    {
+      "stage": "local_atlas_startup",
+      "started_utc": "2026-10-04T10:25:07.768173+00:00",
+      "finished_utc": "2026-10-04T10:28:58.650164+00:00",
+      "elapsed_seconds": 230.881991,
+      "status": "passed"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-10-04T10:28:58.655077+00:00",
+      "finished_utc": "2026-10-04T10:29:00.131947+00:00",
+      "elapsed_seconds": 1.47687,
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_startup",
+      "started_utc": "2026-10-04T10:29:33.597260+00:00",
+      "finished_utc": "2026-10-04T10:37:00.008671+00:00",
+      "elapsed_seconds": 446.411411,
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_interaction",
+      "started_utc": "2026-10-04T10:37:00.009109+00:00",
+      "finished_utc": "2026-10-04T10:41:22.874215+00:00",
+      "elapsed_seconds": 262.865106,
+      "status": "passed"
+    }
+  ],
+  "server_data_cache": {
+    "policy": "closed_owned_atlas_data_directory_v1",
+    "key": "53bae505c6a501b2b00335b5",
+    "reused": true,
+    "first_use_requires_full_staging": false,
+    "changed_parent_paths": [
+      "."
+    ],
+    "changed_parent_directory_checks": 1,
+    "changed_parent_entry_checks": 50,
+    "immutable_directory_checks": 8915,
+    "immutable_anchor_checks": 22,
+    "private_entries_checked": 2130,
+    "private_bytes": 816475711,
+    "checkout_elapsed_seconds": 6.420174,
+    "returned_after_owned_cleanup": true,
+    "credential_config_removed": true
+  },
+  "server_preparation": {
+    "elapsed_seconds": 10.49333,
+    "files": 176960,
+    "directories": 9524,
+    "new_immutable_links": 0,
+    "new_private_copies": 0,
+    "postgres_seconds": 0.490539,
+    "atlas_phase_regression_against_previous_run_seconds": 35.866,
+    "broad_dbserver_stage_reduction_against_previous_run_seconds": 411.974
+  },
+  "world_supplement": {
+    "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+    "archive_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+    "file_count": 2904,
+    "installed_files": 0,
+    "reused_files": 2904,
+    "decoded_files": 0,
+    "decoded_payload_bytes": 0,
+    "preparation_elapsed_seconds": 32.818124
+  },
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "ready_prefix_reused": true,
+    "refresh_reason": "none",
+    "registration_passes": 0,
+    "elapsed_seconds": 8.807
+  },
+  "texture_index": {
+    "bytes": 2699988,
+    "client_content_identity_sha256": "88f43aec2e12dc4056604b3e9d0841f02c320df5914d6d04790662c527448302",
+    "client_executable_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+    "format": 1,
+    "identity": "0a2714861cdd32421d21f393c2ec0550400a50a701f6995bea0fb30ac893364a",
+    "identity_policy": "verified_client_content_v1",
+    "inventory_sha256": "8bc3aae26aaacc7f64eb6ac6b4c0f5686dd69ab3fda9466478788d441e8f09b9",
+    "original_header_bytes_sha256": "c7da7b88567d1cb7cb7fac300b4450cdfc0fe9d5852bf936462a0264ed6d7a0e",
+    "records": 11367,
+    "sha256": "b1ad2aa5bee633a7140a330127ef82724c1b4b013888f98fa43b36bd7b18c4b6",
+    "reused": true,
+    "preparation_seconds": 32.43,
+    "legacy_identity_migrated": false,
+    "native_layer_identity_migrated": true,
+    "interrupted_envelope_recovered": false,
+    "native_file_opens_avoidable": 11367,
+    "original_texture_files_unchanged": true,
+    "native_fallback_available": true,
+    "native_hits": 11367,
+    "native_ordinary_reads": 0,
+    "native_miss_samples": 0,
+    "native_hit_rate": 1.0,
+    "header_phase_seconds": 7.55
+  },
+  "texture_preparation_schedule": {
+    "status": "prepared_before_client",
+    "preparation_phase": "after_current_owned_atlas_readiness",
+    "overlapped_stage": "win32_runtime_dll",
+    "worker_started": true,
+    "worker_joined": true,
+    "shared_wine_prefix_access": false,
+    "private_server_cache_access": false,
+    "preparation_seconds": 32.46,
+    "actual_overlap_seconds": 1.474,
+    "overlap_timing_source": "current_owned_runtime_probe_completion",
+    "runtime_probe_completion_observed": true,
+    "wait_before_client_seconds": 30.977,
+    "physical_startup_savings_validated": false
+  },
+  "native_client_phases": [
+    {
+      "phase": "texture_headers",
+      "seconds": 7.55,
+      "start_marker": "Loading texture headers",
+      "end_marker": "Loaded texture headers",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "lod",
+      "seconds": 12.351,
+      "start_marker": "Loading LOD info",
+      "end_marker": "Loaded LOD info",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "sequencers",
+      "seconds": 95.325,
+      "start_marker": "Loading sequencers",
+      "end_marker": "Loaded sequencers",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "powers_complete",
+      "seconds": 59.427,
+      "start_marker": "Loading powers",
+      "end_marker": "Loaded powers",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "power_dictionary_and_boost_sets_subset",
+      "seconds": 53.625,
+      "start_marker": "Loading power dictionary and boost sets",
+      "end_marker": "Loaded power dictionary and boost sets",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "fx_info",
+      "seconds": 27.095,
+      "start_marker": "Loading FX info",
+      "end_marker": "Loaded FX info",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "cape_fx",
+      "seconds": 22.152,
+      "start_marker": "Loading cape FX",
+      "end_marker": "Loaded cape FX",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "npc_definitions_and_validation",
+      "seconds": 3.378,
+      "start_marker": "Loading NPC definitions",
+      "end_marker": "Loaded NPC definitions",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "particles",
+      "seconds": 23.115,
+      "start_marker": "Preloading particles",
+      "end_marker": "Preloaded particles",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "costume_bins_and_validation",
+      "seconds": 7.462,
+      "start_marker": "Loading costume bins",
+      "end_marker": "Loaded costume bins",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "grouplibs",
+      "seconds": 54.725,
+      "start_marker": "Initialized network library",
+      "end_marker": "Loaded grouplibs: 3224 files, 75433 names",
+      "timing_source": "inferred adjacent markers; may include intervening work"
+    },
+    {
+      "phase": "map_metadata_and_client_npcs",
+      "seconds": 33.184,
+      "start_marker": "Parsing .mapstats from mapstats.bin",
+      "end_marker": "Loading items",
+      "timing_source": "inferred adjacent markers; includes mapstats, minimap, mapspecs and npcs_client"
+    },
+    {
+      "phase": "fx_behaviors",
+      "seconds": 22.295,
+      "start_marker": "Parsing .bhvr from behaviors.bin",
+      "end_marker": "Loaded FX behaviors",
+      "timing_source": "owned current client console wall-clock markers"
+    }
+  ],
+  "observer_policy": {
+    "policy": "query_after_current_console_renderer_and_data_ready",
+    "deferred_checks": 88,
+    "registry_reset_before_launch": true,
+    "current_pid_window_and_registry_main_loop_required": true
+  },
+  "observer_metrics": {
+    "console_and_native_readiness": {
+      "calls": 141,
+      "total_ms": 48994.52,
+      "max_ms": 4869.217,
+      "last_ms": 8.099
+    },
+    "window_identity": {
+      "calls": 141,
+      "total_ms": 20921.244,
+      "max_ms": 1109.653,
+      "last_ms": 40.146
+    },
+    "progress_registry": {
+      "calls": 11,
+      "total_ms": 15798.106,
+      "max_ms": 2251.814,
+      "last_ms": 1070.253
+    }
+  },
+  "texture_diagnostic_aggregation": [
+    {
+      "phase": "tricks",
+      "reported_records": 1024,
+      "duplicate_records": 655,
+      "suppressed_records": 3453,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    },
+    {
+      "phase": "npc",
+      "reported_records": 1024,
+      "duplicate_records": 27726,
+      "suppressed_records": 48905,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    },
+    {
+      "phase": "costume",
+      "reported_records": 1024,
+      "duplicate_records": 14605,
+      "suppressed_records": 48535,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    }
+  ],
+  "visual_defects": {
+    "user_visual_acceptance": false,
+    "missing_assets_confirmed_in_console": true,
+    "visible_screenshot_observations": [
+      "white patches on world surfaces",
+      "blue/white placeholder blocks in HUD icons",
+      "user-reported missing models and textures"
+    ],
+    "screenshot_asset_attribution_verified": false,
+    "distant_blue_buildings_not_individually_attributed_to_missing_assets": true,
+    "console_bytes": 1187787,
+    "console_lines": 20846,
+    "file_error_records": 3345,
+    "custom_texture_error_records": 1661,
+    "missing_geo_files": 391,
+    "missing_root_geo_records": 114,
+    "texture_swap_warning_records": 4,
+    "selected_missing_asset_samples": [
+      {
+        "kind": "NPC texture",
+        "name": "SPADR_MsLiberty",
+        "npc": "Wedding_MsLiberty_01",
+        "bone": "Shoulders",
+        "source": "DEFS/NPC/NPCS_SIGNATURE.ND"
+      },
+      {
+        "kind": "NPC texture",
+        "name": "BELT_Miss_Liberty",
+        "npc": "Wedding_MsLiberty_01",
+        "bone": "Belt",
+        "source": "DEFS/NPC/NPCS_SIGNATURE.ND"
+      },
+      {
+        "kind": "world geometry",
+        "name": "object_library/city_zones/hollows/hollows_elements/hollows_obelisks/hollows_obelisks.geo"
+      },
+      {
+        "kind": "FX geometry",
+        "name": "object_library/FX/5th_missile/5th_missile.geo"
+      },
+      {
+        "kind": "texture swap",
+        "name": "tickertape_STEEL_CANYON_SOUTH -> tickertape_TALOS_ISLAND"
+      }
+    ],
+    "ms_liberty_samples_do_not_prove_same_costume_or_visual_cause_as_atlas_contact": true,
+    "renderer_remains_software": true
+  },
+  "save_result": {
+    "ordinary_logout_requested": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "committed_sql_verified": true,
+    "committed_native_position_verified": true,
+    "selected_rows_preserved": true,
+    "powers_preserved": true,
+    "costume_preserved": true,
+    "preserved_existing_identity": true,
+    "character_id": 1,
+    "before_login_count": 2,
+    "login_count": 3,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "saved_utc": "2026-10-04T10:41:14.699036+00:00",
+    "snapshot_sha256": "1748c8bd130d6cbd77858d10990110b2fb64adf4922cb9642375550b2589433f",
+    "save_event": {
+      "type": "character_saved",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-04T10:41:14.999582+00:00",
+      "session_id": "f068895fa01549e59d231199c0164b54",
+      "client_pid": 648,
+      "character_id": 1,
+      "name": "THORHERO",
+      "committed_sql_verified": true,
+      "reopen_verified": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "preserved_existing_identity": true,
+      "committed_native_position_verified": true,
+      "recovery_requested": false,
+      "recovery_verified": false
+    },
+    "sql_game_mutations_performed_by_harness": false,
+    "23505_or_pg_fifo_failed_in_owned_db_console": false,
+    "previous_cancelled_child_insert_regression_passed_on_this_device": true
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true,
+    "android_cleanup_verified": true,
+    "cleanup_blocked": false,
+    "owned_worker_remaining": 0,
+    "wine_process_cleanup_complete": true,
+    "process_exit_code": 0,
+    "failures": []
+  },
+  "comparison_to_0_13_5": {
+    "prior_receipt": "startup-bundle-0.13.5-device-result.json",
+    "prior_server_preparation_seconds": 421.648,
+    "current_server_preparation_seconds": 10.49333,
+    "prior_actual_client_startup_seconds": 582.356,
+    "current_actual_client_startup_seconds": 445.942,
+    "current_guest_stage_elapsed_seconds": 446.411411,
+    "client_launcher_observation_reduction_seconds": 136.414,
+    "prior_texture_header_phase_seconds": 137.859,
+    "current_texture_header_phase_seconds": 7.55,
+    "texture_header_phase_reduction_seconds": 130.309,
+    "prior_texture_hits": 0,
+    "prior_texture_ordinary_reads": 11367,
+    "current_texture_hits": 11367,
+    "current_texture_ordinary_reads": 0,
+    "prior_atlas_startup_seconds": 195.016,
+    "current_atlas_startup_seconds": 230.882
+  },
+  "acceptance": {
+    "0_13_6_server_cache_and_texture_index_improvements": true,
+    "0_13_6_character_reopen_and_ordinary_save_regression_fix": true,
+    "runtime_setup_this_attempt": true,
+    "startup_300_second_target_qualified": false,
+    "complete_visual_model_texture_gate_qualified": false,
+    "new_gameplay_gate_claimed": false,
+    "prior_acceptances_preserved": [
+      "native login",
+      "character creation/default costume",
+      "prior save/reopen",
+      "Atlas render/movement",
+      "contact dialogue",
+      "manual task acceptance/completion",
+      "storage cleanup",
+      "fresh profile recovery"
+    ]
+  },
+  "next_authorized_scope": {
+    "priorities": [
+      "reduce measured native client startup work",
+      "trace and repair remaining required model and texture dependencies",
+      "preserve accepted server cache, database, save, task and memory protection behavior"
+    ],
+    "implementation_pending_at_receipt_creation": true,
+    "no_repeated_completed_physical_gates_requested": true
+  }
+}

@@ -1,5 +1,111 @@
 # City of Heroes Android handoff
 
+**Current device acceptance and next focus: client startup and missing visual assets (October 4, 2026 UTC).**
+The user reports a substantial server-startup improvement: about **6 minutes**
+to server start, **7m30s** for actual client startup to login, then about
+**1m45s** to world entry including password input and hero selection. The
+[0.13.6 device receipt](android-evidence/client-visual-0.13.6-device-result.json)
+pins `coh-atlas-gameplay-20261004-104130.zip`, its current reports/consoles and
+all four supplied screenshots. Three screenshots are current user visual
+examples; `Screenshot_20261004-034450.png` is an older visual reference and
+must not be represented as an independently authenticated 0.13.6 capture.
+
+Runtime setup completed in **64.918s**. Request-to-owned-Atlas readiness is
+**329.701s (5m29.701s)**, so the <=300-second target remains open. PostgreSQL
+itself takes **0.491s**. The existing server-data cache is reused after verifying
+one changed parent (`.`) and 50 child entries; checkout takes **6.420s**, with
+**10.493s** total private-server preparation versus **421.648s** of prior
+restaging. The broad DbServer stage falls from **452.302s to 40.328s**. Atlas
+initialization takes **230.882s**, up from 195.016s in the preceding run; do not
+claim that every native server phase became faster.
+
+The actual client startup stage is **446.411s (7m26.411s)**; the launcher's
+readiness observation is **445.942s**, versus 582.356s previously. The verified
+texture index now has **11,367 hits, zero ordinary reads and zero miss samples**.
+Texture-header loading falls from **137.859s to 7.550s**. This confirms the
+0.13.6 path adapter and explains most of the observed client improvement.
+The original headers and generated client caches are preserved through the
+verified native-layer identity migration. Preparing the retained index after
+Atlas readiness still takes **32.430s**, with **30.977s** of serial waiting
+before the client launcher; this is a separate preparation opportunity.
+
+Largest remaining console-measured client phases are sequencers **95.325s**,
+powers **59.427s** (53.625s for dictionary/boost sets), grouplibs approximately
+**54.725s**, map metadata/client NPCs approximately **33.184s**, FX info
+**27.095s**, particles **23.115s**, FX behaviors **22.295s** and capes **22.152s**.
+Grouplibs and map-metadata timings use adjacent log boundaries and can include
+intervening work. Deferred registry polling works (88 deferred checks; 11
+translated queries totaling 15.798s). Instrumented Android login-to-connection
+is **78.703s**; its protocol boundaries differ from the user's 1m45s visual/input
+observation. Do not equate either interval with pure world-loading time.
+
+**Accept the ordinary-save regression fix on this device.** Existing THORHERO
+reopened, ordinary Save/logout was delivered, the server observed the logout
+timer and disconnect, and committed SQL/native position plus identity, powers,
+costume and selected rows were verified. Character ID 1 remains intact; login
+count increases 2 to 3, with one `ents` row, one `ents2` row, seven powers and
+14 costume parts. No PostgreSQL 23505/PG_FIFO_FAILED appears in this current
+owned DbServer console. Graceful PostgreSQL shutdown, Wine-prefix stop and
+owned worker cleanup pass with zero remaining workers. Preserve the database
+and accepted prior task/save/storage/gameplay progress; no repetition of those
+completed physical gates is requested.
+
+**Missing models/textures remain open and are now an active priority alongside
+client startup.** The supplied screenshots show white world-surface patches
+and blue/white HUD placeholders; the user also reports missing models. The
+current console contains 3,345 FILEERROR records, 1,661 spaced `CUSTOM TEXTURE
+ERROR` records, 391 missing `.geo` files and 114 missing root-geometry records.
+Recorded examples include Ms Liberty texture names on `Wedding_MsLiberty_01`,
+Atlas world dependencies and missing FX geometry. These references do not
+identify the exact resource responsible for every screenshot or prove the
+same costume as the invisible Atlas contact. The bounded diagnostic limit
+worked, retaining validation and suppressed-event counters. Rendering still
+uses llvmpipe/software with the performance preset; complete model/texture
+appearance and hardware acceleration are unqualified.
+
+Continue the existing `codex/character-persistence-continuation` branch and draft
+PR #1. Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; this analysis
+starts from `f865c9902eec22d20c9e985eff23ad11702961c8`. The current 0.13.7 pass
+exposes the existing animation pack through the stock client loader and adds
+selected missing Atlas NPC/world/HUD inputs after owned Atlas readiness. Game,
+DbServer, MapServer, graphics libraries and the memory-protected Android DEX
+retain their exact 0.13.6 bytes. Native parser/date-check bypasses are deferred
+until freshness checks and decoding costs can be measured separately. The
+animation helper validates pack and loose-file identities on each preparation;
+count its verification overhead against any sequencer improvement. Added
+textures require one full header-index refresh (prior cold build about 90s),
+reported separately from actual Game startup. The selected visual closure is
+bounded; `male_collar.geo/GEO_Collar_MAGIC` is absent from its donor and remains
+explicitly unresolved. Do not claim full visual restoration or physical speedup
+before the next device result. Five older geometry base-material names remain
+absent from the donor (nine model edges): `BF_Boot_Clogs`, `BM_Eyes_Glasses_01a`,
+`BM_Boot_Business_Shoe`, `BM_Chest_Bum_Flannel_01a` and `Emblem_Hero_Corp`.
+Available live costume overrides are supplied; the original edges remain open.
+The supplement also includes Ms Liberty's `FEM_GLOVE.geo`: the native Larm
+suppression path masks its absence, so console BAD DATA alone was insufficient
+to identify all missing costume parts. Exact source-requested model names are
+checked against donor tables; no guessed model/material aliases are introduced.
+The frozen supplement has **290 files: 45 geometry files and 245 textures**,
+**36,583,648 decoded bytes**, archive **23,887,359 bytes** / SHA-256
+`2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809`.
+Original donor geometry tables contain 6,576 named models; 135 of 136 requested
+model names match, including both Folded Gloves models. The selected ZIP and
+each original file are checked by SHA-256, donor table MD5, cached headers,
+native loader version/bounds and requested model/material edges. Its manifest
+SHA-256 is `6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b`.
+Archive reconstruction authenticates selected HTTP ranges with stable metadata
+and original per-file integrity; it does not claim full donor-archive hashes.
+The animation mount references the retained 5,878-track pack and duplicates no
+animation payload bytes. The installer adds missing private client files only,
+with atomic/cancellable publication, owned readonly outputs and warm receipts.
+[Focused 0.13.7 instructions](COH-Atlas-Gameplay-0.13.7-testing.txt)
+request one timing/visual review, then Abort/owned cleanup/export; repeating
+accepted task/save/storage gates or a second long boot is not requested.
+Build/publication qualification remains pending. Preserve the accepted server reuse,
+setup memory guard, imports, database, tasks and all earlier qualified gates.
+Historical entries below retain their state at the time they were written;
+this current section supersedes their outstanding 0.13.6 device-test requests.
+
 **0.13.6 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.6/COH-Atlas-Gameplay-0.13.6.apk)
 from source `7b48762de0748e443a2df60c6e4b59e22b365e35`

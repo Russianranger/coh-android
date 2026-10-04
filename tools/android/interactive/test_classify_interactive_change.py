@@ -9,6 +9,19 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_visual_pass_routes_only_its_explicit_client_assets_without_native_or_java_changes(self):
+        names = sorted(change.VISUAL_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('android/guest/character_server_data_cache.py', 'android/guest/local_character_server.py',
+                'android/guest/client_startup_diagnostic.py', 'android/guest/native_responsiveness_contract.py',
+                'patches/startup-bundle-client/0001-verified-texture-root.patch',
+                'tools/android/interactive/package_startup_bundle_client.py',
+                'assets/atlas-world-supplement-manifest.json',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+                'upstream/ouroboros/Game/src/render/tex.c', 'unknown.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
     def test_bundle_routes_only_exact_explicit_native_and_guest_paths_to_its_own_pipeline(self):
         names = sorted(change.BUNDLE_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -71,7 +84,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),

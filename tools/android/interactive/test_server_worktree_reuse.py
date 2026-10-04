@@ -152,6 +152,39 @@ class ServerWorktreeReuseTests(unittest.TestCase):
                          'qualified salvage ids')
         self.close(second)
 
+    def test_client_visual_additions_preserve_closed_server_tree_and_native_bins(self):
+        old_texture = self.source('texture_library/gui/old.texture', 'old texture')
+        self.source('player_library/animations/old.anim', 'old animation')
+        first = self.make(1)
+        self.prepare(first)
+        data = first.runtime / 'data'
+        inode = data.stat().st_ino
+        (data / 'bin/native.bin').write_bytes(b'retained native cache')
+        # These client-only files are installed after this server is ready.
+        # Existing server anchors keep their original target and private bins.
+        added = ('player_library/pieces/fem/fem_pants.geo',
+                 'texture_library/gui/tray_ring_inspiration.texture')
+        for name in added:
+            self.source(name, 'new client visual input')
+        (self.work / 'piggs').mkdir()
+        (self.work / 'piggs/server-animations.pigg').symlink_to(self.root / 'pinned-animation-pack')
+        before = data.stat()
+        os.utime(data, ns=(before.st_atime_ns, before.st_mtime_ns + 1000000))
+        self.close(first)
+        second = self.make(2)
+        with patch.object(second, 'stage_map_data', side_effect=AssertionError('client visuals restaged server')):
+            result = self.prepare(second)['server_data_cache']
+        self.assertTrue(result['reused'])
+        self.assertEqual(result['changed_parent_paths'], ['.'])
+        self.assertEqual(first.data_cache.key, second.data_cache.key)
+        self.assertEqual((second.runtime / 'data').stat().st_ino, inode)
+        self.assertEqual((second.runtime / 'data/bin/native.bin').read_bytes(), b'retained native cache')
+        self.assertEqual((second.runtime / 'data/texture_library/gui/old.texture').resolve(), old_texture)
+        for name in added:
+            self.assertTrue((self.data / name).exists())
+            self.assertFalse((second.runtime / 'data' / name).exists())
+        self.close(second)
+
     def test_old_closed_receipt_recovers_changed_parent_only_with_exact_original_links(self):
         self.source('defs/dbidmaps/invsalvage.dbidmap', 'qualified salvage ids')
         first = self.make(1); self.prepare(first); self.close(first)

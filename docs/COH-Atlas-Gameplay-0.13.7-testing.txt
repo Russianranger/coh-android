@@ -1,0 +1,55 @@
+COH Atlas Gameplay 0.13.7 — client animation loading and missing visual assets
+
+Install over the existing app. Keep imports, THORHERO, SQL data and completed
+tasks. Run Set up runtime once to activate the new helper/asset generation.
+Do not uninstall, clear data or reimport. The verified setup memory guard,
+server startup reuse and ordinary-save fix remain in this APK.
+
+This pass exposes the existing verified animation pack through the client's
+stock loader without copying animation data or changing its validation. It
+targets the 95.325-second sequencer phase. Preparation verifies the pack and
+loose input identities; its cost is reported separately. Device savings are
+unmeasured. Game, DbServer, MapServer, graphics libraries and Android DEX are
+identical to 0.13.6; this pass adds selected missing Atlas NPC geometry, Atlas
+materials and tray/inspiration textures to the private client tree.
+The supplement contains 45 geometry files and 245 textures (36.6 MB decoded).
+The existing animation pack is linked, adding no duplicate animation payload.
+
+New texture files require one fresh texture-header index. The first upgraded
+run may spend extra time in wrapper preparation before actual Game startup;
+the earlier full index build took about 90 seconds. Record that preparation
+separately from the actual client-start interval. Server readiness comes first,
+and the new client inputs do not invalidate the existing closed server cache.
+
+1. Reopen saved THORHERO once using the same graphics preset. Note elapsed time
+   to server/Atlas ready, the start of actual client launch, visible login,
+   and world entry. Include time spent typing/selecting hero separately if
+   convenient. Export immediately if any stage fails; keep all app data.
+2. Review the white Atlas building/pavement areas, Ms Liberty's appearance and
+   the HUD tray/inspiration icons shown in the last screenshots. Send comparable
+   screenshots and describe any models or textures still missing. No task,
+   combat, character creation, storage cleanup or second long boot is requested.
+3. After the visual review, use Abort operation and wait for owned cleanup,
+   then Export latest report. A cancelled interactive result is expected for
+   this focused review and is not a failed gameplay milestone. Ordinary Save /
+   logout remains available if you want to save; its earlier regression already
+   passed, so repeating that physical gate is not required.
+
+Evidence needed from this run:
+- client_visual_supplement install/reuse counts, bytes, elapsed time and scope;
+- client_animation_pack validation, mount/reuse and preparation elapsed time;
+- client_texture_startup_schedule preparation/serial wait and index regeneration;
+- COH_TEXTURE_INDEX_V1 hits/ordinary reads and full native sequencer timings;
+- current owned server/cache/Atlas and Game launch/login/connection timings;
+- current missing geometry/material/texture samples and suppressed totals;
+- owned cleanup, graceful PostgreSQL shutdown and remaining worker count.
+
+The supplement closes a selected set of logged missing inputs, not the entire
+game asset graph. One requested GEO_Collar_MAGIC model is absent from the donor
+male_collar geometry and remains unresolved; no guessed alias is substituted.
+Five older base-material names (nine model references) are also absent from the
+donor: BF_Boot_Clogs, BM_Eyes_Glasses_01a, BM_Boot_Business_Shoe,
+BM_Chest_Bum_Flannel_01a and Emblem_Hero_Corp. Available live costume texture
+overrides are supplied, but these original references remain explicitly open.
+Visible restoration and total client-time savings need this device result.
+Software llvmpipe rendering remains; hardware acceleration is a separate gate.
