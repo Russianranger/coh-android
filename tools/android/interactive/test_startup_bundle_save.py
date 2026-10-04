@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 REQUIRE_POSTGRESQL = os.environ.get('COH_REQUIRE_STARTUP_BUNDLE_PG') == '1'
 POSTGRES_FIXTURES_RUN = set()
@@ -42,7 +43,7 @@ def source(directory, patched=True):
     retained.wine.apply_patch(directory, (ROOT/'patches/postgresql/0001-dbserver-postgresql.patch')
                               .read_bytes().replace(b'\r\n', b'\n'))
     if patched:
-        retained.wine.apply_patch(directory, (ROOT/PATCH).read_bytes())
+        retained.wine.apply_patch(directory, (ROOT/PATCH).read_bytes().replace(b'\r\n', b'\n'))
     return directory/'DBServer/src/container_sql.c'
 
 
@@ -309,6 +310,18 @@ COMMIT; BEGIN;
         for mode,provider in (('cancelled',1),('replacement',1),('container',2)):
             with self.subTest(mode=mode,provider=provider):
                 self.assertEqual(self.commands(mode,provider),self.commands(mode,provider,False))
+
+    def test_crlf_patch_checkout_produces_the_same_staged_native_source(self):
+        raw_reader=Path.read_bytes
+        normalized=raw_reader(ROOT/PATCH).replace(b'\r\n',b'\n')
+        def checkout_bytes(path):
+            return normalized.replace(b'\n',b'\r\n') if path == ROOT/PATCH else raw_reader(path)
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);ordinary=root/'ordinary';ordinary.mkdir();crlf=root/'crlf';crlf.mkdir()
+            expected=source(ordinary).read_bytes()
+            with mock.patch.object(Path,'read_bytes',checkout_bytes):
+                actual=source(crlf).read_bytes()
+            self.assertEqual(actual,expected)
 
     def test_only_row_emitter_changes_and_fifo_ack_commit_logic_is_retained(self):
         patch=(ROOT/PATCH).read_text()
