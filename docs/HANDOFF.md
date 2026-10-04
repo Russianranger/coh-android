@@ -1,5 +1,32 @@
 # City of Heroes Android handoff
 
+**0.13.5 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.5/COH-Atlas-Gameplay-0.13.5.apk)
+from build source `31c8a1722f992e7a8334ef2256b4feaa9ca173be`
+(application implementation `9e3b88a2d6109cb5711a3ba480924d0a89fe0c1c`).
+[CI 37174737394](https://github.com/Russianranger/coh-android/actions/runs/37174737394)
+passed qualification, official SDK compile/v2/v3 signing/version verification,
+and wrapper publication: **467 checks / 29 suites / zero skips / 160 source pins**.
+Public APK is **676,120,510 bytes**, only **12,288 bytes** larger than 0.13.4;
+SHA-256 `b02cfa71498418a0fef0f5b3219a37207fcbc713fcece0c2dcc3a1019b5c3a13`.
+[Publication receipt](android-evidence/setup-memory-0.13.5-publication.json)
+records the actual public download and verification of all 67 retained payloads,
+DEX/resources, server archive extraction, source pins and checksum/instructions.
+CI official SDK checks are bound to these identical bytes; no local SDK rerun
+or physical memory/LMK qualification is claimed. The first CI attempt stopped
+before APK creation because checkout omitted the parent needed by the routing
+check; both dedicated jobs now fetch two commits. Broader draft-PR baseline
+checks are separate from this successful wrapper publication.
+
+Install over the current app and do **Set up runtime once, then export its report**.
+Do not uninstall, clear data, reimport assets, recreate THORHERO or repeat any
+accepted gameplay/storage/recovery gate. Review this setup result before another
+long Reopen. This wrapper retains the exact 0.13.4 runtime manifest/generation
+identity and all runtime files; a completed generation is reused. Interrupted
+staging must complete verification under the memory guard before activation.
+[Setup-only instructions](COH-Atlas-Gameplay-0.13.5-testing.txt).
+Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; PR #1 stays draft.
+
 **Current continuation: runtime setup memory protection (October 4, 2026 UTC).**
 The user reports that running 0.13.4 Set up runtime interrupted all apps. No new
 log bundle accompanied this report: neither Android LMK nor a precise failing
@@ -7,7 +34,7 @@ phase is confirmed. [Recorded report](android-evidence/setup-memory-0.13.4-user-
 Accepted storage recovery and manual task completion remain accepted; do not
 reset the profile or repeat those gates to diagnose this setup failure.
 
-The next wrapper, 0.13.5, adds setup memory headroom checks, bounded pauses and
+The published wrapper, 0.13.5, adds setup memory headroom checks, bounded pauses and
 safe refusal under persistent pressure, bounded I/O/synchronization, effective
 Stop during extraction, and interruption checkpoints with own Android exit
 history. It retains the exact 0.13.4 runtime manifest and all 67 runtime payloads;
@@ -22,8 +49,8 @@ Local qualification passed **467 checks / 29 suites / zero skips / 160 source
 pins**, including production guard, real archive cancellation, installer reuse
 and publication refusal, Service heap/ownership/recovery and all retained prior
 guards. All 19 authored Java sources are receipted (six changes plus one setup
-guard). CI wrapper/signature/publication verification is pending; no native
-rebuild or physical setup qualification is claimed.
+guard). Dedicated CI and independent public payload verification passed; no
+native rebuild or physical setup qualification is claimed.
 
 The setup controller checks at admission, bounded I/O (1 MiB aggregate reads and
 writes) or 250 ms between cooperative checkpoints. It keeps 512 MiB–1 GiB above
