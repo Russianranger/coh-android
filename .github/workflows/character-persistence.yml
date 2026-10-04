@@ -1,0 +1,166 @@
+name: Character persistence
+
+on:
+  workflow_dispatch:
+    inputs:
+      schema_run:
+        description: Successful accepted schema workflow run
+        type: string
+        default: '36088012666'
+      reference_run:
+        description: Successful matching reference runtime workflow run
+        type: string
+        default: '36088012664'
+      gates_run:
+        description: Successful template comparison and Atlas Park workflow run
+        type: string
+        default: '36176806895'
+      release_asset_id:
+        description: Reviewed asset bundle in this repository's draft release
+        type: string
+        default: '588984151'
+  push:
+    branches: [main, codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/character-persistence.yml'
+      - 'database/postgresql/tests/*character*'
+      - 'database/postgresql/tests/*pipe*'
+      - 'database/postgresql/tests/run_one_map.py'
+      - 'database/postgresql/tests/run_network_ack.py'
+      - 'database/postgresql/tests/run_generated_schema.py'
+  pull_request:
+    paths:
+      - '.github/workflows/character-persistence.yml'
+      - 'database/postgresql/tests/**'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: character-persistence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SCHEMA_RUN: ${{ inputs.schema_run || '36088012666' }}
+  REFERENCE_RUN: ${{ inputs.reference_run || '36088012664' }}
+  GATES_RUN: ${{ inputs.gates_run || '36176806895' }}
+
+jobs:
+  tooling:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2025-vs2026]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate character acceptance and pipe handling
+        run: python -m unittest discover -s database/postgresql/tests -p 'test_*character*.py' -v
+      - name: Validate existing map acceptance
+        run: python -m unittest discover -s database/postgresql/tests -p test_run_one_map.py -v
+  character:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    # Required only to download the existing unpublished asset. PR checks never
+    # receive this permission; no credentials are persisted by checkout.
+    permissions:
+      contents: write
+      actions: read
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Require successful input workflows from this repository
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
+          $base = "https://api.github.com/repos/${{ github.repository }}/actions"
+          $inputs = @(
+            @{ Id = $env:SCHEMA_RUN; Path = '.github/workflows/schema-generation.yml' },
+            @{ Id = $env:REFERENCE_RUN; Path = '.github/workflows/reference-runtime.yml' },
+            @{ Id = $env:GATES_RUN; Path = '.github/workflows/reference-templates.yml' }
+          )
+          foreach ($inputRun in $inputs) {
+            if ($inputRun.Id -notmatch '^[0-9]+$') { throw 'Workflow run ID must be numeric' }
+            $run = Invoke-RestMethod "$base/runs/$($inputRun.Id)" -Headers $headers
+            if ($run.status -ne 'completed' -or $run.conclusion -ne 'success' -or $run.path -ne $inputRun.Path -or $run.head_repository.full_name -ne '${{ github.repository }}') {
+              throw "Unaccepted input workflow $($inputRun.Id)"
+            }
+            Write-Host "Accepted $($inputRun.Path) run $($run.id) at $($run.head_sha)"
+          }
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/reference-artifact
+          run-id: ${{ env.REFERENCE_RUN }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: data-only-schema-evidence
+          path: out/accepted-schemas
+          run-id: ${{ env.SCHEMA_RUN }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-template-comparison-evidence
+          path: out/reference-template-evidence
+          run-id: ${{ env.GATES_RUN }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: postgresql-one-map-evidence
+          path: out/one-map-evidence
+          run-id: ${{ env.GATES_RUN }}
+          github-token: ${{ github.token }}
+      - name: Download reviewed binary assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET_ID: ${{ inputs.release_asset_id || '588984151' }}
+        run: |
+          python tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/asset-inputs.zip --release-asset-id "$env:ASSET_ID"
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed asset download failed' }
+      - name: Verify input bytes and stage a fresh runtime
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = 'out/reference-artifact/coh-reference-win32.zip'
+          $expected = (Get-Content out/reference-artifact/SHA256SUMS.txt | Where-Object { $_ -match '  coh-reference-win32\.zip$' }).Split(' ')[0]
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -ne $expected) { throw 'Runtime archive hash mismatch' }
+          Expand-Archive $zip out/reference-binaries
+          python tools/runtime_asset_bundle.py stage --archive out/asset-inputs.zip --manifest assets/reference-inputs-manifest.json --output out/reviewed-assets
+          if ($LASTEXITCODE -ne 0) { throw 'Reviewed asset extraction failed' }
+          python tools/prepare_runtime.py --output out/character-runtime --asset-data out/reviewed-assets --binaries out/reference-binaries
+          if ($LASTEXITCODE -ne 0) { throw 'Fresh character runtime staging failed' }
+      - name: Install pinned x86 PostgreSQL ODBC
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path $env:RUNNER_TEMP 'psqlodbc_x86.msi'
+          Invoke-WebRequest 'https://ftp.postgresql.org/pub/odbc/releases/REL-18_00_0004/psqlodbc_x86.msi' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash.ToLower() -ne '1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773') { throw 'ODBC installer hash mismatch' }
+          $result = Start-Process msiexec.exe -ArgumentList @('/i', $installer, '/qn', '/norestart') -Wait -PassThru
+          if ($result.ExitCode -notin @(0,3010)) { throw "ODBC install failed: $($result.ExitCode)" }
+      - name: Create, save, restart and resume a disposable character
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $driver = Get-OdbcDriver -Platform '32-bit' | Where-Object Name -Like 'PostgreSQL Unicode*' | Select-Object -First 1
+          if (-not $driver) { throw 'x86 Unicode PostgreSQL ODBC driver not found' }
+          python database/postgresql/tests/run_character_persistence.py --runtime out/character-runtime --reference-binaries out/reference-binaries --schema-report out/accepted-schemas/schema-evidence/schema-generation-report.json --comparison-report out/reference-template-evidence/reference-template-comparison-report.json --comparison-inputs out/reference-template-evidence/comparison-runtime-inputs.json --one-map-report out/one-map-evidence/one-map-report.json --bin "$env:PGBIN" --driver "$($driver.Name)" --work "$env:RUNNER_TEMP/coh-character-persistence" --output out/character-evidence --timeout-seconds 900 --phase-timeout-seconds 300
+          if ($LASTEXITCODE -ne 0) { throw 'Character persistence validation failed; inspect redacted evidence' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: character-persistence-evidence
+          path: out/character-evidence/
+          if-no-files-found: warn
+          retention-days: 30

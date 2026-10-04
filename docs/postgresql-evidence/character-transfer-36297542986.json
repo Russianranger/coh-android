@@ -1,0 +1,5291 @@
+{
+  "status": "fresh_fakeauth_character_map_roundtrip_second_save_passed_gameplay_unvalidated",
+  "started_utc": "2026-09-27T05:46:48.876212+00:00",
+  "failures": [],
+  "phases": [
+    {
+      "phase": "first_services_ready",
+      "time_utc": "2026-09-27T05:49:41.895951+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "account_empty",
+      "time_utc": "2026-09-27T05:49:42.992160+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "created_connected",
+      "time_utc": "2026-09-27T05:50:14.604241+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "influence_observed_while_connected",
+      "time_utc": "2026-09-27T05:50:17.130817+00:00",
+      "status": "passed",
+      "value": 12345,
+      "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+    },
+    {
+      "phase": "protocol_logout_committed",
+      "time_utc": "2026-09-27T05:50:22.856038+00:00",
+      "status": "passed",
+      "quitnow_is_save_ack": false,
+      "client_forced_stop_before_commit": false
+    },
+    {
+      "phase": "restart_services_ready",
+      "time_utc": "2026-09-27T05:51:04.312245+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "restart_saved_state",
+      "time_utc": "2026-09-27T05:51:05.467955+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "missing_name_refused_without_mutation",
+      "time_utc": "2026-09-27T05:51:11.977666+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "restored_currency_while_connected",
+      "time_utc": "2026-09-27T05:51:19.119115+00:00",
+      "status": "passed",
+      "value": 12345
+    },
+    {
+      "phase": "sustained_connected_observation",
+      "time_utc": "2026-09-27T05:52:29.640475+00:00",
+      "status": "passed",
+      "required_seconds": 60,
+      "observed_seconds": 64.95299999999997,
+      "sample_count": 12,
+      "maximum_sample_gap_seconds": 6.234000000000037,
+      "connected_map_id": 1,
+      "current_server_heartbeats": true
+    },
+    {
+      "phase": "clone101_prestarted_ready",
+      "time_utc": "2026-09-27T05:52:43.404634+00:00",
+      "status": "passed",
+      "map_id": 101,
+      "udp_port": 7002
+    },
+    {
+      "phase": "transfer1_arrived_and_committed",
+      "time_utc": "2026-09-27T05:53:01.182883+00:00",
+      "status": "passed",
+      "map_id": 101,
+      "udp_port": 7002
+    },
+    {
+      "phase": "transfer2_arrived_and_committed",
+      "time_utc": "2026-09-27T05:53:18.990773+00:00",
+      "status": "passed",
+      "map_id": 1,
+      "udp_port": 7001
+    },
+    {
+      "phase": "second_influence_observed_while_connected",
+      "time_utc": "2026-09-27T05:53:21.355279+00:00",
+      "status": "passed",
+      "value": 23456
+    },
+    {
+      "phase": "second_protocol_logout_committed",
+      "time_utc": "2026-09-27T05:53:27.943524+00:00",
+      "status": "passed",
+      "quitnow_is_save_ack": false,
+      "client_forced_stop_before_commit": false
+    }
+  ],
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "binary_sha256": {
+    "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+  },
+  "schema_report_sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf",
+  "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+  "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+  "one_map_report_sha256": "ef45cc77ca53dfc00b4a44c7a61c1f13f8a0a5a4368b4f0b247f5ebea5b1b06c",
+  "source_contract": {
+    "list_id": 3,
+    "map_id": 1,
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "influence": 12345,
+    "source_sha256": {
+      "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83",
+      "Utilities/TestClient/src/testClientCmdParse.c": "c0a31cdaedfa91fde32f4236f6fbc2f78eb171d8848dc7fd78c41f9c97975dd6",
+      "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+      "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "Game/src/clientcomm/dbclient.c": "81a1ab55db4a8c45fa791b3bd57841c887ac80eb0c882c9934bb14533825885b",
+      "Game/src/entity/entrecv.c": "a8c39e78c2e20a1666563bb5aaa05ea5785c8435f78e083dd5c39ec4b34a16e5",
+      "MapServer/src/svr/svr_tick.c": "790635fec2f21e49981c776815eb8e927e79ef5a277324b0e3601cc3b4bbade0",
+      "MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "Utilities/TestClient/src/externs.c": "4ea3b83f408e447cd189f49b18527fa3d395b92b63cd2b2c20676ebada5575bb",
+      "MapServer/src/cmdparse/cmdservercsr.c": "8f50b7d05468692e7de3833d7449c9a36446ab3672abe884e19497bce36c65aa",
+      "Utilities/TestClient/src/chatter.c": "ab7a72bb24bc5231234e5cc4cb1b5d6ecb1c3f31a30ececb3d1f26487139b3f2",
+      "Utilities/TestClient/src/win_init.c": "e7ae3630c5a44ee3452f743af0e7aa99a629d40f38f64ef797c96fbf184e9c3c",
+      "libs/UtilitiesLib/src/utils/utils.c": "9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf"
+    },
+    "resume_scope": "Stock order-sensitive -justlogin -character clears CREATE and STAY_CONNECTED",
+    "quit_ack_scope": "QuitNow confirms the request only; server status plus committed SQL are required"
+  },
+  "selected_sql_contract": {
+    "fields": {
+      "ents": [
+        "containerid",
+        "authid",
+        "authname",
+        "name",
+        "class",
+        "origin",
+        "level",
+        "experiencepoints",
+        "influencepoints",
+        "description",
+        "motto",
+        "datecreated"
+      ],
+      "ents2": [
+        "containerid",
+        "subid",
+        "curbuild",
+        "originalprimary",
+        "originalsecondary",
+        "praetorianprogress",
+        "playersubtype",
+        "influencetype"
+      ],
+      "powers": [
+        "containerid",
+        "subid",
+        "powerid",
+        "categoryname",
+        "powersetname",
+        "powername",
+        "powerlevelbought",
+        "powernumboostsbought",
+        "powersetlevelbought",
+        "buildnum",
+        "uniqueid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid",
+        "name",
+        "geom",
+        "tex1",
+        "tex2",
+        "displayname",
+        "region",
+        "bodyset",
+        "color1",
+        "color2",
+        "costumenum",
+        "fxname",
+        "color3",
+        "color4"
+      ]
+    },
+    "row_keys": {
+      "ents": [
+        "containerid"
+      ],
+      "ents2": [
+        "containerid",
+        "subid"
+      ],
+      "powers": [
+        "containerid",
+        "subid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid"
+      ]
+    },
+    "separate_progression_field": "ents.logincount",
+    "expected_influence": 12345
+  },
+  "port_preflight": [
+    {
+      "service": "postgresql",
+      "protocol": "TCP",
+      "port": 15437,
+      "available_before_start": true
+    },
+    {
+      "service": "dbserver",
+      "protocol": "TCP",
+      "port": 6997,
+      "available_before_start": true
+    },
+    {
+      "service": "map_client",
+      "protocol": "UDP",
+      "port": 7001,
+      "available_before_start": true
+    },
+    {
+      "service": "atlas_clone_client",
+      "protocol": "UDP",
+      "port": 7002,
+      "available_before_start": true
+    }
+  ],
+  "diagnostic_version": "coh-persistence-diagnostic",
+  "diagnostic_version_source": "diagnostic fallback; reference package contains no patch version",
+  "version_compatibility_validated": false,
+  "no_version_check": true,
+  "testclient_console_capture": "Owned helper attaches to stock GUI console before launcher version reply and retains bounded screen buffer through client exit",
+  "character_persistence_validated": true,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "scope": "Fresh character/save/restart, missing-name refusal, sustained resume, Atlas1 to clone101 to Atlas1, then second protocol save",
+  "network_scope": "Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host",
+  "raw_evidence_private": true,
+  "status_samples": [
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:49.287470+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:51.398271+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:53.505535+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:55.637344+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:57.840225+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:48:59.984956+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:49:02.103437+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:49:04.240271+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:06.389285+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:07.699661+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:10.909636+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:14.183816+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:17.447642+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:20.739194+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:23.963737+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:27.346348+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:49:30.756240+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "raw": "1 City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T05:49:34.212769+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "raw": "1 City_01_01.txt S: 6/6  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T05:49:37.539029+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:49:40.743890+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:35.416330+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:37.660046+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:39.927302+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:42.176078+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:44.451106+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:46.631354+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "sampled_utc": "2026-09-27T05:50:48.861323+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:50:51.073274+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:50:52.613121+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": true,
+      "raw": "1 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:50:56.016606+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": false,
+      "not_started": false,
+      "raw": "1 City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T05:50:59.255396+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:02.486314+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 9,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 3/9  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:20.866432+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 2/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:26.792437+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:32.738482+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 7,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 4/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:38.895071+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:44.770665+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 9,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/9  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:50.648966+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:51:56.533377+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:02.390806+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 7,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 3/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:08.284913+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:14.127014+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 8,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 4/8  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:19.934770+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 4,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 0/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:25.792750+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": true,
+      "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:52:30.855742+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": true,
+      "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:52:32.926793+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": true,
+      "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:52:35.122163+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": true,
+      "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:52:37.312042+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": false,
+      "raw": "101 City_01_01.txt S: 2/2  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T05:52:39.437137+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": false,
+      "not_started": false,
+      "raw": "101 City_01_01.txt S: 4/4  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-27T05:52:41.479293+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 2/2  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:52:43.404634+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 4,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 4/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-27T05:52:45.750172+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 5,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:52:46.945559+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 9,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 1/9  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:52:50.196072+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 5,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:52:56.638017+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+      "sampled_utc": "2026-09-27T05:53:03.470595+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 3/3  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:53:04.626920+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 7,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+      "sampled_utc": "2026-09-27T05:53:08.440963+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 3,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+      "sampled_utc": "2026-09-27T05:53:14.560092+00:00"
+    },
+    {
+      "map_id": 1,
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+      "sampled_utc": "2026-09-27T05:53:32.781098+00:00"
+    },
+    {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 2/2  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:53:33.910812+00:00"
+    }
+  ],
+  "character_status_samples": [
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:50:12.860793+00:00",
+      "phase": "created",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:50:17.130817+00:00",
+      "phase": "currency",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T05:50:20.646028+00:00",
+      "phase": "logout",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T05:51:10.133716+00:00",
+      "phase": "missing_name",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:16.646638+00:00",
+      "phase": "resumed",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:19.119115+00:00",
+      "phase": "restored live currency",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:22.059176+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:27.939815+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:34.172760+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:40.072332+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:45.945604+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:51.816851+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:51:57.700058+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:03.550561+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:09.431746+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:15.282221+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:21.087216+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:27.015373+00:00",
+      "phase": "sustained",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:29.640475+00:00",
+      "phase": "restored currency after observation",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:52:44.570848+00:00",
+      "phase": "transfer1_departure",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 101,
+      "static_map_id": 101,
+      "sampled_utc": "2026-09-27T05:52:51.369955+00:00",
+      "phase": "transfer1_arrival",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 101,
+      "static_map_id": 101,
+      "sampled_utc": "2026-09-27T05:52:53.914350+00:00",
+      "phase": "transfer1 live currency",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 101,
+      "static_map_id": 101,
+      "sampled_utc": "2026-09-27T05:52:57.830788+00:00",
+      "phase": "transfer1_settled",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 101,
+      "static_map_id": 101,
+      "sampled_utc": "2026-09-27T05:53:02.317831+00:00",
+      "phase": "transfer2_departure",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:53:09.560761+00:00",
+      "phase": "transfer2_arrival",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:53:11.944472+00:00",
+      "phase": "transfer2 live currency",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:53:15.726365+00:00",
+      "phase": "transfer2_settled",
+      "character_id": 1
+    },
+    {
+      "loaded": true,
+      "connected": true,
+      "in_map_transfer": false,
+      "map_id": 1,
+      "static_map_id": 1,
+      "sampled_utc": "2026-09-27T05:53:21.355279+00:00",
+      "phase": "second live currency",
+      "character_id": 1
+    },
+    {
+      "loaded": false,
+      "connected": false,
+      "in_map_transfer": false,
+      "sampled_utc": "2026-09-27T05:53:26.786301+00:00",
+      "phase": "second_logout",
+      "character_id": 1
+    }
+  ],
+  "snapshots": {
+    "after_protocol_logout": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_service_restart": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_missing_name_refusal": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 1,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_transfer1": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 2,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_transfer2": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 2,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 12345,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    },
+    "after_second_protocol_logout": {
+      "identity": {
+        "containerid": 1,
+        "authid": 1398454575,
+        "authname": "CohP3b45b37396",
+        "name": "TEST59440"
+      },
+      "login_count": 2,
+      "rows": {
+        "ents": [
+          {
+            "containerid": 1,
+            "authid": 1398454575,
+            "authname": "CohP3b45b37396",
+            "name": "TEST59440",
+            "class": 245,
+            "origin": 257,
+            "level": null,
+            "experiencepoints": null,
+            "influencepoints": 23456,
+            "description": "I was born to destroy newb\\ss",
+            "motto": "TEST59440",
+            "datecreated": "2026-09-27T05:49:59"
+          }
+        ],
+        "ents2": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "curbuild": null,
+            "originalprimary": "Super_Strength",
+            "originalsecondary": "Stone_Armor",
+            "praetorianprogress": null,
+            "playersubtype": null,
+            "influencetype": null
+          }
+        ],
+        "powers": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "powerid": 1,
+            "categoryname": 2312,
+            "powersetname": 2312,
+            "powername": 3117,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 286556421
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "powerid": 2,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 408,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1327800208
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "powerid": 3,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6759,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 446960276
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "powerid": 4,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6756,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1598813304
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "powerid": 5,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 1968,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 49739768
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "powerid": 6,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6744,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 101672052
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "powerid": 7,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6743,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 811536967
+          },
+          {
+            "containerid": 1,
+            "subid": 7,
+            "powerid": 8,
+            "categoryname": 1367,
+            "powersetname": 1367,
+            "powername": 6205,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 1451777400
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "powerid": 9,
+            "categoryname": 8865,
+            "powersetname": 3291,
+            "powername": 615,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 854716504
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "powerid": 10,
+            "categoryname": 8866,
+            "powersetname": 1336,
+            "powername": 2282,
+            "powerlevelbought": null,
+            "powernumboostsbought": null,
+            "powersetlevelbought": null,
+            "buildnum": null,
+            "uniqueid": 564586690
+          }
+        ],
+        "costumeparts": [
+          {
+            "containerid": 1,
+            "subid": 0,
+            "name": null,
+            "geom": 16296,
+            "tex1": 17962,
+            "tex2": 18109,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 1,
+            "name": null,
+            "geom": 20028,
+            "tex1": 17968,
+            "tex2": 19643,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 2,
+            "name": null,
+            "geom": 16437,
+            "tex1": 16506,
+            "tex2": 16570,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 3,
+            "name": null,
+            "geom": 18125,
+            "tex1": 18291,
+            "tex2": 19023,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 4,
+            "name": null,
+            "geom": 18270,
+            "tex1": 18309,
+            "tex2": 18472,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 5,
+            "name": null,
+            "geom": 19728,
+            "tex1": 17312,
+            "tex2": 17313,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 6,
+            "name": null,
+            "geom": 20895,
+            "tex1": 16339,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 8,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 9,
+            "name": null,
+            "geom": 19962,
+            "tex1": 17311,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 10,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 13,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 11808,
+            "bodyset": 20880,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 14,
+            "name": null,
+            "geom": 18952,
+            "tex1": 18954,
+            "tex2": null,
+            "displayname": null,
+            "region": 18669,
+            "bodyset": 20050,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          },
+          {
+            "containerid": 1,
+            "subid": 27,
+            "name": null,
+            "geom": null,
+            "tex1": null,
+            "tex2": null,
+            "displayname": null,
+            "region": 17890,
+            "bodyset": 16296,
+            "color1": 2031636,
+            "color2": 4403,
+            "costumenum": null,
+            "fxname": null,
+            "color3": null,
+            "color4": null
+          }
+        ]
+      }
+    }
+  },
+  "resume_client_package": {
+    "schema_version": 1,
+    "build_role": "resume_only_diagnostic_testclient",
+    "status": "diagnostic_build_packaged_runtime_unverified",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "repository_commit": "5f2c561058a186de59d3f27301eea210bd4bb66d",
+    "configuration": "OptDebug",
+    "architecture": "Win32",
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36297542986",
+    "postgresql_persistence_fixture": false,
+    "resume_client_build_input": {
+      "schema_version": 1,
+      "build_role": "resume_only_diagnostic_testclient",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "postgresql_build_input_canonical_sha256": "c5dd8a6ecc42472d14a02c8a3986530aefecc4266ed94496a16df3d8fe2ce022",
+      "postgresql_build_input": {
+        "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+        "patch_sha256": "03898e46aa0d8aa34b97234a296307e075c8859f438567450cfb4024f5a282ad",
+        "overlay_sha256": {
+          "Common/sql/pg_compat.h": "119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e",
+          "DBServer/src/pg_persistence_test.c": "30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2"
+        },
+        "patched_sha256": {
+          "Common/sql/sqlconn.c": "8c987e869157cc66f1ba909332dca16d38edd696b88a2e94a2fd5e6c47563b8f",
+          "Common/sql/sqlconn.h": "955e760307896f57227c55d3f0ed478ac6de0cf4aae03f025cd3b86b95523249",
+          "DBServer/CMakeLists.txt": "9937c7f12639fa7b7b3813df35a606b56aa9e9a4d4b580ec75e0509c5603656a",
+          "DBServer/src/auctionservercomm.c": "629d40ce8a2f59ba81cd8344fed73616dc9294375d77a0ebbdbfb5991d6dfef6",
+          "DBServer/src/clientcomm.c": "99032cf01727e6cf7ceb710ee68287a07448d2d2c74f8fbdc8926f32f9349c1a",
+          "DBServer/src/container.c": "43163b69b1762363bff1ccee4bbd497e2a392b3163d1f3a0169b577f18726369",
+          "DBServer/src/container_sql.c": "7123f2dc01c88b23853e47c58266a33c5b5f8b6c41f577c789c66513c7ca5d08",
+          "DBServer/src/container_tplt.c": "5f0adfdb4f52a1ba4212afe2c2a644a92844555d1f750f627c1f679600d9c85f",
+          "DBServer/src/container_tplt_utils.c": "934eaae85397389cdcaa6e0bd4c2425545939a4d40ed654a62f586011cbfa530",
+          "DBServer/src/dbdispatch.c": "a81a29e724361e35a9fac40423da173583621b9edd987053e6254cfe29ceafde",
+          "DBServer/src/dbimport.c": "77432691fd400a4351038357bf989c49cfce9ecd6c540eec4ba8102b93f8961a",
+          "DBServer/src/dbinit.c": "9b7a8cde3b7553152f992292c0cfa3825acce3649b4ab2b97c3621f52e19d45f",
+          "DBServer/src/sql_fifo.c": "73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa",
+          "DBServer/src/sql_fifo.h": "fb1a943714b315c454669645e98c0c0f586e95381fded697cf49bc4f38f8d8db",
+          "MapServer/src/dbcomm/dbcontainer.c": "35fcf37e35642735d61dacf8f960dc5e3b159c3748cc6052e37fb1a7eac0e759",
+          "MapServer/src/dbcomm/dbquery.c": "75a3de6cd707bed3f517ac2fbc73bbf0760ca171fb1e2a26b301d002d3960d70"
+        }
+      },
+      "resume_patch_sha256": "9a424a1befb942ae462df3ad636cdb69a168aaf406bcd936382fc6a891b95f01",
+      "source_sha256": {
+        "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83"
+      },
+      "patched_sha256": {
+        "Utilities/TestClient/src/main.c": "00a7c8f96745c8511f6fa0aae97a363bf6e6d0748b9611784d893eeaaebc2a76"
+      },
+      "command_flag": "-resumeonly",
+      "required_argument": "-character NAME",
+      "creation_allowed": false,
+      "stay_connected": true,
+      "transfer_proof": {
+        "schema_version": 1,
+        "marker": "COH_RESUME_ONLY_TRANSFER_UPDATE",
+        "epoch": "successful_doMapXfer",
+        "endpoint": "connected_peer",
+        "readiness": "processed_SERVER_UPDATE",
+        "identity": "initial_received_player_entity"
+      },
+      "runtime_validation": "unverified"
+    },
+    "files": {
+      "TestClient.exe": {
+        "sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+        "size": 3143168,
+        "pe_machine": 332,
+        "imports": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "IPHLPAPI.DLL",
+          "KERNEL32.dll",
+          "USER32.dll",
+          "WINMM.dll",
+          "WS2_32.dll"
+        ],
+        "delay_imports": []
+      },
+      "resume-client-build-input.json": {
+        "sha256": "18a27dc8a801db05a69fa87936364f4266678e7c99effcf7d28d3cc4b3e06771",
+        "size": 3220
+      }
+    },
+    "symbols": {
+      "TestClient.pdb": {
+        "sha256": "f308b0fc6c09a5ddba6fb8d38b4a4fb8d5bf624abace2f962fbc2eca68a4b828",
+        "size": 26390528
+      }
+    },
+    "dependency_validation": "deferred_until_accepted_reference_runtime"
+  },
+  "sustained_session_validated": true,
+  "sustained_observation_required_seconds": 60,
+  "map_transfer_contract": {
+    "home_map_id": 1,
+    "clone_map_id": 101,
+    "base_map_id": 1,
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "udp_ports": {
+      "1": 7001,
+      "101": 7002
+    },
+    "maps_db_sha256": "2eced612b0626a9d855a344441b57fe543d456b710cfda9c21a5c9628378a529",
+    "source_sha256": {
+      "DBServer/src/dbinit.c": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+      "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+      "DBServer/src/mapxfer.c": "3eb5d5f5a157363bc39dea4545791d01032fedadfa8517cf2a2e1bb7fa54ad59",
+      "MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "MapServer/src/dbcomm/dbmapxfer.c": "14799001b028608bf940b631b73ba6af02ed869915b09ec000547e3aa0106663",
+      "MapServer/src/container/containercallbacks.c": "56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73",
+      "MapServer/src/svr/svr_init.c": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "MapServer/src/svr/svr_player.c": "82fee142cd2a0d37f2ec8cb62c91b54ee34d5bb31655d1d33961187868a667a8",
+      "MapServer/src/dbcomm/staticMapInfo.c": "bf065d7cf8d22b980e808d49e6f9733af483d7d6d893581d7c13175f73af3660",
+      "MapServer/src/group/groupnetsend.c": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "Utilities/TestClient/src/externs.c": "4ea3b83f408e447cd189f49b18527fa3d395b92b63cd2b2c20676ebada5575bb"
+    },
+    "scope": "Two manually owned static instances of the same Atlas map; no door or different-zone asset validation",
+    "login_count_scope": "Ordinary resume adds one login; is_map_xfer suppresses further increments",
+    "save_scope": "Transfer sends an ordinary entity update; independent committed SQL is still required"
+  },
+  "map_transfer_validated": true,
+  "transfer_legs": [
+    {
+      "epoch": 1,
+      "from_map_id": 1,
+      "to_map_id": 101,
+      "requested_utc": "2026-09-27T05:52:46.945559+00:00",
+      "command": "mapmove 101",
+      "departure_character_status": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:44.570848+00:00"
+      },
+      "maps_before": {
+        "1": {
+          "map_id": 1,
+          "ready": true,
+          "network_age_seconds": 4,
+          "stats_age_seconds": 4,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "raw": "1 City_01_01.txt S: 4/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+          "sampled_utc": "2026-09-27T05:52:45.750172+00:00"
+        },
+        "101": {
+          "map_id": 101,
+          "ready": true,
+          "network_age_seconds": 5,
+          "stats_age_seconds": 5,
+          "address": "127.0.0.1",
+          "port": 7002,
+          "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+          "sampled_utc": "2026-09-27T05:52:46.945559+00:00"
+        }
+      },
+      "arrival": {
+        "processed_update": {
+          "epoch": 1,
+          "database_id": 1,
+          "name": "TEST59440",
+          "base_map_id": 1,
+          "instance_number": 2,
+          "address": "127.0.0.1",
+          "port": 7002,
+          "database_id_source": "processed MapServer player entity update",
+          "instance_number_is_map_container_id": false,
+          "map_id": 101,
+          "static_map_id": 101,
+          "exact_destination_endpoint_verified": true,
+          "in_map_transfer": false
+        },
+        "map_status": {
+          "map_id": 101,
+          "ready": true,
+          "network_age_seconds": 1,
+          "stats_age_seconds": 9,
+          "address": "127.0.0.1",
+          "port": 7002,
+          "raw": "101 City_01_01.txt S: 1/9  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+          "sampled_utc": "2026-09-27T05:52:50.196072+00:00"
+        },
+        "character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 101,
+          "static_map_id": 101,
+          "sampled_utc": "2026-09-27T05:52:51.369955+00:00"
+        },
+        "observed_utc": "2026-09-27T05:52:51.369955+00:00"
+      },
+      "live_currency": {
+        "player": "TEST59440",
+        "account": "CohP3b45b37396",
+        "influence": 12345,
+        "time_utc": "2026-09-27T05:52:52.625487+00:00",
+        "sequence": 25
+      },
+      "sql_comparison": {
+        "identity_unchanged": true,
+        "selected_rows_unchanged": true,
+        "committed_login_count": 2,
+        "expected_session_login_count": 2,
+        "additional_transfer_login": false,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 10,
+          "costumeparts": 13
+        },
+        "sql_scope": "Committed ordinary entity update; no forced save or SQL mutation"
+      },
+      "committed_sql_observed_utc": "2026-09-27T05:52:55.461068+00:00",
+      "status": "passed",
+      "settled_utc": "2026-09-27T05:52:57.830788+00:00",
+      "settled_map_status": {
+        "map_id": 101,
+        "ready": true,
+        "network_age_seconds": 5,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7002,
+        "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:52:56.638017+00:00"
+      },
+      "settled_character_status": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 101,
+        "static_map_id": 101,
+        "sampled_utc": "2026-09-27T05:52:57.830788+00:00"
+      },
+      "account_character_count": 1
+    },
+    {
+      "epoch": 2,
+      "from_map_id": 101,
+      "to_map_id": 1,
+      "requested_utc": "2026-09-27T05:53:04.626920+00:00",
+      "command": "mapmove 1",
+      "departure_character_status": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 101,
+        "static_map_id": 101,
+        "sampled_utc": "2026-09-27T05:53:02.317831+00:00"
+      },
+      "maps_before": {
+        "1": {
+          "map_id": 1,
+          "ready": true,
+          "network_age_seconds": 2,
+          "stats_age_seconds": 2,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "raw": "1 City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+          "sampled_utc": "2026-09-27T05:53:03.470595+00:00"
+        },
+        "101": {
+          "map_id": 101,
+          "ready": true,
+          "network_age_seconds": 3,
+          "stats_age_seconds": 3,
+          "address": "127.0.0.1",
+          "port": 7002,
+          "raw": "101 City_01_01.txt S: 3/3  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+          "sampled_utc": "2026-09-27T05:53:04.626920+00:00"
+        }
+      },
+      "arrival": {
+        "processed_update": {
+          "epoch": 2,
+          "database_id": 1,
+          "name": "TEST59440",
+          "base_map_id": 1,
+          "instance_number": 1,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "database_id_source": "processed MapServer player entity update",
+          "instance_number_is_map_container_id": false,
+          "map_id": 1,
+          "static_map_id": 1,
+          "exact_destination_endpoint_verified": true,
+          "in_map_transfer": false
+        },
+        "map_status": {
+          "map_id": 1,
+          "ready": true,
+          "network_age_seconds": 1,
+          "stats_age_seconds": 7,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "raw": "1 City_01_01.txt S: 1/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+          "sampled_utc": "2026-09-27T05:53:08.440963+00:00"
+        },
+        "character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 1,
+          "static_map_id": 1,
+          "sampled_utc": "2026-09-27T05:53:09.560761+00:00"
+        },
+        "observed_utc": "2026-09-27T05:53:09.560761+00:00"
+      },
+      "live_currency": {
+        "player": "TEST59440",
+        "account": "CohP3b45b37396",
+        "influence": 12345,
+        "time_utc": "2026-09-27T05:53:10.793617+00:00",
+        "sequence": 30
+      },
+      "sql_comparison": {
+        "identity_unchanged": true,
+        "selected_rows_unchanged": true,
+        "committed_login_count": 2,
+        "expected_session_login_count": 2,
+        "additional_transfer_login": false,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 10,
+          "costumeparts": 13
+        },
+        "sql_scope": "Committed ordinary entity update; no forced save or SQL mutation"
+      },
+      "committed_sql_observed_utc": "2026-09-27T05:53:13.428448+00:00",
+      "status": "passed",
+      "settled_utc": "2026-09-27T05:53:15.726365+00:00",
+      "settled_map_status": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 3,
+        "stats_age_seconds": 3,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+        "sampled_utc": "2026-09-27T05:53:14.560092+00:00"
+      },
+      "settled_character_status": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:53:15.726365+00:00"
+      },
+      "account_character_count": 1
+    }
+  ],
+  "transfer_map_startup": {
+    "baseline": {
+      "map_id": 101,
+      "ready": false,
+      "not_started": true,
+      "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-27T05:52:30.855742+00:00"
+    },
+    "ready": {
+      "map_id": 101,
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7002,
+      "raw": "101 City_01_01.txt S: 2/2  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-27T05:52:43.404634+00:00"
+    }
+  },
+  "account": "CohP3b45b37396",
+  "redacted_logs": [
+    {
+      "file": "selected-diagnostics.txt",
+      "sha256": "103057dd286acf6202cc2a1860dd9687b17d50841f97d7d8c102fead928e8178",
+      "bytes": 3717,
+      "scope": "Selected diagnostics; complete raw logs and container payloads remain private"
+    }
+  ],
+  "benign_catalog_notices": {
+    "count": 96,
+    "lines": [
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "260927 05:48:44 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 05:48:44 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260927 05:48:44 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 05:48:44 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents_teamupsid_teamups\" of relation \"ents\" does not exist, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 00000 NOTICE: constraint \"fk_ents2_leaguesid_leagues\" of relation \"ents2\" does not exist, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_d35a94bbfd5046f3ddf63660566de5b1\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_9283e8c5e72b4c104a840140e1beb18f\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_3b412795d1b52f66fa76c1f73424b63c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_0b043bf41e5fa8df4c87806b36bc4525\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c966088b4d7df8aba27bf25e9a7d1133\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_b9286a927ecc3907e4cfe219b24a4ddf\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_70cf6804504c4416b7a6ccd9d49dec69\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_758a75a721659bc6aac385f93000d527\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_222e125e331c5886f8d77d7e627b233a\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_76ab837134d13494e22d789c4a220d2f\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_85c8bb0e445fa3ae7c7ed398b4d86f89\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_7281320fd73629557a177545ae7eeace\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_227674a2f7ad5fdfaf0c195be1ea3cde\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_4b7e1a2570e4ca32f0041917c24add7c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_58a2ac94714383b93662e004057d255e\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_018fa1deada958bc8542bdda78dcc5e2\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_c0328cd4b0254031e1d045a68123c15e\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_15fda1cac48ab0717212293efb0b0fef\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_1075be6a714e5ca113423c3806565a4c\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping",
+      "260927 05:50:34 -1 SQLERROR: -1 42P07 NOTICE: relation \"coh_77ce0f52e6db9dfc76c55c08d39f817f\" already exists, skipping"
+    ],
+    "line_limit": 100
+  },
+  "attribute_mapping_sha256": {
+    "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+    "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+    "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+  },
+  "character": {
+    "container_id": 1,
+    "name": "TEST59440",
+    "account": "CohP3b45b37396"
+  },
+  "influence_requested_utc": "2026-09-27T05:50:14.604746+00:00",
+  "live_currency_evidence": {
+    "player": "TEST59440",
+    "account": "CohP3b45b37396",
+    "influence": 12345,
+    "time_utc": "2026-09-27T05:50:15.645075+00:00",
+    "sequence": 14
+  },
+  "quit_requested_utc": "2026-09-27T05:50:18.328956+00:00",
+  "first_session_pipe": {
+    "client_pid": 3040,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": false,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "3040",
+        "time_utc": "2026-09-27T05:49:50.998659+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T05:49:50.999672+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP3b45b37396",
+        "time_utc": "2026-09-27T05:49:50.999672+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T05:49:50.999672+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T05:49:55.463353+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T05:50:04.986188+00:00",
+        "sequence": 9
+      },
+      {
+        "kind": "Player",
+        "value": "TEST59440",
+        "time_utc": "2026-09-27T05:50:04.986188+00:00",
+        "sequence": 10
+      },
+      {
+        "kind": "Status",
+        "value": "Running",
+        "time_utc": "2026-09-27T05:50:04.986188+00:00",
+        "sequence": 12
+      },
+      {
+        "kind": "QuitNow",
+        "value": "",
+        "time_utc": "2026-09-27T05:50:18.467124+00:00",
+        "sequence": 16
+      }
+    ]
+  },
+  "restart_comparison": {
+    "phase": "restart",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": true,
+    "only_expected_influence_change": false,
+    "login_count_before": 1,
+    "login_count_after": 1,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 13
+    }
+  },
+  "diagnostic_testclient_sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+  "missing_name_probe": {
+    "requested_name": "CohAbsent08548cd7c29b",
+    "exit_code": 3,
+    "explicit_refusal": true,
+    "creation_or_scene_observed": false,
+    "counts_as_login_or_save": false,
+    "character_count_before": 1,
+    "character_count_after": 1,
+    "independent_sql_unchanged": true
+  },
+  "missing_name_comparison": {
+    "phase": "missing_name",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": true,
+    "only_expected_influence_change": false,
+    "login_count_before": 1,
+    "login_count_after": 1,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 13
+    }
+  },
+  "missing_name_session_pipe": {
+    "client_pid": 6736,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": true,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "6736",
+        "time_utc": "2026-09-27T05:51:05.687852+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T05:51:05.687852+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP3b45b37396",
+        "time_utc": "2026-09-27T05:51:05.687852+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T05:51:05.687852+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T05:51:06.918799+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "Status",
+        "value": "ERROR",
+        "time_utc": "2026-09-27T05:51:07.062937+00:00",
+        "sequence": 9
+      }
+    ]
+  },
+  "resume_probe": {
+    "slot": 0,
+    "database_id": 1,
+    "database_id_source": "processed MapServer player entity update",
+    "exact_name": "TEST59440",
+    "creation_disabled": true,
+    "scene_exchange_observed": true,
+    "processed_server_update_for_original_player": true,
+    "active_gameplay_confirmed": false,
+    "scope": "Connected existing-character session; combat, movement and rendered gameplay unvalidated"
+  },
+  "restored_live_currency_evidence": {
+    "player": "TEST59440",
+    "account": "CohP3b45b37396",
+    "influence": 12345,
+    "time_utc": "2026-09-27T05:51:17.718151+00:00",
+    "sequence": 13
+  },
+  "sustained_session_samples": [
+    {
+      "sampled_utc": "2026-09-27T05:51:22.059176+00:00",
+      "elapsed_seconds": 2.937000000000012,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 3,
+        "stats_age_seconds": 9,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 3/9  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:20.866432+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:22.059176+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:27.939815+00:00",
+      "elapsed_seconds": 8.812000000000012,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 2,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 2/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:26.792437+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:27.939815+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:34.172760+00:00",
+      "elapsed_seconds": 15.04600000000005,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 1,
+        "stats_age_seconds": 1,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:32.738482+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:34.172760+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:40.072332+00:00",
+      "elapsed_seconds": 20.952999999999975,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 4,
+        "stats_age_seconds": 7,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 4/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:38.895071+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:40.072332+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:45.945604+00:00",
+      "elapsed_seconds": 26.827999999999975,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 3,
+        "stats_age_seconds": 3,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:44.770665+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:45.945604+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:51.816851+00:00",
+      "elapsed_seconds": 32.68700000000001,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 1,
+        "stats_age_seconds": 9,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 1/9  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:50.648966+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:51.816851+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:51:57.700058+00:00",
+      "elapsed_seconds": 38.577999999999975,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 1,
+        "stats_age_seconds": 5,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 1/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:51:56.533377+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:51:57.700058+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:52:03.550561+00:00",
+      "elapsed_seconds": 44.42100000000005,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 1,
+        "stats_age_seconds": 1,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+        "sampled_utc": "2026-09-27T05:52:02.390806+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:03.550561+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:52:09.431746+00:00",
+      "elapsed_seconds": 50.31200000000001,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 3,
+        "stats_age_seconds": 7,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 3/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+        "sampled_utc": "2026-09-27T05:52:08.284913+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:09.431746+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:52:15.282221+00:00",
+      "elapsed_seconds": 56.15599999999995,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 3,
+        "stats_age_seconds": 3,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+        "sampled_utc": "2026-09-27T05:52:14.127014+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:15.282221+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:52:21.087216+00:00",
+      "elapsed_seconds": 61.96799999999996,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 4,
+        "stats_age_seconds": 8,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 4/8  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+        "sampled_utc": "2026-09-27T05:52:19.934770+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:21.087216+00:00"
+      }
+    },
+    {
+      "sampled_utc": "2026-09-27T05:52:27.015373+00:00",
+      "elapsed_seconds": 67.88999999999999,
+      "map": {
+        "map_id": 1,
+        "ready": true,
+        "network_age_seconds": 0,
+        "stats_age_seconds": 4,
+        "address": "127.0.0.1",
+        "port": 7001,
+        "raw": "1 City_01_01.txt S: 0/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+        "sampled_utc": "2026-09-27T05:52:25.792750+00:00"
+      },
+      "character": {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "sampled_utc": "2026-09-27T05:52:27.015373+00:00"
+      }
+    }
+  ],
+  "sustained_observation": {
+    "required_seconds": 60,
+    "observed_seconds": 64.95299999999997,
+    "sample_count": 12,
+    "maximum_sample_gap_seconds": 6.234000000000037,
+    "connected_map_id": 1,
+    "current_server_heartbeats": true
+  },
+  "restored_live_currency_after_observation": {
+    "player": "TEST59440",
+    "account": "CohP3b45b37396",
+    "influence": 12345,
+    "time_utc": "2026-09-27T05:52:28.296476+00:00",
+    "sequence": 21
+  },
+  "second_influence_requested_utc": "2026-09-27T05:53:18.990773+00:00",
+  "second_live_currency_evidence": {
+    "player": "TEST59440",
+    "account": "CohP3b45b37396",
+    "influence": 23456,
+    "time_utc": "2026-09-27T05:53:20.040415+00:00",
+    "sequence": 31
+  },
+  "second_quit_requested_utc": "2026-09-27T05:53:24.596390+00:00",
+  "second_logout_comparison": {
+    "phase": "second_logout",
+    "identity_unchanged": true,
+    "selected_rows_unchanged": false,
+    "only_expected_influence_change": true,
+    "login_count_before": 1,
+    "login_count_after": 2,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 13
+    }
+  },
+  "resume_session_pipe": {
+    "client_pid": 9884,
+    "pid_verified": true,
+    "version_requests": 1,
+    "disconnected": false,
+    "events": [
+      {
+        "kind": "PID",
+        "value": "9884",
+        "time_utc": "2026-09-27T05:51:12.134775+00:00",
+        "sequence": 1
+      },
+      {
+        "kind": "Status",
+        "value": "Loading",
+        "time_utc": "2026-09-27T05:51:12.134775+00:00",
+        "sequence": 3
+      },
+      {
+        "kind": "AuthName",
+        "value": "CohP3b45b37396",
+        "time_utc": "2026-09-27T05:51:12.134775+00:00",
+        "sequence": 4
+      },
+      {
+        "kind": "VersionRequest",
+        "value": "NULL",
+        "time_utc": "2026-09-27T05:51:12.134775+00:00",
+        "sequence": 5
+      },
+      {
+        "kind": "Status",
+        "value": "Connecting",
+        "time_utc": "2026-09-27T05:51:13.351797+00:00",
+        "sequence": 6
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T05:51:13.889867+00:00",
+        "sequence": 9
+      },
+      {
+        "kind": "Player",
+        "value": "TEST59440",
+        "time_utc": "2026-09-27T05:51:13.889867+00:00",
+        "sequence": 10
+      },
+      {
+        "kind": "Status",
+        "value": "Running",
+        "time_utc": "2026-09-27T05:51:13.889867+00:00",
+        "sequence": 12
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T05:52:48.203088+00:00",
+        "sequence": 23
+      },
+      {
+        "kind": "MapName",
+        "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+        "time_utc": "2026-09-27T05:53:06.168422+00:00",
+        "sequence": 27
+      },
+      {
+        "kind": "QuitNow",
+        "value": "",
+        "time_utc": "2026-09-27T05:53:24.671456+00:00",
+        "sequence": 33
+      }
+    ]
+  },
+  "launcher_sessions": [
+    {
+      "client_pid": 3040,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "3040",
+          "time_utc": "2026-09-27T05:49:50.998659+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T05:49:50.999672+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP3b45b37396",
+          "time_utc": "2026-09-27T05:49:50.999672+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T05:49:50.999672+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T05:49:55.463353+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T05:50:04.986188+00:00",
+          "sequence": 9
+        },
+        {
+          "kind": "Player",
+          "value": "TEST59440",
+          "time_utc": "2026-09-27T05:50:04.986188+00:00",
+          "sequence": 10
+        },
+        {
+          "kind": "Status",
+          "value": "Running",
+          "time_utc": "2026-09-27T05:50:04.986188+00:00",
+          "sequence": 12
+        },
+        {
+          "kind": "QuitNow",
+          "value": "",
+          "time_utc": "2026-09-27T05:50:18.467124+00:00",
+          "sequence": 16
+        }
+      ]
+    },
+    {
+      "client_pid": 6736,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "6736",
+          "time_utc": "2026-09-27T05:51:05.687852+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T05:51:05.687852+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP3b45b37396",
+          "time_utc": "2026-09-27T05:51:05.687852+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T05:51:05.687852+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T05:51:06.918799+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "Status",
+          "value": "ERROR",
+          "time_utc": "2026-09-27T05:51:07.062937+00:00",
+          "sequence": 9
+        }
+      ]
+    },
+    {
+      "client_pid": 9884,
+      "pid_verified": true,
+      "version_requests": 1,
+      "disconnected": true,
+      "events": [
+        {
+          "kind": "PID",
+          "value": "9884",
+          "time_utc": "2026-09-27T05:51:12.134775+00:00",
+          "sequence": 1
+        },
+        {
+          "kind": "Status",
+          "value": "Loading",
+          "time_utc": "2026-09-27T05:51:12.134775+00:00",
+          "sequence": 3
+        },
+        {
+          "kind": "AuthName",
+          "value": "CohP3b45b37396",
+          "time_utc": "2026-09-27T05:51:12.134775+00:00",
+          "sequence": 4
+        },
+        {
+          "kind": "VersionRequest",
+          "value": "NULL",
+          "time_utc": "2026-09-27T05:51:12.134775+00:00",
+          "sequence": 5
+        },
+        {
+          "kind": "Status",
+          "value": "Connecting",
+          "time_utc": "2026-09-27T05:51:13.351797+00:00",
+          "sequence": 6
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T05:51:13.889867+00:00",
+          "sequence": 9
+        },
+        {
+          "kind": "Player",
+          "value": "TEST59440",
+          "time_utc": "2026-09-27T05:51:13.889867+00:00",
+          "sequence": 10
+        },
+        {
+          "kind": "Status",
+          "value": "Running",
+          "time_utc": "2026-09-27T05:51:13.889867+00:00",
+          "sequence": 12
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T05:52:48.203088+00:00",
+          "sequence": 23
+        },
+        {
+          "kind": "MapName",
+          "value": "maps/City_Zones/City_01_01/City_01_01.txt",
+          "time_utc": "2026-09-27T05:53:06.168422+00:00",
+          "sequence": 27
+        },
+        {
+          "kind": "QuitNow",
+          "value": "",
+          "time_utc": "2026-09-27T05:53:24.671456+00:00",
+          "sequence": 33
+        }
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "label": "first-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 297.532
+    },
+    {
+      "label": "first-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 289.75
+    },
+    {
+      "label": "first-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 287.032
+    },
+    {
+      "label": "first-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 284.922
+    },
+    {
+      "label": "first-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 282.813
+    },
+    {
+      "label": "first-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 280.672
+    },
+    {
+      "label": "first-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 278.469
+    },
+    {
+      "label": "first-baseline-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 276.328
+    },
+    {
+      "label": "first-baseline-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 274.203
+    },
+    {
+      "label": "first-baseline-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 272.063
+    },
+    {
+      "label": "first-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 271.438
+    },
+    {
+      "label": "first-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 270.813
+    },
+    {
+      "label": "first-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 267.578
+    },
+    {
+      "label": "first-ready-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 264.36
+    },
+    {
+      "label": "first-ready-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 261.094
+    },
+    {
+      "label": "first-ready-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 257.797
+    },
+    {
+      "label": "first-ready-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 254.532
+    },
+    {
+      "label": "first-ready-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 251.188
+    },
+    {
+      "label": "first-ready-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 247.907
+    },
+    {
+      "label": "first-ready-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 244.422
+    },
+    {
+      "label": "first-ready-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 240.969
+    },
+    {
+      "label": "first-ready-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 237.735
+    },
+    {
+      "label": "create-client",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 233.875
+    },
+    {
+      "label": "find-created-character",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 211.969
+    },
+    {
+      "label": "created-status-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 205.61
+    },
+    {
+      "label": "currency-status-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 201.36
+    },
+    {
+      "label": "logout-status-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 197.828
+    },
+    {
+      "label": "restart-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 186.391
+    },
+    {
+      "label": "restart-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 184.641
+    },
+    {
+      "label": "restart-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 180.844
+    },
+    {
+      "label": "restart-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 178.594
+    },
+    {
+      "label": "restart-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 176.313
+    },
+    {
+      "label": "restart-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 174.078
+    },
+    {
+      "label": "restart-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 171.844
+    },
+    {
+      "label": "restart-baseline-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 169.657
+    },
+    {
+      "label": "restart-baseline-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 167.407
+    },
+    {
+      "label": "restart-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 166.75
+    },
+    {
+      "label": "restart-ready-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 166.047
+    },
+    {
+      "label": "restart-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 162.547
+    },
+    {
+      "label": "restart-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 159.219
+    },
+    {
+      "label": "restart-ready-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 156.047
+    },
+    {
+      "label": "missing-name-client",
+      "exit_code": 3,
+      "forced_stop": false,
+      "elapsed_seconds": 152.313
+    },
+    {
+      "label": "missing_name-status-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 148.469
+    },
+    {
+      "label": "sustained-resume-client",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 145.844
+    },
+    {
+      "label": "resumed-status-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 141.828
+    },
+    {
+      "label": "restored live currency-status-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 139.344
+    },
+    {
+      "label": "sustained-map-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 137.61
+    },
+    {
+      "label": "sustained-status-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 136.422
+    },
+    {
+      "label": "sustained-map-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 131.688
+    },
+    {
+      "label": "sustained-status-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 130.516
+    },
+    {
+      "label": "sustained-map-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 125.75
+    },
+    {
+      "label": "sustained-status-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 124.453
+    },
+    {
+      "label": "sustained-map-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 119.578
+    },
+    {
+      "label": "sustained-status-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 118.407
+    },
+    {
+      "label": "sustained-map-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 113.688
+    },
+    {
+      "label": "sustained-status-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 112.516
+    },
+    {
+      "label": "sustained-map-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 107.813
+    },
+    {
+      "label": "sustained-status-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 106.657
+    },
+    {
+      "label": "sustained-map-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 101.938
+    },
+    {
+      "label": "sustained-status-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 100.766
+    },
+    {
+      "label": "sustained-map-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 96.063
+    },
+    {
+      "label": "sustained-status-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 94.907
+    },
+    {
+      "label": "sustained-map-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 90.172
+    },
+    {
+      "label": "sustained-status-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 89.016
+    },
+    {
+      "label": "sustained-map-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 84.328
+    },
+    {
+      "label": "sustained-status-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 83.188
+    },
+    {
+      "label": "sustained-map-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 78.516
+    },
+    {
+      "label": "sustained-status-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 77.375
+    },
+    {
+      "label": "sustained-map-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 72.672
+    },
+    {
+      "label": "sustained-status-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 71.5
+    },
+    {
+      "label": "restored currency after observation-status-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 68.844
+    },
+    {
+      "label": "clone101-baseline",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 67.625
+    },
+    {
+      "label": "atlas-clone101",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 66.969
+    },
+    {
+      "label": "clone101-ready-45",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 65.641
+    },
+    {
+      "label": "clone101-ready-46",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 63.469
+    },
+    {
+      "label": "clone101-ready-47",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 61.25
+    },
+    {
+      "label": "clone101-ready-48",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 59.078
+    },
+    {
+      "label": "clone101-ready-49",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 57.032
+    },
+    {
+      "label": "clone101-ready-50",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 55.063
+    },
+    {
+      "label": "transfer1_departure-status-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 53.891
+    },
+    {
+      "label": "transfer1-before-map1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 52.719
+    },
+    {
+      "label": "transfer1-before-map101",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 51.532
+    },
+    {
+      "label": "transfer1-arrival-map-53",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 48.282
+    },
+    {
+      "label": "transfer1_arrival-status-20",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 47.11
+    },
+    {
+      "label": "transfer1 live currency-status-21",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 44.641
+    },
+    {
+      "label": "transfer1-settled-map",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 41.828
+    },
+    {
+      "label": "transfer1_settled-status-22",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 40.641
+    },
+    {
+      "label": "transfer2_departure-status-23",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 36.141
+    },
+    {
+      "label": "transfer2-before-map1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 34.985
+    },
+    {
+      "label": "transfer2-before-map101",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 33.828
+    },
+    {
+      "label": "transfer2-arrival-map-57",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 30.0
+    },
+    {
+      "label": "transfer2_arrival-status-24",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 28.875
+    },
+    {
+      "label": "transfer2 live currency-status-25",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 26.516
+    },
+    {
+      "label": "transfer2-settled-map",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 23.891
+    },
+    {
+      "label": "transfer2_settled-status-26",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 22.75
+    },
+    {
+      "label": "second live currency-status-27",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 17.094
+    },
+    {
+      "label": "second_logout-status-28",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 11.657
+    },
+    {
+      "label": "final-sustained-map-status",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 5.672
+    },
+    {
+      "label": "final-transfer-clone101-status",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 4.532
+    }
+  ],
+  "console_observers": [
+    {
+      "label": "create-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 663,
+      "used_rows": 145,
+      "final_snapshot": true,
+      "observer": {
+        "label": "create-client-console-observer",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 233.875
+      }
+    },
+    {
+      "label": "missing-name-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 24,
+      "used_rows": 156,
+      "final_snapshot": true,
+      "observer": {
+        "label": "missing-name-client-console-observer",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 152.297
+      }
+    },
+    {
+      "label": "sustained-resume-client",
+      "ready": true,
+      "method": "exact_pid_console_screen_buffer",
+      "raw_evidence_private": true,
+      "buffer_rows_limit": 16384,
+      "capture_byte_limit": 16777216,
+      "width": 200,
+      "height": 16384,
+      "snapshots": 2714,
+      "used_rows": 235,
+      "final_snapshot": true,
+      "observer": {
+        "label": "sustained-resume-client-console-observer",
+        "exit_code": 0,
+        "forced_stop": false,
+        "elapsed_seconds": 145.844
+      }
+    }
+  ],
+  "shutdown_scope": "Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated",
+  "finished_utc": "2026-09-27T05:53:37.831120+00:00"
+}

@@ -28,7 +28,12 @@ static void check(SQLRETURN rc, SQLSMALLINT type, SQLHANDLE handle, int line)
         exit(1);
     }
 }
+#ifdef COH_ODBC_TRACE
+/* Diagnostic-only progress: no SQL, login string or parameter values. */
+#define CHECK(rc,t,h) (fprintf(stderr,"CALL:%d\n",__LINE__), check(rc,t,h,__LINE__))
+#else
 #define CHECK(rc,t,h) check(rc,t,h,__LINE__)
+#endif
 static SQLHSTMT statement(void) {
     SQLHSTMT s; CHECK(SQLAllocHandle(SQL_HANDLE_STMT,dbc,&s),SQL_HANDLE_DBC,dbc); return s;
 }
@@ -128,7 +133,14 @@ static void foreign_keys(void) {
 static void metadata(void) {
     SQLHSTMT s=statement(); SQLRETURN rc; SQLLEN len;
     char name[80],type[80],canonical[80]; SQLINTEGER size; int count=0; CohPgKind kind;
+#ifdef COH_ODBC_WIDE_COLUMNS
+    /* The ANSI fallback rejects valid NULL catalog/column filters. Preserve
+     * those filters through the driver's implemented Unicode entry point. */
+    SQLWCHAR schema[]={'d','b','o',0},table[]={'p','g','p','r','o','b','e',0};
+    CHECK(SQLColumnsW(s,NULL,0,schema,SQL_NTS,table,SQL_NTS,NULL,0),SQL_HANDLE_STMT,s);
+#else
     CHECK(SQLColumnsA(s,NULL,0,(SQLCHAR *)"dbo",SQL_NTS,(SQLCHAR *)"pgprobe",SQL_NTS,NULL,0),SQL_HANDLE_STMT,s);
+#endif
     while ((rc=SQLFetch(s))!=SQL_NO_DATA) {
         CHECK(rc,SQL_HANDLE_STMT,s);
         CHECK(SQLGetData(s,4,SQL_C_CHAR,name,sizeof(name),&len),SQL_HANDLE_STMT,s);
@@ -217,13 +229,35 @@ static void schema_rebuild(void) {
 
 int main(int argc,char **argv) {
     FILE *file; char version[100]; int id;
+#ifdef COH_ODBC_TRACE
+    setvbuf(stdout,NULL,_IONBF,0); setvbuf(stderr,NULL,_IONBF,0);
+#endif
     REQUIRE(argc>=2); file=fopen(argv[1],"rb"); REQUIRE(file);
     REQUIRE(fgets(login,sizeof(login),file)); REQUIRE(feof(file) || fgetc(file)==EOF); fclose(file);
     login[strcspn(login,"\r\n")]=0;
     CHECK(SQLAllocHandle(SQL_HANDLE_ENV,SQL_NULL_HANDLE,&env),SQL_HANDLE_ENV,SQL_NULL_HANDLE);
     CHECK(SQLSetEnvAttr(env,SQL_ATTR_ODBC_VERSION,(SQLPOINTER)SQL_OV_ODBC3,0),SQL_HANDLE_ENV,env);
     connect_db();
+#ifdef COH_ODBC_WIDE_INFO
+    /* Wine 10's ANSI fallback passes a driver-private handle to its public W
+     * wrapper. Query the same metadata through W with the real manager handle. */
+    {
+        SQLWCHAR wide_version[100]; SQLSMALLINT version_bytes=0; size_t i, count;
+        memset(wide_version,0,sizeof(wide_version));
+        CHECK(SQLGetInfoW(dbc,SQL_DRIVER_VER,wide_version,sizeof(wide_version),&version_bytes),SQL_HANDLE_DBC,dbc);
+        REQUIRE(version_bytes>0 && version_bytes<(SQLSMALLINT)sizeof(wide_version));
+        REQUIRE(version_bytes%sizeof(SQLWCHAR)==0);
+        count=(size_t)version_bytes/sizeof(SQLWCHAR);
+        REQUIRE(count<sizeof(version) && wide_version[count]==0);
+        for(i=0;i<count;i++) {
+            REQUIRE((wide_version[i]>='0' && wide_version[i]<='9') || wide_version[i]=='.');
+            version[i]=(char)wide_version[i];
+        }
+        version[count]=0;
+    }
+#else
     CHECK(SQLGetInfoA(dbc,SQL_DRIVER_VER,version,sizeof(version),NULL),SQL_HANDLE_DBC,dbc);
+#endif
     printf("psqlODBC %s; pointer bits %d; SQLWCHAR bytes %d\n",version,(int)(sizeof(void*)*8),(int)sizeof(SQLWCHAR));
     if(argc==4 && !strcmp(argv[2],"reserve")) {
         id=atoi(argv[3]); REQUIRE(id>0); reserve_insert(id);

@@ -1,0 +1,352 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_dbserver_fixture_and_normal_schema",
+  "milestone": "Requalification of the separately receipted DbServer with default normal startup and opt-in fixed-input normal reload; Atlas behavior remains to be qualified.",
+  "run_id": 36451873322,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36451873322",
+  "repository_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+  "workflow_conclusion": "success",
+  "workflow_terminal_observed_utc": "2026-09-28T16:49:37.792291+00:00",
+  "jobs": {
+    "tooling": 109028373602,
+    "windows_build_and_persistence": 109028598448,
+    "arm64_runtime": 109031527402
+  },
+  "tooling_tests_run": 77,
+  "tooling_tests_passed": 69,
+  "tooling_tests_skipped": 8,
+  "tooling_suites": [
+    {
+      "name": "prepare Wine source",
+      "tests_run": 14,
+      "passed": 14,
+      "skipped": 0
+    },
+    {
+      "name": "DbServer tooling",
+      "tests_run": 55,
+      "passed": 47,
+      "skipped": 8
+    },
+    {
+      "name": "accepted talloc source recovery",
+      "tests_run": 8,
+      "passed": 8,
+      "skipped": 0
+    }
+  ],
+  "windows": {
+    "status": "passed",
+    "persistence_phases": 14,
+    "check_groups": 21,
+    "server": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "executable_sha256": "e7a62e81a50eed4f0b2353cb3bb226c079a0c79bf1a51077fd793ca75d4c4b2b",
+    "runtime_scope": "Controlled fixture execution; normal product compiled separately and exercised in the ARM64 gate.",
+    "dispatch_contract_tests_run": 4,
+    "dispatch_contract_tests_passed": 4,
+    "fixed_inputs_contract_tests_run": 4,
+    "fixed_inputs_contract_tests_passed": 4,
+    "enabled_mapping_publication_validated": true
+  },
+  "arm64": {
+    "status": "passed",
+    "started_utc": "2026-09-28T16:42:49.927485+00:00",
+    "finished_utc": "2026-09-28T16:46:02.208075+00:00",
+    "elapsed_seconds": 192.28059,
+    "stages_passed": 28,
+    "persistence_phases": 14,
+    "persistence_check_groups": 21,
+    "normal_fixture_enabled": false,
+    "normal_exports": 2,
+    "normal_export_bytes": [
+      0,
+      0
+    ],
+    "normal_fixed_inputs_modes": [
+      {
+        "requested": false,
+        "startup_acknowledgement": null
+      },
+      {
+        "requested": true,
+        "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved"
+      }
+    ],
+    "normal_fixed_inputs_activation_acknowledgement_in_process_output": true,
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "attribute_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "attribute_sha256": {
+      "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+      "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+      "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+    },
+    "catalog_sha256": {
+      "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+      "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+      "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+    },
+    "reload_stable": true,
+    "failure_diagnostics": 0,
+    "all_process_input_output_closed": true,
+    "process_records": 111,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_processes_remaining": 0,
+    "ownership_inspection_failures": 0,
+    "fresh_cluster": true,
+    "wine_initialization": {
+      "policy": "initialize_once_then_reuse",
+      "state": "ready",
+      "ready_prefix_reused": false,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "registration_processes": 3,
+      "wow64_registration_processes": 1,
+      "registration_passes": 1,
+      "elapsed_seconds": 37.844
+    },
+    "dispatch_observer_enabled": false,
+    "enabled_dispatch_publication_validated": false
+  },
+  "network": {
+    "distinct_namespace": true,
+    "only_interface": "lo",
+    "external_network_disabled": true,
+    "guest_effective_uid": 1001,
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+  },
+  "inputs": {
+    "format": 1,
+    "scope": "host_dbserver_runtime_inputs",
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b",
+    "fixture_executable_sha256": "e7a62e81a50eed4f0b2353cb3bb226c079a0c79bf1a51077fd793ca75d4c4b2b",
+    "normal_executable_sha256": "659e9072234f75ad02c8cac2636df93f5249ff1de385c1ed7d6c6fc0c04a453a",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "repository_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "kernel_hostname": "runnervmoyp6c",
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+    "guest_hosts_bytes": 34,
+    "guest_hosts_loopback_aliases": [
+      "localhost",
+      "runnervmoyp6c"
+    ],
+    "guest_hosts_evidence_file": "guest-etc-hosts",
+    "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "package_commit": "53c6270dff8a0efcc6be09da756408504d8313bd",
+    "guest_script_sha256": "0b5c08cababfd5477ecd99e9a7396698cc90a55b99533c1f82f37ac1a81ea9e5",
+    "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+    "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+    "schema_acceptance_run_id": 36088012666,
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "dispatch_progress_contract": {
+    "environment_variable": "COH_WINE_DB_PROGRESS",
+    "format": 1,
+    "record_bytes": 128,
+    "mapping_bytes": 4096,
+    "magic_hex": "434f484442503100",
+    "byte_order": "little",
+    "offsets": {
+      "magic": 0,
+      "format": 8,
+      "record_bytes": 12,
+      "process_id": 16,
+      "main_thread_id": 20,
+      "sequence": 24,
+      "stage": 28,
+      "loop_count": 32,
+      "flags": 36,
+      "stage_count": 40,
+      "reserved": 44
+    },
+    "stages": {
+      "1": "INITIALIZED",
+      "2": "STARTUP",
+      "3": "DB_INIT",
+      "4": "MAIN_LOOP",
+      "5": "MSG_SCAN",
+      "6": "SQL_KEEPALIVE_CHECK",
+      "7": "SQL_KEEPALIVE_FOREGROUND",
+      "8": "SQL_KEEPALIVE_QUEUE",
+      "9": "SQL_FIFO_TICK",
+      "10": "DELINK_MAPS",
+      "11": "DELINK_LAUNCHERS",
+      "12": "SQL_MEMORY_PRESSURE",
+      "13": "NM_MONITOR",
+      "14": "SVRMON_UPDATES",
+      "15": "AUTO_START",
+      "16": "AUTH_STATUS",
+      "17": "AUTH_RECONNECT",
+      "18": "WAITING_ENTITIES",
+      "19": "DB_RELAY",
+      "20": "CLIENT_LINKS",
+      "21": "BEACON_LAUNCHERS",
+      "22": "STATS",
+      "23": "SHARD_CHAT",
+      "24": "LOG_STATS",
+      "25": "AUCTION",
+      "26": "OVERLOAD",
+      "27": "TEMP_LOCKS",
+      "28": "CONSOLE_TITLE",
+      "29": "EXIT_REQUEST",
+      "30": "FOLDER_CALLBACKS",
+      "31": "POOL_COMPACT",
+      "32": "SHUTDOWN_TICK",
+      "33": "CONSOLE_POLL",
+      "34": "CONSOLE_READ",
+      "35": "CONSOLE_COMMAND",
+      "36": "LOOP_DONE",
+      "37": "READY"
+    },
+    "disabled_by_default": true,
+    "writer": "dbserver_main_thread",
+    "stage_semantics": "operation_about_to_run",
+    "sequence_semantics": "positive_even_stable_odd_updating_no_wrap",
+    "flags": {
+      "1": "sequence_saturated_samples_unavailable"
+    },
+    "initialization_failure": "requested_normal_launch_exits_nonzero",
+    "file_creation": "new_absolute_drive_path_private_parent_required",
+    "proves_sql_or_game_success": false
+  },
+  "fixed_inputs_contract": {
+    "environment_variable": "COH_WINE_DB_FIXED_INPUTS",
+    "enabled_value": "1",
+    "disabled_by_default": true,
+    "activation": "before_first_folder_cache_create",
+    "watcher_registration": "disabled",
+    "notification_updates": "disabled",
+    "initial_reads": "preserved",
+    "lookup_mode": "preserved",
+    "startup_acknowledgement": "COH_WINE_DB_FIXED_INPUTS=1 active: directory monitoring disabled; initial reads and lookup mode preserved",
+    "proves_generic_notification_fix": false
+  },
+  "talloc_source_recovery": {
+    "format": 1,
+    "accepted_runtime_run_id": 36364550345,
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "proot_build_receipt": {
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    "corresponding_sources": {
+      "bytes": 1014688,
+      "sha256": "ae2a4de4b6008ceb3230e0cf77881b4b1fffe52f9ad5b1179b03b67d4395fee7"
+    },
+    "member": {
+      "bytes": 684092,
+      "sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd",
+      "name": "sources/talloc-2.4.3.tar.gz"
+    },
+    "output": "out/android/source-cache/talloc-2.4.3.tar.gz",
+    "build_recipe_unchanged": true,
+    "runtime_execution_validated": false
+  },
+  "package_manifest_canonical_sha256": "4d7971f81959a45376592f064b0c69104ea26da36f44bdf04529c634bb41d842",
+  "artifacts": [
+    {
+      "id": 10983589345,
+      "name": "wine-dbserver-windows-evidence",
+      "bytes": 19377,
+      "sha256": "249799ae084ab58b22ab5254667341575f2aab515e76f9bb0d6c7df700060b78"
+    },
+    {
+      "id": 10983529415,
+      "name": "wine-dbserver-package",
+      "bytes": 2181631,
+      "sha256": "5b282da75451372be7bc847464e8c462c8df3e6021dfb7a2f8da7b0f74f51cfb"
+    },
+    {
+      "id": 10983469697,
+      "name": "wine-dbserver-arm64-evidence",
+      "bytes": 532346,
+      "sha256": "d64be337dfbf38535752a1a5c1d4678e437497f87326c8940b6ade6e6261795e"
+    }
+  ],
+  "artifact_download_hashes_independently_verified": true,
+  "independent_validation": {
+    "package_inventory_and_variant_flags": true,
+    "windows_fixture_phases_and_binary_identity": true,
+    "arm64_report_against_accepted_runtime_and_artifact_schema": true,
+    "host_and_guest_inputs_match": true,
+    "guest_script_wine_patch_and_overlay_hashes_match_tested_commit": true,
+    "isolated_network_and_hosts_hash": true,
+    "default_normal_start_and_acknowledged_fixed_input_reload": true,
+    "accepted_talloc_source_chain_matches_local_recovery_and_native_build": true
+  },
+  "preserved_files": {
+    "dbserver-arm64-36451873322.json": {
+      "bytes": 169638,
+      "sha256": "cf92241c79f4b79aea6ff9f532efd09fb514baff9955d6c063205539935b825c"
+    },
+    "dbserver-windows-36451873322.json": {
+      "bytes": 5043,
+      "sha256": "7b4a3b162dcce5d7206044eec917c0de2ae5ed690f9e2d6b280a925eb4bea204"
+    },
+    "dbserver-package-36451873322.json": {
+      "bytes": 23957,
+      "sha256": "e4f8a66802f29643b13aec2228ada1549a80c22efa11de1549a9b145bb43e06b"
+    },
+    "dbserver-host-inputs-36451873322.json": {
+      "bytes": 1538,
+      "sha256": "b9cb0c39324d324388fbab55081640e225aa4387ee8c59116867cd195f89ee6e"
+    },
+    "dbserver-network-36451873322.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "dbserver-proot-36451873322.json": {
+      "bytes": 3048,
+      "sha256": "212f632f6802872d225ca39496f8a555602fcea92d356dd7d807e71ab81386b6"
+    },
+    "dbserver-hosts-36451873322.txt": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "dbserver-build-input-36451873322.json": {
+      "bytes": 7847,
+      "sha256": "52581c0419db7fdb1d32ee3b9aca62a090df040f3314db4175c835f4ddf05d86"
+    },
+    "dbserver-ci-tests-36451873322.json": {
+      "bytes": 3263,
+      "sha256": "b38676b0522cff188c257529cdb13562f7737a1615d9e34cc7c8aecad4c681c5"
+    },
+    "dbserver-talloc-source-36451873322.json": {
+      "bytes": 724,
+      "sha256": "3d15e54639ef937ba47887e5dda613e9b723661c8bd90c734ada304f11ea2a34"
+    }
+  },
+  "preservation": "Raw artifact files copied byte-for-byte, including original Windows CRLF. CI test summary records exact selected decoded log lines. Complete artifact ZIPs remain linked on the run.",
+  "prior_accepted_runtime_run_id": 36425508780,
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "mapserver_validated": false,
+  "generated_character_persistence_validated": false,
+  "gameplay_validated": false,
+  "generic_directory_notification_fix_validated": false,
+  "accepted_device_apk_unchanged": {
+    "version": "0.1.5",
+    "sha256": "bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5"
+  },
+  "next_work": [
+    "Adopt this immutable qualified normal DbServer package in the separate Atlas diagnostic.",
+    "Enable acknowledged fixed-input mode only for the hosted Atlas immutable configuration contract.",
+    "Complete hosted create/save, restart, exact-name resume and second-save evidence before any Android game-server candidate."
+  ]
+}

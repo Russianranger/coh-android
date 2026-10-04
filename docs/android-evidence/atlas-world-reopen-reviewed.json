@@ -1,0 +1,363 @@
+{
+  "format": 1,
+  "status": "passed",
+  "qualification_run_id": 36929550592,
+  "qualification_head_sha": "f7c6c3a6b60cb727813d8b2cf344076c2db1bdf8",
+  "apk_sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+  "donor_apk": {
+    "name": "COH-Character-Reopen-0.10.0.apk",
+    "bytes": 590725465,
+    "sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688"
+  },
+  "donor_build_report": {
+    "name": "interactive-apk-build-report.json",
+    "bytes": 38185,
+    "sha256": "587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f"
+  },
+  "apk_artifact": {
+    "id": 11192425448,
+    "name": "coh-client-interaction-apk",
+    "bytes": 553313601,
+    "sha256": "82a769943a7237465c26d42e419fa54e39ec6ab6010376f566a752a1c47f6a90"
+  },
+  "atlas_world_visible": true,
+  "avatar_visible": true,
+  "qualification_artifact": {
+    "id": 11198317943,
+    "name": "coh-client-interaction-arm64-evidence",
+    "bytes": 142304789,
+    "sha256": "2593eb8f5e4527649e785b9316979f86833d784970b9554c4b4ce8387d9487aa"
+  },
+  "host_report": {
+    "name": "client-evidence/host-client-report.json",
+    "bytes": 298621,
+    "sha256": "a9451cf4f20c53cfd6ca37333e9054fac2907d73fbb07b8f0f4dc05e4320b3da"
+  },
+  "qualification_driver": {
+    "name": "client-evidence/qualification-driver.json",
+    "bytes": 37063,
+    "sha256": "284a5da5f02d84c0cfaa16721ebffc9356487b16ce23119d974a5b0419639748"
+  },
+  "visual_evidence_frames": [
+    {
+      "name": "client-evidence/reopen/connected_captures-001.png",
+      "bytes": 295556,
+      "sha256": "624c8545e843cbb2006e8676ffbecebfc4adaadad962fadcc7a3384cc2e78dd3"
+    },
+    {
+      "name": "client-evidence/reopen/world_after_stuck_captures-001.png",
+      "bytes": 295284,
+      "sha256": "d66f976246bdcd8a72cf0117b35481c134ccf048aa2a369d162a69e3360d12e5"
+    }
+  ],
+  "device_validated": false,
+  "world_materials_complete": false,
+  "gameplay_validated": false,
+  "raw_evidence_review": {
+    "format": 1,
+    "status": "passed",
+    "run_id": 36929550592,
+    "apk_donor_repository_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+    "host_harness_repository_commit": "f7c6c3a6b60cb727813d8b2cf344076c2db1bdf8",
+    "artifact": {
+      "id": 11198317943,
+      "bytes": 142304789,
+      "sha256": "2593eb8f5e4527649e785b9316979f86833d784970b9554c4b4ce8387d9487aa"
+    },
+    "artifact_members": 355,
+    "apk_sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+    "runtime_manifest_sha256": "cb530beb1326b24626f0525682b2724269c0b4346ecfd46ad994b913c4822571",
+    "build_report_pin": {
+      "bytes": 38185,
+      "sha256": "587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f"
+    },
+    "host_report_pin": {
+      "bytes": 298621,
+      "sha256": "a9451cf4f20c53cfd6ca37333e9054fac2907d73fbb07b8f0f4dc05e4320b3da"
+    },
+    "qualification_driver_pin": {
+      "bytes": 37063,
+      "sha256": "284a5da5f02d84c0cfaa16721ebffc9356487b16ce23119d974a5b0419639748"
+    },
+    "source_manifest_verified": {
+      "file_count": 195,
+      "files_sha256": "3f558007d31be30e163093624ad42b75cdc64cd990f51555d55fa1e707ef27e7",
+      "tree": "44d0e1c396e8088155f9d77846635e3b9fcad479"
+    },
+    "source_validators_verified": [
+      "tools/android/interactive/character_reopen_host_smoke.py",
+      "tools/android/interactive/character_host_smoke.py",
+      "tools/android/interactive/host_smoke.py",
+      "tools/android/interactive/login_host_smoke.py",
+      "tools/android/interactive/prepare_assets.py",
+      "tools/android/interactive/prepare_atlas_world_assets.py",
+      "tools/android/interactive/prepare_character_avatar_assets.py",
+      "android/guest/local_character_server.py",
+      "android/guest/game_evidence.py",
+      "android/guest/character_reopen_diagnostic.py",
+      "android/guest/character_creation_diagnostic.py"
+    ],
+    "two_real_sessions_verified": true,
+    "raw_saved_SQL_continuity_verified": true,
+    "ordinary_login_count_increment_verified": true,
+    "powers_costume_selected_rows_preserved": true,
+    "sessions": [
+      {
+        "session_id": "c4e0c1c34ddef7252975fb3c8d44df7a",
+        "report_pin": {
+          "bytes": 160758,
+          "sha256": "de91b4b60da2b87f9003031e52330e332e3011e42ebd562f2080e519265c757f"
+        },
+        "host_session_report_pin": {
+          "bytes": 139831,
+          "sha256": "7097a9100cd69fc4f3693eb3477d341cb23838a8259bcf21e2b14c496777bae4"
+        },
+        "raw_report_archive_pin": {
+          "bytes": 4451209,
+          "sha256": "1b5928b84108c190bbdc35ec0fd499069cc786aa97f5b937a5a5a4b6591c09fc"
+        },
+        "archive_members": 12,
+        "identity": {
+          "containerid": 1,
+          "authid": 1353310574,
+          "authname": "COHLOCAL",
+          "name": "THORHERO"
+        },
+        "login_count": 1,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 7,
+          "costumeparts": 14
+        },
+        "snapshot_sha256": "f0f1691e2b39404e3a6fa4f1e0ff9faf46764020f56fe9606a05d04e8a1a03d0",
+        "native": {
+          "archive_pin": {
+            "bytes": 7223,
+            "sha256": "0fb330e279ad9d5cd4909688078a1d83d74ff78f714788b903796cb70862c83e"
+          },
+          "log_count": 8,
+          "native_ready_and_logout_lines_verified": true
+        },
+        "cleanup_verified": true,
+        "guest_ppm_pins_verified": 5,
+        "png_count": 174,
+        "proof_png_count": 12,
+        "proof_png_pins": {
+          "client-startup-external-000.png": {
+            "bytes": 885811,
+            "sha256": "a02a1edcf36bf01ef685e3d61952791186ce4d0a5f46e107b5dbfb5dc2e8e4a1",
+            "group": "post_startup_captures"
+          },
+          "client-startup-external-001.png": {
+            "bytes": 885736,
+            "sha256": "8da6fa10e05776366b949b8d140a23588678ba8735ec09f0beb350676c52e0ad",
+            "group": "post_startup_captures"
+          },
+          "client-startup-external-002.png": {
+            "bytes": 885804,
+            "sha256": "2ee73f6e433b3f43c66cc003f6d0e9877ef4e78b9de6ec41e9c2f7dd5d151b73",
+            "group": "post_startup_captures"
+          },
+          "post_login_captures-000.png": {
+            "bytes": 412491,
+            "sha256": "7e5d4a8357635e44f2c8b2d2c043f15e0177112b271dc8a7877c5a622ebf486d",
+            "group": "post_login_captures"
+          },
+          "post_login_captures-001.png": {
+            "bytes": 412392,
+            "sha256": "641fc142d22f965b1b4e50e9ab9b433d1e090f8b7530c9cf8a7f5f538f305ea3",
+            "group": "post_login_captures"
+          },
+          "post_login_captures-002.png": {
+            "bytes": 412324,
+            "sha256": "b9d4c8d920669e630d2920dcf8f9a76935baf0819a1c5b84362a71e2b5507c6e",
+            "group": "post_login_captures"
+          },
+          "connected_captures-000.png": {
+            "bytes": 284928,
+            "sha256": "baa1f1e90d348344fea5e29e2047d98fe65634c3470f1489e13aad140e94b2ef",
+            "group": "connected_captures"
+          },
+          "connected_captures-001.png": {
+            "bytes": 285181,
+            "sha256": "db16dc1507ea9922f35ebff590a3ed55e68345e4de25ca475f77f5a6bb44d075",
+            "group": "connected_captures"
+          },
+          "connected_captures-002.png": {
+            "bytes": 286050,
+            "sha256": "b8614e79a2e456dff7617125943c607516d7f4f9f0811da17a5f3b1d550c92c6",
+            "group": "connected_captures"
+          },
+          "post_save_captures-000.png": {
+            "bytes": 962310,
+            "sha256": "1dec675bf418cf162bcae8871c17dd11202d4bffe6ef6f8bc6670690bc281a9f",
+            "group": "post_save_captures"
+          },
+          "post_save_captures-001.png": {
+            "bytes": 962310,
+            "sha256": "1dec675bf418cf162bcae8871c17dd11202d4bffe6ef6f8bc6670690bc281a9f",
+            "group": "post_save_captures"
+          },
+          "post_save_captures-002.png": {
+            "bytes": 962310,
+            "sha256": "11e6f34415332e999e91ca85a665eca14d4b56006d9daae5362775f6b825f799",
+            "group": "post_save_captures"
+          }
+        }
+      },
+      {
+        "session_id": "ace0e65755ddd2dbd88690f6cfbc8135",
+        "report_pin": {
+          "bytes": 180548,
+          "sha256": "9499895909112969ba720e305b9b624ea5d947b56c037967d93f50533aa41dea"
+        },
+        "host_session_report_pin": {
+          "bytes": 131819,
+          "sha256": "0b71561a9623869c34ab012f0b2d2ae4d059980d92fa346fdcabab4ae5206e60"
+        },
+        "raw_report_archive_pin": {
+          "bytes": 4614868,
+          "sha256": "b82cbc8a1d0151b1560bd03101d5dc472bf3a2cb5b09aa351a9edf49db9b59a2"
+        },
+        "archive_members": 13,
+        "identity": {
+          "containerid": 1,
+          "authid": 1353310574,
+          "authname": "COHLOCAL",
+          "name": "THORHERO"
+        },
+        "login_count": 2,
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 7,
+          "costumeparts": 14
+        },
+        "snapshot_sha256": "9c65cdf16dff42c5d8919f206e30869090446b550c342598e980cc29949ac329",
+        "native": {
+          "archive_pin": {
+            "bytes": 7879,
+            "sha256": "8cab1a783557fbccf37da1efee15e5290463035f71ea7183a5d97d918ace556e"
+          },
+          "log_count": 8,
+          "native_ready_and_logout_lines_verified": true,
+          "stable_position": [
+            106.45,
+            0.25,
+            -114.45
+          ],
+          "stable_elapsed_ms": 30000,
+          "committed_safe_position": {
+            "containerid": 1,
+            "mapid": 1,
+            "staticmapid": 1,
+            "posx": 106.454605,
+            "posy": 0.251066,
+            "posz": -114.45343
+          }
+        },
+        "cleanup_verified": true,
+        "guest_ppm_pins_verified": 5,
+        "png_count": 147,
+        "proof_png_count": 15,
+        "proof_png_pins": {
+          "client-startup-external-000.png": {
+            "bytes": 961996,
+            "sha256": "222573069385ddf76ff2e15c036b7221a9ddc7e7b10d28fd0a3761ca6fbf6bcd",
+            "group": "post_startup_captures"
+          },
+          "client-startup-external-001.png": {
+            "bytes": 961954,
+            "sha256": "b1fcbb5addd5187c1ba728ac6a78c98785e4efa835c10da860c93da2326f5b37",
+            "group": "post_startup_captures"
+          },
+          "client-startup-external-002.png": {
+            "bytes": 962000,
+            "sha256": "6ccf81e65df3be45ffde365124488f50f518daa3d75b039e33d2c31229fe1713",
+            "group": "post_startup_captures"
+          },
+          "post_login_captures-000.png": {
+            "bytes": 452355,
+            "sha256": "30fee4b7448f9ec3080a5293ad24a0ea00a05aa51c7f6fe067d919b9967b874b",
+            "group": "post_login_captures"
+          },
+          "post_login_captures-001.png": {
+            "bytes": 451950,
+            "sha256": "2e5bae51668de710faab73c27021e7b0e8f05aa1fc9539c7b497c0e344300e65",
+            "group": "post_login_captures"
+          },
+          "post_login_captures-002.png": {
+            "bytes": 452005,
+            "sha256": "93ba50abab189eea59737a575e2f5b841975d1d9df94ab54ab9a1f498dcc2a32",
+            "group": "post_login_captures"
+          },
+          "connected_captures-000.png": {
+            "bytes": 294404,
+            "sha256": "4abcebb4a527d95e81d3231b86692dd8119216fc52a7c24e23956f9b32542d5e",
+            "group": "connected_captures"
+          },
+          "connected_captures-001.png": {
+            "bytes": 295556,
+            "sha256": "624c8545e843cbb2006e8676ffbecebfc4adaadad962fadcc7a3384cc2e78dd3",
+            "group": "connected_captures"
+          },
+          "connected_captures-002.png": {
+            "bytes": 286480,
+            "sha256": "77e407cd4018760f962750a6e303edb46314cc1e2431ff41c3d24aaab81dd1e9",
+            "group": "connected_captures"
+          },
+          "world_after_stuck_captures-000.png": {
+            "bytes": 294744,
+            "sha256": "a77ca96cce80a3e5b3f913608bd9b086bb96bfb6cf20cfdda4d2990c46f6b813",
+            "group": "world_after_stuck_captures"
+          },
+          "world_after_stuck_captures-001.png": {
+            "bytes": 295284,
+            "sha256": "d66f976246bdcd8a72cf0117b35481c134ccf048aa2a369d162a69e3360d12e5",
+            "group": "world_after_stuck_captures"
+          },
+          "world_after_stuck_captures-002.png": {
+            "bytes": 295416,
+            "sha256": "af1e0979dd906a8df07b102a7aae43e091c1c29cf3ac5d70e1271aa5669215f8",
+            "group": "world_after_stuck_captures"
+          },
+          "post_save_captures-000.png": {
+            "bytes": 962452,
+            "sha256": "91bd4444de0cc654262cf96b23b513e85b864dddbe7d071567393ad1661d7d5a",
+            "group": "post_save_captures"
+          },
+          "post_save_captures-001.png": {
+            "bytes": 962513,
+            "sha256": "8a4274fd8414e78ee7f9ad897464960383c2d5ee90ca9d41115ef09c0d840000",
+            "group": "post_save_captures"
+          },
+          "post_save_captures-002.png": {
+            "bytes": 962516,
+            "sha256": "851604326c6a0abd916b73e6a8aaa2f069a6c4c943b94ac55f0d7ecfcd644486",
+            "group": "post_save_captures"
+          }
+        }
+      }
+    ],
+    "actual_APK_signature_independently_verified": false,
+    "atlas_scene_visually_reviewed": false,
+    "android_device_validated": false,
+    "full_collision_validated": false
+  },
+  "visual_review": {
+    "method": "manual inspection of retained exact native RFB frames",
+    "observed": [
+      "THORHERO body and UI",
+      "Atlas plaza ground and stairs",
+      "Atlas statue geometry",
+      "building geometry, trees and sky"
+    ],
+    "limitations": [
+      "World surfaces remain flat or poorly textured/lit.",
+      "The helper prompt remains visible; choose None before the device movement test.",
+      "Native UI warns that the map has not been beaconed; NPC pathfinding remains a later milestone.",
+      "These hosted frames do not validate Thor hardware rendering, walking, jumping, full collision or the revised 27-texture supplement."
+    ]
+  }
+}

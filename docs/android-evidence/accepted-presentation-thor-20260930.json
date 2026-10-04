@@ -1,0 +1,204 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "independent_physical_Thor_0.5.0_visible_presentation_evidence_review",
+  "archive": {
+    "filename": "coh-client-test-20260930-094646.zip",
+    "bytes": 21280,
+    "sha256": "5b88a20f88c70e30f90f7b3c2f5a5e4ff2325788317c3c6e9d6c20aa98ffdbef"
+  },
+  "archive_members": {
+    "operation.log": {
+      "bytes": 18760,
+      "sha256": "ab5e1d803e2d021aa3852c7e87817cf188c8fc8830d47202096be33194b83070"
+    },
+    "guest-report.zip": {
+      "bytes": 4373,
+      "sha256": "8f9baf192332cc017c5f397b6714b96661655cfeebb206d540e80a2e32c61915"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "android-presentation-report.json": {
+      "bytes": 83414,
+      "sha256": "3f65a3b30b230893c9067ef38b3e95c81ec9210d5dd2835f19427d73852de420"
+    },
+    "runtime-manifest.json": {
+      "bytes": 11015,
+      "sha256": "975be83592dc552d4cb3ee838ef6e557675307f3cc9c86460e5b1ecf95de58d0"
+    }
+  },
+  "device": {
+    "model": "AYN AYN Thor",
+    "android_sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "app_id": "io.github.russianranger.cohpresentation",
+    "app_version": "0.5.0"
+  },
+  "run_id": "1790761449566-fd7dd3c146a0",
+  "session_id": "004f8c6c35ca4a0cae55c213f01c7556",
+  "candidate_commit": "6fdeef4494dd41f6137ee51d80ec4e39cf687b01",
+  "qualified_apk": {
+    "apk": "COH-Client-Test-0.5.0.apk",
+    "bytes": 13851058,
+    "sha256": "d0745f974567f798cf1254fb98b95eb056702021e11c2f29938e9cb407a83e71",
+    "application_id": "io.github.russianranger.cohpresentation",
+    "version_name": "0.5.0",
+    "version_code": 1,
+    "repository_commit": "6fdeef4494dd41f6137ee51d80ec4e39cf687b01",
+    "signer_certificate_sha256": "3701c6594d4f6afdf3fc17340e93c572b63eff0e3f03d5d5ad11c9d05304b6b0",
+    "signature_verified": true,
+    "runtime_manifest_sha256": "b5a55d278f19fbbb53fd5b654b506abacc49652cc86f5b099e2b0b52ff6aba74"
+  },
+  "apk_build_run": 36653423058,
+  "host_qualification_run": 36654262400,
+  "runtime_manifest_sha256": "b5a55d278f19fbbb53fd5b654b506abacc49652cc86f5b099e2b0b52ff6aba74",
+  "exported_runtime_manifest_sha256": "975be83592dc552d4cb3ee838ef6e557675307f3cc9c86460e5b1ecf95de58d0",
+  "runtime_manifest_export_note": "The app reserializes the primary manifest with JSONObject.toString(2), so parsed-content equality and the independently verified original-byte digest are checked separately.",
+  "accepted_base_runtime_run": 36364550345,
+  "accepted_base_runtime_payload_count": 12,
+  "apk_payloads_rehashed": 25,
+  "apk_java_source_pins_verified": 13,
+  "guest_asset_pins_verified": 12,
+  "java_gate_source": {
+    "bytes": 3690,
+    "sha256": "3bea0d2ea87b47bb554293045f6dd4921d7bbab828328f592d66e31b6ac94c5a"
+  },
+  "checks": [
+    "Bounded regular unique archive entries verified for outer and nested ZIPs",
+    "Exported runtime manifest matches APK as parsed JSON; its reported original-byte hash matches the APK; lock and two auxiliary manifests are byte-identical",
+    "All APK build payloads independently rehashed; all accepted base payload pins retained",
+    "Every APK Java source pin matches its immutable candidate commit",
+    "Nested guest report exactly matches Android wrapper guest report",
+    "Unmodified shipped Java cleanup and surface acceptance gates pass on the uploaded report",
+    "All five guest stages pass with twelve runtime payload hash pins matching the APK",
+    "Native stdout emits all 120 session-bound frame markers",
+    "All 120 PixelCopy certification records have matching session, monotonic timestamps, complete frame IDs and correct alternating bar colors",
+    "All six child records closed; owned cleanup complete; private socket removed"
+  ],
+  "elapsed_seconds": 128.592,
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "ready",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": false,
+    "timeout_seconds": 600,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 55.584
+  },
+  "stages_passed": 5,
+  "producer": {
+    "format": 1,
+    "status": "passed",
+    "failure_stage": "",
+    "session_id": "004f8c6c35ca4a0cae55c213f01c7556",
+    "width": 800,
+    "height": 600,
+    "frames": 120,
+    "duration_seconds": 60,
+    "pointer_bits": 32,
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "vendor": "Mesa/X.org",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "software_rendering": true,
+    "frame_contract": 1,
+    "readback_verified": true,
+    "android_surface_validated": false,
+    "game_validated": false
+  },
+  "decoded_frame_count": 127,
+  "surface": {
+    "certified_frames": 120,
+    "unique_frame_ids": 120,
+    "first_frame_id": 1,
+    "last_frame_id": 120,
+    "capture_span_seconds": 62.758,
+    "source_width": 800,
+    "source_height": 600,
+    "surface_width": 1347,
+    "surface_height": 834,
+    "surface_generation": 2,
+    "session_matches": true,
+    "alternating_bars_match": true
+  },
+  "closed_child_records": 6,
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "owned_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 57,
+    "scanned_tasks": 46,
+    "dead_leaders_with_live_tasks": 3,
+    "owned_live_workers": 3,
+    "leader_exit_retries": 0,
+    "candidates": 3,
+    "term_signals": 3,
+    "kill_signals": 1,
+    "pidfd_signals": 4,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "presentation_socket_removed": true,
+  "cleanup_blocked": false,
+  "cancelled": false,
+  "lifecycle": [
+    {
+      "event": "operation_requested setup=false activity_visible=true",
+      "uptime_ms": 212898079
+    },
+    {
+      "event": "operation_display_started",
+      "uptime_ms": 212898080,
+      "session_id": "004f8c6c35ca4a0cae55c213f01c7556"
+    },
+    {
+      "event": "surface_certification_error count=1 message=PixelCopy verification: session mismatch",
+      "uptime_ms": 212898755,
+      "session_id": "004f8c6c35ca4a0cae55c213f01c7556"
+    },
+    {
+      "event": "surface_certification_error count=2 message=PixelCopy verification: session mismatch",
+      "uptime_ms": 212902042,
+      "session_id": "004f8c6c35ca4a0cae55c213f01c7556"
+    },
+    {
+      "event": "surface_certification_error count=4 message=PixelCopy verification: session mismatch",
+      "uptime_ms": 212949234,
+      "session_id": "004f8c6c35ca4a0cae55c213f01c7556"
+    }
+  ],
+  "early_uncertified_frames": "Initial desktop frames were rejected for session mismatch before the native pattern started; no such frame counts toward acceptance.",
+  "android_execution_validated": true,
+  "android_surface_validated": true,
+  "software_rendering": true,
+  "hardware_acceleration_validated": false,
+  "game_rendering_validated": false,
+  "gameplay_validated": false,
+  "controller_input_validated": false,
+  "evidence_limit": "The export preserves application-produced PixelCopy certification records, not raw surface pixels or installed-package attestation. Identity comparison binds exported manifests and runtime hashes to the independently qualified candidate APK; raw pixels cannot be reconstructed from this report.",
+  "manual_stop_rerun": "not_requested_or_validated; user waived repeat testing",
+  "screen_lock": "not_requested_or_validated; user waived repeat testing",
+  "next_step": "Proceed to bounded actual CityOfHeroes.exe graphical startup; preserve accepted Atlas result without repeating its long server boot."
+}

@@ -1,0 +1,552 @@
+{
+  "android_execution_validated": false,
+  "asset_archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+  "cache_consumption_validated": false,
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+  "files": {
+    "data/bin/BodyParts.bin": {
+      "bytes": 2584,
+      "schema_crc": "cf27aba3",
+      "sha256": "b0955c46731ed0cb54ad01d96015b301e583bd0224f8d872f50cfefeb08f6beb"
+    },
+    "data/bin/Cards.bin": {
+      "bytes": 69268,
+      "schema_crc": "ae33a047",
+      "sha256": "000bf30499c3601238395f3abfe65dc0348377265ae475adea88fc9919ccc9fa"
+    },
+    "data/bin/CustomCritterRewardMods.bin": {
+      "bytes": 236,
+      "schema_crc": "881ecd94",
+      "sha256": "197e85b8715f14d464769489c9155969550288b727d88c48434e3b313eb9041d"
+    },
+    "data/bin/InvBaseDetail.bin": {
+      "bytes": 77652,
+      "schema_crc": "6f0830ea",
+      "sha256": "80990b0300deab77613b2ab8a0abf56ecbe4e14840346a79fad17283d228e75d"
+    },
+    "data/bin/InvConcept.bin": {
+      "bytes": 18620,
+      "schema_crc": "6f0830ea",
+      "sha256": "8ee9a606ecb4f341c7bceb7717c77da20caabe1a342606698fac98db726a01e0"
+    },
+    "data/bin/InvRecipe.bin": {
+      "bytes": 929768,
+      "schema_crc": "6f0830ea",
+      "sha256": "f772a8556efe8119799c0691e2ed70b34f422406fb4bd1368110f3af960b028c"
+    },
+    "data/bin/InvSalvage.bin": {
+      "bytes": 11284,
+      "schema_crc": "6f0830ea",
+      "sha256": "eb65b811238a17be8311d882c2b548b734da1e9f65f9af7ab882d468ff4b939c"
+    },
+    "data/bin/InvStoredSalvage.bin": {
+      "bytes": 11140,
+      "schema_crc": "6f0830ea",
+      "sha256": "cc9cc4c7a81fadcf69abdaa2dcd275f2ae0b1f81fd4813785d8dd026d7675abd"
+    },
+    "data/bin/LoyaltyReward.bin": {
+      "bytes": 8140,
+      "schema_crc": "4e72020c",
+      "sha256": "d0af635d12dae04cb422b8745e716586fac31a15dcee2e786c34a4d5f7abe66c"
+    },
+    "data/bin/PC_Def_Animation.bin": {
+      "bytes": 7008,
+      "schema_crc": "6d043156",
+      "sha256": "87d5b32f2da9b625cb1ff201edc7b4a8325e36ecc269ead35f6c326fd54aaf6a"
+    },
+    "data/bin/PC_Def_Contacts.bin": {
+      "bytes": 29148,
+      "schema_crc": "1c11d177",
+      "sha256": "906499910d7c2ea9cc91ed9e81718829ae750d82fb8bc30f5398c3282602ce88"
+    },
+    "data/bin/PC_Def_DestructObject.bin": {
+      "bytes": 2028,
+      "schema_crc": "58032133",
+      "sha256": "2ef27b0ecf18dbec9bb003b29a8e5618e407cbf08058a4c0b49a4408b45f3f42"
+    },
+    "data/bin/PC_Def_Entities.bin": {
+      "bytes": 91772,
+      "schema_crc": "4908d1c3",
+      "sha256": "5fd5a031f785db26649a9501638fffe9513005cf8cb98240e74899ec01519fbc"
+    },
+    "data/bin/PC_Def_MapSets.bin": {
+      "bytes": 1488,
+      "schema_crc": "5c03f63a",
+      "sha256": "5b52cd5a75710a5a8ac828cb84979b4862bce89b04410bb4cd41982e9000d1ba"
+    },
+    "data/bin/PC_Def_MapUnique.bin": {
+      "bytes": 23436,
+      "schema_crc": "120e98ea",
+      "sha256": "4c5593f57e7242b527c28ae61bde40917bb13f752295c44683d43a9504d54e2d"
+    },
+    "data/bin/PC_Def_NonSelectable_Entities.bin": {
+      "bytes": 25956,
+      "schema_crc": "be08eb7c",
+      "sha256": "93421fe594c1b5b3d74abd0f37c1c4ccfad054c549709f3a72c806ca4f9c08fc"
+    },
+    "data/bin/PC_Def_Objects.bin": {
+      "bytes": 3956,
+      "schema_crc": "310ce383",
+      "sha256": "d93e6972cfcf022597ff545f1e65be50187da1a17e0e71157676cc5915cc3f41"
+    },
+    "data/bin/PC_Def_Sequencer_Anims.bin": {
+      "bytes": 19916,
+      "schema_crc": "f90949fa",
+      "sha256": "51f60f31c38dc9ff71ea5e2531c170cc69686216564da4ac87fec437769b931a"
+    },
+    "data/bin/PC_Def_UI.bin": {
+      "bytes": 75552,
+      "schema_crc": "5d7d6c82",
+      "sha256": "d6c1ca0ca4c82243cca6ebb1ddd8b2db13427df26de9e3fd3bfd62dab24515ac"
+    },
+    "data/bin/PC_Def_Unlockable_Content.bin": {
+      "bytes": 22264,
+      "schema_crc": "ed07c5bd",
+      "sha256": "e403d19e98fdd3ad0df643aad1295c40df2131a17e639ee76c3f7df082b53689"
+    },
+    "data/bin/PopHelp.bin": {
+      "bytes": 6632,
+      "schema_crc": "591c0566",
+      "sha256": "8da203d500c8d518ea7a7c8305fa2ed1aa50dbc5628b7d8c51456f6fc0ada9e5"
+    },
+    "data/bin/Proficiencies.bin": {
+      "bytes": 2748,
+      "schema_crc": "5b3f53ab",
+      "sha256": "24837a0390efcc3f7be2696c49514998f74df0aca9c07de6ec5c24fd8f32188b"
+    },
+    "data/bin/ProficiencyIds.bin": {
+      "bytes": 704,
+      "schema_crc": "6f0830ea",
+      "sha256": "6d3e893c0b7591935aad9c7422bc681e2f42af5c5850d79ae50d5b3b69c4002f"
+    },
+    "data/bin/Salvage.bin": {
+      "bytes": 70568,
+      "schema_crc": "5b9c4ac0",
+      "sha256": "bb351fc475d654578d8f613c38a07d2fb8bb05424853114a80c1fccc68b054ee"
+    },
+    "data/bin/VillainCostume.bin": {
+      "bytes": 28743996,
+      "schema_crc": "d1a68118",
+      "sha256": "94f2d86ce15785d8a4d69e269f8b495bb1d1982b484b19853babbb559c209cca"
+    },
+    "data/bin/VillainDef.bin": {
+      "bytes": 16417580,
+      "schema_crc": "33e59071",
+      "sha256": "0fbf7d87d17c7f682613753fc2ed4d1541b8ba4e95873da79003db37f0e159eb"
+    },
+    "data/bin/VillainGroups.bin": {
+      "bytes": 14464,
+      "schema_crc": "cd3570e4",
+      "sha256": "c9f8f220be77ffcd71abf27340e71b148e6a83adce37f517c77ab2896dcab44b"
+    },
+    "data/bin/arenamaps.bin": {
+      "bytes": 1252,
+      "schema_crc": "7513c2d9",
+      "sha256": "33deb39c44e96a85e2344df91e1b9f91203dd1f61d3bd00414279705b610ea4d"
+    },
+    "data/bin/attrib_descriptions.bin": {
+      "bytes": 5892,
+      "schema_crc": "315acdb1",
+      "sha256": "20f770f406e661050434284e4253f721699df2112ea4481de66b50146304c132"
+    },
+    "data/bin/attrib_names.bin": {
+      "bytes": 10592,
+      "schema_crc": "1f5ae0b6",
+      "sha256": "92daf1ec706f21b9a2f1f57d1ba941be43d4ed16b3f48c4e5028ac7e79162345"
+    },
+    "data/bin/auctionconfig.bin": {
+      "bytes": 80,
+      "schema_crc": "ee12dab3",
+      "sha256": "831cb9df5b09674453522e5d3f0d0fe10cfd7a3dbeed6fdd112809330a86a90b"
+    },
+    "data/bin/badges.bin": {
+      "bytes": 586324,
+      "schema_crc": "15ea15cf",
+      "sha256": "c12387e003414c2f584469c29eb1b8f48c25d53749d77e6b63bbb0be908aabe9"
+    },
+    "data/bin/baserecipes.bin": {
+      "bytes": 12492600,
+      "schema_crc": "be2cf4d1",
+      "sha256": "065827aabf290427dbef231735ba4a9081be5e32cf4caf1a2815250f9ccfd386"
+    },
+    "data/bin/baseupkeep.bin": {
+      "bytes": 200,
+      "schema_crc": "102d6c1e",
+      "sha256": "f8c82217241baa3e5e5031dcbbfb18f533748d3e195205fbef42bd44f2257c33"
+    },
+    "data/bin/behaviors.bin": {
+      "bytes": 4198644,
+      "schema_crc": "1e2c2c56",
+      "sha256": "d2e7eaf268bf4d5beeb60876b727d9738ef1b42494d1ab78b480d1e07f788056"
+    },
+    "data/bin/boost_effect_above.bin": {
+      "bytes": 96,
+      "schema_crc": "5d068463",
+      "sha256": "04c0643936f30f0c445899564c8b99c65ae933a1a59eab71fd1be2ba7560ac02"
+    },
+    "data/bin/boost_effect_below.bin": {
+      "bytes": 96,
+      "schema_crc": "5d068463",
+      "sha256": "f888e14a84b042ed6f498aa800ffcd9c089cc26441a2660aa07f53500b418f8e"
+    },
+    "data/bin/boost_effect_boosters.bin": {
+      "bytes": 104,
+      "schema_crc": "5d068463",
+      "sha256": "cc295ce81cd8dbabcd658dafb7f5043bbb524d6f3694d2c14d33ca118a326c35"
+    },
+    "data/bin/boostsets.bin": {
+      "bytes": 2275580,
+      "schema_crc": "8e49f551",
+      "sha256": "7af712b44bcbb93c18c45d42d21cb12bd7946c57506858f2f42c1070bb818c6c"
+    },
+    "data/bin/capes.bin": {
+      "bytes": 97568,
+      "schema_crc": "6246004e",
+      "sha256": "9d34b0a7a2c22c7f4e21080f9aa5b36f468b7d2e0c06ca4487488a95b36c9a62"
+    },
+    "data/bin/chestGeoLink.bin": {
+      "bytes": 1108,
+      "schema_crc": "8f12ada6",
+      "sha256": "46606cfe37efee7e2da2ad6a008a5dfea9bd4c30cbbb5fcd6eb07923d626f0e8"
+    },
+    "data/bin/classes.bin": {
+      "bytes": 1219292,
+      "schema_crc": "7ff68aaf",
+      "sha256": "91af1ca0b304d77e56f356d54e1a880309b910c40f1729672cc0af1b83dd6733"
+    },
+    "data/bin/clothColInfo.bin": {
+      "bytes": 42792,
+      "schema_crc": "a9447224",
+      "sha256": "adcc645aed172f088f35683be662e09ddddc88948dc7bb3664a627459d4445eb"
+    },
+    "data/bin/clothWindInfo.bin": {
+      "bytes": 1548,
+      "schema_crc": "492a3929",
+      "sha256": "0e9e1b22c8b4acd8bf1549b63571a05aebc2a619d7fa9355a06575aca7fd1385"
+    },
+    "data/bin/combine_booster_chances.bin": {
+      "bytes": 104,
+      "schema_crc": "8506dc69",
+      "sha256": "1bdae93fe8a14f45e0f08e0eb4cf590616ff6676c8e7c8bdc356c14e09a5a1fd"
+    },
+    "data/bin/combine_chances.bin": {
+      "bytes": 160,
+      "schema_crc": "8506dc69",
+      "sha256": "041f1d89c637566b170ef267f990f41405b7b7e3931cc9d730df5ea8c022cfeb"
+    },
+    "data/bin/combine_same_set_chances.bin": {
+      "bytes": 168,
+      "schema_crc": "8506dc69",
+      "sha256": "dd6f943d9c40f55f2dc322acaf3ff8bc77330f360df2ebd0a6885000fbf120b3"
+    },
+    "data/bin/command.bin": {
+      "bytes": 5984,
+      "schema_crc": "f6195c7d",
+      "sha256": "cb183ffbe69e17d513b2e8cd0f208de8d88b22ae4034be4134fea74d73647070"
+    },
+    "data/bin/conversionsets.bin": {
+      "bytes": 1304,
+      "schema_crc": "b1110b4f",
+      "sha256": "f49989a4537a4b9395a9b77dbd7f69d69d8132dc134a12fbe7a06aef021a1888"
+    },
+    "data/bin/costume.bin": {
+      "bytes": 17691352,
+      "schema_crc": "a3374618",
+      "sha256": "10ef7562156be60bd1ef3c437c3b46d10b36b6b265129c10f39d25c4a4df5a77"
+    },
+    "data/bin/costumeWeaponStances.bin": {
+      "bytes": 528,
+      "schema_crc": "dd1e01e2",
+      "sha256": "9980bb27731f81baa8a49d64cb26e538581e448cef878fd5d8f962cad617101e"
+    },
+    "data/bin/defaultBodyCfg.bin": {
+      "bytes": 972,
+      "schema_crc": "4b22fb3b",
+      "sha256": "e1ddc4c739df802d5498d3e70d6919c1b8f8ea2e2986c739c7a5603789f82202"
+    },
+    "data/bin/defnames.bin": {
+      "bytes": 3300312,
+      "schema_crc": "0c027625",
+      "sha256": "cab5eb006413fdf355586b85765d7bfdecca082b687c1338e78b9eeb17b29fc7"
+    },
+    "data/bin/depts.bin": {
+      "bytes": 29420,
+      "schema_crc": "5a060975",
+      "sha256": "eb60fe990086e4b86d60ddbd889a80e9254efc4586e4d1e6c52f7a862b5380c0"
+    },
+    "data/bin/detailcats.bin": {
+      "bytes": 1108,
+      "schema_crc": "522ad306",
+      "sha256": "b3c0f24047dd138017ba7870d6652a5348f98535f807e8b54eabbebfceb4cbe4"
+    },
+    "data/bin/details.bin": {
+      "bytes": 401216,
+      "schema_crc": "326ad4e9",
+      "sha256": "11e5104e0210fa5cbbc910932e5df461a34853e9a30d43f890d31510cdf2ce28"
+    },
+    "data/bin/dim_returns.bin": {
+      "bytes": 864,
+      "schema_crc": "499f34b4",
+      "sha256": "cf81588dc98b4264a5f4e27b86300d848363781834c81a8423f5ce6c74bd0c19"
+    },
+    "data/bin/ent_types.bin": {
+      "bytes": 1444116,
+      "schema_crc": "23b72742",
+      "sha256": "4bb44025fda13d11c03d200362c55f51dec346d60e195ded4ecaed38026ebf67"
+    },
+    "data/bin/exemplar_handicaps.bin": {
+      "bytes": 892,
+      "schema_crc": "4c0d578c",
+      "sha256": "626456e3797195e8d79ff56e2ce742e3a581b38d4399400affb43bb488f8cafb"
+    },
+    "data/bin/experience.bin": {
+      "bytes": 512,
+      "schema_crc": "2d11c077",
+      "sha256": "1295f7e7ad69f49aa9187bf7a97f8fa4335af78df0bd778dcbc28d776669a4d0"
+    },
+    "data/bin/fxinfo.bin": {
+      "bytes": 58505496,
+      "schema_crc": "4cb7d9cb",
+      "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+    },
+    "data/bin/items.bin": {
+      "bytes": 4542044,
+      "schema_crc": "8753ff10",
+      "sha256": "80e45680f9a22ac49ab1654a98c3389a5a2763f36bbd22d0470cd616c617e824"
+    },
+    "data/bin/kb.bin": {
+      "bytes": 12240,
+      "schema_crc": "d11484b8",
+      "sha256": "af3a2dfed7f4d1deb6cad00e8beae0c9b3a9ea8777f62961258bd7dc3a9c04bd"
+    },
+    "data/bin/kbkorea.bin": {
+      "bytes": 12252,
+      "schema_crc": "d11484b8",
+      "sha256": "e8bea925c9c4dbe77e8db6529c2a0dbd0dcfa86e460c9a92685f1dc1988edecc"
+    },
+    "data/bin/lods.bin": {
+      "bytes": 1059016,
+      "schema_crc": "e8361497",
+      "sha256": "13800255781138248226340be316cd628e98800d9ba889fe1aecc902e483b66a"
+    },
+    "data/bin/map.bin": {
+      "bytes": 5600,
+      "schema_crc": "4837cab2",
+      "sha256": "5e64f9b0903a3bbfd163ef6ec62f40ad95e55be3c85c7a7742d53d788d336e49"
+    },
+    "data/bin/mapspecs.bin": {
+      "bytes": 164840,
+      "schema_crc": "5b3be1a2",
+      "sha256": "238b6876148ff6f19cc8f835ee36b8a9fe0b09a5d13601eb8adb5a3d858f077e"
+    },
+    "data/bin/mapstats.bin": {
+      "bytes": 1542744,
+      "schema_crc": "bf963282",
+      "sha256": "b14c208848ef59529ceeb592a1c4a4e167d7a62683a13c9d1536b5166d0b44a8"
+    },
+    "data/bin/menuAnimations.bin": {
+      "bytes": 1804,
+      "schema_crc": "4011736e",
+      "sha256": "a2dc887e6aeced481e4fc1bf556c50632b302e82f9e0fdfc7f2c49fee92e33d2"
+    },
+    "data/bin/minimap.bin": {
+      "bytes": 13945296,
+      "schema_crc": "7520ffe0",
+      "sha256": "a9a2ba27bcf6c6e3ab7df66a8f1a96d74e6d3b7d9f2ccbe93395f65f2da259a2"
+    },
+    "data/bin/npcs_client.bin": {
+      "bytes": 546520,
+      "schema_crc": "ea743a41",
+      "sha256": "27c1eacc19f2b0774763ea7b01eaf912eb0d08e9a4b1d0c6130fa7c803c67035"
+    },
+    "data/bin/origins.bin": {
+      "bytes": 504,
+      "schema_crc": "6d177c17",
+      "sha256": "ec13f45bc83815bb6d2c440380360589217919c65cc637f94959e53c5410e033"
+    },
+    "data/bin/particles.bin": {
+      "bytes": 25770540,
+      "schema_crc": "4ac5b355",
+      "sha256": "87898af40681f6c7c54a324be4d959e4dd592768f31fa2b2642e663af8f71241"
+    },
+    "data/bin/plots.bin": {
+      "bytes": 19260,
+      "schema_crc": "144dc947",
+      "sha256": "f3568a21a3eda0a3e9120d2addd77b90d35d9e9124fbf30ff78300a888d2a25a"
+    },
+    "data/bin/powercats.bin": {
+      "bytes": 239304,
+      "schema_crc": "59248ecb",
+      "sha256": "67b46915b9bf4440de8f5cf8bf7dd4a9047daee7dc5cb96f2c2be3999f8fc5e7"
+    },
+    "data/bin/powercustomizationcost.bin": {
+      "bytes": 196,
+      "schema_crc": "f81dfffb",
+      "sha256": "50b968d708261f4a9775e73bc0508e4b0f9c6925e73d665bc0a2ba2195d4041c"
+    },
+    "data/bin/powercustomizationmenu.bin": {
+      "bytes": 332,
+      "schema_crc": "ef0ab73c",
+      "sha256": "f71aa71d1f27eaeee31aa26eedf9366da9a2e45074228e33dc433fdcabcbd30a"
+    },
+    "data/bin/powers.bin": {
+      "bytes": 62047164,
+      "schema_crc": "b553b8ff",
+      "sha256": "25641e747c60e066016fcc7d2ce0a2e72f57d7d3953f7b1ff4b18b69e2d49c6d"
+    },
+    "data/bin/powersets.bin": {
+      "bytes": 3179276,
+      "schema_crc": "2fe0d52d",
+      "sha256": "afadc5f3ae6fc9c9c413924cec75bb911ff5cd4ce37388c6737cdb5786d9d547"
+    },
+    "data/bin/product_catalog.bin": {
+      "bytes": 250576,
+      "schema_crc": "28525566",
+      "sha256": "79252c1e4967e046320201f0c8ff4e6387a7da5ed501de2d316aef50a9e5ccd5"
+    },
+    "data/bin/replacepowernames.bin": {
+      "bytes": 2352,
+      "schema_crc": "090e82f6",
+      "sha256": "7da843a2f3119967050dc704c2a93f7a1062f057d00090f9c152bc0d151d8eb3"
+    },
+    "data/bin/roomcategories.bin": {
+      "bytes": 812,
+      "schema_crc": "10184422",
+      "sha256": "47298da5fbd1034f1bd338124c09f1df9939d3f8762fbeb09860df48c7b12e02"
+    },
+    "data/bin/roomtemplates.bin": {
+      "bytes": 25688,
+      "schema_crc": "4a499aee",
+      "sha256": "2fbd3f2fee1498a8c0dbb3eb21c278ff8734ea5d0013808cb1ac40b80408ffd3"
+    },
+    "data/bin/schedules.bin": {
+      "bytes": 520,
+      "schema_crc": "9f2a61e2",
+      "sha256": "a6b344b7f37b8bade2f5fbc28906d122690791ca08b381a10e6581664a348de6"
+    },
+    "data/bin/seqstatebits.bin": {
+      "bytes": 15380,
+      "schema_crc": "6b0e7f06",
+      "sha256": "9c4a5aab4c2bffb99eb2416e76a692449ee26927beed3cdd86dece02af2b2aac"
+    },
+    "data/bin/sequencers.bin": {
+      "bytes": 83739012,
+      "schema_crc": "9dfb79df",
+      "sha256": "64362d2213da02a36e63235de7037eb0355b9cdfdc5982dce528d26a42783d53"
+    },
+    "data/bin/soundinfo.bin": {
+      "bytes": 34432,
+      "schema_crc": "8a0b086a",
+      "sha256": "3d1fce1f3c5826be100c6dd77b016e6cec2346f51a3f2b5e5892382dc0120d37"
+    },
+    "data/bin/stores.bin": {
+      "bytes": 29912,
+      "schema_crc": "f249dd6c",
+      "sha256": "68e8763476b39f3ac32a09a3fa578bb6876692a24829abcd0fe652ae583a00a2"
+    },
+    "data/bin/supergroupColors.bin": {
+      "bytes": 2664,
+      "schema_crc": "f0095ef2",
+      "sha256": "e5676ebbccc380f9d69322ef6750332b0b7e7a46d915bdfb591322862d22cb75"
+    },
+    "data/bin/supergroupEmblems.bin": {
+      "bytes": 13764,
+      "schema_crc": "46937197",
+      "sha256": "9a8fb6ee86a46e9ff69bdc5e0de5f83ed137412eb1d33b489bb09a8d789284e0"
+    },
+    "data/bin/supergroup_badges.bin": {
+      "bytes": 13076,
+      "schema_crc": "15ea15cf",
+      "sha256": "5f3fd9325ab157948197fa767244c2f7b40254d30531fdb080c3aee96a8caed3"
+    },
+    "data/bin/tailorcost.bin": {
+      "bytes": 272,
+      "schema_crc": "3c2f0dae",
+      "sha256": "aa70748cd9ab05239ffc811d579f8fa039d3bee4c5f0c1bda86cd8f5321266c9"
+    },
+    "data/bin/texWords.bin": {
+      "bytes": 694324,
+      "schema_crc": "479da30a",
+      "sha256": "4a4eac7c3464febdf11d67a9afd0e349fb4e49f3f06ea33933e258a495739b11"
+    },
+    "data/bin/tricks.bin": {
+      "bytes": 13537052,
+      "schema_crc": "5ba1b0e3",
+      "sha256": "cf9595e54bc65a40d2dddc3a5a13c475d7c2ce07a96420e6001b0e2312926bc1"
+    },
+    "data/bin/villain_classes.bin": {
+      "bytes": 4228088,
+      "schema_crc": "7ff68aaf",
+      "sha256": "bc0789f03941d845f9574f6df4dd1ad953ad35328a3d7323c07d02d92fdbd523"
+    },
+    "data/bin/villain_origins.bin": {
+      "bytes": 124,
+      "schema_crc": "6d177c17",
+      "sha256": "2432c9d535ef7021d2c86ab9ea2e7049148304721e88163af3a3a2611bbeba3a"
+    },
+    "data/bin/visionPhases.bin": {
+      "bytes": 328,
+      "schema_crc": "44061748",
+      "sha256": "4e1099f1b9234004b568c7e2899eecd8b63b6ed9a2c50c56b90ed6989f4a8d32"
+    },
+    "data/bin/visionPhasesExclusive.bin": {
+      "bytes": 916,
+      "schema_crc": "44061748",
+      "sha256": "60a6b76d7b7e481923eb87e1dd710dfe6dc3ab694999e061be2453514328ad15"
+    },
+    "data/server/bin/PC_Rewards.bin": {
+      "bytes": 680,
+      "schema_crc": "39520d4b",
+      "sha256": "11d0506a3704b703e683a99155b911b80189a7e87f97c988d3ae939507192c70"
+    },
+    "data/server/bin/PowersetConversion.bin": {
+      "bytes": 18628,
+      "schema_crc": "5b04e851",
+      "sha256": "d262596cf6281168633d2b06e3d8412a4b54924accd30472bbbaf325b188924a"
+    }
+  },
+  "format": 1,
+  "gameplay_validated": false,
+  "generated_noncache_outputs": [],
+  "generation_report": {
+    "bytes": 49976,
+    "sha256": "19c277e8634f679a79cd05ff8edc87f6877692d66fcea6e03d5de011e1a841e1"
+  },
+  "generator_platform": "native_x86_64_linux_wine_x86_client",
+  "import_donor": {
+    "apk_bytes": 355130247,
+    "apk_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+    "build_receipt_sha256": "39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea",
+    "payloads": {
+      "assets/atlas/atlas-assets-index.tsv": {
+        "bytes": 2379733,
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+      },
+      "assets/atlas/atlas-import.properties": {
+        "bytes": 923,
+        "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+      },
+      "assets/atlas/atlas-text-index.tsv": {
+        "bytes": 21187391,
+        "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+      },
+      "assets/atlas/atlas-text.zip": {
+        "bytes": 312807038,
+        "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+      }
+    },
+    "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+    "run_id": 36638344040
+  },
+  "launcher_sha256": "97e6c1cf78136279a64059683eeb1b8157e9b5cc19b024f65e2fa3f0a61fd2e1",
+  "launcher_source_sha256": "3fe4fa8509690fa546c1e9a3684b839b43e931220ff4ab07c106303dc9e88eff",
+  "nonfatal_queued_errors_reviewed": false,
+  "normalized_mtime_epoch": 1767225600,
+  "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+  "reference_run_id": 36088012664,
+  "repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+  "role": "actual_client_generated_caches",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "wine_version": "wine-9.0 (Ubuntu 9.0~repack-4build3)"
+}

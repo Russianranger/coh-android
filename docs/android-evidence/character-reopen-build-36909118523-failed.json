@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "run_id": 36909118523,
+  "repository_commit": "159cc0d1da00a67bedd2dc91bc77e0a05b4b1ed2",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36909118523",
+  "tooling_passed": true,
+  "prepared_caches_passed": true,
+  "apk_built": false,
+  "runtime_started": false,
+  "failure": "Compiler apt install exceeded240seconds while downloading109MB from Azure Ubuntu mirror",
+  "exit_code": 124,
+  "correction": "Use canonical Ubuntu signed mirror, install required POSIX compiler variant only, and retain finite update/install/step bounds."
+}

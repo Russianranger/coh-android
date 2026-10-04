@@ -1,0 +1,365 @@
+--- a/Common/sql/sqlinclude.h
++++ b/Common/sql/sqlinclude.h
+@@ -46,4 +46,8 @@
+ #define MSSQL_SMALLDATETIME_PRECISION (sizeof("yyyy-mm-dd hh:mm:ss")-1)
+ #define MSSQL_SMALLDATETIME_DECIMALDIGITS 0
+ 
++#ifdef COH_WINE_ODBC
++#include "wine_odbc.h"
+ #endif
++
++#endif
+--- a/DBServer/CMakeLists.txt
++++ b/DBServer/CMakeLists.txt
+@@ -163,6 +163,9 @@
+ 
+ add_executable(DbServer
+ 	${DbServer_SOURCES} ${DbServer_HEADERS} ${DbServer_GENERATED})
++# Isolated Wine variant: the stock PostgreSQL source preparation is unchanged.
++target_sources(DbServer PRIVATE ../Common/sql/wine_odbc.c src/wine_dispatch_progress.c src/wine_fixed_inputs.c src/wine_loopback.c)
++target_compile_definitions(DbServer PRIVATE COH_WINE_ODBC=1)
+ option(COH_PG_PERSISTENCE_TESTS "Enable disposable PostgreSQL fixture entry point" OFF)
+ if(COH_PG_PERSISTENCE_TESTS)
+     target_sources(DbServer PRIVATE src/pg_persistence_test.c)
+--- a/DBServer/src/dbinit.c
++++ b/DBServer/src/dbinit.c
+@@ -1,4 +1,7 @@
+ #include "dbinit.h"
++#include "wine_dispatch_progress.h"
++#include "wine_fixed_inputs.h"
++#include "wine_loopback.h"
+ #include <utilitieslib/stdtypes.h>
+ #include "dbserver/auctionservercomm.h"
+ #include "accountservercomm.h"
+@@ -361,50 +364,77 @@
+         return;
+ 
+     last = now;
++    cohDbProgressMark(COH_DB_STAGE_SQL_KEEPALIVE_FOREGROUND);
+     sqlConnExecDirect(keepalive, sizeof(keepalive)-1, SQLCONN_FOREGROUND, false);
+ 
++    cohDbProgressMark(COH_DB_STAGE_SQL_KEEPALIVE_QUEUE);
+     for (i=0; i<SQLCONN_MAX-1; i++)
+         sqlExecAsyncEx(keepalive, sizeof(keepalive)-1, i, false);
+ }
+ 
+ void msgScan()
+ {
++    cohDbProgressMark(COH_DB_STAGE_SQL_KEEPALIVE_CHECK);
+     sendSqlKeepAlive();
++    cohDbProgressMark(COH_DB_STAGE_SQL_FIFO_TICK);
+     sqlFifoTick();
++    cohDbProgressMark(COH_DB_STAGE_DELINK_MAPS);
+     delinkCrashedMaps();
++    cohDbProgressMark(COH_DB_STAGE_DELINK_LAUNCHERS);
+     delinkDeadLaunchers();
++    cohDbProgressMark(COH_DB_STAGE_SQL_MEMORY_PRESSURE);
+     sqlFifoDisableNMMonitorIfMemoryLow();
++    cohDbProgressMark(COH_DB_STAGE_NM_MONITOR);
+     NMMonitor(1);
+ 
++    cohDbProgressMark(COH_DB_STAGE_SVRMON_UPDATES);
+     svrMonSendUpdates();
++    cohDbProgressMark(COH_DB_STAGE_AUTO_START);
+     checkServerAutoStart();
+-    if(authDisconnected())
++    cohDbProgressMark(COH_DB_STAGE_AUTH_STATUS);
++    if(authDisconnected()) {
++        cohDbProgressMark(COH_DB_STAGE_AUTH_RECONNECT);
+         reconnectToAuth();
++    }
+     
+     // @todo -AB: work this out :07/12/07
++    cohDbProgressMark(COH_DB_STAGE_WAITING_ENTITIES);
+     waitingEntitiesCheck();
++    cohDbProgressMark(COH_DB_STAGE_DB_RELAY);
+     dbRelayQueueCheck();
+ 
++    cohDbProgressMark(COH_DB_STAGE_CLIENT_LINKS);
+     if(!server_cfg.queue_server)
+         clientClearDeadLinks();
+ #if defined QUEUESERVER_VERIFICATION
+     else
+         queueservercomm_updateCount();
+ #endif
++    cohDbProgressMark(COH_DB_STAGE_BEACON_LAUNCHERS);
+     launcherLaunchBeaconizers();
++    cohDbProgressMark(COH_DB_STAGE_STATS);
+     stat_Update();
+     if (!server_cfg.use_logserver) {
++        cohDbProgressMark(COH_DB_STAGE_SHARD_CHAT);
+         shardChatMonitor();
++        cohDbProgressMark(COH_DB_STAGE_LOG_STATS);
+         updateLogStats();
+     }
++    cohDbProgressMark(COH_DB_STAGE_AUCTION);
+     auctionMonitorTick();
++    cohDbProgressMark(COH_DB_STAGE_OVERLOAD);
+     launcherOverloadProtectionTick();
+ 
++    cohDbProgressMark(COH_DB_STAGE_TEMP_LOCKS);
+     tempLockTick(server_cfg.name_lock_timeout, timerSecondsSince2000());  //timeout temporary name locks
+ 
++    cohDbProgressMark(COH_DB_STAGE_CONSOLE_TITLE);
+     updateDbServerTitle();
++    cohDbProgressMark(COH_DB_STAGE_EXIT_REQUEST);
+     checkExitRequest();
++    cohDbProgressMark(COH_DB_STAGE_FOLDER_CALLBACKS);
+     FolderCacheDoCallbacks();
++    cohDbProgressMark(COH_DB_STAGE_POOL_COMPACT);
+     mpCompactPools();
+ }
+ 
+@@ -1766,15 +1796,37 @@
+ {
+     int        i,start_static=0,flat_to_sql=0,is_log_server=0,init_encryption = 1;
+
++    /* Configure before common startup or the fixture can create a listener. */
++    if (cohDbLoopbackInit() < 0) {
++        fprintf(stderr, "DbServer loopback initialization failed (Windows error %lu).\n", GetLastError());
++        return 2;
++    }
++
+     memCheckInit();
+ #ifdef COH_PG_PERSISTENCE_TESTS
+     if (argc > 1 && !strcmp(argv[1], "-pgpersistencetest")) {
+         extern int pgPersistenceTestMain(int argc, char **argv);
++#ifdef COH_WINE_ODBC
++        /* The fixture bypasses normal startup. Initialize its non-thread-safe
++         * file cache and log path before SQL notice logging starts on workers. */
++        setAssertMode(ASSERTMODE_STDERR | ASSERTMODE_EXIT);
++        logSetDir("pg-persistence-test");
++#endif
+         return pgPersistenceTestMain(argc, argv);
+     }
+ #endif
+ 
+     EXCEPTION_HANDLER_BEGIN
++
++    if (cohDbFixedInputsInit() < 0) {
++        printf_stderr("DbServer fixed-input initialization failed (Windows error %lu).\n", GetLastError());
++        return 2;
++    }
++    if (cohDbProgressInit() < 0) {
++        printf_stderr("DbServer dispatch progress initialization failed (Windows error %lu).\n", GetLastError());
++        return 2;
++    }
++    cohDbProgressMark(COH_DB_STAGE_STARTUP);
+     
+     setWindowIconColoredLetter(compatibleGetConsoleWindow(), 'D', 0x00ff00);
+ 
+@@ -1988,8 +2040,10 @@
+     }
+ 
+ 
++    cohDbProgressMark(COH_DB_STAGE_DB_INIT);
+     dbInit(start_static);
+     
++    cohDbProgressMark(COH_DB_STAGE_READY);
+     printf_stderr("%s DbServer Ready.\n", timerGetTimeString());
+ 
+     for(;;)
+@@ -1998,11 +2052,19 @@
+         extern BOOL g_heuristicdebug_enabled;
+         extern void sendRemainTimeToClient(U32 auth_id,U32 curr_avail,U32 total_avail,U8 reservation,int countdown,int change_billing);
+ 
++        cohDbProgressMark(COH_DB_STAGE_MAIN_LOOP);
++        cohDbProgressMark(COH_DB_STAGE_MSG_SCAN);
+         msgScan();
++        cohDbProgressMark(COH_DB_STAGE_SHUTDOWN_TICK);
+         dbShutdownTick();
++        cohDbProgressMark(COH_DB_STAGE_CONSOLE_POLL);
+         if (_kbhit()) { // debug hack for printing out memory monitor stuff
+             static int s_nQuitsToSend = 1000;
+-            switch (_getch()) {
++            int key;
++            cohDbProgressMark(COH_DB_STAGE_CONSOLE_READ);
++            key = _getch();
++            cohDbProgressMark(COH_DB_STAGE_CONSOLE_COMMAND);
++            switch (key) {
+                 case 'm':
+                     memMonitorDisplayStats();
+                 xcase 'w':
+@@ -2107,9 +2169,11 @@
+                 }
+             }
+         }
++        cohDbProgressMark(COH_DB_STAGE_LOOP_DONE);
+     }
+     dbDelink(); // Leave this in, for no other reason than it causes the function to get linked into the .exe!
+     packetShutdown();
++    cohDbProgressClose();
+ 
+     EXCEPTION_HANDLER_END
+         return 0;
+--- a/libs/UtilitiesLib/src/utils/FolderCache.c
++++ b/libs/UtilitiesLib/src/utils/FolderCache.c
+@@ -57,6 +57,10 @@
+ int folder_cache_update_enable=1;
+ int folder_cache_manual_callback_check=0;
+ 
++/* Opt-in immutable-input runtime: never create directory watchers or ingest
++ * change notifications. Normal cache selection and initial reads are retained. */
++static int folder_cache_fixed_inputs=0;
++
+ static int folder_cache_dirMonTimeout = 0;
+ static int folder_cache_noDisableOnBufferOverruns = 0;
+ 
+@@ -90,6 +94,16 @@
+ 
+ 
+ static DWORD threadid=0;
++
++int FolderCacheSetFixedInputsMode(void)
++{
++    /* Refuse late activation instead of abandoning live asynchronous watches. */
++    if (threadid)
++        return 0;
++    folder_cache_fixed_inputs = 1;
++    folder_cache_update_enable = 0;
++    return 1;
++}
+ 
+ FolderCache *FolderCacheCreate() {
+     FolderCache *fc = calloc(sizeof(FolderCache),1);
+@@ -365,13 +379,15 @@
+         return;
+     }
+ 
+-    // Add notification hook
+-    dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
+-    context = malloc(sizeof(*context));
+-    context->fc = fc;
+-    context->virtual_location = virtual_location;
+-    if (!dirMonAddDirectory(basepath, true, (void*)context)) {
+-        verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++    // Fixed inputs keep initial reads/cache behavior without creating watches.
++    if (!folder_cache_fixed_inputs) {
++        dirMonSetFlags(DIR_MON_NO_TIMESTAMPS);
++        context = malloc(sizeof(*context));
++        context->fc = fc;
++        context->virtual_location = virtual_location;
++        if (!dirMonAddDirectory(basepath, true, (void*)context)) {
++            verbose_printf("Error adding dirMon!  Dynamic reloading may not fully function.\n");
++        }
+     }
+     
+     if (FolderCacheGetMode()!=FOLDER_CACHE_MODE_DEVELOPMENT_DYNAMIC) {
+@@ -872,7 +888,7 @@
+     bool hog_file_changed=false;
+     DirChangeInfo* bufferOverrun;
+ 
+-    if (!folder_cache_update_enable) {
++    if (folder_cache_fixed_inputs || !folder_cache_update_enable) {
+         return 0;
+     }
+ 
+@@ -1307,7 +1323,7 @@
+ }
+ 
+ void FolderCacheEnableCallbacks(int enable) { // Disables/enables checking for changes in the filesystem (turn these off when loading)
+-    folder_cache_update_enable = enable;
++    folder_cache_update_enable = enable && !folder_cache_fixed_inputs;
+ }
+ 
+ void FolderCacheChooseMode(void) { // Auto-chooses the appropriate mode, based on existence of ./piggs
+--- a/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h
++++ b/libs/UtilitiesLib/include/utilitieslib/utils/FolderCache.h
+@@ -108,6 +108,9 @@
+ void FolderCacheChooseMode(void); // Auto-chooses the appropriate mode, based on existence of ./piggs
+ 
+ void FolderCacheEnableCallbacks(int enable); // Disables/enables checking for changes in the filesystem (turn these off when loading)
++// One-way opt-in before the first FolderCacheCreate; returns 0 if called too late.
++// Prevents watcher creation/updates while retaining lookup mode and initial reads.
++int FolderCacheSetFixedInputsMode(void);
+ 
+ void FolderCacheExclude(FolderCacheExclusion mode, const char *folder);
+ 
+--- a/libs/UtilitiesLib/src/network/sock.c
++++ b/libs/UtilitiesLib/src/network/sock.c
+@@ -23,11 +23,71 @@
+      addr->sin_port = htons((u_short)port);
+ }
+
++/* States: 0=default/unbound, 1=loopback/unbound, 2=default/binding,
++ * 3=loopback/binding. CAS makes activation and the first bind mutually ordered.
++ * This library hook has no effect until an explicit startup request enables it. */
++static volatile LONG sock_bind_policy = 0;
++
++int sockSetLoopbackOnlyMode(void)
++{
++    return InterlockedCompareExchange(&sock_bind_policy, 1, 0) == 0;
++}
++
++static void sockLoopbackFailure(SOCKET sock, const char *reason, int error)
++{
++    /* Some stock callers ignore sockBind failure. Never let an opted-in
++     * diagnostic continue after an unavailable or unverified listener. */
++    closesocket(sock);
++    fprintf(stderr, "COH_WINE_DB_LOOPBACK_ONLY binding failed: %s (Windows socket error %d)\n", reason, error);
++    fflush(stderr);
++    ExitProcess(2);
++}
++
+ int    sockBind(SOCKET sock,const struct sockaddr_in *name)
+ {
+-    if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
+-
+-    return 0;
++    LONG policy;
++    struct sockaddr_in local, actual;
++    int length = (int)sizeof(actual);
++    int socket_type, type_length = (int)sizeof(socket_type);
++    unsigned long address;
++
++    do {
++        policy = InterlockedCompareExchange(&sock_bind_policy, 0, 0);
++    } while (InterlockedCompareExchange(&sock_bind_policy, policy | 2, policy) != policy);
++    if (!(policy & 1)) {
++        if (bind (sock,(struct sockaddr *) name, sizeof(struct sockaddr_in)) >= 0) return 1;
++        return 0;
++    }
++    if (!name || name->sin_family != AF_INET)
++        sockLoopbackFailure(sock, "IPv4 address required", WSAEAFNOSUPPORT);
++    local = *name;
++    address = ntohl(local.sin_addr.s_addr);
++    if (address == INADDR_ANY)
++        local.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++    else if ((address & 0xff000000UL) != 0x7f000000UL)
++        sockLoopbackFailure(sock, "non-loopback address refused", WSAEADDRNOTAVAIL);
++    if (bind(sock, (struct sockaddr *)&local, sizeof(local)) < 0)
++        sockLoopbackFailure(sock, "bind", WSAGetLastError());
++    memset(&actual, 0, sizeof(actual));
++    if (getsockname(sock, (struct sockaddr *)&actual, &length) != 0)
++        sockLoopbackFailure(sock, "getsockname", WSAGetLastError());
++    address = ntohl(actual.sin_addr.s_addr);
++    if (length != (int)sizeof(actual) || actual.sin_family != AF_INET
++            || (address & 0xff000000UL) != 0x7f000000UL
++            || actual.sin_addr.s_addr != local.sin_addr.s_addr
++            || !actual.sin_port || (local.sin_port && actual.sin_port != local.sin_port))
++        sockLoopbackFailure(sock, "bound endpoint verification", WSAEINVAL);
++    if (getsockopt(sock, SOL_SOCKET, SO_TYPE, (char *)&socket_type, &type_length) != 0)
++        sockLoopbackFailure(sock, "getsockopt(SO_TYPE)", WSAGetLastError());
++    if (type_length != (int)sizeof(socket_type)
++            || (socket_type != SOCK_STREAM && socket_type != SOCK_DGRAM))
++        sockLoopbackFailure(sock, "socket type verification", WSAEINVAL);
++    fprintf(stdout, "\nCOH_WINE_DB_LOOPBACK_ONLY bind verified: protocol=%s address=%lu.%lu.%lu.%lu port=%u\n",
++            socket_type == SOCK_STREAM ? "tcp" : "udp",
++            (address >> 24) & 255, (address >> 16) & 255,
++            (address >> 8) & 255, address & 255, (unsigned)ntohs(actual.sin_port));
++    fflush(stdout);
++    return 1;
+ }
+
+ void    sockSetBlocking(SOCKET fd,int block)
+--- a/libs/UtilitiesLib/include/utilitieslib/network/sock.h
++++ b/libs/UtilitiesLib/include/utilitieslib/network/sock.h
+@@ -23,6 +23,8 @@
+ C_DECLARATIONS_BEGIN
+
+ void sockSetAddr(struct sockaddr_in *addr,unsigned int ip,int port);
++/* One-way, before the first sockBind attempt. Defaults to the stock policy. */
++int sockSetLoopbackOnlyMode(void);
+ int sockBind(SOCKET sock,const struct sockaddr_in *name);
+ void sockSetBlocking(SOCKET fd, int block);
+ void sockSetDelay(SOCKET fd, int delay);

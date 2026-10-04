@@ -1,0 +1,373 @@
+{
+  "format": 1,
+  "status": "published_and_independently_verified",
+  "scope": "optional_ground_recovery_and_stationary_contact_evidence",
+  "repository_commit": "1791a3203ecf662191f2d6e3401cfa9ea4692004",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "version_name": "0.12.0",
+  "version_code": 13,
+  "public_apk": {
+    "bytes": 595203099,
+    "sha256": "4a507d7d59b3af07be74de4bf47e39b8fd09ac86266a34c4fefd756fb442ee7c"
+  },
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "release": {
+    "id": 402190997,
+    "tag": "coh-atlas-gameplay-v0.12.0",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.12.0",
+    "draft": false,
+    "prerelease": true,
+    "assets": {
+      "COH-Atlas-Gameplay-0.12.0-testing.txt": {
+        "id": 606600405,
+        "name": "COH-Atlas-Gameplay-0.12.0-testing.txt",
+        "size": 2481,
+        "digest": "sha256:9151a1ac81c5b29fa5efc3f22ad3a6deeb65235e46a70e30f0e14169359dd46d",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.0/COH-Atlas-Gameplay-0.12.0-testing.txt"
+      },
+      "COH-Atlas-Gameplay-0.12.0.apk": {
+        "id": 606599958,
+        "name": "COH-Atlas-Gameplay-0.12.0.apk",
+        "size": 595203099,
+        "digest": "sha256:4a507d7d59b3af07be74de4bf47e39b8fd09ac86266a34c4fefd756fb442ee7c",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.0/COH-Atlas-Gameplay-0.12.0.apk"
+      },
+      "COH-Atlas-Gameplay-0.12.0.apk.sha256": {
+        "id": 606600399,
+        "name": "COH-Atlas-Gameplay-0.12.0.apk.sha256",
+        "size": 96,
+        "digest": "sha256:694263e03cb90def28ced9af0de69f1b309a42a593fd4447996de3515a03e562",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.12.0/COH-Atlas-Gameplay-0.12.0.apk.sha256"
+      }
+    }
+  },
+  "build": {
+    "run_id": 37071344940,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37071344940",
+    "conclusion": "success",
+    "observer_job_id": 111051260030,
+    "apk_job_id": 111051658353,
+    "report": {
+      "bytes": 103482,
+      "sha256": "bb5cb7237fd1f489a53df5fe081398dcedde49f8d21ed7e9d27bb6417f21de07"
+    }
+  },
+  "artifacts": {
+    "observer": {
+      "id": 11253859276,
+      "zip_bytes": 6347,
+      "zip_sha256": "88cc5fa7c2c4e6c7bff71dc14dc34a6587a123fbdb014bfb0e0ca9905b29af97"
+    },
+    "packaging": {
+      "id": 11254583608,
+      "zip_bytes": 24971,
+      "zip_sha256": "03b9d99691dde7687b9e5eced338589d7cc65d9c708992b510ea9b8035cb666a"
+    },
+    "apk": {
+      "id": 11254248886,
+      "zip_bytes": 557785460,
+      "github_digest": "sha256:a09e41d1e9632baa1e9145c055f0cc5f46018f1ba139e9ba43489007b369d57b",
+      "archive_downloaded": false,
+      "public_apk_independently_downloaded": true
+    }
+  },
+  "focused_qualification": {
+    "receipt": {
+      "bytes": 19532,
+      "sha256": "64140bf936dc88eb78739269dc650a0c31933c160b0ad80c94e65cace2aa0487"
+    },
+    "checks_passed": 161,
+    "source_files_pinned": 84,
+    "test_suites": {
+      "test_contact_interaction_package": {
+        "tests_run": 11,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_contact_capture": {
+        "tests_run": 7,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_stationary_contact_evidence": {
+        "tests_run": 10,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_reopen_guest": {
+        "tests_run": 20,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_character_server": {
+        "tests_run": 24,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_budget_guest": {
+        "tests_run": 16,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_session_budget_java": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_ground_repair": {
+        "tests_run": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_acceptance": {
+        "tests_run": 9,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_input": {
+        "tests_run": 30,
+        "status": "passed",
+        "skipped": 0
+      },
+      "test_rfb_buffered_input": {
+        "tests_run": 5,
+        "status": "passed",
+        "skipped": 0
+      }
+    },
+    "checks": {
+      "optional_ground_and_normal_save_guards_verified": true,
+      "bounded_contact_capture_and_owned_log_evidence_verified": true,
+      "retained_native_data_cache_and_source_boundaries_verified": true,
+      "actual_guest_archive_extraction_verified": true
+    }
+  },
+  "donor": {
+    "run_id": 37063509202,
+    "repository_commit": "6557a21dbd696c9ac8e9b9344a0e8d7553d5a345",
+    "apk": {
+      "bytes": 595194816,
+      "sha256": "c8a0b2801c6f4ea80ef6df17f7e66f0a90b0ad128ef86fbb39d94c6d54182895"
+    },
+    "build_report": {
+      "bytes": 131522,
+      "sha256": "ac709e92901321a74e6211a9be58564de4e476f6718b656069064836def6e079"
+    }
+  },
+  "accepted_physical_checkpoint": {
+    "path": "docs/android-evidence/thor-0.11.6-client-accepted-20261002.json",
+    "pin": {
+      "bytes": 11848,
+      "sha256": "acdd50b131783a39f0db4ea5d8843149f7767dc3ac4ef6e0374309f0690b467f"
+    },
+    "existing_character_reopen_and_ordinary_save_passed": true,
+    "client_smoothness_accepted_by_user": true,
+    "sustained_fps_measured": false
+  },
+  "behavior": {
+    "mandatory_return_to_safe_ground_removed": true,
+    "optional_return_to_safe_ground_button_retained": true,
+    "requested_recovery_retains_strict_native_receipt_position_and_view_checks": true,
+    "ordinary_save_retains_native_to_sql_position_identity_powers_costume_and_logout_checks": true,
+    "normal_save_falsely_claims_ground_verification": false,
+    "contact_capture_max_requests": 3,
+    "contact_capture_fresh_views_per_request": 3,
+    "contact_capture_max_request_age_ms": 120000,
+    "contact_capture_requires_current_connection_session_pid_character_and_frame_time_watermarks": true,
+    "native_contact_logs_collected_once_at_export": true,
+    "native_initiation_logs_prove_dialog_semantics": false,
+    "preferred_contact": "Ms. Liberty beside Atlas statue",
+    "interior_fallback": "City Representative inside City Hall",
+    "input": "Existing ordinary cursor and left click/A; F remains Follow"
+  },
+  "deferred": {
+    "server_startup_optimization": true,
+    "server_startup_goal_seconds": 300,
+    "server_startup_measurement": "Session start through Atlas server readiness including required preparation",
+    "latest_accepted_server_readiness_seconds": 1310,
+    "gpu_acceleration": true,
+    "authentic_beacon_generation_and_moving_npc_pathing": true,
+    "mission_rewards_training_and_combat": true
+  },
+  "physical_0_12_0_contact_dialog_normal_save_without_recovery_or_performance_validated": false,
+  "native_client_or_server_recompiled": false,
+  "independent_public_audit_receipt": {
+    "bytes": 5632,
+    "sha256": "17a1b0fb5730b7d24f4b68e5a8693137ca8189b1161b16cbfd2549baea66e2d7"
+  },
+  "independent_public_audit": {
+    "format": 1,
+    "status": "passed",
+    "public_apk": {
+      "bytes": 595203099,
+      "sha256": "4a507d7d59b3af07be74de4bf47e39b8fd09ac86266a34c4fefd756fb442ee7c"
+    },
+    "repository_commit": "1791a3203ecf662191f2d6e3401cfa9ea4692004",
+    "build_report_pin": {
+      "bytes": 103482,
+      "sha256": "bb5cb7237fd1f489a53df5fe081398dcedde49f8d21ed7e9d27bb6417f21de07"
+    },
+    "production_manifest": {
+      "application_id": "io.github.russianranger.cohclientinteractive",
+      "version_code": 13,
+      "version_name": "0.12.0",
+      "min_sdk": 26,
+      "target_sdk": 35
+    },
+    "signature_verification": {
+      "v2": {
+        "cryptographic_signature_verified": true,
+        "whole_apk_digest_verified": true,
+        "certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+        "sdk_range": null,
+        "digests": [
+          {
+            "algorithm_id": "0x103",
+            "content_digest": "ad5d48c0b33d220d3ff1c24e7e8753172be06b808c60a3c09aa46433add85f8b",
+            "protected_chunks": 570
+          }
+        ]
+      },
+      "v3": {
+        "cryptographic_signature_verified": true,
+        "whole_apk_digest_verified": true,
+        "certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+        "sdk_range": [
+          24,
+          2147483647
+        ],
+        "digests": [
+          {
+            "algorithm_id": "0x103",
+            "content_digest": "ad5d48c0b33d220d3ff1c24e7e8753172be06b808c60a3c09aa46433add85f8b",
+            "protected_chunks": 570
+          }
+        ]
+      }
+    },
+    "ci_qualification_receipt": {
+      "bytes": 19532,
+      "sha256": "64140bf936dc88eb78739269dc650a0c31933c160b0ad80c94e65cace2aa0487"
+    },
+    "qualified_source_pins_verified": 84,
+    "ci_focused_tests_passed": 161,
+    "unique_zip_entries": 63,
+    "all_zip_entries_read_crc_verified": true,
+    "public_donor_zip_entries_crc_verified": 62,
+    "payload_hashes_verified": 56,
+    "runtime_manifest_files_verified": 49,
+    "client_manifest_files_verified": 41,
+    "retained_donor_payloads_verified": 50,
+    "replaced_payloads": [
+      "assets/runtime/character_reopen_diagnostic.py",
+      "assets/runtime/character_session_budget.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/local_character_server.py",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "added_payloads": [
+      "assets/runtime/stationary_contact_evidence.py"
+    ],
+    "changed_java_sources_verified": [
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java"
+    ],
+    "retained_android_resources_verified": 2,
+    "actual_packaged_guest_extraction": {
+      "format": 1,
+      "status": "passed",
+      "archives": {
+        "dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+          "file_count": 9,
+          "extracted_bytes": 4930397
+        },
+        "dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+          "file_count": 63,
+          "extracted_bytes": 9268640
+        },
+        "game-package.tar.gz": {
+          "bytes": 10976915,
+          "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d",
+          "file_count": 26,
+          "extracted_bytes": 28474910
+        }
+      }
+    },
+    "raw_server_archives_identical_to_public_0_11_6": true,
+    "native_archive_closure": {
+      "CityOfHeroes.exe": {
+        "actual_file": {
+          "bytes": 9441280,
+          "sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da"
+        },
+        "entire_archive_member_inventory_identical_to_0_11_6": true,
+        "native_archive_members_verified": 22
+      },
+      "MapServer.exe": {
+        "actual_file": {
+          "bytes": 6912512,
+          "sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36"
+        },
+        "entire_archive_member_inventory_identical_to_0_11_6": true,
+        "native_archive_members_verified": 26
+      }
+    },
+    "public_release_closure": {
+      "testing_notes": {
+        "bytes": 2481,
+        "sha256": "9151a1ac81c5b29fa5efc3f22ad3a6deeb65235e46a70e30f0e14169359dd46d"
+      },
+      "checksum": {
+        "bytes": 96,
+        "sha256": "694263e03cb90def28ced9af0de69f1b309a42a593fd4447996de3515a03e562"
+      },
+      "release_id": 402190997,
+      "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.12.0",
+      "apk_asset_id": 606599958,
+      "release_json_pin": {
+        "bytes": 11163,
+        "sha256": "fb1c77a4b305dbfb94b7cc2aaaee52dfd9e5fb0463a430dc4e4a995d6b7da564"
+      },
+      "public_release_asset_metadata_verified": true
+    },
+    "auditor_scripts": {
+      "contact_auditor": {
+        "bytes": 14562,
+        "sha256": "d3db43ed9085b4c676264f8456a2d6970e92dbf280d40b69b7f38cab8e9f6774"
+      },
+      "signature_manifest_helpers": {
+        "bytes": 23771,
+        "sha256": "7e0cca45cbc85a6e14fa32f2de3f633194fdfbc5d533f1543653347667cde53d"
+      }
+    },
+    "physical_refresh_reopen_contact_or_performance_tested": false,
+    "native_or_database_processes_started": false,
+    "limitations": [
+      "Host public-byte verification only; physical optional recovery, contact dialog/mission behavior, startup timing and FPS remain pending."
+    ]
+  },
+  "superseded_workflow": {
+    "run_id": 37071344885,
+    "apk_job_id": 111051511174,
+    "conclusion": "failure",
+    "cause": "Legacy 0.11.0 packager rejected changed historical android-character-reopen-qualified-apk.yml source pin before compiling or publishing an APK",
+    "routing_repair": "android-atlas-gameplay.yml is manual-only; current 0.12.0 dedicated workflow succeeded"
+  },
+  "pull_request": {
+    "number": 1,
+    "draft": true,
+    "main_unchanged": "04d62616e2e1b41b10f35a04d4c798e43680d5ba"
+  }
+}

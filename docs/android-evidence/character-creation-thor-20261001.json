@@ -1,0 +1,204 @@
+{
+  "format": 1,
+  "gate": "device_character_creation_and_ordinary_save_review",
+  "status": "accepted",
+  "reviewed_utc": "2026-10-01T16:43:16.279574+00:00",
+  "scope": "Default Male creator appearance reported by user; initial Atlas client connection; ordinary logout and committed save with fresh Android captures. World rendering/collision, exact-character reopen and gameplay remain pending.",
+  "source_apk_repository_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+  "delivered_apk_sha256": "001e1dc4db87f1184814a8f75a33953504d6ee06b238490a8c26c71c4ca7f963",
+  "runtime_manifest_sha256_declared": "e8191c6596067d1f697b37e3d2237af9f32350ca6568afd0aa157012a69e77e9",
+  "runtime_identity_review": {
+    "exported_manifest_repository_commit": "bc4d750deab00f0fdbbd084b32b563aa3abdddce",
+    "guest_asset_pins_verified_against_exported_runtime_and_client_manifest": 29,
+    "raw_export_is_reserialized_json": true,
+    "whole_apk_bytes_in_attachment": false,
+    "raw_complete_properties_in_attachment": false,
+    "import_generation": "generation-bdae47eb25ed42b0accee0efaebd31e6",
+    "import_contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+    "import_receipt_sha256_declared": "b69d4e0f12fec27ac36397a411a1c0e7bd3ac5b67886b67502903adc7b693aed",
+    "imported_data_preserved": true
+  },
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "app_id": "io.github.russianranger.cohclientinteractive",
+  "app_version": "0.9.0",
+  "session_id": "13433205a59a4d0cb8bd043faafc7932",
+  "client_pid": 672,
+  "account": "COHLOCAL",
+  "name": "THORHERO",
+  "character_id": 1,
+  "auth_id": 1353310574,
+  "map_id": 1,
+  "original_wrapper": {
+    "status": "client_incomplete",
+    "passed": false,
+    "app_error": "The guest completed, but its current-session client evidence did not match this APK.",
+    "character_creation_verified": false,
+    "evidence_modified": false
+  },
+  "wrapper_rejection": {
+    "cause": "Final Android guestAccepted recognizes only the original menu window title. The same owned client retains the canonical Atlas title after map entry/logout.",
+    "actual_window": {
+      "window_id": 20971523,
+      "title": "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 672",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    },
+    "old_required_title": "City of Heroes : PID: 672",
+    "correction": "Use a PID-bound exact initial-menu or Atlas-map window matcher; preserve all other acceptance gates.",
+    "source_base": "e6ecb1068757e116c656ea74bb7b34b3d0869078",
+    "correction_packaged_in_delivered_apk": false,
+    "rerun_creation_requested": false
+  },
+  "proof": {
+    "verified": true,
+    "connected_on_atlas": true,
+    "committed_sql_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false,
+    "client_ready_evidence": {
+      "path": "logs/dbserver/entity_2026-10-01-16-00-00.log",
+      "line_sha256": "fa1d378945ec2fe9f2e3bfdb413aa20d27bbe070844573b22ff3eaf9b4013889",
+      "log_timestamp": "261001 16:21:49",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_mapserver_CLIENT_READY_resumeCharacter_success",
+      "loaded_world_assets": true
+    },
+    "client_ready_observed_utc": "2026-10-01T16:23:09.167430+00:00",
+    "logout_delivery": {
+      "format": 1,
+      "session_id": "13433205a59a4d0cb8bd043faafc7932",
+      "client_pid": 672,
+      "character_id": 1,
+      "action": "quittologin",
+      "sent_utc_ms": 1790871822953
+    },
+    "logout_timer_evidence": {
+      "path": "logs/dbserver/entity_2026-10-01-16-00-00.log",
+      "line_sha256": "290cecdf61d3c84514ccb72e0afc38f1471a857f4a42d3a003dcd8dc696f1a48",
+      "log_timestamp": "261001 16:23:43",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "saved_utc": "2026-10-01T16:24:52.092873+00:00",
+    "snapshot_sha256": "3bfa7c4a9806af1db8b9903fd5791a44357eaed09f0a2fb94ef15eca9bb09695",
+    "table_sha256": {
+      "ents": "80e11556dd97b8782ea8adcedbb50d5d9f82a1864f80d9d2cec28d782402bce4",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "bc49fb4c2808bf03d362d71cb48c49d7c5582fcbeecaebc5bf4a10ba162fd2fc",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    }
+  },
+  "android_captures": {
+    "verified_png_records": 17,
+    "surface_count": 3,
+    "login_count": 3,
+    "post_save_count": 3,
+    "post_save_watermark": 3825,
+    "post_save_observed_uptime_ms": 248854089,
+    "post_save_sequence": [
+      3827,
+      3835,
+      3841
+    ],
+    "post_save_span_ms": 2050,
+    "same_session": true,
+    "fresh_post_event_frames": true,
+    "post_save_visual_review": "Normal COHLOCAL login screen after logout",
+    "connected_visual_review": "Visible avatar and Atlas HUD against a flat empty backdrop; scenery absent"
+  },
+  "cleanup": {
+    "wrapper_verified": true,
+    "guest_complete": true,
+    "guest_cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "post_save_term_signals": 6,
+    "post_save_kill_signals": 2,
+    "forced_stop_before_save": false
+  },
+  "known_limits": {
+    "default_male_costume": "Confirmed by user; complete creator preview was separately hosted-reviewed",
+    "atlas_scenery_visible": false,
+    "native_position_fell_below_map": true,
+    "native_last_periodic_y": -2000,
+    "native_logout_location": {
+      "map_id": 1,
+      "x": 106.453125,
+      "y": -2000,
+      "z": -114.453125
+    },
+    "sole_cause_established": false,
+    "exact_character_reopen_validated": false,
+    "gameplay_validated": false,
+    "hardware_acceleration_validated": false,
+    "observed_renderer": "llvmpipe (LLVM 15.0.6, 128 bits)"
+  },
+  "disposition": "Accept creation and committed save without another long boot. Keep THORHERO ID1 and existing database. Next work is exact-character reopen, Atlas geometry/collision and safe relocation if required; do not recreate or synthesize a character.",
+  "validation": {
+    "interactive_distinct_tests_passed": 188,
+    "java_acceptance_tests_passed": 7,
+    "regression": "Retained Thor Atlas title and PID672 accepted; foreign maps, wrong PID, traversal, malformed windows and missing SQL/logout/capture/cleanup proof rejected",
+    "independent_review": "No blocker; retained device proof meets other observable gates"
+  },
+  "evidence": {
+    "coh-character-creation-20261001-162621.zip": {
+      "bytes": 11312195,
+      "sha256": "64acecd0977d7d12671bb374081f2e34eb6f09dffe25f5c6de6d9483c9f910b8"
+    },
+    "Screenshot_20261001-112227.png": {
+      "bytes": 306351,
+      "sha256": "62a2f641e9c285448f09105e7cbe2e9940bdec98240dd6e9361538abfaeb00a7"
+    },
+    "android-client-report.json": {
+      "bytes": 189102,
+      "sha256": "e5e164c28678d5f600002359600f3e8365e158a3bee66a70413018e8fd4ef0eb"
+    },
+    "operation.log": {
+      "bytes": 138896,
+      "sha256": "1850902ca87226290fe8eb808b10c64594962f92ae1c09da6740f2cfc192082a"
+    },
+    "runtime-manifest.json": {
+      "bytes": 15673,
+      "sha256": "2dcb2bdd44223aec0c399247889206fb8ac5f2dad08637a01b614e5d9d1e9a5b"
+    },
+    "guest-report.zip": {
+      "bytes": 4937262,
+      "sha256": "6ef20e6d291da97f38f9d43cfac716126424cb0593d14e3761816c9ee3514337"
+    },
+    "guest/latest-report.json": {
+      "bytes": 164081,
+      "sha256": "f2aa6f9de909b6bd3c717001405e6b288b2f238e21619e74bcb5c5cc8652b1c2"
+    },
+    "guest/client-evidence/character-saved-snapshot.json": {
+      "bytes": 8682,
+      "sha256": "c8cf1133cf9b8d7f7cde0cc8a6dd3f2f82602723fc5c9ffb8c9985f8462b0882"
+    },
+    "guest/client-evidence/character-server-logs.zip": {
+      "bytes": 170798,
+      "sha256": "38f95f81eadc726460e2a531e7e15d30eaa1727bb6d3b3d41a8d02043aa7c4dd"
+    }
+  }
+}

@@ -1,0 +1,249 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_atlas_device_candidate",
+  "run_id": 36599606621,
+  "run_attempt": 2,
+  "workflow_conclusion": "success",
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/36599606621",
+  "repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+  "scope": "Exact signed APK import and isolated native ARM64 guest adapter execution; physical Thor 0.4.2 confirmation pending",
+  "apk": {
+    "apk": "COH-Atlas-Test-0.4.2.apk",
+    "bytes": 355109686,
+    "sha256": "1889ca4f005a6a4a9341daaba4eb7e4ec87e9564ab98f88ddbdbe1db729edf07",
+    "application_id": "io.github.russianranger.cohatlastest",
+    "version_name": "0.4.2",
+    "version_code": 3,
+    "signer_certificate_sha256": "ecf032e4849e9dd66c636f529e2a5aba808513d5173029ccf164707b7e25aae5"
+  },
+  "runtime_manifest_sha256": "3d1c522df288580e27fd06f22508c6f601c6e952d5d96d0ab04610ce687d9554",
+  "import_contract_sha256": "500be57ce3425a3aac52d6eaf43a05560a19f894d32eb2fa353f2c0de19265f8",
+  "accepted_game_package_run_id": 36510836956,
+  "accepted_game_repository_commit": "ac4c1f7978be444a893f65f5177641191861d42f",
+  "tooling": {
+    "new_contract_checks_passed": 100,
+    "accepted_import_checks_passed": 65,
+    "accepted_game_checks_run": 143,
+    "accepted_game_checks_passed": 142,
+    "windows_only_checks_skipped": 1
+  },
+  "correction": {
+    "scope": "Candidate-only DbServer startup budget",
+    "behavior": "Schema/listener and positive main-loop dispatch share one 600-second startup deadline",
+    "original_readiness_predicates_preserved": true,
+    "overall_deadline_and_cancellation_preserved": true,
+    "accepted_base_runtime_and_game_binaries_unchanged": true,
+    "android_java_acceptance_guards_unchanged": true,
+    "device_failure_receipt": "atlas-test-thor-dispatch-failure-20260929.json"
+  },
+  "qualification": {
+    "stages_passed": 18,
+    "total_seconds_including_import": 1931.304339,
+    "import_seconds": 53.550659,
+    "guest_seconds": 1876.97809,
+    "file_count": 173011,
+    "total_bytes": 2977730517,
+    "independent_import_hashes_verified": true,
+    "immutable_import_generation_preserved": true,
+    "game_and_service_captures_verified": true,
+    "network_namespace_verified": true,
+    "character": {
+      "container_id": 1,
+      "name": "TEST14267",
+      "account": "CohA62b763c2ac"
+    },
+    "influence": 12345,
+    "same_cluster_restart": true,
+    "exact_name_resume": "TEST14267",
+    "resume_creation_disabled": true,
+    "first_committed_login_count": 1,
+    "second_committed_login_count": 2,
+    "closed_process_records": 122,
+    "dbserver_startup": {
+      "first": {
+        "scope": "service_startup_entry_through_positive_main_loop",
+        "budget_seconds": 600,
+        "milestones": {
+          "schema_and_listener": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 42.52
+          },
+          "positive_main_loop": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 56.142
+          }
+        }
+      },
+      "restart": {
+        "scope": "service_startup_entry_through_positive_main_loop",
+        "budget_seconds": 600,
+        "milestones": {
+          "schema_and_listener": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 5.228
+          },
+          "positive_main_loop": {
+            "status": "passed",
+            "elapsed_since_startup_seconds": 31.541
+          }
+        }
+      }
+    },
+    "owned_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 630,
+      "scanned_tasks": 8,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0
+    },
+    "restart_owned_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 314,
+      "scanned_tasks": 4,
+      "dead_leaders_with_live_tasks": 0,
+      "owned_live_workers": 0,
+      "leader_exit_retries": 0,
+      "candidates": 0,
+      "term_signals": 0,
+      "kill_signals": 0,
+      "pidfd_signals": 0,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 0,
+      "worker_exit_rechecks": 0,
+      "permission_observations": [],
+      "permission_observations_omitted": 0
+    },
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "java_acceptance_compatibility": {
+    "untouched_host_report_rejected": true,
+    "untouched_cleanup_accepted": true,
+    "scratch_only_platform_field_adaptation_accepted": true,
+    "physical_android_execution_proved": false
+  },
+  "memory_observation": {
+    "scope": "run_token_owned_Wine_FEX_processes_only",
+    "measurement": "sampled_sum_of_process_VmRSS_kibibytes",
+    "minimum_interval_seconds": 5,
+    "inspection_budget_seconds": 1,
+    "excludes": [
+      "PostgreSQL",
+      "Python",
+      "Java",
+      "Android app"
+    ],
+    "shared_pages_may_be_counted_more_than_once": true,
+    "instantaneous_peak_measured": false,
+    "pss_measured": false,
+    "successful_samples": 312,
+    "unavailable_samples": 1,
+    "maximum_sampled_rss_kib": 4316712,
+    "last_unavailable_type": "DiagnosticError"
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "android_surface_validated": false,
+  "hardware_acceleration_validated": false,
+  "next_gate": "Install 0.4.2, prepare runtime/import and run one full Thor test/export before continuing Stop/rerun and lifecycle checks",
+  "installation": "Uninstall only Atlas Test0.4.1 because the ephemeral CI signing key changed; reprepare private runtime/import. Keep earlier accepted apps.",
+  "earlier_failed_attempt": {
+    "run_attempt": 1,
+    "failure": "Atlas lost current readiness during observation",
+    "evidence": "atlas-test-evidence-36599606621-attempt1-failed.zip",
+    "review": "atlas-test-review-36599606621-attempt1-failed.json",
+    "exact_same_APK_and_guards": true,
+    "retry_establishes_repair_of_Atlas_failure": false,
+    "root_cause_established": false
+  },
+  "preserved_files": {
+    "atlas-test-evidence-36599606621.zip": {
+      "bytes": 479954,
+      "sha256": "6f2c7cca41d3cc4a0beecc786de4b7d5a9b6da9631e06e5578e27f27c7d0fcd2"
+    },
+    "atlas-test-packaging-36599606621.zip": {
+      "bytes": 13061,
+      "sha256": "aca20814caf7fbe8684e92283e1f35fece6a51ade810fa237156fdc6b1d8bb98"
+    },
+    "atlas-test-apk-build-36599606621.json": {
+      "bytes": 23819,
+      "sha256": "6b027d35c46d6af68a6ed21ce4b4e1d6c05d78ebe825185a987569517eb5167c"
+    },
+    "atlas-test-apk-verification-36599606621.json": {
+      "bytes": 9535,
+      "sha256": "c81d23c920374db842b2154cb70ce567edf9de66c97672e1cda268dae460e5f2"
+    },
+    "atlas-test-preparation-36599606621.json": {
+      "bytes": 3541,
+      "sha256": "542aa03f3ed38793519820a5237972df24b74e8e6eeab44c8f79d784563f854f"
+    },
+    "atlas-test-host-qualification-36599606621.json": {
+      "bytes": 583,
+      "sha256": "ec09f27cc32d567301f6dada11c8b785e3851b75296f22f853e5c14c5afddcb5"
+    },
+    "atlas-test-host-inputs-36599606621.json": {
+      "bytes": 3615,
+      "sha256": "192048510db244d6b4fb8cbd4521f9191bb8352c7ce63681efee86a162dfaf3b"
+    },
+    "atlas-test-arm64-36599606621.json": {
+      "bytes": 251059,
+      "sha256": "cb48d95bc1a4a36a4051c054e68d9b37a5111c09c85904465464f8daa9815997"
+    },
+    "atlas-test-import-36599606621.json": {
+      "bytes": 1801,
+      "sha256": "94f76d72b2f4b9767f5e6b4406b41236a8443eb664addbb2c3542852c644ea8c"
+    },
+    "atlas-test-java-gate-compatibility-36599606621.json": {
+      "bytes": 1147,
+      "sha256": "b0430f65731ed77605126a3077e9b9ec3c7e17954fcccaac8e8acd33d86fa855"
+    },
+    "atlas-test-independent-revalidation-36599606621.json": {
+      "bytes": 10970,
+      "sha256": "c8331a57ababb3b3a87dec37524e41ef1614e8560e66253769fd1ec303f1467a"
+    }
+  },
+  "independent_downloaded_evidence_revalidation": "passed",
+  "github_artifacts": [
+    {
+      "id": 11052400337,
+      "name": "coh-atlas-test-arm64-evidence",
+      "size_in_bytes": 479954,
+      "digest": "sha256:6f2c7cca41d3cc4a0beecc786de4b7d5a9b6da9631e06e5578e27f27c7d0fcd2",
+      "created_at": "2026-09-29T17:56:53Z"
+    },
+    {
+      "id": 11049147394,
+      "name": "coh-atlas-test-apk",
+      "size_in_bytes": 321075446,
+      "digest": "sha256:d558ac1bfb600636bc48fc3a2cdc1bf8dcde1560aeebf9cd8da6587b944bad11",
+      "created_at": "2026-09-29T16:46:18Z"
+    },
+    {
+      "id": 11048432713,
+      "name": "coh-atlas-test-packaging-evidence",
+      "size_in_bytes": 13061,
+      "digest": "sha256:aca20814caf7fbe8684e92283e1f35fece6a51ade810fa237156fdc6b1d8bb98",
+      "created_at": "2026-09-29T16:46:19Z"
+    }
+  ],
+  "runtime_workflow_job_id": 109529912092
+}

@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "apk": "COH-Diagnostic-0.1.4.apk",
+  "bytes": 13481586,
+  "sha256": "49e4480e0c6d0d951ab49bbf5402d66488a50a165e23c750af591ae9e0513097",
+  "application_id": "io.github.russianranger.cohdiagnostic",
+  "version_name": "0.1.4",
+  "version_code": 5,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "abi": "arm64-v8a",
+  "repository_commit": "83f132ddb8077c9d5175ae7cd039e0754b70074e",
+  "runtime_manifest_sha256": "18c57d8fa3bf464468609f6380b30c034f791857b3ed45930b378f226cd43a07",
+  "signature_verified": true,
+  "signer_certificate_sha256": "29f874e3f08bd3b13b1754bb97aaba33d533e5f53de8cd0b068ff7a54e4abf72",
+  "signing": "Ephemeral CI certificate; not a stable release/update signing identity",
+  "package_badging_verified": true,
+  "payload_bytes_verified": true,
+  "device_validated": false,
+  "gameplay_validated": false
+}

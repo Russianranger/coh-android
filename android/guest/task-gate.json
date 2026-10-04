@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "scope": "manual_authored_task_command_completion_and_ordinary_save",
+  "required": true,
+  "contact_path": "Contacts/Atlas_Park/Matthew_Habashy.contact",
+  "task_name": "Mission1",
+  "task_index": 0,
+  "completion_command": "/completetask 0",
+  "reward_turn_in_required": false
+}

@@ -1,0 +1,147 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36805992804,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36805992804",
+  "runtime_job_id": 110191398073,
+  "repository_commit": "335688677eb1fe67e31089b35b3f685bebaf04f6",
+  "apk_sha256": "fd0923028f8c07160c8b9b6e29476c07f9533dcf85930ebee016e734c5a60191",
+  "runtime_manifest_sha256": "b7d90233facc12b1066c87123b81bdf47274f4e6140f9caff459562a0ff90ad2",
+  "session_id": "7b1c207a89461955f27fd2b23631c54e",
+  "client_pid": 656,
+  "elapsed_seconds": 1563.81,
+  "host_failure": {
+    "type": "ValueError",
+    "message": "Rendered Yes button not found; inspect retained creator frames"
+  },
+  "guest_failures": [
+    "Server log evidence exceeded bound",
+    "Cannot retain server evidence: Server log evidence exceeded bound"
+  ],
+  "failure_review": {
+    "host": "The final screenshot shows the Complete character creation and enter game? dialog; the cursor covers the Yes label and the hosted driver could not recognize that button.",
+    "guest": "Character observation and later server-evidence collection exceeded the inherited 2 MiB server log bound.",
+    "scope": "The runtime is not qualified. Neither failure constitutes character creation, map connection or saved-character proof."
+  },
+  "observed_progress": {
+    "atlas_started": true,
+    "atlas_ready": true,
+    "atlas_ready_utc": "2026-10-01T02:49:49.298654+00:00",
+    "local_login_verified": true,
+    "local_login_ready_utc": "2026-10-01T02:57:55.138871+00:00",
+    "character_list_sent": true,
+    "character_count_at_login": 0,
+    "creator_register_screen_reached": true,
+    "character_name": "THORHERO",
+    "tutorial_declined": true,
+    "hero_alignment_selected": true,
+    "last_visible_prompt": "Complete character creation and enter game?",
+    "script_steps_recorded": 62,
+    "script_completed": false,
+    "ocr_buttons_recognized": [
+      "No",
+      "Hero"
+    ],
+    "connected_captures": 0,
+    "post_save_captures": 0
+  },
+  "character_proof": {
+    "verified": false,
+    "connected_on_atlas": false,
+    "committed_sql_verified": false,
+    "requested_logout_observed": false,
+    "logout_timer_observed": false,
+    "disconnected_before_sql": false,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "acceptance": {
+    "character_creation": false,
+    "character_map_entry": false,
+    "committed_character_save": false,
+    "android_execution": false,
+    "gameplay": false
+  },
+  "cleanup": {
+    "guest_report_exported": true,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "presentation_socket_removed": true,
+    "database_preserved": true,
+    "host_cleanup": {
+      "stop_requested": true,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "guest_evidence_export": {
+      "files": [
+        "latest-report.json",
+        "report.zip"
+      ],
+      "fallback_used": false,
+      "errors": []
+    }
+  },
+  "evidence": {
+    "runtime_artifact_id": 11138443147,
+    "runtime_artifact": {
+      "file": "artifact.zip",
+      "bytes": 71538631,
+      "sha256": "556dc2ea5f6da9d9af71078081076f9894f4baeee3dde73ab614e37c184ecadc"
+    },
+    "artifact_subdirectory": "client-evidence",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 95870,
+        "sha256": "a401e5e6ed3fd95844d5e6fbf7070956d6ee1886e876f16b19bab8fd2f94bd6f"
+      },
+      "latest-report.json": {
+        "bytes": 115762,
+        "sha256": "7698653ecfbff607b1ffd4c952318bd01aeec68a50de3baba93416e85e8f653d"
+      },
+      "report.zip": {
+        "bytes": 2907876,
+        "sha256": "82d097becfe57476a64f070dbdb7976abb95dd91fda1bb75b6b4edfd85c90eed"
+      },
+      "host-client.log": {
+        "bytes": 98798,
+        "sha256": "b0ad16f05f8180784a631ce1ea0cd307e57481e89799f3a486784b964e7094a9"
+      },
+      "character-57-before-register_play.png": {
+        "bytes": 415945,
+        "sha256": "88cb0b655677cdc7ced21b5b56469ff59f0c1fa3f55f54dbe6ddb27e1ca23336"
+      },
+      "character-59-before-skip_tutorial.png": {
+        "bytes": 410648,
+        "sha256": "23c8b07d2a66710c5f34d65a0120b37c89cde947d9a20902af999f4319bf188b"
+      },
+      "character-61-before-choose_hero.png": {
+        "bytes": 410661,
+        "sha256": "dd8f873c685a1105ea61445a502576e96045abe071948b1cd14b38ce935ca05c"
+      },
+      "client-frame-final.png": {
+        "bytes": 408680,
+        "sha256": "a2182559bf26c4459f18c6a36e0fd2a227d758885c6fb763ba24f9bf173f9dd3"
+      }
+    },
+    "selected_frame_review": "Independent review confirms the final creation confirmation and cursor over Yes; the male avatar preview remains absent in this pre-supplement candidate."
+  },
+  "followup": "Retain this failed protocol-flow run. Subsequent qualification must recognize the visible confirmation reliably and retain bounded complete character-server evidence. This run does not qualify the later avatar-supplement candidate."
+}

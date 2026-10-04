@@ -1,0 +1,144 @@
+name: Thor Atlas gameplay candidate from qualified backend
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-atlas-gameplay
+  cancel-in-progress: false
+
+jobs:
+  tooling:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check gameplay controls and retained runtime publication boundaries
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_input.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_atlas_gameplay_package.py' -v
+      - name: Require completed exact ARM64 reopening and reviewed visible Atlas world
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_atlas_gameplay_apk.py qualify
+          --output out/gameplay-donor-qualification.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-gameplay-donor-qualification
+          path: out/gameplay-donor-qualification.json
+          if-no-files-found: error
+  apk:
+    needs: tooling
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-gameplay-donor-qualification
+          path: out/qualification
+      - name: Select the separately completed runtime qualification
+        id: qualification-source
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, pathlib
+          metadata = json.loads(pathlib.Path('out/qualification/gameplay-donor-qualification.json').read_text())
+          identifier = metadata['qualification']['run']['id']
+          if type(identifier) is not int or identifier <= 0:
+              raise ValueError('Expected a completed runtime qualification identity')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('run_id=' + str(identifier) + '\n')
+          PYTHON
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-apk
+          path: out/reopen-donor
+          run-id: 36920583713
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interaction-arm64-evidence
+          path: out/reopen-evidence
+          run-id: ${{ steps.qualification-source.outputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Ensure required existing Android SDK tools
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build gameplay shell and missing material textures with qualified backend bytes
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_atlas_gameplay_apk.py build
+          --donor-apk out/reopen-donor/COH-Character-Reopen-0.10.0.apk
+          --donor-build-report out/reopen-donor/interactive-apk-build-report.json
+          --evidence out/reopen-evidence
+          --qualification out/qualification/gameplay-donor-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/atlas-gameplay/COH-Atlas-Gameplay-0.11.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-gameplay-packaging-evidence
+          path: |
+            out/atlas-gameplay/atlas-gameplay-apk-build-report.json
+            out/atlas-gameplay/COH-Atlas-Gameplay-0.11.0.apk.sha256
+            out/atlas-gameplay/COH-Atlas-Gameplay-0.11.0-testing.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-gameplay-apk
+          path: out/atlas-gameplay/
+          if-no-files-found: error
+      - name: Publish exact retained-signer gameplay APK and focused Thor instructions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_atlas_gameplay_apk.py publish
+          --apk out/atlas-gameplay/COH-Atlas-Gameplay-0.11.0.apk
+          --build-report out/atlas-gameplay/atlas-gameplay-apk-build-report.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --qualification out/qualification/gameplay-donor-qualification.json
+      - name: Remove retained signing material from runner workspace
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

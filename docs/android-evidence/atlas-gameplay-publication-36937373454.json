@@ -1,0 +1,62 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "independent_download_and_publication_review_of_existing_0.11.0_candidate",
+  "source_commit": "1649e807d2b2310170e775c53bafa24cd932638a",
+  "workflow_run_id": 36937373454,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/36937373454",
+  "release_tag": "coh-atlas-gameplay-v0.11.0",
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.0",
+  "apk_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.0/COH-Atlas-Gameplay-0.11.0.apk",
+  "release_asset_id": 604292740,
+  "apk": {
+    "name": "COH-Atlas-Gameplay-0.11.0.apk",
+    "bytes": 595099993,
+    "sha256": "e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924"
+  },
+  "build_report": {
+    "bytes": 45992,
+    "sha256": "cc0ad0f09bf06f598e6f65e706260fa9bb1a90e699ad1794d9df9ff1625d1d00"
+  },
+  "packaging_artifact": {
+    "id": 11198950591,
+    "bytes": 12826,
+    "sha256": "03b28afdb1729d148a86ea51e1b5175ccf2cfed2267945c4444acbfd511935a5"
+  },
+  "apk_artifact": {
+    "id": 11199050244,
+    "bytes": 557674735,
+    "sha256": "0a018a4b5ca35aea72b67b5154b17d04e0b62d3706c90e519d681d158183c1bb"
+  },
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "version_name": "0.11.0",
+  "version_code": 6,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "signer_evidence": "Build and publication both verified the retained signer; independent published APK digest matches that exact signed build.",
+  "published_apk_downloaded_and_digest_verified": true,
+  "all_packaged_payload_pins_verified": true,
+  "shipped_java_source_pins_verified": true,
+  "preserved_backend_source_pins_verified": true,
+  "testing_notes_pin_verified": true,
+  "world_decoded_files_verified": 2904,
+  "retained_original_world_files_verified": 2877,
+  "added_material_textures_verified": 27,
+  "added_decoded_bytes": 8955931,
+  "qualified_backend_reused": true,
+  "native_libraries_changed": false,
+  "client_or_server_recompiled": false,
+  "prior_passed_tests_rerun": false,
+  "ci_results_reviewed": {
+    "input_and_rfb_tests": 30,
+    "gameplay_package_boundary_tests": 14,
+    "donor_qualification_run_id": 36929550592,
+    "java_compile_and_d8": "passed",
+    "packaging_signature_alignment_and_badging": "passed",
+    "release_publication": "passed"
+  },
+  "physical_gameplay_validated": false,
+  "revised_world_runtime_appearance_validated": false,
+  "full_revised_apk_host_runtime_tested": false,
+  "next_gate": "One physical AYN Thor session: preserve THORHERO, reopen/recover, inspect materials, short walking/jump/camera and grounded collision observation, normal stationary save and exported evidence.",
+  "following_milestone": "Reopen the movement-saved position and qualify a sustained Atlas movement/collision session before first power/combat work."
+}

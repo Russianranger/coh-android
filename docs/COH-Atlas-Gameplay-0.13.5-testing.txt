@@ -1,0 +1,34 @@
+COH Atlas Gameplay 0.13.5 — guarded runtime setup
+
+The reported 0.13.4 runtime setup interrupted other apps. No new device log
+bundle accompanied that report, so Android low-memory termination has not yet
+been confirmed. This update reduces setup I/O pressure, checks Android memory
+headroom during work, pauses when headroom is low and stops safely if pressure
+persists. It also makes Stop effective inside archive extraction and records
+setup phases and the app's Android process-exit history for diagnosis.
+
+Activation and the only requested check:
+1. Install over the existing app, keeping its data. Do not uninstall, clear
+   storage, import assets again, recreate THORHERO or clean up the saved profile.
+2. Run Set up runtime once. This APK retains the exact 0.13.4 runtime manifest,
+   guest helpers and native files. A completed 0.13.4 setup reuses its generation;
+   an interrupted setup retries its staging work without activating incomplete
+   files. A pressure stop or Stop can retain unactivated staging for the next
+   healthy setup to clean safely. Existing runtime generations, imported assets,
+   SQL data and task journal remain preserved.
+3. Note setup time, the last phase shown, any memory-pressure pause, whether
+   Runtime ready appears, and whether other apps remain usable. A protective
+   memory-pressure stop is an incomplete setup, not a successful activation.
+4. Export the latest report. If Android closes the app, reopen it and export
+   the recovered setup report before attempting setup again. Send that report
+   and the observations, including whether Android itself restarted.
+
+Do not start another long Reopen session until the setup result is reviewed.
+No new task, contact, movement, save, storage-cleanup or fresh-profile gate is
+requested. The four retained startup optimizations remain enabled. The <=5-minute
+server-readiness target is still open; this pass qualifies setup safety first.
+
+The app cannot control Android's system-wide low-memory killer or guarantee
+other processes will never be terminated. Guard pauses/stops and bounded exit
+history are evidence for the next diagnosis; host tests do not establish a
+physical memory-pressure or setup-success result on the Thor.

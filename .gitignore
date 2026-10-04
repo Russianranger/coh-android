@@ -3,3 +3,8 @@
 /imports/
 __pycache__/
 *.pyc
+
+# Reconstructed from exact reviewed public donor ranges before packaging.
+/assets/atlas-world-supplement.zip
+/assets/.atlas-world-supplement.zip.*
+/assets/.atlas-world-*/

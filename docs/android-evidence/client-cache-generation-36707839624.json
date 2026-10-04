@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "status": "cache_generation_output_checks_passed",
+  "scope": "native_x86_client_cache_generation",
+  "run_id": 36707839624,
+  "repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "cache_archive": {
+    "bytes": 27071659,
+    "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+  },
+  "cache_manifest_sha256": "e5bc9ff306f90f96b6d34d4d481b30804af078b0e07845dafd71f7324dff6352",
+  "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+  "exit_code": 0,
+  "elapsed_seconds": 248.695,
+  "failures": [],
+  "generated_noncache_outputs": [],
+  "removed_outputs": [],
+  "files": 100,
+  "uncompressed_bytes": 364703716,
+  "independent_review": {
+    "status": "cache_archive_verified",
+    "files": 100,
+    "dependency_records": 92046,
+    "dependency_dates": {
+      "1767225600": 92046
+    },
+    "maximum_dependency_path_bytes": 137,
+    "cache_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f"
+  },
+  "normal_client_startup_validated": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "limitation": "Missing costume textures are logged. Generation success and valid Parse6 envelopes do not establish complete game content or semantic compatibility; normal client startup is qualified separately."
+}

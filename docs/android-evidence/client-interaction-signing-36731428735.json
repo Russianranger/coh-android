@@ -1,0 +1,24 @@
+{
+  "format": 1,
+  "purpose": "retained_development_apk_signer",
+  "application_id": "io.github.russianranger.cohclientinteractive",
+  "alias": "coh-client-interactive",
+  "donor_run_id": 36731428735,
+  "repository_commit": "ec9021d5191c15724c0d9299f53764c8117f2497",
+  "keystore": {
+    "bytes": 3560,
+    "sha256": "91b7e0105bd533a51a85edb265c1c86f5fb0413790136d38a34e116ebae08508"
+  },
+  "certificate": {
+    "bytes": 1074,
+    "sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "production_signer": false,
+  "policy": "Future builds require this exact certificate; no regeneration fallback.",
+  "artifact_id": 11105441661,
+  "artifact_sha256": "26d874b4137f1cf3a12d538c81c64b0a300a1a12d8373bd3558b82c36fb47c80",
+  "artifact_retention_days": 90,
+  "private_backup_name": "coh-client-interactive-signing-36731428735.zip",
+  "private_backup_saved": true,
+  "recovery_policy": "If the Actions donor expires, restore the exact private backup or fail. Never regenerate to unblock an installed-package update."
+}

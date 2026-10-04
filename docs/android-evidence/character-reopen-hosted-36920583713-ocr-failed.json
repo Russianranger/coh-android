@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "workflow_run_id": 36920583713,
+  "repository_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+  "conclusion": "failure",
+  "stage": "rendered_existing_character_selection_host_ocr",
+  "error": "Rendered THORHERO button not found; inspect retained creator frames",
+  "seed_session": {
+    "passed": true,
+    "duration_seconds": 1845.046,
+    "native_client_ready": true,
+    "normal_save": true
+  },
+  "reopen_session": {
+    "null_active_map_baseline_accepted": true,
+    "identity_powers_costume_and_sql_position_preserved": true,
+    "native_atlas_started": true,
+    "graphical_local_login": true,
+    "roster_visible": true,
+    "expected_name": "THORHERO",
+    "original_ocr_text": "THOAMERG",
+    "original_ocr_confidence": 48.16,
+    "native_client_ready": false,
+    "ground_recovery": false,
+    "second_normal_save": false
+  },
+  "retained_frame": "client-evidence/reopen/preposition_existing_character-ocr-21.png",
+  "corrected_host_ocr": {
+    "region": [
+      100,
+      60,
+      330,
+      83
+    ],
+    "profile": "inverted_grayscale_single_line_psm7",
+    "exact_text_required": "THORHERO",
+    "recognized_confidence": 70.013947,
+    "retained_attempts_verified": [
+      1,
+      10,
+      21
+    ],
+    "click_derived_from_recognized_bounds": true
+  },
+  "owned_cleanup": {
+    "both_sessions_graceful_postgresql_stop": true,
+    "both_sessions_stopped_wine": true,
+    "surviving_owned_workers": 0
+  },
+  "artifact": {
+    "id": 11194676237,
+    "name": "coh-client-interaction-arm64-evidence",
+    "bytes": 126086753,
+    "sha256": "7ae43f4f353f10820e4ac6e42f38973691b468730ad28d9632901730440ea7fc"
+  },
+  "retained_apk": {
+    "name": "COH-Character-Reopen-0.10.0.apk",
+    "bytes": 590725465,
+    "sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688",
+    "build_report_bytes": 38185,
+    "build_report_sha256": "587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f"
+  },
+  "qualification_limits": [
+    "No reopened native Atlas entry or second save was reached.",
+    "Host OCR correction is not a runtime component change.",
+    "This failed APK has not been delivered for Thor testing."
+  ]
+}

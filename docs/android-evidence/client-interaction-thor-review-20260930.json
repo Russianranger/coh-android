@@ -1,0 +1,357 @@
+{
+  "review_status": "partial_device_input_success_with_preserved_failed_terminal_result",
+  "review_scope": "Read-only independent audit of uploaded COH Client Interaction 0.7.0 device report; no runtime reruns and no edits to original evidence.",
+  "archive_integrity": [
+    {
+      "file": "coh-client-interaction-20260930-201926.zip",
+      "bytes": 8144554,
+      "sha256": "4056086e11c5cffb10c36f912cea27a912b8de205f35611df521496726ba9abb",
+      "entries": 19,
+      "crc_verified": true,
+      "unique_safe_paths": true,
+      "extracted_bytes_equal_archive": true
+    },
+    {
+      "file": "guest-report.zip",
+      "bytes": 2061247,
+      "sha256": "06940cba44a70c61ca61bdcac3b88dc06835943492ca752d903b5a22723b02fe",
+      "entries": 7,
+      "crc_verified": true,
+      "unique_safe_paths": true,
+      "extracted_bytes_equal_archive": true
+    }
+  ],
+  "identity": {
+    "session_id": "1a19152dfa0e494fad6ec5e1faf1d124",
+    "device": "AYN AYN Thor",
+    "app_id": "io.github.russianranger.cohclientinteractive",
+    "app_version": "0.7.0",
+    "android_sdk": 33,
+    "android_embedded_guest_equals_standalone_guest": true,
+    "qualified_host_run_id": 36736910061,
+    "qualified_host_status": "passed",
+    "repository_commit_matches_qualified_host": true,
+    "source_data_client_identity_matches_qualified_host": true,
+    "accepted_base_manifest_hash_and_embedded_identity_match": true,
+    "all_accepted_base_file_pins_preserved": true,
+    "client_manifest_hash_matches": true,
+    "all_client_file_pins_match_runtime_manifest": true,
+    "all_guest_reported_asset_hashes_match_manifest": true,
+    "runtime_lock_hash_matches": true,
+    "qualification_limit": "Binds report metadata and the exported manifest content to the independently hash-verified qualified APK artifact. The installed APK bytes and all runtime payload bytes are not present in the device upload and were not independently rehashed on device.",
+    "exported_manifest_sha256": "25fd432c296ce8427a5d35184dcf74201f8142ee1778feaa8e6564e64ced7807",
+    "exported_manifest_bytes_match_reported_asset_hash": false,
+    "qualified_apk_artifact_sha256_matches_record": true,
+    "embedded_apk_manifest_sha256": "3c4ae284d0200b4bef23374f1adf6fce126e39a003b116a3a0cef4d7e9f0a355",
+    "embedded_apk_manifest_hash_matches_android_and_qualified_host": true,
+    "exported_manifest_semantically_equals_qualified_apk_manifest": true,
+    "manifest_serialization_note": "Exported manifest is reserialized JSON, so its byte hash differs. Its parsed content exactly equals the embedded manifest in the hash-verified, hosted-qualified APK artifact; the embedded asset hash matches the Android report."
+  },
+  "producer_result_preserved": {
+    "status": "failed",
+    "passed": false,
+    "process_exit_code": 1,
+    "android_surface_validated": false,
+    "interaction_session_completed": false,
+    "menu_visual_validated": false,
+    "controller_input_validated": false,
+    "input_effect_verified": false,
+    "cleanup_verified": true
+  },
+  "failure": {
+    "guest_failures": [
+      "Observed client desktop became blank"
+    ],
+    "interaction_ready_utc": "2026-09-30T20:18:16.376635+00:00",
+    "finish_received_utc": "2026-09-30T20:19:14.592007+00:00",
+    "blank_snapshot_utc": "2026-09-30T20:19:14.835172+00:00",
+    "ready_to_blank_seconds": 58.458537,
+    "finish_to_blank_seconds": 0.243165,
+    "blank_snapshot_equals_before_client_snapshot": true,
+    "observation_seconds": 58.427,
+    "timeout_seconds": 180,
+    "timeout_reached": false,
+    "failure_classification": "Final sampled desktop was blank after requested finish, before cleanup. The report does not prove whether the graphics transition would recover, whether B/Escape caused it, or whether the game exited/crashed."
+  },
+  "input_and_visual_evidence": {
+    "input_events_sent": 174,
+    "input_events_failed": 0,
+    "decoded_frame_count": 385,
+    "captures_verified": [
+      {
+        "path": "android-surface/capture-1.png",
+        "kind": "startup",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 52,
+        "seconds_after_ready": 0.671,
+        "post_input_frame_verified": null
+      },
+      {
+        "path": "android-surface/capture-2.png",
+        "kind": "startup",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 57,
+        "seconds_after_ready": 1.683,
+        "post_input_frame_verified": null
+      },
+      {
+        "path": "android-surface/capture-3.png",
+        "kind": "startup",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 74,
+        "seconds_after_ready": 2.693,
+        "post_input_frame_verified": null
+      },
+      {
+        "path": "android-interaction/capture-1.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 52,
+        "seconds_after_ready": 0.671,
+        "post_input_frame_verified": null
+      },
+      {
+        "path": "android-interaction/capture-17.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 295,
+        "seconds_after_ready": 40.182,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-18.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 306,
+        "seconds_after_ready": 41.192,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-19.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 323,
+        "seconds_after_ready": 42.202,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-20.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 341,
+        "seconds_after_ready": 43.221,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-21.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 358,
+        "seconds_after_ready": 44.23,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-22.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 371,
+        "seconds_after_ready": 45.237,
+        "post_input_frame_verified": true
+      },
+      {
+        "path": "android-interaction/capture-23.png",
+        "kind": "interaction",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "dimensions": [
+          800,
+          600
+        ],
+        "source_dimensions_match": true,
+        "session_matches": true,
+        "within_live_session": true,
+        "nonuniform_verified": true,
+        "sequence": 383,
+        "seconds_after_ready": 46.247,
+        "post_input_frame_verified": true
+      }
+    ],
+    "guest_screenshots_verified": [
+      {
+        "file": "before-client.ppm",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "session_matches": true,
+        "dimensions_match": true,
+        "captured_utc": "2026-09-30T20:07:33.040185+00:00",
+        "solid_black": true
+      },
+      {
+        "file": "client-startup.ppm",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "session_matches": true,
+        "dimensions_match": true,
+        "captured_utc": "2026-09-30T20:18:16.376253+00:00",
+        "solid_black": false
+      },
+      {
+        "file": "client-observed.ppm",
+        "sha256_verified": true,
+        "bytes_verified": true,
+        "session_matches": true,
+        "dimensions_match": true,
+        "captured_utc": "2026-09-30T20:19:14.835172+00:00",
+        "solid_black": true
+      }
+    ],
+    "manual_visual_review": {
+      "reviewed_files": [
+        "android-surface/capture-1.png",
+        "android-interaction/capture-17.png",
+        "android-interaction/capture-23.png"
+      ],
+      "initial_graphics_prompt_visible": true,
+      "cohinput_visible_in_account_name": true,
+      "settings_panel_visible": true,
+      "last_android_capture_is_loading_splash_with_progress_bar": true,
+      "later_blank_guest_snapshot": true
+    },
+    "user_attested_effects": [
+      "touch cursor movement",
+      "right stick cursor movement",
+      "A left click",
+      "text delivery"
+    ],
+    "supported_partial_acceptance": "Menu rendering, text entry and opening Settings visibly succeeded; touch/right-stick/A effects additionally attested by the user. Overall terminal result remains failed.",
+    "not_proven": [
+      "B/Escape effect",
+      "recovery after closing Settings",
+      "clean menu continuity after settings close",
+      "gameplay",
+      "hardware acceleration"
+    ]
+  },
+  "cleanup": {
+    "owned_child_count": 40,
+    "process_records": 40,
+    "all_process_streams_closed": true,
+    "cleanup_complete": true,
+    "owned_processes_reaped": true,
+    "remaining_owned_workers": 0,
+    "inspection_failures": 0,
+    "wine_prefix_lock_free": true,
+    "wine_server_socket_inactive": true,
+    "presentation_socket_removed": true,
+    "android_input_worker_stopped": true
+  },
+  "timing": {
+    "total_android_session_seconds": 1039.671,
+    "android_request_to_ready_seconds": 976.286,
+    "client_startup_seconds": 643.118,
+    "initial_private_data_reused": false,
+    "initial_wine_prefix_reused": false
+  },
+  "console_integrity": {
+    "bytes_verified": true,
+    "sha256_verified": true
+  },
+  "recommended_disposition": "Retain original failed report; accept and carry forward the demonstrated menu/input sub-results. Address settings-close/black-frame handling before asking for any further targeted test; do not require replay of already-demonstrated controls.",
+  "source_review": {
+    "settings_red_x": "upstream/ouroboros/Game/src/UI/uiWindows.c: WDW_OPTIONS sends options and switches to WINDOW_SHRINKING",
+    "settings_close": "upstream/ouroboros/Game/src/UI/uiOptions.c: optionsWindow invokes gfxApplySettings(&s_gfx, true, false) while shrinking",
+    "graphics_reload": "upstream/ouroboros/Game/src/graphics/gfxSettings.c and render/renderUtil.c: graphics feature/texture changes can show loading artwork and rebuild rendering resources",
+    "android_b_mapping": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java maps B to X11 Escape 0xff1b",
+    "conclusion": "Graphics reload is supported by source and observed loading artwork/shader compilation. B as the cause and eventual recovery remain unproven."
+  }
+}

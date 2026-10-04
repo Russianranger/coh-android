@@ -1,0 +1,188 @@
+{
+  "format": 1,
+  "source_artifact": {
+    "id": 11064800934,
+    "bytes": 9039997,
+    "sha256": "ad3dedd615ca364d02541b9a374f9245d0b08c6bef6d6650f8d956304f8741c4"
+  },
+  "preserved_archive": {
+    "bytes": 950505,
+    "sha256": "34869d958ce2038986829be56f9d9852722bab6cef20dc5fa590af0002c760d8"
+  },
+  "included_unchanged_entries": {
+    "mapserver-progress-evidence/game-captures.json": {
+      "bytes": 1756,
+      "sha256": "2e66085daf4976df54a61f66003ef9e0107fc89617a7734de478e5b1d1edf1d2"
+    },
+    "mapserver-progress-evidence/game-captures/first-console.txt": {
+      "bytes": 8319,
+      "sha256": "4182bbd43e2e9a6af03b760120720d806210064e197fae7f095456929817d356"
+    },
+    "mapserver-progress-evidence/game-captures/first-events.jsonl": {
+      "bytes": 3309,
+      "sha256": "0e552943c66942b7ed86d50590eed00814c5a39106dfc2ff708195eeab65caa5"
+    },
+    "mapserver-progress-evidence/game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "6c26b10bcb1030d82dffcef8b299302b16bed2c6f7910112ef8c4cca88d04599"
+    },
+    "mapserver-progress-evidence/game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "2fe9c4dc8295ea29e0f99806de401c7a1e497f0428fecc49d9cc57792aebcb3c"
+    },
+    "mapserver-progress-evidence/game-captures/first-snapshot.json": {
+      "bytes": 4781,
+      "sha256": "440e108eed21240dce19c8582cf39eaf90d94b39674139deb526c418c4c75ce6"
+    },
+    "mapserver-progress-evidence/game-captures/mapserver-progress.json": {
+      "bytes": 228879,
+      "sha256": "b7adf8de4b73486f1a46e021746c78eaae3824dfe287560d421519cdee8cb3b7"
+    },
+    "mapserver-progress-evidence/game-captures/restart-snapshot.json": {
+      "bytes": 4781,
+      "sha256": "440e108eed21240dce19c8582cf39eaf90d94b39674139deb526c418c4c75ce6"
+    },
+    "mapserver-progress-evidence/game-captures/second-console.txt": {
+      "bytes": 8921,
+      "sha256": "9d453ed441423c29e1eb2355f68dab872faa73399c2bf3a6bb06b30bee610990"
+    },
+    "mapserver-progress-evidence/game-captures/second-events.jsonl": {
+      "bytes": 1865,
+      "sha256": "199c5fb8163c0637e3f6c38e4f1ee8c6b7341d20e019add980b978820e584b08"
+    },
+    "mapserver-progress-evidence/game-captures/second-ready.json": {
+      "bytes": 276,
+      "sha256": "4e98f5c8a1b6d1608fa548ae6aa9bb2f1a0a85c93a135ed929c4b4ce0dc44faf"
+    },
+    "mapserver-progress-evidence/game-captures/second-result.json": {
+      "bytes": 329,
+      "sha256": "735cb61df054fbcea3869db89bbc5020ac50b6b1670c3d93d45cc6e526197f01"
+    },
+    "mapserver-progress-evidence/game-captures/second-snapshot.json": {
+      "bytes": 4781,
+      "sha256": "da2c03220cef0942c2d035f2abe9c6d33462aa4dabbb175472399d7deb87895d"
+    },
+    "mapserver-progress-evidence/game-hang-captures.json": {
+      "bytes": 78,
+      "sha256": "57d20d77a89b8f8a9ccb8ec6e0ed6bc4d2bb89dc204d869ba4b9a04a42b98033"
+    },
+    "mapserver-progress-evidence/game-runtime-report.json": {
+      "bytes": 458520,
+      "sha256": "119739655518d016fa736ab53e3195e33e0d70b256c6b6ca7b38104eda034a37"
+    },
+    "mapserver-progress-evidence/game-service-captures.json": {
+      "bytes": 1993,
+      "sha256": "2afce971c2ef6865aad751c2265169d0117232817e51d219ee5f31bd059c3e92"
+    },
+    "mapserver-progress-evidence/game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016007,
+      "sha256": "cc60a8e7d21fe3604aba7ffa0ac7d84dfaec8b2d9ab687469cb758261943ea0d"
+    },
+    "mapserver-progress-evidence/game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 5471,
+      "sha256": "a9774899b7d7788e153379085324735b2bde3f8392bfb51ca7f537f707383688"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "dcb3e321f01eb1e1aea8924c27f6a33b8913a1b46086269454aa7b75c6547706"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-002.txt": {
+      "bytes": 76,
+      "sha256": "ba8b09a308f28bbee206f2e8da2232801e5b129539d5389c9a183e4ee14a16bc"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-003.txt": {
+      "bytes": 16930,
+      "sha256": "31b88303266c23877021adef27e82d84e2ac6595b72b08068f2bcfc0c0519cda"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-004.txt": {
+      "bytes": 3274,
+      "sha256": "62ec32d7787015bce7b2697fc58e71eabd4ceb07293d36637537fa7d3bd0e232"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-005.txt": {
+      "bytes": 93,
+      "sha256": "cf59e815a0730f97006e4462f6f6bc881163fbed2ec501d40b2c8e3220cf0254"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-006.txt": {
+      "bytes": 93,
+      "sha256": "dce2aa597b4008dedfe99cadd6b1d292504694b9761d5fcf6a047afa9b21248e"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-007.txt": {
+      "bytes": 1048614,
+      "sha256": "2e37a7a75b97d4b14a42129da6e2a1a538a440bd5c437f1a2760c43b9f3ded20"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-008.txt": {
+      "bytes": 1048614,
+      "sha256": "9a143207683730ec371beed2551f1b9dd3d12ad9584c7d73bd6ca99a452d95f4"
+    },
+    "mapserver-progress-evidence/game-service-captures/log-009.txt": {
+      "bytes": 1048614,
+      "sha256": "12b5487c6c836d146c349d7b648447b7819661d5f11f11704f6658b894097804"
+    },
+    "mapserver-progress-evidence/game-service-captures/manifest.json": {
+      "bytes": 4108,
+      "sha256": "5ce3600817646d8c2f85e586b6d3ad60d4cb1fa370222afb8562639726c794e6"
+    },
+    "mapserver-progress-evidence/game-service-captures/restart-atlas-stdout.txt": {
+      "bytes": 1000536,
+      "sha256": "f3ef160890a8294ed1136940a505b41dbc8983b5d4a22f2cb343a1a86a2fa92e"
+    },
+    "mapserver-progress-evidence/game-service-captures/restart-dbserver-stdout.txt": {
+      "bytes": 18258,
+      "sha256": "6888d64ab9dd44e203ecefda03413ad846b4529dce05301113ffaa91ca2354ff"
+    },
+    "mapserver-progress-evidence/guest-etc-hosts": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    },
+    "mapserver-progress-evidence/host-game-inputs.json": {
+      "bytes": 3802,
+      "sha256": "223f57470a75fa7cb9e8c6a5d18688c971ae01506a8b316bf92fe9664f4bed11"
+    },
+    "mapserver-progress-evidence/host-game.log": {
+      "bytes": 155175,
+      "sha256": "fe17a849b2cf779af9283a2b14860aaccf5d6ed0bf33e85f55988cd45c52f0cc"
+    },
+    "mapserver-progress-evidence/network-isolation.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "mapserver-progress-evidence/stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    },
+    "mapserver-progress-inputs/bridge/bridge-build.json": {
+      "bytes": 776,
+      "sha256": "3629c3d412db66013854fb15e511e5388e01421761894b482e58dbb9e04bd2aa"
+    },
+    "mapserver-progress-inputs/mapserver-progress/build-info.json": {
+      "bytes": 30563,
+      "sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1"
+    },
+    "mapserver-progress-inputs/schema/schema-manifest.json": {
+      "bytes": 4865901,
+      "sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+    },
+    "mapserver-progress-inputs/stack-probe/stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    },
+    "mapserver-progress-inputs/talloc-source-receipt.json": {
+      "bytes": 742,
+      "sha256": "9491746f7d3d64191af62a30379b7704eacca6789b9085c0c4d9d81b75a04cd5"
+    },
+    "mapserver-progress-native/linux-arm64/proot-build-receipt.json": {
+      "bytes": 3048,
+      "sha256": "1821f6d38a8a53d7f8bf951f0b8c7086cee4538a447f93dfd5dcb995b625a54c"
+    },
+    "mapserver-progress-package/game-package.json": {
+      "bytes": 181680,
+      "sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd"
+    }
+  },
+  "omitted_accepted_inventory": {
+    "path": "mapserver-progress-inputs/game-data/game-data-manifest.json",
+    "bytes": 32184737,
+    "sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+    "reason": "Unchanged accepted game-data inventory; retained in original workflow artifact."
+  }
+}

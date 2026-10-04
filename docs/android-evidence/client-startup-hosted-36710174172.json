@@ -1,0 +1,63 @@
+{
+  "format": 1,
+  "status": "failed_observation_budget",
+  "scope": "immutable_apk_full_startup_qualification",
+  "run_id": 36710174172,
+  "workflow_commit": "46271ae77c6c9fd0d49a6aa1f3ec8cc93f24a1af",
+  "repository_commit": "a40250b0032bd05a333514920722ddffa4427730",
+  "apk_sha256": "7ef2ec40931ada23910f2e6125ad0d754049003aba9deb882dbaee4ea6f3d803",
+  "session_id": "db3a41772bd424a9106c6293a66ab4cd",
+  "startup_timeout_seconds": 900,
+  "failures": [
+    "Actual client console exceeded observation budget"
+  ],
+  "console_bytes": 1047115,
+  "console_truncation_marker_observed": true,
+  "renderer_initialized": true,
+  "all_data_loaded": false,
+  "client_main_loop_reached": false,
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 453,
+    "scanned_tasks": 2,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0,
+    "proc_read_retries": 0,
+    "proc_read_observations": [],
+    "proc_read_observations_omitted": 0,
+    "last_inspection_failure": null
+  },
+  "last_completed": [
+    "FX info",
+    "FX string handles",
+    "loyalty reward tree",
+    "FX behaviors",
+    "villain definitions",
+    "cape FX",
+    "body parts"
+  ],
+  "last_phase": "NPC costume missing-texture validation; source logs genuine missing assets in the supplied bundle.",
+  "cache_miss_diagnostics": 0,
+  "fix": "Increase only bounded client console/guest-output/evidence capacities; keep all truncation, readiness and cleanup checks. Reuse the same exact prepared caches.",
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

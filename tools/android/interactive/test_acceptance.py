@@ -1,0 +1,426 @@
+#!/usr/bin/env python3
+"""Exercise shipped Java acceptance against stale frames and incomplete cleanup."""
+from pathlib import Path
+import subprocess
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parents[3]
+SOURCE = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java'
+FIXTURE = r'''
+package io.github.russianranger.cohclientinteractive;
+import java.util.*;
+public final class ClientAcceptanceHost {
+    static Map<String,Object> map(Object... values) {
+        Map<String,Object> result = new LinkedHashMap<>();
+        for (int i=0;i<values.length;i+=2) result.put((String)values[i],values[i+1]);
+        return result;
+    }
+    static final String SESSION = "0123456789abcdef0123456789abcdef";
+    static List<Map<String,Object>> samples() {
+        List<Map<String,Object>> samples = new ArrayList<>();
+        for (int i=0;i<3;i++) samples.add(map("session_id",SESSION,"sequence",7,
+            "pixel_copy_success",true,"non_uniform",true,"png_verified",true,
+            "source_width",800,"source_height",600,"png_sha256",String.join("", Collections.nCopies(64,"a")),
+            "captured_elapsed_ms",1000L+i*1000));
+        return samples;
+    }
+    static Map<String,Object> cleanup() {
+        return map("cleanup_complete",true,"cleanup_execution",map("diagnostic_initialized",true,
+            "wine_started",true,"owned_child_count",1),"processes",Arrays.asList(map("exit_code",0,
+            "input_closed",true,"output_capture_closed",true)),"cleanup",map("owned_processes_reaped",true,
+            "wine_prefix_stopped",true),"wine_process_cleanup",map("complete",true,"remaining",0,"inspection_failures",0));
+    }
+    @SuppressWarnings("unchecked") static Map<String,Object> at(Map<String,Object> value,String key) {
+        return (Map<String,Object>) value.get(key);
+    }
+    public static void main(String[] args) {
+        List<Map<String,Object>> frames=samples(); Map<String,Object> cleanup=cleanup();
+        Map<String,Object> login=map("local_login",map("session_id",SESSION,"client_pid",42,"profile","android-local-login",
+            "local_login_verified",true,"character_list_sent",true,"local_account_verified",true,
+            "character_list_response_sent",true,"database_preserved",true,"auth_id",1));
+        Map<String,Object> saved=map("type","character_saved","session_id",SESSION,"client_pid",42,
+            "character_id",7,"name","THORHERO","committed_sql_verified",true);
+        Map<String,Object> connected=map("type","character_connected","session_id",SESSION,"client_pid",42,
+            "character_id",7,"name","THORHERO","account","COHLOCAL","map_id",1);
+        login.put("character_creation",map("verified",true,"session_id",SESSION,"client_pid",42,
+            "character_id",7,"name","THORHERO","account","COHLOCAL","auth_id",1,"map_id",1,
+            "committed_sql_verified",true,"requested_logout_observed",true,"logout_timer_observed",true,"disconnected_before_sql",true,
+            "forced_stop_before_save",false,"connected_on_atlas",true));
+        Map<String,Object> interaction=map("interaction_session_completed",true,"input_effect_verified",false,
+            "interaction_completion_reason","finish_requested");
+        // Retained from the Thor's successful 2026-10-01 save: the window title
+        // still names Atlas when the rendered screen has returned to login.
+        Map<String,Object> window=map("window_id",20971523,"title",
+            "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 672",
+            "width",800,"height",600,"mapped",true);
+        Object windowPid=672;
+        if (args[0].startsWith("final_")) {
+            at(login,"local_login").put("client_pid",672);
+            at(login,"character_creation").put("client_pid",672);
+            saved.put("client_pid",672);connected.put("client_pid",672);
+        }
+        List<Map<String,Object>> connectedFrames=samples(), relocationFrames=samples();
+        Map<String,Object> relocated=map("type","character_relocated","session_id",SESSION,"client_pid",42,
+            "character_id",1,"name","THORHERO","account","COHLOCAL","map_id",1,
+            "recovery_requested",true,"recovery_verified",true,
+            "ordinary_stuck_observed",true,"on_atlas_safe_position",true,"stable_ground_verified",true);
+        if (args[0].startsWith("reopen_")) {
+            Map<String,Object> reopen=new LinkedHashMap<>(at(login,"character_creation"));
+            reopen.put("character_id",1);reopen.put("before_character_id",1);reopen.put("baseline_character_id",1);
+            for(String flag:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
+                    "recovery_requested","recovery_verified","committed_native_position_verified",
+                    "native_client_ready_observed","powers_preserved","costume_preserved","ordinary_stuck_observed",
+                    "on_atlas_safe_position","stable_ground_verified","selected_rows_preserved","committed_safe_position_verified"}) reopen.put(flag,true);
+            login.put("character_reopen",reopen);login.remove("character_creation");
+            saved.put("character_id",1);connected.put("character_id",1);connected.put("baseline_character_id",1);
+            connected.put("reopen_verified",true);connected.put("existing_character_verified",true);
+            for(int i=0;i<3;i++) {
+                relocationFrames.get(i).put("captured_elapsed_ms",4000L+i*1000);
+                frames.get(i).put("captured_elapsed_ms",7000L+i*1000);
+            }
+            if (args[0].startsWith("reopen_normal_")) {
+                for (String flag : new String[]{"recovery_requested", "recovery_verified", "ordinary_stuck_observed",
+                        "on_atlas_safe_position", "stable_ground_verified", "committed_safe_position_verified"}) reopen.put(flag,false);
+                relocated.clear(); relocationFrames.clear();
+            }
+        }
+        boolean expected=false,actual;
+        switch(args[0]) {
+            case "window_retained_atlas": expected=true;break;
+            case "window_menu": window.put("title","City of Heroes : PID: 672");expected=true;break;
+            case "window_whitespace": window.put("title","City of Heroes\t :\tCity_Zones/City_01_01/City_01_01.txt \t PID: \t672");expected=true;break;
+            case "window_backslashes": window.put("title","City of Heroes : City_Zones\\City_01_01\\City_01_01.txt  PID: 672");expected=true;break;
+            case "window_mixed_slashes": window.put("title","City of Heroes : City_Zones/City_01_01\\City_01_01.txt  PID: 672");expected=true;break;
+            case "window_minimum_dimensions": window.put("width",320);window.put("height",240);expected=true;break;
+            case "window_wrong_pid": windowPid=673;break;
+            case "window_zero_pid": windowPid=0;break;
+            case "window_negative_pid": windowPid=-672;break;
+            case "window_fractional_pid": windowPid=672.5;break;
+            case "window_string_pid": windowPid="672";break;
+            case "window_boolean_pid": windowPid=true;break;
+            case "window_missing_pid": windowPid=null;break;
+            case "window_large_pid": windowPid=1L<<32;window.put("title","City of Heroes : PID: 4294967296");break;
+            case "window_pid_suffix": window.put("title",window.get("title")+"0");break;
+            case "window_pid_fraction": window.put("title",window.get("title")+".0");break;
+            case "window_pid_leading_zero": window.put("title","City of Heroes : PID: 0672");break;
+            case "window_wrong_map": window.put("title","City of Heroes : City_Zones/City_02_01/City_02_01.txt  PID: 672");break;
+            case "window_arbitrary_title": window.put("title","Other game : PID: 672");break;
+            case "window_path_prefix": window.put("title","City of Heroes : data/City_Zones/City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_absolute_path": window.put("title","City of Heroes : /City_Zones/City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_drive_path": window.put("title","City of Heroes : C:\\City_Zones\\City_01_01\\City_01_01.txt  PID: 672");break;
+            case "window_path_traversal": window.put("title","City of Heroes : City_Zones/../City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_backslash_traversal": window.put("title","City of Heroes : City_Zones\\..\\City_01_01\\City_01_01.txt  PID: 672");break;
+            case "window_empty_component": window.put("title","City of Heroes : City_Zones//City_01_01/City_01_01.txt  PID: 672");break;
+            case "window_filename_suffix": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.txt.bak  PID: 672");break;
+            case "window_case_changed": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.TXT  PID: 672");break;
+            case "window_trailing_text": window.put("title",window.get("title")+" saved");break;
+            case "window_leading_space": window.put("title"," "+window.get("title"));break;
+            case "window_trailing_space": window.put("title",window.get("title")+" ");break;
+            case "window_newline": window.put("title","City of Heroes : City_Zones/City_01_01/City_01_01.txt\nPID: 672");break;
+            case "window_missing_title": window.remove("title");break;
+            case "window_nonstring_title": window.put("title",672);break;
+            case "window_long_title": window.put("title",String.join("",Collections.nCopies(1001,"a")));break;
+            case "window_unmapped": window.put("mapped",false);break;
+            case "window_string_mapped": window.put("mapped","true");break;
+            case "window_missing_mapped": window.remove("mapped");break;
+            case "window_small_width": window.put("width",319);break;
+            case "window_small_height": window.put("height",239);break;
+            case "window_fractional_width": window.put("width",800.5);break;
+            case "window_fractional_height": window.put("height",600.5);break;
+            case "window_string_width": window.put("width","800");break;
+            case "window_boolean_height": window.put("height",true);break;
+            case "window_missing_width": window.remove("width");break;
+            case "window_missing_height": window.remove("height");break;
+            case "window_nonfinite_width": window.put("width",Double.POSITIVE_INFINITY);break;
+            case "window_nan_height": window.put("height",Double.NaN);break;
+            case "window_overflow_width": window.put("width",2147483648L);break;
+            case "window_overflow_height": window.put("height",2147483648L);break;
+            case "final_retained_atlas": expected=true;break;
+            case "final_wrong_pid": windowPid=673;break;
+            case "final_wrong_path": window.put("title","City of Heroes : City_Zones/../City_01_01/City_01_01.txt  PID: 672");break;
+            case "final_no_sql": at(login,"character_creation").put("committed_sql_verified",false);break;
+            case "final_no_logout": at(login,"character_creation").put("requested_logout_observed",false);break;
+            case "final_no_timer": at(login,"character_creation").put("logout_timer_observed",false);break;
+            case "final_no_save_event": saved.clear();break;
+            case "final_no_connected_event": connected.clear();break;
+            case "final_no_login": at(login,"local_login").put("local_login_verified",false);break;
+            case "final_no_fresh_capture": frames.get(0).put("sequence",6);break;
+            case "final_no_cleanup": cleanup.put("cleanup_complete",false);break;
+            case "reopen_valid": expected=true;break;
+            case "reopen_normal_valid": expected=true;break;
+            case "reopen_normal_no_position_commit": at(login,"character_reopen").remove("committed_native_position_verified");break;
+            case "reopen_normal_recovery_claim": at(login,"character_reopen").put("recovery_verified",true);break;
+            case "reopen_normal_fake_ground_claim": at(login,"character_reopen").put("stable_ground_verified",true);break;
+            case "reopen_normal_missing_request_status": at(login,"character_reopen").remove("recovery_requested");break;
+            case "reopen_normal_request_is_string": at(login,"character_reopen").put("recovery_requested","false");break;
+            case "reopen_normal_missing_connected_captures": connectedFrames.clear();break;
+            case "reopen_normal_missing_saved_captures": frames.clear();break;
+            case "reopen_normal_changed_power": at(login,"character_reopen").put("powers_preserved",false);break;
+            case "reopen_normal_force_saved": at(login,"character_reopen").put("forced_stop_before_save",true);break;
+            case "reopen_missing_recovery_verified": at(login,"character_reopen").remove("recovery_verified");break;
+            case "reopen_no_native_position_commit": at(login,"character_reopen").remove("committed_native_position_verified");break;
+            case "reopen_missing": login.remove("character_reopen");break;
+            case "reopen_creation_only": login.put("character_creation",login.remove("character_reopen"));break;
+            case "reopen_new_character": at(login,"character_reopen").put("character_id",2);break;
+            case "reopen_wrong_baseline": at(login,"character_reopen").put("baseline_character_id",2);break;
+            case "reopen_wrong_before": at(login,"character_reopen").put("before_character_id",2);break;
+            case "reopen_unproved_existing": at(login,"character_reopen").remove("existing_character_verified");break;
+            case "reopen_unproved_reopen": at(login,"character_reopen").put("reopen_verified",false);break;
+            case "reopen_identity_changed": at(login,"character_reopen").put("preserved_existing_identity",false);break;
+            case "reopen_costume_changed": at(login,"character_reopen").put("costume_preserved",false);break;
+            case "reopen_powers_changed": at(login,"character_reopen").put("powers_preserved",false);break;
+            case "reopen_no_selected_rows": at(login,"character_reopen").remove("selected_rows_preserved");break;
+            case "reopen_selected_rows_changed": at(login,"character_reopen").put("selected_rows_preserved",false);break;
+            case "reopen_selected_rows_null": at(login,"character_reopen").put("selected_rows_preserved",null);break;
+            case "reopen_no_safe_commit": at(login,"character_reopen").remove("committed_safe_position_verified");break;
+            case "reopen_bad_safe_commit": at(login,"character_reopen").put("committed_safe_position_verified",false);break;
+            case "reopen_safe_commit_null": at(login,"character_reopen").put("committed_safe_position_verified",null);break;
+            case "reopen_no_stuck": at(login,"character_reopen").remove("ordinary_stuck_observed");break;
+            case "reopen_no_safe_ground": at(login,"character_reopen").put("on_atlas_safe_position",false);break;
+            case "reopen_unstable_ground": at(login,"character_reopen").put("stable_ground_verified",false);break;
+            case "reopen_no_relocation_event": relocated.clear();break;
+            case "reopen_relocation_old_session": relocated.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_relocation_wrong_pid": relocated.put("client_pid",43);break;
+            case "reopen_relocation_wrong_character": relocated.put("character_id",2);break;
+            case "reopen_relocation_wrong_account": relocated.put("account","OLDACCOUNT");break;
+            case "reopen_relocation_wrong_map": relocated.put("map_id",2);break;
+            case "reopen_relocation_no_stuck": relocated.remove("ordinary_stuck_observed");break;
+            case "reopen_relocation_no_ground": relocated.put("on_atlas_safe_position",false);break;
+            case "reopen_relocation_unstable": relocated.put("stable_ground_verified",false);break;
+            case "reopen_no_relocation_captures": relocationFrames.clear();break;
+            case "reopen_two_relocation_captures": relocationFrames.remove(0);break;
+            case "reopen_pre_relocation_capture": relocationFrames.get(0).put("captured_elapsed_ms",3999);break;
+            case "reopen_pre_relocation_frame": relocationFrames.get(0).put("sequence",6);break;
+            case "reopen_late_relocation_capture": relocationFrames.get(2).put("captured_elapsed_ms",7001);break;
+            case "reopen_blank_relocation_capture": relocationFrames.get(0).put("non_uniform",false);break;
+            case "reopen_no_native_ready": at(login,"character_reopen").remove("native_client_ready_observed");break;
+            case "reopen_event_new_character": connected.put("baseline_character_id",2);break;
+            case "reopen_event_no_existing": connected.remove("existing_character_verified");break;
+            case "reopen_event_no_reopen": connected.put("reopen_verified",false);break;
+            case "reopen_event_old_session": connected.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_event_wrong_pid": connected.put("client_pid",43);break;
+            case "reopen_no_logout": at(login,"character_reopen").put("requested_logout_observed",false);break;
+            case "reopen_no_timer": at(login,"character_reopen").put("logout_timer_observed",false);break;
+            case "reopen_no_sql": at(login,"character_reopen").put("committed_sql_verified",false);break;
+            case "reopen_no_auth": at(login,"local_login").put("auth_id",2);break;
+            case "reopen_forced_save": at(login,"character_reopen").put("forced_stop_before_save",true);break;
+            case "reopen_no_connection_captures": connectedFrames.clear();break;
+            case "reopen_two_connection_captures": connectedFrames.remove(0);break;
+            case "reopen_pre_connection_capture": connectedFrames.get(0).put("captured_elapsed_ms",999);break;
+            case "reopen_pre_connection_frame": connectedFrames.get(0).put("sequence",6);break;
+            case "reopen_stale_connection_capture": connectedFrames.get(0).put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "reopen_blank_connection_capture": connectedFrames.get(0).put("non_uniform",false);break;
+            case "reopen_late_connection_capture": connectedFrames.get(2).put("captured_elapsed_ms",4001);break;
+            case "reopen_pre_save_capture": frames.get(0).put("captured_elapsed_ms",6999);break;
+            case "reopen_pre_save_frame": frames.get(0).put("sequence",6);break;
+            case "reopen_two_save_captures": frames.remove(0);break;
+            case "reopen_save_event_mismatch": saved.put("character_id",2);break;
+            case "character_valid": expected=true;break;
+            case "character_missing": login.remove("character_creation");break;
+            case "character_unverified": at(login,"character_creation").put("verified",false);break;
+            case "character_wrong_id": at(login,"character_creation").put("character_id",8);break;
+            case "character_zero_id": at(login,"character_creation").put("character_id",0);break;
+            case "character_fractional_id": at(login,"character_creation").put("character_id",7.5);break;
+            case "character_missing_id": at(login,"character_creation").remove("character_id");break;
+            case "character_wrong_name": at(login,"character_creation").put("name","OLDHERO");break;
+            case "character_missing_name": at(login,"character_creation").remove("name");break;
+            case "character_old_session": at(login,"character_creation").put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "character_wrong_pid": at(login,"character_creation").put("client_pid",43);break;
+            case "character_no_sql": at(login,"character_creation").put("committed_sql_verified",false);break;
+            case "character_missing_sql": at(login,"character_creation").remove("committed_sql_verified");break;
+            case "character_no_logout": at(login,"character_creation").remove("requested_logout_observed");break;
+            case "character_logout_not_requested": at(login,"character_creation").put("requested_logout_observed",false);break;
+            case "character_missing_logout_timer": at(login,"character_creation").remove("logout_timer_observed");break;
+            case "character_no_logout_timer": at(login,"character_creation").put("logout_timer_observed",false);break;
+            case "character_old_protocol_flag_only": at(login,"character_creation").remove("requested_logout_observed");
+                at(login,"character_creation").remove("logout_timer_observed");at(login,"character_creation").put("protocol_logout_verified",true);break;
+            case "character_still_connected": at(login,"character_creation").put("disconnected_before_sql",false);break;
+            case "character_force_saved": at(login,"character_creation").put("forced_stop_before_save",true);break;
+            case "character_missing_stop_proof": at(login,"character_creation").remove("forced_stop_before_save");break;
+            case "character_wrong_account": at(login,"character_creation").put("account","OLDACCOUNT");break;
+            case "character_no_auth_id": at(login,"character_creation").put("auth_id",0);break;
+            case "character_wrong_auth_id": at(login,"character_creation").put("auth_id",2);break;
+            case "character_missing_login_auth_id": at(login,"local_login").remove("auth_id");break;
+            case "character_no_atlas": at(login,"character_creation").put("connected_on_atlas",false);break;
+            case "character_missing_atlas": at(login,"character_creation").remove("connected_on_atlas");break;
+            case "character_wrong_map": at(login,"character_creation").put("map_id",2);break;
+            case "character_database_lost": at(login,"local_login").put("database_preserved",false);break;
+            case "character_no_save_event": saved.clear();break;
+            case "character_event_wrong_id": saved.put("character_id",8);break;
+            case "character_event_no_id": saved.remove("character_id");break;
+            case "character_event_old_session": saved.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "character_event_wrong_pid": saved.put("client_pid",43);break;
+            case "character_event_wrong_name": saved.put("name","OLDHERO");break;
+            case "character_event_no_sql": saved.remove("committed_sql_verified");break;
+            case "character_no_connected_event": connected.clear();break;
+            case "character_connected_old_session": connected.put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "character_connected_wrong_pid": connected.put("client_pid",43);break;
+            case "character_connected_wrong_id": connected.put("character_id",8);break;
+            case "character_connected_wrong_name": connected.put("name","OLDHERO");break;
+            case "character_connected_wrong_account": connected.put("account","OLDACCOUNT");break;
+            case "character_connected_wrong_map": connected.put("map_id",2);break;
+            case "character_no_captures": frames.clear();break;
+            case "character_two_captures": frames.remove(0);break;
+            case "character_pre_save_frame": frames.get(0).put("sequence",6);break;
+            case "character_pre_save_capture": frames.get(0).put("captured_elapsed_ms",999);break;
+            case "character_stale_capture_session": frames.get(0).put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "character_blank_capture": frames.get(0).put("non_uniform",false);break;
+            case "login_valid": expected=true;break;
+            case "login_old_session": at(login,"local_login").put("session_id","ffffffffffffffffffffffffffffffff");break;
+            case "login_wrong_pid": at(login,"local_login").put("client_pid",43);break;
+            case "login_fractional_pid": at(login,"local_login").put("client_pid",42.5);break;
+            case "login_wrong_profile": at(login,"local_login").put("profile","old-diagnostic");break;
+            case "login_unproved": at(login,"local_login").put("local_login_verified",false);break;
+            case "login_no_character_list": at(login,"local_login").put("character_list_sent",false);break;
+            case "login_no_account": at(login,"local_login").put("local_account_verified",false);break;
+            case "login_no_response": at(login,"local_login").put("character_list_response_sent",false);break;
+            case "login_not_preserved": at(login,"local_login").put("database_preserved",false);break;
+            case "login_missing": login.clear();break;
+            case "interaction_finish": expected=true; break;
+            case "interaction_timeout": interaction.put("interaction_completion_reason","interaction_timeout");expected=true;break;
+            case "interaction_incomplete": interaction.put("interaction_session_completed",false);break;
+            case "interaction_unproven_effect": interaction.put("input_effect_verified",true);break;
+            case "interaction_missing_effect": interaction.remove("input_effect_verified");break;
+            case "interaction_unknown_finish": interaction.put("interaction_completion_reason","old_session");break;
+            case "valid": expected=true; break;
+            case "static_frame": expected=true; break;
+            case "stale_session": frames.get(0).put("session_id","ffffffffffffffffffffffffffffffff"); break;
+            case "missing_pixelcopy": frames.get(0).remove("pixel_copy_success"); break;
+            case "missing_png": frames.get(0).remove("png_verified"); break;
+            case "blank_frame": frames.get(0).put("non_uniform",false); break;
+            case "bad_hash": frames.get(0).put("png_sha256","not-a-hash"); break;
+            case "wrong_size": frames.get(0).put("source_width",1024); break;
+            case "short_span": for(int i=0;i<3;i++) frames.get(i).put("captured_elapsed_ms",1000+i*100); break;
+            case "before_window": frames.get(0).put("captured_elapsed_ms",999); break;
+            case "after_window": frames.get(2).put("captured_elapsed_ms",3501); break;
+            case "duplicate_capture": frames.get(2).put("captured_elapsed_ms",2000); break;
+            case "zero_sequence": frames.get(0).put("sequence",0); break;
+            case "pre_event_frame": frames.get(0).put("sequence",5); break;
+            case "at_event_frame": frames.get(0).put("sequence",6); break;
+            case "fractional_time": frames.get(0).put("captured_elapsed_ms",1000.5); break;
+            case "cleanup_valid": expected=true; break;
+            case "cleanup_postgres_stopped": cleanup.put("postgres_started",true);at(cleanup,"cleanup").put("postgres_graceful",true);expected=true;break;
+            case "cleanup_postgres_running": cleanup.put("postgres_started",true);at(cleanup,"cleanup").put("postgres_graceful",false);break;
+            case "cleanup_postgres_missing": cleanup.put("postgres_started",true);break;
+            case "cleanup_missing": cleanup.remove("cleanup_execution"); break;
+            case "cleanup_orphan": at(cleanup,"wine_process_cleanup").put("remaining",1); break;
+            case "cleanup_unreadable": at(cleanup,"wine_process_cleanup").put("inspection_failures",1); break;
+            case "cleanup_capture_live": ((Map)((List)cleanup.get("processes")).get(0)).put("output_capture_closed",false); break;
+            case "cleanup_child_omitted": at(cleanup,"cleanup_execution").put("owned_child_count",2); break;
+            case "cleanup_no_guest": cleanup=map("cleanup_complete",true,"processes",Collections.emptyList(),
+                "cleanup_execution",map("diagnostic_initialized",false,"wine_started",false,"owned_child_count",0));expected=true;break;
+            default: throw new AssertionError("Unknown fixture");
+        }
+        actual=args[0].startsWith("window_") ? ClientAcceptance.clientWindowAccepted(window,windowPid)
+            : args[0].startsWith("final_") ? ClientAcceptance.clientWindowAccepted(window,windowPid)
+                && ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,672,500,4000,1000,3500,6)
+                && ClientAcceptance.cleanupSafe(cleanup)
+            : args[0].startsWith("reopen_") ? ClientAcceptance.characterReopenAccepted(login,saved,connected,relocated,connectedFrames,relocationFrames,frames,SESSION,42,500,11000,1000,6,4000,6,7000,10000,6)
+            : args[0].startsWith("character_") ? ClientAcceptance.characterCreationAccepted(login,saved,connected,frames,SESSION,42,500,4000,1000,3500,6)
+            : args[0].startsWith("login_") ? ClientAcceptance.localLoginVerified(login,SESSION,42)
+            : args[0].startsWith("interaction_") ? ClientAcceptance.interactionCompleted(interaction)
+            : args[0].startsWith("cleanup_") ? ClientAcceptance.cleanupSafe(cleanup)
+            : ClientAcceptance.surfaceAccepted(frames,SESSION,500,4000,1000,3500,6);
+        if(actual!=expected) throw new AssertionError(args[0]+" expected="+expected+" actual="+actual);
+    }
+}
+'''
+
+
+class ClientAcceptanceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory(prefix='coh-client-gate-')
+        harness = Path(cls.tmp.name) / 'ClientAcceptanceHost.java'
+        harness.write_text(FIXTURE)
+        subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
+                        '-d', cls.tmp.name, str(SOURCE), str(harness)], check=True, capture_output=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_interaction_completion_boundaries(self):
+        for mode in ('interaction_finish', 'interaction_timeout', 'interaction_incomplete',
+                     'interaction_unproven_effect', 'interaction_missing_effect', 'interaction_unknown_finish'):
+            with self.subTest(mode=mode): self.execute(mode)
+
+    def test_local_login_requires_current_session_protocol_and_persistence(self):
+        for mode in ('login_valid', 'login_old_session', 'login_wrong_pid', 'login_fractional_pid',
+                     'login_wrong_profile', 'login_unproved', 'login_no_character_list',
+                     'login_not_preserved', 'login_missing', 'login_no_account', 'login_no_response'):
+            with self.subTest(mode=mode): self.execute(mode)
+
+    def test_owned_window_accepts_menu_or_exact_atlas_title(self):
+        cases = ('retained_atlas', 'menu', 'whitespace', 'backslashes', 'mixed_slashes', 'minimum_dimensions',
+                 'wrong_pid', 'zero_pid', 'negative_pid', 'fractional_pid', 'string_pid', 'boolean_pid',
+                 'missing_pid', 'large_pid', 'pid_suffix', 'pid_fraction', 'pid_leading_zero', 'wrong_map',
+                 'arbitrary_title', 'path_prefix', 'absolute_path', 'drive_path', 'path_traversal',
+                 'backslash_traversal', 'empty_component', 'filename_suffix', 'case_changed', 'trailing_text',
+                 'leading_space', 'trailing_space', 'newline', 'missing_title', 'nonstring_title', 'long_title',
+                 'unmapped', 'string_mapped', 'missing_mapped', 'small_width', 'small_height',
+                 'fractional_width', 'fractional_height', 'string_width', 'boolean_height', 'missing_width',
+                 'missing_height', 'nonfinite_width', 'nan_height', 'overflow_width', 'overflow_height')
+        for case in cases:
+            with self.subTest(case=case): self.execute('window_' + case)
+
+    def test_retained_atlas_title_still_requires_character_capture_and_cleanup_proofs(self):
+        for case in ('retained_atlas', 'wrong_pid', 'wrong_path', 'no_sql', 'no_logout', 'no_timer',
+                     'no_save_event', 'no_connected_event', 'no_login', 'no_fresh_capture', 'no_cleanup'):
+            with self.subTest(case=case): self.execute('final_' + case)
+
+    def test_character_requires_matching_protocol_save_committed_sql_and_fresh_captures(self):
+        cases = ('valid', 'missing', 'unverified', 'wrong_id', 'zero_id', 'fractional_id', 'missing_id',
+                 'wrong_name', 'missing_name', 'old_session', 'wrong_pid', 'no_sql', 'missing_sql',
+                 'no_logout', 'logout_not_requested', 'missing_logout_timer', 'no_logout_timer', 'old_protocol_flag_only', 'still_connected', 'force_saved', 'missing_stop_proof', 'wrong_account',
+                 'no_auth_id', 'wrong_auth_id', 'missing_login_auth_id', 'no_atlas', 'missing_atlas', 'wrong_map', 'database_lost', 'no_save_event', 'event_wrong_id',
+                 'event_no_id', 'event_old_session', 'event_wrong_pid', 'event_wrong_name', 'event_no_sql',
+                 'no_connected_event', 'connected_old_session', 'connected_wrong_pid', 'connected_wrong_id',
+                 'connected_wrong_name', 'connected_wrong_account', 'connected_wrong_map', 'no_captures',
+                 'two_captures', 'pre_save_frame', 'pre_save_capture', 'stale_capture_session', 'blank_capture')
+        for case in cases:
+            with self.subTest(case=case): self.execute('character_' + case)
+
+    def test_reopen_requires_prior_identity_unchanged_costume_and_two_fresh_capture_sets(self):
+        cases = ('valid', 'missing', 'creation_only', 'new_character', 'wrong_baseline', 'wrong_before',
+                 'unproved_existing', 'unproved_reopen', 'identity_changed', 'costume_changed', 'powers_changed',
+                 'no_native_ready', 'no_selected_rows', 'selected_rows_changed', 'selected_rows_null',
+                 'missing_recovery_verified', 'no_native_position_commit',
+                 'no_safe_commit', 'bad_safe_commit', 'safe_commit_null', 'no_stuck', 'no_safe_ground', 'unstable_ground', 'no_relocation_event',
+                 'relocation_old_session', 'relocation_wrong_pid', 'relocation_wrong_character',
+                 'relocation_wrong_account', 'relocation_wrong_map', 'relocation_no_stuck', 'relocation_no_ground',
+                 'relocation_unstable', 'no_relocation_captures', 'two_relocation_captures', 'pre_relocation_capture',
+                 'pre_relocation_frame', 'late_relocation_capture', 'blank_relocation_capture', 'event_new_character', 'event_no_existing', 'event_no_reopen',
+                 'event_old_session', 'event_wrong_pid', 'no_logout', 'no_timer', 'no_sql', 'no_auth', 'forced_save',
+                 'no_connection_captures', 'two_connection_captures', 'pre_connection_capture',
+                 'pre_connection_frame', 'stale_connection_capture', 'blank_connection_capture',
+                 'late_connection_capture', 'pre_save_capture', 'pre_save_frame', 'two_save_captures', 'save_event_mismatch')
+        for case in cases:
+            with self.subTest(case=case): self.execute('reopen_' + case)
+
+    def test_normal_reopen_without_recovery_requires_native_save_and_two_android_capture_sets(self):
+        for case in ('valid', 'no_position_commit', 'recovery_claim', 'fake_ground_claim', 'missing_request_status',
+                     'request_is_string', 'missing_connected_captures', 'missing_saved_captures',
+                     'changed_power', 'force_saved'):
+            with self.subTest(case=case): self.execute('reopen_normal_' + case)
+
+    def test_frame_boundaries(self):
+        for mode in ('valid', 'static_frame', 'stale_session', 'missing_pixelcopy',
+                     'missing_png', 'blank_frame', 'bad_hash', 'wrong_size', 'short_span',
+                     'before_window', 'after_window', 'duplicate_capture', 'zero_sequence', 'pre_event_frame', 'at_event_frame', 'fractional_time'):
+            with self.subTest(mode=mode): self.execute(mode)
+
+    def test_cleanup_boundaries(self):
+        for mode in ('cleanup_valid', 'cleanup_missing', 'cleanup_orphan', 'cleanup_unreadable',
+                     'cleanup_capture_live', 'cleanup_child_omitted', 'cleanup_no_guest',
+                     'cleanup_postgres_stopped', 'cleanup_postgres_running', 'cleanup_postgres_missing'):
+            with self.subTest(mode=mode): self.execute(mode)
+
+    def execute(self, mode):
+        subprocess.run(['java', '-cp', self.tmp.name,
+                        'io.github.russianranger.cohclientinteractive.ClientAcceptanceHost', mode],
+                       check=True, capture_output=True, timeout=10)
+
+
+if __name__ == '__main__': unittest.main()

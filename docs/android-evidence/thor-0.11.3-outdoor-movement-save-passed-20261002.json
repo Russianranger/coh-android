@@ -1,0 +1,779 @@
+{
+  "format": 1,
+  "milestone": "physical_thor_0.11.3_outdoor_movement_normal_save",
+  "status": "passed",
+  "reviewed_utc": "2026-10-02T15:09:31.007025+00:00",
+  "scope": "Physical user acceptance of outdoor traversal and usable presentation; independently reviewed current-character reopen, phase deadlines, fresh Android frames, ordinary logout, committed outdoor SQL position and cleanup. New exterior saved-position restart, complete rendering/collision and NPC/combat remain unqualified.",
+  "supersedes_pending_physical_scope": "docs/android-evidence/session-window-0.11.3-publication.json",
+  "source_report": {
+    "name": "coh-atlas-gameplay-20261002-145320.zip",
+    "bytes": 15139737,
+    "sha256": "98000ff41cb86a2ddc2deda5f4d1aab40813ebf85f9284bfd27fa61cc285935d",
+    "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+    "run_id": "1790949838658-e5752257705d"
+  },
+  "physical_user_acceptance": {
+    "statement": "It took awhile before i could effectively move, but i was able to move around outside in atlas park. I started in the interior, probably due to the premature close from last time. But overall this was a success.",
+    "outdoor_movement_passed": true,
+    "usable_outdoor_rendering_observed": true,
+    "prior_movement_camera_jump_acceptance_retained": true,
+    "prior_tested_route_no_clipping_acceptance_retained": true,
+    "new_jump_camera_retest_claimed": false,
+    "new_complete_collision_claimed": false,
+    "automated_visual_controller_or_input_effect_proof_claimed": false,
+    "screenshots": [
+      {
+        "name": "Screenshot_20261002-094810.png",
+        "bytes": 444532,
+        "sha256": "d9aa39ed7f4aa7583c01874f683a531c335fcf8d718f0fbbd805e20a4d7e8687"
+      },
+      {
+        "name": "Screenshot_20261002-094444.png",
+        "bytes": 401356,
+        "sha256": "c7f11aba0d52ec50ae7741d37104a521c2ffd9c3ed26a9f822722b0e03cf4b57"
+      },
+      {
+        "name": "Screenshot_20261002-094149.png",
+        "bytes": 374322,
+        "sha256": "b94de3ec4164fe02aa0287d3ac6619ad05febce36f914f20516da44232bf1986"
+      },
+      {
+        "name": "Screenshot_20261002-093732.png",
+        "bytes": 379465,
+        "sha256": "cf219dee07b36fd38b986f8fba7ec046634e9d02fb1878f1ab0a66266cafee7b"
+      },
+      {
+        "name": "Screenshot_20261002-094016.png",
+        "bytes": 431730,
+        "sha256": "a4882fa61dafb7fcc8c96ab34cf8935898ad167d4bd53a6a50580ffdee4876e6"
+      }
+    ]
+  },
+  "android": {
+    "app_id": "io.github.russianranger.cohclientinteractive",
+    "app_version": "0.11.3",
+    "device": "AYN AYN Thor",
+    "android_sdk": 33,
+    "status": "passed",
+    "passed": true,
+    "process_exit_code": 0,
+    "android_surface_validated": true,
+    "interaction_session_completed": true,
+    "character_reopen_verified": true,
+    "stuck_requested": true,
+    "save_logout_requested": true,
+    "finish_requested": true,
+    "cleanup_verified": true,
+    "cleanup_blocked": false,
+    "cancelled": false,
+    "input_events_sent": 1666,
+    "input_events_failed": 0,
+    "input_transport_observed": true,
+    "input_worker_stopped": true,
+    "decoded_frame_count": 3108,
+    "session_budget_revision": 2,
+    "session_budget_phase": "grounded",
+    "deadline_input_suppressed": true
+  },
+  "native_and_sql": {
+    "character_id": 1,
+    "auth_id": 1353310574,
+    "account": "COHLOCAL",
+    "name": "THORHERO",
+    "map_id": 1,
+    "verified": true,
+    "existing_character_verified": true,
+    "preserved_existing_identity": true,
+    "native_client_ready_observed": true,
+    "ordinary_stuck_observed": true,
+    "on_atlas_safe_position": true,
+    "stable_ground_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "committed_sql_verified": true,
+    "committed_safe_position_verified": true,
+    "powers_preserved": true,
+    "costume_preserved": true,
+    "selected_rows_preserved": true,
+    "sql_game_mutations_performed": false,
+    "client_ready_evidence": {
+      "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+      "line_sha256": "32ada4e9b6f960b23309896c57cdaa2927921ec710e19a5241fed22346e8e4b9",
+      "log_timestamp": "261002 14:36:27",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_mapserver_CLIENT_READY_resumeCharacter_success",
+      "loaded_world_assets": true
+    },
+    "relocation_delivery": {
+      "format": 1,
+      "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+      "client_pid": 672,
+      "character_id": 1,
+      "action": "stuck",
+      "sent_utc_ms": 1790952254313
+    },
+    "ground_evidence": {
+      "verified": true,
+      "samples": [
+        {
+          "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+          "line_sha256": "89fdcdec9136dc026b82925a33a9d09cd7371ebb1dd8627dc1714ca11c5f2bce",
+          "log_timestamp": "261002 14:49:45",
+          "log_route": "embedded_dbserver_logserver",
+          "map_instance": "City_01_01_1",
+          "position": [
+            104.47,
+            31.96,
+            -531.56
+          ],
+          "utc_ms": 1790952585000,
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_owned_mapserver_periodic_entity_physics_position"
+        },
+        {
+          "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+          "line_sha256": "334f05b368020bb146f394e1304517ab7b465d447a4959ff2e5df00b1be891c7",
+          "log_timestamp": "261002 14:50:15",
+          "log_route": "embedded_dbserver_logserver",
+          "map_instance": "City_01_01_1",
+          "position": [
+            104.47,
+            31.96,
+            -531.56
+          ],
+          "utc_ms": 1790952615000,
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_owned_mapserver_periodic_entity_physics_position"
+        }
+      ],
+      "elapsed_ms": 30000,
+      "position": [
+        104.47,
+        31.96,
+        -531.56
+      ],
+      "ordinary_command": "stuck",
+      "scope": "two_current_native_physics_positions_stable_above_fall_boundary_after_ordinary_stuck",
+      "full_collision_geometry_verified": false
+    },
+    "ground_observed_utc": "2026-10-02T14:46:09.826003+00:00",
+    "logout_delivery": {
+      "format": 1,
+      "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+      "client_pid": 672,
+      "character_id": 1,
+      "action": "quittologin",
+      "sent_utc_ms": 1790952624531
+    },
+    "logout_timer_evidence": {
+      "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+      "line_sha256": "63fb7155ac08182cc46223cd767c0dd704e9f6b2a9f4d64890d8a3cfed6eadec",
+      "log_timestamp": "261002 14:50:27",
+      "log_route": "embedded_dbserver_logserver",
+      "map_instance": "City_01_01_1",
+      "reason": "Logout timer expired",
+      "account": "COHLOCAL",
+      "name": "THORHERO",
+      "source": "current_owned_server_entity_log_live_client_logout_timer"
+    },
+    "saved_utc": "2026-10-02T14:52:01.321170+00:00",
+    "verified_utc": "2026-10-02T14:52:01.692924+00:00",
+    "saved_position": {
+      "containerid": 1,
+      "mapid": 1,
+      "staticmapid": 1,
+      "posx": 104.47185,
+      "posy": 31.959229,
+      "posz": -531.55786
+    },
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "table_sha256": {
+      "ents": "d88c7d30ade43f3a9d401b37db12ae84ddb6d21891a3ef002842414130a3dfc8",
+      "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+      "powers": "bc49fb4c2808bf03d362d71cb48c49d7c5582fcbeecaebc5bf4a10ba162fd2fc",
+      "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+    },
+    "snapshot_sha256": "648b7ca2368748f0bbd5020e7bcd99a6a1b9e040728ac8f73cb525ff323123e0",
+    "baseline": {
+      "character_id": 1,
+      "auth_id": 1353310574,
+      "identity_sha256": "a5fe5f09ecb4493fd4bd1c6c3f73b890dcaf042881787ebd10304f8c38b192e8",
+      "snapshot_sha256": "a4a9dfadfe03b497a5c3c95e5c0146575283690b58a4ba9a40b8a9ba4f64539d",
+      "table_sha256": {
+        "ents": "4417f8ca76d82a90f0cb60a25e87f4c37ec7fdab4c49e750c47157f68eb3423c",
+        "ents2": "36dd26e88ac48da0adda2a83b5f72bf8c291d9ac5032b49fafe5fd5990f3d1ff",
+        "powers": "bc49fb4c2808bf03d362d71cb48c49d7c5582fcbeecaebc5bf4a10ba162fd2fc",
+        "costumeparts": "1dbc429e682d91bdbd9d719b2ad769698901b9b3319a9ed671a402bb3309b7f2"
+      },
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 7,
+        "costumeparts": 14
+      },
+      "login_count": 4,
+      "captured_utc": "2026-10-02T14:13:03.057488+00:00",
+      "saved_position": {
+        "containerid": 1,
+        "mapid": 1,
+        "staticmapid": 1,
+        "posx": 133.92833,
+        "posy": -768,
+        "posz": -594.64825
+      }
+    }
+  },
+  "independent_archive_review": {
+    "raw_native_line_hashes_verified": 4,
+    "closed_server_log_manifest_hashes_verified": 8,
+    "snapshot_canonical_hashes_verified": true,
+    "identity_preserved": true,
+    "ents2_powers_and_costume_rows_identical": true,
+    "selected_ents_identical_except_logincount": true,
+    "login_count_before": 4,
+    "login_count_after": 5,
+    "prior_accepted_snapshot_sha256": "be69e921dfafb584ae0fd263693a6f43eb6f1577125dfa5b17b4852576071362",
+    "prior_snapshot_to_current_baseline_selected_rows_delta": "Only snapshot login_count and ents.logincount changed 3 to 4; identity, ents2, seven powers and fourteen costume parts are retained.",
+    "selected_row_snapshot_excludes_position": true,
+    "position_proof": "Separate read-only SQL query outputs for baseline and saved position are retained in guest processes labeled sql-fixture; final SQL matches current periodic native position within 0.003 units.",
+    "retained_android_png_hashes_verified": 23,
+    "distinct_png_digests": 20,
+    "png_dimensions": [
+      800,
+      600
+    ],
+    "fresh_post_connection_ground_save_frames_verified": true
+  },
+  "initial_location_assessment": {
+    "baseline_position_matches_prior_accepted_interior_save": true,
+    "baseline_position": {
+      "containerid": 1,
+      "mapid": 1,
+      "staticmapid": 1,
+      "posx": 133.92833,
+      "posy": -768,
+      "posz": -594.64825
+    },
+    "native_initial_position_lines": [
+      {
+        "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+        "log_timestamp": "261002 14:34:15",
+        "line_sha256": "7768294aec09e2adcb8f35b3438d9d39eea9c3659f066296056502eea82d4f89",
+        "line": "261002 14:34:15 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 PeriodicInfo pos=<133.93,-768.00,-594.65> ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 64211-49972-11966 5453:51921:61957"
+      },
+      {
+        "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+        "log_timestamp": "261002 14:36:45",
+        "line_sha256": "3ef6b682bf052e427087f1ed3c749cb3ebbec96297b9eb86b5a7fe9b295312a8",
+        "line": "261002 14:36:45 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 PeriodicInfo pos=<134.50,-768.00,-575.00> ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 31304-21544-18 62944:18:42888"
+      }
+    ],
+    "normal_door_emergence_position": [
+      134.5,
+      -768,
+      -575
+    ],
+    "explanation": "Previous outdoor export ended without a requested normal exterior save. This run restored the last committed interior coordinate, then ordinary nearby-door emergence chose another authored auxiliary exit. No character reset or persistence loss is indicated.",
+    "source_paths": [
+      "upstream/ouroboros/MapServer/src/player/parseClientInput.c",
+      "upstream/ouroboros/MapServer/src/gameSys/dooranim.c",
+      "upstream/i24/data/object_library/Doors/City_Doors/city_doors.txt",
+      "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt"
+    ],
+    "door_calculation": "City Hall base(132,-768,-640) + door(2.5,0,69.5) + authored auxiliary(0,0,-4.5) = (134.5,-768,-575). Native EntRunOutOfDoor chooses an auxiliary exit at random after a nearby emergence match.",
+    "source_pins": {
+      "upstream/ouroboros/MapServer/src/player/parseClientInput.c": {
+        "bytes": 144600,
+        "sha256": "6faf4a9d063c52b7463cf2c6a5cda198dd7a540dfac001ef1a22164d9ce1f313"
+      },
+      "upstream/ouroboros/MapServer/src/gameSys/dooranim.c": {
+        "bytes": 35832,
+        "sha256": "8a8879efa2740f4dcfc22e91bf5768198b7235e3f3d66a3953623a34286fbd85"
+      },
+      "upstream/i24/data/object_library/Doors/City_Doors/city_doors.txt": {
+        "bytes": 9185,
+        "sha256": "56ace5adc0051c35074d8d4c52224b461a5b6893724de190c19ea9d1201afb14"
+      },
+      "upstream/i24/data/maps/city_zones/city_01_01/city_01_01_layer_geometry.txt": {
+        "bytes": 2617295,
+        "sha256": "e2fcea989f1030e6e4fc57d94d2130302a8271eaabcbd8b9a6488040d94e9e28"
+      }
+    }
+  },
+  "session_budget_review": {
+    "events": [
+      {
+        "type": "character_session_budget",
+        "stage": "actual_client_interaction",
+        "time_utc": "2026-10-02T14:37:36.964886+00:00",
+        "format": 1,
+        "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+        "client_pid": 672,
+        "character_id": 1,
+        "name": "THORHERO",
+        "account": "COHLOCAL",
+        "map_id": 1,
+        "revision": 1,
+        "phase": "connected",
+        "generated_utc_ms": 1790951856964,
+        "deadline_utc_ms": 1790953056964,
+        "save_request_deadline_utc_ms": 0,
+        "movement_deadline_utc_ms": 0,
+        "native_client_ready_observed": true,
+        "reopen_verified": true
+      },
+      {
+        "type": "character_session_budget",
+        "stage": "actual_client_interaction",
+        "time_utc": "2026-10-02T14:46:09.826635+00:00",
+        "format": 1,
+        "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+        "client_pid": 672,
+        "character_id": 1,
+        "name": "THORHERO",
+        "account": "COHLOCAL",
+        "map_id": 1,
+        "revision": 2,
+        "phase": "grounded",
+        "generated_utc_ms": 1790952369826,
+        "deadline_utc_ms": 1790952854313,
+        "save_request_deadline_utc_ms": 1790952674313,
+        "movement_deadline_utc_ms": 1790952614313,
+        "native_client_ready_observed": true,
+        "reopen_verified": true,
+        "ordinary_stuck_observed": true,
+        "stable_ground_verified": true
+      }
+    ],
+    "delivered_stuck_utc": "2026-10-02T14:44:14.313+00:00",
+    "movement_deadline_utc": "2026-10-02T14:50:14.313+00:00",
+    "save_request_deadline_utc": "2026-10-02T14:51:14.313+00:00",
+    "proof_finish_deadline_utc": "2026-10-02T14:54:14.313+00:00",
+    "movement_deadline_uptime_ms": 288182668,
+    "save_request_deadline_uptime_ms": 288242668,
+    "proof_finish_deadline_uptime_ms": 288422668,
+    "movement_suppression_lifecycle_uptime_ms": 288183226,
+    "movement_suppression_after_deadline_ms": 558,
+    "logout_request_uptime_ms": 288189169,
+    "logout_delivered_utc": "2026-10-02T14:50:24.531+00:00",
+    "logout_delivery_before_save_cutoff_ms": 49782,
+    "finish_request_uptime_ms": 288303940,
+    "finish_received": {
+      "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+      "client_pid": 672,
+      "action": "finish_interaction",
+      "bytes": 107,
+      "sha256": "003915c8c0ffe64c24091a323846d99e32b8a4308b6a783c207c5e84fa0e35b6",
+      "received_utc": "2026-10-02T14:52:19.993230+00:00"
+    },
+    "finish_requested_before_deadline_ms": 118728,
+    "connected_to_grounded_final_deadline_change_ms": -202651,
+    "one_way_connected_then_grounded_only": true,
+    "renewal_or_expiry_revival_observed": false,
+    "original_menu_expiry_exercised": false,
+    "deadline_scope": "Changed deadlines, revision uptake, input suppression and normal save completion were observed. Finish occurred before the original menu deadline too; no expired-phase rejection or previously failing timeout is exercised by this successful run.",
+    "input_count_after_logout_through_finish": 1666,
+    "full_sixty_second_control_neutral_interval_proven": false,
+    "last_retained_non_save_input_to_logout_delivery_ms": 44728,
+    "neutral_interval_scope": "Native final positions were stable 30 seconds apart and normal save passed. The last retained ordinary input preceded logout delivery by 44.728 seconds and could have been a cursor/release event; this export does not prove 60 seconds with all controls released."
+  },
+  "readiness_latency": {
+    "guest_operation_started_utc": "2026-10-02T14:03:59.382011+00:00",
+    "interactive_stage_started_utc": "2026-10-02T14:33:27.181651+00:00",
+    "startup_elapsed_seconds": {
+      "wine_initialization": 64.219,
+      "local_dbserver_startup": 436.521,
+      "local_atlas_startup": 642.823,
+      "actual_client_startup": 578.142
+    },
+    "operation_to_interactive_menu_seconds": 1767.8,
+    "native_resume_log_timestamp": "261002 14:36:27",
+    "connected_observed_utc": "2026-10-02T14:37:36.960191+00:00",
+    "stuck_sent_to_ground_event_ms": 115513,
+    "ground_event_to_third_fresh_android_capture_ms": 2217,
+    "time_left_for_movement_after_third_ground_capture_ms": 242269,
+    "no_login_watchdog_auth_failure_or_early_disconnect_in_this_run": true,
+    "first_effective_user_input_time_proven": false,
+    "initial_ground_pair_reconstructed_as_of_event": [
+      {
+        "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+        "log_timestamp": "261002 14:45:15",
+        "line_sha256": "f8e2e33ba856594dd83aea3b04cd87038de346454a77c37cb34ebee218ffaf13",
+        "line": "261002 14:45:15 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 PeriodicInfo pos=<132.82,44.04,-597.78> ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 31304-21544-18 62944:18:31476"
+      },
+      {
+        "path": "logs/dbserver/entity_2026-10-02-14-00-00.log",
+        "log_timestamp": "261002 14:45:45",
+        "line_sha256": "5e4ce3599837455db7464694e7693adfbfde9c7ac63fbad9860a59692791eeb0",
+        "line": "261002 14:45:45 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 PeriodicInfo pos=<132.82,44.04,-597.78> ExpLevel:1, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 3096-00-00 32:00:32"
+      }
+    ],
+    "initial_ground_pair_scope": "Latest matching archived records at or before the first ground event. Original first accepted pair is not retained; the final report refreshes ground_evidence to later pre-save positions. Character was already outdoors before stuck delivery.",
+    "launcher_started_timestamp_scope": "Exact monotonic launcher start is not exported. Display announcement at 14:23:49.272 and first startup poll at 14:23:50.830 bound it; emitted deadlines fit launcher plus 34 minutes even at the earlier bound."
+  },
+  "android_event_frame_evidence": {
+    "connected": {
+      "event_observed_uptime_ms": 287425320,
+      "event_frame_watermark": 1204,
+      "captures": [
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287426240,
+          "sequence": 1210,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "748d421f34a3d979bab8fe5578639b011f8032ef8b76b9ef96ee23e46e52016f",
+          "non_uniform": true,
+          "png_sha256": "748d421f34a3d979bab8fe5578639b011f8032ef8b76b9ef96ee23e46e52016f",
+          "png_verified": true,
+          "png_bytes": 292735,
+          "archive_path": "android-connected/capture-1.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287427249,
+          "sequence": 1213,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "0ac03f5e065494d1ca349cfd0287b5a85bcdda869adbedeb488a25ff940b4919",
+          "non_uniform": true,
+          "png_sha256": "0ac03f5e065494d1ca349cfd0287b5a85bcdda869adbedeb488a25ff940b4919",
+          "png_verified": true,
+          "png_bytes": 292870,
+          "archive_path": "android-connected/capture-2.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287428258,
+          "sequence": 1218,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "871cf2c0096d33a9a87a06f633d93ad9974d514cdad63694d6b603c3ce84a945",
+          "non_uniform": true,
+          "png_sha256": "871cf2c0096d33a9a87a06f633d93ad9974d514cdad63694d6b603c3ce84a945",
+          "png_verified": true,
+          "png_bytes": 292642,
+          "archive_path": "android-connected/capture-3.png",
+          "post_character_connection_frame_observed": true,
+          "character_id": 1
+        }
+      ],
+      "fresh_sequence_and_uptime_verified": true
+    },
+    "relocation": {
+      "event_observed_uptime_ms": 287938182,
+      "event_frame_watermark": 2081,
+      "captures": [
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287938368,
+          "sequence": 2082,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "83a788bd0c3be85fbc6d393398329f048dd362db153c9f28ff9455e420a28c2d",
+          "non_uniform": true,
+          "png_sha256": "83a788bd0c3be85fbc6d393398329f048dd362db153c9f28ff9455e420a28c2d",
+          "png_verified": true,
+          "png_bytes": 320203,
+          "archive_path": "android-relocated/capture-1.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287939377,
+          "sequence": 2083,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "729744382d239ca63b5a5b58396f6c65da52f21bd634ea3eed52aa6536b2551a",
+          "non_uniform": true,
+          "png_sha256": "729744382d239ca63b5a5b58396f6c65da52f21bd634ea3eed52aa6536b2551a",
+          "png_verified": true,
+          "png_bytes": 320404,
+          "archive_path": "android-relocated/capture-2.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 287940399,
+          "sequence": 2084,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "ff7e6745b1d9c6355a1243d3305b158c9b938ff4237cd6019e7586eb9635cb35",
+          "non_uniform": true,
+          "png_sha256": "ff7e6745b1d9c6355a1243d3305b158c9b938ff4237cd6019e7586eb9635cb35",
+          "png_verified": true,
+          "png_bytes": 321395,
+          "archive_path": "android-relocated/capture-3.png",
+          "post_character_relocation_frame_observed": true,
+          "character_id": 1
+        }
+      ],
+      "fresh_sequence_and_uptime_verified": true
+    },
+    "character": {
+      "event_observed_uptime_ms": 288290048,
+      "event_frame_watermark": 2998,
+      "captures": [
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 288290210,
+          "sequence": 2999,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "66a0275cae036dd0e700f80f00f110806ddd07217f6b86f356bc2f8d26e0a101",
+          "non_uniform": true,
+          "png_sha256": "66a0275cae036dd0e700f80f00f110806ddd07217f6b86f356bc2f8d26e0a101",
+          "png_verified": true,
+          "png_bytes": 562962,
+          "archive_path": "android-character/capture-1.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 288291235,
+          "sequence": 3001,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "19996cdc386668605790e565249ad5588706733fafdeabe306ac922c11b2d46b",
+          "non_uniform": true,
+          "png_sha256": "19996cdc386668605790e565249ad5588706733fafdeabe306ac922c11b2d46b",
+          "png_verified": true,
+          "png_bytes": 562838,
+          "archive_path": "android-character/capture-2.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        },
+        {
+          "session_id": "d6933c2f83b3442498d5b0e43dfc369c",
+          "pixel_copy_success": true,
+          "captured_elapsed_ms": 288292256,
+          "sequence": 3004,
+          "surface_generation": 2,
+          "source_width": 800,
+          "source_height": 600,
+          "surface_width": 1347,
+          "surface_height": 834,
+          "sha256": "78fcdeab83dc7e8b2b764116ec8e19c327a3387134c7d160a41e023a142e2e45",
+          "non_uniform": true,
+          "png_sha256": "78fcdeab83dc7e8b2b764116ec8e19c327a3387134c7d160a41e023a142e2e45",
+          "png_verified": true,
+          "png_bytes": 562885,
+          "archive_path": "android-character/capture-3.png",
+          "post_character_save_frame_observed": true,
+          "character_id": 1
+        }
+      ],
+      "fresh_sequence_and_uptime_verified": true
+    }
+  },
+  "visual_review": {
+    "connected_captures": "City Hall interior with THORHERO and doorway.",
+    "relocation_captures": "Outdoor Atlas Plaza with statue, columns, trees and THORHERO.",
+    "saved_captures": "Post-normal-logout login screen.",
+    "remaining_artifacts": [
+      "Large flat white ground and purple/blue flat surfaces",
+      "Blue/white UI placeholders",
+      "User screenshot at 09:41 explicitly shows Map Unavailable"
+    ],
+    "full_materials_or_minimap_usability_accepted": false
+  },
+  "runtime_provenance": {
+    "report_app_version": "0.11.3",
+    "report_original_runtime_manifest_sha256": "37c255b646c5b259a2b3b8775518fb758038293cc156e6ad8b7768f851fb576a",
+    "exported_runtime_manifest_semantically_equals_published_apk": true,
+    "exported_runtime_manifest_serialization": "Pretty printed in export; original report hash identifies exact published APK member bytes.",
+    "identity_manifests_and_runtime_lock_byte_exact_published_apk": true,
+    "published_apk_source_commit": "97565b0c28ba27ef79e70d4c04dddb1a8383ec1f",
+    "published_apk_sha256": "3c97d5c85092ec9aec88de405cea92a91c760db379cdbf66a244714687f35dfd",
+    "independent_installed_apk_byte_attestation_claimed": false
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 320,
+      "scanned_tasks": 99,
+      "dead_leaders_with_live_tasks": 6,
+      "owned_live_workers": 6,
+      "leader_exit_retries": 0,
+      "candidates": 6,
+      "term_signals": 6,
+      "kill_signals": 2,
+      "pidfd_signals": 8,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true,
+      "permission_read_retries": 1,
+      "worker_exit_rechecks": 1,
+      "permission_observations": [
+        {
+          "group_pid": 10454,
+          "group_starttime": 59398252,
+          "worker_tid": 18438,
+          "worker_starttime": 59457571,
+          "operation": "worker_environment",
+          "errno": 13,
+          "error_type": "PermissionError",
+          "attempt": 1,
+          "worker_state_before": "R",
+          "resolution": "verified_disappearance",
+          "worker_state_after": "R"
+        }
+      ],
+      "permission_observations_omitted": 0,
+      "proc_read_retries": 0,
+      "proc_read_observations": [],
+      "proc_read_observations_omitted": 0,
+      "last_inspection_failure": null
+    },
+    "presentation_socket_removed": true,
+    "finished_utc": "2026-10-02T14:53:14.783222+00:00"
+  },
+  "raw_artifact_pins": {
+    "android-client-report.json": {
+      "bytes": 260266,
+      "sha256": "89b943d56417e0fa1a58ff1541191bc7ab9a164b86f5868bf7b70e7b9640c5cd"
+    },
+    "operation.log": {
+      "bytes": 163552,
+      "sha256": "996c7450a2614836c08eb8cac43c40c33456286d0904079b0fdd2838b01469fb"
+    },
+    "runtime-manifest.json": {
+      "bytes": 17358,
+      "sha256": "79b5991c0baa95dbfdb9b43480296e3c5095d9ea6021ddf9fc27e169bb74d5fe"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "identities/accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "identities/atlas-world-supplement-manifest.json": {
+      "bytes": 4258210,
+      "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "identities/character-avatar-defaults-manifest.json": {
+      "bytes": 28554,
+      "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+    },
+    "identities/client-manifest.json": {
+      "bytes": 5023,
+      "sha256": "af7c2059da8fa67e7f49bdc2aa5e57d0df4e849347e63c792a8bcbe97185d978"
+    },
+    "guest-report.zip": {
+      "bytes": 4719357,
+      "sha256": "3ebe1d43127a1d74a9afe3174da744effe318beac1fd65f99f0647eda7b86bd1"
+    },
+    "guest/latest-report.json": {
+      "bytes": 204834,
+      "sha256": "b12ba1ecbf6be7816faf406e6c33869b75ac315851ca7a7862a810b72112ecd9"
+    },
+    "guest/client-evidence/character-reopen-before-snapshot.json": {
+      "bytes": 8682,
+      "sha256": "22efe52628ca1251ac8a4a51a017307c26a229d8b11dfb0cbca8f80d7d04c332"
+    },
+    "guest/client-evidence/character-saved-snapshot.json": {
+      "bytes": 8682,
+      "sha256": "ccd56c9333de957d177e3ed897a78f6d25b369abae18ee029a381801bfc2940a"
+    },
+    "guest/client-evidence/character-server-logs.zip": {
+      "bytes": 8723,
+      "sha256": "43631f6791775cb40d36e7bf49c84652d1e6d25369474d2eef350a8c356bd65c"
+    }
+  },
+  "automated_scope_limits": {
+    "gameplay_validated": false,
+    "game_rendering_validated": false,
+    "hardware_acceleration_validated": false,
+    "controller_input_validated": false,
+    "input_effect_verified": false
+  },
+  "remaining_gates": {
+    "new_outdoor_saved_position_reopened": false,
+    "startup_and_readiness_latency_resolved": false,
+    "full_collision_geometry_verified": false,
+    "complete_materials_verified": false,
+    "minimap_usable": false,
+    "generated_beacon_inputs_available": false,
+    "native_beacon_graph_load_verified": false,
+    "npc_pathing_powers_combat_verified": false
+  },
+  "next_milestone": {
+    "startup_and_readiness": "Use this archived timeline to target expensive private data preparation, Atlas/client loading and ground-observer latency; preserve current profile/cache/SQL and native/save gates.",
+    "genuine_navigation": "Qualify authentic bounded one-map graph generation/provenance, complete v8 graph structure, matching loaded-world CRC/date sidecar and native graph loading before NPC pathing/powers/combat. Existing preflight remains no_input.",
+    "outdoor_saved_position": "Assess the new committed exterior coordinate on a later necessary reopen; do not repeat a long accepted native/physical gate solely for this evidence checkpoint.",
+    "package": "Retain installed 0.11.3; no APK change or publication for evidence review."
+  },
+  "preserve": {
+    "main": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "branch": "codex/character-persistence-continuation",
+    "pr": 1,
+    "pr_draft": true,
+    "existing_character_data_imports_cache_wine_profile_and_signer": true
+  }
+}

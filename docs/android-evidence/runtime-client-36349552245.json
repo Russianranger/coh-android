@@ -1,0 +1,536 @@
+{
+  "format": 1,
+  "status": "passed",
+  "started_utc": "2026-09-27T20:57:20.548502+00:00",
+  "stages": [
+    {
+      "stage": "assets_and_architecture",
+      "started_utc": "2026-09-27T20:57:20.658991+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:57:20.669007+00:00",
+      "machine": "aarch64",
+      "guest_uid": 1000,
+      "postgres_native_arm64": true
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "started_utc": "2026-09-27T20:57:20.669199+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:57:22.839595+00:00",
+      "cluster_reused": false
+    },
+    {
+      "stage": "postgres_first_start",
+      "started_utc": "2026-09-27T20:57:22.839787+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:57:23.054282+00:00",
+      "loopback": "127.0.0.1",
+      "port": 56533,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "started_utc": "2026-09-27T20:57:23.054490+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:57:23.861096+00:00",
+      "database": "coh_test_3566d23f987d7a0c",
+      "role": "cohtest",
+      "migration_version": 2,
+      "reapplied": true
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "started_utc": "2026-09-27T20:57:23.861314+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:58:49.232770+00:00",
+      "prefix_owned": true,
+      "architecture": "win64 with PE32 WoW64/FEX",
+      "x_tcp": false,
+      "rfb_tcp": false,
+      "installer": {
+        "path": "C:\\windows\\syswow64\\msiexec.exe",
+        "pointer_bits": 32,
+        "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+      }
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "started_utc": "2026-09-27T20:58:49.232996+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:58:57.525858+00:00",
+      "driver_name": "PostgreSQL Unicode",
+      "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+      "pointer_bits": 32,
+      "registry_view": 32,
+      "driver_dll_loaded": true
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-09-27T20:58:57.526080+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:05.870988+00:00",
+      "pointer_bits": 32,
+      "dll_export_verified": true,
+      "odbc_manager_loaded": true
+    },
+    {
+      "stage": "win32_client_capabilities",
+      "started_utc": "2026-09-27T20:59:05.871208+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:16.824573+00:00",
+      "client_probe": {
+        "format": 1,
+        "status": "passed",
+        "failure_stage": "",
+        "pointer_bits": 32,
+        "win32_error": 0,
+        "scope": "headless_wgl_client_capabilities",
+        "gl": {
+          "vendor": "Mesa/X.org",
+          "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+          "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+          "renderer_class": "software",
+          "arb_vertex_program": true,
+          "arb_fragment_program": true,
+          "arb_shader_objects": true,
+          "framebuffer_extension": true,
+          "wgl_pbuffer_entrypoint": true,
+          "wgl_pixel_format_entrypoint": true,
+          "pbuffer_exercised": false
+        },
+        "render": {
+          "textured_quad_verified": true,
+          "samples_verified": 4,
+          "swap_buffers": true,
+          "rgb_samples": [
+            [
+              255,
+              0,
+              0
+            ],
+            [
+              0,
+              255,
+              0
+            ],
+            [
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255
+            ]
+          ]
+        },
+        "input": {
+          "scope": "synthetic_own_window_and_device_creation_only",
+          "window_messages_verified": true,
+          "keyboard_message_mask": 3,
+          "mouse_message_mask": 7,
+          "directinput_devices_created": true,
+          "directinput_hresult": 0,
+          "physical_input_validated": false
+        },
+        "audio": {
+          "scope": "device_enumeration_only",
+          "enumeration_hresult": 0,
+          "devices": 0,
+          "default_reported": false,
+          "playback_validated": false
+        },
+        "cg_shaders_validated": false,
+        "game_rendering_validated": false,
+        "android_surface_validated": false,
+        "hardware_acceleration_validated": false
+      }
+    },
+    {
+      "stage": "odbc_fixture",
+      "started_utc": "2026-09-27T20:59:16.824793+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:28.995848+00:00",
+      "driver_version": "18.00.0004",
+      "pointer_bits": 32,
+      "sqlwchar_bytes": 2,
+      "checks": [
+        "PASS all 65 stock DbServer ODBC connections coexist",
+        "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+        "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+        "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+        "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL",
+        "PASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea",
+        "PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys",
+        "PASS column migration and connection reopen"
+      ]
+    },
+    {
+      "stage": "postgres_clean_restart",
+      "started_utc": "2026-09-27T20:59:28.996111+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:29.253765+00:00",
+      "same_cluster": true,
+      "graceful": true
+    },
+    {
+      "stage": "postgres_restart_ready",
+      "started_utc": "2026-09-27T20:59:29.253978+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:29.468477+00:00",
+      "loopback": "127.0.0.1",
+      "port": 56533,
+      "durability_verified": true,
+      "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+    },
+    {
+      "stage": "odbc_after_restart",
+      "started_utc": "2026-09-27T20:59:29.468685+00:00",
+      "status": "passed",
+      "finished_utc": "2026-09-27T20:59:37.816132+00:00",
+      "driver_version": "18.00.0004",
+      "pointer_bits": 32,
+      "sqlwchar_bytes": 2,
+      "checks": [
+        "PASS persisted fixture after reconnect/restart/restore"
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "label": "initdb",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 2.015,
+      "output": "The files belonging to this database system will be owned by user \"coh\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are enabled.\n\ncreating directory /state/diagnostic/init-pending-220c763aa779455f ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default \"max_connections\" ... 100\nselecting default \"shared_buffers\" ... 128MB\nselecting default time zone ... UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /opt/coh/pgsql/bin/pg_ctl -D /state/diagnostic/init-pending-220c763aa779455f -l logfile start\n\n"
+    },
+    {
+      "label": "existing-cluster-status",
+      "exit_code": 3,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "pg_ctl: no server running\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "127.0.0.1|56533|/state/diagnostic/pgdata|on|on|on\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "0\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "0\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "CREATE ROLE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "1\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.255,
+      "output": "CREATE DATABASE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "REVOKE\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "ALTER DATABASE\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "REVOKE\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "BEGIN\nCREATE SCHEMA\nCREATE SCHEMA\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 1\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 1\nCOMMIT\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "BEGIN\nNOTICE:  schema \"dbo\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  schema \"coh_meta\" already exists, skipping\nCREATE SCHEMA\nNOTICE:  relation \"schema_version\" already exists, skipping\nCREATE TABLE\nCREATE FUNCTION\nCREATE FUNCTION\nREVOKE\nREVOKE\nINSERT 0 0\nCREATE FUNCTION\nREVOKE\nCREATE FUNCTION\nREVOKE\nINSERT 0 0\nCOMMIT\n"
+    },
+    {
+      "label": "sql-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "cohtest|2\n"
+    },
+    {
+      "label": "wineboot",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 76.473,
+      "output": ""
+    },
+    {
+      "label": "install-x86-psqlodbc",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.793,
+      "output": ""
+    },
+    {
+      "label": "odbc-driver-preflight",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.29,
+      "output": "COH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 REG name=PostgreSQL Unicode(x86) view=32 key_error=0 driver_error=0 type=1 path=C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 NAME PostgreSQL Unicode\r\nCOH_ODBC_DRIVER_V1 DLL C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll\r\nCOH_ODBC_DRIVER_V1 PASS bits=32\r\n"
+    },
+    {
+      "label": "runtime-probe",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.344,
+      "output": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified\r\n"
+    },
+    {
+      "label": "client-probe",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 10.953,
+      "output": "ALSA lib confmisc.c:855:(parse_card) cannot find card '0'\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory\nALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory\nALSA lib confmisc.c:1334:(snd_func_refer) error evaluating name\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory\nALSA lib conf.c:5703:(snd_config_expand) Evaluate error: No such file or directory\nALSA lib pcm.c:2666:(snd_pcm_open_noupdate) Unknown PCM default\nALSA lib confmisc.c:855:(parse_card) cannot find card '0'\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory\nALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory\nALSA lib confmisc.c:1334:(snd_func_refer) error evaluating name\nALSA lib conf.c:5180:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory\nALSA lib conf.c:5703:(snd_config_expand) Evaluate error: No such file or directory\nALSA lib pcm.c:2666:(snd_pcm_open_noupdate) Unknown PCM default\nCOH_CLIENT_PROBE_V1 {\"format\":1,\"status\":\"passed\",\"failure_stage\":\"\",\"pointer_bits\":32,\"win32_error\":0,\"scope\":\"headless_wgl_client_capabilities\",\"gl\":{\"vendor\":\"Mesa/X.org\",\"renderer\":\"llvmpipe (LLVM 15.0.6, 128 bits)\",\"version\":\"4.3 (Compatibility Profile) Mesa 22.3.6\",\"renderer_class\":\"software\",\"arb_vertex_program\":true,\"arb_fragment_program\":true,\"arb_shader_objects\":true,\"framebuffer_extension\":true,\"wgl_pbuffer_entrypoint\":true,\"wgl_pixel_format_entrypoint\":true,\"pbuffer_exercised\":false},\"render\":{\"textured_quad_verified\":true,\"samples_verified\":4,\"swap_buffers\":true,\"rgb_samples\":[[255,0,0],[0,255,0],[0,0,255],[255,255,255]]},\"input\":{\"scope\":\"synthetic_own_window_and_device_creation_only\",\"window_messages_verified\":true,\"keyboard_message_mask\":3,\"mouse_message_mask\":7,\"directinput_devices_created\":true,\"directinput_hresult\":0,\"physical_input_validated\":false},\"audio\":{\"scope\":\"device_enumeration_only\",\"enumeration_hresult\":0,\"devices\":0,\"default_reported\":false,\"playback_validated\":false},\"cg_shaders_validated\":false,\"game_rendering_validated\":false,\"android_surface_validated\":false,\"hardware_acceleration_validated\":false}\r\n"
+    },
+    {
+      "label": "odbc-fixture",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 12.17,
+      "output": "CALL:238\r\nCALL:239\r\nCALL:57\r\nCALL:58\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:247\r\npsqlODBC 18.00.0004; pointer bits 32; SQLWCHAR bytes 2\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:70\r\nCALL:71\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nCALL:75\r\nCALL:76\r\nPASS all 65 stock DbServer ODBC connections coexist\r\nCALL:38\r\nCALL:46\r\nCALL:43\r\nCALL:43\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:83\r\nCALL:84\r\nCALL:85\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:83\r\nCALL:84\r\nCALL:85\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:83\r\nCALL:84\r\nCALL:85\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:275\r\nCALL:38\r\nCALL:83\r\nCALL:84\r\nCALL:85\r\nCALL:43\r\nCALL:40\r\nCALL:277\r\nCALL:278\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS ID ordering, deleted highest ID, rollback and bulk-import startup state\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:43\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:125\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection\r\nCALL:38\r\nCALL:168\r\nCALL:169\r\nCALL:170\r\nCALL:171\r\nCALL:172\r\nCALL:173\r\nCALL:174\r\nCALL:175\r\nCALL:40\r\nCALL:38\r\nCALL:178\r\nCALL:179\r\nCALL:181\r\nCALL:182\r\nCALL:183\r\nCALL:184\r\nCALL:185\r\nCALL:186\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:188\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL\r\nCALL:38\r\nCALL:140\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:145\r\nCALL:146\r\nCALL:147\r\nCALL:148\r\nCALL:40\r\nPASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea\r\nCALL:38\r\nCALL:46\r\nCALL:43\r\nCALL:43\r\nCALL:43\r\nCALL:43\r\nCALL:43\r\nCALL:43\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:201\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:201\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:201\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys\r\nCALL:38\r\nCALL:46\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:63\r\nCALL:64\r\nCALL:57\r\nCALL:58\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS column migration and connection reopen\r\nCALL:63\r\nCALL:64\r\n"
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.256,
+      "output": "waiting for server to shut down.... done\nserver stopped\n"
+    },
+    {
+      "label": "postgres_first_start",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 126.414,
+      "output": "2026-09-27 20:57:22.923 UTC [5935] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-27 20:57:22.924 UTC [5935] LOG:  listening on IPv4 address \"127.0.0.1\", port 56533\n2026-09-27 20:57:22.926 UTC [5935] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.56533\"\n2026-09-27 20:57:22.932 UTC [5943] LOG:  database system was shut down at 2026-09-27 20:57:22 UTC\n2026-09-27 20:57:22.942 UTC [5935] LOG:  database system is ready to accept connections\n2026-09-27 20:59:24.545 UTC [6511] ERROR:  insert or update on table \"pgchild\" violates foreign key constraint \"fk_pgchild_containerid_pgprobe\"\n2026-09-27 20:59:24.545 UTC [6511] DETAIL:  Key (containerid)=(999) is not present in table \"pgprobe\".\n2026-09-27 20:59:24.545 UTC [6511] STATEMENT:  INSERT INTO dbo.PgChild VALUES(999,0);\n2026-09-27 20:59:24.674 UTC [6511] ERROR:  insert or update on table \"pgrebuildchild\" violates foreign key constraint \"pgrebuildchild_containerid_fkey\"\n2026-09-27 20:59:24.674 UTC [6511] DETAIL:  Key (containerid)=(41) is not present in table \"pgrebuild\".\n2026-09-27 20:59:24.674 UTC [6511] STATEMENT:  INSERT INTO dbo.PgRebuildChild VALUES(41,0);\n2026-09-27 20:59:24.685 UTC [6511] ERROR:  value too long for type character varying(1)\n2026-09-27 20:59:24.685 UTC [6511] CONTEXT:  SQL statement \"INSERT INTO dbo.coh_rebuild_94546c6c568fd629ae0799b223921ca9 (ContainerId,Active,Name,Score) SELECT ContainerId,Active,Name,Score FROM dbo.pgrebuild\"\n\tPL/pgSQL function dbo.coh_rebuild_table(regclass,text,text,boolean) line 43 at EXECUTE\n2026-09-27 20:59:24.685 UTC [6511] STATEMENT:  SELECT dbo.coh_rebuild_table('dbo.PgRebuild','ContainerId SERIAL PRIMARY KEY,Active integer,Name varchar(1),Score integer','ContainerId,Active,Name,Score',true);\n2026-09-27 20:59:24.701 UTC [6511] ERROR:  cannot drop table dbo.pgrebuild because other objects depend on it\n2026-09-27 20:59:24.701 UTC [6511] DETAIL:  view coh_meta.rebuild_view depends on table dbo.pgrebuild\n2026-09-27 20:59:24.701 UTC [6511] HINT:  Use DROP ... CASCADE to drop the dependent objects too.\n2026-09-27 20:59:24.701 UTC [6511] CONTEXT:  SQL statement \"DROP TABLE dbo.pgrebuild\"\n\tPL/pgSQL function dbo.coh_rebuild_table(regclass,text,text,boolean) line 48 at EXECUTE\n2026-09-27 20:59:24.701 UTC [6511] STATEMENT:  SELECT dbo.coh_rebuild_table('dbo.PgRebuild','ContainerId SERIAL PRIMARY KEY,Active integer,Name varchar(64),Score integer','ContainerId,Active,Name,Score',true);\n2026-09-27 20:59:29.002 UTC [5935] LOG:  received fast shutdown request\n2026-09-27 20:59:29.004 UTC [5935] LOG:  aborting any active transactions\n2026-09-27 20:59:29.005 UTC [5935] LOG:  background worker \"logical replication launcher\" (PID 5946) exited with exit code 1\n2026-09-27 20:59:29.005 UTC [5941] LOG:  shutting down\n2026-09-27 20:59:29.006 UTC [5941] LOG:  checkpoint starting: shutdown immediate\n2026-09-27 20:59:29.107 UTC [5941] LOG:  checkpoint complete: wrote 996 buffers (24.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.077 s, sync=0.020 s, total=0.102 s; sync files=354, longest=0.001 s, average=0.001 s; distance=4625 kB, estimate=4625 kB; lsn=0/1B73B70, redo lsn=0/1B73B70\n2026-09-27 20:59:29.116 UTC [5935] LOG:  database system is shut down\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": "127.0.0.1|56533|/state/diagnostic/pgdata|on|on|on\n"
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.055,
+      "output": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n"
+    },
+    {
+      "label": "odbc-verify",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.347,
+      "output": "CALL:238\r\nCALL:239\r\nCALL:57\r\nCALL:58\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:247\r\npsqlODBC 18.00.0004; pointer bits 32; SQLWCHAR bytes 2\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nCALL:38\r\nCALL:51\r\nCALL:52\r\nCALL:53\r\nCALL:40\r\nPASS persisted fixture after reconnect/restart/restore\r\nCALL:63\r\nCALL:64\r\n"
+    },
+    {
+      "label": "owned-wine-stop",
+      "exit_code": 1,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": ""
+    },
+    {
+      "label": "owned-wine-wait",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.054,
+      "output": ""
+    },
+    {
+      "label": "sql-admin",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.155,
+      "output": "DROP DATABASE\n"
+    },
+    {
+      "label": "postgres-graceful-stop",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 0.155,
+      "output": "waiting for server to shut down.... done\nserver stopped\n"
+    },
+    {
+      "label": "postgres_restart_ready",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.983,
+      "output": "2026-09-27 20:59:29.337 UTC [6591] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-27 20:59:29.337 UTC [6591] LOG:  listening on IPv4 address \"127.0.0.1\", port 56533\n2026-09-27 20:59:29.339 UTC [6591] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.56533\"\n2026-09-27 20:59:29.346 UTC [6599] LOG:  database system was shut down at 2026-09-27 20:59:29 UTC\n2026-09-27 20:59:29.356 UTC [6591] LOG:  database system is ready to accept connections\n2026-09-27 20:59:37.944 UTC [6597] LOG:  checkpoint starting: immediate force wait\n2026-09-27 20:59:37.951 UTC [6597] LOG:  checkpoint complete: wrote 4 buffers (0.1%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.007 s; sync files=6, longest=0.001 s, average=0.001 s; distance=12 kB, estimate=12 kB; lsn=0/1B76C40, redo lsn=0/1B76BE8\n2026-09-27 20:59:38.087 UTC [6591] LOG:  received fast shutdown request\n2026-09-27 20:59:38.088 UTC [6591] LOG:  aborting any active transactions\n2026-09-27 20:59:38.089 UTC [6591] LOG:  background worker \"logical replication launcher\" (PID 6602) exited with exit code 1\n2026-09-27 20:59:38.089 UTC [6597] LOG:  shutting down\n2026-09-27 20:59:38.090 UTC [6597] LOG:  checkpoint starting: shutdown immediate\n2026-09-27 20:59:38.094 UTC [6597] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.006 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=10 kB; lsn=0/1B76D68, redo lsn=0/1B76D68\n2026-09-27 20:59:38.101 UTC [6591] LOG:  database system is shut down\n"
+    },
+    {
+      "label": "private-headless-x",
+      "exit_code": 0,
+      "forced_stop": true,
+      "elapsed_seconds": 134.383,
+      "output": "_XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https://www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nSun Sep 27 20:57:23 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on\n              /state/diagnostic/runtime/vnc.sock (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n\nSun Sep 27 20:59:38 2026\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"
+    }
+  ],
+  "failures": [],
+  "scope": "Native ARM64 PostgreSQL, Wine/FEX PE32 DLL and ODBC fixtures with clean restart; headless WGL rendering and synthetic input fixture",
+  "passed": true,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "execution_platform_requested": "host",
+  "diagnostic_mode": "database_and_client",
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "odbc_probe.exe": "c3874d3f428c3a7b52038f8b4367f5bc1932a6bf9a048ff50cb29d61cc6085f4",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-probe.exe": "74a3b880ebe0fb47a31428da2d4d93490436125a530394157216479faf201878",
+    "probe.dll": "49d82aeca0752595083564c9ff31116c2ba019dae553d62019366ff1ee699c22",
+    "client-probe.exe": "2a694b8285c37ead348cd64f3939b9e8cc7e55782ca2f48adaa35bfe0130aa91"
+  },
+  "postgres_port": 56533,
+  "odbc_installer": {
+    "path": "C:\\windows\\syswow64\\msiexec.exe",
+    "pointer_bits": 32,
+    "sha256": "d4ed3551f449cfb68e609e1572b519b5eecd3bf0519bf16877ea02bd4fb01ed0"
+  },
+  "odbc_driver": {
+    "driver_name": "PostgreSQL Unicode",
+    "driver_path": "C:\\Program Files (x86)\\psqlODBC\\1800\\bin\\podbc35w.dll",
+    "pointer_bits": 32,
+    "registry_view": 32,
+    "driver_dll_loaded": true
+  },
+  "client_probe": {
+    "format": 1,
+    "status": "passed",
+    "failure_stage": "",
+    "pointer_bits": 32,
+    "win32_error": 0,
+    "scope": "headless_wgl_client_capabilities",
+    "gl": {
+      "vendor": "Mesa/X.org",
+      "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer_class": "software",
+      "arb_vertex_program": true,
+      "arb_fragment_program": true,
+      "arb_shader_objects": true,
+      "framebuffer_extension": true,
+      "wgl_pbuffer_entrypoint": true,
+      "wgl_pixel_format_entrypoint": true,
+      "pbuffer_exercised": false
+    },
+    "render": {
+      "textured_quad_verified": true,
+      "samples_verified": 4,
+      "swap_buffers": true,
+      "rgb_samples": [
+        [
+          255,
+          0,
+          0
+        ],
+        [
+          0,
+          255,
+          0
+        ],
+        [
+          0,
+          0,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "input": {
+      "scope": "synthetic_own_window_and_device_creation_only",
+      "window_messages_verified": true,
+      "keyboard_message_mask": 3,
+      "mouse_message_mask": 7,
+      "directinput_devices_created": true,
+      "directinput_hresult": 0,
+      "physical_input_validated": false
+    },
+    "audio": {
+      "scope": "device_enumeration_only",
+      "enumeration_hresult": 0,
+      "devices": 0,
+      "default_reported": false,
+      "playback_validated": false
+    },
+    "cg_shaders_validated": false,
+    "game_rendering_validated": false,
+    "android_surface_validated": false,
+    "hardware_acceleration_validated": false
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 1,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "finished_utc": "2026-09-27T20:59:38.245512+00:00",
+  "cleanup_complete": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  }
+}

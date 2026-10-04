@@ -1,0 +1,39 @@
+COH Atlas Gameplay 0.12.0 — stationary contact interaction
+
+Install over the existing app. Keep your app data, imports and THORHERO.
+Refresh runtime once after updating, then Reopen saved THORHERO and log in with
+COHLOCAL / offline. The accepted client performance changes remain included.
+
+Return to safe ground is now OPTIONAL. Movement and Save become available after
+the existing character connects and three fresh Android views are captured.
+Use the recovery button only if you are stuck; its normal /stuck verification
+still runs when requested. Follow the movement and Save countdowns.
+
+New checkpoint:
+1. Dismiss help. Approach Ms. Liberty beside the Atlas statue. If you start
+   inside City Hall, City Representative is an available shorter alternative.
+2. Stand close, point the cursor directly at the NPC and press A/left-click,
+   or tap the NPC. F is Follow in this client; there is no new Interact binding.
+3. When the dialog is visible, tap Capture contact dialog. Keep it open until
+   Contact view captured. Up to three batches can be captured if a retry or
+   another dialog view is useful. Each batch retains three fresh Android views.
+4. Read a normal information response if available, then choose Goodbye or
+   close normally with B/Esc. Do not accept tasks, train, or alter your powers
+   during this focused contact test.
+5. Release controls and stand still for 60 seconds. Tap Save character / log out
+   before its countdown expires; stay still during logout. After Saved character
+   verified, tap Finish and export the ZIP. Report which NPC you approached,
+   whether the dialog/text/response appeared and whether closing it worked.
+
+The capture button records views; it does not claim that a dialog opened.
+Native contact-initiation/response logs are collected once at export when
+available. Their contact handles are runtime identifiers, not character IDs.
+The report still verifies ordinary logout, committed SQL position, identity,
+powers, costume and cleanup. Normal play does not claim safe-ground proof.
+
+No long camera/jump or ground-recovery retest is required. Existing Game and
+MapServer binaries, renderer, imported world/avatar data and prepared caches
+are retained. Generated beacon graphs, NPC pathing and combat remain pending.
+Server startup optimization is deferred; the target is five minutes or less
+from session start to Atlas server readiness. No startup reduction is claimed
+for this update. GPU acceleration remains deferred.

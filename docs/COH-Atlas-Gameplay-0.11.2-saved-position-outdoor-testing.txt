@@ -1,0 +1,42 @@
+COH Atlas Gameplay 0.11.2 — reopen the movement-saved position and inspect outdoors
+
+The prior Thor run passed movement, camera, jump, usable City Hall interior
+rendering, normal save and cleanup. THORHERO's committed Atlas position is
+(133.92833, -768, -594.64825). This test checks that position survives reopening
+and extends observation to sustained movement, nearby collision and outdoors.
+
+Use the already installed 0.11.2 APK. Keep THORHERO, app data, imports, caches,
+database and Wine profile. No reinstall or runtime refresh is needed.
+
+1. Reopen saved THORHERO. Log in as COHLOCAL / offline, select 127.0.0.1 and
+   the existing character. Once gameplay appears, leave every control neutral
+   for 60 seconds BEFORE tapping Return to safe ground. Take a screenshot of
+   the initial location. It should be the same nearby City Hall spot saved in
+   the last run. The full report will retain the initial native coordinates
+   for comparison with saved SQL; Saved character reopened alone does not
+   automatically verify position restoration.
+2. Tap Return to safe ground once and stay neutral until Atlas position
+   verified unlocks movement. If it remains blocked for two minutes, abort,
+   wait for cleanup and export the complete report. If the initial position
+   was wrong, record that even if recovery succeeds.
+3. Spend about 2–3 minutes on a short route in City Hall. Repeatedly walk,
+   stop, turn and jump/land. Check a wall, corners and any accessible stairs:
+   the character should stay on the floor and stop at solid surfaces.
+4. Find the EXIT marker and use the normal door interaction (cursor and A
+   click) to leave City Hall for outdoor Atlas. If a prompt appears, confirm
+   the ordinary exit. Inspect the ground, nearby stairs, statue/buildings
+   and materials. Walk a short nearby loop, stop, jump/land and check local
+   collision. Capture an outdoor screenshot. If the exit cannot be used,
+   report that and finish from a stable interior position.
+5. If the character falls through terrain or materials prevent navigation,
+   stop the test, abort and export after cleanup. Otherwise stop at a safe
+   location, release all controls for 60 seconds, then tap Save character /
+   log out once. Request save within ten minutes of Return to safe ground.
+   Stay neutral through logout. After Saved character verified, tap Finish
+   and save report, then export the complete ZIP.
+
+Return the ZIP, initial/outdoor screenshots and observations: same location
+on reopening, sustained walk/stop, jump/landing, wall/stair collision, City
+Hall exit and outdoor scenery. If the exit or outdoors fails, those remain
+pending even when the normal-save report passes. Map beaconing and native
+NPC/powers/combat follow after this position/collision/outdoor gate.

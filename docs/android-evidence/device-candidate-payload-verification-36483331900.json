@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "scope": "independent_downloaded_android_dbserver_candidate_payload_verification",
+  "run_id": 36483331900,
+  "repository_commit": "f7dbba42ec29a1c054d856d71810146f5b53bac6",
+  "apk_sha256": "cb5cf453af1b81cbaa02917a6d7cb55ab8b8f2a910a46b0a85f4ae399883188b",
+  "apk_bytes": 16668615,
+  "runtime_manifest_sha256": "d68ae4374dadfacd3c5044ccdbfcc04a6d4104af263c3b100168d7ed7d6b7cb9",
+  "accepted_base_runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+  "qualified_package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+  "accepted_schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+  "checks": {
+    "augmented_manifest_and_all_archived_inventories_verified": true,
+    "all_12_base_payload_files_byte_identical_to_accepted_donor": true,
+    "accepted_base_manifest_byte_identical": true,
+    "apk_runtime_file_count": 17,
+    "apk_runtime_files_byte_identical": true,
+    "apk_native_file_count": 2,
+    "apk_native_files_byte_identical": true,
+    "no_unexpected_asset_or_native_members": true,
+    "no_duplicate_zip_members": true,
+    "native_receipt_byte_identical_to_accepted_runtime": true,
+    "native_files_and_corresponding_sources_and_licenses_match_pinned_receipt": true,
+    "preparation_and_build_reports_match_downloaded_bundle": true,
+    "exact_archives_extracted_and_package_schema_revalidated": true
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

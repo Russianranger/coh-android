@@ -1,0 +1,408 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "downloaded_APK_bytes_and_exact_source_receipt_verification",
+  "workflow_run_id": 36638344040,
+  "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "apk": "COH-Atlas-Test-0.4.4.apk",
+  "bytes": 355130247,
+  "sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547",
+  "application_id": "io.github.russianranger.cohatlastest",
+  "version_name": "0.4.4",
+  "version_code": 5,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "abi": "arm64-v8a",
+  "build_receipt": {
+    "bytes": 24992,
+    "sha256": "39f4e75aa947d5519e42d176d756c317adae21ed18ea03fcdeb155b6bb7535ea"
+  },
+  "builder_source": {
+    "bytes": 20860,
+    "sha256": "687958152cd5c2c378fad3ea34a2df02ee5a23302ca990da3206e2fed1adbf9c"
+  },
+  "artifact_id": 11065273626,
+  "artifact_download_verification": {
+    "bytes": 1175,
+    "sha256": "8852c230d7eace170ea83bd6323870cc7ce8604425d36ddf850630a7fcd65d66"
+  },
+  "artifact_archive_sha256": "d59877ae9778be95c42adeab6ca7972827aae804332e2af3ae6ed19192abbfa6",
+  "source_manifest": {
+    "bytes": 1685,
+    "sha256": "f47bb9d6d44fd9b49401d083ff6332dad42e2cab881f6c38a2c71140e1e26258"
+  },
+  "compiled_manifest": {
+    "package": "io.github.russianranger.cohatlastest",
+    "version_name": "0.4.4",
+    "version_code": 5,
+    "min_sdk": 26,
+    "target_sdk": 35,
+    "permissions": [
+      "android.permission.FOREGROUND_SERVICE",
+      "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
+      "android.permission.INTERNET",
+      "android.permission.POST_NOTIFICATIONS",
+      "android.permission.WAKE_LOCK"
+    ],
+    "bytes": 3912,
+    "sha256": "25e558c08caf26c4e80f471aa8a3d3c3cc31bfe37386081bfaa3436436fcb94f"
+  },
+  "local_compiled_manifest_identity_verified": true,
+  "payload_count": 31,
+  "payloads_verified": true,
+  "payload_pins": {
+    "assets/atlas/atlas-assets-index.tsv": {
+      "bytes": 2379733,
+      "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+    },
+    "assets/atlas/atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+    },
+    "assets/atlas/atlas-text-index.tsv": {
+      "bytes": 21187391,
+      "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+    },
+    "assets/atlas/atlas-text.zip": {
+      "bytes": 312807038,
+      "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+    },
+    "assets/runtime/001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "assets/runtime/GameStackProbe.exe": {
+      "bytes": 121344,
+      "sha256": "e91d231a141c3413684bfea4a3c393b9391f48eee53c68b6b286753e15a28876"
+    },
+    "assets/runtime/THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "assets/runtime/accepted-runtime-manifest.json": {
+      "bytes": 4128,
+      "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+    },
+    "assets/runtime/client-probe.exe": {
+      "bytes": 470392,
+      "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+    },
+    "assets/runtime/dbserver-schema.tar.gz": {
+      "bytes": 1139794,
+      "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+    },
+    "assets/runtime/dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "assets/runtime/diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "assets/runtime/game-data-manifest.json.gz": {
+      "bytes": 8232262,
+      "sha256": "6089bc674e4d4d24354b43239eb37598aa728565006bfc68f8ede6645986a52e"
+    },
+    "assets/runtime/game-package.tar.gz": {
+      "bytes": 10937463,
+      "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+    },
+    "assets/runtime/game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "assets/runtime/game_diagnostic.py": {
+      "bytes": 79536,
+      "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+    },
+    "assets/runtime/game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "assets/runtime/game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "assets/runtime/game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "assets/runtime/odbc_probe.exe": {
+      "bytes": 270071,
+      "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+    },
+    "assets/runtime/postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+    },
+    "assets/runtime/postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "assets/runtime/probe.dll": {
+      "bytes": 82761,
+      "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+    },
+    "assets/runtime/proot-build.json": {
+      "bytes": 3236,
+      "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+    },
+    "assets/runtime/psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "assets/runtime/runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "assets/runtime/runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+    },
+    "assets/runtime/stack-probe-build.json": {
+      "bytes": 577,
+      "sha256": "7e8ea3b34917160222e56cec0012860eec2b1d684907723365222d369a399185"
+    },
+    "assets/runtime/runtime-manifest.json": {
+      "bytes": 12418,
+      "sha256": "2d0cabd598af74f383d7973429a1d9359d5764fdcb8aba348a5e6bc29cdf43aa"
+    },
+    "lib/arm64-v8a/libproot-loader.so": {
+      "bytes": 17624,
+      "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+    },
+    "lib/arm64-v8a/libproot.so": {
+      "bytes": 263648,
+      "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+    }
+  },
+  "java_source_count": 14,
+  "java_source_receipts_match_exact_commit": true,
+  "java_sources": {
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+      "bytes": 1294,
+      "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+      "bytes": 879,
+      "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+      "bytes": 1017,
+      "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+      "bytes": 1208,
+      "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+      "bytes": 14749,
+      "sha256": "198c485d3749b0750472f27b45c44d41fe40dc1f566495d477d7970ba01156fa"
+    },
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+      "bytes": 37139,
+      "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasActivity.java": {
+      "bytes": 14498,
+      "sha256": "5ba67d861603604b7258365a453b19aa7188fcc381d9b6af09b458715217b6a9"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasGameReports.java": {
+      "bytes": 6891,
+      "sha256": "bc51fa7097b0b3bab321ede629a715ab6c6e262a4150692184d576e98b72cd37"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasGameService.java": {
+      "bytes": 29272,
+      "sha256": "cd793b38813770cdd74a79aa557c9bf4e0c41388d948c621b76fc40be87080c2"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohatlastest/AtlasOperationDispatch.java": {
+      "bytes": 962,
+      "sha256": "0f061f989da207429207cea9cc532dd57d14c09772a3daab7945e5efd73b0601"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameAcceptance.java": {
+      "bytes": 20028,
+      "sha256": "871a2bbba6dfe497126a4405d9e90370b405c8b9b5d36c48311bd8333458643b"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameCapturePolicy.java": {
+      "bytes": 1382,
+      "sha256": "da5740fb2b456156cbeea080c75893a097215872af38b214c63699f0b03baeed"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasGameRuntime.java": {
+      "bytes": 38469,
+      "sha256": "c70b840b9cb557f706392c88d22447210ed926e059f5f7b72e830312ed1f577c"
+    },
+    "android/atlasgame/src/main/java/io/github/russianranger/cohdiagnostic/AtlasMapProgressAcceptance.java": {
+      "bytes": 12320,
+      "sha256": "82a14a9c4d4d887a63d652e2789d0ee19d3e2980f8b78c7bce1117e17fda7956"
+    }
+  },
+  "java_source_scope": "Repository source receipts; generated R.java is excluded; no local DEX/source equivalence claim",
+  "packaged_guest_sources_match_exact_commit": true,
+  "guest_sources": {
+    "game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "game_diagnostic.py": {
+      "bytes": 79536,
+      "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+    },
+    "game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    }
+  },
+  "runtime_manifest_sha256": "2d0cabd598af74f383d7973429a1d9359d5764fdcb8aba348a5e6bc29cdf43aa",
+  "import_contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+  "hosted_signature_receipt_verified": true,
+  "hosted_badging_receipt_verified": true,
+  "signer_certificate_sha256": "eb80c0129ff7891179043fb264633dfcfbf525d0b8bbf2546e3d76d173085133",
+  "local_signature_verified": true,
+  "apk_signature": {
+    "scheme": "APK Signature Scheme v2",
+    "verified": true,
+    "signer_certificate_sha256": "eb80c0129ff7891179043fb264633dfcfbf525d0b8bbf2546e3d76d173085133",
+    "signature_algorithms": [
+      "0x103"
+    ],
+    "signed_content_digest_verified": true
+  },
+  "signature_verification_scope": "Locally verified APK v2 signer signature and complete content digest; signer matches hosted receipt; no re-signing or recompilation",
+  "mapserver_progress_profile": "dispatch_progress_v1",
+  "mapserver_progress_producer": {
+    "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+    "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+    "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+  },
+  "qualified_donor_run_id": 36630872719,
+  "qualified_donor_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "qualified_donor_acceptance_record": {
+    "bytes": 12954,
+    "sha256": "a0eea28f0c6c5c116b254251a0d0448d1ade50631192d749ee1964cf48fa319e"
+  },
+  "producer_source_and_patch_receipts_match_donor_commit": true,
+  "game_package_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+  "nested_game_package_file_count": 25,
+  "nested_game_package_files": {
+    "cudart32_30_9.dll": {
+      "bytes": 290408,
+      "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+    },
+    "concrt140.dll": {
+      "bytes": 314816,
+      "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+    },
+    "msvcp140_atomic_wait.dll": {
+      "bytes": 57272,
+      "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+    },
+    "CrashRpt.dll": {
+      "bytes": 39424,
+      "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+    },
+    "msvcp140_2.dll": {
+      "bytes": 261056,
+      "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+    },
+    "PhysXCooking.dll": {
+      "bytes": 383840,
+      "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+    },
+    "NxCooking.dll": {
+      "bytes": 749568,
+      "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+    },
+    "cgGL.dll": {
+      "bytes": 350824,
+      "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+    },
+    "vcruntime140_threads.dll": {
+      "bytes": 36280,
+      "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+    },
+    "PhysXLoader.dll": {
+      "bytes": 64352,
+      "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+    },
+    "PhysXCore.dll": {
+      "bytes": 3567456,
+      "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+    },
+    "vccorlib140.dll": {
+      "bytes": 287160,
+      "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+    },
+    "msvcp140.dll": {
+      "bytes": 618944,
+      "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+    },
+    "msvcp140_1.dll": {
+      "bytes": 33728,
+      "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+    },
+    "physxcudart_20.dll": {
+      "bytes": 197912,
+      "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+    },
+    "PhysXDevice.dll": {
+      "bytes": 65536,
+      "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+    },
+    "NxCharacter.dll": {
+      "bytes": 107872,
+      "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+    },
+    "vcruntime140.dll": {
+      "bytes": 123328,
+      "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+    },
+    "msvcp140_codecvt_ids.dll": {
+      "bytes": 30648,
+      "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+    },
+    "cg.dll": {
+      "bytes": 5667432,
+      "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+    },
+    "MapServer.exe": {
+      "bytes": 6914048,
+      "sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+    },
+    "TestClientCreate.exe": {
+      "bytes": 3143680,
+      "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+    },
+    "DbServer.exe": {
+      "bytes": 1661440,
+      "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+    },
+    "TestClientResume.exe": {
+      "bytes": 3146240,
+      "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+    },
+    "TestClientBridge.exe": {
+      "bytes": 145920,
+      "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+    },
+    "game-package.json": {
+      "bytes": 181680,
+      "sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd"
+    }
+  },
+  "unchanged_supporting_donor_run_id": 36510836956,
+  "readiness_or_runtime_acceptance_assessed": false,
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

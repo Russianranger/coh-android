@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact_APK_import_and_isolated_ARM64_device_adapter",
+  "candidate_repository_commit": "6b50467a1b96133acc92a378617ff961733f288c",
+  "apk": {
+    "bytes": 355105590,
+    "sha256": "781dfb978b07e2d129c1b65b50913cee669df78e24058ee5f780aa4157502734"
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "stages": 18,
+  "full_game_captures_verified": true,
+  "network_namespace_verified": true,
+  "imported_generation_verified": true,
+  "accepted_package_run_id": 36510836956,
+  "elapsed_seconds": 1968.534312
+}

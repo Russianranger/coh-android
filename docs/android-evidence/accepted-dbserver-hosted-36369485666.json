@@ -1,0 +1,193 @@
+{
+  "format": 1,
+  "status": "accepted_hosted_dbserver_fixture_and_normal_schema",
+  "milestone": "First hosted M3 subgate; physical Android game-server execution remains unvalidated",
+  "run_id": 36369485666,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36369485666",
+  "repository_commit": "1a5eea159172a4698441eb8cfed5ea5ca99fcf12",
+  "workflow_conclusion": "success",
+  "workflow_completed_utc": "2026-09-28T02:33:22Z",
+  "jobs": {
+    "tooling": 108762567221,
+    "windows_build_and_persistence": 108762677716,
+    "arm64_runtime": 108763992322
+  },
+  "tooling_tests_passed": 50,
+  "windows": {
+    "status": "passed",
+    "persistence_phases": 14,
+    "check_groups": 21,
+    "server": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "executable_sha256": "767ff3190e8e98faa732398f8237df6ec7a226a11c4fd07152ec0842a5b79c5f"
+  },
+  "arm64": {
+    "status": "passed",
+    "started_utc": "2026-09-28T02:30:11.008213+00:00",
+    "finished_utc": "2026-09-28T02:33:18.887413+00:00",
+    "elapsed_seconds": 187.8792,
+    "stages_passed": 28,
+    "persistence_phases": 14,
+    "persistence_check_groups": 21,
+    "normal_fixture_enabled": false,
+    "normal_exports": 2,
+    "normal_export_bytes": [
+      0,
+      0
+    ],
+    "table_count": 99,
+    "ordered_column_count": 5935,
+    "attribute_rows": 58272,
+    "attribute_counts": {
+      "attributes": 56411,
+      "badgestatsattributes": 1771,
+      "pophelpattributes": 90
+    },
+    "ordered_columns_sha256": "0f35891b50f957d331c2407bdf5145bf36648e415c62445109c0431d9f32e36e",
+    "attribute_sha256": {
+      "attributes": "c28b663f617b653f11b96d392da8921f994b4b6d2979a97144af25ed66a3f47c",
+      "badgestatsattributes": "9ae57d1ae195b56ee73a70aedbd1afa2d94c94608c4ddf9e77b623a2c4ee1d24",
+      "pophelpattributes": "8300d4fc5596906ffa5f16d0e09cf36b0836262526e1dfda2a77e9055a03bb34"
+    },
+    "catalog_sha256": {
+      "columns": "6d8c069e86803fe384d00d0935dc3542fae8690e43def4f20cf49f3ed5aeffcc",
+      "indexes": "e6e01dab4eae2bbde598e4990c22eae75fd08f2269d7ce2b61845ad3f4579580",
+      "constraints": "e8ea61bec2b7f7dac09d50110e8652b1b9e88ebe4894a510c415d4f5cf63b7c0"
+    },
+    "reload_stable": true,
+    "failure_diagnostics": 0,
+    "all_process_input_output_closed": true,
+    "process_records": 111,
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_processes_remaining": 0,
+    "ownership_inspection_failures": 0,
+    "fresh_cluster": true,
+    "wine_initialization": {
+      "policy": "initialize_once_then_reuse",
+      "state": "ready",
+      "ready_prefix_reused": false,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "registration_processes": 3,
+      "wow64_registration_processes": 1,
+      "registration_passes": 1,
+      "elapsed_seconds": 38.74
+    }
+  },
+  "network": {
+    "distinct_namespace": true,
+    "only_interface": "lo",
+    "external_network_disabled": true,
+    "guest_effective_uid": 1001,
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+  },
+  "inputs": {
+    "format": 1,
+    "scope": "host_dbserver_runtime_inputs",
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "2dee0ef37aaaab5666c868393dfdba7bcfd1520b4aa1bffe9d565632cfd9327b",
+    "fixture_executable_sha256": "767ff3190e8e98faa732398f8237df6ec7a226a11c4fd07152ec0842a5b79c5f",
+    "normal_executable_sha256": "b6ce3b447e31daced5d9502a99d80ddb8dd0cd74e6bbdd75456f8a6ba802ef6b",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "repository_commit": "1a5eea159172a4698441eb8cfed5ea5ca99fcf12",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "kernel_hostname": "runnervmoyp6c",
+    "guest_hosts_sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d",
+    "guest_hosts_bytes": 34,
+    "guest_hosts_loopback_aliases": [
+      "localhost",
+      "runnervmoyp6c"
+    ],
+    "guest_hosts_evidence_file": "guest-etc-hosts",
+    "runtime_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "package_commit": "1a5eea159172a4698441eb8cfed5ea5ca99fcf12",
+    "guest_script_sha256": "97b2b69eae182ba2f787f00b9902714fb2efd38eee6855a8c75e5cc74fec54ed",
+    "proot_sha256": "a6ae0af6e1ed808f2d5c9fc0e01198bb1606fbd30e94cab35edcfe0b9084fbbb",
+    "proot_loader_sha256": "c132e52ce325929514b3341aa51aefbcbd3685394350ece03c527f08ee3fb8b5",
+    "schema_acceptance_run_id": 36088012666,
+    "android_execution_validated": false,
+    "gameplay_validated": false
+  },
+  "artifacts": [
+    {
+      "id": 10948812021,
+      "name": "wine-dbserver-windows-evidence",
+      "bytes": 17886,
+      "sha256": "7fb3d503c57bde02b9f04e32b42001c67023de63a8169f926e32498c2f5d7bbb"
+    },
+    {
+      "id": 10948417737,
+      "name": "wine-dbserver-package",
+      "bytes": 2177732,
+      "sha256": "6d80ac2fe0e10d32cb48addc327b377b65796adeb4744cee3d4b5bf9ab37b107"
+    },
+    {
+      "id": 10948413211,
+      "name": "wine-dbserver-arm64-evidence",
+      "bytes": 529943,
+      "sha256": "51ca3080d56d2526f5705ed7164d64e9520ac458b4b353dd8678203c92e15829"
+    }
+  ],
+  "artifact_download_hashes_independently_verified": true,
+  "preserved_files": {
+    "dbserver-arm64-36369485666.json": {
+      "bytes": 168896,
+      "sha256": "223de647ccce804ef6df943b9585e04a059ec60c768ba7176e828770074644ec"
+    },
+    "dbserver-windows-36369485666.json": {
+      "bytes": 5043,
+      "sha256": "2bedda8f10cf87c7f7bf785fcb784310ae3f85ead0787a3ca15643c9e9d5de4a"
+    },
+    "dbserver-package-36369485666.json": {
+      "bytes": 20238,
+      "sha256": "2dee0ef37aaaab5666c868393dfdba7bcfd1520b4aa1bffe9d565632cfd9327b"
+    },
+    "dbserver-host-inputs-36369485666.json": {
+      "bytes": 1538,
+      "sha256": "29feb9bcca71b52e8ce0c1e81d79180f7cc064caca0dc987fe183a3ca7a5c5b1"
+    },
+    "dbserver-network-36369485666.json": {
+      "bytes": 424,
+      "sha256": "3a0f258e8d693438ad4ae307397b608da46dd01f5b8a95f0d06d07f0d1c578ee"
+    },
+    "dbserver-proot-36369485666.json": {
+      "bytes": 3048,
+      "sha256": "78531c525afe460b9a2660a472755817163653fe5f2f2454ee2e5624a5d7fedf"
+    },
+    "dbserver-hosts-36369485666.txt": {
+      "bytes": 34,
+      "sha256": "38e45940550b7051a34fb54b7c432069a08844f7c65f42c6bbd66aff53b5582d"
+    }
+  },
+  "preservation": "Listed files copied byte-for-byte from hash-verified artifacts, including original Windows CRLF. Complete artifact ZIPs remain linked on the run.",
+  "prior_failed_attempts": [
+    "dbserver-packaging-failure-36367594924.json",
+    "dbserver-runtime-failure-36368424997.json"
+  ],
+  "android_execution_validated": false,
+  "android_listener_binding_validated": false,
+  "mapserver_validated": false,
+  "generated_character_persistence_validated": false,
+  "gameplay_validated": false,
+  "next_work": [
+    "Managed Atlas MapServer and diagnostic TestClient execution through the same runtime",
+    "Android listener binding and app-owned lifecycle integration before a device candidate",
+    "Physical Thor Stop/rerun, app reopen, suspend/resume and peak memory checks with the next candidate"
+  ],
+  "separate_ci_test_helper_correction": {
+    "failed_run_id": 36369485651,
+    "failed_job_id": 108762566921,
+    "affected_test": "DiagnosticProcessTests.test_wineboot_nonzero_exit_is_rejected_and_inherited_child_stopped",
+    "failure": "The test helper read /proc after a process disappeared and did not catch ProcessLookupError (ESRCH).",
+    "fix": "Treat ESRCH from /proc like a missing entry and conservatively retry; only kill(pid,0) ESRCH proves local exit. Permission errors still propagate.",
+    "focused_process_tests_passed": 21,
+    "production_diagnostic_changed": false,
+    "scope": "Test-only fix accompanying acceptance documentation; hosted M3 runtime code remains the tested commit."
+  }
+}

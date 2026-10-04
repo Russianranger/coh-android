@@ -1,0 +1,38 @@
+COH Atlas Gameplay 0.11.5 — native readiness and software-rendering performance
+
+Install as an update, keep app data and imported assets, then tap Refresh runtime
+once. Leave Use performance graphics checked. Reopen the existing THORHERO with
+COHLOCAL / offline.
+
+This candidate adds immediate native ready/position events, a batched texture
+header index, fewer repeated missing-texture diagnostics, and a reversible low
+graphics profile. GPU acceleration is deferred. Software llvmpipe, the 800x600
+display and existing 10 FPS cap remain. Device loading-time and FPS gains have
+not yet been measured; the report records index preparation/use and event delay.
+
+Server reuse is limited to one early client-exit retry within the same operation,
+before the first interactive menu/login. Finish and Stop still shut services
+down. This does not remove every cold Atlas start or handle a later login-menu
+bounce. First-run header-index preparation also costs time; later valid starts
+reuse the index. Invalid indexes fall back to ordinary texture loading.
+
+Keep this comparison short:
+1. Note the time from Reopen to the login menu and from entering the character
+   to usable movement. If initial loading returns to login, wait and reenter the
+   existing character. The native loading deadline remains unchanged.
+2. Dismiss help, tap Return to safe ground once and stand still until Atlas
+   position verified. Briefly check movement outside and note frame pace.
+3. Release all controls and stand still for at least 60 seconds. Tap Save
+   character / log out before its countdown expires, then keep still.
+4. Wait for Saved character verified, tap Finish and save report, then export
+   the ZIP. There is no need to repeat the accepted long camera/jump tests.
+
+The graphics checkbox affects the next launch. Turning it off restores the
+previous saved graphics settings. Graphics changes made in-game while the
+performance profile is active are temporary. No second comparison run is needed
+unless this profile causes a problem.
+
+Do not create/delete THORHERO, reset app data, or force-stop a normal save. The
+same app ID and signer, imported world/avatar assets, saved character identity,
+normal save/ground/deadline guards and capture-proof requirements are retained.
+Complete materials/minimap, beacon generation and NPC/combat remain pending.

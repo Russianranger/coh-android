@@ -1,8 +1,13 @@
 # Matching reference runtime
 
-Updated: 2026-09-25. The exact-pin Windows client/server package now builds in
-this repository. It is a reference for the Android work, not an Android app or
-a gameplay-validated server.
+Updated: 2026-09-27. The exact-pin Windows client/server package builds in this
+repository. Ordinary asset-backed template generation and Atlas Park protocol
+readiness have passed using this package, followed by fresh fake-auth character
+persistence through logout, service restart and a short exact-name scene resume.
+A separately packaged opt-in TestClient has also passed a sustained resumed
+session and an Atlas map 1 → 101 → 1 round trip with final protocol save against
+the same accepted server package. The M2 Thor diagnostic APK is next.
+This is not an Android app or a gameplay-validated server.
 
 ## Build and downloads
 
@@ -80,9 +85,10 @@ has now fully verified both immutable imports and successfully staged the run
 36088012664 package with the restored, verified 16,721 binary assets. The current
 [assembly record](reference-runtime-evidence/assembly-775.json) confirms 173,011
 data files / 2,977,730,517 bytes and 29 verified build-package files. Ordinary
-asset-backed generation has not yet executed. See
-[the next validation steps](NEXT_SERVER_VALIDATION.md) for the prepared asset
-bundle and hosted comparison workflow.
+asset-backed generation and the separate Atlas Park readiness check subsequently
+passed in [run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895).
+See [the current validation steps](NEXT_SERVER_VALIDATION.md) for the accepted
+asset bundle, recovered evidence and character persistence gate.
 
 ## Reference generation
 
@@ -130,8 +136,9 @@ The wrapper requires the exact source/patch receipt, the captured executable
 hash, its completion marker and all freshly written schema outputs. Successful
 output archives contain templates, HTML schemas and newly written dbidmaps;
 incidental parser caches are excluded because this mode deliberately lacks
-gameplay assets. Equality with an asset-complete reference `-templates` run
-must still be tested. Never substitute this executable for the reference runtime.
+gameplay assets. The later ordinary asset-backed `-templates` run reproduced
+all 56 accepted files byte-for-byte for the reviewed inputs; complete asset
+coverage remains unproven. Never substitute this executable for the reference runtime.
 
 The [first engine attempt](schema-generation-evidence/attempt-36070840517.json)
 wrote all 51 required template/attribute/schema files and exited with zero queued
@@ -256,7 +263,132 @@ no acknowledgement and an unchanged prior row. See the
 This diagnostic does not load a map or graphical client and requires no binary
 asset archives. It validates the generic container acknowledgement path; each
 save still has its own transaction, so a multi-container request is not atomic.
-The next gates are comparison with ordinary asset-backed `MapServer -templates`,
-normal MapServer map startup and real character creation/save/logout/reload.
-These results do not establish playable character sessions, map transfers,
-auxiliary services, compatibility with the custom client or Android execution.
+The subsequent template, Atlas Park and fresh-character persistence gates below
+passed. Generic network acknowledgement evidence alone does not establish playable
+character sessions, map transfers, auxiliary services, compatibility with the
+custom client or Android execution.
+
+## Asset-backed templates and Atlas Park readiness
+
+[Run 36176806895](https://github.com/Russianranger/coh-android/actions/runs/36176806895)
+completed successfully on 2026-09-25 at 19:16:38 UTC, using workflow commit
+`fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687` and the same accepted reference/schema
+pair. Ordinary `MapServer -templates` freshly rewrote all **56** expected files
+byte-identically in **25.89 seconds**, with zero output differences and no
+reported failures. The [comparison report](reference-runtime-evidence/reference-template-comparison-36176806895.json)
+and [complete artifact](reference-runtime-evidence/reference-template-comparison-36176806895.zip)
+are preserved.
+
+A separate fresh runtime, without comparison caches, started DbServer and
+Atlas Park against disposable PostgreSQL. Independent map-status queries
+observed the not-started state followed by a registered, ready map with ongoing
+status updates for **62.235 seconds**, exceeding the requested 60 seconds.
+The [map report](postgresql-evidence/one-map-36176806895.json) and
+[complete artifact](postgresql-evidence/postgresql-one-map-36176806895.zip) are
+preserved with [archive hashes and shared build identity](reference-runtime-evidence/accepted-gates-36176806895.json).
+
+These checks establish the reported schema equivalence for the reviewed inputs
+and bounded map readiness. The normal executable does not expose its queued
+startup error count; these template/map checks alone do not establish complete
+assets, character login/persistence or gameplay. Continuation on 2026-09-26
+recovered these completed results from GitHub after the earlier handoff had stopped at an in-progress
+status. Repository activity cannot establish another Codex session's internal state.
+
+## Fresh character persistence and short resume
+
+[Run 36282414135](https://github.com/Russianranger/coh-android/actions/runs/36282414135)
+passed all eight phases with no failures at harness commit
+`86e512e85c8350714bc7b58668bf11443dc164f8`, using this same accepted reference
+package, generated schemas and reviewed assets. Stock TestClient created
+`TEST20636` (ID 1), observed a normal-protocol currency change to 12345 on the
+connected MapServer, then logged out and verified committed SQL state. Selected
+character, power and costume rows survived service restart and exact-name short
+scene resume unchanged. LoginCount remained 1 across restart and advanced to 2
+after resume. Creation fallback was disabled for the resume probe.
+
+The [report](postgresql-evidence/character-persistence-36282414135.json),
+[redacted evidence archive](postgresql-evidence/character-persistence-36282414135.zip)
+and [acceptance/provenance receipt](postgresql-evidence/accepted-character-persistence-36282414135.json)
+preserve the result. The console observers captured creation and resume
+diagnostics. The first finalized after committed logout and before residual-client
+cleanup; the second finalized after the client's natural exit. Both retained final
+snapshots and exited zero without forced stop. The underlying TestClient binary
+and imported snapshots were unchanged.
+
+The stock short resume exits after scene exchange; this run alone does not prove
+a sustained second session or active gameplay. The separate diagnostic-client
+result below extends the session evidence while preserving the stock result's
+scope and package hashes.
+
+## Separate diagnostic client: sustained resume and second save
+
+[Run 36295176484](https://github.com/Russianranger/coh-android/actions/runs/36295176484)
+built and exercised the opt-in `-resumeonly` TestClient at commit
+`4e8058c3ffe20acda61b55023202d409ed1d0df1`. Download its separate
+`resume-testclient-win32` artifact for this diagnostic. The harness stages its
+executable as `TestClientResume.exe` beside the accepted stock TestClient, checks
+its x86 imports against the accepted runtime dependencies and retains both
+identities. The diagnostic executable SHA-256 is
+`b09a82d8aaffac18dc74828753ccee466d71a37f913dddc05934cb84957e6f7e`.
+The stock reference archive, DbServer, MapServer, schema and asset identities
+above are unchanged; this does not replace the reference package or modify the
+immutable source snapshots.
+
+All twelve runtime phases passed with no failures. Fresh stock-client creation
+and protocol save were followed by service restart, explicit missing-name refusal
+with natural exit 3 and unchanged SQL, then exact-name diagnostic resume of
+`TEST-37762` (ID 1). Its received player identity matched and ten connected Atlas
+Park samples covered 66.953 seconds with current heartbeats. Live influence 12345
+survived restart/resume; a normal command changed it to 23456, and a second
+protocol logout committed that value. Identity and selected rows were unchanged
+except for currency, with LoginCount 1 → 1 → 1 → 2. All three console observers
+finalized cleanly, with protocol-save acceptance preceding residual-client cleanup.
+
+The [report](postgresql-evidence/character-session-36295176484.json),
+[redacted archive](postgresql-evidence/character-session-36295176484.zip) and
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-session-36295176484.json)
+are preserved. The [sustained-session design and attempt history](SUSTAINED_SESSION_VALIDATION.md)
+describe the diagnostic's limits.
+
+## Separate diagnostic client: Atlas instance round trip
+
+The [transfer job in run 36297542986](https://github.com/Russianranger/coh-android/actions/runs/36297542986/job/108560197056)
+passed all fifteen runtime phases without failures at commit
+`5f2c561058a186de59d3f27301eea210bd4bb66d`. All five workflow jobs passed,
+including the separate sustained-session regression. This run's
+`resume-testclient-win32` artifact adds transfer epochs and processed destination
+updates; it is separate from the
+earlier sustained-only diagnostic. Its executable SHA-256 is
+`94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856`.
+The stock reference package, DbServer, MapServer, schemas, assets and imported
+source snapshots remain unchanged.
+
+After fresh creation/save, restart, missing-name refusal and 64.953 seconds
+connected, the same `TEST59440` (ID 1) moved from Atlas map 1 to its owned,
+prestarted clone 101 and back. The clone advanced from unstarted to ready on UDP
+7002. Each successful handoff produced a new epoch followed by a processed player
+update with the original ID/name and actual peer. These peers matched independent
+DbServer MapId/SmapId status: 101 at 127.0.0.1:7002, then 1 at :7001. Both arrivals
+were connected without `InMapXfer`, with current heartbeats and live influence
+12345. Received base-map 1 and instance numbers 2/1 were retained as metadata,
+not substituted for the database map IDs.
+
+Independent SQL reads after each leg showed unchanged committed selected state
+and LoginCount 2; they do not establish fresh identical transfer writes or
+transfer-save acknowledgements. The final distinct change to influence 23456 was
+observed live and committed after protocol logout before forced cleanup. The
+same one-character inventory remained, with ten selected power and thirteen
+costume-part rows. All three console observers finalized cleanly. The
+[report](postgresql-evidence/character-transfer-36297542986.json),
+[redacted archive](postgresql-evidence/character-transfer-36297542986.zip),
+[acceptance/provenance receipt](postgresql-evidence/accepted-character-transfer-36297542986.json)
+and [transfer scope](MAP_TRANSFER_VALIDATION.md) preserve the evidence.
+
+The next milestone is the [M2 Thor diagnostic APK](ANDROID_PORT_PROPOSAL.md#stages-and-acceptance-criteria):
+package app-owned ARM64 PostgreSQL and a verified Wine/translation runtime, then
+run the existing Win32 ODBC probe to establish initialization, transactions,
+durable restart and owned-process shutdown. No Android shell or packaged runtime
+exists here yet. New-zone/mission transfers, automatic map startup, combat,
+auxiliary services and graphical/custom-client compatibility remain separate
+unfinished scope and need not delay that diagnostic. No APK, Android execution
+or performance result is claimed.

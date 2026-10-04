@@ -1,0 +1,72 @@
+import importlib.util
+from pathlib import Path
+import unittest
+
+spec = importlib.util.spec_from_file_location('interactive_change_classifier',
+    Path(__file__).with_name('classify_interactive_change.py'))
+change = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(change)
+
+
+class QualificationRoutingTests(unittest.TestCase):
+    def test_setup_wrapper_reuses_runtime_for_its_exact_known_scope(self):
+        names = sorted(change.SETUP_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('android/native/unreviewed-setup.c',
+                'upstream/ouroboros/DBServer/src/dbinit.c', 'android/guest/diagnostic.py',
+                'android/interactive/src/main/AndroidManifest.xml', 'unreviewed.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_setup_dispatch_and_ambiguous_history_request_runtime(self):
+        names = sorted(change.SETUP_ALLOWED)
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+
+    def test_receipt_cleanup_reuses_native_build_and_unknown_changes_remain_closed(self):
+        names = sorted(change.RECEIPT_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            names+['android/native/unreviewed-startup.c']))
+
+    def test_exact_startup_derivative_routes_to_its_native_and_apk_pipeline(self):
+        names = sorted(change.STARTUP_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            names+['upstream/ouroboros/DBServer/src/dbinit.c']))
+
+    def test_only_direct_push_of_bounded_host_or_gameplay_changes_can_route_runtime(self):
+        parent, head = 'a' * 40, 'b' * 40
+        known = sorted(change.SHELL_ONLY)
+        self.assertFalse(change.runtime_required('push', parent, head, parent, known))
+        candidate = sorted(change.SHELL_ONLY | change.RESPONSIVENESS_ONLY)
+        self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
+        for event, before, files in (
+            ('workflow_dispatch', parent, known), ('pull_request', parent, known),
+            ('push', 'c' * 40, known), ('push', '0' * 40, known),
+            ('push', parent, []),
+            ('push', parent, candidate + ['android/native/unreviewed-renderer.c']),
+            ('push', parent, known + ['android/guest/diagnostic.py']),
+            ('push', parent, known + ['assets/reference-inputs-manifest.json']),
+            ('push', parent, known + ['android/interactive/src/main/AndroidManifest.xml']),
+        ):
+            with self.subTest(event=event, before=before, files=files):
+                self.assertTrue(change.runtime_required(event, before, head, parent, files))
+
+
+    def test_task_derivative_routes_to_its_own_workflow_but_unknown_native_edits_do_not(self):
+        paths = ['.github/workflows/android-task-gate.yml',
+            'android/guest/task_gate_evidence.py', 'android/guest/server_animation_package.py',
+            'android/guest/task-gate.json',
+            'tools/android/atlasgame/prepare_server_animations.py',
+            'tools/android/interactive/test_task_gate_integration.py']
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, paths))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            paths+['upstream/ouroboros/MapServer/src/svr/svrinit.c']))

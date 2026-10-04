@@ -1,0 +1,148 @@
+name: Thor optional ground recovery and contact interaction
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - '.github/workflows/android-contact-interaction.yml'
+      - 'tools/android/interactive/build_contact_interaction_apk.py'
+      - 'tools/android/interactive/qualify_contact_interaction.py'
+      - 'tools/android/interactive/test_contact_interaction_package.py'
+      - 'docs/COH-Atlas-Gameplay-0.12.0-testing.txt'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: android-contact-interaction-apk
+  cancel-in-progress: false
+
+jobs:
+  observer:
+    if: >-
+      github.repository == 'Russianranger/coh-android' &&
+      github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-repair-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37063509202
+          github-token: ${{ github.token }}
+      - name: Download the exact public retained-native donor APK
+        run: >-
+          python3 tools/android/interactive/build_contact_interaction_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.6.apk
+      - name: Qualify optional recovery, bounded contact evidence and ordinary save guards
+        run: >-
+          python3 tools/android/interactive/qualify_contact_interaction.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.6.apk
+          --donor-build-report out/donor-evidence/reopen-repair-apk-build-report.json
+          --output out/contact-interaction-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-contact-interaction-observer-evidence
+          path: out/contact-interaction-qualification.json
+          if-no-files-found: error
+
+  apk:
+    needs: observer
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-repair-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37063509202
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-contact-interaction-observer-evidence
+          path: out/qualification
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Download the exact public retained-native donor APK
+        run: >-
+          python3 tools/android/interactive/build_contact_interaction_apk.py download-donor
+          --output out/donor/COH-Atlas-Gameplay-0.11.6.apk
+      - name: Ensure Android compilation and signing tools
+        timeout-minutes: 4
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/aapt2" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/d8.jar" ] ||
+             [ ! -f "$ANDROID_HOME/build-tools/35.0.0/lib/apksigner.jar" ]; then
+            timeout 180s sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Compile the contact shell and package the source-only derivative
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_contact_interaction_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.6.apk
+          --donor-build-report out/donor-evidence/reopen-repair-apk-build-report.json
+          --qualification out/qualification/contact-interaction-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/contact-interaction/COH-Atlas-Gameplay-0.12.0.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-contact-interaction-packaging-evidence
+          path: |
+            out/contact-interaction/contact-interaction-apk-build-report.json
+            out/contact-interaction/COH-Atlas-Gameplay-0.12.0.apk.sha256
+            out/contact-interaction/COH-Atlas-Gameplay-0.12.0-testing.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-contact-interaction-apk
+          path: out/contact-interaction/
+          if-no-files-found: error
+      - name: Publish the retained-signer contact candidate after focused qualification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_contact_interaction_apk.py publish
+          --apk out/contact-interaction/COH-Atlas-Gameplay-0.12.0.apk
+          --build-report out/contact-interaction/contact-interaction-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.11.6.apk
+          --donor-build-report out/donor-evidence/reopen-repair-apk-build-report.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --qualification out/qualification/contact-interaction-qualification.json
+      - name: Remove retained signing material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

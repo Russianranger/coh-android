@@ -1,0 +1,42 @@
+{
+  "workflow_run": {
+    "id": 36297326622,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36297326622",
+    "commit": "3848133e5e644f4c166cc9e7f3e027288d06c2fd",
+    "conclusion": "failure",
+    "completed_utc": "2026-09-27T05:30:30Z"
+  },
+  "job": {
+    "id": 108558488596,
+    "name": "tooling (windows-2025-vs2026)",
+    "conclusion": "failure"
+  },
+  "scope": "Windows tooling only; diagnostic build and runtime experiments were skipped.",
+  "checks": {
+    "linux": {
+      "character_passed": 63,
+      "character_skipped": 5,
+      "map_passed": 13,
+      "diagnostic_passed": 38
+    },
+    "windows": {
+      "character_passed": 68,
+      "map_passed": 13,
+      "package_passed": 20,
+      "compiled_c_fixture": "setup failed"
+    }
+  },
+  "diagnostic_excerpt": [
+    "2026-09-27T05:30:13.6037221Z Ran 68 tests in 1.819s",
+    "2026-09-27T05:30:14.3998668Z Ran 13 tests in 0.221s",
+    "2026-09-27T05:30:22.8629242Z setUpClass (test_prepare_resume_client_source.ResumeBehaviorTests) ... ERROR",
+    "2026-09-27T05:30:25.6620753Z ERROR: setUpClass (test_prepare_resume_client_source.ResumeBehaviorTests)",
+    "2026-09-27T05:30:25.6622758Z   File \"D:\\a\\coh-android\\coh-android\\tools\\test_prepare_resume_client_source.py\", line 222, in setUpClass",
+    "2026-09-27T05:30:25.6625318Z     raise CalledProcessError(retcode, process.args,",
+    "2026-09-27T05:30:25.6626851Z subprocess.CalledProcessError: Command '['C:\\\\mingw64\\\\bin\\\\cc.EXE', '-std=c99', '-Wall', '-Werror', 'C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\tmpd_ny_wkn\\\\probe.c', '-o', 'C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\tmpd_ny_wkn\\\\probe']' returned non-zero exit status 1.",
+    "2026-09-27T05:30:25.6628860Z Ran 25 tests in 10.629s",
+    "2026-09-27T05:30:25.6629169Z FAILED (errors=1)"
+  ],
+  "root_cause": "The compiled-C test fixture included POSIX arpa/inet.h unconditionally; MinGW cc on the Windows runner requires Winsock headers and linking.",
+  "acceptance": "No transfer or sustained-session runtime result from this attempt."
+}

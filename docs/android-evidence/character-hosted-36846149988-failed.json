@@ -1,0 +1,289 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36846149988,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36846149988",
+  "runtime_job_id": 110318151973,
+  "repository_commit": "e00f04970fa438864c08c339e5f6c65515b7ecdc",
+  "apk_sha256": "9f8f69a7e4c9c44b6b70d2ffafe6b583d8beb7e24c3992533c015eb4aa9e8817",
+  "runtime_manifest_sha256": "2a410816a48aef63ce051fcdaea104360b07071bb4059259f533ba1cb3815399",
+  "session_id": "81b0e6cfbaf6de25d218728314121adb",
+  "elapsed_seconds": 2158.647,
+  "host_failure": {
+    "type": "ValueError",
+    "message": "Private RFB transport ended before client startup observation completed"
+  },
+  "guest_failures": [
+    "Actual CoH client exited during startup or observation"
+  ],
+  "failure_review": {
+    "root_cause": "The owned native launcher reached its fixed 1200-second deadline from launch and returned67; the character interaction deadline is1200 seconds after input readiness. Startup consumed419.223 seconds, so launcher ended observation before the allowed interaction window. This is not evidence that CityOfHeroes.exe crashed.",
+    "console_last_stage": "AutoGroup.. during map loading",
+    "visual_scope": "Clear reset produced textured tights, boots and head/hair; both forearms and hands were absent. Avatar rendering is incomplete. No rendered Atlas, CLIENT_READY or ordinary logout/save accepted."
+  },
+  "client_launcher_result": {
+    "elapsed_seconds": 1234.216,
+    "exit_code": 67,
+    "forced_stop": false,
+    "output_capture_closed": true,
+    "input_closed": true
+  },
+  "observed_progress": {
+    "client_startup_seconds": 419.223,
+    "atlas_ready": true,
+    "local_login_verified": true,
+    "character_id": 1,
+    "db_map_assignment_observed": true,
+    "character_samples": [
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      },
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      }
+    ],
+    "observed_window_titles": [
+      "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656",
+      "Z:\\opt\\coh\\client-launcher.exe",
+      "Default IME",
+      "Default IME",
+      "Default IME"
+    ]
+  },
+  "character_proof": {
+    "verified": false,
+    "connected_on_atlas": false,
+    "committed_sql_verified": false,
+    "requested_logout_observed": false,
+    "logout_timer_observed": false,
+    "disconnected_before_sql": false,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "host_cleanup": {
+      "stop_requested": true,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "guest_evidence_export": {
+      "files": [
+        "latest-report.json",
+        "report.zip"
+      ],
+      "fallback_used": false,
+      "errors": []
+    },
+    "database_preserved": true
+  },
+  "evidence": {
+    "runtime_artifact_id": 11156065084,
+    "runtime_artifact_bytes": 66750260,
+    "runtime_artifact_sha256": "13be9fa8a5f6c8fb71400f20e39b0fb6f324b638e5141f0b68bb05980389dcd8",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 113883,
+        "sha256": "d6ddb881000e145c4d9a2a64d679a3273bcc00a05445deabdd8776f2d18a7d0f"
+      },
+      "latest-report.json": {
+        "bytes": 174555,
+        "sha256": "88c4d648e041d3ed0da95d054c379f4ce209b120d41330a573d61496d2faebc5"
+      },
+      "report.zip": {
+        "bytes": 2834844,
+        "sha256": "ffdfbc7f9f1145ad8173ee2ac641aa9c76a543ae205c26392de756c7b019387c"
+      },
+      "client-frame-final.png": {
+        "bytes": 1560,
+        "sha256": "f73dd6a86f55f189758e97784b9030aee01655e07f0bfba3808b7131472aac7e"
+      },
+      "character-54-before-preposition_accept_default_costume.png": {
+        "bytes": 464324,
+        "sha256": "4cacd30534eec112aaf59b040cc0dbef24712a98d8fbefc5a3807cd5a000f470"
+      }
+    }
+  }
+}

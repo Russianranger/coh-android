@@ -1,0 +1,1655 @@
+﻿2026-09-28T17:00:40.4558475Z Current runner version: '2.337.0'
+2026-09-28T17:00:40.4590823Z ##[group]Runner Image Provisioner
+2026-09-28T17:00:40.4592077Z Hosted Compute Agent
+2026-09-28T17:00:40.4592814Z Version: 20260828.587
+2026-09-28T17:00:40.4593498Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-28T17:00:40.4594208Z Build Date: 2026-08-28T16:44:25Z
+2026-09-28T17:00:40.4595105Z Worker ID: {761a7b00-366c-4fe7-ab06-4e73485718eb}
+2026-09-28T17:00:40.4595856Z Azure Region: northcentralus
+2026-09-28T17:00:40.4596569Z ##[endgroup]
+2026-09-28T17:00:40.4598895Z ##[group]Operating System
+2026-09-28T17:00:40.4599587Z Ubuntu
+2026-09-28T17:00:40.4600824Z 24.04.5
+2026-09-28T17:00:40.4601591Z LTS
+2026-09-28T17:00:40.4602179Z ##[endgroup]
+2026-09-28T17:00:40.4602773Z ##[group]Runner Image
+2026-09-28T17:00:40.4603402Z Image: ubuntu-24.04-arm
+2026-09-28T17:00:40.4604080Z Version: 20260920.129.1
+2026-09-28T17:00:40.4605536Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260920.129/images/ubuntu/Ubuntu2404-Arm64-Readme.md
+2026-09-28T17:00:40.4607215Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24-arm64%2F20260920.129
+2026-09-28T17:00:40.4608187Z ##[endgroup]
+2026-09-28T17:00:40.4609496Z ##[group]GITHUB_TOKEN Permissions
+2026-09-28T17:00:40.4613294Z Actions: read
+2026-09-28T17:00:40.4614070Z Contents: read
+2026-09-28T17:00:40.4614623Z Metadata: read
+2026-09-28T17:00:40.4615299Z ##[endgroup]
+2026-09-28T17:00:40.4618543Z Secret source: Actions
+2026-09-28T17:00:40.4619496Z Cache mode: write
+2026-09-28T17:00:40.4620744Z Prepare workflow directory
+2026-09-28T17:00:40.4999660Z Prepare all required actions
+2026-09-28T17:00:40.5049831Z Getting action download info
+2026-09-28T17:00:40.7675474Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-28T17:00:40.9121748Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-09-28T17:00:41.3395557Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-28T17:00:41.5394652Z Complete job name: runtime
+2026-09-28T17:00:41.6303562Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-09-28T17:00:41.6305145Z with:
+2026-09-28T17:00:41.6306010Z   repository: Russianranger/coh-android
+2026-09-28T17:00:41.6310151Z   token: ***
+2026-09-28T17:00:41.6310859Z   ssh-strict: true
+2026-09-28T17:00:41.6311784Z   ssh-user: git
+2026-09-28T17:00:41.6312489Z   persist-credentials: true
+2026-09-28T17:00:41.6313319Z   clean: true
+2026-09-28T17:00:41.6314058Z   sparse-checkout-cone-mode: true
+2026-09-28T17:00:41.6314781Z   fetch-depth: 1
+2026-09-28T17:00:41.6315497Z   fetch-tags: false
+2026-09-28T17:00:41.6316183Z   show-progress: true
+2026-09-28T17:00:41.6317021Z   lfs: false
+2026-09-28T17:00:41.6317691Z   submodules: false
+2026-09-28T17:00:41.6318346Z   set-safe-directory: true
+2026-09-28T17:00:41.6319150Z   allow-unsafe-pr-checkout: false
+2026-09-28T17:00:41.6320492Z ##[endgroup]
+2026-09-28T17:00:41.7162822Z Syncing repository: Russianranger/coh-android
+2026-09-28T17:00:41.7165619Z ##[group]Getting Git version info
+2026-09-28T17:00:41.7166780Z Working directory is '/home/runner/work/coh-android/coh-android'
+2026-09-28T17:00:41.7169651Z [command]/usr/bin/git version
+2026-09-28T17:00:41.7243851Z git version 2.55.0
+2026-09-28T17:00:41.7274312Z ##[endgroup]
+2026-09-28T17:00:41.7280839Z Temporarily overriding HOME='/home/runner/work/_temp/97ad73db-538f-42ae-85e1-5e62975474bd' before making global git config changes
+2026-09-28T17:00:41.7282952Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-28T17:00:41.7284476Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-09-28T17:00:41.7313299Z Deleting the contents of '/home/runner/work/coh-android/coh-android'
+2026-09-28T17:00:41.7315997Z ##[group]Initializing the repository
+2026-09-28T17:00:41.7317733Z [command]/usr/bin/git init /home/runner/work/coh-android/coh-android
+2026-09-28T17:00:41.7381811Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-28T17:00:41.7383925Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-28T17:00:41.7386125Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-28T17:00:41.7387369Z hint: call:
+2026-09-28T17:00:41.7388012Z hint:
+2026-09-28T17:00:41.7388968Z hint: 	git config --global init.defaultBranch <name>
+2026-09-28T17:00:41.7389876Z hint:
+2026-09-28T17:00:41.7390682Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-28T17:00:41.7392197Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-28T17:00:41.7393196Z hint:
+2026-09-28T17:00:41.7393849Z hint: 	git branch -m <name>
+2026-09-28T17:00:41.7394643Z hint:
+2026-09-28T17:00:41.7395499Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-28T17:00:41.7396964Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/.git/
+2026-09-28T17:00:41.7401523Z [command]/usr/bin/git remote add origin https://github.com/Russianranger/coh-android
+2026-09-28T17:00:41.7437222Z ##[endgroup]
+2026-09-28T17:00:41.7438966Z ##[group]Disabling automatic garbage collection
+2026-09-28T17:00:41.7440715Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-28T17:00:41.7470592Z ##[endgroup]
+2026-09-28T17:00:41.7472385Z ##[group]Setting up auth
+2026-09-28T17:00:41.7475073Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-28T17:00:41.7505320Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-28T17:00:41.7762828Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-28T17:00:41.7809788Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-28T17:00:41.7993066Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-28T17:00:41.8020631Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-28T17:00:41.8207603Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-28T17:00:41.8244853Z ##[endgroup]
+2026-09-28T17:00:41.8246235Z ##[group]Fetching the repository
+2026-09-28T17:00:41.8253139Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8944bd598990b33b63a750a64ae448403e4542cd:refs/remotes/origin/codex/character-persistence-continuation
+2026-09-28T17:00:52.2950116Z From https://github.com/Russianranger/coh-android
+2026-09-28T17:00:52.2952071Z  * [new ref]             8944bd598990b33b63a750a64ae448403e4542cd -> origin/codex/character-persistence-continuation
+2026-09-28T17:00:52.2954979Z ##[endgroup]
+2026-09-28T17:00:52.2955634Z ##[group]Determining the checkout info
+2026-09-28T17:00:52.2956355Z ##[endgroup]
+2026-09-28T17:00:52.2961134Z [command]/usr/bin/git sparse-checkout disable
+2026-09-28T17:00:52.3001560Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-28T17:00:52.3028139Z ##[group]Checking out the ref
+2026-09-28T17:00:52.3032207Z [command]/usr/bin/git checkout --progress --force -B codex/character-persistence-continuation refs/remotes/origin/codex/character-persistence-continuation
+2026-09-28T17:00:53.3986816Z Updating files:  22% (37108/162730)
+2026-09-28T17:00:53.4284488Z Updating files:  23% (37428/162730)
+2026-09-28T17:00:53.4572098Z Updating files:  24% (39056/162730)
+2026-09-28T17:00:53.4864015Z Updating files:  25% (40683/162730)
+2026-09-28T17:00:53.5146837Z Updating files:  26% (42310/162730)
+2026-09-28T17:00:53.5416759Z Updating files:  27% (43938/162730)
+2026-09-28T17:00:53.5707107Z Updating files:  28% (45565/162730)
+2026-09-28T17:00:53.6003692Z Updating files:  29% (47192/162730)
+2026-09-28T17:00:53.6277658Z Updating files:  30% (48819/162730)
+2026-09-28T17:00:53.6549005Z Updating files:  31% (50447/162730)
+2026-09-28T17:00:53.6842348Z Updating files:  32% (52074/162730)
+2026-09-28T17:00:53.7122293Z Updating files:  33% (53701/162730)
+2026-09-28T17:00:53.7392972Z Updating files:  34% (55329/162730)
+2026-09-28T17:00:53.8345304Z Updating files:  35% (56956/162730)
+2026-09-28T17:00:53.8632224Z Updating files:  36% (58583/162730)
+2026-09-28T17:00:53.8929596Z Updating files:  37% (60211/162730)
+2026-09-28T17:00:53.9209747Z Updating files:  38% (61838/162730)
+2026-09-28T17:00:53.9483505Z Updating files:  39% (63465/162730)
+2026-09-28T17:00:53.9753313Z Updating files:  40% (65092/162730)
+2026-09-28T17:00:54.0027934Z Updating files:  41% (66720/162730)
+2026-09-28T17:00:54.0271087Z Updating files:  42% (68347/162730)
+2026-09-28T17:00:54.0551408Z Updating files:  43% (69974/162730)
+2026-09-28T17:00:54.0835598Z Updating files:  44% (71602/162730)
+2026-09-28T17:00:54.3188421Z Updating files:  45% (73229/162730)
+2026-09-28T17:00:54.3959285Z Updating files:  46% (74856/162730)
+2026-09-28T17:00:54.6924274Z Updating files:  46% (75082/162730)
+2026-09-28T17:00:54.8791093Z Updating files:  47% (76484/162730)
+2026-09-28T17:00:55.6039536Z Updating files:  48% (78111/162730)
+2026-09-28T17:00:56.1773051Z Updating files:  48% (78222/162730)
+2026-09-28T17:00:56.4185343Z Updating files:  49% (79738/162730)
+2026-09-28T17:00:56.5178604Z Updating files:  49% (81123/162730)
+2026-09-28T17:00:56.9322966Z Updating files:  50% (81365/162730)
+2026-09-28T17:00:57.0619031Z Updating files:  51% (82993/162730)
+2026-09-28T17:00:57.1051018Z Updating files:  52% (84620/162730)
+2026-09-28T17:00:57.1472937Z Updating files:  53% (86247/162730)
+2026-09-28T17:00:57.1745002Z Updating files:  54% (87875/162730)
+2026-09-28T17:00:57.2022398Z Updating files:  55% (89502/162730)
+2026-09-28T17:00:57.3612465Z Updating files:  56% (91129/162730)
+2026-09-28T17:00:57.3930821Z Updating files:  57% (92757/162730)
+2026-09-28T17:00:57.4116241Z Updating files:  57% (94091/162730)
+2026-09-28T17:00:57.5690865Z Updating files:  58% (94384/162730)
+2026-09-28T17:00:57.6952869Z Updating files:  59% (96011/162730)
+2026-09-28T17:00:57.7407702Z Updating files:  60% (97638/162730)
+2026-09-28T17:00:57.7880386Z Updating files:  61% (99266/162730)
+2026-09-28T17:00:57.8267280Z Updating files:  62% (100893/162730)
+2026-09-28T17:00:57.8620164Z Updating files:  63% (102520/162730)
+2026-09-28T17:00:57.8965789Z Updating files:  64% (104148/162730)
+2026-09-28T17:00:57.9318307Z Updating files:  65% (105775/162730)
+2026-09-28T17:00:57.9684132Z Updating files:  66% (107402/162730)
+2026-09-28T17:00:58.0051830Z Updating files:  67% (109030/162730)
+2026-09-28T17:00:58.0390375Z Updating files:  68% (110657/162730)
+2026-09-28T17:00:58.1111521Z Updating files:  69% (112284/162730)
+2026-09-28T17:00:58.1444847Z Updating files:  70% (113911/162730)
+2026-09-28T17:00:58.1773913Z Updating files:  71% (115539/162730)
+2026-09-28T17:00:58.2100312Z Updating files:  72% (117166/162730)
+2026-09-28T17:00:58.2407594Z Updating files:  73% (118793/162730)
+2026-09-28T17:00:58.2723538Z Updating files:  74% (120421/162730)
+2026-09-28T17:00:58.3037815Z Updating files:  75% (122048/162730)
+2026-09-28T17:00:58.3336969Z Updating files:  76% (123675/162730)
+2026-09-28T17:00:58.3647481Z Updating files:  77% (125303/162730)
+2026-09-28T17:00:58.4145098Z Updating files:  78% (126930/162730)
+2026-09-28T17:00:58.4276561Z Updating files:  78% (128177/162730)
+2026-09-28T17:00:58.4603110Z Updating files:  79% (128557/162730)
+2026-09-28T17:00:58.4897029Z Updating files:  80% (130184/162730)
+2026-09-28T17:00:58.5185569Z Updating files:  81% (131812/162730)
+2026-09-28T17:00:58.5472506Z Updating files:  82% (133439/162730)
+2026-09-28T17:00:58.5782610Z Updating files:  83% (135066/162730)
+2026-09-28T17:00:58.6114516Z Updating files:  84% (136694/162730)
+2026-09-28T17:00:58.6426638Z Updating files:  85% (138321/162730)
+2026-09-28T17:00:58.6757250Z Updating files:  86% (139948/162730)
+2026-09-28T17:00:58.9137822Z Updating files:  87% (141576/162730)
+2026-09-28T17:00:58.9456444Z Updating files:  88% (143203/162730)
+2026-09-28T17:00:58.9759059Z Updating files:  89% (144830/162730)
+2026-09-28T17:00:59.0065801Z Updating files:  90% (146457/162730)
+2026-09-28T17:00:59.0435736Z Updating files:  91% (148085/162730)
+2026-09-28T17:00:59.0944836Z Updating files:  92% (149712/162730)
+2026-09-28T17:00:59.1716415Z Updating files:  93% (151339/162730)
+2026-09-28T17:00:59.4010634Z Updating files:  94% (152967/162730)
+2026-09-28T17:00:59.4845326Z Updating files:  94% (153277/162730)
+2026-09-28T17:00:59.5669660Z Updating files:  95% (154594/162730)
+2026-09-28T17:00:59.6817786Z Updating files:  96% (156221/162730)
+2026-09-28T17:00:59.9147248Z Updating files:  97% (157849/162730)
+2026-09-28T17:01:00.0095592Z Updating files:  98% (159476/162730)
+2026-09-28T17:01:00.1169057Z Updating files:  99% (161103/162730)
+2026-09-28T17:01:00.1169951Z Updating files: 100% (162730/162730)
+2026-09-28T17:01:00.1170465Z Updating files: 100% (162730/162730), done.
+2026-09-28T17:01:00.2903768Z Switched to a new branch 'codex/character-persistence-continuation'
+2026-09-28T17:01:00.2904530Z branch 'codex/character-persistence-continuation' set up to track 'origin/codex/character-persistence-continuation'.
+2026-09-28T17:01:00.2992406Z ##[endgroup]
+2026-09-28T17:01:00.3030194Z [command]/usr/bin/git log -1 --format=%H
+2026-09-28T17:01:00.3052314Z 8944bd598990b33b63a750a64ae448403e4542cd
+2026-09-28T17:01:00.3283592Z ##[group]Run actions/download-artifact@v4
+2026-09-28T17:01:00.3283962Z with:
+2026-09-28T17:01:00.3284305Z   name: wine-dbserver-package
+2026-09-28T17:01:00.3284598Z   path: out/wine-dbserver
+2026-09-28T17:01:00.3284855Z   merge-multiple: false
+2026-09-28T17:01:00.3285179Z   repository: Russianranger/coh-android
+2026-09-28T17:01:00.3285459Z   run-id: 36454174374
+2026-09-28T17:01:00.3285758Z ##[endgroup]
+2026-09-28T17:01:00.4514131Z Downloading single artifact
+2026-09-28T17:01:00.4647868Z (node:2249) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T17:01:00.4648803Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T17:01:00.5954708Z Preparing to download the following artifacts:
+2026-09-28T17:01:00.5955749Z - wine-dbserver-package (ID: 10985042551, Size: 2181633, Expected Digest: sha256:d64be2e27bdf88b8ca41071fb075d67cb8d52168b4eb1be65dd78f4cc467f35a)
+2026-09-28T17:01:00.7520798Z Redirecting to blob download url: https://productionresultssa19.blob.core.windows.net/actions-results/fb2883ac-224d-4e8d-8924-0c2c2edf46c5/workflow-job-run-a71590cc-0aa0-58d7-b486-393db0540f39/artifacts/a367580ecf1b995853dcde064fe039d32028a6f9a592a67d004fa3e656983bd1.zip
+2026-09-28T17:01:00.7522664Z Starting download of artifact to: /home/runner/work/coh-android/coh-android/out/wine-dbserver
+2026-09-28T17:01:00.8903614Z (node:2249) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-09-28T17:01:01.0971643Z SHA256 digest of downloaded artifact is d64be2e27bdf88b8ca41071fb075d67cb8d52168b4eb1be65dd78f4cc467f35a
+2026-09-28T17:01:01.0972237Z Artifact download completed successfully.
+2026-09-28T17:01:01.0972740Z Total of 1 artifact(s) downloaded
+2026-09-28T17:01:01.0977367Z Download artifact has finished successfully
+2026-09-28T17:01:01.1139863Z ##[group]Run actions/download-artifact@v4
+2026-09-28T17:01:01.1140302Z with:
+2026-09-28T17:01:01.1140559Z   name: coh-diagnostic-runtime-inputs
+2026-09-28T17:01:01.1140954Z   path: out/android/assets/runtime
+2026-09-28T17:01:01.1141502Z   run-id: 36364550345
+2026-09-28T17:01:01.1144396Z   github-token: ***
+2026-09-28T17:01:01.1144685Z   merge-multiple: false
+2026-09-28T17:01:01.1144960Z   repository: Russianranger/coh-android
+2026-09-28T17:01:01.1145661Z ##[endgroup]
+2026-09-28T17:01:01.2374445Z Downloading single artifact
+2026-09-28T17:01:01.2440678Z (node:2261) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T17:01:01.2441575Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T17:01:01.2607371Z (node:2261) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-28T17:01:01.4700598Z Preparing to download the following artifacts:
+2026-09-28T17:01:01.4701736Z - coh-diagnostic-runtime-inputs (ID: 10947225941, Size: 13337866, Expected Digest: sha256:9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107)
+2026-09-28T17:01:01.4731711Z Downloading artifact '10947225941' from 'Russianranger/coh-android'
+2026-09-28T17:01:01.6463084Z Redirecting to blob download url: https://productionresultssa9.blob.core.windows.net/actions-results/b73f71ec-2625-48f2-9454-64c0f325ef55/workflow-job-run-b80c7f38-4ccb-5eea-b673-d8f5f33378c2/artifacts/bd974f85ee171e7370e716d1ed133214484d6eee295e2f4dd71d425a5f2991d7.zip
+2026-09-28T17:01:01.6464599Z Starting download of artifact to: /home/runner/work/coh-android/coh-android/out/android/assets/runtime
+2026-09-28T17:01:01.7902639Z (node:2261) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-09-28T17:01:02.4907933Z SHA256 digest of downloaded artifact is 9853b93aa146b125d129f4491f02ff1ad6f0e5752492a3214e619775a179e107
+2026-09-28T17:01:02.4908786Z Artifact download completed successfully.
+2026-09-28T17:01:02.4909117Z Total of 1 artifact(s) downloaded
+2026-09-28T17:01:02.4912806Z Download artifact has finished successfully
+2026-09-28T17:01:02.5046056Z ##[group]Run actions/download-artifact@v4
+2026-09-28T17:01:02.5046575Z with:
+2026-09-28T17:01:02.5046826Z   name: coh-proot-android-source-and-build
+2026-09-28T17:01:02.5047149Z   path: out/android/accepted-proot-sources
+2026-09-28T17:01:02.5047530Z   run-id: 36364550345
+2026-09-28T17:01:02.5049996Z   github-token: ***
+2026-09-28T17:01:02.5050329Z   merge-multiple: false
+2026-09-28T17:01:02.5050612Z   repository: Russianranger/coh-android
+2026-09-28T17:01:02.5050932Z ##[endgroup]
+2026-09-28T17:01:02.6297012Z Downloading single artifact
+2026-09-28T17:01:02.6363055Z (node:2273) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T17:01:02.6363836Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T17:01:02.6540865Z (node:2273) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-28T17:01:02.9045394Z Preparing to download the following artifacts:
+2026-09-28T17:01:02.9046230Z - coh-proot-android-source-and-build (ID: 10946592550, Size: 1162455, Expected Digest: sha256:ff12b5d7fca65434a5bb6d76e35dafd5f956e10d492086810cb3ca449db7baeb)
+2026-09-28T17:01:02.9074433Z Downloading artifact '10946592550' from 'Russianranger/coh-android'
+2026-09-28T17:01:03.1434177Z Redirecting to blob download url: https://productionresultssa9.blob.core.windows.net/actions-results/b73f71ec-2625-48f2-9454-64c0f325ef55/workflow-job-run-b80c7f38-4ccb-5eea-b673-d8f5f33378c2/artifacts/5e3efc0edf7dccf70e752deb68103cbbc2244dca5d9449d8a5b3582087009b2d.zip
+2026-09-28T17:01:03.1435689Z Starting download of artifact to: /home/runner/work/coh-android/coh-android/out/android/accepted-proot-sources
+2026-09-28T17:01:03.2767358Z (node:2273) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-09-28T17:01:03.4700768Z SHA256 digest of downloaded artifact is ff12b5d7fca65434a5bb6d76e35dafd5f956e10d492086810cb3ca449db7baeb
+2026-09-28T17:01:03.4701927Z Artifact download completed successfully.
+2026-09-28T17:01:03.4702502Z Total of 1 artifact(s) downloaded
+2026-09-28T17:01:03.4706516Z Download artifact has finished successfully
+2026-09-28T17:01:03.4819994Z ##[group]Run python3 tools/android/extract_talloc_source.py --assets out/android/assets/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json
+2026-09-28T17:01:03.4822436Z [36;1mpython3 tools/android/extract_talloc_source.py --assets out/android/assets/runtime --bundle out/android/accepted-proot-sources/proot-corresponding-sources.tar.gz --output out/android/source-cache/talloc-2.4.3.tar.gz > out/android/talloc-source-receipt.json[0m
+2026-09-28T17:01:03.7160294Z shell: /usr/bin/bash -e {0}
+2026-09-28T17:01:03.7160736Z ##[endgroup]
+2026-09-28T17:01:04.0238002Z ##[group]Run sudo apt-get update -qq
+2026-09-28T17:01:04.0238442Z [36;1msudo apt-get update -qq[0m
+2026-09-28T17:01:04.0239131Z [36;1msudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux[0m
+2026-09-28T17:01:04.0275228Z shell: /usr/bin/bash -e {0}
+2026-09-28T17:01:04.0275527Z ##[endgroup]
+2026-09-28T17:01:10.0613718Z Reading package lists...
+2026-09-28T17:01:10.2729528Z Building dependency tree...
+2026-09-28T17:01:10.2735402Z Reading state information...
+2026-09-28T17:01:10.4965048Z gawk is already the newest version (1:5.2.1-2ubuntu0.1).
+2026-09-28T17:01:10.4965643Z gawk set to manually installed.
+2026-09-28T17:01:10.4965978Z iproute2 is already the newest version (6.1.0-1ubuntu6.4).
+2026-09-28T17:01:10.4966478Z util-linux is already the newest version (2.39.3-9ubuntu6.6).
+2026-09-28T17:01:10.4966898Z The following additional packages will be installed:
+2026-09-28T17:01:10.4971750Z   ca-certificates-java default-jre-headless libpcsclite1
+2026-09-28T17:01:10.4973187Z   openjdk-21-jdk-headless openjdk-21-jre-headless
+2026-09-28T17:01:10.4981766Z Suggested packages:
+2026-09-28T17:01:10.4982136Z   default-jre pcscd openjdk-21-demo openjdk-21-source libnss-mdns
+2026-09-28T17:01:10.4982665Z   fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei
+2026-09-28T17:01:10.4983054Z   | fonts-wqy-zenhei fonts-indic
+2026-09-28T17:01:10.5155854Z The following NEW packages will be installed:
+2026-09-28T17:01:10.5156385Z   build-essential ca-certificates-java default-jdk-headless
+2026-09-28T17:01:10.5162407Z   default-jre-headless libpcsclite1 openjdk-21-jdk-headless
+2026-09-28T17:01:10.5163783Z   openjdk-21-jre-headless
+2026-09-28T17:01:10.7541586Z 0 upgraded, 7 newly installed, 0 to remove and 34 not upgraded.
+2026-09-28T17:01:10.7542313Z Need to get 128 MB of archives.
+2026-09-28T17:01:10.7542677Z After this operation, 301 MB of additional disk space will be used.
+2026-09-28T17:01:10.7543362Z Get:1 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 build-essential arm64 12.10ubuntu1 [4932 B]
+2026-09-28T17:01:10.8641376Z Get:2 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 ca-certificates-java all 20240118 [11.6 kB]
+2026-09-28T17:01:10.9885356Z Get:3 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 libpcsclite1 arm64 2.0.3-1build1 [21.8 kB]
+2026-09-28T17:01:11.1481626Z Get:4 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 openjdk-21-jre-headless arm64 21.0.12.1+1-1~24.04.4 [45.8 MB]
+2026-09-28T17:01:13.2318524Z Get:5 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 default-jre-headless arm64 2:1.21-75+exp1 [3096 B]
+2026-09-28T17:01:13.3415656Z Get:6 http://ports.ubuntu.com/ubuntu-ports noble-updates/main arm64 openjdk-21-jdk-headless arm64 21.0.12.1+1-1~24.04.4 [81.9 MB]
+2026-09-28T17:01:13.9420378Z Get:7 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 default-jdk-headless arm64 2:1.21-75+exp1 [960 B]
+2026-09-28T17:01:14.1795670Z Fetched 128 MB in 3s (37.4 MB/s)
+2026-09-28T17:01:14.2086224Z Selecting previously unselected package build-essential.
+2026-09-28T17:01:14.2228031Z (Reading database ... 
+2026-09-28T17:01:14.2228329Z (Reading database ... 5%
+2026-09-28T17:01:14.2228740Z (Reading database ... 10%
+2026-09-28T17:01:14.2229004Z (Reading database ... 15%
+2026-09-28T17:01:14.2229257Z (Reading database ... 20%
+2026-09-28T17:01:14.2229546Z (Reading database ... 25%
+2026-09-28T17:01:14.2229792Z (Reading database ... 30%
+2026-09-28T17:01:14.2230109Z (Reading database ... 35%
+2026-09-28T17:01:14.2230372Z (Reading database ... 40%
+2026-09-28T17:01:14.2230625Z (Reading database ... 45%
+2026-09-28T17:01:14.2230916Z (Reading database ... 50%
+2026-09-28T17:01:14.2333093Z (Reading database ... 55%
+2026-09-28T17:01:14.3205279Z (Reading database ... 60%
+2026-09-28T17:01:14.5258264Z (Reading database ... 65%
+2026-09-28T17:01:14.7150077Z (Reading database ... 70%
+2026-09-28T17:01:14.9178999Z (Reading database ... 75%
+2026-09-28T17:01:15.0310694Z (Reading database ... 80%
+2026-09-28T17:01:15.2169854Z (Reading database ... 85%
+2026-09-28T17:01:15.3756071Z (Reading database ... 90%
+2026-09-28T17:01:15.5217429Z (Reading database ... 95%
+2026-09-28T17:01:15.5217882Z (Reading database ... 100%
+2026-09-28T17:01:15.5218476Z (Reading database ... 201510 files and directories currently installed.)
+2026-09-28T17:01:15.5261608Z Preparing to unpack .../0-build-essential_12.10ubuntu1_arm64.deb ...
+2026-09-28T17:01:15.5321062Z Unpacking build-essential (12.10ubuntu1) ...
+2026-09-28T17:01:15.5508742Z Selecting previously unselected package ca-certificates-java.
+2026-09-28T17:01:15.5688702Z Preparing to unpack .../1-ca-certificates-java_20240118_all.deb ...
+2026-09-28T17:01:15.5718677Z Unpacking ca-certificates-java (20240118) ...
+2026-09-28T17:01:15.5922671Z Selecting previously unselected package libpcsclite1:arm64.
+2026-09-28T17:01:15.6109685Z Preparing to unpack .../2-libpcsclite1_2.0.3-1build1_arm64.deb ...
+2026-09-28T17:01:15.6123407Z Unpacking libpcsclite1:arm64 (2.0.3-1build1) ...
+2026-09-28T17:01:15.6313090Z Selecting previously unselected package openjdk-21-jre-headless:arm64.
+2026-09-28T17:01:15.6503615Z Preparing to unpack .../3-openjdk-21-jre-headless_21.0.12.1+1-1~24.04.4_arm64.deb ...
+2026-09-28T17:01:15.6511185Z Unpacking openjdk-21-jre-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T17:01:16.6960867Z Selecting previously unselected package default-jre-headless.
+2026-09-28T17:01:16.7119374Z Preparing to unpack .../4-default-jre-headless_2%3a1.21-75+exp1_arm64.deb ...
+2026-09-28T17:01:16.7127029Z Unpacking default-jre-headless (2:1.21-75+exp1) ...
+2026-09-28T17:01:16.7309775Z Selecting previously unselected package openjdk-21-jdk-headless:arm64.
+2026-09-28T17:01:16.7464220Z Preparing to unpack .../5-openjdk-21-jdk-headless_21.0.12.1+1-1~24.04.4_arm64.deb ...
+2026-09-28T17:01:16.7496421Z Unpacking openjdk-21-jdk-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T17:01:17.1365441Z Selecting previously unselected package default-jdk-headless.
+2026-09-28T17:01:17.1517208Z Preparing to unpack .../6-default-jdk-headless_2%3a1.21-75+exp1_arm64.deb ...
+2026-09-28T17:01:17.1524401Z Unpacking default-jdk-headless (2:1.21-75+exp1) ...
+2026-09-28T17:01:17.1863318Z Setting up libpcsclite1:arm64 (2.0.3-1build1) ...
+2026-09-28T17:01:17.1885023Z Setting up build-essential (12.10ubuntu1) ...
+2026-09-28T17:01:17.1902969Z Setting up ca-certificates-java (20240118) ...
+2026-09-28T17:01:19.1177065Z Adding debian:ACCVRAIZ1.pem
+2026-09-28T17:01:19.1192181Z Adding debian:AC_RAIZ_FNMT-RCM.pem
+2026-09-28T17:01:19.3249150Z Adding debian:AC_RAIZ_FNMT-RCM_SERVIDORES_SEGUROS.pem
+2026-09-28T17:01:19.3264203Z Adding debian:ANF_Secure_Server_Root_CA.pem
+2026-09-28T17:01:19.3278768Z Adding debian:Actalis_Authentication_Root_CA.pem
+2026-09-28T17:01:19.3287612Z Adding debian:Amazon_Root_CA_1.pem
+2026-09-28T17:01:19.3300516Z Adding debian:Amazon_Root_CA_2.pem
+2026-09-28T17:01:19.3306986Z Adding debian:Amazon_Root_CA_3.pem
+2026-09-28T17:01:19.3314504Z Adding debian:Amazon_Root_CA_4.pem
+2026-09-28T17:01:19.3325253Z Adding debian:Atos_TrustedRoot_2011.pem
+2026-09-28T17:01:19.3332634Z Adding debian:Atos_TrustedRoot_Root_CA_ECC_TLS_2021.pem
+2026-09-28T17:01:19.3346458Z Adding debian:Atos_TrustedRoot_Root_CA_RSA_TLS_2021.pem
+2026-09-28T17:01:19.3361344Z Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+2026-09-28T17:01:19.3374688Z Adding debian:BJCA_Global_Root_CA1.pem
+2026-09-28T17:01:19.3382937Z Adding debian:BJCA_Global_Root_CA2.pem
+2026-09-28T17:01:19.3753066Z Adding debian:Buypass_Class_2_Root_CA.pem
+2026-09-28T17:01:19.3765762Z Adding debian:Buypass_Class_3_Root_CA.pem
+2026-09-28T17:01:19.3780312Z Adding debian:CA_Disig_Root_R2.pem
+2026-09-28T17:01:19.3794279Z Adding debian:CFCA_EV_ROOT.pem
+2026-09-28T17:01:19.3801807Z Adding debian:COMODO_ECC_Certification_Authority.pem
+2026-09-28T17:01:19.3816035Z Adding debian:COMODO_RSA_Certification_Authority.pem
+2026-09-28T17:01:19.3823797Z Adding debian:Certainly_Root_E1.pem
+2026-09-28T17:01:19.3839722Z Adding debian:Certainly_Root_R1.pem
+2026-09-28T17:01:19.3856081Z Adding debian:Certigna_Root_CA.pem
+2026-09-28T17:01:19.3863776Z Adding debian:Certum_EC-384_CA.pem
+2026-09-28T17:01:19.3873614Z Adding debian:Certum_Trusted_Network_CA.pem
+2026-09-28T17:01:19.3886674Z Adding debian:Certum_Trusted_Network_CA_2.pem
+2026-09-28T17:01:19.3900031Z Adding debian:Certum_Trusted_Root_CA.pem
+2026-09-28T17:01:19.3909417Z Adding debian:D-TRUST_BR_Root_CA_1_2020.pem
+2026-09-28T17:01:19.3923551Z Adding debian:D-TRUST_BR_Root_CA_2_2023.pem
+2026-09-28T17:01:19.3933000Z Adding debian:D-TRUST_EV_Root_CA_1_2020.pem
+2026-09-28T17:01:19.3947000Z Adding debian:D-TRUST_EV_Root_CA_2_2023.pem
+2026-09-28T17:01:19.3960747Z Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+2026-09-28T17:01:19.3970795Z Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+2026-09-28T17:01:19.3981063Z Adding debian:DigiCert_Assured_ID_Root_G2.pem
+2026-09-28T17:01:19.3988550Z Adding debian:DigiCert_Assured_ID_Root_G3.pem
+2026-09-28T17:01:19.3998545Z Adding debian:DigiCert_Global_Root_G2.pem
+2026-09-28T17:01:19.4006411Z Adding debian:DigiCert_Global_Root_G3.pem
+2026-09-28T17:01:19.4012640Z Adding debian:DigiCert_TLS_ECC_P384_Root_G5.pem
+2026-09-28T17:01:19.4025322Z Adding debian:DigiCert_TLS_RSA4096_Root_G5.pem
+2026-09-28T17:01:19.4038759Z Adding debian:DigiCert_Trusted_Root_G4.pem
+2026-09-28T17:01:19.4056369Z Adding debian:Entrust_Root_Certification_Authority.pem
+2026-09-28T17:01:19.4069179Z Adding debian:GDCA_TrustAUTH_R5_ROOT.pem
+2026-09-28T17:01:19.4081165Z Adding debian:GTS_Root_R1.pem
+2026-09-28T17:01:19.4087742Z Adding debian:GTS_Root_R3.pem
+2026-09-28T17:01:19.4093434Z Adding debian:GTS_Root_R4.pem
+2026-09-28T17:01:19.4099589Z Adding debian:GlobalSign_ECC_Root_CA_-_R4.pem
+2026-09-28T17:01:19.4106441Z Adding debian:GlobalSign_ECC_Root_CA_-_R5.pem
+2026-09-28T17:01:19.4114928Z Adding debian:GlobalSign_Root_CA_-_R3.pem
+2026-09-28T17:01:19.4127833Z Adding debian:GlobalSign_Root_CA_-_R6.pem
+2026-09-28T17:01:19.4133919Z Adding debian:GlobalSign_Root_E46.pem
+2026-09-28T17:01:19.4145956Z Adding debian:GlobalSign_Root_R46.pem
+2026-09-28T17:01:19.4154897Z Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+2026-09-28T17:01:19.4174346Z Adding debian:HARICA_TLS_ECC_Root_CA_2021.pem
+2026-09-28T17:01:19.4174925Z Adding debian:HARICA_TLS_RSA_Root_CA_2021.pem
+2026-09-28T17:01:19.4181841Z Adding debian:Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
+2026-09-28T17:01:19.4195086Z Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
+2026-09-28T17:01:19.4207123Z Adding debian:HiPKI_Root_CA_-_G1.pem
+2026-09-28T17:01:19.4219535Z Adding debian:Hongkong_Post_Root_CA_3.pem
+2026-09-28T17:01:19.4230826Z Adding debian:ISRG_Root_X1.pem
+2026-09-28T17:01:19.4237720Z Adding debian:ISRG_Root_X2.pem
+2026-09-28T17:01:19.4250249Z Adding debian:IdenTrust_Commercial_Root_CA_1.pem
+2026-09-28T17:01:19.4263633Z Adding debian:IdenTrust_Public_Sector_Root_CA_1.pem
+2026-09-28T17:01:19.4277091Z Adding debian:Izenpe.com.pem
+2026-09-28T17:01:19.4287142Z Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+2026-09-28T17:01:19.4293680Z Adding debian:Microsoft_ECC_Root_Certificate_Authority_2017.pem
+2026-09-28T17:01:19.4306747Z Adding debian:Microsoft_RSA_Root_Certificate_Authority_2017.pem
+2026-09-28T17:01:19.4320692Z Adding debian:NAVER_Global_Root_Certification_Authority.pem
+2026-09-28T17:01:19.4338514Z Adding debian:NetLock_Arany_=Class_Gold=_Főtanúsítvány.pem
+2026-09-28T17:01:19.4349393Z Adding debian:OISTE_Server_Root_ECC_G1.pem
+2026-09-28T17:01:19.4363676Z Adding debian:OISTE_Server_Root_RSA_G1.pem
+2026-09-28T17:01:19.4381968Z Adding debian:OISTE_WISeKey_Global_Root_GB_CA.pem
+2026-09-28T17:01:19.4382769Z Adding debian:OISTE_WISeKey_Global_Root_GC_CA.pem
+2026-09-28T17:01:19.4384698Z Adding debian:QuoVadis_Root_CA_1_G3.pem
+2026-09-28T17:01:19.4396421Z Adding debian:QuoVadis_Root_CA_2_G3.pem
+2026-09-28T17:01:19.4407834Z Adding debian:QuoVadis_Root_CA_3_G3.pem
+2026-09-28T17:01:19.4415176Z Adding debian:SSL.com_EV_Root_Certification_Authority_ECC.pem
+2026-09-28T17:01:19.4427986Z Adding debian:SSL.com_EV_Root_Certification_Authority_RSA_R2.pem
+2026-09-28T17:01:19.4434959Z Adding debian:SSL.com_Root_Certification_Authority_ECC.pem
+2026-09-28T17:01:19.4450435Z Adding debian:SSL.com_Root_Certification_Authority_RSA.pem
+2026-09-28T17:01:19.4456662Z Adding debian:SSL.com_TLS_ECC_Root_CA_2022.pem
+2026-09-28T17:01:19.4468273Z Adding debian:SSL.com_TLS_RSA_Root_CA_2022.pem
+2026-09-28T17:01:19.4476799Z Adding debian:SZAFIR_ROOT_CA2.pem
+2026-09-28T17:01:19.4483083Z Adding debian:Sectigo_Public_Server_Authentication_Root_E46.pem
+2026-09-28T17:01:19.4496107Z Adding debian:Sectigo_Public_Server_Authentication_Root_R46.pem
+2026-09-28T17:01:19.4505914Z Adding debian:SecureSign_Root_CA12.pem
+2026-09-28T17:01:19.4518367Z Adding debian:SecureSign_Root_CA14.pem
+2026-09-28T17:01:19.4521857Z Adding debian:SecureSign_Root_CA15.pem
+2026-09-28T17:01:19.4528463Z Adding debian:Security_Communication_ECC_RootCA1.pem
+2026-09-28T17:01:19.4537685Z Adding debian:Security_Communication_RootCA2.pem
+2026-09-28T17:01:19.4546924Z Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+2026-09-28T17:01:19.4556262Z Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+2026-09-28T17:01:19.4568000Z Adding debian:SwissSign_RSA_TLS_Root_CA_2022_-_1.pem
+2026-09-28T17:01:19.4576779Z Adding debian:T-TeleSec_GlobalRoot_Class_2.pem
+2026-09-28T17:01:19.4585876Z Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+2026-09-28T17:01:19.4595652Z Adding debian:TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.pem
+2026-09-28T17:01:19.4607701Z Adding debian:TWCA_CYBER_Root_CA.pem
+2026-09-28T17:01:19.4618666Z Adding debian:TWCA_Global_Root_CA.pem
+2026-09-28T17:01:19.4627052Z Adding debian:TWCA_Root_Certification_Authority.pem
+2026-09-28T17:01:19.4633429Z Adding debian:Telekom_Security_TLS_ECC_Root_2020.pem
+2026-09-28T17:01:19.4645913Z Adding debian:Telekom_Security_TLS_RSA_Root_2023.pem
+2026-09-28T17:01:19.4657206Z Adding debian:Telia_Root_CA_v2.pem
+2026-09-28T17:01:19.4668886Z Adding debian:TrustAsia_Global_Root_CA_G3.pem
+2026-09-28T17:01:19.4675917Z Adding debian:TrustAsia_Global_Root_CA_G4.pem
+2026-09-28T17:01:19.4692581Z Adding debian:TrustAsia_TLS_ECC_Root_CA.pem
+2026-09-28T17:01:19.4693766Z Adding debian:TrustAsia_TLS_RSA_Root_CA.pem
+2026-09-28T17:01:19.4705451Z Adding debian:TunTrust_Root_CA.pem
+2026-09-28T17:01:19.4716895Z Adding debian:UCA_Extended_Validation_Root.pem
+2026-09-28T17:01:19.4727723Z Adding debian:UCA_Global_G2_Root.pem
+2026-09-28T17:01:19.4737605Z Adding debian:USERTrust_ECC_Certification_Authority.pem
+2026-09-28T17:01:19.4751597Z Adding debian:USERTrust_RSA_Certification_Authority.pem
+2026-09-28T17:01:19.4762284Z Adding debian:certSIGN_Root_CA_G2.pem
+2026-09-28T17:01:19.4764377Z Adding debian:e-Szigno_Root_CA_2017.pem
+2026-09-28T17:01:19.4773075Z Adding debian:e-Szigno_TLS_Root_CA_2023.pem
+2026-09-28T17:01:19.4785196Z Adding debian:ePKI_Root_Certification_Authority.pem
+2026-09-28T17:01:19.4790320Z Adding debian:emSign_ECC_Root_CA_-_C3.pem
+2026-09-28T17:01:19.4797345Z Adding debian:emSign_ECC_Root_CA_-_G3.pem
+2026-09-28T17:01:19.4805025Z Adding debian:emSign_Root_CA_-_C1.pem
+2026-09-28T17:01:19.4812876Z Adding debian:emSign_Root_CA_-_G1.pem
+2026-09-28T17:01:19.4817675Z Adding debian:vTrus_ECC_Root_CA.pem
+2026-09-28T17:01:19.4828521Z Adding debian:vTrus_Root_CA.pem
+2026-09-28T17:01:19.5585010Z done.
+2026-09-28T17:01:19.5608475Z Setting up openjdk-21-jre-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T17:01:19.6186999Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-09-28T17:01:19.6836004Z Processing triggers for ca-certificates-java (20240118) ...
+2026-09-28T17:01:19.7122598Z done.
+2026-09-28T17:01:19.7153597Z Setting up openjdk-21-jdk-headless:arm64 (21.0.12.1+1-1~24.04.4) ...
+2026-09-28T17:01:19.8053996Z Setting up default-jre-headless (2:1.21-75+exp1) ...
+2026-09-28T17:01:19.8074590Z Setting up default-jdk-headless (2:1.21-75+exp1) ...
+2026-09-28T17:01:22.0237324Z 
+2026-09-28T17:01:22.0238666Z Running kernel seems to be up-to-date.
+2026-09-28T17:01:22.0238971Z 
+2026-09-28T17:01:22.0239128Z No services need to be restarted.
+2026-09-28T17:01:22.0239328Z 
+2026-09-28T17:01:22.0239846Z No containers need to be restarted.
+2026-09-28T17:01:22.0240161Z 
+2026-09-28T17:01:22.0240361Z No user sessions are running outdated binaries.
+2026-09-28T17:01:22.0240578Z 
+2026-09-28T17:01:22.0240797Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-09-28T17:01:23.0525278Z ##[group]Run python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+2026-09-28T17:01:23.0526473Z [36;1mpython3 tools/android/build_proot.py --target linux-arm64 --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz[0m
+2026-09-28T17:01:23.0563035Z shell: /usr/bin/bash -e {0}
+2026-09-28T17:01:23.0563441Z ##[endgroup]
+2026-09-28T17:01:23.1115039Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-28T17:01:23.1115966Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-28T17:01:23.1116562Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-28T17:01:23.1117059Z hint: call:
+2026-09-28T17:01:23.1117274Z hint:
+2026-09-28T17:01:23.1117611Z hint: 	git config --global init.defaultBranch <name>
+2026-09-28T17:01:23.1117934Z hint:
+2026-09-28T17:01:23.1118398Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-28T17:01:23.1118913Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-28T17:01:23.1119356Z hint:
+2026-09-28T17:01:23.1119570Z hint: 	git branch -m <name>
+2026-09-28T17:01:23.1119840Z hint:
+2026-09-28T17:01:23.1120205Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-28T17:01:23.1120961Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/proot-git/.git/
+2026-09-28T17:01:23.5749832Z From https://github.com/termux/proot
+2026-09-28T17:01:23.5750320Z  * branch            7266fb3e8516535682f5a9c8f3a7e70f6506eddb -> FETCH_HEAD
+2026-09-28T17:01:23.7533191Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-28T17:01:23.7533990Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-28T17:01:23.7534558Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-28T17:01:23.7534994Z hint: call:
+2026-09-28T17:01:23.7535248Z hint:
+2026-09-28T17:01:23.7535510Z hint: 	git config --global init.defaultBranch <name>
+2026-09-28T17:01:23.7535883Z hint:
+2026-09-28T17:01:23.7536189Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-28T17:01:23.7536704Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-28T17:01:23.7537128Z hint:
+2026-09-28T17:01:23.7537349Z hint: 	git branch -m <name>
+2026-09-28T17:01:23.7537623Z hint:
+2026-09-28T17:01:23.7537961Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-28T17:01:23.7538685Z Initialized empty Git repository in /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/proot/.git/
+2026-09-28T17:01:24.0816479Z Setting top to                           : /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-2.4.3 
+2026-09-28T17:01:24.0817582Z Setting out to                           : /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-2.4.3/bin 
+2026-09-28T17:01:24.5933293Z Checking for 'gcc' (C compiler)          : /usr/bin/cc 
+2026-09-28T17:01:24.5945031Z Checking for program 'git'               : /usr/bin/git 
+2026-09-28T17:01:25.1575168Z Checking for c flags '-MMD'              : yes 
+2026-09-28T17:01:25.1578617Z Checking for program 'gdb'               : not found 
+2026-09-28T17:01:25.2246739Z Checking for header sys/utsname.h        : yes 
+2026-09-28T17:01:25.5392156Z Checking uname sysname type              : Linux 
+2026-09-28T17:01:25.5709735Z Checking uname machine type              : aarch64 
+2026-09-28T17:01:25.6021718Z Checking uname release type              : 6.17.0-1022-azure 
+2026-09-28T17:01:25.6353789Z Checking uname version type              : #22-Ubuntu SMP Mon Jul 27 17:12:01 UTC 2026 
+2026-09-28T17:01:25.7312489Z Checking for header stdio.h              : yes 
+2026-09-28T17:01:25.7656529Z Checking simple C program                : ok 
+2026-09-28T17:01:25.7800598Z Checking compiler accepts ['-Werror']    : yes 
+2026-09-28T17:01:25.8077767Z Checking linker accepts ['-Wl,-rpath,.'] : yes 
+2026-09-28T17:01:25.8772558Z Checking for rpath library support       : yes 
+2026-09-28T17:01:25.9287503Z Checking for -Wl,--version-script support : yes 
+2026-09-28T17:01:25.9431182Z Checking compiler accepts ['-fvisibility=hidden'] : yes 
+2026-09-28T17:01:25.9728693Z Checking for HAVE_VISIBILITY_ATTR                 : ok 
+2026-09-28T17:01:26.0061437Z Checking for library constructor support          : ok 
+2026-09-28T17:01:26.0396019Z Checking for library destructor support           : ok 
+2026-09-28T17:01:26.0684849Z Checking for __attribute__                        : ok 
+2026-09-28T17:01:26.0826922Z Checking compiler accepts ['-fPIC']               : yes 
+2026-09-28T17:01:26.0932352Z Checking for inline                               : inline 
+2026-09-28T17:01:26.0933287Z Checking for program 'pkg-config'                 : /usr/bin/pkg-config 
+2026-09-28T17:01:26.1345406Z Checking for pkg-config version >= '0.0.0'        : yes 
+2026-09-28T17:01:26.1490301Z Checking compiler accepts ['-D__STDC_WANT_LIB_EXT1__=1'] : yes 
+2026-09-28T17:01:26.1592993Z Checking compiler accepts ['']                           : yes 
+2026-09-28T17:01:26.2343564Z Checking for header sys/types.h                          : yes 
+2026-09-28T17:01:26.3178676Z Checking for header sys/stat.h                           : yes 
+2026-09-28T17:01:26.3427842Z Checking for header stdlib.h                             : yes 
+2026-09-28T17:01:26.3649721Z Checking for header stddef.h                             : yes 
+2026-09-28T17:01:26.3989301Z Checking for header memory.h                             : yes 
+2026-09-28T17:01:26.4220770Z Checking for header string.h                             : yes 
+2026-09-28T17:01:26.4454070Z Checking for header strings.h                            : yes 
+2026-09-28T17:01:26.4753434Z Checking for header inttypes.h                           : yes 
+2026-09-28T17:01:26.4992047Z Checking for header stdint.h                             : yes 
+2026-09-28T17:01:26.5608900Z Checking for header unistd.h                             : yes 
+2026-09-28T17:01:26.5841656Z Checking for header minix/config.h                       : no 
+2026-09-28T17:01:26.6169353Z Checking for header ctype.h                              : yes 
+2026-09-28T17:01:26.6408431Z Checking for header standards.h                          : no 
+2026-09-28T17:01:26.6744989Z Checking for header stdbool.h                            : yes 
+2026-09-28T17:01:26.7030076Z Checking for header stdarg.h                             : yes 
+2026-09-28T17:01:26.7262737Z Checking for header vararg.h                             : no 
+2026-09-28T17:01:26.7755097Z Checking for header limits.h                             : yes 
+2026-09-28T17:01:26.8092895Z Checking for header assert.h                             : yes 
+2026-09-28T17:01:26.8105746Z Checking getconf LFS_CFLAGS                              : not found 
+2026-09-28T17:01:26.8547913Z Checking getconf large file support flags work           : ok 
+2026-09-28T17:01:26.8982831Z Checking for large file support without additional flags : ok 
+2026-09-28T17:01:26.9309930Z Checking for header sys/time.h                           : yes 
+2026-09-28T17:01:26.9663666Z Checking for header time.h                               : yes 
+2026-09-28T17:01:26.9936691Z Checking for header endian.h                             : yes 
+2026-09-28T17:01:27.0163986Z Checking for header sys/endian.h                         : no 
+2026-09-28T17:01:27.0578519Z Checking for HAVE_LITTLE_ENDIAN                          : ok 
+2026-09-28T17:01:27.0818716Z Checking for HAVE_BIG_ENDIAN                             : not found 
+2026-09-28T17:01:27.1572193Z Checking for header signal.h                             : yes 
+2026-09-28T17:01:27.1828898Z Checking if signal handlers return int                   : not found 
+2026-09-28T17:01:27.2180139Z Checking for variable __FUNCTION__                       : ok 
+2026-09-28T17:01:27.2676876Z Checking for va_copy                                     : ok 
+2026-09-28T17:01:27.2963656Z Checking for header linux/types.h                        : yes 
+2026-09-28T17:01:27.3313478Z Checking for header crypt.h                              : yes 
+2026-09-28T17:01:27.3601045Z Checking for header locale.h                             : yes 
+2026-09-28T17:01:27.3831132Z Checking for header acl/libacl.h                         : no 
+2026-09-28T17:01:27.4068094Z Checking for header compat.h                             : no 
+2026-09-28T17:01:27.4306223Z Checking for header attr/xattr.h                         : no 
+2026-09-28T17:01:27.4542114Z Checking for header dustat.h                             : no 
+2026-09-28T17:01:27.4951779Z Checking for header fcntl.h                              : yes 
+2026-09-28T17:01:27.5236030Z Checking for header fnmatch.h                            : yes 
+2026-09-28T17:01:27.5570911Z Checking for header glob.h                               : yes 
+2026-09-28T17:01:27.5802895Z Checking for header history.h                            : no 
+2026-09-28T17:01:27.6045145Z Checking for header krb5.h                               : no 
+2026-09-28T17:01:27.6441656Z Checking for header langinfo.h                           : yes 
+2026-09-28T17:01:27.6674615Z Checking for header ndir.h                               : no 
+2026-09-28T17:01:27.7011103Z Checking for header pwd.h                                : yes 
+2026-09-28T17:01:27.7415568Z Checking for header shadow.h                             : yes 
+2026-09-28T17:01:27.7654108Z Checking for header sys/acl.h                            : no 
+2026-09-28T17:01:27.7892234Z Checking for header sys/attributes.h                     : no 
+2026-09-28T17:01:27.8128930Z Checking for header attr/attributes.h                    : no 
+2026-09-28T17:01:27.8374140Z Checking for header sys/capability.h                     : no 
+2026-09-28T17:01:27.8732598Z Checking for header sys/dir.h                            : yes 
+2026-09-28T17:01:27.9020443Z Checking for header sys/epoll.h                          : yes 
+2026-09-28T17:01:27.9312745Z Checking for header sys/fcntl.h                          : yes 
+2026-09-28T17:01:27.9545675Z Checking for header sys/filio.h                          : no 
+2026-09-28T17:01:27.9782421Z Checking for header sys/filsys.h                         : no 
+2026-09-28T17:01:28.0013244Z Checking for header sys/fs/s5param.h                     : no 
+2026-09-28T17:01:28.0244983Z Checking for header sys/id.h                             : no 
+2026-09-28T17:01:28.0747537Z Checking for header sys/ioctl.h                          : yes 
+2026-09-28T17:01:28.1036910Z Checking for header sys/ipc.h                            : yes 
+2026-09-28T17:01:28.1325359Z Checking for header sys/mman.h                           : yes 
+2026-09-28T17:01:28.1555879Z Checking for header sys/mode.h                           : no 
+2026-09-28T17:01:28.1785796Z Checking for header sys/ndir.h                           : no 
+2026-09-28T17:01:28.2011754Z Checking for header sys/priv.h                           : no 
+2026-09-28T17:01:28.2418495Z Checking for header sys/resource.h                       : yes 
+2026-09-28T17:01:28.2650120Z Checking for header sys/security.h                       : no 
+2026-09-28T17:01:28.2937739Z Checking for header sys/shm.h                            : yes 
+2026-09-28T17:01:28.3220534Z Checking for header sys/statfs.h                         : yes 
+2026-09-28T17:01:28.3496288Z Checking for header sys/statvfs.h                        : yes 
+2026-09-28T17:01:28.3729168Z Checking for header sys/termio.h                         : no 
+2026-09-28T17:01:28.4007055Z Checking for header sys/vfs.h                            : yes 
+2026-09-28T17:01:28.4287853Z Checking for header sys/xattr.h                          : yes 
+2026-09-28T17:01:28.4592537Z Checking for header termio.h                             : yes 
+2026-09-28T17:01:28.4878192Z Checking for header termios.h                            : yes 
+2026-09-28T17:01:28.5172708Z Checking for header sys/file.h                           : yes 
+2026-09-28T17:01:28.5460599Z Checking for header sys/ucontext.h                       : yes 
+2026-09-28T17:01:28.5759068Z Checking for header sys/wait.h                           : yes 
+2026-09-28T17:01:28.6045160Z Checking for declaration of malloc                       : ok 
+2026-09-28T17:01:28.6328802Z Checking for header grp.h                                : yes 
+2026-09-28T17:01:28.6607470Z Checking for header sys/select.h                         : yes 
+2026-09-28T17:01:28.6898826Z Checking for header setjmp.h                             : yes 
+2026-09-28T17:01:28.7231696Z Checking for header utime.h                              : yes 
+2026-09-28T17:01:28.7608737Z Checking for header sys/syslog.h                         : yes 
+2026-09-28T17:01:28.7897464Z Checking for header syslog.h                             : yes 
+2026-09-28T17:01:28.8365406Z Checking for header sys/mount.h                          : yes 
+2026-09-28T17:01:28.8649589Z Checking for header mntent.h                             : yes 
+2026-09-28T17:01:28.8883782Z Checking for header stropts.h                            : no 
+2026-09-28T17:01:28.9123702Z Checking for header unix.h                               : no 
+2026-09-28T17:01:28.9528378Z Checking for header sys/param.h                          : yes 
+2026-09-28T17:01:28.9984385Z Checking for header sys/socket.h                         : yes 
+2026-09-28T17:01:29.0392897Z Checking for header netinet/in.h                         : yes 
+2026-09-28T17:01:29.0810902Z Checking for header netdb.h                              : yes 
+2026-09-28T17:01:29.1164337Z Checking for header arpa/inet.h                          : yes 
+2026-09-28T17:01:29.1470074Z Checking for header netinet/in_systm.h                   : yes 
+2026-09-28T17:01:29.1772817Z Checking for header netinet/ip.h                         : yes 
+2026-09-28T17:01:29.2078525Z Checking for header netinet/tcp.h                        : yes 
+2026-09-28T17:01:29.2339044Z Checking for header netinet/in_ip.h                      : no 
+2026-09-28T17:01:29.2610251Z Checking for header sys/sockio.h                         : no 
+2026-09-28T17:01:29.2931830Z Checking for header sys/un.h                             : yes 
+2026-09-28T17:01:29.3217610Z Checking for header sys/uio.h                            : yes 
+2026-09-28T17:01:29.3509073Z Checking for header ifaddrs.h                            : yes 
+2026-09-28T17:01:29.3736214Z Checking for header direct.h                             : no 
+2026-09-28T17:01:29.4023747Z Checking for header dirent.h                             : yes 
+2026-09-28T17:01:29.4256687Z Checking for header windows.h                            : no 
+2026-09-28T17:01:29.4494065Z Checking for header winsock2.h                           : no 
+2026-09-28T17:01:29.4736119Z Checking for header ws2tcpip.h                           : no 
+2026-09-28T17:01:29.5097951Z Checking for header errno.h                              : yes 
+2026-09-28T17:01:29.5396252Z Checking for header getopt.h                             : yes 
+2026-09-28T17:01:29.5683956Z Checking for header iconv.h                              : yes 
+2026-09-28T17:01:29.5976759Z Checking for header nss.h                                : yes 
+2026-09-28T17:01:29.6212899Z Checking for header sasl/sasl.h                          : no 
+2026-09-28T17:01:29.6711423Z Checking for header linux/openat2.h                      : yes 
+2026-09-28T17:01:29.7356605Z Checking for inotify_init                                : ok 
+2026-09-28T17:01:29.7598019Z Checking for header security/pam_appl.h                  : no 
+2026-09-28T17:01:29.7981838Z Checking for header zlib.h                               : yes 
+2026-09-28T17:01:29.8330163Z Checking for header asm/unistd.h                         : yes 
+2026-09-28T17:01:29.8620433Z Checking for header sys/unistd.h                         : yes 
+2026-09-28T17:01:29.8910636Z Checking for header alloca.h                             : yes 
+2026-09-28T17:01:29.9253885Z Checking for header float.h                              : yes 
+2026-09-28T17:01:29.9494174Z Checking for header rpc/rpc.h                            : no 
+2026-09-28T17:01:29.9732675Z Checking for header rpc/nettype.h                        : no 
+2026-09-28T17:01:29.9983240Z Checking for tirpc rpc headers in default system path    : not found 
+2026-09-28T17:01:30.1291179Z Checking for libtirpc headers                            : not found 
+2026-09-28T17:01:30.1317040Z Checking for libntirpc headers                           : not found 
+2026-09-28T17:01:30.1317965Z No rpc/rpc.h header found, tirpc or libntirpc missing?
+2026-09-28T17:01:30.1577243Z Checking for header sys/sysctl.h                         : not found 
+2026-09-28T17:01:30.1810244Z Checking for header sys/fileio.h                         : no 
+2026-09-28T17:01:30.2051742Z Checking for header sys/filesys.h                        : no 
+2026-09-28T17:01:30.2299902Z Checking for header sys/dustat.h                         : no 
+2026-09-28T17:01:30.2602192Z Checking for header sys/sysmacros.h                      : yes 
+2026-09-28T17:01:30.2842964Z Checking for header xfs/libxfs.h                         : no 
+2026-09-28T17:01:30.3078800Z Checking for header netgroup.h                           : no 
+2026-09-28T17:01:30.3311527Z Checking for header valgrind.h                           : no 
+2026-09-28T17:01:30.3559322Z Checking for header valgrind/valgrind.h                  : no 
+2026-09-28T17:01:30.3803066Z Checking for header valgrind/memcheck.h                  : no 
+2026-09-28T17:01:30.4042066Z Checking for header valgrind/helgrind.h                  : no 
+2026-09-28T17:01:30.4282979Z Checking for header valgrind/callgrind.h                 : no 
+2026-09-28T17:01:30.4525802Z Checking for header nss_common.h                         : no 
+2026-09-28T17:01:30.4765190Z Checking for header nsswitch.h                           : no 
+2026-09-28T17:01:30.5001159Z Checking for header ns_api.h                             : no 
+2026-09-28T17:01:30.5238329Z Checking for header sys/extattr.h                        : no 
+2026-09-28T17:01:30.5472546Z Checking for header sys/ea.h                             : no 
+2026-09-28T17:01:30.5706417Z Checking for header sys/proplist.h                       : no 
+2026-09-28T17:01:30.5988279Z Checking for header sys/cdefs.h                          : yes 
+2026-09-28T17:01:30.6291642Z Checking for header utmp.h                               : yes 
+2026-09-28T17:01:30.6583847Z Checking for header utmpx.h                              : yes 
+2026-09-28T17:01:30.6875528Z Checking for header lastlog.h                            : yes 
+2026-09-28T17:01:30.7178035Z Checking for header syscall.h                            : yes 
+2026-09-28T17:01:30.7471081Z Checking for header sys/syscall.h                        : yes 
+2026-09-28T17:01:30.7703472Z Checking for header sys/atomic.h                         : no 
+2026-09-28T17:01:30.7993358Z Checking for header stdatomic.h                          : yes 
+2026-09-28T17:01:30.8274785Z Checking for header libgen.h                             : yes 
+2026-09-28T17:01:30.8415570Z Checking compiler accepts -Wno-format-truncation         : yes 
+2026-09-28T17:01:30.8555206Z Checking compiler accepts -Wno-unused-function           : yes 
+2026-09-28T17:01:30.8692415Z Checking compiler accepts -Wno-strict-overflow           : yes 
+2026-09-28T17:01:30.8829795Z Checking compiler accepts -Wno-unused-but-set-variable   : yes 
+2026-09-28T17:01:30.8964651Z Checking compiler accepts -Wuse-after-free=1             : yes 
+2026-09-28T17:01:30.9309650Z Checking for header sys/prctl.h                          : yes 
+2026-09-28T17:01:30.9742050Z Checking for prctl syscall                               : ok 
+2026-09-28T17:01:31.0185272Z Checking for O_DIRECT flag to open(2)                    : ok 
+2026-09-28T17:01:31.0470439Z Checking for long long                                   : ok 
+2026-09-28T17:01:31.0754623Z Checking for intptr_t                                    : ok 
+2026-09-28T17:01:31.1053702Z Checking for uintptr_t                                   : ok 
+2026-09-28T17:01:31.1345534Z Checking for ptrdiff_t                                   : ok 
+2026-09-28T17:01:31.1626974Z Checking for comparison_fn_t                             : ok 
+2026-09-28T17:01:31.1905341Z Checking for bool                                        : ok 
+2026-09-28T17:01:31.2179313Z Checking for int8_t                                      : ok 
+2026-09-28T17:01:31.2462620Z Checking for uint8_t                                     : ok 
+2026-09-28T17:01:31.2741752Z Checking for int16_t                                     : ok 
+2026-09-28T17:01:31.3027256Z Checking for uint16_t                                    : ok 
+2026-09-28T17:01:31.3309103Z Checking for int32_t                                     : ok 
+2026-09-28T17:01:31.3598587Z Checking for uint32_t                                    : ok 
+2026-09-28T17:01:31.3882524Z Checking for int64_t                                     : ok 
+2026-09-28T17:01:31.4176958Z Checking for uint64_t                                    : ok 
+2026-09-28T17:01:31.4468179Z Checking for size_t                                      : ok 
+2026-09-28T17:01:31.4757965Z Checking for ssize_t                                     : ok 
+2026-09-28T17:01:31.5045230Z Checking for ino_t                                       : ok 
+2026-09-28T17:01:31.5339876Z Checking for loff_t                                      : ok 
+2026-09-28T17:01:31.5588289Z Checking for offset_t                                    : not found 
+2026-09-28T17:01:31.5877384Z Checking for volatile int                                : ok 
+2026-09-28T17:01:31.6131362Z Checking for uint_t                                      : not found 
+2026-09-28T17:01:31.6426588Z Checking for blksize_t                                   : ok 
+2026-09-28T17:01:31.6719851Z Checking for blkcnt_t                                    : ok 
+2026-09-28T17:01:31.7150010Z Checking if size of bool == 1                            : ok 
+2026-09-28T17:01:31.7581661Z Checking if size of char == 1                            : ok 
+2026-09-28T17:01:31.7827352Z Checking if size of int == 1                             : not found 
+2026-09-28T17:01:31.8068817Z Checking if size of int == 2                             : not found 
+2026-09-28T17:01:31.8497073Z Checking if size of int == 4                             : ok 
+2026-09-28T17:01:31.8753265Z Checking if size of long long == 1                       : not found 
+2026-09-28T17:01:31.8998477Z Checking if size of long long == 2                       : not found 
+2026-09-28T17:01:31.9239901Z Checking if size of long long == 4                       : not found 
+2026-09-28T17:01:31.9659017Z Checking if size of long long == 8                       : ok 
+2026-09-28T17:01:31.9899736Z Checking if size of long == 1                            : not found 
+2026-09-28T17:01:32.0141492Z Checking if size of long == 2                            : not found 
+2026-09-28T17:01:32.0380332Z Checking if size of long == 4                            : not found 
+2026-09-28T17:01:32.0798633Z Checking if size of long == 8                            : ok 
+2026-09-28T17:01:32.1043068Z Checking if size of short == 1                           : not found 
+2026-09-28T17:01:32.1457866Z Checking if size of short == 2                           : ok 
+2026-09-28T17:01:32.1696055Z Checking if size of size_t == 1                          : not found 
+2026-09-28T17:01:32.2038616Z Checking if size of size_t == 2                          : not found 
+2026-09-28T17:01:32.2179311Z Checking if size of size_t == 4                          : not found 
+2026-09-28T17:01:32.2593382Z Checking if size of size_t == 8                          : ok 
+2026-09-28T17:01:32.2841901Z Checking if size of ssize_t == 1                         : not found 
+2026-09-28T17:01:32.3096893Z Checking if size of ssize_t == 2                         : not found 
+2026-09-28T17:01:32.3348637Z Checking if size of ssize_t == 4                         : not found 
+2026-09-28T17:01:32.3778884Z Checking if size of ssize_t == 8                         : ok 
+2026-09-28T17:01:32.4202325Z Checking if size of int8_t == 1                          : ok 
+2026-09-28T17:01:32.4628360Z Checking if size of uint8_t == 1                         : ok 
+2026-09-28T17:01:32.4877323Z Checking if size of int16_t == 1                         : not found 
+2026-09-28T17:01:32.5303611Z Checking if size of int16_t == 2                         : ok 
+2026-09-28T17:01:32.5546878Z Checking if size of uint16_t == 1                        : not found 
+2026-09-28T17:01:32.5971130Z Checking if size of uint16_t == 2                        : ok 
+2026-09-28T17:01:32.6217289Z Checking if size of int32_t == 1                         : not found 
+2026-09-28T17:01:32.6458749Z Checking if size of int32_t == 2                         : not found 
+2026-09-28T17:01:32.6892309Z Checking if size of int32_t == 4                         : ok 
+2026-09-28T17:01:32.7138936Z Checking if size of uint32_t == 1                        : not found 
+2026-09-28T17:01:32.7391030Z Checking if size of uint32_t == 2                        : not found 
+2026-09-28T17:01:32.7826118Z Checking if size of uint32_t == 4                        : ok 
+2026-09-28T17:01:32.8064727Z Checking if size of int64_t == 1                         : not found 
+2026-09-28T17:01:32.8313318Z Checking if size of int64_t == 2                         : not found 
+2026-09-28T17:01:32.8553179Z Checking if size of int64_t == 4                         : not found 
+2026-09-28T17:01:32.8972500Z Checking if size of int64_t == 8                         : ok 
+2026-09-28T17:01:32.9213565Z Checking if size of uint64_t == 1                        : not found 
+2026-09-28T17:01:32.9453510Z Checking if size of uint64_t == 2                        : not found 
+2026-09-28T17:01:32.9693783Z Checking if size of uint64_t == 4                        : not found 
+2026-09-28T17:01:33.0143876Z Checking if size of uint64_t == 8                        : ok 
+2026-09-28T17:01:33.0394978Z Checking if size of void* == 1                           : not found 
+2026-09-28T17:01:33.0635296Z Checking if size of void* == 2                           : not found 
+2026-09-28T17:01:33.1955290Z Checking if size of void* == 4                           : not found 
+2026-09-28T17:01:33.2419898Z Checking if size of void* == 8                           : ok 
+2026-09-28T17:01:33.2674520Z Checking if size of off_t == 1                           : not found 
+2026-09-28T17:01:33.2927058Z Checking if size of off_t == 2                           : not found 
+2026-09-28T17:01:33.3172546Z Checking if size of off_t == 4                           : not found 
+2026-09-28T17:01:33.3611171Z Checking if size of off_t == 8                           : ok 
+2026-09-28T17:01:33.3863693Z Checking if size of dev_t == 1                           : not found 
+2026-09-28T17:01:33.4115594Z Checking if size of dev_t == 2                           : not found 
+2026-09-28T17:01:33.4367802Z Checking if size of dev_t == 4                           : not found 
+2026-09-28T17:01:33.4804728Z Checking if size of dev_t == 8                           : ok 
+2026-09-28T17:01:33.5063910Z Checking if size of ino_t == 1                           : not found 
+2026-09-28T17:01:33.5319375Z Checking if size of ino_t == 2                           : not found 
+2026-09-28T17:01:33.5569832Z Checking if size of ino_t == 4                           : not found 
+2026-09-28T17:01:33.6005249Z Checking if size of ino_t == 8                           : ok 
+2026-09-28T17:01:33.6253704Z Checking if size of time_t == 1                          : not found 
+2026-09-28T17:01:33.6499001Z Checking if size of time_t == 2                          : not found 
+2026-09-28T17:01:33.6743732Z Checking if size of time_t == 4                          : not found 
+2026-09-28T17:01:33.7177988Z Checking if size of time_t == 8                          : ok 
+2026-09-28T17:01:33.7488427Z Checking for socklen_t                                   : ok 
+2026-09-28T17:01:33.7796048Z Checking for struct ifaddrs                              : ok 
+2026-09-28T17:01:33.8111546Z Checking for struct addrinfo                             : ok 
+2026-09-28T17:01:33.8415851Z Checking for struct sockaddr                             : ok 
+2026-09-28T17:01:33.8870747Z Checking for HAVE_STRUCT_SOCKADDR_IN6                    : ok 
+2026-09-28T17:01:33.9176081Z Checking for struct sockaddr_storage                     : ok 
+2026-09-28T17:01:33.9478128Z Checking for sa_family_t                                 : ok 
+2026-09-28T17:01:33.9783154Z Checking for sig_atomic_t                                : ok 
+2026-09-28T17:01:34.0075152Z Checking for sigsetmask                                  : ok 
+2026-09-28T17:01:34.0373794Z Checking for siggetmask                                  : ok 
+2026-09-28T17:01:34.0672424Z Checking for sigprocmask                                 : ok 
+2026-09-28T17:01:34.0969423Z Checking for sigblock                                    : ok 
+2026-09-28T17:01:34.1265293Z Checking for sigaction                                   : ok 
+2026-09-28T17:01:34.1559690Z Checking for sigset                                      : ok 
+2026-09-28T17:01:34.1858552Z Checking for inet_ntoa                                   : ok 
+2026-09-28T17:01:34.2154373Z Checking for inet_aton                                   : ok 
+2026-09-28T17:01:34.2450800Z Checking for inet_ntop                                   : ok 
+2026-09-28T17:01:34.2744406Z Checking for inet_pton                                   : ok 
+2026-09-28T17:01:34.3037180Z Checking for connect                                     : ok 
+2026-09-28T17:01:34.3336065Z Checking for gethostbyname                               : ok 
+2026-09-28T17:01:34.3638371Z Checking for getaddrinfo                                 : ok 
+2026-09-28T17:01:34.3936760Z Checking for getnameinfo                                 : ok 
+2026-09-28T17:01:34.4229430Z Checking for freeaddrinfo                                : ok 
+2026-09-28T17:01:34.4528874Z Checking for gai_strerror                                : ok 
+2026-09-28T17:01:34.4827415Z Checking for socketpair                                  : ok 
+2026-09-28T17:01:34.5396500Z Checking for memset_s                                    : not found 
+2026-09-28T17:01:34.5974482Z Checking for memset_explicit                             : not found 
+2026-09-28T17:01:34.6649500Z Checking for volatile memory protection                  : ok 
+2026-09-28T17:01:34.6981605Z Checking for variable IPV6_V6ONLY                        : ok 
+2026-09-28T17:01:34.7501598Z Checking for header net/if.h                             : yes 
+2026-09-28T17:01:34.8005931Z Checking for HAVE_IPV6                                   : ok 
+2026-09-28T17:01:34.8480805Z Checking whether we have ucontext_t                      : ok 
+2026-09-28T17:01:34.9036643Z Checking for __sync_fetch_and_add compiler builtin       : ok 
+2026-09-28T17:01:34.9492439Z Checking for __sync_add_and_fetch compiler builtin       : ok 
+2026-09-28T17:01:34.9958262Z Checking for atomic_add_32 compiler builtin              : not found 
+2026-09-28T17:01:35.0458505Z Checking for __atomic_add_fetch compiler builtin         : ok 
+2026-09-28T17:01:35.0910135Z Checking for __atomic_load compiler builtin              : ok 
+2026-09-28T17:01:35.1411376Z Checking for atomic_thread_fence(memory_order_seq_cst) in stdatomic.h : ok 
+2026-09-28T17:01:35.1841238Z Checking for fallthrough attribute                                    : ok 
+2026-09-28T17:01:35.2142216Z Checking for strdup                                                   : ok 
+2026-09-28T17:01:35.2457819Z Checking for memmem                                                   : ok 
+2026-09-28T17:01:35.2756774Z Checking for printf                                                   : ok 
+2026-09-28T17:01:35.3062128Z Checking for memcpy                                                   : ok 
+2026-09-28T17:01:35.3366039Z Checking for memmove                                                  : ok 
+2026-09-28T17:01:35.3681549Z Checking for strcpy                                                   : ok 
+2026-09-28T17:01:35.3987295Z Checking for strncpy                                                  : ok 
+2026-09-28T17:01:35.4556596Z Checking for shl_load                                                 : not found 
+2026-09-28T17:01:35.5139880Z Checking for shl_unload                                               : not found 
+2026-09-28T17:01:35.5710322Z Checking for shl_findsym                                              : not found 
+2026-09-28T17:01:35.6023429Z Checking for pipe                                                     : ok 
+2026-09-28T17:01:35.6341628Z Checking for strftime                                                 : ok 
+2026-09-28T17:01:35.6655572Z Checking for srandom                                                  : ok 
+2026-09-28T17:01:35.6962957Z Checking for random                                                   : ok 
+2026-09-28T17:01:35.7273144Z Checking for srand                                                    : ok 
+2026-09-28T17:01:35.7585512Z Checking for rand                                                     : ok 
+2026-09-28T17:01:35.7891205Z Checking for usleep                                                   : ok 
+2026-09-28T17:01:35.8197269Z Checking for setbuffer                                                : ok 
+2026-09-28T17:01:35.8499686Z Checking for lstat                                                    : ok 
+2026-09-28T17:01:35.8803573Z Checking for getpgrp                                                  : ok 
+2026-09-28T17:01:35.9116348Z Checking for utime                                                    : ok 
+2026-09-28T17:01:35.9420655Z Checking for utimes                                                   : ok 
+2026-09-28T17:01:35.9721864Z Checking for setuid                                                   : ok 
+2026-09-28T17:01:36.0016479Z Checking for seteuid                                                  : ok 
+2026-09-28T17:01:36.0313088Z Checking for setreuid                                                 : ok 
+2026-09-28T17:01:36.0609222Z Checking for setresuid                                                : ok 
+2026-09-28T17:01:36.0907718Z Checking for setgid                                                   : ok 
+2026-09-28T17:01:36.1207323Z Checking for setegid                                                  : ok 
+2026-09-28T17:01:36.1503503Z Checking for setregid                                                 : ok 
+2026-09-28T17:01:36.1792619Z Checking for setresgid                                                : ok 
+2026-09-28T17:01:36.2078069Z Checking for chroot                                                   : ok 
+2026-09-28T17:01:36.2365541Z Checking for strerror                                                 : ok 
+2026-09-28T17:01:36.2665427Z Checking for vsyslog                                                  : ok 
+2026-09-28T17:01:36.2969111Z Checking for setlinebuf                                               : ok 
+2026-09-28T17:01:36.3267302Z Checking for mktime                                                   : ok 
+2026-09-28T17:01:36.3585560Z Checking for ftruncate                                                : ok 
+2026-09-28T17:01:36.4162064Z Checking for chsize                                                   : not found 
+2026-09-28T17:01:36.4470357Z Checking for rename                                                   : ok 
+2026-09-28T17:01:36.4778173Z Checking for waitpid                                                  : ok 
+2026-09-28T17:01:36.5092470Z Checking for wait4                                                    : ok 
+2026-09-28T17:01:36.5398033Z Checking for initgroups                                               : ok 
+2026-09-28T17:01:36.5708614Z Checking for pread                                                    : ok 
+2026-09-28T17:01:36.6010434Z Checking for pwrite                                                   : ok 
+2026-09-28T17:01:36.6318613Z Checking for strndup                                                  : ok 
+2026-09-28T17:01:36.6625222Z Checking for strcasestr                                               : ok 
+2026-09-28T17:01:36.6935583Z Checking for strsep                                                   : ok 
+2026-09-28T17:01:36.7240552Z Checking for strtok_r                                                 : ok 
+2026-09-28T17:01:36.7550641Z Checking for mkdtemp                                                  : ok 
+2026-09-28T17:01:36.7855818Z Checking for dup2                                                     : ok 
+2026-09-28T17:01:36.8156100Z Checking for dprintf                                                  : ok 
+2026-09-28T17:01:36.8451873Z Checking for vdprintf                                                 : ok 
+2026-09-28T17:01:36.8747305Z Checking for isatty                                                   : ok 
+2026-09-28T17:01:36.9049944Z Checking for chown                                                    : ok 
+2026-09-28T17:01:36.9348351Z Checking for lchown                                                   : ok 
+2026-09-28T17:01:36.9640987Z Checking for link                                                     : ok 
+2026-09-28T17:01:36.9939100Z Checking for readlink                                                 : ok 
+2026-09-28T17:01:37.0232448Z Checking for symlink                                                  : ok 
+2026-09-28T17:01:37.0526848Z Checking for realpath                                                 : ok 
+2026-09-28T17:01:37.0828339Z Checking for snprintf                                                 : ok 
+2026-09-28T17:01:37.1135711Z Checking for vsnprintf                                                : ok 
+2026-09-28T17:01:37.1432557Z Checking for asprintf                                                 : ok 
+2026-09-28T17:01:37.1730973Z Checking for vasprintf                                                : ok 
+2026-09-28T17:01:37.2031122Z Checking for setenv                                                   : ok 
+2026-09-28T17:01:37.2330347Z Checking for unsetenv                                                 : ok 
+2026-09-28T17:01:37.2645935Z Checking for strnlen                                                  : ok 
+2026-09-28T17:01:37.2944326Z Checking for strtoull                                                 : ok 
+2026-09-28T17:01:37.3540666Z Checking for __strtoull                                               : not found 
+2026-09-28T17:01:37.3867752Z Checking for strtouq                                                  : ok 
+2026-09-28T17:01:37.4173257Z Checking for strtoll                                                  : ok 
+2026-09-28T17:01:37.4759355Z Checking for __strtoll                                                : not found 
+2026-09-28T17:01:37.5074361Z Checking for strtoq                                                   : ok 
+2026-09-28T17:01:37.5388332Z Checking for memalign                                                 : ok 
+2026-09-28T17:01:37.5705050Z Checking for posix_memalign                                           : ok 
+2026-09-28T17:01:37.6012415Z Checking for fmemopen                                                 : ok 
+2026-09-28T17:01:37.6319867Z Checking for renameat2                                                : ok 
+2026-09-28T17:01:37.6629576Z Checking for header malloc.h                                          : yes 
+2026-09-28T17:01:37.6942967Z Checking for declaration of memalign                                  : ok 
+2026-09-28T17:01:37.7387489Z Checking for posix_fallocate-capable libc                             : ok 
+2026-09-28T17:01:37.7700135Z Checking for posix_fallocate                                          : ok 
+2026-09-28T17:01:37.7700611Z Checking for prctl                                                    : ok 
+2026-09-28T17:01:37.8006399Z Checking for dirname                                                  : ok 
+2026-09-28T17:01:37.8312958Z Checking for basename                                                 : ok 
+2026-09-28T17:01:37.8614585Z Checking for strlcpy                                                  : ok 
+2026-09-28T17:01:37.8919527Z Checking for strlcat                                                  : ok 
+2026-09-28T17:01:37.9507751Z Checking for getpeereid                                               : not found 
+2026-09-28T17:01:37.9712691Z Checking for library bsd                                              : no 
+2026-09-28T17:01:38.1031842Z Checking for getpeereid                                               : not found 
+2026-09-28T17:01:38.1235885Z Checking for library setproctitle                                     : no 
+2026-09-28T17:01:38.5015995Z Checking for setproctitle                                             : not found 
+2026-09-28T17:01:38.5228100Z Checking for library bsd                                              : no 
+2026-09-28T17:01:38.6547995Z Checking for setproctitle                                             : not found 
+2026-09-28T17:01:38.7130980Z Checking for setproctitle_init                                        : not found 
+2026-09-28T17:01:38.7335203Z Checking for library bsd                                              : no 
+2026-09-28T17:01:38.8630017Z Checking for setproctitle_init                                        : not found 
+2026-09-28T17:01:38.8935555Z Checking for closefrom                                                : ok 
+2026-09-28T17:01:38.9387067Z Checking whether we can use SO_PEERCRED to get socket credentials     : ok 
+2026-09-28T17:01:38.9839139Z Checking correct behavior of strtoll                                  : not found 
+2026-09-28T17:01:39.0139024Z Checking for if_nameindex                                             : ok 
+2026-09-28T17:01:39.0443296Z Checking for if_nametoindex                                           : ok 
+2026-09-28T17:01:39.0754884Z Checking for strerror_r                                               : ok 
+2026-09-28T17:01:39.1055025Z Checking for syslog                                                   : ok 
+2026-09-28T17:01:39.1055515Z Checking for gai_strerror                                             : ok 
+2026-09-28T17:01:39.1357690Z Checking for get_current_dir_name                                     : ok 
+2026-09-28T17:01:39.1661132Z Checking for timegm                                                   : ok 
+2026-09-28T17:01:39.1958824Z Checking for getifaddrs                                               : ok 
+2026-09-28T17:01:39.2254487Z Checking for freeifaddrs                                              : ok 
+2026-09-28T17:01:39.2556034Z Checking for mmap                                                     : ok 
+2026-09-28T17:01:39.2855610Z Checking for setgroups                                                : ok 
+2026-09-28T17:01:39.3156053Z Checking for syscall                                                  : ok 
+2026-09-28T17:01:39.3465958Z Checking for setsid                                                   : ok 
+2026-09-28T17:01:39.3775906Z Checking for getgrent_r                                               : ok 
+2026-09-28T17:01:39.4087701Z Checking for getgrgid_r                                               : ok 
+2026-09-28T17:01:39.4414806Z Checking for getgrnam_r                                               : ok 
+2026-09-28T17:01:39.4728446Z Checking for getgrouplist                                             : ok 
+2026-09-28T17:01:39.5040882Z Checking for getpagesize                                              : ok 
+2026-09-28T17:01:39.5355487Z Checking for getpwent_r                                               : ok 
+2026-09-28T17:01:39.5667701Z Checking for getpwnam_r                                               : ok 
+2026-09-28T17:01:39.5971581Z Checking for getpwuid_r                                               : ok 
+2026-09-28T17:01:39.6282197Z Checking for epoll_create1                                            : ok 
+2026-09-28T17:01:39.6895841Z Checking for getprogname                                              : not found 
+2026-09-28T17:01:39.7217820Z Checking for copy_file_range                                          : ok 
+2026-09-28T17:01:39.7542138Z Checking for getxattr                                                 : ok 
+2026-09-28T17:01:39.7812514Z Checking whether xattr interface takes additional options             : not found 
+2026-09-28T17:01:39.8696186Z Checking for dlopen                                                   : ok 
+2026-09-28T17:01:39.9003860Z Checking for dlsym                                                    : ok 
+2026-09-28T17:01:39.9317191Z Checking for dlerror                                                  : ok 
+2026-09-28T17:01:39.9628550Z Checking for dlclose                                                  : ok 
+2026-09-28T17:01:39.9936450Z Checking for declaration of dlopen                                    : ok 
+2026-09-28T17:01:40.0190774Z Checking C prototype for dlopen                                       : not found 
+2026-09-28T17:01:40.0503978Z Checking for fdatasync                                                : ok 
+2026-09-28T17:01:40.0806135Z Checking for declaration of fdatasync                                 : ok 
+2026-09-28T17:01:40.1105075Z Checking for clock_gettime                                            : ok 
+2026-09-28T17:01:40.1555188Z Checking whether the clock_gettime clock ID CLOCK_MONOTONIC is available : ok 
+2026-09-28T17:01:40.2007949Z Checking whether the clock_gettime clock ID CLOCK_PROCESS_CPUTIME_ID is available : ok 
+2026-09-28T17:01:40.2464150Z Checking whether the clock_gettime clock ID CLOCK_REALTIME is available           : ok 
+2026-09-28T17:01:40.2785213Z Checking for struct timespec                                                      : ok 
+2026-09-28T17:01:40.3132835Z Checking for header arpa/nameser.h                                                : yes 
+2026-09-28T17:01:40.3534816Z Checking for header resolv.h                                                      : yes 
+2026-09-28T17:01:40.3847233Z Checking for res_search                                                           : ok 
+2026-09-28T17:01:40.4153348Z Checking for header libintl.h                                                     : yes 
+2026-09-28T17:01:40.4362129Z Checking for library intl                                                         : no 
+2026-09-28T17:01:40.4674169Z Checking for declaration of dgettext                                              : ok 
+2026-09-28T17:01:40.4986555Z Checking for declaration of gettext                                               : ok 
+2026-09-28T17:01:40.5312579Z Checking for declaration of bindtextdomain                                        : ok 
+2026-09-28T17:01:40.5616469Z Checking for declaration of textdomain                                            : ok 
+2026-09-28T17:01:40.5934242Z Checking for declaration of bind_textdomain_codeset                               : ok 
+2026-09-28T17:01:40.6243981Z Checking for bindtextdomain                                                       : ok 
+2026-09-28T17:01:40.6561108Z Checking for textdomain                                                           : ok 
+2026-09-28T17:01:40.6882742Z Checking for bind_textdomain_codeset                                              : ok 
+2026-09-28T17:01:40.7208118Z Checking for dgettext                                                             : ok 
+2026-09-28T17:01:40.7532334Z Checking for gettext                                                              : ok 
+2026-09-28T17:01:40.8253176Z Checking for pthread_create                                                       : ok 
+2026-09-28T17:01:40.8576473Z Checking for pthread_attr_init                                                    : ok 
+2026-09-28T17:01:40.8893740Z Checking for pthread_mutexattr_setrobust                                          : ok 
+2026-09-28T17:01:40.9180105Z Checking for declaration of PTHREAD_MUTEX_ROBUST                                  : not found 
+2026-09-28T17:01:40.9503922Z Checking for declaration of PTHREAD_MUTEX_ROBUST (as enum)                        : ok 
+2026-09-28T17:01:40.9813586Z Checking for pthread_mutex_consistent                                             : ok 
+2026-09-28T17:01:41.0255466Z Checking for __thread local storage                                               : ok 
+2026-09-28T17:01:41.1029286Z Checking for crypt                                                                : not found 
+2026-09-28T17:01:41.1324829Z Checking for library crypt                                                        : yes 
+2026-09-28T17:01:41.1630994Z Checking for crypt in crypt                                                       : ok 
+2026-09-28T17:01:41.2214661Z Checking for crypt_r                                                              : not found 
+2026-09-28T17:01:41.2529633Z Checking for crypt_r in crypt                                                     : ok 
+2026-09-28T17:01:41.3121773Z Checking for crypt_rn                                                             : not found 
+2026-09-28T17:01:41.3440950Z Checking for crypt_rn in crypt                                                    : ok 
+2026-09-28T17:01:41.3692955Z Checking for header readline.h                                                    : no 
+2026-09-28T17:01:41.3942892Z Checking for header readline/readline.h                                           : no 
+2026-09-28T17:01:41.4198893Z Checking for header readline/history.h                                            : no 
+2026-09-28T17:01:41.4471029Z Checking for variable rl_event_hook                                               : not found 
+2026-09-28T17:01:41.4785516Z Checking for variable program_invocation_short_name                               : ok 
+2026-09-28T17:01:41.5101945Z Checking for declaration of snprintf                                              : ok 
+2026-09-28T17:01:41.5415442Z Checking for declaration of vsnprintf                                             : ok 
+2026-09-28T17:01:41.5729249Z Checking for declaration of asprintf                                              : ok 
+2026-09-28T17:01:41.6040168Z Checking for declaration of vasprintf                                             : ok 
+2026-09-28T17:01:41.6356914Z Checking for declaration of errno                                                 : ok 
+2026-09-28T17:01:41.6669594Z Checking for declaration of EWOULDBLOCK                                           : ok 
+2026-09-28T17:01:41.6982188Z Checking for declaration of environ                                               : ok 
+2026-09-28T17:01:41.7295430Z Checking for declaration of getgrent_r                                            : ok 
+2026-09-28T17:01:41.7609287Z Checking for declaration of getpwent_r                                            : ok 
+2026-09-28T17:01:41.7923510Z Checking for declaration of pread                                                 : ok 
+2026-09-28T17:01:41.8231243Z Checking for declaration of pwrite                                                : ok 
+2026-09-28T17:01:41.8536936Z Checking for declaration of setenv                                                : ok 
+2026-09-28T17:01:41.8850214Z Checking for declaration of setresgid                                             : ok 
+2026-09-28T17:01:41.9159303Z Checking for declaration of setresuid                                             : ok 
+2026-09-28T17:01:41.9768572Z Checking for eventfd                                                              : ok 
+2026-09-28T17:01:42.0093163Z Checking for header poll.h                                                        : yes 
+2026-09-28T17:01:42.0403004Z Checking for poll                                                                 : ok 
+2026-09-28T17:01:42.0711881Z Checking for strptime                                                             : ok 
+2026-09-28T17:01:42.1028138Z Checking for declaration of strptime                                              : ok 
+2026-09-28T17:01:42.1620812Z Checking for working strptime                                                     : ok 
+2026-09-28T17:01:42.1927863Z Checking for declaration of gettimeofday                                          : ok 
+2026-09-28T17:01:42.2184863Z Checking C prototype for gettimeofday                                             : not found 
+2026-09-28T17:01:42.2486542Z Checking C prototype for gettimeofday                                             : ok 
+2026-09-28T17:01:42.3318526Z Checking for C99 vsnprintf                                                        : ok 
+2026-09-28T17:01:43.3888926Z Checking for HAVE_SHARED_MMAP                                                     : ok 
+2026-09-28T17:01:43.5256728Z Checking for HAVE_MREMAP                                                          : ok 
+2026-09-28T17:01:43.5835939Z Checking for HAVE_INCOHERENT_MMAP                                                 : not found 
+2026-09-28T17:01:43.6288346Z Checking for HAVE_IMMEDIATE_STRUCTURES                                            : ok 
+2026-09-28T17:01:43.6743343Z Checking for HAVE_MKDIR_MODE                                                      : ok 
+2026-09-28T17:01:43.7063728Z Checking for member st_rdev in struct stat                                        : ok 
+2026-09-28T17:01:43.7383436Z Checking for member st_rdev in struct stat                                        : ok 
+2026-09-28T17:01:43.7725680Z Checking for member ss_family in struct sockaddr_storage                          : ok 
+2026-09-28T17:01:43.8024359Z Checking for member __ss_family in struct sockaddr_storage                        : not found 
+2026-09-28T17:01:43.8317250Z Checking for member sa_len in struct sockaddr                                     : not found 
+2026-09-28T17:01:43.8609934Z Checking for member sin_len in struct sockaddr_in                                 : not found 
+2026-09-28T17:01:43.8905577Z Checking for member sin6_len in struct sockaddr_in6                               : not found 
+2026-09-28T17:01:43.9387263Z Checking for HAVE_UNIXSOCKET                                                      : ok 
+2026-09-28T17:01:43.9904668Z Checking for HAVE_SECURE_MKSTEMP                                                  : ok 
+2026-09-28T17:01:44.0365643Z Checking for HAVE_IFACE_GETIFADDRS                                                : not found 
+2026-09-28T17:01:44.0896418Z Checking for HAVE_IFACE_AIX                                                       : not found 
+2026-09-28T17:01:44.1345688Z Checking for HAVE_IFACE_IFCONF                                                    : not found 
+2026-09-28T17:01:44.1780464Z Checking for HAVE_IFACE_IFREQ                                                     : not found 
+2026-09-28T17:01:44.2105421Z Checking for declaration of getpwent_r                                            : ok 
+2026-09-28T17:01:44.2380615Z Checking C prototype for getpwent_r                                               : not found 
+2026-09-28T17:01:44.2699637Z Checking for declaration of getgrent_r                                            : ok 
+2026-09-28T17:01:44.2974627Z Checking C prototype for getgrent_r                                               : not found 
+2026-09-28T17:01:44.3247350Z Checking C prototype for getpwent_r                                               : not found 
+2026-09-28T17:01:44.3517555Z Checking C prototype for getgrent_r                                               : not found 
+2026-09-28T17:01:44.3518658Z Checking for strerror_r                                                           : ok 
+2026-09-28T17:01:44.3788002Z Checking for XSI (rather than GNU) prototype for strerror_r                       : not found 
+2026-09-28T17:01:44.3797202Z Checking for program 'xsltproc'                                                   : not found 
+2026-09-28T17:01:44.4182254Z Checking for header sys/auxv.h                                                    : yes 
+2026-09-28T17:01:44.4508132Z Checking for getauxval                                                            : ok 
+2026-09-28T17:01:44.4726764Z Checking if compiler accepts -fstack-protector-strong                             : no 
+2026-09-28T17:01:44.4942962Z Checking if compiler accepts -fstack-protector                                    : no 
+2026-09-28T17:01:44.5315519Z Checking if compiler accepts -fstack-clash-protection                             : yes 
+2026-09-28T17:01:44.5694750Z Checking linker accepts -Wl,-no-undefined                                         : yes 
+2026-09-28T17:01:44.5893388Z Checking linker accepts ['-undefined', 'dynamic_lookup']                          : no 
+2026-09-28T17:01:44.5895251Z Checking for program 'python3'                                                    : /usr/bin/python3 
+2026-09-28T17:01:44.5970593Z Checking for program 'python'                                                     : /usr/bin/python3 
+2026-09-28T17:01:44.6120710Z Checking for program 'python3'                                                    : /usr/bin/python3 
+2026-09-28T17:01:45.2978964Z Checking for python version >= 3.6.0                                              : 3.12.3 
+2026-09-28T17:01:45.2979529Z python headers                                                                    : Check disabled due to --disable-python 
+2026-09-28T17:01:45.2988320Z 'configure' finished successfully (21.223s)
+2026-09-28T17:01:45.3188330Z PYTHONHASHSEED=1 WAF_MAKE=1  `PATH=buildtools/bin:../../buildtools/bin:$PATH which waf` build
+2026-09-28T17:01:45.4296407Z Waf: Entering directory `/home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-2.4.3/bin/default'
+2026-09-28T17:01:45.4315440Z Checking project rules ...
+2026-09-28T17:01:45.4325204Z Project rules pass
+2026-09-28T17:01:45.4350863Z [1/2] Creating bin/default/lib/replace/replace.empty.c
+2026-09-28T17:01:45.4355811Z [2/2] Compiling talloc.pc.in
+2026-09-28T17:01:45.4366952Z [3/3] Compiling lib/replace/replace.c
+2026-09-28T17:01:45.5072119Z [4/4] Processing talloc.vscript: ABI/talloc-2.0.2.sigs ABI/talloc-2.0.3.sigs ABI/talloc-2.0.4.sigs ABI/talloc-2.0.5.sigs ABI/talloc-2.0.6.sigs ABI/talloc-2.0.7.sigs ABI/talloc-2.0.8.sigs ABI/talloc-2.1.0.sigs ABI/talloc-2.1.1.sigs ABI/talloc-2.1.2.sigs ABI/talloc-2.1.3.sigs ABI/talloc-2.1.4.sigs ABI/talloc-2.1.5.sigs ABI/talloc-2.1.6.sigs ABI/talloc-2.1.7.sigs ABI/talloc-2.1.8.sigs ABI/talloc-2.1.9.sigs ABI/talloc-2.1.10.sigs ABI/talloc-2.1.11.sigs ABI/talloc-2.1.12.sigs ABI/talloc-2.1.13.sigs ABI/talloc-2.1.14.sigs ABI/talloc-2.1.15.sigs ABI/talloc-2.1.16.sigs ABI/talloc-2.2.0.sigs ABI/talloc-2.3.0.sigs ABI/talloc-2.3.1.sigs ABI/talloc-2.3.2.sigs ABI/talloc-2.3.3.sigs ABI/talloc-2.3.4.sigs ABI/talloc-2.3.5.sigs ABI/talloc-2.4.0.sigs ABI/talloc-2.4.1.sigs ABI/talloc-2.4.2.sigs ABI/talloc-2.4.3.sigs -> bin/default/talloc.vscript
+2026-09-28T17:01:45.5085678Z [5/5] Compiling lib/replace/replace.c
+2026-09-28T17:01:45.5676234Z [ 6/21] Compiling talloc.c
+2026-09-28T17:01:45.5681713Z [ 7/21] Compiling lib/replace/tests/strptime.c
+2026-09-28T17:01:45.6141954Z [ 8/21] Compiling lib/replace/tests/getifaddrs.c
+2026-09-28T17:01:45.6607561Z [ 9/21] Compiling lib/replace/tests/os2_delete.c
+2026-09-28T17:01:45.7201505Z [10/21] Compiling lib/replace/tests/testsuite.c
+2026-09-28T17:01:46.1226391Z [11/21] Compiling lib/replace/tests/main.c
+2026-09-28T17:01:46.1560572Z [12/21] Linking bin/default/libtalloc.so
+2026-09-28T17:01:46.1704505Z [13/21] Compiling testsuite.c
+2026-09-28T17:01:46.8393650Z ../../testsuite.c: In function ‘test_autofree’:
+2026-09-28T17:01:46.8394710Z ../../testsuite.c:1334:9: warning: ‘talloc_autofree_context’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8395256Z  1334 |         p = talloc_autofree_context();
+2026-09-28T17:01:46.8396883Z [14/21] Compiling testsuite_main.c
+2026-09-28T17:01:46.8397136Z       |         ^
+2026-09-28T17:01:46.8407199Z In file included from ../../testsuite.c:28:
+2026-09-28T17:01:46.8407610Z ../../talloc.h:1084:16: note: declared here
+2026-09-28T17:01:46.8408030Z  1084 | _PUBLIC_ void *talloc_autofree_context(void) _DEPRECATED_;
+2026-09-28T17:01:46.8408467Z       |                ^~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8409277Z ../../testsuite.c:1337:9: warning: ‘talloc_autofree_context’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8410081Z  1337 |         p = talloc_autofree_context();
+2026-09-28T17:01:46.8410583Z       |         ^
+2026-09-28T17:01:46.8411051Z ../../talloc.h:1084:16: note: declared here
+2026-09-28T17:01:46.8411990Z  1084 | _PUBLIC_ void *talloc_autofree_context(void) _DEPRECATED_;
+2026-09-28T17:01:46.8412500Z       |                ^~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8413070Z ../../testsuite.c: In function ‘test_memlimit’:
+2026-09-28T17:01:46.8413810Z ../../testsuite.c:1680:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8414484Z  1680 |         torture_assert("memlimit", talloc_set_memlimit(l1, 2048) == 0,
+2026-09-28T17:01:46.8414955Z       |         ^~~~~~~~~~~~~~
+2026-09-28T17:01:46.8415312Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8415835Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8416364Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8417048Z ../../testsuite.c:1740:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8417738Z  1740 |         torture_assert("memlimit", talloc_set_memlimit(l3, 1024) == 0,
+2026-09-28T17:01:46.8418219Z       |         ^~~~~~~~~~~~~~
+2026-09-28T17:01:46.8418575Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8419096Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8419616Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8420294Z ../../testsuite.c:1753:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8420955Z  1753 |         torture_assert("memlimit", talloc_set_memlimit(l4, 512) == 0,
+2026-09-28T17:01:46.8421580Z       |         ^~~~~~~~~~~~~~
+2026-09-28T17:01:46.8421943Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8422452Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8422986Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8423676Z ../../testsuite.c:1787:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8424369Z  1787 |         torture_assert("memlimit", talloc_set_memlimit(l4, 512) == 0,
+2026-09-28T17:01:46.8424838Z       |         ^~~~~~~~~~~~~~
+2026-09-28T17:01:46.8425188Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8425705Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8426218Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8426893Z ../../testsuite.c:1820:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8427495Z  1820 |         talloc_set_memlimit(pool, 10*1024);
+2026-09-28T17:01:46.8427887Z       |         ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8428261Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8428777Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8429587Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8430335Z ../../testsuite.c:1873:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8430936Z  1873 |         talloc_set_memlimit(pool, 11*1024);
+2026-09-28T17:01:46.8431516Z       |         ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8431900Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8432422Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8432935Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8433602Z ../../testsuite.c:1885:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8434194Z  1885 |         talloc_set_memlimit(pool, 21*1024);
+2026-09-28T17:01:46.8434590Z       |         ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8434956Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8435461Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8435991Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8436861Z ../../testsuite.c:1923:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8437478Z  1923 |         talloc_set_memlimit(pool, 1024);
+2026-09-28T17:01:46.8437858Z       |         ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8438229Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8438753Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8439266Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8439941Z ../../testsuite.c:1944:9: warning: ‘talloc_set_memlimit’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:46.8440527Z  1944 |         talloc_set_memlimit(pool, 10*1024);
+2026-09-28T17:01:46.8440918Z       |         ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8441413Z ../../talloc.h:1951:14: note: declared here
+2026-09-28T17:01:46.8442023Z  1951 | _PUBLIC_ int talloc_set_memlimit(const void *ctx, size_t max_size) _DEPRECATED_;
+2026-09-28T17:01:46.8442536Z       |              ^~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:46.8442824Z 
+2026-09-28T17:01:46.8731888Z [15/21] Compiling test_magic_differs_helper.c
+2026-09-28T17:01:46.8961885Z [16/21] Linking bin/default/talloc_testsuite
+2026-09-28T17:01:46.9109511Z [17/21] Linking bin/default/talloc_test_magic_differs_helper
+2026-09-28T17:01:46.9250761Z [18/21] Compiling bin/default/lib/replace/replace.empty.c
+2026-09-28T17:01:46.9302042Z [19/21] Compiling talloc.c
+2026-09-28T17:01:46.9354600Z [20/21] Linking bin/default/lib/replace/replace_testsuite
+2026-09-28T17:01:46.9497813Z [21/21] Symlinking bin/default/libtalloc.so
+2026-09-28T17:01:47.5507661Z Waf: Leaving directory `/home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-2.4.3/bin/default'
+2026-09-28T17:01:47.5508347Z Build commands will be stored in bin/default/compile_commands.json
+2026-09-28T17:01:47.5526041Z 'build' finished successfully (2.133s)
+2026-09-28T17:01:54.7906831Z make: Entering directory '/home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/proot/src'
+2026-09-28T17:01:54.8950524Z   CC	cli/note.o
+2026-09-28T17:01:54.9522222Z   CC	execve/enter.o
+2026-09-28T17:01:54.9580441Z   CC	execve/exit.o
+2026-09-28T17:01:55.0596376Z   CC	execve/shebang.o
+2026-09-28T17:01:55.0678698Z   CC	execve/elf.o
+2026-09-28T17:01:55.1189797Z   CC	execve/ldso.o
+2026-09-28T17:01:55.1486470Z   CC	execve/auxv.o
+2026-09-28T17:01:55.2049065Z   CC	path/binding.o
+2026-09-28T17:01:55.2550969Z   CC	path/glue.o
+2026-09-28T17:01:55.2793276Z ./path/glue.c: In function ‘set_placeholder_destructor’:
+2026-09-28T17:01:55.2793908Z ./path/glue.c:76:9: warning: ‘talloc_autofree_context’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:55.2794602Z    76 |         autofreed = talloc_autofree_context();
+2026-09-28T17:01:55.2795007Z       |         ^~~~~~~~~
+2026-09-28T17:01:55.2795709Z In file included from ./path/glue.c:31:
+2026-09-28T17:01:55.2796415Z /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-prefix/include/talloc.h:1084:16: note: declared here
+2026-09-28T17:01:55.2797223Z  1084 | _PUBLIC_ void *talloc_autofree_context(void) _DEPRECATED_;
+2026-09-28T17:01:55.2797675Z       |                ^~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.3025596Z   CC	path/canon.o
+2026-09-28T17:01:55.3607437Z   CC	path/f2fs-bug.o
+2026-09-28T17:01:55.3909849Z   CC	path/proc.o
+2026-09-28T17:01:55.4198520Z ./path/proc.c: In function ‘readlink_proc’:
+2026-09-28T17:01:55.4199455Z ./path/proc.c:124:25: warning: ‘__builtin_strncpy’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:55.4200197Z   124 |                         strncpy(result, string, status + 1);    \
+2026-09-28T17:01:55.4200599Z       |                         ^~~~~~~
+2026-09-28T17:01:55.4201092Z ./path/proc.c:130:17: note: in expansion of macro ‘SUBSTITUTE’
+2026-09-28T17:01:55.4201778Z   130 |                 SUBSTITUTE(exe, known_tracee->exe);
+2026-09-28T17:01:55.4202141Z       |                 ^~~~~~~~~~
+2026-09-28T17:01:55.4202467Z ./path/proc.c:120:34: note: length computed here
+2026-09-28T17:01:55.4203211Z   120 |                         status = strlen(string);                \
+2026-09-28T17:01:55.4203640Z       |                                  ^~~~~~~~~~~~~~
+2026-09-28T17:01:55.4204160Z ./path/proc.c:130:17: note: in expansion of macro ‘SUBSTITUTE’
+2026-09-28T17:01:55.4204593Z   130 |                 SUBSTITUTE(exe, known_tracee->exe);
+2026-09-28T17:01:55.4204959Z       |                 ^~~~~~~~~~
+2026-09-28T17:01:55.4205677Z ./path/proc.c:124:25: warning: ‘__builtin_strncpy’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:55.4206373Z   124 |                         strncpy(result, string, status + 1);    \
+2026-09-28T17:01:55.4206768Z       |                         ^~~~~~~
+2026-09-28T17:01:55.4207261Z ./path/proc.c:131:17: note: in expansion of macro ‘SUBSTITUTE’
+2026-09-28T17:01:55.4207701Z   131 |                 SUBSTITUTE(cwd, known_tracee->fs->cwd);
+2026-09-28T17:01:55.4208078Z       |                 ^~~~~~~~~~
+2026-09-28T17:01:55.4208416Z ./path/proc.c:120:34: note: length computed here
+2026-09-28T17:01:55.4208811Z   120 |                         status = strlen(string);                \
+2026-09-28T17:01:55.4209194Z       |                                  ^~~~~~~~~~~~~~
+2026-09-28T17:01:55.4209693Z ./path/proc.c:131:17: note: in expansion of macro ‘SUBSTITUTE’
+2026-09-28T17:01:55.4210169Z   131 |                 SUBSTITUTE(cwd, known_tracee->fs->cwd);
+2026-09-28T17:01:55.4210579Z       |                 ^~~~~~~~~~
+2026-09-28T17:01:55.4262597Z   CC	path/temp.o
+2026-09-28T17:01:55.4416850Z   CC	syscall/syscall.o
+2026-09-28T17:01:55.4491212Z ./path/temp.c: In function ‘get_temp_directory’:
+2026-09-28T17:01:55.4492082Z ./path/temp.c:37:9: warning: ‘talloc_autofree_context’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:55.4492657Z    37 |         temp_directory = talloc_strdup(talloc_autofree_context(), tmp);
+2026-09-28T17:01:55.4492997Z       |         ^~~~~~~~~~~~~~
+2026-09-28T17:01:55.4493241Z In file included from ./path/temp.c:9:
+2026-09-28T17:01:55.4493823Z /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-prefix/include/talloc.h:1084:16: note: declared here
+2026-09-28T17:01:55.4494481Z  1084 | _PUBLIC_ void *talloc_autofree_context(void) _DEPRECATED_;
+2026-09-28T17:01:55.4494807Z       |                ^~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.4496900Z ./path/temp.c: In function ‘create_temp_name’:
+2026-09-28T17:01:55.4497455Z ./path/temp.c:273:17: warning: ‘talloc_autofree_context’ is deprecated [-Wdeprecated-declarations]
+2026-09-28T17:01:55.4498107Z   273 |                 context = talloc_autofree_context();
+2026-09-28T17:01:55.4498492Z       |                 ^~~~~~~
+2026-09-28T17:01:55.4499129Z /home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/talloc-prefix/include/talloc.h:1084:16: note: declared here
+2026-09-28T17:01:55.4500284Z  1084 | _PUBLIC_ void *talloc_autofree_context(void) _DEPRECATED_;
+2026-09-28T17:01:55.4500715Z       |                ^~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.4949176Z   CC	syscall/chain.o
+2026-09-28T17:01:55.5018482Z   CC	syscall/enter.o
+2026-09-28T17:01:55.5438453Z   CC	syscall/exit.o
+2026-09-28T17:01:55.5734028Z ./syscall/exit.c: In function ‘translate_syscall_exit’:
+2026-09-28T17:01:55.5734688Z ./syscall/exit.c:391:68: warning: comparison of unsigned expression in ‘< 0’ is always false [-Wtype-limits]
+2026-09-28T17:01:55.5735222Z   391 |                         if (syscall_number == PR_readlink || dirfd < 0) {
+2026-09-28T17:01:55.5735573Z       |                                                                    ^
+2026-09-28T17:01:55.6211916Z ./syscall/enter.c: In function ‘emulate_pivot_root’:
+2026-09-28T17:01:55.6212985Z ./syscall/enter.c:308:24: warning: ‘get_binding’ reading 4096 bytes from a region of size 2 [-Wstringop-overread]
+2026-09-28T17:01:55.6213566Z   308 |         root_binding = get_binding(tracee, GUEST, "/");
+2026-09-28T17:01:55.6213884Z       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6272362Z ./syscall/enter.c:308:24: note: referencing argument 3 of type ‘const char[4096]’
+2026-09-28T17:01:55.6272975Z In file included from ./syscall/enter.c:79:
+2026-09-28T17:01:55.6273553Z ./path/binding.h:53:17: note: in a call to function ‘get_binding’
+2026-09-28T17:01:55.6274139Z    53 | extern Binding *get_binding(const Tracee *tracee, Side side, const char path[PATH_MAX]);
+2026-09-28T17:01:55.6274650Z       |                 ^~~~~~~~~~~
+2026-09-28T17:01:55.6275339Z ./syscall/enter.c:354:16: warning: ‘insort_binding3’ reading 4096 bytes from a region of size 2 [-Wstringop-overread]
+2026-09-28T17:01:55.6276016Z   354 |         (void) insort_binding3(tracee, tracee->fs, new_root_host, "/");
+2026-09-28T17:01:55.6276490Z       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6277121Z ./syscall/enter.c:354:16: note: referencing argument 4 of type ‘const char[4096]’
+2026-09-28T17:01:55.6277804Z ./path/binding.h:48:17: note: in a call to function ‘insort_binding3’
+2026-09-28T17:01:55.6278421Z    48 | extern Binding *insort_binding3(const Tracee *tracee, const TALLOC_CTX *context,
+2026-09-28T17:01:55.6278912Z       |                 ^~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6279613Z ./syscall/enter.c:378:32: warning: ‘insort_binding3’ reading 4096 bytes from a region of size 4095 [-Wstringop-overread]
+2026-09-28T17:01:55.6280277Z   378 |                         (void) insort_binding3(tracee, tracee->fs, b->host.path,
+2026-09-28T17:01:55.6280777Z       |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6281230Z   379 |                                                b->guest.path + new_root_len);
+2026-09-28T17:01:55.6281815Z       |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6282444Z ./syscall/enter.c:378:32: note: referencing argument 4 of type ‘const char[4096]’
+2026-09-28T17:01:55.6283119Z ./path/binding.h:48:17: note: in a call to function ‘insort_binding3’
+2026-09-28T17:01:55.6283728Z    48 | extern Binding *insort_binding3(const Tracee *tracee, const TALLOC_CTX *context,
+2026-09-28T17:01:55.6284218Z       |                 ^~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6284699Z ./syscall/enter.c: In function ‘maybe_redirect_userns_file’:
+2026-09-28T17:01:55.6287121Z ./syscall/enter.c:1808:16: warning: ‘set_sysarg_path’ reading 4096 bytes from a region of size 10 [-Wstringop-overread]
+2026-09-28T17:01:55.6287670Z  1808 |         (void) set_sysarg_path(tracee, "/dev/null", reg);
+2026-09-28T17:01:55.6287994Z       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6288612Z ./syscall/enter.c:1808:16: note: referencing argument 2 of type ‘const char[4096]’
+2026-09-28T17:01:55.6289113Z In file included from ./syscall/enter.c:64:
+2026-09-28T17:01:55.6290047Z ./syscall/syscall.h:53:12: note: in a call to function ‘set_sysarg_path’
+2026-09-28T17:01:55.6290662Z    53 | extern int set_sysarg_path(Tracee *tracee, const char path[PATH_MAX], Reg reg);
+2026-09-28T17:01:55.6291162Z       |            ^~~~~~~~~~~~~~~
+2026-09-28T17:01:55.6817084Z   CC	syscall/sysnum.o
+2026-09-28T17:01:55.7231629Z   CC	syscall/socket.o
+2026-09-28T17:01:55.7627907Z ./syscall/socket.c: In function ‘translate_socketcall_enter’:
+2026-09-28T17:01:55.7628890Z ./syscall/socket.c:147:9: warning: ‘__builtin_strncpy’ output may be truncated copying 108 bytes from a string of length 4095 [-Wstringop-truncation]
+2026-09-28T17:01:55.7629663Z   147 |         strncpy(sockaddr.sun_path, host_path, sizeof_path);
+2026-09-28T17:01:55.7630069Z       |         ^
+2026-09-28T17:01:55.7815756Z   CC	syscall/heap.o
+2026-09-28T17:01:55.8354886Z   CC	syscall/rlimit.o
+2026-09-28T17:01:55.8549238Z In file included from ./syscall/rlimit.c:31:
+2026-09-28T17:01:55.8550116Z ./syscall/rlimit.c: In function ‘translate_setrlimit_exit’:
+2026-09-28T17:01:55.8551638Z ./cli/note.h:46:54: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘rlim64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-09-28T17:01:55.8552511Z    46 |                         note(tracee, INFO, INTERNAL, (message), ## args); \
+2026-09-28T17:01:55.8552952Z       |                                                      ^~~~~~~~~
+2026-09-28T17:01:55.8553501Z ./syscall/rlimit.c:115:9: note: in expansion of macro ‘VERBOSE’
+2026-09-28T17:01:55.8554159Z   115 |         VERBOSE(tracee, 1, "stack soft limit increased to %llu bytes", proot_stack.rlim_cur);
+2026-09-28T17:01:55.8554642Z       |         ^~~~~~~
+2026-09-28T17:01:55.8721101Z   CC	syscall/pipe_shadow.o
+2026-09-28T17:01:55.9334244Z   CC	tracee/tracee.o
+2026-09-28T17:01:56.0384629Z   CC	tracee/reg.o
+2026-09-28T17:01:56.0511382Z   CC	tracee/event.o
+2026-09-28T17:01:56.0991048Z   CC	tracee/seccomp.o
+2026-09-28T17:01:56.1278016Z ./tracee/seccomp.c: In function ‘handle_seccomp_event_common’:
+2026-09-28T17:01:56.1278664Z ./tracee/seccomp.c:311:21: warning: variable ‘status’ set but not used [-Wunused-but-set-variable]
+2026-09-28T17:01:56.1279125Z   311 |                 int status;
+2026-09-28T17:01:56.1279350Z       |                     ^~~~~~
+2026-09-28T17:01:56.1283745Z ./tracee/seccomp.c:619:43: warning: comparison of integer expressions of different signedness: ‘gid_t’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+2026-09-28T17:01:56.1284384Z   619 |                 if (rxid != rxid_ && rxid != -1)
+2026-09-28T17:01:56.1284668Z       |                                           ^~
+2026-09-28T17:01:56.1285581Z ./tracee/seccomp.c:621:43: warning: comparison of integer expressions of different signedness: ‘gid_t’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+2026-09-28T17:01:56.1286311Z   621 |                 if (exid != exid_ && exid != -1)
+2026-09-28T17:01:56.1286709Z       |                                           ^~
+2026-09-28T17:01:56.1287563Z ./tracee/seccomp.c:623:43: warning: comparison of integer expressions of different signedness: ‘gid_t’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+2026-09-28T17:01:56.1288299Z   623 |                 if (sxid != sxid_ && sxid != -1)
+2026-09-28T17:01:56.1288674Z       |                                           ^~
+2026-09-28T17:01:56.1781005Z   CC	tracee/statx.o
+2026-09-28T17:01:56.2187578Z   CC	ptrace/ptrace.o
+2026-09-28T17:01:56.2334092Z   CC	ptrace/user.o
+2026-09-28T17:01:56.2486330Z ./ptrace/ptrace.c: In function ‘translate_ptrace_exit’:
+2026-09-28T17:01:56.2502372Z ./ptrace/ptrace.c:411:25: warning: ‘convert_user_regs_struct’ accessing 4 bytes in a region of size 0 [-Wstringop-overflow=]
+2026-09-28T17:01:56.2503063Z   411 |                         convert_user_regs_struct(true, (uint64_t *) &buffer.regs, regs32);
+2026-09-28T17:01:56.2503506Z       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.2504106Z ./ptrace/ptrace.c:411:25: note: referencing argument 3 of type ‘uint32_t[0]’ {aka ‘unsigned int[]’}
+2026-09-28T17:01:56.2504991Z In file included from ./ptrace/ptrace.c:34:
+2026-09-28T17:01:56.2505497Z ./ptrace/user.h:49:20: note: in a call to function ‘convert_user_regs_struct’
+2026-09-28T17:01:56.2505939Z    49 | static inline void convert_user_regs_struct(bool reverse UNUSED,
+2026-09-28T17:01:56.2506287Z       |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.2543722Z   CC	ptrace/wait.o
+2026-09-28T17:01:56.3150326Z   CC	extension/ashmem_memfd/ashmem_memfd.o
+2026-09-28T17:01:56.3225593Z   CC	extension/kompat/kompat.o
+2026-09-28T17:01:56.3257443Z   CC	extension/fake_id0/chown.o
+2026-09-28T17:01:56.3588104Z   CC	extension/fake_id0/chroot.o
+2026-09-28T17:01:56.3788890Z ./extension/fake_id0/chroot.c: In function ‘handle_chroot_exit_end’:
+2026-09-28T17:01:56.3789951Z ./extension/fake_id0/chroot.c:54:9: warning: ignoring return value of ‘realpath’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:56.3790751Z    54 |         realpath(path, path_host_absolute);
+2026-09-28T17:01:56.3791131Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.3849471Z ./extension/kompat/kompat.c: In function ‘parse_utsname’:
+2026-09-28T17:01:56.3850502Z ./extension/kompat/kompat.c:939:17: warning: ‘__builtin_strncpy’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:56.3851174Z   939 |                 strncpy(config->utsname.release, string, length);
+2026-09-28T17:01:56.3851626Z       |                 ^
+2026-09-28T17:01:56.3852044Z In file included from ./extension/kompat/kompat.c:35:
+2026-09-28T17:01:56.3852501Z ./extension/kompat/kompat.c:938:30: note: length computed here
+2026-09-28T17:01:56.3853033Z   938 |                 length = MIN(strlen(string), sizeof(config->utsname.release) - 1);
+2026-09-28T17:01:56.3853501Z       |                              ^
+2026-09-28T17:01:56.4037071Z   CC	extension/fake_id0/getsockopt.o
+2026-09-28T17:01:56.4388758Z   CC	extension/fake_id0/sendmsg.o
+2026-09-28T17:01:56.4777658Z   CC	extension/fake_id0/socket.o
+2026-09-28T17:01:56.4945343Z   CC	extension/fake_id0/open.o
+2026-09-28T17:01:56.5054521Z   CC	extension/fake_id0/unlink.o
+2026-09-28T17:01:56.5312325Z   CC	extension/fake_id0/rename.o
+2026-09-28T17:01:56.5375004Z   CC	extension/fake_id0/chmod.o
+2026-09-28T17:01:56.5681661Z   CC	extension/fake_id0/utimensat.o
+2026-09-28T17:01:56.5706772Z   CC	extension/fake_id0/access.o
+2026-09-28T17:01:56.6051961Z   CC	extension/fake_id0/exec.o
+2026-09-28T17:01:56.6056469Z   CC	extension/fake_id0/link.o
+2026-09-28T17:01:56.6229428Z ./extension/fake_id0/exec.c: In function ‘handle_exec_enter_end’:
+2026-09-28T17:01:56.6230256Z ./extension/fake_id0/exec.c:36:18: warning: ‘check_dir_perms’ accessing 4096 bytes in a region of size 2 [-Wstringop-overflow=]
+2026-09-28T17:01:56.6230865Z    36 |         status = check_dir_perms(tracee, 'r', meta_path, "/", config);
+2026-09-28T17:01:56.6231240Z       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.6232002Z ./extension/fake_id0/exec.c:36:18: note: referencing argument 4 of type ‘char[4096]’
+2026-09-28T17:01:56.6232447Z In file included from ./extension/fake_id0/exec.c:7:
+2026-09-28T17:01:56.6232969Z ./extension/fake_id0/helper_functions.h:12:5: note: in a call to function ‘check_dir_perms’
+2026-09-28T17:01:56.6233596Z    12 | int check_dir_perms(Tracee *tracee, char type, char path[PATH_MAX], char rel_path[PATH_MAX], Config *config);
+2026-09-28T17:01:56.6234060Z       |     ^~~~~~~~~~~~~~~
+2026-09-28T17:01:56.6358102Z   CC	extension/fake_id0/symlink.o
+2026-09-28T17:01:56.6358863Z   CC	extension/fake_id0/mk.o
+2026-09-28T17:01:56.6644991Z   CC	extension/fake_id0/stat.o
+2026-09-28T17:01:56.6654900Z   CC	extension/fake_id0/helper_functions.o
+2026-09-28T17:01:56.6896541Z ./extension/fake_id0/helper_functions.c: In function ‘get_permissions’:
+2026-09-28T17:01:56.6897567Z ./extension/fake_id0/helper_functions.c:183:9: warning: this ‘else’ clause does not guard... [-Wmisleading-indentation]
+2026-09-28T17:01:56.6898714Z   183 |         else
+2026-09-28T17:01:56.6899007Z       |         ^~~~
+2026-09-28T17:01:56.6899800Z ./extension/fake_id0/helper_functions.c:185:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘else’
+2026-09-28T17:01:56.6900553Z   185 |                 emulated_gid = config->egid;
+2026-09-28T17:01:56.6900959Z       |                 ^~~~~~~~~~~~
+2026-09-28T17:01:56.6909013Z ./extension/fake_id0/helper_functions.c:197:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.6909525Z   197 |                 omode /= 10;
+2026-09-28T17:01:56.6909753Z       |                 ~~~~~~^~~~~
+2026-09-28T17:01:56.6910030Z ./extension/fake_id0/helper_functions.c:198:9: note: here
+2026-09-28T17:01:56.6910330Z   198 |         case GROUP_PERMS:
+2026-09-28T17:01:56.6910550Z       |         ^~~~
+2026-09-28T17:01:56.6910966Z ./extension/fake_id0/helper_functions.c:199:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.6911628Z   199 |                 omode /= 10;
+2026-09-28T17:01:56.6911852Z       |                 ~~~~~~^~~~~
+2026-09-28T17:01:56.6912425Z ./extension/fake_id0/helper_functions.c:200:9: note: here
+2026-09-28T17:01:56.6912744Z   200 |         case OTHER_PERMS:
+2026-09-28T17:01:56.6912963Z       |         ^~~~
+2026-09-28T17:01:56.6922410Z ./extension/fake_id0/helper_functions.c: In function ‘read_meta_file’:
+2026-09-28T17:01:56.6942465Z ./extension/fake_id0/helper_functions.c:322:9: warning: ignoring return value of ‘fscanf’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:56.6943339Z   322 |         fscanf(fp, "%d %d %d ", &lcl_mode, owner, group);
+2026-09-28T17:01:56.6943672Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.7082437Z   CC	extension/fake_id0/fake_id0.o
+2026-09-28T17:01:56.7414552Z ./extension/fake_id0/fake_id0.c: In function ‘handle_sysenter_end’:
+2026-09-28T17:01:56.7415335Z ./extension/fake_id0/fake_id0.c:738:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.7415915Z   738 |                 gid_sysarg = SYSARG_4;
+2026-09-28T17:01:56.7416294Z       |                 ~~~~~~~~~~~^~~~~~~~~~
+2026-09-28T17:01:56.7416665Z ./extension/fake_id0/fake_id0.c:739:9: note: here
+2026-09-28T17:01:56.7417020Z   739 |         case PR_chown:
+2026-09-28T17:01:56.7417318Z       |         ^~~~
+2026-09-28T17:01:56.7422473Z ./extension/fake_id0/fake_id0.c: In function ‘handle_sysexit_end’:
+2026-09-28T17:01:56.7423074Z ./extension/fake_id0/fake_id0.c:1052:29: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.7423564Z  1052 |                 stat_sysarg = SYSARG_3;
+2026-09-28T17:01:56.7423832Z       |                 ~~~~~~~~~~~~^~~~~~~~~~
+2026-09-28T17:01:56.7425114Z ./extension/fake_id0/fake_id0.c:1053:9: note: here
+2026-09-28T17:01:56.7425401Z  1053 |         case PR_stat64:
+2026-09-28T17:01:56.7425635Z       |         ^~~~
+2026-09-28T17:01:56.7466891Z   CC	extension/hidden_files/hidden_files.o
+2026-09-28T17:01:56.7996866Z   CC	extension/mountinfo/mountinfo.o
+2026-09-28T17:01:56.8356500Z ./extension/mountinfo/mountinfo.c: In function ‘mountinfo_check_open_path’:
+2026-09-28T17:01:56.8357384Z ./extension/mountinfo/mountinfo.c:184:25: warning: ‘__builtin_strncpy’ specified bound 4096 equals destination size [-Wstringop-truncation]
+2026-09-28T17:01:56.8358003Z   184 |                         strncpy(path, new_path, PATH_MAX);
+2026-09-28T17:01:56.8358298Z       |                         ^
+2026-09-28T17:01:56.8632420Z   CC	extension/port_switch/port_switch.o
+2026-09-28T17:01:56.8868589Z ./extension/port_switch/port_switch.c: In function ‘mod_port’:
+2026-09-28T17:01:56.8869691Z ./extension/port_switch/port_switch.c:174:100: warning: ‘sizeof’ on array function parameter ‘socketcall_arg2’ will return size of ‘long int *’ [-Wsizeof-array-argument]
+2026-09-28T17:01:56.8870701Z   174 |                     write_data(tracee, peek_reg(tracee, CURRENT, SYSARG_2), socketcall_arg2, sizeof(socketcall_arg2));
+2026-09-28T17:01:56.8871917Z       |                                                                                                    ^
+2026-09-28T17:01:56.8872422Z ./extension/port_switch/port_switch.c:145:121: note: declared here
+2026-09-28T17:01:56.8873157Z   145 | void mod_port(Tracee *tracee, bool is_socketcall, bool is_bind, bool is_udp, struct sockaddr_storage *my_sockaddr, long socketcall_arg2[]) {
+2026-09-28T17:01:56.8873922Z       |                                                                                                                    ~~~~~^~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.8874969Z ./extension/port_switch/port_switch.c:182:100: warning: ‘sizeof’ on array function parameter ‘socketcall_arg2’ will return size of ‘long int *’ [-Wsizeof-array-argument]
+2026-09-28T17:01:56.8875983Z   182 |                     write_data(tracee, peek_reg(tracee, CURRENT, SYSARG_2), socketcall_arg2, sizeof(socketcall_arg2));
+2026-09-28T17:01:56.8876626Z       |                                                                                                    ^
+2026-09-28T17:01:56.8877338Z ./extension/port_switch/port_switch.c:145:121: note: declared here
+2026-09-28T17:01:56.8878117Z   145 | void mod_port(Tracee *tracee, bool is_socketcall, bool is_bind, bool is_udp, struct sockaddr_storage *my_sockaddr, long socketcall_arg2[]) {
+2026-09-28T17:01:56.8878938Z       |                                                                                                                    ~~~~~^~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.8879980Z ./extension/port_switch/port_switch.c:204:100: warning: ‘sizeof’ on array function parameter ‘socketcall_arg2’ will return size of ‘long int *’ [-Wsizeof-array-argument]
+2026-09-28T17:01:56.8880971Z   204 |                     write_data(tracee, peek_reg(tracee, CURRENT, SYSARG_2), socketcall_arg2, sizeof(socketcall_arg2));
+2026-09-28T17:01:56.8881726Z       |                                                                                                    ^
+2026-09-28T17:01:56.8882228Z ./extension/port_switch/port_switch.c:145:121: note: declared here
+2026-09-28T17:01:56.8882952Z   145 | void mod_port(Tracee *tracee, bool is_socketcall, bool is_bind, bool is_udp, struct sockaddr_storage *my_sockaddr, long socketcall_arg2[]) {
+2026-09-28T17:01:56.8883709Z       |                                                                                                                    ~~~~~^~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.8884745Z ./extension/port_switch/port_switch.c:212:100: warning: ‘sizeof’ on array function parameter ‘socketcall_arg2’ will return size of ‘long int *’ [-Wsizeof-array-argument]
+2026-09-28T17:01:56.8885734Z   212 |                     write_data(tracee, peek_reg(tracee, CURRENT, SYSARG_2), socketcall_arg2, sizeof(socketcall_arg2));
+2026-09-28T17:01:56.8886361Z       |                                                                                                    ^
+2026-09-28T17:01:56.8886859Z ./extension/port_switch/port_switch.c:145:121: note: declared here
+2026-09-28T17:01:56.8887589Z   145 | void mod_port(Tracee *tracee, bool is_socketcall, bool is_bind, bool is_udp, struct sockaddr_storage *my_sockaddr, long socketcall_arg2[]) {
+2026-09-28T17:01:56.8888352Z       |                                                                                                                    ~~~~~^~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.9249195Z   CC	extension/sysvipc/sysvipc.o
+2026-09-28T17:01:56.9582594Z ./extension/sysvipc/sysvipc.c: In function ‘sysvipc_callback’:
+2026-09-28T17:01:56.9582986Z   CC	extension/sysvipc/sysvipc_msg.o
+2026-09-28T17:01:56.9583458Z ./extension/sysvipc/sysvipc.c:216:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.9583900Z   216 |         {
+2026-09-28T17:01:56.9584077Z       |         ^
+2026-09-28T17:01:56.9584285Z ./extension/sysvipc/sysvipc.c:243:9: note: here
+2026-09-28T17:01:56.9584556Z   243 |         case SIGSYS_OCC:
+2026-09-28T17:01:56.9585120Z       |         ^~~~
+2026-09-28T17:01:56.9585509Z ./extension/sysvipc/sysvipc.c:251:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.9585952Z   251 |         {
+2026-09-28T17:01:56.9586137Z       |         ^
+2026-09-28T17:01:56.9586348Z ./extension/sysvipc/sysvipc.c:296:9: note: here
+2026-09-28T17:01:56.9586633Z   296 |         case SYSCALL_CHAINED_ENTER:
+2026-09-28T17:01:56.9586875Z       |         ^~~~
+2026-09-28T17:01:56.9587288Z ./extension/sysvipc/sysvipc.c: In function ‘sysvipc_syscall_common’:
+2026-09-28T17:01:56.9587820Z ./extension/sysvipc/sysvipc.c:60:27: warning: this statement may fall through [-Wimplicit-fallthrough=]
+2026-09-28T17:01:56.9588320Z    60 |                 timeout = peek_reg(tracee, CURRENT, SYSARG_4);
+2026-09-28T17:01:56.9588651Z       |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:56.9588951Z ./extension/sysvipc/sysvipc.c:62:9: note: here
+2026-09-28T17:01:56.9589218Z    62 |         case PR_semop:
+2026-09-28T17:01:56.9589433Z       |         ^~~~
+2026-09-28T17:01:57.0110096Z   CC	extension/sysvipc/sysvipc_sem.o
+2026-09-28T17:01:57.0313831Z ./extension/sysvipc/sysvipc_sem.c: In function ‘sysvipc_semop’:
+2026-09-28T17:01:57.0314859Z ./extension/sysvipc/sysvipc_sem.c:149:37: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+2026-09-28T17:01:57.0315531Z   149 |                 if (sops[i].sem_num < 0 || sops[i].sem_num >= semaphore->nsems) {
+2026-09-28T17:01:57.0315882Z       |                                     ^
+2026-09-28T17:01:57.0536291Z   CC	extension/sysvipc/sysvipc_shm.o
+2026-09-28T17:01:57.0926974Z ./extension/sysvipc/sysvipc_shm.c: In function ‘sysvipc_shm_send_helper_request’:
+2026-09-28T17:01:57.0953131Z ./extension/sysvipc/sysvipc_shm.c:188:9: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:57.0961937Z   188 |         write(proot2helper, request, sizeof(*request));
+2026-09-28T17:01:57.0962681Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:57.0963277Z ./extension/sysvipc/sysvipc_shm.c: In function ‘sysvipc_shm_helper_main’:
+2026-09-28T17:01:57.0964157Z ./extension/sysvipc/sysvipc_shm.c:860:9: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:57.0964843Z   860 |         write(1, addr.sun_path, SYSVIPC_SHMHELPER_SOCKET_LEN);
+2026-09-28T17:01:57.0965191Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:57.0965903Z ./extension/sysvipc/sysvipc_shm.c:879:25: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:57.0966513Z   879 |                         write(1, &fd, sizeof(int));
+2026-09-28T17:01:57.0966805Z       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:57.0974013Z   CC	extension/link2symlink/link2symlink.o
+2026-09-28T17:01:57.2315314Z ./extension/sysvipc/sysvipc_shm.c:839:17: warning: ‘__builtin_strncpy’ specified bound 108 equals destination size [-Wstringop-truncation]
+2026-09-28T17:01:57.2316210Z   839 |                 strncpy(addr.sun_path, path, sizeof(addr.sun_path));
+2026-09-28T17:01:57.2316623Z       |                 ^
+2026-09-28T17:01:57.2325202Z ./extension/link2symlink/link2symlink.c: In function ‘decrement_link_count’:
+2026-09-28T17:01:57.2326377Z ./extension/link2symlink/link2symlink.c:701:17: warning: ‘__builtin___strncpy_chk’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:57.2327249Z   701 |                 strncpy(new_final, final, strlen(final) - 4);
+2026-09-28T17:01:57.2327683Z       |                 ^
+2026-09-28T17:01:57.2328173Z ./extension/link2symlink/link2symlink.c:701:43: note: length computed here
+2026-09-28T17:01:57.2328687Z   701 |                 strncpy(new_final, final, strlen(final) - 4);
+2026-09-28T17:01:57.2329087Z       |                                           ^~~~~~~~~~~~~
+2026-09-28T17:01:57.2482577Z ./extension/link2symlink/link2symlink.c: In function ‘move_and_symlink_path’:
+2026-09-28T17:01:57.2483829Z ./extension/link2symlink/link2symlink.c:562:25: warning: ‘__builtin___strncpy_chk’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:57.2484795Z   562 |                         strncpy(intermediate, original, strlen(original) - strlen(name));
+2026-09-28T17:01:57.2485268Z       |                         ^
+2026-09-28T17:01:57.2485728Z ./extension/link2symlink/link2symlink.c:559:46: note: length computed here
+2026-09-28T17:01:57.2486263Z   559 |                         if (strlen(PREFIX) + strlen(original) + 5 >= PATH_MAX)
+2026-09-28T17:01:57.2486711Z       |                                              ^~~~~~~~~~~~~~~~
+2026-09-28T17:01:57.2487646Z ./extension/link2symlink/link2symlink.c:604:17: warning: ‘__builtin___strncpy_chk’ specified bound depends on the length of the source argument [-Wstringop-truncation]
+2026-09-28T17:01:57.2488498Z   604 |                 strncpy(new_final, final, strlen(final) - 4);
+2026-09-28T17:01:57.2488911Z       |                 ^
+2026-09-28T17:01:57.2489695Z ./extension/link2symlink/link2symlink.c:604:43: note: length computed here
+2026-09-28T17:01:57.2490308Z   604 |                 strncpy(new_final, final, strlen(final) - 4);
+2026-09-28T17:01:57.2490729Z       |                                           ^~~~~~~~~~~~~
+2026-09-28T17:01:57.2540739Z   CC	extension/fix_symlink_size/fix_symlink_size.o
+2026-09-28T17:01:57.2920667Z   CC	loader/loader.o
+2026-09-28T17:01:57.2982091Z   CC	loader/assembly.o
+2026-09-28T17:01:57.3152073Z In file included from ./loader/loader.c:37:
+2026-09-28T17:01:57.3152716Z ./loader/loader.c: In function ‘_start’:
+2026-09-28T17:01:57.3153632Z ./loader/assembly-arm64.h:31:9: warning: listing the stack pointer register ‘sp’ in a clobber list is deprecated [-Wdeprecated]
+2026-09-28T17:01:57.3154357Z    31 |         asm volatile (                                          \
+2026-09-28T17:01:57.3154802Z       |         ^~~
+2026-09-28T17:01:57.3155292Z ./loader/loader.c:253:33: note: in expansion of macro ‘BRANCH’
+2026-09-28T17:01:57.3155851Z   253 |                                 BRANCH(stmt->start.stack_pointer, stmt->start.entry_point);
+2026-09-28T17:01:57.3156317Z       |                                 ^~~~~~
+2026-09-28T17:01:57.3157104Z ./loader/assembly-arm64.h:31:9: note: the value of the stack pointer after an ‘asm’ statement must be the same as it was before the statement
+2026-09-28T17:01:57.3157805Z    31 |         asm volatile (                                          \
+2026-09-28T17:01:57.3158191Z       |         ^~~
+2026-09-28T17:01:57.3158640Z ./loader/loader.c:253:33: note: in expansion of macro ‘BRANCH’
+2026-09-28T17:01:57.3159203Z   253 |                                 BRANCH(stmt->start.stack_pointer, stmt->start.entry_point);
+2026-09-28T17:01:57.3159697Z       |                                 ^~~~~~
+2026-09-28T17:01:57.3307446Z   LD	loader/loader
+2026-09-28T17:01:57.3351140Z python3 loader/loader-info.py loader/loader > loader/loader-info.c
+2026-09-28T17:01:57.3359964Z   GEN	build.h
+2026-09-28T17:01:57.3438926Z   CC	cli/cli.o
+2026-09-28T17:01:57.4130288Z   CC	cli/proot.o
+2026-09-28T17:01:57.4409948Z ./cli/proot.c: In function ‘handle_option_V’:
+2026-09-28T17:01:57.4410683Z ./cli/proot.c:226:17: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-09-28T17:01:57.4411388Z   226 |                 write(1, &_binary_licenses_start, size);
+2026-09-28T17:01:57.4411710Z       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-09-28T17:01:57.4813704Z   CC	execve/aoxp.o
+2026-09-28T17:01:57.5017036Z   CC	path/path.o
+2026-09-28T17:01:57.5742388Z   CC	syscall/seccomp.o
+2026-09-28T17:01:57.6323777Z   CC	tracee/mem.o
+2026-09-28T17:01:57.6487202Z   CC	extension/extension.o
+2026-09-28T17:01:57.6927301Z   CC	loader/loader-info.o
+2026-09-28T17:01:57.7490449Z   LD	proot
+2026-09-28T17:01:57.7560529Z /usr/bin/ld: syscall/socket.o: in function `translate_socketcall_enter':
+2026-09-28T17:01:57.7561093Z socket.c:(.text+0x1e8): warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'
+2026-09-28T17:01:57.7714486Z rm .check_seccomp_filter.o .check_process_vm.o .check_seccomp_filter .check_process_vm
+2026-09-28T17:01:57.7715167Z make: Leaving directory '/home/runner/work/coh-android/coh-android/out/android/proot-build-linux-arm64/proot/src'
+2026-09-28T17:01:57.8251656Z {"status": "native_built_runtime_unverified", "target": "linux-arm64", "output": "/home/runner/work/coh-android/coh-android/out/android/native/linux-arm64"}
+2026-09-28T17:01:57.8375598Z ##[group]Run python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema
+2026-09-28T17:01:57.8376327Z [36;1mpython3 tools/android/dbserver/prepare_dbserver_schema.py --output out/dbserver-schema[0m
+2026-09-28T17:01:57.8410302Z shell: /usr/bin/bash -e {0}
+2026-09-28T17:01:57.8410535Z ##[endgroup]
+2026-09-28T17:01:58.9434739Z {"output": "out/dbserver-schema", "files": 62, "tables": 99, "attribute_rows": 58272}
+2026-09-28T17:01:58.9545956Z ##[group]Run python3 tools/android/dbserver/host_dbserver_smoke.py --assets out/android/assets/runtime --package out/wine-dbserver --schema out/dbserver-schema
+2026-09-28T17:01:58.9547058Z [36;1mpython3 tools/android/dbserver/host_dbserver_smoke.py --assets out/android/assets/runtime --package out/wine-dbserver --schema out/dbserver-schema[0m
+2026-09-28T17:01:58.9582371Z shell: /usr/bin/bash -e {0}
+2026-09-28T17:01:58.9582605Z ##[endgroup]
+2026-09-28T17:02:17.4634139Z COH_RUNTIME_EXTRACT_V1 PASS /home/runner/work/coh-android/coh-android/out/android/cache/base.tar.gz /home/runner/work/coh-android/coh-android/out/android/dbserver-host/rootfs
+2026-09-28T17:02:17.4635327Z COH_RUNTIME_EXTRACT_V1 PASS /home/runner/work/coh-android/coh-android/out/android/cache/wine.tar.gz /home/runner/work/coh-android/coh-android/out/android/dbserver-host/wine
+2026-09-28T17:02:17.4638510Z COH_RUNTIME_EXTRACT_V1 PASS /home/runner/work/coh-android/coh-android/out/android/assets/runtime/postgresql-runtime.tar.gz /home/runner/work/coh-android/coh-android/out/android/dbserver-host/pg
+2026-09-28T17:04:00.1117070Z 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_RETRY command=2 SQLSTATE=40001 attempt=4\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nCOMMAND: UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;UPDATE dbo.PgFifoItems SET ItemValue=?,Label=? WHERE ContainerId=? AND SubId=?;\r\nSQLERROR: 1 40001 ERROR: injected retry exhaustion;\r\nError while executing the query\r\nPG_FIFO_FAILED command=2 SQLSTATE=40001; save not acknowledged\r\n"}
+2026-09-28T17:04:00.1128578Z {"type": "stage", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.271504+00:00", "status": "passed"}
+2026-09-28T17:04:00.1129275Z {"type": "log", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.325742+00:00", "label": "sql-fixture", "message": "0\n"}
+2026-09-28T17:04:00.1130008Z {"type": "log", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.379925+00:00", "label": "sql-fixture", "message": "0\n"}
+2026-09-28T17:04:00.1130752Z {"type": "log", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.434359+00:00", "label": "sql-fixture", "message": "5\n"}
+2026-09-28T17:04:00.1131597Z {"type": "log", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.490690+00:00", "label": "sql-fixture", "message": "DROP TRIGGER\n"}
+2026-09-28T17:04:00.1132451Z {"type": "log", "stage": "dbserver_exhaust", "time_utc": "2026-09-28T17:03:23.546319+00:00", "label": "sql-fixture", "message": "CREATE FUNCTION\nCREATE TRIGGER\n"}
+2026-09-28T17:04:00.1133228Z {"type": "stage", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:23.546542+00:00", "status": "running"}
+2026-09-28T17:04:00.1134082Z {"type": "stage", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:23.550875+00:00", "status": "running", "message": "Running real DbServer dbserver-delete-fail \u00b7 0 s"}
+2026-09-28T17:04:00.1135128Z {"type": "stage", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.586321+00:00", "status": "running", "message": "Running real DbServer dbserver-delete-fail \u00b7 5 s"}
+2026-09-28T17:04:00.1138204Z {"type": "log", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.738155+00:00", "label": "dbserver-delete-fail", "message": "0518:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\r\nSQLERROR: 1 23503 ERROR: injected delete failure;\r\nError while executing the query\r\nCOMMAND: DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\r\nSQLERROR: 1 23503 ERROR: injected delete failure;\r\nError while executing the query\r\nPG_FIFO_FAILED command=6 SQLSTATE=23503; save not acknowledged\r\n"}
+2026-09-28T17:04:00.1141139Z {"type": "stage", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.738366+00:00", "status": "passed"}
+2026-09-28T17:04:00.1142150Z {"type": "log", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.793312+00:00", "label": "sql-fixture", "message": "512\n"}
+2026-09-28T17:04:00.1142912Z {"type": "log", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.848422+00:00", "label": "sql-fixture", "message": "1\n"}
+2026-09-28T17:04:00.1143702Z {"type": "log", "stage": "dbserver_delete_fail", "time_utc": "2026-09-28T17:03:28.903530+00:00", "label": "sql-fixture", "message": "DROP TRIGGER\n"}
+2026-09-28T17:04:00.1144430Z {"type": "stage", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:28.903746+00:00", "status": "running"}
+2026-09-28T17:04:00.1145274Z {"type": "stage", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:28.908034+00:00", "status": "running", "message": "Running real DbServer dbserver-disconnect \u00b7 0 s"}
+2026-09-28T17:04:00.1146461Z {"type": "stage", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:33.943413+00:00", "status": "running", "message": "Running real DbServer dbserver-disconnect \u00b7 5 s"}
+2026-09-28T17:04:00.1149713Z {"type": "log", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:34.195243+00:00", "label": "dbserver-disconnect", "message": "0624:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\r\nSQLERROR: 35 57P01 FATAL: terminating connection due to administrator command;\r\nThe connection has been lost\r\nCOMMAND: UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\r\nSQLERROR: 35 57P01 FATAL: terminating connection due to administrator command;\r\nThe connection has been lost\r\nPG_FIFO_FAILED command=6 SQLSTATE=57P01; save not acknowledged\r\n"}
+2026-09-28T17:04:00.1153032Z {"type": "stage", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:34.195451+00:00", "status": "passed"}
+2026-09-28T17:04:00.1153750Z {"type": "log", "stage": "dbserver_disconnect", "time_utc": "2026-09-28T17:03:34.250218+00:00", "label": "sql-fixture", "message": "555\n"}
+2026-09-28T17:04:00.1154440Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:34.250470+00:00", "status": "running"}
+2026-09-28T17:04:00.1155237Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:34.254396+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 0 s"}
+2026-09-28T17:04:00.1156206Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:39.290824+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 5 s"}
+2026-09-28T17:04:00.1158072Z {"type": "log", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:39.695772+00:00", "label": "dbserver-verify", "message": "0754:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n"}
+2026-09-28T17:04:00.1159756Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:39.695975+00:00", "status": "passed"}
+2026-09-28T17:04:00.1160629Z {"type": "log", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:39.851432+00:00", "label": "postgres-graceful-stop", "message": "waiting for server to shut down.... done\nserver stopped\n"}
+2026-09-28T17:04:00.1174338Z {"type": "log", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:39.853346+00:00", "label": "postgres_first_start", "message": "o.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 17:03:23.177 UTC [6493] ERROR:  injected retry exhaustion\n2026-09-28 17:03:23.177 UTC [6493] CONTEXT:  PL/pgSQL function coh_meta.fifo_reject() line 1 at RAISE\n2026-09-28 17:03:23.177 UTC [6493] STATEMENT:  UPDATE dbo.PgFifoItems SET ItemValue=494,Label='slot493' WHERE ContainerId=103 AND SubId=493;UPDATE dbo.PgFifoItems SET ItemValue=495,Label='slot494' WHERE ContainerId=103 AND SubId=494;UPDATE dbo.PgFifoItems SET ItemValue=496,Label='slot495' WHERE ContainerId=103 AND SubId=495;UPDATE dbo.PgFifoItems SET ItemValue=497,Label='slot496' WHERE ContainerId=103 AND SubId=496;UPDATE dbo.PgFifoItems SET ItemValue=498,Label='slot497' WHERE ContainerId=103 AND SubId=497;UPDATE dbo.PgFifoItems SET ItemValue=499,Label='slot498' WHERE ContainerId=103 AND SubId=498;UPDATE dbo.PgFifoItems SET ItemValue=500,Label='slot499' WHERE ContainerId=103 AND SubId=499;UPDATE dbo.PgFifoItems SET ItemValue=501,Label='slot500' WHERE ContainerId=103 AND SubId=500;UPDATE dbo.PgFifoItems SET ItemValue=502,Label='slot501' WHERE ContainerId=103 AND SubId=501;UPDATE dbo.PgFifoItems SET ItemValue=503,Label='slot502' WHERE ContainerId=103 AND SubId=502;UPDATE dbo.PgFifoItems SET ItemValue=504,Label='slot503' WHERE ContainerId=103 AND SubId=503;UPDATE dbo.PgFifoItems SET ItemValue=505,Label='slot504' WHERE ContainerId=103 AND SubId=504;UPDATE dbo.PgFifoItems SET ItemValue=506,Label='slot505' WHERE ContainerId=103 AND SubId=505;UPDATE dbo.PgFifoItems SET ItemValue=507,Label='slot506' WHERE ContainerId=103 AND SubId=506;UPDATE dbo.PgFifoItems SET ItemValue=508,Label='slot507' WHERE ContainerId=103 AND SubId=507;UPDATE dbo.PgFifoItems SET ItemValue=509,Label='slot508' WHERE ContainerId=103 AND SubId=508;UPDATE dbo.PgFifoItems SET ItemValue=510,Label='slot509' WHERE ContainerId=103 AND SubId=509;UPDATE dbo.PgFifoItems SET ItemValue=511,Label='slot510' WHERE ContainerId=103 AND SubId=510;UPDATE dbo.PgFifoItems SET ItemValue=9999,Label='slot511' WHERE ContainerId=103 AND SubId=511;\n2026-09-28 17:03:28.599 UTC [6659] ERROR:  injected delete failure\n2026-09-28 17:03:28.599 UTC [6659] CONTEXT:  PL/pgSQL function coh_meta.fifo_reject_delete() line 1 at RAISE\n2026-09-28 17:03:28.599 UTC [6659] STATEMENT:  BEGIN;DELETE FROM dbo.PgFifoItems WHERE ContainerId=101;DELETE FROM dbo.PgFifo WHERE ContainerId=101;\n2026-09-28 17:03:34.058 UTC [6806] FATAL:  terminating connection due to administrator command\n2026-09-28 17:03:34.058 UTC [6806] STATEMENT:  BEGIN;UPDATE dbo.PgFifo SET Score=666 WHERE ContainerId=101; SELECT pg_terminate_backend(pg_backend_pid());\n2026-09-28 17:03:39.702 UTC [5959] LOG:  received fast shutdown request\n2026-09-28 17:03:39.703 UTC [5959] LOG:  aborting any active transactions\n2026-09-28 17:03:39.704 UTC [5959] LOG:  background worker \"logical replication launcher\" (PID 5970) exited with exit code 1\n2026-09-28 17:03:39.705 UTC [5965] LOG:  shutting down\n2026-09-28 17:03:39.705 UTC [5965] LOG:  checkpoint starting: shutdown immediate\n2026-09-28 17:03:39.789 UTC [5965] LOG:  checkpoint complete: wrote 1018 buffers (24.9%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.065 s, sync=0.017 s, total=0.085 s; sync files=329, longest=0.001 s, average=0.001 s; distance=6394 kB, estimate=6394 kB; lsn=0/1D2E290, redo lsn=0/1D2E290\n2026-09-28 17:03:39.798 UTC [5959] LOG:  database system is shut down\n"}
+2026-09-28T17:04:00.1189618Z {"type": "stage", "stage": "postgres_clean_restart_ready", "time_utc": "2026-09-28T17:03:39.853562+00:00", "status": "running"}
+2026-09-28T17:04:00.1190331Z TRASC PRoot: SysV shared memory uses memfd
+2026-09-28T17:04:00.1190998Z {"type": "log", "stage": "postgres_clean_restart_ready", "time_utc": "2026-09-28T17:03:40.113632+00:00", "label": "sql-admin", "message": "127.0.0.1|35005|/state/diagnostic/pgdata|on|on|on\n"}
+2026-09-28T17:04:00.1192308Z {"type": "log", "stage": "postgres_clean_restart_ready", "time_utc": "2026-09-28T17:03:40.168541+00:00", "label": "sql-admin", "message": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n"}
+2026-09-28T17:04:00.1193369Z {"type": "stage", "stage": "postgres_clean_restart_ready", "time_utc": "2026-09-28T17:03:40.168684+00:00", "status": "passed"}
+2026-09-28T17:04:00.1194028Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:40.168847+00:00", "status": "running"}
+2026-09-28T17:04:00.1194950Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:40.173295+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 0 s"}
+2026-09-28T17:04:00.1195944Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:45.209910+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 5 s"}
+2026-09-28T17:04:00.1197810Z {"type": "log", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:45.765199+00:00", "label": "dbserver-verify", "message": "00e0:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n"}
+2026-09-28T17:04:00.1199503Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:45.765429+00:00", "status": "passed"}
+2026-09-28T17:04:00.1200164Z {"type": "stage", "stage": "postgres_immediate_restart", "time_utc": "2026-09-28T17:03:45.765604+00:00", "status": "running"}
+2026-09-28T17:04:00.1201132Z {"type": "log", "stage": "postgres_immediate_restart", "time_utc": "2026-09-28T17:03:45.920738+00:00", "label": "postgres-immediate-stop", "message": "waiting for server to shut down.... done\nserver stopped\n"}
+2026-09-28T17:04:00.1204235Z {"type": "log", "stage": "postgres_immediate_restart", "time_utc": "2026-09-28T17:03:45.922386+00:00", "label": "postgres_clean_restart_ready", "message": "2026-09-28 17:03:39.935 UTC [7053] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-28 17:03:39.935 UTC [7053] LOG:  listening on IPv4 address \"127.0.0.1\", port 35005\n2026-09-28 17:03:39.937 UTC [7053] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.35005\"\n2026-09-28 17:03:39.943 UTC [7061] LOG:  database system was shut down at 2026-09-28 17:03:39 UTC\n2026-09-28 17:03:40.006 UTC [7053] LOG:  database system is ready to accept connections\n2026-09-28 17:03:45.772 UTC [7053] LOG:  received immediate shutdown request\n2026-09-28 17:03:45.776 UTC [7053] LOG:  database system is shut down\n"}
+2026-09-28T17:04:00.1206964Z {"type": "stage", "stage": "postgres_immediate_restart", "time_utc": "2026-09-28T17:03:45.922497+00:00", "status": "passed"}
+2026-09-28T17:04:00.1207659Z {"type": "stage", "stage": "postgres_wal_recovery_ready", "time_utc": "2026-09-28T17:03:45.922653+00:00", "status": "running"}
+2026-09-28T17:04:00.1208151Z TRASC PRoot: SysV shared memory uses memfd
+2026-09-28T17:04:00.1208809Z {"type": "log", "stage": "postgres_wal_recovery_ready", "time_utc": "2026-09-28T17:03:46.382881+00:00", "label": "sql-admin", "message": "127.0.0.1|35005|/state/diagnostic/pgdata|on|on|on\n"}
+2026-09-28T17:04:00.1210032Z {"type": "log", "stage": "postgres_wal_recovery_ready", "time_utc": "2026-09-28T17:03:46.437789+00:00", "label": "sql-admin", "message": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n"}
+2026-09-28T17:04:00.1211240Z {"type": "stage", "stage": "postgres_wal_recovery_ready", "time_utc": "2026-09-28T17:03:46.437960+00:00", "status": "passed"}
+2026-09-28T17:04:00.1211981Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:46.438138+00:00", "status": "running"}
+2026-09-28T17:04:00.1212778Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:46.442576+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 0 s"}
+2026-09-28T17:04:00.1213749Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:51.478991+00:00", "status": "running", "message": "Running real DbServer dbserver-verify \u00b7 5 s"}
+2026-09-28T17:04:00.1215727Z {"type": "log", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:51.883410+00:00", "label": "dbserver-verify", "message": "025c:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nPG_TEST_PASS reload through real container reader\r\nPG_TEST_COMPLETE verify\r\nFlushing SQL fifo\r\n"}
+2026-09-28T17:04:00.1217414Z {"type": "stage", "stage": "dbserver_verify", "time_utc": "2026-09-28T17:03:51.883599+00:00", "status": "passed"}
+2026-09-28T17:04:00.1218034Z {"type": "stage", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:03:51.883768+00:00", "status": "running"}
+2026-09-28T17:04:00.1218837Z {"type": "stage", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:03:51.887960+00:00", "status": "running", "message": "Running real DbServer dbserver-rebuild \u00b7 0 s"}
+2026-09-28T17:04:00.1219820Z {"type": "stage", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:03:56.924875+00:00", "status": "running", "message": "Running real DbServer dbserver-rebuild \u00b7 5 s"}
+2026-09-28T17:04:00.1223630Z {"type": "log", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:03:59.494782+00:00", "label": "dbserver-rebuild", "message": "0360:err:environ:init_peb starting L\"Z:\\\\state\\\\diagnostic\\\\dbserver-fixture-fe110a06a944\\\\DbServer.exe\" in experimental wow64 mode\nSQL PSQLODBC35W.DLL 18.00.0004 / ODBC 03.51\r\nSQL_GETDATA_EXTENSIONS = 0x0000000f\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nCOMMAND: DO $$DECLARE n text := 'coh_' || md5(lower('PgFifo:Name_ind')); BEGIN EXECUTE format('CREATE INDEX IF NOT EXISTS %I ON dbo.%I (%s)', n, lower('PgFifo'), 'Name'); END$$;\r\nSQLERROR: -1 42P07 NOTICE: relation \"coh_c83ff57e25fdbc69cf6372683a4a8c11\" already exists, skipping\r\nPG_TEST_PASS real schema rebuild preserves rows, high-water and foreign key\r\nPG_TEST_COMPLETE rebuild\r\nFlushing log files to disk\r\nFlushing SQL fifo\r\n"}
+2026-09-28T17:04:00.1227401Z {"type": "log", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:03:59.894900+00:00", "label": "sql-admin", "message": "DROP DATABASE\n"}
+2026-09-28T17:04:00.1228363Z {"type": "log", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:04:00.049925+00:00", "label": "postgres-graceful-stop", "message": "waiting for server to shut down.... done\nserver stopped\n"}
+2026-09-28T17:04:00.1236771Z {"type": "log", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:04:00.051687+00:00", "label": "postgres_wal_recovery_ready", "message": "2026-09-28 17:03:46.002 UTC [7219] LOG:  starting PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit\n2026-09-28 17:03:46.003 UTC [7219] LOG:  listening on IPv4 address \"127.0.0.1\", port 35005\n2026-09-28 17:03:46.004 UTC [7219] LOG:  listening on Unix socket \"/state/diagnostic/socket/.s.PGSQL.35005\"\n2026-09-28 17:03:46.010 UTC [7227] LOG:  database system was interrupted; last known up at 2026-09-28 17:03:40 UTC\n2026-09-28 17:03:46.294 UTC [7227] LOG:  database system was not properly shut down; automatic recovery in progress\n2026-09-28 17:03:46.298 UTC [7227] LOG:  redo starts at 0/1D2E308\n2026-09-28 17:03:46.299 UTC [7227] LOG:  invalid record length at 0/1D322C0: expected at least 24, got 0\n2026-09-28 17:03:46.299 UTC [7227] LOG:  redo done at 0/1D302A0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s\n2026-09-28 17:03:46.303 UTC [7225] LOG:  checkpoint starting: end-of-recovery immediate wait\n2026-09-28 17:03:46.307 UTC [7225] LOG:  checkpoint complete: wrote 2 buffers (0.0%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=4, longest=0.001 s, average=0.001 s; distance=16 kB, estimate=16 kB; lsn=0/1D322C0, redo lsn=0/1D322C0\n2026-09-28 17:03:46.309 UTC [7219] LOG:  database system is ready to accept connections\n2026-09-28 17:03:59.809 UTC [7225] LOG:  checkpoint starting: immediate force wait\n2026-09-28 17:03:59.814 UTC [7225] LOG:  checkpoint complete: wrote 5 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.006 s; sync files=6, longest=0.001 s, average=0.001 s; distance=287 kB, estimate=287 kB; lsn=0/1D7A110, redo lsn=0/1D7A0B8\n2026-09-28 17:03:59.901 UTC [7219] LOG:  received fast shutdown request\n2026-09-28 17:03:59.902 UTC [7219] LOG:  aborting any active transactions\n2026-09-28 17:03:59.903 UTC [7219] LOG:  background worker \"logical replication launcher\" (PID 7230) exited with exit code 1\n2026-09-28 17:03:59.904 UTC [7225] LOG:  shutting down\n2026-09-28 17:03:59.904 UTC [7225] LOG:  checkpoint starting: shutdown immediate\n2026-09-28 17:03:59.908 UTC [7225] LOG:  checkpoint complete: wrote 0 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.005 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=258 kB; lsn=0/1D7A238, redo lsn=0/1D7A238\n2026-09-28 17:03:59.914 UTC [7219] LOG:  database system is shut down\n"}
+2026-09-28T17:04:00.1247571Z {"type": "log", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:04:00.059318+00:00", "label": "private-headless-x", "message": "_XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created.\n\nXvnc TigerVNC 1.12.0 - built 2023-01-06 16:01\nCopyright (C) 1999-2021 TigerVNC Team and many others (see README.rst)\nSee https://www.tigervnc.org for information on TigerVNC.\nUnderlying X server release 12101006, X.Org\n\n\nMon Sep 28 17:02:23 2026\n vncext:      VNC extension running!\n vncext:      Listening for VNC connections on\n              /state/diagnostic/runtime/vnc.sock (mode 0600)\n vncext:      created VNC server for screen 0\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 2\n[mi] mieq: warning: overriding existing handler (nil) with 0x300015ad10 for event 3\n\nMon Sep 28 17:04:00 2026\n ComparingUpdateTracker: 0 pixels in / 0 pixels out\n ComparingUpdateTracker: (1:nan ratio)\n"}
+2026-09-28T17:04:00.1251041Z {"type": "result", "stage": "dbserver_rebuild", "time_utc": "2026-09-28T17:04:00.065657+00:00", "status": "failed", "passed": false, "report": "/state/latest-report.json", "failures": ["DbServer exit code differs: dbserver-rebuild"]}
+2026-09-28T17:04:00.1251821Z 
+2026-09-28T17:04:00.1460486Z Traceback (most recent call last):
+2026-09-28T17:04:00.1461186Z   File "/home/runner/work/coh-android/coh-android/tools/android/dbserver/host_dbserver_smoke.py", line 475, in <module>
+2026-09-28T17:04:00.1461873Z     main()
+2026-09-28T17:04:00.1462296Z   File "/home/runner/work/coh-android/coh-android/tools/android/dbserver/host_dbserver_smoke.py", line 466, in main
+2026-09-28T17:04:00.1462856Z     report = run_guest(command, env, work / "state", evidence,
+2026-09-28T17:04:00.1463188Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-09-28T17:04:00.1463712Z   File "/home/runner/work/coh-android/coh-android/tools/android/dbserver/host_dbserver_smoke.py", line 383, in run_guest
+2026-09-28T17:04:00.1464722Z     require(code == 0, "DbServer PRoot runtime returned a failure exit status")
+2026-09-28T17:04:00.1472493Z   File "/home/runner/work/coh-android/coh-android/tools/android/dbserver/host_dbserver_smoke.py", line 62, in require
+2026-09-28T17:04:00.1482167Z     raise RuntimeError(message)
+2026-09-28T17:04:00.1482502Z RuntimeError: DbServer PRoot runtime returned a failure exit status
+2026-09-28T17:04:00.1684836Z ##[error]Process completed with exit code 1.
+2026-09-28T17:04:00.1749606Z ##[group]Run actions/upload-artifact@v4
+2026-09-28T17:04:00.1749895Z with:
+2026-09-28T17:04:00.1750085Z   name: wine-dbserver-arm64-evidence
+2026-09-28T17:04:00.1750946Z   path: out/android/dbserver-evidence/
+out/dbserver-schema/schema-manifest.json
+out/wine-dbserver/package-manifest.json
+out/android/native/linux-arm64/proot-build-receipt.json
+out/android/talloc-source-receipt.json
+
+2026-09-28T17:04:00.1752048Z   if-no-files-found: warn
+2026-09-28T17:04:00.1752271Z   compression-level: 6
+2026-09-28T17:04:00.1752470Z   overwrite: false
+2026-09-28T17:04:00.1752668Z   include-hidden-files: false
+2026-09-28T17:04:00.1752887Z ##[endgroup]
+2026-09-28T17:04:00.3105722Z (node:7539) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-28T17:04:00.3106527Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-28T17:04:00.3305223Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-09-28T17:04:00.3325072Z The least common ancestor is /home/runner/work/coh-android/coh-android/out. This will be the root directory of the artifact
+2026-09-28T17:04:00.3325787Z With the provided path, there will be 9 files uploaded
+2026-09-28T17:04:00.3326445Z Artifact name is valid!
+2026-09-28T17:04:00.3326777Z Root directory input is valid!
+2026-09-28T17:04:00.5958109Z Beginning upload of artifact content to blob storage
+2026-09-28T17:04:00.6710518Z (node:7539) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-28T17:04:00.8764395Z Uploaded bytes 521613
+2026-09-28T17:04:00.9086044Z Finished uploading artifact content to blob storage!
+2026-09-28T17:04:00.9086949Z SHA256 digest of uploaded artifact zip is 6f1467eebddf1514e62316b28dd72c8d8f31468d8fa69ecadd6adbbf57ec0b01
+2026-09-28T17:04:00.9088448Z Finalizing artifact upload
+2026-09-28T17:04:01.2670176Z Artifact wine-dbserver-arm64-evidence.zip successfully finalized. Artifact ID 10985392649
+2026-09-28T17:04:01.2670925Z Artifact wine-dbserver-arm64-evidence has been successfully uploaded! Final size is 521613 bytes. Artifact ID is 10985392649
+2026-09-28T17:04:01.2677196Z Artifact download URL: https://github.com/Russianranger/coh-android/actions/runs/36454174374/artifacts/10985392649
+2026-09-28T17:04:01.2845879Z Post job cleanup.
+2026-09-28T17:04:01.3581984Z [command]/usr/bin/git version
+2026-09-28T17:04:01.3611778Z git version 2.55.0
+2026-09-28T17:04:01.3642143Z Temporarily overriding HOME='/home/runner/work/_temp/82b0ff32-577d-4f2f-a219-062b1c133ed6' before making global git config changes
+2026-09-28T17:04:01.3642845Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-28T17:04:01.3643437Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/coh-android/coh-android
+2026-09-28T17:04:01.3732044Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-28T17:04:01.3733759Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-28T17:04:01.4064216Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-28T17:04:01.4096757Z http.https://github.com/.extraheader
+2026-09-28T17:04:01.4113437Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-28T17:04:01.4149557Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-28T17:04:01.4489939Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-28T17:04:01.4524630Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-28T17:04:01.5002342Z Cleaning up orphan processes
+2026-09-28T17:04:01.5315951Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/download-artifact@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

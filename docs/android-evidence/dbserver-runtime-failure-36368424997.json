@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "status": "arm64_runtime_failed",
+  "run_id": 36368424997,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36368424997",
+  "repository_commit": "c0f4e09928c1c49abb3bcdebc4db998d6cdf7058",
+  "tooling_tests_passed": 46,
+  "windows_persistence": {
+    "status": "passed",
+    "phases": 14,
+    "check_groups": 21,
+    "report": "dbserver-windows-36368424997.json",
+    "artifact_report_bytes": 5627,
+    "artifact_report_sha256": "7afe0da70267623d26d0ba2c92a6e90ae565bbd87ccaf2e4cb30d8c14f9c584c",
+    "preserved_report_line_endings": "LF; artifact report CRLF normalized without changing JSON values"
+  },
+  "arm64_runtime": {
+    "status": "failed",
+    "stage": "dbserver_initial",
+    "exit_code": 3,
+    "fixture_completed": false,
+    "normal_schema_started": false,
+    "failures": [
+      "DbServer exit code differs: dbserver-initial"
+    ],
+    "observed_diagnostics": [
+      "Missing appropriate game data directory",
+      "setHostIpList getaddrinfo localhost failed with11002",
+      "FolderCache duplicate virtual_location assertion"
+    ],
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "cleanup_complete": true,
+    "owned_processes_remaining": 0,
+    "report": "dbserver-arm64-failed-36368424997.json"
+  },
+  "artifacts": [
+    {
+      "id": 10948980527,
+      "name": "wine-dbserver-windows-evidence",
+      "bytes": 17791,
+      "sha256": "09ef871f809060a6c12d62c50edb3a0d0ab02ba410de0bd905320f70a1a6fecf"
+    },
+    {
+      "id": 10948791426,
+      "name": "wine-dbserver-package",
+      "bytes": 2177714,
+      "sha256": "64833c77d9ee1d2057328a496028b53e10a893e33cca67c5b99beaa0cc520645"
+    },
+    {
+      "id": 10948577399,
+      "name": "wine-dbserver-arm64-evidence",
+      "bytes": 512979,
+      "sha256": "f64cde803521f38fe2fa27b7e3e9915ed85cb4fc292a722d25e791db2e231449"
+    }
+  ],
+  "input_hashes": {
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "package_manifest_sha256": "651ad72669e406d3932cb32e6a541beb7156f93ca6ab4c57d6e08a333bfe809f",
+    "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+    "fixture_executable_sha256": "5cfd4dd4a0dde6a02c3bc49604764908d490c010689c19b3650904eec149a7ba",
+    "normal_executable_sha256": "a63d1e6d98eefba60c7b3c2037333bdc120ce9f24a72906aa1cf8857e6e3f292",
+    "repository_commit": "c0f4e09928c1c49abb3bcdebc4db998d6cdf7058",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "preserved_reports": {
+    "dbserver-windows-36368424997.json": {
+      "bytes": 5470,
+      "sha256": "d2deeb779b681e237aaa6057cdde7bca8823ca3da4b1adf7f7135b8baf81d384"
+    },
+    "dbserver-arm64-failed-36368424997.json": {
+      "bytes": 25238,
+      "sha256": "591215efe47978635d809b48dfdf1431f77bc0f0d77f62c2430651225e234b76"
+    }
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

@@ -1,0 +1,214 @@
+{
+  "format": 1,
+  "status": "passed",
+  "public_apk": {
+    "bytes": 595194816,
+    "sha256": "c8a0b2801c6f4ea80ef6df17f7e66f0a90b0ad128ef86fbb39d94c6d54182895"
+  },
+  "repository_commit": "6557a21dbd696c9ac8e9b9344a0e8d7553d5a345",
+  "ci_qualification_receipt": {
+    "bytes": 43810,
+    "sha256": "649d9fa50a9b245a5e435389e707d66ee539a168e6ab299f0c9f5aef44224bdf"
+  },
+  "qualified_source_pins_verified": 116,
+  "ci_focused_tests_passed": 118,
+  "production_manifest": {
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "version_code": 12,
+    "version_name": "0.11.6",
+    "min_sdk": 26,
+    "target_sdk": 35
+  },
+  "signature_verification": {
+    "v2": {
+      "cryptographic_signature_verified": true,
+      "whole_apk_digest_verified": true,
+      "certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+      "sdk_range": null,
+      "digests": [
+        {
+          "algorithm_id": "0x103",
+          "content_digest": "f23674f3afe3786c9aa2851ee4c6f93f7a7abf16ff8778061559614852bf4176",
+          "protected_chunks": 570
+        }
+      ]
+    },
+    "v3": {
+      "cryptographic_signature_verified": true,
+      "whole_apk_digest_verified": true,
+      "certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+      "sdk_range": [
+        24,
+        2147483647
+      ],
+      "digests": [
+        {
+          "algorithm_id": "0x103",
+          "content_digest": "f23674f3afe3786c9aa2851ee4c6f93f7a7abf16ff8778061559614852bf4176",
+          "protected_chunks": 570
+        }
+      ]
+    }
+  },
+  "unique_zip_entries": 62,
+  "all_zip_entries_read_crc_verified": true,
+  "payload_hashes_verified": 55,
+  "runtime_manifest_files_verified": 48,
+  "client_manifest_files_verified": 40,
+  "retained_donor_payloads_verified": 39,
+  "replaced_payloads": [
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/character_reopen_diagnostic.py",
+    "assets/runtime/client-launcher.exe",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-runtime.zip",
+    "assets/runtime/client_interactive_diagnostic.py",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/game-package.tar.gz",
+    "assets/runtime/game_diagnostic.py",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "retained_android_resources_verified": 2,
+  "actual_packaged_guest_extraction": {
+    "format": 1,
+    "status": "passed",
+    "archives": {
+      "dbserver-package.tar.gz": {
+        "bytes": 2133821,
+        "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80",
+        "file_count": 9,
+        "extracted_bytes": 4930397
+      },
+      "dbserver-schema.tar.gz": {
+        "bytes": 1139794,
+        "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792",
+        "file_count": 63,
+        "extracted_bytes": 9268640
+      },
+      "game-package.tar.gz": {
+        "bytes": 10976915,
+        "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d",
+        "file_count": 26,
+        "extracted_bytes": 28474910
+      }
+    }
+  },
+  "native_archive_closure": {
+    "CityOfHeroes.exe": {
+      "actual_file": {
+        "bytes": 9441280,
+        "sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da"
+      },
+      "identical_to_public_0_11_5": true,
+      "retained_native_files": 20
+    },
+    "MapServer.exe": {
+      "actual_file": {
+        "bytes": 6912512,
+        "sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36"
+      },
+      "identical_to_public_0_11_5": true,
+      "retained_native_files": 24
+    }
+  },
+  "physical_refresh_reopen_or_performance_tested": false,
+  "native_or_database_processes_started": false,
+  "limitations": [
+    "Host public-byte verification only; physical Android refresh, character reopen, startup timing and FPS remain pending."
+  ],
+  "signature_reference_urls": [
+    "https://source.android.com/docs/security/features/apksigning/v2",
+    "https://source.android.com/docs/security/features/apksigning/v3"
+  ],
+  "apk": {
+    "name": "COH-Atlas-Gameplay-0.11.6.apk",
+    "bytes": 595194816,
+    "sha256": "c8a0b2801c6f4ea80ef6df17f7e66f0a90b0ad128ef86fbb39d94c6d54182895"
+  },
+  "build_receipt": {
+    "bytes": 131522,
+    "sha256": "ac709e92901321a74e6211a9be58564de4e476f6718b656069064836def6e079"
+  },
+  "failed_operation_evidence": "thor-0.11.5-reopen-preflight-failed-20261002.json",
+  "prior_archive_failure_reproduced": {
+    "format": 1,
+    "status": "reproduced",
+    "apk": {
+      "bytes": 595194816,
+      "sha256": "5ba95d45bfbe0a2cda74bb632b80d1499058f5c8b40c48d9d422a9304cdb9941"
+    },
+    "archive": {
+      "bytes": 10976956,
+      "sha256": "0909fd12c47bdb79d8a039c6fd157a5105838963850f748fc08a8e4ec3ad3195"
+    },
+    "actual_guest_extractor": "local_login_server.extract_regular",
+    "error": "Server payload archive metadata differs",
+    "first_member_metadata": {
+      "name": "CrashRpt.dll",
+      "mtime": 1767225600,
+      "mode": 420,
+      "uid": 0,
+      "gid": 0,
+      "pax_headers": {}
+    },
+    "extracted_files": 0
+  },
+  "native_build_reused": {
+    "run_id": 37048610759,
+    "repository_commit": "0ddd27dfaddf9ac53a6a65548c8199bced767fbe",
+    "client_or_server_recompiled_this_build": false,
+    "files": {
+      "CityOfHeroes.exe": {
+        "bytes": 9441280,
+        "sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da"
+      },
+      "MapServer.exe": {
+        "bytes": 6912512,
+        "sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36"
+      }
+    }
+  },
+  "runtime_refresh": {
+    "crash_cause_confirmed": false,
+    "crash_trace_in_supplied_zip": false,
+    "bounded_transfer_buffer_bytes": 65536,
+    "allocation_fixture_members": 1002,
+    "allocation_fixture_heap_mib": 32,
+    "prior_gc_collections": 125,
+    "repaired_gc_collections": 1,
+    "own_app_exit_metadata_added": true,
+    "exit_metadata_maximum_records": 4,
+    "trace_streams_requested": false
+  },
+  "release": {
+    "id": 402150671,
+    "tag": "coh-atlas-gameplay-v0.11.6",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.6",
+    "apk_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.6/COH-Atlas-Gameplay-0.11.6.apk",
+    "github_asset_id": 606479071,
+    "github_asset_digest": "sha256:c8a0b2801c6f4ea80ef6df17f7e66f0a90b0ad128ef86fbb39d94c6d54182895",
+    "public": true,
+    "prerelease": true
+  },
+  "apk_build": {
+    "run_id": 37063509202,
+    "observer_job_id": 111025553871,
+    "apk_job_id": 111026049348,
+    "conclusion": "success",
+    "packaging_artifact_id": 11251578552,
+    "packaging_artifact_sha256": "43549dbfaf9390a0c79e24a611585e363b1be4796a0e5d3836c0ace8a390caff",
+    "observer_artifact_id": 11251573369,
+    "observer_artifact_sha256": "146af74fc9ca29dd17b7859accb035688c476c9d8ab9ef4d6e565a698c08d344"
+  },
+  "repository": {
+    "branch": "codex/character-persistence-continuation",
+    "main": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "pull_request": 1,
+    "draft": true
+  },
+  "physical_gameplay_validated_for_this_update": false,
+  "measured_device_speedup": false,
+  "gpu_acceleration_deferred": true,
+  "audited_utc": "2026-10-02T21:01:05.451731+00:00"
+}

@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "scope": "stock_Atlas_AutoGroup_load_policy_source_review",
+  "status": "source_reviewed_runtime_pending",
+  "reviewed_repository_commit": "cdff43b4c440c0e4d7b2b72c2b5b357dde39402e",
+  "native_option": "-donotautogroup",
+  "applies_to": "character_creation_owned_Atlas_MapServer_only",
+  "source_files": {
+    "upstream/ouroboros/MapServer/src/svr/svr_init.c": {
+      "bytes": 70402,
+      "sha256": "2048c22f8380931514cefb429790552295e52dd72e03617973820936e116639d",
+      "git_blob": "916cbeef89abd534a8fb89792a170ebecfc5edda"
+    },
+    "upstream/ouroboros/MapServer/src/group/groupnetsend.c": {
+      "bytes": 16285,
+      "sha256": "cd739e2a1b424bf089017be73d3c42adef0f23aca7563e8577cfc98ecdfebff9",
+      "git_blob": "34d79a75416ea4bb74c43f3fc66ead055b0e228a"
+    },
+    "upstream/ouroboros/Game/src/group/groupnetrecv.c": {
+      "bytes": 36471,
+      "sha256": "f4cccb5a51acea3448191965470eaa349034c4f6fa1c729fa52aed0888c7004d",
+      "git_blob": "248bb8c46014b1ab67e7d6e6e7f9e116ea1f8f70"
+    },
+    "upstream/ouroboros/Common/group/groupfileload.c": {
+      "bytes": 63848,
+      "sha256": "5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7",
+      "git_blob": "821b4cdc2c5ccd5a914148cb85e1177a157920ac"
+    },
+    "upstream/ouroboros/Common/group/group.c": {
+      "bytes": 64194,
+      "sha256": "dc7c70b59b565a0a358fbedfba291e6018805efa6442d0ad0419e52f3908f7d7",
+      "git_blob": "9ba9d808065cf36a92e76b570e671a2c2c2a0669"
+    },
+    "upstream/ouroboros/Game/src/clientcomm/clientcomm.c": {
+      "bytes": 73982,
+      "sha256": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "git_blob": "fef73cbfd9daffbb8e831cd49ecef3e4434380ac"
+    }
+  },
+  "packaged_mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb",
+  "packaged_option_literal_verified": true,
+  "source_findings": {
+    "server_parser": "svr_init.c1004-1006 sets doNotAutoGroup;1439 already defaults true in production;1468 parses after config, before groupLoadMap.",
+    "network": "groupnetsend.c354 sends the setting on new world;groupnetrecv.c850 assigns it before clientLoadMapStart and receiveGroupFile.",
+    "load_scope": "groupfileload.c1805 skips the optional layer AutoGroup block. Normal map parsing, refs/tracker activation, welding and collision/NovodeX initialization remain.",
+    "readiness": "clientcomm.c1928-1941 still finishes relevant textures and geometry before sending CLIENT_READY. Ordinary logout and SQL-save gates are unchanged.",
+    "development_client_caveat": "groupnetrecv.c851 sets iAmAnArtist=true when doNotAutoGroup and development mode; runtime acceptance must assess this stock side effect. Internal group topology/IDs are not claimed bitwise identical."
+  },
+  "failure_context": {
+    "run_id": 36846149988,
+    "last_console_marker": "AutoGroup..",
+    "launcher_timeout_proven": true,
+    "AutoGroup_hang_proven": false,
+    "full_budget_retry_run_id": 36852214162,
+    "full_budget_retry_status_at_review": "in_progress"
+  },
+  "atlas_local_graph": {
+    "local_definitions": 4850,
+    "edges": 27314,
+    "largest_container_children": 4575,
+    "expanded_visits_external_names_as_leaves": 38304,
+    "unique_names": 6588,
+    "max_depth": 70,
+    "local_cycles": 0,
+    "external_closure_cycles_verified": false
+  },
+  "claims": {
+    "binaries_rebuilt": false,
+    "imported_assets_modified": false,
+    "readiness_or_save_gates_bypassed": false,
+    "rendered_Atlas_verified": false,
+    "ordinary_save_verified": false,
+    "performance_improvement_measured": false
+  }
+}

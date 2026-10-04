@@ -1,0 +1,47 @@
+name: Bootstrap retained client interaction development signer
+# Completed one-time bootstrap. New production/development identities must be explicit.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  signer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Create a retained development identity
+        shell: bash
+        run: |
+          umask 077
+          mkdir -p signing
+          keytool -genkeypair -keystore signing/coh-client-interactive.jks -storetype PKCS12 \
+            -storepass android -keypass android -alias coh-client-interactive \
+            -keyalg RSA -keysize 3072 -validity 3650 \
+            -dname 'CN=COH Client Interaction Development, O=Russianranger'
+          keytool -exportcert -keystore signing/coh-client-interactive.jks -storepass android \
+            -alias coh-client-interactive -file signing/certificate.der
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          root=pathlib.Path('signing')
+          pin=lambda p: {'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
+          receipt={'format':1,'purpose':'retained_development_apk_signer',
+                   'application_id':'io.github.russianranger.cohclientinteractive',
+                   'alias':'coh-client-interactive','donor_run_id':int(os.environ['GITHUB_RUN_ID']),
+                   'repository_commit':os.environ['GITHUB_SHA'],
+                   'keystore':pin(root/'coh-client-interactive.jks'),
+                   'certificate':pin(root/'certificate.der'),
+                   'production_signer':False,
+                   'policy':'Future builds require this exact certificate; no regeneration fallback.'}
+          (root/'signing-identity.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print(json.dumps(receipt,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: signing/
+          retention-days: 90
+          if-no-files-found: error

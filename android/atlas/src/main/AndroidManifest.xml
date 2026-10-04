@@ -1,0 +1,24 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.russianranger.cohatlas"
+    android:versionCode="1" android:versionName="0.3.0">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <application android:label="COH Atlas Setup" android:icon="@drawable/ic_coh_atlas"
+        android:theme="@style/AtlasTheme" android:allowBackup="false"
+        android:supportsRtl="true" android:usesCleartextTraffic="false">
+        <activity android:name="io.github.russianranger.cohatlas.AtlasActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="io.github.russianranger.cohatlas.AtlasImportService" android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-started integrity-checked import of offline game content into private app storage with progress and cancellation" />
+        </service>
+    </application>
+</manifest>
