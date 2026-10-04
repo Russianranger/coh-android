@@ -117,6 +117,8 @@ def qualification():
             'postgresql_emission_fixture_verified', 'java_or_dex_recompiled', 'native_client_recompiled')},
         'changed_java_sources': sorted(package.JAVA_CHANGES), 'retained_java_sources': 17,
         'retained_world_lod_geometry_verified': True,
+        'native_source_commit': package.NATIVE_SOURCE_COMMIT, 'native_source_provenance': package.native_link(),
+        'native_client_compiled_in_current_run': False, 'native_client_package_reused': True,
         'postgresql_emission_fixtures': ['cancelled_child_deletion_commits', 'delete_insert_replacement_commits',
             'duplicate_insert_23505_rollback'], 'tests_run': len(contract.TEST_MODULES),
         'checks': {name: True for name in package.CHECKS},
@@ -261,6 +263,17 @@ class ClientLoadingPackagingTests(unittest.TestCase):
         with mock.patch.object(package, 'builder', return_value=base): self.assertIs(package.validate_qualification(receipt, COMMIT), receipt)
         self.assertEqual(base.checked_file.call_count, len(package.SOURCE_FILES))
 
+    def test_qualification_check_aggregation_covers_only_registered_required_suites(self):
+        contract = package.module('client_loading_aggregation_test', package.ROOT/package.QUALIFICATION_SCRIPT)
+        results = {name: {'status': 'passed', 'skipped': 0, 'tests_run': 1} for name in contract.TEST_MODULES}
+        checks = contract.qualification_checks(results)
+        self.assertEqual(set(checks), set(package.CHECKS)); self.assertTrue(all(checks.values()))
+        self.assertIn('test_acceptance', contract.TEST_MODULES)
+        with mock.patch.dict(contract.CHECK_SUITES, {'android_visual_stage_acceptance_verified': ['unregistered_suite']}):
+            with self.assertRaisesRegex(ValueError, 'registered required suites'): contract.qualification_checks(results)
+        results.pop('test_acceptance')
+        with self.assertRaisesRegex(ValueError, 'complete unique registered'): contract.qualification_checks(results)
+
     def test_two_fresh_processes_produce_identical_encoded_manifests(self):
         with tempfile.TemporaryDirectory() as temporary:
             folder = Path(temporary); _, donor, _, _, _, _ = fixture(folder)
@@ -284,12 +297,35 @@ print(json.dumps({'client':package.shared.encoded(client).decode(),'runtime':pac
         self.assertIn('run-id: '+str(package.DONOR_RUN_ID), text)
         self.assertIn('name: coh-client-visual-packaging-evidence', text)
         self.assertIn('needs: qualify', text); self.assertIn("COH_REQUIRE_STARTUP_BUNDLE_PG: '1'", text)
-        self.assertIn('--target Game', text); self.assertNotIn('--target DbServer', text)
-        self.assertIn('--checks out/client-loading-native-checks.json', text)
+        self.assertNotIn('cmake --', text); self.assertNotIn('windows-', text)
+        self.assertIn("artifact-ids: '"+str(package.NATIVE_ARTIFACT_ID)+"'", text)
+        self.assertIn('run-id: '+str(package.NATIVE_RUN_ID), text)
+        self.assertIn('verify-native --client-directory out/client-loading-native', text)
         self.assertIn('assets/client-visual-manifest.json', text)
         self.assertEqual(package.ADDED_PAYLOADS, set()); self.assertEqual(package.ADDED_HELPERS, set())
         self.assertEqual((package.VERSION_NAME, package.VERSION_CODE), ('0.13.8', 23))
         self.assertEqual(package.DONOR_COMMIT, '0da09e771cb472f4ec897c39b90cef675d007edf')
+
+    def test_retained_native_artifact_requires_all_original_source_and_package_byte_pins(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary); directory = folder/'native'; directory.mkdir()
+            source_pins = {'native-source/patch.diff': pin(b'exact-original-native-source')}
+            package_pins = {'native-proof.json': pin(b'exact-original-native-proof')}
+            source = folder/'native-source/patch.diff'; source.parent.mkdir(); source.write_bytes(b'exact-original-native-source')
+            proof = directory/'native-proof.json'; proof.write_bytes(b'exact-original-native-proof')
+            manifest = {'repository_commit': package.NATIVE_SOURCE_COMMIT,
+                'run_url': 'https://github.com/'+package.REPOSITORY+'/actions/runs/'+str(package.NATIVE_RUN_ID)}
+            producer = mock.Mock(SOURCE_FILES=tuple(source_pins)); producer.validate_package.return_value = manifest
+            with mock.patch.object(package, 'ROOT', folder), mock.patch.object(package, 'NATIVE_SOURCE_PINS', source_pins), \
+                    mock.patch.object(package, 'NATIVE_PACKAGE_PINS', package_pins), mock.patch.object(package, 'client_builder', return_value=producer):
+                self.assertEqual(package.validate_native_package(directory), manifest)
+                producer.validate_package.assert_called_with(directory, package.NATIVE_SOURCE_COMMIT)
+                for path in (source, proof):
+                    previous = path.read_bytes(); path.write_bytes(b'foreign-content')
+                    with self.assertRaises(ValueError): package.validate_native_package(directory)
+                    path.write_bytes(previous)
+                manifest['repository_commit'] = COMMIT
+                with self.assertRaisesRegex(ValueError, 'original commit'): package.validate_native_package(directory)
 
 
 if __name__ == '__main__': unittest.main()

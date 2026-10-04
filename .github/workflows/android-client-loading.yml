@@ -21,6 +21,7 @@ on:
       - tools/android/interactive/test_client_animation_package.py
       - tools/android/interactive/test_client_visual_schedule.py
       - tools/android/interactive/test_client_loading_package.py
+      - tools/android/interactive/test_acceptance.py
       - tools/android/interactive/test_client_stage_acceptance.py
       - tools/android/interactive/fixtures/client-stage-0.13.7.json
       - tools/android/interactive/classify_storage_cleanup_change.py
@@ -41,73 +42,27 @@ concurrency:
 jobs:
   client:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
-    runs-on: windows-2025-vs2026
-    timeout-minutes: 65
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Stage the frozen native client chain and separate startup layer
-        shell: pwsh
-        run: |
-          python tools/android/interactive/package_client_loading_native.py stage --output out/client-loading-source
-          if ($LASTEXITCODE -ne 0) { throw 'Client startup staging failed' }
-      - name: Qualify exact production string semantics and Win32 copy assembly before building Game
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
-          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          if (-not $installation) { throw 'MSVC installation was not found' }
-          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
-          $batch = @"
-          @echo off
-          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_loading_native.py --require-windows --output out/client-loading-native-checks.json
-          if errorlevel 1 exit /b 1
-          "@
-          Set-Content -Path out/contracts/client-loading.cmd -Value $batch -Encoding ASCII
-          cmd /c .\out\contracts\client-loading.cmd 2>&1 | Tee-Object out/contracts/client-loading.txt
-          if ($LASTEXITCODE -ne 0) { throw 'Client loading native qualification failed' }
-      - name: Build only Game retaining the existing MapServer and graphics profile
-        working-directory: out/client-loading-source
-        shell: pwsh
-        run: |
-          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
-          if ($LASTEXITCODE -ne 0) { throw 'Client startup configure failed' }
-          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
-          if ($LASTEXITCODE -ne 0) { throw 'Client startup Game build failed' }
-      - name: Package Game with exact source and schema receipts
-        shell: pwsh
-        run: >-
-          python tools/android/interactive/package_client_loading_native.py package
-          --directory out/client-loading-source/out/build/vs2026/bin/OptDebug
-          --source out/client-loading-source
-          --cache out/client-loading-source/out/build/vs2026/CMakeCache.txt
-          --checks out/client-loading-native-checks.json
-          --repository-commit "$env:GITHUB_SHA"
-          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          --output out/client-loading-native
+      - name: Recover the exact previously qualified Game and original Win32 proof
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '11304751532'
+          path: out/client-loading-native
+          merge-multiple: true
+          run-id: 37204837499
+          github-token: ${{ github.token }}
+      - name: Verify all retained native source and artifact bytes without relabelling their producer
+        run: python3 tools/android/interactive/build_client_loading_apk.py verify-native --client-directory out/client-loading-native
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-loading-native
           path: out/client-loading-native/
           if-no-files-found: error
-          retention-days: 90
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coh-client-loading-native-build-evidence
-          path: |
-            out/client-loading-source/*build-input.json
-            out/client-loading-source/responsiveness-source-input.json
-            out/client-loading-source/out/build/vs2026/CMakeCache.txt
-            out/client-loading-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
-            out/client-loading-native/client-loading-native-manifest.json
-            out/client-loading-native-checks.json
-            out/contracts/client-loading.txt
-          if-no-files-found: warn
           retention-days: 90
   qualify:
     needs: client

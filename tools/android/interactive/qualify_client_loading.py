@@ -19,7 +19,7 @@ import qualify_client_visual as prior
 import qualify_startup_schedule as closure
 
 TEST_MODULES = prior.TEST_MODULES + ('test_client_stage_acceptance', 'test_client_loading_package',
-    'test_client_loading_native', 'test_client_loading_contract')
+    'test_client_loading_native', 'test_client_loading_contract', 'test_acceptance')
 CHECK_SUITES = {
     'client_animation_mount_and_failure_guards_verified': ['test_client_animation_package', 'test_client_visual_schedule'],
     'missing_only_visual_assets_and_texture_index_binding_verified': ['test_client_visual_assets',
@@ -60,6 +60,17 @@ def regressions():
     return results
 
 
+def qualification_checks(results):
+    registered = set(TEST_MODULES)
+    derivative.require(len(registered) == len(TEST_MODULES) and set(results) == registered,
+        'Client qualification requires the complete unique registered suite inventory')
+    derivative.require(set(CHECK_SUITES) == set(derivative.CHECKS)
+        and all(suites and set(suites) <= registered for suites in CHECK_SUITES.values()),
+        'Every client qualification check must reference registered required suites')
+    return {name: all(results[suite]['status'] == 'passed' and results[suite]['skipped'] == 0
+        and results[suite]['tests_run'] > 0 for suite in suites) for name, suites in CHECK_SUITES.items()}
+
+
 def qualify(args):
     if hasattr(time, 'tzset'): os.environ['TZ'] = 'UTC'; time.tzset()
     base = derivative.builder(); commit = base.source_commit(args.repository_commit)
@@ -75,8 +86,7 @@ def qualify(args):
         {'cancelled_child_deletion_commits', 'duplicate_insert_23505_rollback', 'delete_insert_replacement_commits'},
         'Formal qualification requires all three real PostgreSQL transaction fixtures')
     for name, expected in pins.items(): base.checked_file(ROOT/name, expected)
-    checks = {name: all(results[suite]['status'] == 'passed' and results[suite]['skipped'] == 0
-        and results[suite]['tests_run'] > 0 for suite in suites) for name, suites in CHECK_SUITES.items()}
+    checks = qualification_checks(results)
     receipt = {'format': 1, 'status': 'passed' if all(checks.values()) else 'failed',
         'scope': derivative.QUALIFICATION_SCOPE, 'repository_commit': commit,
         'retained_runtime_repository_commit': derivative.DONOR_COMMIT,
@@ -91,6 +101,8 @@ def qualify(args):
         'previous_runtime_generation_retained': True, 'asset_reimport_required': False,
         'setup_memory_guards_preserved': True, 'java_or_dex_recompiled': True,
         'native_dbserver_recompiled': False, 'native_client_recompiled': True, 'native_mapserver_recompiled': False,
+        'native_source_commit': derivative.NATIVE_SOURCE_COMMIT, 'native_source_provenance': derivative.native_link(),
+        'native_client_compiled_in_current_run': False, 'native_client_package_reused': True,
         'visual_package': visual, 'visual_superset': conservation, 'native_client_loading': native,
         'retained_world_lod_geometry_verified': True,
         'retained_server_cache_and_save_fix_verified': True,

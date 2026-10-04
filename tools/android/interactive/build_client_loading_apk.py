@@ -33,6 +33,23 @@ DONOR_RUNTIME_COMMIT = '7b48762de0748e443a2df60c6e4b59e22b365e35'
 RETAINED_SETUP_MEMORY_COMMIT = '31c8a1722f992e7a8334ef2256b4feaa9ca173be'
 RETAINED_NATIVE_COMMIT = startup.RETAINED_NATIVE_COMMIT
 DONOR_RUN_ID = 37198877717
+NATIVE_SOURCE_COMMIT = 'f42ebb46675213809018b4f9825d13eb1cd6e952'
+NATIVE_RUN_ID = 37204837499
+NATIVE_ARTIFACT_ID = 11304751532
+NATIVE_SOURCE_PINS = {
+    'patches/client-loading/0001-known-length-string-copy-and-profile.patch': {
+        'bytes': 4255, 'sha256': 'c989c1518af562b09bef114ba1c694b39410de56d6da9d3c55f77fe9ad6e6a5a'},
+    'tools/android/interactive/package_client_loading_native.py': {
+        'bytes': 15478, 'sha256': '6aba37c93152fb492418328db050d8b3d2a67e6e8798dbf469b7124217f01f01'},
+    'tools/android/interactive/test_client_loading_native.py': {
+        'bytes': 15832, 'sha256': '2981c2ae36468c4513060d6d3683554f1891a85768d56880ffa8f88ed45efc87'},
+}
+NATIVE_PACKAGE_PINS = {
+    'CityOfHeroes.exe': {'bytes': 9443840, 'sha256': 'ec1a6c01b07d7c189bde743a7255c860b8dd96879225b4ffa50fd42eabbb721b'},
+    'CMakeCache.txt': {'bytes': 39350, 'sha256': '5672ae5126e8c1d6166f668ba7712b89897816e61a6e994675aeb75025d3462b'},
+    'client-loading-native-checks.json': {'bytes': 7011, 'sha256': 'c5bb5ce86ba4db4fad2bf079f9e410138e70b7c80d0fb8d7f2b4fcd12268edb0'},
+    'client-loading-native-manifest.json': {'bytes': 35846, 'sha256': '0d7e472b18254b3853a525efcc5b801ca8db8315124236139cf5a897bb81c894'},
+}
 DONOR_APK_NAME = 'COH-Atlas-Gameplay-0.13.7.apk'
 DONOR_APK = {'bytes': 700131607, 'sha256': 'ab21dc2e8a6ebecea0edf694187da83787f808a396d686e0d8312565f8373fc7'}
 DONOR_BUILD = {'bytes': 3263448, 'sha256': '48fac5edde017731cbd9331300af9ffb80d2c1973eb4a946f7e29546c30d8de9'}
@@ -113,6 +130,11 @@ def builder(*, repaired=False):
 
 def donor_link():
     return {'run_id': DONOR_RUN_ID, 'repository_commit': DONOR_COMMIT, 'apk': DONOR_APK, 'build_report': DONOR_BUILD}
+
+
+def native_link():
+    return {'repository_commit': NATIVE_SOURCE_COMMIT, 'run_id': NATIVE_RUN_ID, 'artifact_id': NATIVE_ARTIFACT_ID,
+        'source_files': copy.deepcopy(NATIVE_SOURCE_PINS), 'package_files': copy.deepcopy(NATIVE_PACKAGE_PINS)}
 
 
 def validate_donor_receipt(path):
@@ -271,6 +293,8 @@ def verification_manifests(donor, client, updates, commit):
         'donor_repository_commit': DONOR_COMMIT, 'retained_setup_memory_repository_commit': RETAINED_SETUP_MEMORY_COMMIT,
         'retained_native_repository_commit': RETAINED_NATIVE_COMMIT,
         'native_dbserver_recompiled': False, 'native_client_recompiled': True, 'native_mapserver_recompiled': False,
+        'native_source_commit': NATIVE_SOURCE_COMMIT, 'native_source_provenance': native_link(),
+        'native_client_compiled_in_current_run': False, 'native_client_package_reused': True,
         'physical_client_timing_validated': False, 'physical_visual_assets_validated': False,
         'existing_server_cache_and_save_fix_preserved': True}
     expected_runtime['scope'] = 'Client visual leaf superset, source-bound Game copy/BIN profiling layer and Android stage acceptance correction with exact retained 0.13.7 server/DLL bytes; physical timing and visual review pending'
@@ -281,9 +305,24 @@ def client_builder():
     return module('client_loading_native_producer', Path(__file__).with_name('package_client_loading_native.py'))
 
 
+def validate_native_package(directory):
+    require(directory is not None and directory.is_dir() and not directory.is_symlink(),
+        'Exact retained native package directory required')
+    producer = client_builder()
+    require(set(producer.SOURCE_FILES) == set(NATIVE_SOURCE_PINS), 'Retained native source inventory differs')
+    for name, pin in NATIVE_SOURCE_PINS.items(): builder().checked_file(ROOT/name, pin)
+    require({path.name for path in directory.iterdir()} == set(NATIVE_PACKAGE_PINS), 'Retained native package inventory differs')
+    for name, pin in NATIVE_PACKAGE_PINS.items(): builder().checked_file(directory/name, pin)
+    native = producer.validate_package(directory, NATIVE_SOURCE_COMMIT)
+    require(native['repository_commit'] == NATIVE_SOURCE_COMMIT
+        and native['run_url'] == 'https://github.com/'+REPOSITORY+'/actions/runs/'+str(NATIVE_RUN_ID),
+        'Retained native producer history must keep its original commit and producer run')
+    return native
+
+
 def validate_native(directory, commit, donor):
     require(directory is not None, 'Source-bound client loading native package required')
-    native = client_builder().validate_package(directory, commit)
+    native = validate_native_package(directory)
     require(native.get('base_client_executable') == donor['native_client_startup']['files']['CityOfHeroes.exe']
         and native.get('retained_source_inputs') == donor['native_responsiveness']['build_inputs']
         and native.get('schema_sources_sha256') == donor['native_responsiveness']['retained_cache']['schema_sources_sha256']
@@ -413,6 +452,10 @@ def validate_qualification(receipt, commit):
             'physical_visual_assets_validated', 'native_runtime_booted', 'long_prior_gameplay_milestones_repeated',
             'asset_reimport_required', 'native_dbserver_recompiled', 'native_mapserver_recompiled'))
         and receipt.get('native_client_recompiled') is True
+        and receipt.get('native_source_commit') == NATIVE_SOURCE_COMMIT
+        and receipt.get('native_source_provenance') == native_link()
+        and receipt.get('native_client_compiled_in_current_run') is False
+        and receipt.get('native_client_package_reused') is True
         and receipt.get('java_or_dex_recompiled') is True
         and receipt.get('changed_java_sources') == sorted(JAVA_CHANGES)
         and receipt.get('retained_java_sources') == 17
@@ -532,6 +575,8 @@ def build(args):
             'retained_server_cache_and_save_fix_verified': True, 'visual_package': visual, 'visual_superset': conservation,
             'retained_java_sources': 17,
             'native_client_loading': native,
+            'native_source_commit': NATIVE_SOURCE_COMMIT, 'native_source_provenance': native_link(),
+            'native_client_compiled_in_current_run': False, 'native_client_package_reused': True,
             'runtime_manifest': runtime, 'runtime_manifest_sha256': payloads['assets/runtime/runtime-manifest.json']['sha256'],
             'scope': QUALIFICATION_SCOPE, **{name: donor[name] for name in RETAINED_RECEIPT_FIELDS}}
         (args.output.parent/REPORT_NAME).write_text(json.dumps(report, indent=2)+'\n')
@@ -560,6 +605,9 @@ def verify_report(args, commit):
         and report.get('java_sources') == current_sources(donor) and report.get('changed_java_sources') == sorted(JAVA_CHANGES)
         and report.get('added_java_sources') == [] and report.get('donor_dex') == donor['retained_dex']
         and report.get('retained_java_sources') == 17 and report.get('visual_superset') == conservation
+        and report.get('native_source_commit') == NATIVE_SOURCE_COMMIT
+        and report.get('native_source_provenance') == native_link()
+        and report.get('native_client_compiled_in_current_run') is False and report.get('native_client_package_reused') is True
         and report.get('preserved_sources') == donor['preserved_sources']
         and report.get('changed_apk_payloads') == sorted(REPLACED_PAYLOADS|ADDED_PAYLOADS)
         and report.get('replaced_apk_payloads') == sorted(REPLACED_PAYLOADS) and report.get('added_apk_payloads') == sorted(ADDED_PAYLOADS)
@@ -632,6 +680,7 @@ def audit(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__); commands = parser.add_subparsers(dest='command', required=True)
     get = commands.add_parser('download-donor'); get.add_argument('--output', type=Path, required=True)
+    native = commands.add_parser('verify-native'); native.add_argument('--client-directory', type=Path, required=True)
     create = commands.add_parser('build')
     for name in ('donor-apk', 'donor-build-report', 'qualification', 'visual-directory', 'client-directory', 'android-jar', 'build-tools', 'keystore', 'output'):
         create.add_argument('--'+name, type=Path, required=True)
@@ -646,7 +695,8 @@ def main():
     args = parser.parse_args()
     for key, value in vars(args).items():
         if isinstance(value, Path): setattr(args, key, value.absolute())
-    {'download-donor': download, 'build': build, 'publish': publish, 'audit-public': audit}[args.command](args)
+    {'download-donor': download, 'verify-native': lambda value: validate_native_package(value.client_directory),
+        'build': build, 'publish': publish, 'audit-public': audit}[args.command](args)
 
 
 if __name__ == '__main__': main()
