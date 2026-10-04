@@ -55,6 +55,9 @@ class ServerWorktreeReuseTests(unittest.TestCase):
             cleanup_status={'wine_prefix_stopped': True, 'owned_processes_reaped': True})
         value.ctx = SimpleNamespace(report={'client_worktree': dict(self.receipt)}, check=Mock(), event=Mock())
         value.creation_report = {}
+        # payloads() supplies this qualified receipt before production runtime
+        # preparation; the fixture mocks only the server file-copy operation.
+        value.package = json.loads((ROOT / 'docs/android-evidence/dbserver-package-36460867428.json').read_text())
         value.schema = {'files': {name: {} for name in self.schema_files}}
         value.schema_dir = self.schema_dir
         value.map_package = {'files': {'MapServer.exe': {'sha256':

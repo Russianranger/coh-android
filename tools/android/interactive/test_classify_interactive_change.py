@@ -9,6 +9,12 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_exact_startup_derivative_routes_to_its_native_and_apk_pipeline(self):
+        names = sorted(change.STARTUP_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
+            names+['upstream/ouroboros/DBServer/src/dbinit.c']))
+
     def test_only_direct_push_of_bounded_host_or_gameplay_changes_can_route_runtime(self):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)

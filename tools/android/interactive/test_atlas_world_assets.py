@@ -3,11 +3,13 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
@@ -23,8 +25,24 @@ class WorldInstallTests(unittest.TestCase):
             'data/texture_library/world/atlas/ground.texture': b'ground image'}
         self.files = {name: {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
             for name, raw in self.payloads.items()}
-        self.manifest = {'files': self.files, 'visual_scope': 'unqualified world fixture'}
-        self.enterContext(patch.object(world, 'package', return_value=(self.manifest, self.payloads)))
+        archive = self.root / world.ARCHIVE
+        with zipfile.ZipFile(archive, 'w') as output:
+            for name, raw in self.payloads.items():
+                entry = zipfile.ZipInfo(name); entry.external_attr = (stat.S_IFREG | 0o444) << 16
+                entry.compress_type = zipfile.ZIP_DEFLATED; output.writestr(entry, raw)
+        archive_raw = archive.read_bytes()
+        self.manifest = {'format': 1, 'scope': world.SCOPE, 'source_commit': world.client.SOURCE,
+            'data_commit': world.client.DATA, 'files': self.files, 'file_count': len(self.files),
+            'payload_bytes': sum(len(raw) for raw in self.payloads.values()),
+            'archive': {'filename': world.ARCHIVE, 'bytes': len(archive_raw),
+                'sha256': hashlib.sha256(archive_raw).hexdigest()},
+            'runtime_visual_validated': False, 'gameplay_validated': False,
+            'visual_scope': 'unqualified world fixture'}
+        manifest_raw = world.canonical(self.manifest)
+        (self.root / world.MANIFEST).write_bytes(manifest_raw)
+        self.enterContext(patch.object(world, 'MANIFEST_SHA256', hashlib.sha256(manifest_raw).hexdigest()))
+        self.enterContext(patch.object(world, 'ARCHIVE_SHA256', hashlib.sha256(archive_raw).hexdigest()))
+        self.enterContext(patch.object(world, 'ARCHIVE_BYTES', len(archive_raw)))
         self.enterContext(patch.object(world, 'FILE_COUNT', len(self.files)))
         self.enterContext(patch.object(world, 'PAYLOAD_BYTES', sum(len(raw) for raw in self.payloads.values())))
         self.enterContext(patch.object(world, 'FILES_SHA256', hashlib.sha256(world.canonical(self.files)).hexdigest()))

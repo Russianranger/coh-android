@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Graphical character creation, ordinary logout and committed private SQL save."""
 import argparse
+import copy
 import json
 import os
 from pathlib import Path
 import re
 import signal
 import sys
+import threading
+import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import client_login_diagnostic as login
@@ -76,6 +79,62 @@ class CharacterContext(login.LoginContext):
         return child
 
 
+class TextureHeaderPreparation:
+    """One cooperative client-only worker, with main-thread evidence publication.
+
+    Wine registration and every service readiness proof have finished before
+    this starts. The worker never accesses the Wine prefix or private server
+    caches, starts children, changes Wine environment, or invokes server health.
+    """
+    def __init__(self, diagnostic):
+        self.diagnostic = diagnostic
+        self.report = {'client_worktree': copy.deepcopy(
+            diagnostic.ctx.report.get('client_worktree', {}))}
+        self.import_identity = copy.deepcopy(diagnostic.ctx.report['import_identity'])
+        self.stop = threading.Event()
+        self.events = []
+        self.result = self.error = self.finished = None
+        self.started = time.monotonic()
+        self.thread = threading.Thread(target=self.run, name='client-texture-headers')
+        self.thread_started = False
+
+    def check(self):
+        if self.stop.is_set():
+            raise base.Cancelled('Client texture preparation cancelled')
+        # LoginContext.check also updates mutable server progress/health. The
+        # main thread retains those checks while both paths keep the same owned
+        # process, cancellation and overall deadline checks.
+        base.Context.check(self.diagnostic.ctx)
+
+    def event(self, kind, **fields):
+        require(len(self.events) < 16, 'Texture preparation event count exceeded bound')
+        self.events.append((kind, fields))
+
+    def run(self):
+        try:
+            self.check()
+            self.result = self.diagnostic.prepare_texture_header_index(self)
+            self.check()
+        except BaseException as error:
+            self.error = error
+        finally:
+            self.finished = time.monotonic()
+
+    def start(self):
+        try:
+            self.thread.start()
+            self.thread_started = True
+        except (OSError, RuntimeError):
+            # Hosts without worker support retain the post-readiness ordinary
+            # preparation path, with zero reported concurrency.
+            self.run()
+
+    def cancel_and_join(self):
+        self.stop.set()
+        if self.thread_started:
+            self.thread.join()
+
+
 class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
     REPORT_KEY = 'character_creation'
     REQUIRED = REQUIRED
@@ -94,6 +153,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         self.connected_announced = False
         self.saved_announced = False
         self.connected_identity = None
+        self.texture_header_preparation = None
 
     def launcher_command(self):
         return interactive.ClientInteractiveDiagnostic.launcher_command(self) + ['--character-creation']
@@ -109,23 +169,102 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         # staging mirrors them into the private server tree before map launch.
         import atlas_world_assets as world
         self.ctx.report['atlas_world_supplement'] = world.install(self.work, self.args.assets, self.ctx)
+
+    def start_wine(self):
+        # The inherited path registers Wine, verifies ODBC, starts DbServer and
+        # requires Atlas's completed tick plus the real protocol readiness proof.
+        # Client-only texture work must never delay any of those server stages.
+        super().start_wine()
         # Only the explicit new executable can consume this optional index.
         # The preserved stock startup/creation entry points keep their path.
         if not self.ctx.report.get('native_responsiveness_candidate'):
             return
+        require(self.local_server.report.get('server_ready') is True
+                and self.local_server.creation_report.get('map_ready') is True,
+                'Client texture preparation requires current owned server readiness')
+        self.ctx.check()
+        self.texture_header_preparation = TextureHeaderPreparation(self)
+        self.texture_header_preparation.start()
+
+    def prepare_texture_header_index(self, context):
         import texture_header_index
         try:
-            index_receipt, index_env = texture_header_index.prepare(self.work,
-                self.ctx.report['import_identity'], self.client_executable_sha256, self.ctx)
-            self.ctx.report['texture_header_index'] = index_receipt
-            self.wine_env.update(index_env)
+            return texture_header_index.prepare(self.work,
+                context.import_identity, self.client_executable_sha256, context)
         except (ValueError, OSError) as error:
             # Optional optimization failure retains the ordinary native path.
+            context.event('log', label='texture-header-index',
+                          message='Ordinary texture header reads: ' + str(error)[:300])
+            return {'enabled': False, 'native_fallback_available': True,
+                    'reason': str(error)[:300]}, {}
+
+    def record_texture_schedule(self, preparation, waited_at, status):
+        finished = preparation.finished
+        probe = next((child for child in reversed(self.ctx.children)
+                      if child.label == 'runtime-probe' and child.started >= preparation.started
+                      and child.completion is not None), None)
+        concurrent = 0
+        if preparation.thread_started and probe is not None:
+            probe_finished = probe.started + probe.completion['elapsed_seconds']
+            concurrent = max(0, min(waited_at, finished, probe_finished)
+                             - max(preparation.started, probe.started))
+        self.ctx.report['client_texture_startup_schedule'] = {
+            'status': status, 'preparation_phase': 'after_current_owned_atlas_readiness',
+            'overlapped_stage': 'win32_runtime_dll',
+            'worker_started': preparation.thread_started, 'worker_joined': True,
+            'shared_wine_prefix_access': False, 'private_server_cache_access': False,
+            'preparation_seconds': round(finished - preparation.started, 3),
+            'actual_overlap_seconds': round(concurrent, 3),
+            'overlap_timing_source': 'current_owned_runtime_probe_completion',
+            'runtime_probe_completion_observed': probe is not None,
+            'wait_before_client_seconds': round(max(0, finished - waited_at), 3),
+            'physical_startup_savings_validated': False}
+
+    def reset_client_startup_inputs(self):
+        preparation = self.texture_header_preparation
+        if preparation is not None:
+            waited_at = time.monotonic()
+            next_message = waited_at
+            try:
+                while preparation.thread_started and preparation.thread.is_alive():
+                    self.ctx.check()
+                    if time.monotonic() >= next_message:
+                        self.ctx.event('stage', status='running', message='Preparing client texture headers')
+                        next_message = time.monotonic() + 5
+                    preparation.thread.join(timeout=.05)
+                if preparation.thread_started:
+                    preparation.thread.join()
+                self.ctx.check()
+                if preparation.error is not None:
+                    raise preparation.error
+            except BaseException:
+                preparation.cancel_and_join()
+                self.record_texture_schedule(preparation, waited_at, 'failed_before_client')
+                self.texture_header_preparation = None
+                raise
+            self.record_texture_schedule(preparation, waited_at, 'prepared_before_client')
+            index_receipt, index_env = preparation.result
+            self.ctx.report['texture_header_index'] = index_receipt
+            for kind, fields in preparation.events:
+                self.ctx.event(kind, **fields)
             for key in ('COH_TEXTURE_HEADER_PACK', 'COH_TEXTURE_HEADER_ID', 'COH_TEXTURE_DIAGNOSTIC_DEDUP'):
                 self.wine_env.pop(key, None)
-            self.ctx.report['texture_header_index'] = {'enabled': False, 'native_fallback_available': True,
-                                                       'reason': str(error)[:300]}
-            self.ctx.event('log', label='texture-header-index', message='Ordinary texture header reads: ' + str(error)[:300])
+            self.wine_env.update(index_env)
+            self.texture_header_preparation = None
+        # This hook is also used by bounded client retries. Only the first call
+        # joins preparation; every launch still retains ordinary input reset.
+        return super().reset_client_startup_inputs()
+
+    def cleanup(self):
+        preparation = self.texture_header_preparation
+        if preparation is not None:
+            waited_at = time.monotonic()
+            preparation.cancel_and_join()
+            self.record_texture_schedule(preparation, waited_at, 'aborted_before_client')
+            self.texture_header_preparation = None
+        # A failed PE32 probe can reach cleanup before the reset hook. Join the
+        # worker first so cleanup cannot race index publication or shared data.
+        return super().cleanup()
 
     def observe_console(self):
         output, launch, console = super().observe_console()

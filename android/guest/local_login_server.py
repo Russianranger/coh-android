@@ -236,6 +236,7 @@ class LocalLoginServer:
             game.check_game_port(port, protocol)
         environment = dict(d.wine_env, COH_WINE_DB_FIXED_INPUTS='1', COH_WINE_DB_LOOPBACK_ONLY='1',
                            COH_WINE_DB_PROGRESS=base.windows_path(self.progress_path))
+        environment = self.dbserver_environment(environment)
         self.process = self.ctx.start('local-dbserver', ['/usr/bin/env', '--chdir=' + str(self.runtime), d.args.wine,
             base.windows_path(self.runtime / 'DbServer.exe'), '-start', '0'], env=environment)
         self.ctx.report['server_started'] = True
@@ -247,11 +248,12 @@ class LocalLoginServer:
             text = self.process.text()
             fixed = game.fixed_inputs_acknowledgement(self.process)
             loopback = game.loopback_acknowledgement(self.process, endpoints)
+            startup_policy_ready = self.dbserver_startup_policy_ready(text)
             progress = None
             if fixed and loopback:
                 try: progress = dispatch.read_dispatch_record(self.progress_path, stages)
                 except (FileNotFoundError, dispatch.DispatchPublicationPending): pass
-            if fixed and loopback and progress and progress['loop_count'] > 0:
+            if fixed and loopback and progress and progress['loop_count'] > 0 and startup_policy_ready:
                 break
             require(time.monotonic() < deadline, 'Local DbServer startup timed out')
             if time.monotonic() >= next_progress:
@@ -263,6 +265,15 @@ class LocalLoginServer:
                            dispatch_progress=progress, schema=snapshot)
         self.ctx.passed(local_dbserver_ready=True, mapserver_started=False, **snapshot)
         self.ctx.event('local_server_ready', session_id=d.args.session_id, profile=PROFILE, account=ACCOUNT)
+
+    def dbserver_environment(self, environment):
+        # A host environment cannot accidentally request a manual Atlas profile
+        # for the stock persistent login service.
+        environment.pop('COH_WINE_DB_MANUAL_ATLAS', None)
+        return environment
+
+    def dbserver_startup_policy_ready(self, console):
+        return True
 
     def health(self):
         d = self.owner

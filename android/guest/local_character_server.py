@@ -40,6 +40,102 @@ SERVER_LOG_COUNT_LIMIT = 128
 # two fresh, stable native observations and the separate physical collision gate.
 NATIVE_FALL_FLOOR_Y = -2000.0
 FALL_FLOOR_CLEARANCE = 1.0
+MANUAL_ATLAS_ENVIRONMENT = 'COH_WINE_DB_MANUAL_ATLAS'
+MANUAL_ATLAS_ACK = ('COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; '
+                    'manual Atlas launch; ordinary DbServer readiness required')
+
+
+def manual_atlas_wait_contract():
+    return {'environment_variable': MANUAL_ATLAS_ENVIRONMENT, 'enabled_value': '1',
+        'disabled_by_default': True, 'startup_acknowledgement': MANUAL_ATLAS_ACK,
+        'required_native_configuration': {'start_static': 0, 'fake_auth': True,
+            'auth_server_present': False, 'queue_server': False, 'use_logserver': 0,
+            'launcher_count': 0, 'launchers_connecting': False,
+            'COH_WINE_DB_FIXED_INPUTS': '1', 'COH_WINE_DB_LOOPBACK_ONLY': '1'},
+        'activation': 'after_launcher_listener_before_connection_wait',
+        'skipped_operation': 'unused_launcher_connection_wait_only',
+        'original_minimum_wait_seconds': 15,
+        'preserved': ['launcher_listener', 'server_auto_start', 'static_map_list_initialization',
+            'remaining_db_init', 'sql_fifo_finish', 'dispatch_main_loop', 'mapserver_readiness'],
+        'invalid_request': 'exit_2_before_launcher_wait', 'android_execution_validated': False}
+
+
+def install_manual_atlas_dbserver(assets, runtime, package):
+    """Replace only the fresh owned DbServer after verifying its donor closure."""
+    binary = assets / 'startup-dbserver.exe'
+    manifest = assets / 'startup-dbserver-manifest.json'
+    if not binary.exists() and not manifest.exists():
+        return None
+    require(binary.is_file() and not binary.is_symlink() and manifest.is_file()
+            and not manifest.is_symlink(), 'Incomplete or linked manual Atlas DbServer supplement')
+    value = dbserver.load_json(manifest, 2 * 1024 * 1024)
+    require(value.get('format') == 1 and value.get('role') == 'manual_atlas_dbserver_startup_supplement'
+            and dbserver.COMMIT.fullmatch(value.get('repository_commit', ''))
+            and value.get('source_commit') == package['source_commit']
+            and value.get('base_package_manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
+            and value.get('replacement_scope') == 'fresh_owned_manual_atlas_runtime_DbServer.exe_only'
+            and value.get('base_package_archive_changed') is False
+            and value.get('architecture') == 'Win32' and value.get('configuration') == 'OptDebug'
+            and value.get('postgresql_persistence_fixture') is False
+            and value.get('android_execution_validated') is False and value.get('gameplay_validated') is False,
+            'Manual Atlas DbServer provenance or build mode differs')
+    original = package['variants']['normal']
+    retained = {name: record for name, record in original['files'].items() if name != 'DbServer.exe'}
+    require(value.get('retained_normal_files') == retained
+            and value.get('base_normal_executable') == original['files']['DbServer.exe']
+            and value.get('base_normal_cmake_cache_sha256') == original['cmake_cache_sha256'],
+            'Manual Atlas DbServer changed the accepted dependency closure')
+    build_input = value.get('build_input', {})
+    require(build_input.get('format') == 1
+            and build_input.get('build_role') == 'manual_atlas_dbserver_startup_supplement'
+            and build_input.get('source_commit') == package['source_commit']
+            and build_input.get('base_wine_build_input') == package['wine_build_input']
+            and build_input.get('base_wine_build_input_canonical_sha256') == digest_json(package['wine_build_input'])
+            and dbserver.exact_contract(build_input.get('launcher_wait'), manual_atlas_wait_contract())
+            and build_input.get('built_target') == 'DbServer'
+            and build_input.get('postgresql_persistence_fixture') is False,
+            'Manual Atlas DbServer source or native wait contract differs')
+    require(set(build_input.get('patched_sha256', {})) == {'DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c'}
+            and build_input.get('source_sha256') == {name: package['wine_build_input']['patched_sha256'][name]
+                for name in ('DBServer/CMakeLists.txt', 'DBServer/src/dbinit.c')}
+            and build_input.get('patch') == 'patches/startup-dbserver/0001-manual-atlas-launcher-wait.patch'
+            and set(build_input.get('overlay_sha256', {})) == {'DBServer/src/wine_manual_atlas.c',
+                                                              'DBServer/src/wine_manual_atlas.h'}
+            and all(isinstance(digest, str) and re.fullmatch(r'[a-f0-9]{64}', digest)
+                    for digest in [build_input.get('patch_sha256'),
+                                   *build_input['patched_sha256'].values(),
+                                   *build_input['overlay_sha256'].values()]),
+            'Manual Atlas DbServer source hashes differ')
+    files = value.get('files', {})
+    require(set(files) == {'DbServer.exe'}, 'Manual Atlas supplement contains another native target')
+    record = files['DbServer.exe']
+    require(type(record.get('bytes')) is int and 0 < record['bytes'] <= 200 * 1024 * 1024
+            and binary.stat().st_size == record['bytes'] and base.file_hash(binary) == record.get('sha256')
+            and record['sha256'] != original['files']['DbServer.exe']['sha256']
+            and value.get('dependency_report', {}).get('unresolved') == [],
+            'Manual Atlas executable bytes or imports differ')
+    require(set(value.get('odbc_imports', [])) >= {'SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare',
+            'SQLGetDiagRecA', 'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW'}
+            and not set(value['odbc_imports']).intersection({'SQLDriverConnectA', 'SQLExecDirectA',
+                'SQLPrepareA', 'SQLGetInfo', 'SQLGetInfoA', 'SQLColumns', 'SQLColumnsA',
+                'SQLTables', 'SQLTablesA', 'SQLForeignKeys', 'SQLForeignKeysA'}),
+            'Manual Atlas executable lost accepted ODBC imports')
+    base.verify_pe32(binary)
+    target = runtime / 'DbServer.exe'
+    require(target.is_file() and not target.is_symlink()
+            and base.file_hash(target) == original['files']['DbServer.exe']['sha256'],
+            'Manual Atlas replacement requires the fresh accepted DbServer')
+    for name, retained_record in retained.items():
+        path = runtime / name
+        require(path.is_file() and not path.is_symlink() and base.file_hash(path) == retained_record['sha256'],
+                'Manual Atlas retained runtime library differs: ' + name)
+    shutil.copyfile(binary, target)
+    require(base.file_hash(target) == record['sha256'], 'Installed manual Atlas executable differs')
+    return {'enabled': True, 'native_ack_observed': False,
+        'manifest_sha256': base.file_hash(manifest), 'executable_sha256': record['sha256'],
+        'repository_commit': value['repository_commit'], 'contract': build_input['launcher_wait'],
+        'base_package_archive_changed': False, 'other_native_targets_changed': False,
+        'ordinary_fixed_inputs_loopback_dispatch_and_map_readiness_required': True}
 
 
 def above_native_fall_floor(y):
@@ -316,6 +412,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.baseline = None
         self.snapshot = None
         self.auth_id = None
+        self.manual_atlas_startup = None
         self.creation_report = {'session_id': owner.args.session_id, 'account': ACCOUNT,
             'name': CHARACTER, 'map_id': 1, 'verified': False, 'connected_on_atlas': False,
             'committed_sql_verified': False, 'requested_logout_observed': False, 'logout_timer_observed': False,
@@ -420,6 +517,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             else:
                 shutil.copyfile(self.map_package_dir / name, target)
                 target.chmod(0o400)
+        self.manual_atlas_startup = install_manual_atlas_dbserver(self.owner.args.assets, self.runtime, self.package)
+        if self.manual_atlas_startup is not None:
+            self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
         try:
             donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
                                                                           self.runtime / 'MapServer.exe')
@@ -448,6 +548,23 @@ class LocalCharacterServer(login.LocalLoginServer):
             'directory_layout': 'real_directories_with_individual_immutable_file_links',
             'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
             'server_data_cache': self.data_cache.summary, **staged}
+
+    def dbserver_environment(self, environment):
+        environment = super().dbserver_environment(environment)
+        if self.manual_atlas_startup is not None:
+            environment[MANUAL_ATLAS_ENVIRONMENT] = '1'
+        return environment
+
+    def dbserver_startup_policy_ready(self, console):
+        if self.manual_atlas_startup is None:
+            return True
+        complete_lines = console[:console.rfind('\n') + 1].splitlines()
+        count = complete_lines.count(MANUAL_ATLAS_ACK)
+        require(count <= 1, 'Repeated manual Atlas native acknowledgement')
+        require('Waiting for launchers to link up...' not in console,
+                'Manual Atlas DbServer entered the unused Launcher wait')
+        self.manual_atlas_startup['native_ack_observed'] = count == 1
+        return count == 1
 
     def legacy_data_identity_matches(self, previous, current, receipt):
         """Qualify wrapper-only legacy keys without moving their source root.

@@ -7,6 +7,34 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_startup_routes_away_from_all_three_historical_publications(self):
+        names = sorted(change.STARTUP_ALLOWED)
+        for function in (change.task_required, change.cleanup_required, change.recovery_required):
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+            for other in ('upstream/ouroboros/DBServer/src/dbinit.c',
+                    'android/native/unreviewed.c', 'android/guest/dbserver_diagnostic.py'):
+                with self.subTest(function=function.__name__, other=other):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_startup_dispatch_ambiguous_history_or_document_only_edit_cannot_skip(self):
+        names = sorted(change.STARTUP_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md'])):
+            for function in (change.task_required, change.cleanup_required, change.recovery_required):
+                with self.subTest(function=function.__name__, event=event):
+                    self.assertTrue(function(event, before, head, parent, files))
+
+    def test_recovery_workflow_obeys_startup_routing_before_qualification(self):
+        workflow = Path(__file__).resolve().parents[3]/'.github/workflows/android-storage-recovery.yml'
+        text = workflow.read_text()
+        self.assertIn('recovery_required: ${{ steps.scope.outputs.recovery_required }}', text)
+        self.assertIn('needs: [changes, qualify]', text)
+        self.assertEqual(text.count("needs.changes.outputs.recovery_required != 'false'"), 2)
+        self.assertIn('fetch-depth: 2', text)
+
     def test_recovery_routes_away_from_historical_task_and_cleanup_publications(self):
         for marker in change.RECOVERY_SOURCES:
             with self.subTest(marker=marker):

@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "scope": "startup_schedule_0.13.3_prior_device_baseline",
+  "status": "observed_baseline_not_new_candidate_qualification",
+  "device": "AYN Thor",
+  "app_version": "0.13.2",
+  "upload": {
+    "name": "coh-atlas-gameplay-20261004-003136.zip",
+    "bytes": 10085589,
+    "sha256": "eb9029b53d3724a61fbe30c8cf609d1dfdcc16422e8da34a6949c968afa79ecd"
+  },
+  "operation": "character_reopen",
+  "run_id": "1791071610390-4faf0c7d8ac5",
+  "session_id": "35b0270a8fd14933854906849f727b5b",
+  "guest_started_utc": "2026-10-03T23:53:31.184965+00:00",
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "seconds": 0.37,
+      "from_guest_start_seconds": 0.388
+    },
+    {
+      "stage": "client_private_data",
+      "seconds": 0.102,
+      "from_guest_start_seconds": 0.49
+    },
+    {
+      "stage": "persistent_server_profile",
+      "seconds": 0.587,
+      "from_guest_start_seconds": 1.08
+    },
+    {
+      "stage": "postgres_local_login",
+      "seconds": 0.379,
+      "from_guest_start_seconds": 1.459
+    },
+    {
+      "stage": "presentation_display",
+      "seconds": 0.058,
+      "from_guest_start_seconds": 47.885
+    },
+    {
+      "stage": "wine_initialization",
+      "seconds": 7.901,
+      "from_guest_start_seconds": 55.786
+    },
+    {
+      "stage": "local_login_odbc",
+      "seconds": 12.739,
+      "from_guest_start_seconds": 68.525
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "seconds": 413.111,
+      "from_guest_start_seconds": 481.637
+    },
+    {
+      "stage": "local_atlas_startup",
+      "seconds": 200.429,
+      "from_guest_start_seconds": 682.726
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "seconds": 0.567,
+      "from_guest_start_seconds": 683.294
+    },
+    {
+      "stage": "actual_client_startup",
+      "seconds": 609.694,
+      "from_guest_start_seconds": 1295.418
+    }
+  ],
+  "native_connected_from_guest_start_seconds": 1398.824,
+  "native_connected_from_android_start_seconds": 1399.616,
+  "texture_index_preparation_seconds": 16.585,
+  "texture_index_reused": true,
+  "world_verified_file_count": 2904,
+  "world_installed_files": 0,
+  "world_payload_bytes": 318611871,
+  "comparison_limits": [
+    "Warm reopen baseline from same existing imported profile; not a paired controlled hardware timing trial.",
+    "User manually accepted/completed task and that gameplay acceptance remains valid regardless of cancelled diagnostic verdict.",
+    "Preparation options do not claim to eliminate native DbServer or actual client data initialization.",
+    "First install of new source-bound runtime must prepare its generation once; imported game data and character profile must be retained."
+  ],
+  "prior_manual_gameplay_acceptance": "thor-0.13.2-manual-task-accepted-20261004.json"
+}

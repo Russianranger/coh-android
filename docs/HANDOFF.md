@@ -1,5 +1,38 @@
 # City of Heroes Android handoff
 
+**Current authorized priority (October 4, 2026 UTC): reduce server startup
+further before the next gameplay milestone.** The user selected options **7
+(avoid decoding unchanged world assets), 13 (skip the unused local Launcher
+wait), 18 (overlap independent preparation) and 4 (move client texture indexing
+after server readiness)**. Preserve the accepted manual task and all earlier
+physical gates; do not restart the proposed progression sequence yet.
+
+The 0.13.3 candidate uses a pinned world reuse receipt, a narrowly guarded
+DbServer manual-Atlas launcher-wait bypass, and a single texture preparation
+worker after actual Atlas readiness which overlaps only the independent PE32
+runtime probe. Server and client heavy initialization remain serial, and the
+worker joins before client launch or cleanup. Game, MapServer, renderer,
+imported content, prepared definition/message caches and the animation pack
+remain retained. This candidate has not yet established physical speedup.
+
+[Prior warm-run baseline](android-evidence/startup-schedule-0.13.3-baseline.json)
+pins the uploaded 0.13.2 reopen: Atlas readiness **11m22.726s** from guest start,
+native connection **23m19.616s** from Android run start, DbServer **6m53.111s**,
+Atlas **3m20.429s**, client startup **10m09.694s**, and warm texture preparation
+**16.585s**. The previous 89.7-second texture observation was a cold preparation,
+not a guarantee for every run. World reuse avoids repeatedly decoding 318.6 MB
+of unpacked resources. The <=300-second Atlas-readiness target remains open.
+
+The updated source-bound runtime requires **one Set up runtime** to activate
+the changed helpers/DbServer. Keep the current installation, imported assets
+and saved profile; do not reimport or recreate THORHERO. The prior generation
+remains for rollback and can later be retired with reviewed storage cleanup.
+Repeated setup of the same new manifest must reuse its installed generation.
+[Focused startup instructions](COH-Atlas-Gameplay-0.13.3-testing.txt) request one
+startup/connection timing session and its export, without repeated task,
+movement, safe-ground, contact, storage or recovery qualification. Main remains
+preserved; continue the same draft PR and branch.
+
 **Latest physical acceptance (October 4, 2026 UTC): manual task acceptance and
 completion passed on Thor in the installed 0.13.2. The user completed the task
 through normal in-game play without the completion helper and explicitly asks
