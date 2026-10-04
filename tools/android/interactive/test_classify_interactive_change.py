@@ -9,6 +9,14 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_streaming_pass_retains_exact_native_server_dex_and_limits_reviewed_helper_asset_scope(self):
+        names = sorted(change.CLIENT_STREAMING_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('android/guest/local_character_server.py', 'android/guest/native_responsiveness_contract.py',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+                'patches/client-loading/0001-known-length-string-copy-and-profile.patch', 'unknown.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
     def test_visual_pass_routes_only_its_explicit_client_assets_without_native_or_java_changes(self):
         names = sorted(change.VISUAL_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -84,7 +92,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),

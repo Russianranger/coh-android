@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED
+from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED
 
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
@@ -199,7 +199,8 @@ BUNDLE_MARKERS = BUNDLE_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY |
                                  STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED)
 VISUAL_MARKERS = VISUAL_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY | STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED)
 CLIENT_LOADING_MARKERS = CLIENT_LOADING_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY | STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED | VISUAL_ALLOWED)
-RESPONSIVENESS_ONLY |= STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED | VISUAL_ALLOWED | CLIENT_LOADING_ALLOWED
+CLIENT_STREAMING_MARKERS = CLIENT_STREAMING_ALLOWED - (SHELL_ONLY | RESPONSIVENESS_ONLY | STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED | VISUAL_ALLOWED | CLIENT_LOADING_ALLOWED)
+RESPONSIVENESS_ONLY |= CLIENT_STREAMING_ALLOWED | STARTUP_ALLOWED | RECEIPT_ALLOWED | SETUP_ALLOWED | BUNDLE_ALLOWED | VISUAL_ALLOWED | CLIENT_LOADING_ALLOWED
 
 
 def runtime_required(event, before, head, parent, names):
@@ -207,7 +208,7 @@ def runtime_required(event, before, head, parent, names):
     # A specifically marked bundle must stay within its reviewed source
     # closure. Historical allowances cannot hide an additional launcher or
     # guest change in this derivative's push.
-    allowed = CLIENT_LOADING_ALLOWED if paths & CLIENT_LOADING_MARKERS else VISUAL_ALLOWED if paths & VISUAL_MARKERS else BUNDLE_ALLOWED if paths & BUNDLE_MARKERS else SHELL_ONLY | RESPONSIVENESS_ONLY
+    allowed = CLIENT_STREAMING_ALLOWED if paths & CLIENT_STREAMING_MARKERS else CLIENT_LOADING_ALLOWED if paths & CLIENT_LOADING_MARKERS else VISUAL_ALLOWED if paths & VISUAL_MARKERS else BUNDLE_ALLOWED if paths & BUNDLE_MARKERS else SHELL_ONLY | RESPONSIVENESS_ONLY
     return not (event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0' * 40 and before == parent and head != before

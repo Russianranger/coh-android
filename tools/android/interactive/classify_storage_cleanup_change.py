@@ -199,6 +199,36 @@ CLIENT_LOADING_ALLOWED = CLIENT_LOADING_SOURCES | frozenset({
     'docs/android-evidence/client-visual-0.13.7-device-result.json',
     'docs/android-evidence/client-loading-0.13.8-publication.json',
 })
+CLIENT_STREAMING_SOURCES = frozenset({
+    '.github/workflows/android-client-streaming.yml',
+    'tools/android/interactive/build_client_streaming_apk.py',
+    'tools/android/interactive/qualify_client_streaming.py',
+    'tools/android/interactive/test_client_streaming_package.py',
+    'tools/android/interactive/prepare_client_visual_assets.py',
+    'tools/android/interactive/test_client_visual_assets.py',
+    'tools/android/interactive/test_texture_header_index.py',
+    'tools/android/interactive/test_client_console_markers.py',
+    'tools/android/interactive/benchmark_client_console_markers.py',
+    'tools/android/interactive/benchmark_texture_inventory.py',
+    'android/guest/client_visual_assets.py', 'assets/client-visual-manifest.json',
+    'android/guest/client_startup_diagnostic.py', 'android/guest/texture_header_index.py',
+})
+CLIENT_STREAMING_ALLOWED = CLIENT_STREAMING_SOURCES | frozenset({
+    '.github/workflows/android-client-loading.yml',
+    'tools/android/interactive/test_client_loading_package.py',
+    '.github/workflows/android-client-visual-candidates.yml',
+    'tools/android/interactive/discover_client_visual_candidates.py',
+    'tools/android/interactive/test_client_visual_candidates.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/HANDOFF.md', 'docs/COH-Atlas-Gameplay-0.13.9-testing.txt',
+    'docs/android-evidence/client-streaming-0.13.9-console-benchmark.json',
+    'docs/android-evidence/client-streaming-0.13.9-texture-benchmark.json',
+    'docs/android-evidence/client-streaming-0.13.9-assets.json',
+    'docs/android-evidence/client-streaming-0.13.9-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -252,6 +282,11 @@ def client_loading_push(event, before, head, parent, names):
         and set(names) & CLIENT_LOADING_SOURCES)
 
 
+def client_streaming_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, CLIENT_STREAMING_ALLOWED)
+        and set(names) & CLIENT_STREAMING_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
@@ -260,7 +295,8 @@ def task_required(event, before, head, parent, names):
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
@@ -271,7 +307,8 @@ def cleanup_required(event, before, head, parent, names):
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
@@ -280,35 +317,50 @@ def recovery_required(event, before, head, parent, names):
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def receipt_required(event, before, head, parent, names):
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
     return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def schedule_required(event, before, head, parent, names):
     return not (bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def setup_required(event, before, head, parent, names):
     return not (bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def bundle_required(event, before, head, parent, names):
     return not (visual_push(event, before, head, parent, names)
-        or client_loading_push(event, before, head, parent, names))
+        or client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
 
 
 def visual_required(event, before, head, parent, names):
-    return not client_loading_push(event, before, head, parent, names)
+    return not (client_loading_push(event, before, head, parent, names)
+        or client_streaming_push(event, before, head, parent, names))
+
+
+def loading_required(event, before, head, parent, names):
+    return not client_streaming_push(event, before, head, parent, names)
+
+
+def streaming_required(event, before, head, parent, names):
+    # The new workflow always qualifies its own candidate, including dispatch.
+    return True
 
 
 def main():
@@ -320,6 +372,8 @@ def main():
     setup = True
     bundle = True
     visual = True
+    loading = True
+    streaming = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -340,6 +394,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         visual = visual_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        loading = loading_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
@@ -351,6 +407,8 @@ def main():
         output.write('setup_required='+str(setup).lower()+'\n')
         output.write('bundle_required='+str(bundle).lower()+'\n')
         output.write('visual_required='+str(visual).lower()+'\n')
+        output.write('loading_required='+str(loading).lower()+'\n')
+        output.write('streaming_required='+str(streaming).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

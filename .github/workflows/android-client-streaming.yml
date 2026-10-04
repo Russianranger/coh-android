@@ -1,0 +1,200 @@
+name: Thor client streaming inventory and exact visual follow-up
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-streaming.yml
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/texture_header_index.py
+      - android/guest/client_visual_assets.py
+      - assets/client-visual-manifest.json
+      - tools/android/interactive/build_client_streaming_apk.py
+      - tools/android/interactive/qualify_client_streaming.py
+      - tools/android/interactive/test_client_streaming_package.py
+      - tools/android/interactive/prepare_client_visual_assets.py
+      - tools/android/interactive/test_client_visual_assets.py
+      - tools/android/interactive/test_texture_header_index.py
+      - tools/android/interactive/test_client_console_markers.py
+      - docs/COH-Atlas-Gameplay-0.13.9-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-streaming-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      streaming_required: ${{ steps.scope.outputs.streaming_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
+  qualify:
+    needs: changes
+    if: needs.changes.outputs.streaming_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-packaging-evidence
+          path: out/client-streaming-donor-evidence
+          run-id: 37206208480
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.8 donor
+        run: python3 tools/android/interactive/build_client_streaming_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.8.apk
+      - name: Prepare selected exact missing visual assets
+        run: |
+          python3 tools/android/interactive/prepare_client_visual_assets.py --materialize
+          mkdir out/client-streaming-assets
+          python3 tools/android/interactive/prepare_client_visual_assets.py --output out/client-streaming-assets
+      - name: Qualify client mount missing-only visual install and retained memory server cache and save guards
+        run: >-
+          python3 tools/android/interactive/qualify_client_streaming.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.8.apk
+          --donor-build-report out/client-streaming-donor-evidence/client-loading-apk-build-report.json
+          --visual-directory out/client-streaming-assets
+          --output out/client-streaming-qualification.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-streaming-assets
+          path: out/client-streaming-assets/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-streaming-qualification
+          path: out/client-streaming-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: qualify
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-packaging-evidence
+          path: out/client-streaming-donor-evidence
+          run-id: 37206208480
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-streaming-assets
+          path: out/client-streaming-assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-streaming-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.8 donor
+        run: python3 tools/android/interactive/build_client_streaming_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.8.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the client supplement retaining all native code and memory-protected Android DEX
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_streaming_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.8.apk
+          --donor-build-report out/client-streaming-donor-evidence/client-loading-apk-build-report.json
+          --visual-directory out/client-streaming-assets
+          --qualification out/client-streaming-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-streaming/COH-Atlas-Gameplay-0.13.9.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-streaming-packaging-evidence
+          path: |
+            out/client-streaming/client-streaming-apk-build-report.json
+            out/client-streaming/COH-Atlas-Gameplay-0.13.9-testing.txt
+            out/client-streaming/COH-Atlas-Gameplay-0.13.9.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-streaming-apk
+          path: out/client-streaming/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.9 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_streaming_apk.py publish
+          --apk out/client-streaming/COH-Atlas-Gameplay-0.13.9.apk
+          --build-report out/client-streaming/client-streaming-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.8.apk
+          --donor-build-report out/client-streaming-donor-evidence/client-loading-apk-build-report.json
+          --visual-directory out/client-streaming-assets
+          --qualification out/client-streaming-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

@@ -255,6 +255,66 @@ class TextureIndexTests(unittest.TestCase):
         self.assertEqual('1', env['COH_STARTUP_DIAGNOSTIC_BOUND'])
         self.assertNotIn(b'original', pack)
 
+    def test_each_leaf_keeps_strict_resolution_with_one_shared_root_proof(self):
+        folder = self.work / 'data/texture_library/test'
+        for index in range(40):
+            target = folder / ('local-%02d.texture' % index)
+            target.write_bytes(texture(target.stem))
+            target.chmod(0o444)
+        original = Path.resolve
+        calls = []
+        def resolve(path, *args, **kwargs):
+            calls.append((path, args, kwargs))
+            return original(path, *args, **kwargs)
+        with mock.patch.object(Path, 'resolve', resolve):
+            records, inventory, client = module.texture_inputs(self.work, Context())
+        leaves = [call for call in calls if call[0].suffix == '.texture']
+        self.assertEqual(42, len(records))
+        self.assertEqual({path for _, path in records}, {path for path, _, _ in leaves})
+        self.assertEqual(42, len(leaves))
+        self.assertTrue(all(arguments == () and keywords == {'strict': True}
+                            for _, arguments, keywords in leaves))
+        roots = [call for call in calls if call[0] == self.work / 'data']
+        self.assertEqual(2, len(roots))
+        self.assertTrue(all(keywords == {'strict': True} for _, _, keywords in roots))
+        self.assertEqual(64, len(inventory))
+        self.assertEqual(self.client, client)
+
+    def test_cached_private_root_cannot_accept_an_ancestor_replacement(self):
+        original = Path.resolve
+        replaced = False
+        data = self.work / 'data'
+        moved = self.work / 'moved-data'
+        def resolve(path, *args, **kwargs):
+            nonlocal replaced
+            result = original(path, *args, **kwargs)
+            if path.suffix == '.texture' and not replaced:
+                data.rename(moved)
+                data.symlink_to(moved, target_is_directory=True)
+                replaced = True
+            return result
+        with mock.patch.object(Path, 'resolve', resolve), \
+                self.assertRaisesRegex(ValueError, 'root changed'):
+            module.texture_inputs(self.work, Context())
+        self.assertTrue(replaced)
+
+    def test_preparation_phase_timings_partition_cold_and_warm_work(self):
+        first, _ = self.prepare()
+        marker = (self.work / module.MARKER).read_bytes()
+        second, _ = self.prepare()
+        self.assertEqual(marker, (self.work / module.MARKER).read_bytes())
+        self.assertEqual(2, first['inventory_scan_passes'])
+        self.assertEqual(1, second['inventory_scan_passes'])
+        for receipt in (first, second):
+            phases = receipt['preparation_phase_seconds']
+            self.assertEqual({'complete_inventory', 'original_header_reads',
+                              'validation_and_publication'}, set(phases))
+            self.assertTrue(all(type(value) is float and value >= 0 for value in phases.values()))
+            self.assertAlmostEqual(receipt['preparation_seconds'], sum(phases.values()), delta=.002)
+        self.assertEqual(0, second['preparation_phase_seconds']['original_header_reads'])
+        self.assertNotIn('preparation_phase_seconds', json.loads(marker))
+        self.assertNotIn('inventory_scan_passes', json.loads(marker))
+
     def test_executable_and_content_changes_invalidate(self):
         before, _ = self.prepare()
         changed, _ = self.prepare('c' * 64)

@@ -62,6 +62,7 @@ class InstallerTests(unittest.TestCase):
         self.document['archive'] = {'filename': visual.ARCHIVE, **producer.pin(self.assets / visual.ARCHIVE)}
         self.repin()
         self.patches = mock.patch.multiple(visual, ARCHIVE_SHA256=self.document['archive']['sha256'],
+            ENCOUNTER_FILE_COUNT=0,
             ARCHIVE_BYTES=self.document['archive']['bytes'], MANIFEST_SHA256=self.manifest_sha,
             FILE_COUNT=2, PAYLOAD_BYTES=self.document['payload_bytes'], FILES_SHA256=self.document['files_sha256'],
             BASE_FILE_COUNT=1, BASE_PAYLOAD_BYTES=self.files[first]['bytes'],
@@ -236,6 +237,45 @@ class InstallerTests(unittest.TestCase):
 
 
 class SourceProofTests(unittest.TestCase):
+    def test_encounter_extension_keeps_323_prior_leaves_and_only_six_observed_npc_textures(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        names = producer.encounter_files(value)
+        self.assertEqual(len(names), 6)
+        self.assertEqual(sum(value['files'][name]['bytes'] for name in names), 291538)
+        self.assertEqual({Path(name).stem for name in names}, {'chest_bm_labcoat_01a',
+            'chest_bm_labcoat_01b', 'chest_bm_flannel_01a', 'chest_bm_flannel_01b',
+            'face_skin_bf_25asian3', 'face_skin_bf_45black1'})
+        self.assertEqual(visual.package(ROOT / 'assets'), value)
+        receipt = json.loads((ROOT / value['encounter_extension']['source_device_receipt']).read_text())
+        console = next(row for row in receipt['source_files'] if row['path'].endswith('client-console.log'))
+        self.assertEqual({key: console[key] for key in ('bytes', 'sha256')},
+            value['encounter_extension']['source_console'])
+        self.assertFalse(value['encounter_extension']['runtime_visual_validated'])
+        self.assertTrue(all(value['provenance']['entries'][name]['source_archive'] == 'stage1c.pigg' for name in names))
+
+    def test_encounter_append_rejects_modified_prior_payloads_and_speculative_target_names(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        changed = copy.deepcopy(value)
+        name = next(n for n in changed['files'] if n not in changed['encounter_extension']['files'])
+        changed['files'][name]['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'preserved 0.13.8 payload'):
+            producer.encounter_files(changed)
+        changed = copy.deepcopy(value)
+        name = next(iter(changed['encounter_extension']['files']))
+        rows = changed['encounter_extension']['files'].pop(name)
+        changed['encounter_extension']['files']['data/texture_library/npcs/other.texture'] = rows
+        with self.assertRaisesRegex(ValueError, 'encounter extension bounds'):
+            producer.encounter_files(changed)
+
+    def test_encounter_evidence_does_not_allow_native_renderer_or_physical_success_claims(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        for key in ('runtime_visual_validated', 'npc_identity_claimed', 'native_renderer_changed',
+                    'global_lod_distances_changed', 'full_global_asset_closure'):
+            changed = copy.deepcopy(value)
+            changed['encounter_extension'][key] = True
+            with self.assertRaisesRegex(ValueError, 'encounter extension bounds'):
+                producer.encounter_files(changed)
+
     def test_extension_preserves_290_leaves_and_binds_exact_hostile_family(self):
         value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
         selected = producer.extension_files(value)

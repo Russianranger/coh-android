@@ -20,15 +20,18 @@ require = client.require
 ARCHIVE = 'client-visual-assets.zip'
 MANIFEST = 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_SHA256 = 'db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24'
-MANIFEST_SHA256 = '0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22'
-FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
-ARCHIVE_BYTES = 25221661
-FILE_COUNT, PAYLOAD_BYTES = 323, 39229699
+ARCHIVE_SHA256 = 'e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda'
+MANIFEST_SHA256 = '32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c'
+FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
+ARCHIVE_BYTES = 25400546
+FILE_COUNT, PAYLOAD_BYTES = 329, 39521237
 BASE_FILE_COUNT, BASE_PAYLOAD_BYTES = 290, 36583648
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
 EXTENSION_FILE_COUNT, EXTENSION_PAYLOAD_BYTES = 33, 2646051
 EXTENSION_FILES_SHA256 = '3b904fd8e99d0c00ec6a07b87e0dc387fcca89835920aba8332723e10b50caa2'
+ENCOUNTER_FILE_COUNT, ENCOUNTER_PAYLOAD_BYTES = 6, 291538
+ENCOUNTER_FILES_SHA256 = 'd2c2ea6b9bacb7691b53944e852180698edc255c54b231d1743b8fc3ffd7e85d'
+IMMEDIATE_FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
 MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 64 * 1024**2, 2 * 1024**2
 MAX_ENTRY_BYTES, MAX_RECEIPT_BYTES = 32 * 1024**2, 1024**2
 MARKER = 'client-visual-installed.json'
@@ -68,6 +71,7 @@ def package(assets):
         and all(value.get(key) is False for key in ('runtime_visual_validated', 'gameplay_validated',
             'imported_assets_modified', 'prepared_caches_modified', 'existing_supplements_modified')),
         'Client visual identity, missing-only policy or inventory differs')
+    encounters = encounter_files(value)
     extension = value.get('visual_extension', {})
     additions = extension.get('files', {})
     require(isinstance(additions, dict) and set(additions) <= set(files)
@@ -79,7 +83,7 @@ def package(assets):
         and extension.get('baseline_payload_bytes') == BASE_PAYLOAD_BYTES
         and extension.get('baseline_files_sha256') == BASE_FILES_SHA256,
         'Client visual append-only baseline policy differs')
-    baseline = {name: row for name, row in files.items() if name not in additions}
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in encounters}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == BASE_FILE_COUNT
         and sum(row['bytes'] for row in baseline.values()) == BASE_PAYLOAD_BYTES
@@ -88,6 +92,30 @@ def package(assets):
         and hashlib.sha256(canonical(selected)).hexdigest() == EXTENSION_FILES_SHA256,
         'Client visual append-only recipe changes a preserved baseline payload')
     return value
+
+
+def encounter_files(value):
+    if ENCOUNTER_FILE_COUNT == 0:  # Small installer fixtures retain the original two-file policy tests.
+        require('encounter_extension' not in value, 'Unexpected encounter extension in baseline fixture')
+        return set()
+    extension, files = value.get('encounter_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(isinstance(additions, dict) and set(additions) <= set(files)
+        and len(additions) == extension.get('file_count') == ENCOUNTER_FILE_COUNT
+        and extension.get('payload_bytes') == ENCOUNTER_PAYLOAD_BYTES
+        and extension.get('baseline_payloads_preserved') is True and extension.get('missing_only') is True
+        and extension.get('baseline_file_count') == 323 and extension.get('baseline_payload_bytes') == 39229699
+        and extension.get('baseline_files_sha256') == IMMEDIATE_FILES_SHA256
+        and all(name.startswith('data/texture_library/npcs/') and name.endswith('.texture') for name in additions),
+        'Client visual encounter append-only baseline policy differs')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 323 and sum(row['bytes'] for row in baseline.values()) == 39229699
+        and hashlib.sha256(canonical(baseline)).hexdigest() == IMMEDIATE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == ENCOUNTER_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(selected)).hexdigest() == ENCOUNTER_FILES_SHA256,
+        'Client visual encounter recipe changes a preserved 0.13.8 payload')
+    return set(additions)
 
 
 def source_state(assets):
@@ -218,6 +246,8 @@ def install(worktree, assets, context):
         'archive_sha256': ARCHIVE_SHA256, 'files_sha256': FILES_SHA256, 'file_count': FILE_COUNT,
         'payload_bytes': PAYLOAD_BYTES, 'installed_files': installed, 'reused_files': FILE_COUNT - installed,
         'retained_baseline_file_count': BASE_FILE_COUNT, 'added_file_count': EXTENSION_FILE_COUNT,
+        'retained_immediate_file_count': 323, 'added_encounter_file_count': ENCOUNTER_FILE_COUNT,
+        'added_encounter_payload_bytes': ENCOUNTER_PAYLOAD_BYTES,
         'retained_baseline_payloads_preserved': True,
         'reuse_validation': POLICY, 'fingerprint_reused': bool(reused), 'decoded_files': installed,
         'decoded_payload_bytes': decoded_bytes, 'verified_existing_bytes': verified_bytes,

@@ -689,8 +689,29 @@ class XObserver:
             self.display = None
 
 
+# str.splitlines recognizes these boundaries as well as CR/LF. Keep its exact
+# identity semantics while avoiding a Python object for every unrelated native
+# diagnostic line at each startup observation. Search all current output on
+# every call, so a late duplicate, retry, or malformed identity is never cached.
+_CONSOLE_LINE_BOUNDARIES = '\n\r\v\f\x1c\x1d\x1e\x85\u2028\u2029'
+_CONSOLE_LINE_END = re.compile('[' + _CONSOLE_LINE_BOUNDARIES + ']')
+
+
+def console_marker_values(output, marker):
+    values, position = [], 0
+    while True:
+        position = output.find(marker, position)
+        if position < 0:
+            return values
+        start = position + len(marker)
+        if position == 0 or output[position - 1] in _CONSOLE_LINE_BOUNDARIES:
+            end = _CONSOLE_LINE_END.search(output, start)
+            values.append(json.loads(output[start:end.start() if end else len(output)]))
+        position = start
+
+
 def parse_launch(output, session):
-    values = [json.loads(line[len(LAUNCH_MARKER):]) for line in output.splitlines() if line.startswith(LAUNCH_MARKER)]
+    values = console_marker_values(output, LAUNCH_MARKER)
     require(len(values) <= 1, 'Duplicate client launch identity')
     if not values: return None
     value = values[0]
@@ -732,8 +753,7 @@ def current_client_title(title, launch):
 
 
 def console_identity(output, launch):
-    values = [json.loads(line[len(CONSOLE_MARKER):]) for line in output.splitlines()
-              if line.startswith(CONSOLE_MARKER)]
+    values = console_marker_values(output, CONSOLE_MARKER)
     require(len(values) <= 1, 'Duplicate client console identity')
     if not values: return None
     value = values[0]
@@ -840,6 +860,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         return record
 
     def observe_console(self):
+        started = time.monotonic()
         output = self.client.text()
         launch = parse_launch(output, self.args.session_id)
         if launch:
@@ -847,6 +868,15 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         console = console_identity(output, launch)
         self.ctx.report['client_console_observation'] = console
         require('COH_CLIENT_CONSOLE_TRUNCATED_V1' not in output, 'Actual client console exceeded observation budget')
+        milliseconds = max(0.0, time.monotonic() - started) * 1000
+        metrics = self.ctx.report.setdefault('client_console_identity_metrics', {
+            'policy': 'complete_current_console_marker_search', 'calls': 0,
+            'total_ms': 0.0, 'max_ms': 0.0,
+            'whole_console_rescanned': True, 'identity_cache_added': False})
+        metrics.update(calls=metrics['calls'] + 1,
+                       total_ms=round(metrics['total_ms'] + milliseconds, 3),
+                       max_ms=round(max(metrics['max_ms'], milliseconds), 3),
+                       last_ms=round(milliseconds, 3), last_console_characters=len(output))
         return output, launch, console
 
     def execute(self):

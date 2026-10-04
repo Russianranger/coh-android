@@ -1,8 +1,8 @@
 {
   "archive": {
-    "bytes": 25221661,
+    "bytes": 25400546,
     "filename": "client-visual-assets.zip",
-    "sha256": "db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24"
+    "sha256": "e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda"
   },
   "closure": {
     "absent_requested_models": [
@@ -2331,8 +2331,279 @@
     "console_file": "coh-atlas-gameplay-20261004-104130/guest/client-evidence/client-console.log",
     "sha256": "bd3aae7860b329d8f0ed6eeb298b569c59f5b08a285fe0fb2568ff776310f3b6"
   },
+  "encounter_extension": {
+    "baseline_archive_pin": {
+      "bytes": 25221661,
+      "sha256": "db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24"
+    },
+    "baseline_file_count": 323,
+    "baseline_files_sha256": "f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7",
+    "baseline_manifest_pin": {
+      "bytes": 1113867,
+      "sha256": "0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22"
+    },
+    "baseline_payload_bytes": 39229699,
+    "baseline_payloads_preserved": true,
+    "discovery": {
+      "artifact_bytes": 185131,
+      "artifact_id": 11314047108,
+      "artifact_sha256": "99c8808d67dad03d162baea70be1fe2eaf4bdc313ad283809c8be6e779955d3e",
+      "job_id": 111524613017,
+      "run_id": 37232372488
+    },
+    "file_count": 6,
+    "files": {
+      "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25asian3.texture": [
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+          "console_line_number": 18661,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:10:34.785Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+          "console_line_number": 20760,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:12:22.676Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+          "console_line_number": 22392,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+          "console_line_number": 22565,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+          "console_line_number": 22608,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ],
+      "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_45black1.texture": [
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+          "console_line_number": 18679,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:10:34.831Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+          "console_line_number": 18682,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:10:34.834Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "HEAD",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+          "console_line_number": 23257,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:14:05.378Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ],
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01a.texture": [
+        {
+          "body": "BM",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+          "console_line_number": 20039,
+          "layer": "1",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:11:49.677Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BM",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+          "console_line_number": 20724,
+          "layer": "1",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:12:22.446Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BM_FAT",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM_FAT wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+          "console_line_number": 22921,
+          "layer": "1",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:49.321Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ],
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01b.texture": [
+        {
+          "body": "BM",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+          "console_line_number": 20040,
+          "layer": "2",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:11:49.677Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BM",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+          "console_line_number": 20725,
+          "layer": "2",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:12:22.446Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BM_FAT",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BM_FAT wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+          "console_line_number": 22922,
+          "layer": "2",
+          "preceding_sequencer": "bis.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:49.321Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ],
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01a.texture": [
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+          "console_line_number": 22390,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+          "console_line_number": 22563,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+          "console_line_number": 22606,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+          "console_line_number": 22612,
+          "layer": "1",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:33.326Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ],
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01b.texture": [
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+          "console_line_number": 22391,
+          "layer": "2",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+          "console_line_number": 22564,
+          "layer": "2",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+          "console_line_number": 22607,
+          "layer": "2",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        },
+        {
+          "body": "BF",
+          "bone": "CHEST",
+          "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+          "console_line_number": 22613,
+          "layer": "2",
+          "preceding_sequencer": "BF.txt",
+          "preceding_timestamp_utc": "2026-10-04 12:13:33.326Z",
+          "scope": "observed_atlas_post_world_npc_texture"
+        }
+      ]
+    },
+    "files_sha256": "d2c2ea6b9bacb7691b53944e852180698edc255c54b231d1743b8fc3ffd7e85d",
+    "full_global_asset_closure": false,
+    "global_lod_distances_changed": false,
+    "missing_only": true,
+    "native_renderer_changed": false,
+    "npc_identity_claimed": false,
+    "payload_bytes": 291538,
+    "runtime_visual_validated": false,
+    "scope": "recorded_atlas_post_world_npc_texture_leaves",
+    "source_console": {
+      "bytes": 1334723,
+      "sha256": "ebec9cac51bfa68b5dcd1ec40ec0c85b74041af1b4ef7faf5cf5bd1e2eb3ed5c"
+    },
+    "source_device_receipt": "docs/android-evidence/client-visual-0.13.7-device-result.json",
+    "unresolved_names": []
+  },
   "existing_supplements_modified": false,
-  "file_count": 323,
+  "file_count": 329,
   "files": {
     "data/player_library/bf_boot.geo": {
       "bytes": 8513,
@@ -2714,6 +2985,10 @@
       "bytes": 87765,
       "sha256": "5828d983009d8d6b889996b3b4e902aee1fae192701d637866ba8fb1297b1b20"
     },
+    "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25asian3.texture": {
+      "bytes": 87765,
+      "sha256": "d83cba168ddbd78157c9af3d4ef2db50bbeb81b41c47efc650ececffdc795540"
+    },
     "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25black1.texture": {
       "bytes": 87765,
       "sha256": "f77341f7ea318684a44bef37638f7c07f02f1dfd7075a86860a9cb047e5936c2"
@@ -2733,6 +3008,10 @@
     "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_45asian1.texture": {
       "bytes": 87765,
       "sha256": "64bfcacd43facaf10e509d46e715ed858e4b164b861ce5645cf61a335edafc17"
+    },
+    "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_45black1.texture": {
+      "bytes": 87765,
+      "sha256": "40db5f4faeb3a8127d9a80af3b34c1fcdf762bf451a58c99fd6c65b254f13f67"
     },
     "data/texture_library/npcs/basic_female/bf_gloves/glove_skin_bf_hand_01a.texture": {
       "bytes": 22231,
@@ -2782,9 +3061,25 @@
       "bytes": 44050,
       "sha256": "6a2a3960f48f4c0aec4cc55c7403147947aa97122107fda0a3342bc6cfcaa0ac"
     },
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01a.texture": {
+      "bytes": 44050,
+      "sha256": "1379f70dd94fbfbd3397aa070138d72cfc87a4f51886c71ca3e3b9a28528a8c9"
+    },
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01b.texture": {
+      "bytes": 22146,
+      "sha256": "f7d9e3a7683d23c40dcbcb66bd930506e5a829a7121eb218029b50a671874755"
+    },
     "data/texture_library/npcs/basic_male/bm_chest/chest_bm_jumpsuit.texture": {
       "bytes": 175119,
       "sha256": "ac3ba833c8bb48dc63a09d15acd21e8f42131c80bef1f15384a3a28be450a0b2"
+    },
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01a.texture": {
+      "bytes": 44050,
+      "sha256": "ba0393024b9eb1989b0f5d18a11e1a34228957307421ff2d14445e943424b407"
+    },
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01b.texture": {
+      "bytes": 5762,
+      "sha256": "1117769333c958ac44c9f9090f3e9dc3b8ddf4e77e11c4c7fe6c1d5a6568fb38"
     },
     "data/texture_library/npcs/basic_male/bm_chest/chest_bm_leather_jacket_01a.texture": {
       "bytes": 44057,
@@ -3627,12 +3922,12 @@
       "sha256": "e9f32fd150cd71e0a56cb591c87a9aabeeb396949426fa35f8282cc9b69d356a"
     }
   },
-  "files_sha256": "f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7",
+  "files_sha256": "07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09",
   "format": 1,
   "gameplay_validated": false,
   "imported_assets_modified": false,
   "installation": "private_client_worktree_missing_files_only",
-  "payload_bytes": 39229699,
+  "payload_bytes": 39521237,
   "prepared_caches_modified": false,
   "provenance": {
     "entries": {
@@ -6486,6 +6781,36 @@
           "width": 256
         }
       },
+      "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25asian3.texture": {
+        "bytes": 87765,
+        "cached_header_bytes": 229,
+        "cached_header_id": 630,
+        "cached_header_sha256": "cd880d3bde17e606e23077a75bf6d3fae724acc5d542be218940aa99e42ff118",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "fc4540cb1a70f0e6e9e517cea3a2949d",
+        "offset": 35876539,
+        "path": "texture_library/NPCS/Basic_Female/BF_Faces/Face_Skin_BF_25Asian3.texture",
+        "sha256": "d83cba168ddbd78157c9af3d4ef2db50bbeb81b41c47efc650ececffdc795540",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 35876539-35923521/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 46983,
+        "stored_sha256": "c0bbda6dbbacd611516b7afcf0d5a17d4f769acdc1126f572a3d8ebe602d78dc",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 229,
+          "height": 256,
+          "original_name": "texture_library/NPCS/Basic_Female/BF_Faces/Face_Skin_BF_25Asian3.dds",
+          "struct_bytes": 32,
+          "width": 256
+        }
+      },
       "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25black1.texture": {
         "bytes": 87765,
         "cached_header_bytes": 229,
@@ -6632,6 +6957,36 @@
           "header_bytes": 229,
           "height": 256,
           "original_name": "texture_library/NPCS/Basic_Female/BF_Faces/Face_Skin_BF_45Asian1.dds",
+          "struct_bytes": 32,
+          "width": 256
+        }
+      },
+      "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_45black1.texture": {
+        "bytes": 87765,
+        "cached_header_bytes": 229,
+        "cached_header_id": 639,
+        "cached_header_sha256": "1bad6423405e3bff1b315447413c7f34579c57a741440ed6b5224f513b4c60fd",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "5eb6b95b13460f19756120086dd445d6",
+        "offset": 36311773,
+        "path": "texture_library/NPCS/Basic_Female/BF_Faces/Face_Skin_BF_45Black1.texture",
+        "sha256": "40db5f4faeb3a8127d9a80af3b34c1fcdf762bf451a58c99fd6c65b254f13f67",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 36311773-36360865/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 49093,
+        "stored_sha256": "545b403288c3f1bf5641330a5af56b275cdc6658864a91430d70ac313365702f",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 229,
+          "height": 256,
+          "original_name": "texture_library/NPCS/Basic_Female/BF_Faces/Face_Skin_BF_45Black1.dds",
           "struct_bytes": 32,
           "width": 256
         }
@@ -6996,6 +7351,66 @@
           "width": 128
         }
       },
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01a.texture": {
+        "bytes": 44050,
+        "cached_header_bytes": 194,
+        "cached_header_id": 671,
+        "cached_header_sha256": "ec833ce9bbaa235f77097abc670f3fa169005afadf8d9d254d0bd31c8963de27",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "a4aa8a0ba65a9087936b4e7cb03dbfb6",
+        "offset": 37190310,
+        "path": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Flannel_01a.texture",
+        "sha256": "1379f70dd94fbfbd3397aa070138d72cfc87a4f51886c71ca3e3b9a28528a8c9",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 37190310-37226268/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 35959,
+        "stored_sha256": "76ccfcac7aaed52ded30ec48b187f9decc2641c20a0fe445f2b4fd8dfafe7acb",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 194,
+          "height": 256,
+          "original_name": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Flannel_01a.dds",
+          "struct_bytes": 32,
+          "width": 128
+        }
+      },
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01b.texture": {
+        "bytes": 22146,
+        "cached_header_bytes": 154,
+        "cached_header_id": 673,
+        "cached_header_sha256": "dd213b0fd5e70a887c3244b2aca4ca3b73d75bb105bca3983cb0ca0270291c93",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "a19d87ad3517eaf75c960dddeebc82bd",
+        "offset": 37253909,
+        "path": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Flannel_01b.texture",
+        "sha256": "f7d9e3a7683d23c40dcbcb66bd930506e5a829a7121eb218029b50a671874755",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 37253909-37267491/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 13583,
+        "stored_sha256": "ea5a7d46a78b8ac1da731b40f47080bade9b47875c3c91e228aa6439f39192b3",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 154,
+          "height": 256,
+          "original_name": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Flannel_01b.dds",
+          "struct_bytes": 32,
+          "width": 128
+        }
+      },
       "data/texture_library/npcs/basic_male/bm_chest/chest_bm_jumpsuit.texture": {
         "bytes": 175119,
         "cached_header_bytes": 191,
@@ -7024,6 +7439,66 @@
           "original_name": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Jumpsuit.dds",
           "struct_bytes": 32,
           "width": 256
+        }
+      },
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01a.texture": {
+        "bytes": 44050,
+        "cached_header_bytes": 194,
+        "cached_header_id": 676,
+        "cached_header_sha256": "0efb34f96e08c5e67bd39df4bf8c7a18530f7b4368acd3960eef9bb7de382e92",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "6f4df77739c30461b516061d47a95154",
+        "offset": 37470590,
+        "path": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Labcoat_01a.texture",
+        "sha256": "ba0393024b9eb1989b0f5d18a11e1a34228957307421ff2d14445e943424b407",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 37470590-37501362/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 30773,
+        "stored_sha256": "bc0c3b73942cac7fb7a9511b97d882c9fe389b433356c9ba02a6b739a688b044",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 194,
+          "height": 256,
+          "original_name": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Labcoat_01a.dds",
+          "struct_bytes": 32,
+          "width": 128
+        }
+      },
+      "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01b.texture": {
+        "bytes": 5762,
+        "cached_header_bytes": 154,
+        "cached_header_id": 678,
+        "cached_header_sha256": "0c32526ceb92c4d580f2553cc29a440a9e1ee95bb68c3196d24983446451b23e",
+        "cached_header_verified": true,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "46c6e6f61a66a5775e2231d3c21f9ff0",
+        "offset": 37527614,
+        "path": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Labcoat_01b.texture",
+        "sha256": "1117769333c958ac44c9f9090f3e9dc3b8ddf4e77e11c4c7fe6c1d5a6568fb38",
+        "source_archive": "stage1c.pigg",
+        "source_archive_bytes": 201809454,
+        "source_content_range": "bytes 37527614-37528787/201809454",
+        "source_etag": "\"5132c83e89ec1c34566c6d1143e6a249\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:06 GMT",
+        "source_metadata_sha256": "a9056cb38da69585a29898c8b7768bf4875caa9281446b48ae29f16a9854403b",
+        "source_url": "https://dists.thunderspy.org/piggs/stage1c.pigg",
+        "stored_bytes": 1174,
+        "stored_sha256": "9cb39ca8e2cc47f94eeec6abe30029dce7e72e610902713758703d445c1b550e",
+        "texture_header": {
+          "data_bounds_verified": true,
+          "header_bytes": 154,
+          "height": 128,
+          "original_name": "texture_library/NPCS/Basic_Male/BM_Chest/Chest_BM_Labcoat_01b.dds",
+          "struct_bytes": 32,
+          "width": 64
         }
       },
       "data/texture_library/npcs/basic_male/bm_chest/chest_bm_leather_jacket_01a.texture": {
@@ -15791,6 +16266,58 @@
         "scope": "current_atlas_npc_texture"
       }
     ],
+    "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25asian3.texture": [
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+        "console_line_number": 18661,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:10:34.785Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+        "console_line_number": 20760,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:12:22.676Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+        "console_line_number": 22392,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+        "console_line_number": 22565,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_25Asian3 as texture 1 on bone HEAD.",
+        "console_line_number": 22608,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      }
+    ],
     "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_25black1.texture": [
       {
         "body": "BF",
@@ -15833,6 +16360,38 @@
         "console_line": "CUSTOM TEXTURE ERROR: BF_FAT wants nonexistent texture FACE_Skin_BF_45Asian1 as texture 1 on bone HEAD.",
         "layer": "1",
         "scope": "current_atlas_npc_texture"
+      }
+    ],
+    "data/texture_library/npcs/basic_female/bf_faces/face_skin_bf_45black1.texture": [
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+        "console_line_number": 18679,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:10:34.831Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+        "console_line_number": 18682,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:10:34.834Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "HEAD",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture FACE_Skin_BF_45Black1 as texture 1 on bone HEAD.",
+        "console_line_number": 23257,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:14:05.378Z",
+        "scope": "observed_atlas_post_world_npc_texture"
       }
     ],
     "data/texture_library/npcs/basic_female/bf_gloves/glove_skin_bf_hand_01a.texture": [
@@ -16182,12 +16741,160 @@
         "scope": "current_atlas_npc_texture"
       }
     ],
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01a.texture": [
+      {
+        "body": "BM",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+        "console_line_number": 20039,
+        "layer": "1",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:11:49.677Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BM",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+        "console_line_number": 20724,
+        "layer": "1",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:12:22.446Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BM_FAT",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM_FAT wants nonexistent texture CHEST_BM_Flannel_01a as texture 1 on bone CHEST.",
+        "console_line_number": 22921,
+        "layer": "1",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:49.321Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      }
+    ],
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_flannel_01b.texture": [
+      {
+        "body": "BM",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+        "console_line_number": 20040,
+        "layer": "2",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:11:49.677Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BM",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+        "console_line_number": 20725,
+        "layer": "2",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:12:22.446Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BM_FAT",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BM_FAT wants nonexistent texture CHEST_BM_Flannel_01B as texture 2 on bone CHEST.",
+        "console_line_number": 22922,
+        "layer": "2",
+        "preceding_sequencer": "bis.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:49.321Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      }
+    ],
     "data/texture_library/npcs/basic_male/bm_chest/chest_bm_jumpsuit.texture": [
       {
         "geometry": "data/player_library/bm_shirt.geo",
         "model": "GEO_CHEST_Dress_Shirt_Large",
         "scope": "current_atlas_npc_geometry_texture",
         "target": "Chest_BM_Jumpsuit.tga"
+      }
+    ],
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01a.texture": [
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+        "console_line_number": 22390,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+        "console_line_number": 22563,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+        "console_line_number": 22606,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01a as texture 1 on bone CHEST.",
+        "console_line_number": 22612,
+        "layer": "1",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:33.326Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      }
+    ],
+    "data/texture_library/npcs/basic_male/bm_chest/chest_bm_labcoat_01b.texture": [
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+        "console_line_number": 22391,
+        "layer": "2",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:28.443Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+        "console_line_number": 22564,
+        "layer": "2",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.712Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+        "console_line_number": 22607,
+        "layer": "2",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:32.927Z",
+        "scope": "observed_atlas_post_world_npc_texture"
+      },
+      {
+        "body": "BF",
+        "bone": "CHEST",
+        "console_line": "CUSTOM TEXTURE ERROR: BF wants nonexistent texture CHEST_BM_Labcoat_01B as texture 2 on bone CHEST.",
+        "console_line_number": 22613,
+        "layer": "2",
+        "preceding_sequencer": "BF.txt",
+        "preceding_timestamp_utc": "2026-10-04 12:13:33.326Z",
+        "scope": "observed_atlas_post_world_npc_texture"
       }
     ],
     "data/texture_library/npcs/basic_male/bm_chest/chest_bm_leather_jacket_01a.texture": [

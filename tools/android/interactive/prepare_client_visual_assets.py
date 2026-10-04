@@ -24,15 +24,20 @@ import prepare_atlas_world_assets as donor
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE, MANIFEST = 'client-visual-assets.zip', 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_PIN = {'bytes': 25221661, 'sha256': 'db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24'}
-MANIFEST_PIN = {'bytes': 1113867, 'sha256': '0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22'}
-FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
-FILE_COUNT, PAYLOAD_BYTES = 323, 39229699
+ARCHIVE_PIN = {'bytes': 25400546, 'sha256': 'e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda'}
+MANIFEST_PIN = {'bytes': 1145658, 'sha256': '32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c'}
+FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
+FILE_COUNT, PAYLOAD_BYTES = 329, 39521237
 BASE_ARCHIVE_PIN = {'bytes': 23887359, 'sha256': '2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809'}
 BASE_MANIFEST_PIN = {'bytes': 782080, 'sha256': '6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b'}
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
 EXTENSION_SCOPE = 'recorded_atlas_vegetation_lod_and_blood_brother_chopper_assets'
 EXTENSION_FILES_SHA256 = '3b904fd8e99d0c00ec6a07b87e0dc387fcca89835920aba8332723e10b50caa2'
+ENCOUNTER_SCOPE = 'recorded_atlas_post_world_npc_texture_leaves'
+ENCOUNTER_FILES_SHA256 = 'd2c2ea6b9bacb7691b53944e852180698edc255c54b231d1743b8fc3ffd7e85d'
+IMMEDIATE_ARCHIVE_PIN = {'bytes': 25221661, 'sha256': 'db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24'}
+IMMEDIATE_MANIFEST_PIN = {'bytes': 1113867, 'sha256': '0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22'}
+IMMEDIATE_FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
 MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 64 * 1024**2, 2 * 1024**2
 MAX_ENTRY_BYTES = 32 * 1024**2
 SOURCE, DATA = donor.SOURCE, donor.DATA
@@ -57,7 +62,49 @@ def bundle_contract():
         'imported_assets_modified': False, 'prepared_caches_modified': False,
         'existing_supplements_modified': False, 'runtime_visual_validated': False, 'gameplay_validated': False,
         'visual_extension_scope': EXTENSION_SCOPE, 'retained_visual_files': 290,
-        'added_visual_files': 33, 'added_visual_payload_bytes': 2646051}
+        'added_visual_files': 33, 'added_visual_payload_bytes': 2646051,
+        'encounter_extension_scope': ENCOUNTER_SCOPE, 'retained_immediate_visual_files': 323,
+        'added_encounter_texture_files': 6, 'added_encounter_payload_bytes': 291538}
+
+
+def encounter_files(value):
+    """Require six observed NPC texture leaves while preserving all 323 prior files."""
+    extension, files = value.get('encounter_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(extension.get('scope') == ENCOUNTER_SCOPE and extension.get('missing_only') is True
+        and extension.get('baseline_payloads_preserved') is True
+        and extension.get('baseline_archive_pin') == IMMEDIATE_ARCHIVE_PIN
+        and extension.get('baseline_manifest_pin') == IMMEDIATE_MANIFEST_PIN
+        and extension.get('baseline_file_count') == 323 and extension.get('baseline_payload_bytes') == 39229699
+        and extension.get('baseline_files_sha256') == IMMEDIATE_FILES_SHA256
+        and isinstance(additions, dict) and len(additions) == extension.get('file_count') == 6
+        and extension.get('payload_bytes') == 291538
+        and extension.get('files_sha256') == ENCOUNTER_FILES_SHA256
+        and set(additions) <= set(files)
+        and all(name.startswith('data/texture_library/npcs/') and name.endswith('.texture') for name in additions)
+        and {PurePosixPath(name).stem for name in additions} == {'chest_bm_labcoat_01a', 'chest_bm_labcoat_01b',
+            'face_skin_bf_25asian3', 'face_skin_bf_45black1', 'chest_bm_flannel_01a', 'chest_bm_flannel_01b'}
+        and extension.get('unresolved_names') == []
+        and all(extension.get(key) is False for key in ('runtime_visual_validated', 'npc_identity_claimed',
+            'native_renderer_changed', 'global_lod_distances_changed', 'full_global_asset_closure')),
+        'Client visual exact encounter extension bounds or evidence differ')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 323 and sum(row['bytes'] for row in baseline.values()) == 39229699
+        and hashlib.sha256(canonical(baseline)).hexdigest() == IMMEDIATE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == 291538
+        and hashlib.sha256(canonical(selected)).hexdigest() == ENCOUNTER_FILES_SHA256,
+        'Client visual encounter extension changes a preserved 0.13.8 payload')
+    require(extension.get('source_console') == {'bytes': 1334723,
+        'sha256': 'ebec9cac51bfa68b5dcd1ec40ec0c85b74041af1b4ef7faf5cf5bd1e2eb3ed5c'}
+        and all(value['requests'].get(name) == rows and rows
+            and all(row.get('scope') == 'observed_atlas_post_world_npc_texture'
+                and row.get('body') in ('BF', 'BM', 'BM_FAT') and row.get('bone') in ('HEAD', 'CHEST')
+                and row.get('preceding_timestamp_utc', '').startswith('2026-10-04 12:1')
+                and row.get('console_line', '').startswith('CUSTOM TEXTURE ERROR: ')
+                for row in rows) for name, rows in additions.items()),
+        'Client visual encounter extension lacks exact post-world console evidence')
+    return set(additions)
 
 
 def extension_files(value, *, root=ROOT):
@@ -77,7 +124,8 @@ def extension_files(value, *, root=ROOT):
         and all(extension.get(key) is False for key in ('runtime_visual_validated',
             'full_global_asset_closure', 'native_renderer_changed', 'global_lod_distances_changed')),
         'Client visual extension bounds or preservation policy differ')
-    baseline = {name: row for name, row in files.items() if name not in additions}
+    encounters = set(value.get('encounter_extension', {}).get('files', {}))
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in encounters}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 290 and sum(row['bytes'] for row in baseline.values()) == 36583648
         and hashlib.sha256(canonical(baseline)).hexdigest() == BASE_FILES_SHA256
@@ -147,7 +195,7 @@ def read_manifest(manifest, *, root=ROOT):
     for name in ('character-avatar-defaults-manifest.json', 'atlas-world-supplement-manifest.json'):
         baseline.update(json.loads((root / 'assets' / name).read_text())['files'])
     require(not baseline.intersection(files), 'Client visual supplement would replace a preserved asset')
-    additions = extension_files(value, root=root)
+    additions = extension_files(value, root=root) | encounter_files(value)
     for name, row in files.items():
         require(safe_payload(name) and type(row.get('bytes')) is int and 0 < row['bytes'] <= MAX_ENTRY_BYTES
             and re.fullmatch('[0-9a-f]{64}', row.get('sha256', '')), 'Unsafe client visual payload or pin')
@@ -166,7 +214,8 @@ def read_manifest(manifest, *, root=ROOT):
                 'current_atlas_gui', 'atlas_composite_layer', 'current_atlas_npc_geometry_texture',
                 'observed_atlas_hostile_geometry', 'observed_atlas_hostile_texture',
                 'blood_brother_chopper_costume', 'preserved_atlas_vegetation_model_material',
-                'observed_atlas_hostile_geometry_material', 'atlas_vegetation_or_hostile_composite_layer')
+                'observed_atlas_hostile_geometry_material', 'atlas_vegetation_or_hostile_composite_layer',
+                'observed_atlas_post_world_npc_texture')
                 for r in value['requests'][name]),
             'Client visual payload lacks bounded source request evidence')
     for name, expected in value.get('source_files', {}).items():

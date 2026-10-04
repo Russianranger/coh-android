@@ -70,6 +70,11 @@ def texture_inputs(work, context):
             'Missing or oversized verified client worktree')
     client = json.loads(marker.read_bytes())
     imported = Path(client['source_data']).resolve()
+    # Resolve the shared private root once; every leaf still gets its original
+    # strict resolution, readonly metadata checks and complete inventory entry.
+    # Recheck the root after the walk so a changed ancestor is never accepted
+    # because of this cached comparison path.
+    private = data.resolve(strict=True)
     inventory, records = [], []
     for current, directories, files in os.walk(root, followlinks=False):
         context.check()
@@ -80,18 +85,19 @@ def texture_inputs(work, context):
             require(not (Path(current) / name).is_symlink(), 'Linked texture directory refused')
         directory = Path(current)
         info = directory.stat()
-        inventory.append([directory.relative_to(data).as_posix(), info.st_ino, info.st_mtime_ns, info.st_ctime_ns])
+        relative_directory = directory.relative_to(data).as_posix()
+        inventory.append([relative_directory, info.st_ino, info.st_mtime_ns, info.st_ctime_ns])
         for name in files:
             if not name.lower().endswith('.texture') or name.startswith('_'):
                 continue
             path = directory / name
             resolved = path.resolve(strict=True)
-            require(resolved.is_relative_to(imported) or resolved.is_relative_to(data.resolve()),
+            require(resolved.is_relative_to(imported) or resolved.is_relative_to(private),
                     'Texture link escapes verified immutable input')
             info = resolved.stat()
             require(stat.S_ISREG(info.st_mode) and not info.st_mode & 0o222,
                     'Texture index requires readonly regular inputs')
-            relative = path.relative_to(data).as_posix().lower()
+            relative = (relative_directory + '/' + name).lower()
             require(relative.isascii() and 25 <= len(relative) < 260 and '\\' not in relative
                     and ':' not in relative and all(p not in ('', '.', '..') for p in relative.split('/')),
                     'Texture index path exceeds native contract')
@@ -99,6 +105,7 @@ def texture_inputs(work, context):
                               info.st_mtime_ns, info.st_ctime_ns, info.st_mode])
             records.append((relative, path))
             require(len(records) <= MAX_RECORDS, 'Texture inventory exceeds native bound')
+    require(data.resolve(strict=True) == private, 'Private texture root changed while indexing')
     records.sort(key=lambda item: item[0])
     require(records and len({name for name, _ in records}) == len(records),
             'Empty or ambiguous texture inventory')
@@ -153,7 +160,17 @@ def prepare(work, import_identity, executable_sha256, context):
     """
     started = time.monotonic()
     work = Path(work)
-    records, inventory_sha, client = texture_inputs(work, context)
+    inventory_seconds = 0.0
+    inventory_passes = 0
+    header_seconds = 0.0
+    def inspect_inputs():
+        nonlocal inventory_seconds, inventory_passes
+        begin = time.monotonic()
+        result = texture_inputs(work, context)
+        inventory_seconds += time.monotonic() - begin
+        inventory_passes += 1
+        return result
+    records, inventory_sha, client = inspect_inputs()
     stable_client = worktree_identity(client)
     require(stable_client['data_contract']['import'] == import_identity,
             'Texture import identity differs from verified client worktree')
@@ -221,7 +238,7 @@ def prepare(work, import_identity, executable_sha256, context):
                         client_content_identity_sha256=old['content_identity_sha256'])
                     if all(candidate.get(key) == value for key, value in old_expected.items()):
                         contents = rebind_legacy_pack(contents, old_identity, identity, len(records))
-                        _, after, after_client = texture_inputs(work, context)
+                        _, after, after_client = inspect_inputs()
                         require(after == inventory_sha and worktree_identity(after_client) == stable_client,
                                 'Texture generation changed while rebinding native index')
                         saved = dict(candidate, **expected, sha256=hashlib.sha256(contents).hexdigest())
@@ -238,7 +255,7 @@ def prepare(work, import_identity, executable_sha256, context):
                     if (worktree_data_identity(previous) == stable_client['data_contract']
                             and all(candidate.get(key) == value for key, value in legacy_expected.items())):
                         contents = rebind_legacy_pack(contents, legacy, identity, len(records))
-                        _, after, after_client = texture_inputs(work, context)
+                        _, after, after_client = inspect_inputs()
                         require(after == inventory_sha and worktree_identity(after_client) == stable_client,
                                 'Texture generation changed while migrating index')
                         saved = dict(candidate, **expected, sha256=hashlib.sha256(contents).hexdigest())
@@ -250,9 +267,11 @@ def prepare(work, import_identity, executable_sha256, context):
     reused = saved is not None
     if saved is None:
         context.event('stage', status='running', message='Indexing immutable texture headers', records=len(records))
+        header_started = time.monotonic()
         contents, header_sha = make_pack(records, identity, context)
+        header_seconds = time.monotonic() - header_started
         # Reject a concurrent mutation rather than publish a mixed generation.
-        _, after, after_client = texture_inputs(work, context)
+        _, after, after_client = inspect_inputs()
         require(after == inventory_sha and worktree_identity(after_client) == stable_client,
                 'Texture generation changed while indexing')
         saved = dict(expected, bytes=len(contents), sha256=hashlib.sha256(contents).hexdigest(),
@@ -260,7 +279,14 @@ def prepare(work, import_identity, executable_sha256, context):
         require(not target.is_symlink() and not marker.is_symlink(), 'Linked texture index output refused')
         atomic_write(target, contents)
         atomic_write(marker, canonical(saved) + b'\n')
-    receipt = dict(saved, reused=reused, preparation_seconds=round(time.monotonic() - started, 3),
+    elapsed = time.monotonic() - started
+    receipt = dict(saved, reused=reused, preparation_seconds=round(elapsed, 3),
+                   inventory_scan_passes=inventory_passes,
+                   preparation_phase_seconds={
+                       'complete_inventory': round(inventory_seconds, 3),
+                       'original_header_reads': round(header_seconds, 3),
+                       'validation_and_publication': round(max(0,
+                           elapsed - inventory_seconds - header_seconds), 3)},
                    legacy_identity_migrated=migrated,
                    native_layer_identity_migrated=native_migrated,
                    interrupted_envelope_recovered=interrupted_recovered,

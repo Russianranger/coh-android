@@ -1,5 +1,57 @@
 # City of Heroes Android handoff
 
+**0.13.9 bounded continuation in qualification (October 4, 2026 UTC).**
+The live repository was first confirmed at `af7e6a52926f842044b3115ae4729809df8997a2`;
+0.13.8 was already published and has not been recreated. Read-only exact
+candidate discovery is committed at `17f46d5e26fb04ef3411348c525343bc76013bdf`.
+Continue the same branch and open draft PR #1; main remains
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`. No newer physical 0.13.8 result
+was found. Preserve the accepted 0.13.7 device result and all prior milestones.
+
+The next wrapper preserves the exact public 0.13.8 APK Game/client ZIP, 20 DLLs,
+corrected Android DEX/resources and 19 Java sources, DbServer/MapServer and server
+packs, cache schemas, graphics and all animation tracks. It changes three guest
+helpers, append-only visual payloads and two verification manifests only.
+[Exact encounter evidence](android-evidence/client-streaming-0.13.9-assets.json)
+selects six original NPC texture leaves (291,538 decoded bytes) from existing
+first-encounter Atlas errors; no broad asset dump, user reimport or speculative asset replacement
+is requested. All 323 previous visual leaf pins and compressed payload streams
+remain intact; the complete supplement has 329 files / 39,521,237 decoded bytes.
+Existing Hellion and selected vegetation repairs remain intact.
+
+Complete current-console marker search avoids splitting every unrelated native
+line while retaining every session/PID/duplicate/retry check on every call.
+`client_console_identity_metrics` separates decoding/identity parsing from the
+broader observer hook, whose old 83.249 seconds include other work and must not
+be attributed wholly to this parser. The host benchmark uses the exact
+1,334,723-byte / 23,631-line preserved console and alternating stock/candidate
+rounds with UTF-8 decode in both paths: median 0.922698s stock
+versus 0.147935s candidate for 156 final-console observations.
+[Console benchmark](android-evidence/client-streaming-0.13.9-console-benchmark.json)
+does not establish Thor savings.
+Texture inventory computes shared canonical roots and relative prefixes once,
+retaining strict resolution and full readonly metadata for each leaf, with a
+final ancestor replacement check. Inventory tuples/hash and cache envelope are
+unchanged. A reproducible 11,612-leaf Linux fixture has identical full tuples and
+SHA-256 across all comparisons: median 1.152739s to
+0.771422s (33.079% host reduction),
+with every leaf still strictly resolved once. [Texture benchmark](android-evidence/client-streaming-0.13.9-texture-benchmark.json)
+is synthetic preparation only. New report-only `preparation_phase_seconds` separates complete
+inventory, original header reads and validation/publication. These fields are
+not persisted in the texture-index marker and do not invalidate warm packs.
+The six additions require one index refresh; prelaunch preparation and the
+previous 37.460-second wait are separate from actual Game startup.
+
+[Focused 0.13.9 instructions](COH-Atlas-Gameplay-0.13.9-testing.txt) request one
+same-preset hero reopen, three timing observations, one far/near comparison,
+nearby Hellion appearance and a short first-pass/retrace comparison in the same
+session, then Abort, owned cleanup and the complete exported outer support ZIP.
+Physical startup/streaming/visual success remains pending. Preserve BIN phase
+instrumentation; do not bypass freshness or change native decoder/cache formats
+without new device timing. Repeated `Reading Car_*.txt` log lines are not proof
+of repeated disk reads: stock seqLoad logs before its in-memory cache lookup.
+Publication/host qualification will be recorded here once complete.
+
 **0.13.8 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.8/COH-Atlas-Gameplay-0.13.8.apk)
 from APK source `17751a759240181f962d5b5ded962cf13b364e24` on the existing
