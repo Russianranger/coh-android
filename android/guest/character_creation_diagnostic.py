@@ -256,6 +256,12 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             'physical_startup_savings_validated': False}
 
     def reset_client_startup_inputs(self):
+        # Only a validated new Game producer enables these opt-in paths. Keep
+        # historical launchers on their stock allocator/diagnostic behavior.
+        for name in ('COH_CLIENT_KNOWN_STRING_COPY', 'COH_CLIENT_BIN_PROFILE'):
+            self.wine_env.pop(name, None)
+        if self.ctx.report.get('client_loading'):
+            self.wine_env.update(COH_CLIENT_KNOWN_STRING_COPY='1', COH_CLIENT_BIN_PROFILE='1')
         preparation = self.texture_header_preparation
         if preparation is not None:
             waited_at = time.monotonic()

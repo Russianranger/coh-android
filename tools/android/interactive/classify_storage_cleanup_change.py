@@ -167,6 +167,38 @@ VISUAL_ALLOWED = VISUAL_SOURCES | frozenset({
     'docs/android-evidence/client-visual-0.13.6-device-result.json',
     'docs/android-evidence/client-visual-0.13.7-publication.json',
 })
+CLIENT_LOADING_SOURCES = frozenset({
+    '.github/workflows/android-client-loading.yml',
+    'tools/android/interactive/build_client_loading_apk.py',
+    'tools/android/interactive/qualify_client_loading.py',
+    'tools/android/interactive/test_client_loading_package.py',
+    'tools/android/interactive/test_client_stage_acceptance.py',
+    'tools/android/interactive/fixtures/client-stage-0.13.7.json',
+    'tools/android/interactive/package_client_loading_native.py',
+    'tools/android/interactive/test_client_loading_native.py',
+    'tools/android/interactive/test_client_loading_contract.py',
+    'patches/client-loading/0001-known-length-string-copy-and-profile.patch',
+    'tools/android/interactive/prepare_client_visual_assets.py',
+    'tools/android/interactive/client_visual_geometry.py',
+    'tools/android/interactive/test_client_visual_assets.py',
+    'android/guest/client_visual_assets.py', 'assets/client-visual-manifest.json',
+    'android/guest/character_creation_diagnostic.py',
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/client_startup_diagnostic.py', 'android/guest/texture_header_index.py',
+    JAVA+'ClientRuntime.java', JAVA+'ClientAcceptance.java',
+})
+CLIENT_LOADING_ALLOWED = CLIENT_LOADING_SOURCES | frozenset({
+    '.github/workflows/android-client-visual.yml',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/interactive/test_client_visual_package.py',
+    'tools/android/interactive/test_acceptance.py', 'docs/HANDOFF.md',
+    'docs/COH-Atlas-Gameplay-0.13.8-testing.txt',
+    'docs/android-evidence/client-visual-0.13.7-device-result.json',
+    'docs/android-evidence/client-loading-0.13.8-publication.json',
+})
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -215,6 +247,11 @@ def visual_push(event, before, head, parent, names):
         and set(names) & VISUAL_SOURCES)
 
 
+def client_loading_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, CLIENT_LOADING_ALLOWED)
+        and set(names) & CLIENT_LOADING_SOURCES)
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
@@ -222,7 +259,8 @@ def task_required(event, before, head, parent, names):
         or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
@@ -232,7 +270,8 @@ def cleanup_required(event, before, head, parent, names):
         or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
@@ -240,27 +279,36 @@ def recovery_required(event, before, head, parent, names):
     return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
         or bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def receipt_required(event, before, head, parent, names):
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
     return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def schedule_required(event, before, head, parent, names):
     return not (bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def setup_required(event, before, head, parent, names):
     return not (bundle_push(event, before, head, parent, names)
-        or visual_push(event, before, head, parent, names))
+        or visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
 
 
 def bundle_required(event, before, head, parent, names):
-    return not visual_push(event, before, head, parent, names)
+    return not (visual_push(event, before, head, parent, names)
+        or client_loading_push(event, before, head, parent, names))
+
+
+def visual_required(event, before, head, parent, names):
+    return not client_loading_push(event, before, head, parent, names)
 
 
 def main():
@@ -271,6 +319,7 @@ def main():
     schedule = True
     setup = True
     bundle = True
+    visual = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -289,6 +338,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         bundle = bundle_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        visual = visual_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
@@ -299,6 +350,7 @@ def main():
         output.write('schedule_required='+str(schedule).lower()+'\n')
         output.write('setup_required='+str(setup).lower()+'\n')
         output.write('bundle_required='+str(bundle).lower()+'\n')
+        output.write('visual_required='+str(visual).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

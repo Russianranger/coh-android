@@ -340,7 +340,8 @@ print(json.dumps({'client': encoded_client.decode(), 'runtime': encoded_runtime.
 
     def test_workflow_has_no_native_or_java_compile_and_uses_exact_qualified_asset(self):
         text = (package.ROOT/package.WORKFLOW).read_text()
-        self.assertEqual(text.count('    runs-on:'), 2)
+        self.assertEqual(text.count('    runs-on:'), 3)
+        self.assertIn("needs.changes.outputs.visual_required != 'false'", text)
         self.assertNotIn('cmake --', text); self.assertNotIn('windows-', text); self.assertNotIn('javac', text)
         self.assertIn('needs: qualify', text)
         self.assertIn('run-id: '+str(package.DONOR_RUN_ID), text)

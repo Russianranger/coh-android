@@ -1,0 +1,283 @@
+name: Thor client loading and LOD enemy visual repair
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-loading.yml
+      - android/guest/character_creation_diagnostic.py
+      - android/guest/client_visual_assets.py
+      - android/guest/texture_header_index.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/native_responsiveness_contract.py
+      - tools/android/interactive/package_client_loading_native.py
+      - tools/android/interactive/test_client_loading_native.py
+      - tools/android/interactive/test_client_loading_contract.py
+      - patches/client-loading/**
+      - tools/android/interactive/build_client_loading_apk.py
+      - tools/android/interactive/qualify_client_loading.py
+      - tools/android/interactive/prepare_client_visual_assets.py
+      - tools/android/interactive/client_visual_geometry.py
+      - tools/android/interactive/test_client_visual_assets.py
+      - tools/android/interactive/test_client_animation_package.py
+      - tools/android/interactive/test_client_visual_schedule.py
+      - tools/android/interactive/test_client_loading_package.py
+      - tools/android/interactive/test_client_stage_acceptance.py
+      - tools/android/interactive/fixtures/client-stage-0.13.7.json
+      - tools/android/interactive/classify_storage_cleanup_change.py
+      - tools/android/interactive/test_classify_storage_cleanup_change.py
+      - tools/android/interactive/classify_interactive_change.py
+      - tools/android/interactive/test_classify_interactive_change.py
+      - assets/client-visual-manifest.json
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java
+      - docs/COH-Atlas-Gameplay-0.13.8-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-loading-publication
+  cancel-in-progress: false
+jobs:
+  client:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Stage the frozen native client chain and separate startup layer
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_client_loading_native.py stage --output out/client-loading-source
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup staging failed' }
+      - name: Qualify exact production string semantics and Win32 copy assembly before building Game
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_loading_native.py --require-windows --output out/client-loading-native-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/client-loading.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\client-loading.cmd 2>&1 | Tee-Object out/contracts/client-loading.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Client loading native qualification failed' }
+      - name: Build only Game retaining the existing MapServer and graphics profile
+        working-directory: out/client-loading-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup Game build failed' }
+      - name: Package Game with exact source and schema receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_client_loading_native.py package
+          --directory out/client-loading-source/out/build/vs2026/bin/OptDebug
+          --source out/client-loading-source
+          --cache out/client-loading-source/out/build/vs2026/CMakeCache.txt
+          --checks out/client-loading-native-checks.json
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/client-loading-native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-loading-native
+          path: out/client-loading-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-loading-native-build-evidence
+          path: |
+            out/client-loading-source/*build-input.json
+            out/client-loading-source/responsiveness-source-input.json
+            out/client-loading-source/out/build/vs2026/CMakeCache.txt
+            out/client-loading-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/client-loading-native/client-loading-native-manifest.json
+            out/client-loading-native-checks.json
+            out/contracts/client-loading.txt
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: client
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-native
+          path: out/client-loading-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-visual-packaging-evidence
+          path: out/client-loading-donor-evidence
+          run-id: 37198877717
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.7 donor
+        run: python3 tools/android/interactive/build_client_loading_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.7.apk
+      - name: Prepare selected exact missing visual assets
+        run: |
+          python3 tools/android/interactive/prepare_client_visual_assets.py --materialize
+          mkdir out/client-loading-assets
+          python3 tools/android/interactive/prepare_client_visual_assets.py --output out/client-loading-assets
+      - name: Qualify client mount missing-only visual install and retained memory server cache and save guards
+        run: >-
+          python3 tools/android/interactive/qualify_client_loading.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.7.apk
+          --donor-build-report out/client-loading-donor-evidence/client-visual-apk-build-report.json
+          --visual-directory out/client-loading-assets
+          --client-directory out/client-loading-native
+          --output out/client-loading-qualification.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-loading-assets
+          path: out/client-loading-assets/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-loading-qualification
+          path: out/client-loading-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: qualify
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-native
+          path: out/client-loading-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-visual-packaging-evidence
+          path: out/client-loading-donor-evidence
+          run-id: 37198877717
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-assets
+          path: out/client-loading-assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-loading-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.7 donor
+        run: python3 tools/android/interactive/build_client_loading_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.7.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the client follow-up and recompile only the two corrected Android acceptance classes
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_loading_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.7.apk
+          --donor-build-report out/client-loading-donor-evidence/client-visual-apk-build-report.json
+          --visual-directory out/client-loading-assets
+          --client-directory out/client-loading-native
+          --qualification out/client-loading-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-loading/COH-Atlas-Gameplay-0.13.8.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-loading-packaging-evidence
+          path: |
+            out/client-loading/client-loading-apk-build-report.json
+            out/client-loading/COH-Atlas-Gameplay-0.13.8-testing.txt
+            out/client-loading/COH-Atlas-Gameplay-0.13.8.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-loading-apk
+          path: out/client-loading/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.8 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_loading_apk.py publish
+          --apk out/client-loading/COH-Atlas-Gameplay-0.13.8.apk
+          --build-report out/client-loading/client-loading-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.7.apk
+          --donor-build-report out/client-loading-donor-evidence/client-visual-apk-build-report.json
+          --visual-directory out/client-loading-assets
+          --client-directory out/client-loading-native
+          --qualification out/client-loading-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

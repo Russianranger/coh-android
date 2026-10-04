@@ -22,14 +22,37 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)
         for function in (change.task_required, change.cleanup_required, change.recovery_required, change.receipt_required,
-                change.schedule_required, change.setup_required, runtime_required):
+                change.schedule_required, change.setup_required, change.bundle_required, change.visual_required, runtime_required):
             with self.subTest(function=function.__name__):
                 self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, sorted(names)))
+
+    def test_client_loading_scope_disables_all_previous_publication_and_runtime_gates(self):
+        from classify_interactive_change import runtime_required
+        names = sorted(change.CLIENT_LOADING_ALLOWED)
+        functions = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required,
+            change.bundle_required, change.visual_required, runtime_required)
+        for function in functions:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for other in ('android/guest/local_character_server.py', change.JAVA+'SetupMemoryGuard.java',
+                        'android/native/client-launcher.c', 'unreviewed.py'):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+                for event, before, head, parent in (('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                        ('push', '0'*40, 'b'*40, '0'*40), ('push', 'c'*40, 'b'*40, 'a'*40)):
+                    self.assertTrue(function(event, before, head, parent, names))
+
+    def test_old_visual_workflow_is_gated_away_from_client_loading_publication(self):
+        root = Path(__file__).resolve().parents[3]
+        text = (root/'.github/workflows/android-client-visual.yml').read_text()
+        self.assertIn('visual_required: ${{ steps.scope.outputs.visual_required }}', text)
+        self.assertIn("needs.changes.outputs.visual_required != 'false'", text)
+        self.assertIn('COH_PUSH_BEFORE: ${{ github.event.before }}', text)
 
     def test_client_visual_scope_disables_all_seven_old_publication_gates(self):
         from classify_interactive_change import runtime_required
@@ -193,14 +216,14 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\n')
             output.unlink()
             with mock.patch.dict(change.os.environ, environment), \
                     mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
-                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\n')
+                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\n')
 
     def test_classifier_emits_all_six_disabled_gates_for_exact_bundle_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -212,7 +235,7 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\nvisual_required=true\n')
 
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)

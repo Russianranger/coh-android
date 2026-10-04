@@ -84,7 +84,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),
@@ -97,6 +97,16 @@ class QualificationRoutingTests(unittest.TestCase):
         ):
             with self.subTest(event=event, before=before, files=files):
                 self.assertTrue(change.runtime_required(event, before, head, parent, files))
+
+    def test_client_loading_reuses_server_donor_only_for_its_exact_game_and_acceptance_scope(self):
+        names = sorted(change.CLIENT_LOADING_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('upstream/ouroboros/DBServer/src/container_sql.c',
+                'upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c',
+                'android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java',
+                'android/guest/local_character_server.py', 'unreviewed.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
 
 
     def test_task_derivative_routes_to_its_own_workflow_but_unknown_native_edits_do_not(self):

@@ -1480,16 +1480,14 @@ public final class ClientRuntime {
                 || worktree.optLong("prepared_prerequisite_bytes", -1) != 54948L
                 || worktree.optLong("input_files", -1) != imported.count
                 || worktree.optLong("input_bytes", -1) != imported.bytes) return false;
-        String[] requiredStages = {"client_inputs", "client_private_data", "persistent_server_profile", "postgres_local_login",
-                "presentation_display", "wine_initialization", "local_login_odbc", "local_dbserver_startup",
-                "local_atlas_startup", "win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
         JSONArray stages = report.optJSONArray("stages");
-        if (stages == null || stages.length() != requiredStages.length) return false;
-        for (int i=0;i<requiredStages.length;i++) {
-            JSONObject stage = stages.getJSONObject(i);
-            if (!requiredStages[i].equals(stage.optString("stage")) || !"passed".equals(stage.optString("status"))) return false;
-        }
-        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(11);
+        // The visual/animation stages are required only by an APK whose exact
+        // asset pins include the complete bundle. A guest flag cannot select
+        // a shorter path or excuse a missing/failed preparation stage.
+        int interactionStage = ClientAcceptance.clientInteractionStageIndex(
+                jsonValue(stages), jsonValue(clientPins));
+        if (interactionStage < 0) return false;
+        JSONObject inputs = stages.getJSONObject(0), startup = stages.getJSONObject(interactionStage);
         if (!imported.sourceCommit.equals(inputs.optString("source_commit"))
                 || !imported.dataCommit.equals(inputs.optString("data_commit"))
                 || !Boolean.TRUE.equals(startup.opt("bounded_live_observation"))) return false;

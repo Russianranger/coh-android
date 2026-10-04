@@ -8,6 +8,47 @@ import java.util.Set;
 
 /** Pure acceptance checks: a decoded framebuffer alone never proves an Android display. */
 final class ClientAcceptance {
+    /** Exact stage sequence selected from the APK's already verified asset pins. */
+    static int clientInteractionStageIndex(Object stagesValue, Object verifiedPinsValue) {
+        if (!(stagesValue instanceof List) || !(verifiedPinsValue instanceof Map)) return -1;
+        Map<?, ?> pins = object(verifiedPinsValue);
+        int visualInputs = 0;
+        for (String name : new String[]{"client_visual_assets.py", "client_animation_package.py",
+                "client-visual-assets.zip", "client-visual-manifest.json"}) {
+            if (!pins.containsKey(name)) continue;
+            if (!assetPin(pins.get(name))) return -1;
+            visualInputs++;
+        }
+        if (visualInputs != 0 && visualInputs != 4) return -1;
+        boolean visual = visualInputs == 4;
+        if (visual && (!assetPin(pins.get("server-animations.pigg"))
+                || !assetPin(pins.get("server-animation-manifest.json")))) return -1;
+        String[] before = {"client_inputs", "client_private_data", "persistent_server_profile", "postgres_local_login",
+                "presentation_display", "wine_initialization", "local_login_odbc", "local_dbserver_startup",
+                "local_atlas_startup"};
+        String[] after = {"win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
+        List<?> stages = (List<?>) stagesValue;
+        if (stages.size() != before.length + after.length + (visual ? 2 : 0)) return -1;
+        int index = 0;
+        for (String name : before) if (!passedStage(stages.get(index++), name)) return -1;
+        if (visual && (!passedStage(stages.get(index++), "client_visual_assets")
+                || !passedStage(stages.get(index++), "client_animation_pack"))) return -1;
+        for (String name : after) if (!passedStage(stages.get(index++), name)) return -1;
+        return stages.size() - 1;
+    }
+
+    private static boolean assetPin(Object value) {
+        Map<?, ?> pin = object(value);
+        Object hash = pin.get("sha256");
+        return positiveInteger(pin.get("bytes")) && hash instanceof String
+                && ((String) hash).matches("[0-9a-f]{64}");
+    }
+
+    private static boolean passedStage(Object value, String name) {
+        Map<?, ?> stage = object(value);
+        return name.equals(stage.get("stage")) && "passed".equals(stage.get("status"));
+    }
+
     static boolean clientWindowAccepted(Object value, Object clientPid) {
         Map<?, ?> window = object(value);
         Object title = window.get("title"), width = window.get("width"), height = window.get("height");

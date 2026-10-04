@@ -6,6 +6,7 @@ candidate executable to the stock reference or rewrites prepared-cache history.
 """
 import hashlib
 import json
+import math
 import re
 
 SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
@@ -99,6 +100,8 @@ def client_contract(package, receipt=None):
     executable = candidate['files']['CityOfHeroes.exe']
     if 'startup_bundle_client' in package:
         executable = startup_bundle_client_contract(package, candidate)
+    if 'client_loading' in package:
+        executable = client_loading_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
@@ -155,6 +158,100 @@ def startup_bundle_client_contract(package, candidate=None):
             'Startup client layer changed validation or native source scope')
     record = pe_record(manifest['files']['CityOfHeroes.exe'])
     require(record != candidate['files']['CityOfHeroes.exe'], 'Startup client derivative is unchanged')
+    return record
+
+
+def client_loading_contract(package, candidate=None):
+    """Wrap the exact startup producer without rewriting its schema history."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = startup_bundle_client_contract(package, candidate)
+    startup = package['startup_bundle_client']
+    wrapper = package.get('client_loading')
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+            'base_startup_client_manifest_sha256', 'base_client_executable'}
+            and wrapper['base_startup_client_manifest_sha256'] == startup['manifest_sha256']
+            and wrapper['base_client_executable'] == previous,
+            'Client loading must retain the exact immediate startup producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+            and manifest.get('format') == 1 and manifest.get('role') == 'bounded_client_binary_loading'
+            and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+            and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+            and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+            and manifest.get('build_targets') == ['Game']
+            and manifest.get('postgresql_persistence_fixture') is False
+            and manifest.get('runtime_execution_validated') is False
+            and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and manifest.get('retained_native_dependencies_changed') is False
+            and manifest.get('retained_source_inputs') == candidate['build_inputs']
+            and manifest.get('schema_sources_sha256') == candidate['retained_cache']['schema_sources_sha256']
+            and manifest.get('base_client_executable') == previous
+            and manifest.get('cache_encoding_changed') is False
+            and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+            'Client loading source, dependency or cache provenance differs')
+    build = manifest.get('build_input', {})
+    path = 'libs/UtilitiesLib/src/utils/textparser.c'
+    copy = {'environment_variable': 'COH_CLIENT_KNOWN_STRING_COPY', 'enabled_value': '1',
+        'disabled_by_default': True, 'negative_length_only': True,
+        'explicit_length_secure_crt_preserved': True, 'allocation_and_free_behavior_preserved': True}
+    profile = {'environment_variable': 'COH_CLIENT_BIN_PROFILE', 'enabled_value': '1',
+        'disabled_by_default': True, 'record_prefix': 'COH_CLIENT_BIN_PROFILE_V1',
+        'phases': ['open', 'freshness', 'decode'], 'thread_local_flags_and_counters': True,
+        'stock_freshness_and_crc_preserved': True, 'clock': 'GetTickCount_unsigned_wrap'}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+            'base_startup_client_build_input', 'patch', 'patch_sha256', 'source_sha256',
+            'patched_sha256', 'preserved_functions_sha256', 'reverse_patch_exact_base_verified',
+            'known_length_copy', 'bin_profile', 'build_targets', 'configuration', 'architecture',
+            'cache_encoding_changed', 'parse6_schema_changes', 'source_freshness_changed',
+            'graphics_profile_changes', 'runtime_execution_validated'}
+            and build.get('format') == 1 and build.get('role') == manifest['role']
+            and build.get('source_commit') == SOURCE
+            and build.get('base_startup_client_build_input') == startup['manifest']['build_input']
+            and build.get('patch') == 'patches/client-loading/0001-known-length-string-copy-and-profile.patch'
+            and HEX64.fullmatch(str(build.get('patch_sha256', '')))
+            and build.get('source_sha256') == {path: manifest['schema_sources_sha256'].get(path)}
+            and isinstance(build.get('patched_sha256'), dict) and set(build['patched_sha256']) == {path}
+            and all(HEX64.fullmatch(str(value)) for value in build['source_sha256'].values())
+            and all(HEX64.fullmatch(str(value)) for value in build['patched_sha256'].values())
+            and build['patched_sha256'] != build['source_sha256']
+            and manifest.get('decoder_source_sha256') == build['patched_sha256']
+            and isinstance(build.get('preserved_functions_sha256'), dict)
+            and set(build['preserved_functions_sha256']) == {'int ParseTableCRC(', 'int ParserReadBinaryTable(',
+                'void*    StructAllocRawDbg(', 'void    StructFree(', 'void StructFreeString(',
+                'static FileScanAction DateCheckCallback('}
+            and all(HEX64.fullmatch(str(value)) for value in build['preserved_functions_sha256'].values())
+            and build.get('reverse_patch_exact_base_verified') is True
+            and build.get('known_length_copy') == copy and build.get('bin_profile') == profile
+            and build.get('build_targets') == ['Game']
+            and build.get('configuration') == 'OptDebug' and build.get('architecture') == 'Win32'
+            and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+                'source_freshness_changed', 'graphics_profile_changes', 'runtime_execution_validated')),
+            'Client loading changed encoding, freshness, memory ownership or source scope')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and checks.get('format') == 1 and checks.get('status') == 'passed'
+            and checks.get('platform') == 'windows' and checks.get('architecture') == 'Win32'
+            and checks.get('configuration') == 'OptDebug' and checks.get('build_input') == build
+            and checks.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+            and all(checks.get(key) is True for key in ('equivalence_verified', 'explicit_length_behavior_verified',
+                'thread_local_flags_verified', 'opt_in_and_fallback_verified',
+                'known_length_path_secure_crt_call_eliminated'))
+            and all(HEX64.fullmatch(str(checks.get(key, ''))) for key in ('assembly_sha256', 'harness_sha256'))
+            and checks.get('physical_startup_savings_validated') is False,
+            'Client loading requires source-bound Win32 equivalence checks')
+    benchmarks = checks.get('benchmarks')
+    require(isinstance(benchmarks, list) and len(benchmarks) == 5
+            and all(isinstance(row, dict) and type(row.get('length')) is int
+                and row['length'] in (8, 48, 128, 512, 11999)
+                and type(row.get('rounds')) is int and row['rounds'] == 5
+                and all(type(row.get(key)) in (int, float) and math.isfinite(row[key]) and row[key] > 0
+                    for key in ('stock_seconds', 'candidate_seconds')) for row in benchmarks)
+            and sorted(row['length'] for row in benchmarks) == [8, 48, 128, 512, 11999]
+            and sum(row['candidate_seconds'] for row in benchmarks if row['length'] <= 512)
+                < sum(row['stock_seconds'] for row in benchmarks if row['length'] <= 512),
+            'Client loading representative Win32 copy benchmark did not improve')
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(record != previous and record != candidate['files']['CityOfHeroes.exe'],
+            'Client loading derivative is unchanged or regressed to its ancestor')
     return record
 
 

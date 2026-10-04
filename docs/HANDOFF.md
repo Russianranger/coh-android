@@ -1,5 +1,76 @@
 # City of Heroes Android handoff
 
+**0.13.7 device improvement accepted; 0.13.8 client loading/visual repair in development (October 4, 2026 UTC).**
+The [current device receipt](android-evidence/client-visual-0.13.7-device-result.json)
+pins the supplied `coh-atlas-gameplay-20261004-121800.zip` and six screenshots.
+The user accepts server startup at approximately **6 minutes**, actual client
+startup **4m24s**, and login-to-world **1m27s**, including about 30 seconds of
+waiting/input. Instrumented client readiness is **263.921s**, down **182.021s**
+from 0.13.6; the guest client stage is **264.424s**. Request-to-owned-Atlas is
+**316.277s**, PostgreSQL **0.388s**, DbServer **41.163s**, and Atlas **232.803s**.
+The <=300-second server goal remains open. Login-to-character protocol timing
+is **67.939s**, using different boundaries from the user's visual measurement.
+
+Many models and the HUD tray textures are visibly restored. The first visual
+installation adds 290 files in **3.446s**; animation binding/verification takes
+**13.974s** with **zero duplicate animation payload bytes**. The new texture
+index has **11,612 hits / zero ordinary reads**; regeneration takes **38.941s**,
+with **37.460s** of serial waiting. The complete Atlas-ready-to-launcher gap is
+**59.068s**. Sequencer loading falls to **53.764s** from 95.325s; powers remain
+approximately **54.048s**, FX info **29.694s**, grouplibs **19.427s** and the
+map metadata/client NPC interval **23.649s**. Warm generated particle/behavior/
+cape caches also improve. Do not attribute the entire client improvement to
+animation mounting or claim these phase boundaries isolate pure decoding.
+
+The guest succeeds, ordinary save/logout preserves character ID 1, powers,
+costume and SQL/native position, login count increases 3 to 4, and owned cleanup
+leaves zero workers. **The raw Android report is false because its retained Java
+validator expects 12 stages while this build correctly emits 14.** All 56 guest
+payload pins and the session match. Preserve the raw flag and fix the exact
+contract; do not treat it as a gameplay or PostgreSQL regression. The next pass
+requires the complete visual/animation APK pins and their two passed stages,
+while retaining session, import, capture, save and cleanup checks.
+
+Distant white vegetation/objects remain and can change appearance when approached.
+The exact material/fallback dependency chain is being repaired without forcing
+high-detail LOD or changing rendering. The invisible hostile is independently
+identified as **Blood Brother Chopper / Hellions_Axe_Thug**, whose stock costume
+variants are `Thug_Hellion_01` through `_06`. Native logs contain five hostile
+power activations and three hits; HP changes from 102.50 to 98.24. Accept this
+limited aggro/incoming-damage observation; full combat remains unqualified.
+The current console still reports 391 missing GEO files and 1,422 texture errors;
+this next bounded repair cannot promise every NPC/world asset is complete.
+
+The 0.13.8 candidate expands the existing visual supplement to **323 files**,
+preserving all old 290 leaf bytes and adding **8 THUG GEO files / 25 textures**,
+**2,646,051 decoded bytes**. All 19 requested hostile model names are present in
+stock geometry tables. The preserved Atlas bushes' `X_P_BushLODs` uses the
+previously absent `Praet_BushLODs_d` primary and `Praet_BushLODs_fb` fallback;
+both are now supplied alongside selected oak/evergreen material dependencies.
+Stock LOD distances and renderer remain unchanged. The first updated texture
+inventory rebuilds the header index; this preparation is separate from client
+startup. The manifest retains unresolved original collar/legacy-texture gaps.
+
+A separate, Game-only native layer retains the previous startup producer and
+cache schema history. The candidate replaces known-length string allocation
+copies with `memcpy` after stock `strlen`, only under
+`COH_CLIENT_KNOWN_STRING_COPY=1`; explicit-length copies keep stock secure CRT
+behavior. `COH_CLIENT_BIN_PROFILE=1` distinguishes opening/CRC, source-freshness
+checks and BIN decoding. CRC, date checks, parser tables, allocation/free policy,
+DLLs and server executables are preserved. Two small-stack decoder prototypes
+were slower in host measurements and were not selected. The new copy path must
+pass source-bound Win32 equivalence and representative benchmarks before APK
+publication; device client savings remain unqualified. The guest recognizes the
+exact immediate producer, upgrades only Game in place, and preserves generated
+caches and absolute server links. Android DEX is recompiled solely for the two
+acceptance Java changes; 17 other Java sources and setup memory guards are fixed.
+
+Continue the same branch and draft PR #1. Preserve all accepted setup, storage,
+NPC interaction, task acceptance/completion, character creation/reopen and save
+milestones. The next physical check is client timing plus distant/close vegetation
+and hostile visibility, followed by owned cleanup/export. No repeated task,
+creation, reinstall, asset reimport or broad gameplay gate is requested.
+
 **0.13.7 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.7/COH-Atlas-Gameplay-0.13.7.apk)
 from source `0da09e771cb472f4ec897c39b90cef675d007edf`
@@ -29,12 +100,12 @@ Install over the existing app, preserve imports/profile/database/tasks, and run
 **Set up runtime once**. [Focused instructions](COH-Atlas-Gameplay-0.13.7-testing.txt)
 request one saved-hero reopen with the same preset, separate preparation/client
 timings and Atlas/NPC/HUD screenshots, then Abort/owned cleanup/export. The first
-new texture-header index may add preparation time. Physical client savings and
-visible restoration remain pending; known model/material gaps are recorded below.
+new texture-header index may add preparation time. Physical client savings and visible restoration were pending at publication;
+the subsequent partial improvements are accepted above. Remaining gaps stay open.
 Continue the existing branch and draft PR #1; main remains
 `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Preserve all earlier accepted gates.
 
-**Current device acceptance and next focus: client startup and missing visual assets (October 4, 2026 UTC).**
+**Preserved 0.13.6 device baseline: server startup and client asset diagnosis (October 4, 2026 UTC).**
 The user reports a substantial server-startup improvement: about **6 minutes**
 to server start, **7m30s** for actual client startup to login, then about
 **1m45s** to world entry including password input and hero selection. The

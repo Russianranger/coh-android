@@ -1,0 +1,123 @@
+--- a/libs/UtilitiesLib/src/utils/textparser.c
++++ b/libs/UtilitiesLib/src/utils/textparser.c
+@@ -747,13 +747,38 @@
+ #endif
+ }
+ 
++// The flags are thread local because string allocations also occur outside the
++// serial BIN loader. No shared scratch buffer or additional allocation is used.
++static __declspec(thread) int coh_client_loading_flags = -1;
++static __declspec(thread) unsigned int coh_client_known_length_copies;
++static int cohClientLoadingFlags(void)
++{
++    if (coh_client_loading_flags < 0)
++    {
++        const char *copy = getenv("COH_CLIENT_KNOWN_STRING_COPY");
++        const char *profile = getenv("COH_CLIENT_BIN_PROFILE");
++        coh_client_loading_flags = (copy && strcmp(copy, "1") == 0 ? 1 : 0)
++            | (profile && strcmp(profile, "1") == 0 ? 2 : 0);
++    }
++    return coh_client_loading_flags;
++}
++
++static void cohClientBinProfile(const char *phase, const char *filename,
++    DWORD begin, int success, unsigned int copies)
++{
++    printf("COH_CLIENT_BIN_PROFILE_V1 phase=%s path=%s milliseconds=%.3f success=%d known_length_copies=%u crc_validation_preserved=1 source_freshness_preserved=1\n",
++        phase, filename ? filename : "<memory>",
++        (double)(DWORD)(GetTickCount() - begin), success, copies);
++}
++
+ // allocate memory for a string and copy parameter in
+ char* StructAllocStringLenDbg(const char* string, int len, const char *file, int line)
+ {
+     char* ret;
++    int knownLength = len < 0;
+     if(!string)
+         return NULL;
+-    if(len < 0)
++    if(knownLength)
+         len = (int)strlen(string);
+ #if PRIVATE_PARSER_HEAPS
+     if(!g_stringheap)
+@@ -767,7 +792,16 @@
+ #else
+     ret = _malloc_dbg(len+1, _NORMAL_BLOCK, file, line);
+ #endif
+-    strncpy_s(ret, len+1, string, len);
++    if (knownLength && (cohClientLoadingFlags() & 1))
++    {
++        // strlen established the exact bound, including the final zero. The
++        // explicit-length API keeps its secure CRT padding/truncation behavior.
++        memcpy(ret, string, (size_t)len + 1);
++        if (cohClientLoadingFlags() & 2)
++            ++coh_client_known_length_copies;
++    }
++    else
++        strncpy_s(ret, len+1, string, len);
+     return ret;
+ }
+ 
+@@ -2105,6 +2139,9 @@
+     int size = 0;
+     int success;
+     long loc, endloc;
++    int coh_profile = !!(cohClientLoadingFlags() & 2);
++    DWORD coh_begin = coh_profile ? GetTickCount() : 0;
++    unsigned int coh_copies = coh_client_known_length_copies;
+ 
+     if (binfile) {
+         file = binfile;
+@@ -2132,6 +2169,9 @@
+         success = 0;
+     }
+     SerializeClose(file);
++    if (coh_profile)
++        cohClientBinProfile("decode", filename, coh_begin, success,
++            coh_client_known_length_copies - coh_copies);
+     return success;
+ }
+ 
+@@ -2247,10 +2287,17 @@
+     int crc, i, n;
+     int savedpos;
+     int haveFalseFiles = 0;        // do I have files in lf_filedates that don't exist?
++    int coh_profile = !!(cohClientLoadingFlags() & 2);
++    DWORD coh_begin = coh_profile ? GetTickCount() : 0;
+ 
+     // open the bin file
+     crc = ParseTableCRC(pti, defines);
+     binfile = SerializeReadOpen(persistfile, PARSE_SIG, crc, isProductionMode());
++    if (coh_profile)
++    {
++        cohClientBinProfile("open", persistfile, coh_begin, binfile != NULL, 0);
++        coh_begin = GetTickCount();
++    }
+     if (!binfile)
+     {
+         verbose_printf("bin file %s is incorrect version\n", persistfile);
+@@ -2261,7 +2308,11 @@
+ 
+     // always assume .bin file is ok if not in development mode
+     if(isProductionMode())
++    {
++        if (coh_profile)
++            cohClientBinProfile("freshness", persistfile, coh_begin, 1, 0);
+         return binfile;
++    }
+ 
+     // read the file table from the bin file first
+     if (!FileListRead(&binlist, binfile))
+@@ -2354,8 +2405,12 @@
+     FileListDestroy(&lf_filedates);
+     FileListDestroy(&binlist);
+     SimpleBufSeek(binfile, savedpos, SEEK_SET);
++    if (coh_profile)
++        cohClientBinProfile("freshness", persistfile, coh_begin, 1, 0);
+     return binfile;
+ IsPersist_Fail:
++    if (coh_profile)
++        cohClientBinProfile("freshness", persistfile, coh_begin, 0, 0);
+     FileListDestroy(&lf_filedates);
+     FileListDestroy(&binlist);
+     SerializeClose(binfile);

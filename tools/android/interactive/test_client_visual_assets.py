@@ -51,12 +51,23 @@ class InstallerTests(unittest.TestCase):
             'imported_assets_modified': False, 'prepared_caches_modified': False,
             'existing_supplements_modified': False, 'runtime_visual_validated': False, 'gameplay_validated': False,
             'closure': {'unresolved_dependencies': [], 'absent_requested_models': []}}
+        first, second = list(self.files)
+        self.baseline = {first: self.files[first]}; self.additions = {second: self.files[second]}
+        self.document['visual_extension'] = {'files': {second: [{'scope': 'fixture'}]},
+            'file_count': 1, 'payload_bytes': self.files[second]['bytes'], 'missing_only': True,
+            'baseline_payloads_preserved': True, 'baseline_file_count': 1,
+            'baseline_payload_bytes': self.files[first]['bytes'],
+            'baseline_files_sha256': hashlib.sha256(visual.canonical(self.baseline)).hexdigest()}
         self.write_archive(self.members)
         self.document['archive'] = {'filename': visual.ARCHIVE, **producer.pin(self.assets / visual.ARCHIVE)}
         self.repin()
         self.patches = mock.patch.multiple(visual, ARCHIVE_SHA256=self.document['archive']['sha256'],
             ARCHIVE_BYTES=self.document['archive']['bytes'], MANIFEST_SHA256=self.manifest_sha,
-            FILE_COUNT=2, PAYLOAD_BYTES=self.document['payload_bytes'], FILES_SHA256=self.document['files_sha256'])
+            FILE_COUNT=2, PAYLOAD_BYTES=self.document['payload_bytes'], FILES_SHA256=self.document['files_sha256'],
+            BASE_FILE_COUNT=1, BASE_PAYLOAD_BYTES=self.files[first]['bytes'],
+            BASE_FILES_SHA256=self.document['visual_extension']['baseline_files_sha256'],
+            EXTENSION_FILE_COUNT=1, EXTENSION_PAYLOAD_BYTES=self.files[second]['bytes'],
+            EXTENSION_FILES_SHA256=hashlib.sha256(visual.canonical(self.additions)).hexdigest())
         self.patches.start(); self.addCleanup(self.patches.stop); self.addCleanup(self.temporary.cleanup)
 
     def write_archive(self, members, *, bad_mode=False, duplicate=False):
@@ -205,8 +216,62 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(self.target(next(iter(self.members))).read_bytes(), b'racing-owner-file')
         self.assertFalse((self.work / visual.MARKER).exists())
 
+    def test_upgrade_adds_only_delta_and_preserves_previous_installed_leaf_identity(self):
+        name = next(iter(self.baseline)); target = self.target(name)
+        target.write_bytes(self.members[name]); target.chmod(0o444)
+        os.utime(target, (client.CACHE_EPOCH, client.CACHE_EPOCH))
+        before = target.stat()
+        report = self.run_install()
+        self.assertEqual((report['installed_files'], report['reused_files']), (1, 1))
+        self.assertEqual((target.stat().st_dev, target.stat().st_ino, target.stat().st_mtime_ns),
+            (before.st_dev, before.st_ino, before.st_mtime_ns))
+        self.assertEqual(target.read_bytes(), self.members[name])
+
+    def test_changed_baseline_pin_is_rejected_even_if_whole_manifest_is_repinned(self):
+        self.document['visual_extension']['baseline_files_sha256'] = '0' * 64; self.repin()
+        with mock.patch.object(visual, 'MANIFEST_SHA256', self.manifest_sha):
+            with self.assertRaisesRegex((ValueError, DiagnosticError), 'baseline policy'):
+                self.run_install()
+        self.assertFalse(self.target(next(iter(self.members))).exists())
+
 
 class SourceProofTests(unittest.TestCase):
+    def test_extension_preserves_290_leaves_and_binds_exact_hostile_family(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        selected = producer.extension_files(value)
+        self.assertEqual(len(selected), 33)
+        self.assertEqual(sum(name.endswith('.geo') for name in selected), 8)
+        self.assertEqual(sum(name.endswith('.texture') for name in selected), 25)
+        self.assertEqual(value['visual_extension']['unresolved_dependencies'], [])
+        proofs = value['visual_extension']['requested_model_proof']
+        self.assertEqual(sum(len(row['requested_models']) for row in proofs.values()), 19)
+        self.assertTrue(all(not row['absent_requested_models'] for row in proofs.values()))
+        names = value['visual_extension']['hostile_identity']['costumes']
+        self.assertEqual(set(names), {f'Thug_Hellion_{i:02}' for i in range(1, 7)})
+        self.assertIn('NPC "Thug_Hellion_01"', (ROOT / 'upstream/i24/data/defs/villaincostume/thugs.nd').read_text())
+        self.assertIn('"P222712670" "Blood Brother Chopper"',
+            (ROOT / 'upstream/i24/data/texts/english/villains/villains.xls.ms').read_text())
+
+    def test_low_detail_bush_material_both_primary_and_fallback_are_selected(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        selected = value['visual_extension']['files']
+        for stem in ('praet_bushlods_d', 'praet_bushlods_fb'):
+            name = 'data/texture_library/world/city_zones/praetoria/nature/' + stem + '.texture'
+            self.assertIn(name, selected)
+            self.assertTrue(any(row.get('alias') == 'X_P_BushLODs' for row in selected[name]))
+        proof = value['visual_extension']['preserved_world_geometry_proof'][
+            'data/object_library/city_zones/praetoria/nature/bushes/praet_bushes_urban01.geo']
+        self.assertTrue(any('LOD' in row['name'] and 'X_P_BushLODs' in row['direct_texture_names']
+            for row in proof['models']))
+
+    def test_extension_rejects_a_changed_retained_leaf(self):
+        value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+        value = copy.deepcopy(value)
+        name = next(n for n in value['files'] if n not in value['visual_extension']['files'])
+        value['files'][name]['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'preserved 0.13.7 payload'):
+            producer.extension_files(value)
+
     def test_actual_frozen_manifest_has_no_baseline_replacements_and_discloses_known_gaps(self):
         value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
         self.assertEqual(value['file_count'], producer.FILE_COUNT)

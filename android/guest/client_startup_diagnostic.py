@@ -322,6 +322,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'startup_bundle_client' in package:
         previous_client = package['startup_bundle_client']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if 'client_loading' in package:
+        previous_client = package['client_loading']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -342,16 +345,18 @@ def prepare_worktree(root, data, assets, identity, context):
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
-        if 'startup_bundle_client' not in package or not report.get('reused'):
+        layer = 'client_loading' if 'client_loading' in package else 'startup_bundle_client'
+        if layer not in package or not report.get('reused'):
             return report
-        wrapper = package['startup_bundle_client']
+        wrapper = package[layer]
         old_files = dict(package['files'], **{'CityOfHeroes.exe': wrapper['base_client_executable']})
         old_native = dict(package, files=old_files)
         old_content = identity_sha256({'data': worktree_data_identity(expected_identity),
                                       'native': native_closure_identity(old_native)})
         report['source_root_preserved'] = True
         report['native_texture_index_migration'] = {
-            'format': 1, 'policy': 'verified_startup_client_layer_v1',
+            'format': 1, 'policy': ('verified_client_loading_layer_v1' if layer == 'client_loading'
+                                    else 'verified_startup_client_layer_v1'),
             'previous_client_identity': {'content_identity_sha256': old_content,
                 'data_contract': worktree_data_identity(expected_identity)},
             'previous_executable_sha256': wrapper['base_client_executable']['sha256'],
@@ -801,6 +806,16 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         if 'startup_bundle_client' in package:
             wrapper = package['startup_bundle_client']
             self.ctx.report['startup_bundle_client'] = {
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'replacement_scope': 'CityOfHeroes.exe_only',
+                'prepared_cache_schema_changed': False, 'graphics_profile_changed': False,
+                'runtime_execution_validated': False}
+        if 'client_loading' in package:
+            wrapper = package['client_loading']
+            self.ctx.report['client_loading'] = {
                 'repository_commit': wrapper['manifest']['repository_commit'],
                 'manifest_sha256': wrapper['manifest_sha256'],
                 'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],

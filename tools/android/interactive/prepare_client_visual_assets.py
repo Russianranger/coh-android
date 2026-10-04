@@ -24,10 +24,15 @@ import prepare_atlas_world_assets as donor
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE, MANIFEST = 'client-visual-assets.zip', 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_PIN = {'bytes': 23887359, 'sha256': '2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809'}
-MANIFEST_PIN = {'bytes': 782080, 'sha256': '6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b'}
-FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
-FILE_COUNT, PAYLOAD_BYTES = 290, 36583648
+ARCHIVE_PIN = {'bytes': 25221661, 'sha256': 'db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24'}
+MANIFEST_PIN = {'bytes': 1113867, 'sha256': '0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22'}
+FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
+FILE_COUNT, PAYLOAD_BYTES = 323, 39229699
+BASE_ARCHIVE_PIN = {'bytes': 23887359, 'sha256': '2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809'}
+BASE_MANIFEST_PIN = {'bytes': 782080, 'sha256': '6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b'}
+BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
+EXTENSION_SCOPE = 'recorded_atlas_vegetation_lod_and_blood_brother_chopper_assets'
+EXTENSION_FILES_SHA256 = '3b904fd8e99d0c00ec6a07b87e0dc387fcca89835920aba8332723e10b50caa2'
 MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 64 * 1024**2, 2 * 1024**2
 MAX_ENTRY_BYTES = 32 * 1024**2
 SOURCE, DATA = donor.SOURCE, donor.DATA
@@ -50,7 +55,69 @@ def bundle_contract():
         'file_count': FILE_COUNT, 'payload_bytes': PAYLOAD_BYTES, 'files_sha256': FILES_SHA256,
         'installation': 'private_client_worktree_missing_files_only',
         'imported_assets_modified': False, 'prepared_caches_modified': False,
-        'existing_supplements_modified': False, 'runtime_visual_validated': False, 'gameplay_validated': False}
+        'existing_supplements_modified': False, 'runtime_visual_validated': False, 'gameplay_validated': False,
+        'visual_extension_scope': EXTENSION_SCOPE, 'retained_visual_files': 290,
+        'added_visual_files': 33, 'added_visual_payload_bytes': 2646051}
+
+
+def extension_files(value, *, root=ROOT):
+    """The newer recipe may only append the reviewed 33 leaves to 0.13.7."""
+    extension, files = value.get('visual_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(extension.get('scope') == EXTENSION_SCOPE and extension.get('missing_only') is True
+        and extension.get('baseline_payloads_preserved') is True
+        and extension.get('baseline_archive_pin') == BASE_ARCHIVE_PIN
+        and extension.get('baseline_manifest_pin') == BASE_MANIFEST_PIN
+        and extension.get('baseline_file_count') == 290 and extension.get('baseline_payload_bytes') == 36583648
+        and extension.get('baseline_files_sha256') == BASE_FILES_SHA256
+        and isinstance(additions, dict) and len(additions) == extension.get('file_count') == 33
+        and extension.get('payload_bytes') == 2646051
+        and extension.get('files_sha256') == EXTENSION_FILES_SHA256
+        and set(additions) <= set(files)
+        and all(extension.get(key) is False for key in ('runtime_visual_validated',
+            'full_global_asset_closure', 'native_renderer_changed', 'global_lod_distances_changed')),
+        'Client visual extension bounds or preservation policy differ')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 290 and sum(row['bytes'] for row in baseline.values()) == 36583648
+        and hashlib.sha256(canonical(baseline)).hexdigest() == BASE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == 2646051
+        and hashlib.sha256(canonical(selected)).hexdigest() == EXTENSION_FILES_SHA256,
+        'Client visual extension changes a preserved 0.13.7 payload')
+    require(extension.get('unresolved_dependencies') == []
+        and set(extension.get('requested_model_proof', {})) == {n for n in additions if n.endswith('.geo')}
+        and len(extension['requested_model_proof']) == 8
+        and all(row.get('absent_requested_models') == [] for row in extension['requested_model_proof'].values())
+        and extension.get('hostile_identity', {}).get('display_name') == 'Blood Brother Chopper'
+        and extension['hostile_identity'].get('message_id') == 'P222712670'
+        and extension['hostile_identity'].get('villain_definition') == 'Hellions_Axe_Thug'
+        and set(extension['hostile_identity'].get('costumes', {})) == {f'Thug_Hellion_{i:02}' for i in range(1, 7)},
+        'Client visual hostile family or selected geometry closure differs')
+    world = json.loads((Path(root) / 'assets/atlas-world-supplement-manifest.json').read_text())['files']
+    proofs = extension.get('preserved_world_geometry_proof', {})
+    require(set(proofs) == {
+        'data/object_library/city_zones/praetoria/nature/bushes/praet_bushes_urban01.geo',
+        'data/object_library/city_zones/praetoria/nature/trees/praet_tree_urban01.geo',
+        'data/object_library/city_zones/praetoria/nature/park/praet_altaspark_tree.geo'},
+        'Client visual vegetation proof broadens the reviewed Atlas geometry families')
+    for name, proof in proofs.items():
+        require({k: proof.get(k) for k in ('bytes', 'sha256')} == world[name]
+            and proof.get('version') == 8 and isinstance(proof.get('models'), list)
+            and hashlib.sha256(canonical(proof['models'])).hexdigest() == proof.get('model_table_sha256'),
+            'Client visual preserved vegetation geometry or material edges differ')
+    return set(additions)
+
+
+def verify_preserved_world_geometry(archive, value):
+    """Recheck all original high/low vegetation edges against the retained donor ZIP."""
+    import client_visual_geometry
+    proofs = value['visual_extension']['preserved_world_geometry_proof']
+    with zipfile.ZipFile(archive) as source:
+        for name, proof in proofs.items():
+            raw = source.read(name)
+            require(len(raw) == proof['bytes'] and hashlib.sha256(raw).hexdigest() == proof['sha256']
+                and client_visual_geometry.tables(raw) == (proof['version'], proof['models']),
+                'Client visual vegetation material proof differs from retained Atlas bytes')
 
 
 def read_manifest(manifest, *, root=ROOT):
@@ -80,6 +147,7 @@ def read_manifest(manifest, *, root=ROOT):
     for name in ('character-avatar-defaults-manifest.json', 'atlas-world-supplement-manifest.json'):
         baseline.update(json.loads((root / 'assets' / name).read_text())['files'])
     require(not baseline.intersection(files), 'Client visual supplement would replace a preserved asset')
+    additions = extension_files(value, root=root)
     for name, row in files.items():
         require(safe_payload(name) and type(row.get('bytes')) is int and 0 < row['bytes'] <= MAX_ENTRY_BYTES
             and re.fullmatch('[0-9a-f]{64}', row.get('sha256', '')), 'Unsafe client visual payload or pin')
@@ -95,7 +163,11 @@ def read_manifest(manifest, *, root=ROOT):
             'Client visual selected PIGG entry differs')
         require(isinstance(value['requests'][name], list) and value['requests'][name]
             and all(r.get('scope') in ('current_atlas_npc_geometry', 'current_atlas_npc_texture',
-                'current_atlas_gui', 'atlas_composite_layer', 'current_atlas_npc_geometry_texture') for r in value['requests'][name]),
+                'current_atlas_gui', 'atlas_composite_layer', 'current_atlas_npc_geometry_texture',
+                'observed_atlas_hostile_geometry', 'observed_atlas_hostile_texture',
+                'blood_brother_chopper_costume', 'preserved_atlas_vegetation_model_material',
+                'observed_atlas_hostile_geometry_material', 'atlas_vegetation_or_hostile_composite_layer')
+                for r in value['requests'][name]),
             'Client visual payload lacks bounded source request evidence')
     for name, expected in value.get('source_files', {}).items():
         relative = PurePosixPath(name)
@@ -107,7 +179,15 @@ def read_manifest(manifest, *, root=ROOT):
                     'upstream/ouroboros/Game/src/entity/entclient.c',
                     'upstream/ouroboros/Game/src/entity/costume_client.c',
                     'upstream/i24/data/defs/ui/bodyparts.bp',
-                    'upstream/i24/data/defs/npc/npcs_signature.nd'))
+                    'upstream/i24/data/defs/npc/npcs_signature.nd',
+                    'upstream/i24/data/defs/villaincostume/thugs.nd',
+                    'upstream/i24/data/defs/villains/hellions.villain',
+                    'upstream/i24/data/texts/english/villains/villains.xls.ms',
+                    'upstream/i24/data/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/block_foundations.txt',
+                    'upstream/i24/data/object_library/city_zones/Praetoria/Nature/Bushes/bushes.txt',
+                    'upstream/i24/data/object_library/city_zones/Praetoria/Nature/Trees/trees.txt',
+                    'upstream/ouroboros/Game/src/render/tex.c',
+                    'upstream/ouroboros/Game/src/render/rendermodel.c'))
             and pin(root / name) == expected, 'Client visual native or trick source changed: ' + name)
     catalog = json.loads((root / 'assets/catalog.json').read_text())['archives']
     require([row['archive'] for row in provenance.get('metadata_archives', [])] == sorted(
@@ -121,10 +201,10 @@ def read_manifest(manifest, *, root=ROOT):
             and row['source'].get('geometry') in files for row in closure['unresolved_dependencies'])
         and closure.get('absent_requested_models') == [
             {'geometry': 'data/player_library/male_collar.geo', 'model': 'GEO_Collar_MAGIC'}]
-        and set(closure.get('requested_model_proof', {})) == {name for name in files if name.endswith('.geo')}
+        and set(closure.get('requested_model_proof', {})) == {name for name in files if name.endswith('.geo') and name not in additions}
         and closure.get('full_global_asset_closure') is False
-        and closure.get('selected_current_atlas_npc_geometry_files') == sum(name.endswith('.geo') for name in files)
-        and closure.get('selected_texture_files') == sum(name.endswith('.texture') for name in files),
+        and closure.get('selected_current_atlas_npc_geometry_files') == sum(name.endswith('.geo') for name in files if name not in additions)
+        and closure.get('selected_texture_files') == sum(name.endswith('.texture') for name in files if name not in additions),
         'Client visual selected closure is incomplete or misrepresented')
     return value
 
@@ -173,7 +253,8 @@ def verify(archive, manifest, *, root=ROOT):
                 and entry.file_size == expected['bytes'] and entry.compress_type in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED),
                 'Invalid client visual ZIP member')
             verify_payload(entry.filename, source.read(entry), expected, value['provenance']['entries'][entry.filename],
-                requests=value['requests'][entry.filename], model_proof=value['closure']['requested_model_proof'].get(entry.filename))
+                requests=value['requests'][entry.filename], model_proof=(
+                    value['closure']['requested_model_proof'] | value['visual_extension']['requested_model_proof']).get(entry.filename))
     return value
 
 
