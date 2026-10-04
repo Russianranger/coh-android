@@ -1,5 +1,39 @@
 # City of Heroes Android handoff
 
+**0.13.7 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.7/COH-Atlas-Gameplay-0.13.7.apk)
+from source `0da09e771cb472f4ec897c39b90cef675d007edf`
+(implementation `78218a5d2368af4020712dbc65900b40f1d2d4f1`).
+[Dedicated CI 37198877717](https://github.com/Russianranger/coh-android/actions/runs/37198877717)
+passed both Ubuntu jobs, **633 checks / 38 suites / zero skips / 236 source pins**,
+all three real PostgreSQL transaction fixtures, official SDK v2/v3 signing,
+version-only manifest verification and publication. No native or Java/DEX
+recompile was performed. Broader draft-PR baseline checks remain separate.
+
+Public APK is **700,131,607 bytes**, **23,998,809 bytes** above 0.13.6;
+SHA-256 `ab21dc2e8a6ebecea0edf694187da83787f808a396d686e0d8312565f8373fc7`.
+[Publication receipt](android-evidence/client-visual-0.13.7-publication.json)
+records an independent public download, all **71 payloads** with the exact
+**64 retained / 3 replaced / 4 added** boundary, unchanged 22-member client ZIP
+and 20 DLLs, actual Game/DbServer source and PE receipts, exact memory DEX and
+19 Java sources, retained MapServer/server extraction, all 5,878 animation
+tracks, selected visual files/model tables and public checksum/instructions.
+Local SDK reverification was not performed; official CI SDK checks are bound
+to the identical public APK SHA-256. The first run assembled/signed an
+unpublished APK, then refused publication on process-dependent JSON key order.
+A serialization-only fix and independent-process regression passed; every
+runtime payload outside the two verification manifests remains identical to
+that first attempt. No extra physical test or user APK was requested.
+
+Install over the existing app, preserve imports/profile/database/tasks, and run
+**Set up runtime once**. [Focused instructions](COH-Atlas-Gameplay-0.13.7-testing.txt)
+request one saved-hero reopen with the same preset, separate preparation/client
+timings and Atlas/NPC/HUD screenshots, then Abort/owned cleanup/export. The first
+new texture-header index may add preparation time. Physical client savings and
+visible restoration remain pending; known model/material gaps are recorded below.
+Continue the existing branch and draft PR #1; main remains
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Preserve all earlier accepted gates.
+
 **Current device acceptance and next focus: client startup and missing visual assets (October 4, 2026 UTC).**
 The user reports a substantial server-startup improvement: about **6 minutes**
 to server start, **7m30s** for actual client startup to login, then about
@@ -101,7 +135,8 @@ with atomic/cancellable publication, owned readonly outputs and warm receipts.
 [Focused 0.13.7 instructions](COH-Atlas-Gameplay-0.13.7-testing.txt)
 request one timing/visual review, then Abort/owned cleanup/export; repeating
 accepted task/save/storage gates or a second long boot is not requested.
-Build/publication qualification remains pending. Preserve the accepted server reuse,
+Host/package qualification and publication are recorded above; the physical
+client timing and visual gate remains pending. Preserve the accepted server reuse,
 setup memory guard, imports, database, tasks and all earlier qualified gates.
 Historical entries below retain their state at the time they were written;
 this current section supersedes their outstanding 0.13.6 device-test requests.
