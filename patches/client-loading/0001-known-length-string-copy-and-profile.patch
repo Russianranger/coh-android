@@ -45,7 +45,7 @@
      ret = _malloc_dbg(len+1, _NORMAL_BLOCK, file, line);
  #endif
 -    strncpy_s(ret, len+1, string, len);
-+    if (knownLength && (cohClientLoadingFlags() & 1))
++    if (ret && knownLength && (cohClientLoadingFlags() & 1))
 +    {
 +        // strlen established the exact bound, including the final zero. The
 +        // explicit-length API keeps its secure CRT padding/truncation behavior.

@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(Path(__file__).parent), str(ROOT/'tools')]
@@ -31,14 +32,22 @@ def harness():
 #include <stdint.h>
 #include <time.h>
 #include <assert.h>
+#include <errno.h>
+static unsigned int invalid_parameter_calls;
 #ifdef _WIN32
 #include <windows.h>
 #define NOINLINE __declspec(noinline)
 #define TLS __declspec(thread)
+static void __cdecl test_invalid_parameter(const wchar_t*expression,const wchar_t*function,
+    const wchar_t*file,unsigned int line,uintptr_t reserved) {
+    (void)expression;(void)function;(void)file;(void)line;(void)reserved;
+    invalid_parameter_calls++;
+}
 #else
 #define NOINLINE __attribute__((noinline))
 #define TLS _Thread_local
 static int strncpy_s(char*d,size_t cap,const char*s,size_t count) {
+    if(!d){invalid_parameter_calls++;errno=EINVAL;return EINVAL;}
     size_t i=0; while(i<count && s[i]){assert(i+1<cap);d[i]=s[i];i++;}
     assert(i<cap);d[i]=0;return 0;
 }
@@ -46,7 +55,8 @@ static int strncpy_s(char*d,size_t cap,const char*s,size_t count) {
 #define PRIVATE_PARSER_HEAPS 0
 #define _NORMAL_BLOCK 0
 static size_t allocations,last_size;
-static void* test_malloc(size_t size,int b,const char*f,int l){(void)b;(void)f;(void)l;allocations++;last_size=size;return malloc(size);}
+static int fail_allocations;
+static void* test_malloc(size_t size,int b,const char*f,int l){(void)b;(void)f;(void)l;allocations++;last_size=size;return fail_allocations?NULL:malloc(size);}
 #define _malloc_dbg test_malloc
 static TLS int coh_client_loading_flags = -1;
 static TLS unsigned int coh_client_known_length_copies;
@@ -60,6 +70,17 @@ static void equivalent(const char*s,int len) {
     assert(a && b && allocations==before+2 && old_size==last_size && !strcmp(a,b));
     assert(!memcmp(a,b,strlen(a)+1));free(a);free(b);
 }
+static void allocation_failure(const char*s,int len) {
+    size_t before=allocations;unsigned int invalid_before=invalid_parameter_calls;
+    unsigned int copies_before=coh_client_known_length_copies;
+    fail_allocations=1;errno=0;
+    char*a=stock_allocator(s,len,"oom",1);int old_errno=errno;size_t old_size=last_size;
+    errno=0;char*b=candidate_allocator(s,len,"oom",1);
+    assert(!a && !b && allocations==before+2 && old_size==last_size);
+    assert(old_errno==EINVAL && errno==old_errno && invalid_parameter_calls==invalid_before+2);
+    assert(coh_client_known_length_copies==copies_before);
+    fail_allocations=0;
+}
 #ifdef _WIN32
 static DWORD WINAPI thread_check(LPVOID value) {
     int *ok=(int*)value;
@@ -70,12 +91,15 @@ static DWORD WINAPI thread_check(LPVOID value) {
 #endif
 static double bench(int enabled,int length,int iterations) {
     char*s=malloc((size_t)length+1);memset(s,'s',(size_t)length);s[length]=0;
-    coh_client_loading_flags=enabled?1:0;
+    coh_client_loading_flags=enabled?3:0;
     clock_t begin=clock();
     for(int i=0;i<iterations;i++){char*p=enabled?candidate_allocator(s,-1,"bench",0):stock_allocator(s,-1,"bench",0);observer+=(unsigned char)p[length-1];free(p);}
     double elapsed=(double)(clock()-begin)/CLOCKS_PER_SEC;free(s);return elapsed;
 }
 int main(int argc,char**argv) {
+#ifdef _WIN32
+    _invalid_parameter_handler previous_handler=_set_invalid_parameter_handler(test_invalid_parameter);
+#endif
     int lens[]={0,1,8,48,128,511,512,11999,12000,65535};
     for(int flags=0;flags<4;flags++){
         coh_client_loading_flags=flags;coh_client_known_length_copies=0;
@@ -85,6 +109,8 @@ int main(int argc,char**argv) {
             equivalent(s,-1);equivalent(s,0);equivalent(s,length);equivalent(s,length/2);equivalent(s,length+3);free(s);
         }
         assert(coh_client_known_length_copies==((flags==3)?11u:0u));
+        allocation_failure("oom",-1);allocation_failure("",-1);
+        allocation_failure("oom",0);allocation_failure("oom",3);
     }
     coh_client_loading_flags=-1;
 #ifdef _WIN32
@@ -110,6 +136,9 @@ int main(int argc,char**argv) {
             }
         }
     }
+#ifdef _WIN32
+    _set_invalid_parameter_handler(previous_handler);
+#endif
     puts("EQUIVALENCE_OK");return 0;
 }
 '''
@@ -167,6 +196,19 @@ def windows_receipt(output):
 
 
 class ClientLoadingNativeTests(unittest.TestCase):
+    def test_exact_reverse_proof_handles_windows_input_and_ambient_git(self):
+        expected = native.patched_text()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in ('upstream/ouroboros/'+native.FILE, native.PATCH):
+                target = root/name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes((native.ROOT/name).read_bytes().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n'))
+            # A caller's Git state must not direct either operation elsewhere.
+            with mock.patch.dict(os.environ, {'GIT_DIR':str(root/'foreign.git'),
+                    'GIT_WORK_TREE':str(root/'foreign'), 'GIT_INDEX_FILE':str(root/'foreign.index')}):
+                self.assertEqual(native.patched_text(root), expected)
+
     def test_exact_decoder_scope_preserves_schema_and_freshness(self):
         expected=native.expected_receipt(); original,current=native.patched_text()
         self.assertEqual(set(expected['patched_sha256']),{native.FILE})

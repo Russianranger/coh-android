@@ -5,9 +5,11 @@ import hashlib
 import json
 import math
 import importlib
+import os
 from pathlib import Path
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -53,6 +55,20 @@ def function(text, signature):
     return text[begin:end]
 
 
+def reverse_patch(source, patch):
+    # Use the same Git implementation/configuration as the forward application.
+    # GNU patch can rewrite otherwise identical LF source as CRLF on Windows.
+    env = os.environ.copy()
+    for name in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE'):
+        env.pop(name, None)
+    env['GIT_CEILING_DIRECTORIES'] = str(source.parent)
+    command = ['git', '-c', 'core.autocrlf=false', 'apply', '--reverse']
+    subprocess.run(command + ['--check', '-'], input=patch, cwd=source, env=env,
+                   check=True, capture_output=True)
+    subprocess.run(command + ['-'], input=patch, cwd=source, env=env,
+                   check=True, capture_output=True)
+
+
 def patched_text(root=ROOT):
     root = Path(root)
     original = (root/'upstream/ouroboros'/FILE).read_bytes().replace(b'\r\n', b'\n')
@@ -62,11 +78,9 @@ def patched_text(root=ROOT):
         require(tuple(line[6:] for line in patch.decode().splitlines() if line.startswith('+++ b/')) == FILES,
             'Client loading patch changed unexpected source')
         apply_patch(source, patch)
-        result = path.read_text()
+        result = path.read_bytes().decode()
         # Reverse the precise patch and compare the complete immutable input.
-        import subprocess
-        subprocess.run(['patch', '-p1', '-R', '--batch', '--fuzz=0'], input=patch,
-            cwd=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        reverse_patch(source, patch)
         require(path.read_bytes() == original, 'Decoder reverse patch did not reproduce exact base')
         return original.decode(), result
 
