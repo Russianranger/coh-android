@@ -1,5 +1,36 @@
 # City of Heroes Android handoff
 
+**0.13.6 published and independently payload-verified (October 4, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.6/COH-Atlas-Gameplay-0.13.6.apk)
+from source `7b48762de0748e443a2df60c6e4b59e22b365e35`
+(implementation `ecddc3983beb8e6c298aaa63e6a068eb341f4e25`).
+[Dedicated CI 37192124009](https://github.com/Russianranger/coh-android/actions/runs/37192124009)
+passed both Win32 native builds, **542 checks / 34 suites / zero skips / 187 source
+pins**, three real PostgreSQL transaction fixtures, official SDK v2/v3 signing,
+version-only manifest verification and publication. Broader draft-PR baseline
+checks are separate. The first CI attempt stopped before APK creation on a
+Windows test-fixture CRLF patch input; a fixture-only fix and regression passed.
+
+Public APK is **676,132,798 bytes**, only **12,288 bytes** larger than 0.13.5;
+SHA-256 `6c3a11bcbe245c3938dbb9eb461fce40468097189dc115ab8819c496d26f5552`.
+[Publication receipt](android-evidence/startup-bundle-0.13.6-publication.json)
+records actual public download and checksum/instruction verification, all 67
+payloads with the exact 55-retained/12-updated boundary, nested 22-file client
+ZIP with 20 retained DLLs, native source/qualification receipts, actual retained
+server archive extraction, 19 unchanged authored Java sources and the exact
+memory-protection DEX/resources. CI SDK checks are bound to identical public
+bytes; no separate local SDK rerun or device performance claim is made.
+
+Install over the existing app, keep imports and private database/profile, and
+**Set up runtime once** to activate the changed helper/native generation.
+[Focused instructions](COH-Atlas-Gameplay-0.13.6-testing.txt) request one Reopen
+saved THORHERO with the same graphics preset, readiness/login/connection timings,
+one Save/logout for the newly observed regression, then one exported report.
+No contact/task/combat/movement/storage/character-creation retest or second long
+boot is requested. Preserve the accepted 0.13.5 setup result and earlier gates.
+Actual 0.13.6 speedups and <=300-second readiness remain unqualified.
+Main stays `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; PR #1 stays open draft.
+
 **Current continuation: measured startup/cache/texture and save fixes (October 4, 2026 UTC).**
 The user accepted smooth 0.13.5 runtime setup and supplied both reports
 `coh-atlas-gameplay-20261004-082023.zip` and `coh-atlas-gameplay-20261004-084550.zip`.
@@ -38,9 +69,9 @@ Only Game and normal DbServer need native compilation; the retained MapServer,
 renderer libraries, runtime archives, prepared caches, imports and 19 authored
 Java memory-protection sources remain exact. Frozen prior native source layers
 remain unchanged; new patches and receipts describe each supplement separately.
-Local qualification passed **541 checks / 34 suites / zero skips**, with a
-**187-file source closure** and independent safety review. Native compilation,
-real PostgreSQL fixtures and APK publication remain pending CI.
+Dedicated CI qualification passed **542 checks / 34 suites / zero skips**, with
+a **187-file source closure**, both native builds and all three real PostgreSQL
+transaction fixtures. The public APK also passed independent payload verification.
 [Targeted instructions](COH-Atlas-Gameplay-0.13.6-testing.txt) request one runtime
 activation and one preserved-character timing/save session. Do not repeat
 contact, task, combat, movement, storage or character-creation tests. Device
