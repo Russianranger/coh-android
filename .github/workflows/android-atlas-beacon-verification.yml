@@ -66,7 +66,15 @@ jobs:
               print('COH_ATLAS_FAILURE_ROLE ' + role + ' bytes=' + str(len(raw)))
               for marker in markers:
                   print(marker)
+              crc_lines = [line[:512] for line in text.splitlines() if re.search(r'CRC|Max Height|Total triangles|Basic Beacons|Legal Beacons|Traffic Beacons|Newest Data Time|Reading beacon file|File size', line, re.I)][-40:]
+              roles[role]['crc_lines'] = crc_lines
+              for line in crc_lines:
+                  print('COH_ATLAS_FAILURE_CRC_LINE ' + role + ' ' + line.encode('ascii', errors='backslashreplace').decode())
               print(text[-4096:].encode('ascii', errors='backslashreplace').decode())
+          cache = root / 'evidence' / 'CMakeCache.txt'
+          if cache.is_file():
+              flag_lines = [line[:512] for line in cache.read_text(errors='replace').splitlines() if re.search(r'FLAGS_(OPTDEBUG|RELEASE|DEBUG|RELWITHDEBINFO)|BUILD_TYPE|CONFIGURATION_TYPES', line)][:24]
+              print('COH_ATLAS_FAILURE_COMPILER_FLAGS ' + json.dumps(flag_lines))
           result = {'format': 1, 'status': 'failure_evidence_only_no_graph_qualification',
               'run_id': run_id, 'source_commit': head, 'artifact_id': artifact_id,
               'artifact_zip_sha256': artifact['digest'], 'files': pins, 'roles': roles}

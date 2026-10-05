@@ -1,5 +1,41 @@
 # City of Heroes Android handoff
 
+**UI sweep ready; Atlas generation completed, but CRC qualification failed. No 0.13.14 APK is published.**
+
+Actual native run [37363692462](https://github.com/Russianranger/coh-android/actions/runs/37363692462)
+at source `57515789dfafab5c4eab3273c63e28beef20264c` passed 106 focused
+tests, the exact donor audit, fresh host compilation and both physical input
+inventories. The owned server returned zero and graph/date files existed.
+Python then rejected the native witness at **2026-10-05 21:13:57 UTC**:
+`Native loaded-world CRC and date sidecar differ`. This was a post-generation
+qualification failure; the two fresh profile checks had not run.
+
+The unqualified server marker reported CRC `0xfe75bab6`, 163,544 combat
+beacons, 163,527 connected beacons, 1,805,050 ground connections, 2,698,868
+raised connections, 602 blocks and 32 paths. These emitted values do not
+establish accepted graph/CRC/profile proof. The pinned original sidecar
+writer and reader agree on exactly 12 bytes: S32 version 9, U32 newest time,
+U32 full-world CRC. Do not change that format or relax CRC equality.
+
+Failure artifact **11370824751** contains 13 evidence files, 16,790,903 bytes,
+ZIP SHA-256 `f5ea6e160a16fcd37971daf3fb8ee1e60f63ab03420da6e360b57d144dce79f1`.
+Its fresh host executable is 6,880,256 bytes, SHA-256
+`f21980e4b973e4e774b07ffc589e9fb9f9be667e01e3bcfb37a3d4cef938e1b5`.
+The old failure collector did not retain the generated graph/date. A targeted
+producer draft now captures bounded, explicitly unqualified output before
+validation and prints bounded role heartbeats; it needs hosted tests before use.
+
+Read-only forensic run **37375223395** authenticated the actual failed artifact
+and recovered role markers/tails. The next forensic revision extracts the
+earlier CRC/date lines and compiler flags. Review the freshly computed matcher
+CRC, file aliases and optimized-build validation semantics before choosing a
+source correction. Preserve strict full readback, native paths and both fresh
+profiles. Freeze graph pins and commit the held publisher only after genuine
+qualification succeeds. Main remains separate; draft PR #1 remains open.
+The UI payload stays frozen at 788 additions; zoning remains a later pass.
+
+Earlier active-run checkpoint follows; its pending status is historical.
+
 **UI sweep ready; corrected host compiled; genuine Atlas graph proof is running. Next candidate: 0.13.14 / code 29.**
 
 Source milestone: `57515789dfafab5c4eab3273c63e28beef20264c`.
