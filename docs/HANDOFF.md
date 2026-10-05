@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep ready; corrected CRC proof passed 114 targeted tests. Fresh native build is running. Next candidate: 0.13.14 / code 29.**
+**UI sweep ready; corrected host compiled and passed 114 targeted tests. Genuine Atlas graph proof is running. Next candidate: 0.13.14 / code 29.**
 
 The preceding real generation finished, but its later CRC marker used a
 different runtime phase and failed qualification. Authenticated forensic run
@@ -25,14 +25,16 @@ Bounded 60-second owned-role heartbeats improve host diagnostics. Actual run
 at generation source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` passed
 **114 targeted tests in 17.390 seconds** (job 111988749980), including source,
 fixture, missing/conflicting/late marker and evidence-retention cases. Independent
-source review found no blocker. Windows job **111989203448** is active; its
-fresh compilation and genuine generation/profile proof are pending. The C
-receipt changes; no failed graph or old path proof is reused.
+source review found no blocker. Windows job **111989203448** passed fresh
+Win32 compilation and began its combined preparation/generation/readback step
+at **2026-10-05 21:47:27 UTC**. New genuine graph/profile qualification is
+pending; no failed graph or old path proof is reused. This docs-only checkpoint
+changes no generation source/input and must not restart the active lane.
 
 The previous owned phase was about 77 minutes, following about 12 minutes of
 host input preparation. Keep its 90-minute owned deadline and each bounded
 fresh-profile deadline; no timeout failure occurred. The current actual run must
-pass compilation, generation and both profile proofs before
+complete genuine generation and both profile proofs before
 freezing graph pins and enabling final 68-suite/seven-PostgreSQL-fixture signing
 and public APK download audit. No 0.13.14 APK is published. The frozen UI sweep
 adds 788 original resources while preserving all 9,613 prior streams. Main
