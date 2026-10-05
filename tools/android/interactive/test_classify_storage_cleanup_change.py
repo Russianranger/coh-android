@@ -12,6 +12,15 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_host_beacon_generation_workflow_has_no_publication_or_shipping_binary_step(self):
+        root = Path(__file__).resolve().parents[3]
+        source = (root/'.github/workflows/android-atlas-beacon-generation.yml').read_text()
+        for required in ('C:/bcn-src', 'generate_atlas_beacons.py', '--target MapServer',
+                '--timeout-seconds 5400', 'coh-ui-beacon-native', 'contents: read'):
+            self.assertIn(required, source)
+        for forbidden in ('build_ui_beacon_apk.py build', 'contents: write', 'COH_ATLAS_BEACON_REUSE_RUN_ID'):
+            self.assertNotIn(forbidden, source)
+
     def test_ui_beacon_scope_skips_all_historical_builds_and_fails_closed(self):
         from classify_interactive_change import runtime_required
         names = sorted(change.UI_BEACON_ALLOWED)

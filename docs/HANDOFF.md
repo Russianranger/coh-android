@@ -48,6 +48,15 @@ commands must not be enabled as a substitute for the active native generator.
 Preserve all working assets, character data, cache/freshness, controls and timing
 instrumentation. Do not repeat broad world/model imports.
 
+The host-only native Atlas graph producer is staged and its six focused source,
+CRC and transcript tests pass. Its standalone Windows workflow uses short
+`C:/bcn-src` build paths and four owned localhost roles, preserving the real
+generation/connection algorithms. It must pass a fresh ordinary loaded-world
+CRC comparison, full native graph readback and 32 native path searches before
+any graph can ship. Physical collision/group/trick inputs are pinned and proved
+unchanged around generation. This executable never replaces the gameplay
+MapServer; generation and Android graph consumption remain pending.
+
 **The 0.13.13 publication checkpoint below is historical; its pending physical
 startup/training/persistence questions are now resolved by the evidence above.**
 

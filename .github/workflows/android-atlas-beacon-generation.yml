@@ -1,0 +1,87 @@
+name: Generate authentic single-map Atlas native beacons
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-atlas-beacon-generation.yml
+      - tools/prepare_atlas_beacon_generator_source.py
+      - tools/android/interactive/generate_atlas_beacons.py
+      - patches/atlas-beacons/**
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-atlas-beacon-native-generation
+  cancel-in-progress: false
+jobs:
+  generate:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: out/ui-beacon-donor/evidence
+          run-id: 37324515114
+          github-token: ${{ github.token }}
+      - name: Recover exact public working world and reviewed original import input
+        shell: pwsh
+        run: |
+          python tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          if ($LASTEXITCODE -ne 0) { throw 'Public donor download failed' }
+          python tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --release-asset-id 588984151 --output out/ui-beacon-donor/reference-assets.zip
+          if ($LASTEXITCODE -ne 0) { throw 'Exact original import input download failed' }
+      - name: Stage a contained host-only single-map native generator
+        shell: pwsh
+        run: |
+          python tools/prepare_atlas_beacon_generator_source.py --output C:/bcn-src
+          if ($LASTEXITCODE -ne 0) { throw 'Native generator staging failed' }
+      - name: Compile Win32 generator without changing shipped MapServer
+        working-directory: C:/bcn-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Native generator configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target MapServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Native generator compile failed' }
+      - name: Generate actual Atlas graph then independently read back and exercise native paths
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/generate_atlas_beacons.py
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-receipt out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --asset-archive out/ui-beacon-donor/reference-assets.zip
+          --generator C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+          --build-input C:/bcn-src/atlas-beacon-generator-build-input.json
+          --repository-commit "$env:GITHUB_SHA"
+          --work out/atlas-beacon-generator-work
+          --output out/ui-beacon-native
+          --timeout-seconds 5400
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-ui-beacon-generation-evidence
+          path: |
+            out/ui-beacon-native/atlas-beacon-generation-report.json
+            out/ui-beacon-native/evidence/
+            C:/bcn-src/atlas-beacon-generator-build-input.json
+            C:/bcn-src/out/build/vs2026/CMakeCache.txt
+            C:/bcn-src/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/atlas-beacon-generator-work/*.log
+          if-no-files-found: warn
+          retention-days: 90
