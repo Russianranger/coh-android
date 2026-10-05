@@ -1,5 +1,32 @@
 # City of Heroes Android handoff
 
+**UI sweep ready; corrected host compiled; genuine Atlas graph proof is running. Next candidate: 0.13.14 / code 29.**
+
+Source milestone: `57515789dfafab5c4eab3273c63e28beef20264c`.
+Actual run [37363692462](https://github.com/Russianranger/coh-android/actions/runs/37363692462)
+passed **106 focused tests** (12.451 seconds) and the SHA-pinned public-donor
+audit. Windows job **111946023236** correctly refused the old incompatible
+host compile, then compiled the corrected source successfully. Its native
+generation/readback step began at **2026-10-05 19:44:23 UTC** and is still
+active at this documentation checkpoint. No completed failure or successful
+graph/profile proof is available yet; no 0.13.14 APK is published.
+
+This docs-only checkpoint changes no generation source or input pin and must
+not restart the active native lane. The next result must come from the actual
+owned roles, full graph/CRC readback and two fresh profile processes with
+32 successful paths each. Do not infer role readiness or graph qualification
+from elapsed time. If successful, verify the actual package with the held
+cloud verifier, freeze its real manifest/archive pins, then run the final
+68-suite/seven-PostgreSQL-fixture/signing/public-download qualification.
+The held verifier/publication drafts target run 37363692462 and actual source
+57515789, and remain uncommitted until that run completes successfully.
+
+The executor remains unavailable; hosted jobs are the execution evidence.
+Main remains separate and unchanged. Keep ordinary fast-forward checkpoints
+on the continuation branch and leave draft PR #1 open. Zoning remains later.
+
+Earlier bind-repair checkpoint follows; pending statements below are historical.
+
 **UI sweep ready; native Atlas port-bind repair ready for proof. Next candidate: 0.13.14 / code 29.**
 
 Actual run [37361394686](https://github.com/Russianranger/coh-android/actions/runs/37361394686)
