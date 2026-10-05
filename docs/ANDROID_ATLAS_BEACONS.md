@@ -5,6 +5,53 @@ training without a crash, and still displayed the native unbeaconized warning.
 This pass produces a genuine graph for the current Atlas world. Zoning remains
 a later pass. The warning is not patched or hidden.
 
+## Native proof checkpoint on October 5
+
+Run `37363692462` at generation commit
+`57515789dfafab5c4eab3273c63e28beef20264c` passed 106 preflight tests,
+fresh native compilation, both exact input inventories and all four owned
+roles. It completed real generation and graph readback, reporting 163,544
+combat beacons, 163,527 connected beacons, 1,805,050 ground connections,
+2,698,868 raised connections, 602 grid blocks and 32 native routes. The
+generation server exited zero. This is a native generation milestone, not an
+accepted package.
+
+Qualification then rejected its CRC witness before the two fresh input-profile
+processes. Authenticated failed-artifact inspection recovered a fresh ordinary
+world traversal with 4,569,858 triangles and full CRC `0xb0c21ded`; its native
+date matcher accepted. The later marker recomputed CRC after graph reload and
+route searches and reported `0xfe75bab6`. The original v9 layout is exactly
+S32 version + U32 newest-data time + U32 full-world CRC, twelve bytes. There is
+no format exception or relaxed CRC check. The precise reason for the later
+runtime-state CRC change remains unproved.
+
+The host proof now calls the fresh matcher unconditionally, rejects false with
+an explicit fatal exit, and captures its newly calculated full-world CRC
+immediately before graph readback. A distinct preceding
+`COH_ATLAS_BEACON_FRESH_WORLD_V1` marker and the final count/route marker must
+both equal the unchanged native v9 sidecar CRC. Reader version, populated
+connections/blocks and all 32 native routes have explicit fatal guards that do
+not depend on assertion macros or optimized-build flags. Both fresh profile
+processes remain mandatory and must agree. Changing this host C wrapper
+invalidates the earlier compile receipt and requires a fresh native binary;
+generation/collision/file/path algorithms and the shipped gameplay binary
+remain unchanged.
+
+The failed-run evidence artifact is `11370824751` (16,790,903 bytes),
+SHA256 `f5ea6e160a16fcd37971daf3fb8ee1e60f63ab03420da6e360b57d144dce79f1`.
+It retains all role logs, host EXE/PDB and build receipts, but the old producer
+did not preserve graph/date bytes before Python qualification failed. No
+qualified graph or graph pins can be recovered from that artifact.
+
+The producer now saves bounded regular graph/date copies, exact byte pins,
+date hex and native markers as explicitly **unqualified** always-evidence
+before CRC validation, and also when a native qualification guard fails after
+writing them. It records the actual server exit status and never rewrites the
+native sidecar. Owned-role progress emits bounded ASCII heartbeat lines every
+60 seconds. These diagnostics supply neither profile proof nor publication
+approval. The next actual native run and both fresh profiles still gate the
+APK.
+
 ## Native producer and qualification
 
 The prior `atlas-beacon-input-preflight.json` remains accurate about the input
@@ -35,7 +82,8 @@ after generation. UI-only texture additions do not change this graph identity.
 
 After native generation and connection, the server freshly loads the ordinary
 Atlas map without the generator's missing-definition cleanup. It compares the
-v9 date-sidecar full-world CRC with that fresh world, fully rereads the v8 graph,
+v9 date-sidecar full-world CRC with that fresh world, captures that freshly
+verified CRC before graph operations, fully rereads the v8 graph,
 requires populated connected combat/grid data and exercises 32 real native
 pathfinder routes. The same graph must then pass two additional fresh native
 processes: base/world inputs with none of the optional 406 GEOs, and base/world

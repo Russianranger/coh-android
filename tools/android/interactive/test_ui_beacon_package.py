@@ -197,7 +197,9 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 'profile_verification_processes': 2, 'profile_proofs': profiles,
                 'cold_mirror': {'created_before_visual_overlay_and_generation': True,
                     'readonly_inputs_hardlinked': True, 'private_cache_roots': ['data/bin', 'data/geobin', 'data/server']},
-                'evidence': {'evidence/server.log': pin(b'native-CRC-readback-and-path-witness')}}
+                'evidence': {'evidence/server.log': pin(
+                    b'COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x12345678\n'
+                    b'COH_ATLAS_BEACON_NATIVE_V1 crc=0x12345678 combat=2000 connected=1900 ground=5000 raised=100 blocks=100 paths=32\n')}}
             guest = mock.Mock(); guest.read_manifest.return_value = manifest
             guest.ARCHIVE_BYTES = (directory/'atlas-beacons.zip').stat().st_size
             guest.ARCHIVE_SHA256 = pin((directory/'atlas-beacons.zip').read_bytes())['sha256']

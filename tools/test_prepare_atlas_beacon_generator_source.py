@@ -28,7 +28,7 @@ class AtlasBeaconSourceTests(unittest.TestCase):
         patch = (producer.ROOT/producer.PATCH).read_text()
         additions = '\n'.join(line[1:] for line in patch.splitlines() if line.startswith('+') and not line.startswith('+++'))
         for call in ('beaconDoesTheBeaconFileMatchTheMap(1)', 'beaconReload()', 'beaconPathFind(search',
-                     'assert(paths == 32)'):
+                     'beaconHostRequire(paths == 32'):
             self.assertIn(call, additions)
         self.assertIn('beaconSetPathFindEntity(NULL, 0)', additions)
         self.assertIn('groupLoadMap(freshMapName, 0, 0)', additions)
@@ -42,6 +42,32 @@ class AtlasBeaconSourceTests(unittest.TestCase):
         self.assertNotIn('THIS MAP HAS NOT BEEN BEACONIZED', additions)
         self.assertNotIn('beaconProcessCombatBeacons(', additions)
         self.assertNotIn('RegReader', additions)
+
+
+    def test_native_crc_proof_is_mandatory_and_captured_before_graph_mutation(self):
+        patch=(producer.ROOT/producer.PATCH).read_text()
+        additions='\n'.join(line[1:] for line in patch.splitlines()
+                            if line.startswith('+') and not line.startswith('+++'))
+        proof=additions.split('static void beaconHostVerifyCurrentAtlasGraph(void){',1)[1]
+        proof=proof.split('static void beaconServerStartupSetServerType',1)[0]
+        self.assertNotIn('assert(',proof)
+        self.assertNotIn('beaconGetMapCRC(',proof)
+        for call in ('mapMatches = beaconDoesTheBeaconFileMatchTheMap(1)',
+                     'beaconHostRequire(mapMatches',
+                     'freshWorldCRC = beacon_process.fullMapCRC',
+                     'COH_ATLAS_BEACON_FRESH_WORLD_V1',
+                     'beaconHostRequire(beaconGetReadFileVersion() == 8',
+                     'beaconHostRequire(paths == 32'):
+            self.assertIn(call,proof)
+        self.assertLess(proof.index('mapMatches = beaconDoesTheBeaconFileMatchTheMap'),
+                        proof.index('freshWorldCRC = beacon_process.fullMapCRC'))
+        self.assertLess(proof.index('freshWorldCRC = beacon_process.fullMapCRC'),
+                        proof.index('beaconReload()'))
+        self.assertIn('freshWorldCRC, combatBeaconArray.size, connected',proof)
+        require=additions.split('static void beaconHostRequire(',1)[1].split('static void beaconHostVerify',1)[0]
+        self.assertIn('if(!condition)',require)
+        self.assertIn('FatalErrorf(',require)
+        self.assertIn('exit(2)',require)
 
     def test_containment_patch_applies_without_changing_algorithm_files(self):
         with tempfile.TemporaryDirectory(prefix='coh-beacon-stage-test-') as temporary:

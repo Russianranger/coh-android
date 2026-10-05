@@ -13,7 +13,7 @@ import generate_atlas_beacons as generator
 
 
 class AtlasNativeEvidenceTests(unittest.TestCase):
-    MARKER = b'COH_ATLAS_BEACON_NATIVE_V1 crc=0x10203040 combat=2000 connected=1900 ground=5000 raised=100 blocks=100 paths=32\n'
+    MARKER = b'COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x10203040\n' + b'COH_ATLAS_BEACON_NATIVE_V1 crc=0x10203040 combat=2000 connected=1900 ground=5000 raised=100 blocks=100 paths=32\n'
 
     def test_valid_bounded_native_receipt_shape(self):
         value = generator.native_evidence(self.MARKER, struct.pack('<iII',9,1767225600,0x10203040))
@@ -27,6 +27,16 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             with self.subTest(raw=raw):
                 with self.assertRaises(ValueError):
                     generator.native_evidence(raw,struct.pack('<iII',9,1767225600,0x10203040))
+
+
+    def test_fresh_loaded_world_capture_must_be_unique_and_match_final_witness(self):
+        date=struct.pack('<iII',9,1767225600,0x10203040)
+        main=self.MARKER.splitlines(keepends=True)[-1]
+        fresh=self.MARKER.splitlines(keepends=True)[0]
+        for raw in (main,main+fresh,fresh+self.MARKER,
+                    fresh.replace(b'0x10203040',b'0x10203041')+main):
+            with self.subTest(raw=raw), self.assertRaisesRegex(ValueError,'fresh ordinary-world'):
+                generator.native_evidence(raw,date)
 
     def test_date_crc_version_and_size_must_match_native_loaded_world(self):
         for date in (b'bad',struct.pack('<iII',8,1767225600,0x10203040),
@@ -134,6 +144,100 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             self.assertEqual(record['cold_difference']['missing_count'],1)
             self.assertEqual(json.loads((evidence/'native-input-profiles.json').read_bytes()),record)
             self.assertIn('COH_ATLAS_BEACON_INPUT_PROFILES',output.getvalue())
+
+
+    def test_unqualified_completed_output_is_saved_before_crc_validation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); runtime = root/'r'; runtime.mkdir()
+            evidence = root/'evidence'; evidence.mkdir()
+            graph = runtime/generator.GRAPH; graph.parent.mkdir(parents=True)
+            graph.write_bytes(b'actual generated graph bytes')
+            date = runtime/generator.DATE
+            date.write_bytes(struct.pack('<iII', 9, 1767225600, 0x10203041))
+            (evidence/'server.log').write_bytes(self.MARKER)
+            with contextlib.redirect_stdout(io.StringIO()) as output:
+                value = generator.record_native_output(evidence, runtime, 0)
+            self.assertEqual(value['status'], 'unqualified_native_output')
+            self.assertTrue(value['both_fresh_profile_proofs_required'])
+            self.assertEqual(value['date']['full_world_crc'], '0x10203041')
+            self.assertEqual(value['native_markers'][0]['crc'], '0x10203040')
+            self.assertEqual((evidence/'unqualified-native-graph.bcn').read_bytes(), graph.read_bytes())
+            self.assertEqual((evidence/'unqualified-native-graph.bcn.date').read_bytes(), date.read_bytes())
+            self.assertEqual(json.loads((evidence/'unqualified-native-output.json').read_bytes()), value)
+            self.assertIn('COH_ATLAS_BEACON_UNQUALIFIED_OUTPUT', output.getvalue())
+            with self.assertRaisesRegex(ValueError, 'marker=0x10203040 date=0x10203041'):
+                generator.native_evidence(self.MARKER, date.read_bytes())
+            self.assertFalse((evidence/generator.MANIFEST).exists())
+            self.assertFalse((evidence/generator.ARCHIVE).exists())
+
+    def test_unqualified_capture_preserves_native_version_instead_of_repairing_it(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); runtime=root/'r'; runtime.mkdir()
+            evidence=root/'evidence'; evidence.mkdir()
+            graph=runtime/generator.GRAPH; graph.parent.mkdir(parents=True); graph.write_bytes(b'actual native graph')
+            date=runtime/generator.DATE; raw=struct.pack('<iII',8,0,0x10203040); date.write_bytes(raw)
+            (evidence/'server.log').write_bytes(self.MARKER)
+            with contextlib.redirect_stdout(io.StringIO()):
+                value=generator.record_native_output(evidence,runtime,0)
+            self.assertEqual(value['date']['version'],8)
+            self.assertEqual(date.read_bytes(),raw)
+            with self.assertRaisesRegex(ValueError,'Native date version differs: 8'):
+                generator.native_evidence(self.MARKER,raw)
+
+    def test_unqualified_output_refuses_symlink_and_oversize_payloads(self):
+        for linked in (False,True):
+            with self.subTest(linked=linked), tempfile.TemporaryDirectory() as temporary:
+                root=Path(temporary); runtime=root/'r'; runtime.mkdir()
+                evidence=root/'evidence'; evidence.mkdir()
+                graph=runtime/generator.GRAPH; graph.parent.mkdir(parents=True)
+                if linked:
+                    other=root/'unowned.bcn'; other.write_bytes(b'foreign graph'); graph.symlink_to(other)
+                else:
+                    with graph.open('wb') as stream: stream.truncate(generator.MAX_GRAPH+1)
+                (runtime/generator.DATE).write_bytes(struct.pack('<iII',9,0,0x10203040))
+                (evidence/'server.log').write_bytes(self.MARKER)
+                with self.assertRaises(ValueError): generator.record_native_output(evidence,runtime,0)
+                self.assertFalse((evidence/'unqualified-native-output.json').exists())
+
+    def test_owned_role_heartbeat_is_bounded_ascii_and_not_a_proof(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence=Path(temporary)
+            (evidence/'server.log').write_bytes(b'EXCLUDED_PREFIX\n'+b'x'*9000+b'\nNative \xff final progress\n')
+            process=SimpleNamespace(poll=lambda:None)
+            with contextlib.redirect_stdout(io.StringIO()) as output:
+                value=generator.record_role_heartbeat(evidence,{'server':process},generator.time.monotonic()-5,'generation')
+            self.assertEqual(value['status'],'native_progress_only')
+            self.assertEqual(value['phase'],'generation')
+            self.assertIsNone(value['roles']['server']['returncode'])
+            self.assertGreaterEqual(value['elapsed_seconds'],5)
+            self.assertNotIn('EXCLUDED_PREFIX',output.getvalue())
+            self.assertIn('final progress',output.getvalue())
+            output.getvalue().encode('ascii')
+            self.assertLessEqual(len(value['roles']['server']['last_progress_line']),512)
+            self.assertFalse((evidence/generator.REPORT).exists())
+
+    def test_capture_precedes_native_crc_assertion_in_actual_producer(self):
+        import inspect
+        source=inspect.getsource(generator.generate)
+        self.assertLess(source.index('record_native_output(evidence, runtime,'),
+                        source.index('witness = native_evidence'))
+        self.assertIn('next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS',source)
+
+
+
+    def test_unqualified_output_retains_failed_server_status_without_qualifying_it(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); runtime=root/'r'; runtime.mkdir()
+            evidence=root/'evidence'; evidence.mkdir()
+            graph=runtime/generator.GRAPH; graph.parent.mkdir(parents=True); graph.write_bytes(b'written before native proof failed')
+            (runtime/generator.DATE).write_bytes(struct.pack('<iII',9,0,0x10203040))
+            (evidence/'server.log').write_bytes(b'native graph written then qualification failed')
+            with contextlib.redirect_stdout(io.StringIO()):
+                value=generator.record_native_output(evidence,runtime,2)
+            self.assertEqual(value['native_generation_server_returncode'],2)
+            self.assertEqual(value['status'],'unqualified_native_output')
+            self.assertEqual(value['native_markers'],[])
+            self.assertFalse((evidence/generator.REPORT).exists())
 
 
 class AtlasNativeInputCaseTests(unittest.TestCase):

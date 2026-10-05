@@ -35,6 +35,8 @@ REPORT = 'atlas-beacon-generation-report.json'
 GRAPH = 'data/server/maps/city_zones/city_01_01/city_01_01.txt.v8.bcn'
 DATE = GRAPH + '.date'
 MAX_LOG = 128 * 1024 * 1024
+MAX_GRAPH = 128 * 1024 * 1024
+HEARTBEAT_SECONDS = 60
 MAX_FAILURE_TAIL = 8192
 VISUAL_OBJECT_GEOS = 406
 PROFILES = ('base_world', 'base_world_visual')
@@ -48,6 +50,7 @@ HOST_COMPILE_REUSE = {
                  'sha256': 'd37e6d13bd619e9c39014b784d193773830ad950d2abd3e252f025588c58020b'},
 }
 
+FRESH_NATIVE = re.compile(rb'COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=(0x[0-9a-fA-F]{8})')
 NATIVE = re.compile(rb'COH_ATLAS_BEACON_NATIVE_V1 crc=(0x[0-9a-fA-F]{8}) combat=(\d+) connected=(\d+) ground=(\d+) raised=(\d+) blocks=(\d+) paths=(\d+)')
 GENERATION_SOURCES = (
     'tools/prepare_atlas_beacon_generator_source.py',
@@ -335,12 +338,18 @@ def native_evidence(log, date):
     matches = NATIVE.findall(log)
     require(len(matches) == 1, 'One native graph/CRC/path witness required')
     crc, *values = matches[0]
+    fresh = FRESH_NATIVE.findall(log)
+    require(len(fresh) == 1 and fresh[0] == crc
+            and FRESH_NATIVE.search(log).start() < NATIVE.search(log).start(),
+            'One matching fresh ordinary-world CRC capture required before graph readback')
     combat, connected, ground, raised, blocks, paths = map(int, values)
     require(1000 < combat <= 1000000 and 1000 < connected <= combat and ground > 1000
             and raised >= 0 and blocks > 0 and paths == 32, 'Native graph/path witness outside bounds')
     require(len(date) == 12, 'Native v9 date sidecar must have exactly 12 bytes')
     version, newest, date_crc = struct.unpack('<iII', date)
-    require(version == 9 and date_crc == int(crc, 16), 'Native loaded-world CRC and date sidecar differ')
+    require(version == 9, f'Native date version differs: {version}')
+    require(date_crc == int(crc, 16),
+            f'Native loaded-world CRC and date sidecar differ: marker={crc.decode("ascii")} date=0x{date_crc:08x}')
     return {'full_world_crc': f'0x{date_crc:08x}', 'combat_beacons': combat,
             'connected_beacons': connected, 'ground_connections': ground,
             'raised_connections': raised, 'grid_blocks': blocks, 'native_pathfinder_successes': paths,
@@ -406,6 +415,68 @@ def validate_package(directory, repository_commit):
 
 def _date_from_archive(path):
     with zipfile.ZipFile(path) as archive: return archive.read(DATE)
+
+
+
+def record_native_output(evidence, runtime, server_returncode):
+    """Preserve real completed output for diagnosis, without qualifying it."""
+    files = {}
+    for source_name, evidence_name, limit in (
+            (GRAPH, 'unqualified-native-graph.bcn', MAX_GRAPH),
+            (DATE, 'unqualified-native-graph.bcn.date', 12)):
+        source = resolve_world_targets(runtime, [source_name])[source_name]
+        info = source.lstat()
+        require(stat.S_ISREG(info.st_mode) and not source.is_symlink()
+                and 0 < info.st_size <= limit, 'Bounded regular native output required')
+        target = evidence / evidence_name
+        shutil.copyfile(source, target)
+        actual = pin(source)
+        require(pin(target) == actual, 'Native output changed during evidence capture')
+        files[evidence_name] = actual
+    raw = (evidence / 'unqualified-native-graph.bcn.date').read_bytes()
+    date = {'bytes': len(raw), 'hex': raw.hex()}
+    if len(raw) == 12:
+        version, newest, crc = struct.unpack('<iII', raw)
+        date.update(version=version, latest_data_time=newest, full_world_crc=f'0x{crc:08x}')
+    log = evidence / 'server.log'
+    require(log.stat().st_size <= MAX_LOG, 'Bounded native server log required')
+    raw_log = log.read_bytes()
+    matches = NATIVE.findall(raw_log)
+    fresh_markers = FRESH_NATIVE.findall(raw_log)
+    require(len(matches) <= 16 and len(fresh_markers) <= 16, 'Native marker diagnostic exceeds bound')
+    markers = [{'crc': row[0].decode('ascii'),
+                'combat': int(row[1]), 'connected': int(row[2]),
+                'ground': int(row[3]), 'raised': int(row[4]),
+                'blocks': int(row[5]), 'paths': int(row[6])} for row in matches]
+    value = {'format': 1, 'status': 'unqualified_native_output',
+             'native_generation_server_returncode': server_returncode,
+             'both_fresh_profile_proofs_required': True,
+             'files': files, 'date': date, 'native_markers': markers,
+             'fresh_world_markers': [crc.decode('ascii') for crc in fresh_markers]}
+    (evidence / 'unqualified-native-output.json').write_bytes(canonical(value))
+    print('COH_ATLAS_BEACON_UNQUALIFIED_OUTPUT ' + canonical(value).decode('ascii'), flush=True)
+    return value
+
+
+def record_role_heartbeat(evidence, processes, started, phase):
+    """Print bounded owned-role progress; this supplies no graph proof."""
+    roles = {}
+    for role, process in processes.items():
+        path = evidence / (role + '.log')
+        size = path.stat().st_size
+        require(size <= MAX_LOG, 'Native role log exceeded bound')
+        with path.open('rb') as stream:
+            stream.seek(max(0, size - MAX_FAILURE_TAIL))
+            tail = stream.read(MAX_FAILURE_TAIL)
+        lines = [line for line in tail.splitlines() if line.strip()]
+        last = lines[-1][-512:] if lines else b''
+        roles[role] = {'returncode': process.poll(), 'log_bytes': size,
+                       'last_progress_line': last.decode('utf-8', errors='replace')
+                           .encode('ascii', errors='backslashreplace').decode('ascii')[-512:]}
+    value = {'format': 1, 'status': 'native_progress_only', 'phase': phase,
+             'elapsed_seconds': max(0, round(time.monotonic() - started, 3)), 'roles': roles}
+    print('COH_ATLAS_BEACON_HEARTBEAT ' + canonical(value).decode('ascii'), flush=True)
+    return value
 
 
 def record_role_failure(evidence, processes, commands, failure, before_cleanup=None):
@@ -526,11 +597,15 @@ def generate(args):
                     require((evidence / (role + '.log')).stat().st_size <= MAX_LOG, 'Native role startup log exceeded bound')
                     require(processes[role].poll() is None and time.monotonic() < deadline, 'Native role startup failed: ' + role)
                     time.sleep(0.5)
+        next_heartbeat = time.monotonic()
         while processes['server'].poll() is None:
             require(time.monotonic() - started < args.timeout_seconds, 'Atlas generation exceeded owned deadline')
             for role, path in ((role, evidence / (role + '.log')) for role in processes):
                 require(path.stat().st_size <= MAX_LOG, 'Native role log exceeded bound')
                 require(role == 'server' or processes[role].poll() is None, 'Owned native role exited: ' + role)
+            if time.monotonic() >= next_heartbeat:
+                record_role_heartbeat(evidence, processes, started, 'generation')
+                next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS
             time.sleep(1)
         require(processes['server'].returncode == 0, 'Native Atlas graph producer failed')
     except Exception as error:
@@ -544,8 +619,18 @@ def generate(args):
             try: process.wait(timeout=15)
             except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
         for stream in logs.values(): stream.close()
-        if failure is not None: record_role_failure(evidence, processes, commands, failure, before_cleanup)
+        if failure is not None:
+            record_role_failure(evidence, processes, commands, failure, before_cleanup)
+            if all((runtime / name).is_file() for name in (GRAPH, DATE)):
+                try:
+                    record_native_output(evidence, runtime, processes['server'].returncode)
+                except Exception as capture_error:
+                    capture = {'format': 1, 'status': 'unqualified_output_capture_failed',
+                               'reason': str(capture_error)[:2048]}
+                    (evidence / 'unqualified-native-output-capture-error.json').write_bytes(canonical(capture))
+                    print('COH_ATLAS_BEACON_OUTPUT_CAPTURE_FAILURE ' + canonical(capture).decode('ascii'), flush=True)
     require((runtime / GRAPH).is_file() and (runtime / DATE).is_file(), 'Native graph files missing')
+    record_native_output(evidence, runtime, processes['server'].returncode)
     require(geometry_inputs(runtime) == inputs, 'Native generation modified an immutable collision input')
     witness = native_evidence((evidence / 'server.log').read_bytes(), (runtime / DATE).read_bytes())
     profile_proofs = {}

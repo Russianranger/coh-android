@@ -1,5 +1,42 @@
 # City of Heroes Android handoff
 
+**UI sweep ready; corrected native CRC proof committed for hosted validation. Next candidate: 0.13.14 / code 29.**
+
+The preceding real generation finished, but its later CRC marker used a
+different runtime phase and failed qualification. Authenticated forensic run
+**37376054116** recovered a fresh ordinary-map traversal with 4,569,858
+triangles and CRC `0xb0c21ded`, accepted by the original native date matcher.
+The later marker was `0xfe75bab6`. The exact cause of that later-state drift
+is unproved; the sidecar format and matcher elision hypotheses were ruled out.
+
+The host wrapper now calls the original fresh matcher unconditionally, stops
+on false and captures its newly computed full-world CRC immediately before
+navigation loading. Reader version, graph counts/connections and all 32 real
+routes also have explicit fatal failure gates. Python requires one preceding
+fresh CRC marker, the final full-readback/path witness and the untouched
+12-byte version-9 sidecar CRC to agree exactly. Both fresh native profile
+processes must still return the same complete witness and physical inventories.
+
+Actual generated graph/date files are now captured with bounded pins into
+explicitly unqualified diagnostic evidence before validation, including a
+failed server's output. A later proof failure cannot silently lose them.
+Bounded 60-second owned-role heartbeats improve host diagnostics. Source,
+fixture, missing/conflicting/late marker and evidence-retention tests accompany
+the change; they still require actual hosted execution. Independent source
+review found no blocker. The C receipt changes, so fresh compilation and genuine
+generation are required; no failed graph or old path proof is reused.
+
+The previous owned phase was about 77 minutes, following about 12 minutes of
+host input preparation. Keep its 90-minute owned deadline and each bounded
+fresh-profile deadline; no timeout failure occurred. The next actual run must
+pass targeted tests, compilation, generation and both profile proofs before
+freezing graph pins and enabling final 68-suite/seven-PostgreSQL-fixture signing
+and public APK download audit. No 0.13.14 APK is published. The frozen UI sweep
+adds 788 original resources while preserving all 9,613 prior streams. Main
+remains separate, PR #1 stays draft, and zoning remains a later pass.
+
+Earlier actual CRC failure checkpoint follows; its investigation status is historical.
+
 **UI sweep ready; Atlas generation completed, but CRC qualification failed. No 0.13.14 APK is published.**
 
 Actual native run [37363692462](https://github.com/Russianranger/coh-android/actions/runs/37363692462)
