@@ -39,7 +39,15 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             value = generator.role_environment({'PATH': 'owned-path', 'COH_WINE_MAP_PROGRESS': request,
                 'COH_CLIENT_DEPENDENCY_PRELOAD': '1', 'COH_MANUAL_ATLAS_DB': '1',
                 'COH_WINE_GAME_LISTENERS': '1'})
-            self.assertEqual(value, {'PATH': 'owned-path'})
+            self.assertEqual(value, {'PATH': 'owned-path', 'COH_GAME_LOOPBACK_ONLY': '1'})
+
+
+    def test_host_roles_override_inherited_loopback_mode_before_native_startup(self):
+        for request in ('', '0', '1', 'invalid'):
+            with self.subTest(request=request):
+                env = generator.role_environment({'COH_GAME_LOOPBACK_ONLY': request, 'PATH': 'owned'})
+                self.assertEqual(env['COH_GAME_LOOPBACK_ONLY'], '1')
+                self.assertEqual(env['PATH'], 'owned')
 
     def test_failure_receipt_retains_exit_status_and_only_bounded_role_tail(self):
         with tempfile.TemporaryDirectory() as temporary:

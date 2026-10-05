@@ -28,7 +28,7 @@ class AtlasBeaconSourceTests(unittest.TestCase):
         patch = (producer.ROOT/producer.PATCH).read_text()
         additions = '\n'.join(line[1:] for line in patch.splitlines() if line.startswith('+') and not line.startswith('+++'))
         for call in ('beaconDoesTheBeaconFileMatchTheMap(1)', 'beaconReload()', 'beaconPathFind(search',
-                     'assert(paths == 32)', 'ipFromString("127.0.0.1")'):
+                     'assert(paths == 32)'):
             self.assertIn(call, additions)
         self.assertIn('beaconSetPathFindEntity(NULL, 0)', additions)
         self.assertIn('groupLoadMap(freshMapName, 0, 0)', additions)
@@ -61,6 +61,27 @@ class AtlasBeaconSourceTests(unittest.TestCase):
             self.assertIn('Owned host beacon roles reject executable self-update',client)
             server=(stage/'MapServer/src/beacon/beaconServer.c').read_text()
             self.assertNotIn('checkForCorrectExePath(',server)
+            self.assertIn('netInit(&beacon_server.clients, 0, portToTry)', server)
+            self.assertNotIn('netInit(&beacon_server.clients, ipFromString(', server)
+
+
+    def test_network_api_keeps_udp_disabled_and_accepted_loopback_policy(self):
+        # The address-looking integer formerly supplied here was really a UDP
+        # port: all four roles attempted the same unintended UDP listener.
+        header = (producer.ROOT / 'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/network/netio.h').read_text()
+        self.assertIn('int netInit(NetLinkList *nlist,int udp_port,int tcp_port);', header)
+        patch = (producer.ROOT / producer.PATCH).read_text()
+        self.assertNotIn('+            if(netInit(', patch)
+        contract = self.receipt['base']['game_build_input']['loopback_only']
+        self.assertEqual(contract['environment_variable'], 'COH_GAME_LOOPBACK_ONLY')
+        self.assertEqual(contract['enabled_value'], '1')
+        self.assertEqual(contract['activation'], 'before_common_startup')
+        self.assertEqual(contract['endpoint_verification'], 'getsockname_and_SO_TYPE_after_each_successful_bind')
+        base = (producer.ROOT / 'patches/game-loopback/0001-game-loopback-bindings.patch').read_text()
+        main = base.split('+++ b/MapServer/src/svr/svr_init.c', 1)[1].split('--- a/', 1)[0]
+        self.assertLess(main.index('sockGameLoopbackInit()'), main.index('memCheckInit()'))
+        for check in ('getsockname', 'getsockopt', 'SO_TYPE', 'htonl(INADDR_LOOPBACK)'):
+            self.assertIn(check, base)
 
     def test_android_load_and_v9_freshness_do_not_depend_on_copied_mtimes(self):
         text = (producer.ROOT/'upstream/ouroboros/MapServer/src/beacon/beaconFile.c').read_text()

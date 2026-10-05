@@ -441,6 +441,9 @@ def role_environment(environment=None):
     for name in ('COH_WINE_MAP_PROGRESS', 'COH_CLIENT_DEPENDENCY_PRELOAD',
                  'COH_MANUAL_ATLAS_DB', 'COH_WINE_GAME_LISTENERS', 'COH_ATLAS_BEACON_VERIFY_ONLY'):
         env.pop(name, None)
+    # Accepted native startup activates this before any explicit socket bind.
+    # netInit's second argument is UDP port, so address policy belongs here.
+    env['COH_GAME_LOOPBACK_ONLY'] = '1'
     return env
 
 

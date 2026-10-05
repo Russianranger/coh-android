@@ -106,12 +106,36 @@ keeping bin, geometry and server caches private. These changes do not alter
 native algorithms or rename the imported assets. A fresh qualified graph and
 both native profile proofs remain required.
 
-The retry may reuse the successfully compiled host EXE/PDB from artifact
-`11366950301` only after checking the exact completed run/job and successful
-stage/compile steps, raw ZIP SHA-256/byte count, fresh native build-input
-equality and Win32 executable identity. A bound compile-reuse receipt enters
-new generation evidence. Changed native source triggers fresh compilation;
-no graph, role or path proof is reused from that failed generation attempt.
+
+The next workflow can reuse only the host executable and symbols from that
+completed successful compile. It checks the exact earlier run/head and
+successful compile step, artifact ID/digest/size, unchanged staged native source
+receipt and Win32 executable identity. A different native source forces a fresh
+compile. The compile-origin receipt is retained with generation evidence. The
+failed run supplies no graph, native readiness, readback, CRC or route proof;
+all those proofs must be produced anew.
+
+
+Run `37361394686` passed all 104 preflight tests, recovered the exact compatible
+host compile, and proved the 5,231 common plus 406 optional physical inputs with
+zero inventory differences. Native master and sentry readiness then succeeded,
+but the server exited with assertion status 3 during network initialization.
+Its retained stack identifies `beaconServerInitNetwork`: it could not bind any
+port in the 48812–48912 range. This was not heap corruption.
+
+The host containment patch had incorrectly supplied an IP address integer as
+`netInit`'s second argument. The authoritative signature is
+`netInit(NetLinkList *, int udp_port, int tcp_port)`; master and server therefore
+requested the same unintended UDP listener, and each server attempt repeated
+that collision before reaching its TCP bind. The patch now retains the original
+`netInit(&beacon_server.clients, 0, portToTry)` call. Owned child environments
+activate the already accepted `COH_GAME_LOOPBACK_ONLY=1` policy before native
+startup. Its existing socket wrapper constrains IPv4 bindings to loopback and
+verifies each actual endpoint with `getsockname` and `SO_TYPE`; no networking
+algorithm or port range is changed. Source tests bind the API signature and
+startup order, and host tests verify inherited environment values are overridden.
+Artifact `11367521746` retains the actual role logs and stack. The changed native
+source receipt requires a fresh compile, then new graph/readback/CRC/route proofs.
 
 ## Private installation and startup
 

@@ -1,5 +1,51 @@
 # City of Heroes Android handoff
 
+**UI sweep ready; native Atlas port-bind repair ready for proof. Next candidate: 0.13.14 / code 29.**
+
+Actual run [37361394686](https://github.com/Russianranger/coh-android/actions/runs/37361394686)
+at `ba99eeb1ee242cb14aefb054f36b65a253d51087` passed **104 focused tests**,
+the exact public-donor audit and source-compatible host compile reuse.
+The directory-case repair is now executed and verified: **5,231 cold inputs
+and 406 optional GEOs**, zero missing/extra/changed byte pins in either layout.
+Cold inventory SHA-256 is
+`3bd8cd7305d8066adb2e2ae88bf761d4bcac546c786257027e0b7d28f5a15a08`;
+full inventory SHA-256 is
+`039f2a761ac11c01338ec1060a8656c6a9c833dc47b294a65d4dfa90648555f8`.
+
+Master, sentry and worker stayed alive; server exited 3 at
+`beaconServerInitNetwork` with “Can't bind any ports in range 48812-48912”.
+The recovered stack and native API show a concrete host-patch error:
+`netInit(NetLinkList*, int udp_port, int tcp_port)` received an IP integer in
+its UDP-port argument, so the roles collided on unintended UDP port 127.
+This attempt did not reproduce the prior heap corruption. Failure artifact
+**11367521746** is 16,525,519 bytes / SHA-256
+`6cfc200ceef59a74ef53cc1bf6e5911d161fd8f2fc0189dddc0a4e24e254fc1f`.
+It contains no accepted graph or path proof.
+
+The repair restores the original TCP-only `netInit(..., 0, portToTry)` call
+and forces `COH_GAME_LOOPBACK_ONLY=1` before every owned process starts.
+The retained accepted startup activates that policy before common startup and
+verifies bound address/type with getsockname/SO_TYPE. No port-range expansion
+or assertion weakening is needed. New guards bind the real API signature,
+original call, activation order, endpoint checks and inherited-env override.
+Native source changed, so the old compile receipt must fail compatibility
+and trigger fresh compilation. The native algorithms and shipped Android
+binaries remain unchanged. Hosted proof of this latest repair is pending.
+
+Hold graph pins and publication until genuine generation and both fresh native
+profile readbacks pass the same collision CRC, full graph counts and 32 paths
+each. The final APK also requires all 68 suites (including the held publication
+workflow test), seven real PostgreSQL fixtures, retained signer and full public
+APK download audit. No 0.13.14 APK is published. Zoning remains a later pass.
+
+The local execution connection remains unavailable; new execution claims come
+only from actual hosted jobs. Continue ordinary fast-forward commits on the
+existing continuation branch and keep main unchanged. The held publication
+and verifier workflows must be repinned to the next actual successful native
+run/head; run 37361394686 failed and must not be accepted as graph evidence.
+
+Earlier case-repair checkpoint follows; its pending statements are historical.
+
 **Full UI sweep ready; actual Atlas graph remains unqualified. Next candidate: 0.13.14 / code 29.**
 
 Latest hosted run [37357540374](https://github.com/Russianranger/coh-android/actions/runs/37357540374)

@@ -82,15 +82,6 @@
      
      beaconPrintf(COLOR_YELLOW, "Skipping Perforce get because it is disabled\n");
  }
-@@ -2781,7 +2760,7 @@
-                 continue;
-             }
- 
--            if(netInit(&beacon_server.clients, 0, portToTry)){
-+            if(netInit(&beacon_server.clients, ipFromString("127.0.0.1"), portToTry)){
-                 break;
-             }
-         }
 @@ -2866,6 +2845,9 @@
  #undef BUFSIZE
  
