@@ -1,5 +1,80 @@
 # City of Heroes Android handoff
 
+**Recovered 0.13.12 source checkpoint ready for hosted qualification; publication pending.**
+Continue branch `codex/character-persistence-continuation` from live checkpoint
+`8f602b83095989cc936fc77f89bacceb4a960aee`; draft PR #1 stays open and unmerged.
+Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Preserve the accepted
+runtime, imported asset packs, THORHERO database and completed gameplay work.
+No broad reimport, project reset or original appearance-pack recreation is needed.
+
+The complete [device evidence](android-evidence/levelup-ui-repair-0.13.11-device-result.json)
+binds both October 5 outer reports and intact guest evidence. The user sees all
+models, including the police drone, loading. XP increases **50 → 115**, and the
+second reopen SQL snapshot retains **115 XP / 89 influence / login count 7**.
+Internal level remains zero before training (displayed level 1); completed
+training to displayed level 2 and its chosen power were not committed by the
+failed transaction. Keep this distinction explicit in future status reports.
+
+Native first/second Atlas startup is **235.342s / 208.616s**; actual client
+startup **334.499s / 324.792s**. User stopwatches are respectively Atlas 3:55 /
+3:28, client 5:32 / 5:20 and whole reopen 15:36 / 13:10. The second visual pack
+reuses all 9,490 leaves, the existing texture index produces 19,930 hits with zero
+ordinary header reads, and other stages improve. Both native logs have **zero
+COH_CLIENT_DEPENDENCY_PRELOAD_V1 acknowledgements**: the saved-character route
+never enabled the already packaged Game opt-in. The candidate fixes the actual
+initial/retry launch environment, preserves shared Wine/server environment, and
+requires the current typed Game producer. Physical savings remain pending.
+The unchanged native Atlas sequencer stage is still about 54 seconds.
+
+The second failure is local **DbServer exit 3**, after PostgreSQL **23505** on
+`AttribMods(ContainerId,SubId)=(1,0)` at 11:36:11.836. FIFO records the failure
+and withholds acknowledgement; the generic report wording "during login"
+describes the health-check location, although world entry was already verified.
+There is no captured native-client exception. The production reader drops a
+physical NULL/default child-row witness when preceding parent/power fields have
+already increased its cumulative line count. Later training then treats that
+row as absent and emits a conflicting INSERT. The narrow new PostgreSQL layer
+retains per-row witnesses and also orders single-container child reads by SubId,
+which the unchanged merger requires. Parent/MSSQL queries, row/column emission,
+normal missing-row INSERT, prior cancelled-insert fix, FIFO rollback and
+commit-before-ACK remain intact. No ignored SQL failure, UPSERT or schema reset.
+
+[Finite original UI receipt](android-evidence/levelup-ui-repair-0.13.12-assets.json)
+records **123 original textures / 5,384,150 decoded bytes** appended over all
+9,490 accepted leaves. These cover XP bubbles, 27 standard inspiration icons,
+five F-key labels and trainer selection/menu controls. Archery/Devices icons
+already existed; the photographed power-row squares are owned-power checkmarks.
+All 9,490 original stored streams and their complete ancestor recipe remain
+exact. Five unavailable donor requests stay explicit, with no fuzzy replacement.
+The composed pack is 9,613 leaves / 1,511,101,967 decoded bytes, ZIP
+854,625,639 bytes, SHA `7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544`.
+
+The intended next derivative is **0.13.12 / code 27**, from the exact public
+0.13.11 donor and retained signer. It retains Game, all twenty client DLLs,
+MapServer, server/cache payloads, DEX/resources, Java, imports and private state.
+A finite read-only native purchase/SQL proof now recognizes this character's
+first trained level (internal 0 → 1 / displayed 2) and preserves all prior
+semantic powers by stable UniqueID, with native structural row renumbering
+allowed only inside that witnessed transition. It accepts the exact successful
+stock `BuyPower Click` log and corresponding selected power plus original
+automatic grants. Thirteen untouched native/data producer files are explicitly
+pinned. Only the typed current reader enables stock entity-category logging;
+ordinary logout, native position, rewards and authored task guards remain.
+The sequential host scenario trains/saves with native XP awards, then reopens
+the exact trained character with its chosen power intact. All **961 local
+regression scenarios / 62 suites** passed: 882 retained, 67 focused
+persistence/UI/preload/package checks and twelve training scenarios.
+Real PostgreSQL fixtures and full Win32 DbServer compilation remain hosted
+qualification requirements. No physical fix or speed claim.
+Formal real PostgreSQL fixtures, complete Win32 DbServer build, current payload
+conservation, official SDK package/signature checks and publication are required
+before delivering the APK. Do not describe this source checkpoint as a release.
+Use [focused 0.13.12 instructions](COH-Atlas-Gameplay-0.13.12-testing.txt) after
+publication; retain imports/profile, set up runtime once, train at Ms Liberty,
+ordinary save/log out, and reopen to verify XP/level/new power.
+
+**0.13.11 publication checkpoint below is historical.**
+
 **0.13.11 published and independently public-byte verified; focused Thor comparison pending.**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.11/COH-Atlas-Gameplay-0.13.11.apk)
 from implementation `a5ff474674393e898f9a5d4b3ad29ae51dd25a2a`, version

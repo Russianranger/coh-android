@@ -183,10 +183,36 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             shutil.rmtree(previous_logs)
 
     def launch_client_attempt(self, *, label='actual-coh-client'):
+        # Interactive login/creation/reopen overrides the startup execute path.
+        # Apply its qualified Game opt-in here too, including an owned retry,
+        # without enabling it for Wine initialization or either server.
+        environment = dict(self.wine_env)
+        environment.pop('COH_CLIENT_DEPENDENCY_PRELOAD', None)
+        enabled = getattr(self, 'client_startup_followup', False) is True
+        producer = self.ctx.report.get('client_startup_followup')
+        if enabled:
+            require(isinstance(producer, dict)
+                    and re.fullmatch(r'[0-9a-f]{64}', str(getattr(self, 'client_executable_sha256', '')))
+                    and producer.get('client_executable_sha256') == self.client_executable_sha256
+                    and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
+                    and re.fullmatch(r'[0-9a-f]{40}', str(producer.get('repository_commit', '')))
+                    and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
+                    and producer.get('metadata_preload_only') is True
+                    and producer.get('source_freshness_preserved') is True
+                    and producer.get('prepared_cache_schema_changed') is False,
+                    'Client dependency preload lacks its current verified Game producer')
+            environment['COH_CLIENT_DEPENDENCY_PRELOAD'] = '1'
+        self.ctx.report['client_dependency_preload_environment'] = {
+            'format': 1, 'policy': 'current_verified_Game_attempt_only',
+            'enabled': enabled, 'launch_label': label,
+            'producer_manifest_sha256': producer['manifest_sha256'] if enabled else None,
+            'client_executable_sha256': self.client_executable_sha256 if enabled else None,
+            'shared_wine_environment_modified': False,
+            'native_execution_validated': False, 'physical_startup_savings_validated': False}
         previous = Path.cwd()
         try:
             os.chdir(self.work)
-            self.client = self.ctx.start(label, self.launcher_command(), env=self.wine_env)
+            self.client = self.ctx.start(label, self.launcher_command(), env=environment)
         finally:
             os.chdir(previous)
 

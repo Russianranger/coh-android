@@ -121,11 +121,19 @@ class QualificationRoutingTests(unittest.TestCase):
         self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40,
             names+['upstream/ouroboros/DBServer/src/dbinit.c']))
 
+    def test_levelup_route_has_precedence_and_cannot_hide_retained_game_or_native_changes(self):
+        names = sorted(change.LEVELUP_UI_REPAIR_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('upstream/ouroboros/Game/src/render/tex.c', 'android/guest/diagnostic.py',
+                'patches/startup-bundle/0001-pg-cancelled-child-insert.patch', 'unknown.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
     def test_only_direct_push_of_bounded_host_or_gameplay_changes_can_route_runtime(self):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS - change.CLIENT_ASSET_CLOSURE_MARKERS - change.CLIENT_STARTUP_FOLLOWUP_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS - change.CLIENT_ASSET_CLOSURE_MARKERS - change.CLIENT_STARTUP_FOLLOWUP_MARKERS - change.LEVELUP_UI_REPAIR_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),

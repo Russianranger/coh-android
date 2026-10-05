@@ -303,6 +303,37 @@ CLIENT_STARTUP_FOLLOWUP_ALLOWED = CLIENT_STARTUP_FOLLOWUP_SOURCES | frozenset({
     'docs/android-evidence/client-startup-followup-0.13.11-benchmark.json',
     'docs/android-evidence/client-asset-closure-0.13.10-device-result.json',
 })
+LEVELUP_UI_REPAIR_SOURCES = frozenset({
+    '.github/workflows/android-levelup-ui-repair.yml',
+    'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch',
+    'tools/android/interactive/build_levelup_ui_repair_apk.py',
+    'tools/android/interactive/qualify_levelup_ui_repair.py',
+    'tools/android/interactive/test_levelup_ui_repair_package.py',
+    'tools/android/interactive/package_levelup_ui_repair_dbserver.py',
+    'tools/android/interactive/test_levelup_ui_repair_dbserver.py',
+    'tools/android/interactive/test_levelup_ui_repair_contract.py',
+    'tools/android/interactive/discover_client_ui_repair_assets.py',
+    'tools/android/interactive/prepare_client_ui_repair_assets.py',
+    'tools/android/interactive/test_client_ui_repair_assets.py',
+    'tools/android/interactive/test_client_preload_launch.py',
+    'tools/android/interactive/test_training_save.py',
+    'android/guest/native_training_save.py',
+    'assets/client-ui-repair-requests.json', 'assets/client-ui-repair-manifest.json',
+    'assets/client-ui-repair-plan.json',
+    'android/guest/client_visual_assets.py', 'android/guest/local_character_server.py',
+    'android/guest/client_interactive_diagnostic.py',
+})
+LEVELUP_UI_REPAIR_ALLOWED = LEVELUP_UI_REPAIR_SOURCES | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/HANDOFF.md', 'docs/COH-Atlas-Gameplay-0.13.12-testing.txt',
+    'docs/android-evidence/levelup-ui-repair-0.13.12-publication.json',
+    'docs/android-evidence/levelup-ui-repair-0.13.11-device-result.json',
+    'docs/android-evidence/levelup-ui-repair-0.13.12-assets.json',
+})
+
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -371,6 +402,19 @@ def client_startup_followup_push(event, before, head, parent, names):
         and set(names) & CLIENT_STARTUP_FOLLOWUP_SOURCES)
 
 
+def levelup_ui_repair_docs(event, before, head, parent, names):
+    reviewed = {'docs/HANDOFF.md', 'docs/COH-Atlas-Gameplay-0.13.12-testing.txt',
+        'docs/android-evidence/levelup-ui-repair-0.13.12-publication.json'}
+    return bool(bounded_push(event, before, head, parent, names, reviewed)
+        and 'docs/android-evidence/levelup-ui-repair-0.13.12-publication.json' in names)
+
+
+def levelup_ui_repair_push(event, before, head, parent, names):
+    return bool((bounded_push(event, before, head, parent, names, LEVELUP_UI_REPAIR_ALLOWED)
+        and set(names) & LEVELUP_UI_REPAIR_SOURCES)
+        or levelup_ui_repair_docs(event, before, head, parent, names))
+
+
 def task_required(event, before, head, parent, names):
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
@@ -382,7 +426,8 @@ def task_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def cleanup_required(event, before, head, parent, names):
@@ -396,7 +441,8 @@ def cleanup_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def recovery_required(event, before, head, parent, names):
@@ -408,7 +454,8 @@ def recovery_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def receipt_required(event, before, head, parent, names):
@@ -418,7 +465,8 @@ def receipt_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def schedule_required(event, before, head, parent, names):
@@ -427,7 +475,8 @@ def schedule_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def setup_required(event, before, head, parent, names):
@@ -436,7 +485,8 @@ def setup_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def bundle_required(event, before, head, parent, names):
@@ -444,34 +494,43 @@ def bundle_required(event, before, head, parent, names):
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def visual_required(event, before, head, parent, names):
     return not (client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def loading_required(event, before, head, parent, names):
     return not (client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def streaming_required(event, before, head, parent, names):
     return not (client_asset_closure_push(event, before, head, parent, names)
-        or client_startup_followup_push(event, before, head, parent, names))
+        or client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def asset_closure_required(event, before, head, parent, names):
-    return not client_startup_followup_push(event, before, head, parent, names)
+    return not (client_startup_followup_push(event, before, head, parent, names)
+        or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def startup_followup_required(event, before, head, parent, names):
-    # The newest dedicated workflow always qualifies its own candidate.
-    return True
+    return not levelup_ui_repair_push(event, before, head, parent, names)
+
+
+def levelup_ui_repair_required(event, before, head, parent, names):
+    # Source candidates always qualify; an exact publication checkpoint is docs only.
+    return not levelup_ui_repair_docs(event, before, head, parent, names)
 
 
 def main():
@@ -487,6 +546,7 @@ def main():
     streaming = True
     asset_closure = True
     startup_followup = True
+    levelup_ui_repair = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -513,6 +573,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         asset_closure = asset_closure_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        levelup_ui_repair = levelup_ui_repair_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         startup_followup = startup_followup_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
@@ -530,6 +592,7 @@ def main():
         output.write('streaming_required='+str(streaming).lower()+'\n')
         output.write('asset_closure_required='+str(asset_closure).lower()+'\n')
         output.write('startup_followup_required='+str(startup_followup).lower()+'\n')
+        output.write('levelup_ui_repair_required='+str(levelup_ui_repair).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

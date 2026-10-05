@@ -1,0 +1,142 @@
+{
+  "candidate": {
+    "archive": {
+      "bytes": 854625639,
+      "sha256": "7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544"
+    },
+    "files": 9613,
+    "files_sha256": "cef9da030ec9dbeee1a139a1806f557f249c8b427d9f47706540047c065c1ef8",
+    "manifest": {
+      "bytes": 42553059,
+      "sha256": "e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3"
+    },
+    "payload_bytes": 1511101967
+  },
+  "finite_append": {
+    "archery_and_devices_icons": "All 18 finite power IconName dependencies already installed; no replacement or duplicate",
+    "files": 123,
+    "files_sha256": "0ee97ecfe5da5b7884a6f309f3aeeb17b1d65714d1d3669468dc92b55a33cbb6",
+    "inspiration": "27 standard Small/Medium/Large definition icons and five native F-key labels",
+    "new_geometry_files": 0,
+    "only_native_texture_leaves": true,
+    "payload_bytes": 5384150,
+    "per_row_power_icon_rendering_changed": false,
+    "scope": "recorded_status_inspiration_and_trainer_ui_dependency_closure",
+    "status": "XP ring, 20 filled/empty XP bubbles, plunger/sweep and notifications; alignment indicators",
+    "trainer": "Generic native checked/unchecked boxes, checkbar states, title/background and next-button dependencies",
+    "tray": "Native tray effect/selection overlays and team-up controls"
+  },
+  "format": 1,
+  "immediate_donor": {
+    "archive": {
+      "bytes": 854341235,
+      "sha256": "840619b3b40c24f206576580dfaedb779a66582f1df189f37002dd59c5399cb9"
+    },
+    "files": 9490,
+    "files_sha256": "e23299918437e5d0afa2e9d2003eb966151f59471eaeb430313d2824d42fe341",
+    "manifest": {
+      "bytes": 42257673,
+      "sha256": "8b3f579a9ff48e80f40e06e252c91fe3357daf9f0b01441dea5bceaa5801f1e6"
+    },
+    "payload_bytes": 1505717817,
+    "version": "0.13.11"
+  },
+  "physical_followup": "Thor inspiration and XP-bubble appearance, trainer checked/unchecked state, and normal power-training return require device confirmation.",
+  "policy": {
+    "full_global_asset_closure": false,
+    "missing_only_private_client_generation": true,
+    "native_gameplay_changed": false,
+    "native_renderer_changed": false,
+    "preloading": false,
+    "retained_sources_requests_model_proofs_aliases_world_and_appearance_records_preserved": true,
+    "runtime_visual_validated": false
+  },
+  "qualification": {
+    "all9490_ancestral_encoded_zip_streams_byte_identical": true,
+    "all9613_decoded_size_sha256_original_table_md5_and_native_headers_passed": true,
+    "bounded_neighbor_gap_bytes": 158762,
+    "discovery_plan_pin": {
+      "bytes": 85741,
+      "sha256": "0947923e3ace7bcf9d40ffa35d40f4d21d9d63f202b2d02935eb6db9a0f0baee"
+    },
+    "discovery_requests_pin": {
+      "bytes": 77775,
+      "sha256": "a9f90f0df23c46706817f45fe24665a3be3f023ea0b3a624753c09ae4d681210"
+    },
+    "fresh_plan_and_requests_reproduced_exactly": true,
+    "frozen_pigg_metadata_archives": 57,
+    "full_ancestral_document_projection_equal": true,
+    "native_ui_source_witnesses": {
+      "upstream/i24/data/defs/powers/blaster_ranged_archery.powers": {
+        "bytes": 69375,
+        "sha256": "fc1174acb25e9ad43839aab7eb625b47650a13f4a3ca90aa4e7445c2eb810679"
+      },
+      "upstream/i24/data/defs/powers/blaster_support_gadgets.powers": {
+        "bytes": 79074,
+        "sha256": "496c75ddae92f01d874af7e69d01fcf6dd4afedf640cafa44e218956c4b59d03"
+      },
+      "upstream/i24/data/defs/powers/inspirations_large.powers": {
+        "bytes": 68947,
+        "sha256": "50c11b6eb048b3509744dcd0292d8152a2489e5a3de6d402fe23a5fa20a05b64"
+      },
+      "upstream/i24/data/defs/powers/inspirations_medium.powers": {
+        "bytes": 73357,
+        "sha256": "4d57d15c26ba1872cc3dceab3b2d115028125e8821515fd65a638c33c0be60ab"
+      },
+      "upstream/i24/data/defs/powers/inspirations_small.powers": {
+        "bytes": 68346,
+        "sha256": "578e09a789c4ea0bef3c830806aa155d27af7475760cacae550df885e0ee0b48"
+      },
+      "upstream/ouroboros/Common/entity/character_base.h": {
+        "bytes": 34656,
+        "sha256": "d14449844aec6b30294ca80d2ab478c55941154ef6eed484178b3345383db1ee"
+      },
+      "upstream/ouroboros/Game/src/UI/uiInspiration.c": {
+        "bytes": 34630,
+        "sha256": "afc3f883c8d36520d393201b6e07482ff5be1d9268a5cd19733caa59c8639e54"
+      },
+      "upstream/ouroboros/Game/src/UI/uiLevelPower.c": {
+        "bytes": 22722,
+        "sha256": "ed92bb9843c1df152475876ef9ea2a2a5a978902bccba9bc5fecac57eec59cd8"
+      },
+      "upstream/ouroboros/Game/src/UI/uiStatus.c": {
+        "bytes": 49141,
+        "sha256": "a54a51f45cbc30b149cdceaf9d3b556269610bfda61775caa764b84d7702e9bc"
+      },
+      "upstream/ouroboros/Game/src/UI/uiTray.c": {
+        "bytes": 115882,
+        "sha256": "54123637f9a29a1ef3b36d25a8829b3771eb66974cef0c0733d7f1e82fff1794"
+      },
+      "upstream/ouroboros/Game/src/UI/uiUtilMenu.c": {
+        "bytes": 70041,
+        "sha256": "80b189a1d81bcbed99c3eb5bdcdb1f6500b5346e9828d443e8b3b3a36a3600e2"
+      }
+    },
+    "new123_original_texture_streams_match_verified_pigg_range_streams": true,
+    "new_ui_native_producer_and_guest_scenarios": 32,
+    "new_ui_suite_zero_skips": true,
+    "selected_payload_http206_ranges": 10
+  },
+  "scope": "coh_levelup_ui_repair_0.13.12_original_assets",
+  "screenshots": {
+    "Screenshot_20261005-060009.png": {
+      "bytes": 430892,
+      "sha256": "114e5d09a126a3696eae07223e44e813f04050a05ec67c8fe31572dc287eb352"
+    },
+    "Screenshot_20261005-061212.png": {
+      "bytes": 446019,
+      "sha256": "5e080ec56b4eec92aac063a9fd975b42ea69245f0d66cb9af51cd1efa746a39a"
+    },
+    "Screenshot_20261005-063559.png": {
+      "bytes": 178937,
+      "sha256": "c222690c75e2e9404d11e86169380a9b4ca98d805ebee7a63ef31616ee40fe29"
+    }
+  },
+  "unresolved_exact_donor_names": [
+    "checkbar_meat_base_underlight_l",
+    "checkbar_meat_base_underlight_mid",
+    "checkbar_meat_base_underlight_r",
+    "checkbox_base_underlight",
+    "default_tray"
+  ]
+}

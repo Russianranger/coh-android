@@ -98,6 +98,55 @@ def startup_bundle_build_input(build_input):
         'runtime_validation': 'unverified'}
 
 
+
+LEVELUP_UI_REPAIR_ROLE = 'manual_atlas_dbserver_levelup_ui_repair'
+LEVELUP_UI_REPAIR_BASE_EXECUTABLE = {'bytes': 1664000, 'sha256': 'baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029'}
+LEVELUP_UI_REPAIR_BASE_BUNDLE_SHA256 = '3c8e2fb700eeb086edd96bc28fec274e0a87d44c1d033f5a3141ccbc287c850a'
+
+
+def levelup_ui_repair_build_input(build_input, bundle):
+    """Require the complete current read layer above both frozen save producers."""
+    require(digest_json(build_input) == STARTUP_BUNDLE_BASE_BUILD_INPUT_SHA256
+            and digest_json(bundle) == LEVELUP_UI_REPAIR_BASE_BUNDLE_SHA256
+            and bundle == startup_bundle_build_input(build_input),
+            'Level-up read repair changed its retained native ancestry')
+    return {'format': 1,
+ 'build_role': 'manual_atlas_dbserver_levelup_ui_repair',
+ 'source_commit': '0b75ade0c801735e10c5798f641948a45cc50488',
+ 'base_startup_build_input_canonical_sha256': '12f42bdb973c2f5712408f7717bee631e23c9cf73e1e38b2f2be4d2cb943a9c2',
+ 'base_startup_bundle_build_input_canonical_sha256': '3c8e2fb700eeb086edd96bc28fec274e0a87d44c1d033f5a3141ccbc287c850a',
+ 'patch': 'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch',
+ 'patch_sha256': 'e686142af836ffe2216e8e30ac7a170f86ef3514216b434378ac16a388b20519',
+ 'source_sha256': {'DBServer/src/container_sql.c': '0becda9957c9cbe35b11fa28d4c62ad63af5f08faf492bd0013746dadfbec4fc'},
+ 'patched_sha256': {'DBServer/src/container_sql.c': '8eaae13bf59dbee9b76ee0c3dff447eef080eb83e943f546ba0da70d0b42c295'},
+ 'unchanged_merger_sha256': '45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e',
+ 'unchanged_fifo_sha256': '73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa',
+ 'built_target': 'DbServer',
+ 'configuration': 'OptDebug',
+ 'architecture': 'Win32',
+ 'postgresql_persistence_fixture': False,
+ 'save_contract': {'provider': 'PostgreSQL',
+                   'table_type': 'TT_SUBCONTAINER',
+                   'scope': 'physical_child_row_read_witness_and_order_only',
+                   'match': 'row_read_appends_no_non_default_field_compared_with_its_initial_line_count',
+                   'effect': 'retain_FAKE_STR_IDX_row_witness_before_later_diff_merge',
+                   'row_order': 'ORDER_BY_SubId_on_PostgreSQL_subcontainer_single_container_select_only',
+                   'retained': ['non_default_column_reads',
+                                'SQL_Server_provider',
+                                'parent_container_read_policy',
+                                'all_row_and_column_commands',
+                                'cancelled_provisional_child_INSERT_filter',
+                                'FIFO_transaction_commit_before_completion',
+                                'save_ACK_after_SQL_completion',
+                                'permanent_failure_rollback_and_exit_without_ACK'],
+                   'ignored_SQL_failures': False,
+                   'UPSERT': False,
+                   'schema_migration': False,
+                   'profile_reset': False,
+                   'android_execution_validated': False},
+ 'runtime_validation': 'unverified'}
+
+
 def install_manual_atlas_dbserver(assets, runtime, package):
     """Replace only the fresh owned DbServer after verifying its donor closure."""
     binary = assets / 'startup-dbserver.exe'
@@ -108,7 +157,7 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and not manifest.is_symlink(), 'Incomplete or linked manual Atlas DbServer supplement')
     value = dbserver.load_json(manifest, 2 * 1024 * 1024)
     require(value.get('format') == 1 and value.get('role') in
-            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE)
+            ('manual_atlas_dbserver_startup_supplement', STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE)
             and dbserver.COMMIT.fullmatch(value.get('repository_commit', ''))
             and value.get('source_commit') == package['source_commit']
             and value.get('base_package_manifest_sha256') == dbserver.DEVICE_PACKAGE_MANIFEST
@@ -145,7 +194,7 @@ def install_manual_atlas_dbserver(assets, runtime, package):
                                    *build_input['patched_sha256'].values(),
                                    *build_input['overlay_sha256'].values()]),
             'Manual Atlas DbServer source hashes differ')
-    if value['role'] == STARTUP_BUNDLE_ROLE:
+    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
         require(value.get('base_startup_executable') == STARTUP_BUNDLE_BASE_EXECUTABLE
                 and dbserver.exact_contract(value.get('startup_bundle_build_input'),
                     startup_bundle_build_input(build_input)),
@@ -153,6 +202,15 @@ def install_manual_atlas_dbserver(assets, runtime, package):
     else:
         require('startup_bundle_build_input' not in value,
                 'Legacy manual Atlas supplement contains an unqualified save layer')
+    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+        require(value.get('base_startup_bundle_executable') == LEVELUP_UI_REPAIR_BASE_EXECUTABLE
+                and dbserver.exact_contract(value.get('levelup_ui_repair_build_input'),
+                    levelup_ui_repair_build_input(build_input, value['startup_bundle_build_input'])),
+                'Level-up read repair layer or retained executable differs')
+    else:
+        require('levelup_ui_repair_build_input' not in value
+                and 'base_startup_bundle_executable' not in value,
+                'Legacy manual Atlas supplement contains an unqualified read layer')
     files = value.get('files', {})
     require(set(files) == {'DbServer.exe'}, 'Manual Atlas supplement contains another native target')
     record = files['DbServer.exe']
@@ -161,9 +219,12 @@ def install_manual_atlas_dbserver(assets, runtime, package):
             and record['sha256'] != original['files']['DbServer.exe']['sha256']
             and value.get('dependency_report', {}).get('unresolved') == [],
             'Manual Atlas executable bytes or imports differ')
-    if value['role'] == STARTUP_BUNDLE_ROLE:
+    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
         require(record['sha256'] != STARTUP_BUNDLE_BASE_EXECUTABLE['sha256'],
                 'Startup bundle executable is unchanged from the retained startup supplement')
+    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+        require(record['sha256'] != LEVELUP_UI_REPAIR_BASE_EXECUTABLE['sha256'],
+                'Level-up read executable is unchanged from the retained startup bundle')
     require(set(value.get('odbc_imports', [])) >= {'SQLDriverConnect', 'SQLExecDirect', 'SQLPrepare',
             'SQLGetDiagRecA', 'SQLGetInfoW', 'SQLColumnsW', 'SQLTablesW', 'SQLForeignKeysW'}
             and not set(value['odbc_imports']).intersection({'SQLDriverConnectA', 'SQLExecDirectA',
@@ -186,9 +247,12 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         'repository_commit': value['repository_commit'], 'contract': build_input['launcher_wait'],
         'base_package_archive_changed': False, 'other_native_targets_changed': False,
         'ordinary_fixed_inputs_loopback_dispatch_and_map_readiness_required': True}
-    if value['role'] == STARTUP_BUNDLE_ROLE:
+    if value['role'] in (STARTUP_BUNDLE_ROLE, LEVELUP_UI_REPAIR_ROLE):
         installed['startup_bundle_save'] = value['startup_bundle_build_input']['save_contract']
         installed['startup_bundle_build_input_sha256'] = digest_json(value['startup_bundle_build_input'])
+    if value['role'] == LEVELUP_UI_REPAIR_ROLE:
+        installed['levelup_ui_repair_save'] = value['levelup_ui_repair_build_input']['save_contract']
+        installed['levelup_ui_repair_build_input_sha256'] = digest_json(value['levelup_ui_repair_build_input'])
     return installed
 
 
@@ -1308,6 +1372,21 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         require(self.report.get('profile_reused') is True,
                 'Character reopen requires the reused persistent profile')
 
+    def prepare_runtime(self):
+        super().prepare_runtime()
+        # The current reader repair enables a stock, read-only native purchase
+        # witness. DbServer transmits this category level to its owned MapServer.
+        # Retained runtime producers keep their original logging configuration.
+        if (isinstance(self.manual_atlas_startup, dict)
+                and self.manual_atlas_startup.get('levelup_ui_repair_save') is not None):
+            config = self.runtime / 'data/server/db/servers.cfg'
+            text = re.sub(r'(?im)^\s*SetLogLevel\s+entity\s+[^\r\n]*\r?\n?', '', config.read_text())
+            base.private_write(config, text.rstrip() + '\nSetLogLevel entity 1\n')
+            self.creation_report['native_training_logging'] = {
+                'entity': 1, 'stock_purchase_records': True,
+                'current_reader_repair_only': True, 'other_categories_changed': False,
+                'native_dbserver_manifest_sha256': self.manual_atlas_startup['manifest_sha256']}
+
     def capture_baseline(self):
         self.baseline = self.inventory()
         candidates = [row for row in self.baseline
@@ -1418,12 +1497,31 @@ class LocalCharacterReopenServer(LocalCharacterServer):
     def validate_saved_rows(self, rows, inventory):
         require(self.baseline_snapshot is not None, 'Existing character baseline is missing')
         self.native_reward_credit = None
+        self.native_training_save = None
         before = self.baseline_snapshot
         after = validate_character_rows(rows, self.baseline, inventory,
             self.schema['expected_attributes'], self.auth_id,
             existing_identity=before['identity'], expected_login_count=before['login_count'] + 1)
         if after is None:
             return None
+        # Only the typed current reader repair permits the finite first-training
+        # transition. It observes stock native success and committed SQL; it
+        # supplies no character input and never changes database rows. The
+        # authored task profile retains its original strict level/power guards.
+        if (isinstance(self.manual_atlas_startup, dict)
+                and self.manual_atlas_startup.get('levelup_ui_repair_save') is not None
+                and self.creation_report.get('task_gate_required') is not True
+                and not evidence._same(before['rows']['ents'][0]['level'], after['rows']['ents'][0]['level'])):
+            import native_training_save
+            now_ms = int(time.time() * 1000)
+            receipt = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+                self.owner.args.session_id, self.creation_report.get('client_pid'), self.CHARACTER_ID,
+                self.creation_report.get('client_ready_observed_utc_ms'), now_ms)
+            logs = self.current_logs()
+            self.native_training_save = native_training_save.verify(logs, self.creation_report,
+                receipt, logout_record(logs), before['rows'], after['rows'],
+                self.schema['expected_attributes']['attributes'], session=self.owner.args.session_id,
+                client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
         for table in evidence.SELECTED:
             previous = before['rows'][table]
             current = after['rows'][table]
@@ -1494,9 +1592,23 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return after
 
     def saved_selected_rows_match(self, table, previous, current):
-        """Permit only normal LoginCount or exact current native point credits."""
+        """Permit exact point awards and the witnessed first trained purchase."""
         if evidence._same(previous, current):
             return True
+        training = getattr(self, 'native_training_save', None)
+        if isinstance(training, dict) and training.get('verified') is True:
+            if table == 'powers':
+                return (digest_json(previous) == training['before_power_rows_sha256']
+                        and digest_json(current) == training['saved_power_rows_sha256'])
+            if (table == 'ents' and len(previous) == 1 and len(current) == 1
+                    and (previous[0].get('level') is None or type(previous[0].get('level')) is int
+                         and previous[0]['level'] == training['before_internal_level'])
+                    and type(current[0].get('level')) is int
+                    and current[0]['level'] == training['saved_internal_level']):
+                previous = [{key: value for key, value in previous[0].items() if key != 'level'}]
+                current = [{key: value for key, value in current[0].items() if key != 'level'}]
+                if evidence._same(previous, current):
+                    return True
         if table != 'ents' or len(previous) != 1 or len(current) != 1:
             return False
         fields = ('experiencepoints', 'influencepoints')
@@ -1544,6 +1656,12 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             result.update(selected_rows_preservation_policy='strict_baseline_except_login_count_and_exact_native_point_credits',
                 selected_non_reward_rows_preserved=True, native_reward_values_committed_verified=True,
                 native_reward_credit_evidence=credit)
+        training = getattr(self, 'native_training_save', None)
+        if training is not None:
+            result.update(selected_rows_preservation_policy='strict_baseline_except_login_count_exact_native_point_credits_and_first_trained_purchase',
+                native_training_values_committed_verified=True,
+                native_training_save_evidence=training, saved_internal_level=1,
+                saved_displayed_level=2, newly_purchased_power=training['purchased_power'])
         return result
 
     def collect(self, target):
