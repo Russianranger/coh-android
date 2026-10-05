@@ -1,0 +1,83 @@
+name: Audit failed Atlas native generation evidence
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths: [.github/workflows/android-atlas-beacon-verification.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-atlas-beacon-native-verification
+  cancel-in-progress: false
+jobs:
+  failure_evidence:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-generation-evidence
+          path: out/native-failure
+          run-id: 37363692462
+          github-token: ${{ github.token }}
+      - name: Bind failed run provenance and inspect bounded native witnesses
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, re, urllib.request
+          from pathlib import Path
+          repo = 'Russianranger/coh-android'
+          run_id = 37363692462
+          artifact_id = 11370824751
+          head = '57515789dfafab5c4eab3273c63e28beef20264c'
+          def get(path):
+              request = urllib.request.Request('https://api.github.com/repos/' + repo + path,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+          run = get('/actions/runs/' + str(run_id))
+          artifact = get('/actions/artifacts/' + str(artifact_id))
+          assert run['status'] == 'completed' and run['conclusion'] == 'failure' and run['head_sha'] == head
+          assert artifact['id'] == artifact_id and artifact['name'] == 'coh-ui-beacon-generation-evidence'
+          assert artifact['workflow_run']['id'] == run_id and artifact['workflow_run']['head_sha'] == head
+          assert not artifact['expired'] and artifact['size_in_bytes'] == 16790903
+          assert artifact['digest'] == 'sha256:f5ea6e160a16fcd37971daf3fb8ee1e60f63ab03420da6e360b57d144dce79f1'
+          root = Path('out/native-failure')
+          files = sorted(path for path in root.rglob('*') if path.is_file())
+          assert len(files) <= 128 and sum(path.stat().st_size for path in files) <= 268435456
+          pins = {}
+          for path in files:
+              assert not path.is_symlink()
+              raw = path.read_bytes()
+              pins[path.relative_to(root).as_posix()] = {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+          roles = {}
+          for role in ('master', 'server', 'sentry', 'worker'):
+              path = root / 'evidence' / (role + '.log')
+              if not path.is_file():
+                  print('COH_ATLAS_FAILURE_ROLE_MISSING ' + role)
+                  continue
+              raw = path.read_bytes()
+              text = raw.decode('utf-8', errors='replace')
+              markers = re.findall(r'COH_ATLAS_BEACON_NATIVE_V1 [^\r\n]+', text)
+              roles[role] = {'file': pins[path.relative_to(root).as_posix()], 'native_witnesses': markers,
+                  'tail': text[-4096:]}
+              print('COH_ATLAS_FAILURE_ROLE ' + role + ' bytes=' + str(len(raw)))
+              for marker in markers:
+                  print(marker)
+              print(text[-4096:].encode('ascii', errors='backslashreplace').decode())
+          result = {'format': 1, 'status': 'failure_evidence_only_no_graph_qualification',
+              'run_id': run_id, 'source_commit': head, 'artifact_id': artifact_id,
+              'artifact_zip_sha256': artifact['digest'], 'files': pins, 'roles': roles}
+          target = Path('out/atlas-native-failure-forensic.json')
+          target.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+          print('COH_ATLAS_FAILURE_FILE_PINS ' + json.dumps(pins, sort_keys=True))
+          print('COH_ATLAS_FAILURE_GRAPH_CAPTURED ' + str(any(name.endswith(('.beacon', '.date')) for name in pins)))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-beacon-failure-forensic
+          path: out/atlas-native-failure-forensic.json
+          if-no-files-found: error
+          retention-days: 90
