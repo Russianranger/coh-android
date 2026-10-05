@@ -10,12 +10,14 @@
      const char* exeFileName = beaconGetExeFileName();
      const char* baseFolder = "c:/beaconizer/";
      const char* folderPrefix = "beaconcopy.";
-@@ -2842,8 +2845,9 @@
+@@ -2842,8 +2845,11 @@
  
  void beaconizerStart()
  {
 -    if(!beaconizerInit.clientServerType){
 -        return;
++    /* -nogui skips console stdio setup; use the native FileWrapper API. */
++    setvbuf(fileGetStdout(), NULL, _IONBF, 0);
 +    if(!beaconizerInit.clientServerType || beaconIsProductionMode()){
 +        FatalErrorf("Host Atlas beacon producer requires nonproduction native beacon roles");
 +        exit(2);
@@ -159,7 +161,7 @@
 +            printf("COH_ATLAS_BEACON_NATIVE_V1 crc=0x%08x combat=%d connected=%d ground=%d raised=%d blocks=%d paths=%d\n",
 +                   beaconGetMapCRC(0, 1, 0), combatBeaconArray.size, connected,
 +                   ground, raised, combatBeaconGridBlockArray.size, paths);
-+            fflush(stdout);
++            fflush(fileGetStdout());
 +        }
      }else{
          beaconServerUpdateTitle("Writing beacon file to memory!");

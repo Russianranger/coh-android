@@ -22,6 +22,12 @@ class StorageRoutingTests(unittest.TestCase):
             self.assertIn(required, source)
         self.assertEqual(source.count('contents: write'), 1)
         self.assertIn('release asset, as in the accepted server-cache workflow. No publishing step.', source)
+        self.assertLess(source.index('core.autocrlf false'), source.index('actions/checkout@'))
+        self.assertIn('Collect short-path host evidence on the repository drive', source)
+        self.assertIn('Copy-Item -LiteralPath $source', source)
+        evidence_upload = source.split('name: coh-ui-beacon-generation-evidence', 1)[1]
+        self.assertNotIn('C:/', evidence_upload)
+        self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)
         for forbidden in ('build_ui_beacon_apk.py', 'softprops/action-gh-release', '--publish', 'COH_ATLAS_BEACON_REUSE_RUN_ID'):
             self.assertNotIn(forbidden, source)
 

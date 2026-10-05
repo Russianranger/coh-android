@@ -25,6 +25,9 @@ jobs:
     runs-on: windows-2025-vs2026
     timeout-minutes: 120
     steps:
+      - name: Preserve exact generation source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
@@ -84,6 +87,24 @@ jobs:
           path: out/ui-beacon-native/
           if-no-files-found: error
           retention-days: 90
+      - name: Collect short-path host evidence on the repository drive
+        if: always()
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $destination = 'out/ui-beacon-native/evidence'
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          $files = @{
+            'C:/bcn-src/atlas-beacon-generator-build-input.json' = 'atlas-beacon-generator-build-input.json'
+            'C:/bcn-src/out/build/vs2026/CMakeCache.txt' = 'CMakeCache.txt'
+            'C:/bcn-src/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml' = 'CMakeConfigureLog.yaml'
+            'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe' = 'host-only-beacon-generator.exe'
+          }
+          foreach ($source in $files.Keys) {
+            if (Test-Path -LiteralPath $source) {
+              Copy-Item -LiteralPath $source -Destination (Join-Path $destination $files[$source]) -Force
+            }
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -91,9 +112,6 @@ jobs:
           path: |
             out/ui-beacon-native/atlas-beacon-generation-report.json
             out/ui-beacon-native/evidence/
-            C:/bcn-src/atlas-beacon-generator-build-input.json
-            C:/bcn-src/out/build/vs2026/CMakeCache.txt
-            C:/bcn-src/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
             out/atlas-beacon-generator-work/*.log
           if-no-files-found: warn
           retention-days: 90

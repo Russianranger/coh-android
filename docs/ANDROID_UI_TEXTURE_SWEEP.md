@@ -34,6 +34,15 @@ The five previously unavailable stems remain explicit: `checkbar_meat_base_under
 
 This is a complete source sweep of the declared interface scope, not a claim that every dynamic property/emblem, every world/material dependency or every unvisited UI screen is visually qualified. Physical screenshots remain the acceptance evidence.
 
+A final exact-source audit checked all **57 approved PIGG name tables**, including entries excluded by texture/header filtering, the reference/avatar/world inventories, **1,585 stock trick files** and authored TexWord sources. It found no original leaf or stock composite alias for `gradient`, `powers_iconring_background`, `default_tray` or the four checkbar/checkbox underlight names. Their native uses narrow the impact:
+
+- Underlights are guarded by `UISKIN_PRAETORIANS` (`uiUtilMenu.c:593–595,767–771,940–944`); THORHERO's hero UI uses the retained normal checkbox/checkbar artwork.
+- `powers_iconring_background` is assigned to an unused local `back` in `displayPowerHelpBackground` (`uiPowers.c:118–130`), so it is not drawn. The displayed power-description ring exists.
+- `default_tray` initializes the fallback in `tray_GetIcon` (`uiTray.c:1967–2006`). Valid powers/inspirations supply their own icons; `trayslot_drawIcon` returns for null items and replaces a white fallback with the retained `Power_Missing` texture (`uiTray.c:2171–2176`).
+- `gradient` is drawn with vertex colors by watermark-frame helpers (`uiUtilGame.c:2664–2748`), called by Auction/Mission Architect interfaces. There is no exact approved donor or authored alias to add; this remaining watermark limitation is recorded without substituting another texture.
+
+This audit leaves the frozen asset packet unchanged.
+
 ## Reproducibility and cache behavior
 
 `discover_client_ui_sweep_assets.py` derives source witnesses and resolves only exact missing names. `prepare_client_ui_sweep_assets.py` verifies the immutable recipe and original donor ranges, checks all retained encoded streams and reuses the original compressed streams for every addition. The new source manifest is a small, bounded append recipe over the pinned existing 0.13.13 source manifest; it reconstructs the exact plaintext bytes before packaging. Requests and plan use bounded source envelopes as well. These transport choices do not change runtime JSON or ZIP bytes.

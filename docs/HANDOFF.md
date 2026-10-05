@@ -2,15 +2,26 @@
 
 **0.13.13 Thor reopen, training, save and persistence verified; UI sweep and Atlas beacon generation in progress for 0.13.14.**
 
-Latest implementation checkpoint: `18d665e277645805d5a6efcbee4c9918f2938b5e`
-on the existing continuation branch. The full UI sweep and fail-closed graph
-installer are committed. Native generation run **37343908071** recovered the
-exact reviewed inputs and reached Win32 compilation; real graph output and
-guest archive/manifest pins remain pending. No 0.13.14 APK is published yet.
-The new packaging boundary passes 13 targeted checks and independent review;
-full hosted qualification, including seven real PostgreSQL fixtures, still
-must pass before publication. Reuse the successful native artifact only after
-verifying its unchanged producer/world identities.
+Latest packaging checkpoint: `15a27d4da0665ab9c05ba1e3ddb0417e69196741`
+on the existing continuation branch. The full UI sweep, fail-closed graph
+installer, packaging gates and Thor testing notes are committed. Native run
+**37343908071** recovered the exact inputs and compiled successfully, but its
+master role exited before readiness. The mixed Windows-drive evidence upload
+also failed, so no native graph or valid generation artifact was produced.
+The source audit found an invalid empty progress environment variable in the
+host roles, consistent with an early startup exit; the lost master log prevents
+direct confirmation of that branch. The retry removes that variable, corrects
+native FileWrapper stream setup/flush handling, enforces absolute role paths,
+records bounded failure tails/exit codes, and copies build evidence into one
+repository-drive tree before upload. Cross-platform checkouts retain exact LF
+source bytes. Shipped binaries and progress instrumentation remain unchanged.
+Guest archive/manifest pins remain pending. No 0.13.14 APK is published yet.
+The packaging boundary passes 13 targeted checks and independent review.
+The consistent local broad regression passed **1,030 scenarios / 67 suites**
+without skips; this does not include real PostgreSQL execution. Full hosted
+qualification with all seven real PostgreSQL fixtures remains mandatory.
+Reuse a successful native artifact only after verifying its unchanged
+producer/world identities.
 
 The live continuation branch and draft PR #1 were rechecked at
 `6098d5e040d9a41654acec60e92c64be2b5aacee`; main remains separate at

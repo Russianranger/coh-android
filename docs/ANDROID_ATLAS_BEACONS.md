@@ -46,6 +46,18 @@ may be reused in a later documentation/UI commit only while every generation
 implementation pin, native build input and world identity still matches. The
 receipt continues to name the actual generation commit.
 
+The first compiled run, `37343908071`, failed before the master's readiness
+marker. Its mixed-drive evidence upload also failed, so that run supplies no
+accepted graph or native role log. A source audit found that its host child
+environment set `COH_WINE_MAP_PROGRESS` to an empty string, which native progress
+initialization rejects. This is consistent with the early exit; the lost log
+prevents proving which branch actually ended that process. The producer now removes that host-only request,
+uses the native FileWrapper stdout API for unbuffered readiness/qualification
+logging, retains exit codes and bounded log tails on failure, and gathers the
+short-path C-drive build evidence onto the repository drive before upload.
+Generation paths are explicitly absolute. These host fixes preserve the
+shipped Android observer and require a fresh native generation.
+
 ## Private installation and startup
 
 `android/guest/atlas_beacon_package.py` accepts only the frozen qualified graph

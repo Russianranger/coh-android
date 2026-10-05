@@ -213,8 +213,14 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 '35.0.0', 'android-35/android.jar', 'coh-client-interactive.jks', package.APK_NAME):
             self.assertIn(expected, source)
         native_job = source.split('  beacons:\n', 1)[1].split('  qualify:\n', 1)[0]
+        self.assertLess(native_job.index('core.autocrlf false'), native_job.index('actions/checkout@'))
         self.assertIn('actions/setup-java@v4', native_job)
         self.assertIn("java-version: '17'", native_job)
+        self.assertIn('Collect host build and role evidence on the repository drive', native_job)
+        self.assertIn('Copy-Item -LiteralPath $entry.source', native_job)
+        evidence_upload = native_job.split('name: coh-ui-beacon-generation-evidence', 1)[1]
+        self.assertNotIn('C:/', evidence_upload)
+        self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)
         for forbidden in ('--target DbServer', 'discover_client_visual_assets.py', 'prepare_client_appearance_assets.py'):
             self.assertNotIn(forbidden, source)
 

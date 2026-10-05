@@ -33,6 +33,7 @@ REPORT = 'atlas-beacon-generation-report.json'
 GRAPH = 'data/server/maps/city_zones/city_01_01/city_01_01.txt.v8.bcn'
 DATE = GRAPH + '.date'
 MAX_LOG = 128 * 1024 * 1024
+MAX_FAILURE_TAIL = 8192
 NATIVE = re.compile(rb'COH_ATLAS_BEACON_NATIVE_V1 crc=(0x[0-9a-fA-F]{8}) combat=(\d+) connected=(\d+) ground=(\d+) raised=(\d+) blocks=(\d+) paths=(\d+)')
 GENERATION_SOURCES = (
     'tools/prepare_atlas_beacon_generator_source.py',
@@ -196,8 +197,39 @@ def _date_from_archive(path):
     with zipfile.ZipFile(path) as archive: return archive.read(DATE)
 
 
+def record_role_failure(evidence, processes, commands, failure):
+    """Keep bounded native diagnostics even when artifact publication fails."""
+    roles = {}
+    for role, process in processes.items():
+        path = evidence / (role + '.log')
+        code = process.returncode
+        with path.open('rb') as stream:
+            stream.seek(max(0, path.stat().st_size - MAX_FAILURE_TAIL))
+            tail = stream.read(MAX_FAILURE_TAIL).decode('utf-8', errors='replace')
+        roles[role] = {'returncode': code, 'windows_exit_hex': None if code is None else f'0x{code & 0xffffffff:08x}',
+                       'command': commands[role], 'log': pin(path), 'tail_bytes_limit': MAX_FAILURE_TAIL}
+        print(f'COH_ATLAS_BEACON_ROLE_FAILURE role={role} exit={roles[role]["windows_exit_hex"]}', flush=True)
+        print(tail, flush=True)
+    record = {'format': 1, 'status': 'failed', 'exception_type': type(failure).__name__,
+              'reason': str(failure), 'roles': roles,
+              'cleanup_complete': all(process.poll() is not None for process in processes.values())}
+    (evidence / 'native-role-failure.json').write_bytes(canonical(record))
+
+
+def role_environment(environment=None):
+    # Native progress initialization distinguishes absent from empty. Host roles
+    # do not own an Android observer mapping and must never request one.
+    env = dict(os.environ if environment is None else environment)
+    for name in ('COH_WINE_MAP_PROGRESS', 'COH_CLIENT_DEPENDENCY_PRELOAD',
+                 'COH_MANUAL_ATLAS_DB', 'COH_WINE_GAME_LISTENERS'):
+        env.pop(name, None)
+    return env
+
+
 def generate(args):
     require(os.name == 'nt', 'Native generation requires an isolated Windows runner')
+    for name in ('donor_apk', 'donor_receipt', 'asset_archive', 'generator', 'build_input', 'work', 'output'):
+        setattr(args, name, Path(getattr(args, name)).resolve())
     require(30 <= args.timeout_seconds <= 5400 and re.fullmatch('[0-9a-f]{40}', args.repository_commit), 'Invalid timeout/commit')
     require(not args.work.exists() and not args.output.exists(), 'Fresh generator work/output required')
     args.work.mkdir(parents=True); args.output.mkdir(parents=True)
@@ -205,7 +237,8 @@ def generate(args):
     build_input = json.loads(args.build_input.read_bytes())
     require(build_input == producer.expected(), 'Native generator source receipt differs')
     assets = args.work / 'donor'; extract_assets(args.donor_apk, args.donor_receipt, assets)
-    data = import_data(assets, args.asset_archive, args.work, evidence); runtime = data.parent
+    data = import_data(assets, args.asset_archive, args.work, evidence).resolve(strict=True)
+    runtime = data.parent.resolve(strict=True)
     native = extract_tar(assets / 'runtime/game-package.tar.gz', runtime, 'game-package.json')
     require(pin(runtime / 'MapServer.exe')['sha256'] == STOCK_MAPSERVER, 'Retained native MapServer differs')
     extract_tar(assets / 'runtime/dbserver-schema.tar.gz', runtime, 'schema-manifest.json')
@@ -218,14 +251,15 @@ def generate(args):
     inputs = geometry_inputs(runtime)
     (runtime / 'tools').mkdir(exist_ok=True)
     generator = runtime / 'AtlasBeaconGenerator.exe'; shutil.copyfile(args.generator, generator)
-    env = dict(os.environ, COH_WINE_MAP_PROGRESS='')
-    for name in ('COH_CLIENT_DEPENDENCY_PRELOAD', 'COH_MANUAL_ATLAS_DB', 'COH_WINE_GAME_LISTENERS'): env.pop(name, None)
+    env = role_environment()
     common = ['-nogui', '-nopigs', '-noencrypt', '-beaconallownovodex', '-beacondatatoolsrootpath', str(runtime)]
-    roles = [('master', ['-beaconmasterserver', '-beaconrequestcachedir', str(args.work / 'requests')]),
+    requests = (args.work / 'requests').resolve()
+    require(runtime.is_absolute() and requests.is_absolute(), 'Native cwd/root/cache paths must be absolute')
+    roles = [('master', ['-beaconmasterserver', '-beaconrequestcachedir', str(requests)]),
              ('server', ['-beaconserver', '127.0.0.1', '-beacononepassonly', '-beaconforcerebuild']),
              ('sentry', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity']),
              ('worker', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity'])]
-    processes, logs, commands = {}, {}, {}
+    processes, logs, commands, failure = {}, {}, {}, None
     started = time.monotonic()
     try:
         for role, flags in roles:
@@ -237,6 +271,7 @@ def generate(args):
                 expected = b'BEACON MASTER SERVER RUNNING' if role == 'master' else b"I'm the sentry!!!"
                 deadline = min(started + args.timeout_seconds, time.monotonic() + 300)
                 while expected not in (evidence / (role + '.log')).read_bytes():
+                    require((evidence / (role + '.log')).stat().st_size <= MAX_LOG, 'Native role startup log exceeded bound')
                     require(processes[role].poll() is None and time.monotonic() < deadline, 'Native role startup failed: ' + role)
                     time.sleep(0.5)
         while processes['server'].poll() is None:
@@ -246,6 +281,9 @@ def generate(args):
                 require(role == 'server' or processes[role].poll() is None, 'Owned native role exited: ' + role)
             time.sleep(1)
         require(processes['server'].returncode == 0, 'Native Atlas graph producer failed')
+    except Exception as error:
+        failure = error
+        raise
     finally:
         for process in processes.values():
             if process.poll() is None: process.terminate()
@@ -253,6 +291,7 @@ def generate(args):
             try: process.wait(timeout=15)
             except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
         for stream in logs.values(): stream.close()
+        if failure is not None: record_role_failure(evidence, processes, commands, failure)
     require((runtime / GRAPH).is_file() and (runtime / DATE).is_file(), 'Native graph files missing')
     require(geometry_inputs(runtime) == inputs, 'Native generation modified an immutable collision input')
     witness = native_evidence((evidence / 'server.log').read_bytes(), (runtime / DATE).read_bytes())
@@ -290,8 +329,6 @@ def main():
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--timeout-seconds', type=int, default=5400)
     args = parser.parse_args()
-    for name in ('donor_apk', 'donor_receipt', 'asset_archive', 'generator', 'build_input', 'work', 'output'):
-        setattr(args, name, getattr(args, name).resolve())
     generate(args)
 
 
