@@ -4,6 +4,7 @@ import copy
 import io
 import json
 from pathlib import Path
+import shlex
 import tempfile
 import unittest
 from unittest import mock
@@ -251,3 +252,17 @@ class LevelupUiRepairPackagingTests(unittest.TestCase):
         self.assertIn("COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'", text)
         self.assertNotIn('d8.jar', text); self.assertNotIn('javac', text)
         self.assertIn('out/levelup-ui-repair/'+package.APK_NAME, text)
+
+    def test_hosted_asset_discovery_command_is_accepted_by_the_real_cli(self):
+        import discover_client_ui_repair_assets as discovery
+        lines = (package.ROOT/package.WORKFLOW).read_text().splitlines()
+        commands = [shlex.split(line.strip()) for line in lines
+                    if line.strip().startswith('python3 tools/android/interactive/discover_client_ui_repair_assets.py ')]
+        self.assertEqual(len(commands), 1)
+        args = discovery.arguments(commands[0][2:])
+        self.assertTrue(args.plan_only)
+        self.assertEqual(args.baseline_archive.name, 'client-visual-assets.zip')
+        self.assertEqual(args.baseline_manifest.name, 'client-visual-manifest.json')
+        self.assertEqual(args.output.name, 'levelup-ui-repair-discovery')
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            discovery.arguments(commands[0][2:]+['--requests', 'unreviewed.json'])

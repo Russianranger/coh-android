@@ -1,6 +1,15 @@
 # City of Heroes Android handoff
 
 **Recovered 0.13.12 source checkpoint ready for hosted qualification; publication pending.**
+Implementation checkpoint `1485dfa12236b66a3e409a0423f297ce9bc6ff3a` preserves
+the cut-off agent's complete work and finishes training validation. Hosted
+run `37314436172` reached donor extraction, then refused an unsupported
+`--requests` discovery argument in the recovered workflow. The corrected workflow
+omits it; the producer reads its frozen source requests internally. The new regression
+parses the exact hosted command through the production argument parser.
+The Windows save assertions also passed before a fixture cleanup failure;
+explicitly close the reopened SQLite connection so Windows can remove its file.
+Keep this failed run as evidence; it did not publish an APK.
 Continue branch `codex/character-persistence-continuation` from live checkpoint
 `8f602b83095989cc936fc77f89bacceb4a960aee`; draft PR #1 stays open and unmerged.
 Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Preserve the accepted
@@ -61,8 +70,8 @@ automatic grants. Thirteen untouched native/data producer files are explicitly
 pinned. Only the typed current reader enables stock entity-category logging;
 ordinary logout, native position, rewards and authored task guards remain.
 The sequential host scenario trains/saves with native XP awards, then reopens
-the exact trained character with its chosen power intact. All **961 local
-regression scenarios / 62 suites** passed: 882 retained, 67 focused
+the exact trained character with its chosen power intact. All **962 local
+regression scenarios / 62 suites** passed: 882 retained, 68 focused
 persistence/UI/preload/package checks and twelve training scenarios.
 Real PostgreSQL fixtures and full Win32 DbServer compilation remain hosted
 qualification requirements. No physical fix or speed claim.

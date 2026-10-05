@@ -259,7 +259,7 @@ def discover(args):
     print(json.dumps({key: public[key] for key in ('archive', 'manifest', 'total_file_count', 'total_payload_bytes')}), flush=True)
 
 
-if __name__ == '__main__':
+def arguments(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--baseline-archive', type=Path, required=True)
@@ -268,4 +268,8 @@ if __name__ == '__main__':
     parser.add_argument('--payload-cache', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--plan-only', action='store_true')
-    discover(parser.parse_args())
+    return parser.parse_args(argv)
+
+
+if __name__ == '__main__':
+    discover(arguments())

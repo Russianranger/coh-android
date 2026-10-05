@@ -146,7 +146,7 @@ jobs:
       - name: Append finite source-witnessed UI dependencies preserving all 9490 accepted original streams
         run: |
           python3 tools/android/interactive/build_levelup_ui_repair_apk.py extract-baseline --donor-apk out/donor/COH-Atlas-Gameplay-0.13.11.apk --donor-build-report out/levelup-ui-repair-donor-evidence/client-startup-followup-apk-build-report.json --output out/levelup-ui-repair-baseline
-          python3 tools/android/interactive/discover_client_ui_repair_assets.py --requests assets/client-ui-repair-requests.json --baseline-archive out/levelup-ui-repair-baseline/client-visual-assets.zip --baseline-manifest out/levelup-ui-repair-baseline/client-visual-manifest.json --metadata-cache out/levelup-ui-repair-metadata --payload-cache out/levelup-ui-repair-payloads --output out/levelup-ui-repair-discovery --plan-only
+          python3 tools/android/interactive/discover_client_ui_repair_assets.py --baseline-archive out/levelup-ui-repair-baseline/client-visual-assets.zip --baseline-manifest out/levelup-ui-repair-baseline/client-visual-manifest.json --metadata-cache out/levelup-ui-repair-metadata --payload-cache out/levelup-ui-repair-payloads --output out/levelup-ui-repair-discovery --plan-only
           python3 tools/android/interactive/build_levelup_ui_repair_apk.py verify-discovery-plan --directory out/levelup-ui-repair-discovery --manifest assets/client-ui-repair-manifest.json
           mkdir out/levelup-ui-repair-assets
           python3 tools/android/interactive/prepare_client_ui_repair_assets.py --materialize --manifest assets/client-ui-repair-manifest.json --baseline-directory out/levelup-ui-repair-baseline --output out/levelup-ui-repair-assets

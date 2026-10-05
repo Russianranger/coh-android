@@ -1,5 +1,6 @@
 """Reproduce default AttribMods reads, native training statements, and atomic saves."""
 import copy
+from contextlib import closing
 import json
 import os
 from pathlib import Path
@@ -324,7 +325,7 @@ class EmptyChildSaveTests(unittest.TestCase):
             _, batches = self.commands()
             with db: self.execute(db, batches)
             db.close()
-            with sqlite3.connect(filename) as reopened:
+            with closing(sqlite3.connect(filename)) as reopened:
                 self.assertEqual(reopened.execute('SELECT XP,Level FROM Ents WHERE ContainerId=1').fetchone(), (116, 2))
                 self.assertEqual(reopened.execute('SELECT SubId,PowerID FROM Powers ORDER BY SubId').fetchall(), [(0, 7), (1, 8)])
                 self.assertEqual(reopened.execute('SELECT SubId,Duration,UiD FROM AttribMods ORDER BY SubId').fetchall(), [(0, 12, 42), (1, 9, 43)])
