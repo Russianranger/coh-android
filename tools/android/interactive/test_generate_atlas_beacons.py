@@ -128,4 +128,125 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             self.assertIn('COH_ATLAS_BEACON_INPUT_PROFILES',output.getvalue())
 
 
+class AtlasNativeInputCaseTests(unittest.TestCase):
+    """Actual imported directory case is reused; immutable leaf case stays exact."""
+
+    def mixed_runtime(self, root):
+        runtime = root / 'r'
+        files = {'Data/Object_Library/Furniture/UpperExact.geo': b'exact upper leaf',
+                 'Data/Maps/City_Zones/City_01_01/map.txt': b'exact Atlas groups',
+                 'Data/Tricks/trick.txt': b'exact tricks'}
+        files.update({'Data/Object_Library/Furniture/base%03d.geo' % index:
+                      ('exact geometry %d' % index).encode() for index in range(100)})
+        for name, raw in files.items():
+            target = runtime / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+        return runtime, files
+
+    def test_inventory_canonicalizes_only_directories_and_resolves_real_case(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime, files = self.mixed_runtime(Path(temporary))
+            before = {path.relative_to(runtime).as_posix() for path in runtime.rglob('*')}
+            records = generator.geometry_inputs(runtime)
+            expected = {generator.canonical_input_name(name): generator.pin(runtime / name)
+                        for name in files}
+            self.assertEqual(records, expected)
+            self.assertIn('data/object_library/furniture/UpperExact.geo', records)
+            self.assertNotIn('data/object_library/furniture/upperexact.geo', records)
+            targets = generator.resolve_world_targets(runtime, records)
+            for name, target in targets.items():
+                self.assertEqual(target.name, Path(name).name)
+                self.assertEqual(generator.pin(target), records[name])
+            self.assertEqual({path.relative_to(runtime).as_posix() for path in runtime.rglob('*')}, before)
+            self.assertFalse((runtime / 'data').exists())
+            self.assertIn('android/guest/atlas_world_assets.py', generator.GENERATION_SOURCES)
+            self.assertEqual(generator._WORLD_RESOLVE_TARGETS.__code__.co_filename,
+                             str(generator.WORLD_CASE_SOURCE))
+
+    def test_case_colliding_directories_and_leaves_are_rejected(self):
+        for collision in ('Data/Object_Library/furniture/extra.geo',
+                          'Data/Object_Library/Furniture/upperexact.geo'):
+            with self.subTest(collision=collision), tempfile.TemporaryDirectory() as temporary:
+                runtime, _ = self.mixed_runtime(Path(temporary))
+                target = runtime / collision
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(b'conflicting immutable input')
+                with self.assertRaisesRegex(ValueError, 'case-conflicting'):
+                    generator.geometry_inputs(runtime)
+
+    def test_exact_leaf_case_and_linked_owned_roots_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runtime, _ = self.mixed_runtime(root)
+            with self.assertRaisesRegex(ValueError, 'leaf'):
+                generator.resolve_world_targets(runtime, ['data/object_library/furniture/upperexact.geo'])
+            linked = root / 'linked'
+            linked.symlink_to(runtime, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'Owned native input'):
+                generator.geometry_inputs(linked)
+            with self.assertRaisesRegex(ValueError, 'Owned native input'):
+                generator.resolve_world_targets(linked, ['data/tricks/trick.txt'])
+
+    def test_mixed_case_cache_roots_are_private_in_cold_mirror(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runtime, _ = self.mixed_runtime(root)
+            private = ('Data/Bin/defs.bin', 'Data/GeoBin/world.bin', 'Data/Server/cache.bin')
+            for name in private:
+                target = runtime / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(b'private native cache')
+            cold = root / 'c'
+            generator.mirror_cold_runtime(runtime, cold)
+            self.assertTrue(os.path.samefile(runtime / 'Data/Tricks/trick.txt',
+                                            cold / 'Data/Tricks/trick.txt'))
+            for name in private:
+                self.assertFalse(os.path.samefile(runtime / name, cold / name))
+                (runtime / name).write_bytes(b'changed native cache')
+                self.assertEqual((cold / name).read_bytes(), b'private native cache')
+            self.assertEqual(generator.geometry_inputs(runtime), generator.geometry_inputs(cold))
+
+    def test_optional_overlay_reuses_imported_parent_case_and_strict_leafs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            runtime, _ = self.mixed_runtime(root)
+            archive = root / 'visual.zip'
+            files = {'data/object_library/furniture/optional%03d.geo' % index:
+                     ('original optional %d' % index).encode()
+                     for index in range(generator.VISUAL_OBJECT_GEOS)}
+            with generator.zipfile.ZipFile(archive, 'w') as target:
+                for name, raw in files.items():
+                    target.writestr(name, raw)
+            pins = {name: {'bytes': len(raw), 'sha256': generator.hashlib.sha256(raw).hexdigest()}
+                    for name, raw in files.items()}
+            manifest = root / 'visual.json'
+            manifest.write_bytes(generator.canonical({'archive': generator.pin(archive), 'files': pins}))
+            _, selected = generator.overlay_object_geometry(archive, manifest, runtime)
+            self.assertEqual(selected, pins)
+            targets = generator.resolve_world_targets(runtime, selected)
+            self.assertTrue(all(path.parent == runtime / 'Data/Object_Library/Furniture'
+                                for path in targets.values()))
+            self.assertFalse((runtime / 'data').exists())
+            self.assertEqual({name: generator.pin(path) for name, path in targets.items()}, pins)
+            exact = targets['data/object_library/furniture/optional000.geo']
+            exact.rename(exact.with_name('OPTIONAL000.geo'))
+            with self.assertRaisesRegex(ValueError, 'leaf'):
+                generator.overlay_object_geometry(archive, manifest, runtime)
+
+    def test_retained_compile_requires_exact_source_binary_and_fixed_artifact(self):
+        build_input = {'source_commit': 'a' * 40, 'active_algorithms': {'actual.c': 'b' * 64}}
+        binary = {'bytes': 300, 'sha256': 'c' * 64}
+        value = {'format': 1, 'status': 'reused_exact_compatible_native_compile',
+                 'compile': generator.HOST_COMPILE_REUSE,
+                 'build_input': build_input, 'generator': binary}
+        self.assertEqual(generator.validate_compile_reuse_receipt(value, build_input, binary), value)
+        for changed in ({**value, 'status': 'native_graph_qualified'},
+                        {**value, 'compile': {**generator.HOST_COMPILE_REUSE, 'run_id': 1}},
+                        {**value, 'build_input': {'different.c': 'd' * 64}},
+                        {**value, 'generator': {**binary, 'sha256': 'd' * 64}}):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                generator.validate_compile_reuse_receipt(changed, build_input, binary)
+
+
 if __name__ == '__main__': unittest.main()

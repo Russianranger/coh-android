@@ -1,33 +1,58 @@
 # City of Heroes Android handoff
 
-**Full UI sweep ready; real Atlas graph remains unqualified. Next candidate: 0.13.14 / code 29.**
+**Full UI sweep ready; actual Atlas graph remains unqualified. Next candidate: 0.13.14 / code 29.**
 
-The latest native attempt, [37351887742](https://github.com/Russianranger/coh-android/actions/runs/37351887742)
-at `8f379581484ed3f67aef03727ca2226cfd401856`, compiled successfully but stopped
-in the Python geometry-inventory assertion before any native role started.
-Evidence artifact **11364550876** preserves the importer, executable, PDB and
-build input. This attempt supplies no navigation result and does not test the
-repaired sentry callsite. No 0.13.14 APK is published.
+Latest hosted run [37357540374](https://github.com/Russianranger/coh-android/actions/runs/37357540374)
+at `780b030b73fef34b5000b7303ba4fe828020a229` passed the actual public-donor
+audit and **88 affected functional tests** (Ubuntu job 111923655360), then
+compiled the unchanged host producer successfully (Windows job 111924222126).
+Its importer/pre-role assertion retained decisive diagnostics: all **5,231 cold
+inputs matched exactly**; the full layout had **405 missing lowercase-directory
+keys and 405 extra canonical-directory keys, with zero changed byte pins**.
+Examples include `fx` versus the importer's established `FX` directory.
+Failure artifact **11366950301** retains the executable/PDB, build input,
+importer and bounded profile evidence. No native role was started, no graph was
+accepted, and no 0.13.14 APK is published.
 
-The next checkpoint distinguishes rich original visual-source records from
-physical file pins containing only byte count and SHA-256. Raw 406-object and
-927-GEO source identities remain unchanged; projected physical inputs have a
-separate digest. Strict profile closure, unchanged collision inputs, fresh
-native processes, identical loaded-world CRC and 32 paths per profile remain
-mandatory. A hosted preflight audits the actual SHA-pinned public 0.13.13 donor
-and runs the affected source, producer, guest, profile, packaging and routing
-tests before another Windows compile/import. Only the explicitly uncommitted
-publication-workflow contract test is outside that preflight scope; the final
-68-suite qualification must execute it and all seven real PostgreSQL fixtures.
+The earlier rich-metadata explanation is disproved by the real donor audit:
+all 406 optional records already contain only `bytes` and `sha256`; both raw
+and physical SHA-256 equal
+`c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`.
+The raw/physical contract separation remains useful, but was not the failing
+condition and is not claimed as a verified repair. The guest optional-geometry
+constant is now frozen to that actual audited identity; graph archive/manifest
+pins remain pending.
 
-The local execution connection became unavailable during this checkpoint.
-New detached source changes therefore have no local execution claim; hosted
-preflight must pass them. Repository updates preserve the existing branch and
-main through ordinary fast-forward GitHub tree commits. The unpublished full
-packaging workflow was reconstructed from its authored excerpts and committed
-CLI contracts, with actual public APK download/SDK audit added; this is not a
-claim of recovering byte-identical untracked files. Hold that workflow and all
-graph pins until actual successful native evidence is verified.
+The current repair uses the shipped world resolver's exact function bodies
+for host preparation and its ordinary API on Android. It reuses existing
+case-insensitive parent directories, preserves exact immutable leaf spelling,
+rejects case aliases, maps actual inventory back to declared logical names
+bijectively, and binds resolved physical paths in warm fingerprints.
+Case-insensitive Bin/GeoBin/Server roots remain private in the cold mirror.
+The authoritative resolver is now the eighth generation-source pin.
+Six host and ten guest/profile regression cases cover this boundary.
+Hosted preflight must execute these changes before actual native generation.
+The C containment patch, native algorithms and shipped binaries are unchanged.
+The retry may reuse only the exact successful host compile from the retained
+artifact: authenticated run/job/step identity, ZIP bytes/hash, fresh native
+build-input equality and actual Win32 executable identity are required. The
+reuse receipt is bound into new generation evidence. No graph or role proof
+is reused from that failed attempt.
+
+Both fresh native profile readbacks must still prove identical real collision
+CRC, full graph counts and 32 successful native paths each. Do not relax these
+proofs, hide the warning, fabricate a graph or use the failed attempt as a
+successful generation artifact. Only the explicitly uncommitted publication
+workflow contract test is outside the focused preflight scope; final **68-suite
+qualification and all seven real PostgreSQL fixtures** remain mandatory.
+
+The local execution connection is unavailable. New source changes have no
+local execution claim; hosted Actions provide executable verification.
+Repository updates preserve the continuation branch and main through ordinary
+fast-forward GitHub tree commits. The unpublished packaging workflow was
+reconstructed from its authored excerpts and committed CLI contracts; this
+does not claim byte-identical recovery of untracked files. Hold publication
+until successful native evidence, verified graph pins and final qualification.
 
 Earlier checkpoint details below remain historical.
 

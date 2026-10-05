@@ -13,6 +13,7 @@ from unittest import mock
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT/'android/guest'))
 spec = importlib.util.spec_from_file_location('atlas_beacon_test_module', ROOT/'android/guest/atlas_beacon_package.py')
 package = importlib.util.module_from_spec(spec); spec.loader.exec_module(package)
 
@@ -94,10 +95,28 @@ class AtlasBeaconPackageTests(unittest.TestCase):
         return package.install(self.archive,self.manifest,self.runtime,context=Context(),imported_inputs_readonly=True)
 
     def add_optional_inputs(self, names=None):
-        for name in (self.optional_inputs if names is None else names):
-            path = self.runtime/name
+        selected = self.optional_inputs if names is None else names
+        for name, path in package.actual_targets(self.runtime, selected, Context()).items():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(self.optional_inputs[name]); path.chmod(0o400)
+
+    def mixed_case_directories(self):
+        for relative, spelling in (
+                ('data/object_library/test', 'Test'),
+                ('data/object_library', 'Object_Library'),
+                ('data/maps/city_zones/city_01_01', 'City_01_01'),
+                ('data/maps/city_zones', 'City_Zones'),
+                ('data/maps', 'Maps'), ('data/tricks', 'Tricks'), ('data', 'Data')):
+            target = self.runtime/relative
+            target.rename(target.with_name(spelling))
+        (self.runtime/'Data/Server/Maps/City_Zones/City_01_01').mkdir(parents=True)
+
+    def assert_no_graph(self):
+        self.assertFalse((self.runtime/'Data/Server/Maps/City_Zones/City_01_01/city_01_01.txt.v8.bcn').exists())
+        self.assertFalse((self.runtime/'Data/Server/atlas-beacon-installed.json').exists())
+        self.assertFalse((self.runtime/package.GRAPH).exists())
+        self.assertFalse((self.runtime/package.MARKER).exists())
+
 
     def test_first_install_and_warm_reuse_do_not_decode_or_hash_input_payloads_again(self):
         first=self.install();self.assertEqual(first['installed_files'],2)
@@ -140,6 +159,101 @@ class AtlasBeaconPackageTests(unittest.TestCase):
     def test_bad_native_receipt_and_unrelated_graph_payload_are_refused(self):
         self.value['native']['native_pathfinder_successes']=0;self.freeze()
         with self.assertRaisesRegex(ValueError,'proofs are incomplete'):self.install()
+
+    def test_mixed_case_directories_install_cold_and_reuse_bound_actual_paths(self):
+        self.mixed_case_directories()
+        first = self.install()
+        self.assertEqual(first['server_geometry_profile'], 'base_world')
+        marker = self.runtime/'Data/Server/atlas-beacon-installed.json'
+        record = json.loads(marker.read_bytes())
+        self.assertTrue(record['input_fingerprints']['data/object_library/test/g1.geo']['path'].startswith(
+            'Data/Object_Library/Test/'))
+        self.assertEqual(record['graph_fingerprints'][package.GRAPH]['path'],
+            'Data/Server/Maps/City_Zones/City_01_01/city_01_01.txt.v8.bcn')
+        with mock.patch.object(package.zipfile, 'ZipFile', side_effect=AssertionError('Warm graph must not decode archive')):
+            reused = self.install()
+        self.assertEqual(reused['status'], 'reused_verified_graph')
+        self.assertEqual(reused['input_payload_bytes_hashed'], 0)
+        self.assertFalse((self.runtime/'data').exists())
+
+    def test_mixed_case_directories_install_complete_optional_profile_and_reuse(self):
+        self.mixed_case_directories()
+        self.add_optional_inputs()
+        first = self.install()
+        self.assertEqual(first['server_geometry_profile'], 'base_world_visual')
+        self.assertEqual(first['input_files_checked'], len(self.inputs) + len(self.optional_inputs))
+        self.assertFalse((self.runtime/'Data/object_library').exists())
+        with mock.patch.object(package.zipfile, 'ZipFile', side_effect=AssertionError('Warm graph must not decode archive')):
+            reused = self.install()
+        self.assertEqual(reused['status'], 'reused_verified_graph')
+        self.assertEqual(reused['input_payload_bytes_hashed'], 0)
+
+    def test_original_uppercase_map_and_geometry_leaves_are_preserved_exactly(self):
+        for old, new in (
+                ('data/'+package.MAP, 'data/maps/city_zones/city_01_01/CITY_01_01.TXT'),
+                ('data/object_library/test/g1.geo', 'data/object_library/test/G1.GEO')):
+            (self.runtime/old).rename(self.runtime/new)
+            self.value['input_files'][new] = self.value['input_files'].pop(old)
+        self.refresh_physical_profiles(); self.freeze()
+        self.mixed_case_directories()
+        installed = self.install()
+        self.assertEqual(installed['server_geometry_profile'], 'base_world')
+        self.assertTrue((self.runtime/'Data/Maps/City_Zones/City_01_01/CITY_01_01.TXT').is_file())
+        self.assertTrue((self.runtime/'Data/Object_Library/Test/G1.GEO').is_file())
+        self.assertFalse((self.runtime/'Data/Object_Library/Test/g1.geo').exists())
+
+    def test_case_colliding_directories_leaves_and_different_leaf_case_are_refused(self):
+        self.mixed_case_directories()
+        alias = self.runtime/'Data/object_library'
+        alias.mkdir()
+        with self.assertRaisesRegex(package.world.client.base.DiagnosticError, 'case-conflicting world destination'):
+            self.install()
+        self.assert_no_graph(); alias.rmdir()
+        original = self.runtime/'Data/Object_Library/Test/g1.geo'
+        duplicate = original.with_name('G1.GEO')
+        duplicate.write_bytes(original.read_bytes()); duplicate.chmod(0o400)
+        with self.assertRaisesRegex(package.world.client.base.DiagnosticError, 'case-conflicting world destination'):
+            self.install()
+        self.assert_no_graph(); duplicate.unlink()
+        original.rename(duplicate)
+        with self.assertRaisesRegex(package.world.client.base.DiagnosticError, 'Case-conflicting world leaf'):
+            self.install()
+        self.assert_no_graph(); duplicate.rename(original)
+
+    def test_unreferenced_case_colliding_directories_and_leaves_are_refused(self):
+        self.mixed_case_directories()
+        parent = self.runtime/'Data/Object_Library/unreferenced'
+        parent.mkdir()
+        first, second = parent/'Group', parent/'group'
+        first.mkdir(); second.mkdir()
+        with self.assertRaisesRegex(ValueError, 'Case-conflicting Atlas source inventory'):
+            self.install()
+        self.assert_no_graph(); first.rmdir(); second.rmdir()
+        first, second = parent/'note.ini', parent/'NOTE.INI'
+        first.write_bytes(b'one'); second.write_bytes(b'two')
+        with self.assertRaisesRegex(ValueError, 'Case-conflicting Atlas source inventory'):
+            self.install()
+        self.assert_no_graph()
+
+    def test_case_variant_existing_graph_is_preserved_without_alternate_directory(self):
+        self.mixed_case_directories()
+        graph = self.runtime/'Data/Server/Maps/City_Zones/City_01_01/CITY_01_01.TXT.v8.bcn'
+        graph.write_bytes(b'previous case-variant graph must survive')
+        before = graph.read_bytes()
+        with self.assertRaisesRegex(package.world.client.base.DiagnosticError, 'Case-conflicting world leaf'):
+            self.install()
+        self.assertEqual(graph.read_bytes(), before)
+        self.assert_no_graph()
+        self.assertFalse((self.runtime/'data').exists())
+        self.assertFalse((self.runtime/'Data/server').exists())
+
+    def test_declared_casefold_duplicate_leaves_are_refused_before_installation(self):
+        original = 'data/object_library/test/g1.geo'
+        self.value['input_files']['data/object_library/test/G1.GEO'] = dict(self.value['input_files'][original])
+        self.refresh_physical_profiles(); self.freeze()
+        with self.assertRaisesRegex(ValueError, 'Atlas collision/group source identity differs'):
+            self.install()
+        self.assert_no_graph()
 
     def test_raw_donor_and_physical_digests_are_distinct_and_cannot_be_swapped(self):
         identity = self.value['input_identity']

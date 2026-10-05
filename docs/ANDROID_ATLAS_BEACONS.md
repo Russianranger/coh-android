@@ -82,6 +82,37 @@ the precise failing instruction. Failure JSON is now written before rendering
 ASCII-safe bounded tails, captures pre-cleanup process exit status, and the
 workflow retains host symbols and bounded native internal logs/minidumps.
 
+
+Run `37357540374` passed all 88 hosted preflight tests and audited the exact
+public donor manifest. All 406 optional GEO records already contained only
+`bytes` and `sha256`; their physical SHA-256 was
+`c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`.
+The earlier metadata-projection hypothesis did not explain the actual failure.
+The Windows producer then stopped before starting any native role: its 5,231
+common inputs exactly matched the cold mirror, but 405 optional inputs appeared
+under imported canonical directory spellings such as `FX/AnimatedCharacterParts`
+instead of the donor's lowercase logical directory keys. There were no changed
+byte pins. Artifact `11366950301` retains the bounded inventory diagnostic and
+compiled host evidence; it contains no accepted graph or successful role proof.
+
+The producer now uses the exact `real_directory` and `resolve_targets` function
+bodies from the existing `atlas_world_assets.py` policy. Its source is an
+additional pinned generation dependency. Logical inventory keys normalize
+directory components only and retain the original immutable leaf spelling.
+Physical overlay destinations reuse the imported directory spellings, reject
+case-conflicting directory or leaf aliases, and preserve strict leaf names.
+Cold mirror cache-root classification also reuses directory case safely while
+keeping bin, geometry and server caches private. These changes do not alter
+native algorithms or rename the imported assets. A fresh qualified graph and
+both native profile proofs remain required.
+
+The retry may reuse the successfully compiled host EXE/PDB from artifact
+`11366950301` only after checking the exact completed run/job and successful
+stage/compile steps, raw ZIP SHA-256/byte count, fresh native build-input
+equality and Win32 executable identity. A bound compile-reuse receipt enters
+new generation evidence. Changed native source triggers fresh compilation;
+no graph, role or path proof is reused from that failed generation attempt.
+
 ## Private installation and startup
 
 `android/guest/atlas_beacon_package.py` accepts only the frozen qualified graph
@@ -97,6 +128,10 @@ cold/warm collision CRC or incomplete fresh-process proof is refused. It never
 adds those GEOs to server startup just to satisfy a package assertion.
 Existing different graphs and linked target paths are preserved and refused.
 Only the two server-only files and an owned proof receipt are written.
+Input and graph destinations use the same existing world resolver to recover
+actual directory spelling while requiring exact leaf names. The warm proof
+also binds each input's actual relative path, so physical directory-case changes
+invalidate reuse rather than silently introducing aliases.
 
 The ordinary Atlas preparation path installs the package for saved and fresh
 characters. The unmodified gameplay MapServer discovers and loads the graph
@@ -127,7 +162,10 @@ existing graphs, linked targets, writable inputs and incomplete native proofs.
 Synthetic unit fixtures are explicitly not native generation evidence.
 Cold-mirror tests verify cache isolation. Production cache tests reproduce both
 the retained cold mirror and later full-visual fallback; profile tests refuse
-mixed geometry and inconsistent cold/warm proof metadata.
+mixed geometry and inconsistent cold/warm proof metadata. Real filesystem
+fixtures cover mixed imported directory case, exact leaf names, ambiguous
+source aliases, graph target aliases, a 406-file optional overlay, warm proof
+reuse and private mixed-case cache roots.
 
 After publication, install the next APK over the current app and reopen the
 saved THORHERO. Record setup/preparation, local Atlas, client, login and world

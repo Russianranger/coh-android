@@ -7,12 +7,14 @@ its date CRC with a freshly loaded ordinary world, and proves 32 native routes.
 """
 from __future__ import annotations
 import argparse
+import ast
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import struct
 import subprocess
 import sys
@@ -39,6 +41,13 @@ PROFILES = ('base_world', 'base_world_visual')
 VISUAL_MANIFEST_PIN = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
 VISUAL_GEO_SOURCE_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
 VISUAL_OBJECT_SOURCE_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
+HOST_COMPILE_REUSE = {
+    'run_id': 37357540374, 'job_id': 111924222126,
+    'repository_commit': '780b030b73fef34b5000b7303ba4fe828020a229',
+    'artifact': {'id': 11366950301, 'bytes': 16542485,
+                 'sha256': 'd37e6d13bd619e9c39014b784d193773830ad950d2abd3e252f025588c58020b'},
+}
+
 NATIVE = re.compile(rb'COH_ATLAS_BEACON_NATIVE_V1 crc=(0x[0-9a-fA-F]{8}) combat=(\d+) connected=(\d+) ground=(\d+) raised=(\d+) blocks=(\d+) paths=(\d+)')
 GENERATION_SOURCES = (
     'tools/prepare_atlas_beacon_generator_source.py',
@@ -46,6 +55,7 @@ GENERATION_SOURCES = (
     'android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java',
     'tools/android/atlas/java/io/github/russianranger/cohatlas/HostImport.java',
     'assets/reference-inputs-receipt.json', 'source-target.json',
+    'android/guest/atlas_world_assets.py',
 )
 
 
@@ -141,6 +151,39 @@ def overlay_zip(path, manifest_path, runtime):
     return manifest
 
 
+WORLD_CASE_SOURCE = ROOT / 'android/guest/atlas_world_assets.py'
+_WORLD_RESOLVE_TARGETS = None
+
+
+class HostPathContext:
+    def check(self): pass
+
+
+def resolve_world_targets(runtime, names):
+    """Use exactly the shipped resolver without importing Android diagnostics."""
+    global _WORLD_RESOLVE_TARGETS
+    if _WORLD_RESOLVE_TARGETS is None:
+        source = ast.parse(WORLD_CASE_SOURCE.read_text(encoding='utf-8'))
+        required = ('real_directory', 'resolve_targets')
+        functions = {node.name: node for node in source.body
+                     if isinstance(node, ast.FunctionDef) and node.name in required}
+        require(set(functions) == set(required), 'Authoritative world case resolver is missing')
+        namespace = {'Path': Path, 'stat': stat, 'require': require}
+        module = ast.Module(body=[functions[name] for name in required], type_ignores=[])
+        exec(compile(ast.fix_missing_locations(module), str(WORLD_CASE_SOURCE), 'exec'), namespace)
+        _WORLD_RESOLVE_TARGETS = namespace['resolve_targets']
+    runtime = Path(runtime).absolute()
+    require(runtime.is_dir() and not runtime.is_symlink(), 'Owned native input directory required')
+    return _WORLD_RESOLVE_TARGETS(runtime, names, HostPathContext())
+
+
+def canonical_input_name(name):
+    """Normalize directory keys only; retain exact immutable leaf spelling."""
+    safe(name)
+    parts = name.split('/')
+    return '/'.join([*(part.casefold() for part in parts[:-1]), parts[-1]])
+
+
 def physical_pins(records):
     """Project rich donor source records to the exact on-disk byte identity."""
     require(isinstance(records, dict), 'Physical source records must be a mapping')
@@ -217,11 +260,12 @@ def overlay_object_geometry(path, manifest_path, runtime):
     selected = physical_pins({name: expected for name, expected in manifest['files'].items()
                               if name.startswith('data/object_library/') and name.endswith('.geo')})
     require(len(selected) == VISUAL_OBJECT_GEOS, 'Exact optional object GEO inventory differs')
+    targets = resolve_world_targets(runtime, selected)
     with zipfile.ZipFile(path) as archive:
         require(len(archive.namelist()) == len(set(archive.namelist()))
                 and set(archive.namelist()) == set(manifest['files']), 'Visual ZIP closure differs')
         for name, expected in selected.items():
-            safe(name); target = runtime / name
+            safe(name); target = targets[name]
             require(not target.exists(), 'Optional visual geometry overlaps the base/world profile')
             with archive.open(name) as source: copy_pinned(source, target, expected)
     return manifest, selected
@@ -243,8 +287,8 @@ def mirror_cold_runtime(runtime, destination):
         count += 1; total += source.stat().st_size
         require(count <= 200000 and total <= 6 * 1024**3, 'Cold readback mirror exceeds owned input bound')
         target.parent.mkdir(parents=True, exist_ok=True)
-        private = (relative.parts[0] != 'data' or len(relative.parts) > 1
-                   and relative.parts[1] in ('bin', 'geobin', 'server'))
+        private = (relative.parts[0].casefold() != 'data' or len(relative.parts) > 1
+                   and relative.parts[1].casefold() in ('bin', 'geobin', 'server'))
         if private:
             shutil.copyfile(source, target); target.chmod(0o600)
         else:
@@ -255,15 +299,36 @@ def mirror_cold_runtime(runtime, destination):
 
 
 def geometry_inputs(runtime):
-    """Physical collision donors plus Atlas placement/trick source inputs."""
-    data = runtime / 'data'
-    paths = set((data / 'object_library').rglob('*.geo'))
-    paths.update((data / 'object_library').rglob('*.txt'))
-    paths.update((data / 'maps/city_zones/city_01_01').rglob('*.txt'))
-    paths.update((data / 'tricks').rglob('*.txt'))
-    require(100 < len(paths) <= 12288 and all(path.is_file() and not path.is_symlink() for path in paths),
-            'Collision input scope exceeds producer bound')
-    return {path.relative_to(runtime).as_posix(): pin(path) for path in sorted(paths)}
+    """Bind exact leaves under canonical directory keys and refuse case aliases."""
+    runtime = Path(runtime).absolute()
+    require(runtime.is_dir() and not runtime.is_symlink(), 'Owned native input directory required')
+    scopes = ('data/object_library', 'data/maps/city_zones/city_01_01', 'data/tricks')
+    roots = resolve_world_targets(runtime, [name + '/.atlas-beacon-inventory' for name in scopes])
+    records, seen, count = {}, {}, 0
+    for scope in scopes:
+        root = roots[scope + '/.atlas-beacon-inventory'].parent
+        require(root.is_dir() and not root.is_symlink(), 'Native collision input scope is missing or linked')
+        for path in root.rglob('*'):
+            count += 1
+            require(count <= 200000 and not path.is_symlink(), 'Native input tree is linked or oversized')
+            raw_name = path.relative_to(runtime).as_posix()
+            folded = raw_name.casefold()
+            require(folded not in seen, 'Ambiguous case-conflicting native input inventory')
+            seen[folded] = raw_name
+            if path.is_dir(): continue
+            require(path.is_file(), 'Nonregular native source input refused')
+            suffixes = ('.geo', '.txt') if scope == 'data/object_library' else ('.txt',)
+            if path.suffix.casefold() not in suffixes: continue
+            name = canonical_input_name(raw_name)
+            require(name not in records, 'Duplicate canonical native input')
+            records[name] = pin(path)
+    require(100 < len(records) <= 12288, 'Collision input scope exceeds producer bound')
+    # A folded comparison alone would accidentally permit a different leaf.
+    # The authoritative resolver must recover exactly each enumerated leaf.
+    targets = resolve_world_targets(runtime, records)
+    require(all(target.name == Path(name).name and pin(target) == records[name]
+                for name, target in targets.items()), 'Canonical native input leaf/byte mapping differs')
+    return dict(sorted(records.items()))
 
 
 def native_evidence(log, date):
@@ -291,6 +356,10 @@ def validate_package(directory, repository_commit):
     require(value.get('generation_sources') == {name: pin(ROOT / name) for name in GENERATION_SOURCES},
             'Generation implementation changed; a fresh native generation is required')
     require(value['build_input'] == producer.expected(), 'Host producer source receipt differs')
+    reuse_path = directory / 'evidence/host-compile-reuse.json'
+    if reuse_path.exists():
+        require('evidence/host-compile-reuse.json' in value['evidence'], 'Host compile receipt must be bound')
+        validate_compile_reuse_receipt(json.loads(reuse_path.read_bytes()), value['build_input'], value['generator'])
     require(value['donor'] == DONOR and value['stock_mapserver_sha256'] == STOCK_MAPSERVER,
             'Stock native compatibility differs')
     require(value.get('cleanup_complete') is True and value.get('owned_roles') == 4
@@ -375,6 +444,17 @@ def role_environment(environment=None):
     return env
 
 
+def validate_compile_reuse_receipt(value, build_input, generator_pin):
+    """A retained successful compile supplies no accepted graph or role proof."""
+    require(isinstance(value, dict) and value.get('format') == 1
+            and value.get('status') == 'reused_exact_compatible_native_compile'
+            and value.get('compile') == HOST_COMPILE_REUSE
+            and value.get('build_input') == build_input
+            and value.get('generator') == generator_pin,
+            'Retained host compile/source/artifact identity differs')
+    return value
+
+
 def generate(args):
     require(os.name == 'nt', 'Native generation requires an isolated Windows runner')
     for name in ('donor_apk', 'donor_receipt', 'asset_archive', 'generator', 'build_input', 'work', 'output'):
@@ -385,6 +465,12 @@ def generate(args):
     evidence = args.output / 'evidence'; evidence.mkdir()
     build_input = json.loads(args.build_input.read_bytes())
     require(build_input == producer.expected(), 'Native generator source receipt differs')
+    reuse_path = args.build_input.with_name('atlas-beacon-generator-compile-reuse.json')
+    if reuse_path.exists():
+        require(reuse_path.is_file() and not reuse_path.is_symlink() and reuse_path.stat().st_size < 1024**2,
+                'Finite private host compile receipt required')
+        validate_compile_reuse_receipt(json.loads(reuse_path.read_bytes()), build_input, pin(args.generator))
+        shutil.copyfile(reuse_path, evidence / 'host-compile-reuse.json')
     assets = args.work / 'donor'; extract_assets(args.donor_apk, args.donor_receipt, assets)
     data = import_data(assets, args.asset_archive, args.work, evidence).resolve(strict=True)
     imported_runtime = data.parent.resolve(strict=True)
@@ -407,7 +493,8 @@ def generate(args):
     cold_mirror = mirror_cold_runtime(runtime, cold_runtime)
     visual_path = assets / 'runtime/client-visual-manifest.json'
     visual, optional_inputs = overlay_object_geometry(assets / 'runtime/client-visual-assets.zip', visual_path, runtime)
-    for name in optional_inputs: os.utime(runtime / name, (1767225600, 1767225600))
+    for target in resolve_world_targets(runtime, optional_inputs).values():
+        os.utime(target, (1767225600, 1767225600))
     inputs = geometry_inputs(runtime)
     inventory = record_profile_inventory(evidence, common_inputs, optional_inputs, inputs, geometry_inputs(cold_runtime))
     require(inventory['status'] == 'passed', 'Cold/warm physical geometry profiles differ from their exact inventories')

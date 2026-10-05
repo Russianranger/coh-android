@@ -140,12 +140,30 @@ class BeaconQualifiedProfileInstallerTests(unittest.TestCase):
             self.staging.close(server)
 
     def install_client_optional(self, names=None):
-        for name in (self.beacon.optional_inputs if names is None else names):
-            path = self.staging.data / name.removeprefix('data/')
+        selected = self.beacon.optional_inputs if names is None else names
+        targets = beacon_fixture.package.actual_targets(self.staging.work, selected, beacon_fixture.Context())
+        for name, path in targets.items():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(self.beacon.optional_inputs[name])
             path.chmod(0o444)
             os.utime(path, (1767225600, 1767225600))
+
+    def mixed_staging_directories(self):
+        for relative, spelling in (
+                ('object_library/test', 'Test'), ('object_library', 'Object_Library'),
+                ('maps/city_zones/city_01_01', 'City_01_01'),
+                ('maps/city_zones', 'City_Zones'), ('maps', 'Maps'), ('tricks', 'Tricks')):
+            target = self.staging.data/relative
+            target.rename(target.with_name(spelling))
+
+    @staticmethod
+    def mixed_graph_parent(server):
+        (server.runtime/'data/server/Maps/City_Zones/City_01_01').mkdir(parents=True)
+
+    def assert_private_graph_absent(self, server):
+        self.assert_no_graph_installed()
+        self.assertFalse((server.runtime/'data/server/Maps/City_Zones/City_01_01/city_01_01.txt.v8.bcn').exists())
+
 
     def fallback_server(self, names=None):
         cold, _ = self.prepare(1)
@@ -219,6 +237,57 @@ class BeaconQualifiedProfileInstallerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'inventory'):
             self.beacon.install()
         self.assert_no_graph_installed()
+
+    def test_real_mixed_case_cold_cache_and_warm_reuse_preserve_the_none_profile(self):
+        self.mixed_staging_directories()
+        cold, _ = self.prepare(1)
+        self.mixed_graph_parent(cold)
+        first = self.beacon.install()
+        self.assertEqual(first['server_geometry_profile'], 'base_world')
+        marker = json.loads((cold.runtime/'data/server/atlas-beacon-installed.json').read_bytes())
+        self.assertEqual(marker['input_fingerprints']['data/object_library/test/g1.geo']['path'],
+                         'data/Object_Library/Test/g1.geo')
+        self.staging.close(cold)
+        self.install_client_optional()
+        warm, receipt = self.prepare(2)
+        self.assertTrue(receipt['server_data_cache']['reused'])
+        reused = self.beacon.install()
+        self.assertEqual(reused['server_geometry_profile'], 'base_world')
+        self.assertEqual(reused['status'], 'reused_verified_graph')
+        self.assertEqual(reused['input_payload_bytes_hashed'], 0)
+        self.assertFalse((warm.runtime/'data/object_library').exists())
+        self.assertFalse((warm.runtime/'data/server/maps').exists())
+
+    def test_real_mixed_case_complete_source_and_warm_cache_reuse_the_full_profile(self):
+        self.mixed_staging_directories(); self.install_client_optional()
+        cold, _ = self.prepare(1)
+        self.mixed_graph_parent(cold)
+        first = self.beacon.install()
+        self.assertEqual(first['server_geometry_profile'], 'base_world_visual')
+        self.staging.close(cold)
+        warm, receipt = self.prepare(2)
+        self.assertTrue(receipt['server_data_cache']['reused'])
+        reused = self.beacon.install()
+        self.assertEqual(reused['server_geometry_profile'], 'base_world_visual')
+        self.assertEqual(reused['status'], 'reused_verified_graph')
+        self.assertEqual(reused['input_payload_bytes_hashed'], 0)
+        self.assertFalse((warm.runtime/'data/object_library').exists())
+
+    def test_real_staged_case_variant_graph_refuses_without_private_cache_changes(self):
+        self.mixed_staging_directories()
+        server, _ = self.prepare(1)
+        self.mixed_graph_parent(server)
+        private = server.runtime/'data/server/bin/preserved.bin'
+        private.parent.mkdir(parents=True, exist_ok=True)
+        private.write_bytes(b'private-cache-must-survive-case-refusal')
+        graph = server.runtime/'data/server/Maps/City_Zones/City_01_01/CITY_01_01.TXT.v8.bcn'
+        graph.write_bytes(b'existing graph must survive case refusal')
+        with self.assertRaisesRegex(beacon_fixture.package.world.client.base.DiagnosticError, 'Case-conflicting world leaf'):
+            self.beacon.install()
+        self.assert_private_graph_absent(server)
+        self.assertEqual(graph.read_bytes(), b'existing graph must survive case refusal')
+        self.assertEqual(private.read_bytes(), b'private-cache-must-survive-case-refusal')
+        self.assertFalse((server.runtime/'data/server/maps').exists())
 
     def test_swapped_raw_source_and_physical_digests_refuse_before_cache_or_graph_changes(self):
         server, _ = self.prepare(1)

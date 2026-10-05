@@ -16,6 +16,8 @@ import tempfile
 import time
 import zipfile
 
+import atlas_world_assets as world
+
 ARCHIVE = 'atlas-beacons.zip'
 MANIFEST = 'atlas-beacon-manifest.json'
 ROLE = 'authentic_native_atlas_beacon_graph'
@@ -36,7 +38,7 @@ WORLD_MANIFEST_SHA256 = '204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85c
 VISUAL_GEOMETRY_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
 VISUAL_SOURCE_MANIFEST = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
 VISUAL_OBJECT_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
-OPTIONAL_GEOMETRY_SHA256 = 'pending_normalized_inventory_audit'
+OPTIONAL_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
 OPTIONAL_GEOS = 406
 PROFILES = ('base_world', 'base_world_visual')
 MAX_MANIFEST = 8 * 1024 * 1024
@@ -78,10 +80,15 @@ def safe(name):
 
 
 def input_name(name):
-    return safe(name) and (
-        name.startswith('data/object_library/') and name.endswith(('.geo', '.txt'))
-        or name.startswith('data/maps/city_zones/city_01_01/') and name.endswith('.txt')
-        or name.startswith('data/tricks/') and name.endswith('.txt'))
+    if not safe(name): return False
+    # Logical directories are canonical; original leaf spelling remains exact.
+    parts = name.split('/')
+    if any(part != part.casefold() for part in parts[:-1]): return False
+    folded = name.casefold()
+    return (
+        folded.startswith('data/object_library/') and folded.endswith(('.geo', '.txt'))
+        or folded.startswith('data/maps/city_zones/city_01_01/') and folded.endswith('.txt')
+        or folded.startswith('data/tricks/') and folded.endswith('.txt'))
 
 
 def read_manifest(path):
@@ -102,12 +109,15 @@ def read_manifest(path):
             and files[DATE].get('bytes') == 12 and 18 < files[GRAPH].get('bytes', 0) <= MAX_GRAPH,
             'Only the native Atlas v8 graph and v9 sidecar may be installed')
     require(isinstance(inputs, dict) and 100 < len(inputs) <= MAX_INPUTS and all(input_name(name) for name in inputs)
-            and 'data/' + MAP in inputs
+            and ('data/' + MAP).casefold() in {name.casefold() for name in inputs}
+            and len({name.casefold() for name in inputs}) == len(inputs)
             and hashlib.sha256(canonical(inputs)).hexdigest() == value.get('input_files_sha256'),
             'Atlas collision/group source identity differs')
     require(isinstance(optional, dict) and len(optional) == OPTIONAL_GEOS
-            and all(input_name(name) and name.startswith('data/object_library/') and name.endswith('.geo')
-                    for name in optional) and not set(inputs).intersection(optional)
+            and all(input_name(name) and name.startswith('data/object_library/') and name.casefold().endswith('.geo')
+                    for name in optional)
+            and len({name.casefold() for name in optional}) == len(optional)
+            and not {name.casefold() for name in inputs}.intersection(name.casefold() for name in optional)
             and len(inputs) + len(optional) <= MAX_INPUTS
             and hashlib.sha256(canonical(optional)).hexdigest() == OPTIONAL_GEOMETRY_SHA256,
             'Exact optional original object geometry identity differs')
@@ -139,30 +149,48 @@ def read_manifest(path):
     return value
 
 
+def actual_targets(runtime, names, context):
+    """Resolve canonical logical directories using the existing world policy."""
+    return world.resolve_targets(Path(runtime), names, context)
+
+
 def select_profile(runtime, manifest, context):
     """Accept only the two complete server inventories proved in fresh processes."""
     runtime = Path(runtime); optional = manifest['optional_input_files']
+    targets = actual_targets(runtime, {**manifest['input_files'], **optional}, context)
     present = 0
     for name in optional:
         context.check()
-        present += os.path.lexists(runtime / name)
+        present += os.path.lexists(targets[name])
     require(present in (0, len(optional)), 'Partial optional Atlas geometry has no native profile proof')
     profile = 'base_world_visual' if present else 'base_world'
     selected = (manifest['input_files'] if not present else {**manifest['input_files'], **optional})
+    declared = {name.casefold(): name for name in selected}
+    require(len(declared) == len(selected), 'Case-conflicting Atlas source declaration refused')
     # The enclosing server cache verifies immutable links; this finite inventory
     # also refuses extra source leaves whose collision contribution was not proved.
-    actual = set()
+    actual, seen = {}, set()
     for relative in ('data/object_library', 'data/maps/city_zones/city_01_01', 'data/tricks'):
-        root = runtime / relative
+        # A non-created sentinel makes the directory a parent, so the world
+        # resolver reuses its spelling rather than treating it as a leaf.
+        sentinel = relative + '/.atlas-beacon-inventory'
+        root = actual_targets(runtime, (sentinel,), context)[sentinel].parent
         require(root.is_dir() and not root.is_symlink(), 'Private Atlas source directory required')
         for path in root.rglob('*'):
             context.check()
+            relative_name = path.relative_to(runtime).as_posix()
+            folded = relative_name.casefold()
+            require(folded not in seen, 'Case-conflicting Atlas source inventory refused')
+            seen.add(folded)
             require(not (path.is_symlink() and path.is_dir()), 'Linked Atlas source directory refused')
             suffixes = ('.geo', '.txt') if relative == 'data/object_library' else ('.txt',)
-            if path.suffix.lower() in suffixes and not path.is_dir():
-                actual.add(path.relative_to(runtime).as_posix())
+            if path.suffix.casefold() in suffixes and not path.is_dir():
+                actual[folded] = relative_name
                 require(len(actual) <= MAX_INPUTS, 'Atlas source inventory exceeds proof bound')
-    require(actual == set(selected), 'Actual Atlas source inventory has no qualified native profile')
+    require(set(actual) == set(declared)
+            and all(actual[folded] == targets[name].relative_to(runtime).as_posix()
+                    for folded, name in declared.items()),
+            'Actual Atlas source inventory has no qualified native profile')
     return profile, selected
 
 
@@ -179,22 +207,23 @@ def fingerprint(path, *, immutable_input=False):
 
 
 def fingerprints(runtime, names, context, *, immutable_input=False):
-    result = {}
-    for name in names:
+    runtime = Path(runtime); result = {}
+    for name, target in actual_targets(runtime, names, context).items():
         context.check()
-        result[name] = fingerprint(runtime / name, immutable_input=immutable_input)
+        result[name] = {**fingerprint(target, immutable_input=immutable_input),
+                        'path': target.relative_to(runtime).as_posix()}
     return result
 
 
-def private_target(runtime, name):
+def private_target(runtime, name, context):
     require(name in (GRAPH, DATE, MARKER), 'Unexpected beacon target')
     current = Path(runtime)
     require(current.is_dir() and not current.is_symlink(), 'Beacon runtime root must be private')
-    for part in Path(name).parts[:-1]:
+    target = actual_targets(current, (name,), context)[name]
+    for part in target.relative_to(current).parts[:-1]:
         current /= part
         if not current.exists(): current.mkdir(mode=0o700)
         require(current.is_dir() and not current.is_symlink(), 'Linked beacon parent refused')
-    target = runtime / name
     require(not target.is_symlink(), 'Linked beacon target refused')
     return target
 
@@ -219,8 +248,8 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
     require(pin(runtime / 'MapServer.exe', context)['sha256'] == STOCK_MAPSERVER_SHA256,
             'A different MapServer cannot consume this qualified native graph')
     inputs = fingerprints(runtime, selected, context, immutable_input=True)
-    targets = {name: private_target(runtime, name) for name in value['files']}
-    marker = private_target(runtime, MARKER)
+    targets = {name: private_target(runtime, name, context) for name in value['files']}
+    marker = private_target(runtime, MARKER, context)
     prior = None
     if marker.exists():
         try:
@@ -238,9 +267,10 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
                 'archive_decoded': False, 'fingerprint_walk': True, 'input_inventory_walk': True,
                 'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
     total = 0
+    input_targets = actual_targets(runtime, selected, context)
     for name, expected in selected.items():
         context.check()
-        require(pin(runtime / name, context) == expected, 'Actual Atlas collision/group input differs: ' + name)
+        require(pin(input_targets[name], context) == expected, 'Actual Atlas collision/group input differs: ' + name)
         total += expected['bytes']
     require(inputs == fingerprints(runtime, selected, context, immutable_input=True)
             and select_profile(runtime, value, context)[0] == profile,
