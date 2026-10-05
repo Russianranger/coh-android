@@ -332,6 +332,105 @@ def logout_record(logs):
     return None
 
 
+def native_reward_credit_evidence(logs, proof, delivery, logout, *, session, client_pid, now_utc_ms):
+    """Bind exact stock point credits to the already validated owned connection.
+
+    Native reward lines have neither a character DB ID nor a session/PID. Their
+    THORHERO:COHLOCAL identity and owned Atlas route are bound through the prior
+    reopen/ready proof. This reads evidence only; it never awards game points.
+    """
+    import stationary_contact_evidence as contact
+    import task_gate_evidence as task
+    identity = contact.binding(proof, session, client_pid, now_utc_ms)
+    if (identity is None or type(delivery) is not dict
+            or delivery.get('session_id') != session or delivery.get('client_pid') != client_pid
+            or type(delivery.get('client_pid')) is not int or delivery.get('character_id') != 1
+            or type(delivery.get('character_id')) is not int or delivery.get('action') != 'quittologin'
+            or type(delivery.get('sent_utc_ms')) is not int
+            or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms
+            or logout is None or not logout_follows_delivery(logout, delivery)):
+        return None
+    try:
+        end_ms = int(time.mktime(time.strptime(logout['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+    except (KeyError, ValueError, OverflowError):
+        return None
+    ready_ms = identity['client_ready_observed_utc_ms']
+    if not ready_ms <= end_ms <= now_utc_ms:
+        return None
+    values = task.records(logs, ready_ms, end_ms)
+    if values is None:
+        return None  # An over-bound/truncated inventory is never credit proof.
+    credits = [value for value in values if value['kind'] == 'reward']
+    # The retained task parser deduplicates logger routes. For point changes,
+    # refuse repeated positive credits instead of guessing whether two identical
+    # records represent one mirrored award or two real awards in one second.
+    route_pattern = re.compile(r'^(?P<timestamp>\d{6} \d{2}:\d{2}:\d{2}) '
+        r'(?:(?P<local_level>[02])|(?P<map_instance>(?i:City_01_01)_1):127\.0\.0\.1:127\.0\.0\.1) +'
+        r'(?P<message>[^\r\n]+)$')
+    seen, candidate_count = set(), 0
+    for name, text in logs:
+        path = Path(name)
+        local = path.parent == Path('logs/mapserver') and path.name == 'rewards.log'
+        embedded = (path.parent == Path('logs/dbserver')
+            and re.fullmatch(r'rewards_[0-9][0-9_-]*\.log', path.name))
+        if not local and not embedded:
+            continue
+        tail = text[text.rfind('\n') + 1:]
+        if re.search(r'"THORHERO:COHLOCAL" -?\d+ \[Tbl\]:Rcv:Points(?: |$)', tail):
+            return None  # A pending award line is not a complete credit inventory.
+        for line in text[:text.rfind('\n') + 1].splitlines():
+            parsed = route_pattern.fullmatch(line)
+            if parsed is None or (parsed['local_level'] is not None) != local:
+                continue
+            message = parsed['message']
+            if not re.match(contact.PREFIX + r'\[Tbl\]:Rcv:Points(?: |$)', message):
+                continue
+            try:
+                stamp = int(time.mktime(time.strptime(parsed['timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+            except (ValueError, OverflowError):
+                return None
+            if not ready_ms <= stamp <= end_ms:
+                continue
+            candidate_count += 1
+            match = task.PATTERNS['reward'].fullmatch(message)
+            if (candidate_count > task.RECORD_LIMIT or match is None or len(message) > 2048
+                    or parsed['local_level'] == '2'
+                    or task._int(int(match['teamup']), -0x80000000) is None):
+                return None
+            if int(match['xp']) or int(match['influence']):
+                key = (stamp, message)
+                if key in seen:
+                    return None
+                seen.add(key)
+    xp, influence = 0, 0
+    positive = []
+    for credit in credits:
+        fields = credit['fields']
+        points = {key: task._int(int(fields[key]))
+                  for key in ('xp', 'influence', 'debt', 'prestige', 'supergroup')}
+        if any(value is None for value in points.values()) or any(
+                points[key] != 0 for key in ('debt', 'prestige', 'supergroup')):
+            return None
+        xp += points['xp']; influence += points['influence']
+        if xp > 0x7fffffff or influence > 0x7fffffff:
+            return None
+        if points['xp'] or points['influence']:
+            positive.append(credit)
+    if not positive or len(positive) != len(seen):
+        return None  # No native award permits no reward-field serialization drift.
+    return {'format': 1, 'verified': True,
+        'scope': 'owned_atlas_exact_native_point_credits_before_ordinary_logout',
+        'connection': identity, 'ready_utc_ms': ready_ms, 'logout_utc_ms': end_ms,
+        'logout_timer_evidence': logout, 'logout_delivery': delivery,
+        'native_log_timestamp_precision_ms': 1000,
+        'duplicate_positive_credit_policy': 'reject_even_mirrored_logger_routes',
+        'record_limit': task.RECORD_LIMIT, 'candidate_count': candidate_count,
+        'parsed_reward_count': len(credits), 'positive_credit_count': len(positive),
+        'experiencepoints_delta': xp, 'influencepoints_delta': influence,
+        'records': credits, 'sql_game_mutations_performed': False,
+        'combat_defeat_verified': False, 'reward_source_classification_verified': False}
+
+
 def native_logout_position(logs, delivery, ready_utc_ms, now_utc_ms):
     """Read the terminal position paired with this ordinary logout timer.
 
@@ -697,8 +796,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         # Imported inputs and generated caches retain their accepted allowance.
         # The verified missing-only supplements are additional immutable files,
         # not generated cache entries; budget their exact pinned inventories too.
-        max_files = device.DATA_COUNT + 4096 + world.FILE_COUNT + len(avatar.ALLOWED)
-        max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES
+        import client_visual_assets as visual
+        max_files = device.DATA_COUNT + 4096 + world.FILE_COUNT + len(avatar.ALLOWED) + visual.FILE_COUNT
+        max_bytes = device.DATA_BYTES + 1024**3 + world.PAYLOAD_BYTES + avatar.PAYLOAD_BYTES + visual.PAYLOAD_BYTES
         result = {'files': 0, 'bytes': 0, 'directories': 0, 'linked_immutable_files': 0,
                   'copied_private_files': 0, 'preserved_schema_files': 0}
         pending = [(source, target)]
@@ -1317,6 +1417,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
 
     def validate_saved_rows(self, rows, inventory):
         require(self.baseline_snapshot is not None, 'Existing character baseline is missing')
+        self.native_reward_credit = None
         before = self.baseline_snapshot
         after = validate_character_rows(rows, self.baseline, inventory,
             self.schema['expected_attributes'], self.auth_id,
@@ -1393,14 +1494,57 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return after
 
     def saved_selected_rows_match(self, table, previous, current):
-        """The retained reopen profile permits only its normal LoginCount change."""
-        return evidence._same(previous, current)
+        """Permit only normal LoginCount or exact current native point credits."""
+        if evidence._same(previous, current):
+            return True
+        if table != 'ents' or len(previous) != 1 or len(current) != 1:
+            return False
+        fields = ('experiencepoints', 'influencepoints')
+        if not evidence._same(
+                [{key: value for key, value in previous[0].items() if key not in fields}],
+                [{key: value for key, value in current[0].items() if key not in fields}]):
+            return False
+        values = []
+        for row in (previous[0], current[0]):
+            if any(key not in row or row[key] is not None
+                    and (type(row[key]) is not int or not 0 <= row[key] <= 0x7fffffff)
+                    for key in fields):
+                return False
+            values.append({key: 0 if row[key] is None else row[key] for key in fields})
+        proof = self.creation_report
+        if (previous[0].get('containerid') != self.CHARACTER_ID
+                or type(previous[0].get('containerid')) is not int
+                or previous[0].get('authid') != proof.get('auth_id')
+                or type(previous[0].get('authid')) is not int):
+            return False
+        now_ms = int(time.time() * 1000)
+        delivery = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+            self.owner.args.session_id, proof.get('client_pid'), self.CHARACTER_ID,
+            proof.get('client_ready_observed_utc_ms'), now_ms)
+        if delivery is None:
+            return False
+        logs = self.current_logs()
+        credit = native_reward_credit_evidence(logs, proof, delivery, logout_record(logs),
+            session=self.owner.args.session_id, client_pid=proof.get('client_pid'), now_utc_ms=now_ms)
+        if credit is None or any(values[1][key] != values[0][key] + credit[key + '_delta']
+                                 for key in fields):
+            return False
+        credit['before_reward_values'] = values[0]
+        credit['expected_saved_reward_values'] = values[1]
+        self.native_reward_credit = credit
+        return True
 
     def saved_metadata(self, snapshot):
-        return {'preserved_existing_identity': True, 'powers_preserved': True, 'costume_preserved': True,
+        result = {'preserved_existing_identity': True, 'powers_preserved': True, 'costume_preserved': True,
             'selected_rows_preserved': True, 'login_count': snapshot['login_count'],
             'before_login_count': self.baseline_snapshot['login_count'],
             'evidence_scope': 'existing_committed_character_native_ready_then_requested_logout_and_preserved_committed_rows'}
+        credit = getattr(self, 'native_reward_credit', None)
+        if credit is not None:
+            result.update(selected_rows_preservation_policy='strict_baseline_except_login_count_and_exact_native_point_credits',
+                selected_non_reward_rows_preserved=True, native_reward_values_committed_verified=True,
+                native_reward_credit_evidence=credit)
+        return result
 
     def collect(self, target):
         super().collect(target)
@@ -1531,7 +1675,9 @@ class LocalCharacterTaskReopenServer(LocalCharacterReopenServer):
         completed = self.task_completed
         if not (isinstance(completed, dict) and completed.get('reward_credit_verified') is True
                 and completed.get('task_completed_verified') is True):
-            return super().saved_selected_rows_match(table, previous, current)
+            # The task profile keeps its authored exact-credit proof contract;
+            # it must never fall back to the ordinary reopen reward exception.
+            return evidence._same(previous, current)
         if len(previous) != 1 or len(current) != 1:
             return False
         expected = completed['expected_saved_reward_values']

@@ -349,6 +349,9 @@ class CharacterLifecycleTests(unittest.TestCase):
         self.enterContext(patch.object(world_assets, 'PAYLOAD_BYTES', 32))
         self.enterContext(patch.object(avatar_assets, 'ALLOWED', frozenset({'avatar-a', 'avatar-b'})))
         self.enterContext(patch.object(avatar_assets, 'PAYLOAD_BYTES', 8))
+        import client_visual_assets as visual_assets
+        self.enterContext(patch.object(visual_assets, 'FILE_COUNT', 0))
+        self.enterContext(patch.object(visual_assets, 'PAYLOAD_BYTES', 0))
         return value, source, root
 
     @staticmethod

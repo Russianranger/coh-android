@@ -7,6 +7,7 @@ PIGG table MD5, cached headers and frozen SHA256 pins are checked independently.
 """
 from __future__ import annotations
 import argparse
+import base64
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
@@ -17,17 +18,20 @@ import shutil
 import stat
 import struct
 import tempfile
+import urllib.error
+import urllib.request
 import zipfile
+import zlib
 
 import prepare_atlas_world_assets as donor
 
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE, MANIFEST = 'client-visual-assets.zip', 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_PIN = {'bytes': 25400546, 'sha256': 'e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda'}
-MANIFEST_PIN = {'bytes': 1145658, 'sha256': '32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c'}
-FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
-FILE_COUNT, PAYLOAD_BYTES = 329, 39521237
+ARCHIVE_PIN = {'bytes': 515813056, 'sha256': '1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea'}
+MANIFEST_PIN = {'bytes': 16272899, 'sha256': '447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b'}
+FILES_SHA256 = '99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542'
+FILE_COUNT, PAYLOAD_BYTES = 5476, 873255284
 BASE_ARCHIVE_PIN = {'bytes': 23887359, 'sha256': '2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809'}
 BASE_MANIFEST_PIN = {'bytes': 782080, 'sha256': '6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b'}
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
@@ -38,8 +42,21 @@ ENCOUNTER_FILES_SHA256 = 'd2c2ea6b9bacb7691b53944e852180698edc255c54b231d1743b8f
 IMMEDIATE_ARCHIVE_PIN = {'bytes': 25221661, 'sha256': 'db8a831bc674df6db41ec5d7a7e75e0256d20d4ad8cd3caa097a545f96090f24'}
 IMMEDIATE_MANIFEST_PIN = {'bytes': 1113867, 'sha256': '0b3ef76dad49ff018485c7cf03f5f0c1b9a9ca7bd5272043484f0913e2ce4e22'}
 IMMEDIATE_FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
-MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 64 * 1024**2, 2 * 1024**2
+# The finite 0.13.10 diagnostic/dependency sweep is stored on disk; it is not a
+# preload. The installer streams each bounded leaf and retains all old bytes.
+MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 512 * 1024**2, 16 * 1024**2
+# Repository transport encodes the reviewed plaintext manifest only. The APK
+# and guest always receive its exact original bytes and retain the same pin.
+SOURCE_MANIFEST_SCOPE = 'coh_client_visual_source_manifest_v1'
+MAX_SOURCE_MANIFEST_BYTES, MAX_SOURCE_GZIP_BYTES = 4 * 1024**2, 3 * 1024**2
 MAX_ENTRY_BYTES = 32 * 1024**2
+SWEEP_SCOPE = 'recorded_client_missing_asset_dependency_closure'
+SWEEP_FILE_COUNT, SWEEP_PAYLOAD_BYTES = 5147, 833734047
+SWEEP_FILES_SHA256 = '7159ada9851057278f934f55c577b7063e4979d1fe2a2ce11718ded79440e8e6'
+SWEEP_BASE_ARCHIVE_PIN = {'bytes': 25400546, 'sha256': 'e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda'}
+SWEEP_BASE_MANIFEST_PIN = {'bytes': 1145658, 'sha256': '32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c'}
+SWEEP_BASE_FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
+SWEEP_BASE_PAYLOAD_BYTES = 39521237
 SOURCE, DATA = donor.SOURCE, donor.DATA
 require, pin, canonical = donor.require, donor.pin, donor.canonical
 
@@ -50,7 +67,7 @@ def safe_payload(name):
     path = PurePosixPath(name)
     return (name == name.casefold() and path.as_posix() == name and name.isascii()
         and '\\' not in name and ':' not in name and all(p not in ('', '.', '..') for p in path.parts)
-        and (name.startswith('data/player_library/') and path.suffix == '.geo'
+        and (name.startswith(('data/player_library/', 'data/object_library/')) and path.suffix == '.geo'
              or name.startswith('data/texture_library/') and path.suffix == '.texture'))
 
 
@@ -64,7 +81,10 @@ def bundle_contract():
         'visual_extension_scope': EXTENSION_SCOPE, 'retained_visual_files': 290,
         'added_visual_files': 33, 'added_visual_payload_bytes': 2646051,
         'encounter_extension_scope': ENCOUNTER_SCOPE, 'retained_immediate_visual_files': 323,
-        'added_encounter_texture_files': 6, 'added_encounter_payload_bytes': 291538}
+        'added_encounter_texture_files': 6, 'added_encounter_payload_bytes': 291538,
+        'sweep_extension_scope': SWEEP_SCOPE, 'retained_sweep_visual_files': 329,
+        'added_sweep_visual_files': SWEEP_FILE_COUNT, 'added_sweep_payload_bytes': SWEEP_PAYLOAD_BYTES,
+        'entire_client_preloaded': False}
 
 
 def encounter_files(value):
@@ -88,7 +108,8 @@ def encounter_files(value):
         and all(extension.get(key) is False for key in ('runtime_visual_validated', 'npc_identity_claimed',
             'native_renderer_changed', 'global_lod_distances_changed', 'full_global_asset_closure')),
         'Client visual exact encounter extension bounds or evidence differ')
-    baseline = {name: row for name, row in files.items() if name not in additions}
+    sweeps = set(value.get('sweep_extension', {}).get('files', {}))
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in sweeps}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 323 and sum(row['bytes'] for row in baseline.values()) == 39229699
         and hashlib.sha256(canonical(baseline)).hexdigest() == IMMEDIATE_FILES_SHA256
@@ -124,7 +145,7 @@ def extension_files(value, *, root=ROOT):
         and all(extension.get(key) is False for key in ('runtime_visual_validated',
             'full_global_asset_closure', 'native_renderer_changed', 'global_lod_distances_changed')),
         'Client visual extension bounds or preservation policy differ')
-    encounters = set(value.get('encounter_extension', {}).get('files', {}))
+    encounters = set(value.get('encounter_extension', {}).get('files', {})) | set(value.get('sweep_extension', {}).get('files', {}))
     baseline = {name: row for name, row in files.items() if name not in additions and name not in encounters}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 290 and sum(row['bytes'] for row in baseline.values()) == 36583648
@@ -156,6 +177,48 @@ def extension_files(value, *, root=ROOT):
     return set(additions)
 
 
+def sweep_files(value, *, root=ROOT):
+    """Bind the finite recorded dependency sweep to all immediate 329 leaves."""
+    if SWEEP_FILE_COUNT == 0:
+        require('sweep_extension' not in value, 'Unexpected sweep extension in baseline')
+        return set()
+    extension, files = value.get('sweep_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(extension.get('scope') == SWEEP_SCOPE and extension.get('missing_only') is True
+        and extension.get('baseline_payloads_preserved') is True
+        and extension.get('baseline_archive_pin') == SWEEP_BASE_ARCHIVE_PIN
+        and extension.get('baseline_manifest_pin') == SWEEP_BASE_MANIFEST_PIN
+        and extension.get('baseline_file_count') == 329
+        and extension.get('baseline_payload_bytes') == SWEEP_BASE_PAYLOAD_BYTES
+        and extension.get('baseline_files_sha256') == SWEEP_BASE_FILES_SHA256
+        and isinstance(additions, dict) and len(additions) == extension.get('file_count') == SWEEP_FILE_COUNT
+        and extension.get('payload_bytes') == SWEEP_PAYLOAD_BYTES
+        and extension.get('files_sha256') == SWEEP_FILES_SHA256
+        and set(additions) <= set(files)
+        and all(isinstance(binding, dict) and set(binding) == {'requests_sha256'}
+            and isinstance(value.get('requests', {}).get(name), list) and value['requests'][name]
+            and binding['requests_sha256'] == hashlib.sha256(canonical(value['requests'][name])).hexdigest()
+            for name, binding in additions.items())
+        and extension.get('discovery_requests_pin') == pin(Path(root) / 'assets/client-visual-sweep-requests.json')
+        and extension.get('source_console') == {'bytes': 1902345,
+            'sha256': '1f532e7a18c57b5e0cb77fa7e79d9d5f85dee628b7af6aa1a63de46995c9fba2'}
+        and all(extension.get(key) is False for key in ('runtime_visual_validated',
+            'full_global_asset_closure', 'native_renderer_changed', 'full_archive_verified', 'preloading')),
+        'Client visual recorded sweep bounds or source evidence differ')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 329 and sum(row['bytes'] for row in baseline.values()) == SWEEP_BASE_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(baseline)).hexdigest() == SWEEP_BASE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == SWEEP_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(selected)).hexdigest() == SWEEP_FILES_SHA256,
+        'Client visual sweep changes a preserved 0.13.9 payload')
+    proofs = extension.get('requested_model_proof', {})
+    require(isinstance(proofs, dict) and set(proofs) == {name for name in additions if name.endswith('.geo')}
+        and isinstance(extension.get('unresolved_dependencies'), list),
+        'Client visual sweep lacks exact model-table or unresolved dependency proof')
+    return set(additions)
+
+
 def verify_preserved_world_geometry(archive, value):
     """Recheck all original high/low vegetation edges against the retained donor ZIP."""
     import client_visual_geometry
@@ -168,11 +231,65 @@ def verify_preserved_world_geometry(archive, value):
                 'Client visual vegetation material proof differs from retained Atlas bytes')
 
 
+def manifest_bytes(manifest):
+    """Decode source transport only, retaining the exact reviewed output pin.
+
+    Plaintext final/runtime manifests remain accepted. A source envelope may
+    contain one bounded original gzip stream; duplicate fields, extra streams,
+    trailing content and over-bound expansion are rejected before publication.
+    """
+    require(0 < MANIFEST_PIN['bytes'] <= MAX_MANIFEST_BYTES,
+        'Client visual manifest differs from reviewed metadata')
+    manifest = Path(manifest)
+    require(manifest.is_file() and not manifest.is_symlink(),
+        'Missing or linked client visual manifest input: ' + manifest.name)
+    with manifest.open('rb') as source:
+        raw = source.read(MAX_MANIFEST_BYTES + 1)
+    require(0 < len(raw) <= MAX_MANIFEST_BYTES,
+        'Client visual manifest exceeds reviewed metadata bound')
+    if {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == MANIFEST_PIN:
+        return raw
+    require(len(raw) <= MAX_SOURCE_MANIFEST_BYTES,
+        'Client visual source manifest envelope exceeds bound')
+
+    def unique_fields(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, 'Client visual source manifest has duplicate fields')
+            result[key] = value
+        return result
+
+    value = json.loads(raw, object_pairs_hook=unique_fields)
+    require(isinstance(value, dict) and set(value) == {
+            'format', 'scope', 'encoding', 'decoded', 'gzip', 'data'}
+        and type(value['format']) is int and value['format'] == 1
+        and value['scope'] == SOURCE_MANIFEST_SCOPE and value['encoding'] == 'gzip+base64'
+        and value['decoded'] == MANIFEST_PIN,
+        'Client visual source manifest envelope differs from reviewed metadata')
+    encoded, packed_pin = value['data'], value['gzip']
+    require(isinstance(encoded, str) and isinstance(packed_pin, dict)
+        and set(packed_pin) == {'bytes', 'sha256'} and type(packed_pin['bytes']) is int
+        and 0 < packed_pin['bytes'] <= MAX_SOURCE_GZIP_BYTES
+        and isinstance(packed_pin['sha256'], str) and re.fullmatch('[0-9a-f]{64}', packed_pin['sha256'])
+        and len(encoded) == 4 * ((packed_pin['bytes'] + 2) // 3),
+        'Client visual source manifest encoded stream exceeds bound or differs')
+    packed = base64.b64decode(encoded, validate=True)
+    require({'bytes': len(packed), 'sha256': hashlib.sha256(packed).hexdigest()} == packed_pin,
+        'Client visual source manifest gzip stream differs')
+    decoder = zlib.decompressobj(16 + zlib.MAX_WBITS)
+    try:
+        decoded = decoder.decompress(packed, MANIFEST_PIN['bytes'] + 1)
+    except zlib.error as exc:
+        raise ValueError('Client visual source manifest gzip stream is invalid') from exc
+    require(decoder.eof and not decoder.unused_data and not decoder.unconsumed_tail
+        and {'bytes': len(decoded), 'sha256': hashlib.sha256(decoded).hexdigest()} == MANIFEST_PIN,
+        'Client visual source manifest decoded bytes differ or exceed bound')
+    return decoded
+
+
 def read_manifest(manifest, *, root=ROOT):
     root, manifest = Path(root), Path(manifest)
-    require(pin(manifest) == MANIFEST_PIN and MANIFEST_PIN['bytes'] <= MAX_MANIFEST_BYTES,
-        'Client visual manifest differs from reviewed metadata')
-    value = json.loads(manifest.read_text())
+    value = json.loads(manifest_bytes(manifest))
     files, provenance = value.get('files', {}), value.get('provenance', {})
     require(value.get('format') == 1 and value.get('scope') == SCOPE
         and value.get('source_commit') == SOURCE and value.get('data_commit') == DATA
@@ -195,7 +312,7 @@ def read_manifest(manifest, *, root=ROOT):
     for name in ('character-avatar-defaults-manifest.json', 'atlas-world-supplement-manifest.json'):
         baseline.update(json.loads((root / 'assets' / name).read_text())['files'])
     require(not baseline.intersection(files), 'Client visual supplement would replace a preserved asset')
-    additions = extension_files(value, root=root) | encounter_files(value)
+    additions = extension_files(value, root=root) | encounter_files(value) | sweep_files(value, root=root)
     for name, row in files.items():
         require(safe_payload(name) and type(row.get('bytes')) is int and 0 < row['bytes'] <= MAX_ENTRY_BYTES
             and re.fullmatch('[0-9a-f]{64}', row.get('sha256', '')), 'Unsafe client visual payload or pin')
@@ -215,14 +332,30 @@ def read_manifest(manifest, *, root=ROOT):
                 'observed_atlas_hostile_geometry', 'observed_atlas_hostile_texture',
                 'blood_brother_chopper_costume', 'preserved_atlas_vegetation_model_material',
                 'observed_atlas_hostile_geometry_material', 'atlas_vegetation_or_hostile_composite_layer',
-                'observed_atlas_post_world_npc_texture')
+                'observed_atlas_post_world_npc_texture',
+                'observed_client_missing_texture', 'observed_client_missing_geometry',
+                'observed_client_material_dependency', 'observed_player_catalog_texture',
+                'observed_player_catalog_geometry', 'preserved_atlas_world_material_dependency',
+                'recorded_atlas_costume_geometry', 'recorded_atlas_costume_texture',
+                'recorded_client_geometry_material', 'recorded_client_composite_layer',
+                'recorded_client_missing_asset_dependency')
                 for r in value['requests'][name]),
             'Client visual payload lacks bounded source request evidence')
     for name, expected in value.get('source_files', {}).items():
         relative = PurePosixPath(name)
         require(relative.as_posix() == name and '..' not in relative.parts and ':' not in name and '\\' not in name
-            and (name.startswith(('upstream/i24/data/tricks/', 'upstream/ouroboros/Game/src/UI/'))
+            and (name.startswith(('upstream/i24/data/tricks/', 'upstream/i24/data/defs/',
+                    'upstream/i24/data/menu/costume/',
+                    'upstream/i24/data/object_library/', 'upstream/ouroboros/Game/src/UI/'))
                 or name in ('upstream/ouroboros/Common/seq/anim.c', 'upstream/ouroboros/Common/seq/anim.h',
+                    'upstream/ouroboros/Common/seq/tricks.c', 'upstream/ouroboros/Common/seq/tricks.h',
+                    'upstream/ouroboros/Common/gameData/costume_data.c',
+                    'upstream/ouroboros/Common/entity/costume.c',
+                    'upstream/ouroboros/Common/gameData/BodyPart.c',
+                    'upstream/ouroboros/Common/gameComm/NPC.c',
+                    'upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c',
+                    'assets/atlas-world-supplement-manifest.json',
+                    'tools/android/interactive/client_visual_geometry.py',
                     'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/gridpoly.h',
                     'upstream/ouroboros/Game/src/render/thread/rt_model_cache.h',
                     'upstream/ouroboros/Game/src/entity/entclient.c',
@@ -284,8 +417,13 @@ def verify_payload(name, raw, expected, record, *, requests=None, model_proof=No
         require(header == record['geometry_header'] and header['baseline_loader_accepts_version'] is True
             and header['header_decompression_verified'] is True, 'Client visual geometry header differs')
         import client_visual_geometry
+        actual = client_visual_geometry.requested_model_proof(raw, requests or [])
+        if isinstance(model_proof, dict) and 'request_basis' in model_proof:
+            actual['request_basis'] = ('exact_source_or_runtime_model_name'
+                if any('model' in row for row in requests or [])
+                else 'recorded_missing_filename_native_model_inventory')
         require(requests is not None and model_proof is not None
-            and client_visual_geometry.requested_model_proof(raw, requests) == model_proof,
+            and actual == model_proof,
             'Client visual requested native model table or direct material edges differ')
 
 
@@ -303,11 +441,76 @@ def verify(archive, manifest, *, root=ROOT):
                 'Invalid client visual ZIP member')
             verify_payload(entry.filename, source.read(entry), expected, value['provenance']['entries'][entry.filename],
                 requests=value['requests'][entry.filename], model_proof=(
-                    value['closure']['requested_model_proof'] | value['visual_extension']['requested_model_proof']).get(entry.filename))
+                    value['closure']['requested_model_proof'] | value['visual_extension']['requested_model_proof']
+                    | value.get('sweep_extension', {}).get('requested_model_proof', {})).get(entry.filename))
     return value
 
 
-def materialize(archive=None, manifest=None, *, root=ROOT, downloader=donor.download_range):
+def download_selected_range(group):
+    """Replay frozen bounded partial responses, including their neighboring bytes."""
+    key, names = group
+    if not any('source_download_content_range' in row for _, row in names):
+        return donor.download_range(group)
+    url, etag, modified, total, range_text = key
+    match = re.fullmatch(r'bytes (\d+)-(\d+)/(\d+)', range_text)
+    require(match is not None and int(match[3]) == total, 'Invalid client visual source range')
+    start, end = int(match[1]), int(match[2])
+    size = end - start + 1
+    require(0 <= start <= end < total <= 2 * 1024**3 and size <= donor.MAX_RANGE_BYTES,
+        'Client visual partial response exceeds bound')
+    proofs = {(row.get('source_download_content_range'), row.get('source_download_bytes'),
+        row.get('source_download_sha256')) for _, row in names}
+    require(len(proofs) == 1, 'Client visual partial response receipts differ')
+    reviewed_range, reviewed_size, reviewed_sha = next(iter(proofs))
+    require(reviewed_range == range_text and reviewed_size == size
+        and isinstance(reviewed_sha, str) and re.fullmatch('[0-9a-f]{64}', reviewed_sha),
+        'Client visual partial response receipt is invalid')
+    request = urllib.request.Request(url, headers={'Range': f'bytes={start}-{end}',
+        'If-Match': etag, 'User-Agent': 'coh-android-reviewed-visual-ranges/1'})
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request, timeout=45) as response:
+                require(response.status == 206 and response.geturl() == url
+                    and response.headers.get('ETag') == etag
+                    and response.headers.get('Last-Modified') == modified
+                    and response.headers.get('Content-Range') == range_text
+                    and int(response.headers.get('Content-Length', -1)) == size,
+                    'Client visual donor changed or exact partial transfer was refused')
+                source = response.read(size + 1)
+            break
+        except (urllib.error.URLError, TimeoutError, OSError):
+            if attempt == 2:
+                raise
+    require(len(source) == size and hashlib.sha256(source).hexdigest() == reviewed_sha,
+        'Client visual partial response bytes differ')
+    result = []
+    for name, record in names:
+        offset = record['offset'] - start
+        member_range = f"bytes {record['offset']}-{record['offset'] + record['stored_bytes'] - 1}/{total}"
+        require(0 <= offset and record['stored_bytes'] <= len(source) - offset
+            and record.get('source_member_range') == record.get('source_content_range') == member_range
+            and record.get('source_download_member_bytes') == record['stored_bytes'],
+            'Client visual member escaped its reviewed partial response')
+        stored = source[offset:offset + record['stored_bytes']]
+        donor.decode_entry(stored, record)
+        result.append((name, record, stored))
+    return result
+
+
+def selected_download_record(value, record):
+    """Expand a pinned shared response receipt without modifying manifest evidence."""
+    reference = record.get('source_download_receipt')
+    if reference is None:
+        return record
+    receipt = value.get('provenance', {}).get('sweep_downloads', {}).get(reference)
+    require(isinstance(receipt, dict) and receipt.get('source_archive') == record.get('source_archive'),
+        'Client visual shared partial response receipt is missing or foreign')
+    return record | {'source_download_content_range': receipt.get('content_range'),
+        'source_download_bytes': receipt.get('bytes'), 'source_download_sha256': receipt.get('sha256'),
+        'source_download_member_bytes': record['stored_bytes']}
+
+
+def materialize(archive=None, manifest=None, *, root=ROOT, downloader=download_selected_range):
     assets = Path(root) / 'assets'
     archive, manifest = Path(archive or assets / ARCHIVE), Path(manifest or assets / MANIFEST)
     value = read_manifest(manifest, root=root)
@@ -316,8 +519,9 @@ def materialize(archive=None, manifest=None, *, root=ROOT, downloader=donor.down
         return bundle_contract() | {'status': 'verified_existing_archive'}
     groups = {}
     for name, record in value['provenance']['entries'].items():
+        record = selected_download_record(value, record)
         key = tuple(record[k] for k in ('source_url', 'source_etag', 'source_last_modified',
-            'source_archive_bytes', 'source_content_range'))
+            'source_archive_bytes')) + (record.get('source_download_content_range', record['source_content_range']),)
         groups.setdefault(key, []).append((name, record))
     with tempfile.TemporaryDirectory(prefix='.client-visual-', dir=archive.parent) as temporary:
         target, entries = Path(temporary) / ARCHIVE, []
@@ -338,8 +542,8 @@ def prepare(output, *, root=ROOT):
     verify(assets / ARCHIVE, assets / MANIFEST, root=root)
     for name in (ARCHIVE, MANIFEST):
         require(not (output / name).exists() and not (output / name).is_symlink(), 'Client visual output already exists')
-    for name in (ARCHIVE, MANIFEST):
-        shutil.copyfile(assets / name, output / name)
+    shutil.copyfile(assets / ARCHIVE, output / ARCHIVE)
+    (output / MANIFEST).write_bytes(manifest_bytes(assets / MANIFEST))
     verify(output / ARCHIVE, output / MANIFEST, root=root)
     return bundle_contract()
 

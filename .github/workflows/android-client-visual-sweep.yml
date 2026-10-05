@@ -1,0 +1,74 @@
+name: Recorded client asset dependency sweep evidence
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-visual-sweep.yml
+      - assets/client-visual-sweep-requests.json
+      - tools/android/interactive/discover_client_visual_sweep.py
+      - tools/android/interactive/client_visual_tricks.py
+      - tools/android/interactive/client_visual_geometry.py
+      - tools/android/interactive/test_client_visual_sweep.py
+      - tools/android/interactive/test_client_visual_tricks.py
+      - tools/android/interactive/test_client_visual_geometry.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check native material predicates, legacy GEO tables and original-stream retention
+        run: |
+          python3 -m unittest discover -s tools/android/interactive -p 'test_client_visual_tricks.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_client_visual_geometry.py' -v
+          python3 -m unittest discover -s tools/android/interactive -p 'test_client_visual_sweep.py' -v
+      - name: Recover only the pinned immediate 0.13.9 visual donor from its public APK
+        run: |
+          mkdir -p out/sweep-donor
+          curl --fail --location --retry 3 https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.9/COH-Atlas-Gameplay-0.13.9.apk --output out/sweep-donor/donor.apk
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          import shutil
+          import sys
+          import zipfile
+          sys.path.insert(0, 'tools/android/interactive')
+          import discover_client_visual_sweep as sweep
+          apk = Path('out/sweep-donor/donor.apk')
+          digest = hashlib.sha256()
+          with apk.open('rb') as source:
+              for block in iter(lambda: source.read(1024 * 1024), b''):
+                  digest.update(block)
+          assert apk.stat().st_size == 701679895
+          assert digest.hexdigest() == '64644f8b82c7bde63304bc36009043dccacc171e5cae8df9d537cbadf4d60b9d'
+          with zipfile.ZipFile(apk) as source:
+              for name, expected in [('client-visual-assets.zip', sweep.BASE_ARCHIVE_PIN),
+                                     ('client-visual-manifest.json', sweep.BASE_MANIFEST_PIN)]:
+                  target = apk.parent / name
+                  member = source.getinfo('assets/runtime/' + name)
+                  assert member.file_size == expected['bytes']
+                  with source.open(member) as reader, target.open('xb') as writer:
+                      shutil.copyfileobj(reader, writer, 1024 * 1024)
+                  assert sweep.pin(target) == expected
+          PY
+      - name: Reproduce finite filename, native-model and material closure from frozen metadata prefixes
+        run: >-
+          python3 tools/android/interactive/discover_client_visual_sweep.py
+          --baseline-archive out/sweep-donor/client-visual-assets.zip
+          --baseline-manifest out/sweep-donor/client-visual-manifest.json
+          --metadata-cache out/sweep-metadata
+          --payload-cache out/sweep-payloads
+          --output out/client-visual-sweep-evidence
+          --plan-only
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-visual-sweep-0.13.10
+          path: out/client-visual-sweep-evidence/
+          if-no-files-found: error
+          retention-days: 90

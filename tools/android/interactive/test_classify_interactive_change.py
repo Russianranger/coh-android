@@ -9,6 +9,15 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_exact_asset_closure_scope_cannot_hide_native_renderer_startup_or_java_edits(self):
+        names = sorted(change.CLIENT_ASSET_CLOSURE_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('android/guest/texture_header_index.py', 'android/guest/client_interactive_diagnostic.py',
+                'android/guest/native_responsiveness_contract.py',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+                'upstream/ouroboros/Game/src/render/tex.c', 'unknown.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
     def test_streaming_pass_retains_exact_native_server_dex_and_limits_reviewed_helper_asset_scope(self):
         names = sorted(change.CLIENT_STREAMING_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -92,7 +101,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS - change.CLIENT_ASSET_CLOSURE_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),

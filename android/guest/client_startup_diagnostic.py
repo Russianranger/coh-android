@@ -108,7 +108,9 @@ def verify_assets(assets):
         path = assets / name
         # This exact world supplement is independently pinned by its manifest
         # and runtime helper; unrelated payloads keep their existing cap.
-        limit = (CACHE_BYTES_LIMIT if name in ('client-caches.zip', 'server-caches.zip') else
+        limit = (512*1024*1024 if name == 'client-visual-assets.zip' else
+                 16*1024*1024 if name == 'client-visual-manifest.json' else
+                 CACHE_BYTES_LIMIT if name in ('client-caches.zip', 'server-caches.zip') else
                  256*1024*1024 if name == 'atlas-world-supplement.zip' else 128*1024*1024)
         require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= limit,
                 'Missing, linked or oversized client input: ' + name)

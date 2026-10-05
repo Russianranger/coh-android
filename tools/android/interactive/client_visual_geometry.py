@@ -57,7 +57,14 @@ def tables(raw):
     block_count = 5 if 2 <= version <= 6 else 4
     sizes = [u32(header, 4 * index) for index in range(block_count)]
     pos = block_count * 4
-    texture_names = names_table(region(header, pos, sizes[1])); pos += sizes[1]
+    texture_block = region(header, pos, sizes[1])
+    texture_names = names_table(texture_block); pos += sizes[1]
+    # geoLoadStubs supplies its stock white texture when old geometry has an
+    # empty name table. It requires room for the count and first string field;
+    # TexID 0 is valid only after that native fallback has been applied.
+    if not texture_names:
+        require(len(texture_block) >= 8, 'Client visual empty texture table lacks the native white slot')
+        texture_names = ['white']
     object_names = region(header, pos, sizes[2]); pos += sizes[2]
     texidx = region(header, pos, sizes[3]); pos += sizes[3]
     if block_count == 5:

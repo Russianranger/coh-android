@@ -106,8 +106,8 @@ jobs:
           if-no-files-found: error
           retention-days: 90
   apk:
-    needs: qualify
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: [changes, qualify]
+    if: needs.changes.outputs.streaming_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     permissions:
       contents: write
       actions: read

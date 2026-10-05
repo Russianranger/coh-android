@@ -4,7 +4,10 @@ Synthetic small installer fixtures make no graphics or Android execution claim.
 The separate manifest checks bind the actual reviewed donor/model inventories.
 """
 import copy
+import base64
+import gzip
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -29,6 +32,116 @@ import client_visual_geometry as geometry
 class Context:
     def check(self):
         pass
+
+
+class SourceManifestEncodingTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.path = self.root / producer.MANIFEST
+        self.raw = b'{"files":{"original-leaf":{"bytes":64}},"format":1}\n'
+        self.pin = {'bytes': len(self.raw), 'sha256': hashlib.sha256(self.raw).hexdigest()}
+        patch = mock.patch.object(producer, 'MANIFEST_PIN', self.pin)
+        patch.start(); self.addCleanup(patch.stop)
+
+    def envelope(self, packed=None):
+        packed = packed if packed is not None else gzip.compress(self.raw, mtime=0)
+        return {'format': 1, 'scope': producer.SOURCE_MANIFEST_SCOPE,
+            'encoding': 'gzip+base64', 'decoded': dict(self.pin),
+            'gzip': {'bytes': len(packed), 'sha256': hashlib.sha256(packed).hexdigest()},
+            'data': base64.b64encode(packed).decode('ascii')}
+
+    def write(self, value):
+        self.path.write_bytes(producer.canonical(value) + b'\n')
+
+    def test_plaintext_and_envelope_return_identical_original_bytes(self):
+        self.path.write_bytes(self.raw)
+        self.assertEqual(producer.manifest_bytes(self.path), self.raw)
+        self.write(self.envelope())
+        self.assertEqual(producer.manifest_bytes(self.path), self.raw)
+
+    def test_linked_source_is_rejected_even_if_original_bytes_match(self):
+        target = self.root / 'original.json'
+        for raw in (self.raw, producer.canonical(self.envelope()) + b'\n'):
+            target.write_bytes(raw)
+            self.path.symlink_to(target)
+            with self.assertRaisesRegex(ValueError, 'linked client visual manifest input'):
+                producer.manifest_bytes(self.path)
+            self.path.unlink()
+            self.assertEqual(target.read_bytes(), raw)
+
+    def test_source_encoding_never_reaches_prepared_runtime_manifest(self):
+        assets, output = self.root / 'assets', self.root / 'output'
+        assets.mkdir(); output.mkdir()
+        self.path = assets / producer.MANIFEST
+        self.write(self.envelope())
+        archive_raw = b'exact-original-archive-streams'
+        (assets / producer.ARCHIVE).write_bytes(archive_raw)
+        with mock.patch.object(producer, 'verify') as verify:
+            producer.prepare(output, root=self.root)
+        self.assertEqual(verify.call_count, 2)
+        self.assertEqual((output / producer.MANIFEST).read_bytes(), self.raw)
+        self.assertEqual((output / producer.ARCHIVE).read_bytes(), archive_raw)
+
+    def test_changed_packed_stream_is_rejected_before_decompression(self):
+        value = self.envelope(); value['gzip']['sha256'] = '0' * 64; self.write(value)
+        with mock.patch.object(producer.zlib, 'decompressobj', side_effect=AssertionError('decode forbidden')):
+            with self.assertRaisesRegex(ValueError, 'gzip stream differs'):
+                producer.manifest_bytes(self.path)
+
+    def test_wrong_decoded_pin_or_extra_envelope_fields_are_rejected(self):
+        for change in ('bytes', 'sha256', 'extra', 'encoding'):
+            value = self.envelope()
+            if change == 'bytes': value['decoded']['bytes'] += 1
+            elif change == 'sha256': value['decoded']['sha256'] = '0' * 64
+            elif change == 'encoding': value['encoding'] = 'unbounded-zip'
+            else: value['extra'] = True
+            self.write(value)
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, 'envelope differs'):
+                producer.manifest_bytes(self.path)
+
+    def test_duplicate_envelope_fields_are_rejected(self):
+        raw = producer.canonical(self.envelope())
+        self.path.write_bytes(b'{"format":1,' + raw[1:])
+        with self.assertRaisesRegex(ValueError, 'duplicate fields'):
+            producer.manifest_bytes(self.path)
+
+    def test_invalid_base64_and_gzip_crc_are_rejected(self):
+        value = self.envelope(); value['data'] = '!' + value['data'][1:]; self.write(value)
+        with self.assertRaises(ValueError): producer.manifest_bytes(self.path)
+        packed = bytearray(gzip.compress(self.raw, mtime=0)); packed[-8] ^= 1
+        self.write(self.envelope(bytes(packed)))
+        with self.assertRaisesRegex(ValueError, 'gzip stream is invalid'):
+            producer.manifest_bytes(self.path)
+
+    def test_concatenated_or_trailing_gzip_bytes_are_rejected(self):
+        packed = gzip.compress(self.raw, mtime=0)
+        for tail in (b'trailing', gzip.compress(b'another-manifest', mtime=0)):
+            self.write(self.envelope(packed + tail))
+            with self.subTest(tail=tail), self.assertRaisesRegex(ValueError, 'decoded bytes differ'):
+                producer.manifest_bytes(self.path)
+
+    def test_expansion_is_limited_by_exact_reviewed_decoded_size(self):
+        self.write(self.envelope(gzip.compress(b'x' * 1000000, mtime=0)))
+        with self.assertRaisesRegex(ValueError, 'decoded bytes differ or exceed bound'):
+            producer.manifest_bytes(self.path)
+
+    def test_source_and_packed_sizes_are_bounded_before_decode(self):
+        self.write(self.envelope())
+        with mock.patch.object(producer, 'MAX_SOURCE_MANIFEST_BYTES', 32):
+            with self.assertRaisesRegex(ValueError, 'envelope exceeds bound'):
+                producer.manifest_bytes(self.path)
+        value = self.envelope(); value['gzip']['bytes'] = producer.MAX_SOURCE_GZIP_BYTES + 1
+        self.write(value)
+        with self.assertRaisesRegex(ValueError, 'encoded stream exceeds bound'):
+            producer.manifest_bytes(self.path)
+
+    def test_plaintext_over_bound_is_rejected(self):
+        self.path.write_bytes(self.raw)
+        with mock.patch.object(producer, 'MAX_MANIFEST_BYTES', len(self.raw) - 1):
+            with self.assertRaisesRegex(ValueError, 'manifest differs from reviewed metadata'):
+                producer.manifest_bytes(self.path)
 
 
 class InstallerTests(unittest.TestCase):
@@ -62,7 +175,7 @@ class InstallerTests(unittest.TestCase):
         self.document['archive'] = {'filename': visual.ARCHIVE, **producer.pin(self.assets / visual.ARCHIVE)}
         self.repin()
         self.patches = mock.patch.multiple(visual, ARCHIVE_SHA256=self.document['archive']['sha256'],
-            ENCOUNTER_FILE_COUNT=0,
+            ENCOUNTER_FILE_COUNT=0, SWEEP_FILE_COUNT=0,
             ARCHIVE_BYTES=self.document['archive']['bytes'], MANIFEST_SHA256=self.manifest_sha,
             FILE_COUNT=2, PAYLOAD_BYTES=self.document['payload_bytes'], FILES_SHA256=self.document['files_sha256'],
             BASE_FILE_COUNT=1, BASE_PAYLOAD_BYTES=self.files[first]['bytes'],
@@ -236,7 +349,124 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse(self.target(next(iter(self.members))).exists())
 
 
+class PartialResponseTests(unittest.TestCase):
+    def fixture(self):
+        body = b'ignored-gap-original-leaf-neighbor'
+        raw = b'original-leaf'
+        start = 100
+        offset = start + body.index(raw)
+        row = {'source_archive': 'fixture.pigg', 'offset': offset, 'bytes': len(raw),
+            'sha256': hashlib.sha256(raw).hexdigest(), 'md5_table': hashlib.md5(raw).hexdigest(),
+            'compressed': False, 'stored_bytes': len(raw), 'stored_sha256': hashlib.sha256(raw).hexdigest(),
+            'source_download_content_range': f'bytes {start}-{start+len(body)-1}/1000',
+            'source_download_bytes': len(body), 'source_download_sha256': hashlib.sha256(body).hexdigest(),
+            'source_download_member_bytes': len(raw),
+            'source_member_range': f'bytes {offset}-{offset+len(raw)-1}/1000',
+            'source_content_range': f'bytes {offset}-{offset+len(raw)-1}/1000'}
+        url = 'https://dists.thunderspy.org/piggs/fixture.pigg'
+        key = (url, 'original-etag', 'original-last-modified', 1000, row['source_download_content_range'])
+        response = io.BytesIO(body)
+        response.status = 206
+        response.geturl = lambda: url
+        response.headers = {'ETag': key[1], 'Last-Modified': key[2], 'Content-Range': key[4],
+            'Content-Length': str(len(body))}
+        return body, raw, row, key, response
+
+    def test_exact_response_with_gap_preserves_selected_original_stream(self):
+        body, raw, row, key, response = self.fixture()
+        with mock.patch.object(producer.urllib.request, 'urlopen', return_value=response) as transfer:
+            result = producer.download_selected_range((key, [('fixture', row)]))
+        self.assertEqual(result, [('fixture', row, raw)])
+        self.assertEqual(transfer.call_args.args[0].get_header('Range'), 'bytes=100-'+str(99+len(body)))
+
+    def test_changed_neighbor_is_rejected_even_when_selected_leaf_matches(self):
+        _, _, row, key, response = self.fixture()
+        response.getbuffer()[0] ^= 1
+        with mock.patch.object(producer.urllib.request, 'urlopen', return_value=response):
+            with self.assertRaisesRegex(ValueError, 'response bytes differ'):
+                producer.download_selected_range((key, [('fixture', row)]))
+
+    def test_partial_response_cannot_be_replaced_with_full_download(self):
+        _, _, row, key, response = self.fixture()
+        response.status = 200
+        with mock.patch.object(producer.urllib.request, 'urlopen', return_value=response):
+            with self.assertRaisesRegex(ValueError, 'partial transfer was refused'):
+                producer.download_selected_range((key, [('fixture', row)]))
+
+    def test_shared_receipt_cannot_bind_another_archive(self):
+        value = {'provenance': {'sweep_downloads': {'r0000': {'source_archive': 'foreign.pigg'}}}}
+        with self.assertRaisesRegex(ValueError, 'missing or foreign'):
+            producer.selected_download_record(value, {'source_download_receipt': 'r0000',
+                'source_archive': 'fixture.pigg', 'stored_bytes': 1})
+
+    def test_shared_receipt_expansion_preserves_original_evidence(self):
+        original = {'source_download_receipt': 'r0000', 'source_archive': 'fixture.pigg', 'stored_bytes': 7}
+        value = {'provenance': {'sweep_downloads': {'r0000': {'source_archive': 'fixture.pigg',
+            'content_range': 'bytes 1-9/100', 'bytes': 9, 'sha256': 'a'*64}}}}
+        actual = producer.selected_download_record(value, original)
+        self.assertEqual(actual['source_download_content_range'], 'bytes 1-9/100')
+        self.assertNotIn('source_download_content_range', original)
+
+
 class SourceProofTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.swept = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
+
+    def test_sweep_preserves_all_immediate329_file_identities(self):
+        value = self.swept
+        additions = producer.sweep_files(value)
+        self.assertEqual(additions, visual.sweep_files(value))
+        retained = {name: row for name, row in value['files'].items() if name not in additions}
+        self.assertEqual(len(retained), 329)
+        self.assertEqual(sum(row['bytes'] for row in retained.values()), 39521237)
+        self.assertEqual(hashlib.sha256(producer.canonical(retained)).hexdigest(),
+            '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09')
+
+    def test_sweep_rejects_changed_immediate_leaf_even_with_new_inventory_digest(self):
+        value = copy.deepcopy(self.swept)
+        old = next(name for name in value['files'] if name not in value['sweep_extension']['files'])
+        value['files'][old]['sha256'] = '0'*64
+        value['files_sha256'] = hashlib.sha256(producer.canonical(value['files'])).hexdigest()
+        for check in (producer.sweep_files, visual.sweep_files):
+            with self.assertRaisesRegex((ValueError, DiagnosticError), 'preserved 0.13.9 payload'):
+                check(value)
+
+    def test_sweep_rejects_changed_source_witness_and_false_physical_or_preload_claims(self):
+        changed = copy.deepcopy(self.swept)
+        name = next(iter(changed['sweep_extension']['files']))
+        changed['requests'][name][0]['target'] = 'unrelated_texture'
+        with self.assertRaisesRegex(ValueError, 'source evidence differ'):
+            producer.sweep_files(changed)
+        for flag in ('runtime_visual_validated', 'full_global_asset_closure', 'preloading'):
+            changed = copy.deepcopy(self.swept); changed['sweep_extension'][flag] = True
+            with self.assertRaisesRegex(ValueError, 'source evidence differ'):
+                producer.sweep_files(changed)
+
+    def test_all390_recorded_missing_geometries_have_native_model_inventory_proof(self):
+        requests = json.loads((ROOT/'assets/client-visual-sweep-requests.json').read_text())
+        observed = {name for name, rows in requests['geometry'].items()
+            if any(row.get('scope') == 'observed_startup_missing_geometry' for row in rows)}
+        self.assertEqual(len(observed), 390)
+        proofs = self.swept['sweep_extension']['requested_model_proof']
+        self.assertTrue(observed <= set(proofs))
+        self.assertTrue(all(row['absent_requested_models'] == [] for row in proofs.values()))
+        for name in observed:
+            self.assertGreater(proofs[name]['indexed_model_count'], 0, name)
+
+    def test_silent_civilian_and_vanguard_hands_have_exact_original_models(self):
+        proofs = self.swept['sweep_extension']['requested_model_proof']
+        for stem in ('bm_glove','bf_glove','v_new_rikti_glove','v_male_glove','v_fem_glove'):
+            proof = proofs['data/player_library/'+stem+'.geo']
+            self.assertTrue(proof['requested_models'], stem)
+            self.assertFalse(proof['absent_requested_models'], stem)
+            self.assertTrue(any('larm' in row['requested'].casefold() for row in proof['requested_models']), stem)
+
+    def test_loaded_atlas_ground_and_bench_missing_layers_are_explicit(self):
+        stems = {Path(name).stem for name in self.swept['sweep_extension']['files']}
+        self.assertTrue({'plaza_grass_freshcut_01_z','plaza_grass_freshcut_01_ns',
+            'plaza_grass_freshcut_01a_ns','p_planter_soil_ns','bench_gold_fb','bench_gold_ns'} <= stems)
+
     def test_encounter_extension_keeps_323_prior_leaves_and_only_six_observed_npc_textures(self):
         value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
         names = producer.encounter_files(value)
@@ -245,7 +475,13 @@ class SourceProofTests(unittest.TestCase):
         self.assertEqual({Path(name).stem for name in names}, {'chest_bm_labcoat_01a',
             'chest_bm_labcoat_01b', 'chest_bm_flannel_01a', 'chest_bm_flannel_01b',
             'face_skin_bf_25asian3', 'face_skin_bf_45black1'})
-        self.assertEqual(visual.package(ROOT / 'assets'), value)
+        # Repository transport is decoded by the producer; the unchanged
+        # guest contract sees only the pinned original plaintext manifest.
+        with tempfile.TemporaryDirectory() as temporary:
+            assets = Path(temporary)
+            (assets / producer.MANIFEST).write_bytes(
+                producer.manifest_bytes(ROOT / 'assets' / producer.MANIFEST))
+            self.assertEqual(visual.package(assets), value)
         receipt = json.loads((ROOT / value['encounter_extension']['source_device_receipt']).read_text())
         console = next(row for row in receipt['source_files'] if row['path'].endswith('client-console.log'))
         self.assertEqual({key: console[key] for key in ('bytes', 'sha256')},
@@ -256,7 +492,8 @@ class SourceProofTests(unittest.TestCase):
     def test_encounter_append_rejects_modified_prior_payloads_and_speculative_target_names(self):
         value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
         changed = copy.deepcopy(value)
-        name = next(n for n in changed['files'] if n not in changed['encounter_extension']['files'])
+        name = next(n for n in changed['files'] if n not in changed['encounter_extension']['files']
+            and n not in changed.get('sweep_extension', {}).get('files', {}))
         changed['files'][name]['sha256'] = '0' * 64
         with self.assertRaisesRegex(ValueError, 'preserved 0.13.8 payload'):
             producer.encounter_files(changed)
@@ -307,7 +544,8 @@ class SourceProofTests(unittest.TestCase):
     def test_extension_rejects_a_changed_retained_leaf(self):
         value = producer.read_manifest(ROOT / 'assets' / producer.MANIFEST)
         value = copy.deepcopy(value)
-        name = next(n for n in value['files'] if n not in value['visual_extension']['files'])
+        name = next(n for n in value['files'] if n not in value['visual_extension']['files']
+            and n not in value.get('sweep_extension', {}).get('files', {}))
         value['files'][name]['sha256'] = '0' * 64
         with self.assertRaisesRegex(ValueError, 'preserved 0.13.7 payload'):
             producer.extension_files(value)

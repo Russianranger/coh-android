@@ -1,0 +1,3847 @@
+{
+  "baseline": {
+    "archive": {
+      "bytes": 25400546,
+      "sha256": "e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda"
+    },
+    "file_count": 329,
+    "files_sha256": "07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09",
+    "manifest": {
+      "bytes": 1145658,
+      "sha256": "32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c"
+    },
+    "payload_bytes": 39521237,
+    "version_name": "0.13.9"
+  },
+  "bounds": {
+    "archive_limit_bytes": 536870912,
+    "archive_margin_bytes": 21057856,
+    "entry_limit_bytes": 33554432,
+    "extra_missing_only_installed_bytes": 833734047,
+    "installer_behavior": "Missing-only original leaves; stream one leaf at a time and retain imported assets, existing files and prepared caches.",
+    "manifest_limit_bytes": 16777216,
+    "manifest_margin_bytes": 504317,
+    "preloading_entire_client": false
+  },
+  "causal_findings": {
+    "material_creation": "Stock trickCreateTextures requires every surviving material slot and enabled fallback leaf. Its warning reports only the first absent slot; quickload material lookup may substitute white/grey without another warning.",
+    "native_names": "Exact native translated names are retained. One leading bang and native final-dot three/seven-character extension removal are used once; no gender, bone-prefix or fuzzy asset substitutions.",
+    "silent_gloves": "Stock entclient.c silently maps missing Larm models to NONE. Source-confirmed missing BM/BF Hand, male/female Vanguard and Rikti worker GEO files explain absent hands/gloves that do not emit BAD DATA.",
+    "zero_texture_table": "Three legacy FX GEOs contain zero texture names with TexID0. Stock geoLoadStubs supplies white for an eight-byte empty table; discovery-only table proof now follows that native rule. Original geometry and renderer are unchanged."
+  },
+  "existing_prepared_caches_modified": false,
+  "focused_atlas_material_dependencies": {
+    "x_p_planter_soil": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage3g.pigg",
+              "bytes": 87776,
+              "cached_header_id": 1157,
+              "compressed": false,
+              "md5_table": "4e6d1e1019bb1381f421a412d1935617",
+              "offset": 57456981,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/planters/p_planter_soil_ns.texture",
+              "stored_bytes": 87776
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 p_planter_soil_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/planters/p_planter_soil_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_planters.txt",
+          "source_pin": {
+            "bytes": 3515,
+            "sha256": "70adcb4796fba887779c58bc8db340fe6e9e72aca9f79a78257f07fc3499e2af"
+          },
+          "target": "p_planter_soil_ns"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_KR/p_brick_midrise_kr.bin milliseconds=17.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19653,
+          "geometry": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_kr/p_brick_midrise_kr.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_SetC/p_brick_midrise_c3.bounds milliseconds=20.000 success=1 known_length_copies=72 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19560,
+          "geometry": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_setc/p_brick_midrise_c.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Praetoria/First_Ward/Buildings/Brick_MidRises/Brick_SetC/p_brick_midrise_c3.bounds milliseconds=20.000 success=1 known_length_copies=72 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19560,
+          "geometry": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_setc/p_brick_midrise_c3.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_kr/p_brick_midrise_kr.geo",
+        "geometry_sha256": "420b3addccf08220d4e7bd386a64674c3119562e561cba5b5e3e2ea55f324711",
+        "model": "FW_BrickC_Planter",
+        "scope": "preserved_world_model_direct_material",
+        "target": "x_p_planter_soil"
+      }
+    },
+    "x_plaza_grass_freshcut_01": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 44024,
+              "cached_header_id": 438,
+              "compressed": true,
+              "md5_table": "b474fd0f8f7ac298c4c63a793d492d53",
+              "offset": 63643528,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Grass_FreshCut_01_Z.texture",
+              "stored_bytes": 32372
+            }
+          ],
+          "field": "Multiply1",
+          "original_line": "Multiply1 Plaza_Grass_FreshCut_01_Z",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_grass_freshcut_01_z.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_surfaces.txt",
+          "source_pin": {
+            "bytes": 36290,
+            "sha256": "a828c47b51fea4a0543c0c016a3ebeab4662c6282e37b91c717395bc6a7bd04c"
+          },
+          "target": "plaza_grass_freshcut_01_z"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 87785,
+              "cached_header_id": 437,
+              "compressed": true,
+              "md5_table": "f1164c239c7e7e70a219c593eee4bdeb",
+              "offset": 63576329,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Grass_FreshCut_01_NS.texture",
+              "stored_bytes": 67199
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 Plaza_Grass_FreshCut_01_NS",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_grass_freshcut_01_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_surfaces.txt",
+          "source_pin": {
+            "bytes": 36290,
+            "sha256": "a828c47b51fea4a0543c0c016a3ebeab4662c6282e37b91c717395bc6a7bd04c"
+          },
+          "target": "plaza_grass_freshcut_01_ns"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 44024,
+              "cached_header_id": 438,
+              "compressed": true,
+              "md5_table": "b474fd0f8f7ac298c4c63a793d492d53",
+              "offset": 63643528,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Grass_FreshCut_01_Z.texture",
+              "stored_bytes": 32372
+            }
+          ],
+          "field": "Multiply2",
+          "original_line": "Multiply2 Plaza_Grass_FreshCut_01_Z",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_grass_freshcut_01_z.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_surfaces.txt",
+          "source_pin": {
+            "bytes": 36290,
+            "sha256": "a828c47b51fea4a0543c0c016a3ebeab4662c6282e37b91c717395bc6a7bd04c"
+          },
+          "target": "plaza_grass_freshcut_01_z"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 1398506,
+              "cached_header_id": 435,
+              "compressed": true,
+              "md5_table": "08125162921da5adda8846ddde18c053",
+              "offset": 61926026,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Grass_FreshCut_01A_NS.texture",
+              "stored_bytes": 1052063
+            }
+          ],
+          "field": "BumpMap2",
+          "original_line": "BumpMap2 Plaza_Grass_FreshCut_01A_NS",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_grass_freshcut_01a_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_surfaces.txt",
+          "source_pin": {
+            "bytes": 36290,
+            "sha256": "a828c47b51fea4a0543c0c016a3ebeab4662c6282e37b91c717395bc6a7bd04c"
+          },
+          "target": "plaza_grass_freshcut_01a_ns"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 44024,
+              "cached_header_id": 438,
+              "compressed": true,
+              "md5_table": "b474fd0f8f7ac298c4c63a793d492d53",
+              "offset": 63643528,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Grass_FreshCut_01_Z.texture",
+              "stored_bytes": 32372
+            }
+          ],
+          "field": "Blend",
+          "original_line": "Blend Plaza_Grass_FreshCut_01_Z",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_grass_freshcut_01_z.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/plazas/plaza_surfaces.txt",
+          "source_pin": {
+            "bytes": 36290,
+            "sha256": "a828c47b51fea4a0543c0c016a3ebeab4662c6282e37b91c717395bc6a7bd04c"
+          },
+          "target": "plaza_grass_freshcut_01_z"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/Buildings/Style/Upgraded_Deco/upgraded_deco_skyscraper_07.bin milliseconds=12.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19595,
+          "geometry": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/ap_cityhall_makeover_01.bounds milliseconds=34.000 success=1 known_length_copies=4 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19805,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/ap_cityhall_makeover_01.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/ap_plaza_upgrade_01.bounds milliseconds=22.000 success=1 known_length_copies=14 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19467,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/ap_plaza_upgrade_01.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_01.bounds milliseconds=16.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19769,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_01.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_02.bounds milliseconds=29.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19764,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_02.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_03.bin milliseconds=20.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20232,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_03.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_04.bounds milliseconds=30.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19636,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_04.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_05.bounds milliseconds=29.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19746,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_05.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_06.bounds milliseconds=32.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19439,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_06.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_07.bounds milliseconds=32.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19514,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_07.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_08.bounds milliseconds=15.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19793,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_08.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_09.bounds milliseconds=18.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19784,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_09.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_10.bounds milliseconds=15.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19756,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_10.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_11.bounds milliseconds=17.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19738,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_11.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_12.bounds milliseconds=32.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19669,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_12.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_13.bounds milliseconds=16.000 success=1 known_length_copies=4 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19731,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_13.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_14.bounds milliseconds=22.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19498,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_14.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_15.bounds milliseconds=27.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19677,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_15.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_16.bounds milliseconds=16.000 success=1 known_length_copies=5 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20096,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_16.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_17.bounds milliseconds=16.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20207,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_17.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_18.bounds milliseconds=23.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20211,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_18.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_19.bounds milliseconds=15.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19556,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_19.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_20.bounds milliseconds=17.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20223,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_20.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_21.bounds milliseconds=22.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19797,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_21.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_22.bounds milliseconds=26.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19801,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_22.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_23.bounds milliseconds=37.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19760,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_23.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_24.bounds milliseconds=18.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20219,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_24.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_25.bounds milliseconds=18.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 20215,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_25.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Atlas_Park_makeover/Block_Foundations/ap_block_foundation_26.bounds milliseconds=15.000 success=1 known_length_copies=2 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19524,
+          "geometry": "data/object_library/city_zones/atlas_park_makeover/block_foundations/ap_block_foundation_26.geo"
+        },
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=decode path=geobin/object_library/city_zones/Praetoria/Nova/Infrastructure/Magesterium_Plaza/magesterium_plaza_segments.bounds milliseconds=33.000 success=1 known_length_copies=52 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19471,
+          "geometry": "data/object_library/city_zones/praetoria/nova/infrastructure/magesterium_plaza/magesterium_plaza_segments.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_07.geo",
+        "geometry_sha256": "7243eb32f6e503381ff963b1a31b1039dd7c870aa35b163ef60a54c2f08bca46",
+        "model": "_deco_skyscraper_07",
+        "scope": "preserved_world_model_direct_material",
+        "target": "x_plaza_grass_freshcut_01"
+      }
+    },
+    "x_praet_road_benchbrass": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 5851,
+              "cached_header_id": 442,
+              "compressed": true,
+              "md5_table": "b8bc356c2e874ca1ee3377dbbe9688b1",
+              "offset": 64162565,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/bench_gold_ns.texture",
+              "stored_bytes": 4821
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 bench_gold_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/bench_gold_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_benchbrass.txt",
+          "source_pin": {
+            "bytes": 1870,
+            "sha256": "1e0bf7501775e833c3e11308bbab4f9afc1a6fd566f12bb4646622b3b8957a11"
+          },
+          "target": "bench_gold_ns"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 5851,
+              "cached_header_id": 442,
+              "compressed": true,
+              "md5_table": "b8bc356c2e874ca1ee3377dbbe9688b1",
+              "offset": 64162565,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/bench_gold_ns.texture",
+              "stored_bytes": 4821
+            }
+          ],
+          "field": "BumpMap2",
+          "original_line": "BumpMap2 bench_gold_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/bench_gold_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_benchbrass.txt",
+          "source_pin": {
+            "bytes": 1870,
+            "sha256": "1e0bf7501775e833c3e11308bbab4f9afc1a6fd566f12bb4646622b3b8957a11"
+          },
+          "target": "bench_gold_ns"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 3051,
+              "cached_header_id": 441,
+              "compressed": true,
+              "md5_table": "5d64d674ee4d264f58f5bc48a85592a2",
+              "offset": 64160512,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/bench_gold_FB.texture",
+              "stored_bytes": 2053
+            }
+          ],
+          "field": "Base",
+          "original_line": "Base bench_gold_fb",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/bench_gold_fb.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_benchbrass.txt",
+          "source_pin": {
+            "bytes": 1870,
+            "sha256": "1e0bf7501775e833c3e11308bbab4f9afc1a6fd566f12bb4646622b3b8957a11"
+          },
+          "target": "bench_gold_fb"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.bin milliseconds=16.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19610,
+          "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+        "geometry_sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+        "model": "_P_StreetD_BenchMetal",
+        "scope": "preserved_world_model_direct_material",
+        "target": "X_Praet_Road_BenchBrass"
+      }
+    },
+    "x_praet_road_benches_a": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 87774,
+              "cached_header_id": 460,
+              "compressed": true,
+              "md5_table": "794986c8e4bee70a7ea3561ba3e4d502",
+              "offset": 65945898,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/Praet_benches_ns.texture",
+              "stored_bytes": 31079
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 Praet_benches_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/praet_benches_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_benches_a.txt",
+          "source_pin": {
+            "bytes": 1795,
+            "sha256": "6318ea2c0c097a132cdf239ff1ff5be60968af772a1df0faca5afffff91d9775"
+          },
+          "target": "praet_benches_ns"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.bin milliseconds=16.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19610,
+          "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+        "geometry_sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+        "model": "_P_SDetails_CanAa__Pmetbench",
+        "scope": "preserved_world_model_direct_material",
+        "target": "X_Praet_Road_benches_a"
+      }
+    },
+    "x_praet_road_bustcanmetbench": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 349920,
+              "cached_header_id": 445,
+              "compressed": true,
+              "md5_table": "983a96e865d73f34b76853b0ddecfdd9",
+              "offset": 64439390,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/busTcanMetbench_ns.texture",
+              "stored_bytes": 173274
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 busTcanMetbench_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/bustcanmetbench_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_bustcanmetbench.txt",
+          "source_pin": {
+            "bytes": 3006,
+            "sha256": "ba35b5dbe7f06a81c6ae1906d5646e9ef448eae0bb76f809cd4f3683ebaabf9f"
+          },
+          "target": "bustcanmetbench_ns"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 175095,
+              "cached_header_id": 444,
+              "compressed": true,
+              "md5_table": "1ed40fc39d03864ecb8e11890ef12726",
+              "offset": 64316541,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/busTcanMetbench_FallBackd.texture",
+              "stored_bytes": 122849
+            }
+          ],
+          "field": "Base",
+          "original_line": "Base busTcanMetbench_FallBackd.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/bustcanmetbench_fallbackd.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_bustcanmetbench.txt",
+          "source_pin": {
+            "bytes": 3006,
+            "sha256": "ba35b5dbe7f06a81c6ae1906d5646e9ef448eae0bb76f809cd4f3683ebaabf9f"
+          },
+          "target": "bustcanmetbench_fallbackd"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.bin milliseconds=16.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19610,
+          "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+        "geometry_sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+        "model": "_P_SDetails_CanA",
+        "scope": "preserved_world_model_direct_material",
+        "target": "X_Praet_Road_BusTcanMetbench"
+      }
+    },
+    "x_praet_road_stonebench": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 175082,
+              "cached_header_id": 476,
+              "compressed": true,
+              "md5_table": "20f5226d3e64297ccc7facf9b93182db",
+              "offset": 67419085,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/stonebench_m.texture",
+              "stored_bytes": 45856
+            }
+          ],
+          "field": "Multiply1",
+          "original_line": "Multiply1 stonebench_m.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/stonebench_m.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_stonebench .txt",
+          "source_pin": {
+            "bytes": 2819,
+            "sha256": "7c53630bd59d630af65b5493912b26d61abfccc775864c1907bc242d75b4bf7b"
+          },
+          "target": "stonebench_m"
+        },
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 175083,
+              "cached_header_id": 477,
+              "compressed": true,
+              "md5_table": "522bf74dc0970d3fca54f0d316617094",
+              "offset": 67464941,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/stonebench_ns.texture",
+              "stored_bytes": 4055
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 stonebench_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/stonebench_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_stonebench .txt",
+          "source_pin": {
+            "bytes": 2819,
+            "sha256": "7c53630bd59d630af65b5493912b26d61abfccc775864c1907bc242d75b4bf7b"
+          },
+          "target": "stonebench_ns"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.bin milliseconds=16.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19610,
+          "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+        "geometry_sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+        "model": "Praet_Street_Details_BenchStone",
+        "scope": "preserved_world_model_direct_material",
+        "target": "X_Praet_Road_stonebench"
+      }
+    },
+    "x_praet_road_treegrate": {
+      "added_original_layers": [
+        {
+          "exact_donor_candidates": [
+            {
+              "archive": "stage2c.pigg",
+              "bytes": 175136,
+              "cached_header_id": 473,
+              "compressed": true,
+              "md5_table": "2166196930f033ce446b10578029c50e",
+              "offset": 67124781,
+              "path": "texture_library/WORLD/City_Zones/Praetoria/Roads/Details/Praet_treegrate_ns.texture",
+              "stored_bytes": 133566
+            }
+          ],
+          "field": "BumpMap1",
+          "original_line": "BumpMap1 Praet_treegrate_ns.tga",
+          "selected_paths": [
+            "data/texture_library/world/city_zones/praetoria/roads/details/praet_treegrate_ns.texture"
+          ],
+          "source_path": "upstream/i24/data/tricks/cityzones/praetoria/roads/details/x_praet_road_treegrate.txt",
+          "source_pin": {
+            "bytes": 2813,
+            "sha256": "3ea86b994e2691ed3d44bc434c284dd92d4c2637d8bff7a13136665f1cd155c0"
+          },
+          "target": "praet_treegrate_ns"
+        }
+      ],
+      "observed_geometry_cache_successes": [
+        {
+          "console_line": "COH_CLIENT_BIN_PROFILE_V1 phase=open path=geobin/object_library/city_zones/Praetoria/Roads/Details/praet_roaddetails_curbobjects2.bin milliseconds=16.000 success=1 known_length_copies=0 crc_validation_preserved=1 source_freshness_preserved=1",
+          "console_line_number": 19610,
+          "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo"
+        }
+      ],
+      "original_model_witness": {
+        "geometry": "data/object_library/city_zones/praetoria/roads/details/praet_roaddetails_curbobjects2.geo",
+        "geometry_sha256": "434a57b8c687918b331e7bed874f70262116527843987edd73d65b71bb5f2c99",
+        "model": "Praet_Street_Details_TreeCover",
+        "scope": "preserved_world_model_direct_material",
+        "target": "X_Praet_Road_treegrate"
+      }
+    }
+  },
+  "format": 1,
+  "frozen_discovery_requests": {
+    "bytes": 5860299,
+    "path": "assets/client-visual-sweep-requests.json",
+    "sha256": "496bf96a5bcb8606f99ac7ef321ebe7f96cc7d233b3bd283a62ee7a9020388fd"
+  },
+  "global_lod_distances_changed": false,
+  "hosted_validation": {
+    "mode": "Read-only predicate tests and metadata closure; packaging CI replays and qualifies original payload bytes.",
+    "run_status": "pending_at_asset_recipe_freeze",
+    "workflow": ".github/workflows/android-client-visual-sweep.yml"
+  },
+  "imported_assets_modified": false,
+  "inherited_visual_gap_objects_preserved": {
+    "closure": {
+      "absent_requested_models": [
+        {
+          "geometry": "data/player_library/male_collar.geo",
+          "model": "GEO_Collar_MAGIC"
+        }
+      ],
+      "composite_requests": {
+        "x_ap_agapanthus": [
+          {
+            "alias": "x_ap_agapanthus",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_asphalt_01": [
+          {
+            "alias": "x_ap_asphalt_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_automark_decals_01": [
+          {
+            "alias": "x_ap_automark_decals_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_bricktile_01": [
+          {
+            "alias": "x_ap_bricktile_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_baseconcrete_01": [
+          {
+            "alias": "x_ap_cityhall_baseconcrete_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_border_01": [
+          {
+            "alias": "x_ap_cityhall_border_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_border_02": [
+          {
+            "alias": "x_ap_cityhall_border_02",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_border_03": [
+          {
+            "alias": "x_ap_cityhall_border_03",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_border_04": [
+          {
+            "alias": "x_ap_cityhall_border_04",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_concrete_01": [
+          {
+            "alias": "x_ap_cityhall_concrete_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_details_01": [
+          {
+            "alias": "x_ap_cityhall_details_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_dome_01": [
+          {
+            "alias": "x_ap_cityhall_dome_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_gold_d": [
+          {
+            "alias": "x_ap_cityhall_gold_d",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_marble": [
+          {
+            "alias": "x_ap_cityhall_marble",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_pillar_01": [
+          {
+            "alias": "x_ap_cityhall_pillar_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_plaque_01": [
+          {
+            "alias": "x_ap_cityhall_plaque_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_cityhall_tiles": [
+          {
+            "alias": "x_ap_cityhall_tiles",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_concrete_wallfoundation_stained_01": [
+          {
+            "alias": "x_ap_concrete_wallfoundation_stained_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_crack_decal_01": [
+          {
+            "alias": "x_ap_crack_decal_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_dirty_brick_floor_01": [
+          {
+            "alias": "x_ap_dirty_brick_floor_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_dirty_concrete_01": [
+          {
+            "alias": "x_ap_dirty_concrete_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_drity_asphalt_01": [
+          {
+            "alias": "x_ap_drity_asphalt_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grass_decal_01": [
+          {
+            "alias": "x_ap_grass_decal_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grass_decal_02": [
+          {
+            "alias": "x_ap_grass_decal_02",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grass_decal_03": [
+          {
+            "alias": "x_ap_grass_decal_03",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grass_decal_04": [
+          {
+            "alias": "x_ap_grass_decal_04",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grime_decal_01": [
+          {
+            "alias": "x_ap_grime_decal_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_grime_decal_dark_01": [
+          {
+            "alias": "x_ap_grime_decal_dark_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_ivy_01": [
+          {
+            "alias": "x_ap_ivy_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_ivy_creepers_01": [
+          {
+            "alias": "x_ap_ivy_creepers_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_oilstains_decal_01": [
+          {
+            "alias": "x_ap_oilstains_decal_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_rock01": [
+          {
+            "alias": "x_ap_rock01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_rock01_lod": [
+          {
+            "alias": "x_ap_rock01_lod",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_treeleaf01": [
+          {
+            "alias": "x_ap_treeleaf01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_treelroots01": [
+          {
+            "alias": "x_ap_treelroots01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_ap_trees_lod": [
+          {
+            "alias": "x_ap_trees_lod",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_door_atlas_generic_double": [
+          {
+            "alias": "x_door_atlas_generic_double",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_enforcer_spadr": [
+          {
+            "body": "MALE",
+            "bone": "SPADR",
+            "console_line": "CUSTOM TEXTURE ERROR: MALE wants nonexistent texture X_Enforcer_spadr as texture 1 on bone SPADR.",
+            "layer": "1",
+            "scope": "current_atlas_npc_texture"
+          }
+        ],
+        "x_imperialdefense_belt_01": [
+          {
+            "body": "FEM",
+            "bone": "BELT",
+            "console_line": "CUSTOM TEXTURE ERROR: FEM wants nonexistent texture X_ImperialDefense_Belt_01 as texture 1 on bone BELT.",
+            "layer": "1",
+            "scope": "current_atlas_npc_texture"
+          }
+        ],
+        "x_male_statue_atlas_01": [
+          {
+            "alias": "x_male_statue_atlas_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_male_statue_atlas_globe_01": [
+          {
+            "alias": "x_male_statue_atlas_globe_01",
+            "scope": "atlas_composite_root"
+          }
+        ],
+        "x_mirror_glasses": [
+          {
+            "body": "MALE",
+            "bone": "EYES",
+            "console_line": "CUSTOM TEXTURE ERROR: MALE wants nonexistent texture X_Mirror_Glasses as texture 1 on bone EYES.",
+            "layer": "1",
+            "scope": "current_atlas_npc_texture"
+          },
+          {
+            "geometry": "data/player_library/v_male_eyes.geo",
+            "model": "GEO_Eyes_Mirror_Glasses",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "X_Mirror_Glasses"
+          }
+        ],
+        "x_officer_belt": [
+          {
+            "body": "MALE",
+            "bone": "BELT",
+            "console_line": "CUSTOM TEXTURE ERROR: MALE wants nonexistent texture X_Officer_Belt as texture 1 on bone BELT.",
+            "layer": "1",
+            "scope": "current_atlas_npc_texture"
+          },
+          {
+            "geometry": "data/player_library/v_male_belt.geo",
+            "model": "GEO_Belt_Security_Belt_02",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "X_Officer_Belt"
+          }
+        ],
+        "x_tech_retro_hips_01": [
+          {
+            "body": "MALE",
+            "bone": "HIPS",
+            "console_line": "CUSTOM TEXTURE ERROR: MALE wants nonexistent texture X_Tech_Retro_Hips_01 as texture 1 on bone HIPS.",
+            "layer": "1",
+            "scope": "current_atlas_npc_texture"
+          }
+        ]
+      },
+      "full_global_asset_closure": false,
+      "procedural_dependencies": [
+        {
+          "source": {
+            "alias": "X_Male_Statue_Atlas_01",
+            "field": "CubeMap",
+            "scope": "atlas_composite_layer",
+            "source_path": "upstream/i24/data/tricks/hero_statues.txt",
+            "target": "%DYNAMIC%"
+          },
+          "target": "%dynamic%"
+        },
+        {
+          "source": {
+            "alias": "X_Tech_Retro_Hips_01",
+            "field": "DualColor1",
+            "scope": "atlas_composite_layer",
+            "source_path": "upstream/i24/data/tricks/v_shaders/villains/male/shader_villain_tech_retro.txt",
+            "target": "Swappable"
+          },
+          "target": "swappable"
+        },
+        {
+          "source": {
+            "alias": "X_Tech_Retro_Hips_01",
+            "field": "DualColor2",
+            "scope": "atlas_composite_layer",
+            "source_path": "upstream/i24/data/tricks/v_shaders/villains/male/shader_villain_tech_retro.txt",
+            "target": "Swappable"
+          },
+          "target": "swappable"
+        }
+      ],
+      "requested_model_proof": {
+        "data/player_library/bf_boot.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 12,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "576d3e79aadd719a758ac1ee507b481e09991df2e30925e014b2ff22edf94715",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BF_Boot_Clogs.tga"
+                  ],
+                  "name": "GEO_LLegL_High_Heel"
+                }
+              ],
+              "requested": "GEO_LLEGL_High_Heel"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BF_Boot_Clogs.tga"
+                  ],
+                  "name": "GEO_LLegL_Vans"
+                }
+              ],
+              "requested": "GEO_LLEGL_Vans"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BF_Boot_Clogs.tga"
+                  ],
+                  "name": "GEO_LLegR_High_Heel"
+                }
+              ],
+              "requested": "GEO_LLEGR_High_Heel"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BF_Boot_Clogs.tga"
+                  ],
+                  "name": "GEO_LLegR_Vans"
+                }
+              ],
+              "requested": "GEO_LLEGR_Vans"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bf_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 3,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "0fe6aa58dff1d0438dc8adfa21b363d2fe2cc3281761997a969084c652ee4aa5",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BM_Eyes_Glasses_01a.tga"
+                  ],
+                  "name": "GEO_Eyes_Glasses"
+                }
+              ],
+              "requested": "GEO_EYES_Glasses"
+            }
+          ],
+          "version": 3
+        },
+        "data/player_library/bf_hair.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 66,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "4b9bd9a8a0c75d4411d4660d204128dbdc3fc66748469447b2d7bcb752f56711",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BF_Hat_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Hat_01"
+                }
+              ],
+              "requested": "GEO_HAIR_Hat_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Long_02"
+                }
+              ],
+              "requested": "GEO_HAIR_Long_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Medium_01"
+                }
+              ],
+              "requested": "GEO_HAIR_Medium_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Medium_02"
+                }
+              ],
+              "requested": "GEO_HAIR_Medium_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Medium_03"
+                }
+              ],
+              "requested": "GEO_HAIR_Medium_03"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Medium_04"
+                }
+              ],
+              "requested": "GEO_HAIR_Medium_04"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Ponytail_01"
+                }
+              ],
+              "requested": "GEO_HAIR_Ponytail_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Ponytail_02"
+                }
+              ],
+              "requested": "GEO_HAIR_Ponytail_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Short_01"
+                }
+              ],
+              "requested": "GEO_HAIR_Short_01"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bf_head.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 9,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "c583529cf812e165201f2b89da82e8a3f21d96aa17b4d6bdb5a1cb073b6181b3",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_BF_25White1.tga"
+                  ],
+                  "name": "GEO_Head_Large"
+                }
+              ],
+              "requested": "GEO_HEAD_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_BF_10White1.tga"
+                  ],
+                  "name": "GEO_Head_Normal"
+                }
+              ],
+              "requested": "GEO_HEAD_Normal"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bf_pants.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 21,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "09424dc67020f7d1b548db0255531a23113d9ad621f9210848e114f55c9778eb",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Police_Pants.tga"
+                  ],
+                  "name": "GEO_Hips_Jeans"
+                }
+              ],
+              "requested": "GEO_HIPS_Jeans"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_Skin_BM_Shorts_01a.tga"
+                  ],
+                  "name": "GEO_Hips_Large_Jeans"
+                }
+              ],
+              "requested": "GEO_HIPS_Large_Jeans"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_Skin_BF_Skirt_01a.tga"
+                  ],
+                  "name": "GEO_Hips_Large_Skirt_Long"
+                }
+              ],
+              "requested": "GEO_HIPS_Large_Skirt_Long"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_Skin_BF_Skirt_01a.tga"
+                  ],
+                  "name": "GEO_Hips_Skirt"
+                }
+              ],
+              "requested": "GEO_HIPS_Skirt"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_Skin_BF_Skirt_01a.tga"
+                  ],
+                  "name": "GEO_Hips_Skirt_Long"
+                }
+              ],
+              "requested": "GEO_HIPS_Skirt_Long"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bf_shirt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 24,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "a814e4738e218e68eead54db5a7e2edf07ca37e7df576862528b9da72253c98a",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BF_Tshirt_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Business_Jacket"
+                }
+              ],
+              "requested": "GEO_CHEST_Business_Jacket"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BF_Tshirt_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Large_TShirt"
+                }
+              ],
+              "requested": "GEO_CHEST_Large_TShirt"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BF_Tshirt_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Sleeveless"
+                }
+              ],
+              "requested": "GEO_CHEST_Sleeveless"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BF_Tshirt_01a.tga"
+                  ],
+                  "name": "GEO_Chest_TShirt"
+                }
+              ],
+              "requested": "GEO_CHEST_TShirt"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bm_boot.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 19,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "de470fdecef0efa855b68f30ac108c49e7e7813e03b63d9f28dcb6e9d58315df",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BM_Boot_Business_Shoe.tga"
+                  ],
+                  "name": "GEO_LLegL_BM_Business_Shoe"
+                }
+              ],
+              "requested": "GEO_LLEGL_BM_Business_Shoe"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_Thug_Boot.tga"
+                  ],
+                  "name": "GEO_LlegL_Crey_Security"
+                }
+              ],
+              "requested": "GEO_LLEGL_Crey_Security"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_BM_Vans_01a.tga"
+                  ],
+                  "name": "GEO_LLegL_Vans"
+                }
+              ],
+              "requested": "GEO_LLEGL_Vans"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BM_Boot_Business_Shoe.tga"
+                  ],
+                  "name": "GEO_LLegR_BM_Business_Shoe"
+                }
+              ],
+              "requested": "GEO_LLEGR_BM_Business_Shoe"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_Thug_Boot.tga"
+                  ],
+                  "name": "GEO_LlegR_Crey_Security"
+                }
+              ],
+              "requested": "GEO_LLEGR_Crey_Security"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_BM_Vans_01a.tga"
+                  ],
+                  "name": "GEO_LLegR_Vans"
+                }
+              ],
+              "requested": "GEO_LLEGR_Vans"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bm_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 4,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "598772df0e896ebcb2eb5fde57575e63320ed4155c547e8e175ebaa662b72a98",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Eyes_BM_Sunglasses_01a.tga"
+                  ],
+                  "name": "GEO_Eyes_Glasses"
+                }
+              ],
+              "requested": "GEO_EYES_Glasses"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bm_hair.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 70,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "c905653c900114234efdeba27a24237541efc4efd64f9de39c581b115cb65fd8",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Skin_BM_Balding_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Balding"
+                }
+              ],
+              "requested": "GEO_HAIR_Balding"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Hat_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Baseball_Forw"
+                }
+              ],
+              "requested": "GEO_HAIR_Baseball_Forw"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Skin_BM_Balding_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Buzzed"
+                }
+              ],
+              "requested": "GEO_HAIR_Buzzed"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Skin_BM_Balding_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Combover"
+                }
+              ],
+              "requested": "GEO_HAIR_Combover"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Hat_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Hat_Fedora"
+                }
+              ],
+              "requested": "GEO_HAIR_Hat_Fedora"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Long"
+                }
+              ],
+              "requested": "GEO_HAIR_Long"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_BM_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Ponytail"
+                }
+              ],
+              "requested": "GEO_HAIR_Ponytail"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_BM_Cigarette.tga"
+                  ],
+                  "name": "GEO_Hair_Short_Bangs"
+                }
+              ],
+              "requested": "GEO_HAIR_Short_Bangs"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_BM_Cigarette.tga"
+                  ],
+                  "name": "GEO_Hair_Slick"
+                }
+              ],
+              "requested": "GEO_HAIR_Slick"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/bm_head.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 10,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "629a61a0c12260678d62dc593e4201039914228c419ec2b05c9337626ed8df61",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_BM_25Asian1.tga"
+                  ],
+                  "name": "GEO_Head_Large"
+                }
+              ],
+              "requested": "GEO_HEAD_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_BM_25Asian1.tga"
+                  ],
+                  "name": "GEO_Head_Normal"
+                }
+              ],
+              "requested": "GEO_HEAD_Normal"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/bm_neck.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 66,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "e92692503d0abcb9f33b50eb4837f426d2f6bd0ff337ce2d4b60b8805a129ac8",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Clean_01"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Clean_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Clean_02"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Clean_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Full_02"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Full_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Goatee_01_01"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Goatee_01_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Van_Dyke_01"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Van_Dyke_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Van_Dyke_02"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Van_Dyke_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_BM_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Mustache_02_02"
+                }
+              ],
+              "requested": "GEO_NECK_Mustache_02_02"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bm_pants.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 40,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "79e69f4377f336c24f6f6f540605b6f875a8e0154f8d86d9490b3eab4032337e",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Business_Pants.tga"
+                  ],
+                  "name": "GEO_Hips_Business_Pants"
+                }
+              ],
+              "requested": "GEO_HIPS_Business_Pants"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Jeans.tga"
+                  ],
+                  "name": "GEO_Hips_Business_Pants_Large"
+                }
+              ],
+              "requested": "GEO_HIPS_Business_Pants_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Jeans.tga"
+                  ],
+                  "name": "GEO_Hips_Jeans"
+                }
+              ],
+              "requested": "GEO_HIPS_Jeans"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Jeans.tga"
+                  ],
+                  "name": "GEO_Hips_Jeans_Large"
+                }
+              ],
+              "requested": "GEO_HIPS_Jeans_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_BM_Jeans.tga"
+                  ],
+                  "name": "GEO_Hips_Shorts"
+                }
+              ],
+              "requested": "GEO_HIPS_shorts"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/bm_shirt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 55,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "e5e7c3a454a5bdac2475dc78ad46d134a22e2400c837e3cdc8487403d0c80100",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_BM_Leather_Jacket_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Business_Jacket"
+                }
+              ],
+              "requested": "GEO_CHEST_Business_Jacket"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "BM_Chest_Bum_Flannel_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Business_Jacket_Large"
+                }
+              ],
+              "requested": "GEO_CHEST_Business_Jacket_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_BM_Jumpsuit.tga"
+                  ],
+                  "name": "GEO_Chest_Dress_Shirt_Large"
+                }
+              ],
+              "requested": "GEO_CHEST_Dress_Shirt_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BM_TShirt_Jersey_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Hawaiian"
+                }
+              ],
+              "requested": "GEO_CHEST_Hawaiian"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BM_TShirt_Jersey_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Tshirt"
+                }
+              ],
+              "requested": "GEO_CHEST_TShirt"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Skin_BM_TShirt_Jersey_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Tshirt_Large"
+                }
+              ],
+              "requested": "GEO_CHEST_TShirt_Large"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_BM_Winter_Coat.tga"
+                  ],
+                  "name": "GEO_Chest_Winter_Coat"
+                }
+              ],
+              "requested": "GEO_CHEST_Winter_Coat"
+            }
+          ],
+          "version": 2
+        },
+        "data/player_library/fem_belt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 183,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "9a0a5624bf324e8ea5d6f040bce680c01d1b61f4b9d141ca3e472703305b50e6",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Belt_Miss_Liberty.tga"
+                  ],
+                  "name": "GEO_Belt_Miss_Liberty"
+                }
+              ],
+              "requested": "GEO_BELT_Miss_Liberty"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_boot.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 144,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "3e92fadfeb721f30ce9c052b59b1b4ee6d40bba59addbaa35e8e0c8831ac8db3",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_Robotics_Assault_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Banded"
+                }
+              ],
+              "requested": "GEO_LLEGL_Banded"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "sf_boot_schoolgirl_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Big"
+                }
+              ],
+              "requested": "GEO_LLEGL_Big"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "boot_smooth_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Folded"
+                }
+              ],
+              "requested": "GEO_LLEGL_Folded"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "boot_smooth_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Tallboot"
+                }
+              ],
+              "requested": "GEO_LLEGL_Tallboot"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_Robotics_Assault_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Banded"
+                }
+              ],
+              "requested": "GEO_LLEGR_Banded"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "sf_boot_schoolgirl_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Big"
+                }
+              ],
+              "requested": "GEO_LLEGR_Big"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "boot_smooth_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Folded"
+                }
+              ],
+              "requested": "GEO_LLEGR_Folded"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "boot_smooth_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Tallboot"
+                }
+              ],
+              "requested": "GEO_LLEGR_Tallboot"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/fem_emblem.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 117,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "d85b3d8d289dd04425b5eb61c22face02e12779a9b531f781f34a55d87f7907f",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_Hero_Corp.tga"
+                  ],
+                  "name": "GEO_Emblem_Tight"
+                }
+              ],
+              "requested": "GEO_EMBLEM_Tight"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "emblem_Celtic_03.tga"
+                  ],
+                  "name": "GEO_Emblem_Top"
+                }
+              ],
+              "requested": "GEO_EMBLEM_Top"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/fem_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 222,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "b575e61beb336ff2e5df6999f4e140afb3a87539e05653ecf10a7369240cf654",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Eyes_Solid_01b.tga"
+                  ],
+                  "name": "GEO_Eyes_Glasses_01"
+                }
+              ],
+              "requested": "GEO_EYES_Glasses_01"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/fem_glove.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 168,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "7bef2adf212c24e92eac27f8d607c1c4385815bdcac755fffa84ed3ea95b9096",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "glove_skin_bare.tga"
+                  ],
+                  "name": "GEO_LarmL_Folded"
+                }
+              ],
+              "requested": "GEO_LARML_Folded"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "glove_skin_bare.tga"
+                  ],
+                  "name": "GEO_LarmR_Folded"
+                }
+              ],
+              "requested": "GEO_LARMR_Folded"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_hair.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 318,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "1ea2a84c65ed967a09ea60dccc2af3641932bdef1e51a2ebaff04d69da5be958",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_A_line"
+                }
+              ],
+              "requested": "GEO_HAIR_A_line"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Long_02"
+                }
+              ],
+              "requested": "GEO_HAIR_Long_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Long_05"
+                }
+              ],
+              "requested": "GEO_HAIR_Long_05"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Med_Bangs"
+                }
+              ],
+              "requested": "GEO_HAIR_Med_Bangs"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Medium_04"
+                }
+              ],
+              "requested": "GEO_HAIR_Medium_04"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_Long_01a.tga"
+                  ],
+                  "name": "GEO_Hair_Student_01__dblsided"
+                }
+              ],
+              "requested": "GEO_HAIR_Student_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_head.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 21,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "a759f8c3a12760d6e4d830124ec3f384671cd1f94cfb5547db7ab88144414c33",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_V_Bella_01.tga"
+                  ],
+                  "name": "GEO_Head_Masked_Bald"
+                }
+              ],
+              "requested": "GEO_HEAD_Masked_Bald"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_Skin_V_Bella_01.tga"
+                  ],
+                  "name": "GEO_Head_Standard"
+                }
+              ],
+              "requested": "GEO_HEAD_standard"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_pants.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 48,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "9cbd0fe993ca41d3b7d00da0211e1852b47eddbc207dc46024c7d91ca0cd631c",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "sf_hips_skin_tights.tga"
+                  ],
+                  "name": "GEO_Hips_Miniskirt__alpha"
+                }
+              ],
+              "requested": "GEO_HIPS_Miniskirt"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hips_V_Seer_04.tga"
+                  ],
+                  "name": "GEO_Hips_Tight"
+                }
+              ],
+              "requested": "GEO_HIPS_Tight"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_shirt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 51,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "02aea75978f12779a7cfd3be7e91fe7848a681dc3d7b2319e3715f15e785451b",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_Suit_01a.tga"
+                  ],
+                  "name": "GEO_Chest_Jacket"
+                }
+              ],
+              "requested": "GEO_CHEST_Jacket"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "sf_chest_tights.tga"
+                  ],
+                  "name": "GEO_Chest_Jackets_Sleeves"
+                }
+              ],
+              "requested": "GEO_CHEST_Jackets_Sleeves"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Chest_V_Fem_CoThorns_01.tga"
+                  ],
+                  "name": "GEO_Chest_Tight"
+                }
+              ],
+              "requested": "GEO_CHEST_Tight"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/fem_spadr.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 135,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "34995a08b37e3b82637e5df106b902b8d687088822132a336c9dc446957d13ea",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SpadR_Organic_01.tga"
+                  ],
+                  "name": "GEO_Spadr_Manga_S"
+                }
+              ],
+              "requested": "GEO_SPADR_Manga_s"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SpadR_Organic_01.tga"
+                  ],
+                  "name": "GEO_Spadr_Metal"
+                }
+              ],
+              "requested": "GEO_SPADR_Metal"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SpadR_MsLiberty.tga"
+                  ],
+                  "name": "GEO_SpadR_MsLiberty"
+                }
+              ],
+              "requested": "GEO_SPADR_MsLiberty"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SpadR_Manga_s.tga"
+                  ],
+                  "name": "GEO_Spadr_Smooth"
+                }
+              ],
+              "requested": "GEO_SPADR_Smooth"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/male_belt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 162,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "53ad5a68fb328a36fcfc3b0d4b387de7fc58091a328d53bd2a11468ffe908281",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "belt_tech_01a.tga"
+                  ],
+                  "name": "GEO_Belt_Hero_Corp"
+                }
+              ],
+              "requested": "GEO_BELT_Hero_Corp"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "belt_tech_02a.tga"
+                  ],
+                  "name": "GEO_Belt_Robe_Leather_02"
+                }
+              ],
+              "requested": "GEO_BELT_Robe_Leather_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Belt_Sunstorm.tga"
+                  ],
+                  "name": "GEO_Belt_Sunstorm__Collar2x"
+                }
+              ],
+              "requested": "GEO_BELT_Sunstorm"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_V_Skull_01.tga"
+                  ],
+                  "name": "GEO_Belt_Tactical"
+                }
+              ],
+              "requested": "GEO_BELT_Tactical"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/male_collar.geo": {
+          "absent_requested_models": [
+            "GEO_Collar_MAGIC"
+          ],
+          "indexed_model_count": 96,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "05f117f84861ac993e95cae56a9747cf7c6a85a9fef4c06905266613896e5714",
+          "requested_models": [],
+          "version": 7
+        },
+        "data/player_library/male_emblem.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 126,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "fb223a457ec4339c5b17d2af5a16d1f455ea06a402e6ff961ef11f4e7d906ef0",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_NPC_Freedom_Corp.tga"
+                  ],
+                  "name": "GEO_Emblem_Tight"
+                }
+              ],
+              "requested": "GEO_EMBLEM_Tight"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/male_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 192,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "5e77753f001edcebe76b4aa252ed1cc4af73609bc64a48144d11f3f3dbb783e4",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_Villain_Pirate.tga"
+                  ],
+                  "name": "GEO_Eyes_Goggle_03"
+                }
+              ],
+              "requested": "GEO_EYES_Goggle_03"
+            }
+          ],
+          "version": 5
+        },
+        "data/player_library/male_head.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 45,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "33a6b4d1fc7e8de6e60237643d747d0af715b17cbe6a4854863f7646229d9b6a",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_V_Clockwork_01.tga"
+                  ],
+                  "name": "GEO_Head_Masked_Bald"
+                }
+              ],
+              "requested": "GEO_HEAD_Masked_Bald"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Face_V_Clockwork_01.tga"
+                  ],
+                  "name": "GEO_Head_Standard"
+                }
+              ],
+              "requested": "GEO_HEAD_standard"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/male_neck.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 93,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "7ede241d26447383528b1abf4eb27f4ccdd7b9514f59955b8703716e1415a081",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_Beard_01a.tga"
+                  ],
+                  "name": "GEO_Neck_Beard_Van_Dyke"
+                }
+              ],
+              "requested": "GEO_NECK_Beard_Van_Dyke"
+            }
+          ],
+          "version": 7
+        },
+        "data/player_library/male_spadr.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 78,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "dde750c2637f9b674f7f5ee53a0054df5fa952bf261ac4238292094cef205fef",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SpadR_Manga_s.tga"
+                  ],
+                  "name": "GEO_Spadr_Rings"
+                }
+              ],
+              "requested": "GEO_SPADR_Rings"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_belt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 156,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "231ffcfbe526476ce03f488b19a02b8bd950e3738e22833cec154f9e1935811e",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "belt_V_ImperialDefense_01.tga"
+                  ],
+                  "name": "GEO_Belt_ImperialDefense_01__Alpha"
+                }
+              ],
+              "requested": "GEO_Belt_ImperialDefense_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Helmet_Longbow.tga"
+                  ],
+                  "name": "GEO_Belt_Longbow_Belt_02__Collar2x"
+                }
+              ],
+              "requested": "GEO_Belt_Longbow_Belt_02"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_boot.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 477,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "9dece0389242f903e603c72a5cbef0485744ce83cf0b1baeb612767d7bd4757c",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Motorcycle_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Motorcycle_Boot_01"
+                }
+              ],
+              "requested": "GEO_LlegL_Motorcycle_Boot_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Motorcycle_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Motorcycle_Boot_01"
+                }
+              ],
+              "requested": "GEO_LlegR_Motorcycle_Boot_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_Skin_Wedding_Shoe_02.tga"
+                  ],
+                  "name": "GEO_LlegR_Wedding_Shoe_01"
+                }
+              ],
+              "requested": "GEO_LlegR_Wedding_Shoe_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 309,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "b937a2c965251bd3fa5dcc69ca3cbc5072f27a75b8c90885d55e64368db0b954",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_V_Longbow_Rocketpack.tga"
+                  ],
+                  "name": "GEO_Eyes_Rocketpack"
+                }
+              ],
+              "requested": "GEO_Eyes_Rocketpack"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_hair.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 282,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "1bbef33e6ca833405ace4585fdfdc461450c75f26191084cd954a96394cee80a",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "SF_Hair_Beau_Monde_01.tga"
+                  ],
+                  "name": "GEO_Hair_Beau_Monde_01"
+                }
+              ],
+              "requested": "GEO_Hair_Beau_Monde_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_sleeves.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 48,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "687020d93c8abaf0c011f9360f2db59a4ee8a085d7478012ead51923f7c9c482",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Sleeves_Goldbricker_01.tga"
+                  ],
+                  "name": "GEO_Sleeves_V_Leather"
+                }
+              ],
+              "requested": "GEO_Sleeves_V_Leather"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_spadr.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 336,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "db87d6c007c99eff258cc14a7e6bba57753c7b60cb836a992a3edd95dc60d2e4",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Helmet_Longbow.tga"
+                  ],
+                  "name": "GEO_SpadR_Longbow_Pad"
+                }
+              ],
+              "requested": "GEO_SpadR_Longbow_Pad"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_fem_top.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 105,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "8910ed9b483b6e2313f427704542f303c482b5e6118c5bec5cc53113a95a3c87",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_Goldbricker_01.tga"
+                  ],
+                  "name": "GEO_Top_V_Leather"
+                }
+              ],
+              "requested": "GEO_Top_V_Leather"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_belt.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 186,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "e4536fc7d583f245714f68094959b49cb6ae0d920e714ce2769c24019aaa7bc8",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Helmet_Longbow.tga"
+                  ],
+                  "name": "GEO_Belt_Longbow_Belt_02__Collar2x"
+                }
+              ],
+              "requested": "GEO_Belt_Longbow_Belt_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "X_Officer_Belt"
+                  ],
+                  "name": "GEO_Belt_Security_Belt_02"
+                }
+              ],
+              "requested": "GEO_Belt_Security_Belt_02"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_boot.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 480,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "a0c41d851310ef8471d0725ccafd767fc29d3786bc834b755ebc481007ff856c",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Stealth_01.tga"
+                  ],
+                  "name": "GEO_LlegL_Stealth_Boot_01"
+                }
+              ],
+              "requested": "GEO_LlegL_Stealth_Boot_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Work_Boot.tga"
+                  ],
+                  "name": "GEO_LlegL_Work_Boot"
+                }
+              ],
+              "requested": "GEO_LlegL_Work_Boot"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Stealth_01.tga"
+                  ],
+                  "name": "GEO_LlegR_Stealth_Boot_01"
+                }
+              ],
+              "requested": "GEO_LlegR_Stealth_Boot_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Boot_V_Work_Boot.tga"
+                  ],
+                  "name": "GEO_LlegR_Work_Boot"
+                }
+              ],
+              "requested": "GEO_LlegR_Work_Boot"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_emblem.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 273,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "22b0be7a78ca07681b5ac92f4b68ca4bc1937c9fb473fe8b941815cedc41cdfb",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_V_Tie_01.tga"
+                  ],
+                  "name": "GEO_Emblem_Dress_Tie_01"
+                }
+              ],
+              "requested": "GEO_Emblem_Dress_Tie_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_V_Isle_Police_Tie_01.tga"
+                  ],
+                  "name": "GEO_Emblem_Security_Tie_01"
+                }
+              ],
+              "requested": "GEO_Emblem_Security_Tie_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_eyes.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 333,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "20e151f9aae01767d87fc506941a8d46de06b2eb9cca8ef87d69119b5cf693c0",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "X_Mirror_Glasses"
+                  ],
+                  "name": "GEO_Eyes_Mirror_Glasses"
+                }
+              ],
+              "requested": "GEO_Eyes_Mirror_Glasses"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Neck_V_Longbow_Rocketpack.tga"
+                  ],
+                  "name": "GEO_Eyes_Rocketpack"
+                }
+              ],
+              "requested": "GEO_Eyes_Rocketpack"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_hair.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 399,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "267de27aee2592b648a21afcebc6b9c48d8ed8fc0ecab14b16fdb7fbc228e918",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_V_Paragon_Police_Tie_01.tga"
+                  ],
+                  "name": "GEO_Hair_Hat_Paragon_Police"
+                }
+              ],
+              "requested": "GEO_Hair_Hat_Paragon_Police"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Magic_Hood_01.tga"
+                  ],
+                  "name": "GEO_Hair_Magic_Hood_01"
+                }
+              ],
+              "requested": "GEO_Hair_Magic_Hood_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Princeton_01.tga"
+                  ],
+                  "name": "GEO_Hair_Princeton_01"
+                }
+              ],
+              "requested": "GEO_Hair_Princeton_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_sleeves.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 60,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "3eedd6377a14bd4868ffc286116149c2a8785bc06ab6b061f6dd016ae6428e6b",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Sleeves_V_Suit_Coat_01.tga"
+                  ],
+                  "name": "GEO_Sleeves_Dress_Shirt_05"
+                }
+              ],
+              "requested": "GEO_Sleeves_Dress_Shirt_05"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_V_Security_Guard_Shirt_01.tga"
+                  ],
+                  "name": "GEO_Sleeves_Robe_Sercurity_Sleeve_02"
+                }
+              ],
+              "requested": "GEO_Sleeves_Robe_Sercurity_Sleeve_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_Robe_Warrior_02.tga"
+                  ],
+                  "name": "GEO_Sleeves_Robe_Warrior_01"
+                }
+              ],
+              "requested": "GEO_Sleeves_Robe_Warrior_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_spadr.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 399,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "528e15759464fede660c981f224a762fcb12d7650c99c2f9e9bc07aab39c11f3",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "spadr_v_Enforcer_01.tga"
+                  ],
+                  "name": "GEO_SpadR_Enforcer_02"
+                }
+              ],
+              "requested": "GEO_SpadR_Enforcer_02"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Hair_V_Helmet_Longbow.tga"
+                  ],
+                  "name": "GEO_SpadR_Longbow_Pad"
+                }
+              ],
+              "requested": "GEO_SpadR_Longbow_Pad"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Emblem_V_Security_Guard_Tie_01.tga"
+                  ],
+                  "name": "GEO_SpadR_Security_Patch_01"
+                }
+              ],
+              "requested": "GEO_SpadR_Security_Patch_01"
+            }
+          ],
+          "version": 8
+        },
+        "data/player_library/v_male_top.geo": {
+          "absent_requested_models": [],
+          "indexed_model_count": 135,
+          "mesh_or_skinning_execution_validated": false,
+          "model_table_sha256": "8cf1a420b83a0efb828ace0783d90ef5cf9dfa2685841785a94bdd445d9ccf36",
+          "requested_models": [
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_V_2_Button_01.tga"
+                  ],
+                  "name": "GEO_Top_2_Button_01"
+                }
+              ],
+              "requested": "GEO_Top_2_Button_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_V_Security_Guard_Shirt_01.tga"
+                  ],
+                  "name": "GEO_Top_Robe_Sercurity_Shirt_01"
+                }
+              ],
+              "requested": "GEO_Top_Robe_Sercurity_Shirt_01"
+            },
+            {
+              "matches": [
+                {
+                  "direct_texture_names": [
+                    "Top_Robe_Warrior_02.tga"
+                  ],
+                  "name": "GEO_Top_Robe_Warrior_01"
+                }
+              ],
+              "requested": "GEO_Top_Robe_Warrior_01"
+            }
+          ],
+          "version": 8
+        }
+      },
+      "selected_current_atlas_npc_geometry_files": 45,
+      "selected_texture_files": 245,
+      "unresolved_dependencies": [
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bf_boot.geo",
+            "model": "GEO_LLEGL_High_Heel",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BF_Boot_Clogs.tga"
+          },
+          "target": "bf_boot_clogs"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bf_boot.geo",
+            "model": "GEO_LLEGL_Vans",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BF_Boot_Clogs.tga"
+          },
+          "target": "bf_boot_clogs"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bf_boot.geo",
+            "model": "GEO_LLEGR_High_Heel",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BF_Boot_Clogs.tga"
+          },
+          "target": "bf_boot_clogs"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bf_boot.geo",
+            "model": "GEO_LLEGR_Vans",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BF_Boot_Clogs.tga"
+          },
+          "target": "bf_boot_clogs"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bf_eyes.geo",
+            "model": "GEO_EYES_Glasses",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BM_Eyes_Glasses_01a.tga"
+          },
+          "target": "bm_eyes_glasses_01a"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bm_boot.geo",
+            "model": "GEO_LLEGL_BM_Business_Shoe",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BM_Boot_Business_Shoe.tga"
+          },
+          "target": "bm_boot_business_shoe"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bm_boot.geo",
+            "model": "GEO_LLEGR_BM_Business_Shoe",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BM_Boot_Business_Shoe.tga"
+          },
+          "target": "bm_boot_business_shoe"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/bm_shirt.geo",
+            "model": "GEO_CHEST_Business_Jacket_Large",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "BM_Chest_Bum_Flannel_01a.tga"
+          },
+          "target": "bm_chest_bum_flannel_01a"
+        },
+        {
+          "matching_paths": [],
+          "source": {
+            "geometry": "data/player_library/fem_emblem.geo",
+            "model": "GEO_EMBLEM_Tight",
+            "scope": "current_atlas_npc_geometry_texture",
+            "target": "Emblem_Hero_Corp.tga"
+          },
+          "target": "emblem_hero_corp"
+        }
+      ]
+    },
+    "visual_extension_unresolved_dependencies": []
+  },
+  "local_validation": {
+    "all_329_original_encoded_zip_streams_identical": true,
+    "all_329_original_leaf_pins_requests_and_provenance_identical": true,
+    "all_historical_closure_and_extension_objects_identical": true,
+    "all_new_original_geo_payload_tables_match_cached_headers": true,
+    "all_prior_source_file_pins_identical": true,
+    "exact_existing_leaf_backedges": 185,
+    "native_geometry_table_tests": 3,
+    "stock_trick_predicate_tests": 21,
+    "sweep_guard_tests": 10,
+    "unresolved_alias_cycles": 0,
+    "whole_composed_zip_crc_verified": true
+  },
+  "native_renderer_changed": false,
+  "remaining_risks": [
+    "All physical visual fixes remain unconfirmed on the AYN Thor.",
+    "This finite sweep increases APK and private missing-only asset storage; the first upgraded preparation can take longer.",
+    "No hostile identity or graphics/skinning execution is established by static donor/header proof.",
+    "Twenty-four new native texture/material names remain absent from the exact donor namespace; inherited unresolved geometry/alias gaps are preserved.",
+    "Native diagnostic caps and startup filename inventory do not prove complete Atlas visibility or complete global source closure."
+  ],
+  "requested_hour": {
+    "earliest_publication_utc": "2026-10-04T23:42:58Z",
+    "start_utc": "2026-10-04T22:42:58Z",
+    "status": "sweep_continues_after_asset_recipe_freeze"
+  },
+  "result": {
+    "added_files_sha256": "7159ada9851057278f934f55c577b7063e4979d1fe2a2ce11718ded79440e8e6",
+    "archive": {
+      "bytes": 515813056,
+      "sha256": "1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea"
+    },
+    "file_count": 5147,
+    "files_sha256": "99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542",
+    "manifest": {
+      "bytes": 16272899,
+      "sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b"
+    },
+    "payload_bytes": 833734047,
+    "stored_payload_bytes": 489127072,
+    "total_file_count": 5476,
+    "total_payload_bytes": 873255284
+  },
+  "resumed_independent_validation": {
+    "added_decoded_bytes": 833734047,
+    "added_files": 5147,
+    "caller_bounds_correction": "Only the named visual ZIP/recipe limits and exact visual file/byte staging budgets increase; other verification and staging AST is conserved.",
+    "caller_bounds_findings": [
+      "Retained startup verifier capped visual ZIP at 128 MiB.",
+      "Retained server staging budgets did not include the enlarged visual inventory."
+    ],
+    "decoded_bytes": 873255284,
+    "decoded_sizes_sha256_original_table_md5_and_cached_headers_verified": true,
+    "final_file_count": 5476,
+    "frozen_original_metadata_prefixes_verified": 57,
+    "inherited_GEO_Collar_MAGIC_absent_from_supported_donor_model_inventory": true,
+    "input_manifest_and_archive_unchanged_from_recovered_final_v3": true,
+    "new_exact_absent_names": {
+      "npc_costume": 8,
+      "other_fx": 2,
+      "world": 14
+    },
+    "new_valid_dependencies_found_after_recovery": 0,
+    "physical_Android_install_memory_pressure_or_visual_success_claimed": false,
+    "recovered_world_material_additions_present": 623,
+    "retained_compressed_streams_byte_identical": 329,
+    "retained_files": 329,
+    "retained_world_geos_verified": 488,
+    "retained_world_model_records_replayed": 10034,
+    "source_pins_verified": 888,
+    "source_recipe_encoding": {
+      "decoded_bytes": 16272899,
+      "decoded_sha256": "447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b",
+      "encoding": "gzip+base64",
+      "packaged_manifest_and_asset_archive_unchanged": true,
+      "reason": "Authenticated GitHub request maximum is 16 MiB including JSON escaping.",
+      "source_json_bytes": 2835953,
+      "source_json_sha256": "e5817e1f9bc4693066927485218687db70e476e0baaea75e9e633861ddcc004e"
+    },
+    "stock_trick_declarations_replayed": 14715,
+    "stock_trick_files": 1585,
+    "workspace_recovered_without_restarting_sweep": true
+  },
+  "runtime_visual_validated": false,
+  "scope": "recorded_client_missing_asset_dependency_closure",
+  "selected_scope": {
+    "absent_exact_requested_models": 0,
+    "actual_post_world_npc_geometry_files": 17,
+    "all_preserved_world_geometry_headers": 488,
+    "complete_atlas_map_definition_reachability_claimed": false,
+    "exact_named_npc_or_glove_geometry_proofs": 22,
+    "full_global_asset_closure_claimed": false,
+    "global_and_catalogue_diagnostics_capped_by_native_client": true,
+    "new_geometry_files": 412,
+    "new_texture_leaves": 4735,
+    "preserved_world_model_records": 10034,
+    "source_confirmed_silent_glove_geometry_files": 5,
+    "startup_missing_original_geometry_filenames": 390
+  },
+  "silent_glove_model_proofs": {
+    "data/player_library/bf_glove.geo": {
+      "proof": {
+        "absent_requested_models": [],
+        "indexed_model_count": 6,
+        "mesh_or_skinning_execution_validated": false,
+        "model_table_sha256": "025795949f946ea57ebe168b210c1ab3ff8b0e570f8c6ffe8a857b2c39be8c75",
+        "requested_models": [
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_Skin_BF_Hand_01a.tga"
+                ],
+                "name": "GEO_LArmL_Hand"
+              }
+            ],
+            "requested": "GEO_LarmL_Hand"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_Skin_BF_Hand_01a.tga"
+                ],
+                "name": "GEO_LArmR_Hand"
+              }
+            ],
+            "requested": "GEO_LarmR_Hand"
+          }
+        ],
+        "version": 2
+      },
+      "requests": [
+        {
+          "model": "GEO_LarmR_Hand",
+          "npc": "FemaleNPC_116",
+          "scope": "source_confirmed_silent_civilian_hand",
+          "source_file": "upstream/i24/data/defs/npc/npcs_generic.nd",
+          "source_line": 42418
+        },
+        {
+          "model": "GEO_LarmL_Hand",
+          "npc": "FemaleNPC_116",
+          "scope": "source_confirmed_silent_civilian_hand",
+          "source_file": "upstream/i24/data/defs/npc/npcs_generic.nd",
+          "source_line": 42418
+        }
+      ]
+    },
+    "data/player_library/bm_glove.geo": {
+      "proof": {
+        "absent_requested_models": [],
+        "indexed_model_count": 7,
+        "mesh_or_skinning_execution_validated": false,
+        "model_table_sha256": "af4492cd4df7b0e216ab387f9b3cb1bc5e8fb5904917d7530ea8430c33eae4da",
+        "requested_models": [
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_Skin_BF_Hand_01a.tga"
+                ],
+                "name": "GEO_LArmL_Hand"
+              }
+            ],
+            "requested": "GEO_LarmL_Hand"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_Skin_BF_Hand_01a.tga"
+                ],
+                "name": "GEO_LArmR_Hand"
+              }
+            ],
+            "requested": "GEO_LarmR_Hand"
+          }
+        ],
+        "version": 2
+      },
+      "requests": [
+        {
+          "model": "GEO_LarmR_Hand",
+          "npc": "MaleNPC_116",
+          "scope": "source_confirmed_silent_civilian_hand",
+          "source_file": "upstream/i24/data/defs/npc/npcs_generic.nd",
+          "source_line": 15691
+        },
+        {
+          "model": "GEO_LarmL_Hand",
+          "npc": "MaleNPC_116",
+          "scope": "source_confirmed_silent_civilian_hand",
+          "source_file": "upstream/i24/data/defs/npc/npcs_generic.nd",
+          "source_line": 15691
+        }
+      ]
+    },
+    "data/player_library/v_fem_glove.geo": {
+      "proof": {
+        "absent_requested_models": [],
+        "indexed_model_count": 405,
+        "mesh_or_skinning_execution_validated": false,
+        "model_table_sha256": "930f91a60cc290a82a584cb4f8d6a16a8649c4ab8dea12678f2fe4b2e6efbc66",
+        "requested_models": [
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmL_Vangaurd_01"
+              }
+            ],
+            "requested": "GEO_LarmL_Vangaurd_01"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmL_Vangaurd_02"
+              }
+            ],
+            "requested": "GEO_LarmL_Vangaurd_02"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmR_Vangaurd_01"
+              }
+            ],
+            "requested": "GEO_LarmR_Vangaurd_01"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmR_Vangaurd_02"
+              }
+            ],
+            "requested": "GEO_LarmR_Vangaurd_02"
+          }
+        ],
+        "version": 8
+      },
+      "requests": [
+        {
+          "model": "GEO_LarmR_Vangaurd_01",
+          "npc": "Vanguard_Drill_Instructor_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3268
+        },
+        {
+          "model": "GEO_LarmL_Vangaurd_01",
+          "npc": "Vanguard_Drill_Instructor_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3268
+        },
+        {
+          "model": "GEO_LarmR_Vangaurd_02",
+          "npc": "Vanguard_Female_Store_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3547
+        },
+        {
+          "model": "GEO_LarmL_Vangaurd_02",
+          "npc": "Vanguard_Female_Store_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3547
+        }
+      ]
+    },
+    "data/player_library/v_male_glove.geo": {
+      "proof": {
+        "absent_requested_models": [],
+        "indexed_model_count": 435,
+        "mesh_or_skinning_execution_validated": false,
+        "model_table_sha256": "827413999bb818d5d0a4aff5fd9b2cc89c81288a7e9b97c6f81c14d76e4f56cb",
+        "requested_models": [
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmL_Vangaurd_01"
+              }
+            ],
+            "requested": "GEO_LarmL_Vangaurd_01"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmL_Vangaurd_02"
+              }
+            ],
+            "requested": "GEO_LarmL_Vangaurd_02"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmR_Vangaurd_01"
+              }
+            ],
+            "requested": "GEO_LarmR_Vangaurd_01"
+          },
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "Glove_V_Vanguard_01.tga"
+                ],
+                "name": "GEO_LarmR_Vangaurd_02"
+              }
+            ],
+            "requested": "GEO_LarmR_Vangaurd_02"
+          }
+        ],
+        "version": 8
+      },
+      "requests": [
+        {
+          "model": "GEO_LarmR_Vangaurd_01",
+          "npc": "Vanguard_Sword_Male_Boss_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 8220
+        },
+        {
+          "model": "GEO_LarmL_Vangaurd_01",
+          "npc": "Vanguard_Sword_Male_Boss_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 8220
+        },
+        {
+          "model": "GEO_LarmR_Vangaurd_02",
+          "npc": "Vanguard_Male_Store_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3828
+        },
+        {
+          "model": "GEO_LarmL_Vangaurd_02",
+          "npc": "Vanguard_Male_Store_01",
+          "scope": "source_confirmed_silent_vanguard_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_vanguard.nd",
+          "source_line": 3828
+        }
+      ]
+    },
+    "data/player_library/v_new_rikti_glove.geo": {
+      "proof": {
+        "absent_requested_models": [],
+        "indexed_model_count": 24,
+        "mesh_or_skinning_execution_validated": false,
+        "model_table_sha256": "839fcfc06d6ee9945e42d20df609f89aa31bbbe88a8f731acd922c78a012cb3f",
+        "requested_models": [
+          {
+            "matches": [
+              {
+                "direct_texture_names": [
+                  "X_Rikti_Worker_Gloves"
+                ],
+                "name": "GEO_LarmR_Rikti_Worker_01"
+              }
+            ],
+            "requested": "GEO_LarmR_Rikti_Worker_01"
+          }
+        ],
+        "version": 7
+      },
+      "requests": [
+        {
+          "model": "GEO_LarmR_Rikti_Worker_01",
+          "npc": "Rikti_New_Worker_Minion_01",
+          "scope": "source_confirmed_silent_rikti_worker_hand",
+          "source_file": "upstream/i24/data/defs/v_villain_costumes/v_new_rikti.nd",
+          "source_line": 659
+        }
+      ]
+    }
+  },
+  "source_console": {
+    "bytes": 1902345,
+    "sha256": "1f532e7a18c57b5e0cb77fa7e79d9d5f85dee628b7af6aa1a63de46995c9fba2"
+  },
+  "status": "original_assets_verified_physical_validation_pending",
+  "transfer_integrity": {
+    "actual_receipts": "provenance.sweep_downloads; source_download_receipt binds each new entry to actual Content-Range, response byte count and SHA256; source_content_range and source_member_range retain its exact original stream range.",
+    "bounded_neighbor_bytes": 2941377,
+    "frozen_metadata_bytes": 31834846,
+    "frozen_metadata_prefix_count": 57,
+    "maximum_neighbor_gap_bytes": 32768,
+    "maximum_response_bytes": 16622907,
+    "original_selected_streams_passed_http206_identity_size_zlib_md5_cached_header_and_sha256": true,
+    "selected_original_response_count": 901,
+    "source_archives_fully_downloaded": false,
+    "whole_source_archive_sha256_verified": false
+  },
+  "unresolved_new_dependencies": [
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "_ind_elements_metal01.tga",
+          "geometry": "data/object_library/buildings/style/warehouses/ind_elements_01/ind_elements_01.geo",
+          "geometry_sha256": "b40d3fe513a52f944fe0a1f0b3ba9356d7cc539b3ff840918a3774ee2d8d4601",
+          "model": "_ind_pipe_small01",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "_ind_elements_metal01.tga"
+        }
+      ],
+      "target": "_ind_elements_metal01"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "_ind_elements_metal01a.tga",
+          "geometry": "data/object_library/buildings/style/warehouses/ind_elements_01/ind_elements_01.geo",
+          "geometry_sha256": "b40d3fe513a52f944fe0a1f0b3ba9356d7cc539b3ff840918a3774ee2d8d4601",
+          "model": "_ind_elmnts_pipesmall_08",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "_ind_elements_metal01a.tga"
+        }
+      ],
+      "target": "_ind_elements_metal01a"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "_ind_elements_metal02.tga",
+          "geometry": "data/object_library/buildings/style/warehouses/ind_elements_01/ind_elements_01.geo",
+          "geometry_sha256": "b40d3fe513a52f944fe0a1f0b3ba9356d7cc539b3ff840918a3774ee2d8d4601",
+          "model": "_ind_pipsmall_cap01",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "_ind_elements_metal02.tga"
+        }
+      ],
+      "target": "_ind_elements_metal02"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "boot_banded01.tga",
+          "geometry": "data/object_library/item_library/weapons/general/general.geo",
+          "model": "Wep_template",
+          "native_model_table_sha256": "5a339f126b2f25d8a5854d06b09d7db85ac5565cb5cbf9a9c7516194da4476db",
+          "scope": "recorded_geometry_material",
+          "target": "boot_banded01.tga"
+        }
+      ],
+      "target": "boot_banded01"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "brown_plush.tga",
+          "geometry": "data/object_library/buildings/style/deco/deco1/deco1.geo",
+          "geometry_sha256": "2f187c73e4434038a38b5ca5318a8b5e922a89943dbe869362b79c068976c5bb",
+          "model": "_Deco1__tray",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "brown_plush.tga"
+        }
+      ],
+      "target": "brown_plush"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "CHEST_skin_leather_01a",
+          "bone": "Chest",
+          "console_line": 12276,
+          "entity_type": "fem",
+          "npc": "Thug_Skull_Female_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/skulls.nd",
+          "target": "CHEST_skin_leather_01a"
+        }
+      ],
+      "target": "chest_skin_leather_01a"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "CHEST_skin_leather_01B",
+          "bone": "Chest",
+          "console_line": 12284,
+          "entity_type": "fem",
+          "npc": "Thug_Skull_Female_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/skulls.nd",
+          "target": "CHEST_skin_leather_01B"
+        }
+      ],
+      "target": "chest_skin_leather_01b"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "Crey_Respawner_05.tga",
+          "geometry": "data/object_library/common_decor/med_&_sci/medical_items/medical_items.geo",
+          "geometry_sha256": "af129e34d8c4fe032b6af6aed00525e4dcf3e2029042c27c0fed9e77e71830a8",
+          "model": "_Medical_Respawner",
+          "proven_original_model_occurrences": 3,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "Crey_Respawner_05.tga"
+        }
+      ],
+      "target": "crey_respawner_05"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "door_molding.tga",
+          "geometry": "data/object_library/buildings/style/deco/deco1/deco1.geo",
+          "geometry_sha256": "2f187c73e4434038a38b5ca5318a8b5e922a89943dbe869362b79c068976c5bb",
+          "model": "_Deco1__tray",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "door_molding.tga"
+        }
+      ],
+      "target": "door_molding"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "Door_Rusty_Metal.tga",
+          "geometry": "data/object_library/buildings/style/filler_buildings/filler_brick1/filler_brick1.geo",
+          "geometry_sha256": "76e80d0469717fbd992148af8e59140f78978eac28b8d33e9399fae9655ad2cc",
+          "model": "_FBRK1a_Door_Holder__FBRK_Stairs",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "Door_Rusty_Metal.tga"
+        }
+      ],
+      "target": "door_rusty_metal"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "FACE_makeup_3",
+          "bone": "Head",
+          "console_line": 7588,
+          "entity_type": "fem",
+          "npc": "Wedding_Sister_Psyche_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/npc/npcs_signature.nd",
+          "target": "FACE_makeup_3"
+        }
+      ],
+      "target": "face_makeup_3"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "fire.tga",
+          "geometry": "data/object_library/omni/encounterspawns/base_missions/base_missions.geo",
+          "geometry_sha256": "980ed1df6cb391ce9ff13dfb98d66b86a4a87c9c463e3066c3e07818e0e17da1",
+          "model": "_base_missions_dummyobj",
+          "proven_original_model_occurrences": 3,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "fire.tga"
+        }
+      ],
+      "target": "fire"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "GLOVE_Skin_Bracer_01a",
+          "bone": "Gloves",
+          "console_line": 11260,
+          "entity_type": "fem",
+          "npc": "Tsoo_Female_Sorceress_LT_03",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/tsoo.nd",
+          "target": "GLOVE_Skin_Bracer_01a"
+        }
+      ],
+      "target": "glove_skin_bracer_01a"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "GLOVE_Skin_Bracer_01B",
+          "bone": "Gloves",
+          "console_line": 11268,
+          "entity_type": "fem",
+          "npc": "Tsoo_Female_Sorceress_LT_03",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/tsoo.nd",
+          "target": "GLOVE_Skin_Bracer_01B"
+        }
+      ],
+      "target": "glove_skin_bracer_01b"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "HIPS_bikini_3",
+          "bone": "Pants",
+          "console_line": 11324,
+          "entity_type": "fem",
+          "npc": "Tsoo_Female_Bow_LT_04",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/tsoo.nd",
+          "target": "HIPS_bikini_3"
+        },
+        {
+          "alias": "HIPS_bikini_3",
+          "bone": "Pants",
+          "console_line": 12292,
+          "entity_type": "fem",
+          "npc": "Thug_Skull_Female_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/skulls.nd",
+          "target": "HIPS_bikini_3"
+        }
+      ],
+      "target": "hips_bikini_3"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "Medical_Ceiling_Vent_01.tga",
+          "geometry": "data/object_library/common_decor/med_&_sci/medical_items/medical_items.geo",
+          "geometry_sha256": "af129e34d8c4fe032b6af6aed00525e4dcf3e2029042c27c0fed9e77e71830a8",
+          "model": "Medical_Ceiling_Vent",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "Medical_Ceiling_Vent_01.tga"
+        }
+      ],
+      "target": "medical_ceiling_vent_01"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "pwn_cloth_rack.tga",
+          "geometry": "data/object_library/v_cov/villian_lairs/shops/v_pawn_shop/v_pawn_shop.geo",
+          "geometry_sha256": "08cc31c47c7408a6fa05ea6853e62b946f2eef36f3a481e2ad806725b1be5e4f",
+          "model": "pwn_cloth_01__vpawnshopLODmd",
+          "proven_original_model_occurrences": 3,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "pwn_cloth_rack.tga"
+        }
+      ],
+      "target": "pwn_cloth_rack"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "TOP_Korea_01a",
+          "bone": "Top",
+          "console_line": 12220,
+          "entity_type": "fem",
+          "npc": "Thug_Skull_Female_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/skulls.nd",
+          "target": "TOP_Korea_01a"
+        }
+      ],
+      "target": "top_korea_01a"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "TOP_Korea_01B",
+          "bone": "Top",
+          "console_line": 12228,
+          "entity_type": "fem",
+          "npc": "Thug_Skull_Female_01",
+          "scope": "runtime_catalogue_npc_texture_missing",
+          "source_path": "upstream/i24/data/defs/villaincostume/skulls.nd",
+          "target": "TOP_Korea_01B"
+        }
+      ],
+      "target": "top_korea_01b"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "wood.tga",
+          "geometry": "data/object_library/streets/elements/planters/planters.geo",
+          "geometry_sha256": "942cec5b1bd559747e48689f5f5fc3953525b0c14cd494fe3ccf0ba3562de349",
+          "model": "_planter_Pot1",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "wood.tga"
+        }
+      ],
+      "target": "wood"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "x_deco_skyscraper_05_LOD",
+          "geometry": "data/object_library/buildings/style/upgraded_deco/upgraded_deco_skyscraper_05.geo",
+          "geometry_sha256": "f1bbe574afaa3910b440a3ec1748fd6f046da7fdf5fd8cd10f9a70b87cd91ff5",
+          "model": "_deco_skyscraper_05_LOD_02",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "x_deco_skyscraper_05_LOD"
+        }
+      ],
+      "target": "x_deco_skyscraper_05_lod"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "X_FX_Windstream_01",
+          "geometry": "data/object_library/fx/super_powers/natureaffinity/natureaffinity.geo",
+          "model": "FX_WindStream__Fx_Additive",
+          "native_model_table_sha256": "db8475b81af7648509a91d4dde4b72761d25009bda0f25919aeb017ab32dfaae",
+          "scope": "recorded_geometry_material",
+          "target": "X_FX_Windstream_01"
+        },
+        {
+          "alias": "X_FX_Windstream_01",
+          "geometry": "data/object_library/fx/super_powers/natureaffinity/natureaffinity.geo",
+          "model": "FX_WindWisp__FX_Additive",
+          "native_model_table_sha256": "db8475b81af7648509a91d4dde4b72761d25009bda0f25919aeb017ab32dfaae",
+          "scope": "recorded_geometry_material",
+          "target": "X_FX_Windstream_01"
+        }
+      ],
+      "target": "x_fx_windstream_01"
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "X_Praet_GravelRoof.",
+          "geometry": "data/object_library/city_zones/praetoria/first_ward/buildings/brick_midrises/brick_kr/p_brick_midrise_kr.geo",
+          "geometry_sha256": "420b3addccf08220d4e7bd386a64674c3119562e561cba5b5e3e2ea55f324711",
+          "model": "FW_BrickC_64StubTall_Off",
+          "proven_original_model_occurrences": 106,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "X_Praet_GravelRoof."
+        }
+      ],
+      "target": "x_praet_gravelroof."
+    },
+    {
+      "kind": "texture_or_material",
+      "sources": [
+        {
+          "alias": "X_Praet_SciChair",
+          "geometry": "data/object_library/villain_lairs/p_tech/elements/standard/laboratory/scienceprops.geo",
+          "geometry_sha256": "85a7cc47e5ab3249c66b4e56fcee22948d3193c2e17842ef38d4639398f4f54a",
+          "model": "P_SciLabChair",
+          "proven_original_model_occurrences": 1,
+          "scope": "preserved_world_model_direct_material",
+          "source_path": "assets/atlas-world-supplement-manifest.json",
+          "target": "X_Praet_SciChair"
+        }
+      ],
+      "target": "x_praet_scichair"
+    }
+  ],
+  "version_code": 25,
+  "version_name": "0.13.10"
+}

@@ -20,11 +20,11 @@ require = client.require
 ARCHIVE = 'client-visual-assets.zip'
 MANIFEST = 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_SHA256 = 'e7caf3f505ecf9fef0efc4dbb34c1aedc2905afbe58c0ac26bbcc03f6f71ccda'
-MANIFEST_SHA256 = '32cd85c643e2748532bf5ea4ba66d4ef843d58af07c5ebd276f99bad8e38014c'
-FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
-ARCHIVE_BYTES = 25400546
-FILE_COUNT, PAYLOAD_BYTES = 329, 39521237
+ARCHIVE_SHA256 = '1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea'
+MANIFEST_SHA256 = '447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b'
+FILES_SHA256 = '99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542'
+ARCHIVE_BYTES = 515813056
+FILE_COUNT, PAYLOAD_BYTES = 5476, 873255284
 BASE_FILE_COUNT, BASE_PAYLOAD_BYTES = 290, 36583648
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
 EXTENSION_FILE_COUNT, EXTENSION_PAYLOAD_BYTES = 33, 2646051
@@ -32,8 +32,12 @@ EXTENSION_FILES_SHA256 = '3b904fd8e99d0c00ec6a07b87e0dc387fcca89835920aba8332723
 ENCOUNTER_FILE_COUNT, ENCOUNTER_PAYLOAD_BYTES = 6, 291538
 ENCOUNTER_FILES_SHA256 = 'd2c2ea6b9bacb7691b53944e852180698edc255c54b231d1743b8fc3ffd7e85d'
 IMMEDIATE_FILES_SHA256 = 'f5577769ef6df22437f9eda6b0388358cd1c28013eb5fbc35aece9af0febd4f7'
-MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 64 * 1024**2, 2 * 1024**2
-MAX_ENTRY_BYTES, MAX_RECEIPT_BYTES = 32 * 1024**2, 1024**2
+SWEEP_FILE_COUNT, SWEEP_PAYLOAD_BYTES = 5147, 833734047
+SWEEP_FILES_SHA256 = '7159ada9851057278f934f55c577b7063e4979d1fe2a2ce11718ded79440e8e6'
+SWEEP_BASE_FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
+SWEEP_BASE_PAYLOAD_BYTES = 39521237
+MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 512 * 1024**2, 16 * 1024**2
+MAX_ENTRY_BYTES, MAX_RECEIPT_BYTES = 32 * 1024**2, 4 * 1024**2
 MARKER = 'client-visual-installed.json'
 POLICY = 'pinned_missing_only_client_visual_v1'
 
@@ -48,7 +52,7 @@ def safe_payload(name):
     path = PurePosixPath(name)
     return (name == name.casefold() and path.as_posix() == name and name.isascii()
         and '\\' not in name and ':' not in name and all(p not in ('', '.', '..') for p in path.parts)
-        and (name.startswith('data/player_library/') and path.suffix == '.geo'
+        and (name.startswith(('data/player_library/', 'data/object_library/')) and path.suffix == '.geo'
              or name.startswith('data/texture_library/') and path.suffix == '.texture'))
 
 
@@ -71,7 +75,8 @@ def package(assets):
         and all(value.get(key) is False for key in ('runtime_visual_validated', 'gameplay_validated',
             'imported_assets_modified', 'prepared_caches_modified', 'existing_supplements_modified')),
         'Client visual identity, missing-only policy or inventory differs')
-    encounters = encounter_files(value)
+    sweeps = sweep_files(value)
+    encounters = encounter_files(value) | sweeps
     extension = value.get('visual_extension', {})
     additions = extension.get('files', {})
     require(isinstance(additions, dict) and set(additions) <= set(files)
@@ -108,13 +113,40 @@ def encounter_files(value):
         and extension.get('baseline_files_sha256') == IMMEDIATE_FILES_SHA256
         and all(name.startswith('data/texture_library/npcs/') and name.endswith('.texture') for name in additions),
         'Client visual encounter append-only baseline policy differs')
-    baseline = {name: row for name, row in files.items() if name not in additions}
+    sweeps = set(value.get('sweep_extension', {}).get('files', {}))
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in sweeps}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 323 and sum(row['bytes'] for row in baseline.values()) == 39229699
         and hashlib.sha256(canonical(baseline)).hexdigest() == IMMEDIATE_FILES_SHA256
         and sum(row['bytes'] for row in selected.values()) == ENCOUNTER_PAYLOAD_BYTES
         and hashlib.sha256(canonical(selected)).hexdigest() == ENCOUNTER_FILES_SHA256,
         'Client visual encounter recipe changes a preserved 0.13.8 payload')
+    return set(additions)
+
+
+def sweep_files(value):
+    if SWEEP_FILE_COUNT == 0:  # Small synthetic installer fixtures.
+        require('sweep_extension' not in value, 'Unexpected sweep extension in baseline fixture')
+        return set()
+    extension, files = value.get('sweep_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(extension.get('scope') == 'recorded_client_missing_asset_dependency_closure'
+        and isinstance(additions, dict) and set(additions) <= set(files)
+        and len(additions) == extension.get('file_count') == SWEEP_FILE_COUNT
+        and extension.get('payload_bytes') == SWEEP_PAYLOAD_BYTES
+        and extension.get('files_sha256') == SWEEP_FILES_SHA256
+        and extension.get('baseline_payloads_preserved') is True and extension.get('missing_only') is True
+        and extension.get('baseline_file_count') == 329
+        and extension.get('baseline_payload_bytes') == SWEEP_BASE_PAYLOAD_BYTES
+        and extension.get('baseline_files_sha256') == SWEEP_BASE_FILES_SHA256,
+        'Client visual sweep append-only baseline policy differs')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 329 and sum(row['bytes'] for row in baseline.values()) == SWEEP_BASE_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(baseline)).hexdigest() == SWEEP_BASE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == SWEEP_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(selected)).hexdigest() == SWEEP_FILES_SHA256,
+        'Client visual sweep changes a preserved 0.13.9 payload')
     return set(additions)
 
 
@@ -242,12 +274,16 @@ def install(worktree, assets, context):
         world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest(), 'Verified client identity changed')
     if not reused:
         publish_marker(worktree, final, context)
+    unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension')
+        for row in document.get(section, {}).get('unresolved_dependencies', [])})
     return {'format': 1, 'scope': SCOPE, 'manifest_sha256': MANIFEST_SHA256,
         'archive_sha256': ARCHIVE_SHA256, 'files_sha256': FILES_SHA256, 'file_count': FILE_COUNT,
         'payload_bytes': PAYLOAD_BYTES, 'installed_files': installed, 'reused_files': FILE_COUNT - installed,
         'retained_baseline_file_count': BASE_FILE_COUNT, 'added_file_count': EXTENSION_FILE_COUNT,
         'retained_immediate_file_count': 323, 'added_encounter_file_count': ENCOUNTER_FILE_COUNT,
         'added_encounter_payload_bytes': ENCOUNTER_PAYLOAD_BYTES,
+        'retained_sweep_baseline_file_count': 329, 'added_sweep_file_count': SWEEP_FILE_COUNT,
+        'added_sweep_payload_bytes': SWEEP_PAYLOAD_BYTES,
         'retained_baseline_payloads_preserved': True,
         'reuse_validation': POLICY, 'fingerprint_reused': bool(reused), 'decoded_files': installed,
         'decoded_payload_bytes': decoded_bytes, 'verified_existing_bytes': verified_bytes,
@@ -255,10 +291,8 @@ def install(worktree, assets, context):
         'normalized_mtime_epoch': client.CACHE_EPOCH, 'imported_files_modified': False,
         'generated_caches_modified': False, 'existing_supplements_modified': False,
         'runtime_visual_validated': False, 'full_global_asset_closure': False,
-        'unresolved_direct_material_names': sorted(set(row['target'] for row in
-            document.get('closure', {}).get('unresolved_dependencies', []))),
+        'unresolved_direct_material_names': unresolved,
         'absent_requested_models': document.get('closure', {}).get('absent_requested_models', []),
-        'unresolved_dependency_count': len(set(row['target'] for row in
-            document.get('closure', {}).get('unresolved_dependencies', [])))
+        'unresolved_dependency_count': len(unresolved)
             + len(document.get('closure', {}).get('absent_requested_models', [])),
         'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}

@@ -1,5 +1,87 @@
 # City of Heroes Android handoff
 
+**0.13.9 Thor result received; recovered 0.13.10 asset candidate ready for hosted qualification (October 5, 2026 UTC).**
+The live continuation was confirmed at `09989889894861b0b91dadda113f000d033559f6`,
+with open draft PR #1 and main still `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+The new [physical receipt](android-evidence/client-streaming-0.13.9-device-result.json)
+pins `coh-atlas-gameplay-20261004-223940.zip` and all nine screenshots. The user
+reports more visible models, continuing absent NPC heads/hands/gloves and pale
+ground textures, actual client start **4m15s** and local Atlas stage **3m40s**.
+Instrumented native readiness is **259.260s**, client stage **259.724s**, Atlas
+stage **222.858s**; request-to-owned-Atlas is **322.451s** and is a different
+boundary from local Atlas preparation. This is a modest client change, not a
+new proven large startup improvement. Texture preparation takes **38.103s**.
+The user successfully targets and defeats NPCs; screenshots show standing and
+defeated Blood Brother Slicers and stock XP/influence/loot messages. Preserve
+that demonstrated target/defeat milestone without claiming complete combat.
+
+The raw final report is **failed**, despite world entry and zero owned workers
+remaining: the reopen validator rejected ordinary earned rewards. Selected
+`ents` rows changed only XP NULL→25, influence NULL→14, and LoginCount 4→5;
+all selected `ents2`, seven powers and fourteen costume parts remain identical.
+Two owned MapServer credits exactly total XP25/influence14. A bounded report
+fix is being qualified that permits only exact native reward credits while
+retaining identity, non-reward rows, task reward, logout and saved-position
+checks. Do not classify the entire raw report as passed or clear device data.
+
+The requested 60-minute asset sweep started **2026-10-04T22:42:58Z**. It covers
+captured missing texture/material/catalogue diagnostics, all exact missing GEO
+filenames, stock costume dependencies (including silently skipped glove models),
+and every original model/material edge in the retained Atlas world GEOs. The
+source console has **1,902,345 bytes**, SHA-256
+`1f532e7a18c57b5e0cb77fa7e79d9d5f85dee628b7af6aa1a63de46995c9fba2`.
+Some native diagnostic categories stop at 1,024 records; this finite evidence
+does not prove complete global coverage. Resolve all exact original leaves and
+all surviving blend/mask/bump/glow/enabled fallback dependencies without fuzzy
+substitutions, native/render/cache changes, broad reimports or memory preloads. Only exact named
+visual input and staging budgets are raised for the larger disk package.
+Keep every immediate 329 visual leaf and its original compressed stream intact.
+The new supplement deliberately has larger bounded disk/manifest ceilings and
+streamed per-leaf installation. Record final bytes, pins, gaps and hosted/public
+audit in this entry once the sweep and publication finish.
+
+The interrupted workspace was recovered intact and reused. Independent replay
+confirms **5,476 final files: 329 retained + 5,147 original additions**, comprising
+**22 player GEOs, 390 object GEOs and 4,735 textures**. All decoded sizes, SHA-256,
+original-table MD5, cached headers and stored streams match 57 frozen donor
+metadata prefixes. All **329 prior compressed ZIP streams remain byte-identical**.
+The archive is **515,813,056 bytes**; decoded total is **873,255,284 bytes**, including
+**833,734,047 added bytes**. No further valid leaf was found after recovery; the
+candidate and manifest remain identical to the recovered `final-v3` asset set.
+Dependency replay covers 14,715 declarations in 1,585 stock trick files, 888
+source pins, 488 retained world GEOs / 10,034 models and all 623 recovered missing
+world-material leaves. Heads/body pieces, silent civilian/Vanguard/Rikti gloves,
+ground/bench/planter material layers, aliases and FX geometry dependencies are
+addressed. **24 new exact missing names** remain absent from the original donor:
+14 world, eight NPC costume and two other/FX, in addition to inherited gaps.
+`GEO_Collar_MAGIC` has no exact supported model among the 4,971 donor GEOs;
+similarly named magic armor models are distinct and are not substituted.
+Distant white-object rendering and physical coverage still require Thor evidence.
+
+Recovery review found two real compatibility blockers: the retained startup
+verifier capped this ZIP at 128 MiB, and server staging did not budget the larger
+visual inventory. Narrow corrections permit only the named visual ZIP (512 MiB)
+and manifest (16 MiB), and add the exact visual file/byte counts to staging.
+Packaging conserves every unrelated startup/staging AST node, native binary,
+DEX/resource and cache format. Seven of the 71 APK payloads change; 64 are retained.
+The asset additions are disk installation, not memory preloading. Fresh physical
+installation/memory and ordinary Save validation remain pending.
+
+The source recipe uses a bounded lossless gzip/base64 JSON envelope because
+GitHub's authenticated request limit includes JSON escaping and could not carry
+the original 16,272,899-byte recipe. The 2,835,953-byte source envelope decodes
+to that **exact original manifest SHA-256**; packaging writes the original raw
+JSON, and the 515,813,056-byte visual archive is unchanged. Source envelope
+and all decoded payloads remain independently pinned. No dependency evidence
+or recipe fields were removed to meet the transport limit.
+
+Startup remains the **following** priority. Preserve BIN instrumentation: this
+run reports substantial freshness work (not pure decoding), especially powers,
+FX, NPCs, costume and mapstats. Console identity work is only about 200ms across
+144 observations; the full 104.964-second observer includes other work and is
+not attributable to that parser. Do not skip freshness or invalidate stable
+generated caches without bounded source/equivalence proof and device evidence.
+
 **0.13.9 published and independently payload-verified (October 4, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.9/COH-Atlas-Gameplay-0.13.9.apk)
 from APK source `7e905d6a9241848b4635a069a962c42382a9a200`, version **0.13.9 / code 24**,
