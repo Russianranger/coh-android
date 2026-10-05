@@ -1,6 +1,74 @@
 # City of Heroes Android handoff
 
-**0.13.9 Thor result received; recovered 0.13.10 asset candidate ready for hosted qualification (October 5, 2026 UTC).**
+**0.13.10 published and independently payload-verified; focused Thor visuals pending (October 5, 2026 UTC).**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.10/COH-Atlas-Gameplay-0.13.10.apk)
+from exact implementation **`9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb`**, version
+**0.13.10 / code 25**, on `codex/character-persistence-continuation` and existing
+open draft PR #1. [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.10)
+is a published prerelease. Main remains **`04d62616e2e1b41b10f35a04d4c798e43680d5ba`**.
+0.13.9 remains published from `7e905d6a9241848b4635a069a962c42382a9a200` and was
+not rebuilt or overwritten. **Do not restart the sweep, recreate the branch/PR,
+replace the accepted runtime or reimport existing assets.**
+
+[Publication CI 37249488856](https://github.com/Russianranger/coh-android/actions/runs/37249488856)
+passed all three jobs: **838 checks / 52 suites / zero skips / 1,162 source pins**,
+all three real PostgreSQL transaction fixtures, official SDK version and v2/v3
+signature checks with the retained signer, and publication.
+[Fresh hosted discovery 37249488857](https://github.com/Russianranger/coh-android/actions/runs/37249488857)
+passed 34 checks and reproduced the recovered final-v3 plan **byte-identically**.
+The original Windows console-sharing PermissionError at documentation head
+`09989889` remains a historical separate tooling failure; this candidate's
+relevant hosted workflows passed, and accepted physical tests were not repeated.
+
+The public APK is **1,194,150,167 bytes (about 1.11 GiB)**, SHA-256
+`4c02b4f5f1ff9b82ab8b96fe5b4d2f402b687c3ee66ef1d8535a1a68f0c07d4a`.
+[Independent publication receipt](android-evidence/client-asset-closure-0.13.10-publication.json)
+checks a fresh public download, release/API/build digests, every one of the
+**71 payloads: 64 retained / 7 replaced / zero added**, all qualified source pins,
+all 5,878 original animation tracks, retained Game/20 DLLs, DEX/resources/server
+binaries and cache lineage. It also verifies **all 5,476 final visual files**
+against decoded size, SHA-256, original-table MD5/cached headers and frozen donor
+metadata. **All 329 prior compressed streams remain byte-identical.** Local SDK
+verification was not repeated; the official checks bind to this identical APK.
+This documentation checkpoint descends from the APK source and implies no build.
+
+The count remains exactly the recovered candidate: **329 retained + 5,147 added**
+(**22 player GEOs, 390 object GEOs, 4,735 textures**). The visual ZIP remains
+**515,813,056 bytes**, with **873,255,284 decoded bytes**, including **833,734,047
+added bytes**. Source encoding is lossless; the packaged original manifest remains
+**16,272,899 bytes / SHA-256 447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b**.
+Added categories address heads/body pieces, silent hand/glove failures, costume
+textures, ground/bench/planter layers, material/geometry dependencies, native
+aliases and FX geometry. Exact named larger visual input/staging budgets and
+bounded report-only native reward acceptance are the only startup/server helper
+exceptions. Native architecture and gameplay code are retained.
+
+Still unresolved: **24 new exact names absent from the donor** (14 world, eight
+NPC costume, two other/FX), plus inherited gaps. `GEO_Collar_MAGIC` lacks an exact
+supported model in the retained donor namespace; no similarly named substitution
+was made. Distant white geometry/material causes and physical visual completeness
+remain unconfirmed. The prior raw device report remains failed; its legitimate
+XP25/influence14 is now accepted only with exact owned native credit proof.
+
+Follow [focused Thor instructions](COH-Atlas-Gameplay-0.13.10-testing.txt): install
+over the existing app, run **Set up runtime once**, preserve imports/profile/DB,
+then reopen THORHERO once with the same preset. Compare NPC heads/hands and pale
+ground/white benches far and near. Record local Atlas, actual client and
+login-to-world timings; keep first asset installation/header refresh separate.
+Use ordinary Save/log out, Finish and export the complete outer support ZIP with
+its intact nested guest report, plus screenshots. If a stage fails, Abort and
+wait for owned cleanup before export. Do not clear app data, repeat accepted
+combat/task/creation gates or require return-to-safe-ground testing.
+
+**Next priority is the focused startup pass** against the observed **~4m15s
+actual client / ~3m40s local Atlas** baseline. Do not claim savings from this
+asset build or include first asset preparation in that client measurement.
+Keep existing BIN freshness/decode and console/preparation instrumentation; use
+new physical evidence to identify the remaining cost without discarding assets
+or accepted gameplay. Visual, install/memory and ordinary Save acceptance on the
+Thor are pending; software llvmpipe remains active.
+
+**0.13.9 Thor evidence and recovered 0.13.10 asset implementation (October 5, 2026 UTC).**
 The live continuation was confirmed at `09989889894861b0b91dadda113f000d033559f6`,
 with open draft PR #1 and main still `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
 The new [physical receipt](android-evidence/client-streaming-0.13.9-device-result.json)
