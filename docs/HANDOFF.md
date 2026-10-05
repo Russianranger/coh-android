@@ -56,6 +56,28 @@ optional UI reuse requires the exact successful prep head/run and both frozen
 size/SHA pairs, followed by all final conservation and qualification checks.
 Main remains separate, PR #1 stays draft, and zoning remains a later pass.
 
+Unmerged reviewed drafts are retained as exact Git blobs in this repository:
+
+- Successful-native cloud verifier: `062a229425ac9d494cea2ae65c34915373f96450`.
+  Replace the current forensic-only verification workflow only after native
+  run 37377053417/source 3124723 completes successfully; parse its actual
+  `COH_ATLAS_BEACON_CLOUD_VERIFICATION_V1` evidence for graph pins.
+- Full UI/beacon publisher: `3b5e575e02a754433a1d5602fc5ad2880ae0fc5d`.
+  This draft reuses only successful native run 37377053417/source 3124723
+  and successful exact UI prep 37379767112/source 52da9286, with all
+  provenance, current source, physical profile and frozen size/SHA gates.
+- Full final workflow-contract tests:
+  `b2bc7404158a2f0091e9043ca120cce4f5edbedc`.
+  Restore with the full publisher after freezing the guest's three actual
+  graph constants. The current committed tests support preparation only.
+
+Independent final review found no blocker in the held publisher: all 68
+suites and seven PostgreSQL fixtures remain mandatory without skips; 75
+runtime payloads comprise 65 identical donor payloads, seven reviewed
+replacements and three additions; app ID and retained signer are unchanged.
+Final SDK checks and the full public-APK download audit must pass. These are
+reviewed gates, not completed final execution or physical acceptance.
+
 Earlier actual CRC failure checkpoint follows; its investigation status is historical.
 
 **UI sweep ready; Atlas generation completed, but CRC qualification failed. No 0.13.14 APK is published.**
