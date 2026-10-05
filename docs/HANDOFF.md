@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep is prepared. Required-geometry recovery qualification is the next hosted gate. No 0.13.14 APK is published.**
+**UI sweep is prepared. Required-geometry checkpoint passed 161 targeted tests; authentic native recovery qualification is running. No 0.13.14 APK is published.**
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
@@ -52,8 +52,13 @@ generation and new qualification remain separate; no recompilation or repeated
 date is 12 bytes, SHA-256
 `ce64be4b49e4a8a4e61f01b31c651e603dc955551fb5c471ad3b75d2bb4f1711`.
 
-Source review of recovery, finite cache refresh, fixtures and launch order passed;
-hosted execution of this checkpoint is pending. Preflight includes source/recovery,
+Source review of recovery, finite cache refresh, fixtures and launch order passed.
+Actual recovery run [37390562231](https://github.com/Russianranger/coh-android/actions/runs/37390562231)
+at source `d856c41b586c87fd2d093eaa4d17c28d3508b66d` passed the exact donor
+audit and **161 targeted tests in 29.311 seconds** (job 112034358727).
+The Windows recovery/readback job 112034867969 is running; new native graph
+qualification remains pending. This documentation checkpoint changes no native
+input or qualification source and must not restart the active lane. Preflight includes source/recovery,
 guest, actual production runtime, packaging, finite change classifier and all 26
 server-cache reuse fixtures. Only the exact future full-publication workflow test
 is held while the preparation workflow remains active; final qualification must
