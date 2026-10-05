@@ -38,9 +38,19 @@ complete genuine generation and both profile proofs before
 freezing graph pins and enabling final 68-suite/seven-PostgreSQL-fixture signing
 and public APK download audit. No 0.13.14 APK is published. The frozen UI sweep
 adds 788 original resources while preserving all 9,613 prior streams. The
-current `android-ui-beacon.yml` is **preparation only**: it can retain the exact
-frozen UI ZIP/manifest pair in a read-only hosted job while the native run
-continues. Full publication remains held. After real graph success and frozen
+current `android-ui-beacon.yml` is **preparation only**. Its actual hosted run
+[37379767112](https://github.com/Russianranger/coh-android/actions/runs/37379767112)
+at exact source `52da9286c2fd1695c6c0c2979378fc418c418c99` succeeded (job
+111998412560). The frozen pair and all 9,613 retained encoded streams passed.
+Unexpired artifact **11373610942** (`coh-ui-beacon-visual`) is 907,668,082 bytes,
+outer ZIP SHA-256
+`ffd0e9e667ef460c662bdd8808d00a74600a61943c507e19daaadc162e97b364`.
+Its inner UI ZIP remains 859,075,775 bytes, SHA-256
+`5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60`;
+plaintext manifest is 48,591,999 bytes, SHA-256
+`8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2`.
+This preparation did not restart or cancel native run 37377053417. Full
+publication remains held. After real graph success and frozen
 guest pins, replace that preparation workflow with the reviewed full publisher;
 optional UI reuse requires the exact successful prep head/run and both frozen
 size/SHA pairs, followed by all final conservation and qualification checks.
