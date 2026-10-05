@@ -33,3 +33,22 @@
          LineTracker    *line = dynArrayAdd(&list->lines, sizeof(list->lines[0]), &list->count, &list->max_lines, 1);
          line->str_idx = FAKE_STR_IDX;
          line->is_str = 1;
+--- a/libs/UtilitiesLib/src/utils/utils.c
++++ b/libs/UtilitiesLib/src/utils/utils.c
+@@ -2261,10 +2261,14 @@
+     handle = _beginthreadex(security,stack_size,start_address,arglist,initflag,thrdaddr);
+     if(handle)
+     {
+-        char threadname[128];
++        char *threadname = NULL;
+         assertYouMayFreezeThisThread((HANDLE)handle,*thrdaddr);
+-        sprintf(threadname, "%s(%d)", filename, linenumber);
++        /* __FILE__ may exceed the old 128-byte diagnostic buffer in staged
++         * builds. Preserve the complete name without overflowing thread
++         * startup; SetThreadName consumes this text synchronously. */
++        estrPrintf(&threadname, "%s(%d)", filename, linenumber);
+         SetThreadName(*thrdaddr,threadname);
++        estrDestroy(&threadname);
+     }
+     return handle;
+ }

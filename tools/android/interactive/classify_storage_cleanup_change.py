@@ -334,6 +334,35 @@ LEVELUP_UI_REPAIR_ALLOWED = LEVELUP_UI_REPAIR_SOURCES | frozenset({
     'docs/android-evidence/levelup-ui-repair-0.13.12-assets.json',
 })
 
+
+REOPEN_STARTUP_REPAIR_SOURCES = frozenset({
+    '.github/workflows/android-reopen-startup-repair.yml',
+    'tools/android/interactive/build_reopen_startup_repair_apk.py',
+    'tools/android/interactive/qualify_reopen_startup_repair.py',
+    'tools/android/interactive/test_reopen_startup_repair_package.py',
+    'tools/android/interactive/test_reopen_dbserver_thread_name.py',
+    'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch',
+    'tools/android/interactive/package_levelup_ui_repair_dbserver.py',
+    'tools/android/interactive/test_levelup_ui_repair_dbserver.py',
+    'tools/android/interactive/test_levelup_ui_repair_contract.py',
+    'android/guest/local_character_server.py',
+    'tools/android/game/test_game_diagnostic.py',
+})
+REOPEN_STARTUP_REPAIR_DOCS = frozenset({
+    'docs/HANDOFF.md', 'docs/ANDROID_REOPEN_STARTUP_REPAIR.md',
+    'docs/COH-Atlas-Gameplay-0.13.13-testing.txt',
+    'docs/ANDROID_CHARACTER_REOPEN.md', 'docs/ANDROID_THOR_ACCEPTANCE.md',
+    'docs/ANDROID_INTERACTIVE_DIAGNOSTIC.md',
+    'docs/android-evidence/reopen-startup-repair-0.13.12-device-result.json',
+    'docs/android-evidence/reopen-startup-repair-0.13.13-publication.json',
+})
+REOPEN_STARTUP_REPAIR_ALLOWED = REOPEN_STARTUP_REPAIR_SOURCES | REOPEN_STARTUP_REPAIR_DOCS | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+})
+
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -409,10 +438,27 @@ def levelup_ui_repair_docs(event, before, head, parent, names):
         and 'docs/android-evidence/levelup-ui-repair-0.13.12-publication.json' in names)
 
 
+
+def reopen_startup_repair_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, REOPEN_STARTUP_REPAIR_DOCS)
+        and 'docs/android-evidence/reopen-startup-repair-0.13.13-publication.json' in names)
+
+
+def reopen_startup_repair_push(event, before, head, parent, names):
+    return bool((bounded_push(event, before, head, parent, names, REOPEN_STARTUP_REPAIR_ALLOWED)
+        and set(names) & REOPEN_STARTUP_REPAIR_SOURCES)
+        or reopen_startup_repair_docs(event, before, head, parent, names))
+
+
+def reopen_startup_repair_required(event, before, head, parent, names):
+    return not reopen_startup_repair_docs(event, before, head, parent, names)
+
+
 def levelup_ui_repair_push(event, before, head, parent, names):
     return bool((bounded_push(event, before, head, parent, names, LEVELUP_UI_REPAIR_ALLOWED)
         and set(names) & LEVELUP_UI_REPAIR_SOURCES)
-        or levelup_ui_repair_docs(event, before, head, parent, names))
+        or levelup_ui_repair_docs(event, before, head, parent, names)
+        or reopen_startup_repair_push(event, before, head, parent, names))
 
 
 def task_required(event, before, head, parent, names):
@@ -530,7 +576,8 @@ def startup_followup_required(event, before, head, parent, names):
 
 def levelup_ui_repair_required(event, before, head, parent, names):
     # Source candidates always qualify; an exact publication checkpoint is docs only.
-    return not levelup_ui_repair_docs(event, before, head, parent, names)
+    return not (levelup_ui_repair_docs(event, before, head, parent, names)
+        or reopen_startup_repair_push(event, before, head, parent, names))
 
 
 def main():
@@ -547,6 +594,7 @@ def main():
     asset_closure = True
     startup_followup = True
     levelup_ui_repair = True
+    reopen_startup_repair = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -575,6 +623,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         levelup_ui_repair = levelup_ui_repair_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        reopen_startup_repair = reopen_startup_repair_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         startup_followup = startup_followup_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
@@ -593,6 +643,7 @@ def main():
         output.write('asset_closure_required='+str(asset_closure).lower()+'\n')
         output.write('startup_followup_required='+str(startup_followup).lower()+'\n')
         output.write('levelup_ui_repair_required='+str(levelup_ui_repair).lower()+'\n')
+        output.write('reopen_startup_repair_required='+str(reopen_startup_repair).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

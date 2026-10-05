@@ -1,6 +1,33 @@
 # City of Heroes Android handoff
 
-**0.13.12 published and independently public-byte verified; first-training Thor test pending.**
+**0.13.12 Thor reopen blocked; native diagnostic thread-name repair targeted for 0.13.13.**
+Live continuation head recovered as `ed1b69bca04f4bf56e43f6dbc6115b0578934812`;
+main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`, PR #1 open/draft.
+The user supplied `coh-atlas-gameplay-20261005-135502.zip`, SHA-256
+`d96a393d681b8068e84b0d2647997996b9cf42a568d969255fd6536a6e14209f`.
+See [device evidence](android-evidence/reopen-startup-repair-0.13.12-device-result.json)
+and [repair/testing documentation](ANDROID_REOPEN_STARTUP_REPAIR.md).
+
+Reopen ended in 94.328 seconds inside DbServer startup, before MapServer or the
+game client launched. PostgreSQL connected, then `quick_sprintf.c:101` asserted.
+The new hosted build's embedded TaskThread header filename is 123 bytes;
+`x_beginthreadex` adds `(110)`, requiring 129 bytes including NUL in its old
+128-byte diagnostic buffer. Its assertion reporter then opens TCP 52015, which
+the existing endpoint guard correctly rejects. Keep that guard unchanged.
+Cleanup passed. No training or power purchase occurred in this report, and no
+live XP/level/power SQL snapshot was captured; do not claim a persistence loss.
+
+The narrow candidate keeps the complete diagnostic thread name with dynamic
+storage, preserving thread creation and all prior SQL/FIFO/save semantics.
+0.13.13 retains the exact published 0.13.12 UI, Game, MapServer, Android and cache
+payloads; only the fresh DbServer and typed producer/verifier witnesses change.
+Qualification/publication are pending. Keep the existing character, import and
+accepted milestones. [Focused next test](COH-Atlas-Gameplay-0.13.13-testing.txt)
+starts by establishing login/character selection/world entry, then the original
+UI/training/purchase/save/reopen objectives. Stop and export once if it fails.
+Physical training/UI restoration and client startup savings remain pending.
+
+**0.13.12 publication checkpoint below is historical; its first Thor reopen failed.**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.12/COH-Atlas-Gameplay-0.13.12.apk),
 version **0.13.12 / code 27**, implementation
 `e552fadeb1f392ab2574be16df6b474933c8ed00`. Continue the existing continuation

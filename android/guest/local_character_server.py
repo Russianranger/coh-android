@@ -116,9 +116,15 @@ def levelup_ui_repair_build_input(build_input, bundle):
  'base_startup_build_input_canonical_sha256': '12f42bdb973c2f5712408f7717bee631e23c9cf73e1e38b2f2be4d2cb943a9c2',
  'base_startup_bundle_build_input_canonical_sha256': '3c8e2fb700eeb086edd96bc28fec274e0a87d44c1d033f5a3141ccbc287c850a',
  'patch': 'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch',
- 'patch_sha256': 'e686142af836ffe2216e8e30ac7a170f86ef3514216b434378ac16a388b20519',
- 'source_sha256': {'DBServer/src/container_sql.c': '0becda9957c9cbe35b11fa28d4c62ad63af5f08faf492bd0013746dadfbec4fc'},
- 'patched_sha256': {'DBServer/src/container_sql.c': '8eaae13bf59dbee9b76ee0c3dff447eef080eb83e943f546ba0da70d0b42c295'},
+ 'patch_sha256': '66653e01f415ba00f8e65655b8e9db1e1bbb21d76dd54b3bb4741ea13032671b',
+ 'source_sha256': {'DBServer/src/container_sql.c': '0becda9957c9cbe35b11fa28d4c62ad63af5f08faf492bd0013746dadfbec4fc',
+                   'libs/UtilitiesLib/src/utils/utils.c': '9ed817dc9dd6233fe5e06d7d0958ff9ae87aaec9c159d0c86dd8b129f55a1ecf'},
+ 'patched_sha256': {'DBServer/src/container_sql.c': '8eaae13bf59dbee9b76ee0c3dff447eef080eb83e943f546ba0da70d0b42c295',
+                    'libs/UtilitiesLib/src/utils/utils.c': 'ebcb8d4a08f752abc9f7e9e4cbf7434f977f4144e93f269ee15402bf62353cff'},
+ 'unchanged_thread_support_sha256': {'libs/UtilitiesLib/src/utils/quick_sprintf.c': '3808e4e601395e94c31a67b6acb075364e1d51c0ef3f1d3599ab06ece6d81d7b',
+                                     'libs/UtilitiesLib/src/components/EString.c': 'b8aed7538139a6d910d9e6f408d13a6eefdb421a6d5fb753884a3e092d739de8',
+                                     'libs/UtilitiesLib/include/utilitieslib/components/EString.h': 'a13e7b17a67c6f56bad4a6d833b8ed09625e858372be29a8c809bc336e1e664c',
+                                     'libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp': '70a7f4bfbe172ba3a7ee7f9daf77e2d8504176e66c61016fa29d9e99c038c2de'},
  'unchanged_merger_sha256': '45849f2b9c2ff92db6aadb6e6dcbcfe412b55f57971647e49dbec4ff486e307e',
  'unchanged_fifo_sha256': '73b7f30ab56f3deb58066477ea4fb716e7c7094fda3505baede091eb7d4c04aa',
  'built_target': 'DbServer',
@@ -144,6 +150,17 @@ def levelup_ui_repair_build_input(build_input, bundle):
                    'schema_migration': False,
                    'profile_reset': False,
                    'android_execution_validated': False},
+ 'startup_thread_name_contract': {'scope': 'x_beginthreadex_diagnostic_name_storage_only',
+                                  'name': 'complete_source_filename_and_line',
+                                  'storage': 'temporary_EString_released_after_synchronous_SetThreadName',
+                                  'retained': ['CRT_thread_creation_arguments_and_result',
+                                               'caller_thread_id_or_local_fallback',
+                                               'assertYouMayFreezeThisThread',
+                                               'SetThreadName_API',
+                                               'assertion_policy',
+                                               'global_quick_sprintf'],
+                                  'source_path_length_limit': False,
+                                  'android_execution_validated': False},
  'runtime_validation': 'unverified'}
 
 
@@ -252,6 +269,7 @@ def install_manual_atlas_dbserver(assets, runtime, package):
         installed['startup_bundle_build_input_sha256'] = digest_json(value['startup_bundle_build_input'])
     if value['role'] == LEVELUP_UI_REPAIR_ROLE:
         installed['levelup_ui_repair_save'] = value['levelup_ui_repair_build_input']['save_contract']
+        installed['startup_thread_name'] = value['levelup_ui_repair_build_input']['startup_thread_name_contract']
         installed['levelup_ui_repair_build_input_sha256'] = digest_json(value['levelup_ui_repair_build_input'])
     return installed
 

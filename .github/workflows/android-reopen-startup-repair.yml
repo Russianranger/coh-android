@@ -1,0 +1,278 @@
+name: Thor saved-character DbServer startup repair
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-reopen-startup-repair.yml
+      - patches/levelup-ui-repair/**
+      - tools/android/interactive/build_reopen_startup_repair_apk.py
+      - tools/android/interactive/qualify_reopen_startup_repair.py
+      - tools/android/interactive/test_reopen_startup_repair_package.py
+      - tools/android/interactive/test_reopen_dbserver_thread_name.py
+      - tools/android/interactive/package_levelup_ui_repair_dbserver.py
+      - tools/android/interactive/test_levelup_ui_repair_dbserver.py
+      - tools/android/interactive/test_levelup_ui_repair_contract.py
+      - tools/android/game/test_game_diagnostic.py
+      - android/guest/local_character_server.py
+      - docs/COH-Atlas-Gameplay-0.13.13-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-reopen-startup-repair-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      reopen_startup_repair_required: ${{ steps.scope.outputs.reopen_startup_repair_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
+  dbserver:
+    needs: changes
+    if: needs.changes.outputs.reopen_startup_repair_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/base-dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - name: Stage retained SQL fixes and narrow thread-name formatting repair
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_levelup_ui_repair_dbserver.py stage --output out/levelup-ui-repair-db-source --base-manifest out/base-dbserver/package-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer staging failed' }
+      - name: Compile and execute retained wait and production save contracts on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_local_launcher_wait.py --require-windows
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_startup_bundle_save.py
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_levelup_ui_repair_dbserver.py
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_reopen_dbserver_thread_name.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/manual-atlas.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\manual-atlas.cmd 2>&1 | Tee-Object out/contracts/manual-atlas.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Guarded native launcher-wait contracts failed' }
+      - name: Build only the normal DbServer with retained SQL repair and thread-name fix
+        working-directory: out/levelup-ui-repair-db-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target DbServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'Startup DbServer build failed' }
+      - name: Package only DbServer with exact donor dependencies and source receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_levelup_ui_repair_dbserver.py package
+          --source out/levelup-ui-repair-db-source
+          --binary out/levelup-ui-repair-db-source/out/build/vs2026/bin/OptDebug/DbServer.exe
+          --cache out/levelup-ui-repair-db-source/out/build/vs2026/CMakeCache.txt
+          --base-manifest out/base-dbserver/package-manifest.json
+          --repository-commit "$env:GITHUB_SHA"
+          --output out/levelup-ui-repair-dbserver
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-dbserver
+          path: out/levelup-ui-repair-dbserver/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-reopen-startup-repair-dbserver-build-evidence
+          path: |
+            out/contracts/
+            out/levelup-ui-repair-db-source/startup-dbserver-build-input.json
+            out/levelup-ui-repair-db-source/startup-bundle-dbserver-build-input.json
+            out/levelup-ui-repair-db-source/levelup-ui-repair-dbserver-build-input.json
+            out/levelup-ui-repair-db-source/wine-dbserver-build-input.json
+            out/levelup-ui-repair-db-source/out/build/vs2026/CMakeCache.txt
+            out/levelup-ui-repair-db-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/levelup-ui-repair-dbserver/startup-dbserver-manifest.json
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: [changes, dbserver]
+    if: needs.changes.outputs.reopen_startup_repair_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-dbserver
+          path: out/levelup-ui-repair-dbserver
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-levelup-ui-repair-packaging-evidence
+          path: out/levelup-ui-repair-donor-evidence
+          run-id: 37315299321
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.11 donor
+        run: python3 tools/android/interactive/build_levelup_ui_repair_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.11.apk
+      - name: Recover exact public 0.13.12 donor retaining every UI resource
+        run: python3 tools/android/interactive/build_reopen_startup_repair_apk.py download-donor --output out/reopen-donor/COH-Atlas-Gameplay-0.13.12.apk
+      - name: Qualify actual startup formatting real PostgreSQL and all retained guards
+        run: >-
+          python3 tools/android/interactive/qualify_reopen_startup_repair.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/reopen-donor/COH-Atlas-Gameplay-0.13.12.apk
+          --donor-build-report out/levelup-ui-repair-donor-evidence/levelup-ui-repair-apk-build-report.json
+          --dbserver-directory out/levelup-ui-repair-dbserver
+          --output out/reopen-startup-repair-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-reopen-startup-repair-qualification
+          path: out/reopen-startup-repair-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, dbserver, qualify]
+    if: needs.changes.outputs.reopen_startup_repair_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-dbserver
+          path: out/levelup-ui-repair-dbserver
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-levelup-ui-repair-packaging-evidence
+          path: out/levelup-ui-repair-donor-evidence
+          run-id: 37315299321
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover the immutable public 0.13.12 donor
+        run: python3 tools/android/interactive/build_reopen_startup_repair_apk.py download-donor --output out/reopen-donor/COH-Atlas-Gameplay-0.13.12.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build native startup repair retaining all published UI Game MapServer DLLs and Android DEX
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_reopen_startup_repair_apk.py build
+          --donor-apk out/reopen-donor/COH-Atlas-Gameplay-0.13.12.apk
+          --donor-build-report out/levelup-ui-repair-donor-evidence/levelup-ui-repair-apk-build-report.json
+          --dbserver-directory out/levelup-ui-repair-dbserver
+          --qualification out/reopen-startup-repair-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/reopen-startup-repair/COH-Atlas-Gameplay-0.13.13.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: |
+            out/reopen-startup-repair/reopen-startup-repair-apk-build-report.json
+            out/reopen-startup-repair/COH-Atlas-Gameplay-0.13.13-testing.txt
+            out/reopen-startup-repair/COH-Atlas-Gameplay-0.13.13.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-apk
+          path: out/reopen-startup-repair/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.13 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_reopen_startup_repair_apk.py publish
+          --apk out/reopen-startup-repair/COH-Atlas-Gameplay-0.13.13.apk
+          --build-report out/reopen-startup-repair/reopen-startup-repair-apk-build-report.json
+          --donor-apk out/reopen-donor/COH-Atlas-Gameplay-0.13.12.apk
+          --donor-build-report out/levelup-ui-repair-donor-evidence/levelup-ui-repair-apk-build-report.json
+          --dbserver-directory out/levelup-ui-repair-dbserver
+          --qualification out/reopen-startup-repair-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

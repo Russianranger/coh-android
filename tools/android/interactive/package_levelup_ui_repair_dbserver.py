@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package the PostgreSQL empty-child-row read repair above frozen DbServer layers."""
+"""Package empty-child-row reads and safe startup thread names above frozen DbServer layers."""
 import argparse
 import hashlib
 import json
@@ -13,14 +13,21 @@ import package_startup_bundle_dbserver as retained
 ROOT = retained.ROOT
 require = retained.require
 PATCH = 'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch'
-PATCHED_FILES = ('DBServer/src/container_sql.c',)
+PATCHED_FILES = ('DBServer/src/container_sql.c', 'libs/UtilitiesLib/src/utils/utils.c')
+THREAD_SUPPORT_FILES = ('libs/UtilitiesLib/src/utils/quick_sprintf.c',
+    'libs/UtilitiesLib/src/components/EString.c',
+    'libs/UtilitiesLib/include/utilitieslib/components/EString.h',
+    'libs/UtilitiesLib/include/utilitieslib/UtilsCXX/taskthread.hpp')
 RECEIPT = 'levelup-ui-repair-dbserver-build-input.json'
 MANIFEST = retained.MANIFEST
 ROLE = 'manual_atlas_dbserver_levelup_ui_repair'
 BASE_STARTUP_BUNDLE_EXECUTABLE = {'bytes': 1664000,
     'sha256': 'baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029'}
 SOURCE_FILES = (PATCH, 'tools/android/interactive/package_levelup_ui_repair_dbserver.py',
-    'tools/android/interactive/test_levelup_ui_repair_dbserver.py')
+    'tools/android/interactive/test_levelup_ui_repair_dbserver.py',
+    'tools/android/interactive/test_reopen_dbserver_thread_name.py',
+    *('upstream/ouroboros/'+name for name in THREAD_SUPPORT_FILES),
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c')
 
 
 def patch_bytes(root=ROOT):
@@ -44,6 +51,15 @@ def save_contract():
         'profile_reset': False, 'android_execution_validated': False}
 
 
+def startup_thread_name_contract():
+    return {'scope': 'x_beginthreadex_diagnostic_name_storage_only',
+        'name': 'complete_source_filename_and_line',
+        'storage': 'temporary_EString_released_after_synchronous_SetThreadName',
+        'retained': ['CRT_thread_creation_arguments_and_result', 'caller_thread_id_or_local_fallback',
+            'assertYouMayFreezeThisThread', 'SetThreadName_API', 'assertion_policy', 'global_quick_sprintf'],
+        'source_path_length_limit': False, 'android_execution_validated': False}
+
+
 def expected_receipt(root=ROOT, base_startup_build_input=None, base_startup_bundle_build_input=None):
     base = retained.retained.expected_receipt(root,
         base_startup_build_input.get('base_wine_build_input') if base_startup_build_input else None)
@@ -56,14 +72,18 @@ def expected_receipt(root=ROOT, base_startup_build_input=None, base_startup_bund
     with tempfile.TemporaryDirectory(prefix='coh-levelup-read-receipt-') as temporary:
         source = Path(temporary)
         pg = base['base_wine_build_input']['postgresql_build_input']
-        for name in pg['patched_sha256']:
+        wine = retained.retained.wine
+        for name in set(wine.WINE_FILES).union(pg['patched_sha256'], PATCHED_FILES):
             target = source/name; target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(root/'upstream/ouroboros'/name, target)
         retained.retained.wine.apply_patch(source,
             (root/'patches/postgresql/0001-dbserver-postgresql.patch').read_bytes().replace(b'\r\n', b'\n'))
+        wine.apply_patch(source, wine.patch_bytes(root))
         retained.retained.wine.apply_patch(source, retained.patch_bytes(root))
         inputs = {name: retained.retained.wine.sha256(source/name) for name in PATCHED_FILES}
-        require(inputs == bundle['patched_sha256'], 'Level-up repair starts from unexpected save source')
+        closure = source_closure(base, bundle)
+        require(inputs == {name: closure[name] for name in PATCHED_FILES},
+                'Level-up repair starts from unexpected save/thread source')
         retained.retained.wine.apply_patch(source, patch)
         outputs = {name: retained.retained.wine.sha256(source/name) for name in PATCHED_FILES}
     return {'format': 1, 'build_role': ROLE, 'source_commit': base['source_commit'],
@@ -71,15 +91,22 @@ def expected_receipt(root=ROOT, base_startup_build_input=None, base_startup_bund
         'base_startup_bundle_build_input_canonical_sha256': retained.retained.canonical_hash(bundle),
         'patch': PATCH, 'patch_sha256': hashlib.sha256(patch).hexdigest(),
         'source_sha256': inputs, 'patched_sha256': outputs,
+        'unchanged_thread_support_sha256': {name: wine.sha256(root/'upstream/ouroboros'/name)
+            for name in THREAD_SUPPORT_FILES},
         'unchanged_merger_sha256': bundle['unchanged_merger_sha256'],
         'unchanged_fifo_sha256': base['base_wine_build_input']['postgresql_build_input']['patched_sha256']['DBServer/src/sql_fifo.c'],
         'built_target': 'DbServer', 'configuration': 'OptDebug', 'architecture': 'Win32',
         'postgresql_persistence_fixture': False, 'save_contract': save_contract(),
+        'startup_thread_name_contract': startup_thread_name_contract(),
         'runtime_validation': 'unverified'}
 
 
 def source_closure(base, bundle_layer=None, layer=None):
     result = retained.source_closure(base, bundle_layer or retained.expected_receipt(ROOT, base))
+    name = 'libs/UtilitiesLib/src/utils/utils.c'
+    result[name] = retained.retained.wine.sha256(ROOT/'upstream/ouroboros'/name)
+    result.update({name: retained.retained.wine.sha256(ROOT/'upstream/ouroboros'/name)
+                   for name in THREAD_SUPPORT_FILES})
     if layer: result.update(layer['patched_sha256'])
     return result
 

@@ -14,7 +14,7 @@ import unittest
 
 import package_levelup_ui_repair_dbserver as layer
 import test_startup_bundle_save as accepted
-from test_startup_bundle_dbserver import staged_bundle, executable
+from test_startup_bundle_dbserver import staged_bundle as retained_staged_bundle, executable
 
 REQUIRE_POSTGRESQL = os.environ.get('COH_REQUIRE_LEVELUP_UI_REPAIR_PG') == '1'
 POSTGRES_FIXTURES_RUN = set()
@@ -23,9 +23,20 @@ REQUIRED_POSTGRES_FIXTURES = {'empty_child_duplicate_23505_rollback', 'empty_chi
 ROOT = layer.ROOT
 
 
+def staged_bundle(directory):
+    value = retained_staged_bundle(directory)
+    for name in ('libs/UtilitiesLib/src/utils/utils.c', *layer.THREAD_SUPPORT_FILES):
+        target = directory/name; target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT/'upstream/ouroboros'/name, target)
+    return value
+
+
 def source(directory, patched=True):
     path = accepted.source(directory)
     if patched:
+        name = 'libs/UtilitiesLib/src/utils/utils.c'
+        target = directory/name; target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT/'upstream/ouroboros'/name, target)
         layer.retained.retained.wine.apply_patch(directory, layer.patch_bytes())
     return path
 
@@ -383,7 +394,8 @@ class LevelupNativePackageTests(unittest.TestCase):
                 self.assertNotIn(forbidden, text)
 
     def test_changed_source_ancestry_or_repeated_layer_is_refused(self):
-        for target in ('DBServer/src/container_sql.c', 'DBServer/src/container_merge.c', 'DBServer/src/sql_fifo.c'):
+        for target in ('DBServer/src/container_sql.c', 'DBServer/src/container_merge.c', 'DBServer/src/sql_fifo.c',
+                       'libs/UtilitiesLib/src/utils/utils.c'):
             with self.subTest(target=target), tempfile.TemporaryDirectory() as temporary:
                 source = Path(temporary); staged_bundle(source); (source/target).write_text('changed')
                 with self.assertRaises(ValueError): layer.apply_overlay(source)

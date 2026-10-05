@@ -43,6 +43,7 @@ class LevelupUiRepairGuestContractTests(unittest.TestCase):
             self.assertEqual(package, before)
             self.assertEqual(installed['startup_bundle_save'], producer.retained.save_contract())
             self.assertEqual(installed['levelup_ui_repair_save'], producer.save_contract())
+            self.assertEqual(installed['startup_thread_name'], producer.startup_thread_name_contract())
             self.assertFalse(installed['native_ack_observed'])
             self.assertFalse(installed['other_native_targets_changed'])
             self.assertFalse(installed['base_package_archive_changed'])
@@ -63,6 +64,7 @@ class LevelupUiRepairGuestContractTests(unittest.TestCase):
     def test_untyped_or_relabelled_layer_and_changed_physical_policy_are_refused(self):
         changes = [lambda v: v['levelup_ui_repair_build_input'].update(extra='unreviewed'),
                    lambda v: v['levelup_ui_repair_build_input']['save_contract'].update(UPSERT=True),
+                   lambda v: v['levelup_ui_repair_build_input']['startup_thread_name_contract'].update(source_path_length_limit=True),
                    lambda v: v['levelup_ui_repair_build_input'].update(postgresql_persistence_fixture=0),
                    lambda v: v.update(role=producer.retained.ROLE),
                    lambda v: v.update(base_startup_bundle_executable={'bytes': 1, 'sha256': 'f'*64}),

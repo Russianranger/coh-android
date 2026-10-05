@@ -246,6 +246,26 @@ class LoopbackProfileTests(unittest.TestCase):
         with self.assertRaisesRegex(guest.base.DiagnosticError, 'overflowed'):
             guest.loopback_acknowledgement(child, self.endpoints())
 
+    def test_partial_db_startup_refuses_assertion_listener_before_required_binds_complete(self):
+        # Replay the 0.13.12 THORHERO reopen order from the physical report:
+        # SQL connected, then native SuperAssert's listener bound TCP52015.
+        # This is a secondary crash signal, never additional readiness evidence.
+        prefix = guest.dbserver.LOOPBACK_ACK + '\r\n' + ''.join(
+            guest.dbserver.LOOPBACK_ENV +
+            ' bind verified: protocol=tcp address=127.0.0.1 port={}\r\n'.format(port)
+            for port in (6989, 6997, 6971, 6996, 6992))
+        child = SimpleNamespace(overflow=False, text=Mock(return_value=prefix))
+        self.assertFalse(guest.loopback_acknowledgement(child, self.endpoints()))
+        assertion = (guest.dbserver.LOOPBACK_ENV +
+                     ' bind verified: protocol=tcp address=127.0.0.1 port=52015')
+        # An incomplete read remains pending until the actual record completes.
+        child.text.return_value = prefix + assertion
+        self.assertFalse(guest.loopback_acknowledgement(child, self.endpoints()))
+        child.text.return_value += '\r\n'
+        with self.assertRaisesRegex(guest.base.DiagnosticError,
+                                    'Unexpected or duplicate game listener evidence'):
+            guest.loopback_acknowledgement(child, self.endpoints())
+
     def test_launch_environment_cannot_enable_mapserver_or_legacy_dbserver(self):
         diagnostic = object.__new__(guest.GameDiagnostic)
         diagnostic.wine_env = {'WINEPREFIX': '/private/wine', guest.dbserver.LOOPBACK_ENV: 'inherited'}
