@@ -275,12 +275,15 @@ def validate_beacons(directory, commit, donor):
         and manifest.get('role') == 'authentic_native_atlas_beacon_graph' and manifest.get('runtime_graph_readback') is True
         and manifest.get('physical_npc_pathing_validated') is False, 'Native graph proof scope differs')
     geo = {name: value for name, value in donor['_visual_manifest']['files'].items() if name.endswith('.geo')}
-    optional = {name: value for name, value in geo.items() if name.startswith('data/object_library/')}
+    optional_source = {name: value for name, value in geo.items() if name.startswith('data/object_library/')}
+    optional = {name: {key: value[key] for key in ('bytes', 'sha256')}
+        for name, value in optional_source.items()}
     require(manifest.get('input_identity', {}).get('world_manifest') == donor['payloads']['assets/runtime/atlas-world-supplement-manifest.json']
         and manifest['input_identity'].get('visual_geometry_sha256') == hashlib.sha256(producer.canonical(geo)).hexdigest()
         and manifest['input_identity'].get('visual_source_manifest') == donor['payloads']['assets/runtime/client-visual-manifest.json']
         and len(optional) == 406 and manifest.get('optional_input_files') == optional
-        and manifest['input_identity'].get('visual_object_geometry_sha256') == hashlib.sha256(producer.canonical(optional)).hexdigest(),
+        and manifest['input_identity'].get('visual_object_geometry_sha256') == hashlib.sha256(producer.canonical(optional_source)).hexdigest()
+        and manifest['input_identity'].get('optional_physical_geometry_sha256') == hashlib.sha256(producer.canonical(optional)).hexdigest(),
         'Native beacons do not match the exact shipped world geometry')
     common, profiles = manifest.get('input_files'), manifest.get('input_profiles')
     require(isinstance(common, dict) and not set(common).intersection(optional)

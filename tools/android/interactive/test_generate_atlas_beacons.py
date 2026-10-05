@@ -96,5 +96,36 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             optional=runtime/'data/object_library/optional.geo';optional.write_bytes(b'visual object')
             self.assertFalse((cold/'data/object_library/optional.geo').exists())
 
+    def test_rich_source_records_are_projected_without_weakening_byte_pins(self):
+        original = {'data/object_library/a.geo': {'bytes': 17, 'sha256': 'a'*64,
+            'original_client_source': {'container': 'original.pigg', 'index': 45},
+            'models': ['exact-model']}}
+        projected = generator.physical_pins(original)
+        self.assertEqual(projected, {'data/object_library/a.geo': {'bytes': 17, 'sha256': 'a'*64}})
+        self.assertIn('models', original['data/object_library/a.geo'])
+        self.assertNotEqual(generator.canonical(projected), generator.canonical(original))
+        for row in ({'bytes':True,'sha256':'a'*64}, {'bytes':17,'sha256':'not-a-digest'}, {'bytes':0,'sha256':'a'*64}):
+            with self.subTest(row=row), self.assertRaises(ValueError):
+                generator.physical_pins({'data/object_library/a.geo':row})
+
+    def test_inventory_failure_preserves_bounded_actual_missing_extra_and_changed_differences(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence=Path(temporary)
+            common={'data/maps/map.txt': {'bytes':2,'sha256':'a'*64}}
+            optional={'data/object_library/optional.geo': {'bytes':3,'sha256':'b'*64}}
+            warm={'data/maps/map.txt': {'bytes':4,'sha256':'c'*64}}
+            warm.update({'data/object_library/extra%d.geo'%i: {'bytes':1,'sha256':'d'*64} for i in range(50)})
+            output=io.StringIO()
+            with contextlib.redirect_stdout(output):
+                record=generator.record_profile_inventory(evidence,common,optional,warm,{})
+            self.assertEqual(record['status'],'mismatch')
+            self.assertEqual(record['warm_difference']['missing_count'],1)
+            self.assertEqual(record['warm_difference']['extra_count'],50)
+            self.assertEqual(len(record['warm_difference']['extra_first_16']),16)
+            self.assertEqual(record['warm_difference']['changed_count'],1)
+            self.assertEqual(record['cold_difference']['missing_count'],1)
+            self.assertEqual(json.loads((evidence/'native-input-profiles.json').read_bytes()),record)
+            self.assertIn('COH_ATLAS_BEACON_INPUT_PROFILES',output.getvalue())
+
 
 if __name__ == '__main__': unittest.main()

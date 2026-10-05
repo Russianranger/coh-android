@@ -173,7 +173,9 @@ class UiBeaconPackagingTests(unittest.TestCase):
             producer.canonical.side_effect = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
             digest = lambda value: package.hashlib.sha256(producer.canonical(value)).hexdigest()
             optional = {f'data/object_library/atlas/leaf-{index:03}.geo': pin(b'geometry') for index in range(406)}
-            geo = {**optional, 'data/player_library/retained.geo': pin(b'player-geometry')}
+            optional_source = {name: {**value, 'source_kind': 'synthetic-original-visual-geometry'}
+                for name, value in optional.items()}
+            geo = {**optional_source, 'data/player_library/retained.geo': pin(b'player-geometry')}
             world, visual_source = pin(b'world-manifest'), pin(b'public-0.13.13-visual-manifest')
             common = {'data/maps/city_zones/city_01_01/city_01_01.txt': pin(b'Atlas-world')}
             native = {'full_world_crc': '0x12345678', 'native_pathfinder_successes': 32,
@@ -185,7 +187,8 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 'input_files': common, 'input_files_sha256': digest(common),
                 'optional_input_files': optional, 'input_profiles': profiles,
                 'input_identity': {'world_manifest': world, 'visual_source_manifest': visual_source,
-                    'visual_geometry_sha256': digest(geo), 'visual_object_geometry_sha256': digest(optional)}}
+                    'visual_geometry_sha256': digest(geo), 'visual_object_geometry_sha256': digest(optional_source),
+                    'optional_physical_geometry_sha256': digest(optional)}}
             producer.validate_package.return_value = manifest
             (directory/'atlas-beacon-manifest.json').write_text(json.dumps(manifest))
             (directory/'atlas-beacons.zip').write_bytes(b'qualified-native-graph')
@@ -208,6 +211,8 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 self.assertEqual(validated['generation'], report)
                 self.assertEqual(validated['manifest'], manifest)
                 self.assertNotEqual(validated['generation'], validated['manifest'])
+                self.assertNotEqual(digest(optional_source), digest(optional))
+                self.assertTrue(all(set(row) == {'bytes', 'sha256'} for row in validated['manifest']['optional_input_files'].values()))
                 for field, wrong in (('cleanup_complete', False), ('owned_roles', 5), ('native_worker_spawning_allowed', True)):
                     value = dict(report); value[field] = wrong; report_path.write_text(json.dumps(value))
                     with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'ownership/cleanup'):
@@ -215,6 +220,8 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 for mutation, message in (('profile_count', 'isolated native'), ('cold_cache_shared', 'isolated native'),
                         ('missing_profile', 'Both exact'), ('cold_crc', 'Fresh native profile'),
                         ('cold_input_hash', 'Fresh native profile'), ('foreign_optional', 'exact shipped'),
+                        ('source_optional_hash', 'exact shipped'), ('physical_optional_hash', 'exact shipped'),
+                        ('optional_extra_metadata', 'exact shipped'),
                         ('legacy_format', 'proof scope')):
                     changed, changed_report = copy.deepcopy(manifest), copy.deepcopy(report)
                     if mutation == 'profile_count': changed_report['profile_verification_processes'] = 1
@@ -225,6 +232,9 @@ class UiBeaconPackagingTests(unittest.TestCase):
                     elif mutation == 'foreign_optional':
                         changed['optional_input_files'].pop(next(iter(optional)))
                         changed['optional_input_files']['data/object_library/foreign.geo'] = pin(b'foreign')
+                    elif mutation == 'source_optional_hash': changed['input_identity']['visual_object_geometry_sha256'] = digest(optional)
+                    elif mutation == 'physical_optional_hash': changed['input_identity']['optional_physical_geometry_sha256'] = digest(optional_source)
+                    elif mutation == 'optional_extra_metadata': changed['optional_input_files'] = copy.deepcopy(optional_source)
                     elif mutation == 'legacy_format': changed['format'] = 1
                     if mutation not in ('profile_count', 'cold_cache_shared'):
                         changed_report['profile_proofs'] = changed['input_profiles']
@@ -264,6 +274,19 @@ class UiBeaconPackagingTests(unittest.TestCase):
         self.assertIn('native-internal', native_job)
         self.assertIn('$count -ge 128', native_job)
         self.assertIn('$total + $file.Length -gt 268435456', native_job)
+        self.assertIn('Verify successful native reuse against current producers world and frozen guest pins', native_job)
+        self.assertIn("producer.validate_package(directory, os.environ['GITHUB_SHA'])", native_job)
+        self.assertIn("report['repository_commit'] != run['head_sha']", native_job)
+        self.assertIn("guest.read_manifest(directory / 'atlas-beacon-manifest.json')", native_job)
+        self.assertIn("guest.ARCHIVE_SHA256", native_job)
+        self.assertIn('timeout-minutes: 10', source)
+        self.assertIn('for attempt in range(3):', source)
+        self.assertIn('time.monotonic() + 160', source)
+        self.assertIn('urlopen(request, timeout=20)', source)
+        self.assertIn('--apk out/ui-beacon-public/'+package.APK_NAME, source)
+        self.assertIn('build_ui_beacon_apk.py audit', source)
+        self.assertLess(source.index('build_ui_beacon_apk.py audit'), source.index('Record only completed public SDK and payload audit'))
+        self.assertIn('coh-ui-beacon-public-byte-audit', source)
         for forbidden in ('--target DbServer', 'discover_client_visual_assets.py', 'prepare_client_appearance_assets.py'):
             self.assertNotIn(forbidden, source)
 

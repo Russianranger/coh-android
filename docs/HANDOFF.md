@@ -1,5 +1,36 @@
 # City of Heroes Android handoff
 
+**Full UI sweep ready; real Atlas graph remains unqualified. Next candidate: 0.13.14 / code 29.**
+
+The latest native attempt, [37351887742](https://github.com/Russianranger/coh-android/actions/runs/37351887742)
+at `8f379581484ed3f67aef03727ca2226cfd401856`, compiled successfully but stopped
+in the Python geometry-inventory assertion before any native role started.
+Evidence artifact **11364550876** preserves the importer, executable, PDB and
+build input. This attempt supplies no navigation result and does not test the
+repaired sentry callsite. No 0.13.14 APK is published.
+
+The next checkpoint distinguishes rich original visual-source records from
+physical file pins containing only byte count and SHA-256. Raw 406-object and
+927-GEO source identities remain unchanged; projected physical inputs have a
+separate digest. Strict profile closure, unchanged collision inputs, fresh
+native processes, identical loaded-world CRC and 32 paths per profile remain
+mandatory. A hosted preflight audits the actual SHA-pinned public 0.13.13 donor
+and runs the affected source, producer, guest, profile, packaging and routing
+tests before another Windows compile/import. Only the explicitly uncommitted
+publication-workflow contract test is outside that preflight scope; the final
+68-suite qualification must execute it and all seven real PostgreSQL fixtures.
+
+The local execution connection became unavailable during this checkpoint.
+New detached source changes therefore have no local execution claim; hosted
+preflight must pass them. Repository updates preserve the existing branch and
+main through ordinary fast-forward GitHub tree commits. The unpublished full
+packaging workflow was reconstructed from its authored excerpts and committed
+CLI contracts, with actual public APK download/SDK audit added; this is not a
+claim of recovering byte-identical untracked files. Hold that workflow and all
+graph pins until actual successful native evidence is verified.
+
+Earlier checkpoint details below remain historical.
+
 **0.13.13 Thor reopen, training, save and persistence verified; UI sweep and Atlas beacon generation in progress for 0.13.14.**
 
 Latest packaging checkpoint: `15a27d4da0665ab9c05ba1e3ddb0417e69196741`

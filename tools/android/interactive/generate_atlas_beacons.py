@@ -36,6 +36,9 @@ MAX_LOG = 128 * 1024 * 1024
 MAX_FAILURE_TAIL = 8192
 VISUAL_OBJECT_GEOS = 406
 PROFILES = ('base_world', 'base_world_visual')
+VISUAL_MANIFEST_PIN = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
+VISUAL_GEO_SOURCE_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
+VISUAL_OBJECT_SOURCE_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
 NATIVE = re.compile(rb'COH_ATLAS_BEACON_NATIVE_V1 crc=(0x[0-9a-fA-F]{8}) combat=(\d+) connected=(\d+) ground=(\d+) raised=(\d+) blocks=(\d+) paths=(\d+)')
 GENERATION_SOURCES = (
     'tools/prepare_atlas_beacon_generator_source.py',
@@ -138,12 +141,81 @@ def overlay_zip(path, manifest_path, runtime):
     return manifest
 
 
+def physical_pins(records):
+    """Project rich donor source records to the exact on-disk byte identity."""
+    require(isinstance(records, dict), 'Physical source records must be a mapping')
+    result = {}
+    for name, record in records.items():
+        safe(name)
+        require(isinstance(record, dict) and type(record.get('bytes')) is int
+                and 0 < record['bytes'] <= MAX_LOG
+                and re.fullmatch('[0-9a-f]{64}', str(record.get('sha256'))),
+                'Invalid physical source pin')
+        result[name] = {key: record[key] for key in ('bytes', 'sha256')}
+    return result
+
+
+def audit_visual_geometry_manifest(donor_apk):
+    """Audit the actual frozen donor without native import or model generation."""
+    donor_apk = Path(donor_apk)
+    require(pin(donor_apk) == DONOR, 'Actual preflight public donor differs')
+    with zipfile.ZipFile(donor_apk) as archive:
+        require(len(archive.namelist()) == len(set(archive.namelist())), 'Duplicate donor APK member')
+        name = 'assets/runtime/client-visual-manifest.json'
+        require(archive.getinfo(name).file_size == VISUAL_MANIFEST_PIN['bytes'], 'Donor visual manifest size differs')
+        raw = archive.read(name)
+    require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == VISUAL_MANIFEST_PIN,
+            'Actual donor visual source manifest differs')
+    value = json.loads(raw)
+    geo = {name: record for name, record in value['files'].items() if name.endswith('.geo')}
+    original = {name: record for name, record in geo.items() if name.startswith('data/object_library/')}
+    optional = physical_pins(original)
+    require(len(geo) == 927 and len(optional) == VISUAL_OBJECT_GEOS
+            and hashlib.sha256(canonical(geo)).hexdigest() == VISUAL_GEO_SOURCE_SHA256
+            and hashlib.sha256(canonical(original)).hexdigest() == VISUAL_OBJECT_SOURCE_SHA256,
+            'Exact original donor geometry source records differ')
+    keys = {}
+    for record in original.values():
+        shape = ','.join(sorted(record))
+        keys[shape] = keys.get(shape, 0) + 1
+    return {'format': 1, 'status': 'passed', 'donor': DONOR, 'visual_source_manifest': VISUAL_MANIFEST_PIN,
+            'visual_geometry_sha256': VISUAL_GEO_SOURCE_SHA256,
+            'visual_object_geometry_sha256': VISUAL_OBJECT_SOURCE_SHA256,
+            'optional_physical_geometry_sha256': hashlib.sha256(canonical(optional)).hexdigest(),
+            'optional_files': len(optional), 'optional_bytes': sum(row['bytes'] for row in optional.values()),
+            'original_record_keys': keys, 'optional_input_files': optional,
+            'native_import_performed': False, 'native_generation_performed': False}
+
+
+def record_profile_inventory(evidence, common, optional, warm, cold):
+    """Retain bounded actual differences before enforcing exact cold/warm closure."""
+    expected = {**common, **optional}
+    def difference(actual, wanted):
+        missing, extra = sorted(set(wanted) - set(actual)), sorted(set(actual) - set(wanted))
+        changed = sorted(name for name in set(actual).intersection(wanted) if actual[name] != wanted[name])
+        return {'missing_count': len(missing), 'missing_first_16': missing[:16],
+                'extra_count': len(extra), 'extra_first_16': extra[:16],
+                'changed_count': len(changed),
+                'changed_first_16': [{'name': name, 'actual': actual[name], 'expected': wanted[name]}
+                                     for name in changed[:16]]}
+    record = {'format': 1, 'status': 'passed' if warm == expected and cold == common else 'mismatch',
+              'common_files': len(common), 'optional_files': len(optional),
+              'common_sha256': hashlib.sha256(canonical(common)).hexdigest(),
+              'optional_physical_geometry_sha256': hashlib.sha256(canonical(optional)).hexdigest(),
+              'warm_sha256': hashlib.sha256(canonical(warm)).hexdigest(),
+              'cold_sha256': hashlib.sha256(canonical(cold)).hexdigest(),
+              'warm_difference': difference(warm, expected), 'cold_difference': difference(cold, common)}
+    (Path(evidence) / 'native-input-profiles.json').write_bytes(canonical(record))
+    print('COH_ATLAS_BEACON_INPUT_PROFILES ' + canonical(record).decode('ascii'), flush=True)
+    return record
+
+
 def overlay_object_geometry(path, manifest_path, runtime):
     """Expose only original supplemental object GEOs to the host collision load."""
     manifest = json.loads(manifest_path.read_bytes())
     require(pin(path) == {key: manifest['archive'][key] for key in ('bytes', 'sha256')}, 'Visual ZIP pin differs')
-    selected = {name: expected for name, expected in manifest['files'].items()
-                if name.startswith('data/object_library/') and name.endswith('.geo')}
+    selected = physical_pins({name: expected for name, expected in manifest['files'].items()
+                              if name.startswith('data/object_library/') and name.endswith('.geo')})
     require(len(selected) == VISUAL_OBJECT_GEOS, 'Exact optional object GEO inventory differs')
     with zipfile.ZipFile(path) as archive:
         require(len(archive.namelist()) == len(set(archive.namelist()))
@@ -233,11 +305,16 @@ def validate_package(directory, repository_commit):
             and manifest['stock_mapserver_sha256'] == STOCK_MAPSERVER, 'Generated graph scope differs')
     require(manifest['native'] == native_evidence((directory / 'evidence/server.log').read_bytes(),
                                                  _date_from_archive(directory / ARCHIVE)), 'Native transcript differs')
+    identity = manifest['input_identity']
+    require(identity['visual_source_manifest'] == VISUAL_MANIFEST_PIN
+            and identity['visual_geometry_sha256'] == VISUAL_GEO_SOURCE_SHA256
+            and identity['visual_object_geometry_sha256'] == VISUAL_OBJECT_SOURCE_SHA256,
+            'Original donor geometry source provenance differs')
     common, optional = manifest['input_files'], manifest['optional_input_files']
     require(len(optional) == VISUAL_OBJECT_GEOS and not set(common).intersection(optional)
             and set(manifest['input_profiles']) == set(PROFILES), 'Native input profiles differ')
     require(manifest['input_files_sha256'] == hashlib.sha256(canonical(common)).hexdigest()
-            and manifest['input_identity']['visual_object_geometry_sha256']
+            and manifest['input_identity']['optional_physical_geometry_sha256']
                 == hashlib.sha256(canonical(optional)).hexdigest(), 'Native physical input pins differ')
     for profile in PROFILES:
         selected = common if profile == 'base_world' else {**common, **optional}
@@ -332,8 +409,8 @@ def generate(args):
     visual, optional_inputs = overlay_object_geometry(assets / 'runtime/client-visual-assets.zip', visual_path, runtime)
     for name in optional_inputs: os.utime(runtime / name, (1767225600, 1767225600))
     inputs = geometry_inputs(runtime)
-    require(inputs == {**common_inputs, **optional_inputs} and geometry_inputs(cold_runtime) == common_inputs,
-            'Cold/warm physical geometry profiles differ from their exact inventories')
+    inventory = record_profile_inventory(evidence, common_inputs, optional_inputs, inputs, geometry_inputs(cold_runtime))
+    require(inventory['status'] == 'passed', 'Cold/warm physical geometry profiles differ from their exact inventories')
     (runtime / 'tools').mkdir(exist_ok=True)
     generator = runtime / 'AtlasBeaconGenerator.exe'; shutil.copyfile(args.generator, generator)
     env = role_environment()
@@ -431,7 +508,9 @@ def generate(args):
                     'world_manifest': pin(assets / 'runtime/atlas-world-supplement-manifest.json'),
                     'visual_source_manifest': pin(visual_path),
                     'visual_geometry_sha256': hashlib.sha256(canonical(geo_files)).hexdigest(),
-                    'visual_object_geometry_sha256': hashlib.sha256(canonical(optional_inputs)).hexdigest()},
+                    'visual_object_geometry_sha256': hashlib.sha256(canonical({name: record for name, record in geo_files.items()
+                        if name.startswith('data/object_library/')})).hexdigest(),
+                    'optional_physical_geometry_sha256': hashlib.sha256(canonical(optional_inputs)).hexdigest()},
                 'input_files': common_inputs, 'input_files_sha256': hashlib.sha256(canonical(common_inputs)).hexdigest(),
                 'optional_input_files': optional_inputs, 'input_profiles': profile_proofs,
                 'generator_sha256': pin(generator)['sha256'], 'runtime_graph_readback': True,

@@ -12,10 +12,33 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_known_host_verifier_checkpoint_skips_all_historical_builds_and_fails_closed(self):
+        from classify_interactive_change import runtime_required
+        names = [
+            '.github/workflows/android-atlas-beacon-verification.yml',
+            'tools/android/interactive/classify_storage_cleanup_change.py',
+            'tools/android/interactive/test_classify_storage_cleanup_change.py',
+            'docs/HANDOFF.md',
+        ]
+        historical = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required, change.bundle_required,
+            change.visual_required, change.loading_required, change.streaming_required,
+            change.asset_closure_required, change.startup_followup_required,
+            change.levelup_ui_repair_required, change.reopen_startup_repair_required, runtime_required)
+        self.assertTrue(change.ui_beacon_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in historical:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40,
+                    names+['android/native/client-launcher.c']))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40,
+                    names+['unreviewed.py']))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+
     def test_host_beacon_generation_workflow_has_no_publication_or_shipping_binary_step(self):
         root = Path(__file__).resolve().parents[3]
         source = (root/'.github/workflows/android-atlas-beacon-generation.yml').read_text()
-        for required in ('C:/bcn-src', 'generate_atlas_beacons.py', '--target MapServer',
+        for required in ('C:/bcn-src', '--work C:/bcn-run', 'generate_atlas_beacons.py', '--target MapServer',
                 '--timeout-seconds 5400', 'coh-ui-beacon-native', 'contents: read', 'cancel-in-progress: true',
                 'Invoke-WebRequest', '1535592811', 'GH_TOKEN: ${{ github.token }}',
                 '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4'):
@@ -25,6 +48,10 @@ class StorageRoutingTests(unittest.TestCase):
         self.assertLess(source.index('core.autocrlf false'), source.index('actions/checkout@'))
         self.assertIn('Collect short-path host evidence on the repository drive', source)
         self.assertIn('Copy-Item -LiteralPath $source', source)
+        self.assertIn('host-only-beacon-generator.pdb', source)
+        self.assertIn('native-internal', source)
+        self.assertIn('$count -ge 128', source)
+        self.assertIn('$total + $file.Length -gt 268435456', source)
         evidence_upload = source.split('name: coh-ui-beacon-generation-evidence', 1)[1]
         self.assertNotIn('C:/', evidence_upload)
         self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)

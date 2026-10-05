@@ -19,7 +19,8 @@ Zoning is reserved for the next pass.
    The last captured 0.13.13 warm run was Atlas 3:30.356 and actual client 3:08.310;
    your stopwatch observation was about 3:03 for the client and nine minutes to
    login. The first new graph preparation checks collision inputs; later valid
-   reuse should avoid graph archive decoding and input payload hashing.
+   reuse should avoid graph archive decoding and input payload hashing. The
+   exported beacon receipt records server_geometry_profile and preparation time.
 
 2. Confirm the retained level, XP, costume and purchased powers, including Aimed
    Shot. Open a help tip. Inspect inspiration icons, power icons, enhancement
@@ -30,7 +31,9 @@ Zoning is reserved for the next pass.
 3. Talk to Ms. Liberty and inspect the power/training screens and detailed-info
    controls. At level 2, the third power-set column is intentionally empty:
    native Pool sets unlock at displayed level 4 and Epic sets at level 35.
-   Hovered power details appear beneath the columns.
+   Hovered power details appear beneath the columns. If another training choice
+   is available, choose it, complete the dialogue and return to gameplay; include
+   that new power or enhancement-slot change in the restart check below.
 
 4. Confirm the red “THIS MAP HAS NOT BEEN BEACONIZED” warning is absent. Move
    through Atlas, target and fight a nearby Hellion, then move around a bench or

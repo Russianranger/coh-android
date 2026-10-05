@@ -220,6 +220,37 @@ class BeaconQualifiedProfileInstallerTests(unittest.TestCase):
             self.beacon.install()
         self.assert_no_graph_installed()
 
+    def test_swapped_raw_source_and_physical_digests_refuse_before_cache_or_graph_changes(self):
+        server, _ = self.prepare(1)
+        private = server.runtime / 'data/server/bin/preserved.bin'
+        private.parent.mkdir(parents=True, exist_ok=True)
+        private.write_bytes(b'private-cache-must-survive-digest-refusal')
+        identity = self.beacon.value['input_identity']
+        raw = identity['visual_object_geometry_sha256']
+        physical = identity['optional_physical_geometry_sha256']
+        self.assertNotEqual(raw, physical)
+        identity['visual_object_geometry_sha256'] = physical
+        identity['optional_physical_geometry_sha256'] = raw
+        self.beacon.freeze()
+        with self.assertRaisesRegex(ValueError, 'different world/geometry supplement'):
+            self.beacon.install()
+        self.assert_no_graph_installed()
+        self.assertEqual(private.read_bytes(), b'private-cache-must-survive-digest-refusal')
+
+    def test_rich_optional_metadata_is_refused_after_complete_real_staging(self):
+        server = self.fallback_server()
+        private = server.runtime / 'data/server/bin/preserved.bin'
+        private.parent.mkdir(parents=True, exist_ok=True)
+        private.write_bytes(b'private-cache-must-survive-metadata-refusal')
+        row = next(iter(self.beacon.value['optional_input_files'].values()))
+        row['source_archive'] = 'synthetic-donor-rich-metadata'
+        self.beacon.refresh_physical_profiles()
+        self.beacon.freeze()
+        with self.assertRaisesRegex(ValueError, 'Invalid native input/payload pin'):
+            self.beacon.install()
+        self.assert_no_graph_installed()
+        self.assertEqual(private.read_bytes(), b'private-cache-must-survive-metadata-refusal')
+
     def test_cold_warm_crc_difference_is_refused_even_with_refrozen_manifest_and_archive(self):
         self.prepare(1)
         self.beacon.value['input_profiles']['base_world']['native']['full_world_crc'] = '0xdeadbeef'

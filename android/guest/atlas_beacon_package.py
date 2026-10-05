@@ -36,6 +36,7 @@ WORLD_MANIFEST_SHA256 = '204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85c
 VISUAL_GEOMETRY_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
 VISUAL_SOURCE_MANIFEST = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
 VISUAL_OBJECT_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
+OPTIONAL_GEOMETRY_SHA256 = 'pending_normalized_inventory_audit'
 OPTIONAL_GEOS = 406
 PROFILES = ('base_world', 'base_world_visual')
 MAX_MANIFEST = 8 * 1024 * 1024
@@ -108,7 +109,7 @@ def read_manifest(path):
             and all(input_name(name) and name.startswith('data/object_library/') and name.endswith('.geo')
                     for name in optional) and not set(inputs).intersection(optional)
             and len(inputs) + len(optional) <= MAX_INPUTS
-            and hashlib.sha256(canonical(optional)).hexdigest() == VISUAL_OBJECT_GEOMETRY_SHA256,
+            and hashlib.sha256(canonical(optional)).hexdigest() == OPTIONAL_GEOMETRY_SHA256,
             'Exact optional original object geometry identity differs')
     require(all(isinstance(record, dict) and set(record) == {'bytes', 'sha256'}
                 and type(record['bytes']) is int and 0 < record['bytes'] <= MAX_GRAPH
@@ -119,7 +120,8 @@ def read_manifest(path):
             and identity.get('world_manifest', {}).get('sha256') == WORLD_MANIFEST_SHA256
             and identity.get('visual_geometry_sha256') == VISUAL_GEOMETRY_SHA256
             and identity.get('visual_source_manifest') == VISUAL_SOURCE_MANIFEST
-            and identity.get('visual_object_geometry_sha256') == VISUAL_OBJECT_GEOMETRY_SHA256,
+            and identity.get('visual_object_geometry_sha256') == VISUAL_OBJECT_GEOMETRY_SHA256
+            and identity.get('optional_physical_geometry_sha256') == OPTIONAL_GEOMETRY_SHA256,
             'Native graph was generated from a different world/geometry supplement')
     require(isinstance(native, dict) and native.get('native_full_graph_readback_verified') is True
             and native.get('fresh_ordinary_world_crc_verified') is True

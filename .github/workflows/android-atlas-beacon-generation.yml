@@ -15,7 +15,67 @@ concurrency:
   group: android-atlas-beacon-native-generation
   cancel-in-progress: true
 jobs:
+  preflight:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Test actual source and physical inventory contracts before native compilation
+        run: |
+          python3 - <<'PY'
+          import json, sys, unittest
+          from pathlib import Path
+          sys.path[:0] = ['tools', 'tools/android/interactive']
+          modules = ['test_prepare_atlas_beacon_generator_source', 'test_generate_atlas_beacons',
+                     'test_atlas_beacon_package', 'test_beacon_runtime_profiles', 'test_ui_beacon_package',
+                     'test_classify_storage_cleanup_change']
+          excluded = 'test_ui_beacon_package.UiBeaconPackagingTests.test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks'
+          def leaves(suite):
+              for case in suite:
+                  if isinstance(case, unittest.TestSuite): yield from leaves(case)
+                  else: yield case
+          cases = [case for name in modules for case in leaves(unittest.defaultTestLoader.loadTestsFromName(name))]
+          omitted = [case.id() for case in cases if case.id() == excluded]
+          if omitted != [excluded]: raise SystemExit('Exact held publication-workflow test exclusion differs')
+          selected = unittest.TestSuite(case for case in cases if case.id() != excluded)
+          count = selected.countTestCases()
+          print('COH_ATLAS_BEACON_PREFLIGHT_TESTS ' + json.dumps({'count': count, 'modules': modules,
+                'excluded_uncommitted_publication_workflow_test': excluded,
+                'final_apk_qualification_must_include_excluded_test': True}, sort_keys=True), flush=True)
+          result = unittest.TextTestRunner(verbosity=1).run(selected)
+          if not result.wasSuccessful(): raise SystemExit(1)
+          Path('out/beacon-preflight').mkdir(parents=True, exist_ok=True)
+          Path('out/beacon-preflight/test-contract-summary.json').write_text(json.dumps({
+              'status': 'passed', 'selected_tests': count, 'excluded_test': excluded,
+              'native_generation_proof': False}, sort_keys=True))
+          PY
+      - name: Audit exact public donor rich records and projected physical GEO pins
+        run: |
+          mkdir -p out/beacon-preflight
+          curl --fail --location --retry 3 --output out/beacon-preflight/donor.apk \
+            https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          value = producer.audit_visual_geometry_manifest(Path('out/beacon-preflight/donor.apk'))
+          Path('out/beacon-preflight/donor-geometry-projection-audit.json').write_bytes(producer.canonical(value))
+          summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
+          print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-atlas-beacon-donor-preflight
+          path: out/beacon-preflight/*.json
+          if-no-files-found: warn
+          retention-days: 90
   generate:
+    needs: preflight
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     # GitHub requires write permission to READ this existing reviewed draft
     # release asset, as in the accepted server-cache workflow. No publishing step.
