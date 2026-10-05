@@ -1,5 +1,50 @@
 # City of Heroes Android handoff
 
+**UI preparation passed; actual native generation/readback passed, but the first bare-world profile failed. No 0.13.14 APK is published.**
+
+Actual run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
+at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed original native
+generation, verified its fresh ordinary-world CRC, exact version-9 date,
+full graph readback and 32 native routes. All three CRCs were `0xb0c21ded`.
+Counts: combat 163,544; connected 163,527; ground 1,805,050; raised 2,698,868;
+blocks 602. The subsequent fresh `base_world` process failed at
+**2026-10-05 23:16:31 UTC**: real CRC `0x1583f117` did not match the date.
+This is a real geometry difference, not a timeout or the repaired CRC-phase bug.
+The none/all optional-geometry compatibility assumption is disproved.
+
+Failure evidence is retained in artifact **11379217768**:
+33,296,543 bytes, outer ZIP SHA-256
+`a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4`.
+It contains the actual still-unqualified graph: 39,069,559 bytes, SHA-256
+`6a3c9a6661a07cc3aec3a11baa9ca29395cc9b64d783b21e58282b2eb20845f8`;
+the date is exactly 12 bytes (`0900000000000000ed1dc2b0`), SHA-256
+`ce64be4b49e4a8a4e61f01b31c651e603dc955551fb5c471ad3b75d2bb4f1711`.
+No graph pin freeze, accepted package or release has occurred.
+
+The correct next repair requires all **406 exact original GEO files**
+(physical identity `c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`),
+already present in the retained visual/UI package. Do not import unrelated
+assets or relax CRC equality. Validate this set in client source before
+server-data cache checkout/staging/seal. Include required geometry in cache
+identity and prevent migration/reuse of an older NONE server-data generation.
+Do not add regular GEO leaves after sealing the source-link cache tree.
+Normal MapServer arguments contain no beacon-disable option.
+
+The retained native graph may be recovered only through authenticated original
+run/job/artifact pins, exact graph/date bytes, original primary-success logs
+and identical C/stager/build receipts, followed by two actual fresh mandatory-
+geometry layouts with complete CRC/readback and 32 real routes each. A new
+successful proof-only run must report original four-role generation and later
+fresh qualification separately; never relabel the failed overall run successful.
+Native algorithm and shipped MapServer remain unchanged. New source-bound
+recovery, guest/profile, and server-cache identity drafts are in preparation.
+The previously held verifier/publisher blobs below target a successful 373770
+and optional NONE/ALL profiles: **they are stale and must be revised**, not run.
+The UI artifact 11373610942 remains accepted and reusable without another sweep.
+Main is unchanged, PR #1 stays draft, and zoning remains a later pass.
+
+Earlier pending-run checkpoint follows; its pending/optional-profile statements are historical.
+
 **UI sweep ready; corrected host compiled and passed 114 targeted tests. Genuine Atlas graph proof is running. Next candidate: 0.13.14 / code 29.**
 
 The preceding real generation finished, but its later CRC marker used a

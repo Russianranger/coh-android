@@ -19,7 +19,7 @@ jobs:
         with:
           name: coh-ui-beacon-generation-evidence
           path: out/native-failure
-          run-id: 37363692462
+          run-id: 37377053417
           github-token: ${{ github.token }}
       - name: Bind failed run provenance and inspect bounded native witnesses
         env:
@@ -29,9 +29,9 @@ jobs:
           import hashlib, json, os, re, urllib.request
           from pathlib import Path
           repo = 'Russianranger/coh-android'
-          run_id = 37363692462
-          artifact_id = 11370824751
-          head = '57515789dfafab5c4eab3273c63e28beef20264c'
+          run_id = 37377053417
+          artifact_id = 11379217768
+          head = '3124723b93b4ae83b211f9319ffa8d6d8a3e851d'
           def get(path):
               request = urllib.request.Request('https://api.github.com/repos/' + repo + path,
                   headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
@@ -42,8 +42,8 @@ jobs:
           assert run['status'] == 'completed' and run['conclusion'] == 'failure' and run['head_sha'] == head
           assert artifact['id'] == artifact_id and artifact['name'] == 'coh-ui-beacon-generation-evidence'
           assert artifact['workflow_run']['id'] == run_id and artifact['workflow_run']['head_sha'] == head
-          assert not artifact['expired'] and artifact['size_in_bytes'] == 16790903
-          assert artifact['digest'] == 'sha256:f5ea6e160a16fcd37971daf3fb8ee1e60f63ab03420da6e360b57d144dce79f1'
+          assert not artifact['expired'] and artifact['size_in_bytes'] == 33296543
+          assert artifact['digest'] == 'sha256:a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4'
           root = Path('out/native-failure')
           files = sorted(path for path in root.rglob('*') if path.is_file())
           assert len(files) <= 128 and sum(path.stat().st_size for path in files) <= 268435456
@@ -53,7 +53,7 @@ jobs:
               raw = path.read_bytes()
               pins[path.relative_to(root).as_posix()] = {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
           roles = {}
-          for role in ('master', 'server', 'sentry', 'worker'):
+          for role in ('master', 'server', 'sentry', 'worker', 'base_world'):
               path = root / 'evidence' / (role + '.log')
               if not path.is_file():
                   print('COH_ATLAS_FAILURE_ROLE_MISSING ' + role)
@@ -78,6 +78,54 @@ jobs:
           result = {'format': 1, 'status': 'failure_evidence_only_no_graph_qualification',
               'run_id': run_id, 'source_commit': head, 'artifact_id': artifact_id,
               'artifact_zip_sha256': artifact['digest'], 'files': pins, 'roles': roles}
+          from collections import Counter
+          blocks = {}
+          for role in ('server', 'base_world'):
+              path = root / 'evidence' / (role + '.log')
+              text = path.read_bytes().decode('utf-8', errors='replace')
+              starts = list(re.finditer(r'Calculating[^\r\n]*CRC[^\r\n]*Full\s*Info', text, re.I))
+              assert starts, 'No full ordinary-world CRC block: ' + role
+              start = starts[-1].start()
+              done = re.search(r'Done!\s*\(CRC=0x([0-9a-fA-F]{8}),\s*EncounterPositions=(\d+)\)', text[start:])
+              assert done, 'No completed full ordinary-world CRC block: ' + role
+              block = text[start:start + done.end()]
+              rows = [(int(m.group(1)), int(m.group(2)), int(m.group(3)), m.group(4))
+                  for m in re.finditer(r'^\s*(\d+),\s*(\d+),\s*(\d+):\s*([^\r\n]+?)\s*
+          target.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+          print('COH_ATLAS_FAILURE_FILE_PINS ' + json.dumps(pins, sort_keys=True))
+          print('COH_ATLAS_FAILURE_GRAPH_CAPTURED ' + str(any(name.endswith(('.beacon', '.date')) for name in pins)))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-beacon-failure-forensic
+          path: out/atlas-native-failure-forensic.json
+          if-no-files-found: error
+          retention-days: 90
+, block, re.M)]
+              assert rows, 'No native model rows: ' + role
+              summary = [line[:512] for line in block.splitlines()
+                  if re.search(r'Max.?Height|Total.?triangles|Basic.?Beacons|Legal.?Beacons|Traffic.?Beacons|EncounterPositions', line, re.I)]
+              blocks[role] = {'crc': '0x' + done.group(1).lower(),
+                  'encounter_positions': int(done.group(2)), 'model_rows': rows,
+                  'summary': summary, 'block_bytes': len(block.encode('utf-8'))}
+              print('COH_ATLAS_REQUIRED_GEOMETRY_BLOCK ' + json.dumps(
+                  {k:v for k,v in blocks[role].items() if k != 'model_rows'}, sort_keys=True))
+          full, cold = Counter(map(tuple, blocks['server']['model_rows'])), Counter(map(tuple, blocks['base_world']['model_rows']))
+          only_full, only_cold = list((full - cold).elements()), list((cold - full).elements())
+          result['ordinary_world_model_comparison'] = {'full': blocks['server'], 'bare': blocks['base_world'],
+              'full_only_rows': only_full, 'bare_only_rows': only_cold}
+          print('COH_ATLAS_REQUIRED_GEOMETRY_MODEL_DELTA ' + json.dumps({
+              'full_rows': sum(full.values()), 'bare_rows': sum(cold.values()),
+              'full_only_count': len(only_full), 'bare_only_count': len(only_cold),
+              'full_only_first32': only_full[:32], 'bare_only_first32': only_cold[:32]}, sort_keys=True))
+          build = root / 'evidence' / 'atlas-beacon-generator-build-input.json'
+          assert build.is_file(), 'Original host build receipt missing'
+          result['original_host_build_input'] = json.loads(build.read_bytes())
+          print('COH_ATLAS_REQUIRED_GEOMETRY_BUILD_RECEIPT_KEYS ' + json.dumps(sorted(result['original_host_build_input'])))
+          print('COH_ATLAS_REQUIRED_GEOMETRY_GRAPH_PINS ' + json.dumps(
+              {name:pin for name,pin in pins.items()
+               if name.endswith(('.bcn', '.date')) or name.endswith('host-only-beacon-generator.exe')
+                   or name.endswith('atlas-beacon-generator-build-input.json')}, sort_keys=True))
           target = Path('out/atlas-native-failure-forensic.json')
           target.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
           print('COH_ATLAS_FAILURE_FILE_PINS ' + json.dumps(pins, sort_keys=True))
