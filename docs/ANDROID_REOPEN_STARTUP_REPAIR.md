@@ -1,5 +1,16 @@
 # Saved-character startup repair after 0.13.12
 
+**0.13.13 / code 28 is published**, source
+`be955678b4b82f889b31c4071b3b979b0aef6771`.
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk).
+[Production CI](https://github.com/Russianranger/coh-android/actions/runs/37324515114)
+passed fresh Win32 compilation, the production formatter fixture under MSVC
+Win32, 985 scenarios in 64 suites with no skips, all seven real PostgreSQL
+fixtures and the retained-signer SDK checks. The
+[independent public-byte receipt](android-evidence/reopen-startup-repair-0.13.13-publication.json)
+verifies all 72 payloads: 67 retained and five native/verification replacements.
+Physical Thor reopen/training/UI/timing validation remains pending.
+
 The [October 5 device receipt](android-evidence/reopen-startup-repair-0.13.12-device-result.json)
 records `coh-atlas-gameplay-20261005-135502.zip`. It identifies 0.13.12,
 THORHERO character ID 1 and the published DbServer hash. The reopen attempt
@@ -31,8 +42,8 @@ PostgreSQL empty-child-row witness/order fix. No database reset, asset import,
 Game rebuild, listener exception or ignored SQL error is part of the repair.
 The original publication and failed device evidence remain historical records.
 
-Use [the focused 0.13.13 test](COH-Atlas-Gameplay-0.13.13-testing.txt) after the
-new APK is published: first establish reopen reaches character selection and
+Use [the focused 0.13.13 test](COH-Atlas-Gameplay-0.13.13-testing.txt): first
+establish reopen reaches character selection and
 Atlas, then inspect UI, train at Ms Liberty, complete a power purchase, save and
 reopen. Stop and export once if startup fails. Physical training, UI restoration
 and actual client startup savings remain pending; this report reached none of

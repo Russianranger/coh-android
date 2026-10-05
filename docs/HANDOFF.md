@@ -1,31 +1,78 @@
 # City of Heroes Android handoff
 
-**0.13.12 Thor reopen blocked; native diagnostic thread-name repair targeted for 0.13.13.**
-Live continuation head recovered as `ed1b69bca04f4bf56e43f6dbc6115b0578934812`;
-main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`, PR #1 open/draft.
-The user supplied `coh-atlas-gameplay-20261005-135502.zip`, SHA-256
+**0.13.13 published and independently public-byte verified; Thor reopen/training test pending.**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk),
+version **0.13.13 / code 28**, source
+`be955678b4b82f889b31c4071b3b979b0aef6771`. Continue the existing continuation
+branch and open draft PR #1. Main remains
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+This publication documentation descendant does not imply another APK build.
+
+[Production CI 37324515114](https://github.com/Russianranger/coh-android/actions/runs/37324515114)
+passed all four jobs: fresh OptDebug Win32 DbServer, unadapted MSVC Win32
+production thread formatter/EString and retained save contracts, **985 scenarios /
+64 suites / zero skips / 6,815 source pins**, all seven real PostgreSQL save
+fixtures, exact public 0.13.12 donor conservation, official SDK signature,
+badging, alignment and version-only manifest checks, then publication.
+The public APK is **1,535,592,811 bytes**, SHA-256
+`81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4`.
+The retained signer remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+[Independent publication receipt](android-evidence/reopen-startup-repair-0.13.13-publication.json)
+binds a fresh public APK/notes/checksum download, release API digests, current
+native package, qualification, source pins and artifact digests. All **72
+payloads verify: 67 retained / five replaced / none added**. All 9,613 visual
+leaves, 123 UI additions, Game, MapServer, twenty DLLs, native training helper,
+Android DEX/resources, nineteen Java sources and caches remain exact. Local SDK
+signature/badging rechecks were not performed; the hosted checks bind the
+identical independently downloaded public SHA.
+
+The [latest supplied device report](android-evidence/reopen-startup-repair-0.13.12-device-result.json)
+was `coh-atlas-gameplay-20261005-135502.zip` from **0.13.12**, SHA-256
 `d96a393d681b8068e84b0d2647997996b9cf42a568d969255fd6536a6e14209f`.
-See [device evidence](android-evidence/reopen-startup-repair-0.13.12-device-result.json)
-and [repair/testing documentation](ANDROID_REOPEN_STARTUP_REPAIR.md).
+Reopen ended after 94.328 seconds inside DbServer, before MapServer or the client
+started. SQL connected, then `quick_sprintf.c:101` asserted: the hosted
+TaskThread header path is 123 bytes, and `x_beginthreadex` adds `(110)`, requiring
+129 bytes including NUL in its old 128-byte diagnostic name buffer. The assertion
+reporter opened TCP 52015; the endpoint guard correctly rejected it. Keep that
+guard strict. Cleanup passed. No training, character-select/world entry or live
+XP/level/power SQL snapshot was captured, so do not claim persistence loss or
+client/Atlas speed measurements from this failed startup.
 
-Reopen ended in 94.328 seconds inside DbServer startup, before MapServer or the
-game client launched. PostgreSQL connected, then `quick_sprintf.c:101` asserted.
-The new hosted build's embedded TaskThread header filename is 123 bytes;
-`x_beginthreadex` adds `(110)`, requiring 129 bytes including NUL in its old
-128-byte diagnostic buffer. Its assertion reporter then opens TCP 52015, which
-the existing endpoint guard correctly rejects. Keep that guard unchanged.
-Cleanup passed. No training or power purchase occurred in this report, and no
-live XP/level/power SQL snapshot was captured; do not claim a persistence loss.
+0.13.13 uses a temporary EString for the complete diagnostic thread name and
+releases it after synchronous SetThreadName. The fresh DbServer is 1,664,512
+bytes, SHA-256
+`ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba`.
+CRT thread arguments/results/IDs, freeze/naming calls, global formatter/assert
+policy, FIFO and commit-before-ACK remain intact. The PostgreSQL reader repair's
+patched source hash remains exactly `8eaae13bf59dbee9b76ee0c3dff447eef080eb83e943f546ba0da70d0b42c295`.
+[Repair details](ANDROID_REOPEN_STARTUP_REPAIR.md) and the production fixture cover
+the exact old assertion, 127/128/129-byte boundaries, longer paths, allocator
+retry, thread creation failure and diagnostic lifetime. No listener exception,
+SQL error suppression, database reset, asset reimport or foundational rebuild.
 
-The narrow candidate keeps the complete diagnostic thread name with dynamic
-storage, preserving thread creation and all prior SQL/FIFO/save semantics.
-0.13.13 retains the exact published 0.13.12 UI, Game, MapServer, Android and cache
-payloads; only the fresh DbServer and typed producer/verifier witnesses change.
-Qualification/publication are pending. Keep the existing character, import and
-accepted milestones. [Focused next test](COH-Atlas-Gameplay-0.13.13-testing.txt)
-starts by establishing login/character selection/world entry, then the original
-UI/training/purchase/save/reopen objectives. Stop and export once if it fails.
-Physical training/UI restoration and client startup savings remain pending.
+[Focused Thor instructions](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13-testing.txt):
+install over the existing app, Set up runtime once, keep all data. First verify
+reopen reaches login, character selection and Atlas. Record setup/resource
+preparation, Atlas, actual client, login-to-world and total timing separately.
+Inspect inspirations, XP/level bubbles, tray labels, trainer controls and power
+detail icons; train at Ms Liberty, choose a power, press Next, finish/close the
+dialogue and confirm normal gameplay. Ordinary save/log out, Finish and export;
+reopen again to verify level/XP/new power and export the second report. If startup
+fails, stop and export once rather than repeating long boots. Existing creation,
+tasks and known-good world/model milestones do not need repeating.
+
+**Physical reopen, training/power persistence, UI restoration and startup
+savings remain pending.** Preserve the 0.13.11 native phase baselines: Atlas
+235.342s / 208.616s, actual client 334.499s / 324.792s. Five exact donor UI stems
+remain unavailable; no substituted assets were introduced.
+
+An automatically triggered historical Wine listener run
+[37324515168](https://github.com/Russianranger/coh-android/actions/runs/37324515168)
+timed out after 30 seconds compiling an unchanged MSVC listener fixture before
+any assertions ran. It does not feed this release. The current production Win32
+and PostgreSQL checks passed; no listener policy change was made for that timeout.
+Historical 0.13.12 publication jobs correctly skipped the new native-only scope.
 
 **0.13.12 publication checkpoint below is historical; its first Thor reopen failed.**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.12/COH-Atlas-Gameplay-0.13.12.apk),
