@@ -34,6 +34,8 @@ jobs:
           run-id: 37324515114
           github-token: ${{ github.token }}
       - name: Recover exact public working world and reviewed original import input
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
