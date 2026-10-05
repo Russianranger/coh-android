@@ -219,7 +219,8 @@ def prepare(work, import_identity, executable_sha256, context):
                             'texture_header_struct_bytes', 'native_source_closure_verified'}
                         and type(native['format']) is int and native['format'] == 1
                         and native['policy'] in ('verified_startup_client_layer_v1',
-                                                'verified_client_loading_layer_v1')
+                                                'verified_client_loading_layer_v1',
+                                                'verified_client_startup_followup_layer_v1')
                         and native['native_source_closure_verified'] is True
                         and native['texture_header_struct_bytes'] == 32
                         and native['client_executable_sha256'] == executable_sha256

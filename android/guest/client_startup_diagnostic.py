@@ -108,8 +108,8 @@ def verify_assets(assets):
         path = assets / name
         # This exact world supplement is independently pinned by its manifest
         # and runtime helper; unrelated payloads keep their existing cap.
-        limit = (512*1024*1024 if name == 'client-visual-assets.zip' else
-                 16*1024*1024 if name == 'client-visual-manifest.json' else
+        limit = (1024*1024*1024 if name == 'client-visual-assets.zip' else
+                 64*1024*1024 if name == 'client-visual-manifest.json' else
                  CACHE_BYTES_LIMIT if name in ('client-caches.zip', 'server-caches.zip') else
                  256*1024*1024 if name == 'atlas-world-supplement.zip' else 128*1024*1024)
         require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= limit,
@@ -327,6 +327,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'client_loading' in package:
         previous_client = package['client_loading']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if 'client_startup_followup' in package:
+        previous_client = package['client_startup_followup']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -347,7 +350,8 @@ def prepare_worktree(root, data, assets, identity, context):
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
-        layer = 'client_loading' if 'client_loading' in package else 'startup_bundle_client'
+        layer = ('client_startup_followup' if 'client_startup_followup' in package else
+                 'client_loading' if 'client_loading' in package else 'startup_bundle_client')
         if layer not in package or not report.get('reused'):
             return report
         wrapper = package[layer]
@@ -357,7 +361,8 @@ def prepare_worktree(root, data, assets, identity, context):
                                       'native': native_closure_identity(old_native)})
         report['source_root_preserved'] = True
         report['native_texture_index_migration'] = {
-            'format': 1, 'policy': ('verified_client_loading_layer_v1' if layer == 'client_loading'
+            'format': 1, 'policy': ('verified_client_startup_followup_layer_v1' if layer == 'client_startup_followup'
+                                    else 'verified_client_loading_layer_v1' if layer == 'client_loading'
                                     else 'verified_startup_client_layer_v1'),
             'previous_client_identity': {'content_identity_sha256': old_content,
                 'data_contract': worktree_data_identity(expected_identity)},
@@ -845,6 +850,17 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'prepared_cache_schema_changed': False, 'graphics_profile_changed': False,
                 'runtime_execution_validated': False}
+        self.client_startup_followup = 'client_startup_followup' in package
+        if self.client_startup_followup:
+            wrapper = package['client_startup_followup']
+            self.ctx.report['client_startup_followup'] = {
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'replacement_scope': 'CityOfHeroes.exe_only',
+                'metadata_preload_only': True, 'source_freshness_preserved': True,
+                'prepared_cache_schema_changed': False, 'physical_startup_savings_validated': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
                         source_commit=SOURCE, data_commit=DATA,
                         client_executable_sha256=self.client_executable_sha256)
@@ -914,10 +930,13 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         # child's console as a fallback; game code and assets remain unchanged.
         command = [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
                    base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
+        client_environment = dict(self.wine_env)
+        if getattr(self, 'client_startup_followup', False):
+            client_environment['COH_CLIENT_DEPENDENCY_PRELOAD'] = '1'
         previous = Path.cwd()
         try:
             os.chdir(self.work)
-            self.client = self.ctx.start('actual-coh-client', command, env=self.wine_env)
+            self.client = self.ctx.start('actual-coh-client', command, env=client_environment)
         finally:
             os.chdir(previous)
         started = time.monotonic()

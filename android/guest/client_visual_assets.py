@@ -20,11 +20,11 @@ require = client.require
 ARCHIVE = 'client-visual-assets.zip'
 MANIFEST = 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_SHA256 = '1ae0892bc76e44d864bfd97a59702c125693c6850e41bd63999a82e8639389ea'
-MANIFEST_SHA256 = '447868d63b0eea536cba6355fe69763e3d7b24a703a756b13e0ebafb4031a34b'
-FILES_SHA256 = '99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542'
-ARCHIVE_BYTES = 515813056
-FILE_COUNT, PAYLOAD_BYTES = 5476, 873255284
+ARCHIVE_SHA256 = '840619b3b40c24f206576580dfaedb779a66582f1df189f37002dd59c5399cb9'
+MANIFEST_SHA256 = '8b3f579a9ff48e80f40e06e252c91fe3357daf9f0b01441dea5bceaa5801f1e6'
+FILES_SHA256 = 'e23299918437e5d0afa2e9d2003eb966151f59471eaeb430313d2824d42fe341'
+ARCHIVE_BYTES = 854341235
+FILE_COUNT, PAYLOAD_BYTES = 9490, 1505717817
 BASE_FILE_COUNT, BASE_PAYLOAD_BYTES = 290, 36583648
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
 EXTENSION_FILE_COUNT, EXTENSION_PAYLOAD_BYTES = 33, 2646051
@@ -36,7 +36,11 @@ SWEEP_FILE_COUNT, SWEEP_PAYLOAD_BYTES = 5147, 833734047
 SWEEP_FILES_SHA256 = '7159ada9851057278f934f55c577b7063e4979d1fe2a2ce11718ded79440e8e6'
 SWEEP_BASE_FILES_SHA256 = '07b61f301355f2bb0174db2b41f1254b3f2b80cfd660d5f467415c7f33707c09'
 SWEEP_BASE_PAYLOAD_BYTES = 39521237
-MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 512 * 1024**2, 16 * 1024**2
+APPEARANCE_FILE_COUNT, APPEARANCE_PAYLOAD_BYTES = 4014, 632462533
+APPEARANCE_FILES_SHA256 = 'c18ee3f0d2551249bfb98b921be8c230db5923a5a531cec2a55d0c03e80810ae'
+APPEARANCE_BASE_FILES_SHA256 = '99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80ff432f266f617542'
+MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 1024**3, 64 * 1024**2
+MAX_PAYLOAD_BYTES = 2 * 1024**3
 MAX_ENTRY_BYTES, MAX_RECEIPT_BYTES = 32 * 1024**2, 4 * 1024**2
 MARKER = 'client-visual-installed.json'
 POLICY = 'pinned_missing_only_client_visual_v1'
@@ -64,7 +68,7 @@ def package(assets):
     files = value.get('files', {})
     require(value.get('format') == 1 and value.get('scope') == SCOPE
         and value.get('source_commit') == client.SOURCE and value.get('data_commit') == client.DATA
-        and value.get('file_count') == FILE_COUNT and value.get('payload_bytes') == PAYLOAD_BYTES
+        and value.get('file_count') == FILE_COUNT and value.get('payload_bytes') == PAYLOAD_BYTES <= MAX_PAYLOAD_BYTES
         and value.get('files_sha256') == FILES_SHA256 and isinstance(files, dict) and len(files) == FILE_COUNT
         and all(safe_payload(name) and isinstance(pin, dict) and type(pin.get('bytes')) is int
             and 0 < pin['bytes'] <= MAX_ENTRY_BYTES and re.fullmatch('[0-9a-f]{64}', pin.get('sha256', ''))
@@ -75,8 +79,9 @@ def package(assets):
         and all(value.get(key) is False for key in ('runtime_visual_validated', 'gameplay_validated',
             'imported_assets_modified', 'prepared_caches_modified', 'existing_supplements_modified')),
         'Client visual identity, missing-only policy or inventory differs')
+    appearances = appearance_files(value)
     sweeps = sweep_files(value)
-    encounters = encounter_files(value) | sweeps
+    encounters = encounter_files(value) | sweeps | appearances
     extension = value.get('visual_extension', {})
     additions = extension.get('files', {})
     require(isinstance(additions, dict) and set(additions) <= set(files)
@@ -114,7 +119,8 @@ def encounter_files(value):
         and all(name.startswith('data/texture_library/npcs/') and name.endswith('.texture') for name in additions),
         'Client visual encounter append-only baseline policy differs')
     sweeps = set(value.get('sweep_extension', {}).get('files', {}))
-    baseline = {name: row for name, row in files.items() if name not in additions and name not in sweeps}
+    appearances = set(value.get('appearance_extension', {}).get('files', {}))
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in sweeps and name not in appearances}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 323 and sum(row['bytes'] for row in baseline.values()) == 39229699
         and hashlib.sha256(canonical(baseline)).hexdigest() == IMMEDIATE_FILES_SHA256
@@ -140,13 +146,40 @@ def sweep_files(value):
         and extension.get('baseline_payload_bytes') == SWEEP_BASE_PAYLOAD_BYTES
         and extension.get('baseline_files_sha256') == SWEEP_BASE_FILES_SHA256,
         'Client visual sweep append-only baseline policy differs')
-    baseline = {name: row for name, row in files.items() if name not in additions}
+    appearances = set(value.get('appearance_extension', {}).get('files', {}))
+    baseline = {name: row for name, row in files.items() if name not in additions and name not in appearances}
     selected = {name: files[name] for name in sorted(additions)}
     require(len(baseline) == 329 and sum(row['bytes'] for row in baseline.values()) == SWEEP_BASE_PAYLOAD_BYTES
         and hashlib.sha256(canonical(baseline)).hexdigest() == SWEEP_BASE_FILES_SHA256
         and sum(row['bytes'] for row in selected.values()) == SWEEP_PAYLOAD_BYTES
         and hashlib.sha256(canonical(selected)).hexdigest() == SWEEP_FILES_SHA256,
         'Client visual sweep changes a preserved 0.13.9 payload')
+    return set(additions)
+
+
+def appearance_files(value):
+    if SWEEP_FILE_COUNT == 0:  # Only the small synthetic installer fixtures.
+        require('appearance_extension' not in value, 'Unexpected appearance extension in historical fixture')
+        return set()
+    extension, files = value.get('appearance_extension', {}), value.get('files', {})
+    additions = extension.get('files', {})
+    require(extension.get('scope') == 'recorded_atlas_npc_sequence_and_costume_dependency_closure'
+        and isinstance(additions, dict) and set(additions) <= set(files)
+        and len(additions) == extension.get('file_count') == APPEARANCE_FILE_COUNT
+        and extension.get('payload_bytes') == APPEARANCE_PAYLOAD_BYTES
+        and extension.get('files_sha256') == APPEARANCE_FILES_SHA256
+        and extension.get('baseline_payloads_preserved') is True and extension.get('missing_only') is True
+        and extension.get('baseline_file_count') == 5476
+        and extension.get('baseline_payload_bytes') == 873255284
+        and extension.get('baseline_files_sha256') == APPEARANCE_BASE_FILES_SHA256,
+        'Client appearance append-only baseline policy differs')
+    baseline = {name: row for name, row in files.items() if name not in additions}
+    selected = {name: files[name] for name in sorted(additions)}
+    require(len(baseline) == 5476 and sum(row['bytes'] for row in baseline.values()) == 873255284
+        and hashlib.sha256(canonical(baseline)).hexdigest() == APPEARANCE_BASE_FILES_SHA256
+        and sum(row['bytes'] for row in selected.values()) == APPEARANCE_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(selected)).hexdigest() == APPEARANCE_FILES_SHA256,
+        'Client appearance recipe changes a preserved 0.13.10 payload')
     return set(additions)
 
 
@@ -274,7 +307,7 @@ def install(worktree, assets, context):
         world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest(), 'Verified client identity changed')
     if not reused:
         publish_marker(worktree, final, context)
-    unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension')
+    unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension', 'appearance_extension')
         for row in document.get(section, {}).get('unresolved_dependencies', [])})
     return {'format': 1, 'scope': SCOPE, 'manifest_sha256': MANIFEST_SHA256,
         'archive_sha256': ARCHIVE_SHA256, 'files_sha256': FILES_SHA256, 'file_count': FILE_COUNT,
@@ -284,6 +317,8 @@ def install(worktree, assets, context):
         'added_encounter_payload_bytes': ENCOUNTER_PAYLOAD_BYTES,
         'retained_sweep_baseline_file_count': 329, 'added_sweep_file_count': SWEEP_FILE_COUNT,
         'added_sweep_payload_bytes': SWEEP_PAYLOAD_BYTES,
+        'retained_appearance_baseline_file_count': 5476, 'added_appearance_file_count': APPEARANCE_FILE_COUNT,
+        'added_appearance_payload_bytes': APPEARANCE_PAYLOAD_BYTES,
         'retained_baseline_payloads_preserved': True,
         'reuse_validation': POLICY, 'fingerprint_reused': bool(reused), 'decoded_files': installed,
         'decoded_payload_bytes': decoded_bytes, 'verified_existing_bytes': verified_bytes,

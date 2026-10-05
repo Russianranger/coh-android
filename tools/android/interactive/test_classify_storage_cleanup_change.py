@@ -12,6 +12,55 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_startup_followup_scope_gates_every_historical_publication_and_runtime(self):
+        from classify_interactive_change import runtime_required
+        names = sorted(change.CLIENT_STARTUP_FOLLOWUP_ALLOWED)
+        functions = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required,
+            change.bundle_required, change.visual_required, change.loading_required,
+            change.streaming_required, change.asset_closure_required, runtime_required)
+        self.assertTrue(change.client_startup_followup_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in functions:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for other in ('assets/client-visual-manifest.json',
+                        'tools/android/interactive/build_client_asset_closure_apk.py',
+                        change.JAVA+'ClientRuntime.java', 'android/native/client-launcher.c',
+                        'upstream/ouroboros/Game/src/render/tex.c', 'unreviewed.py'):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+                for event, before, head, parent in (('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                        ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                        ('push', '0'*40, 'b'*40, '0'*40), ('push', 'c'*40, 'b'*40, 'a'*40),
+                        ('push', 'a'*40, 'a'*40, 'a'*40)):
+                    self.assertTrue(function(event, before, head, parent, names))
+        self.assertTrue(change.startup_followup_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.startup_followup_required('workflow_dispatch', None, None, None, []))
+
+    def test_startup_followup_needs_a_reviewed_source_and_explicit_evidence_name(self):
+        source = 'tools/android/interactive/build_client_startup_followup_apk.py'
+        for names in ([], ['docs/HANDOFF.md'],
+                ['docs/android-evidence/client-startup-followup-0.13.11-assets.json'],
+                [source, 'docs/android-evidence/client-startup-followup-0.13.11-unreviewed.json']):
+            self.assertFalse(change.client_startup_followup_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+            self.assertTrue(change.asset_closure_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.asset_closure_required('push', 'a'*40, 'b'*40, 'a'*40,
+            sorted(change.CLIENT_ASSET_CLOSURE_ALLOWED)))
+
+    def test_classifier_emits_the_new_gate_and_disables_asset_closure_for_followup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)/'outputs'
+            environment = {'GITHUB_OUTPUT': str(output), 'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40}
+            values = ['a'*40, 'b'*40, b'tools/android/interactive/build_client_startup_followup_apk.py\0']
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\n'
+                'setup_required=false\nbundle_required=false\nvisual_required=false\n'
+                'loading_required=false\nstreaming_required=false\nasset_closure_required=false\n'
+                'startup_followup_required=true\n')
+
     def test_asset_closure_scope_retains_all_old_publications_and_rejects_native_startup_changes(self):
         from classify_interactive_change import runtime_required
         names = sorted(change.CLIENT_ASSET_CLOSURE_ALLOWED)
@@ -47,7 +96,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)
@@ -265,14 +314,14 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\n')
             output.unlink()
             with mock.patch.dict(change.os.environ, environment), \
                     mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
-                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\n')
+                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\n')
 
     def test_classifier_emits_all_six_disabled_gates_for_exact_bundle_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -284,7 +333,7 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\n')
 
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)

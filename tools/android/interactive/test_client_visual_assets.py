@@ -475,13 +475,14 @@ class SourceProofTests(unittest.TestCase):
         self.assertEqual({Path(name).stem for name in names}, {'chest_bm_labcoat_01a',
             'chest_bm_labcoat_01b', 'chest_bm_flannel_01a', 'chest_bm_flannel_01b',
             'face_skin_bf_25asian3', 'face_skin_bf_45black1'})
-        # Repository transport is decoded by the producer; the unchanged
-        # guest contract sees only the pinned original plaintext manifest.
+        # The retained producer still verifies this historical recipe. The
+        # candidate guest requires its new exact appearance manifest identity.
         with tempfile.TemporaryDirectory() as temporary:
             assets = Path(temporary)
             (assets / producer.MANIFEST).write_bytes(
                 producer.manifest_bytes(ROOT / 'assets' / producer.MANIFEST))
-            self.assertEqual(visual.package(assets), value)
+            with self.assertRaisesRegex(DiagnosticError, 'manifest differs'):
+                visual.package(assets)
         receipt = json.loads((ROOT / value['encounter_extension']['source_device_receipt']).read_text())
         console = next(row for row in receipt['source_files'] if row['path'].endswith('client-console.log'))
         self.assertEqual({key: console[key] for key in ('bytes', 'sha256')},

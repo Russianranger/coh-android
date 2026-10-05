@@ -102,6 +102,8 @@ def client_contract(package, receipt=None):
         executable = startup_bundle_client_contract(package, candidate)
     if 'client_loading' in package:
         executable = client_loading_contract(package, candidate)
+    if 'client_startup_followup' in package:
+        executable = client_startup_followup_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
@@ -281,3 +283,87 @@ def events_progress_contract(package):
     return {'contract': build['progress_contract'], 'producer': {
         'repository_commit': receipt['repository_commit'], 'manifest_sha256': donor['manifest_sha256'],
         'mapserver_sha256': record['sha256']}}
+
+
+def client_startup_followup_contract(package, candidate=None):
+    """Keep accepted producers intact; only schedule stock metadata lookups."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = client_loading_contract(package, candidate)
+    loading = package['client_loading']
+    wrapper = package.get('client_startup_followup')
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+            'base_client_loading_manifest_sha256', 'base_client_executable'}
+            and wrapper['base_client_loading_manifest_sha256'] == loading['manifest_sha256']
+            and wrapper['base_client_executable'] == previous,
+            'Startup followup must retain the exact accepted loading producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+            and manifest.get('format') == 1 and manifest.get('role') == 'bounded_client_dependency_preload'
+            and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+            and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+            and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+            and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
+            and manifest.get('retained_native_dependencies_changed') is False
+            and manifest.get('retained_source_inputs') == candidate['build_inputs']
+            and manifest.get('schema_sources_sha256') == candidate['retained_cache']['schema_sources_sha256']
+            and manifest.get('base_client_executable') == previous
+            and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False
+            and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+            'Startup followup changed its frozen native dependency closure')
+    build = manifest.get('build_input', {})
+    path = 'libs/UtilitiesLib/src/utils/textparser.c'
+    preload = {'environment_variable': 'COH_CLIENT_DEPENDENCY_PRELOAD', 'enabled_value': '1',
+        'disabled_by_default': True,
+        'requests': [{'persistfile': 'bin/powers.bin', 'directory': 'defs/powers/', 'filemask': '.powers', 'requested_tree': 'Menu'},
+            {'persistfile': 'bin/sequencers.bin', 'directory': 'sequencers', 'filemask': '.txt',
+             'requested_tree': 'player_library/animations'}],
+        'scope': 'ordinary_FolderCache_metadata_only', 'source_freshness_preserved': True,
+        'crc_validation_preserved': True, 'cache_encoding_changed': False,
+        'full_asset_bytes_preloaded': False, 'native_fallback_preserved': True,
+        'record_prefix': 'COH_CLIENT_DEPENDENCY_PRELOAD_V1'}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+            'base_client_loading_build_input', 'patch', 'patch_sha256', 'source_sha256', 'patched_sha256',
+            'preserved_functions_sha256', 'reverse_patch_exact_base_verified',
+            'freshness_body_exact_except_preload_call', 'native_callsite_sources_sha256', 'dependency_preload', 'build_targets',
+            'configuration', 'architecture', 'cache_encoding_changed', 'parse6_schema_changes',
+            'source_freshness_changed', 'graphics_profile_changes', 'runtime_execution_validated'}
+            and build.get('format') == 1 and build.get('role') == manifest['role']
+            and build.get('source_commit') == SOURCE
+            and build.get('base_client_loading_build_input') == loading['manifest']['build_input']
+            and build.get('patch') == 'patches/client-startup-followup/0001-preload-power-dependency-tree.patch'
+            and HEX64.fullmatch(str(build.get('patch_sha256', '')))
+            and build.get('source_sha256') == loading['manifest']['decoder_source_sha256']
+            and isinstance(build.get('patched_sha256'), dict) and set(build['patched_sha256']) == {path}
+            and all(HEX64.fullmatch(str(value)) for value in build['patched_sha256'].values())
+            and build['patched_sha256'] != build['source_sha256']
+            and manifest.get('preload_source_sha256') == build['patched_sha256']
+            and isinstance(build.get('preserved_functions_sha256'), dict)
+            and set(build['preserved_functions_sha256']) == {'int ParseTableCRC(', 'int ParserReadBinaryTable(',
+                'int ParserReadBinaryFile(', 'char* StructAllocStringLenDbg(', 'static FileScanAction DateCheckCallback(',
+                'void*    StructAllocRawDbg(', 'void    StructFree(', 'void StructFreeString('}
+            and all(HEX64.fullmatch(str(value)) for value in build['preserved_functions_sha256'].values())
+            and build.get('reverse_patch_exact_base_verified') is True
+            and build.get('freshness_body_exact_except_preload_call') is True
+            and build.get('native_callsite_sources_sha256') == {'Common/entity/load_def.c': 'b0d9683471b93194cf40dfe673ca8b2948ef4ebcd05a8ec240062a6e4c3220e5', 'Common/entity/powers_load.c': 'c5b7bbf32621922a36ba097d566840bdd9d4afc692d8e3baacd0e207dc1e12b8', 'Common/seq/seqload.c': '8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f', 'libs/UtilitiesLib/src/utils/FolderCacheNode.c': '36faafa73afd83361fb8e4f25e340961fae5fb9d33c298b1200be9a4b2a48524', 'libs/UtilitiesLib/src/utils/file.c': '8ad08c34d2fed652578e26f0ec1fab79419b40414644c6b8e1ccbc58694733e1', 'libs/UtilitiesLib/src/utils/FolderCache.c': '0cba5a9d841a3cea2e973475aad420741ef0ce344b0f50ffaa5605e9798fb0bf'}
+            and build.get('dependency_preload') == preload and build.get('build_targets') == ['Game']
+            and build.get('configuration') == 'OptDebug' and build.get('architecture') == 'Win32'
+            and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+                'source_freshness_changed', 'graphics_profile_changes', 'runtime_execution_validated')),
+            'Startup followup changed source freshness, CRC, decoder, cache or preload scope')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and checks.get('format') == 1 and checks.get('status') == 'passed'
+            and checks.get('platform') == 'windows' and checks.get('architecture') == 'Win32'
+            and checks.get('configuration') == 'OptDebug' and checks.get('build_input') == build
+            and checks.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+            and all(checks.get(key) is True for key in ('equivalence_verified', 'opt_in_and_fallback_verified',
+                'exact_scope_verified', 'freshness_failure_branches_verified',
+                'metadata_lookup_reduction_verified', 'ordinary_source_mutation_detection_verified'))
+            and HEX64.fullmatch(str(checks.get('harness_sha256', '')))
+            and checks.get('individual_fallback_queries') == 4539 and checks.get('candidate_tree_requests') == 1
+            and checks.get('physical_startup_savings_validated') is False,
+            'Startup followup requires source-bound Win32 freshness equivalence checks')
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(record != previous and record != candidate['files']['CityOfHeroes.exe'],
+            'Startup followup executable is unchanged or regressed')
+    return record

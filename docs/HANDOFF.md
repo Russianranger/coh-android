@@ -1,5 +1,83 @@
 # City of Heroes Android handoff
 
+**0.13.11 startup/appearance candidate; hosted qualification and publication pending.**
+Continue from the durable Thor evidence checkpoint
+`ba876d2e27d9481c1262f19566c12ce3313ab1a3`, with the public 0.13.10 APK as the
+exact immediate donor. This pass combines a bounded Game-only metadata preload
+with an append-only original appearance supplement. Main, accepted runtime,
+DbServer/MapServer, twenty client DLLs, Android DEX/resources, generated cache
+formats, imports, profile and ordinary native reward/save proof are retained.
+Neither 0.13.9 nor 0.13.10 is rebuilt or overwritten.
+
+The client report attributes **65.796s** to power BIN freshness checks and
+**149.238s** to all recorded BIN freshness checks, versus **18.032s** decoding
+and **9.371s** opening. The original power file list has 4,539 dependencies
+outside `defs/powers/`, under `Menu`. Before the existing checks, an explicitly
+enabled Game-only layer requests the stock `Menu` metadata tree; the sequencer
+path requests `player_library/animations`. These requests use the ordinary
+FolderCache and retain loose/PIG timestamp selection, CRC validation, every
+freshness failure branch and decoder behavior. No complete asset bytes are
+preloaded and no persistent cache encoding changes. The exact caller guards,
+original body equivalence, six native source witnesses and controlled lookup
+reduction require source-bound Win32 qualification. **Thor startup savings are
+unverified.** Atlas's **229.246s** native stage remains unresolved; its roughly
+51-second sequencer post-load cost is distinct from BIN decoding and remains a
+future server optimization target.
+
+The appearance audit follows the exact retained Atlas map/encounter references:
+44 maps, 18 exact encounter definitions, 1,048 NPC costumes, 178 EntTypes,
+ten factions and their model, material, texture-alias and FX edges. It includes the otherwise silent police drone
+`player_library/G_Police_Drone.geo` body and the Informant's `Model_Proton`
+costume dependencies, cape/ground-effect layers, native aliases and dependent
+FX models/textures. The final frozen set is **9,490 files: 5,476 retained +
+4,014 original additions (462 GEOs + 3,552 textures)**. The earlier 4,012 scope
+gained a traced megaphone GEO/texture pair; an intermediate 4,008 filter error
+was corrected by restoring valid OneShotFX dependencies. No accepted file was
+dropped. All 9,490 decoded sizes/SHA/original-table MD5/native headers pass, and
+**all 5,476 prior encoded streams are byte-identical, including all 329 original
+streams**. The new ZIP is **854,341,235 bytes**, SHA-256
+`840619b3b40c24f206576580dfaedb779a66582f1df189f37002dd59c5399cb9`;
+decoded payload is **1,505,717,817 bytes**, including **632,462,533 new bytes**.
+The plaintext manifest is **42,257,673 bytes**, SHA-256
+`8b3f579a9ff48e80f40e06e252c91fe3357daf9f0b01441dea5bceaa5801f1e6`.
+Only these named visual inputs receive 1 GiB ZIP/64 MiB metadata/2 GiB decoded
+bounds. Lossless source envelopes fit the existing source transport; the guest
+receives the exact pinned plaintext. Fresh plan-only discovery reproduces both
+frozen plan and request bytes. There are 5,776 appearance source pins, 1,388
+composite aliases, 3,791 stock definitions and 70 native leaf backedges, with
+zero ambiguous definitions, alias cycles or new retained-texture basename
+collisions. See the [frozen asset receipt](android-evidence/client-startup-followup-0.13.11-assets.json).
+
+Still unresolved in this finite scope: **100 dependencies** (five donor GEO
+filenames, nine exact model names, three invalid native GEO model-count headers,
+83 texture/material stems) and **29 deeper source witnesses / 22 unique targets**
+(17 authored FX/behavior paths, two FX models, ten Parkour includes). The NPC
+costume source graph itself closes without gaps; these are unsupported exact
+donor/sequence/FX references, not failed downloads. Colon-prefixed behavior names
+resolve against their owning FX directory, so same basenames elsewhere cannot
+substitute. Historic `GEO_Collar_MAGIC` remains unsupported. Distant white
+geometry, shader/material behavior and full physical visual completeness are
+unconfirmed; no fuzzy substitutions or renderer/gameplay changes are made.
+
+Local source/archive regression coverage is **57 suites / 894 scenarios** with
+zero skips, and qualification resolves **6,763 source paths** without missing
+files. Real hosted Win32 production qualification, three PostgreSQL transaction
+fixtures, signing/publication and fresh public APK verification are still
+pending. The [full-size host installation receipt](android-evidence/client-startup-followup-0.13.11-benchmark.json)
+checks 4,014 additions, all 5,476 retained inode/byte/mode/timestamp identities,
+Game/cache sentinels and absolute server links. Warm reuse of all 9,490 files
+passes with ZIP opening, payload hashing and extraction forbidden. Its
+2,509,324-byte marker fits the unchanged 4 MiB bound; fixture-inclusive host
+peak is 242,108 KiB. Host installation evidence does not establish Thor timing
+or memory behavior.
+
+Use [focused 0.13.11 Thor instructions](COH-Atlas-Gameplay-0.13.11-testing.txt)
+after publication: one first and one subsequent saved-character reopen with
+the same preset, separate Atlas/client/login-to-world and first installation
+timings, the photographed faces/armor/drone/world route, ordinary Save and
+complete support ZIP export. Do not repeat accepted creation/task milestones,
+clear app data or reimport existing assets.
+
 **0.13.10 Thor follow-up and active startup/appearance continuation (October 5, 2026 UTC).**
 The live branch was recovered at `37404945f3c53c0897c275beb94a2fec4ed915b2`,
 after the accepted 0.13.10 APK source `9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb`.

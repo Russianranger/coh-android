@@ -9,6 +9,30 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_startup_followup_marker_has_priority_and_cannot_hide_historical_scope(self):
+        names = sorted(change.CLIENT_STARTUP_FOLLOWUP_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for other in ('assets/client-visual-manifest.json',
+                'tools/android/interactive/build_client_asset_closure_apk.py',
+                'tools/android/interactive/package_client_loading_native.py',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java',
+                'android/native/client-launcher.c', 'unknown.py'):
+            with self.subTest(other=other):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[other]))
+
+    def test_startup_followup_dispatch_and_ambiguous_history_require_full_runtime(self):
+        names = sorted(change.CLIENT_STARTUP_FOLLOWUP_ALLOWED)
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'invalid', 'a'*40),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+
     def test_exact_asset_closure_scope_cannot_hide_native_renderer_startup_or_java_edits(self):
         names = sorted(change.CLIENT_ASSET_CLOSURE_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -101,7 +125,7 @@ class QualificationRoutingTests(unittest.TestCase):
         parent, head = 'a' * 40, 'b' * 40
         known = sorted(change.SHELL_ONLY)
         self.assertFalse(change.runtime_required('push', parent, head, parent, known))
-        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS - change.CLIENT_ASSET_CLOSURE_MARKERS)
+        candidate = sorted((change.SHELL_ONLY | change.RESPONSIVENESS_ONLY) - change.BUNDLE_MARKERS - change.VISUAL_MARKERS - change.CLIENT_LOADING_MARKERS - change.CLIENT_STREAMING_MARKERS - change.CLIENT_ASSET_CLOSURE_MARKERS - change.CLIENT_STARTUP_FOLLOWUP_MARKERS)
         self.assertFalse(change.runtime_required('push', parent, head, parent, candidate))
         for event, before, files in (
             ('workflow_dispatch', parent, known), ('pull_request', parent, known),
