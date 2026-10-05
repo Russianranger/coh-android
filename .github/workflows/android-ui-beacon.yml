@@ -1,0 +1,73 @@
+name: Prepare original UI payload only
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-ui-beacon.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-original-ui-preparation
+  cancel-in-progress: false
+# Preparation only: no graph acceptance, SDK, signing, APK or release steps.
+# The final publisher separately proves retained encoded streams and all68 suites.
+jobs:
+  ui:
+    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: out/ui-beacon-donor/evidence
+          run-id: 37324515114
+          github-token: ${{ github.token }}
+      - name: Recover exact public working donor
+        run: python3 tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+      - name: Extract exact working visual baseline
+        run: >-
+          python3 tools/android/interactive/build_ui_beacon_apk.py extract-baseline
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --output out/ui-beacon-baseline
+      - name: Materialize only the frozen missing original UI leaves
+        run: |
+          mkdir -p out/ui-beacon-visual
+          python3 tools/android/interactive/prepare_client_ui_sweep_assets.py --materialize --manifest assets/client-ui-sweep-manifest.json --baseline-directory out/ui-beacon-baseline --output out/ui-beacon-visual
+      - name: Gate exact frozen original UI payload bytes before artifact upload
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          expected = {
+              'client-visual-assets.zip': {'bytes': 859075775, 'sha256': '5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60'},
+              'client-visual-manifest.json': {'bytes': 48591999, 'sha256': '8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2'},
+          }
+          directory = Path('out/ui-beacon-visual')
+          if not directory.is_dir() or directory.is_symlink() or set(path.name for path in directory.iterdir()) != set(expected):
+              raise ValueError('Exact two original UI payload files required')
+          for name, pin in expected.items():
+              path = directory / name
+              if not path.is_file() or path.is_symlink() or path.stat().st_size != pin['bytes']:
+                  raise ValueError('Prepared original UI file size/type differs: ' + name)
+              digest = hashlib.sha256()
+              with path.open('rb') as source:
+                  for chunk in iter(lambda: source.read(1024 * 1024), b''):
+                      digest.update(chunk)
+              if digest.hexdigest() != pin['sha256']:
+                  raise ValueError('Prepared original UI file SHA-256 differs: ' + name)
+          print('COH_ORIGINAL_UI_PAYLOAD_PIN_GATE_V1 ' + json.dumps(expected, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-visual
+          path: out/ui-beacon-visual/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90

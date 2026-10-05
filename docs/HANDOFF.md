@@ -37,8 +37,14 @@ fresh-profile deadline; no timeout failure occurred. The current actual run must
 complete genuine generation and both profile proofs before
 freezing graph pins and enabling final 68-suite/seven-PostgreSQL-fixture signing
 and public APK download audit. No 0.13.14 APK is published. The frozen UI sweep
-adds 788 original resources while preserving all 9,613 prior streams. Main
-remains separate, PR #1 stays draft, and zoning remains a later pass.
+adds 788 original resources while preserving all 9,613 prior streams. The
+current `android-ui-beacon.yml` is **preparation only**: it can retain the exact
+frozen UI ZIP/manifest pair in a read-only hosted job while the native run
+continues. Full publication remains held. After real graph success and frozen
+guest pins, replace that preparation workflow with the reviewed full publisher;
+optional UI reuse requires the exact successful prep head/run and both frozen
+size/SHA pairs, followed by all final conservation and qualification checks.
+Main remains separate, PR #1 stays draft, and zoning remains a later pass.
 
 Earlier actual CRC failure checkpoint follows; its investigation status is historical.
 
