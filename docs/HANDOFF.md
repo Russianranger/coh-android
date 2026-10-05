@@ -1,5 +1,60 @@
 # City of Heroes Android handoff
 
+**0.13.12 published and independently public-byte verified; first-training Thor test pending.**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.12/COH-Atlas-Gameplay-0.13.12.apk),
+version **0.13.12 / code 27**, implementation
+`e552fadeb1f392ab2574be16df6b474933c8ed00`. Continue the existing continuation
+branch and draft PR #1. Main stays `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+This publication documentation descendant does not imply another APK build.
+
+[Production CI 37315299321](https://github.com/Russianranger/coh-android/actions/runs/37315299321)
+passed all five jobs: exact donor recovery and frozen UI discovery, actual Win32
+DbServer production build and native contracts, **962 scenarios / 62 suites /
+zero skips / 6,804 source pins**, all three retained and four new real PostgreSQL
+transaction fixtures, retained-signer SDK version/signature/alignment checks,
+packaging and publication. The first failed run `37314436172` remains historical
+evidence; its unsupported CLI argument and Windows fixture handle cleanup are
+corrected and covered by the successful current run.
+
+The public APK is **1,535,588,715 bytes**, SHA-256
+`ca692d986d7f8bf50d11be03348f07c436e7f3f1b6c5fab83e8ebe2bc932e749`.
+[Independent public-byte receipt](android-evidence/levelup-ui-repair-0.13.12-publication.json)
+binds a fresh public download, release digest, checksum/testing notes and current
+hosted build/qualification. All **72 payloads** verify: **62 retained / nine
+replaced / one added**. Game, all twenty DLLs, MapServer, Android DEX/resources,
+nineteen Java sources, server archives/caches and all **9,490 original visual
+stored streams** remain exact. The new helper only observes native training and
+committed SQL; the production DbServer keeps rollback and commit-before-ACK.
+Hosted official SDK checks bind to the same independently downloaded APK bytes;
+local SDK/signature rechecks were not performed.
+
+The **123 original UI textures** append 5,384,150 decoded bytes, for **9,613
+verified leaves**. XP/level indicators, inspirations, tray labels and trainer
+selection controls have exact source/donor witnesses. Archery/Devices power
+detail icons were already present; native trainer rows use ownership checkmarks.
+Five exact donor stems remain unavailable, without substituted textures.
+The saved-character and retry routes now enable the existing qualified Game
+metadata preload. Warm visual preparation reuses its verified receipt without
+archive reads/decoding; source freshness, native timing and cache guards remain.
+
+Use the [published focused testing instructions](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.12/COH-Atlas-Gameplay-0.13.12-testing.txt):
+install over the existing app, Set up runtime once and keep imports/profile/DB.
+Reopen THORHERO, inspect the missing UI, train at Ms Liberty, choose a power,
+press Next and complete/exit dialogue. Confirm normal gameplay and the power,
+ordinary Save/log out, Finish and export the complete outer support ZIP. Reopen
+again to verify trained level/XP/new power, then save/finish/export the second
+report. Record Atlas, actual client and login-to-world timing independently of
+setup, first UI/header preparation and user input. No accepted creation/tasks or
+safe-ground milestone rerun is required.
+
+**Physical training/UI success and startup savings remain pending.** The prior
+native first/second Atlas times were 235.342s / 208.616s; actual client times
+334.499s / 324.792s. Preserve those phase-specific baselines. The prior 115 XP
+persisted, but the old failed training transaction rolled back; this build's
+actual level/power persistence requires the new Thor pass.
+
+**Pre-publication recovery checkpoint below is historical.**
+
 **Recovered 0.13.12 source checkpoint ready for hosted qualification; publication pending.**
 Implementation checkpoint `1485dfa12236b66a3e409a0423f297ce9bc6ff3a` preserves
 the cut-off agent's complete work and finishes training validation. Hosted
