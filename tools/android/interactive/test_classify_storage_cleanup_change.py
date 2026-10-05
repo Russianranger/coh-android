@@ -12,6 +12,30 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_ui_beacon_scope_skips_all_historical_builds_and_fails_closed(self):
+        from classify_interactive_change import runtime_required
+        names = sorted(change.UI_BEACON_ALLOWED)
+        historical = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required, change.bundle_required,
+            change.visual_required, change.loading_required, change.streaming_required,
+            change.asset_closure_required, change.startup_followup_required, change.levelup_ui_repair_required,
+            change.reopen_startup_repair_required, runtime_required)
+        self.assertTrue(change.ui_beacon_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.ui_beacon_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in historical:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for foreign in ('android/native/client-launcher.c', 'android/guest/client_interactive_diagnostic.py',
+                        'patches/levelup-ui-repair/0001-pg-empty-row-witness.patch', 'unreviewed.py'):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+                self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+        checkpoint = ['docs/HANDOFF.md', 'docs/android-evidence/ui-beacon-0.13.14-publication.json']
+        for function in historical+(change.ui_beacon_required,):
+            with self.subTest(checkpoint=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, checkpoint))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, checkpoint+['unreviewed.md']))
+
     def test_reopen_startup_native_derivative_skips_historical_publication_and_closes_scope(self):
         from classify_interactive_change import runtime_required
         names = sorted(change.REOPEN_STARTUP_REPAIR_ALLOWED)
@@ -113,7 +137,7 @@ class StorageRoutingTests(unittest.TestCase):
                 'recovery_required=false\nreceipt_required=false\nschedule_required=false\n'
                 'setup_required=false\nbundle_required=false\nvisual_required=false\n'
                 'loading_required=false\nstreaming_required=false\nasset_closure_required=false\n'
-                'startup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\n')
+                'startup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\nui_beacon_required=true\n')
 
     def test_asset_closure_scope_retains_all_old_publications_and_rejects_native_startup_changes(self):
         from classify_interactive_change import runtime_required
@@ -150,7 +174,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)
@@ -368,14 +392,14 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\nui_beacon_required=true\n')
             output.unlink()
             with mock.patch.dict(change.os.environ, environment), \
                     mock.patch.object(change.subprocess, 'check_output', side_effect=OSError('no history')), \
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=true\ncleanup_required=true\n'
-                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\n')
+                'recovery_required=true\nreceipt_required=true\nschedule_required=true\nsetup_required=true\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\nui_beacon_required=true\n')
 
     def test_classifier_emits_all_six_disabled_gates_for_exact_bundle_source(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -387,7 +411,7 @@ class StorageRoutingTests(unittest.TestCase):
                     contextlib.redirect_stdout(io.StringIO()):
                 change.main()
             self.assertEqual(output.read_text(), 'task_required=false\ncleanup_required=false\n'
-                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\n')
+                'recovery_required=false\nreceipt_required=false\nschedule_required=false\nsetup_required=false\nbundle_required=true\nvisual_required=true\nloading_required=true\nstreaming_required=true\nasset_closure_required=true\nstartup_followup_required=true\nlevelup_ui_repair_required=true\nreopen_startup_repair_required=true\nui_beacon_required=true\n')
 
     def test_receipt_cleanup_routes_only_its_same_profile_scope_away_from_old_releases(self):
         names = sorted(change.RECEIPT_ALLOWED)

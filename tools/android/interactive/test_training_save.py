@@ -4,9 +4,12 @@ These host scenarios establish validator semantics, not an Android training
 pass. The accepted ordinary reward/logout tests retain original device lines.
 """
 import copy
+import calendar
+from datetime import datetime
 import json
 from pathlib import Path
 import sys
+import time
 import unittest
 from unittest.mock import Mock, patch
 
@@ -278,6 +281,163 @@ class TrainingSaveTests(unittest.TestCase):
         for name, level in training.AUTO_POWERS.items():
             with self.subTest(name=name):
                 self.assertRegex(sets, r'Powers ' + name.replace('.', r'\.') + r'\s+Available ' + str(level) + r'\b')
+
+
+class DeviceTrainingNormalizationTests(unittest.TestCase):
+    """Real exported SQL/log inputs; sender receipt alone is synthetic.
+
+    These host replays repair the false-negative validator contract. They do
+    not change either historical device report to passed: the private sender
+    receipt was not part of those support ZIPs.
+    """
+    FIXTURE = ROOT / 'tools/android/interactive/fixtures/thor-training-normalization-0.13.13-20261005.json'
+
+    def instance(self, index):
+        fixture = json.loads(self.FIXTURE.read_text())
+        observed = fixture['sessions'][index]
+        value, _ = reward.CombatRewardSaveTests.instance(self)
+        now_ms = int(datetime.fromisoformat(observed['finished_utc']).timestamp() * 1000)
+        # Wine logs and this Android session used UTC. The host may run in a
+        # different timezone; replay their stock local-time conversion in UTC.
+        self.enterContext(patch.object(server.time, 'mktime', side_effect=calendar.timegm))
+        self.enterContext(patch.object(server.time, 'time', return_value=now_ms / 1000))
+        proof = observed['owned_connection']
+        value.owner.args.session_id = proof['session_id']
+        value.auth_id = proof['auth_id']
+        value.creation_report.update(proof, task_gate_required=False)
+        value.manual_atlas_startup = {'levelup_ui_repair_save': {'scope': 'physical_child_row_read_witness_and_order_only'}}
+        value.schema['expected_attributes'] = {'attributes': fixture['attributes']}
+        before = observed['before_rows']
+        inventory = [{key: before['ents'][0][key] for key in server.evidence.IDENTITY_FIELDS}]
+        value.baseline = inventory
+        value.baseline_snapshot = server.validate_character_rows(before, inventory, inventory,
+            value.schema['expected_attributes'], value.auth_id, existing_identity=inventory[0],
+            expected_login_count=before['ents'][0]['logincount'])
+        value.creation_report.update(before_login_count=before['ents'][0]['logincount'])
+        self.rows = observed['saved_rows']
+        value.current_logs.return_value = observed['logs']
+        logout = server.logout_record(observed['logs'])
+        sent_ms = calendar.timegm(time.strptime(logout['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000 - 2000
+        self.receipt = dict(format=1, session_id=proof['session_id'], client_pid=proof['client_pid'],
+                            character_id=1, action='quittologin', sent_utc_ms=sent_ms)
+        (value.owner.args.state / 'character-logout.json').write_text(json.dumps(self.receipt))
+        terminal = server.native_logout_position(observed['logs'], self.receipt,
+            proof['client_ready_observed_utc_ms'], now_ms)
+        x, y, z = terminal['position']
+        value.character_position.return_value = dict(containerid=1, mapid=1, staticmapid=1, posx=x, posy=y, posz=z)
+        return value, inventory
+
+    def test_real_lowercase_attribute_rows_train_aimed_shot_then_keep_exact_25xp_14influence(self):
+        value, inventory = self.instance(0)
+        before = copy.deepcopy(value.baseline_snapshot)
+        saved = value.validate_saved_rows(self.rows, inventory)
+        metadata = value.saved_metadata(saved)
+        self.assertTrue(metadata['native_training_values_committed_verified'])
+        self.assertEqual(metadata['newly_purchased_power']['power'], 'Blaster_Ranged.Archery.Aimed_Shot')
+        self.assertEqual(len(metadata['native_training_save_evidence']['automatic_power_additions']), 7)
+        self.assertTrue(metadata['native_reward_values_committed_verified'])
+        self.assertEqual(metadata['native_reward_credit_evidence']['expected_saved_reward_values'],
+                         {'experiencepoints': 140, 'influencepoints': 103})
+        self.assertEqual(value.baseline_snapshot, before)
+        self.assertTrue(value.creation_report['committed_native_position_verified'])
+
+    def test_real_following_load_normalizes_only_eleven_known_auto_set_levels(self):
+        value, inventory = self.instance(1)
+        before = copy.deepcopy(value.baseline_snapshot)
+        saved = value.validate_saved_rows(self.rows, inventory)
+        metadata = value.saved_metadata(saved)
+        self.assertTrue(metadata['native_power_load_normalization_verified'])
+        evidence = metadata['native_power_load_normalization_evidence']
+        self.assertEqual(len(evidence['changed_auto_set_rows']), 11)
+        self.assertTrue(evidence['all_other_power_fields_preserved'])
+        self.assertFalse(evidence['sql_game_mutations_performed'])
+        self.assertFalse(evidence['new_purchase_verified'])
+        self.assertEqual(value.baseline_snapshot, before)
+        self.assertEqual(saved['rows']['ents'][0]['experiencepoints'], 140)
+        self.assertEqual(saved['rows']['ents'][0]['level'], 1)
+        self.assertNotIn('native_training_values_committed_verified', metadata)
+
+    def test_normalized_following_reopen_is_exact_and_needs_no_second_exception(self):
+        value, inventory = self.instance(1)
+        value.baseline_snapshot['rows'] = copy.deepcopy(self.rows)
+        value.baseline_snapshot['rows']['ents'][0]['logincount'] -= 1
+        saved = value.validate_saved_rows(self.rows, inventory)
+        self.assertNotIn('native_power_load_normalization_verified', value.saved_metadata(saved))
+
+    def test_full_disconnected_sql_and_ordinary_save_pipeline_accepts_both_real_row_transitions(self):
+        for index in (0, 1):
+            value, inventory = self.instance(index)
+            value.health = Mock()
+            value.sample_progress = Mock(return_value={'available': True, 'tick_completed': 7, 'unchanged_seconds': 0})
+            value.inventory = Mock(return_value=inventory)
+            value.character_rows = Mock(return_value=self.rows)
+            value.query = Mock(return_value='invalid container request\n')
+            with self.subTest(index=index), patch.object(server.progress, 'compare_records'):
+                proof = value.character_evidence()
+                self.assertTrue(guest.save_verified(proof, value.owner.args.session_id))
+                self.assertTrue(proof['committed_sql_verified'])
+                self.assertTrue(proof['disconnected_before_sql'])
+                self.assertTrue(proof['requested_logout_observed'])
+                self.assertTrue(proof['powers_preserved'])
+                self.assertTrue(proof['costume_preserved'])
+                self.assertFalse(proof['forced_stop_before_save'])
+
+    def test_every_other_actual_selected_field_and_row_structure_remains_strict(self):
+        for table, fields in server.evidence.SELECTED.items():
+            for field in fields:
+                value, inventory = self.instance(1)
+                changed = copy.deepcopy(self.rows)
+                row = changed[table][0]
+                row[field] = 99999 if type(row[field]) is int else 'changed'
+                with self.subTest(table=table, field=field), self.assertRaises(server.base.DiagnosticError):
+                    value.validate_saved_rows(changed, inventory)
+        for mutation in ('missing_auto', 'added_power', 'reordered', 'wrong_auto_set', 'auto_level', 'uid'):
+            value, inventory = self.instance(1)
+            changed = copy.deepcopy(self.rows)
+            if mutation == 'missing_auto': changed['powers'].pop(5)
+            if mutation == 'added_power': changed['powers'].append(dict(changed['powers'][0], subid=15, powerid=16, uniqueid=555))
+            if mutation == 'reordered': changed['powers'][0], changed['powers'][1] = changed['powers'][1], changed['powers'][0]
+            if mutation == 'wrong_auto_set': changed['powers'][5]['powersetlevelbought'] = 2
+            if mutation == 'auto_level': changed['powers'][5]['powerlevelbought'] = 2
+            if mutation == 'uid': changed['powers'][5]['uniqueid'] = changed['powers'][0]['uniqueid']
+            with self.subTest(mutation=mutation), self.assertRaises(server.base.DiagnosticError):
+                value.validate_saved_rows(changed, inventory)
+
+    def test_qualified_producer_ordinary_sender_owned_ready_and_task_exclusion_remain_required(self):
+        for failure in ('old_producer', 'task_profile', 'sender_missing', 'foreign_sender', 'ready_missing', 'logout_missing'):
+            value, inventory = self.instance(1)
+            if failure == 'old_producer': value.manual_atlas_startup = {'startup_bundle_save': {}}
+            if failure == 'task_profile': value.creation_report['task_gate_required'] = True
+            if failure == 'sender_missing': (value.owner.args.state / 'character-logout.json').unlink()
+            if failure == 'foreign_sender': (value.owner.args.state / 'character-logout.json').write_text(json.dumps(dict(self.receipt, client_pid=self.receipt['client_pid'] + 1)))
+            if failure == 'ready_missing': value.creation_report['native_client_ready_observed'] = False
+            if failure == 'logout_missing': value.current_logs.return_value = []
+            with self.subTest(failure=failure), self.assertRaises(server.base.DiagnosticError):
+                value.validate_saved_rows(self.rows, inventory)
+
+    def test_source_requires_autoissue_available_parent_set_assignment_and_exact_pack(self):
+        native = ROOT / 'upstream/ouroboros'
+        text = (native / 'MapServer/src/entity/character_db.c').read_text()
+        self.assertIn('if(ppowBase->bAutoIssue && !ppowBase->bAutoIssueSaveLevel)', text)
+        self.assertIn('thisDbPower->iPowerSetLevelBought = psetBase->piAvailable[j];', text)
+        self.assertIn('pset->iLevelBought = (pset->psetBase && pset->psetBase->iForceLevelBought >= 0) ? pset->psetBase->iForceLevelBought : thisDbPower->iPowerSetLevelBought;', text)
+        self.assertIn('s_dbpows.powers[iCntPowers].iPowerSetLevelBought = ppow->psetParent->iLevelBought;', text)
+        power_load = (native / 'Common/entity/powers_load.c').read_text()
+        inherent = power_load[power_load.index('if(stricmp(pcat->pchName, "Inherent")==0)'):]
+        self.assertLess(inherent.index('ppow->bAutoIssue = true;'), inherent.index('if(stricmp(ppow->pchName'))
+        data = ROOT / 'upstream/i24/data/defs/powers'
+        sets = (data / 'inherent.powersets').read_text()
+        for name, level in training.AUTO_POWERS.items():
+            with self.subTest(name=name):
+                self.assertRegex(sets, r'Powers ' + name.replace('.', r'\.') + r'\s+Available ' + str(level) + r'\b')
+        for path in ('inherent_inherent.powers', 'inherent_fitness.powers'):
+            definitions = (data / path).read_text()
+            for name in training.AUTO_POWERS:
+                if path != 'inherent_' + name.split('.')[1].casefold() + '.powers':
+                    continue
+                block = definitions[definitions.index('Power ' + name + '\n'):].split('\nPower ', 1)[0]
+                self.assertNotRegex(block, r'\bAutoIssueSaveLevel\s+kTrue\b')
+
 
 
 if __name__ == '__main__': unittest.main()

@@ -653,5 +653,120 @@
       "Determine expected training third pane at displaylevel2; blank screenshot alone does not establish missing content.",
       "Resolve precise tips/enhancement/nameplate dependencies from native source and original client textures; reports do not log useful UI-stem misses."
     ]
+  },
+  "texture_header_index_audit": {
+    "bytes_per_session": 5312285,
+    "conclusion": "No evidence of stale texture-header index or omitted current inventory. Current declared layers have no basename collision and lack two exact enhancement overlay textures; native draw order supports their one-pixel white fallback over the retained dark-blue RingHole. Physical repair confirmation remains pending.",
+    "declared_current_texture_layer_counts": {
+      "avatar": 15,
+      "filename_basename_collisions": 0,
+      "reference": 8936,
+      "total": 20053,
+      "unique_filename_basename_keys": 20053,
+      "visual": 8686,
+      "world": 2416
+    },
+    "declared_layer_manifests": [
+      "assets/reference-inputs-manifest.json",
+      "assets/character-avatar-defaults-manifest.json",
+      "assets/atlas-world-supplement-manifest.json",
+      "out/ui-beacon-donor/visual/client-visual-manifest.json"
+    ],
+    "inventory_sha256": "f22edf02dcfe58232f5e5d724054d739180046ce80c0c2038590d3d348bb014d",
+    "original_header_bytes_sha256": "2133cd2cd9c967ea73f3749ec44373d57a2b94b907e0f43dc9344b81e1cc5e7b",
+    "pack_sha256": "55485fedbd9f41b9a437e134d219348f60531be058dd5176a3638c346e8d5f61",
+    "preparation_order": [
+      "Owned Atlas readiness",
+      "All 9613 visual leaves installed or verified",
+      "Client animation preparation",
+      "Texture index complete inventory",
+      "Native initial texture header scan",
+      "Native gameplay UI lookups"
+    ],
+    "records_per_session": 20053,
+    "retained_donor_texture_check": {
+      "bytes": 16609,
+      "center_8_by_8_pixels_rgba": [
+        0,
+        26,
+        70,
+        255
+      ],
+      "center_contains_white_square": false,
+      "dds_mode": "RGBA",
+      "duplicate_original_basename_count_within_visual_supplement": 0,
+      "header_bytes": 97,
+      "height": 64,
+      "original_name": "texture_library/GUI/CREATION/Enhancements/EnhncTray_RingHole.dds",
+      "path": "data/texture_library/gui/creation/enhancements/enhnctray_ringhole.texture",
+      "sha256": "a1a494a432e213b711b399b2a5c852a1bf5f5e140e05d39175efe6f8794b80eb",
+      "underscore_excluded_texture_count": 0,
+      "visual_manifest_texture_count": 8686,
+      "width": 64
+    },
+    "runtime_witnesses": [
+      {
+        "completion": "COH_TEXTURE_INDEX_V1 hits=20053 ordinary_reads=0",
+        "completion_line": 4452,
+        "header_open_or_decode_errors_observed": false,
+        "index_reused": false,
+        "inventory_passes": 2,
+        "path": "guest-report-extracted/client-evidence/client-console.log",
+        "ready": "COH_TEXTURE_INDEX_V1 ready records=20053 bytes=5312285",
+        "ready_line": 352,
+        "report": "coh-atlas-gameplay-20261005-153904.zip"
+      },
+      {
+        "completion": "COH_TEXTURE_INDEX_V1 hits=20053 ordinary_reads=0",
+        "completion_line": 4452,
+        "header_open_or_decode_errors_observed": false,
+        "index_reused": true,
+        "inventory_passes": 1,
+        "path": "guest-report-extracted/client-evidence/client-console.log",
+        "ready": "COH_TEXTURE_INDEX_V1 ready records=20053 bytes=5312285",
+        "ready_line": 352,
+        "report": "coh-atlas-gameplay-20261005-155202.zip"
+      }
+    ],
+    "scope": "Read-only source/runtime audit of possible omitted or stale UI header registration",
+    "selected_missing_overlay_dependencies": {
+      "enhnctray_ring": {
+        "next_ui_plan_bytes": 65757,
+        "next_ui_plan_path": "data/texture_library/gui/creation/enhancements/enhnctray_ring.texture",
+        "next_ui_plan_sha256": "f5b706f01938e682185406574fa4911456ba7bd1bddadf2774dc6743010e4243",
+        "present_in_current_declared_layers": false
+      },
+      "enhnctray_ring_highlight": {
+        "next_ui_plan_bytes": 65767,
+        "next_ui_plan_path": "data/texture_library/gui/creation/enhancements/enhnctray_ring_highlight.texture",
+        "next_ui_plan_sha256": "2feb8ca11ca533c983767ebdaf0bde955c60d0f4b90f24014329c88db0a86503",
+        "present_in_current_declared_layers": false
+      },
+      "inference": "Missing ring/highlight lookup returns one-pixel white fallback, layered over valid dark-blue RingHole. This explains white enhancement centers as a source/draw-order inference; next-device visual validation is still required.",
+      "source_draw_order": {
+        "function": "drawMenuEnhancement",
+        "lines": "528-599",
+        "menu_semantics": "MENU_COMBINE_SPEC differs from MENU_GAME and therefore uses shell enhancement artwork unless a cutscene suppresses shell menu",
+        "shell_branch": "EnhncTray_Ring at z+2, EnhncTray_Ring_highlight at z+1, EnhncTray_RingHole at z",
+        "shell_menu_source": "upstream/ouroboros/Game/src/UI/uiGame.c:128-138",
+        "source": "upstream/ouroboros/Game/src/UI/uiCombineSpec.c"
+      }
+    },
+    "source_findings": [
+      "Index replaces header input only; ordinary native texture registration, names, dimensions, composites, trick validation, swaps and bind setup remain.",
+      "Complete inventory uses the native underscore exclusions and includes inode/size/mode/mtime/ctime of every texture and containing directory. Changed/additional visual leaves invalidate index reuse.",
+      "First session rebuilt its index after installing all123 new UI textures; second session checked the full current inventory before reuse. No stale pre-UI index acceptance is evidenced.",
+      "Native initial scan is performed on every client initialization; there is no persisted scan result in this path.",
+      "texFind suppresses its optional missing warning, and addAtlasTex silently returns white_tex_atlas for an unresolved sprite. Existing tricks/NPC/costume log samples do not constitute gameplay UI missing-sprite diagnostics."
+    ],
+    "source_paths": [
+      "android/guest/texture_header_index.py",
+      "android/guest/client_visual_assets.py",
+      "android/guest/character_creation_diagnostic.py",
+      "patches/client-texture-index/0001-index-texture-headers.patch",
+      "patches/startup-bundle-client/0001-verified-texture-root.patch",
+      "upstream/ouroboros/Game/src/render/tex.c",
+      "upstream/ouroboros/Game/src/graphics/textureatlas.c"
+    ]
   }
 }

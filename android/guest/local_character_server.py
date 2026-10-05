@@ -1516,6 +1516,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         require(self.baseline_snapshot is not None, 'Existing character baseline is missing')
         self.native_reward_credit = None
         self.native_training_save = None
+        self.native_power_load_normalization = None
         before = self.baseline_snapshot
         after = validate_character_rows(rows, self.baseline, inventory,
             self.schema['expected_attributes'], self.auth_id,
@@ -1523,23 +1524,31 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if after is None:
             return None
         # Only the typed current reader repair permits the finite first-training
-        # transition. It observes stock native success and committed SQL; it
+        # transition or exact stock level-2 auto-set load normalization. It
+        # observes stock native success and committed SQL; it
         # supplies no character input and never changes database rows. The
         # authored task profile retains its original strict level/power guards.
         if (isinstance(self.manual_atlas_startup, dict)
                 and self.manual_atlas_startup.get('levelup_ui_repair_save') is not None
                 and self.creation_report.get('task_gate_required') is not True
-                and not evidence._same(before['rows']['ents'][0]['level'], after['rows']['ents'][0]['level'])):
+                and (not evidence._same(before['rows']['ents'][0]['level'], after['rows']['ents'][0]['level'])
+                    or not evidence._same(before['rows']['powers'], after['rows']['powers']))):
             import native_training_save
             now_ms = int(time.time() * 1000)
             receipt = read_logout_delivery(self.owner.args.state / 'character-logout.json',
                 self.owner.args.session_id, self.creation_report.get('client_pid'), self.CHARACTER_ID,
                 self.creation_report.get('client_ready_observed_utc_ms'), now_ms)
             logs = self.current_logs()
-            self.native_training_save = native_training_save.verify(logs, self.creation_report,
-                receipt, logout_record(logs), before['rows'], after['rows'],
-                self.schema['expected_attributes']['attributes'], session=self.owner.args.session_id,
-                client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
+            if not evidence._same(before['rows']['ents'][0]['level'], after['rows']['ents'][0]['level']):
+                self.native_training_save = native_training_save.verify(logs, self.creation_report,
+                    receipt, logout_record(logs), before['rows'], after['rows'],
+                    self.schema['expected_attributes']['attributes'], session=self.owner.args.session_id,
+                    client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
+            else:
+                self.native_power_load_normalization = native_training_save.verify_reopen_normalization(
+                    logs, self.creation_report, receipt, logout_record(logs), before['rows'], after['rows'],
+                    self.schema['expected_attributes']['attributes'], session=self.owner.args.session_id,
+                    client_pid=self.creation_report.get('client_pid'), now_utc_ms=now_ms)
         for table in evidence.SELECTED:
             previous = before['rows'][table]
             current = after['rows'][table]
@@ -1610,9 +1619,13 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         return after
 
     def saved_selected_rows_match(self, table, previous, current):
-        """Permit exact point awards and the witnessed first trained purchase."""
+        """Permit exact awards, first training and finite auto-set normalization."""
         if evidence._same(previous, current):
             return True
+        normalization = getattr(self, 'native_power_load_normalization', None)
+        if (table == 'powers' and isinstance(normalization, dict) and normalization.get('verified') is True):
+            return (digest_json(previous) == normalization['before_power_rows_sha256']
+                    and digest_json(current) == normalization['saved_power_rows_sha256'])
         training = getattr(self, 'native_training_save', None)
         if isinstance(training, dict) and training.get('verified') is True:
             if table == 'powers':
@@ -1677,9 +1690,16 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         training = getattr(self, 'native_training_save', None)
         if training is not None:
             result.update(selected_rows_preservation_policy='strict_baseline_except_login_count_exact_native_point_credits_and_first_trained_purchase',
+                selected_non_reward_rows_preserved=False,
                 native_training_values_committed_verified=True,
                 native_training_save_evidence=training, saved_internal_level=1,
                 saved_displayed_level=2, newly_purchased_power=training['purchased_power'])
+        normalization = getattr(self, 'native_power_load_normalization', None)
+        if normalization is not None:
+            result.update(selected_rows_preservation_policy='strict_baseline_except_login_count_exact_native_point_credits_and_level2_auto_set_load_normalization',
+                selected_non_reward_rows_preserved=False,
+                native_power_load_normalization_verified=True,
+                native_power_load_normalization_evidence=normalization)
         return result
 
     def collect(self, target):

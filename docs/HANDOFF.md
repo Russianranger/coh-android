@@ -19,9 +19,13 @@ both sessions completed clean shutdown. The diagnostic exports themselves
 failed retained-row qualification: the first rejected training mutations, the
 second rejected eleven stock automatic-power set-level normalizations. Their
 native purchase/logout and committed SQL evidence remain independently valid;
-do not describe these exports as passed qualification. The next validator pass
-must preserve strict save checks while fixing actual lowercase attribute-map
-comparisons and recognizing only the exact native load/save normalization.
+do not describe these exports as passed qualification. The diagnostic repair
+now handles actual lowercase attribute-map comparisons and only the exact
+native load/save normalization, while preserving strict save checks.
+[Validation repair](ANDROID_TRAINING_VALIDATION_REPAIR.md) records 19 targeted
+scenarios and 59 retained save/reopen/task/ground scenarios, including both
+actual SQL transitions. Private logout sender receipts in that host replay are
+synthetic and do not retroactively pass the historical device reports.
 
 Warm captured timings: **Atlas 210.356 s (3:30.356)**, **actual client 188.310 s
 (3:08.310)**, operation start to observed login **556.889 s (9:16.889)**, and

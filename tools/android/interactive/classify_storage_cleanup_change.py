@@ -363,6 +363,44 @@ REOPEN_STARTUP_REPAIR_ALLOWED = REOPEN_STARTUP_REPAIR_SOURCES | REOPEN_STARTUP_R
     'tools/android/interactive/test_classify_interactive_change.py',
 })
 
+UI_BEACON_SOURCES = frozenset({
+    '.github/workflows/android-ui-beacon.yml',
+    'tools/android/interactive/build_ui_beacon_apk.py',
+    'tools/android/interactive/qualify_ui_beacon.py',
+    'tools/android/interactive/test_ui_beacon_package.py',
+    'tools/android/interactive/discover_client_ui_sweep_assets.py',
+    'tools/android/interactive/prepare_client_ui_sweep_assets.py',
+    'tools/android/interactive/test_client_ui_sweep_assets.py',
+    'tools/prepare_atlas_beacon_generator_source.py',
+    'patches/atlas-beacons/0001-host-only-atlas-generator.patch',
+    'tools/android/interactive/fixtures/thor-training-normalization-0.13.13-20261005.json',
+    'tools/android/interactive/generate_atlas_beacons.py',
+    'tools/android/interactive/test_atlas_beacons.py',
+    'android/guest/atlas_beacon_package.py',
+    'assets/client-ui-sweep-manifest.json', 'assets/client-ui-sweep-requests.json',
+    'assets/client-ui-sweep-plan.json',
+    'android/guest/client_visual_assets.py', 'android/guest/native_training_save.py',
+    'android/guest/local_character_server.py',
+    'tools/android/interactive/test_training_save.py',
+    'tools/android/interactive/test_character_reopen_guest.py',
+    'tools/android/interactive/test_combat_reward_save.py',
+})
+UI_BEACON_DOCS = frozenset({
+    'docs/HANDOFF.md', 'docs/ANDROID_UI_BEACON.md', 'docs/ANDROID_TRAINING_VALIDATION_REPAIR.md', 'docs/ANDROID_UI_BEACON_DEVICE_RESULT.md',
+    'docs/COH-Atlas-Gameplay-0.13.14-testing.txt',
+    'docs/ANDROID_CHARACTER_REOPEN.md', 'docs/ANDROID_THOR_ACCEPTANCE.md',
+    'docs/ANDROID_INTERACTIVE_DIAGNOSTIC.md',
+    'docs/android-evidence/ui-beacon-0.13.13-device-result.json',
+    'docs/android-evidence/ui-beacon-0.13.14-assets.json',
+    'docs/android-evidence/ui-beacon-0.13.14-publication.json',
+})
+UI_BEACON_ALLOWED = UI_BEACON_SOURCES | UI_BEACON_DOCS | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+})
+
 ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
     JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
     'android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java',
@@ -439,6 +477,20 @@ def levelup_ui_repair_docs(event, before, head, parent, names):
 
 
 
+def ui_beacon_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, UI_BEACON_DOCS)
+        and 'docs/android-evidence/ui-beacon-0.13.14-publication.json' in names)
+
+
+def ui_beacon_push(event, before, head, parent, names):
+    return bool((bounded_push(event, before, head, parent, names, UI_BEACON_ALLOWED)
+        and set(names) & UI_BEACON_SOURCES) or ui_beacon_docs(event, before, head, parent, names))
+
+
+def ui_beacon_required(event, before, head, parent, names):
+    return not ui_beacon_docs(event, before, head, parent, names)
+
+
 def reopen_startup_repair_docs(event, before, head, parent, names):
     return bool(bounded_push(event, before, head, parent, names, REOPEN_STARTUP_REPAIR_DOCS)
         and 'docs/android-evidence/reopen-startup-repair-0.13.13-publication.json' in names)
@@ -451,14 +503,16 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
-    return not reopen_startup_repair_docs(event, before, head, parent, names)
+    return not (reopen_startup_repair_docs(event, before, head, parent, names)
+        or ui_beacon_push(event, before, head, parent, names))
 
 
 def levelup_ui_repair_push(event, before, head, parent, names):
     return bool((bounded_push(event, before, head, parent, names, LEVELUP_UI_REPAIR_ALLOWED)
         and set(names) & LEVELUP_UI_REPAIR_SOURCES)
         or levelup_ui_repair_docs(event, before, head, parent, names)
-        or reopen_startup_repair_push(event, before, head, parent, names))
+        or reopen_startup_repair_push(event, before, head, parent, names)
+        or ui_beacon_push(event, before, head, parent, names))
 
 
 def task_required(event, before, head, parent, names):
@@ -577,7 +631,8 @@ def startup_followup_required(event, before, head, parent, names):
 def levelup_ui_repair_required(event, before, head, parent, names):
     # Source candidates always qualify; an exact publication checkpoint is docs only.
     return not (levelup_ui_repair_docs(event, before, head, parent, names)
-        or reopen_startup_repair_push(event, before, head, parent, names))
+        or reopen_startup_repair_push(event, before, head, parent, names)
+        or ui_beacon_push(event, before, head, parent, names))
 
 
 def main():
@@ -595,6 +650,7 @@ def main():
     startup_followup = True
     levelup_ui_repair = True
     reopen_startup_repair = True
+    ui_beacon = True
     try:
         parent = subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip()
         head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
@@ -625,6 +681,8 @@ def main():
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         reopen_startup_repair = reopen_startup_repair_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        ui_beacon = ui_beacon_required(os.environ.get('GITHUB_EVENT_NAME'),
+            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
         startup_followup = startup_followup_required(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
@@ -644,6 +702,7 @@ def main():
         output.write('startup_followup_required='+str(startup_followup).lower()+'\n')
         output.write('levelup_ui_repair_required='+str(levelup_ui_repair).lower()+'\n')
         output.write('reopen_startup_repair_required='+str(reopen_startup_repair).lower()+'\n')
+        output.write('ui_beacon_required='+str(ui_beacon).lower()+'\n')
     print('Retained Android storage workflow owns this update' if not required
           else 'Task and native animation workflow required')
 

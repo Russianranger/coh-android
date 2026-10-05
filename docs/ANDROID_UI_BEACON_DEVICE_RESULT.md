@@ -97,6 +97,40 @@ world/costume sets in response to those global diagnostics. Screenshot observati
 alone cannot distinguish a missing asset from renderer fallback or intentional
 empty native content.
 
+A narrow follow-up ruled out an obvious stale header-index receipt. Both native
+consoles register **20,053 indexed headers with 20,053 hits and zero ordinary
+reads**. The first index was rebuilt after the 123 UI additions; the second
+revalidated the complete current inventory before reuse. Source order installs
+or verifies all visual leaves before creating the index, and the native client
+still performs its ordinary initial scan, registration, composites, tricks and
+bind setup. The supplement has 8,686 textures, no underscore-excluded paths and
+no duplicate original basenames within that supplement. Individual gameplay UI
+lookup results are not exported: `texFind` has its optional missing warning
+commented out, and the sprite atlas silently returns the white fallback when a
+name is unresolved.
+
+The exact retained `EnhncTray_RingHole` source is a valid 64x64 DDS in a 16,609-byte
+texture file, SHA256
+`a1a494a432e213b711b399b2a5c852a1bf5f5e140e05d39175efe6f8794b80eb`.
+Its center 8x8 pixels are uniformly opaque dark blue, RGBA `(0,26,70,255)`; it
+does **not** contain the screenshot's white center squares. Header registration
+alone does not explain a particular UI lookup or demand-load result.
+
+The complete declared texture layers total exactly **20,053**: reference 8,936,
+avatar 15, world 2,416 and visual 8,686. All declared filename basename keys are
+unique across those layers; no RingHole alias/duplicate is present. The retained
+RingHole and highlighted RingHole have correct original header names. However,
+`EnhncTray_Ring` and `EnhncTray_Ring_highlight` are absent from all four current
+layers. The next UI supplement contains both exact original textures.
+`drawMenuEnhancement` in `uiCombineSpec.c` draws the ring at `z+2` and highlight
+at `z+1` over the retained RingHole at `z` when using the shell branch;
+`MENU_COMBINE_SPEC` qualifies as a shell menu in `uiGame.c`. This supports the
+specific inference that missing ring/highlight sprites paint their one-pixel white
+fallback over the correctly rendered dark center. Preserve RingHole and add the
+missing original overlays; physical confirmation on the next APK is still
+required. The evidence receipt records the source/draw-order inference and its
+limits.
+
 Both owned Atlas consoles explicitly report:
 
 > Beacon file not loaded for map: maps/City_Zones/City_01_01/City_01_01.txt

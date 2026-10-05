@@ -43,6 +43,7 @@ PURCHASABLE = frozenset({
     'Blaster_Ranged.Archery.Fistful_of_Arrows',
     'Blaster_Support.Gadgets.Web_Grenade', 'Blaster_Support.Gadgets.Caltrops',
 })
+CANONICAL_POWERS = {name.casefold(): name for name in (*AUTO_POWERS, *PURCHASABLE)}
 ROW_LIMIT = 128
 PURCHASE = re.compile(contact.PREFIX + r'BuyPower Click (?P<power>[A-Za-z0-9_]+\.[A-Za-z0-9_]+\.[A-Za-z0-9_]+)'
                       + contact.SUFFIX + '$')
@@ -136,10 +137,14 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
     if not (type(attributes) is list and all(type(row) is dict and type(row.get('id')) is int
             and type(row.get('name')) is str for row in attributes)):
         return None
-    names = {row['id']: row['name'] for row in attributes}
+    # vars.attribute is shipped lower-case; the stock power dictionary/native
+    # BuyPower logger retains its authored capitalization. Native lookup uses
+    # stricmp, so compare attribute names with the same ASCII case semantics.
+    names = {row['id']: row['name'].casefold() if row['name'].isascii() else row['name']
+             for row in attributes}
     if len(names) != len(attributes):
         return None
-    if (names.get(previous['ents'][0].get('class')) != 'Class_Blaster'
+    if (names.get(previous['ents'][0].get('class')) != 'class_blaster'
             or previous['ents2'][0].get('originalprimary') != 'Archery'
             or previous['ents2'][0].get('originalsecondary') != 'Gadgets'):
         return None
@@ -180,12 +185,13 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
         if (_zero(row.get('buildnum')) != 0 or _zero(row.get('powernumboostsbought')) != 0
                 or _zero(row.get('powersetlevelbought')) != 0):
             return None
-        record = {'uniqueid': uid, 'power': full, 'subid': row['subid'], 'powerid': row['powerid']}
+        canonical = CANONICAL_POWERS.get(full)
+        record = {'uniqueid': uid, 'power': canonical, 'subid': row['subid'], 'powerid': row['powerid']}
         added.append(record)
-        if (full == purchase['power'] and _zero(row.get('powerlevelbought')) == 1
+        if (full == purchase['power'].casefold() and _zero(row.get('powerlevelbought')) == 1
                 and (row['categoryname'], row['powersetname']) in owned_pairs):
             purchased.append(record)
-        elif full in AUTO_POWERS and _zero(row.get('powerlevelbought')) == AUTO_POWERS[full]:
+        elif canonical in AUTO_POWERS and _zero(row.get('powerlevelbought')) == AUTO_POWERS[canonical]:
             automatic.append(record)
         else:
             return None
@@ -202,3 +208,102 @@ def verify(logs, proof, delivery, logout, previous, current, attributes, *, sess
         'logout_timer_evidence': logout, 'logout_delivery': delivery,
         'sql_game_mutations_performed': False, 'trainer_identity_verified': False,
         'trainer_dialogue_visual_verified': False}
+
+
+def verify_reopen_normalization(logs, proof, delivery, logout, previous, current,
+                                attributes, *, session, client_pid, now_utc_ms):
+    """Prove the finite stock level-2 auto-set load/save normalization.
+
+    character_db.c unpack resets autoissue set levels to piAvailable, then
+    stores the last loaded power's level on its shared PowerSet. Packaging
+    serializes that parent level for every row in the set. The first trained
+    save still has zero set levels; the following native load sets Inherent
+    and Fitness to one. No UID, row order, power or purchase field may change.
+    """
+    if not (type(logs) in (list, tuple) and len(logs) <= server.SERVER_LOG_COUNT_LIMIT):
+        return None
+    total = 0
+    for item in logs:
+        if not (type(item) in (list, tuple) and len(item) == 2
+                and type(item[0]) is str and type(item[1]) is str):
+            return None
+        size = len(item[1].encode(errors='surrogateescape')); total += size
+        if size > server.SERVER_LOG_FILE_LIMIT or total > server.SERVER_LOG_TOTAL_LIMIT:
+            return None
+    if server.logout_record(logs) != logout:
+        return None
+    identity = contact.binding(proof, session, client_pid, now_utc_ms)
+    if (identity is None or type(delivery) is not dict or delivery.get('session_id') != session
+            or type(delivery.get('client_pid')) is not int or delivery['client_pid'] != client_pid
+            or type(delivery.get('character_id')) is not int or delivery['character_id'] != 1
+            or delivery.get('action') != 'quittologin' or type(delivery.get('sent_utc_ms')) is not int
+            or not identity['client_ready_observed_utc_ms'] <= delivery['sent_utc_ms'] <= now_utc_ms
+            or logout is None or not server.logout_follows_delivery(logout, delivery)):
+        return None
+    try:
+        end_ms = int(time.mktime(time.strptime(logout['log_timestamp'], '%y%m%d %H:%M:%S')) * 1000)
+    except (KeyError, ValueError, OverflowError):
+        return None
+    if not identity['client_ready_observed_utc_ms'] <= end_ms <= now_utc_ms:
+        return None
+    if (type(previous) is not dict or type(current) is not dict
+            or set(previous) != set(server.evidence.SELECTED) or set(current) != set(previous)
+            or len(previous['ents']) != 1 or len(current['ents']) != 1
+            or type(previous['ents'][0].get('level')) is not int or previous['ents'][0]['level'] != 1
+            or type(current['ents'][0].get('level')) is not int or current['ents'][0]['level'] != 1
+            or previous['ents'][0].get('containerid') != 1
+            or previous['ents'][0].get('authid') != identity['auth_id']
+            or len(previous['ents2']) != 1 or len(current['ents2']) != 1
+            or not (type(attributes) is list and all(type(row) is dict and type(row.get('id')) is int
+                and type(row.get('name')) is str for row in attributes))):
+        return None
+    names = {row['id']: row['name'].casefold() if row['name'].isascii() else row['name']
+             for row in attributes}
+    if (len(names) != len(attributes) or names.get(previous['ents'][0].get('class')) != 'class_blaster'
+            or previous['ents2'][0].get('originalprimary') != 'Archery'
+            or previous['ents2'][0].get('originalsecondary') != 'Gadgets'):
+        return None
+    before, after = previous['powers'], current['powers']
+    if not (type(before) is list and type(after) is list and 0 < len(before) == len(after) <= ROW_LIMIT):
+        return None
+    seen, identifiers, changed = set(), set(), []
+    fields = set(server.evidence.SELECTED['powers'])
+    for old, new in zip(before, after):
+        if not (type(old) is dict and type(new) is dict and set(old) == fields and set(new) == fields):
+            return None
+        if (type(old['uniqueid']) is not int or not 0 < old['uniqueid'] <= 0x7fffffff
+                or old['uniqueid'] in identifiers or type(old['containerid']) is not int
+                or old['containerid'] != 1):
+            return None
+        identifiers.add(old['uniqueid'])
+        parts = [names.get(old[key]) for key in ('categoryname', 'powersetname', 'powername')]
+        if any(type(part) is not str for part in parts):
+            return None
+        full = '.'.join(parts)
+        canonical = CANONICAL_POWERS.get(full)
+        if full.startswith(('inherent.inherent.', 'inherent.fitness.')):
+            if (canonical not in AUTO_POWERS or canonical in seen
+                    or _zero(old.get('powerlevelbought')) != AUTO_POWERS[canonical]
+                    or _zero(old.get('powersetlevelbought')) not in (0, 1)
+                    or type(new.get('powersetlevelbought')) is not int or new['powersetlevelbought'] != 1
+                    or not server.evidence._same(
+                        {key: old[key] for key in fields - {'powersetlevelbought'}},
+                        {key: new[key] for key in fields - {'powersetlevelbought'}})):
+                return None
+            seen.add(canonical)
+            if not server.evidence._same(old, new):
+                changed.append({'uniqueid': old['uniqueid'], 'power': canonical,
+                    'before_set_level': old['powersetlevelbought'], 'saved_set_level': 1})
+        elif not server.evidence._same(old, new):
+            return None
+    if seen != set(AUTO_POWERS) or not changed:
+        return None
+    return {'format': 1, 'verified': True,
+        'scope': 'owned_atlas_level2_exact_autoissue_shared_set_load_normalization',
+        'connection': identity, 'saved_internal_level': 1, 'changed_auto_set_rows': changed,
+        'prior_powers_preserved_by_uniqueid': True, 'all_other_power_fields_preserved': True,
+        'before_power_rows_sha256': server.digest_json(before),
+        'saved_power_rows_sha256': server.digest_json(after),
+        'native_source': 'unpackEntPowers_autoissue_piAvailable_then_packageEntPowers_parent_set_level',
+        'logout_timer_evidence': logout, 'logout_delivery': delivery,
+        'sql_game_mutations_performed': False, 'new_purchase_verified': False}
