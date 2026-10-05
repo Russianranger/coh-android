@@ -1,0 +1,160 @@
+{
+  "format": 1,
+  "status": "passed",
+  "audited_at_utc": "2026-10-05T09:19:00.812407+00:00",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "repository_commit": "a5ff474674393e898f9a5d4b3ad29ae51dd25a2a",
+  "version_name": "0.13.11",
+  "version_code": 26,
+  "workflow_run_id": 37280737915,
+  "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37280737915",
+  "workflow_conclusion": "success",
+  "jobs": {
+    "changes": {
+      "id": 111667979485,
+      "conclusion": "success"
+    },
+    "assets": {
+      "id": 111668247003,
+      "conclusion": "success"
+    },
+    "client": {
+      "id": 111668247040,
+      "conclusion": "success"
+    },
+    "qualify": {
+      "id": 111670643698,
+      "conclusion": "success"
+    },
+    "apk": {
+      "id": 111671974288,
+      "conclusion": "success"
+    }
+  },
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.11",
+  "public_apk": {
+    "name": "COH-Atlas-Gameplay-0.13.11.apk",
+    "bytes": 1535252759,
+    "sha256": "aa7c478797989a652594684fdb4c482422143680550ba164b77ee56db4dae1cc",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.11/COH-Atlas-Gameplay-0.13.11.apk"
+  },
+  "build_receipt": {
+    "bytes": 123218611,
+    "sha256": "73ca18679f8a26c0930653e2f9ed8458995d7a8f8487d5bb242459dfbf51d6bb"
+  },
+  "qualification_receipt": {
+    "bytes": 60291071,
+    "sha256": "46495fa553ec8b722ba211e920e42d70fb6962b907b995a2afacdbd85de39cfb"
+  },
+  "public_apk_matches_ci_build_and_github_release_digest": true,
+  "public_checksum_and_testing_notes_verified": true,
+  "payloads_verified": 71,
+  "retained_donor_payloads": 62,
+  "replaced_apk_payloads": [
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-runtime.zip",
+    "assets/runtime/client-visual-assets.zip",
+    "assets/runtime/client-visual-manifest.json",
+    "assets/runtime/client_startup_diagnostic.py",
+    "assets/runtime/client_visual_assets.py",
+    "assets/runtime/native_responsiveness_contract.py",
+    "assets/runtime/runtime-manifest.json",
+    "assets/runtime/texture_header_index.py"
+  ],
+  "added_apk_payloads": [],
+  "retained_dex": {
+    "bytes": 355612,
+    "sha256": "e53a25bdb4da802efa3ed10bac3432c008f459d8b838d96ed6b037f389514626"
+  },
+  "android_resources_retained_exactly": true,
+  "authored_java_sources_retained_exactly": 19,
+  "client_dlls_retained_exactly": 20,
+  "native_client_zip_members": 22,
+  "native_game": {
+    "sha256": "cad33afc212113a5d116bf8fe63078034fa63c494c1a91ddadaf42cadf55fe9a",
+    "size": 9449984,
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "COMDLG32.dll",
+      "DDRAW.dll",
+      "DINPUT8.dll",
+      "DSOUND.dll",
+      "GDI32.dll",
+      "GLU32.dll",
+      "IMM32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ole32.dll",
+      "OPENGL32.dll",
+      "PhysXCooking.dll",
+      "PhysXLoader.dll",
+      "SHELL32.dll",
+      "USER32.dll",
+      "VERSION.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "new_game_bound_to_formal_win32_source_checks": true,
+  "native_dbserver_recompiled": false,
+  "native_mapserver_recompiled": false,
+  "native_client_recompiled": true,
+  "native_client_package_reused": false,
+  "native_client_compiled_in_current_run": true,
+  "runtime_manifest_members": 64,
+  "retained_server_archives_match_donor": true,
+  "actual_server_archive_extraction_verified": true,
+  "tests_run": 895,
+  "test_suites": 57,
+  "skipped_checks": 0,
+  "source_files_verified": 6763,
+  "source_hashes_match_formal_qualification": true,
+  "visual_files": 9490,
+  "visual_original_bytes": 1505717817,
+  "new_visual_files": 4014,
+  "new_visual_payload_bytes": 632462533,
+  "previous_visual_files_retained_byte_for_byte": 5476,
+  "visual_original_compressed_streams": {
+    "retained_compressed_streams": 5476,
+    "all_streams_byte_identical": true
+  },
+  "visual_independent_original_stream_audit": {
+    "original_stored_streams_verified": 9490,
+    "original_stored_streams_inventory_sha256": "565cf77e4f53c658aa53fa578a8ca153bb7240cffb9a5b111c8ee8ce5344367b",
+    "original_pigg_bytes_and_cached_headers_preserved": true
+  },
+  "visual_missing_only_install_policy_verified": true,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "official_sdk_signature_badging_alignment_and_binary_manifest_checks_passed_in_ci": true,
+  "official_sdk_checks_bound_to_same_public_apk_sha256": "aa7c478797989a652594684fdb4c482422143680550ba164b77ee56db4dae1cc",
+  "local_official_sdk_or_signature_reverification_performed": false,
+  "local_sdk_limitation": "Official SDK tools unavailable locally; successful exact-source CI jobs and formal build receipt are tied to independently downloaded public APK SHA-256.",
+  "runtime_refresh_required": true,
+  "previous_runtime_generation_retained": true,
+  "asset_reimport_required": false,
+  "full_global_visual_asset_closure": false,
+  "physical_gameplay_validated": false,
+  "physical_client_timing_validated": false,
+  "physical_visual_assets_validated": false,
+  "physical_result": "Focused Thor startup/appearance validation remains pending.",
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pull_request_number": 1,
+  "pull_request_open_and_draft": true,
+  "recovery_from_commit": "44fc834878b41814ddfcb7e08d33d96ff59eb424",
+  "recovered_failure_run_id": 37260256058,
+  "hosted_discovery": {
+    "artifact_id": 11332206555,
+    "workflow_run_id": 37280737915,
+    "fresh_plan_byte_identical_to_frozen_recipe": true,
+    "plan_bytes": 18919266,
+    "plan_sha256": "5e4b3a035c5687799eb8d0c6b6a7b0a57af1af4488055645fa40108ae05e6bf5"
+  },
+  "unresolved_dependencies": 100,
+  "deeper_source_witness_gaps": 29,
+  "deeper_source_unique_targets": 22
+}

@@ -1,6 +1,74 @@
 # City of Heroes Android handoff
 
-**0.13.11 startup/appearance candidate; hosted qualification and publication pending.**
+**0.13.11 published and independently public-byte verified; focused Thor comparison pending.**
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.11/COH-Atlas-Gameplay-0.13.11.apk)
+from implementation `a5ff474674393e898f9a5d4b3ad29ae51dd25a2a`, version
+**0.13.11 / code 26**. Continue the existing branch and open draft PR #1.
+Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; no merge, branch
+recreation, accepted-milestone rerun or broad user reimport occurred.
+
+[Production CI 37280737915](https://github.com/Russianranger/coh-android/actions/runs/37280737915)
+passed all five jobs: exact Game source staging, real Win32 guarded freshness
+qualification and Game-only build, frozen appearance discovery/materialization,
+**895 scenarios / 57 suites / zero skips / 6,763 source pins**, all three real
+PostgreSQL transaction fixtures, retained-signer official SDK version/signature
+checks, APK packaging and publication. The staging correction binds Game to its
+stock FolderCache, removes an unrelated Wine DbServer fixture patch and verifies
+complete real production staging with stock-byte conservation and mutation
+rejection. The actual native patch and frozen asset recipes remain unchanged.
+Keep failed predecessor run `37260256058` as historical evidence.
+
+The public APK is **1,535,252,759 bytes (about 1.43 GiB)**, SHA-256
+`aa7c478797989a652594684fdb4c482422143680550ba164b77ee56db4dae1cc`.
+[Independent publication receipt](android-evidence/client-startup-followup-0.13.11-publication.json)
+binds a fresh public download, release API digest and exact hosted build receipt.
+It verifies all **71 payloads: 62 retained / nine replaced / zero added**,
+new source-bound Game, all 20 retained client DLLs, DEX/resources, server packs,
+cache ancestry and every qualified source pin. Local official SDK rechecks were
+not repeated; hosted checks bind to the identical independently downloaded APK.
+
+All **9,490 visual files** pass decoded size/SHA, original-table MD5, native
+headers and original stored-stream verification; all **5,476 immediate donor
+compressed streams** remain byte-identical. The **4,014 original additions**
+contain 462 GEO files and 3,552 textures, adding 632,462,533 decoded bytes.
+Fresh hosted discovery reproduces the frozen plan byte-for-byte. Exact NPC
+costume/model/material/alias/FX dependencies include the police drone and
+Informant appearance. The Game-only metadata preload preserves ordinary
+source selection, freshness failures, CRC and decoding; it does not preload
+complete asset contents. DbServer and MapServer were not rebuilt.
+
+Use [focused Thor instructions](COH-Atlas-Gameplay-0.13.11-testing.txt): install
+over the existing app, run **Set up runtime once**, retain imports/profile/DB,
+then perform one first and one subsequent saved-character reopen with the same
+preset. Record local Atlas, actual client and login-to-playable-world separately;
+keep setup/first visual installation/header preparation separate. Compare the
+photographed faces/armor/drone and nearby/distant ground and world objects.
+Ordinary Save/log out, Finish, then export the complete outer support ZIP with
+its intact guest report and screenshots. Do not repeat accepted creation/tasks.
+
+**Thor startup savings and physical appearance completeness remain pending.**
+The last physical baseline is local Atlas **3:50 / 229.246s**, actual client
+**5:22 / 319.732s**. There remain 100 exact donor/sequence/material dependencies
+and 29 deeper source witnesses covering 22 targets; no fuzzy substitutions were
+made. The unchanged Atlas sequencer post-load cost remains a separate future
+server optimization. This documentation checkpoint is a descendant of the APK
+source and does not imply another native/APK build.
+
+**0.13.11 implementation checkpoint before qualification/publication (historical).**
+Continuation recovered the exact `44fc834878b41814ddfcb7e08d33d96ff59eb424`
+candidate and failed production [run 37260256058](https://github.com/Russianranger/coh-android/actions/runs/37260256058).
+Appearance discovery/materialization passed, but Game staging refused the new
+FolderCache source witness before native qualification or compilation. The new
+producer incorrectly expected the separately built Wine DbServer's FolderCache;
+the accepted Game PG/events/texture/graphics chain retains the stock file.
+Its exact normalized SHA-256 is
+`93aac8a9e1a59ca47ab5a067580c36f7ed884db51038577b0453756f55af1d4c`.
+The correction pins that original source in producer and guest, removes the
+fixture's unrelated Wine patch and exercises complete production staging with
+stock-byte conservation and mutation rejection. No native patch or frozen asset
+recipe changes. The failed run remains evidence; hosted Win32 qualification and
+publication are still required before delivering 0.13.11.
+
 Continue from the durable Thor evidence checkpoint
 `ba876d2e27d9481c1262f19566c12ce3313ab1a3`, with the public 0.13.10 APK as the
 exact immediate donor. This pass combines a bounded Game-only metadata preload
