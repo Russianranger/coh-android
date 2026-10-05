@@ -49,5 +49,18 @@ class AtlasBeaconSourceTests(unittest.TestCase):
             for name, digest in self.receipt['retained_algorithm_sha256'].items():
                 self.assertEqual(producer.progress.sha256(stage/name), digest)
 
+    def test_android_load_and_v9_freshness_do_not_depend_on_copied_mtimes(self):
+        text = (producer.ROOT/'upstream/ouroboros/MapServer/src/beacon/beaconFile.c').read_text()
+        reload = text.split('void beaconReload(void){', 1)[1].split('static S32 isFileTimeNewer', 1)[0]
+        self.assertIn('readFile = readBeaconFile(beaconFileName)', reload)
+        for forbidden in ('beaconFileIsUpToDate(', 'beaconFileMatchesMapCRC(', 'fileLastChanged(', '.date'):
+            self.assertNotIn(forbidden, reload)
+        matcher = text.split('static S32 beaconFileMatchesMapCRC(', 1)[1].split('S32 beaconFileIsUpToDate(', 1)[0]
+        self.assertIn('if(version >= 9)', matcher)
+        self.assertIn('crcMatches = fileCRC == beacon_process.fullMapCRC', matcher)
+        freshness = text.split('S32 beaconFileIsUpToDate(', 1)[1].split('S32 beaconDoesTheBeaconFileMatchTheMap(', 1)[0]
+        self.assertIn('else if(crcMatches)', freshness)
+        self.assertIn('else if(0 && beaconIsFileNewerThanAllUsedFiles(', freshness)
+
 
 if __name__ == '__main__': unittest.main()

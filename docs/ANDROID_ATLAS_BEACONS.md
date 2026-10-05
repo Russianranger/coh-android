@@ -59,6 +59,12 @@ Only the two server-only files and an owned proof receipt are written.
 The ordinary Atlas preparation path installs the package for saved and fresh
 characters. The unmodified gameplay MapServer discovers and loads the graph
 through `beaconReload`; no client gameplay or persistence semantics change.
+The ordinary loader reads the v8 graph directly and does not compare the date
+sidecar or source-file timestamps. The optional v9 freshness check accepts a
+matching full-world CRC; its timestamp-only fallback remains compiled out.
+Android import/copy timestamps and cache-directory renames therefore do not
+cause graph regeneration. The installer still checks actual source bytes and
+fingerprint freshness independently.
 The server data cache carries the graph and proof across clean shutdown/reopen.
 Warm reuse still performs a bounded readonly fingerprint walk, but skips input
 payload hashing and ZIP decoding. Both first preparation and warm reuse expose

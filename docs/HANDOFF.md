@@ -2,6 +2,16 @@
 
 **0.13.13 Thor reopen, training, save and persistence verified; UI sweep and Atlas beacon generation in progress for 0.13.14.**
 
+Latest implementation checkpoint: `18d665e277645805d5a6efcbee4c9918f2938b5e`
+on the existing continuation branch. The full UI sweep and fail-closed graph
+installer are committed. Native generation run **37343908071** recovered the
+exact reviewed inputs and reached Win32 compilation; real graph output and
+guest archive/manifest pins remain pending. No 0.13.14 APK is published yet.
+The new packaging boundary passes 13 targeted checks and independent review;
+full hosted qualification, including seven real PostgreSQL fixtures, still
+must pass before publication. Reuse the successful native artifact only after
+verifying its unchanged producer/world identities.
+
 The live continuation branch and draft PR #1 were rechecked at
 `6098d5e040d9a41654acec60e92c64be2b5aacee`; main remains separate at
 `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. The current published test APK
