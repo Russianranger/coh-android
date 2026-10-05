@@ -90,18 +90,7 @@ jobs:
               assert done, 'No completed full ordinary-world CRC block: ' + role
               block = text[start:start + done.end()]
               rows = [(int(m.group(1)), int(m.group(2)), int(m.group(3)), m.group(4))
-                  for m in re.finditer(r'^\s*(\d+),\s*(\d+),\s*(\d+):\s*([^\r\n]+?)\s*
-          target.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
-          print('COH_ATLAS_FAILURE_FILE_PINS ' + json.dumps(pins, sort_keys=True))
-          print('COH_ATLAS_FAILURE_GRAPH_CAPTURED ' + str(any(name.endswith(('.beacon', '.date')) for name in pins)))
-          PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: coh-atlas-beacon-failure-forensic
-          path: out/atlas-native-failure-forensic.json
-          if-no-files-found: error
-          retention-days: 90
-, block, re.M)]
+                  for m in re.finditer(r'^\s*(\d+),\s*(\d+),\s*(\d+):\s*([^\r\n]+?)\s*$', block, re.M)]
               assert rows, 'No native model rows: ' + role
               summary = [line[:512] for line in block.splitlines()
                   if re.search(r'Max.?Height|Total.?triangles|Basic.?Beacons|Legal.?Beacons|Traffic.?Beacons|EncounterPositions', line, re.I)]
