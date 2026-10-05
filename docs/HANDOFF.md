@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep ready; corrected native CRC proof committed for hosted validation. Next candidate: 0.13.14 / code 29.**
+**UI sweep ready; corrected CRC proof passed 114 targeted tests. Fresh native build is running. Next candidate: 0.13.14 / code 29.**
 
 The preceding real generation finished, but its later CRC marker used a
 different runtime phase and failed qualification. Authenticated forensic run
@@ -20,16 +20,19 @@ processes must still return the same complete witness and physical inventories.
 Actual generated graph/date files are now captured with bounded pins into
 explicitly unqualified diagnostic evidence before validation, including a
 failed server's output. A later proof failure cannot silently lose them.
-Bounded 60-second owned-role heartbeats improve host diagnostics. Source,
-fixture, missing/conflicting/late marker and evidence-retention tests accompany
-the change; they still require actual hosted execution. Independent source
-review found no blocker. The C receipt changes, so fresh compilation and genuine
-generation are required; no failed graph or old path proof is reused.
+Bounded 60-second owned-role heartbeats improve host diagnostics. Actual run
+[37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
+at generation source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` passed
+**114 targeted tests in 17.390 seconds** (job 111988749980), including source,
+fixture, missing/conflicting/late marker and evidence-retention cases. Independent
+source review found no blocker. Windows job **111989203448** is active; its
+fresh compilation and genuine generation/profile proof are pending. The C
+receipt changes; no failed graph or old path proof is reused.
 
 The previous owned phase was about 77 minutes, following about 12 minutes of
 host input preparation. Keep its 90-minute owned deadline and each bounded
-fresh-profile deadline; no timeout failure occurred. The next actual run must
-pass targeted tests, compilation, generation and both profile proofs before
+fresh-profile deadline; no timeout failure occurred. The current actual run must
+pass compilation, generation and both profile proofs before
 freezing graph pins and enabling final 68-suite/seven-PostgreSQL-fixture signing
 and public APK download audit. No 0.13.14 APK is published. The frozen UI sweep
 adds 788 original resources while preserving all 9,613 prior streams. Main
