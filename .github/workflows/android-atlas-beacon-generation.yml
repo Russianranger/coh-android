@@ -20,9 +20,27 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
+      - name: Preserve exact preflight source bytes
+        run: git config --global core.autocrlf false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
+      - name: Audit exact public donor rich records and projected physical GEO pins
+        run: |
+          mkdir -p out/beacon-preflight out/ui-beacon-donor
+          curl --fail --location --retry 3 --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk \
+            https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          value = producer.audit_visual_geometry_manifest(Path('out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'))
+          Path('out/beacon-preflight/donor-geometry-projection-audit.json').write_bytes(producer.canonical(value))
+          summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
+          print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
+          PY
       - name: Test actual source and physical inventory contracts before native compilation
         run: |
           python3 - <<'PY'
@@ -51,21 +69,6 @@ jobs:
           Path('out/beacon-preflight/test-contract-summary.json').write_text(json.dumps({
               'status': 'passed', 'selected_tests': count, 'excluded_test': excluded,
               'native_generation_proof': False}, sort_keys=True))
-          PY
-      - name: Audit exact public donor rich records and projected physical GEO pins
-        run: |
-          mkdir -p out/beacon-preflight
-          curl --fail --location --retry 3 --output out/beacon-preflight/donor.apk \
-            https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk
-          python3 - <<'PY'
-          import sys
-          from pathlib import Path
-          sys.path.insert(0, 'tools/android/interactive')
-          import generate_atlas_beacons as producer
-          value = producer.audit_visual_geometry_manifest(Path('out/beacon-preflight/donor.apk'))
-          Path('out/beacon-preflight/donor-geometry-projection-audit.json').write_bytes(producer.canonical(value))
-          summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
-          print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
