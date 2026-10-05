@@ -36,8 +36,13 @@ jobs:
       - name: Recover exact public working world and reviewed original import input
         shell: pwsh
         run: |
-          python tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
-          if ($LASTEXITCODE -ne 0) { throw 'Public donor download failed' }
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          New-Item -ItemType Directory -Path out/ui-beacon-donor -Force | Out-Null
+          $donor = 'out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk'
+          if (Test-Path $donor) { throw 'Fresh public donor path required' }
+          Invoke-WebRequest -Uri 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk' -OutFile $donor -TimeoutSec 300
+          if ((Get-Item $donor).Length -ne 1535592811 -or (Get-FileHash $donor -Algorithm SHA256).Hash.ToLowerInvariant() -ne '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4') { throw 'Exact public 0.13.13 donor differs' }
           python tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --release-asset-id 588984151 --output out/ui-beacon-donor/reference-assets.zip
           if ($LASTEXITCODE -ne 0) { throw 'Exact original import input download failed' }
       - name: Stage a contained host-only single-map native generator
