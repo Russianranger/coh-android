@@ -5,7 +5,69 @@ training without a crash, and still displayed the native unbeaconized warning.
 This pass produces a genuine graph for the current Atlas world. Zoning remains
 a later pass. The warning is not patched or hidden.
 
-## Native proof checkpoint on October 5
+## Required geometry and recovered primary output
+
+Actual run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
+at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` passed 114 targeted tests,
+fresh native compilation and real generation. Its primary server exited zero:
+the fresh ordinary-world marker, full graph reader, all 32 native routes and
+untouched v9 date CRC agreed at `0xb0c21ded`. It produced 163,544 combat
+beacons, 163,527 connected beacons, 1,805,050 ground connections, 2,698,868 raised
+connections and 602 grid blocks. The overall run **failed** when the independent
+base/world profile lacked the supplemental object GEOs and calculated
+`0x1583f117`. The NONE/ALL compatibility assumption is disproved.
+
+Authenticated forensic run `37388593712` compared the last fresh native
+model-witness blocks: the full world had 4,569,858 triangles and 2,845 model
+rows; the bare world had 4,554,087 triangles and 2,784 rows. There were 61
+full-only shop-model rows, 15,771 additional collision triangles and no
+bare-only rows. Scene height and authored basic/legal/traffic beacon and
+encounter counts matched. This is an actual collision geometry difference;
+the sidecar parser, fresh matcher and equality requirement remain unchanged.
+
+Failed-run evidence artifact `11379217768` is 33,296,543 bytes, SHA-256
+`a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4`.
+It retained the real graph (39,069,559 bytes,
+`6a3c9a6661a07cc3aec3a11baa9ca29395cc9b64d783b21e58282b2eb20845f8`)
+and date (12 bytes,
+`ce64be4b49e4a8a4e61f01b31c651e603dc955551fb5c471ad3b75d2bb4f1711`),
+primary transcript, actual server-zero/owned-cleanup evidence and exact
+successful Win32 compile. Host EXE: 6,880,256 bytes,
+`243184510a89e39f765c9aa8ff49b1ce9807c4a92ac626e96d1814850cc18e8b`.
+Actual build receipt: 13,166 bytes,
+`904e1fa5d24b05abab36f771641be82c7fe897e14d410bbeaf3187c49ef492f9`.
+
+Schema 3 requires the exact 406 original object GEOs (16,559,517 bytes,
+physical inventory SHA-256
+`c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`).
+They are already retained in the client visual/UI package. The common 5,231
+source records and these 406 records have combined inventory SHA-256
+`039f2a761ac11c01338ec1060a8656c6a9c833dc47b294a65d4dfa90648555f8`.
+Missing, partial, foreign or changed geometry cannot qualify the graph.
+
+The recovery lane authenticates the original **failed** run, completed compile,
+artifact bytes, primary source files, exact graph/date and original fresh
+CRC/full-reader/32-route witness. It never relabels that run successful and
+never accepts its failed bare profile. Two new independent native processes
+must qualify that unchanged graph: `required_geometry_cold` uses base/world
+plus all 406 required GEOs; `client_visual_reopen` also has the exact frozen
+10,401-file UI visual tree. Both have private geometry/server caches and freshly
+rebuild owned geometry bins before readback. Imported definition bins and
+immutable source files remain intact. Each must return the same untouched date
+CRC, full graph counts and 32 native routes. Native C, source staging, importer
+and collision/path algorithms are unchanged; no new 77-minute generation is
+necessary merely to repeat already successful primary generation.
+
+The report distinguishes `graph_origin` (actual source 312/run 373770,
+original four owned roles and cleanup) from the new proof-only qualification
+commit and its two owned readback processes. Current `owned_roles=0` means
+no new generation roles; it does not waive original generation containment.
+The original producer implementation is pinned separately from the current
+qualifier. New successful native proofs and package pins are still required
+before APK publication. These are reviewable recovery gates, not completed
+device acceptance.
+
+## Earlier native proof checkpoint on October 5
 
 Run `37363692462` at generation commit
 `57515789dfafab5c4eab3273c63e28beef20264c` passed 106 preflight tests,
@@ -75,7 +137,9 @@ private native world using the exact 0.13.13 APK, reviewed base asset ZIP and
 unmodified Java importer. It applies the retained world supplement with the
 shipped missing-only precedence, then exposes only the original visual
 supplement's 406 object-library GEOs (16,559,517 bytes) to host collision loading.
-No visual textures or player-library GEOs are imported into the host server.
+Primary generation used only this object geometry. The subsequent full-visual
+qualification layout also stages retained client textures/player GEOs to prove
+they do not alter the required collision world.
 The generator pins the physical GEOs,
 object-library group text, Atlas placement/layer text and trick text before and
 after generation. UI-only texture additions do not change this graph identity.
@@ -85,25 +149,22 @@ Atlas map without the generator's missing-definition cleanup. It compares the
 v9 date-sidecar full-world CRC with that fresh world, captures that freshly
 verified CRC before graph operations, fully rereads the v8 graph,
 requires populated connected combat/grid data and exercises 32 real native
-pathfinder routes. The same graph must then pass two additional fresh native
-processes: base/world inputs with none of the optional 406 GEOs, and base/world
-inputs with all 406. Each must produce the identical full collision CRC, graph
-counts and 32 successful native routes. The cold tree is captured before visual
-overlay/generation, shares readonly input leaves through hardlinks and keeps
-definition, geometry and server caches private. Existing native full-CRC model
-witness logging helps identify exact collision differences if these proofs fail.
-Failure prevents a qualified package. Six process logs and a
-source/input/build receipt accompany the output. A finite 90-minute deadline
-and log bounds apply; all owned roles are stopped before publication.
+pathfinder routes. The same graph must pass the schema-3 required-geometry and complete-client-
+visual fresh processes described above. Both layouts require all 406 object
+GEOs, the same effective collision-input inventory, full CRC, graph counts and
+32 native routes. A finite deadline and log bounds apply, and all new processes
+are stopped before publication.
 
-The standalone `android-atlas-beacon-generation.yml` workflow builds under a
-short Windows source path to stay below the historical utility diagnostic
-thread-name buffer boundary; owned native runtimes are also short `C:/bcn-run/r`
-and `C:/bcn-run/c`. It emits `atlas-beacons.zip`, `atlas-beacon-manifest.json`,
-`atlas-beacon-generation-report.json` and bounded evidence. A completed graph
-may be reused in a later documentation/UI commit only while every generation
-implementation pin, native build input and world identity still matches. The
-receipt continues to name the actual generation commit.
+The standalone `android-atlas-beacon-generation.yml` retains short source
+and runtime paths `C:/bcn-src`, `C:/bcn-run/r` and `C:/bcn-run/c`.
+The recovery job authenticates the exact retained compile and real graph
+rather than rebuilding unchanged C or repeating primary generation. It emits
+`atlas-beacons.zip`, `atlas-beacon-manifest.json`,
+`atlas-beacon-generation-report.json` and bounded evidence only after both
+new native profiles succeed. Reuse requires current qualification implementation
+pins, original generation/native build provenance and exact world identities.
+The report continues to name the actual original generation and later
+qualification commits honestly.
 
 The first compiled run, `37343908071`, failed before the master's readiness
 marker. Its mixed-drive evidence upload also failed, so that run supplies no
@@ -192,14 +253,50 @@ and v9 sidecar. Its published SHA-256 constants remain pending until a real
 hosted generation succeeds. The installer requires the retained gameplay
 MapServer and the already qualified readonly private world. It hashes the
 physical collision/group/Atlas/trick inputs on the first successful install.
-Current server caching can retain a cold base/world mirror even after client
-visual installation; a later cache miss can mirror all supplemental object GEOs.
-The installer therefore selects only one of the two complete, independently
-proved inventories. A partial optional inventory, extra source leaves, differing
-cold/warm collision CRC or incomplete fresh-process proof is refused. It never
-adds those GEOs to server startup just to satisfy a package assertion.
-Existing different graphs and linked target paths are preserved and refused.
-Only the two server-only files and an owned proof receipt are written.
+Legacy server caching could retain a bare base/world mirror after the client
+visuals were installed; a cache miss could instead mirror all supplemental GEOs.
+The observed native CRC difference makes that legacy ambiguity unsafe. The
+pre-cache helper prepares and validates only the exact 406 known original GEOs
+in the private client source before server cache identity, checkout or staging.
+The first successful geometry preparation also refreshes a finite set of
+owned private `data/geobin` leaves before publishing its durable receipt:
+Atlas `maps/city_zones/city_01_01/` caches and only the exact directory/stem
+matches of those 406 original GEOs, with `.bin`, `.dep` or `.bounds`
+extensions. Native `makeMapBin` can serialize a flattened scene that omitted
+missing models, while recorded text-file dependencies do not prove newly added
+GEO freshness. Restoring the accepted source timestamp alone therefore cannot
+qualify an old flattened cache.
+
+The helper resolves actual directory case, uses the existing world cache
+allowlist and owned-file/hash protections, and records each removed path,
+byte count and SHA-256 in `removed_cache_files`. Its `cache_refresh` receipt
+binds policy `once_required_original_atlas_private_geobin_refresh_v1`, counts,
+total bytes and the removed-inventory digest. Imported `data/bin`, accepted
+cache archives, source definitions and unrelated private caches are preserved.
+Linked, special or conflicting cache paths are refused. Preparation checks
+source, immutable outputs and the geometry receipt again before and after
+refresh; it never seals a partial geometry proof.
+
+The stable required-geometry identity includes this cache policy. Server cache
+checkout therefore cannot reuse or migrate a legacy NONE generation into the
+qualified geometry identity; the old server tree remains preserved. Required
+geometry is staged through the existing immutable source mechanism before
+cache sealing, without late server-file injection.
+
+An unchanged durable geometry receipt reuses its bounded source/output
+fingerprints and historical refresh receipt. It performs no derived-cache
+inventory scan, required-payload hashing or ZIP decoding, and removes zero
+cache files. Newly generated client/server private bins keep their bytes and
+inodes. The `atlas_required_geometry` report exposes
+`selected_payload_bytes_hashed`, `archive_decoded`,
+`cache_files_removed_this_prepare` and `cache_refresh_reused`; historical
+`cache_refresh.performed` does not mean caches were removed again on reopen.
+
+Graph installation accepts only the complete required geometry inventory and
+both independently successful native profiles. Extra leaves, missing/changed
+GEOs, incomplete paths, unequal CRCs, case aliases or linked paths are refused.
+Existing different graphs are preserved and refused. Only the two server-only
+graph files and owned proof receipt are added after preparation.
 Input and graph destinations use the same existing world resolver to recover
 actual directory spelling while requiring exact leaf names. The warm proof
 also binds each input's actual relative path, so physical directory-case changes
@@ -232,12 +329,20 @@ Installer tests cover first install, warm reuse without archive decoding,
 changed geometry, invalidated input fingerprints, preservation of different
 existing graphs, linked targets, writable inputs and incomplete native proofs.
 Synthetic unit fixtures are explicitly not native generation evidence.
-Cold-mirror tests verify cache isolation. Production cache tests reproduce both
-the retained cold mirror and later full-visual fallback; profile tests refuse
-mixed geometry and inconsistent cold/warm proof metadata. Real filesystem
-fixtures cover mixed imported directory case, exact leaf names, ambiguous
-source aliases, graph target aliases, a 406-file optional overlay, warm proof
-reuse and private mixed-case cache roots.
+Cold-mirror tests verify cache isolation. The new synthetic guest/profile
+fixtures require every one of the 406 GEOs and refuse NONE, mixed geometry and
+inconsistent cold/warm proof metadata. Production preparation fixtures cover
+finite stale-client-cache removal before checkout/staging/sealing, preservation
+of the old NONE server generation and unrelated cache/database/imported-bin
+sentinels, and unchanged warm client/server generated-cache bytes and inodes.
+They forbid warm cache scanning, removal, required-payload hashing, ZIP decoding
+and source restaging. Guest cases also cover a prior receipt without refresh,
+linked private caches, invalid deletion history, the real 521-player/406-object
+GEO partition and refusal of an extra object GEO. Real filesystem fixtures
+retain mixed imported directory case, exact leaf names, ambiguous source aliases
+and graph target aliases. These updated guest/profile fixtures are source
+reviewed; their hosted execution and both actual native schema-3 profile proofs
+remain pending. Synthetic fixtures supply neither native nor physical proof.
 
 After publication, install the next APK over the current app and reopen the
 saved THORHERO. Record setup/preparation, local Atlas, client, login and world

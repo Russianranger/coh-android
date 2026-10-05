@@ -25,7 +25,11 @@ MAP = 'maps/city_zones/city_01_01/city_01_01.txt'
 GRAPH = 'data/server/' + MAP + '.v8.bcn'
 DATE = GRAPH + '.date'
 MARKER = 'data/server/atlas-beacon-installed.json'
-POLICY = 'exact_native_atlas_graph_two_proven_geometry_profiles_v2'
+POLICY = 'exact_native_atlas_graph_required_geometry_two_fresh_layouts_v3'
+GEOMETRY_POLICY = 'exact_required_original_atlas_object_geometry_v1'
+GEOMETRY_MARKER = 'atlas-required-geometry-installed.json'
+SERVER_GEOMETRY_PROFILE = 'required_original_object_geometry'
+GEOMETRY_CACHE_POLICY = 'once_required_original_atlas_private_geobin_refresh_v1'
 # Frozen only after the hosted producer completes real generation/readback/CRC/routes.
 MANIFEST_SHA256 = 'pending_native_generation'
 ARCHIVE_SHA256 = 'pending_native_generation'
@@ -38,9 +42,9 @@ WORLD_MANIFEST_SHA256 = '204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85c
 VISUAL_GEOMETRY_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
 VISUAL_SOURCE_MANIFEST = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
 VISUAL_OBJECT_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
-OPTIONAL_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
-OPTIONAL_GEOS = 406
-PROFILES = ('base_world', 'base_world_visual')
+REQUIRED_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
+REQUIRED_GEOS = 406
+PROFILES = ('required_geometry_cold', 'client_visual_reopen')
 MAX_MANIFEST = 8 * 1024 * 1024
 MAX_GRAPH = 128 * 1024 * 1024
 MAX_INPUTS = 12288
@@ -98,8 +102,8 @@ def read_manifest(path):
             'Atlas beacon manifest has not been qualified or differs')
     value = json.loads(raw)
     files, inputs, native = value.get('files'), value.get('input_files'), value.get('native')
-    optional, profiles = value.get('optional_input_files'), value.get('input_profiles')
-    require(value.get('format') == 2 and value.get('role') == ROLE and value.get('map') == MAP
+    required, profiles = value.get('required_geometry_files'), value.get('input_profiles')
+    require(value.get('format') == 3 and value.get('role') == ROLE and value.get('map') == MAP
             and value.get('source_commit') == SOURCE_COMMIT and value.get('data_commit') == DATA_COMMIT
             and value.get('stock_mapserver_sha256') == STOCK_MAPSERVER_SHA256
             and value.get('runtime_graph_readback') is True
@@ -113,25 +117,25 @@ def read_manifest(path):
             and len({name.casefold() for name in inputs}) == len(inputs)
             and hashlib.sha256(canonical(inputs)).hexdigest() == value.get('input_files_sha256'),
             'Atlas collision/group source identity differs')
-    require(isinstance(optional, dict) and len(optional) == OPTIONAL_GEOS
+    require(isinstance(required, dict) and len(required) == REQUIRED_GEOS
             and all(input_name(name) and name.startswith('data/object_library/') and name.casefold().endswith('.geo')
-                    for name in optional)
-            and len({name.casefold() for name in optional}) == len(optional)
-            and not {name.casefold() for name in inputs}.intersection(name.casefold() for name in optional)
-            and len(inputs) + len(optional) <= MAX_INPUTS
-            and hashlib.sha256(canonical(optional)).hexdigest() == OPTIONAL_GEOMETRY_SHA256,
-            'Exact optional original object geometry identity differs')
+                    for name in required)
+            and len({name.casefold() for name in required}) == len(required)
+            and not {name.casefold() for name in inputs}.intersection(name.casefold() for name in required)
+            and len(inputs) + len(required) <= MAX_INPUTS
+            and hashlib.sha256(canonical(required)).hexdigest() == REQUIRED_GEOMETRY_SHA256,
+            'Exact required original object geometry identity differs')
     require(all(isinstance(record, dict) and set(record) == {'bytes', 'sha256'}
                 and type(record['bytes']) is int and 0 < record['bytes'] <= MAX_GRAPH
                 and re.fullmatch('[0-9a-f]{64}', str(record['sha256']))
-                for record in list(files.values()) + list(inputs.values()) + list(optional.values())), 'Invalid native input/payload pin')
+                for record in list(files.values()) + list(inputs.values()) + list(required.values())), 'Invalid native input/payload pin')
     identity = value.get('input_identity', {})
     require(identity.get('asset_archive') == BASE_ARCHIVE
             and identity.get('world_manifest', {}).get('sha256') == WORLD_MANIFEST_SHA256
             and identity.get('visual_geometry_sha256') == VISUAL_GEOMETRY_SHA256
             and identity.get('visual_source_manifest') == VISUAL_SOURCE_MANIFEST
             and identity.get('visual_object_geometry_sha256') == VISUAL_OBJECT_GEOMETRY_SHA256
-            and identity.get('optional_physical_geometry_sha256') == OPTIONAL_GEOMETRY_SHA256,
+            and identity.get('required_geometry_sha256') == REQUIRED_GEOMETRY_SHA256,
             'Native graph was generated from a different world/geometry supplement')
     require(isinstance(native, dict) and native.get('native_full_graph_readback_verified') is True
             and native.get('fresh_ordinary_world_crc_verified') is True
@@ -140,9 +144,9 @@ def read_manifest(path):
             and native.get('ground_connections', 0) > 1000 and native.get('grid_blocks', 0) > 0
             and re.fullmatch('0x[0-9a-f]{8}', str(native.get('full_world_crc'))),
             'Native generation, full reader, CRC or path proofs are incomplete')
-    require(isinstance(profiles, dict) and set(profiles) == set(PROFILES), 'Both fresh native profiles are required')
+    require(isinstance(profiles, dict) and set(profiles) == set(PROFILES), 'Both fresh required-geometry native layouts are required')
     for profile in PROFILES:
-        selected = inputs if profile == 'base_world' else {**inputs, **optional}
+        selected = {**inputs, **required}
         require(profiles[profile] == {'native': native,
                     'input_files_sha256': hashlib.sha256(canonical(selected)).hexdigest()},
                 'Fresh cold/warm native CRC, graph readback or path proofs differ')
@@ -155,16 +159,15 @@ def actual_targets(runtime, names, context):
 
 
 def select_profile(runtime, manifest, context):
-    """Accept only the two complete server inventories proved in fresh processes."""
-    runtime = Path(runtime); optional = manifest['optional_input_files']
-    targets = actual_targets(runtime, {**manifest['input_files'], **optional}, context)
-    present = 0
-    for name in optional:
+    """Require the one complete geometry inventory proved in both fresh layouts."""
+    runtime = Path(runtime); required = manifest['required_geometry_files']
+    selected = {**manifest['input_files'], **required}
+    targets = actual_targets(runtime, selected, context)
+    for name in required:
         context.check()
-        present += os.path.lexists(targets[name])
-    require(present in (0, len(optional)), 'Partial optional Atlas geometry has no native profile proof')
-    profile = 'base_world_visual' if present else 'base_world'
-    selected = (manifest['input_files'] if not present else {**manifest['input_files'], **optional})
+        require(os.path.lexists(targets[name]),
+                'Every required original Atlas geometry leaf must exist before graph installation')
+    profile = SERVER_GEOMETRY_PROFILE
     declared = {name.casefold(): name for name in selected}
     require(len(declared) == len(selected), 'Case-conflicting Atlas source declaration refused')
     # The enclosing server cache verifies immutable links; this finite inventory
@@ -192,6 +195,283 @@ def select_profile(runtime, manifest, context):
                     for folded, name in declared.items()),
             'Actual Atlas source inventory has no qualified native profile')
     return profile, selected
+
+
+
+def required_geometry_identity(files):
+    require(isinstance(files, dict) and len(files) == REQUIRED_GEOS
+            and all(input_name(name) and name.startswith('data/object_library/')
+                    and name.casefold().endswith('.geo') for name in files)
+            and len({name.casefold() for name in files}) == len(files)
+            and all(isinstance(row, dict) and set(row) == {'bytes', 'sha256'}
+                    and type(row['bytes']) is int and 0 < row['bytes'] <= MAX_GRAPH
+                    and re.fullmatch('[0-9a-f]{64}', str(row['sha256']))
+                    for row in files.values())
+            and hashlib.sha256(canonical(files)).hexdigest() == REQUIRED_GEOMETRY_SHA256,
+            'Exact required original object geometry identity differs')
+    return {'format': 1, 'policy': GEOMETRY_POLICY,
+            'required_geometry_sha256': REQUIRED_GEOMETRY_SHA256,
+            'file_count': REQUIRED_GEOS, 'cache_policy': GEOMETRY_CACHE_POLICY}
+
+
+def geometry_client_identity(worktree, context):
+    sentinel = actual_targets(worktree, ('data/.atlas-required-geometry',), context)['data/.atlas-required-geometry']
+    data = sentinel.parent
+    world.real_directory(worktree); world.real_directory(data)
+    return {'worktree': str(worktree),
+            'directory_identity': [[path.stat().st_dev, path.stat().st_ino] for path in (worktree, data)],
+            'client_work_sha256': hashlib.sha256(
+                world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest()}
+
+
+def required_geometry_cache_inventory(worktree, files, context):
+    """Use the existing world allowlist for finite owned caches, resolving case."""
+    worktree = Path(worktree)
+    sentinel = 'data/geobin/.atlas-required-geometry-cache'
+    root = actual_targets(worktree, (sentinel,), context)[sentinel].parent
+    if not os.path.lexists(root): return []
+    world.real_directory(root)
+    geometry = {name.removeprefix('data/').casefold() for name in files}
+    pending, scanned, total, result, seen = [root], 0, 0, [], set()
+    while pending:
+        context.check()
+        current = pending.pop()
+        world.real_directory(current)
+        for entry in current.iterdir():
+            context.check()
+            info = entry.lstat()
+            relative = entry.relative_to(root)
+            folded = relative.as_posix().casefold()
+            require(folded not in seen, 'Case-conflicting required geometry cache refused')
+            seen.add(folded)
+            require(len(seen) <= 2 * world.MAX_CACHE_FILES,
+                    'Required geometry private cache inventory exceeds bound')
+            require(not stat.S_ISLNK(info.st_mode), 'Linked required geometry private cache refused')
+            if stat.S_ISDIR(info.st_mode):
+                pending.append(entry)
+                continue
+            scanned += 1
+            require(scanned <= world.MAX_CACHE_FILES and stat.S_ISREG(info.st_mode),
+                    'Required geometry private cache scan exceeds bound')
+            if not world.cache_path_allowed(relative, geometry): continue
+            size, digest, _ = world.hash_regular(entry, world.MAX_CACHE_BYTES, context)
+            total += size
+            require(total <= world.MAX_CACHE_BYTES, 'Required geometry cache refresh exceeds byte bound')
+            result.append({'path': entry.relative_to(worktree).as_posix(),
+                           'bytes': size, 'sha256': digest})
+    return sorted(result, key=lambda row: row['path'])
+
+
+def required_geometry_cache_receipt(saved, files):
+    """Check once-only refresh history without reading regenerated cache payloads."""
+    refresh, removed = saved.get('cache_refresh'), saved.get('removed_cache_files')
+    require(isinstance(refresh, dict) and set(refresh) == {
+                'policy', 'performed', 'removed_files', 'removed_bytes',
+                'removed_inventory_sha256', 'accepted_cache_archive_modified'}
+            and isinstance(removed, list) and len(removed) <= world.MAX_CACHE_FILES,
+            'Required geometry cache refresh receipt is missing or malformed')
+    geometry = {name.removeprefix('data/').casefold() for name in files}
+    paths = []
+    for row in removed:
+        require(isinstance(row, dict) and set(row) == {'path', 'bytes', 'sha256'}
+                and safe(row['path']) and row['path'].casefold().startswith('data/geobin/')
+                and type(row['bytes']) is int and 0 < row['bytes'] <= world.MAX_CACHE_BYTES
+                and re.fullmatch('[0-9a-f]{64}', str(row['sha256'])),
+                'Invalid required geometry removed-cache pin')
+        relative = PurePosixPath('/'.join(row['path'].split('/')[2:]))
+        require(world.cache_path_allowed(relative, geometry),
+                'Required geometry cache history exceeds the finite allowlist')
+        paths.append(row['path'])
+    require(paths == sorted(paths) and len({name.casefold() for name in paths}) == len(paths)
+            and refresh['policy'] == GEOMETRY_CACHE_POLICY and refresh['performed'] is True
+            and refresh['accepted_cache_archive_modified'] is False
+            and type(refresh['removed_files']) is int and refresh['removed_files'] == len(removed)
+            and type(refresh['removed_bytes']) is int
+            and refresh['removed_bytes'] == sum(row['bytes'] for row in removed)
+            and 0 <= refresh['removed_bytes'] <= world.MAX_CACHE_BYTES
+            and refresh['removed_inventory_sha256'] == hashlib.sha256(canonical(removed)).hexdigest(),
+            'Required geometry cache refresh receipt differs')
+    return refresh, removed
+
+
+def geometry_marker_state(worktree):
+    marker = Path(worktree) / GEOMETRY_MARKER
+    if not os.path.lexists(marker): return None
+    raw = world.read_regular(marker, MAX_MANIFEST, installed=True)
+    try: saved = json.loads(raw)
+    except (ValueError, UnicodeError): return None
+    return saved if isinstance(saved, dict) else None
+
+
+def validate_required_geometry(worktree, context):
+    """Validate the durable selected-geometry proof without graph qualification."""
+    worktree = Path(worktree)
+    saved = geometry_marker_state(worktree)
+    require(isinstance(saved, dict), 'Required Atlas geometry receipt is missing')
+    files = saved.get('required_geometry_files')
+    identity = required_geometry_identity(files)
+    required_geometry_cache_receipt(saved, files)
+    require(saved.get('format') == 1 and saved.get('identity') == identity
+            and saved.get('client_identity') == geometry_client_identity(worktree, context),
+            'Required Atlas geometry receipt identity differs')
+    targets = actual_targets(worktree, files, context)
+    outputs = world.output_state(worktree, targets, files, context)
+    require(all(row['stat'] is not None for row in outputs.values())
+            and saved.get('outputs') == outputs,
+            'Required Atlas geometry immutable fingerprints changed')
+    return identity
+
+
+def ensure_required_geometry(worktree, assets, context):
+    """Prepare only the exact original server collision GEOs in the client source.
+
+    This runs before server cache checkout/staging. Selected payload SHA-256s,
+    not unrelated ZIP members, prove the finite geometry. Full UI archive
+    verification remains the existing client visual/package boundary.
+    """
+    import client_visual_assets as visual
+    started = time.monotonic()
+    worktree, assets = Path(worktree), Path(assets)
+    context.check()
+    world.real_directory(worktree); world.real_directory(assets)
+    client_identity = geometry_client_identity(worktree, context)
+    source_state = visual.source_state(assets)
+    saved = geometry_marker_state(worktree)
+    marker = worktree / GEOMETRY_MARKER
+    marker_before = world.file_state(marker, MAX_MANIFEST, installed=True) if os.path.lexists(marker) else None
+    if isinstance(saved, dict):
+        files = saved.get('required_geometry_files')
+        try:
+            identity = required_geometry_identity(files)
+            refresh, prior_removed = required_geometry_cache_receipt(saved, files)
+        except ValueError:
+            identity = None
+        if (identity is not None and saved.get('format') == 1
+                and saved.get('identity') == identity and saved.get('client_identity') == client_identity
+                and saved.get('source_state') == source_state):
+            targets = actual_targets(worktree, files, context)
+            outputs = world.output_state(worktree, targets, files, context)
+            if all(row['stat'] is not None for row in outputs.values()) and saved.get('outputs') == outputs:
+                return {'format': 1, 'status': 'reused_verified_required_geometry',
+                        'identity': identity, 'installed_files': 0, 'input_files_checked': len(files),
+                        'selected_payload_bytes_hashed': 0, 'archive_decoded': False,
+                        'cache_refresh': refresh, 'cache_files_removed_this_prepare': 0,
+                        'cache_refresh_reused': True, 'full_visual_preload': False, 'native_graph_qualified': False,
+                        'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
+    document = visual.package(assets)
+    files = {name: {key: row[key] for key in ('bytes', 'sha256')}
+             for name, row in document['files'].items()
+             if name.startswith('data/object_library/') and name.casefold().endswith('.geo')}
+    identity = required_geometry_identity(files)
+    targets = actual_targets(worktree, files, context)
+    before = world.output_state(worktree, targets, files, context)
+    cache_reused = False
+    if (isinstance(saved, dict) and saved.get('format') == 1 and saved.get('identity') == identity
+            and saved.get('client_identity') == client_identity
+            and saved.get('required_geometry_files') == files
+            and saved.get('outputs') == before):
+        try:
+            refresh, removed_history = required_geometry_cache_receipt(saved, files)
+            cache_reused = True
+        except ValueError:
+            pass
+    removed = [] if cache_reused else required_geometry_cache_inventory(worktree, files, context)
+    verified = installed = decoded = 0
+    for name, target in targets.items():
+        context.check()
+        if before[name]['stat'] is not None:
+            world.verify_target(target, files[name], context)
+            verified += files[name]['bytes']
+    missing = [name for name in files if before[name]['stat'] is None]
+    if missing:
+        descriptor = os.open(assets / visual.ARCHIVE, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        try:
+            require(world.checked_info(assets / visual.ARCHIVE, os.fstat(descriptor),
+                        visual.MAX_ARCHIVE_BYTES) == source_state[visual.ARCHIVE],
+                    'Required geometry source archive changed before reading')
+            with os.fdopen(descriptor, 'rb', closefd=False) as stream, zipfile.ZipFile(stream) as archive:
+                visual.validate_archive(archive, document['files'], context)
+                for name in missing:
+                    context.check(); target = targets[name]
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    world.real_directory(target.parent)
+                    fd, temporary_name = tempfile.mkstemp(prefix='.atlas-required-geometry-', dir=target.parent)
+                    temporary = Path(temporary_name)
+                    try:
+                        with os.fdopen(fd, 'wb') as output:
+                            world.extract_payload(archive, name, files[name], output, context)
+                            output.flush(); os.fsync(output.fileno())
+                        temporary.chmod(0o444)
+                        os.utime(temporary, (visual.client.CACHE_EPOCH, visual.client.CACHE_EPOCH))
+                        context.check()
+                        world.real_directory(target.parent)
+                        visual.client.publish_new_regular_file(temporary, target)
+                        installed += 1; decoded += files[name]['bytes']
+                    finally:
+                        temporary.unlink(missing_ok=True)
+            world.unchanged(assets / visual.ARCHIVE, descriptor, source_state[visual.ARCHIVE])
+        finally:
+            os.close(descriptor)
+    context.check()
+    require(visual.source_state(assets) == source_state
+            and geometry_client_identity(worktree, context) == client_identity
+            and actual_targets(worktree, files, context) == targets,
+            'Required geometry source or destination changed during preparation')
+    after = world.output_state(worktree, targets, files, context)
+    require(all(row['stat'] is not None for row in after.values())
+            and all(before[name]['stat'] is None or after[name] == before[name] for name in files),
+            'Required geometry output disappeared or an existing leaf changed')
+    require((world.file_state(marker, MAX_MANIFEST, installed=True) if os.path.lexists(marker) else None)
+            == marker_before, 'Required geometry receipt changed before private cache refresh')
+    if not cache_reused:
+        # Flattened Atlas bins can encode missing models, and adding GEOs at
+        # CACHE_EPOCH does not prove their freshness. Refresh only the exact
+        # finite world-policy cache leaves before publishing this receipt.
+        for row in removed:
+            context.check()
+            world.remove_cache(worktree / row['path'], row, context)
+        removed_history = removed
+        refresh = {'policy': GEOMETRY_CACHE_POLICY, 'performed': True,
+                   'removed_files': len(removed), 'removed_bytes': sum(row['bytes'] for row in removed),
+                   'removed_inventory_sha256': hashlib.sha256(canonical(removed)).hexdigest(),
+                   'accepted_cache_archive_modified': False}
+    context.check()
+    require(visual.source_state(assets) == source_state
+            and geometry_client_identity(worktree, context) == client_identity
+            and actual_targets(worktree, files, context) == targets
+            and world.output_state(worktree, targets, files, context) == after,
+            'Required geometry proof changed during private cache refresh')
+    previous = marker_before
+    require((world.file_state(marker, MAX_MANIFEST, installed=True) if os.path.lexists(marker) else None)
+            == previous, 'Required geometry receipt changed after private cache refresh')
+    record = {'format': 1, 'identity': identity, 'client_identity': client_identity,
+              'source_state': source_state, 'required_geometry_files': files, 'outputs': after,
+              'cache_refresh': refresh, 'removed_cache_files': removed_history}
+    fd, temporary_name = tempfile.mkstemp(prefix='.atlas-required-geometry-marker-', dir=worktree)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(fd, 'wb') as output:
+            output.write(canonical(record)); output.flush(); os.fsync(output.fileno())
+        temporary.chmod(0o444)
+        os.utime(temporary, (visual.client.CACHE_EPOCH, visual.client.CACHE_EPOCH))
+        context.check()
+        world.real_directory(worktree)
+        if previous is None:
+            visual.client.publish_new_regular_file(temporary, marker)
+        else:
+            require(world.file_state(marker, MAX_MANIFEST, installed=True) == previous,
+                    'Required geometry receipt changed before publication')
+            os.replace(temporary, marker)
+    finally:
+        temporary.unlink(missing_ok=True)
+    require(validate_required_geometry(worktree, context) == identity,
+            'Required geometry durable proof differs after publication')
+    return {'format': 1, 'status': 'installed_verified_required_geometry',
+            'identity': identity, 'installed_files': installed, 'input_files_checked': len(files),
+            'selected_payload_bytes_hashed': verified + decoded, 'archive_decoded': bool(missing),
+            'cache_refresh': refresh, 'cache_files_removed_this_prepare': len(removed),
+            'cache_refresh_reused': cache_reused, 'full_visual_preload': False, 'native_graph_qualified': False,
+            'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
 
 
 def fingerprint(path, *, immutable_input=False):
@@ -256,12 +536,12 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
             regular(marker, MAX_MANIFEST)
             prior = json.loads(marker.read_bytes())
         except (ValueError, OSError, json.JSONDecodeError): pass
-    if (isinstance(prior, dict) and prior.get('format') == 2 and prior.get('policy') == POLICY
+    if (isinstance(prior, dict) and prior.get('format') == 3 and prior.get('policy') == POLICY
             and prior.get('manifest_sha256') == MANIFEST_SHA256 and prior.get('input_fingerprints') == inputs
             and prior.get('server_geometry_profile') == profile
             and all(path.exists() for path in targets.values())
             and prior.get('graph_fingerprints') == fingerprints(runtime, targets, context)):
-        return {'format': 2, 'status': 'reused_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
+        return {'format': 3, 'status': 'reused_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
                 'full_world_crc': value['native']['full_world_crc'], 'installed_files': 0,
                 'input_files_checked': len(inputs), 'input_payload_bytes_hashed': 0,
                 'archive_decoded': False, 'fingerprint_walk': True, 'input_inventory_walk': True,
@@ -302,12 +582,12 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
                 target.chmod(0o400)
             else:
                 atomic_bytes(target, raw); installed += 1
-    record = {'format': 2, 'policy': POLICY, 'manifest_sha256': MANIFEST_SHA256,
+    record = {'format': 3, 'policy': POLICY, 'manifest_sha256': MANIFEST_SHA256,
               'server_geometry_profile': profile,
               'input_fingerprints': inputs,
               'graph_fingerprints': fingerprints(runtime, targets, context)}
     atomic_bytes(marker, canonical(record))
-    return {'format': 2, 'status': 'installed_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
+    return {'format': 3, 'status': 'installed_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
             'full_world_crc': value['native']['full_world_crc'], 'installed_files': installed,
             'input_files_checked': len(inputs), 'input_payload_bytes_hashed': total,
             'archive_decoded': True, 'fingerprint_walk': True, 'input_inventory_walk': True,

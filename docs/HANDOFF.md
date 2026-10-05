@@ -1,47 +1,70 @@
 # City of Heroes Android handoff
 
-**UI preparation passed; actual native generation/readback passed, but the first bare-world profile failed. No 0.13.14 APK is published.**
+**UI sweep is prepared. Required-geometry recovery qualification is the next hosted gate. No 0.13.14 APK is published.**
 
-Actual run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
-at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed original native
-generation, verified its fresh ordinary-world CRC, exact version-9 date,
-full graph readback and 32 native routes. All three CRCs were `0xb0c21ded`.
-Counts: combat 163,544; connected 163,527; ground 1,805,050; raised 2,698,868;
-blocks 602. The subsequent fresh `base_world` process failed at
-**2026-10-05 23:16:31 UTC**: real CRC `0x1583f117` did not match the date.
-This is a real geometry difference, not a timeout or the repaired CRC-phase bug.
-The none/all optional-geometry compatibility assumption is disproved.
+Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
+at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
+fresh ordinary-world CRC, untouched version-9 date, graph readback and 32 real
+routes, all at `0xb0c21ded`. Counts: combat 163,544; connected 163,527;
+ground 1,805,050; raised 2,698,868; blocks 602. Its first subsequent bare-world
+profile failed at 2026-10-05 23:16:31 UTC with actual CRC `0x1583f117`.
+The overall run remains failed; NONE/ALL optional-geometry equality is disproved.
 
-Failure evidence is retained in artifact **11379217768**:
-33,296,543 bytes, outer ZIP SHA-256
-`a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4`.
-It contains the actual still-unqualified graph: 39,069,559 bytes, SHA-256
+Successful read-only forensic run [37388593712](https://github.com/Russianranger/coh-android/actions/runs/37388593712)
+at `66a430bdc1a1d0372aad8badcc08db4260f79996` found exactly 61 full-only model
+rows and 15,771 triangles, with no bare-only models. The full world has
+4,569,858 triangles versus 4,554,087 bare; first 32 differences are shop models.
+Artifact 11379999575 contains the full finite model delta, original build receipt
+and executable pins (75,058 bytes; SHA-256
+`9140768eedc45d6426172f3a846f6821e74a448b745a393b070013e76dd861ab`).
+
+This checkpoint requires all 406 exact original object-library GEOs already in
+the frozen UI/client package, physical identity
+`c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`.
+The package also contains 521 player GEOs; those are not additional common
+server object GEOs. No broad asset import or algorithm change is authorized.
+Schema 3 uses `required_geometry_cold` and `client_visual_reopen`: both carry
+all 406 required GEOs; the latter also has the actual 10,401-leaf visual tree.
+Both fresh processes must match exact CRC/date/counts/readback and 32 real routes.
+NONE/partial sets fail closed.
+
+The client helper prepares selected immutable GEOs before server-data cache
+checkout/staging/seal and binds stable required geometry plus refresh policy into
+the cache identity. A first preparation removes only owned private Atlas and
+exact 406-derived `.bin/.dep/.bounds` caches, using the existing world allowlist,
+and records their original pins. Native flattened map caches can retain missing
+models and do not track newly supplied GEOs as freshness dependencies.
+Imported definition bins, unrelated caches, source assets and saved databases are
+preserved. Unchanged warm preparation performs no ZIP decode, payload hash,
+cache scan/removal or restaging. Old NONE cache trees are retained but cannot be
+reused under the new identity. The separate prepared server-cache donor accepts
+only `data/server/bin/<leaf>.bin`, so cannot reinstall removed geometry caches.
+
+The new recovery workflow authenticates the original failed run/source, actual
+successful compile, artifact 11379217768 (33,296,543 bytes; SHA-256
+`a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4`),
+original source/build receipts, exact retained executable and primary native proof.
+It then runs two new, source-bound fresh geometry proofs. Original four-role
+generation and new qualification remain separate; no recompilation or repeated
+77-minute generation fallback occurs. The retained graph is still unqualified:
+39,069,559 bytes, SHA-256
 `6a3c9a6661a07cc3aec3a11baa9ca29395cc9b64d783b21e58282b2eb20845f8`;
-the date is exactly 12 bytes (`0900000000000000ed1dc2b0`), SHA-256
+date is 12 bytes, SHA-256
 `ce64be4b49e4a8a4e61f01b31c651e603dc955551fb5c471ad3b75d2bb4f1711`.
-No graph pin freeze, accepted package or release has occurred.
 
-The correct next repair requires all **406 exact original GEO files**
-(physical identity `c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43`),
-already present in the retained visual/UI package. Do not import unrelated
-assets or relax CRC equality. Validate this set in client source before
-server-data cache checkout/staging/seal. Include required geometry in cache
-identity and prevent migration/reuse of an older NONE server-data generation.
-Do not add regular GEO leaves after sealing the source-link cache tree.
-Normal MapServer arguments contain no beacon-disable option.
+Source review of recovery, finite cache refresh, fixtures and launch order passed;
+hosted execution of this checkpoint is pending. Preflight includes source/recovery,
+guest, actual production runtime, packaging, finite change classifier and all 26
+server-cache reuse fixtures. Only the exact future full-publication workflow test
+is held while the preparation workflow remains active; final qualification must
+restore it and run all 68 suites with seven actual PostgreSQL fixtures.
 
-The retained native graph may be recovered only through authenticated original
-run/job/artifact pins, exact graph/date bytes, original primary-success logs
-and identical C/stager/build receipts, followed by two actual fresh mandatory-
-geometry layouts with complete CRC/readback and 32 real routes each. A new
-successful proof-only run must report original four-role generation and later
-fresh qualification separately; never relabel the failed overall run successful.
-Native algorithm and shipped MapServer remain unchanged. New source-bound
-recovery, guest/profile, and server-cache identity drafts are in preparation.
-The previously held verifier/publisher blobs below target a successful 373770
-and optional NONE/ALL profiles: **they are stale and must be revised**, not run.
-The UI artifact 11373610942 remains accepted and reusable without another sweep.
-Main is unchanged, PR #1 stays draft, and zoning remains a later pass.
+The successful UI preparation remains run 37379767112 at source
+`52da9286c2fd1695c6c0c2979378fc418c418c99`, artifact 11373610942.
+It adds 788 exact original UI resources while preserving all 9,613 prior encoded
+streams. Do not rebuild this accepted artifact unnecessarily. Graph guest pins
+remain pending; full verifier/publisher workflows remain held until actual fresh
+proof succeeds. Main is unchanged, PR #1 stays draft, and zoning is later.
 
 Earlier pending-run checkpoint follows; its pending/optional-profile statements are historical.
 

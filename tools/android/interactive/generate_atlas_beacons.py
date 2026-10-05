@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Generate one genuine Atlas graph with four bounded owned native Win32 roles.
+"""Qualify the exact genuine Atlas graph retained from native generation.
 
-The host-only executable never ships. The unchanged algorithms generate from
-exact imported/supplemented data; the native server reopens the graph, compares
-its date CRC with a freshly loaded ordinary world, and proves 32 native routes.
+The failed overall run honestly remains failed: its primary real generator
+completed and the former NONE geometry assumption was disproved. This bounded
+lane authenticates that output, reconstructs required exact source geometry,
+and runs two fresh native CRC/full-readback/32-route proofs. Host tools never ship.
 """
 from __future__ import annotations
 import argparse
@@ -39,7 +40,11 @@ MAX_GRAPH = 128 * 1024 * 1024
 HEARTBEAT_SECONDS = 60
 MAX_FAILURE_TAIL = 8192
 VISUAL_OBJECT_GEOS = 406
-PROFILES = ('base_world', 'base_world_visual')
+PROFILES = ('required_geometry_cold', 'client_visual_reopen')
+COMMON_INPUT_SHA256 = '3bd8cd7305d8066adb2e2ae88bf761d4bcac546c786257027e0b7d28f5a15a08'
+REQUIRED_INPUT_SHA256 = '039f2a761ac11c01338ec1060a8656c6a9c833dc47b294a65d4dfa90648555f8'
+QUALIFICATION_VISUAL_ARCHIVE = {'bytes': 859075775, 'sha256': '5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60'}
+QUALIFICATION_VISUAL_MANIFEST = {'bytes': 48591999, 'sha256': '8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2'}
 VISUAL_MANIFEST_PIN = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
 VISUAL_GEO_SOURCE_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
 VISUAL_OBJECT_SOURCE_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
@@ -48,6 +53,76 @@ HOST_COMPILE_REUSE = {
     'repository_commit': '780b030b73fef34b5000b7303ba4fe828020a229',
     'artifact': {'id': 11366950301, 'bytes': 16542485,
                  'sha256': 'd37e6d13bd619e9c39014b784d193773830ad950d2abd3e252f025588c58020b'},
+}
+
+PRIMARY_RECOVERY = {
+    "run_id": 37377053417,
+    "job_id": 111989203448,
+    "repository_commit": "3124723b93b4ae83b211f9319ffa8d6d8a3e851d",
+    "run_conclusion": "failure",
+    "primary_generation_server_returncode": 0,
+    "generator": {"bytes": 6880256, "sha256": "243184510a89e39f765c9aa8ff49b1ce9807c4a92ac626e96d1814850cc18e8b"},
+    "build_input": {"bytes": 13166, "sha256": "904e1fa5d24b05abab36f771641be82c7fe897e14d410bbeaf3187c49ef492f9"},
+    "artifact": {
+        "id": 11379217768,
+        "bytes": 33296543,
+        "sha256": "a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4"
+    },
+    "graph": {
+        "bytes": 39069559,
+        "sha256": "6a3c9a6661a07cc3aec3a11baa9ca29395cc9b64d783b21e58282b2eb20845f8"
+    },
+    "date": {
+        "bytes": 12,
+        "sha256": "ce64be4b49e4a8a4e61f01b31c651e603dc955551fb5c471ad3b75d2bb4f1711"
+    },
+    "native": {
+        "full_world_crc": "0xb0c21ded",
+        "combat_beacons": 163544,
+        "connected_beacons": 163527,
+        "ground_connections": 1805050,
+        "raised_connections": 2698868,
+        "grid_blocks": 602,
+        "native_pathfinder_successes": 32,
+        "date_version": 9,
+        "date_latest_data_time": 0,
+        "fresh_ordinary_world_crc_verified": True,
+        "native_full_graph_readback_verified": True
+    }
+}
+PRIMARY_GENERATION_SOURCES = {
+    "tools/prepare_atlas_beacon_generator_source.py": {
+        "bytes": 4867,
+        "sha256": "34836711f431f7e7a74e7226a791ed462a2add65cfaa36d956b59c0838ffe10a"
+    },
+    "tools/android/interactive/generate_atlas_beacons.py": {
+        "bytes": 44424,
+        "sha256": "eb89c170f0780e0b3ac61b0bd6e957b3f07b928dbeaf1c91653e7977720f16c2"
+    },
+    "patches/atlas-beacons/0001-host-only-atlas-generator.patch": {
+        "bytes": 11155,
+        "sha256": "e7684871c8a6680be1d25bcf2c352d1c57c1ac9c9f64b41a9714cd3a0df95eb9"
+    },
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+        "bytes": 37139,
+        "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+    },
+    "tools/android/atlas/java/io/github/russianranger/cohatlas/HostImport.java": {
+        "bytes": 4090,
+        "sha256": "1164a1df37d8502b663dd4e51b0b7cb17d3d107d58812416503643ed93de3896"
+    },
+    "assets/reference-inputs-receipt.json": {
+        "bytes": 1014,
+        "sha256": "ff1b88a63803d945b00ebbab8f05412f159d1dc3368134e2b6149d6803ffc198"
+    },
+    "source-target.json": {
+        "bytes": 1011,
+        "sha256": "042ea89d24d116981602b543c8d17eda8a97f518cac79a33688eefcc15222c5f"
+    },
+    "android/guest/atlas_world_assets.py": {
+        "bytes": 24268,
+        "sha256": "4189cff59dce2f9da6d045d754ecc1fda56a09241124f842566b1da69b5865b6"
+    }
 }
 
 FRESH_NATIVE = re.compile(rb'COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=(0x[0-9a-fA-F]{8})')
@@ -244,13 +319,13 @@ def record_profile_inventory(evidence, common, optional, warm, cold):
                 'changed_count': len(changed),
                 'changed_first_16': [{'name': name, 'actual': actual[name], 'expected': wanted[name]}
                                      for name in changed[:16]]}
-    record = {'format': 1, 'status': 'passed' if warm == expected and cold == common else 'mismatch',
+    record = {'format': 1, 'status': 'passed' if warm == expected and cold == expected else 'mismatch',
               'common_files': len(common), 'optional_files': len(optional),
               'common_sha256': hashlib.sha256(canonical(common)).hexdigest(),
               'optional_physical_geometry_sha256': hashlib.sha256(canonical(optional)).hexdigest(),
               'warm_sha256': hashlib.sha256(canonical(warm)).hexdigest(),
               'cold_sha256': hashlib.sha256(canonical(cold)).hexdigest(),
-              'warm_difference': difference(warm, expected), 'cold_difference': difference(cold, common)}
+              'warm_difference': difference(warm, expected), 'cold_difference': difference(cold, expected)}
     (Path(evidence) / 'native-input-profiles.json').write_bytes(canonical(record))
     print('COH_ATLAS_BEACON_INPUT_PROFILES ' + canonical(record).decode('ascii'), flush=True)
     return record
@@ -357,13 +432,69 @@ def native_evidence(log, date):
             'fresh_ordinary_world_crc_verified': True, 'native_full_graph_readback_verified': True}
 
 
+def clear_private_geometry_caches(runtime):
+    """Clear owned map/object binary caches; retained definition bins are untouched."""
+    name = 'data/geobin/.atlas-beacon-cache'
+    root = resolve_world_targets(runtime, [name])[name].parent
+    if not root.exists(): return {'policy': 'empty_private_geobin_before_fresh_readback',
+                                  'removed_files': [], 'remaining_geometry_cache_files': 0}
+    require(root.is_dir() and not root.is_symlink(), 'Owned private geobin directory required')
+    records = []
+    for path in root.rglob('*'):
+        require(not path.is_symlink(), 'Linked native geometry cache refused')
+        if path.is_dir(): continue
+        require(path.is_file(), 'Nonregular native geometry cache refused')
+        if path.suffix.casefold() not in ('.bin', '.dep', '.bounds'): continue
+        require(len(records) < 65536 and path.stat().st_size <= MAX_LOG,
+                'Private geometry cache cleanup exceeds bound')
+        records.append({'path': path.relative_to(runtime).as_posix(), **pin(path)})
+    records.sort(key=lambda row: row['path'])
+    require(sum(row['bytes'] for row in records) <= 1024**3, 'Private cache cleanup byte bound exceeded')
+    for row in records:
+        target = runtime / row['path']; target.chmod(0o600); target.unlink()
+    return {'policy': 'empty_private_geobin_before_fresh_readback', 'removed_files': records,
+            'remaining_geometry_cache_files': 0}
+
+
+def validate_recovered_origin(value, directory, build_input, generator_pin):
+    require(value.get('kind') == 'recovered_primary_native_generation'
+            and value.get('source') == PRIMARY_RECOVERY
+            and value.get('original_run_conclusion') == 'failure'
+            and value.get('primary_generation_server_returncode') == 0
+            and value.get('generation_sources') == PRIMARY_GENERATION_SOURCES
+            and value.get('build_input') == build_input and value.get('generator') == generator_pin == PRIMARY_RECOVERY['generator']
+            and value.get('native') == PRIMARY_RECOVERY['native']
+            and value.get('original_owned_roles') == 4
+            and value.get('original_cleanup_complete') is True
+            and value.get('original_native_worker_spawning_allowed') is False
+            and value.get('fresh_qualification_still_required') is True,
+            'Original native graph origin/source/cleanup differs')
+    directory = Path(directory)
+    validate_primary_implementation_inputs()
+    validate_recovery_metadata(json.loads((directory / 'evidence/primary-recovery-metadata.json').read_bytes()))
+    require(pin(directory / 'evidence/primary-original-generation-source.py')
+            == PRIMARY_GENERATION_SOURCES['tools/android/interactive/generate_atlas_beacons.py'],
+            'Original generation implementation evidence differs')
+    require(json.loads((directory / 'evidence/primary-build-input.json').read_bytes()) == build_input,
+            'Original compiled native source evidence differs')
+    require(pin(directory / 'evidence/primary-build-input.json') == PRIMARY_RECOVERY['build_input'],
+            'Original compile receipt bytes differ')
+    primary = json.loads((directory / 'evidence/primary-unqualified-output.json').read_bytes())
+    require(primary['native_generation_server_returncode'] == 0
+            and primary['status'] == 'unqualified_native_output'
+            and primary['files'] == {'unqualified-native-graph.bcn': PRIMARY_RECOVERY['graph'],
+                                     'unqualified-native-graph.bcn.date': PRIMARY_RECOVERY['date']},
+            'Original actual primary output evidence differs')
+    return value
+
+
 def validate_package(directory, repository_commit):
     directory = Path(directory)
     value = json.loads((directory / REPORT).read_bytes())
-    require(value.get('format') == 2 and value.get('status') == 'passed' and re.fullmatch('[0-9a-f]{40}', value.get('repository_commit', ''))
+    require(value.get('format') == 3 and value.get('status') == 'passed' and re.fullmatch('[0-9a-f]{40}', value.get('repository_commit', ''))
             and re.fullmatch('[0-9a-f]{40}', repository_commit), 'Generation provenance/commit differs')
     require(value.get('generation_sources') == {name: pin(ROOT / name) for name in GENERATION_SOURCES},
-            'Generation implementation changed; a fresh native generation is required')
+            'Qualification implementation changed; new fresh native proofs are required')
     require(value['build_input'] == producer.expected(), 'Host producer source receipt differs')
     reuse_path = directory / 'evidence/host-compile-reuse.json'
     if reuse_path.exists():
@@ -371,15 +502,19 @@ def validate_package(directory, repository_commit):
         validate_compile_reuse_receipt(json.loads(reuse_path.read_bytes()), value['build_input'], value['generator'])
     require(value['donor'] == DONOR and value['stock_mapserver_sha256'] == STOCK_MAPSERVER,
             'Stock native compatibility differs')
-    require(value.get('cleanup_complete') is True and value.get('owned_roles') == 4
+    require(value.get('cleanup_complete') is True and value.get('owned_roles') == 0
+            and value.get('qualification_mode') == 'recovered_primary_fresh_proofs'
             and value.get('native_worker_spawning_allowed') is False,
-            'Owned native generation containment/cleanup proof differs')
+            'Owned proof-only native containment/cleanup differs')
+    validate_recovered_origin(value['graph_origin'], directory, value['build_input'], value['generator'])
     for name, expected in value['evidence'].items():
         require(pin(directory / safe(name)) == expected, 'Generation evidence changed')
     manifest = json.loads((directory / MANIFEST).read_bytes())
     require(pin(directory / MANIFEST) == value['manifest'] and pin(directory / ARCHIVE) == value['archive'],
             'Generated package pin differs')
-    require(manifest.get('format') == 2 and manifest['map'] == producer.MAP and set(manifest['files']) == {GRAPH, DATE}
+    require(manifest['files'] == {GRAPH: PRIMARY_RECOVERY['graph'], DATE: PRIMARY_RECOVERY['date']},
+            'Package graph/date differ from actual original native generation')
+    require(manifest.get('format') == 3 and manifest['map'] == producer.MAP and set(manifest['files']) == {GRAPH, DATE}
             and manifest['stock_mapserver_sha256'] == STOCK_MAPSERVER, 'Generated graph scope differs')
     require(manifest['native'] == native_evidence((directory / 'evidence/server.log').read_bytes(),
                                                  _date_from_archive(directory / ARCHIVE)), 'Native transcript differs')
@@ -388,22 +523,35 @@ def validate_package(directory, repository_commit):
             and identity['visual_geometry_sha256'] == VISUAL_GEO_SOURCE_SHA256
             and identity['visual_object_geometry_sha256'] == VISUAL_OBJECT_SOURCE_SHA256,
             'Original donor geometry source provenance differs')
-    common, optional = manifest['input_files'], manifest['optional_input_files']
-    require(len(optional) == VISUAL_OBJECT_GEOS and not set(common).intersection(optional)
+    common, required = manifest['input_files'], manifest['required_geometry_files']
+    require(len(common) == 5231 and len(required) == VISUAL_OBJECT_GEOS and not set(common).intersection(required)
             and set(manifest['input_profiles']) == set(PROFILES), 'Native input profiles differ')
     require(manifest['input_files_sha256'] == hashlib.sha256(canonical(common)).hexdigest()
-            and manifest['input_identity']['optional_physical_geometry_sha256']
-                == hashlib.sha256(canonical(optional)).hexdigest(), 'Native physical input pins differ')
+            and manifest['input_identity']['required_geometry_sha256']
+                == hashlib.sha256(canonical(required)).hexdigest() == VISUAL_OBJECT_SOURCE_SHA256
+            and manifest['input_files_sha256'] == COMMON_INPUT_SHA256
+            and hashlib.sha256(canonical({**common, **required})).hexdigest() == REQUIRED_INPUT_SHA256, 'Native physical input pins differ')
     for profile in PROFILES:
-        selected = common if profile == 'base_world' else {**common, **optional}
+        selected = {**common, **required}
         native = native_evidence((directory / ('evidence/' + profile + '.log')).read_bytes(),
                                 _date_from_archive(directory / ARCHIVE))
         require(native == manifest['native'] == manifest['input_profiles'][profile]['native']
                 and hashlib.sha256(canonical(selected)).hexdigest()
                 == manifest['input_profiles'][profile]['input_files_sha256'], 'Fresh native profile proof differs')
     require(value['profile_verification_processes'] == 2 and value['profile_proofs'] == manifest['input_profiles']
-            and value['cold_mirror']['created_before_visual_overlay_and_generation'] is True,
+            and value['cold_mirror']['required_geometry_installed_before_mirror'] is True
+            and value['cold_mirror']['created_before_full_visual_overlay_and_readback'] is True
+            and value['cold_mirror']['readonly_inputs_hardlinked'] is True
+            and value['cold_mirror']['private_cache_roots'] == ['data/bin', 'data/geobin', 'data/server'],
             'Fresh isolated native profile provenance differs')
+    require(value.get('qualification_visual') == {
+        'archive': QUALIFICATION_VISUAL_ARCHIVE, 'manifest': QUALIFICATION_VISUAL_MANIFEST,
+        'files': 10401, 'retained_files': 9613, 'added_original_textures': 788,
+        'required_geometry_files': VISUAL_OBJECT_GEOS}, 'Full client visual proof source differs')
+    require(set(value['profile_cache_isolation']) == set(PROFILES)
+            and all(row['policy'] == 'empty_private_geobin_before_fresh_readback'
+                    and row['remaining_geometry_cache_files'] == 0
+                    for row in value['profile_cache_isolation'].values()), 'Private native geometry cache isolation differs')
     with zipfile.ZipFile(directory / ARCHIVE) as archive:
         require(len(archive.namelist()) == 3 and set(archive.namelist()) == {GRAPH, DATE, MANIFEST}, 'Beacon package closure differs')
         require(archive.read(MANIFEST) == (directory / MANIFEST).read_bytes(), 'Embedded manifest differs')
@@ -529,10 +677,178 @@ def validate_compile_reuse_receipt(value, build_input, generator_pin):
     return value
 
 
+def validate_recovery_metadata(value):
+    """Authenticate a failed overall run without upgrading its conclusion."""
+    source = PRIMARY_RECOVERY
+    require(isinstance(value, dict) and value.get('format') == 1
+            and value.get('status') == 'authenticated_failed_run_primary_candidate'
+            and value.get('source') == source, 'Primary recovery source/artifact identity differs')
+    require(value.get('run') == {
+        'id': source['run_id'], 'head_sha': source['repository_commit'],
+        'head_branch': 'codex/character-persistence-continuation',
+        'path': '.github/workflows/android-atlas-beacon-generation.yml',
+        'status': 'completed', 'conclusion': 'failure', 'run_attempt': 1},
+        'Original failed-run API provenance differs')
+    require(value.get('job') == {
+        'id': source['job_id'], 'name': 'generate', 'conclusion': 'failure',
+        'source_stage_conclusion': 'success', 'compile_conclusion': 'success'},
+        'Original native compile/job provenance differs')
+    artifact = source['artifact']
+    require(value.get('artifact') == {
+        'id': artifact['id'], 'name': 'coh-ui-beacon-generation-evidence',
+        'expired': False, 'size_in_bytes': artifact['bytes'],
+        'digest': 'sha256:' + artifact['sha256'],
+        'run_id': source['run_id'], 'head_sha': source['repository_commit']},
+        'Original authenticated artifact metadata differs')
+    return value
+
+
+def validate_primary_implementation_inputs():
+    # The qualifier changes; native algorithms, host C patch, source staging,
+    # importer and authoritative path resolver must remain exactly as generated.
+    for name in GENERATION_SOURCES:
+        if name == 'tools/android/interactive/generate_atlas_beacons.py': continue
+        require(pin(ROOT / name) == PRIMARY_GENERATION_SOURCES[name],
+                'Primary native/import input implementation changed: ' + name)
+
+
+def recover_primary_artifact(archive_path, metadata_path, generator_path,
+                             build_input_path, evidence, original_source_path):
+    """Recover exact primary output; only later new processes can qualify it."""
+    require(pin(archive_path) == {key: PRIMARY_RECOVERY['artifact'][key] for key in ('bytes', 'sha256')}, 'Primary artifact ZIP differs')
+    metadata = validate_recovery_metadata(json.loads(Path(metadata_path).read_bytes()))
+    validate_primary_implementation_inputs()
+    require(pin(original_source_path) == PRIMARY_GENERATION_SOURCES[
+        'tools/android/interactive/generate_atlas_beacons.py'], 'Original generator implementation differs')
+    evidence = Path(evidence)
+    with zipfile.ZipFile(archive_path) as archive:
+        rows = archive.infolist()
+        require(0 < len(rows) <= 512 and sum(row.file_size for row in rows) <= 256 * 1024**2,
+                'Bounded primary artifact required')
+        names = [safe(row.filename.rstrip('/')) for row in rows]
+        require(len({name.casefold() for name in names}) == len(names),
+                'Primary artifact contains ambiguous members')
+        def member(leaf, limit):
+            found = [row for row in rows if Path(row.filename).name == leaf and not row.is_dir()]
+            require(len(found) == 1 and 0 < found[0].file_size <= limit,
+                    'One bounded primary artifact member required: ' + leaf)
+            mode = found[0].external_attr >> 16
+            require(not mode or not stat.S_ISLNK(mode), 'Linked primary artifact member refused')
+            return archive.read(found[0])
+        graph = member('unqualified-native-graph.bcn', MAX_GRAPH)
+        date = member('unqualified-native-graph.bcn.date', 12)
+        raw_capture = member('unqualified-native-output.json', 1024**2)
+        capture = json.loads(raw_capture)
+        require(capture.get('format') == 1 and capture.get('status') == 'unqualified_native_output'
+                and capture.get('native_generation_server_returncode') == 0
+                and capture.get('both_fresh_profile_proofs_required') is True,
+                'Primary native output was not completed successfully')
+        actual = {'unqualified-native-graph.bcn': {
+            'bytes': len(graph), 'sha256': hashlib.sha256(graph).hexdigest()},
+            'unqualified-native-graph.bcn.date': {
+            'bytes': len(date), 'sha256': hashlib.sha256(date).hexdigest()}}
+        require(actual == {'unqualified-native-graph.bcn': PRIMARY_RECOVERY['graph'],
+                           'unqualified-native-graph.bcn.date': PRIMARY_RECOVERY['date']}
+                and capture.get('files') == actual, 'Retained actual native graph/date pins differ')
+        primary_log = member('server.log', MAX_LOG)
+        witness = native_evidence(primary_log, date)
+        require(witness == PRIMARY_RECOVERY['native'], 'Primary fresh CRC/readback/32-route witness differs')
+        failure_raw = member('native-role-failure.json', 1024**2)
+        failure = json.loads(failure_raw)
+        require(failure.get('status') == 'failed' and failure.get('cleanup_complete') is True
+                and failure.get('roles', {}).get('server', {}).get('returncode') == 0
+                and failure.get('roles', {}).get('base_world', {}).get('returncode') == 3,
+                'Original primary completion/owned cleanup/cold refusal evidence differs')
+        build_raw = member('atlas-beacon-generator-build-input.json', 1024**2)
+        require({'bytes': len(build_raw), 'sha256': hashlib.sha256(build_raw).hexdigest()}
+                == PRIMARY_RECOVERY['build_input'], 'Actual retained compile receipt bytes differ')
+        build_input = json.loads(build_raw)
+        require(build_input == producer.expected()
+                and build_input == json.loads(Path(build_input_path).read_bytes()),
+                'Retained successful native compile source receipt differs')
+        binary = member('host-only-beacon-generator.exe', MAX_LOG)
+        require({'bytes': len(binary), 'sha256': hashlib.sha256(binary).hexdigest()}
+                == PRIMARY_RECOVERY['generator'], 'Actual retained native executable bytes differ')
+        require(binary[:2] == b'MZ' and len(binary) > 256, 'Retained native executable header differs')
+        pe = struct.unpack_from('<I', binary, 0x3c)[0]
+        require(pe + 6 < len(binary) and binary[pe:pe+4] == b'PE\0\0'
+                and struct.unpack_from('<H', binary, pe+4)[0] == 0x14c, 'Retained Win32 ABI differs')
+        generator_path = Path(generator_path)
+        require(not generator_path.exists(), 'Fresh owned retained-generator path required')
+        generator_path.parent.mkdir(parents=True, exist_ok=True)
+        generator_path.write_bytes(binary)
+        symbols = member('host-only-beacon-generator.pdb', MAX_LOG)
+        generator_path.with_suffix('.pdb').write_bytes(symbols)
+        inventory = json.loads(member('native-input-profiles.json', 1024**2))
+        require(inventory.get('status') == 'passed' and inventory.get('common_files') == 5231
+                and inventory.get('optional_files') == VISUAL_OBJECT_GEOS
+                and inventory.get('common_sha256') == COMMON_INPUT_SHA256
+                and inventory.get('warm_sha256') == REQUIRED_INPUT_SHA256
+                and inventory.get('optional_physical_geometry_sha256') == VISUAL_OBJECT_SOURCE_SHA256,
+                'Primary native effective geometry inventory differs')
+    for name, raw in {'server.log': primary_log, 'primary-unqualified-output.json': raw_capture,
+                      'primary-role-failure.json': failure_raw,
+                      'primary-build-input.json': build_raw,
+                      'primary-original-generation-source.py': Path(original_source_path).read_bytes()}.items():
+        (evidence / name).write_bytes(raw)
+    shutil.copyfile(metadata_path, evidence / 'primary-recovery-metadata.json')
+    origin = {'kind': 'recovered_primary_native_generation', 'source': PRIMARY_RECOVERY,
+              'original_run_conclusion': 'failure', 'primary_generation_server_returncode': 0,
+              'generation_sources': PRIMARY_GENERATION_SOURCES, 'build_input': build_input,
+              'generator': pin(generator_path), 'native': witness,
+              'original_owned_roles': 4, 'original_cleanup_complete': True,
+              'original_native_worker_spawning_allowed': False,
+              'fresh_qualification_still_required': True}
+    (evidence / 'primary-graph-origin.json').write_bytes(canonical(origin))
+    return origin, graph, date
+
+
+def overlay_complete_visual(path, manifest_path, original_manifest, required, runtime):
+    """Prove the shipped UI extension while retaining every original byte stream."""
+    require(pin(path) == QUALIFICATION_VISUAL_ARCHIVE and pin(manifest_path) == QUALIFICATION_VISUAL_MANIFEST,
+            'Frozen UI preparation pair differs')
+    value = json.loads(Path(manifest_path).read_bytes())
+    require({key: value['archive'][key] for key in ('bytes', 'sha256')} == QUALIFICATION_VISUAL_ARCHIVE,
+            'Frozen client visual archive receipt differs')
+    files = value['files']
+    require(len(files) == 10401 and len(original_manifest['files']) == 9613
+            and set(original_manifest['files']).issubset(files)
+            and all(files[name] == record for name, record in original_manifest['files'].items()),
+            'Retained original visual source streams changed')
+    added = set(files) - set(original_manifest['files'])
+    require(len(added) == 788 and all(name.startswith('data/texture_library/') for name in added),
+            'UI source supplement exceeds its exact texture-only scope')
+    selected = physical_pins({name: row for name, row in files.items()
+                             if name.startswith('data/object_library/') and name.endswith('.geo')})
+    require(selected == required, 'Full client visual collision geometry differs')
+    targets = resolve_world_targets(runtime, files)
+    with zipfile.ZipFile(path) as archive:
+        require(len(archive.namelist()) == len(set(archive.namelist()))
+                and set(archive.namelist()) == set(files), 'Complete client visual ZIP closure differs')
+        for name, row in files.items():
+            target = targets[name]
+            if target.exists():
+                require(pin(target) == physical_pins({name: row})[name],
+                        'Existing immutable visual source changed: ' + name)
+                continue
+            with archive.open(name) as source: copy_pinned(source, target, row)
+            os.utime(target, (1767225600, 1767225600))
+    return {'archive': pin(path), 'manifest': pin(manifest_path), 'files': len(files),
+            'retained_files': 9613, 'added_original_textures': 788, 'required_geometry_files': len(required)}
+
+
 def generate(args):
-    require(os.name == 'nt', 'Native generation requires an isolated Windows runner')
-    for name in ('donor_apk', 'donor_receipt', 'asset_archive', 'generator', 'build_input', 'work', 'output'):
+    require(os.name == 'nt', 'Native qualification requires an isolated Windows runner')
+    for name in ('donor_apk', 'donor_receipt', 'asset_archive', 'generator', 'build_input', 'work', 'output',
+                 'client_visual_archive', 'client_visual_manifest'):
         setattr(args, name, Path(getattr(args, name)).resolve())
+    for name in ('recovery_artifact', 'recovery_metadata', 'original_generation_source'):
+        value = getattr(args, name, None)
+        if value is not None: setattr(args, name, Path(value).resolve())
+    recovering = args.recovery_artifact is not None
+    require(recovering, 'This qualification lane requires the exact retained real primary graph')
+    require(recovering == (args.recovery_metadata is not None) == (args.original_generation_source is not None),
+            'All primary recovery provenance inputs are required together')
     require(30 <= args.timeout_seconds <= 5400 and re.fullmatch('[0-9a-f]{40}', args.repository_commit), 'Invalid timeout/commit')
     require(not args.work.exists() and not args.output.exists(), 'Fresh generator work/output required')
     args.work.mkdir(parents=True); args.output.mkdir(parents=True)
@@ -563,82 +879,52 @@ def generate(args):
     for path in data.rglob('*'):
         if path.is_file(): os.utime(path, (1767225600, 1767225600))
     common_inputs = geometry_inputs(runtime)
-    cold_runtime = args.work / 'c'
-    cold_mirror = mirror_cold_runtime(runtime, cold_runtime)
+    require(hashlib.sha256(canonical(common_inputs)).hexdigest() == COMMON_INPUT_SHA256,
+            'Exact common geometry/text source inventory differs')
     visual_path = assets / 'runtime/client-visual-manifest.json'
-    visual, optional_inputs = overlay_object_geometry(assets / 'runtime/client-visual-assets.zip', visual_path, runtime)
-    for target in resolve_world_targets(runtime, optional_inputs).values():
+    visual, required_inputs = overlay_object_geometry(assets / 'runtime/client-visual-assets.zip', visual_path, runtime)
+    for target in resolve_world_targets(runtime, required_inputs).values():
         os.utime(target, (1767225600, 1767225600))
     inputs = geometry_inputs(runtime)
-    inventory = record_profile_inventory(evidence, common_inputs, optional_inputs, inputs, geometry_inputs(cold_runtime))
-    require(inventory['status'] == 'passed', 'Cold/warm physical geometry profiles differ from their exact inventories')
+    require(hashlib.sha256(canonical(inputs)).hexdigest() == REQUIRED_INPUT_SHA256,
+            'Required original object geometry source inventory differs')
+    # Both fresh layouts contain the actual required collision GEOs. Never prove
+    # compatibility against the disproved legacy NONE profile (CRC1583f117).
+    cold_runtime = args.work / 'c'
+    cold_mirror = mirror_cold_runtime(runtime, cold_runtime)
+    cold_mirror['required_geometry_installed_before_mirror'] = True
+    cold_mirror['created_before_full_visual_overlay_and_readback'] = True
+    cold_mirror.pop('created_before_visual_overlay_and_generation')
+    qualification_visual = overlay_complete_visual(
+        args.client_visual_archive, args.client_visual_manifest, visual, required_inputs, runtime)
+    inventory = record_profile_inventory(evidence, common_inputs, required_inputs, geometry_inputs(runtime),
+                                         geometry_inputs(cold_runtime))
+    require(inventory['status'] == 'passed', 'Required cold/full collision inventories differ')
     (runtime / 'tools').mkdir(exist_ok=True)
-    generator = runtime / 'AtlasBeaconGenerator.exe'; shutil.copyfile(args.generator, generator)
-    env = role_environment()
-    common = ['-nogui', '-nopigs', '-noencrypt', '-beaconallownovodex', '-beacondatatoolsrootpath', str(runtime)]
-    requests = (args.work / 'requests').resolve()
-    require(runtime.is_absolute() and requests.is_absolute(), 'Native cwd/root/cache paths must be absolute')
-    roles = [('master', ['-beaconmasterserver', '-beaconrequestcachedir', str(requests)]),
-             ('server', ['-beaconserver', '127.0.0.1', '-beacononepassonly', '-beaconforcerebuild']),
-             ('sentry', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity']),
-             ('worker', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity'])]
-    processes, logs, commands, failure, before_cleanup = {}, {}, {}, None, {}
+    generator = runtime / 'AtlasBeaconGenerator.exe'
+    graph_origin = None
+    if recovering:
+        graph_origin, recovered_graph, recovered_date = recover_primary_artifact(
+            args.recovery_artifact, args.recovery_metadata, args.generator,
+            args.build_input, evidence, args.original_generation_source)
+    shutil.copyfile(args.generator, generator)
+    processes, commands = {}, {}
     started = time.monotonic()
-    try:
-        for role, flags in roles:
-            command = [str(generator), *common, *flags]; commands[role] = command
-            logs[role] = (evidence / (role + '.log')).open('wb')
-            processes[role] = subprocess.Popen(command, cwd=runtime, env=env, stdin=subprocess.DEVNULL,
-                                                stdout=logs[role], stderr=subprocess.STDOUT)
-            if role in ('master', 'sentry'):
-                expected = b'BEACON MASTER SERVER RUNNING' if role == 'master' else b"I'm the sentry!!!"
-                deadline = min(started + args.timeout_seconds, time.monotonic() + 300)
-                while expected not in (evidence / (role + '.log')).read_bytes():
-                    require((evidence / (role + '.log')).stat().st_size <= MAX_LOG, 'Native role startup log exceeded bound')
-                    require(processes[role].poll() is None and time.monotonic() < deadline, 'Native role startup failed: ' + role)
-                    time.sleep(0.5)
-        next_heartbeat = time.monotonic()
-        while processes['server'].poll() is None:
-            require(time.monotonic() - started < args.timeout_seconds, 'Atlas generation exceeded owned deadline')
-            for role, path in ((role, evidence / (role + '.log')) for role in processes):
-                require(path.stat().st_size <= MAX_LOG, 'Native role log exceeded bound')
-                require(role == 'server' or processes[role].poll() is None, 'Owned native role exited: ' + role)
-            if time.monotonic() >= next_heartbeat:
-                record_role_heartbeat(evidence, processes, started, 'generation')
-                next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS
-            time.sleep(1)
-        require(processes['server'].returncode == 0, 'Native Atlas graph producer failed')
-    except Exception as error:
-        failure = error
-        raise
-    finally:
-        before_cleanup = {role: process.poll() for role, process in processes.items()}
-        for process in processes.values():
-            if process.poll() is None: process.terminate()
-        for process in processes.values():
-            try: process.wait(timeout=15)
-            except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
-        for stream in logs.values(): stream.close()
-        if failure is not None:
-            record_role_failure(evidence, processes, commands, failure, before_cleanup)
-            if all((runtime / name).is_file() for name in (GRAPH, DATE)):
-                try:
-                    record_native_output(evidence, runtime, processes['server'].returncode)
-                except Exception as capture_error:
-                    capture = {'format': 1, 'status': 'unqualified_output_capture_failed',
-                               'reason': str(capture_error)[:2048]}
-                    (evidence / 'unqualified-native-output-capture-error.json').write_bytes(canonical(capture))
-                    print('COH_ATLAS_BEACON_OUTPUT_CAPTURE_FAILURE ' + canonical(capture).decode('ascii'), flush=True)
+    for name, raw in ((GRAPH, recovered_graph), (DATE, recovered_date)):
+        target = resolve_world_targets(runtime, [name])[name]
+        require(not target.exists(), 'Recovered graph must enter a fresh private native cache')
+        target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(raw); target.chmod(0o400)
     require((runtime / GRAPH).is_file() and (runtime / DATE).is_file(), 'Native graph files missing')
-    record_native_output(evidence, runtime, processes['server'].returncode)
+    record_native_output(evidence, runtime, 0)
     require(geometry_inputs(runtime) == inputs, 'Native generation modified an immutable collision input')
     witness = native_evidence((evidence / 'server.log').read_bytes(), (runtime / DATE).read_bytes())
-    profile_proofs = {}
-    for profile, profile_runtime in (('base_world', cold_runtime), ('base_world_visual', runtime)):
+    profile_proofs, profile_cache_isolation = {}, {}
+    for profile, profile_runtime in (('required_geometry_cold', cold_runtime), ('client_visual_reopen', runtime)):
         for name in (GRAPH, DATE):
             target = profile_runtime / name
             if profile_runtime != runtime:
                 target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(runtime / name, target); target.chmod(0o400)
+        profile_cache_isolation[profile] = clear_private_geometry_caches(profile_runtime)
         profile_generator = profile_runtime / 'AtlasBeaconGenerator.exe'
         if profile_runtime != runtime: shutil.copyfile(generator, profile_generator)
         profile_common = ['-nogui', '-nopigs', '-noencrypt', '-beaconallownovodex',
@@ -669,14 +955,14 @@ def generate(args):
                 except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
                 log.flush()
                 if failure is not None: record_role_failure(evidence, processes, commands, failure, before_cleanup)
-        require(geometry_inputs(profile_runtime) == (common_inputs if profile == 'base_world' else inputs),
+        require(geometry_inputs(profile_runtime) == inputs,
                 'Fresh native readback modified an immutable input: ' + profile)
         verified = native_evidence(log_path.read_bytes(), (profile_runtime / DATE).read_bytes())
-        require(verified == witness, 'Cold/warm full-world CRC or graph/path proof differs')
-        selected = common_inputs if profile == 'base_world' else inputs
+        require(verified == witness, 'Required geometry/full visual CRC or graph/path proof differs')
+        selected = inputs
         profile_proofs[profile] = {'native': verified, 'input_files_sha256': hashlib.sha256(canonical(selected)).hexdigest()}
     geo_files = {name: value for name, value in visual['files'].items() if name.endswith('.geo')}
-    manifest = {'format': 2, 'role': 'authentic_native_atlas_beacon_graph', 'map': producer.MAP,
+    manifest = {'format': 3, 'role': 'authentic_native_atlas_beacon_graph', 'map': producer.MAP,
                 'stock_mapserver_sha256': STOCK_MAPSERVER, 'source_commit': build_input['source_commit'],
                 'data_commit': visual['data_commit'], 'files': {name: pin(runtime / name) for name in (GRAPH, DATE)},
                 'native': witness, 'input_identity': {'asset_archive': pin(args.asset_archive),
@@ -685,22 +971,27 @@ def generate(args):
                     'visual_geometry_sha256': hashlib.sha256(canonical(geo_files)).hexdigest(),
                     'visual_object_geometry_sha256': hashlib.sha256(canonical({name: record for name, record in geo_files.items()
                         if name.startswith('data/object_library/')})).hexdigest(),
-                    'optional_physical_geometry_sha256': hashlib.sha256(canonical(optional_inputs)).hexdigest()},
+                    'required_geometry_sha256': hashlib.sha256(canonical(required_inputs)).hexdigest()},
                 'input_files': common_inputs, 'input_files_sha256': hashlib.sha256(canonical(common_inputs)).hexdigest(),
-                'optional_input_files': optional_inputs, 'input_profiles': profile_proofs,
+                'required_geometry_files': required_inputs, 'input_profiles': profile_proofs,
                 'generator_sha256': pin(generator)['sha256'], 'runtime_graph_readback': True,
                 'physical_npc_pathing_validated': False}
+    require(manifest['files'] == {GRAPH: PRIMARY_RECOVERY['graph'], DATE: PRIMARY_RECOVERY['date']},
+            'Qualified graph differs from actual recovered primary generation')
     raw = canonical(manifest); (args.output / MANIFEST).write_bytes(raw)
     with zipfile.ZipFile(args.output / ARCHIVE, 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
-        for name in (GRAPH, DATE): archive.write(runtime / name, name)
+        for name in (GRAPH, DATE): archive.write(resolve_world_targets(runtime, [name])[name], name)
         archive.writestr(MANIFEST, raw)
-    value = {'format': 2, 'status': 'passed', 'repository_commit': args.repository_commit,
+    value = {'format': 3, 'status': 'passed', 'repository_commit': args.repository_commit,
              'donor': DONOR, 'stock_mapserver_sha256': STOCK_MAPSERVER, 'build_input': build_input,
              'generator': pin(generator), 'native': witness, 'manifest': pin(args.output / MANIFEST),
              'generation_sources': {name: pin(ROOT / name) for name in GENERATION_SOURCES},
              'archive': pin(args.output / ARCHIVE), 'elapsed_seconds': round(time.monotonic() - started, 3),
-             'commands': commands, 'owned_roles': 4, 'native_worker_spawning_allowed': False,
+             'commands': commands, 'owned_roles': 0, 'native_worker_spawning_allowed': False,
+             'qualification_mode': 'recovered_primary_fresh_proofs',
+             'graph_origin': graph_origin, 'qualification_visual': qualification_visual,
              'profile_verification_processes': 2, 'profile_proofs': profile_proofs, 'cold_mirror': cold_mirror,
+             'profile_cache_isolation': profile_cache_isolation,
              'cleanup_complete': all(process.poll() is not None for process in processes.values()),
              'evidence': {path.relative_to(args.output).as_posix(): pin(path) for path in evidence.iterdir() if path.is_file()}}
     (args.output / REPORT).write_bytes(canonical(value))
@@ -710,8 +1001,11 @@ def generate(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('donor-apk', 'donor-receipt', 'asset-archive', 'generator', 'build-input', 'work', 'output'):
+    for name in ('donor-apk', 'donor-receipt', 'asset-archive', 'generator', 'build-input', 'work', 'output',
+                 'client-visual-archive', 'client-visual-manifest'):
         parser.add_argument('--' + name, required=True, type=Path)
+    for name in ('recovery-artifact', 'recovery-metadata', 'original-generation-source'):
+        parser.add_argument('--' + name, type=Path)
     parser.add_argument('--repository-commit', required=True)
     parser.add_argument('--timeout-seconds', type=int, default=5400)
     args = parser.parse_args()

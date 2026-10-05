@@ -38,11 +38,17 @@ class StorageRoutingTests(unittest.TestCase):
     def test_host_beacon_generation_workflow_has_no_publication_or_shipping_binary_step(self):
         root = Path(__file__).resolve().parents[3]
         source = (root/'.github/workflows/android-atlas-beacon-generation.yml').read_text()
-        for required in ('C:/bcn-src', '--work C:/bcn-run', 'generate_atlas_beacons.py', '--target MapServer',
+        for required in ('C:/bcn-src', '--work C:/bcn-run', 'generate_atlas_beacons.py', '--recovery-artifact', '--recovery-metadata',
+                '--original-generation-source', '--client-visual-archive', '--client-visual-manifest',
+                '37377053417', '11379217768', '33296543',
+                'a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4',
                 '--timeout-seconds 5400', 'coh-ui-beacon-native', 'contents: read', 'cancel-in-progress: true',
                 'Invoke-WebRequest', '1535592811', 'GH_TOKEN: ${{ github.token }}',
                 '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4'):
             self.assertIn(required, source)
+        self.assertNotIn('cmake --build', source)
+        self.assertIn("conclusion = $run.conclusion", source)
+        self.assertIn("compile_conclusion = $compile[0].conclusion", source)
         self.assertEqual(source.count('contents: write'), 1)
         self.assertIn('release asset, as in the accepted server-cache workflow. No publishing step.', source)
         self.assertLess(source.index('core.autocrlf false'), source.index('actions/checkout@'))
@@ -57,6 +63,23 @@ class StorageRoutingTests(unittest.TestCase):
         self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)
         for forbidden in ('build_ui_beacon_apk.py', 'softprops/action-gh-release', '--publish', 'COH_ATLAS_BEACON_REUSE_RUN_ID'):
             self.assertNotIn(forbidden, source)
+
+    def test_required_geometry_cache_migration_routes_only_current_ui_beacon_work(self):
+        from classify_interactive_change import runtime_required
+        names = ['.github/workflows/android-atlas-beacon-generation.yml',
+            'android/guest/atlas_beacon_package.py', 'android/guest/local_character_server.py',
+            'tools/android/interactive/test_server_worktree_reuse.py']
+        self.assertTrue(change.ui_beacon_required('push','a'*40,'b'*40,'a'*40,names))
+        historical = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required, change.bundle_required,
+            change.visual_required, change.loading_required, change.streaming_required,
+            change.asset_closure_required, change.startup_followup_required, change.levelup_ui_repair_required,
+            change.reopen_startup_repair_required, runtime_required)
+        for function in historical:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push','a'*40,'b'*40,'a'*40,names))
+                self.assertTrue(function('push','a'*40,'b'*40,'a'*40,
+                    names+['android/guest/server_data_cache.py']))
 
     def test_ui_beacon_scope_skips_all_historical_builds_and_fails_closed(self):
         from classify_interactive_change import runtime_required

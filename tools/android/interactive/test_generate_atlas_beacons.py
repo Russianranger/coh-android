@@ -8,6 +8,10 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
+import copy
+import hashlib
+import zipfile
 
 import generate_atlas_beacons as generator
 
@@ -141,7 +145,7 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             self.assertEqual(record['warm_difference']['extra_count'],50)
             self.assertEqual(len(record['warm_difference']['extra_first_16']),16)
             self.assertEqual(record['warm_difference']['changed_count'],1)
-            self.assertEqual(record['cold_difference']['missing_count'],1)
+            self.assertEqual(record['cold_difference']['missing_count'],2)
             self.assertEqual(json.loads((evidence/'native-input-profiles.json').read_bytes()),record)
             self.assertIn('COH_ATLAS_BEACON_INPUT_PROFILES',output.getvalue())
 
@@ -216,12 +220,13 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             self.assertLessEqual(len(value['roles']['server']['last_progress_line']),512)
             self.assertFalse((evidence/generator.REPORT).exists())
 
-    def test_capture_precedes_native_crc_assertion_in_actual_producer(self):
+    def test_recovered_output_capture_precedes_native_crc_validation_in_actual_producer(self):
         import inspect
         source=inspect.getsource(generator.generate)
         self.assertLess(source.index('record_native_output(evidence, runtime,'),
                         source.index('witness = native_evidence'))
-        self.assertIn('next_heartbeat = time.monotonic() + HEARTBEAT_SECONDS',source)
+        self.assertIn("require(recovering, 'This qualification lane requires the exact retained real primary graph')",source)
+        self.assertNotIn("for role, flags in roles",source)
 
 
 
@@ -359,6 +364,170 @@ class AtlasNativeInputCaseTests(unittest.TestCase):
                         {**value, 'generator': {**binary, 'sha256': 'd' * 64}}):
             with self.subTest(changed=changed), self.assertRaises(ValueError):
                 generator.validate_compile_reuse_receipt(changed, build_input, binary)
+
+
+class AtlasPrimaryRecoveryTests(unittest.TestCase):
+    """Synthetic receipts test strict recovery gates, never native acceptance."""
+
+    def metadata(self):
+        source = copy.deepcopy(generator.PRIMARY_RECOVERY)
+        return {'format': 1, 'status': 'authenticated_failed_run_primary_candidate', 'source': source,
+            'run': {'id': source['run_id'], 'head_sha': source['repository_commit'],
+                'head_branch': 'codex/character-persistence-continuation',
+                'path': '.github/workflows/android-atlas-beacon-generation.yml',
+                'status': 'completed', 'conclusion': 'failure', 'run_attempt': 1},
+            'job': {'id': source['job_id'], 'name': 'generate', 'conclusion': 'failure',
+                'source_stage_conclusion': 'success', 'compile_conclusion': 'success'},
+            'artifact': {'id': source['artifact']['id'], 'name': 'coh-ui-beacon-generation-evidence',
+                'expired': False, 'size_in_bytes': source['artifact']['bytes'],
+                'digest': 'sha256:' + source['artifact']['sha256'],
+                'run_id': source['run_id'], 'head_sha': source['repository_commit']}}
+
+    def test_original_failure_is_authenticated_without_relabeling_success(self):
+        value = self.metadata()
+        self.assertEqual(generator.validate_recovery_metadata(value), value)
+        for scope, key, wrong in (('run','conclusion','success'), ('run','head_sha','a'*40),
+                ('run','run_attempt',2), ('job','compile_conclusion','failure'),
+                ('artifact','expired',True), ('artifact','run_id',1),
+                ('artifact','digest','sha256:'+'b'*64), ('source','run_conclusion','success')):
+            changed = copy.deepcopy(value); changed[scope][key] = wrong
+            with self.subTest(scope=scope,key=key), self.assertRaises(ValueError):
+                generator.validate_recovery_metadata(changed)
+
+    def test_none_geometry_profile_is_no_longer_an_accepted_inventory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            common = {'data/maps/a.txt': {'bytes':1,'sha256':'a'*64}}
+            required = {'data/object_library/a.geo': {'bytes':1,'sha256':'b'*64}}
+            with contextlib.redirect_stdout(io.StringIO()):
+                failed = generator.record_profile_inventory(Path(temporary),common,required,{**common,**required},common)
+                passed = generator.record_profile_inventory(Path(temporary),common,required,{**common,**required},{**common,**required})
+            self.assertEqual(failed['status'],'mismatch')
+            self.assertEqual(failed['cold_difference']['missing_count'],1)
+            self.assertEqual(passed['status'],'passed')
+            self.assertEqual(generator.PROFILES,('required_geometry_cold','client_visual_reopen'))
+
+    def fixture(self, root, *, mutation=None, mutate_source=False):
+        source_root = root/'source'; source_root.mkdir()
+        sources = {}
+        for name in generator.GENERATION_SOURCES:
+            raw = ('synthetic unchanged input: '+name).encode()
+            target = source_root/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(raw)
+            sources[name] = generator.pin(target)
+        original = root/'original-generation-source.py'
+        original.write_bytes(b'synthetic historical original producer')
+        sources['tools/android/interactive/generate_atlas_beacons.py'] = generator.pin(original)
+        graph = b'synthetic graph bytes; no native proof claim'
+        date = struct.pack('<iII',9,0,0x10203040)
+        marker = AtlasNativeEvidenceTests.MARKER
+        expected = {'synthetic_native_source': 'a'*64}
+        build = generator.canonical(expected)
+        binary = bytearray(512); binary[:2]=b'MZ'; struct.pack_into('<I',binary,0x3c,128)
+        binary[128:132]=b'PE\0\0'; struct.pack_into('<H',binary,132,0x14c)
+        binary = bytes(binary)
+        source = copy.deepcopy(generator.PRIMARY_RECOVERY)
+        source.update(graph={'bytes':len(graph),'sha256':hashlib.sha256(graph).hexdigest()},
+            date={'bytes':len(date),'sha256':hashlib.sha256(date).hexdigest()},
+            generator={'bytes':len(binary),'sha256':hashlib.sha256(binary).hexdigest()},
+            build_input={'bytes':len(build),'sha256':hashlib.sha256(build).hexdigest()},
+            native=generator.native_evidence(marker,date))
+        capture = {'format':1,'status':'unqualified_native_output','native_generation_server_returncode':0,
+            'both_fresh_profile_proofs_required':True,
+            'files':{'unqualified-native-graph.bcn':source['graph'],'unqualified-native-graph.bcn.date':source['date']}}
+        failure = {'status':'failed','cleanup_complete':True,
+            'roles':{'server':{'returncode':0},'base_world':{'returncode':3}}}
+        inventory = {'status':'passed','common_files':5231,'optional_files':406,
+            'common_sha256':generator.COMMON_INPUT_SHA256,'warm_sha256':generator.REQUIRED_INPUT_SHA256,
+            'optional_physical_geometry_sha256':generator.VISUAL_OBJECT_SOURCE_SHA256}
+        members = {'unqualified-native-graph.bcn':graph,'unqualified-native-graph.bcn.date':date,
+            'unqualified-native-output.json':generator.canonical(capture),'server.log':marker,
+            'native-role-failure.json':generator.canonical(failure),
+            'atlas-beacon-generator-build-input.json':build,'host-only-beacon-generator.exe':binary,
+            'host-only-beacon-generator.pdb':b'synthetic retained symbols',
+            'native-input-profiles.json':generator.canonical(inventory)}
+        if mutation is not None: mutation(members)
+        archive = root/'primary.zip'
+        with zipfile.ZipFile(archive,'w') as target:
+            for name,raw in members.items(): target.writestr('evidence/'+name,raw)
+        source['artifact'] = {**source['artifact'], **generator.pin(archive)}
+        evidence = root/'evidence'; evidence.mkdir()
+        build_path = root/'staged-build.json'; build_path.write_bytes(build)
+        patches = [mock.patch.object(generator,'ROOT',source_root),
+            mock.patch.object(generator,'PRIMARY_GENERATION_SOURCES',sources),
+            mock.patch.object(generator,'PRIMARY_RECOVERY',source),
+            mock.patch.object(generator.producer,'expected',return_value=expected)]
+        with contextlib.ExitStack() as stack:
+            for patch in patches: stack.enter_context(patch)
+            if mutate_source:
+                (source_root/'android/guest/atlas_world_assets.py').write_bytes(b'changed source implementation')
+            metadata = root/'metadata.json'; metadata.write_bytes(generator.canonical(self.metadata()))
+            result = generator.recover_primary_artifact(archive,metadata,root/'owned/MapServer.exe',
+                build_path,evidence,original)
+            origin,recovered_graph,recovered_date = result
+            self.assertEqual(origin['original_run_conclusion'],'failure')
+            self.assertEqual(origin['primary_generation_server_returncode'],0)
+            self.assertTrue(origin['fresh_qualification_still_required'])
+            self.assertEqual(origin['original_owned_roles'],4)
+            self.assertEqual(recovered_graph,graph); self.assertEqual(recovered_date,date)
+            self.assertFalse((evidence/generator.REPORT).exists())
+            self.assertEqual(origin['native'],source['native'])
+        return result
+
+    def test_exact_primary_recovery_still_requires_new_fresh_profile_proofs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            self.fixture(Path(temporary))
+
+    def test_primary_recovery_refuses_wrong_output_native_witness_compile_or_cleanup(self):
+        def change_json(name, key, value):
+            def mutation(members):
+                record=json.loads(members[name]); record[key]=value; members[name]=generator.canonical(record)
+            return mutation
+        mutations = [
+            lambda files: files.__setitem__('unqualified-native-graph.bcn',b'foreign graph'),
+            lambda files: files.__setitem__('unqualified-native-graph.bcn.date',struct.pack('<iII',9,0,0x10203041)),
+            lambda files: files.__setitem__('server.log',files['server.log'].replace(b'paths=32',b'paths=31')),
+            lambda files: files.__setitem__('host-only-beacon-generator.exe',b'foreign executable'),
+            lambda files: files.__setitem__('atlas-beacon-generator-build-input.json',b'{}'),
+            change_json('unqualified-native-output.json','native_generation_server_returncode',2),
+            change_json('native-role-failure.json','cleanup_complete',False),
+            change_json('native-input-profiles.json','warm_sha256','f'*64),
+        ]
+        for index,mutation in enumerate(mutations):
+            with self.subTest(index=index), tempfile.TemporaryDirectory() as temporary, self.assertRaises(ValueError):
+                self.fixture(Path(temporary),mutation=mutation)
+
+    def test_recovery_refuses_changed_importer_or_authoritative_path_resolver(self):
+        with tempfile.TemporaryDirectory() as temporary, self.assertRaisesRegex(ValueError,'implementation changed'):
+            self.fixture(Path(temporary),mutate_source=True)
+
+    def test_fresh_private_geometry_cleanup_keeps_definition_bins_and_immutable_sources(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime=Path(temporary)
+            files={'data/geobin/maps/city_zones/city_01_01/a.bin':b'stale generated map',
+                'data/geobin/object_library/a.bounds':b'stale bounds',
+                'data/bin/powers.bin':b'retained definition cache',
+                'data/object_library/a.geo':b'original required geometry',
+                'data/geobin/readme.txt':b'owned source text'}
+            for name,raw in files.items():
+                path=runtime/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+            record=generator.clear_private_geometry_caches(runtime)
+            self.assertEqual(record['remaining_geometry_cache_files'],0)
+            self.assertEqual(len(record['removed_files']),2)
+            for name in ('data/bin/powers.bin','data/object_library/a.geo','data/geobin/readme.txt'):
+                self.assertEqual((runtime/name).read_bytes(),files[name])
+            for name in ('data/geobin/maps/city_zones/city_01_01/a.bin','data/geobin/object_library/a.bounds'):
+                self.assertFalse((runtime/name).exists())
+
+    def test_fresh_private_geometry_cleanup_refuses_linked_cache(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime=Path(temporary);cache=runtime/'data/geobin';cache.mkdir(parents=True)
+            donor=runtime/'source';donor.write_bytes(b'source')
+            (cache/'unsafe.bin').symlink_to(donor)
+            with self.assertRaises(ValueError):generator.clear_private_geometry_caches(runtime)
+
+    def test_recovery_contract_pins_match_exact_unchanged_production_sources(self):
+        generator.validate_primary_implementation_inputs()
+        self.assertEqual(generator.PRIMARY_RECOVERY['generator']['bytes'],6880256)
+        self.assertEqual(generator.PRIMARY_RECOVERY['native']['full_world_crc'],'0xb0c21ded')
 
 
 if __name__ == '__main__': unittest.main()

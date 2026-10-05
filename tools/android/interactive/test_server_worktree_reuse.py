@@ -1,4 +1,4 @@
-"""Cold/warm Atlas data preparation with owned-process and immutable guards."""
+"""Cold/warm Atlas preparation, source geometry ordering and owned-cache guards."""
 import hashlib
 import json
 import os
@@ -13,6 +13,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'android/guest'))
 import character_server_data_cache as cache
+import atlas_beacon_package as beacons
 import local_character_server as server
 
 
@@ -90,6 +91,8 @@ class ServerWorktreeReuseTests(unittest.TestCase):
             client_work_receipt_sha256=server.base.file_hash(self.work / 'client-work.json'),
             map_manifest_sha256=getattr(value, 'map_manifest_sha256', server.device.MAP_PROGRESS_PACKAGE_SHA256))
         identity.pop('native_closure_sha256'); identity.pop('server_cache_compatibility_sha256')
+        # A real pre-policy v1 receipt never carried the new required-geometry proof.
+        identity.pop('required_geometry', None)
         key = hashlib.sha256(cache.canonical(identity)).hexdigest()[:24]
         record.update(identity=identity, key=key)
         old = self.root / ('character-server-data-' + key)
@@ -97,6 +100,347 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         (old / 'cache.json').write_text(json.dumps(record))
         value.data_cache.pointer.unlink()
         return old, record
+
+
+    def beacon_assets(self, only=None):
+        """Placeholder assets exercise orchestration; the late installer is mocked."""
+        assets = self.root / 'assets'
+        assets.mkdir(exist_ok=True)
+        for name in (beacons.ARCHIVE, beacons.MANIFEST):
+            path = assets / name
+            if only is None or only == name:
+                path.write_bytes(b'synthetic beacon orchestration placeholder')
+            elif path.exists():
+                path.unlink()
+        return assets
+
+    def remove_beacon_assets(self):
+        for name in (beacons.ARCHIVE, beacons.MANIFEST):
+            path = self.root / 'assets' / name
+            if path.exists():
+                path.unlink()
+
+    def required_geometry_files(self):
+        # The helper's own tests prove the real 406-leaf inventory. These two
+        # immutable leaves make the source-to-server staging boundary observable.
+        return {
+            'object_library/required_fixture/building.geo': b'finite immutable building',
+            'object_library/required_fixture/prop.geo': b'finite immutable prop',
+        }
+
+    def install_required_geometry_fixture(self, names=None):
+        selected = self.required_geometry_files()
+        if names is not None:
+            selected = {name: selected[name] for name in names}
+        for name, raw in selected.items():
+            path = self.data / name
+            if not path.exists() and not path.is_symlink():
+                original = self.imported / name
+                if original.exists():
+                    self.assertEqual(original.read_bytes(), raw)
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.symlink_to(original)
+                else:
+                    self.source(name, raw.decode())
+            self.assertEqual(path.read_bytes(), raw)
+            self.assertEqual(path.stat().st_mode & 0o222, 0)
+
+    def required_geometry_proof(self, **counters):
+        # This is an explicitly mocked result from the production helper, not
+        # evidence that the tiny host fixture contains or validates 406 GEOs.
+        return {
+            'format': 1,
+            'identity': {
+                'format': 1,
+                'policy': 'exact_required_original_atlas_object_geometry_v1',
+                'cache_policy': 'once_required_original_atlas_private_geobin_refresh_v1',
+                'required_geometry_sha256':
+                    'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43',
+                'file_count': 406,
+            },
+            'status': 'synthetic_required_geometry_proof',
+            'installed_files': 0,
+            'input_payload_bytes_hashed': 0,
+            'preparation_elapsed_seconds': 0.0,
+            **counters,
+        }
+
+    def database_sentinel(self):
+        path = self.root / 'android-local-login/pgdata/keep'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b'preserved character database sentinel')
+        return path, (path.read_bytes(), path.stat().st_ino)
+
+    def assert_database_sentinel(self, sentinel):
+        path, before = sentinel
+        self.assertEqual((path.read_bytes(), path.stat().st_ino), before)
+
+    def test_required_geometry_precedes_cache_construction_checkout_staging_and_seal_for_either_asset(self):
+        original_init = cache.ServerDataCache.__init__
+        original_checkout = cache.ServerDataCache.checkout
+        original_seal = cache.ServerDataCache.seal
+        for sequence, asset in enumerate((beacons.ARCHIVE, beacons.MANIFEST), start=70):
+            with self.subTest(asset=asset):
+                self.receipt['cache_archive_sha256'] = f'{sequence:064x}'
+                for name in self.required_geometry_files():
+                    path = self.data / name
+                    if path.exists() or path.is_symlink():
+                        path.unlink()
+                self.beacon_assets(only=asset)
+                value = self.make(sequence)
+                events = []
+                proof = self.required_geometry_proof(installed_files=2,
+                    input_payload_bytes_hashed=sum(map(len, self.required_geometry_files().values())))
+                original_stage = value.stage_map_data
+
+                def ensure(work, assets, context):
+                    self.assertEqual((work, assets, context),
+                        (self.work, self.root / 'assets', value.ctx))
+                    self.assertEqual(events, [])
+                    events.append('ensure')
+                    # A successful missing-only proof repairs the finite source
+                    # fixture before the real mirror observes it.
+                    self.install_required_geometry_fixture()
+                    return proof
+
+                def construct(actual, *args, **kwargs):
+                    self.assertEqual(events, ['ensure'])
+                    events.append('construct')
+                    return original_init(actual, *args, **kwargs)
+
+                def checkout(actual, *args, **kwargs):
+                    self.assertEqual(events, ['ensure', 'construct'])
+                    events.append('checkout')
+                    return original_checkout(actual, *args, **kwargs)
+
+                def stage(*args, **kwargs):
+                    self.assertEqual(events, ['ensure', 'construct', 'checkout'])
+                    events.append('stage')
+                    return original_stage(*args, **kwargs)
+
+                def seal(actual, *args, **kwargs):
+                    self.assertEqual(events, ['ensure', 'construct', 'checkout', 'stage'])
+                    for name, raw in self.required_geometry_files().items():
+                        target = value.runtime / 'data' / name
+                        self.assertTrue(target.is_symlink())
+                        self.assertEqual(target.read_bytes(), raw)
+                    events.append('seal')
+                    return original_seal(actual, *args, **kwargs)
+
+                def install(*args, **kwargs):
+                    self.assertEqual(events, ['ensure', 'construct', 'checkout', 'stage', 'seal'])
+                    events.append('install')
+                    return {'status': 'synthetic_late_install_fixture', 'installed_files': 0}
+
+                with patch.object(beacons, 'ensure_required_geometry', side_effect=ensure, create=True), \
+                        patch.object(cache.ServerDataCache, '__init__', construct), \
+                        patch.object(cache.ServerDataCache, 'checkout', checkout), \
+                        patch.object(value, 'stage_map_data', side_effect=stage), \
+                        patch.object(cache.ServerDataCache, 'seal', seal), \
+                        patch.object(beacons, 'install', side_effect=install):
+                    result = self.prepare(value)
+                self.assertEqual(events, ['ensure', 'construct', 'checkout', 'stage', 'seal', 'install'])
+                self.assertFalse(result['server_data_cache']['reused'])
+                self.assertEqual(value.data_cache.identity['required_geometry'], proof['identity'])
+                self.assertEqual(value.ctx.report['atlas_required_geometry'], proof)
+                self.close(value)
+
+    def test_rejected_required_geometry_proof_preserves_closed_cache_and_database_before_cache_work(self):
+        first = self.make(80)
+        self.prepare(first)
+        private = first.runtime / 'data/bin/native.bin'
+        private.write_bytes(b'closed private cache survives rejected source proof')
+        self.close(first)
+        donor = first.data_cache.path / 'data'
+        marker = first.data_cache.marker.read_bytes()
+        pointer = first.data_cache.pointer.read_bytes()
+        donor_inode = donor.stat().st_ino
+        generations = {path.name for path in self.root.glob('character-server-data-*')}
+        sentinel = self.database_sentinel()
+        self.beacon_assets()
+        names = list(self.required_geometry_files())
+
+        for sequence, condition in enumerate(
+                ('missing_unavailable_donor', 'partial_unavailable_donor', 'wrong_existing_bytes'), start=81):
+            with self.subTest(condition=condition):
+                for name in names:
+                    path = self.data / name
+                    if path.exists() or path.is_symlink():
+                        path.unlink()
+                if condition == 'partial_unavailable_donor':
+                    self.install_required_geometry_fixture((names[0],))
+                elif condition == 'wrong_existing_bytes':
+                    self.install_required_geometry_fixture()
+                    wrong = self.imported / 'wrong-required-geometry.geo'
+                    wrong.write_bytes(b'wrong existing readonly geometry')
+                    wrong.chmod(0o444)
+                    path = self.data / names[0]
+                    path.unlink(); path.symlink_to(wrong)
+                value = self.make(sequence)
+
+                def reject(work, assets, context):
+                    self.assertEqual((work, assets, context),
+                        (self.work, self.root / 'assets', value.ctx))
+                    present = [name for name in names if (self.data / name).exists()]
+                    if condition == 'missing_unavailable_donor':
+                        self.assertEqual(present, [])
+                    elif condition == 'partial_unavailable_donor':
+                        self.assertEqual(present, [names[0]])
+                    else:
+                        self.assertEqual(present, names)
+                        self.assertNotEqual((self.data / names[0]).read_bytes(),
+                            self.required_geometry_files()[names[0]])
+                    # Missing/partial source can be repaired by the real helper.
+                    # Here its donor is explicitly unavailable; wrong existing
+                    # bytes are a rejected proof rather than a repair candidate.
+                    raise ValueError('synthetic required geometry proof rejected: ' + condition)
+
+                with patch.object(beacons, 'ensure_required_geometry', side_effect=reject, create=True) as ensure, \
+                        patch.object(cache.ServerDataCache, '__init__',
+                            side_effect=AssertionError('cache constructed before source proof')) as constructor, \
+                        patch.object(cache.ServerDataCache, 'checkout',
+                            side_effect=AssertionError('cache checked out before source proof')) as checkout, \
+                        patch.object(value, 'stage_map_data',
+                            side_effect=AssertionError('source staged before proof')) as stage, \
+                        patch.object(cache.ServerDataCache, 'seal',
+                            side_effect=AssertionError('source sealed before proof')) as seal, \
+                        patch.object(beacons, 'install',
+                            side_effect=AssertionError('graph installed after rejected proof')) as install:
+                    with self.assertRaisesRegex(ValueError, 'synthetic required geometry proof rejected'):
+                        self.prepare(value)
+                ensure.assert_called_once_with(self.work, self.root / 'assets', value.ctx)
+                for untouched in (constructor, checkout, stage, seal, install):
+                    untouched.assert_not_called()
+                self.assertFalse(hasattr(value, 'data_cache'))
+                self.assertEqual(first.data_cache.marker.read_bytes(), marker)
+                self.assertEqual(first.data_cache.pointer.read_bytes(), pointer)
+                self.assertEqual(donor.stat().st_ino, donor_inode)
+                self.assertEqual((donor / 'bin/native.bin').read_bytes(),
+                    b'closed private cache survives rejected source proof')
+                self.assertEqual({path.name for path in self.root.glob('character-server-data-*')}, generations)
+                self.assert_database_sentinel(sentinel)
+
+    def test_required_geometry_rekeys_true_old_v1_and_v2_donors_without_migrating_or_resetting_database(self):
+        sentinel = self.database_sentinel()
+        names = list(self.required_geometry_files())
+        for sequence, legacy in enumerate((True, False), start=90):
+            with self.subTest(legacy_format=1 if legacy else 2):
+                self.remove_beacon_assets()
+                for name in names:
+                    path = self.data / name
+                    if path.exists() or path.is_symlink():
+                        path.unlink()
+                self.receipt['cache_archive_sha256'] = f'{sequence:064x}'
+                first = self.make(sequence * 2)
+                self.prepare(first)
+                (first.runtime / 'data/bin/old-native.bin').write_bytes(b'old private NONE cache')
+                self.close(first)
+                if legacy:
+                    old, old_record = self.make_legacy_cache(first)
+                    self.receipt['verified_legacy_receipts'] = [
+                        old_record['identity']['client_work_receipt_sha256']]
+                else:
+                    old = first.data_cache.path
+                    old_record = json.loads((old / 'cache.json').read_text())
+                self.assertNotIn('required_geometry', old_record['identity'])
+                donor = old / 'data'
+                donor_inode = donor.stat().st_ino
+                marker = (old / 'cache.json').read_bytes()
+                self.beacon_assets()
+                second = self.make(sequence * 2 + 1)
+                proof = self.required_geometry_proof(installed_files=2)
+
+                def ensure(work, assets, context):
+                    self.assertEqual((work, assets, context),
+                        (self.work, self.root / 'assets', second.ctx))
+                    self.install_required_geometry_fixture()
+                    return proof
+
+                with patch.object(beacons, 'ensure_required_geometry', side_effect=ensure, create=True), \
+                        patch.object(beacons, 'install',
+                            return_value={'status': 'synthetic_late_install_fixture', 'installed_files': 0}), \
+                        patch.object(second, 'stage_map_data', wraps=second.stage_map_data) as stage:
+                    result = self.prepare(second)['server_data_cache']
+                stage.assert_called_once()
+                self.assertFalse(result['reused'])
+                self.assertFalse(result.get('legacy_generation_migrated', False))
+                self.assertNotEqual(second.data_cache.key, old_record['key'])
+                self.assertEqual(second.data_cache.identity['required_geometry'], proof['identity'])
+                self.assertNotEqual((second.runtime / 'data').stat().st_ino, donor_inode)
+                self.assertFalse((second.runtime / 'data/bin/old-native.bin').exists())
+                for name, raw in self.required_geometry_files().items():
+                    self.assertFalse((donor / name).exists())
+                    target = second.runtime / 'data' / name
+                    self.assertTrue(target.is_symlink())
+                    self.assertEqual(target.read_bytes(), raw)
+                self.assertEqual((old / 'cache.json').read_bytes(), marker)
+                self.assertEqual(donor.stat().st_ino, donor_inode)
+                self.assertEqual((donor / 'bin/old-native.bin').read_bytes(), b'old private NONE cache')
+                self.assert_database_sentinel(sentinel)
+                self.close(second)
+                self.assertEqual((old / 'cache.json').read_bytes(), marker)
+                self.assertEqual(donor.stat().st_ino, donor_inode)
+                self.assert_database_sentinel(sentinel)
+
+    def test_required_geometry_warm_reuse_preserves_inode_and_native_bins_while_dynamic_proof_counters_change(self):
+        self.beacon_assets()
+        sentinel = self.database_sentinel()
+        cold_proof = self.required_geometry_proof(installed_files=2,
+            input_payload_bytes_hashed=sum(map(len, self.required_geometry_files().values())),
+            preparation_elapsed_seconds=0.25)
+        warm_proof = self.required_geometry_proof(installed_files=0,
+            input_payload_bytes_hashed=0, preparation_elapsed_seconds=0.001,
+            reused_verified_geometry=True)
+        self.assertEqual(cold_proof['identity'], warm_proof['identity'])
+        self.assertNotEqual(cold_proof, warm_proof)
+        proofs = iter((cold_proof, warm_proof))
+
+        def ensure(work, assets, context):
+            self.assertEqual((work, assets), (self.work, self.root / 'assets'))
+            self.install_required_geometry_fixture()
+            return next(proofs)
+
+        with patch.object(beacons, 'ensure_required_geometry', side_effect=ensure, create=True) as ensure_call, \
+                patch.object(beacons, 'install',
+                    return_value={'status': 'synthetic_late_install_fixture', 'installed_files': 0}):
+            first = self.make(200)
+            cold = self.prepare(first)['server_data_cache']
+            self.assertFalse(cold['reused'])
+            key = first.data_cache.key
+            data_inode = (first.runtime / 'data').stat().st_ino
+            (first.runtime / 'data/bin/native.bin').write_bytes(b'required geometry native cache survives warm')
+            self.close(first)
+            second = self.make(201)
+            original_checkout = cache.ServerDataCache.checkout
+
+            def checkout(actual, *args, **kwargs):
+                self.assertEqual(ensure_call.call_count, 2,
+                    'The warm source proof must also precede cache checkout')
+                return original_checkout(actual, *args, **kwargs)
+
+            with patch.object(second, 'stage_map_data',
+                    side_effect=AssertionError('warm required geometry restaged the source')), \
+                    patch.object(cache.ServerDataCache, 'seal',
+                        side_effect=AssertionError('warm required geometry resealed the source')), \
+                    patch.object(cache.ServerDataCache, 'checkout', checkout):
+                warm = self.prepare(second)['server_data_cache']
+            self.assertTrue(warm['reused'])
+            self.assertEqual(second.data_cache.key, key)
+            self.assertEqual((second.runtime / 'data').stat().st_ino, data_inode)
+            self.assertEqual((second.runtime / 'data/bin/native.bin').read_bytes(),
+                b'required geometry native cache survives warm')
+            self.assertEqual(second.ctx.report['atlas_required_geometry'], warm_proof)
+            self.assertEqual(second.data_cache.identity['required_geometry'], warm_proof['identity'])
+            self.assertEqual(second.creation_report['private_map_data']['linked_immutable_files'], 0)
+            self.assertEqual(ensure_call.call_count, 2)
+            self.assertEqual(first.ctx.report['atlas_required_geometry'], cold_proof)
+            for name, raw in self.required_geometry_files().items():
+                target = second.runtime / 'data' / name
+                self.assertTrue(target.is_symlink())
+                self.assertEqual(target.read_bytes(), raw)
+            self.assert_database_sentinel(sentinel)
+            self.close(second)
+        self.assert_database_sentinel(sentinel)
 
     def test_wrapper_receipt_refresh_keeps_server_key_and_generated_private_bins(self):
         supplement = self.data / 'texture_library/msliberty.texture'

@@ -148,6 +148,30 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 self.assertTrue(package.validate_guest_delta(name, archive.read('assets/runtime/'+name), current)['all_other_ast_nodes_retained'])
                 with self.assertRaises(ValueError): package.validate_guest_delta(name, archive.read('assets/runtime/'+name), current+b'\nimport foreign\n')
 
+    def test_required_geometry_source_proof_and_cache_key_cannot_be_changed_or_moved_after_checkout(self):
+        donor = package.ROOT/'out/ui-beacon-donor'/package.DONOR_APK_NAME
+        current = (package.ROOT/'android/guest/local_character_server.py').read_text()
+        source_start = current.index('        required_geometry = None\n')
+        source_end = current.index('        # Wine FolderCache', source_start)
+        source_block = current[source_start:source_end]
+        late = "        beacon_archive = self.owner.args.assets / 'atlas-beacons.zip'\n"
+        mutations = {
+            'late_source_proof': current.replace(source_block, '', 1).replace(late, source_block+late, 1),
+            'server_instead_of_client_source': current.replace(
+                'self.owner.work, self.owner.args.assets, self.ctx)',
+                'self.runtime, self.owner.args.assets, self.ctx)', 1),
+            'dynamic_receipt_in_identity': current.replace(
+                "required_geometry = geometry_preparation['identity']", 'required_geometry = geometry_preparation', 1),
+            'missing_geometry_key': current.replace("            identity['required_geometry'] = required_geometry\n", '            pass\n', 1),
+        }
+        with zipfile.ZipFile(donor) as archive:
+            before = archive.read('assets/runtime/local_character_server.py')
+            self.assertTrue(package.validate_guest_delta('local_character_server.py', before, current.encode())['all_other_ast_nodes_retained'])
+            for name, source in mutations.items():
+                self.assertNotEqual(source, current, name)
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    package.validate_guest_delta('local_character_server.py', before, source.encode())
+
     def test_qualification_requires_every_current_suite_and_real_postgresql_fixture(self):
         base = package.builder()
         with mock.patch.object(package, 'builder', return_value=base), mock.patch.object(base, 'checked_file'):
@@ -172,31 +196,50 @@ class UiBeaconPackagingTests(unittest.TestCase):
             producer = mock.Mock()
             producer.canonical.side_effect = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
             digest = lambda value: package.hashlib.sha256(producer.canonical(value)).hexdigest()
-            optional = {f'data/object_library/atlas/leaf-{index:03}.geo': pin(b'geometry') for index in range(406)}
-            optional_source = {name: {**value, 'source_kind': 'synthetic-original-visual-geometry'}
-                for name, value in optional.items()}
-            geo = {**optional_source, 'data/player_library/retained.geo': pin(b'player-geometry')}
+            required = {f'data/object_library/atlas/leaf-{index:03}.geo': pin(b'geometry') for index in range(406)}
+            required_source = {name: {**value, 'source_kind': 'synthetic-original-visual-geometry'}
+                for name, value in required.items()}
+            geo = {**required_source, 'data/player_library/retained.geo': pin(b'player-geometry')}
             world, visual_source = pin(b'world-manifest'), pin(b'public-0.13.13-visual-manifest')
-            common = {'data/maps/city_zones/city_01_01/city_01_01.txt': pin(b'Atlas-world')}
+            common = {'data/maps/city_zones/city_01_01/city_01_01.txt': pin(b'Atlas-world'),
+                **{f'data/maps/fixture-{index}.txt': pin(b'finite-input') for index in range(5230)}}
             native = {'full_world_crc': '0x12345678', 'native_pathfinder_successes': 32,
                 'native_full_graph_readback_verified': True, 'fresh_ordinary_world_crc_verified': True}
+            selected = {**common, **required}
             profiles = {name: {'native': native, 'input_files_sha256': digest(selected)}
-                for name, selected in (('base_world', common), ('base_world_visual', {**common, **optional}))}
-            manifest = {'format': 2, 'role': 'authentic_native_atlas_beacon_graph', 'runtime_graph_readback': True,
+                for name in ('required_geometry_cold', 'client_visual_reopen')}
+            manifest = {'format': 3, 'role': 'authentic_native_atlas_beacon_graph', 'runtime_graph_readback': True,
                 'physical_npc_pathing_validated': False, 'native': native,
                 'input_files': common, 'input_files_sha256': digest(common),
-                'optional_input_files': optional, 'input_profiles': profiles,
+                'required_geometry_files': required, 'input_profiles': profiles,
                 'input_identity': {'world_manifest': world, 'visual_source_manifest': visual_source,
-                    'visual_geometry_sha256': digest(geo), 'visual_object_geometry_sha256': digest(optional_source),
-                    'optional_physical_geometry_sha256': digest(optional)}}
+                    'visual_geometry_sha256': digest(geo), 'visual_object_geometry_sha256': digest(required_source),
+                    'required_geometry_sha256': digest(required)}}
+            producer.PRIMARY_RECOVERY = {'repository_commit': 'b'*40, 'run_conclusion': 'failure',
+                'graph': pin(b'synthetic-native-generated-graph')}
+            producer.PRIMARY_GENERATION_SOURCES = {'tools/original-fixture-only.py': pin(b'original-source')}
+            producer.QUALIFICATION_VISUAL_ARCHIVE = pin(b'synthetic-full-visual-archive')
+            producer.QUALIFICATION_VISUAL_MANIFEST = pin(b'synthetic-full-visual-manifest')
             producer.validate_package.return_value = manifest
             (directory/'atlas-beacon-manifest.json').write_text(json.dumps(manifest))
             (directory/'atlas-beacons.zip').write_bytes(b'qualified-native-graph')
-            report = {'format': 2, 'repository_commit': 'b'*40, 'generator': pin(b'host-only-Win32-generator'),
-                'cleanup_complete': True, 'owned_roles': 4, 'native_worker_spawning_allowed': False,
+            report = {'format': 3, 'repository_commit': 'c'*40, 'generator': pin(b'host-only-Win32-generator'),
+                'cleanup_complete': True, 'owned_roles': 0, 'native_worker_spawning_allowed': False,
+                'qualification_mode': 'recovered_primary_fresh_proofs',
+                'graph_origin': {'kind': 'recovered_primary_native_generation', 'source': producer.PRIMARY_RECOVERY,
+                    'generation_sources': producer.PRIMARY_GENERATION_SOURCES, 'original_run_conclusion': 'failure',
+                    'primary_generation_server_returncode': 0, 'original_owned_roles': 4,
+                    'original_cleanup_complete': True, 'original_native_worker_spawning_allowed': False,
+                    'fresh_qualification_still_required': True},
                 'profile_verification_processes': 2, 'profile_proofs': profiles,
-                'cold_mirror': {'created_before_visual_overlay_and_generation': True,
+                'cold_mirror': {'required_geometry_installed_before_mirror': True,
+                    'created_before_full_visual_overlay_and_readback': True,
                     'readonly_inputs_hardlinked': True, 'private_cache_roots': ['data/bin', 'data/geobin', 'data/server']},
+                'profile_cache_isolation': {name: {'policy': 'empty_private_geobin_before_fresh_readback',
+                    'remaining_geometry_cache_files': 0} for name in profiles},
+                'qualification_visual': {'archive': producer.QUALIFICATION_VISUAL_ARCHIVE,
+                    'manifest': producer.QUALIFICATION_VISUAL_MANIFEST, 'files': 10401,
+                    'retained_files': 9613, 'added_original_textures': 788, 'required_geometry_files': 406},
                 'evidence': {'evidence/server.log': pin(
                     b'COH_ATLAS_BEACON_FRESH_WORLD_V1 crc=0x12345678\n'
                     b'COH_ATLAS_BEACON_NATIVE_V1 crc=0x12345678 combat=2000 connected=1900 ground=5000 raised=100 blocks=100 paths=32\n')}}
@@ -213,32 +256,51 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 self.assertEqual(validated['generation'], report)
                 self.assertEqual(validated['manifest'], manifest)
                 self.assertNotEqual(validated['generation'], validated['manifest'])
-                self.assertNotEqual(digest(optional_source), digest(optional))
-                self.assertTrue(all(set(row) == {'bytes', 'sha256'} for row in validated['manifest']['optional_input_files'].values()))
-                for field, wrong in (('cleanup_complete', False), ('owned_roles', 5), ('native_worker_spawning_allowed', True)):
+                self.assertNotEqual(digest(required_source), digest(required))
+                self.assertTrue(all(set(row) == {'bytes', 'sha256'} for row in validated['manifest']['required_geometry_files'].values()))
+                for field, wrong in (('cleanup_complete', False), ('owned_roles', 4),
+                        ('qualification_mode', 'new_generation'), ('native_worker_spawning_allowed', True)):
                     value = dict(report); value[field] = wrong; report_path.write_text(json.dumps(value))
                     with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'ownership/cleanup'):
                         package.validate_beacons(directory, COMMIT, donor)
                 for mutation, message in (('profile_count', 'isolated native'), ('cold_cache_shared', 'isolated native'),
-                        ('missing_profile', 'Both exact'), ('cold_crc', 'Fresh native profile'),
-                        ('cold_input_hash', 'Fresh native profile'), ('foreign_optional', 'exact shipped'),
-                        ('source_optional_hash', 'exact shipped'), ('physical_optional_hash', 'exact shipped'),
-                        ('optional_extra_metadata', 'exact shipped'),
+                        ('geometry_after_mirror', 'isolated native'), ('missing_profile', 'Both exact'),
+                        ('none_profile', 'Both exact'), ('cold_crc', 'Fresh native profile'),
+                        ('cold_input_hash', 'Fresh native profile'), ('cold_missing_geometry', 'Fresh native profile'),
+                        ('foreign_required', 'exact shipped'), ('source_required_hash', 'exact shipped'),
+                        ('physical_required_hash', 'exact shipped'), ('required_extra_metadata', 'exact shipped'),
+                        ('legacy_optional', 'exact shipped'), ('origin_source', 'Original native'),
+                        ('origin_roles', 'Original native'), ('origin_cleanup', 'Original native'),
+                        ('origin_success_relabel', 'Original native'), ('shared_geobin', 'empty private'),
+                        ('missing_isolation', 'empty private'), ('foreign_full_visual', 'visual proof source'),
                         ('legacy_format', 'proof scope')):
                     changed, changed_report = copy.deepcopy(manifest), copy.deepcopy(report)
                     if mutation == 'profile_count': changed_report['profile_verification_processes'] = 1
                     elif mutation == 'cold_cache_shared': changed_report['cold_mirror']['private_cache_roots'] = []
-                    elif mutation == 'missing_profile': changed['input_profiles'].pop('base_world')
-                    elif mutation == 'cold_crc': changed['input_profiles']['base_world']['native'] = {**native, 'full_world_crc': '0x87654321'}
-                    elif mutation == 'cold_input_hash': changed['input_profiles']['base_world']['input_files_sha256'] = 'f'*64
-                    elif mutation == 'foreign_optional':
-                        changed['optional_input_files'].pop(next(iter(optional)))
-                        changed['optional_input_files']['data/object_library/foreign.geo'] = pin(b'foreign')
-                    elif mutation == 'source_optional_hash': changed['input_identity']['visual_object_geometry_sha256'] = digest(optional)
-                    elif mutation == 'physical_optional_hash': changed['input_identity']['optional_physical_geometry_sha256'] = digest(optional_source)
-                    elif mutation == 'optional_extra_metadata': changed['optional_input_files'] = copy.deepcopy(optional_source)
-                    elif mutation == 'legacy_format': changed['format'] = 1
-                    if mutation not in ('profile_count', 'cold_cache_shared'):
+                    elif mutation == 'geometry_after_mirror': changed_report['cold_mirror']['required_geometry_installed_before_mirror'] = False
+                    elif mutation == 'missing_profile': changed['input_profiles'].pop('required_geometry_cold')
+                    elif mutation == 'none_profile': changed['input_profiles']['base_world'] = changed['input_profiles'].pop('required_geometry_cold')
+                    elif mutation == 'cold_crc': changed['input_profiles']['required_geometry_cold']['native'] = {**native, 'full_world_crc': '0x87654321'}
+                    elif mutation == 'cold_input_hash': changed['input_profiles']['required_geometry_cold']['input_files_sha256'] = 'f'*64
+                    elif mutation == 'cold_missing_geometry': changed['input_profiles']['required_geometry_cold']['input_files_sha256'] = digest(common)
+                    elif mutation == 'foreign_required':
+                        changed['required_geometry_files'].pop(next(iter(required)))
+                        changed['required_geometry_files']['data/object_library/foreign.geo'] = pin(b'foreign')
+                    elif mutation == 'source_required_hash': changed['input_identity']['visual_object_geometry_sha256'] = digest(required)
+                    elif mutation == 'physical_required_hash': changed['input_identity']['required_geometry_sha256'] = digest(required_source)
+                    elif mutation == 'required_extra_metadata': changed['required_geometry_files'] = copy.deepcopy(required_source)
+                    elif mutation == 'legacy_optional': changed['optional_input_files'] = copy.deepcopy(required)
+                    elif mutation == 'origin_source': changed_report['graph_origin']['source'] = {'repository_commit': 'f'*40}
+                    elif mutation == 'origin_roles': changed_report['graph_origin']['original_owned_roles'] = 0
+                    elif mutation == 'origin_cleanup': changed_report['graph_origin']['original_cleanup_complete'] = False
+                    elif mutation == 'origin_success_relabel': changed_report['graph_origin']['original_run_conclusion'] = 'success'
+                    elif mutation == 'shared_geobin': changed_report['profile_cache_isolation']['required_geometry_cold']['remaining_geometry_cache_files'] = 1
+                    elif mutation == 'missing_isolation': changed_report['profile_cache_isolation'].pop('client_visual_reopen')
+                    elif mutation == 'foreign_full_visual': changed_report['qualification_visual']['archive'] = pin(b'foreign-visual')
+                    elif mutation == 'legacy_format': changed['format'] = 2
+                    if mutation not in ('profile_count', 'cold_cache_shared', 'geometry_after_mirror',
+                            'origin_source', 'origin_roles', 'origin_cleanup', 'origin_success_relabel',
+                            'shared_geobin', 'missing_isolation', 'foreign_full_visual'):
                         changed_report['profile_proofs'] = changed['input_profiles']
                     (directory/'atlas-beacon-manifest.json').write_text(json.dumps(changed))
                     producer.validate_package.return_value = changed; guest.read_manifest.return_value = changed

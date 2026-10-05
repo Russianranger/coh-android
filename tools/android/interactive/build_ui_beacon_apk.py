@@ -59,6 +59,7 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/generate_atlas_beacons.py',
     'tools/android/interactive/test_atlas_beacon_package.py',
     'tools/android/interactive/test_beacon_runtime_profiles.py',
+    'tools/android/interactive/test_server_worktree_reuse.py',
     'tools/android/interactive/test_generate_atlas_beacons.py',
     'tools/test_prepare_atlas_beacon_generator_source.py',
     'tools/android/interactive/test_training_save.py',
@@ -202,6 +203,39 @@ def validate_guest_delta(name, before_raw, after_raw):
         old_atlas = next(node for node in before.body if isinstance(node, ast.ClassDef) and node.name == 'LocalCharacterServer')
         new_atlas = next(node for node in after.body if isinstance(node, ast.ClassDef) and node.name == old_atlas.name)
         method = next(node for node in new_atlas.body if isinstance(node, ast.FunctionDef) and node.name == 'prepare_runtime')
+        source_exact = ast.parse('''required_geometry = None
+if (self.owner.args.assets / 'atlas-beacons.zip').exists() or (self.owner.args.assets / 'atlas-beacon-manifest.json').exists():
+    import atlas_beacon_package
+    geometry_preparation = atlas_beacon_package.ensure_required_geometry(
+        self.owner.work, self.owner.args.assets, self.ctx)
+    required_geometry = geometry_preparation['identity']
+    self.creation_report['atlas_required_geometry'] = geometry_preparation
+    self.ctx.report['atlas_required_geometry'] = geometry_preparation
+''').body
+        source_locations = [index for index in range(len(method.body)-len(source_exact)+1)
+            if [ast.dump(node) for node in method.body[index:index+len(source_exact)]] == [ast.dump(node) for node in source_exact]]
+        require(len(source_locations) == 1, 'Exactly the reviewed pre-cache required geometry source proof is required')
+        source_index = source_locations[0]
+        readonly = ast.parse("require(receipt.get('imported_inputs_readonly') is True, 'Atlas requires the already protected private client worktree')").body[0]
+        require(source_index > 0 and ast.dump(method.body[source_index-1]) == ast.dump(readonly)
+            and source_index+len(source_exact) < len(method.body)
+            and isinstance(method.body[source_index+len(source_exact)], ast.Assign)
+            and ast.unparse(method.body[source_index+len(source_exact)].targets[0]) == 'source_info',
+            'Required geometry must be proved before source fingerprints and cache identity')
+        key_exact = ast.parse("""if required_geometry is not None:
+    identity['required_geometry'] = required_geometry
+""").body[0]
+        key_locations = [index for index, node in enumerate(method.body) if ast.dump(node) == ast.dump(key_exact)]
+        require(len(key_locations) == 1, 'Exactly the stable required geometry cache identity is required')
+        key_index = key_locations[0]
+        require(key_index > source_index+len(source_exact) and key_index+1 < len(method.body)
+            and isinstance(method.body[key_index-1], ast.Assign) and ast.unparse(method.body[key_index-1].targets[0]) == 'identity'
+            and isinstance(method.body[key_index+1], ast.Assign) and ast.unparse(method.body[key_index+1].targets[0]) == 'self.data_cache',
+            'Required geometry identity must precede cache construction and checkout')
+        del method.body[key_index]
+        del method.body[source_index:source_index+len(source_exact)]
+        changes.extend(('LocalCharacterServer.prepare_runtime.required_geometry_source',
+                        'LocalCharacterServer.prepare_runtime.required_geometry_cache_identity'))
         exact = ast.parse('''beacon_archive = self.owner.args.assets / 'atlas-beacons.zip'
 beacon_manifest = self.owner.args.assets / 'atlas-beacon-manifest.json'
 if beacon_archive.exists() or beacon_manifest.exists():
@@ -267,39 +301,61 @@ def validate_beacons(directory, commit, donor):
     producer = module('native_atlas_beacon_producer', Path(__file__).with_name('generate_atlas_beacons.py'))
     validated_manifest = producer.validate_package(directory, commit)
     report = read_json(directory/'atlas-beacon-generation-report.json')
-    require(report.get('cleanup_complete') is True and report.get('owned_roles') == 4
+    require(report.get('cleanup_complete') is True and report.get('owned_roles') == 0
+        and report.get('qualification_mode') == 'recovered_primary_fresh_proofs'
         and report.get('native_worker_spawning_allowed') is False, 'Native producer ownership/cleanup evidence differs')
+    origin = report.get('graph_origin', {})
+    require(origin.get('kind') == 'recovered_primary_native_generation'
+        and origin.get('source') == producer.PRIMARY_RECOVERY
+        and origin.get('generation_sources') == producer.PRIMARY_GENERATION_SOURCES
+        and origin.get('original_run_conclusion') == 'failure'
+        and origin.get('primary_generation_server_returncode') == 0
+        and origin.get('original_owned_roles') == 4 and origin.get('original_cleanup_complete') is True
+        and origin.get('original_native_worker_spawning_allowed') is False
+        and origin.get('fresh_qualification_still_required') is True, 'Original native generation source/ownership evidence differs')
     manifest = read_json(directory/'atlas-beacon-manifest.json')
     require(validated_manifest == manifest, 'Validated native graph manifest differs')
-    require(manifest.get('format') == 2 and report.get('format') == 2
+    require(manifest.get('format') == 3 and report.get('format') == 3
         and manifest.get('role') == 'authentic_native_atlas_beacon_graph' and manifest.get('runtime_graph_readback') is True
         and manifest.get('physical_npc_pathing_validated') is False, 'Native graph proof scope differs')
     geo = {name: value for name, value in donor['_visual_manifest']['files'].items() if name.endswith('.geo')}
-    optional_source = {name: value for name, value in geo.items() if name.startswith('data/object_library/')}
-    optional = {name: {key: value[key] for key in ('bytes', 'sha256')}
-        for name, value in optional_source.items()}
+    required_source = {name: value for name, value in geo.items() if name.startswith('data/object_library/')}
+    required = {name: {key: value[key] for key in ('bytes', 'sha256')}
+        for name, value in required_source.items()}
     require(manifest.get('input_identity', {}).get('world_manifest') == donor['payloads']['assets/runtime/atlas-world-supplement-manifest.json']
         and manifest['input_identity'].get('visual_geometry_sha256') == hashlib.sha256(producer.canonical(geo)).hexdigest()
         and manifest['input_identity'].get('visual_source_manifest') == donor['payloads']['assets/runtime/client-visual-manifest.json']
-        and len(optional) == 406 and manifest.get('optional_input_files') == optional
-        and manifest['input_identity'].get('visual_object_geometry_sha256') == hashlib.sha256(producer.canonical(optional_source)).hexdigest()
-        and manifest['input_identity'].get('optional_physical_geometry_sha256') == hashlib.sha256(producer.canonical(optional)).hexdigest(),
+        and len(required) == 406 and manifest.get('required_geometry_files') == required
+        and 'optional_input_files' not in manifest
+        and manifest['input_identity'].get('visual_object_geometry_sha256') == hashlib.sha256(producer.canonical(required_source)).hexdigest()
+        and manifest['input_identity'].get('required_geometry_sha256') == hashlib.sha256(producer.canonical(required)).hexdigest(),
         'Native beacons do not match the exact shipped world geometry')
     common, profiles = manifest.get('input_files'), manifest.get('input_profiles')
-    require(isinstance(common, dict) and not set(common).intersection(optional)
-        and isinstance(profiles, dict) and set(profiles) == {'base_world', 'base_world_visual'}
+    require(isinstance(common, dict) and len(common) == 5231 and not set(common).intersection(required)
+        and isinstance(profiles, dict) and set(profiles) == {'required_geometry_cold', 'client_visual_reopen'}
         and manifest.get('input_files_sha256') == hashlib.sha256(producer.canonical(common)).hexdigest(),
         'Both exact native Atlas input profiles are required')
-    for profile, selected in (('base_world', common), ('base_world_visual', {**common, **optional})):
+    selected = {**common, **required}
+    for profile in ('required_geometry_cold', 'client_visual_reopen'):
         require(profiles[profile] == {'native': manifest.get('native'),
             'input_files_sha256': hashlib.sha256(producer.canonical(selected)).hexdigest()},
             'Fresh native profile CRC, graph readback or paths differ')
     mirror = report.get('cold_mirror', {})
     require(report.get('profile_verification_processes') == 2 and report.get('profile_proofs') == profiles
-        and mirror.get('created_before_visual_overlay_and_generation') is True
+        and mirror.get('required_geometry_installed_before_mirror') is True
+        and mirror.get('created_before_full_visual_overlay_and_readback') is True
         and mirror.get('readonly_inputs_hardlinked') is True
         and mirror.get('private_cache_roots') == ['data/bin', 'data/geobin', 'data/server'],
         'Fresh isolated native profile provenance differs')
+    isolation = report.get('profile_cache_isolation', {})
+    require(set(isolation) == set(profiles) and all(
+        row.get('policy') == 'empty_private_geobin_before_fresh_readback'
+        and row.get('remaining_geometry_cache_files') == 0 for row in isolation.values()),
+        'Fresh native profiles must have empty private geometry caches')
+    require(report.get('qualification_visual') == {
+        'archive': producer.QUALIFICATION_VISUAL_ARCHIVE, 'manifest': producer.QUALIFICATION_VISUAL_MANIFEST,
+        'files': 10401, 'retained_files': 9613, 'added_original_textures': 788,
+        'required_geometry_files': 406}, 'Full client visual proof source differs')
     guest = module('atlas_beacon_guest_contract', ROOT/'android/guest/atlas_beacon_package.py')
     require(guest.read_manifest(directory/'atlas-beacon-manifest.json') == manifest, 'Guest beacon identity/policy differs')
     require(guest.ARCHIVE_BYTES == builder().file_pin(directory/'atlas-beacons.zip')['bytes']

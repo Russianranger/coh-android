@@ -41,7 +41,7 @@ jobs:
           summary = {key: item for key, item in value.items() if key != 'optional_input_files'}
           print('COH_ATLAS_BEACON_DONOR_GEOMETRY ' + producer.canonical(summary).decode('ascii'), flush=True)
           PY
-      - name: Test actual source and physical inventory contracts before native compilation
+      - name: Test actual source and recovery contracts before native readback
         run: |
           python3 - <<'PY'
           import json, sys, unittest
@@ -49,7 +49,7 @@ jobs:
           sys.path[:0] = ['tools', 'tools/android/interactive']
           modules = ['test_prepare_atlas_beacon_generator_source', 'test_generate_atlas_beacons',
                      'test_atlas_beacon_package', 'test_beacon_runtime_profiles', 'test_ui_beacon_package',
-                     'test_classify_storage_cleanup_change']
+                     'test_classify_storage_cleanup_change', 'test_server_worktree_reuse']
           excluded = 'test_ui_beacon_package.UiBeaconPackagingTests.test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks'
           def leaves(suite):
               for case in suite:
@@ -86,7 +86,7 @@ jobs:
       contents: write
       actions: read
     runs-on: windows-2025-vs2026
-    timeout-minutes: 120
+    timeout-minutes: 60
     steps:
       - name: Preserve exact generation source bytes
         shell: pwsh
@@ -123,8 +123,7 @@ jobs:
         run: |
           python tools/prepare_atlas_beacon_generator_source.py --output C:/bcn-src
           if ($LASTEXITCODE -ne 0) { throw 'Native generator staging failed' }
-      - name: Reuse only the exact compatible successful host compile
-        id: native_compile_reuse
+      - name: Authenticate failed-run primary generation and exact successful UI preparation
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
@@ -133,89 +132,92 @@ jobs:
           $ProgressPreference = 'SilentlyContinue'
           $api = 'https://api.github.com/repos/Russianranger/coh-android/actions'
           $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json'; 'X-GitHub-Api-Version' = '2022-11-28' }
-          $run = Invoke-RestMethod -Uri "$api/runs/37357540374" -Headers $headers
-          $jobs = (Invoke-RestMethod -Uri "$api/runs/37357540374/jobs" -Headers $headers).jobs
-          $job = @($jobs | Where-Object { $_.id -eq 111924222126 })
-          $compile = @($job.steps | Where-Object { $_.name -eq 'Compile Win32 generator without changing shipped MapServer' })
-          $stage = @($job.steps | Where-Object { $_.name -eq 'Stage a contained host-only single-map native generator' })
-          $artifact = Invoke-RestMethod -Uri "$api/artifacts/11366950301" -Headers $headers
-          if ($run.head_sha -ne '780b030b73fef34b5000b7303ba4fe828020a229' -or
-              $run.head_branch -ne 'codex/character-persistence-continuation' -or
-              $run.path -ne '.github/workflows/android-atlas-beacon-generation.yml' -or
-              $run.status -ne 'completed' -or $run.conclusion -ne 'failure' -or $run.run_attempt -ne 1 -or
-              $job.Count -ne 1 -or $job[0].name -ne 'generate' -or
-              $compile.Count -ne 1 -or $compile[0].conclusion -ne 'success' -or
-              $stage.Count -ne 1 -or $stage[0].conclusion -ne 'success' -or
-              $artifact.id -ne 11366950301 -or $artifact.name -ne 'coh-ui-beacon-generation-evidence' -or
-              $artifact.expired -or $artifact.size_in_bytes -ne 16542485 -or
-              $artifact.digest -ne 'sha256:d37e6d13bd619e9c39014b784d193773830ad950d2abd3e252f025588c58020b' -or
-              $artifact.workflow_run.id -ne 37357540374 -or
-              $artifact.workflow_run.head_sha -ne '780b030b73fef34b5000b7303ba4fe828020a229') {
-            throw 'Retained successful compile metadata differs; no binary or graph reuse accepted'
+          New-Item -ItemType Directory -Path out/ui-beacon-recovery -Force | Out-Null
+          $run = Invoke-RestMethod -Uri "$api/runs/37377053417" -Headers $headers
+          $jobs = (Invoke-RestMethod -Uri "$api/runs/37377053417/jobs" -Headers $headers).jobs
+          $job = @($jobs | Where-Object { $_.id -eq 111989203448 })
+          if ($job.Count -ne 1) { throw 'Original native job identity differs' }
+          $compile = @($job[0].steps | Where-Object { $_.name -eq 'Compile Win32 generator without changing shipped MapServer' })
+          $stage = @($job[0].steps | Where-Object { $_.name -eq 'Stage a contained host-only single-map native generator' })
+          if ($compile.Count -ne 1 -or $stage.Count -ne 1) { throw 'Original native stage/compile evidence differs' }
+          $artifact = Invoke-RestMethod -Uri "$api/artifacts/11379217768" -Headers $headers
+          $metadata = @{
+            format = 1; status = 'authenticated_failed_run_primary_candidate'
+            run = @{ id = $run.id; head_sha = $run.head_sha; head_branch = $run.head_branch; path = $run.path
+                     status = $run.status; conclusion = $run.conclusion; run_attempt = $run.run_attempt }
+            job = @{ id = $job[0].id; name = $job[0].name; conclusion = $job[0].conclusion
+                     source_stage_conclusion = $stage[0].conclusion; compile_conclusion = $compile[0].conclusion }
+            artifact = @{ id = $artifact.id; name = $artifact.name; expired = $artifact.expired
+                          size_in_bytes = $artifact.size_in_bytes; digest = $artifact.digest
+                          run_id = $artifact.workflow_run.id; head_sha = $artifact.workflow_run.head_sha }
           }
-          New-Item -ItemType Directory -Path out/ui-beacon-host-reuse -Force | Out-Null
-          $archive = 'out/ui-beacon-host-reuse/compile-evidence.zip'
-          # PowerShell strips Authorization when following the GitHub archive redirect.
-          Invoke-WebRequest -Uri "$api/artifacts/11366950301/zip" -Headers $headers -OutFile $archive -TimeoutSec 180
-          if ((Get-Item $archive).Length -ne 16542485 -or
-              (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'd37e6d13bd619e9c39014b784d193773830ad950d2abd3e252f025588c58020b') {
-            throw 'Retained compile ZIP bytes differ'
-          }
+          $metadata | ConvertTo-Json -Depth 12 | Set-Content -Encoding utf8NoBOM out/ui-beacon-recovery/api-metadata.json
           @'
-          import hashlib, json, os, struct, sys, zipfile
-          from pathlib import Path, PurePosixPath
+          import json, sys
+          from pathlib import Path
           sys.path.insert(0, 'tools/android/interactive')
           import generate_atlas_beacons as producer
-          source = Path('C:/bcn-src')
-          expected = json.loads((source / 'atlas-beacon-generator-build-input.json').read_bytes())
-          assert expected == producer.producer.expected(), 'Current staged native source differs'
-          with zipfile.ZipFile('out/ui-beacon-host-reuse/compile-evidence.zip') as archive:
-              rows = archive.infolist()
-              assert 0 < len(rows) <= 512 and sum(row.file_size for row in rows) <= 256 * 1024**2
-              assert len({row.filename.casefold() for row in rows}) == len(rows)
-              assert all(not row.filename.startswith('/') and '\\' not in row.filename and ':' not in row.filename
-                         and '..' not in PurePosixPath(row.filename).parts for row in rows)
-              def member(leaf):
-                  found = [row for row in rows if PurePosixPath(row.filename).name == leaf and not row.is_dir()]
-                  assert len(found) == 1 and found[0].file_size <= 128 * 1024**2, 'Unique bounded compile member required'
-                  return archive.read(found[0])
-              previous = json.loads(member('atlas-beacon-generator-build-input.json'))
-              if previous != expected:
-                  print('Native source changed: retained compile is not reused; fresh compile follows')
-                  with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
-                      output.write('matched=false\n')
-                  sys.exit(0)
-              binary = member('host-only-beacon-generator.exe')
-              symbols = member('host-only-beacon-generator.pdb')
-          assert binary[:2] == b'MZ' and len(binary) > 256
-          pe = struct.unpack_from('<I', binary, 0x3c)[0]
-          assert pe + 6 < len(binary) and binary[pe:pe+4] == b'PE\0\0'
-          assert struct.unpack_from('<H', binary, pe+4)[0] == 0x14c, 'Win32 host ABI required'
-          target = source / 'out/build/vs2026/bin/OptDebug'
-          target.mkdir(parents=True, exist_ok=True)
-          (target / 'MapServer.exe').write_bytes(binary)
-          (target / 'MapServer.pdb').write_bytes(symbols)
-          receipt = {'format': 1, 'status': 'reused_exact_compatible_native_compile',
-                     'compile': producer.HOST_COMPILE_REUSE, 'build_input': expected,
-                     'generator': producer.pin(target / 'MapServer.exe'),
-                     'symbols': producer.pin(target / 'MapServer.pdb')}
-          producer.validate_compile_reuse_receipt(receipt, expected, producer.pin(target / 'MapServer.exe'))
-          (source / 'atlas-beacon-generator-compile-reuse.json').write_bytes(producer.canonical(receipt))
-          print('COH_ATLAS_HOST_COMPILE_REUSE ' + producer.canonical(receipt).decode())
-          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
-              output.write('matched=true\n')
+          path = Path('out/ui-beacon-recovery/api-metadata.json')
+          value = json.loads(path.read_bytes())
+          value['source'] = producer.PRIMARY_RECOVERY
+          producer.validate_recovery_metadata(value)
+          path.write_bytes(producer.canonical(value))
+          print('COH_ATLAS_BEACON_AUTHENTICATED_PRIMARY ' + producer.canonical(value).decode())
           '@ | python -
-          if ($LASTEXITCODE -ne 0) { throw 'Retained compile validation failed' }
-      - name: Compile Win32 generator without changing shipped MapServer
-        if: steps.native_compile_reuse.outputs.matched != 'true'
-        working-directory: C:/bcn-src
-        shell: pwsh
-        run: |
-          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
-          if ($LASTEXITCODE -ne 0) { throw 'Native generator configure failed' }
-          cmake --build out/build/vs2026 --config OptDebug --target MapServer --parallel
-          if ($LASTEXITCODE -ne 0) { throw 'Native generator compile failed' }
-      - name: Generate actual Atlas graph then independently read back and exercise native paths
+          if ($LASTEXITCODE -ne 0) { throw 'Failed-run primary API authentication refused' }
+          $archive = 'out/ui-beacon-recovery/primary-native-evidence.zip'
+          Invoke-WebRequest -Uri "$api/artifacts/11379217768/zip" -Headers $headers -OutFile $archive -TimeoutSec 180
+          if ((Get-Item $archive).Length -ne 33296543 -or
+              (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4') {
+            throw 'Actual primary native artifact bytes differ'
+          }
+          $oldSource = 'out/ui-beacon-recovery/original-generation-source.py'
+          Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Russianranger/coh-android/3124723b93b4ae83b211f9319ffa8d6d8a3e851d/tools/android/interactive/generate_atlas_beacons.py' -OutFile $oldSource -TimeoutSec 120
+          if ((Get-Item $oldSource).Length -ne 44424 -or
+              (Get-FileHash $oldSource -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'eb89c170f0780e0b3ac61b0bd6e957b3f07b928dbeaf1c91653e7977720f16c2') {
+            throw 'Original generation implementation bytes differ'
+          }
+          $uiRun = Invoke-RestMethod -Uri "$api/runs/37379767112" -Headers $headers
+          $uiArtifact = Invoke-RestMethod -Uri "$api/artifacts/11373610942" -Headers $headers
+          if ($uiRun.head_sha -ne '52da9286c2fd1695c6c0c2979378fc418c418c99' -or
+              $uiRun.head_branch -ne 'codex/character-persistence-continuation' -or
+              $uiRun.path -ne '.github/workflows/android-ui-beacon.yml' -or
+              $uiRun.status -ne 'completed' -or $uiRun.conclusion -ne 'success' -or $uiRun.run_attempt -ne 1 -or
+              $uiArtifact.id -ne 11373610942 -or $uiArtifact.name -ne 'coh-ui-beacon-visual' -or
+              $uiArtifact.expired -or $uiArtifact.size_in_bytes -ne 907668082 -or
+              $uiArtifact.digest -ne 'sha256:ffd0e9e667ef460c662bdd8808d00a74600a61943c507e19daaadc162e97b364' -or
+              $uiArtifact.workflow_run.id -ne 37379767112 -or
+              $uiArtifact.workflow_run.head_sha -ne '52da9286c2fd1695c6c0c2979378fc418c418c99') {
+            throw 'Frozen successful complete-visual preparation provenance differs'
+          }
+          $uiArchive = 'out/ui-beacon-recovery/ui-preparation.zip'
+          Invoke-WebRequest -Uri "$api/artifacts/11373610942/zip" -Headers $headers -OutFile $uiArchive -TimeoutSec 300
+          if ((Get-Item $uiArchive).Length -ne 907668082 -or
+              (Get-FileHash $uiArchive -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'ffd0e9e667ef460c662bdd8808d00a74600a61943c507e19daaadc162e97b364') {
+            throw 'Frozen UI preparation archive bytes differ'
+          }
+          @'
+          import sys, zipfile
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import generate_atlas_beacons as producer
+          output = Path('out/ui-beacon-recovery')
+          with zipfile.ZipFile(output / 'ui-preparation.zip') as archive:
+              rows = archive.infolist()
+              producer.require(0 < len(rows) <= 128 and sum(row.file_size for row in rows) <= 2 * 1024**3,
+                               'Finite UI preparation artifact required')
+              names = [producer.safe(row.filename.rstrip('/')) for row in rows]
+              producer.require(len(set(name.casefold() for name in names)) == len(names), 'UI artifact aliases refused')
+              for leaf, expected in (('client-visual-assets.zip', producer.QUALIFICATION_VISUAL_ARCHIVE),
+                                     ('client-visual-manifest.json', producer.QUALIFICATION_VISUAL_MANIFEST)):
+                  selected = [row for row in rows if Path(row.filename).name == leaf and not row.is_dir()]
+                  producer.require(len(selected) == 1 and selected[0].file_size == expected['bytes'],
+                                   'Exact frozen UI artifact member required')
+                  with archive.open(selected[0]) as source:
+                      producer.copy_pinned(source, output / leaf, expected)
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Frozen complete visual source pair differs' }
+      - name: Recover actual primary graph and qualify two fresh required-geometry native layouts
         shell: pwsh
         run: >-
           python tools/android/interactive/generate_atlas_beacons.py
@@ -228,6 +230,11 @@ jobs:
           --work C:/bcn-run
           --output out/ui-beacon-native
           --timeout-seconds 5400
+          --recovery-artifact out/ui-beacon-recovery/primary-native-evidence.zip
+          --recovery-metadata out/ui-beacon-recovery/api-metadata.json
+          --original-generation-source out/ui-beacon-recovery/original-generation-source.py
+          --client-visual-archive out/ui-beacon-recovery/client-visual-assets.zip
+          --client-visual-manifest out/ui-beacon-recovery/client-visual-manifest.json
       - uses: actions/upload-artifact@v4
         with:
           name: coh-ui-beacon-native
@@ -250,6 +257,7 @@ jobs:
             'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb' = 'host-only-beacon-generator.pdb'
           }
           # All runtime evidence is copied onto D: before upload-artifact.
+          # The retained host EXE/PDB only runs new native proofs; it never ships.
           # Owned native internal errors/minidumps are finite and preserved even
           # when Python fails before it can write its role-failure receipt.
           $diagnostics = Join-Path $destination 'native-internal'

@@ -712,6 +712,14 @@ class LocalCharacterServer(login.LocalLoginServer):
         receipt = self.ctx.report.get('client_worktree', {})
         require(receipt.get('imported_inputs_readonly') is True,
                 'Atlas requires the already protected private client worktree')
+        required_geometry = None
+        if (self.owner.args.assets / 'atlas-beacons.zip').exists() or (self.owner.args.assets / 'atlas-beacon-manifest.json').exists():
+            import atlas_beacon_package
+            geometry_preparation = atlas_beacon_package.ensure_required_geometry(
+                self.owner.work, self.owner.args.assets, self.ctx)
+            required_geometry = geometry_preparation['identity']
+            self.creation_report['atlas_required_geometry'] = geometry_preparation
+            self.ctx.report['atlas_required_geometry'] = geometry_preparation
         # Wine FolderCache does not enumerate directory symlinks as directories.
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
@@ -732,6 +740,8 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'source_commit': self.map_package.get('source_commit', device.SOURCE_COMMIT),
                 'data_commit': self.map_package.get('data_commit', device.DATA_COMMIT),
                 'files': self.map_package['files']})).hexdigest()}
+        if required_geometry is not None:
+            identity['required_geometry'] = required_geometry
         self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
             self.owner.args.session_id, self.ctx,
             legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
