@@ -30,6 +30,9 @@ class AtlasBeaconSourceTests(unittest.TestCase):
         for call in ('beaconDoesTheBeaconFileMatchTheMap(0)', 'beaconReload()', 'beaconPathFind(search',
                      'assert(paths == 32)', 'ipFromString("127.0.0.1")'):
             self.assertIn(call, additions)
+        self.assertIn('beaconSetPathFindEntity(NULL, 0)', additions)
+        self.assertIn('groupLoadMap(freshMapName, 0, 0)', additions)
+        self.assertNotIn('beaconCreatePathCheckEnt()', additions)
         self.assertNotIn('THIS MAP HAS NOT BEEN BEACONIZED', additions)
         self.assertNotIn('beaconProcessCombatBeacons(', additions)
         self.assertNotIn('RegReader', additions)

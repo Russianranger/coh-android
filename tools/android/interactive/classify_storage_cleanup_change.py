@@ -390,7 +390,7 @@ UI_BEACON_SOURCES = frozenset({
     'tools/android/interactive/test_combat_reward_save.py',
 })
 UI_BEACON_DOCS = frozenset({
-    'docs/HANDOFF.md', 'docs/ANDROID_UI_BEACON.md', 'docs/ANDROID_TRAINING_VALIDATION_REPAIR.md', 'docs/ANDROID_UI_BEACON_DEVICE_RESULT.md',
+    'docs/HANDOFF.md', 'docs/ANDROID_UI_BEACON.md', 'docs/ANDROID_TRAINING_VALIDATION_REPAIR.md', 'docs/ANDROID_UI_BEACON_DEVICE_RESULT.md', 'docs/ANDROID_ATLAS_BEACONS.md', 'docs/ANDROID_UI_TEXTURE_SWEEP.md',
     'docs/COH-Atlas-Gameplay-0.13.14-testing.txt',
     'docs/ANDROID_CHARACTER_REOPEN.md', 'docs/ANDROID_THOR_ACCEPTANCE.md',
     'docs/ANDROID_INTERACTIVE_DIAGNOSTIC.md',

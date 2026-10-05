@@ -16,11 +16,13 @@ class StorageRoutingTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[3]
         source = (root/'.github/workflows/android-atlas-beacon-generation.yml').read_text()
         for required in ('C:/bcn-src', 'generate_atlas_beacons.py', '--target MapServer',
-                '--timeout-seconds 5400', 'coh-ui-beacon-native', 'contents: read',
+                '--timeout-seconds 5400', 'coh-ui-beacon-native', 'contents: read', 'cancel-in-progress: true',
                 'Invoke-WebRequest', '1535592811', 'GH_TOKEN: ${{ github.token }}',
                 '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4'):
             self.assertIn(required, source)
-        for forbidden in ('build_ui_beacon_apk.py', 'contents: write', 'COH_ATLAS_BEACON_REUSE_RUN_ID'):
+        self.assertEqual(source.count('contents: write'), 1)
+        self.assertIn('release asset, as in the accepted server-cache workflow. No publishing step.', source)
+        for forbidden in ('build_ui_beacon_apk.py', 'softprops/action-gh-release', '--publish', 'COH_ATLAS_BEACON_REUSE_RUN_ID'):
             self.assertNotIn(forbidden, source)
 
     def test_ui_beacon_scope_skips_all_historical_builds_and_fails_closed(self):

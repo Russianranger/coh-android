@@ -117,15 +117,15 @@
  
      if(!beacon_server.isMasterServer){
          if(masterServerName){
-@@ -5851,6 +5840,47 @@
+@@ -5851,6 +5840,46 @@
          printf("Writing file: ");
          beaconWriteCurrentFile(false);
          printf("Done!\n");
 +        {
 +            S32 i, connected = 0, ground = 0, raised = 0, paths = 0;
-+            Entity* pathEnt;
++            char freshMapName[] = "maps/city_zones/city_01_01/city_01_01.txt";
 +            NavSearch* search;
-+            groupLoadMap("maps/city_zones/city_01_01/city_01_01.txt", 0, 0);
++            groupLoadMap(freshMapName, 0, 0);
 +            assert(beaconDoesTheBeaconFileMatchTheMap(0));
 +            beaconReload();
 +            assert(beaconGetReadFileVersion() == 8);
@@ -138,8 +138,7 @@
 +                raised += b->rbConns.size;
 +            }
 +            assert(connected > 1000 && ground > 1000);
-+            pathEnt = beaconCreatePathCheckEnt();
-+            beaconSetPathFindEntity(pathEnt, 0);
++            beaconSetPathFindEntity(NULL, 0);
 +            search = createNavSearch();
 +            for(i = 0; i < combatBeaconArray.size && paths < 32; i += max(1, combatBeaconArray.size / 1000)){
 +                Beacon* src = combatBeaconArray.storage[i];

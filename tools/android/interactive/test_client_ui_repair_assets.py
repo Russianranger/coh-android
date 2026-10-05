@@ -186,11 +186,13 @@ class GuestCurrentPartition(unittest.TestCase):
     def setUpClass(cls):
         cls.value = json.loads(producer.manifest_bytes(producer.ROOT/'assets'/producer.SOURCE_MANIFEST))
 
-    def test_guest_identity_is_exact_current_producer_identity(self):
-        self.assertEqual((guest.FILE_COUNT, guest.PAYLOAD_BYTES, guest.ARCHIVE_BYTES,
-            guest.ARCHIVE_SHA256, guest.MANIFEST_SHA256, guest.FILES_SHA256),
-            (producer.FILE_COUNT, producer.PAYLOAD_BYTES, producer.ARCHIVE_PIN['bytes'],
-             producer.ARCHIVE_PIN['sha256'], producer.MANIFEST_PIN['sha256'], producer.FILES_SHA256))
+    def test_guest_retains_exact01313_producer_identity_below_current_sweep(self):
+        import prepare_client_ui_sweep_assets as current
+        value = current.read_manifest(current.ROOT/'assets'/current.SOURCE_MANIFEST)
+        retained = guest.ui_sweep_ancestor(value)
+        self.assertEqual((retained['file_count'], retained['payload_bytes'], retained['archive'],
+            retained['files_sha256']), (producer.FILE_COUNT, producer.PAYLOAD_BYTES,
+            {'filename': producer.ARCHIVE, **producer.ARCHIVE_PIN}, producer.FILES_SHA256))
 
     def test_guest123_ui_and9490_ancestor_partition_is_disjoint_and_complete(self):
         ui = guest.ui_repair_files(self.value)
@@ -203,12 +205,12 @@ class GuestCurrentPartition(unittest.TestCase):
         self.assertEqual(len(guest.sweep_files(old)), 5147)
         self.assertEqual(len(guest.encounter_files(old)), 6)
 
-    def test_guest_packages_exact_plaintext_recipe(self):
+    def test_guest_rejects_historical_recipe_as_current_package(self):
         with tempfile.TemporaryDirectory() as directory:
             raw = producer.manifest_bytes(producer.ROOT/'assets'/producer.SOURCE_MANIFEST)
             (Path(directory)/guest.MANIFEST).write_bytes(raw)
-            value = guest.package(directory)
-        self.assertEqual(value['files'], self.value['files'])
+            with self.assertRaisesRegex(DiagnosticError, 'manifest differs'):
+                guest.package(directory)
 
     def test_guest_rejects_ui_byte_drift_with_top_current_identity_unchanged(self):
         changed = copy.deepcopy(self.value)

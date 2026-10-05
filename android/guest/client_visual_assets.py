@@ -20,11 +20,11 @@ require = client.require
 ARCHIVE = 'client-visual-assets.zip'
 MANIFEST = 'client-visual-manifest.json'
 SCOPE = 'atlas_client_missing_visual_assets'
-ARCHIVE_SHA256 = '7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544'
-MANIFEST_SHA256 = 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'
-FILES_SHA256 = 'cef9da030ec9dbeee1a139a1806f557f249c8b427d9f47706540047c065c1ef8'
-ARCHIVE_BYTES = 854625639
-FILE_COUNT, PAYLOAD_BYTES = 9613, 1511101967
+ARCHIVE_SHA256 = '5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60'
+MANIFEST_SHA256 = '8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2'
+FILES_SHA256 = '11345ad8a72f14f2bb1cca5b88f2f9a09c724aa5e6f4f4ce2c73526a77884e12'
+ARCHIVE_BYTES = 859075775
+FILE_COUNT, PAYLOAD_BYTES = 10401, 1534806726
 BASE_FILE_COUNT, BASE_PAYLOAD_BYTES = 290, 36583648
 BASE_FILES_SHA256 = 'f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e'
 EXTENSION_FILE_COUNT, EXTENSION_PAYLOAD_BYTES = 33, 2646051
@@ -42,6 +42,9 @@ APPEARANCE_BASE_FILES_SHA256 = '99021fe01af691b88335f9d3e6fc6c16687ab12dbf652b80
 UI_FILE_COUNT, UI_PAYLOAD_BYTES = 123, 5384150
 UI_FILES_SHA256 = '0ee97ecfe5da5b7884a6f309f3aeeb17b1d65714d1d3669468dc92b55a33cbb6'
 UI_BASE_FILES_SHA256 = 'e23299918437e5d0afa2e9d2003eb966151f59471eaeb430313d2824d42fe341'
+UI_SWEEP_FILE_COUNT, UI_SWEEP_PAYLOAD_BYTES = 788, 23704759
+UI_SWEEP_FILES_SHA256 = 'a52f89042248557d75f650524134c5ba506bd73c286521190a090810284c7a57'
+UI_SWEEP_BASE_FILES_SHA256 = 'cef9da030ec9dbeee1a139a1806f557f249c8b427d9f47706540047c065c1ef8'
 MAX_ARCHIVE_BYTES, MAX_MANIFEST_BYTES = 1024**3, 64 * 1024**2
 MAX_PAYLOAD_BYTES = 2 * 1024**3
 MAX_ENTRY_BYTES, MAX_RECEIPT_BYTES = 32 * 1024**2, 4 * 1024**2
@@ -82,7 +85,7 @@ def package(assets):
         and all(value.get(key) is False for key in ('runtime_visual_validated', 'gameplay_validated',
             'imported_assets_modified', 'prepared_caches_modified', 'existing_supplements_modified')),
         'Client visual identity, missing-only policy or inventory differs')
-    historical = ui_repair_ancestor(value)
+    historical = ui_repair_ancestor(ui_sweep_ancestor(value))
     appearances = appearance_files(historical)
     sweeps = sweep_files(historical)
     encounters = encounter_files(historical) | sweeps | appearances
@@ -107,6 +110,49 @@ def package(assets):
         'Client visual append-only recipe changes a preserved baseline payload')
     return value
 
+
+
+def ui_sweep_files(value):
+    if SWEEP_FILE_COUNT == 0:  # Historical two-leaf installer fixtures.
+        require('ui_sweep_extension' not in value, 'Unexpected UI sweep in historical fixture')
+        return set()
+    delta, files = value.get('ui_sweep_extension', {}), value.get('files', {})
+    names = set(delta.get('files', {}))
+    selected = {name: files[name] for name in sorted(names) if name in files}
+    baseline = {name: row for name, row in files.items() if name not in names}
+    require(delta.get('scope') == 'native_client_interface_texture_dependency_sweep'
+        and delta.get('missing_only') is True and delta.get('baseline_payloads_preserved') is True
+        and len(names) == len(selected) == delta.get('file_count') == UI_SWEEP_FILE_COUNT
+        and delta.get('payload_bytes') == UI_SWEEP_PAYLOAD_BYTES
+        and delta.get('files_sha256') == UI_SWEEP_FILES_SHA256
+        and all(name.startswith('data/texture_library/') and name.endswith('.texture') for name in names)
+        and sum(row['bytes'] for row in selected.values()) == UI_SWEEP_PAYLOAD_BYTES
+        and hashlib.sha256(canonical(selected)).hexdigest() == UI_SWEEP_FILES_SHA256
+        and delta.get('baseline_file_count') == len(baseline) == 9613
+        and delta.get('baseline_payload_bytes') == sum(row['bytes'] for row in baseline.values()) == 1511101967
+        and delta.get('baseline_files_sha256') == UI_SWEEP_BASE_FILES_SHA256
+        and hashlib.sha256(canonical(baseline)).hexdigest() == UI_SWEEP_BASE_FILES_SHA256
+        and delta.get('baseline_archive_pin') == {'bytes': 854625639,
+            'sha256': '7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544'}
+        and delta.get('baseline_manifest_pin') == {'bytes': 42553059,
+            'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
+        and all(delta.get(key) is False for key in ('runtime_visual_validated', 'native_renderer_changed',
+            'native_gameplay_changed', 'full_global_asset_closure', 'preloading', 'full_archive_verified')),
+        'Client UI sweep changes a preserved visual leaf or its bounded append policy')
+    return names
+
+
+def ui_sweep_ancestor(value):
+    names = ui_sweep_files(value)
+    if not names:
+        return value
+    old = dict(value)
+    del old['ui_sweep_extension']
+    old['files'] = {name: row for name, row in value['files'].items() if name not in names}
+    old.update(file_count=9613, payload_bytes=1511101967, files_sha256=UI_SWEEP_BASE_FILES_SHA256,
+        archive={'filename': ARCHIVE, 'bytes': 854625639,
+            'sha256': '7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544'})
+    return old
 
 
 def ui_repair_files(value):
@@ -358,7 +404,7 @@ def install(worktree, assets, context):
         world.read_regular(worktree / 'client-work.json', 1024**2)).hexdigest(), 'Verified client identity changed')
     if not reused:
         publish_marker(worktree, final, context)
-    unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension', 'appearance_extension', 'ui_repair_extension')
+    unresolved = sorted({row['target'] for section in ('closure', 'sweep_extension', 'appearance_extension', 'ui_repair_extension', 'ui_sweep_extension')
         for row in document.get(section, {}).get('unresolved_dependencies', [])})
     return {'format': 1, 'scope': SCOPE, 'manifest_sha256': MANIFEST_SHA256,
         'archive_sha256': ARCHIVE_SHA256, 'files_sha256': FILES_SHA256, 'file_count': FILE_COUNT,
@@ -372,6 +418,8 @@ def install(worktree, assets, context):
         'added_appearance_payload_bytes': APPEARANCE_PAYLOAD_BYTES,
         'retained_ui_baseline_file_count': 9490, 'added_ui_file_count': UI_FILE_COUNT,
         'added_ui_payload_bytes': UI_PAYLOAD_BYTES,
+        'retained_ui_sweep_baseline_file_count': 9613, 'added_ui_sweep_file_count': UI_SWEEP_FILE_COUNT,
+        'added_ui_sweep_payload_bytes': UI_SWEEP_PAYLOAD_BYTES,
         'retained_baseline_payloads_preserved': True,
         'reuse_validation': POLICY, 'fingerprint_reused': bool(reused), 'decoded_files': installed,
         'decoded_payload_bytes': decoded_bytes, 'verified_existing_bytes': verified_bytes,

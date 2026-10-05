@@ -48,6 +48,18 @@ commands must not be enabled as a substitute for the active native generator.
 Preserve all working assets, character data, cache/freshness, controls and timing
 instrumentation. Do not repeat broad world/model imports.
 
+[The UI sweep](ANDROID_UI_TEXTURE_SWEEP.md) is now frozen: **788 exact original
+textures / 23,704,759 decoded bytes**, for **10,401 visual leaves**. All 9,613
+previous encoded streams remain byte-identical. Actual source ranges reproduce
+the exact new ZIP and runtime manifest. The 184 UI modules, shared controls,
+2,551 enhancement definitions, tips, overhead bars, ring/highlight overlays and
+contact-marker dependencies were audited; 23 unavailable donor names stay
+explicit without substitutes. The level-2 trainer's third Pool/Epic pane is
+intentionally empty until displayed levels 4/35. The 35 new UI, 32 prior UI and
+52 installer/cache scenarios pass. First updated preparation installs finite
+new resources; unchanged warm preparation retains zero archive/decode I/O.
+Physical UI confirmation remains pending.
+
 The host-only native Atlas graph producer is staged and its six focused source,
 CRC and transcript tests pass. Its standalone Windows workflow uses short
 `C:/bcn-src` build paths and four owned localhost roles, preserving the real
@@ -56,6 +68,16 @@ CRC comparison, full native graph readback and 32 native path searches before
 any graph can ship. Physical collision/group/trick inputs are pinned and proved
 unchanged around generation. This executable never replaces the gameplay
 MapServer; generation and Android graph consumption remain pending.
+[The beacon installer](ANDROID_ATLAS_BEACONS.md) has eight passing scenarios,
+including first proof, persistent warm reuse, changed geometry and mutations
+that restore size/mtime/mode but change ctime. It exposes preparation timing and
+never accepts pending native package hashes. Native host path checks use the
+supported no-entity ground profile; the graph reader reloads a mutable map name.
+Earlier host attempts stopped before compilation on standalone donor-helper,
+reference-asset token and draft-asset read permissions; those are corrected.
+The scoped permission follows the accepted server-cache draft-read workflow.
+Source corrections supersede
+unfinished host-only generation jobs and cannot replace published APKs.
 
 **The 0.13.13 publication checkpoint below is historical; its pending physical
 startup/training/persistence questions are now resolved by the evidence above.**

@@ -13,10 +13,15 @@ permissions:
   actions: read
 concurrency:
   group: android-atlas-beacon-native-generation
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   generate:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    # GitHub requires write permission to READ this existing reviewed draft
+    # release asset, as in the accepted server-cache workflow. No publishing step.
+    permissions:
+      contents: write
+      actions: read
     runs-on: windows-2025-vs2026
     timeout-minutes: 120
     steps:

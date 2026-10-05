@@ -777,6 +777,15 @@ class LocalCharacterServer(login.LocalLoginServer):
                 self.runtime, context=self.ctx)
             self.creation_report['server_animation_pack'] = installed
             self.ctx.report['server_animation_pack'] = installed
+        beacon_archive = self.owner.args.assets / 'atlas-beacons.zip'
+        beacon_manifest = self.owner.args.assets / 'atlas-beacon-manifest.json'
+        if beacon_archive.exists() or beacon_manifest.exists():
+            import atlas_beacon_package
+            installed = atlas_beacon_package.install(beacon_archive, beacon_manifest,
+                self.runtime, context=self.ctx,
+                imported_inputs_readonly=receipt.get('imported_inputs_readonly'))
+            self.creation_report['atlas_beacon_graph'] = installed
+            self.ctx.report['atlas_beacon_graph'] = installed
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
             'private_cache_roots': ['bin', 'geobin', 'server/bin'],
