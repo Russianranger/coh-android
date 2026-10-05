@@ -246,3 +246,26 @@ then test normal NPC pursuit/pathing around nearby obstacles while retaining
 combat, movement and targeting. Save normally, finish/export, reopen and verify
 level/XP/powers plus graph reuse. Inspect the exported native log and
 `atlas_beacon_graph` receipt before accepting beaconization or a startup claim.
+
+
+### Runtime date reads and warm reuse
+
+A focused review of the pinned original `beaconFile.c` confirms that normal
+map loading does not rewrite the navigation sidecar. The fresh matcher
+`beaconDoesTheBeaconFileMatchTheMap` (2621–2631) delegates to
+`beaconFileMatchesMapCRC`, which opens the date with `rb` (2544), reads the
+version/time/CRC and changes only in-memory `beaconFileTime`.
+`beaconFileIsUpToDate` (2592–2619) likewise reads the graph/date; its timestamp
+freshness branch is explicitly disabled by `else if (0 && ...)`.
+The sole `beaconWriteDateFile` call belongs to `writeBeaconFile` (578),
+reached by `beaconWriteCurrentFile` (1543) during native generation.
+Ordinary `beaconReload` (1580) reads the graph directly. Device/import mtime
+differences therefore do not cause legitimate sidecar rewriting or repeated
+extraction in these paths.
+
+The guest installs graph/date/marker as regular files with mode 0400. Its
+warm receipt binds path, inode, size, mtime, ctime and mode, excluding atime,
+and rewalks the exact allowed geometry inventory. Normal native reads preserve
+these fingerprints. Changed graph/date bytes trigger validation and refusal,
+rather than silent overwrite. This source review justifies retaining current
+cache semantics; physical warm-start timing remains to be measured.

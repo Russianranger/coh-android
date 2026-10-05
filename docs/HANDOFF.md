@@ -78,6 +78,15 @@ replacements and three additions; app ID and retained signer are unchanged.
 Final SDK checks and the full public-APK download audit must pass. These are
 reviewed gates, not completed final execution or physical acceptance.
 
+Focused cache review found no runtime sidecar rewrite: the pinned original
+`beaconDoesTheBeaconFileMatchTheMap` calls the CRC reader, which opens the
+version-9 date with `rb` and changes only in-memory state. Timestamp-based
+freshness is disabled in this path; ordinary `beaconReload` reads the graph.
+The date writer is reached by native graph generation, not normal loading.
+Guest fingerprints exclude atime, so native reads preserve warm reuse;
+changed graph/date contents are validated and refused rather than silently
+replaced. No additional cache or shipped MapServer change is needed.
+
 Earlier actual CRC failure checkpoint follows; its investigation status is historical.
 
 **UI sweep ready; Atlas generation completed, but CRC qualification failed. No 0.13.14 APK is published.**
