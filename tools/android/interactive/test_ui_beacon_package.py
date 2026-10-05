@@ -71,10 +71,11 @@ class UiBeaconPackagingTests(unittest.TestCase):
         self.assertEqual(package.DONOR_APK['sha256'], '81f199d6380faa09261a85efea6fd3abca6ed58749b8cc68c75d1cd579d454a4')
         self.assertEqual((len(package.REPLACED_PAYLOADS), len(package.ADDED_PAYLOADS)), (7, 3))
 
-    def test_real_extraction_conserves72_old_payloads_and_adds_only_server_beacon_module_and_data(self):
+    def test_real_extraction_conserves65_unchanged_payloads_and_adds_only_server_beacon_module_and_data(self):
         with tempfile.TemporaryDirectory() as temporary, candidate(Path(temporary)) as values:
             self.assertEqual(self.verify(values), values[4])
             self.assertEqual(len(values[3]), 75)
+            self.assertEqual(len(set(values[2]['payloads'])-package.REPLACED_PAYLOADS), 65)
             self.assertEqual(values[5], values[2]['server_payload_extraction_preflight'])
             with zipfile.ZipFile(values[0]) as current, zipfile.ZipFile(values[1]) as donor:
                 for name in set(values[2]['payloads'])-package.REPLACED_PAYLOADS:
@@ -151,9 +152,11 @@ class UiBeaconPackagingTests(unittest.TestCase):
         base = package.builder()
         with mock.patch.object(package, 'builder', return_value=base), mock.patch.object(base, 'checked_file'):
             self.assertEqual(package.validate_qualification(qualification(), COMMIT)['status'], 'passed')
-            for mutation in ('missing', 'skip', 'fail', 'count', 'native', 'physical', 'pg', 'source'):
+            for mutation in ('missing', 'profile_suite', 'profile_source', 'skip', 'fail', 'count', 'native', 'physical', 'pg', 'source'):
                 value = qualification(); first = next(iter(value['test_suites']))
                 if mutation == 'missing': value['test_suites'].pop(first)
+                elif mutation == 'profile_suite': value['test_suites'].pop('test_beacon_runtime_profiles')
+                elif mutation == 'profile_source': value['source_files'].pop('tools/android/interactive/test_beacon_runtime_profiles.py')
                 elif mutation == 'skip': value['test_suites'][first]['skipped'] = 1
                 elif mutation == 'fail': value['test_suites'][first]['status'] = 'failed'
                 elif mutation == 'count': value['tests_run'] += 1
@@ -166,25 +169,38 @@ class UiBeaconPackagingTests(unittest.TestCase):
     def test_native_package_receipt_preserves_actual_generation_provenance_and_owned_cleanup(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
-            geo = {'data/object_library/atlas.geo': pin(b'geometry')}
-            world = pin(b'world-manifest')
-            manifest = {'role': 'authentic_native_atlas_beacon_graph', 'runtime_graph_readback': True,
-                'physical_npc_pathing_validated': False, 'input_identity': {'world_manifest': world,
-                    'visual_geometry_sha256': package.hashlib.sha256(package.shared.encoded(geo)).hexdigest()}}
-            # Match the producer's canonical encoding (no indentation/newline).
             producer = mock.Mock()
             producer.canonical.side_effect = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
-            manifest['input_identity']['visual_geometry_sha256'] = package.hashlib.sha256(producer.canonical(geo)).hexdigest()
+            digest = lambda value: package.hashlib.sha256(producer.canonical(value)).hexdigest()
+            optional = {f'data/object_library/atlas/leaf-{index:03}.geo': pin(b'geometry') for index in range(406)}
+            geo = {**optional, 'data/player_library/retained.geo': pin(b'player-geometry')}
+            world, visual_source = pin(b'world-manifest'), pin(b'public-0.13.13-visual-manifest')
+            common = {'data/maps/city_zones/city_01_01/city_01_01.txt': pin(b'Atlas-world')}
+            native = {'full_world_crc': '0x12345678', 'native_pathfinder_successes': 32,
+                'native_full_graph_readback_verified': True, 'fresh_ordinary_world_crc_verified': True}
+            profiles = {name: {'native': native, 'input_files_sha256': digest(selected)}
+                for name, selected in (('base_world', common), ('base_world_visual', {**common, **optional}))}
+            manifest = {'format': 2, 'role': 'authentic_native_atlas_beacon_graph', 'runtime_graph_readback': True,
+                'physical_npc_pathing_validated': False, 'native': native,
+                'input_files': common, 'input_files_sha256': digest(common),
+                'optional_input_files': optional, 'input_profiles': profiles,
+                'input_identity': {'world_manifest': world, 'visual_source_manifest': visual_source,
+                    'visual_geometry_sha256': digest(geo), 'visual_object_geometry_sha256': digest(optional)}}
             producer.validate_package.return_value = manifest
             (directory/'atlas-beacon-manifest.json').write_text(json.dumps(manifest))
             (directory/'atlas-beacons.zip').write_bytes(b'qualified-native-graph')
-            report = {'repository_commit': 'b'*40, 'generator': pin(b'host-only-Win32-generator'),
+            report = {'format': 2, 'repository_commit': 'b'*40, 'generator': pin(b'host-only-Win32-generator'),
                 'cleanup_complete': True, 'owned_roles': 4, 'native_worker_spawning_allowed': False,
+                'profile_verification_processes': 2, 'profile_proofs': profiles,
+                'cold_mirror': {'created_before_visual_overlay_and_generation': True,
+                    'readonly_inputs_hardlinked': True, 'private_cache_roots': ['data/bin', 'data/geobin', 'data/server']},
                 'evidence': {'evidence/server.log': pin(b'native-CRC-readback-and-path-witness')}}
             guest = mock.Mock(); guest.read_manifest.return_value = manifest
             guest.ARCHIVE_BYTES = (directory/'atlas-beacons.zip').stat().st_size
             guest.ARCHIVE_SHA256 = pin((directory/'atlas-beacons.zip').read_bytes())['sha256']
-            donor = {'_visual_manifest': {'files': geo}, 'payloads': {'assets/runtime/atlas-world-supplement-manifest.json': world}}
+            donor = {'_visual_manifest': {'files': geo}, 'payloads': {
+                'assets/runtime/atlas-world-supplement-manifest.json': world,
+                'assets/runtime/client-visual-manifest.json': visual_source}}
             report_path = directory/'atlas-beacon-generation-report.json'
             with mock.patch.object(package, 'module', side_effect=lambda name, path: producer if name == 'native_atlas_beacon_producer' else guest):
                 report_path.write_text(json.dumps(report))
@@ -196,6 +212,29 @@ class UiBeaconPackagingTests(unittest.TestCase):
                     value = dict(report); value[field] = wrong; report_path.write_text(json.dumps(value))
                     with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'ownership/cleanup'):
                         package.validate_beacons(directory, COMMIT, donor)
+                for mutation, message in (('profile_count', 'isolated native'), ('cold_cache_shared', 'isolated native'),
+                        ('missing_profile', 'Both exact'), ('cold_crc', 'Fresh native profile'),
+                        ('cold_input_hash', 'Fresh native profile'), ('foreign_optional', 'exact shipped'),
+                        ('legacy_format', 'proof scope')):
+                    changed, changed_report = copy.deepcopy(manifest), copy.deepcopy(report)
+                    if mutation == 'profile_count': changed_report['profile_verification_processes'] = 1
+                    elif mutation == 'cold_cache_shared': changed_report['cold_mirror']['private_cache_roots'] = []
+                    elif mutation == 'missing_profile': changed['input_profiles'].pop('base_world')
+                    elif mutation == 'cold_crc': changed['input_profiles']['base_world']['native'] = {**native, 'full_world_crc': '0x87654321'}
+                    elif mutation == 'cold_input_hash': changed['input_profiles']['base_world']['input_files_sha256'] = 'f'*64
+                    elif mutation == 'foreign_optional':
+                        changed['optional_input_files'].pop(next(iter(optional)))
+                        changed['optional_input_files']['data/object_library/foreign.geo'] = pin(b'foreign')
+                    elif mutation == 'legacy_format': changed['format'] = 1
+                    if mutation not in ('profile_count', 'cold_cache_shared'):
+                        changed_report['profile_proofs'] = changed['input_profiles']
+                    (directory/'atlas-beacon-manifest.json').write_text(json.dumps(changed))
+                    producer.validate_package.return_value = changed; guest.read_manifest.return_value = changed
+                    report_path.write_text(json.dumps(changed_report))
+                    with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, message):
+                        package.validate_beacons(directory, COMMIT, donor)
+                (directory/'atlas-beacon-manifest.json').write_text(json.dumps(manifest))
+                producer.validate_package.return_value = manifest; guest.read_manifest.return_value = manifest
                 report_path.write_text(json.dumps(report)); guest.ARCHIVE_SHA256 = 'f'*64
                 with self.assertRaisesRegex(ValueError, 'archive pin'): package.validate_beacons(directory, COMMIT, donor)
 
@@ -208,7 +247,7 @@ class UiBeaconPackagingTests(unittest.TestCase):
 
     def test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks(self):
         source = (package.ROOT/package.WORKFLOW).read_text()
-        for expected in ('run-id: 37324515114', 'C:/bcn-src', '--target MapServer', '--timeout-seconds 5400',
+        for expected in ('run-id: 37324515114', 'C:/bcn-src', '--work C:/bcn-run', '--target MapServer', '--timeout-seconds 5400',
                 'generate_atlas_beacons.py', 'reference-inputs-receipt.json', 'COH_ATLAS_BEACON_REUSE_RUN_ID',
                 '35.0.0', 'android-35/android.jar', 'coh-client-interactive.jks', package.APK_NAME):
             self.assertIn(expected, source)
@@ -221,6 +260,10 @@ class UiBeaconPackagingTests(unittest.TestCase):
         evidence_upload = native_job.split('name: coh-ui-beacon-generation-evidence', 1)[1]
         self.assertNotIn('C:/', evidence_upload)
         self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)
+        self.assertIn('host-only-beacon-generator.pdb', native_job)
+        self.assertIn('native-internal', native_job)
+        self.assertIn('$count -ge 128', native_job)
+        self.assertIn('$total + $file.Length -gt 268435456', native_job)
         for forbidden in ('--target DbServer', 'discover_client_visual_assets.py', 'prepare_client_appearance_assets.py'):
             self.assertNotIn(forbidden, source)
 

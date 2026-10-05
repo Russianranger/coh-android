@@ -378,6 +378,7 @@ UI_BEACON_SOURCES = frozenset({
     'tools/android/interactive/fixtures/thor-training-normalization-0.13.13-20261005.json',
     'tools/android/interactive/generate_atlas_beacons.py',
     'tools/android/interactive/test_atlas_beacon_package.py',
+    'tools/android/interactive/test_beacon_runtime_profiles.py',
     'tools/android/interactive/test_generate_atlas_beacons.py',
     'tools/test_prepare_atlas_beacon_generator_source.py',
     'android/guest/atlas_beacon_package.py',

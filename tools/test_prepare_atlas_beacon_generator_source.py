@@ -27,7 +27,7 @@ class AtlasBeaconSourceTests(unittest.TestCase):
     def test_patch_contains_no_warning_suppression_and_has_real_readback(self):
         patch = (producer.ROOT/producer.PATCH).read_text()
         additions = '\n'.join(line[1:] for line in patch.splitlines() if line.startswith('+') and not line.startswith('+++'))
-        for call in ('beaconDoesTheBeaconFileMatchTheMap(0)', 'beaconReload()', 'beaconPathFind(search',
+        for call in ('beaconDoesTheBeaconFileMatchTheMap(1)', 'beaconReload()', 'beaconPathFind(search',
                      'assert(paths == 32)', 'ipFromString("127.0.0.1")'):
             self.assertIn(call, additions)
         self.assertIn('beaconSetPathFindEntity(NULL, 0)', additions)
@@ -36,6 +36,8 @@ class AtlasBeaconSourceTests(unittest.TestCase):
         self.assertIn('fflush(fileGetStdout())', additions)
         self.assertNotIn('fflush(stdout)', additions)
         self.assertNotIn('setvbuf(stdout', additions)
+        self.assertIn('COH_ATLAS_BEACON_VERIFY_ONLY', additions)
+        self.assertIn('!beacon_server.isMasterServer && !beacon_server.isRequestServer && noNetStart', additions)
         self.assertNotIn('beaconCreatePathCheckEnt()', additions)
         self.assertNotIn('THIS MAP HAS NOT BEEN BEACONIZED', additions)
         self.assertNotIn('beaconProcessCombatBeacons(', additions)
@@ -52,6 +54,13 @@ class AtlasBeaconSourceTests(unittest.TestCase):
                 self.assertEqual(producer.progress.sha256(stage/name), digest)
             for name, digest in self.receipt['retained_algorithm_sha256'].items():
                 self.assertEqual(producer.progress.sha256(stage/name), digest)
+            client = (stage/'MapServer/src/beacon/beaconClient.c').read_bytes().decode('latin1')
+            startup = client[client.index("I'm not the sentry!!!"):]
+            self.assertNotIn('checkForCorrectExePath(',startup)
+            self.assertNotIn('beaconClientGetCmdLine(',startup)
+            self.assertIn('Owned host beacon roles reject executable self-update',client)
+            server=(stage/'MapServer/src/beacon/beaconServer.c').read_text()
+            self.assertNotIn('checkForCorrectExePath(',server)
 
     def test_android_load_and_v9_freshness_do_not_depend_on_copied_mtimes(self):
         text = (producer.ROOT/'upstream/ouroboros/MapServer/src/beacon/beaconFile.c').read_text()

@@ -1,5 +1,6 @@
 """Bounded install/reuse checks; synthetic fixtures do not claim native graphs."""
 import hashlib
+import copy
 import importlib.util
 import json
 import os
@@ -27,23 +28,36 @@ class AtlasBeaconPackageTests(unittest.TestCase):
         self.runtime = self.root/'runtime'; self.runtime.mkdir()
         self.inputs = {'data/'+package.MAP: b'authored test map'}
         self.inputs.update({'data/object_library/test/g%d.geo'%i: b'fixture geometry %d'%i for i in range(101)})
+        self.optional_inputs = {'data/object_library/optional/g%d.geo'%i:
+                                b'fixture optional geometry %d'%i for i in range(package.OPTIONAL_GEOS)}
         for name, raw in self.inputs.items():
             path = self.runtime/name; path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(raw); path.chmod(0o400)
+        (self.runtime/'data/tricks').mkdir()
         exe = self.runtime/'MapServer.exe'; exe.write_bytes(b'fixture stock native identity')
         self.payloads = {package.GRAPH: b'unit test graph fixture body only', package.DATE: struct.pack('<iII',9,1767225600,0x10203040)}
         p = lambda raw: {'bytes': len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
-        self.value = {'format':1,'role':package.ROLE,'map':package.MAP,
+        self.value = {'format':2,'role':package.ROLE,'map':package.MAP,
             'source_commit':package.SOURCE_COMMIT,'data_commit':package.DATA_COMMIT,
             'stock_mapserver_sha256':p(exe.read_bytes())['sha256'],'runtime_graph_readback':True,
             'physical_npc_pathing_validated':False,'files':{n:p(v) for n,v in self.payloads.items()},
             'input_files':{n:p(v) for n,v in self.inputs.items()},
+            'optional_input_files':{n:p(v) for n,v in self.optional_inputs.items()},
             'input_identity':{'asset_archive':package.BASE_ARCHIVE,
                 'world_manifest':{'sha256':package.WORLD_MANIFEST_SHA256},
-                'visual_geometry_sha256':package.VISUAL_GEOMETRY_SHA256},
+                'visual_geometry_sha256':package.VISUAL_GEOMETRY_SHA256,
+                'visual_source_manifest':package.VISUAL_SOURCE_MANIFEST},
             'native':{'native_full_graph_readback_verified':True,'fresh_ordinary_world_crc_verified':True,
                 'native_pathfinder_successes':32,'date_version':9,'connected_beacons':1900,
                 'combat_beacons':2000,'ground_connections':5000,'grid_blocks':100,'full_world_crc':'0x10203040'}}
         self.value['input_files_sha256'] = hashlib.sha256(package.canonical(self.value['input_files'])).hexdigest()
+        self.value['input_identity']['visual_object_geometry_sha256'] = hashlib.sha256(
+            package.canonical(self.value['optional_input_files'])).hexdigest()
+        self.value['input_profiles'] = {
+            name: {'native': copy.deepcopy(self.value['native']),
+                   'input_files_sha256': hashlib.sha256(package.canonical(selected)).hexdigest()}
+            for name, selected in (
+                ('base_world', self.value['input_files']),
+                ('base_world_visual', {**self.value['input_files'], **self.value['optional_input_files']}))}
         self.manifest = self.root/package.MANIFEST; self.archive = self.root/package.ARCHIVE
         self.freeze()
 
@@ -55,11 +69,19 @@ class AtlasBeaconPackageTests(unittest.TestCase):
         for name,value in [('MANIFEST_SHA256',hashlib.sha256(raw).hexdigest()),
                            ('ARCHIVE_SHA256',package.pin(self.archive)['sha256']),
                            ('ARCHIVE_BYTES',self.archive.stat().st_size),
+                           ('VISUAL_OBJECT_GEOMETRY_SHA256',hashlib.sha256(
+                               package.canonical(self.value['optional_input_files'])).hexdigest()),
                            ('STOCK_MAPSERVER_SHA256',self.value['stock_mapserver_sha256'])]:
             patch=mock.patch.object(package,name,value);patch.start();self.addCleanup(patch.stop)
 
     def install(self):
         return package.install(self.archive,self.manifest,self.runtime,context=Context(),imported_inputs_readonly=True)
+
+    def add_optional_inputs(self, names=None):
+        for name in (self.optional_inputs if names is None else names):
+            path = self.runtime/name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(self.optional_inputs[name]); path.chmod(0o400)
 
     def test_first_install_and_warm_reuse_do_not_decode_or_hash_input_payloads_again(self):
         first=self.install();self.assertEqual(first['installed_files'],2)

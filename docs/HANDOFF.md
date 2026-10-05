@@ -23,6 +23,39 @@ qualification with all seven real PostgreSQL fixtures remains mandatory.
 Reuse a successful native artifact only after verifying its unchanged
 producer/world identities.
 
+Host retry fixes are pushed at `a81fcbbe77154fec4b6409fbc05e65e777c0878f`.
+Native run **37347246417** passed master/sentry readiness, then the sentry exited
+with heap-corruption status `0xc0000374`; graph generation did not complete.
+Failure evidence artifact **11361951686** is preserved (ZIP SHA-256
+`03a8f9eb47ea41817804f85ce1c4f25d3898df7a3d73a8a9099add633ba20074`).
+The audit found an unsafe EString command-builder still evaluated at the
+stubbed host relocation callsite; the host callsite is now removed, server
+relocation arguments are skipped, and native self-update is rejected. Short runtime
+paths and failure JSON before ASCII-safe console tails avoid further lost
+diagnostics. This is isolated host producer work, not a physical Thor crash.
+A subsequent production cache audit
+reproduced two legitimate server layouts: retained pre-visual cache has no
+visual-exclusive object GEOs, while a cache rebuild after client preparation
+can acquire all **406 object GEOs / 16,559,517 bytes**. Client preparation occurs
+after Atlas readiness, so neither layout may be assumed universally. Do not
+freeze or ship the current single-layout generation output. The next proof
+must read the same graph in fresh cold/full processes with matching native
+collidable-triangle CRC, full graph reader and 32 native paths per layout, or
+resolve the exact required collision geometry if the CRCs differ. Preserve
+existing cache/geometry behavior and avoid preloading client UI on the server.
+Three production staging/cache integration fixtures now reproduce cold, full
+and mixed layouts; 71 affected profile/classifier/package checks pass. The
+full qualifier is extended to 68 suites; final hosted execution remains pending.
+The native retry lane passes four source guards and seven producer/evidence
+tests. Its short `C:/bcn-run/r` and `c` runtimes preserve private cold caches;
+both profile readers run in separate native processes. The graph remains
+unqualified until this exact lane produces real matching native evidence.
+Schema-2 guest installation is implemented and remains fail-closed on pending
+native archive pins. Eight installer tests and ten production cache/profile
+integration tests pass, including rejection of mixed geometry, wrong bytes,
+unlisted GEOs, mismatched collision CRC and incomplete native path proofs.
+These test fixtures are synthetic and do not qualify a real graph.
+
 The live continuation branch and draft PR #1 were rechecked at
 `6098d5e040d9a41654acec60e92c64be2b5aacee`; main remains separate at
 `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. The current published test APK

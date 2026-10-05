@@ -67,6 +67,8 @@ def expected(root=ROOT):
                      'native_full_graph_readback': True,
                      'fresh_ordinary_world_crc_match_required': True,
                      'native_pathfinder_successes_required': 32,
+                     'fresh_process_input_profiles': ['base_world', 'base_world_visual'],
+                     'profile_verification_network_start_allowed': False,
                      'shippable_gameplay_binary': False},
         'build_targets': ['MapServer'], 'runtime_validation': 'pending_generation',
     }

@@ -3,6 +3,7 @@ import struct
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -56,6 +57,44 @@ class AtlasNativeEvidenceTests(unittest.TestCase):
             self.assertNotIn('EXCLUDED_PREFIX', output.getvalue())
             self.assertIn('FINAL_NATIVE_FAILURE', output.getvalue())
             self.assertLess(len(output.getvalue()), generator.MAX_FAILURE_TAIL + 200)
+
+    def test_unicode_tail_is_cp1252_safe_and_json_precedes_console_rendering(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            evidence = Path(temporary); (evidence/'sentry.log').write_bytes(b'heap \xff\xfe FINAL')
+            process = SimpleNamespace(returncode=1, poll=lambda: 1)
+            class WindowsConsole(io.StringIO):
+                def write(self, value):
+                    self_exists = (evidence/'native-role-failure.json').exists()
+                    if not self_exists: raise AssertionError('Receipt must precede rendering')
+                    value.encode('cp1252', errors='strict')
+                    return super().write(value)
+            output = WindowsConsole()
+            with contextlib.redirect_stdout(output):
+                generator.record_role_failure(evidence, {'sentry': process}, {'sentry':['owned.exe']},
+                    ValueError('Native role exited'), {'sentry':3221226356})
+            report = json.loads((evidence/'native-role-failure.json').read_bytes())
+            self.assertEqual(report['roles']['sentry']['windows_exit_before_cleanup'], '0xc0000374')
+            self.assertEqual(report['roles']['sentry']['windows_exit_hex'], '0x00000001')
+            self.assertIn('FINAL',output.getvalue())
+
+    def test_cold_mirror_shares_readonly_inputs_and_isolates_mutable_native_caches(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary); runtime=root/'r'; runtime.mkdir()
+            fixtures = {'data/object_library/a.geo':b'exact geometry', 'data/maps/a.txt':b'exact groups',
+                        'data/bin/defs.bin':b'private definitions', 'data/geobin/world.bin':b'private geometry cache',
+                        'data/server/cache':b'private server cache', 'MapServer.exe':b'owned native'}
+            for name, raw in fixtures.items():
+                target=runtime/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(raw)
+            cold=root/'c'; value=generator.mirror_cold_runtime(runtime,cold)
+            self.assertTrue(value['created_before_visual_overlay_and_generation'])
+            self.assertTrue(os.path.samefile(runtime/'data/object_library/a.geo',cold/'data/object_library/a.geo'))
+            self.assertEqual((cold/'data/object_library/a.geo').stat().st_mode & 0o222,0)
+            for name in ('data/bin/defs.bin','data/geobin/world.bin','data/server/cache','MapServer.exe'):
+                self.assertFalse(os.path.samefile(runtime/name,cold/name))
+                (runtime/name).write_bytes(b'generated after cold snapshot')
+                self.assertEqual((cold/name).read_bytes(),fixtures[name])
+            optional=runtime/'data/object_library/optional.geo';optional.write_bytes(b'visual object')
+            self.assertFalse((cold/'data/object_library/optional.geo').exists())
 
 
 if __name__ == '__main__': unittest.main()

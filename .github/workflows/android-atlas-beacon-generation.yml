@@ -78,7 +78,7 @@ jobs:
           --generator C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
           --build-input C:/bcn-src/atlas-beacon-generator-build-input.json
           --repository-commit "$env:GITHUB_SHA"
-          --work out/atlas-beacon-generator-work
+          --work C:/bcn-run
           --output out/ui-beacon-native
           --timeout-seconds 5400
       - uses: actions/upload-artifact@v4
@@ -99,7 +99,33 @@ jobs:
             'C:/bcn-src/out/build/vs2026/CMakeCache.txt' = 'CMakeCache.txt'
             'C:/bcn-src/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml' = 'CMakeConfigureLog.yaml'
             'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe' = 'host-only-beacon-generator.exe'
+            'C:/bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb' = 'host-only-beacon-generator.pdb'
           }
+          # All runtime evidence is copied onto D: before upload-artifact.
+          # Owned native internal errors/minidumps are finite and preserved even
+          # when Python fails before it can write its role-failure receipt.
+          $diagnostics = Join-Path $destination 'native-internal'
+          New-Item -ItemType Directory -Path $diagnostics -Force | Out-Null
+          $total = 0L
+          $count = 0
+          foreach ($runtime in @('C:/bcn-run/r', 'C:/bcn-run/c')) {
+            if (-not (Test-Path -LiteralPath $runtime)) { continue }
+            $candidates = Get-ChildItem -LiteralPath $runtime -File -Recurse | Where-Object {
+              $_.Name -like 'errorLogLastRun*' -or $_.Extension -in @('.dmp', '.mdmp') -or
+              ($_.FullName -like '*\logs\*' -and $_.Extension -in @('.log', '.txt'))
+            }
+            foreach ($file in $candidates) {
+              if ($count -ge 128 -or $file.Length -gt 134217728 -or $total + $file.Length -gt 268435456) { continue }
+              $relative = [IO.Path]::GetRelativePath('C:/bcn-run', $file.FullName)
+              $target = Join-Path $diagnostics $relative
+              New-Item -ItemType Directory -Path (Split-Path $target) -Force | Out-Null
+              Copy-Item -LiteralPath $file.FullName -Destination $target -Force
+              $count++
+              $total += $file.Length
+            }
+          }
+          @{ copied_files = $count; copied_bytes = $total; max_files = 128; max_bytes = 268435456 } |
+            ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'native-internal-copy.json')
           foreach ($source in $files.Keys) {
             if (Test-Path -LiteralPath $source) {
               Copy-Item -LiteralPath $source -Destination (Join-Path $destination $files[$source]) -Force
@@ -112,6 +138,5 @@ jobs:
           path: |
             out/ui-beacon-native/atlas-beacon-generation-report.json
             out/ui-beacon-native/evidence/
-            out/atlas-beacon-generator-work/*.log
           if-no-files-found: warn
           retention-days: 90

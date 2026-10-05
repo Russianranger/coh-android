@@ -58,6 +58,7 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'patches/atlas-beacons/0001-host-only-atlas-generator.patch',
     'tools/android/interactive/generate_atlas_beacons.py',
     'tools/android/interactive/test_atlas_beacon_package.py',
+    'tools/android/interactive/test_beacon_runtime_profiles.py',
     'tools/android/interactive/test_generate_atlas_beacons.py',
     'tools/test_prepare_atlas_beacon_generator_source.py',
     'tools/android/interactive/test_training_save.py',
@@ -270,12 +271,32 @@ def validate_beacons(directory, commit, donor):
         and report.get('native_worker_spawning_allowed') is False, 'Native producer ownership/cleanup evidence differs')
     manifest = read_json(directory/'atlas-beacon-manifest.json')
     require(validated_manifest == manifest, 'Validated native graph manifest differs')
-    require(manifest.get('role') == 'authentic_native_atlas_beacon_graph' and manifest.get('runtime_graph_readback') is True
+    require(manifest.get('format') == 2 and report.get('format') == 2
+        and manifest.get('role') == 'authentic_native_atlas_beacon_graph' and manifest.get('runtime_graph_readback') is True
         and manifest.get('physical_npc_pathing_validated') is False, 'Native graph proof scope differs')
     geo = {name: value for name, value in donor['_visual_manifest']['files'].items() if name.endswith('.geo')}
+    optional = {name: value for name, value in geo.items() if name.startswith('data/object_library/')}
     require(manifest.get('input_identity', {}).get('world_manifest') == donor['payloads']['assets/runtime/atlas-world-supplement-manifest.json']
-        and manifest['input_identity'].get('visual_geometry_sha256') == hashlib.sha256(producer.canonical(geo)).hexdigest(),
+        and manifest['input_identity'].get('visual_geometry_sha256') == hashlib.sha256(producer.canonical(geo)).hexdigest()
+        and manifest['input_identity'].get('visual_source_manifest') == donor['payloads']['assets/runtime/client-visual-manifest.json']
+        and len(optional) == 406 and manifest.get('optional_input_files') == optional
+        and manifest['input_identity'].get('visual_object_geometry_sha256') == hashlib.sha256(producer.canonical(optional)).hexdigest(),
         'Native beacons do not match the exact shipped world geometry')
+    common, profiles = manifest.get('input_files'), manifest.get('input_profiles')
+    require(isinstance(common, dict) and not set(common).intersection(optional)
+        and isinstance(profiles, dict) and set(profiles) == {'base_world', 'base_world_visual'}
+        and manifest.get('input_files_sha256') == hashlib.sha256(producer.canonical(common)).hexdigest(),
+        'Both exact native Atlas input profiles are required')
+    for profile, selected in (('base_world', common), ('base_world_visual', {**common, **optional})):
+        require(profiles[profile] == {'native': manifest.get('native'),
+            'input_files_sha256': hashlib.sha256(producer.canonical(selected)).hexdigest()},
+            'Fresh native profile CRC, graph readback or paths differ')
+    mirror = report.get('cold_mirror', {})
+    require(report.get('profile_verification_processes') == 2 and report.get('profile_proofs') == profiles
+        and mirror.get('created_before_visual_overlay_and_generation') is True
+        and mirror.get('readonly_inputs_hardlinked') is True
+        and mirror.get('private_cache_roots') == ['data/bin', 'data/geobin', 'data/server'],
+        'Fresh isolated native profile provenance differs')
     guest = module('atlas_beacon_guest_contract', ROOT/'android/guest/atlas_beacon_package.py')
     require(guest.read_manifest(directory/'atlas-beacon-manifest.json') == manifest, 'Guest beacon identity/policy differs')
     require(guest.ARCHIVE_BYTES == builder().file_pin(directory/'atlas-beacons.zip')['bytes']
@@ -434,7 +455,8 @@ def build(args):
             'signing_key_created': False, 'signature_verified': True, 'package_badging_verified': True,
             'binary_manifest_version_only_verified': True, 'payload_bytes_verified': True, 'payloads': payloads,
             'changed_apk_payloads': sorted(REPLACED_PAYLOADS|ADDED_PAYLOADS), 'replaced_apk_payloads': sorted(REPLACED_PAYLOADS),
-            'added_apk_payloads': sorted(ADDED_PAYLOADS), 'retained_baseline_payloads_verified': 72, 'java_sources': java,
+            'added_apk_payloads': sorted(ADDED_PAYLOADS), 'baseline_payloads_verified': len(donor['payloads']),
+            'retained_baseline_payloads_verified': len(set(donor['payloads'])-REPLACED_PAYLOADS), 'java_sources': java,
             'changed_java_sources': [], 'retained_dex': donor['retained_dex'], 'preserved_sources': donor['preserved_sources'],
             'source_manifest': donor['source_manifest'], 'qualification': qualification, 'qualification_receipt': base.file_pin(args.qualification),
             'testing_notes': base.file_pin(args.testing_notes), 'visual_package': visual, 'visual_superset': conservation,
@@ -468,7 +490,9 @@ def verify_report(args, commit):
         and report.get('visual_superset') == conservation and report.get('visual_original_streams') == streams
         and report.get('atlas_beacons') == beacons and report.get('changed_apk_payloads') == sorted(REPLACED_PAYLOADS|ADDED_PAYLOADS)
         and report.get('replaced_apk_payloads') == sorted(REPLACED_PAYLOADS) and report.get('added_apk_payloads') == sorted(ADDED_PAYLOADS)
-        and report.get('retained_baseline_payloads_verified') == 72 and all(report.get(name) == donor[name] for name in RETAINED_REPORT_FIELDS)
+        and report.get('baseline_payloads_verified') == len(donor['payloads'])
+        and report.get('retained_baseline_payloads_verified') == len(set(donor['payloads'])-REPLACED_PAYLOADS)
+        and all(report.get(name) == donor[name] for name in RETAINED_REPORT_FIELDS)
         and all(report.get(key) is True for key in ('signature_verified', 'package_badging_verified', 'binary_manifest_version_only_verified',
             'payload_bytes_verified', 'runtime_refresh_required', 'previous_runtime_generation_retained', 'setup_memory_guards_preserved', 'all_published_visual_resources_retained'))
         and all(report.get(key) is False for key in ('native_dbserver_recompiled', 'native_client_recompiled', 'native_mapserver_recompiled',

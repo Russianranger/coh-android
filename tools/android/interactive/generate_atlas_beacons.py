@@ -34,6 +34,8 @@ GRAPH = 'data/server/maps/city_zones/city_01_01/city_01_01.txt.v8.bcn'
 DATE = GRAPH + '.date'
 MAX_LOG = 128 * 1024 * 1024
 MAX_FAILURE_TAIL = 8192
+VISUAL_OBJECT_GEOS = 406
+PROFILES = ('base_world', 'base_world_visual')
 NATIVE = re.compile(rb'COH_ATLAS_BEACON_NATIVE_V1 crc=(0x[0-9a-fA-F]{8}) combat=(\d+) connected=(\d+) ground=(\d+) raised=(\d+) blocks=(\d+) paths=(\d+)')
 GENERATION_SOURCES = (
     'tools/prepare_atlas_beacon_generator_source.py',
@@ -136,6 +138,50 @@ def overlay_zip(path, manifest_path, runtime):
     return manifest
 
 
+def overlay_object_geometry(path, manifest_path, runtime):
+    """Expose only original supplemental object GEOs to the host collision load."""
+    manifest = json.loads(manifest_path.read_bytes())
+    require(pin(path) == {key: manifest['archive'][key] for key in ('bytes', 'sha256')}, 'Visual ZIP pin differs')
+    selected = {name: expected for name, expected in manifest['files'].items()
+                if name.startswith('data/object_library/') and name.endswith('.geo')}
+    require(len(selected) == VISUAL_OBJECT_GEOS, 'Exact optional object GEO inventory differs')
+    with zipfile.ZipFile(path) as archive:
+        require(len(archive.namelist()) == len(set(archive.namelist()))
+                and set(archive.namelist()) == set(manifest['files']), 'Visual ZIP closure differs')
+        for name, expected in selected.items():
+            safe(name); target = runtime / name
+            require(not target.exists(), 'Optional visual geometry overlaps the base/world profile')
+            with archive.open(name) as source: copy_pinned(source, target, expected)
+    return manifest, selected
+
+
+def mirror_cold_runtime(runtime, destination):
+    """Fresh process data shares readonly inputs and isolates every cache root."""
+    runtime, destination = Path(runtime), Path(destination)
+    require(not destination.exists(), 'Cold readback runtime must be new')
+    destination.mkdir()
+    count = total = 0
+    for source in runtime.rglob('*'):
+        require(not source.is_symlink(), 'Linked host donor path refused')
+        relative = source.relative_to(runtime); target = destination / relative
+        if source.is_dir():
+            target.mkdir(parents=True, exist_ok=True)
+            continue
+        require(source.is_file(), 'Nonregular host donor path refused')
+        count += 1; total += source.stat().st_size
+        require(count <= 200000 and total <= 6 * 1024**3, 'Cold readback mirror exceeds owned input bound')
+        target.parent.mkdir(parents=True, exist_ok=True)
+        private = (relative.parts[0] != 'data' or len(relative.parts) > 1
+                   and relative.parts[1] in ('bin', 'geobin', 'server'))
+        if private:
+            shutil.copyfile(source, target); target.chmod(0o600)
+        else:
+            source.chmod(0o400); os.link(source, target)
+    return {'files': count, 'bytes': total, 'readonly_inputs_hardlinked': True,
+            'private_cache_roots': ['data/bin', 'data/geobin', 'data/server'],
+            'created_before_visual_overlay_and_generation': True}
+
+
 def geometry_inputs(runtime):
     """Physical collision donors plus Atlas placement/trick source inputs."""
     data = runtime / 'data'
@@ -168,22 +214,41 @@ def native_evidence(log, date):
 def validate_package(directory, repository_commit):
     directory = Path(directory)
     value = json.loads((directory / REPORT).read_bytes())
-    require(value.get('status') == 'passed' and re.fullmatch('[0-9a-f]{40}', value.get('repository_commit', ''))
+    require(value.get('format') == 2 and value.get('status') == 'passed' and re.fullmatch('[0-9a-f]{40}', value.get('repository_commit', ''))
             and re.fullmatch('[0-9a-f]{40}', repository_commit), 'Generation provenance/commit differs')
     require(value.get('generation_sources') == {name: pin(ROOT / name) for name in GENERATION_SOURCES},
             'Generation implementation changed; a fresh native generation is required')
     require(value['build_input'] == producer.expected(), 'Host producer source receipt differs')
     require(value['donor'] == DONOR and value['stock_mapserver_sha256'] == STOCK_MAPSERVER,
             'Stock native compatibility differs')
+    require(value.get('cleanup_complete') is True and value.get('owned_roles') == 4
+            and value.get('native_worker_spawning_allowed') is False,
+            'Owned native generation containment/cleanup proof differs')
     for name, expected in value['evidence'].items():
         require(pin(directory / safe(name)) == expected, 'Generation evidence changed')
     manifest = json.loads((directory / MANIFEST).read_bytes())
     require(pin(directory / MANIFEST) == value['manifest'] and pin(directory / ARCHIVE) == value['archive'],
             'Generated package pin differs')
-    require(manifest['map'] == producer.MAP and set(manifest['files']) == {GRAPH, DATE}
+    require(manifest.get('format') == 2 and manifest['map'] == producer.MAP and set(manifest['files']) == {GRAPH, DATE}
             and manifest['stock_mapserver_sha256'] == STOCK_MAPSERVER, 'Generated graph scope differs')
     require(manifest['native'] == native_evidence((directory / 'evidence/server.log').read_bytes(),
                                                  _date_from_archive(directory / ARCHIVE)), 'Native transcript differs')
+    common, optional = manifest['input_files'], manifest['optional_input_files']
+    require(len(optional) == VISUAL_OBJECT_GEOS and not set(common).intersection(optional)
+            and set(manifest['input_profiles']) == set(PROFILES), 'Native input profiles differ')
+    require(manifest['input_files_sha256'] == hashlib.sha256(canonical(common)).hexdigest()
+            and manifest['input_identity']['visual_object_geometry_sha256']
+                == hashlib.sha256(canonical(optional)).hexdigest(), 'Native physical input pins differ')
+    for profile in PROFILES:
+        selected = common if profile == 'base_world' else {**common, **optional}
+        native = native_evidence((directory / ('evidence/' + profile + '.log')).read_bytes(),
+                                _date_from_archive(directory / ARCHIVE))
+        require(native == manifest['native'] == manifest['input_profiles'][profile]['native']
+                and hashlib.sha256(canonical(selected)).hexdigest()
+                == manifest['input_profiles'][profile]['input_files_sha256'], 'Fresh native profile proof differs')
+    require(value['profile_verification_processes'] == 2 and value['profile_proofs'] == manifest['input_profiles']
+            and value['cold_mirror']['created_before_visual_overlay_and_generation'] is True,
+            'Fresh isolated native profile provenance differs')
     with zipfile.ZipFile(directory / ARCHIVE) as archive:
         require(len(archive.namelist()) == 3 and set(archive.namelist()) == {GRAPH, DATE, MANIFEST}, 'Beacon package closure differs')
         require(archive.read(MANIFEST) == (directory / MANIFEST).read_bytes(), 'Embedded manifest differs')
@@ -197,23 +262,30 @@ def _date_from_archive(path):
     with zipfile.ZipFile(path) as archive: return archive.read(DATE)
 
 
-def record_role_failure(evidence, processes, commands, failure):
+def record_role_failure(evidence, processes, commands, failure, before_cleanup=None):
     """Keep bounded native diagnostics even when artifact publication fails."""
-    roles = {}
+    roles, tails = {}, {}
     for role, process in processes.items():
         path = evidence / (role + '.log')
         code = process.returncode
         with path.open('rb') as stream:
             stream.seek(max(0, path.stat().st_size - MAX_FAILURE_TAIL))
             tail = stream.read(MAX_FAILURE_TAIL).decode('utf-8', errors='replace')
+        original = (before_cleanup or {}).get(role, code)
         roles[role] = {'returncode': code, 'windows_exit_hex': None if code is None else f'0x{code & 0xffffffff:08x}',
+                       'returncode_before_cleanup': original,
+                       'windows_exit_before_cleanup': None if original is None else f'0x{original & 0xffffffff:08x}',
                        'command': commands[role], 'log': pin(path), 'tail_bytes_limit': MAX_FAILURE_TAIL}
-        print(f'COH_ATLAS_BEACON_ROLE_FAILURE role={role} exit={roles[role]["windows_exit_hex"]}', flush=True)
-        print(tail, flush=True)
+        tails[role] = tail.encode('ascii', errors='backslashreplace').decode('ascii')[-MAX_FAILURE_TAIL:]
     record = {'format': 1, 'status': 'failed', 'exception_type': type(failure).__name__,
               'reason': str(failure), 'roles': roles,
               'cleanup_complete': all(process.poll() is not None for process in processes.values())}
     (evidence / 'native-role-failure.json').write_bytes(canonical(record))
+    # Windows Actions may use cp1252. Save durable JSON before rendering any
+    # native UTF-8/invalid byte tails, and print only representable ASCII.
+    for role, tail in tails.items():
+        print(f'COH_ATLAS_BEACON_ROLE_FAILURE role={role} exit={roles[role]["windows_exit_before_cleanup"]}', flush=True)
+        print(tail, flush=True)
 
 
 def role_environment(environment=None):
@@ -221,7 +293,7 @@ def role_environment(environment=None):
     # do not own an Android observer mapping and must never request one.
     env = dict(os.environ if environment is None else environment)
     for name in ('COH_WINE_MAP_PROGRESS', 'COH_CLIENT_DEPENDENCY_PRELOAD',
-                 'COH_MANUAL_ATLAS_DB', 'COH_WINE_GAME_LISTENERS'):
+                 'COH_MANUAL_ATLAS_DB', 'COH_WINE_GAME_LISTENERS', 'COH_ATLAS_BEACON_VERIFY_ONLY'):
         env.pop(name, None)
     return env
 
@@ -238,17 +310,30 @@ def generate(args):
     require(build_input == producer.expected(), 'Native generator source receipt differs')
     assets = args.work / 'donor'; extract_assets(args.donor_apk, args.donor_receipt, assets)
     data = import_data(assets, args.asset_archive, args.work, evidence).resolve(strict=True)
-    runtime = data.parent.resolve(strict=True)
+    imported_runtime = data.parent.resolve(strict=True)
+    runtime = args.work / 'r'
+    require(not runtime.exists(), 'Fresh short owned native runtime required')
+    imported_runtime.rename(runtime)
+    data = runtime / 'data'
+    require(len(str(runtime / 'AtlasBeaconGenerator.exe')) < 100,
+            'Host roles require a short owned executable/runtime path')
     native = extract_tar(assets / 'runtime/game-package.tar.gz', runtime, 'game-package.json')
     require(pin(runtime / 'MapServer.exe')['sha256'] == STOCK_MAPSERVER, 'Retained native MapServer differs')
     extract_tar(assets / 'runtime/dbserver-schema.tar.gz', runtime, 'schema-manifest.json')
     world = overlay_zip(assets / 'runtime/atlas-world-supplement.zip', assets / 'runtime/atlas-world-supplement-manifest.json', runtime)
-    visual = overlay_zip(assets / 'runtime/client-visual-assets.zip', assets / 'runtime/client-visual-manifest.json', runtime)
     # Retain immutable byte inputs and common loader epoch. The host source only
     # writes caches and two server-only graph files under this isolated tree.
     for path in data.rglob('*'):
         if path.is_file(): os.utime(path, (1767225600, 1767225600))
+    common_inputs = geometry_inputs(runtime)
+    cold_runtime = args.work / 'c'
+    cold_mirror = mirror_cold_runtime(runtime, cold_runtime)
+    visual_path = assets / 'runtime/client-visual-manifest.json'
+    visual, optional_inputs = overlay_object_geometry(assets / 'runtime/client-visual-assets.zip', visual_path, runtime)
+    for name in optional_inputs: os.utime(runtime / name, (1767225600, 1767225600))
     inputs = geometry_inputs(runtime)
+    require(inputs == {**common_inputs, **optional_inputs} and geometry_inputs(cold_runtime) == common_inputs,
+            'Cold/warm physical geometry profiles differ from their exact inventories')
     (runtime / 'tools').mkdir(exist_ok=True)
     generator = runtime / 'AtlasBeaconGenerator.exe'; shutil.copyfile(args.generator, generator)
     env = role_environment()
@@ -259,7 +344,7 @@ def generate(args):
              ('server', ['-beaconserver', '127.0.0.1', '-beacononepassonly', '-beaconforcerebuild']),
              ('sentry', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity']),
              ('worker', ['-beaconclient', '127.0.0.1', '-beaconworkduringuseractivity'])]
-    processes, logs, commands, failure = {}, {}, {}, None
+    processes, logs, commands, failure, before_cleanup = {}, {}, {}, None, {}
     started = time.monotonic()
     try:
         for role, flags in roles:
@@ -285,36 +370,83 @@ def generate(args):
         failure = error
         raise
     finally:
+        before_cleanup = {role: process.poll() for role, process in processes.items()}
         for process in processes.values():
             if process.poll() is None: process.terminate()
         for process in processes.values():
             try: process.wait(timeout=15)
             except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
         for stream in logs.values(): stream.close()
-        if failure is not None: record_role_failure(evidence, processes, commands, failure)
+        if failure is not None: record_role_failure(evidence, processes, commands, failure, before_cleanup)
     require((runtime / GRAPH).is_file() and (runtime / DATE).is_file(), 'Native graph files missing')
     require(geometry_inputs(runtime) == inputs, 'Native generation modified an immutable collision input')
     witness = native_evidence((evidence / 'server.log').read_bytes(), (runtime / DATE).read_bytes())
+    profile_proofs = {}
+    for profile, profile_runtime in (('base_world', cold_runtime), ('base_world_visual', runtime)):
+        for name in (GRAPH, DATE):
+            target = profile_runtime / name
+            if profile_runtime != runtime:
+                target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(runtime / name, target); target.chmod(0o400)
+        profile_generator = profile_runtime / 'AtlasBeaconGenerator.exe'
+        if profile_runtime != runtime: shutil.copyfile(generator, profile_generator)
+        profile_common = ['-nogui', '-nopigs', '-noencrypt', '-beaconallownovodex',
+                          '-beacondatatoolsrootpath', str(profile_runtime)]
+        command = [str(profile_generator), *profile_common, '-beaconserver', '127.0.0.1', '-beaconnonetstart']
+        commands[profile] = command
+        log_path = evidence / (profile + '.log')
+        with log_path.open('wb') as log:
+            process = subprocess.Popen(command, cwd=profile_runtime,
+                env=dict(role_environment(), COH_ATLAS_BEACON_VERIFY_ONLY='1'),
+                stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
+            processes[profile] = process
+            failure = None
+            try:
+                deadline = min(started + args.timeout_seconds, time.monotonic() + 600)
+                while process.poll() is None:
+                    require(time.monotonic() < deadline and log_path.stat().st_size <= MAX_LOG,
+                            'Fresh native profile exceeded owned time/log bound: ' + profile)
+                    time.sleep(0.5)
+                require(process.returncode == 0, 'Fresh native profile readback failed: ' + profile)
+            except Exception as error:
+                failure = error
+                raise
+            finally:
+                before_cleanup = {role: owned.poll() for role, owned in processes.items()}
+                if process.poll() is None: process.terminate()
+                try: process.wait(timeout=15)
+                except subprocess.TimeoutExpired: process.kill(); process.wait(timeout=15)
+                log.flush()
+                if failure is not None: record_role_failure(evidence, processes, commands, failure, before_cleanup)
+        require(geometry_inputs(profile_runtime) == (common_inputs if profile == 'base_world' else inputs),
+                'Fresh native readback modified an immutable input: ' + profile)
+        verified = native_evidence(log_path.read_bytes(), (profile_runtime / DATE).read_bytes())
+        require(verified == witness, 'Cold/warm full-world CRC or graph/path proof differs')
+        selected = common_inputs if profile == 'base_world' else inputs
+        profile_proofs[profile] = {'native': verified, 'input_files_sha256': hashlib.sha256(canonical(selected)).hexdigest()}
     geo_files = {name: value for name, value in visual['files'].items() if name.endswith('.geo')}
-    manifest = {'format': 1, 'role': 'authentic_native_atlas_beacon_graph', 'map': producer.MAP,
+    manifest = {'format': 2, 'role': 'authentic_native_atlas_beacon_graph', 'map': producer.MAP,
                 'stock_mapserver_sha256': STOCK_MAPSERVER, 'source_commit': build_input['source_commit'],
                 'data_commit': visual['data_commit'], 'files': {name: pin(runtime / name) for name in (GRAPH, DATE)},
                 'native': witness, 'input_identity': {'asset_archive': pin(args.asset_archive),
                     'world_manifest': pin(assets / 'runtime/atlas-world-supplement-manifest.json'),
-                    'visual_geometry_sha256': hashlib.sha256(canonical(geo_files)).hexdigest()},
-                'input_files': inputs, 'input_files_sha256': hashlib.sha256(canonical(inputs)).hexdigest(),
+                    'visual_source_manifest': pin(visual_path),
+                    'visual_geometry_sha256': hashlib.sha256(canonical(geo_files)).hexdigest(),
+                    'visual_object_geometry_sha256': hashlib.sha256(canonical(optional_inputs)).hexdigest()},
+                'input_files': common_inputs, 'input_files_sha256': hashlib.sha256(canonical(common_inputs)).hexdigest(),
+                'optional_input_files': optional_inputs, 'input_profiles': profile_proofs,
                 'generator_sha256': pin(generator)['sha256'], 'runtime_graph_readback': True,
                 'physical_npc_pathing_validated': False}
     raw = canonical(manifest); (args.output / MANIFEST).write_bytes(raw)
     with zipfile.ZipFile(args.output / ARCHIVE, 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for name in (GRAPH, DATE): archive.write(runtime / name, name)
         archive.writestr(MANIFEST, raw)
-    value = {'format': 1, 'status': 'passed', 'repository_commit': args.repository_commit,
+    value = {'format': 2, 'status': 'passed', 'repository_commit': args.repository_commit,
              'donor': DONOR, 'stock_mapserver_sha256': STOCK_MAPSERVER, 'build_input': build_input,
              'generator': pin(generator), 'native': witness, 'manifest': pin(args.output / MANIFEST),
              'generation_sources': {name: pin(ROOT / name) for name in GENERATION_SOURCES},
              'archive': pin(args.output / ARCHIVE), 'elapsed_seconds': round(time.monotonic() - started, 3),
              'commands': commands, 'owned_roles': 4, 'native_worker_spawning_allowed': False,
+             'profile_verification_processes': 2, 'profile_proofs': profile_proofs, 'cold_mirror': cold_mirror,
              'cleanup_complete': all(process.poll() is not None for process in processes.values()),
              'evidence': {path.relative_to(args.output).as_posix(): pin(path) for path in evidence.iterdir() if path.is_file()}}
     (args.output / REPORT).write_bytes(canonical(value))

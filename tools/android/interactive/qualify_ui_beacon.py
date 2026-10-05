@@ -23,12 +23,14 @@ import qualify_startup_schedule as closure
 # below; the new boundary suite covers this candidate's actual extraction instead.
 RETAINED_TEST_MODULES = tuple(name for name in previous.TEST_MODULES
     if name not in ('test_levelup_ui_repair_package', 'test_reopen_startup_repair_package'))
-TEST_MODULES = RETAINED_TEST_MODULES + ('test_client_ui_sweep_assets', 'test_atlas_beacon_package', 'test_generate_atlas_beacons', 'test_prepare_atlas_beacon_generator_source', 'test_ui_beacon_package')
+TEST_MODULES = RETAINED_TEST_MODULES + ('test_client_ui_sweep_assets', 'test_atlas_beacon_package',
+    'test_beacon_runtime_profiles', 'test_generate_atlas_beacons', 'test_prepare_atlas_beacon_generator_source', 'test_ui_beacon_package')
 CHECK_SUITES = {
     'missing_only_original_ui_and_all_previous_encoded_streams_verified': ['test_client_ui_sweep_assets',
         'test_client_visual_assets', 'test_client_ui_repair_assets', 'test_texture_header_index'],
-    'authentic_atlas_beacon_provenance_and_installation_verified': ['test_atlas_beacon_package', 'test_generate_atlas_beacons', 'test_prepare_atlas_beacon_generator_source', 'test_ui_beacon_package'],
-    'retained_gameplay_training_postgresql_preload_and_cache_guards_verified': list(RETAINED_TEST_MODULES),
+    'authentic_atlas_beacon_provenance_and_installation_verified': ['test_atlas_beacon_package',
+        'test_beacon_runtime_profiles', 'test_generate_atlas_beacons', 'test_prepare_atlas_beacon_generator_source', 'test_ui_beacon_package'],
+    'retained_gameplay_training_postgresql_preload_and_cache_guards_verified': list(RETAINED_TEST_MODULES)+['test_beacon_runtime_profiles'],
     'exact_payload_boundaries_android_shell_and_actual_server_extraction_verified': ['test_ui_beacon_package',
         'test_classify_interactive_change', 'test_classify_storage_cleanup_change'],
 }

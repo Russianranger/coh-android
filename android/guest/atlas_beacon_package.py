@@ -23,7 +23,7 @@ MAP = 'maps/city_zones/city_01_01/city_01_01.txt'
 GRAPH = 'data/server/' + MAP + '.v8.bcn'
 DATE = GRAPH + '.date'
 MARKER = 'data/server/atlas-beacon-installed.json'
-POLICY = 'exact_native_atlas_graph_immutable_input_fingerprints_v1'
+POLICY = 'exact_native_atlas_graph_two_proven_geometry_profiles_v2'
 # Frozen only after the hosted producer completes real generation/readback/CRC/routes.
 MANIFEST_SHA256 = 'pending_native_generation'
 ARCHIVE_SHA256 = 'pending_native_generation'
@@ -34,6 +34,10 @@ DATA_COMMIT = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'
 BASE_ARCHIVE = {'bytes': 615541018, 'sha256': '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'}
 WORLD_MANIFEST_SHA256 = '204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86'
 VISUAL_GEOMETRY_SHA256 = '208393ade4edbb9608e200fc7103279217ce95a0cc316eac8018bfe558f54f1f'
+VISUAL_SOURCE_MANIFEST = {'bytes': 42553059, 'sha256': 'e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3'}
+VISUAL_OBJECT_GEOMETRY_SHA256 = 'c5eddbe19511356d1c9eb26890728b169db6989917da9e1375b6f1692f41bb43'
+OPTIONAL_GEOS = 406
+PROFILES = ('base_world', 'base_world_visual')
 MAX_MANIFEST = 8 * 1024 * 1024
 MAX_GRAPH = 128 * 1024 * 1024
 MAX_INPUTS = 12288
@@ -86,7 +90,8 @@ def read_manifest(path):
             'Atlas beacon manifest has not been qualified or differs')
     value = json.loads(raw)
     files, inputs, native = value.get('files'), value.get('input_files'), value.get('native')
-    require(value.get('format') == 1 and value.get('role') == ROLE and value.get('map') == MAP
+    optional, profiles = value.get('optional_input_files'), value.get('input_profiles')
+    require(value.get('format') == 2 and value.get('role') == ROLE and value.get('map') == MAP
             and value.get('source_commit') == SOURCE_COMMIT and value.get('data_commit') == DATA_COMMIT
             and value.get('stock_mapserver_sha256') == STOCK_MAPSERVER_SHA256
             and value.get('runtime_graph_readback') is True
@@ -99,14 +104,22 @@ def read_manifest(path):
             and 'data/' + MAP in inputs
             and hashlib.sha256(canonical(inputs)).hexdigest() == value.get('input_files_sha256'),
             'Atlas collision/group source identity differs')
+    require(isinstance(optional, dict) and len(optional) == OPTIONAL_GEOS
+            and all(input_name(name) and name.startswith('data/object_library/') and name.endswith('.geo')
+                    for name in optional) and not set(inputs).intersection(optional)
+            and len(inputs) + len(optional) <= MAX_INPUTS
+            and hashlib.sha256(canonical(optional)).hexdigest() == VISUAL_OBJECT_GEOMETRY_SHA256,
+            'Exact optional original object geometry identity differs')
     require(all(isinstance(record, dict) and set(record) == {'bytes', 'sha256'}
                 and type(record['bytes']) is int and 0 < record['bytes'] <= MAX_GRAPH
                 and re.fullmatch('[0-9a-f]{64}', str(record['sha256']))
-                for record in list(files.values()) + list(inputs.values())), 'Invalid native input/payload pin')
+                for record in list(files.values()) + list(inputs.values()) + list(optional.values())), 'Invalid native input/payload pin')
     identity = value.get('input_identity', {})
     require(identity.get('asset_archive') == BASE_ARCHIVE
             and identity.get('world_manifest', {}).get('sha256') == WORLD_MANIFEST_SHA256
-            and identity.get('visual_geometry_sha256') == VISUAL_GEOMETRY_SHA256,
+            and identity.get('visual_geometry_sha256') == VISUAL_GEOMETRY_SHA256
+            and identity.get('visual_source_manifest') == VISUAL_SOURCE_MANIFEST
+            and identity.get('visual_object_geometry_sha256') == VISUAL_OBJECT_GEOMETRY_SHA256,
             'Native graph was generated from a different world/geometry supplement')
     require(isinstance(native, dict) and native.get('native_full_graph_readback_verified') is True
             and native.get('fresh_ordinary_world_crc_verified') is True
@@ -115,7 +128,40 @@ def read_manifest(path):
             and native.get('ground_connections', 0) > 1000 and native.get('grid_blocks', 0) > 0
             and re.fullmatch('0x[0-9a-f]{8}', str(native.get('full_world_crc'))),
             'Native generation, full reader, CRC or path proofs are incomplete')
+    require(isinstance(profiles, dict) and set(profiles) == set(PROFILES), 'Both fresh native profiles are required')
+    for profile in PROFILES:
+        selected = inputs if profile == 'base_world' else {**inputs, **optional}
+        require(profiles[profile] == {'native': native,
+                    'input_files_sha256': hashlib.sha256(canonical(selected)).hexdigest()},
+                'Fresh cold/warm native CRC, graph readback or path proofs differ')
     return value
+
+
+def select_profile(runtime, manifest, context):
+    """Accept only the two complete server inventories proved in fresh processes."""
+    runtime = Path(runtime); optional = manifest['optional_input_files']
+    present = 0
+    for name in optional:
+        context.check()
+        present += os.path.lexists(runtime / name)
+    require(present in (0, len(optional)), 'Partial optional Atlas geometry has no native profile proof')
+    profile = 'base_world_visual' if present else 'base_world'
+    selected = (manifest['input_files'] if not present else {**manifest['input_files'], **optional})
+    # The enclosing server cache verifies immutable links; this finite inventory
+    # also refuses extra source leaves whose collision contribution was not proved.
+    actual = set()
+    for relative in ('data/object_library', 'data/maps/city_zones/city_01_01', 'data/tricks'):
+        root = runtime / relative
+        require(root.is_dir() and not root.is_symlink(), 'Private Atlas source directory required')
+        for path in root.rglob('*'):
+            context.check()
+            require(not (path.is_symlink() and path.is_dir()), 'Linked Atlas source directory refused')
+            suffixes = ('.geo', '.txt') if relative == 'data/object_library' else ('.txt',)
+            if path.suffix.lower() in suffixes and not path.is_dir():
+                actual.add(path.relative_to(runtime).as_posix())
+                require(len(actual) <= MAX_INPUTS, 'Atlas source inventory exceeds proof bound')
+    require(actual == set(selected), 'Actual Atlas source inventory has no qualified native profile')
+    return profile, selected
 
 
 def fingerprint(path, *, immutable_input=False):
@@ -167,9 +213,10 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
     started = time.monotonic(); runtime = Path(runtime)
     require(imported_inputs_readonly is True, 'Beacon installation requires the qualified readonly private world')
     value = read_manifest(manifest_path)
+    profile, selected = select_profile(runtime, value, context)
     require(pin(runtime / 'MapServer.exe', context)['sha256'] == STOCK_MAPSERVER_SHA256,
             'A different MapServer cannot consume this qualified native graph')
-    inputs = fingerprints(runtime, value['input_files'], context, immutable_input=True)
+    inputs = fingerprints(runtime, selected, context, immutable_input=True)
     targets = {name: private_target(runtime, name) for name in value['files']}
     marker = private_target(runtime, MARKER)
     prior = None
@@ -178,21 +225,23 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
             regular(marker, MAX_MANIFEST)
             prior = json.loads(marker.read_bytes())
         except (ValueError, OSError, json.JSONDecodeError): pass
-    if (isinstance(prior, dict) and prior.get('format') == 1 and prior.get('policy') == POLICY
+    if (isinstance(prior, dict) and prior.get('format') == 2 and prior.get('policy') == POLICY
             and prior.get('manifest_sha256') == MANIFEST_SHA256 and prior.get('input_fingerprints') == inputs
+            and prior.get('server_geometry_profile') == profile
             and all(path.exists() for path in targets.values())
             and prior.get('graph_fingerprints') == fingerprints(runtime, targets, context)):
-        return {'format': 1, 'status': 'reused_verified_graph', 'map': MAP,
+        return {'format': 2, 'status': 'reused_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
                 'full_world_crc': value['native']['full_world_crc'], 'installed_files': 0,
                 'input_files_checked': len(inputs), 'input_payload_bytes_hashed': 0,
-                'archive_decoded': False, 'fingerprint_walk': True,
+                'archive_decoded': False, 'fingerprint_walk': True, 'input_inventory_walk': True,
                 'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
     total = 0
-    for name, expected in value['input_files'].items():
+    for name, expected in selected.items():
         context.check()
         require(pin(runtime / name, context) == expected, 'Actual Atlas collision/group input differs: ' + name)
         total += expected['bytes']
-    require(inputs == fingerprints(runtime, value['input_files'], context, immutable_input=True),
+    require(inputs == fingerprints(runtime, selected, context, immutable_input=True)
+            and select_profile(runtime, value, context)[0] == profile,
             'Atlas inputs changed while establishing native graph compatibility')
     regular(archive, 2 * MAX_GRAPH)
     require(ARCHIVE_BYTES > 0 and pin(archive, context) == {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
@@ -221,13 +270,14 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
                 target.chmod(0o400)
             else:
                 atomic_bytes(target, raw); installed += 1
-    record = {'format': 1, 'policy': POLICY, 'manifest_sha256': MANIFEST_SHA256,
+    record = {'format': 2, 'policy': POLICY, 'manifest_sha256': MANIFEST_SHA256,
+              'server_geometry_profile': profile,
               'input_fingerprints': inputs,
               'graph_fingerprints': fingerprints(runtime, targets, context)}
     atomic_bytes(marker, canonical(record))
-    return {'format': 1, 'status': 'installed_verified_graph', 'map': MAP,
+    return {'format': 2, 'status': 'installed_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
             'full_world_crc': value['native']['full_world_crc'], 'installed_files': installed,
             'input_files_checked': len(inputs), 'input_payload_bytes_hashed': total,
-            'archive_decoded': True, 'fingerprint_walk': True,
+            'archive_decoded': True, 'fingerprint_walk': True, 'input_inventory_walk': True,
             'native_graph_readback_qualified': True,
             'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
