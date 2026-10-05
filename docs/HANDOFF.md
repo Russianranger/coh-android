@@ -1,5 +1,52 @@
 # City of Heroes Android handoff
 
+**0.13.13 Thor reopen, training, save and persistence verified; UI sweep and Atlas beacon generation in progress for 0.13.14.**
+
+The live continuation branch and draft PR #1 were rechecked at
+`6098d5e040d9a41654acec60e92c64be2b5aacee`; main remains separate at
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`. The current published test APK
+remains **0.13.13 / code 28**, implementation
+`be955678b4b82f889b31c4071b3b979b0aef6771`.
+[Device results](ANDROID_UI_BEACON_DEVICE_RESULT.md) and
+[finite evidence receipt](android-evidence/ui-beacon-0.13.13-device-result.json)
+capture both new 2026-10-05 physical Thor exports.
+
+The first session bought **Aimed Shot** through the native trainer at displayed
+level 2, returned to gameplay, and saved **140 XP / 103 influence**. The next
+session reopened with that level, XP, influence and all fifteen powers retained,
+including every original positive power UniqueID. No runtime crash occurred and
+both sessions completed clean shutdown. The diagnostic exports themselves
+failed retained-row qualification: the first rejected training mutations, the
+second rejected eleven stock automatic-power set-level normalizations. Their
+native purchase/logout and committed SQL evidence remain independently valid;
+do not describe these exports as passed qualification. The next validator pass
+must preserve strict save checks while fixing actual lowercase attribute-map
+comparisons and recognizing only the exact native load/save normalization.
+
+Warm captured timings: **Atlas 210.356 s (3:30.356)**, **actual client 188.310 s
+(3:08.310)**, operation start to observed login **556.889 s (9:16.889)**, and
+login to world **84.519 s**. The user's client stopwatch was about 3:03.
+The client phase is materially shorter than 0.13.11's 324.792 s warm phase;
+Atlas remains around 3:30. Warm visual preparation reused its verified
+fingerprint with zero archive reads, decoded files or installed files.
+Keep setup, visual preparation, texture preparation/wait, Wine/FEX, native
+dependency preload, client initialization and user login/world time separate.
+
+The next authorized pass is a complete bounded original-client UI dependency
+sweep plus **real Atlas beacon generation/loading**, with zoning deferred.
+Inspirations and power icons are now visibly restored. Remaining photographed
+issues include tips, enhancement slots/inventory and some NPC/status/nameplate
+white squares. Verify the native semantics of the trainer's right pane before
+calling intentional empty content an asset failure. Both Atlas logs explicitly
+report the generated beacon file missing. Existing authored beacon placement
+layers are not a generated navigation graph, and disabled legacy generation
+commands must not be enabled as a substitute for the active native generator.
+Preserve all working assets, character data, cache/freshness, controls and timing
+instrumentation. Do not repeat broad world/model imports.
+
+**The 0.13.13 publication checkpoint below is historical; its pending physical
+startup/training/persistence questions are now resolved by the evidence above.**
+
 **0.13.13 published and independently public-byte verified; Thor reopen/training test pending.**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.13/COH-Atlas-Gameplay-0.13.13.apk),
 version **0.13.13 / code 28**, source

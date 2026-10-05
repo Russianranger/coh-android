@@ -1,0 +1,657 @@
+{
+  "analyzed_utc_date": "2026-10-05",
+  "apk_source_commit": "be955678b4b82f889b31c4071b3b979b0aef6771",
+  "cross_session_persistence": {
+    "assertion_basis": "First post-logout SQL rows recur as second pre-reopen SQL rows; same character ID/account, level1 (display2), XP140, influence103, Aimed Shot UniqueID564586690 and all original power UniqueIDs.",
+    "first_post_ents_equals_second_before_except_login_count": true
+  },
+  "format": 1,
+  "limitations": [
+    "Both sessions used startup-only reopen mode, which requires exact retained character rows beyond its explicitly allowed changes; gameplay/training therefore failed diagnostic qualification despite native committed persistence.",
+    "First login observation is delayed by user interaction after actual client startup completed; do not treat its25minute operation-to-login interval as initialization time.",
+    "Second powersetlevelbought normalization is precisely observed; no broader power mutations are proven safe by this result.",
+    "Training persistence is accepted from native purchase/logout plus committed post-SQL and next-reopen witnesses, not from a passed diagnostic flag.",
+    "Missing beacons are real native loader evidence; removing warning text would not beaconize the map.",
+    "Screenshots confirm artifacts but cannot distinguish unavailable assets, renderer fallback, or intentionally empty native panes."
+  ],
+  "reports": [
+    {
+      "app_version": "0.13.13",
+      "beacon_witnesses": [
+        {
+          "line": 492,
+          "path": "guest-report-extracted/client-evidence/character-atlas-console.txt",
+          "text": "loading beacons.. Beacon file not loaded for map: maps/City_Zones/City_01_01/City_01_01.txt"
+        }
+      ],
+      "dbserver_sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+      "dependency_preload_witnesses": [
+        {
+          "line": 4485,
+          "path": "guest-report-extracted/client-evidence/client-console.log",
+          "text": "COH_CLIENT_DEPENDENCY_PRELOAD_V1 tree=player_library/animations cache=bin/sequencers.bin milliseconds=2864.000 source_freshness_preserved=1 crc_validation_preserved=1"
+        },
+        {
+          "line": 4618,
+          "path": "guest-report-extracted/client-evidence/client-console.log",
+          "text": "COH_CLIENT_DEPENDENCY_PRELOAD_V1 tree=Menu cache=bin/powers.bin milliseconds=3670.000 source_freshness_preserved=1 crc_validation_preserved=1"
+        }
+      ],
+      "game_sha256": "cad33afc212113a5d116bf8fe63078034fa63c494c1a91ddadaf42cadf55fe9a",
+      "mapserver_sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+      "mode": {
+        "sql_game_mutations_performed": false,
+        "startup_only_reopen": true,
+        "task_gate_required": false,
+        "task_qualification_requested": false
+      },
+      "native_witnesses": [
+        {
+          "line": 8,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:33:09 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Entity:Resume:Character: Science Class_Blaster, Level:1 XPLevel:2 XP:115 HP:113.40 End:100.00 Debt: 0 Inf:89 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 HAM: 0 VAM: 0 IShard: 0 IThread: 0 Astral: 0 Empyrean: 0 ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0100-00-32767 58904:147:60196"
+        },
+        {
+          "line": 124,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:33:23 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 ContactInteract:GenericOpen Initiating interaction with contact 755 (Ms. Liberty) ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0003-00-00 02:00:01"
+        },
+        {
+          "line": 130,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:34:10 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 BuyPower Click Blaster_Ranged.Archery.Aimed_Shot ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0001-00-00 00:00:00"
+        },
+        {
+          "line": 252,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:37:49 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Disconnect:Logout timer expired] Science Class_Blaster, Level:2 XPLevel:2 XP:140 HP:113.40 End:100.00 Debt: 0 Inf:103 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0125-00-32768 9888:17596:22266"
+        },
+        {
+          "line": 2,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/rewards_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:05 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 15, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 11829-13362-23328 17732:21826:23879"
+        },
+        {
+          "line": 3,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/rewards_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:05 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Enh Generic_Accuracy ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0000-00-18 58316:18:58304"
+        },
+        {
+          "line": 7,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/rewards_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:05 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 0, Pres: 0 (SGMode off (0)) ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 11829-13362-23328 17732:21826:23879"
+        },
+        {
+          "line": 19,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/rewards_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:31 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 10, Debt: 0, Inf: 7, Pres: 0 (SGMode off (0)) ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 28015-24944-29742 29816:2573:12891"
+        },
+        {
+          "line": 22,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/rewards_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:31 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Tbl]:Rcv:Points XP: 0, Debt: 0, Inf: 0, Pres: 0 (SGMode off (0)) ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 28015-24944-29742 29816:2573:12891"
+        },
+        {
+          "line": 1,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/powers_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:01 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Power:Activate id:2331  Click Blaster_Ranged.Archery.Aimed_Shot targeting Blood Brother Brawler:6822 (-221.900, -0.000, 267.423)  ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 61396-18-17664 00:00:61796"
+        },
+        {
+          "line": 3,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/powers_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:04 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Power:Activate id:2369  Click Blaster_Ranged.Archery.Snap_Shot targeting Blood Brother Brawler:6822 (-221.900, -0.000, 267.423)  ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 13657-120-00 1296:164:20744"
+        },
+        {
+          "line": 5,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/powers_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:26 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Power:Activate id:2578  Click Blaster_Ranged.Archery.Aimed_Shot targeting Blood Brother Slugger:6824 (-232.589, -0.000, 275.908)  ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0004-00-00 1296:164:20744"
+        },
+        {
+          "line": 7,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/powers_2026-10-05-15-00-00.log",
+          "text": "261005 15:35:29 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Power:Activate id:2623  Click Blaster_Ranged.Archery.Snap_Shot targeting Blood Brother Slugger:6824 (-232.589, -0.000, 275.908)  ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 64188-18-00 61388:18:284"
+        }
+      ],
+      "report": "coh-atlas-gameplay-20261005-153904.zip",
+      "report_bytes": 9941752,
+      "report_sha256": "2470cbd45aa926cd144ba1a2378fe55c28d60f701f4fcdd0ac343fe850a8c3a1",
+      "result": {
+        "android_passed": false,
+        "character_id": 1,
+        "cleanup": {
+          "owned_processes_reaped": true,
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true
+        },
+        "cleanup_complete": true,
+        "cleanup_verified": true,
+        "crash_reported_by_user": false,
+        "existing_character_verified": true,
+        "failure_messages": [
+          "Committed existing character rows changed after reopen: ents"
+        ],
+        "forced_stop_before_save": false,
+        "guest_passed": false,
+        "world_connected": true
+      },
+      "runtime_manifest_sha256": "5971317dbf30918501af0232438e261471929a7805bd9f203ddba8c5bacb5161",
+      "session_id": "c3b29bc4f63a43f59989df25f7aa7aa9",
+      "sql_evidence": {
+        "after_ents": [
+          {
+            "authid": 1353310574,
+            "authname": "COHLOCAL",
+            "class": 252,
+            "containerid": 1,
+            "datecreated": "2026-10-03T23:44:34",
+            "description": null,
+            "experiencepoints": 140,
+            "influencepoints": 103,
+            "level": 1,
+            "logincount": 8,
+            "motto": null,
+            "name": "THORHERO",
+            "origin": 257
+          }
+        ],
+        "before_ents": [
+          {
+            "authid": 1353310574,
+            "authname": "COHLOCAL",
+            "class": 252,
+            "containerid": 1,
+            "datecreated": "2026-10-03T23:44:34",
+            "description": null,
+            "experiencepoints": 115,
+            "influencepoints": 89,
+            "level": null,
+            "logincount": 7,
+            "motto": null,
+            "name": "THORHERO",
+            "origin": 257
+          }
+        ],
+        "costumeparts_changes": [],
+        "ents2_changes": [],
+        "ents_changes": [
+          {
+            "fields": {
+              "experiencepoints": {
+                "after": 140,
+                "before": 115
+              },
+              "influencepoints": {
+                "after": 103,
+                "before": 89
+              },
+              "level": {
+                "after": 1,
+                "before": null
+              },
+              "logincount": {
+                "after": 8,
+                "before": 7
+              }
+            },
+            "row": 0
+          }
+        ],
+        "post_sql_process_indices": {
+          "costumeparts": 142,
+          "ents": 139,
+          "ents2": 140,
+          "powers": 141
+        },
+        "powers": {
+          "added_rows": [
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 6,
+              "powerlevelbought": 1,
+              "powername": 2953,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 1367,
+              "subid": 5,
+              "uniqueid": 541583798
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 7,
+              "powerlevelbought": 1,
+              "powername": 6758,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 1367,
+              "subid": 6,
+              "uniqueid": 1473126597
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 8,
+              "powerlevelbought": 1,
+              "powername": 6757,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 1367,
+              "subid": 7,
+              "uniqueid": 1815492593
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 9,
+              "powerlevelbought": 1,
+              "powername": 6720,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 5110,
+              "subid": 8,
+              "uniqueid": 1130338197
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 10,
+              "powerlevelbought": 1,
+              "powername": 5113,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 5110,
+              "subid": 9,
+              "uniqueid": 1438136328
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 11,
+              "powerlevelbought": 1,
+              "powername": 5112,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 5110,
+              "subid": 10,
+              "uniqueid": 722364236
+            },
+            {
+              "buildnum": null,
+              "categoryname": 1367,
+              "containerid": 1,
+              "powerid": 12,
+              "powerlevelbought": 1,
+              "powername": 5111,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 5110,
+              "subid": 11,
+              "uniqueid": 552107887
+            },
+            {
+              "buildnum": null,
+              "categoryname": 11427,
+              "containerid": 1,
+              "powerid": 14,
+              "powerlevelbought": 1,
+              "powername": 980,
+              "powernumboostsbought": null,
+              "powersetlevelbought": null,
+              "powersetname": 6153,
+              "subid": 13,
+              "uniqueid": 564586690
+            }
+          ],
+          "after_count": 15,
+          "before_count": 7,
+          "removed_unique_ids": [],
+          "retained_row_changes": [
+            {
+              "fields": {
+                "powerid": {
+                  "after": 13,
+                  "before": 6
+                },
+                "subid": {
+                  "after": 12,
+                  "before": 5
+                }
+              },
+              "uniqueid": 1659675142
+            },
+            {
+              "fields": {
+                "powerid": {
+                  "after": 15,
+                  "before": 7
+                },
+                "subid": {
+                  "after": 14,
+                  "before": 6
+                }
+              },
+              "uniqueid": 153892770
+            }
+          ]
+        },
+        "source": "Read-only JSON outputs captured in latest-report.json processes entries labelled sql-fixture; table key sets match character-reopen-before-snapshot.json. Final per-table output is the post-logout snapshot."
+      },
+      "timing_seconds": {
+        "actual_client_startup": 198.157,
+        "android_operation_start_to_login_observation": 1501.214,
+        "android_operation_start_to_world_observation": 1586.123,
+        "animation_preparation_stage": 14.1172,
+        "atlas_startup_stage": 223.649374,
+        "dbserver_startup_stage": 40.606261,
+        "guest_start_to_actual_client_startup_end": 703.25707,
+        "login_observation_to_world_observation": 84.909,
+        "texture_overlap": 1.537,
+        "texture_preparation": 54.805,
+        "texture_wait_before_client": 53.257,
+        "visual_preparation": 61.870523,
+        "win32_runtime_dll_probe_stage": 1.539578,
+        "wine_initialization": 65.031,
+        "wine_ready_prefix_reused": false
+      },
+      "visual_cache": {
+        "archive_read_bytes": 854625639,
+        "archive_sha256": "7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544",
+        "decoded_files": 123,
+        "decoded_payload_bytes": 5384150,
+        "file_count": 9613,
+        "fingerprint_reused": false,
+        "installed_files": 123,
+        "manifest_sha256": "e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3"
+      }
+    },
+    {
+      "app_version": "0.13.13",
+      "beacon_witnesses": [
+        {
+          "line": 492,
+          "path": "guest-report-extracted/client-evidence/character-atlas-console.txt",
+          "text": "loading beacons.. Beacon file not loaded for map: maps/City_Zones/City_01_01/City_01_01.txt"
+        }
+      ],
+      "dbserver_sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+      "dependency_preload_witnesses": [
+        {
+          "line": 4485,
+          "path": "guest-report-extracted/client-evidence/client-console.log",
+          "text": "COH_CLIENT_DEPENDENCY_PRELOAD_V1 tree=player_library/animations cache=bin/sequencers.bin milliseconds=3013.000 source_freshness_preserved=1 crc_validation_preserved=1"
+        },
+        {
+          "line": 4618,
+          "path": "guest-report-extracted/client-evidence/client-console.log",
+          "text": "COH_CLIENT_DEPENDENCY_PRELOAD_V1 tree=Menu cache=bin/powers.bin milliseconds=2734.000 source_freshness_preserved=1 crc_validation_preserved=1"
+        }
+      ],
+      "game_sha256": "cad33afc212113a5d116bf8fe63078034fa63c494c1a91ddadaf42cadf55fe9a",
+      "mapserver_sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+      "mode": {
+        "sql_game_mutations_performed": false,
+        "startup_only_reopen": true,
+        "task_gate_required": false,
+        "task_qualification_requested": false
+      },
+      "native_witnesses": [
+        {
+          "line": 7,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:50:02 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 Entity:Resume:Character: Science Class_Blaster, Level:2 XPLevel:2 XP:140 HP:113.40 End:100.00 Debt: 0 Inf:103 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 HAM: 0 VAM: 0 IShard: 0 IThread: 0 Astral: 0 Empyrean: 0 ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0100-00-32767 58904:147:60196"
+        },
+        {
+          "line": 114,
+          "path": "guest-report-extracted/client-evidence/server-logs/logs/dbserver/entity_2026-10-05-15-00-00.log",
+          "text": "261005 15:50:39 City_01_01_1:127.0.0.1:127.0.0.1 \"THORHERO:COHLOCAL\" 0 [Disconnect:Logout timer expired] Science Class_Blaster, Level:2 XPLevel:2 XP:140 HP:113.40 End:100.00 Debt: 0 Inf:103 AccessLvl: 9 WisLvl: 0 Wis: 0 Merits: 0 Tickets: 0 ExpLevel:2, AlignmentNum:0, Archetype:Class_Blaster, Incarnate:0 BuildNumber: dev: 0125-00-32768 9888:17596:22266"
+        }
+      ],
+      "report": "coh-atlas-gameplay-20261005-155202.zip",
+      "report_bytes": 10223737,
+      "report_sha256": "cc225bda93d65756a25e44a225167c37a1d34ee6e375746d03a2866995084491",
+      "result": {
+        "android_passed": false,
+        "character_id": 1,
+        "cleanup": {
+          "owned_processes_reaped": true,
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true
+        },
+        "cleanup_complete": true,
+        "cleanup_verified": true,
+        "crash_reported_by_user": false,
+        "existing_character_verified": true,
+        "failure_messages": [
+          "Committed existing character rows changed after reopen: powers"
+        ],
+        "forced_stop_before_save": false,
+        "guest_passed": false,
+        "world_connected": true
+      },
+      "runtime_manifest_sha256": "5971317dbf30918501af0232438e261471929a7805bd9f203ddba8c5bacb5161",
+      "session_id": "de5ead75980449df892f2d9cfdc965da",
+      "sql_evidence": {
+        "after_ents": [
+          {
+            "authid": 1353310574,
+            "authname": "COHLOCAL",
+            "class": 252,
+            "containerid": 1,
+            "datecreated": "2026-10-03T23:44:34",
+            "description": null,
+            "experiencepoints": 140,
+            "influencepoints": 103,
+            "level": 1,
+            "logincount": 9,
+            "motto": null,
+            "name": "THORHERO",
+            "origin": 257
+          }
+        ],
+        "before_ents": [
+          {
+            "authid": 1353310574,
+            "authname": "COHLOCAL",
+            "class": 252,
+            "containerid": 1,
+            "datecreated": "2026-10-03T23:44:34",
+            "description": null,
+            "experiencepoints": 140,
+            "influencepoints": 103,
+            "level": 1,
+            "logincount": 8,
+            "motto": null,
+            "name": "THORHERO",
+            "origin": 257
+          }
+        ],
+        "costumeparts_changes": [],
+        "ents2_changes": [],
+        "ents_changes": [
+          {
+            "fields": {
+              "logincount": {
+                "after": 9,
+                "before": 8
+              }
+            },
+            "row": 0
+          }
+        ],
+        "post_sql_process_indices": {
+          "costumeparts": 70,
+          "ents": 67,
+          "ents2": 68,
+          "powers": 69
+        },
+        "powers": {
+          "added_rows": [],
+          "after_count": 15,
+          "before_count": 15,
+          "removed_unique_ids": [],
+          "retained_row_changes": [
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1649555836
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1311144360
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1758889093
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 421988681
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 541583798
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1473126597
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1815492593
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1130338197
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 1438136328
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 722364236
+            },
+            {
+              "fields": {
+                "powersetlevelbought": {
+                  "after": 1,
+                  "before": null
+                }
+              },
+              "uniqueid": 552107887
+            }
+          ]
+        },
+        "source": "Read-only JSON outputs captured in latest-report.json processes entries labelled sql-fixture; table key sets match character-reopen-before-snapshot.json. Final per-table output is the post-logout snapshot."
+      },
+      "timing_seconds": {
+        "actual_client_startup": 188.31,
+        "android_operation_start_to_login_observation": 556.889,
+        "android_operation_start_to_world_observation": 641.408,
+        "animation_preparation_stage": 13.537367,
+        "atlas_startup_stage": 210.355976,
+        "dbserver_startup_stage": 38.460096,
+        "guest_start_to_actual_client_startup_end": 536.036522,
+        "login_observation_to_world_observation": 84.519,
+        "texture_overlap": 0.943,
+        "texture_preparation": 21.064,
+        "texture_wait_before_client": 20.108,
+        "visual_preparation": 29.733063,
+        "win32_runtime_dll_probe_stage": 0.94502,
+        "wine_initialization": 7.761,
+        "wine_ready_prefix_reused": true
+      },
+      "visual_cache": {
+        "archive_read_bytes": 0,
+        "archive_sha256": "7a1760edc559871c0a99a15b9a52b8592e908a1c463b6e245edb99ecff6ac544",
+        "decoded_files": 0,
+        "decoded_payload_bytes": 0,
+        "file_count": 9613,
+        "fingerprint_reused": true,
+        "installed_files": 0,
+        "manifest_sha256": "e1f1702c9d5b38f38bb324b1171ac7aeaa5cba7e12072dd8face4efbc09a5fa3"
+      }
+    }
+  ],
+  "repository_head_inspected": "6098d5e040d9a41654acec60e92c64be2b5aacee",
+  "scope": "Physical AYN Thor 0.13.13 UI/beacon follow-up evidence",
+  "screenshots": {
+    "observed_restored": [
+      "inspiration icons",
+      "power icons",
+      "training ownership/selection controls in styled screenshot"
+    ],
+    "reported_remaining_ui": [
+      "tips white boxes",
+      "enhancement UI/slot elements",
+      "training right pane question",
+      "white boxes below some NPC names"
+    ],
+    "source_files": [
+      "01-1006612305.jpg",
+      "02-1006612302.jpg",
+      "03-1006612290.jpg",
+      "04-1006612301.jpg"
+    ],
+    "source_semantics_required": [
+      "Determine expected training third pane at displaylevel2; blank screenshot alone does not establish missing content.",
+      "Resolve precise tips/enhancement/nameplate dependencies from native source and original client textures; reports do not log useful UI-stem misses."
+    ]
+  }
+}
