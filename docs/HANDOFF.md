@@ -1,5 +1,40 @@
 # City of Heroes Android handoff
 
+**0.13.10 Thor follow-up and active startup/appearance continuation (October 5, 2026 UTC).**
+The live branch was recovered at `37404945f3c53c0897c275beb94a2fec4ed915b2`,
+after the accepted 0.13.10 APK source `9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb`.
+Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; use the existing
+continuation branch and draft PR #1. The earlier transient checkout was gone,
+but the published source, hosted sweep/packaging receipts and new local support
+ZIP/screenshots were recovered. Do not redo the 0.13.10 milestone or overwrite
+its release. The immediate 5,476 visual files are the next build's baseline.
+
+The user confirms that ground and hands now load and substantially more models
+appear, while white faces/armor and missing police drones remain. The raw
+startup-only report passes, including ordinary Save and owned cleanup. THORHERO
+keeps its identity, powers and costume; only native earned XP25→50,
+influence14→28 and LoginCount5→6 change. These observations do not promote the
+report's false full gameplay/rendering/controller qualification flags.
+See the [pinned physical receipt](android-evidence/client-asset-closure-0.13.10-device-result.json).
+
+Reported local Atlas is **3:50**, with stage **229.246s**. Reported actual client
+is **5:22**, with native launcher **319.732s** and enclosing stage **320.203s**.
+The first visual installation is separately **61.222s**: all 5,147 new files
+installed and 329 reused. The client animation binding takes 14.320s and first
+texture-header preparation takes 47.875s. Do not subtract these from the native
+client duration or conflate total request-to-world time with a native stage.
+The exported runtime manifest has a different serialization digest from the
+embedded APK manifest; its parsed JSON content is identical.
+
+The next bounded pass targets client filesystem metadata costs while retaining
+stock freshness, CRC, source bytes and animation/gameplay behavior. New console
+errors and silent ent-type geometry dependencies are being traced against the
+original donor catalogue, retaining every existing visual ZIP member stream.
+Publish a fresh 0.13.11 only after its relevant hosted qualification succeeds;
+physical startup savings and remaining appearance fixes require focused Thor
+comparison. Atlas's roughly 50-second sequencer post-load cost remains distinct
+from the client BIN freshness costs and is not a reason to bypass validation.
+
 **0.13.10 published and independently payload-verified; focused Thor visuals pending (October 5, 2026 UTC).**
 [Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.10/COH-Atlas-Gameplay-0.13.10.apk)
 from exact implementation **`9c36a5f411290400cb4aa4b2711a4bdcd39ca8cb`**, version
