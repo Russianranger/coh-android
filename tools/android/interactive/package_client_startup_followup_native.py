@@ -75,10 +75,10 @@ def expected_receipt(root=ROOT):
             'Preload changed an existing CRC, date, comparison or failure branch')
     callsites = {name: digest(root/'upstream/ouroboros'/name) for name in (
         'Common/entity/load_def.c', 'Common/entity/powers_load.c', 'Common/seq/seqload.c',
+        'libs/UtilitiesLib/src/utils/FolderCache.c',
         'libs/UtilitiesLib/src/utils/FolderCacheNode.c', 'libs/UtilitiesLib/src/utils/file.c')}
-    import prepare_wine_dbserver_source as wine
-    callsites['libs/UtilitiesLib/src/utils/FolderCache.c'] = wine.expected_wine_receipt(root)['patched_sha256'][
-        'libs/UtilitiesLib/src/utils/FolderCache.c']
+    # Game follows the accepted PostgreSQL/events/texture/graphics chain, not
+    # the separately built Wine DbServer. Its FolderCache remains stock.
     require('load_PowerDictionary(&g_PowerDictionary, "defs/powers/",' in
             (root/'upstream/ouroboros/Common/entity/load_def.c').read_text(), 'Real powers caller path changed')
     require('ParserLoadFiles(pchFilename,".powers","powers.bin",' in

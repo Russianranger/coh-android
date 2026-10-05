@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -217,10 +218,6 @@ class ClientStartupFollowupNativeTests(unittest.TestCase):
                 if not (source/name).exists():
                     (source/name).parent.mkdir(parents=True,exist_ok=True)
                     (source/name).write_bytes((native.ROOT/'upstream/ouroboros'/name).read_bytes().replace(b'\r\n',b'\n'))
-            import prepare_wine_dbserver_source as wine
-            section = next(part for part in re.split(r'(?=^--- a/)',wine.patch_bytes(native.ROOT).decode(),flags=re.M)
-                           if part.startswith('--- a/libs/UtilitiesLib/src/utils/FolderCache.c'))
-            native.base.apply_patch(source,section.encode())
             before = {name:(source/name).read_bytes() for name in native.base.base.baseline.SCHEMA_FILES if name!=native.FILE}
             receipt = native.apply_overlay(source)
             self.assertEqual(native.validate_source(source)[0],receipt)
@@ -233,6 +230,23 @@ class ClientStartupFollowupNativeTests(unittest.TestCase):
                 (source/name).write_bytes(old)
             (source/native.FILE).write_bytes((source/native.FILE).read_bytes()+b'foreign')
             with self.assertRaisesRegex(ValueError,'parser source changed'):native.validate_source(source)
+
+    def test_complete_production_stage_retains_stock_folder_cache(self):
+        # Exercise the actual producer chain, rather than constructing a
+        # fixture with the separate DbServer's unrelated Wine overlay.
+        name = 'libs/UtilitiesLib/src/utils/FolderCache.c'
+        original = (native.ROOT/'upstream/ouroboros'/name).read_bytes()
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary)/'source'
+            receipt = native.stage(SimpleNamespace(output=source))
+            self.assertEqual((source/name).read_bytes(), original)
+            self.assertEqual(receipt['native_callsite_sources_sha256'][name], native.digest(source/name))
+            self.assertEqual(receipt, native.validate_source(source)[0])
+            self.assertFalse((source/'wine-dbserver-build-input.json').exists())
+            path = source/name
+            path.write_bytes(original+b'foreign')
+            with self.assertRaisesRegex(ValueError,'dependency callsite differs'):
+                native.validate_source(source)
 
     def test_windows_qualification_required(self):
         if os.name!='nt':
