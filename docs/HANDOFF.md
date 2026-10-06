@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**0.13.14 is published and its public checksum matches, but the fresh-process manifest audit stopped on a checker serialization bug. A read-only corrected audit is being prepared. The released APK remains unchanged.**
+**0.13.14 is published and its public checksum matches. The reviewed checker correction is committed; the independent read-only public audit is ready for hosted execution. The released APK remains unchanged.**
 
 The published candidate targets **`25f821da9e782281953412543057054abd8dd320`**:
 `COH-Atlas-Gameplay-0.13.14.apk`, code 29, 1,557,338,724 bytes,
@@ -31,11 +31,16 @@ Future builder correction blob `86bea0a3f0a24753affa52334fe653df06e818e4`
 changes only that verification block. Tests blob
 `53685a11602e12590e8987e182c8497b91fa364a` preserves all 14 existing methods
 and adds two order-independence/negative cases; these are source-reviewed, pending
-hosted execution. A separate read-only audit will retain pristine source25 on
+hosted execution. Corrected checker/tests are committed at `dd8bfebe748d59c383c423657a50dd3ce83aed42`.
+The read-only auditor blob `fc9d962fb6edb8d07eeb72f9d1014fb581486b1b`
+was independently reviewed; it downloads the exact public APK and authenticated
+original proof artifacts, runs all 16 package regressions, and retains pristine source25 on
 disk, graft only that separately pinned corrected function, and rerun original
 full receipt/source/payload/SDK/signer/badging/binary-manifest checks. Source
 closure must not be weakened to accommodate a current auditor. The full publisher
-will stop early for an already-published tag; never rebuild/overwrite this APK.
+stops early for an already-published tag; run 37395243623 actually passed its
+release-preservation gate and skipped all four repackaging jobs. These intentional
+publisher skips do not replace any qualification test. Never rebuild/overwrite this APK.
 
 Failed-run packaging evidence artifact **11381709625** is 12,500,422 bytes,
 SHA-256 `336b5d84d685eecbf7fbff17cc3db88e473c31731219c2a3cbb60d7994e41b1b`.
