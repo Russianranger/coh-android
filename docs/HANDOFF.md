@@ -1,53 +1,75 @@
 # City of Heroes Android handoff
 
-**0.13.14 is published and its public checksum matches. The reviewed checker correction is committed; the independent read-only public audit is ready for hosted execution. The released APK remains unchanged.**
+**0.13.14 is ready for physical AYN Thor testing. Its unchanged public APK passed the independent corrected SDK/source/payload audit. UI rendering, NPC pursuit and new startup timings remain physical checks.**
 
-The published candidate targets **`25f821da9e782281953412543057054abd8dd320`**:
-`COH-Atlas-Gameplay-0.13.14.apk`, code 29, 1,557,338,724 bytes,
-SHA-256 `1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee`.
-[Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.14)
-is prerelease 404193274, APK asset 613990752, published 2026-10-06 00:27:05 UTC.
-Actual public download matched those bytes and hash at 00:27:36 UTC.
+APK: **COH-Atlas-Gameplay-0.13.14.apk**, version code **29**,
+application ID `io.github.russianranger.cohclientinteractive`.
+Frozen build/source: **`25f821da9e782281953412543057054abd8dd320`**.
+Public size: **1,557,338,724 bytes**.
+SHA-256: **`1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee`**.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/COH-Atlas-Gameplay-0.13.14.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.14)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/COH-Atlas-Gameplay-0.13.14-testing.txt).
+Release 404193274 / APK asset 613990752 remains a public prerelease targeting that exact source.
+Install as an update, preserving the runtime, imported data and saved THORHERO.
 
-Release workflow 37392793426 remains **FAILED overall**: all 68 suites / 1,102
-scenarios / zero skips / seven real PostgreSQL fixtures passed; APK build, SDK
-signing, same-process payload/source verification, publication and fresh public
-download checksum all passed. The separate public SDK/payload audit stopped at
-**00:28:33 UTC** in `verify_derivative` with `Candidate provenance differs`.
-Do not relabel that failed run successful or claim the final public audit passed.
+Independent read-only audit [37395657530](https://github.com/Russianranger/coh-android/actions/runs/37395657530)
+at auditor source `8edc90d124c3a2291a161ff63066160daddc6684` completed **SUCCESS**.
+Closed job **112050869207** completed at **2026-10-06 00:50:44 UTC**.
+Artifact **11382438795** (`coh-ui-beacon-public-byte-audit`) is **3,470 bytes**,
+SHA-256 `222d5e94a75be166ea4a421f2229b870e962cc003652c23c9f968086096648b0`.
+Its `COH_UI_BEACON_PUBLIC_AUDIT_V2` receipt records `status=passed`, exact
+APK bytes/hash/source, signer certificate
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`,
+original failed-run history and the distinct current auditor provenance.
 
-Two independent source reviews identified the exact cause: `shared.encoded()`
-uses unsorted indented JSON, while `UPDATES` is a frozenset. Three new client
-manifest keys therefore have process-dependent insertion order. Equal decoded
-client manifests can serialize differently, so reconstructing their bytes in a
-fresh process changes the expected runtime's client-manifest hash. The build's
-same-process checks pass, but a fresh audit can reject the valid byte reference.
+The audit authenticated the actual public APK/checksum/testing-note bytes and
+all original proof artifacts. It ran all **16 reviewed package regressions with
+zero skips**, then the original full Android SDK 35 / build-tools 35.0.0 signer,
+badging, binary manifest, source closure, qualification receipt, all 75 payload
+members and donor conservation checks against pristine released source25.
+It loaded no signing key, rebuilt no APK and modified no release.
+Original release qualification actually passed **1,102 scenarios across 68 suites,
+zero skips and all seven real PostgreSQL fixtures**; the read-only audit preserves
+and verifies that evidence rather than presenting it as a new test execution.
 
-The minimal checker correction validates every decoded client field, explicitly
-verifies its embedded bytes against the build payload pin, then binds the expected
-runtime reference to those exact bytes before comparing every runtime field.
-No APK, manifest, helper, native binary or qualification source is changed.
-Future builder correction blob `86bea0a3f0a24753affa52334fe653df06e818e4`
-changes only that verification block. Tests blob
-`53685a11602e12590e8987e182c8497b91fa364a` preserves all 14 existing methods
-and adds two order-independence/negative cases; these are source-reviewed, pending
-hosted execution. Corrected checker/tests are committed at `dd8bfebe748d59c383c423657a50dd3ce83aed42`.
-The read-only auditor blob `fc9d962fb6edb8d07eeb72f9d1014fb581486b1b`
-was independently reviewed; it downloads the exact public APK and authenticated
-original proof artifacts, runs all 16 package regressions, and retains pristine source25 on
-disk, graft only that separately pinned corrected function, and rerun original
-full receipt/source/payload/SDK/signer/badging/binary-manifest checks. Source
-closure must not be weakened to accommodate a current auditor. The full publisher
-stops early for an already-published tag; run 37395243623 actually passed its
-release-preservation gate and skipped all four repackaging jobs. These intentional
-publisher skips do not replace any qualification test. Never rebuild/overwrite this APK.
+Original release run [37392793426](https://github.com/Russianranger/coh-android/actions/runs/37392793426)
+remains **FAILED overall**. Build, SDK signing, same-process audit, publication
+and public checksum passed, but its separate fresh-process verifier stopped at
+2026-10-06 00:28:33 UTC with `Candidate provenance differs`.
+Independent reviews found an audit serialization bug: unsorted JSON plus
+frozenset iteration changed the insertion order of three equivalent manifest
+keys. The corrected checker validates every logical field and actual embedded
+payload pin, then uses the exact embedded manifest bytes for the runtime
+reference. It changes no APK/runtime/source/qualification bytes.
 
-Failed-run packaging evidence artifact **11381709625** is 12,500,422 bytes,
-SHA-256 `336b5d84d685eecbf7fbff17cc3db88e473c31731219c2a3cbb60d7994e41b1b`.
-Original qualified UI/native/qualification artifacts are retained by the same run.
-The graph qualification and actual 68-suite result below remain accepted.
-Physical Thor UI, NPC pursuit, save/reopen and new startup measurements remain
-pending. Main stays separate, PR #1 stays draft, zoning follows this pass.
+Correction source `dd8bfebe748d59c383c423657a50dd3ce83aed42` contains checker blob
+`86bea0a3f0a24753affa52334fe653df06e818e4` and test blob
+`53685a11602e12590e8987e182c8497b91fa364a`.
+Auditor blob `fc9d962fb6edb8d07eeb72f9d1014fb581486b1b` grafted only that reviewed
+verification function into the original builder namespace; released source
+files stayed pristine and every source/SDK/payload guard remained intact.
+Publisher guard run 37395243623 actually passed and intentionally skipped all
+four repackaging jobs because this release already exists. Never overwrite it.
+
+This pass supplies **788 exact original UI resources**, preserving all 9,613
+prior encoded visual streams, and the genuine native Atlas graph qualified in
+two fresh layouts at CRC `0xb0c21ded`, full readback and **32 real routes each**.
+The 406 required original object GEOs are prepared before server cache sealing.
+A finite one-time refresh removes only owned affected private Atlas/model caches;
+unchanged warm preparation avoids archive decoding, input payload hashing,
+cache scans/removal and restaging. Existing character/XP/power persistence and
+shipped Game/MapServer/DbServer bytes remain preserved. No new startup-speed
+claim is made.
+
+Physical test: compare first-update and second-warm timing reports by phase;
+inspect tips, enhancements/slots, tray controls and NPC overhead indicators;
+check absence of the native red beacon warning and Hellion pursuit around an
+obstacle; inspect Ms. Liberty and complete training if a choice is available;
+save/logout, Finish/export, then reopen and verify level/XP/powers.
+At displayed level 2, the third power-set column is intentionally empty under
+native Pool/Epic unlock rules. Keep testing in Atlas; **zoning is the next pass**.
+Main remains separate and PR #1 remains draft.
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
