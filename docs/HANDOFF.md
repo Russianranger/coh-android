@@ -67,7 +67,12 @@ The generated graph ZIP is 16,150,904 bytes, SHA-256
 Artifact **11381885926** separately retains original-host evidence (33,542,063
 bytes; SHA-256 `24702896eefbb7b72ec07ee0f0bfda5dd160e63be675179514b4461310505e19`).
 The read-only verifier is now frozen to this actual successful run/source and
-must emit the final manifest/archive pins before guest constants are frozen. Preflight includes source/recovery,
+must emit the final manifest/archive pins before guest constants are frozen.
+First verifier run 37392236344 stopped in its routing precheck: default shallow
+checkout omitted HEAD^ required by the actual-change-set test (git exit 128).
+Its artifact download passed; the pin-check step did not run. The verifier now
+fetches two commits and reruns all 57 routing tests without skips. Native proofs
+and generation inputs are unchanged; final guest pins/publication remain held. Preflight includes source/recovery,
 guest, actual production runtime, packaging, finite change classifier and all 26
 server-cache reuse fixtures. Only the exact future full-publication workflow test
 is held while the preparation workflow remains active; final qualification must
