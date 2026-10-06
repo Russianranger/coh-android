@@ -1,20 +1,61 @@
-name: Prepare original UI payload only
+name: Thor original UI sweep and native Atlas beacons
 on:
   push:
     branches: [codex/character-persistence-continuation]
     paths:
       - .github/workflows/android-ui-beacon.yml
+      - patches/atlas-beacons/**
+      - tools/prepare_atlas_beacon_generator_source.py
+      - tools/android/interactive/generate_atlas_beacons.py
+      - tools/android/interactive/test_atlas_beacon_package.py
+      - tools/android/interactive/test_beacon_runtime_profiles.py
+      - tools/android/interactive/build_ui_beacon_apk.py
+      - tools/android/interactive/qualify_ui_beacon.py
+      - tools/android/interactive/test_ui_beacon_package.py
+      - tools/android/interactive/discover_client_ui_sweep_assets.py
+      - tools/android/interactive/prepare_client_ui_sweep_assets.py
+      - tools/android/interactive/test_client_ui_sweep_assets.py
+      - assets/client-ui-sweep-*.json
+      - android/guest/atlas_beacon_package.py
+      - android/guest/client_visual_assets.py
+      - android/guest/native_training_save.py
+      - android/guest/local_character_server.py
+      - tools/android/interactive/test_training_save.py
+      - tools/android/interactive/fixtures/thor-training-normalization-0.13.13-20261005.json
+      - docs/COH-Atlas-Gameplay-0.13.14-testing.txt
+  workflow_dispatch:
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: android-original-ui-preparation
+  group: android-ui-beacon-publication
   cancel-in-progress: false
-# Preparation only: no graph acceptance, SDK, signing, APK or release steps.
-# The final publisher separately proves retained encoded streams and all68 suites.
+env:
+  # Pin the successful fresh-proof run separately from its authentic failed-run graph origin.
+  # Current producer/source/world identities and frozen guest pins remain mandatory.
+  COH_ATLAS_BEACON_REUSE_RUN_ID: '37390562231'
+  COH_ATLAS_BEACON_REUSE_COMMIT: 'd856c41b586c87fd2d093eaa4d17c28d3508b66d'
+  # Optional only after an exact preparation run has completed successfully.
+  COH_UI_PREPARATION_REUSE_RUN_ID: '37379767112'
+  COH_UI_PREPARATION_REUSE_COMMIT: '52da9286c2fd1695c6c0c2979378fc418c418c99'
 jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      ui_beacon_required: ${{ steps.scope.outputs.ui_beacon_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Route the bounded UI beacon continuation
+        id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
   ui:
-    if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    needs: changes
+    if: needs.changes.outputs.ui_beacon_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -22,20 +63,60 @@ jobs:
         with:
           persist-credentials: false
       - uses: actions/download-artifact@v4
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID != '0'
+        with:
+          name: coh-ui-beacon-visual
+          path: out/ui-beacon-visual
+          run-id: ${{ env.COH_UI_PREPARATION_REUSE_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Validate completed successful original UI preparation provenance
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import urllib.request
+          run_id = int(os.environ['COH_UI_PREPARATION_REUSE_RUN_ID'])
+          expected_commit = os.environ['COH_UI_PREPARATION_REUSE_COMMIT']
+          if run_id <= 0 or re.fullmatch('[0-9a-f]{40}', expected_commit) is None:
+              raise ValueError('Explicit successful UI preparation run and full source head required')
+          request = urllib.request.Request(
+              f'https://api.github.com/repos/Russianranger/coh-android/actions/runs/{run_id}',
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              run = json.load(response)
+          if (run['id'] != run_id or run['status'] != 'completed' or run['conclusion'] != 'success'
+                  or run['head_sha'] != expected_commit
+                  or run['head_branch'] != 'codex/character-persistence-continuation'
+                  or run['path'] != '.github/workflows/android-ui-beacon.yml'
+                  or run['name'] != 'Prepare original UI payload only'):
+              raise ValueError('Reused UI artifact must come from the exact successful owned preparation run')
+          print(json.dumps({'status': 'passed', 'ui_preparation_run_id': run_id,
+              'ui_preparation_repository_commit': expected_commit}, sort_keys=True))
+          PY
+      - uses: actions/download-artifact@v4
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID == '0'
         with:
           name: coh-reopen-startup-repair-packaging-evidence
           path: out/ui-beacon-donor/evidence
           run-id: 37324515114
           github-token: ${{ github.token }}
       - name: Recover exact public working donor
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID == '0'
         run: python3 tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
       - name: Extract exact working visual baseline
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID == '0'
         run: >-
           python3 tools/android/interactive/build_ui_beacon_apk.py extract-baseline
           --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
           --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
           --output out/ui-beacon-baseline
       - name: Materialize only the frozen missing original UI leaves
+        if: env.COH_UI_PREPARATION_REUSE_RUN_ID == '0'
         run: |
           mkdir -p out/ui-beacon-visual
           python3 tools/android/interactive/prepare_client_ui_sweep_assets.py --materialize --manifest assets/client-ui-sweep-manifest.json --baseline-directory out/ui-beacon-baseline --output out/ui-beacon-visual
@@ -71,3 +152,367 @@ jobs:
           if-no-files-found: error
           compression-level: 0
           retention-days: 90
+  beacons:
+    # Publication reuses only the successful schema-3 recovery qualification.
+    # The authentic primary generation remains explicitly recorded as a failed run.
+    permissions:
+      contents: read
+      actions: read
+    needs: changes
+    if: needs.changes.outputs.ui_beacon_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Preserve exact generation source bytes across host platforms
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate exact successful fresh-proof run before downloading its artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import urllib.request
+          run_id = int(os.environ['COH_ATLAS_BEACON_REUSE_RUN_ID'])
+          expected_commit = os.environ['COH_ATLAS_BEACON_REUSE_COMMIT']
+          if run_id <= 0 or len(expected_commit) != 40 or any(value not in '0123456789abcdef' for value in expected_commit):
+              raise ValueError('Exact successful proof-only follow-up run and source commit required')
+          request = urllib.request.Request(
+              f'https://api.github.com/repos/Russianranger/coh-android/actions/runs/{run_id}',
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              run = json.load(response)
+          if (run['id'] != run_id or run['status'] != 'completed' or run['conclusion'] != 'success'
+                  or run['head_sha'] != expected_commit
+                  or run['head_branch'] != 'codex/character-persistence-continuation'
+                  or run['path'] != '.github/workflows/android-atlas-beacon-generation.yml'):
+              raise ValueError('Reused artifact must come from the exact successful schema-3 fresh-proof workflow')
+          target = Path('out/ui-beacon-native-run.json')
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(json.dumps(run, sort_keys=True) + '\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native
+          run-id: ${{ env.COH_ATLAS_BEACON_REUSE_RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Verify successful native recovery proof against current producers world and frozen guest pins
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import importlib.util
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          def module(name, source):
+              spec = importlib.util.spec_from_file_location(name, source)
+              result = importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(result)
+              return result
+          sys.path.insert(0, str(Path('android/guest').resolve()))
+          producer = module('reused_native_beacon_producer', 'tools/android/interactive/generate_atlas_beacons.py')
+          guest = module('reused_native_beacon_guest', 'android/guest/atlas_beacon_package.py')
+          run = json.loads(Path('out/ui-beacon-native-run.json').read_bytes())
+          directory = Path('out/ui-beacon-native')
+          manifest = producer.validate_package(directory, os.environ['GITHUB_SHA'])
+          report = json.loads((directory / 'atlas-beacon-generation-report.json').read_bytes())
+          if report['repository_commit'] != run['head_sha']:
+              raise ValueError('Reused artifact source commit differs from its successful proof-only workflow run')
+          origin = producer.validate_recovered_origin(report['graph_origin'], directory,
+              report['build_input'], report['generator'])
+          if (report['format'] != 3 or manifest['format'] != 3
+                  or report['qualification_mode'] != 'recovered_primary_fresh_proofs'
+                  or report['owned_roles'] != 0 or report['cleanup_complete'] is not True
+                  or report['native_worker_spawning_allowed'] is not False
+                  or report['profile_verification_processes'] != 2
+                  or origin['original_run_conclusion'] != 'failure'
+                  or origin['primary_generation_server_returncode'] != 0
+                  or origin['original_owned_roles'] != 4):
+              raise ValueError('Recovery must retain authentic failed-run origin and successful fresh proof-only roles')
+          if (set(manifest['input_profiles']) != {'required_geometry_cold', 'client_visual_reopen'}
+                  or len(manifest['required_geometry_files']) != 406
+                  or manifest['input_identity']['required_geometry_sha256'] != guest.REQUIRED_GEOMETRY_SHA256
+                  or report['profile_proofs'] != manifest['input_profiles']):
+              raise ValueError('Both fresh required-geometry profiles are mandatory')
+          if guest.read_manifest(directory / 'atlas-beacon-manifest.json') != manifest:
+              raise ValueError('Reused artifact differs from the frozen guest graph manifest')
+          if producer.pin(directory / 'atlas-beacons.zip') != {'bytes': guest.ARCHIVE_BYTES, 'sha256': guest.ARCHIVE_SHA256}:
+              raise ValueError('Reused artifact differs from the frozen guest graph archive')
+          print(json.dumps({'status': 'passed', 'native_run_id': run['id'],
+              'qualification_repository_commit': report['repository_commit'],
+              'original_generation_repository_commit': origin['source']['repository_commit'],
+              'current_repository_commit': os.environ['GITHUB_SHA'],
+              'manifest_sha256': guest.MANIFEST_SHA256,
+              'archive_sha256': guest.ARCHIVE_SHA256,
+              'qualification_mode': report['qualification_mode'], 'current_owned_roles': report['owned_roles'],
+              'graph_origin': origin, 'profile_verification_processes': 2}, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native/
+          if-no-files-found: error
+          retention-days: 90
+  qualify:
+    needs: [changes, ui, beacons]
+    if: needs.changes.outputs.ui_beacon_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: out/ui-beacon-donor/evidence
+          run-id: 37324515114
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-visual
+          path: out/ui-beacon-visual
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native
+      - name: Recover exact public working donor
+        run: python3 tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+      - name: Qualify UI originals native beacons and all retained gameplay guards
+        run: >-
+          python3 tools/android/interactive/qualify_ui_beacon.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --visual-directory out/ui-beacon-visual
+          --beacon-directory out/ui-beacon-native
+          --output out/ui-beacon-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-ui-beacon-qualification
+          path: out/ui-beacon-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, ui, beacons, qualify]
+    if: needs.changes.outputs.ui_beacon_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-reopen-startup-repair-packaging-evidence
+          path: out/ui-beacon-donor/evidence
+          run-id: 37324515114
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-visual
+          path: out/ui-beacon-visual
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-ui-beacon-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover exact public working donor
+        run: python3 tools/android/interactive/build_ui_beacon_apk.py download-donor --output out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build 0.13.14 retaining native gameplay SQL and Android shell
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_ui_beacon_apk.py build
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --visual-directory out/ui-beacon-visual
+          --beacon-directory out/ui-beacon-native
+          --qualification out/ui-beacon-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/ui-beacon-apk/COH-Atlas-Gameplay-0.13.14.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-packaging-evidence
+          path: |
+            out/ui-beacon-apk/ui-beacon-apk-build-report.json
+            out/ui-beacon-apk/COH-Atlas-Gameplay-0.13.14-testing.txt
+            out/ui-beacon-apk/COH-Atlas-Gameplay-0.13.14.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-apk
+          path: out/ui-beacon-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.14 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_ui_beacon_apk.py publish
+          --apk out/ui-beacon-apk/COH-Atlas-Gameplay-0.13.14.apk
+          --build-report out/ui-beacon-apk/ui-beacon-apk-build-report.json
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --visual-directory out/ui-beacon-visual
+          --beacon-directory out/ui-beacon-native
+          --qualification out/ui-beacon-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Download and checksum the actually public release bytes
+        timeout-minutes: 10
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import shutil
+          import time
+          import urllib.request
+          report = json.loads(Path('out/ui-beacon-apk/ui-beacon-apk-build-report.json').read_bytes())
+          apk_name = 'COH-Atlas-Gameplay-0.13.14.apk'
+          source = Path('out/ui-beacon-apk')
+          directory = Path('out/ui-beacon-public')
+          directory.mkdir(exist_ok=False)
+          destination = directory / apk_name
+          url = 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/' + apk_name
+          for attempt in range(3):
+              deadline = time.monotonic() + 160
+              digest = hashlib.sha256()
+              count = 0
+              try:
+                  request = urllib.request.Request(url, headers={'User-Agent': 'coh-public-byte-audit/0.13.14', 'Accept': 'application/octet-stream'})
+                  with urllib.request.urlopen(request, timeout=20) as response, destination.open('xb') as output:
+                      if response.status != 200:
+                          raise ValueError('Public release download did not return HTTP 200')
+                      while True:
+                          if time.monotonic() >= deadline:
+                              raise TimeoutError('Bounded public release download timed out')
+                          chunk = response.read(1024 * 1024)
+                          if not chunk:
+                              break
+                          count += len(chunk)
+                          if count > report['bytes']:
+                              raise ValueError('Public release exceeds the qualified APK byte count')
+                          digest.update(chunk)
+                          output.write(chunk)
+                  if count != report['bytes'] or digest.hexdigest() != report['sha256']:
+                      raise ValueError('Public release bytes differ from the qualified APK receipt')
+                  break
+              except Exception:
+                  destination.unlink(missing_ok=True)
+                  if attempt == 2:
+                      raise
+                  time.sleep(5)
+          for name in (apk_name + '.sha256', 'COH-Atlas-Gameplay-0.13.14-testing.txt'):
+              shutil.copyfile(source / name, directory / name)
+          print(json.dumps({'public_url': url, 'sha256': digest.hexdigest(), 'bytes': count}, sort_keys=True))
+          PY
+      - name: Audit public download with SDK signer payload and frozen source checks
+        run: >-
+          python3 tools/android/interactive/build_ui_beacon_apk.py audit
+          --apk out/ui-beacon-public/COH-Atlas-Gameplay-0.13.14.apk
+          --build-report out/ui-beacon-apk/ui-beacon-apk-build-report.json
+          --donor-apk out/ui-beacon-donor/COH-Atlas-Gameplay-0.13.13.apk
+          --donor-build-report out/ui-beacon-donor/evidence/reopen-startup-repair-apk-build-report.json
+          --visual-directory out/ui-beacon-visual
+          --beacon-directory out/ui-beacon-native
+          --qualification out/ui-beacon-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+      - name: Record only completed public SDK and payload audit
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(Path('out/ui-beacon-apk/ui-beacon-apk-build-report.json').read_bytes())
+          if report['repository_commit'] != os.environ['GITHUB_SHA']:
+              raise ValueError('Public audit source head differs from qualified build')
+          result = {
+              'format': 1,
+              'status': 'passed',
+              'public_url': 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.14/COH-Atlas-Gameplay-0.13.14.apk',
+              'sha256': report['sha256'],
+              'bytes': report['bytes'],
+              'repository_commit': os.environ['GITHUB_SHA'],
+              'public_bytes_verified': True,
+              'sdk_signer_payload_audit_passed': True,
+              'physical_gameplay_validated': False,
+          }
+          Path('out/ui-beacon-public-audit.json').write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+          print('COH_UI_BEACON_PUBLIC_AUDIT_V1 ' + json.dumps(result, sort_keys=True, separators=(',', ':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-ui-beacon-public-byte-audit
+          path: out/ui-beacon-public-audit.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

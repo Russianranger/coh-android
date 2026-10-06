@@ -31,9 +31,9 @@ GEOMETRY_MARKER = 'atlas-required-geometry-installed.json'
 SERVER_GEOMETRY_PROFILE = 'required_original_object_geometry'
 GEOMETRY_CACHE_POLICY = 'once_required_original_atlas_private_geobin_refresh_v1'
 # Frozen only after the hosted producer completes real generation/readback/CRC/routes.
-MANIFEST_SHA256 = 'pending_native_generation'
-ARCHIVE_SHA256 = 'pending_native_generation'
-ARCHIVE_BYTES = 0
+MANIFEST_SHA256 = 'ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4'
+ARCHIVE_SHA256 = '0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949'
+ARCHIVE_BYTES = 16150904
 STOCK_MAPSERVER_SHA256 = '6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36'
 SOURCE_COMMIT = '0b75ade0c801735e10c5798f641948a45cc50488'
 DATA_COMMIT = 'd51533ec8e6a9cf726b9214968077a05fdcf19f3'

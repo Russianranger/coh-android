@@ -2,8 +2,52 @@
 
 The October 5 physical 0.13.13 test retained level across reopen, completed
 training without a crash, and still displayed the native unbeaconized warning.
-This pass produces a genuine graph for the current Atlas world. Zoning remains
+The host has qualified a genuine graph for the current Atlas world. Zoning remains
 a later pass. The warning is not patched or hidden.
+
+## Actual hosted qualification and frozen package
+
+Run [37390562231](https://github.com/Russianranger/coh-android/actions/runs/37390562231)
+at qualification source `d856c41b586c87fd2d093eaa4d17c28d3508b66d`
+completed **successfully** on October 6 at 00:05:14 UTC. Its hosted preflight
+executed 161 tests in 29.311 seconds. The subsequent authenticated artifact
+verifier [37392459561](https://github.com/Russianranger/coh-android/actions/runs/37392459561)
+at source `72b764a0e3c9cf10028be7ccfda85d9ad59ea4c8` also succeeded, executing 57 checks in 0.438 seconds.
+
+Two new native processes independently passed: `required_geometry_cold` and
+`client_visual_reopen`. Each used all 406 required GEOs, the exact
+`039f2a761ac11c01338ec1060a8656c6a9c833dc47b294a65d4dfa90648555f8`
+common-plus-required inventory, a private geometry cache with zero derived
+geometry leaves before readback, fresh ordinary-world CRC `0xb0c21ded`,
+full graph readback and **32 successful native pathfinder routes**. Both
+reported the same 163,544 combat beacons, 163,527 connected beacons, 1,805,050
+ground connections, 2,698,868 raised connections and 602 grid blocks. The
+complete-client proof also used the frozen 10,401-file original visual/UI tree.
+
+The new report records `qualification_mode=recovered_primary_fresh_proofs`,
+`owned_roles=0`, two actual fresh verification processes, complete cleanup
+and no automatic worker spawning. Its separate `graph_origin` still records
+the original generation run as **failed**, the primary server's successful
+generation/readback, its four owned roles and original cleanup. The graph and
+native v9 sidecar bytes are unchanged from that real primary generation.
+
+| Qualified file | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `atlas-beacons.zip` | 16,150,904 | `0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949` |
+| `atlas-beacon-manifest.json` | 934,650 | `ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4` |
+
+The qualified native artifact is
+[11381731123](https://github.com/Russianranger/coh-android/actions/runs/37390562231/artifacts/11381731123)
+(33,402,802 bytes, outer ZIP SHA-256
+`c077f5cd6b231e6c6cc52af31e93ef9400d71bedd7754aee9946e6d00f4b4f8b`).
+The independent verification artifact is
+[11381776802](https://github.com/Russianranger/coh-android/actions/runs/37392459561/artifacts/11381776802)
+(7,750 bytes, SHA-256
+`c14a095a5db87289244ca7ac03c46f09a27f6db2d33d523d99f8c80bc426444c`).
+These actual artifacts establish native compatibility; physical UI restoration,
+NPC pursuit/pathing, startup phases and device warm reuse still require the next
+AYN Thor test. APK qualification/publication is recorded separately from these
+targeted host checks.
 
 ## Required geometry and recovered primary output
 
@@ -63,9 +107,8 @@ original four owned roles and cleanup) from the new proof-only qualification
 commit and its two owned readback processes. Current `owned_roles=0` means
 no new generation roles; it does not waive original generation containment.
 The original producer implementation is pinned separately from the current
-qualifier. New successful native proofs and package pins are still required
-before APK publication. These are reviewable recovery gates, not completed
-device acceptance.
+qualifier. The actual new successful proofs and exact package pins are recorded
+above. These completed host gates do not certify device acceptance.
 
 ## Earlier native proof checkpoint on October 5
 
@@ -111,8 +154,8 @@ before CRC validation, and also when a native qualification guard fails after
 writing them. It records the actual server exit status and never rewrites the
 native sidecar. Owned-role progress emits bounded ASCII heartbeat lines every
 60 seconds. These diagnostics supply neither profile proof nor publication
-approval. The next actual native run and both fresh profiles still gate the
-APK.
+approval. The later source-312 run completed genuine primary generation,
+and the successful source-d856 qualification completed both required profiles.
 
 ## Native producer and qualification
 
@@ -249,8 +292,8 @@ source receipt requires a fresh compile, then new graph/readback/CRC/route proof
 ## Private installation and startup
 
 `android/guest/atlas_beacon_package.py` accepts only the frozen qualified graph
-and v9 sidecar. Its published SHA-256 constants remain pending until a real
-hosted generation succeeds. The installer requires the retained gameplay
+and v9 sidecar. The 0.13.14 package freezes the archive and manifest identities
+recorded above from the actual successful qualification and independent verifier. The installer requires the retained gameplay
 MapServer and the already qualified readonly private world. It hashes the
 physical collision/group/Atlas/trick inputs on the first successful install.
 Legacy server caching could retain a bare base/world mirror after the client
@@ -340,14 +383,20 @@ and source restaging. Guest cases also cover a prior receipt without refresh,
 linked private caches, invalid deletion history, the real 521-player/406-object
 GEO partition and refusal of an extra object GEO. Real filesystem fixtures
 retain mixed imported directory case, exact leaf names, ambiguous source aliases
-and graph target aliases. These updated guest/profile fixtures are source
-reviewed; their hosted execution and both actual native schema-3 profile proofs
-remain pending. Synthetic fixtures supply neither native nor physical proof.
+and graph target aliases. All seven affected host modules executed in the actual
+161-test preflight, including the updated guest/profile/cache fixtures. The
+one contract method reading the then-uncommitted final APK workflow was excluded
+explicitly; it must run in the final complete APK qualification. The separate
+57-check verifier and both actual native schema-3 profile proofs also passed.
+These targeted checks do not substitute for the complete 68-suite APK
+qualification. Synthetic fixtures supply neither native nor physical proof.
 
 After publication, install the next APK over the current app and reopen the
 saved THORHERO. Record setup/preparation, local Atlas, client, login and world
-entry separately. Observe whether the native unbeaconized warning disappears,
-then test normal NPC pursuit/pathing around nearby obstacles while retaining
+entry separately. Check tips, enhancements, power/training panes, selection
+controls and the white boxes below NPC names. Observe whether the native
+unbeaconized warning disappears, then test normal NPC pursuit/pathing around
+nearby obstacles while retaining
 combat, movement and targeting. Save normally, finish/export, reopen and verify
 level/XP/powers plus graph reuse. Inspect the exported native log and
 `atlas_beacon_graph` receipt before accepting beaconization or a startup claim.

@@ -18,9 +18,12 @@ Zoning is reserved for the next pass.
    Wine/FEX, client initialization, login and world entry can be compared.
    The last captured 0.13.13 warm run was Atlas 3:30.356 and actual client 3:08.310;
    your stopwatch observation was about 3:03 for the client and nine minutes to
-   login. The first new graph preparation checks collision inputs; later valid
-   reuse should avoid graph archive decoding and input payload hashing. The
-   exported beacon receipt records server_geometry_profile and preparation time.
+   login. The first update verifies 406 required original collision GEOs and
+   refreshes only their affected private Atlas/model caches once. Compare the
+   second warm reopen separately: valid reuse should avoid cache removal, graph
+   archive decoding and input payload hashing. The exported atlas_required_geometry
+   receipt records this refresh and preparation time; the beacon receipt records
+   server_geometry_profile and its separate preparation time.
 
 2. Confirm the retained level, XP, costume and purchased powers, including Aimed
    Shot. Open a help tip. Inspect inspiration icons, power icons, enhancement

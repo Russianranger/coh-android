@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep and authentic required-geometry native qualification passed. Final artifact pin verification is next; no 0.13.14 APK is published.**
+**UI sweep, two genuine native beacon proofs and independent graph pin verification passed. Full 0.13.14 / code 29 qualification and publication are next; no APK is published yet.**
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
@@ -66,13 +66,22 @@ The generated graph ZIP is 16,150,904 bytes, SHA-256
 `0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949`.
 Artifact **11381885926** separately retains original-host evidence (33,542,063
 bytes; SHA-256 `24702896eefbb7b72ec07ee0f0bfda5dd160e63be675179514b4461310505e19`).
-The read-only verifier is now frozen to this actual successful run/source and
-must emit the final manifest/archive pins before guest constants are frozen.
+Read-only verifier [37392459561](https://github.com/Russianranger/coh-android/actions/runs/37392459561)
+at source `72b764a0e3c9cf10028be7ccfda85d9ad59ea4c8` completed **SUCCESS**,
+including all **57 routing tests in 0.438 seconds**. Its cloud receipt confirms
+the actual original FAILED source, original four-role generation, new owned roles
+0, two fresh native processes, both required-geometry proofs, empty owned geometry
+caches, exact full 10,401-leaf visual layout and unchanged source/graph/date pins.
+The manifest is 934,650 bytes, SHA-256
+`ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4`.
+Guest archive size/hash and manifest hash are now frozen to these actual outputs.
+Verification artifact **11381776802** is 7,750 bytes, SHA-256
+`c14a095a5db87289244ca7ac03c46f09a27f6db2d33d523d99f8c80bc426444c`.
 First verifier run 37392236344 stopped in its routing precheck: default shallow
 checkout omitted HEAD^ required by the actual-change-set test (git exit 128).
-Its artifact download passed; the pin-check step did not run. The verifier now
-fetches two commits and reruns all 57 routing tests without skips. Native proofs
-and generation inputs are unchanged; final guest pins/publication remain held. Preflight includes source/recovery,
+Its artifact download passed; the pin-check step did not run. Fetching two commits
+fixed this setup error, and the retry above passed every precheck and native pin
+gate without skips. Native generation inputs and C/MapServer are unchanged. Preflight includes source/recovery,
 guest, actual production runtime, packaging, finite change classifier and all 26
 server-cache reuse fixtures. Only the exact future full-publication workflow test
 is held while the preparation workflow remains active; final qualification must
@@ -82,8 +91,14 @@ The successful UI preparation remains run 37379767112 at source
 `52da9286c2fd1695c6c0c2979378fc418c418c99`, artifact 11373610942.
 It adds 788 exact original UI resources while preserving all 9,613 prior encoded
 streams. Do not rebuild this accepted artifact unnecessarily. Graph guest pins
-remain pending final independent artifact verification; the full publisher is
-held until those exact verified pins are committed. Main is unchanged, PR #1 stays draft, and zoning is later.
+are frozen to verified native outputs. The full publisher is enabled with actual
+successful native recovery run 37390562231/source d856c41 and frozen successful
+UI preparation 37379767112/source 52da928. The final full-workflow test is restored;
+all 68 suites must pass with no skips and seven real PostgreSQL fixtures before
+SDK build/signing, publication and full public-download audit. Candidate identity
+is **0.13.14 / code 29**, unchanged app ID and signer. Payload boundary remains
+65 donor-identical assets + 7 reviewed replacements + 3 additions. Physical UI,
+NPC pursuit, saved-character reopen and new phase timing acceptance are pending. Main is unchanged, PR #1 stays draft, and zoning is later.
 
 Earlier pending-run checkpoint follows; its pending/optional-profile statements are historical.
 

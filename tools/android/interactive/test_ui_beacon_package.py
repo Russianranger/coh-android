@@ -321,28 +321,58 @@ class UiBeaconPackagingTests(unittest.TestCase):
 
     def test_workflow_uses_native_generation_and_exact_donor_then_sdk_identity_checks(self):
         source = (package.ROOT/package.WORKFLOW).read_text()
-        for expected in ('run-id: 37324515114', 'C:/bcn-src', '--work C:/bcn-run', '--target MapServer', '--timeout-seconds 5400',
-                'generate_atlas_beacons.py', 'reference-inputs-receipt.json', 'COH_ATLAS_BEACON_REUSE_RUN_ID',
+        for expected in ('run-id: 37324515114', 'generate_atlas_beacons.py',
+                'COH_ATLAS_BEACON_REUSE_RUN_ID', 'COH_ATLAS_BEACON_REUSE_COMMIT',
                 '35.0.0', 'android-35/android.jar', 'coh-client-interactive.jks', package.APK_NAME):
             self.assertIn(expected, source)
+        run_pin = source.split("  COH_ATLAS_BEACON_REUSE_RUN_ID: '", 1)[1].split("'", 1)[0]
+        commit_pin = source.split("  COH_ATLAS_BEACON_REUSE_COMMIT: '", 1)[1].split("'", 1)[0]
+        self.assertGreater(int(run_pin), 0)
+        self.assertNotEqual(run_pin, '37377053417')
+        self.assertEqual(len(commit_pin), 40)
+        self.assertTrue(all(value in '0123456789abcdef' for value in commit_pin))
+        self.assertNotEqual(commit_pin, '3124723b93b4ae83b211f9319ffa8d6d8a3e851d')
         native_job = source.split('  beacons:\n', 1)[1].split('  qualify:\n', 1)[0]
+        self.assertIn('runs-on: ubuntu-24.04', native_job)
+        self.assertIn('contents: read', native_job)
+        self.assertNotIn('contents: write', native_job)
         self.assertLess(native_job.index('core.autocrlf false'), native_job.index('actions/checkout@'))
-        self.assertIn('actions/setup-java@v4', native_job)
-        self.assertIn("java-version: '17'", native_job)
-        self.assertIn('Collect host build and role evidence on the repository drive', native_job)
-        self.assertIn('Copy-Item -LiteralPath $entry.source', native_job)
-        evidence_upload = native_job.split('name: coh-ui-beacon-generation-evidence', 1)[1]
-        self.assertNotIn('C:/', evidence_upload)
-        self.assertIn('out/ui-beacon-native/evidence/', evidence_upload)
-        self.assertIn('host-only-beacon-generator.pdb', native_job)
-        self.assertIn('native-internal', native_job)
-        self.assertIn('$count -ge 128', native_job)
-        self.assertIn('$total + $file.Length -gt 268435456', native_job)
-        self.assertIn('Verify successful native reuse against current producers world and frozen guest pins', native_job)
-        self.assertIn("producer.validate_package(directory, os.environ['GITHUB_SHA'])", native_job)
-        self.assertIn("report['repository_commit'] != run['head_sha']", native_job)
-        self.assertIn("guest.read_manifest(directory / 'atlas-beacon-manifest.json')", native_job)
-        self.assertIn("guest.ARCHIVE_SHA256", native_job)
+        self.assertLess(native_job.index('Validate exact successful fresh-proof run before downloading its artifact'),
+            native_job.index('actions/download-artifact@'))
+        for expected in ("run['conclusion'] != 'success'", "run['head_sha'] != expected_commit",
+                "run['path'] != '.github/workflows/android-atlas-beacon-generation.yml'",
+                'Verify successful native recovery proof against current producers world and frozen guest pins',
+                "producer.validate_package(directory, os.environ['GITHUB_SHA'])",
+                "report['repository_commit'] != run['head_sha']", 'producer.validate_recovered_origin',
+                "report['qualification_mode'] != 'recovered_primary_fresh_proofs'",
+                "report['owned_roles'] != 0", "origin['original_run_conclusion'] != 'failure'",
+                "origin['primary_generation_server_returncode'] != 0", "origin['original_owned_roles'] != 4",
+                "{'required_geometry_cold', 'client_visual_reopen'}",
+                "manifest['required_geometry_files']", 'guest.REQUIRED_GEOMETRY_SHA256',
+                "guest.read_manifest(directory / 'atlas-beacon-manifest.json')",
+                'guest.ARCHIVE_SHA256', "sys.path.insert(0, str(Path('android/guest').resolve()))"):
+            self.assertIn(expected, native_job)
+        self.assertLess(native_job.index('producer.validate_recovered_origin'), native_job.index('actions/upload-artifact@'))
+        for obsolete in ('--target MapServer', 'C:/bcn-', 'optional_input_files',
+                "'base_world'", "'base_world_visual'", "COH_ATLAS_BEACON_REUSE_RUN_ID == '0'"):
+            self.assertNotIn(obsolete, native_job)
+        ui_job = source.split('  ui:\n', 1)[1].split('  beacons:\n', 1)[0]
+        for expected in ('COH_UI_PREPARATION_REUSE_RUN_ID', 'COH_UI_PREPARATION_REUSE_COMMIT',
+                "run['head_sha'] != expected_commit", "run['name'] != 'Prepare original UI payload only'",
+                '859075775', '5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60',
+                '48591999', '8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2',
+                'Extract exact working visual baseline', 'prepare_client_ui_sweep_assets.py --materialize'):
+            self.assertIn(expected, ui_job)
+        self.assertIn("COH_UI_PREPARATION_REUSE_RUN_ID == '0'", ui_job)
+        self.assertIn("COH_UI_PREPARATION_REUSE_RUN_ID != '0'", ui_job)
+        self.assertLess(ui_job.index('Validate completed successful original UI preparation provenance'),
+            ui_job.index('Gate exact frozen original UI payload bytes before artifact upload'))
+        self.assertLess(ui_job.index('Gate exact frozen original UI payload bytes before artifact upload'),
+            ui_job.index('actions/upload-artifact@'))
+        qualify_job = source.split('  qualify:\n', 1)[1].split('  apk:\n', 1)[0]
+        for required in ("COH_REQUIRE_STARTUP_BUNDLE_PG: '1'", "COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'",
+                'postgres:16', 'qualify_ui_beacon.py', '--beacon-directory out/ui-beacon-native'):
+            self.assertIn(required, qualify_job)
         self.assertIn('timeout-minutes: 10', source)
         self.assertIn('for attempt in range(3):', source)
         self.assertIn('time.monotonic() + 160', source)
