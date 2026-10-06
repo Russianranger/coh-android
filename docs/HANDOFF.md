@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep is prepared. Required-geometry checkpoint passed 161 targeted tests; authentic native recovery qualification is running. No 0.13.14 APK is published.**
+**UI sweep and authentic required-geometry native qualification passed. Final artifact pin verification is next; no 0.13.14 APK is published.**
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
@@ -46,7 +46,7 @@ successful compile, artifact 11379217768 (33,296,543 bytes; SHA-256
 original source/build receipts, exact retained executable and primary native proof.
 It then runs two new, source-bound fresh geometry proofs. Original four-role
 generation and new qualification remain separate; no recompilation or repeated
-77-minute generation fallback occurs. The retained graph is still unqualified:
+77-minute generation fallback occurs. The original graph bytes, now qualified by the two fresh layouts, are:
 39,069,559 bytes, SHA-256
 `6a3c9a6661a07cc3aec3a11baa9ca29395cc9b64d783b21e58282b2eb20845f8`;
 date is 12 bytes, SHA-256
@@ -56,9 +56,18 @@ Source review of recovery, finite cache refresh, fixtures and launch order passe
 Actual recovery run [37390562231](https://github.com/Russianranger/coh-android/actions/runs/37390562231)
 at source `d856c41b586c87fd2d093eaa4d17c28d3508b66d` passed the exact donor
 audit and **161 targeted tests in 29.311 seconds** (job 112034358727).
-The Windows recovery/readback job 112034867969 is running; new native graph
-qualification remains pending. This documentation checkpoint changes no native
-input or qualification source and must not restart the active lane. Preflight includes source/recovery,
+Windows recovery/readback job **112034867969** and the overall run completed
+**SUCCESS at 2026-10-06 00:05:14 UTC**. The actual native witness confirms
+CRC `0xb0c21ded`, all recorded graph counts, version-9 date, full readback and
+32 routes in each fresh required-geometry layout. No current compile or repeated
+generation occurred. Native artifact **11381731123** is 33,402,802 bytes,
+outer SHA-256 `c077f5cd6b231e6c6cc52af31e93ef9400d71bedd7754aee9946e6d00f4b4f8b`.
+The generated graph ZIP is 16,150,904 bytes, SHA-256
+`0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949`.
+Artifact **11381885926** separately retains original-host evidence (33,542,063
+bytes; SHA-256 `24702896eefbb7b72ec07ee0f0bfda5dd160e63be675179514b4461310505e19`).
+The read-only verifier is now frozen to this actual successful run/source and
+must emit the final manifest/archive pins before guest constants are frozen. Preflight includes source/recovery,
 guest, actual production runtime, packaging, finite change classifier and all 26
 server-cache reuse fixtures. Only the exact future full-publication workflow test
 is held while the preparation workflow remains active; final qualification must
@@ -68,8 +77,8 @@ The successful UI preparation remains run 37379767112 at source
 `52da9286c2fd1695c6c0c2979378fc418c418c99`, artifact 11373610942.
 It adds 788 exact original UI resources while preserving all 9,613 prior encoded
 streams. Do not rebuild this accepted artifact unnecessarily. Graph guest pins
-remain pending; full verifier/publisher workflows remain held until actual fresh
-proof succeeds. Main is unchanged, PR #1 stays draft, and zoning is later.
+remain pending final independent artifact verification; the full publisher is
+held until those exact verified pins are committed. Main is unchanged, PR #1 stays draft, and zoning is later.
 
 Earlier pending-run checkpoint follows; its pending/optional-profile statements are historical.
 

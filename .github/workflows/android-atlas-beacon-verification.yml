@@ -1,128 +1,147 @@
-name: Audit failed Atlas native generation evidence
+name: Verify authentic recovered Atlas native beacon artifact
 on:
   push:
     branches: [codex/character-persistence-continuation]
-    paths: [.github/workflows/android-atlas-beacon-verification.yml]
+    paths:
+      - .github/workflows/android-atlas-beacon-verification.yml
 permissions:
   contents: read
   actions: read
 concurrency:
   group: android-atlas-beacon-native-verification
   cancel-in-progress: false
+env:
+  # Frozen only after the new proof-only run succeeds; the failed origin is separate.
+  COH_ATLAS_BEACON_REUSE_RUN_ID: '37390562231'
+  COH_ATLAS_BEACON_REUSE_COMMIT: 'd856c41b586c87fd2d093eaa4d17c28d3508b66d'
 jobs:
-  failure_evidence:
+  verify:
     if: github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
+      - name: Preserve exact generation source bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
-          name: coh-ui-beacon-generation-evidence
-          path: out/native-failure
-          run-id: 37377053417
+          name: coh-ui-beacon-native
+          path: out/ui-beacon-native
+          run-id: ${{ env.COH_ATLAS_BEACON_REUSE_RUN_ID }}
           github-token: ${{ github.token }}
-      - name: Bind failed run provenance and inspect bounded native witnesses
+      - name: Verify known host-only checkpoint routing and retained fail-closed boundaries
+        run: python3 -m unittest discover -s tools/android/interactive -p 'test_classify_*change.py' -q
+      - name: Verify actual native graph evidence and print exact frozen inputs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import hashlib, json, os, re, urllib.request
+          import hashlib
+          import json
+          import os
           from pathlib import Path
-          repo = 'Russianranger/coh-android'
-          run_id = 37377053417
-          artifact_id = 11379217768
-          head = '3124723b93b4ae83b211f9319ffa8d6d8a3e851d'
-          def get(path):
-              request = urllib.request.Request('https://api.github.com/repos/' + repo + path,
-                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  return json.load(response)
-          run = get('/actions/runs/' + str(run_id))
-          artifact = get('/actions/artifacts/' + str(artifact_id))
-          assert run['status'] == 'completed' and run['conclusion'] == 'failure' and run['head_sha'] == head
-          assert artifact['id'] == artifact_id and artifact['name'] == 'coh-ui-beacon-generation-evidence'
-          assert artifact['workflow_run']['id'] == run_id and artifact['workflow_run']['head_sha'] == head
-          assert not artifact['expired'] and artifact['size_in_bytes'] == 33296543
-          assert artifact['digest'] == 'sha256:a23fe422656874009013f56bc8a41a243a0511afb1d4fcb828196c03054731a4'
-          root = Path('out/native-failure')
-          files = sorted(path for path in root.rglob('*') if path.is_file())
-          assert len(files) <= 128 and sum(path.stat().st_size for path in files) <= 268435456
-          pins = {}
-          for path in files:
-              assert not path.is_symlink()
-              raw = path.read_bytes()
-              pins[path.relative_to(root).as_posix()] = {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
-          roles = {}
-          for role in ('master', 'server', 'sentry', 'worker', 'base_world'):
-              path = root / 'evidence' / (role + '.log')
-              if not path.is_file():
-                  print('COH_ATLAS_FAILURE_ROLE_MISSING ' + role)
-                  continue
-              raw = path.read_bytes()
-              text = raw.decode('utf-8', errors='replace')
-              markers = re.findall(r'COH_ATLAS_BEACON_NATIVE_V1 [^\r\n]+', text)
-              roles[role] = {'file': pins[path.relative_to(root).as_posix()], 'native_witnesses': markers,
-                  'tail': text[-4096:]}
-              print('COH_ATLAS_FAILURE_ROLE ' + role + ' bytes=' + str(len(raw)))
-              for marker in markers:
-                  print(marker)
-              crc_lines = [line[:512] for line in text.splitlines() if re.search(r'CRC|Max Height|Total triangles|Basic Beacons|Legal Beacons|Traffic Beacons|Newest Data Time|Reading beacon file|File size', line, re.I)][-40:]
-              roles[role]['crc_lines'] = crc_lines
-              for line in crc_lines:
-                  print('COH_ATLAS_FAILURE_CRC_LINE ' + role + ' ' + line.encode('ascii', errors='backslashreplace').decode())
-              print(text[-4096:].encode('ascii', errors='backslashreplace').decode())
-          cache = root / 'evidence' / 'CMakeCache.txt'
-          if cache.is_file():
-              flag_lines = [line[:512] for line in cache.read_text(errors='replace').splitlines() if re.search(r'FLAGS_(OPTDEBUG|RELEASE|DEBUG|RELWITHDEBINFO)|BUILD_TYPE|CONFIGURATION_TYPES', line)][:24]
-              print('COH_ATLAS_FAILURE_COMPILER_FLAGS ' + json.dumps(flag_lines))
-          result = {'format': 1, 'status': 'failure_evidence_only_no_graph_qualification',
-              'run_id': run_id, 'source_commit': head, 'artifact_id': artifact_id,
-              'artifact_zip_sha256': artifact['digest'], 'files': pins, 'roles': roles}
-          from collections import Counter
-          blocks = {}
-          for role in ('server', 'base_world'):
-              path = root / 'evidence' / (role + '.log')
-              text = path.read_bytes().decode('utf-8', errors='replace')
-              starts = list(re.finditer(r'Calculating[^\r\n]*CRC[^\r\n]*Full\s*Info', text, re.I))
-              assert starts, 'No full ordinary-world CRC block: ' + role
-              start = starts[-1].start()
-              done = re.search(r'Done!\s*\(CRC=0x([0-9a-fA-F]{8}),\s*EncounterPositions=(\d+)\)', text[start:])
-              assert done, 'No completed full ordinary-world CRC block: ' + role
-              block = text[start:start + done.end()]
-              rows = [(int(m.group(1)), int(m.group(2)), int(m.group(3)), m.group(4))
-                  for m in re.finditer(r'^\s*(\d+),\s*(\d+),\s*(\d+):\s*([^\r\n]+?)\s*$', block, re.M)]
-              assert rows, 'No native model rows: ' + role
-              summary = [line[:512] for line in block.splitlines()
-                  if re.search(r'Max.?Height|Total.?triangles|Basic.?Beacons|Legal.?Beacons|Traffic.?Beacons|EncounterPositions', line, re.I)]
-              blocks[role] = {'crc': '0x' + done.group(1).lower(),
-                  'encounter_positions': int(done.group(2)), 'model_rows': rows,
-                  'summary': summary, 'block_bytes': len(block.encode('utf-8'))}
-              print('COH_ATLAS_REQUIRED_GEOMETRY_BLOCK ' + json.dumps(
-                  {k:v for k,v in blocks[role].items() if k != 'model_rows'}, sort_keys=True))
-          full, cold = Counter(map(tuple, blocks['server']['model_rows'])), Counter(map(tuple, blocks['base_world']['model_rows']))
-          only_full, only_cold = list((full - cold).elements()), list((cold - full).elements())
-          result['ordinary_world_model_comparison'] = {'full': blocks['server'], 'bare': blocks['base_world'],
-              'full_only_rows': only_full, 'bare_only_rows': only_cold}
-          print('COH_ATLAS_REQUIRED_GEOMETRY_MODEL_DELTA ' + json.dumps({
-              'full_rows': sum(full.values()), 'bare_rows': sum(cold.values()),
-              'full_only_count': len(only_full), 'bare_only_count': len(only_cold),
-              'full_only_first32': only_full[:32], 'bare_only_first32': only_cold[:32]}, sort_keys=True))
-          build = root / 'evidence' / 'atlas-beacon-generator-build-input.json'
-          assert build.is_file(), 'Original host build receipt missing'
-          result['original_host_build_input'] = json.loads(build.read_bytes())
-          print('COH_ATLAS_REQUIRED_GEOMETRY_BUILD_RECEIPT_KEYS ' + json.dumps(sorted(result['original_host_build_input'])))
-          print('COH_ATLAS_REQUIRED_GEOMETRY_GRAPH_PINS ' + json.dumps(
-              {name:pin for name,pin in pins.items()
-               if name.endswith(('.bcn', '.date')) or name.endswith('host-only-beacon-generator.exe')
-                   or name.endswith('atlas-beacon-generator-build-input.json')}, sort_keys=True))
-          target = Path('out/atlas-native-failure-forensic.json')
+          import sys
+          import urllib.request
+
+          sys.path[:0] = ['tools/android/interactive', 'tools', 'android/guest']
+          import generate_atlas_beacons as producer
+          import atlas_beacon_package as guest
+
+          run_id = int(os.environ['COH_ATLAS_BEACON_REUSE_RUN_ID'])
+          native_commit = os.environ['COH_ATLAS_BEACON_REUSE_COMMIT']
+          producer.require(run_id > 0 and len(native_commit) == 40
+              and all(value in '0123456789abcdef' for value in native_commit),
+              'An exact successful proof-only follow-up run and source commit are required')
+          request = urllib.request.Request(
+              f'https://api.github.com/repos/Russianranger/coh-android/actions/runs/{run_id}',
+              headers={'Accept': 'application/vnd.github+json',
+                       'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                       'X-GitHub-Api-Version': '2022-11-28'})
+          with urllib.request.urlopen(request, timeout=30) as response:
+              run = json.loads(response.read(4 * 1024 * 1024))
+          producer.require(run.get('id') == run_id and run.get('status') == 'completed'
+              and run.get('conclusion') == 'success' and run.get('head_sha') == native_commit
+              and run.get('head_branch') == 'codex/character-persistence-continuation'
+              and run.get('path') == '.github/workflows/android-atlas-beacon-generation.yml',
+              'Exact standalone native recovery qualification run is not successful')
+
+          directory = Path('out/ui-beacon-native')
+          manifest = producer.validate_package(directory, os.environ['GITHUB_SHA'])
+          report = json.loads((directory / producer.REPORT).read_bytes())
+          producer.require(report['repository_commit'] == native_commit
+              and report['native'] == manifest['native'],
+              'Native artifact provenance differs from the successful proof-only run')
+          identity = manifest['input_identity']
+          producer.require(manifest['source_commit'] == guest.SOURCE_COMMIT
+              and manifest['data_commit'] == guest.DATA_COMMIT
+              and manifest['stock_mapserver_sha256'] == guest.STOCK_MAPSERVER_SHA256
+              and identity['asset_archive'] == guest.BASE_ARCHIVE
+              and identity['world_manifest']['sha256'] == guest.WORLD_MANIFEST_SHA256
+              and identity['visual_source_manifest'] == guest.VISUAL_SOURCE_MANIFEST
+              and identity['visual_geometry_sha256'] == guest.VISUAL_GEOMETRY_SHA256
+              and identity['visual_object_geometry_sha256'] == guest.VISUAL_OBJECT_GEOMETRY_SHA256
+              and identity['required_geometry_sha256'] == guest.REQUIRED_GEOMETRY_SHA256
+              and hashlib.sha256(producer.canonical(manifest['required_geometry_files'])).hexdigest()
+                  == guest.REQUIRED_GEOMETRY_SHA256,
+              'Native artifact does not match the retained exact world and original visual donors')
+          mirror = report['cold_mirror']
+          origin = producer.validate_recovered_origin(report['graph_origin'], directory,
+              report['build_input'], report['generator'])
+          producer.require(report['format'] == manifest['format'] == 3
+              and report['cleanup_complete'] is True and report['owned_roles'] == 0
+              and report['qualification_mode'] == 'recovered_primary_fresh_proofs'
+              and report['native_worker_spawning_allowed'] is False
+              and report['profile_verification_processes'] == 2
+              and mirror['required_geometry_installed_before_mirror'] is True
+              and mirror['created_before_full_visual_overlay_and_readback'] is True
+              and mirror['readonly_inputs_hardlinked'] is True
+              and mirror['private_cache_roots'] == ['data/bin', 'data/geobin', 'data/server'],
+              'Native proof-only roles or fresh isolated profile proof is incomplete')
+          producer.require(set(manifest['input_profiles']) == {'required_geometry_cold', 'client_visual_reopen'}
+              and report['profile_proofs'] == manifest['input_profiles']
+              and manifest['native'] == origin['native']
+              and manifest['native']['native_pathfinder_successes'] == 32
+              and manifest['native']['native_full_graph_readback_verified'] is True
+              and manifest['native']['fresh_ordinary_world_crc_verified'] is True,
+              'Both actual required-geometry native CRC/readback/path proofs are required')
+
+          result = {
+              'format': 2, 'status': 'passed',
+              'verification_repository_commit': os.environ['GITHUB_SHA'],
+              'qualification_repository_commit': report['repository_commit'],
+              'original_generation_repository_commit': origin['source']['repository_commit'],
+              'qualification_run': {'id': run_id, 'head_sha': run['head_sha'],
+                  'status': run['status'], 'conclusion': run['conclusion'],
+                  'path': run['path']},
+              'archive': producer.pin(directory / producer.ARCHIVE),
+              'manifest': producer.pin(directory / producer.MANIFEST),
+              'generation_report': producer.pin(directory / producer.REPORT),
+              'native': manifest['native'], 'input_profiles': manifest['input_profiles'],
+              'input_identity': identity,
+              'common_input_files': len(manifest['input_files']),
+              'required_geometry_files': len(manifest['required_geometry_files']),
+              'graph_files': manifest['files'],
+              'generation_sources': report['generation_sources'],
+              'build_input_sha256': hashlib.sha256(producer.canonical(report['build_input'])).hexdigest(),
+              'cleanup_complete': True, 'owned_roles': 0,
+              'qualification_mode': report['qualification_mode'],
+              'graph_origin': origin,
+              'qualification_visual': report['qualification_visual'],
+              'profile_cache_isolation': report['profile_cache_isolation'],
+              'native_worker_spawning_allowed': False,
+              'profile_verification_processes': 2,
+              'physical_npc_pathing_validated': False,
+          }
+          target = Path('out/atlas-beacon-cloud-verification.json')
+          target.parent.mkdir(parents=True, exist_ok=True)
           target.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
-          print('COH_ATLAS_FAILURE_FILE_PINS ' + json.dumps(pins, sort_keys=True))
-          print('COH_ATLAS_FAILURE_GRAPH_CAPTURED ' + str(any(name.endswith(('.beacon', '.date')) for name in pins)))
+          print('COH_ATLAS_BEACON_CLOUD_VERIFICATION_V1 ' + producer.canonical(result).decode())
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: coh-atlas-beacon-failure-forensic
-          path: out/atlas-native-failure-forensic.json
+          name: coh-atlas-beacon-cloud-verification
+          path: out/atlas-beacon-cloud-verification.json
           if-no-files-found: error
           retention-days: 90
