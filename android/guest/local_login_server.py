@@ -227,7 +227,10 @@ class LocalLoginServer:
             + ';SSLmode=disable;ByteaAsLongVarBinary=0;UseServerSidePrepare=0;')
         self.ctx.passed(**driver)
         self.ctx.stage('local_dbserver_startup')
+        preparation_at = time.monotonic()
         self.prepare_runtime()
+        preparation_done = time.monotonic()
+        preparation_seconds = round(preparation_done - preparation_at, 6)
         config = self.runtime / 'data/server/db/servers.cfg'
         base.private_write(config, game.game_config(config.read_text(), DATABASE, connection))
         self.config = config
@@ -237,6 +240,7 @@ class LocalLoginServer:
         environment = dict(d.wine_env, COH_WINE_DB_FIXED_INPUTS='1', COH_WINE_DB_LOOPBACK_ONLY='1',
                            COH_WINE_DB_PROGRESS=base.windows_path(self.progress_path))
         environment = self.dbserver_environment(environment)
+        launch_utc, launch_at = base.utc(), time.monotonic()
         self.process = self.ctx.start('local-dbserver', ['/usr/bin/env', '--chdir=' + str(self.runtime), d.args.wine,
             base.windows_path(self.runtime / 'DbServer.exe'), '-start', '0'], env=environment)
         self.ctx.report['server_started'] = True
@@ -260,10 +264,19 @@ class LocalLoginServer:
                 self.ctx.event('stage', status='running', message='Preparing local City of Heroes server')
                 next_progress = time.monotonic() + 5
             time.sleep(.2)
+        native_dispatch_seconds = round(time.monotonic() - launch_at, 6)
+        snapshot_at = time.monotonic()
         snapshot = self.schema_snapshot()
+        timing = {'runtime_preparation_seconds': preparation_seconds,
+                  'runtime_configuration_seconds': round(launch_at - preparation_done, 6),
+                  'native_launch_started_utc': launch_utc,
+                  'native_dispatch_ready_seconds': native_dispatch_seconds,
+                  'schema_snapshot_seconds': round(time.monotonic() - snapshot_at, 6),
+                  'runtime_preparation_phase_seconds': dict(getattr(self, 'creation_report', {}).get(
+                      'server_preparation_phase_seconds', {}))}
         self.report.update(server_ready=True, fixed_inputs=fixed, loopback_only=loopback,
-                           dispatch_progress=progress, schema=snapshot)
-        self.ctx.passed(local_dbserver_ready=True, mapserver_started=False, **snapshot)
+                           dispatch_progress=progress, schema=snapshot, startup_timing=timing)
+        self.ctx.passed(local_dbserver_ready=True, mapserver_started=False, startup_timing=timing, **snapshot)
         self.ctx.event('local_server_ready', session_id=d.args.session_id, profile=PROFILE, account=ACCOUNT)
 
     def dbserver_environment(self, environment):

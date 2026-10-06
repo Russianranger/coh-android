@@ -425,11 +425,46 @@ ALLOWED = STORAGE_SOURCES | RECOVERY_SOURCES | frozenset({
 })
 
 
+# Exact guest-only performance scope. A mixed native/asset change falls back to
+# historical full qualification; only an immediate-parent push may skip it.
+PERFORMANCE_SOURCES = frozenset({
+    '.github/workflows/android-thor-performance.yml',
+    'tools/android/interactive/build_thor_performance_apk.py',
+    'tools/android/interactive/qualify_thor_performance.py',
+    'tools/android/interactive/test_thor_performance_package.py',
+    'tools/android/interactive/analyze_thor_performance.py',
+    'tools/android/interactive/test_thor_performance_report.py',
+    'tools/android/interactive/test_character_readiness.py',
+    'tools/android/interactive/test_character_server.py',
+    'tools/android/interactive/test_character_map_data.py',
+    'tools/android/interactive/test_server_worktree_reuse.py',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/local_character_server.py',
+    'android/guest/local_login_server.py',
+    'android/guest/character_server_data_cache.py',
+})
+PERFORMANCE_ALLOWED = PERFORMANCE_SOURCES | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/HANDOFF.md', 'docs/COH-PERFORMANCE-0.13.15.md',
+    'docs/COH-Atlas-Gameplay-0.13.15-testing.txt',
+    'docs/android-evidence/performance-0.13.14-thor-20261006.json',
+    'docs/android-evidence/performance-0.13.15-publication.json',
+})
+
+
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0'*40 and before == parent and head != before
         and names and set(names) <= allowed)
+
+
+def performance_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, PERFORMANCE_ALLOWED)
+        and set(names) & PERFORMANCE_SOURCES)
 
 
 def startup_push(event, before, head, parent, names):
@@ -496,6 +531,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not ui_beacon_docs(event, before, head, parent, names)
 
 
@@ -511,6 +547,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (reopen_startup_repair_docs(event, before, head, parent, names)
         or ui_beacon_push(event, before, head, parent, names))
 
@@ -524,6 +561,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & (STORAGE_SOURCES | RECOVERY_SOURCES))
         or startup_push(event, before, head, parent, names)
@@ -539,6 +577,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     """Keep historical 0.13.1 publication out of a qualified recovery derivative."""
     return not ((bounded_push(event, before, head, parent, names)
         and set(names) & RECOVERY_SOURCES) or startup_push(event, before, head, parent, names)
@@ -554,6 +593,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     """The newer source-bound startup derivative owns only its explicit scope."""
     return not (startup_push(event, before, head, parent, names) or receipt_push(event, before, head, parent, names)
         or setup_push(event, before, head, parent, names)
@@ -567,6 +607,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
     return not (setup_push(event, before, head, parent, names) or bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
@@ -578,6 +619,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
         or client_loading_push(event, before, head, parent, names)
@@ -588,6 +630,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (bundle_push(event, before, head, parent, names)
         or visual_push(event, before, head, parent, names)
         or client_loading_push(event, before, head, parent, names)
@@ -598,6 +641,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (visual_push(event, before, head, parent, names)
         or client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
@@ -607,6 +651,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (client_loading_push(event, before, head, parent, names)
         or client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
@@ -615,6 +660,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (client_streaming_push(event, before, head, parent, names)
         or client_asset_closure_push(event, before, head, parent, names)
         or client_startup_followup_push(event, before, head, parent, names)
@@ -622,21 +668,25 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (client_asset_closure_push(event, before, head, parent, names)
         or client_startup_followup_push(event, before, head, parent, names)
         or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not (client_startup_followup_push(event, before, head, parent, names)
         or levelup_ui_repair_push(event, before, head, parent, names))
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     return not levelup_ui_repair_push(event, before, head, parent, names)
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if performance_push(event, before, head, parent, names): return False
     # Source candidates always qualify; an exact publication checkpoint is docs only.
     return not (levelup_ui_repair_docs(event, before, head, parent, names)
         or reopen_startup_repair_push(event, before, head, parent, names)

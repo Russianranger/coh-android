@@ -75,6 +75,14 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         metrics.update(calls=metrics['calls'] + 1, last_ms=elapsed_ms,
             total_ms=round(metrics['total_ms'] + elapsed_ms, 3), max_ms=max(metrics['max_ms'], elapsed_ms))
 
+    def query_client_progress(self):
+        started = time.monotonic()
+        registry = self.ctx.run('client-progress-registry', [self.args.wine, 'reg', 'query',
+            r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/reg:32'],
+            timeout=8, env=self.wine_env, check=False)
+        self.record_observer_timing('progress_registry', started)
+        return registry['output']
+
     def initialize(self):
         # The input contract deliberately retains its accepted startup scope;
         # verify_assets hashes every listed file, including this extra entry.
@@ -84,6 +92,11 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
 
     def finish_observation(self, launch, registry_output, deadline):
         """Retain transient blank frames without extending the interaction window."""
+        # game.c writes game_mainLoop once before the infinite loop. Its value
+        # proves entry, not ongoing liveness. Keep the final fresh proof, while
+        # avoiding translated reg.exe competitors throughout ordinary play.
+        registry_output = self.query_client_progress()
+        self.ctx.report['client_progress_poll_policy']['final_registry_rechecked'] = True
         started = time.monotonic()
         settling = {'status': 'checking', 'captures': [], 'blank_capture_count': 0,
                     'initial_budget_seconds': round(max(0, deadline-started), 3),
@@ -249,7 +262,10 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         self.ctx.report['client_progress_poll_policy'] = {
             'policy': 'query_after_current_console_renderer_and_data_ready',
             'deferred_checks': 0, 'registry_reset_before_launch': True,
-            'current_pid_window_and_registry_main_loop_required': True}
+            'current_pid_window_and_registry_main_loop_required': True,
+            'steady_state_registry_queries': False, 'final_registry_rechecked': False,
+            'main_loop_entry_proof_scope': 'current_reset_attempt_before_infinite_native_main_loop',
+            'live_process_console_and_window_checks_preserved': True}
         ready_at = None
         console = None
         finish_request = None
@@ -291,18 +307,13 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
                     # entry, so query after this attempt's console has both
                     # prerequisites. Keep the reset, live PID/window, ordinary
                     # registry proof and post-readiness checks intact.
-                    registry_due = now >= next_registry
+                    registry_due = ready_at is None and now >= next_registry
                     console_ready = ('Renderer initialization complete' in output
                                      and 'Loaded all data!' in output)
                     if registry_due and not console_ready:
                         self.ctx.report['client_progress_poll_policy']['deferred_checks'] += 1
                     if registry_due and console_ready:
-                        registry_started = time.monotonic()
-                        registry = self.ctx.run('client-progress-registry', [self.args.wine, 'reg', 'query',
-                            r'HKCU\Software\Cryptic\CoH', '/v', 'GameProgress', '/reg:32'],
-                            timeout=8, env=self.wine_env, check=False)
-                        registry_output = registry['output']
-                        self.record_observer_timing('progress_registry', registry_started)
+                        registry_output = self.query_client_progress()
                         next_registry = time.monotonic() + 20
                     evidence = startup_evidence(output, registry_output, windows, launch)
                     self.ctx.report.update(evidence)

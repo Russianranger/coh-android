@@ -22,6 +22,7 @@ class CharacterMapDataTests(unittest.TestCase):
         self.value = server.LocalCharacterServer.__new__(server.LocalCharacterServer)
         self.value.owner = SimpleNamespace(work=self.work, args=SimpleNamespace(game_data=self.imported))
         self.value.ctx = SimpleNamespace(check=Mock(), event=Mock())
+        self.value.creation_report = {}
 
     def immutable(self, name, contents='accepted'):
         original = self.imported/name; original.parent.mkdir(parents=True, exist_ok=True)
@@ -45,6 +46,9 @@ class CharacterMapDataTests(unittest.TestCase):
         self.assertEqual(result['files'], 3)
         self.assertEqual(result['linked_immutable_files'], 3)
         self.assertEqual(result['copied_private_files'], 0)
+        resolution = self.value.creation_report['cold_mirror_input_resolution']
+        self.assertEqual(resolution['resolved_leaves'], 3)
+        self.assertEqual(resolution['parent_directory_checks'], resolution['parent_metadata_rechecks'])
         for original in originals:
             target = self.target/original.relative_to(self.imported)
             self.assertTrue(target.is_symlink()); self.assertEqual(target.resolve(), original)

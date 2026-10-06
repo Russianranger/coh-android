@@ -1,3 +1,62 @@
+# Current performance continuation — 2026-10-06
+
+**Physical 0.13.14 is accepted for the observed UI, native Atlas beaconization,
+quest objective tracking, NPC pursuit, combat and task completion. Performance
+is the current priority; zoning is deferred. Historical pending statements below
+are superseded by this checkpoint.**
+
+Starting live continuation head: `8de212e60520d1af66dfcd2f25481f57a85e1d34`.
+Keep branch `codex/character-persistence-continuation`, main separate and PR #1 draft.
+The accepted public 0.13.14 APK/source/tag/signer are unchanged.
+
+Physical input: `coh-atlas-gameplay-20261006-033901.zip`, 13,208,853 bytes,
+SHA-256 `d698a8152880a321d29b94365d831b3eea9bde358baca76361095961dae5a60c`.
+The report passes ordinary saved-character/SQL/owned-cleanup proof. User physical
+observations establish gameplay acceptance independently of startup-only scope.
+
+The approximately 21-minute report contains **508.398 s of private server
+preparation** inside a 538.664 s DbServer stage. Native launch/config/schema is
+only the remaining 30.266 s. The new 406-original-GEO contract properly rejected
+three incompatible closed generations, triggering 186,535-leaf cold staging.
+The returned compatible key `d3f6b18b9ea8bf59a848686a` is preserved by this pass.
+Atlas readiness 198.838 s and actual client startup 198.172 s remain in the good
+3–4 minute range. Reopen-to-observed-login was 1,150.129 s; observed world entry
+1,233.935 s. First-update UI/beacon/header preparation is separately recorded.
+
+0.13.15 / version code 30 candidate implements:
+- Invocation-scoped verified real-parent resolution during cold staging and
+  single-pass directory receipt sealing, with strict leaf/containment/link and
+  final parent checks. Fixture metadata calls 4608→793 (82.8% fewer).
+- Exact cache identity preserved; unchanged warm fixture links/copies zero files.
+- Startup timing separates geometry, cache checkout, cold mirror/seal or warm
+  restore, native dependencies, server bins, animations, beacon preparation,
+  configuration, native DbServer readiness and schema verification.
+- After current native Atlas connection, use native progress/events with current event identity validation during
+  gameplay and perform full fresh SQL/status/save proof on valid logout delivery.
+- Registry main-loop proof only at startup and fresh final completion; preserve
+  live process/window/console checks. This removes recurrent translated probes.
+- Bounded support-ZIP phase analyzer; no extra native/per-frame instrumentation.
+
+Intentionally retained: all 10,401 original visuals and 9,613 prior encoded streams,
+406 original GEOs, native graph/date, native Game/MapServer/DbServer, accepted
+Wine/FEX/Mesa llvmpipe renderer, 800×600 profile and 10 FPS cap, Android shell,
+controls/audio, database/character persistence, rollback and recovery. No assets
+reimport, UI sweep, beacon generation, GPU experiment or zoning work.
+
+Host code-review, meaningful cache/observer tests and the source-bound
+qualification lane gate publication. Exact candidate commit, completed Actions
+run, release/hash and final tests will be recorded after actual completion.
+Host syscall savings and eliminated probes do not prove new physical FPS/timing.
+The first-update and second-warm Thor reports remain required.
+
+Phase comparison/candidate ranking: `docs/COH-PERFORMANCE-0.13.15.md`.
+Focused Thor instructions: `docs/COH-Atlas-Gameplay-0.13.15-testing.txt`.
+Export each complete outer support ZIP, preserving Android report, operation.log,
+inner guest-report.zip/latest-report.json, client/server consoles and server logs.
+Use ordinary Save character/log out then Finish; remain in Atlas.
+
+---
+
 # City of Heroes Android handoff
 
 **0.13.14 is ready for physical AYN Thor testing. Its unchanged public APK passed the independent corrected SDK/source/payload audit. UI rendering, NPC pursuit and new startup timings remain physical checks.**

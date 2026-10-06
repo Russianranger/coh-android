@@ -706,7 +706,16 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def prepare_runtime(self):
         prepared_at = time.monotonic()
+        phase_at, phases = prepared_at, {}
+        self.creation_report['server_preparation_phase_seconds'] = phases
+
+        def checkpoint(name):
+            nonlocal phase_at
+            now = time.monotonic()
+            phases[name], phase_at = round(now - phase_at, 6), now
+
         super().prepare_runtime()
+        checkpoint('base_schema_and_native_runtime')
         source = self.owner.work / 'data'
         require(source.is_dir() and not source.is_symlink(), 'Verified private client data is missing')
         receipt = self.ctx.report.get('client_worktree', {})
@@ -720,6 +729,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             required_geometry = geometry_preparation['identity']
             self.creation_report['atlas_required_geometry'] = geometry_preparation
             self.ctx.report['atlas_required_geometry'] = geometry_preparation
+        checkpoint('required_original_geometry')
         # Wine FolderCache does not enumerate directory symlinks as directories.
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
@@ -745,15 +755,20 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
             self.owner.args.session_id, self.ctx,
             legacy_identity_validator=lambda old: self.legacy_data_identity_matches(old, identity, receipt))
-        if self.data_cache.checkout(self.runtime / 'data'):
+        reused = self.data_cache.checkout(self.runtime / 'data')
+        checkpoint('server_data_cache_checkout')
+        if reused:
             for name in self.schema['files']:
                 server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name,
                                                                   self.runtime / name, self.runtime)
             staged = dict(self.data_cache.record['stats'], linked_immutable_files=0,
                           copied_private_files=0, preserved_schema_files=len(self.schema['files']))
+            checkpoint('warm_schema_restore')
         else:
             staged = self.stage_map_data(source, self.runtime / 'data', cache_recorder=self.data_cache)
+            checkpoint('cold_server_data_mirror')
             self.data_cache.seal(self.runtime / 'data', staged)
+            checkpoint('cold_server_data_receipt_seal')
         for name, record in self.map_package['files'].items():
             target = self.runtime / name
             if target.exists():
@@ -765,6 +780,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.manual_atlas_startup = install_manual_atlas_dbserver(self.owner.args.assets, self.runtime, self.package)
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
+        checkpoint('native_dependencies_and_manual_atlas')
         try:
             donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
                                                                           self.runtime / 'MapServer.exe')
@@ -776,6 +792,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             # existing generated bins and the ordinary loader fully in charge.
             self.creation_report['prepared_server_caches'] = {'format': 1,
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
+        checkpoint('prepared_server_definition_caches')
         # The stock Pig reader can consume unchanged animation bytes without
         # moving or invalidating the preserved server data/cache generation.
         # An invalid present package fails preparation; never launch a bad pig.
@@ -787,6 +804,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                 self.runtime, context=self.ctx)
             self.creation_report['server_animation_pack'] = installed
             self.ctx.report['server_animation_pack'] = installed
+        checkpoint('server_animation_pack')
         beacon_archive = self.owner.args.assets / 'atlas-beacons.zip'
         beacon_manifest = self.owner.args.assets / 'atlas-beacon-manifest.json'
         if beacon_archive.exists() or beacon_manifest.exists():
@@ -796,11 +814,13 @@ class LocalCharacterServer(login.LocalLoginServer):
                 imported_inputs_readonly=receipt.get('imported_inputs_readonly'))
             self.creation_report['atlas_beacon_graph'] = installed
             self.ctx.report['atlas_beacon_graph'] = installed
+        checkpoint('atlas_beacon_graph')
         self.creation_report['private_map_data'] = {'source_worktree': self.owner.work.name,
             'imported_inputs_readonly': True, 'private_server_config': True,
             'private_cache_roots': ['bin', 'geobin', 'server/bin'],
             'directory_layout': 'real_directories_with_individual_immutable_file_links',
             'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
+            'preparation_phase_seconds': dict(phases),
             'server_data_cache': self.data_cache.summary, **staged}
 
     def dbserver_environment(self, environment):
@@ -894,6 +914,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         """
         roots = (self.owner.work.resolve(strict=True), self.owner.args.game_data.resolve(strict=True))
         source, target = Path(source), Path(target)
+        resolver = server_data_cache.CheckedInputResolver(roots, self.ctx)
         # Imported inputs and generated caches retain their accepted allowance.
         # The verified missing-only supplements are additional immutable files,
         # not generated cache entries; budget their exact pinned inventories too.
@@ -912,7 +933,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             relative = current.relative_to(source)
             private = force_private or bool(relative.parts and relative.parts[0] in ('server', 'bin', 'geobin'))
             if stat.S_ISDIR(info.st_mode):
-                resolved = current.resolve(strict=True)
+                resolved = resolver.directory(current)
                 require(any(root == resolved or root in resolved.parents for root in roots),
                         'Map data directory escaped verified roots')
                 require(not destination.exists() or destination.is_dir(), 'Invalid private data directory')
@@ -925,10 +946,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     pending.extend((Path(entry.path), destination / entry.name) for entry in entries)
             else:
                 require(stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode), 'Nonregular map input refused')
-                resolved = current.resolve(strict=True)
-                resolved_info = resolved.stat()
-                require(any(root == resolved or root in resolved.parents for root in roots)
-                        and stat.S_ISREG(resolved_info.st_mode), 'Private map copy escaped verified data roots')
+                resolved, resolved_info = resolver.leaf(current)
                 result['files'] += 1; result['bytes'] += resolved_info.st_size
                 # Include accepted prerequisites/prepared caches and bounded
                 # generated client caches in addition to the imported inputs.
@@ -954,6 +972,10 @@ class LocalCharacterServer(login.LocalLoginServer):
             if time.monotonic() >= next_message:
                 self.ctx.event('stage', status='running', message='Preparing Atlas data directories', files=result['files'])
                 next_message = time.monotonic() + 5
+        # The helper is also used by isolated staging callers without a server
+        # session report. Integrity verification still runs unconditionally.
+        resolution = resolver.verify()
+        getattr(self, 'creation_report', {})['cold_mirror_input_resolution'] = resolution
         return result
 
     def start(self):
@@ -1150,6 +1172,37 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.character_next = now + POLL_SECONDS
         self.health(); self.sample_progress()
         if self.auth_id is None: return None
+        # After this session's native Atlas connection has been proved, neither
+        # SQL inventory nor another translated MapServer.exe -getstatus process
+        # adds gameplay liveness: owned service/process checks and current native
+        # progress continue independently. Keep optional recovery/task observers
+        # active, and require a valid current logout delivery before beginning
+        # the unchanged full disconnected/SQL/native-position save proof below.
+        # This is a phase transition, never a cached successful save result.
+        if self.creation_report['connected_on_atlas']:
+            current = self.sample_progress(force=True)
+            if not self.live_progress(current): return None
+            client_pid = self.creation_report.get('client_pid')
+            if type(client_pid) is not int or client_pid <= 0: return None
+            delivery = read_logout_delivery(self.owner.args.state / 'character-logout.json',
+                self.owner.args.session_id, client_pid, self.creation_report['character_id'],
+                self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000))
+            if delivery is None:
+                # Retain complete current native event identity/sequence guards,
+                # including late malformed or foreign lines. These owned pipe
+                # reads (or retained legacy logger reads) are inexpensive; only
+                # the competing translated protocol/SQL probes are omitted.
+                self.native_ready_record()
+                self.observe_connected_character()
+                policy = self.ctx.report.setdefault('character_observer_metrics', {}).setdefault(
+                    'steady_state_policy', {'policy': 'native_connection_then_delivery_triggered_save',
+                        'translated_status_probes_skipped': 0, 'sql_inventory_reads_skipped': 0,
+                        'current_native_progress_required': True, 'optional_action_observers_preserved': True,
+                        'current_native_event_identity_checks_preserved': True,
+                        'fresh_full_save_proof_required': True})
+                policy['translated_status_probes_skipped'] += 1
+                policy['sql_inventory_reads_skipped'] += 1
+                return None
         before = self.sample_progress(force=True)
         if not self.live_progress(before): return None
         inventory = self.inventory()

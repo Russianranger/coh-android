@@ -59,6 +59,82 @@ def real_path(root, name, *, directory=False):
     return current
 
 
+class CheckedInputResolver:
+    """Resolve shared real parents once during a bounded, owned input mirror.
+
+    Each leaf still gets a fresh type/containment check. Directory aliases and
+    chained file links retain strict pathlib resolution. A final metadata pass
+    refuses any parent replaced or edited while the mirror was in progress.
+    This cache lasts for this invocation only; it is never an integrity donor.
+    """
+    def __init__(self, roots, context):
+        self.roots, self.ctx = tuple(roots), context
+        self.parents, self.observed = {}, {}
+        self.leaves = self.strict_links = 0
+
+    @staticmethod
+    def directory_identity(info):
+        return (info.st_dev, info.st_ino, info.st_uid, info.st_mode, info.st_mtime_ns)
+
+    def directory(self, path):
+        path = Path(path)
+        if path in self.parents:
+            return self.parents[path]
+        self.ctx.check()
+        current = path if path.parent == path else self.directory(path.parent) / path.name
+        info = current.lstat()
+        if any(root == current or root in current.parents for root in self.roots):
+            identity = self.directory_identity(info)
+            require(current not in self.observed or self.observed[current] == identity,
+                    'Atlas input parent changed during staging: ' + str(current))
+            self.observed.setdefault(current, identity)
+        if stat.S_ISLNK(info.st_mode):
+            resolved = current.resolve(strict=True)
+            require(resolved != current, 'Recursive Atlas input directory')
+            result = self.directory(resolved)
+        else:
+            require(stat.S_ISDIR(info.st_mode), 'Non-directory Atlas input parent')
+            result = current
+        self.parents[path] = result
+        return result
+
+    def leaf(self, path):
+        path = Path(path)
+        current = self.directory(path.parent) / path.name
+        info = current.lstat()
+        if stat.S_ISLNK(info.st_mode):
+            target = Path(os.readlink(current))
+            if not target.is_absolute():
+                target = current.parent / target
+            # Keep pathlib's handling of dot components and arbitrary chains.
+            if '..' in target.parts:
+                resolved = current.resolve(strict=True)
+                self.strict_links += 1
+            else:
+                resolved = self.directory(target.parent) / target.name
+                if resolved.is_symlink():
+                    resolved = current.resolve(strict=True)
+                    self.strict_links += 1
+            self.directory(resolved.parent)
+            info = resolved.lstat()
+        else:
+            resolved = current
+        require(any(root == resolved or root in resolved.parents for root in self.roots)
+                and stat.S_ISREG(info.st_mode), 'Private map copy escaped verified data roots')
+        self.leaves += 1
+        return resolved, info
+
+    def verify(self):
+        for path, identity in self.observed.items():
+            self.ctx.check()
+            require(self.directory_identity(path.lstat()) == identity,
+                    'Atlas input parent changed during staging: ' + str(path))
+        return {'policy': 'per_invocation_checked_real_input_parents_v1',
+                'resolved_leaves': self.leaves, 'strict_link_fallbacks': self.strict_links,
+                'parent_directory_checks': len(self.observed),
+                'parent_metadata_rechecks': len(self.observed)}
+
+
 class ServerDataCache:
     """Directory rename preserves private cache bytes; session logs remain fresh."""
     def __init__(self, root, identity, session, context, *, legacy_identity_validator=None):
@@ -443,8 +519,20 @@ class ServerDataCache:
         require(0 < len(self.directory_names) <= DIRECTORY_LIMIT and self.anchor_names,
                 'Missing Atlas immutable cache anchors')
         directories = []
+        names = set(self.directory_names)
+        require(len(names) == len(self.directory_names) and '' in names,
+                'Duplicate or incomplete Atlas cache directories')
+        owner_uid = self.root.stat().st_uid
         for name in self.directory_names:
-            info = real_path(data, name, directory=True).lstat()
+            require(name == '' or relative_name(name), 'Unsafe Atlas cache directory receipt')
+            parent = Path(name).parent.as_posix()
+            require(name == '' or ('' if parent == '.' else parent) in names,
+                    'Incomplete Atlas cache directory parents')
+            # All parents were created by the bounded mirror and are checked
+            # exactly once here, rather than once again for every descendant.
+            info = (data / name).lstat()
+            require(stat.S_ISDIR(info.st_mode) and info.st_uid == owner_uid,
+                    'Linked or foreign Atlas cache directory')
             directories.append({'path': name, 'device': info.st_dev, 'inode': info.st_ino, 'uid': info.st_uid,
                                 'mtime_ns': info.st_mtime_ns})
         anchors = []

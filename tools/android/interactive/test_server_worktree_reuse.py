@@ -844,6 +844,94 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         third = self.make(3); self.assertFalse(self.prepare(third)['server_data_cache']['reused']); self.close(third)
         self.assertEqual((self.work / 'client-work.json').read_text(), '{"verified":"client"}\n')
 
+    def test_cold_input_resolution_rechecks_real_parents_and_reduces_metadata_calls(self):
+        for index in range(256):
+            self.source(f'texture_library/atlas/buildings/street/leaf-{index}.texture')
+        leaves = sorted((self.data / 'texture_library/atlas/buildings/street').iterdir())
+        real_stat, real_lstat = os.stat, os.lstat
+        counts = {'full': 0, 'bounded': 0}
+
+        def measured(method, mode):
+            def invoke(*args, **kwargs):
+                counts[mode] += 1
+                return method(*args, **kwargs)
+            return invoke
+
+        with patch.object(os, 'stat', side_effect=measured(real_stat, 'full')), \
+                patch.object(os, 'lstat', side_effect=measured(real_lstat, 'full')):
+            expected = [(resolved, resolved.stat().st_size) for leaf in leaves
+                        for resolved in (leaf.resolve(strict=True),)]
+        roots = (self.work.resolve(strict=True), self.imported.resolve(strict=True))
+        resolver = cache.CheckedInputResolver(roots, SimpleNamespace(check=Mock()))
+        with patch.object(os, 'stat', side_effect=measured(real_stat, 'bounded')), \
+                patch.object(os, 'lstat', side_effect=measured(real_lstat, 'bounded')):
+            actual = [(path, info.st_size) for path, info in map(resolver.leaf, leaves)]
+            proof = resolver.verify()
+        self.assertEqual(actual, expected)
+        self.assertLess(counts['bounded'], counts['full'] // 3)
+        self.assertEqual(proof['resolved_leaves'], 256)
+        self.assertEqual(proof['strict_link_fallbacks'], 0)
+        self.assertEqual(proof['parent_directory_checks'], proof['parent_metadata_rechecks'])
+        print('COLD_INPUT_HOST_METADATA_METRIC ' + json.dumps(counts, sort_keys=True))
+
+    def test_cold_input_resolution_refuses_escape_and_parent_replacement(self):
+        original = self.source('texture_library/atlas/a.texture')
+        roots = (self.work.resolve(strict=True), self.imported.resolve(strict=True))
+        resolver = cache.CheckedInputResolver(roots, SimpleNamespace(check=Mock()))
+        resolver.leaf(self.data / 'texture_library/atlas/a.texture')
+        parent = original.parent
+        parent.rename(parent.with_name('atlas-retained'))
+        parent.mkdir()
+        original.write_text('replacement'); original.chmod(0o444)
+        with self.assertRaisesRegex(cache.base.DiagnosticError, 'parent changed'):
+            resolver.verify()
+        outside = self.root / 'outside.texture'; outside.write_bytes(b'foreign')
+        link = self.data / 'foreign.texture'; link.symlink_to(outside)
+        resolver = cache.CheckedInputResolver(roots, SimpleNamespace(check=Mock()))
+        with self.assertRaisesRegex(cache.base.DiagnosticError, 'escaped verified data roots'):
+            resolver.leaf(link)
+
+    def test_cold_input_resolution_preserves_relative_and_chained_link_semantics(self):
+        original = self.source('texture_library/atlas/a.texture')
+        original_link = self.data / 'texture_library/atlas/a.texture'
+        original_link.unlink()
+        second = self.imported / 'second'; second.symlink_to(original)
+        original_link.symlink_to(os.path.relpath(second, original_link.parent))
+        resolver = cache.CheckedInputResolver((self.work.resolve(strict=True),
+            self.imported.resolve(strict=True)), SimpleNamespace(check=Mock()))
+        result, info = resolver.leaf(original_link)
+        self.assertEqual(result, original)
+        self.assertEqual(info.st_size, original.stat().st_size)
+        self.assertEqual(resolver.verify()['strict_link_fallbacks'], 1)
+
+    def test_server_startup_phase_receipt_keeps_accepted_cache_identity(self):
+        cold = self.make(990)
+        cold_report = self.prepare(cold)
+        self.assertIn('cold_server_data_mirror', cold_report['preparation_phase_seconds'])
+        self.assertIn('cold_server_data_receipt_seal', cold_report['preparation_phase_seconds'])
+        self.close(cold)
+        warm = self.make(991)
+        warm_report = self.prepare(warm)
+        self.assertEqual(cold.data_cache.key, warm.data_cache.key)
+        self.assertTrue(warm_report['server_data_cache']['reused'])
+        self.assertIn('warm_schema_restore', warm_report['preparation_phase_seconds'])
+        self.assertNotIn('cold_server_data_mirror', warm_report['preparation_phase_seconds'])
+        self.assertEqual(warm_report['copied_private_files'], 0)
+        self.assertEqual(warm_report['linked_immutable_files'], 0)
+        self.close(warm)
+
+    def test_cold_receipt_seal_refuses_unsafe_directory_names_before_publication(self):
+        value = self.make(992)
+        self.prepare(value)
+        marker = value.data_cache.marker.read_bytes()
+        for name in ('/', '../outside', 'back\\slash'):
+            value.data_cache.directory_names = ['', name]
+            with self.subTest(name=name), self.assertRaisesRegex(cache.base.DiagnosticError,
+                    'Unsafe Atlas cache directory receipt'):
+                value.data_cache.seal(value.runtime / 'data', value.data_cache.record['stats'])
+            self.assertEqual(value.data_cache.marker.read_bytes(), marker)
+        self.close(value)
+
     def test_host_metric_warm_preparation_avoids_all_input_leaf_recreation(self):
         for i in range(4000):
             self.source(f'defs/bucket-{i % 20}/input-{i}.def')

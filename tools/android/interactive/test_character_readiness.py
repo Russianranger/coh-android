@@ -17,6 +17,7 @@ import local_character_server as server
 import character_reopen_diagnostic as reopen
 import client_interactive_diagnostic as interactive
 import test_guest as interaction_fixture
+import test_character_reopen_guest as reopen_fixture
 from test_character_reopen_guest import reopened, position, stamp, READY, LOG_NAME
 
 SESSION = '0123456789abcdef0123456789abcdef'
@@ -290,7 +291,7 @@ class ObserverCadenceTests(unittest.TestCase):
         case.d.ctx.start.return_value.text.side_effect = output
         case.finish_when_ready()
         case.d.execute()
-        self.assertEqual(queries, [60, 80])
+        self.assertEqual(queries, [60, 90])
         policy = case.d.ctx.report['client_progress_poll_policy']
         self.assertEqual(policy['deferred_checks'], 12)
         self.assertTrue(policy['current_pid_window_and_registry_main_loop_required'])
@@ -313,6 +314,142 @@ class ObserverCadenceTests(unittest.TestCase):
             case.d.execute()
         self.assertLess(case.elapsed, 2)
         self.assertFalse(any(call.args[0] == 'client-progress-registry' for call in case.d.ctx.run.call_args_list))
+
+    def test_main_loop_entry_has_only_initial_and_fresh_terminal_registry_proofs(self):
+        case = self.fixture()
+        original = case.d.ctx.run.side_effect
+        queries = []
+        def run(label, *args, **kwargs):
+            if label == 'client-progress-registry': queries.append(case.elapsed)
+            return original(label, *args, **kwargs)
+        case.d.ctx.run.side_effect = run
+        case.d.execute()
+        self.assertEqual(queries, [0, 180])
+        self.assertTrue(case.d.ctx.report['client_progress_poll_policy']['final_registry_rechecked'])
+        self.assertFalse(case.d.ctx.report['client_progress_poll_policy']['steady_state_registry_queries'])
+        self.assertTrue(case.d.startup_complete)
+
+    def test_final_registry_failure_cannot_reuse_the_successful_entry_proof(self):
+        case = self.fixture()
+        original = case.d.ctx.run.side_effect
+        def run(label, *args, **kwargs):
+            if label == 'client-progress-registry' and case.elapsed >= 30:
+                return {'output': '    GameProgress    REG_SZ    game_loadData\n'}
+            return original(label, *args, **kwargs)
+        case.d.ctx.run.side_effect = run
+        case.finish_when_ready()
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'disappeared'):
+            case.d.execute()
+        self.assertFalse(case.d.startup_complete)
+
+
+class ConnectedObserverTests(unittest.TestCase):
+    def instance(self):
+        fixture = reopen_fixture.ReopenServerTests()
+        self.addCleanup(fixture.doCleanups)
+        value = fixture.instance()
+        fixture.prepare_normal_logout(value)
+        receipt = value.owner.args.state / 'character-logout.json'
+        value.inventory.reset_mock()
+        value.health = Mock()
+        value.sample_progress = Mock(return_value={'available': True, 'tick_completed': 7, 'unchanged_seconds': 0})
+        value.query = Mock(return_value='invalid container request\n')
+        return value, receipt
+
+    def native_event_instance(self):
+        value, receipt = self.instance()
+        receipt.unlink()
+        value.observe_connected_character = Mock()
+        value.map_package = {'inputs': {'mapserver_progress': {
+            'events_contract': server.character_events.CONTRACT}}}
+        value.map_launch_utc_ms = value.creation_report['client_ready_observed_utc_ms'] - 1000
+        value.creation_report['immediate_native_events'] = {}
+        value.sample_progress.return_value.update(windows_pid=300, main_thread_id=301)
+        value.map_process = Mock()
+        value.map_process.process.poll.return_value = None
+        raw = ('COH_CHARACTER_EVENT_V1 session=' + SESSION + ' pid=300 tid=301 sequence=1 kind=ready '
+            'utc_ms=' + str(value.creation_report['client_ready_observed_utc_ms'])
+            + ' map_id=1 db_id=1 auth_id=77 name=THORHERO account=COHLOCAL '
+            'peer=127.0.0.1:1234 position=<0,0,0>\n')
+        value.map_process.text.return_value = raw
+        return value, raw
+
+    def test_ordinary_connected_play_keeps_native_health_and_optional_actions_without_pe32_or_sql_probes(self):
+        value, receipt = self.instance()
+        receipt.unlink()
+        value.observe_connected_character = Mock()
+        self.assertIsNone(value.character_evidence())
+        value.health.assert_called_once()
+        value.sample_progress.assert_any_call(force=True)
+        value.observe_connected_character.assert_called_once()
+        value.inventory.assert_not_called()
+        value.query.assert_not_called()
+        self.assertFalse(value.creation_report['verified'])
+        policy = value.ctx.report['character_observer_metrics']['steady_state_policy']
+        self.assertEqual(policy['translated_status_probes_skipped'], 1)
+        self.assertEqual(policy['sql_inventory_reads_skipped'], 1)
+
+    def test_foreign_or_stale_logout_receipt_is_refused_before_expensive_probes(self):
+        value, receipt = self.instance()
+        data = json.loads(receipt.read_text())
+        data['client_pid'] = 45
+        receipt.write_text(json.dumps(data))
+        with self.assertRaisesRegex(server.base.DiagnosticError, 'does not match'):
+            value.character_evidence()
+        value.inventory.assert_not_called()
+        value.query.assert_not_called()
+
+    def test_stale_native_progress_cannot_resume_optional_actions_or_save(self):
+        value, receipt = self.instance()
+        receipt.unlink()
+        value.sample_progress.return_value['unchanged_seconds'] = 21
+        value.observe_connected_character = Mock()
+        self.assertIsNone(value.character_evidence())
+        value.observe_connected_character.assert_not_called()
+        value.inventory.assert_not_called()
+        value.query.assert_not_called()
+
+    def test_repeated_connected_observations_validate_current_native_events_without_translated_or_sql_probes(self):
+        value, raw = self.native_event_instance()
+        for _ in range(100):
+            value.character_next = 0
+            self.assertIsNone(value.character_evidence())
+        self.assertEqual(value.creation_report['immediate_native_events']['event_count'], 1)
+        self.assertEqual(value.map_process.text.call_count, 100)
+        self.assertEqual(value.observe_connected_character.call_count, 100)
+        self.assertEqual(value.ctx.report['character_observer_metrics']['steady_state_policy']
+            ['translated_status_probes_skipped'], 100)
+        value.inventory.assert_not_called()
+        value.query.assert_not_called()
+        self.assertFalse(value.creation_report['verified'])
+
+    def test_late_malformed_foreign_or_duplicate_native_events_remain_fatal_during_connected_play(self):
+        for invalid, error in [('COH_CHARACTER_EVENT_V1 malformed\n', 'Malformed'),
+                ('foreign', 'differs'), ('duplicate', 'differs')]:
+            with self.subTest(invalid=invalid):
+                value, raw = self.native_event_instance()
+                self.assertIsNone(value.character_evidence())
+                late = (raw.replace(SESSION, 'f' * 32).replace('sequence=1 ', 'sequence=2 ')
+                    if invalid == 'foreign' else raw if invalid == 'duplicate' else invalid)
+                value.map_process.text.return_value = raw + late
+                value.character_next = 0
+                with self.assertRaisesRegex(server.base.DiagnosticError, error):
+                    value.character_evidence()
+                value.inventory.assert_not_called()
+                value.query.assert_not_called()
+                self.assertFalse(value.creation_report['verified'])
+
+    @patch.object(server.progress, 'compare_records')
+    def test_valid_logout_still_requires_fresh_protocol_sql_inventory_and_full_save_proof(self, _compare):
+        value, receipt = self.instance()
+        # Use the exact retained native logout fixture, including its route.
+        value.current_logs.return_value[0] = (LOG_NAME, READY + position('261001 01:31:00', '106.45,-768,-114.45')
+            + reopen_fixture.LOGOUT)
+        proof = value.character_evidence()
+        self.assertTrue(reopen.save_verified(proof, SESSION))
+        value.inventory.assert_called_once()
+        value.query.assert_called_once_with(['-getstatus', '3', '1'], 'player-status')
+        self.assertTrue(proof['disconnected_before_sql'])
 
 
 if __name__ == '__main__': unittest.main()
