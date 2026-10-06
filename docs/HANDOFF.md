@@ -1,6 +1,6 @@
 # City of Heroes Android handoff
 
-**UI sweep, two genuine native beacon proofs and independent graph pin verification passed. Full 0.13.14 / code 29 qualification and publication are next; no APK is published yet.**
+**UI sweep, genuine native beacons and full qualification passed: 1,102 tests / 68 suites / zero skips / seven real PostgreSQL fixtures. 0.13.14 / code 29 build, signing and public audit are running; no audited APK is published yet.**
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
@@ -94,8 +94,18 @@ streams. Do not rebuild this accepted artifact unnecessarily. Graph guest pins
 are frozen to verified native outputs. The full publisher is enabled with actual
 successful native recovery run 37390562231/source d856c41 and frozen successful
 UI preparation 37379767112/source 52da928. The final full-workflow test is restored;
-all 68 suites must pass with no skips and seven real PostgreSQL fixtures before
-SDK build/signing, publication and full public-download audit. Candidate identity
+Actual release workflow [37392793426](https://github.com/Russianranger/coh-android/actions/runs/37392793426)
+at APK source **`25f821da9e782281953412543057054abd8dd320`** completed
+qualification job **112042175166 SUCCESS**: all **68 distinct suites / 1,102
+host scenarios / zero skips**. Both mandatory PostgreSQL suites passed all seven
+real fixtures (three emission + four level-up), with PostgreSQL 16.15 initialized.
+Exact source closure and donor conservation passed. Artifact **11381713754**
+(`coh-ui-beacon-qualification`) is 6,137,683 bytes, SHA-256
+`4c42683fe1cad44f6bed1df5f0a649d36b0bc68761f91f2ad26e78d4ecc60c8a`.
+The APK job **112043909987** is running SDK build/signing, publication and full
+public-download audit. Do not claim APK availability or public audit success
+until its actual gates complete. This docs-only checkpoint changes no APK
+source/input and does not trigger the active publication lane. Candidate identity
 is **0.13.14 / code 29**, unchanged app ID and signer. Payload boundary remains
 65 donor-identical assets + 7 reviewed replacements + 3 additions. Physical UI,
 NPC pursuit, saved-character reopen and new phase timing acceptance are pending. Main is unchanged, PR #1 stays draft, and zoning is later.
