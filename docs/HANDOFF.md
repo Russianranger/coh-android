@@ -23,7 +23,22 @@ Atlas readiness 198.838 s and actual client startup 198.172 s remain in the good
 3–4 minute range. Reopen-to-observed-login was 1,150.129 s; observed world entry
 1,233.935 s. First-update UI/beacon/header preparation is separately recorded.
 
-0.13.15 / version code 30 candidate implements:
+**0.13.15 / version code 30 is published and all hosted release gates passed.**
+Frozen APK/source commit: `d31685579a04307c38356918a81a22997a858c83`.
+Tag: `coh-atlas-gameplay-v0.13.15`; release 404301936; APK asset 614432886.
+Public APK: 1,557,338,724 bytes; SHA-256
+`f43586fcc36ffc3a88fd8f3dfdb756d174604527e9a1dab140f97f36fbdaf8fb`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.15)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15-testing.txt).
+The same application ID/signing certificate preserves install-as-update behavior.
+Complete the offered helper/runtime update once before Reopen phase timing; retain
+runtime, imported assets, app data and the existing saved character.
+Record that update's duration separately; include it in true launcher-open to
+login if it occurs during that interval. Only Reopen phase timings start after
+the offered update. This clarifies the published testing notes' stopwatch scope.
+
+Implemented:
 - Invocation-scoped verified real-parent resolution during cold staging and
   single-pass directory receipt sealing, with strict leaf/containment/link and
   final parent checks. Fixture metadata calls 4608→793 (82.8% fewer).
@@ -43,17 +58,39 @@ Wine/FEX/Mesa llvmpipe renderer, 800×600 profile and 10 FPS cap, Android shell,
 controls/audio, database/character persistence, rollback and recovery. No assets
 reimport, UI sweep, beacon generation, GPU experiment or zoning work.
 
-Host code-review, meaningful cache/observer tests and the source-bound
-qualification lane gate publication. Exact candidate commit, completed Actions
-run, release/hash and final tests will be recorded after actual completion.
-Host syscall savings and eliminated probes do not prove new physical FPS/timing.
-The first-update and second-warm Thor reports remain required.
+Hosted [run 37411543214](https://github.com/Russianranger/coh-android/actions/runs/37411543214)
+completed **SUCCESS** at 2026-10-06 04:10:44 UTC on the exact frozen source.
+Qualification job 112100983226 passed **1,124 scenarios across 70 suites, zero
+skips and all seven real PostgreSQL 16.15 fixtures**, including retained UI,
+beacon, quest/task/combat-save, persistence and recovery guards. Source closure
+contains 9,590 files; all 19 authored Java files remain identical.
+APK job 112101888443 passed the full SDK/signature/source/payload audit in a
+fresh process before publishing. All 75 payload members are conserved: only
+four guest helpers and two manifests differ; the other 69 are byte-identical,
+with no additions. Native/runtime/UI/GEO/beacon/dex/resources remain intact.
+Independent read-only public-audit job 112103210518 downloaded the actual public
+APK, checksum and notes and repeated SDK, signer, source and payload checks;
+its `COH_THOR_PERFORMANCE_PUBLIC_AUDIT_V1` receipt is `status=passed`.
+Public audit artifact 11389553450 is 531 bytes, SHA-256
+`91e7be3e5e35b2517f3d2633b61c386da49cbf1c112998a8613f70bd4c19ebb8`.
+Qualification artifact 11388779701 and packaging artifact 11388964767 are pinned
+in `docs/android-evidence/performance-0.13.15-publication.json`.
+All 18 other workflows on this source commit also completed SUCCESS; finite
+scope guards kept older native/UI/beacon publishers from rebuilding this pass.
+
+Hosted metadata-call savings and eliminated probes do not prove new physical FPS/timing.
+No hosted test substitutes for physical gameplay. The first-update and
+second-warm Thor reports remain required; 0.13.15 physical validation is pending.
 
 Phase comparison/candidate ranking: `docs/COH-PERFORMANCE-0.13.15.md`.
 Focused Thor instructions: `docs/COH-Atlas-Gameplay-0.13.15-testing.txt`.
 Export each complete outer support ZIP, preserving Android report, operation.log,
 inner guest-report.zip/latest-report.json, client/server consoles and server logs.
 Use ordinary Save character/log out then Finish; remain in Atlas.
+Measure launcher-open to login, Reopen to login, displayed local Atlas startup,
+actual client startup and login-to-playable-world for both runs. Note repeated
+long preparation. Compare standing, walking, camera rotation, several-NPC combat,
+populated areas, UI windows and objective/pathing stutters using the same preset.
 
 ---
 

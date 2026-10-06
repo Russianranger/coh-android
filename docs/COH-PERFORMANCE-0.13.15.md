@@ -10,8 +10,10 @@ The user accepts observed UI completeness, native beaconization, quest objective
 NPC pursuit, combat and task completion. The report passes ordinary save/reopen
 and owned cleanup. These physical observations are separate from hosted checks.
 
-The observed 21-minute interval is mostly **one-time server tree preparation**,
-not a regression in native client or Atlas initialization. The 0.13.14 required
+The observed 21-minute interval is mostly **cold preparation after the GEO
+contract update**; native client and Atlas initialization remain near their
+previous good timings. Compatible warm reuse is hosted-verified and remains
+to be measured on Thor. The 0.13.14 required
 geometry contract correctly invalidated the three older closed server trees.
 The new compatible cache key is `d3f6b18b9ea8bf59a848686a` and this completed run
 returned it closed. It must be retained by guest-only performance updates.
@@ -65,8 +67,8 @@ report; those causes should not be asserted from a low display-frame count.
 | 7 | Tune synchronous streaming, upload, draw calls or allocations | Unknown without native measurements | Moderate–high; broad game changes need separate qualification | Deferred; accepted native Game bytes retained |
 | 8 | Zink/Vulkan/device GPU or newer FEX | Potentially largest rendering gain | High; black screen/crash/assets/runtime risks | Separate native/runtime experiment; deliberately deferred |
 
-The shipped work, actual hosted evidence and physical after measurements are
-recorded below after qualification. No physical startup or FPS gain is claimed
+The shipped work and completed hosted evidence are recorded below. Physical
+0.13.15 measurements remain pending; no physical startup or FPS gain is claimed
 before the new Thor test.
 
 
@@ -101,3 +103,58 @@ same compatible cache key/reused=true, no repeated full mirror, warm visual and
 beacon reuse, unchanged character/UI/pathing and reduced observer work. Record
 both first-update and second warm outcomes; do not subtract nested phases or
 claim 166 seconds of guaranteed wall-time/FPS gain from cumulative probe durations.
+
+## Before/after behavior and completed hosted evidence
+
+Frozen 0.13.15 APK/source commit is
+`d31685579a04307c38356918a81a22997a858c83`, version code 30, tag
+`coh-atlas-gameplay-v0.13.15`. This document may be updated after that frozen
+build without changing the public APK. No renderer, native binaries or
+Wine/FEX/Mesa packages were rebuilt; four guest helpers changed. No asset
+reimport, UI sweep, beacon generation or zoning was done.
+
+| Work | Observed 0.13.14 / prior behavior | Shipped 0.13.15 behavior | Physical 0.13.15 elapsed time |
+| --- | --- | --- | --- |
+| Server preparation | 508.40 s after correctly rejecting three old geometry contracts | Retain the completed compatible key; warm checkout avoids full mirror; cold path reduces redundant parent metadata calls | Pending first-update and warm test |
+| Cold mirror/seal metadata | Fixture 4,608 calls | Same checked fixture 793 calls, 82.8% fewer | Pending; operation count is not a speedup prediction |
+| Warm server tree | Completed cache `d3f6b18b9ea8bf59a848686a` returned closed | 4,002-leaf fixture preserves key/inode/native bins; zero new links/copies | Pending confirmation of reused=true |
+| UI/visual/texture preparation | First addition of 788 UI leaves, 70.16 s visual and 55.82 s texture preparation | Existing versioned/integrity-checked caches retained; no new asset generation or blanket invalidation | Pending; single physical report cannot prove every-run repetition |
+| GEO/beacon preparation | 5.14 s selected GEO verification, 57.29 s graph preparation; generation not rerun | Exact 406-original contract and native graph preserved; unchanged finite refresh stays reusable | Pending warm receipts |
+| DbServer/Atlas/client native initialization | Residual DbServer 30.27 s; Atlas 198.84 s; client 198.17 s | Native bytes, synchronization/readiness proofs and startup order retained; detailed preparation/native phase receipts added | Pending |
+| Gameplay registry observer | 21 queries consumed 43.09 s cumulatively | Initial and fresh final proof retained; no recurring gameplay registry query | Pending smoothness comparison |
+| Connected gameplay server observer | 33 translated status launches consumed 122.96 s cumulatively; full observer polls 127.03 s including those launches | Current session-bound native events/progress remain live; full SQL/status/saved-row proof resumes on valid logout | Pending smoothness comparison |
+
+Hosted [run 37411543214](https://github.com/Russianranger/coh-android/actions/runs/37411543214)
+completed SUCCESS at 2026-10-06 04:10:44 UTC. Its qualification executed **1,124
+scenarios across 70 suites with zero skips**, including all seven real
+PostgreSQL 16.15 fixtures and retained UI, beacon, gameplay-save, recovery and
+persistence guards. Source closure covers 9,590 files and the 19 unchanged
+authored Java files. Negative cache/link, late malformed event, invalid logout,
+save-failure and final registry proof cases remain enforced.
+
+The SDK/payload/signer audit passed in a fresh process **before publication**.
+The separate read-only public-audit job 112103210518 then downloaded the actual
+three release assets and verified their checksum/notes, signature, binary
+manifest, exact source/qualification and donor conservation. It loaded no
+signing key and changed no public asset. All 75 payload members are conserved:
+four guest helpers plus two manifests replaced, 69 byte-identical, none added.
+The accepted Android shell/dex/resources, Wine/FEX/Mesa, native binaries,
+visual/GEO packs and Atlas beacon graph remain preserved.
+All 18 other workflows on this source also completed SUCCESS; older native/UI/
+beacon publisher guards intentionally avoided unnecessary rebuilding.
+Pinned run/job/artifact/file hashes are in
+`android-evidence/performance-0.13.15-publication.json`.
+
+[Published prerelease](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.15)
+contains the 1,557,338,724-byte APK with SHA-256
+`f43586fcc36ffc3a88fd8f3dfdb756d174604527e9a1dab140f97f36fbdaf8fb`.
+Install as an update, complete the offered helper/runtime update once, then
+follow `COH-Atlas-Gameplay-0.13.15-testing.txt` for first-update and second-warm
+measurements and full support-ZIP exports. Hosted conservation/correctness gates
+passed; physical UI/gameplay acceptance continues from 0.13.14 and must be
+checked for regressions in the focused 0.13.15 test.
+For clarity, record helper/runtime update duration separately and include it
+in the true launcher-open-to-login total if the update occurs during that
+interval. Reopen-to-login and its phase measurements start after preparation
+of the offered helper/runtime update. This distinguishes update overhead from
+ordinary launch performance; do not omit update overhead from the total.
