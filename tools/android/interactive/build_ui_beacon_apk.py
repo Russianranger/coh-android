@@ -423,8 +423,15 @@ def verify_derivative(apk, donor, payloads, commit, visual_directory, beacon_dir
         for name in VISUAL_ASSETS: require(payloads['assets/runtime/'+name] == base.file_pin(visual_directory/name), 'Qualified UI bytes differ')
         for name in BEACON_ASSETS: require(payloads['assets/runtime/'+name] == base.file_pin(beacon_directory/name), 'Qualified beacon bytes differ')
         client, runtime = verification_manifests(donor, {name: payloads['assets/runtime/'+name] for name in UPDATES}, commit, visual, beacons)
-        require(json.loads(archive.read('assets/runtime/client-manifest.json')) == client and
-            json.loads(archive.read('assets/runtime/runtime-manifest.json')) == runtime, 'Candidate provenance differs')
+        client_raw = archive.read('assets/runtime/client-manifest.json')
+        require(json.loads(client_raw) == client, 'Candidate client provenance differs')
+        client_pin = {'bytes': len(client_raw), 'sha256': hashlib.sha256(client_raw).hexdigest()}
+        require(client_pin == payloads['assets/runtime/client-manifest.json'], 'Candidate client byte pin differs')
+        # JSON object insertion order can differ between packaging and auditing
+        # processes. Bind the runtime reference to the already verified embedded
+        # client bytes after checking every logical client field.
+        runtime['files']['client-manifest.json'] = client_pin
+        require(json.loads(archive.read('assets/runtime/runtime-manifest.json')) == runtime, 'Candidate provenance differs')
     require(previous.prior.verify_apk_server_archives(apk) == donor['server_payload_extraction_preflight'], 'Candidate actual server extraction differs')
     return runtime
 

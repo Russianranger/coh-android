@@ -365,6 +365,7 @@ REOPEN_STARTUP_REPAIR_ALLOWED = REOPEN_STARTUP_REPAIR_SOURCES | REOPEN_STARTUP_R
 
 UI_BEACON_SOURCES = frozenset({
     '.github/workflows/android-ui-beacon.yml',
+    '.github/workflows/android-ui-beacon-public-audit.yml',
     '.github/workflows/android-atlas-beacon-generation.yml',
     '.github/workflows/android-atlas-beacon-verification.yml',
     'tools/android/interactive/build_ui_beacon_apk.py',

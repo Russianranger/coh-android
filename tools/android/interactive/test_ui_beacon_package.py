@@ -86,6 +86,46 @@ class UiBeaconPackagingTests(unittest.TestCase):
                 self.assertEqual(values[4][name], values[2]['runtime_manifest'][name])
             self.assertFalse(values[4]['ui_beacon']['native_mapserver_recompiled'])
 
+    def test_fresh_audit_accepts_equivalent_client_json_with_different_update_insertion_order(self):
+        # Model separate PYTHONHASHSEED processes without changing APK bytes:
+        # only the regenerated ordering of its three added file records differs.
+        for order in ('reverse', 'rotate'):
+            with self.subTest(order=order), tempfile.TemporaryDirectory() as temporary, candidate(Path(temporary)) as values:
+                with zipfile.ZipFile(values[0]) as archive:
+                    client_raw = archive.read('assets/runtime/client-manifest.json')
+                actual_client = json.loads(client_raw)
+                added_names = [name for name in actual_client['files'] if name in package.BEACON_ASSETS|package.ADDED_HELPERS]
+                self.assertEqual(len(added_names), 3)
+                reordered = list(reversed(added_names)) if order == 'reverse' else added_names[1:]+added_names[:1]
+                original_manifests = package.verification_manifests
+                calls = []
+                def different_order(donor, updates, commit, visual, beacons):
+                    ordered = {name: updates[name] for name in sorted(set(updates)-set(added_names))}
+                    ordered.update((name, updates[name]) for name in reordered)
+                    client, runtime = original_manifests(donor, ordered, commit, visual, beacons)
+                    self.assertEqual(client, actual_client)
+                    regenerated = pin(package.shared.encoded(client))
+                    self.assertNotEqual(regenerated, pin(client_raw))
+                    self.assertEqual(runtime['files']['client-manifest.json'], regenerated)
+                    calls.append(regenerated)
+                    return client, runtime
+                with mock.patch.object(package, 'verification_manifests', side_effect=different_order):
+                    self.assertEqual(self.verify(values), values[4])
+                self.assertEqual(len(calls), 1)
+
+    def test_client_order_tolerance_still_rejects_logical_pin_and_other_runtime_provenance_changes(self):
+        for mutation in ('logical_client', 'declared_client_pin', 'other_runtime_field', 'other_runtime_file'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary, candidate(Path(temporary)) as values:
+                member = 'assets/runtime/client-manifest.json' if mutation == 'logical_client' else 'assets/runtime/runtime-manifest.json'
+                with zipfile.ZipFile(values[0]) as archive: value = json.loads(archive.read(member))
+                if mutation == 'logical_client': value['files']['local_character_server.py'] = pin(b'foreign-helper')
+                elif mutation == 'declared_client_pin': value['files']['client-manifest.json'] = pin(b'foreign-client-manifest')
+                elif mutation == 'other_runtime_field': value['ui_beacon']['physical_gameplay_validated'] = True
+                else: value['files']['local_character_server.py'] = pin(b'foreign-helper')
+                raw = package.shared.encoded(value); replace_member(values[0], member, raw); values[3][member] = pin(raw)
+                with self.assertRaisesRegex(ValueError, 'Candidate client provenance|Candidate provenance'):
+                    self.verify(values)
+
     def test_game_dbserver_mapserver_dlls_world_caches_animations_and_launcher_cannot_change(self):
         names = ('client-runtime.zip', 'game-package.tar.gz', 'dbserver-package.tar.gz', 'dbserver-schema.tar.gz',
             'server-caches.zip', 'client-caches.zip', 'atlas-world-supplement.zip', 'server-animations.pigg',

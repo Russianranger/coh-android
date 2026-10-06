@@ -42,12 +42,54 @@ jobs:
   changes:
     runs-on: ubuntu-24.04
     outputs:
-      ui_beacon_required: ${{ steps.scope.outputs.ui_beacon_required }}
+      ui_beacon_required: ${{ steps.release_gate.outputs.release_exists == 'true' && 'false' || steps.scope.outputs.ui_beacon_required }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
           fetch-depth: 2
+      - name: Preserve any already published release and skip repackaging
+        id: release_gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import ast
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          source = ast.parse(Path('tools/android/interactive/build_ui_beacon_apk.py').read_text())
+          tags = [node.value.value for node in source.body
+              if isinstance(node, ast.Assign) and len(node.targets) == 1
+              and isinstance(node.targets[0], ast.Name) and node.targets[0].id == 'RELEASE_TAG'
+              and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str)]
+          if len(tags) != 1 or not re.fullmatch(r'coh-atlas-gameplay-v[0-9]+\.[0-9]+\.[0-9]+', tags[0]):
+              raise ValueError('One explicit release tag is required for the read-only publication gate')
+          tag = tags[0]
+          request = urllib.request.Request(
+              'https://api.github.com/repos/Russianranger/coh-android/releases/tags/' + urllib.parse.quote(tag, safe=''),
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  release = json.loads(response.read(4 * 1024 * 1024))
+          except urllib.error.HTTPError as error:
+              if error.code != 404:
+                  raise
+              exists = False
+          else:
+              if release.get('tag_name') != tag or type(release.get('id')) is not int:
+                  raise ValueError('Existing release response differs from the explicit candidate tag')
+              exists = True
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('release_exists=' + str(exists).lower() + '\n')
+          print(json.dumps({'release_tag': tag, 'release_exists': exists,
+              'publication_jobs_skipped': exists, 'existing_release_modified': False}, sort_keys=True))
+          PY
       - name: Route the bounded UI beacon continuation
         id: scope
         env:
