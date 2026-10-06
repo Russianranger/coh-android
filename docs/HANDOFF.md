@@ -1,6 +1,48 @@
 # City of Heroes Android handoff
 
-**UI sweep, genuine native beacons and full qualification passed: 1,102 tests / 68 suites / zero skips / seven real PostgreSQL fixtures. 0.13.14 / code 29 build, signing and public audit are running; no audited APK is published yet.**
+**0.13.14 is published and its public checksum matches, but the fresh-process manifest audit stopped on a checker serialization bug. A read-only corrected audit is being prepared. The released APK remains unchanged.**
+
+The published candidate targets **`25f821da9e782281953412543057054abd8dd320`**:
+`COH-Atlas-Gameplay-0.13.14.apk`, code 29, 1,557,338,724 bytes,
+SHA-256 `1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee`.
+[Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.14)
+is prerelease 404193274, APK asset 613990752, published 2026-10-06 00:27:05 UTC.
+Actual public download matched those bytes and hash at 00:27:36 UTC.
+
+Release workflow 37392793426 remains **FAILED overall**: all 68 suites / 1,102
+scenarios / zero skips / seven real PostgreSQL fixtures passed; APK build, SDK
+signing, same-process payload/source verification, publication and fresh public
+download checksum all passed. The separate public SDK/payload audit stopped at
+**00:28:33 UTC** in `verify_derivative` with `Candidate provenance differs`.
+Do not relabel that failed run successful or claim the final public audit passed.
+
+Two independent source reviews identified the exact cause: `shared.encoded()`
+uses unsorted indented JSON, while `UPDATES` is a frozenset. Three new client
+manifest keys therefore have process-dependent insertion order. Equal decoded
+client manifests can serialize differently, so reconstructing their bytes in a
+fresh process changes the expected runtime's client-manifest hash. The build's
+same-process checks pass, but a fresh audit can reject the valid byte reference.
+
+The minimal checker correction validates every decoded client field, explicitly
+verifies its embedded bytes against the build payload pin, then binds the expected
+runtime reference to those exact bytes before comparing every runtime field.
+No APK, manifest, helper, native binary or qualification source is changed.
+Future builder correction blob `86bea0a3f0a24753affa52334fe653df06e818e4`
+changes only that verification block. Tests blob
+`53685a11602e12590e8987e182c8497b91fa364a` preserves all 14 existing methods
+and adds two order-independence/negative cases; these are source-reviewed, pending
+hosted execution. A separate read-only audit will retain pristine source25 on
+disk, graft only that separately pinned corrected function, and rerun original
+full receipt/source/payload/SDK/signer/badging/binary-manifest checks. Source
+closure must not be weakened to accommodate a current auditor. The full publisher
+will stop early for an already-published tag; never rebuild/overwrite this APK.
+
+Failed-run packaging evidence artifact **11381709625** is 12,500,422 bytes,
+SHA-256 `336b5d84d685eecbf7fbff17cc3db88e473c31731219c2a3cbb60d7994e41b1b`.
+Original qualified UI/native/qualification artifacts are retained by the same run.
+The graph qualification and actual 68-suite result below remain accepted.
+Physical Thor UI, NPC pursuit, save/reopen and new startup measurements remain
+pending. Main stays separate, PR #1 stays draft, zoning follows this pass.
 
 Actual native run [37377053417](https://github.com/Russianranger/coh-android/actions/runs/37377053417)
 at source `3124723b93b4ae83b211f9319ffa8d6d8a3e851d` completed generation,
@@ -102,8 +144,8 @@ real fixtures (three emission + four level-up), with PostgreSQL 16.15 initialize
 Exact source closure and donor conservation passed. Artifact **11381713754**
 (`coh-ui-beacon-qualification`) is 6,137,683 bytes, SHA-256
 `4c42683fe1cad44f6bed1df5f0a649d36b0bc68761f91f2ad26e78d4ecc60c8a`.
-The APK job **112043909987** is running SDK build/signing, publication and full
-public-download audit. Do not claim APK availability or public audit success
+APK job **112043909987** completed the build/signing/publication/checksum gates,
+then failed the separate manifest audit described above. Do not claim APK availability or public audit success
 until its actual gates complete. This docs-only checkpoint changes no APK
 source/input and does not trigger the active publication lane. Candidate identity
 is **0.13.14 / code 29**, unchanged app ID and signer. Payload boundary remains
