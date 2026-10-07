@@ -1,3 +1,37 @@
+# Release recovery verification — 2026-10-07
+
+Recovered continuation head `7850376508fe544c1d4a4c817d20f241b3324f20`.
+The interrupted-session screenshot was older than the repository evidence:
+**0.13.16 had already completed qualification, publication, public APK audit
+and handoff. No release/build gate remained unfinished.** Do not rebuild,
+replace or renumber this APK without a concrete new defect/change. The next
+action is physical Thor testing; zoning remains deferred.
+
+This recovery independently checked the live PR/branch, release assets, tag
+and all five owner-run jobs; downloaded and hash-verified the existing public
+audit, qualification, native-build and packaging evidence archives; validated
+their exact receipt bytes; and revalidated all **9,615 frozen source pins**,
+the complete 76-suite qualification contract and actual source-bound Win32
+scene/frame receipts. The previously completed independent public audit
+downloaded and checked the actual APK, checksum and notes. This recovery did
+not repeat that 1.55 GB APK download or claim a new physical performance test.
+
+Independent read-only native/release reviews found no concrete defect. The
+six scene/frame/contract/package/report suites passed again locally:
+**34 tests, zero skips**. Separate review verification including the retained
+preload-launch suite passed **42 tests, zero skips**; these counts overlap and
+must not be added. The full 1,163-test/postgreSQL/SDK/signing/public audit remains
+the completed hosted result at the frozen release source below.
+
+Expanded physical instructions and precise measurement limits are in
+[COH-Atlas-Gameplay-0.13.16-thor-test-plan.md](COH-Atlas-Gameplay-0.13.16-thor-test-plan.md).
+They explicitly cover progressive world visibility, separate stationary/
+camera/populated-movement FPS, building/unseen-scenery hitches, temperatures
+and complete per-run exports. Native thread CPU and render/presentation wall
+timings do not isolate llvmpipe workers or per-texture decode/upload cost.
+This recovery changes documentation only; the release source, APK, checksum
+and published testing notes stay frozen.
+
 # Client scene-loading and native frame continuation — 2026-10-07
 
 **Physical 0.13.15 first-update and warm runs are accepted. Scene loading and
