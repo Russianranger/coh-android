@@ -12,6 +12,82 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_sidebar_exact_android_scope_routes_to_its_owner_without_older_native_publication(self):
+        names = sorted(change.SIDEBAR_ALLOWED)
+        self.assertTrue(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.scene_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.gameplay_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+
+    def test_sidebar_scope_cannot_hide_other_java_guest_native_resource_or_runtime_change(self):
+        names = sorted(change.SIDEBAR_ALLOWED)
+        forbidden = (change.JAVA+'ClientSurface.java', change.JAVA+'ClientAcceptance.java',
+            change.JAVA+'ClientSessionBudget.java',
+            'android/guest/client_interactive_diagnostic.py',
+            'android/guest/native_responsiveness_contract.py', 'android/runtime-lock.json',
+            'android/interactive/src/main/AndroidManifest.xml',
+            'android/interactive/src/main/res/drawable/foreign.xml',
+            'assets/client-ui-sweep-manifest.json', 'android/native/client-launcher.c',
+            'patches/client-gameplay-performance/0001-gameplay-cap-and-texture-diagnostics.patch',
+            'tools/android/interactive/test_client_sidebar_unreviewed.py', 'foreign.py')
+        for foreign in forbidden:
+            with self.subTest(foreign=foreign):
+                mixed = names+[foreign]
+                self.assertFalse(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+                for function in self.gameplay_historical_publishers():
+                    with self.subTest(function=function.__name__):
+                        self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+
+    def test_sidebar_source_marker_requires_valid_immediate_parent_push(self):
+        names = sorted(change.SIDEBAR_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40,
+                    sorted(change.SIDEBAR_ALLOWED-change.SIDEBAR_SOURCES))):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertFalse(change.sidebar_push(event, before, head, parent, files))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function(event, before, head, parent, files))
+
+    def test_sidebar_publication_checkpoint_accepts_only_named_evidence_and_handoff(self):
+        names = ['docs/HANDOFF.md', 'docs/android-evidence/client-sidebar-0.13.18-publication.json']
+        self.assertTrue(change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+['foreign.md']))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+        for files in (['docs/HANDOFF.md'], names+['docs/COH-CLIENT-SIDEBAR-0.13.18.md'],
+                names+[change.JAVA+'ClientActivity.java']):
+            self.assertFalse(change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, files))
+
+    def test_sidebar_classifier_cli_disables_every_older_owner_gate(self):
+        names = sorted(change.SIDEBAR_ALLOWED)
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)/'scope-output.txt'
+            environment = {'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40,
+                'GITHUB_OUTPUT': str(output)}
+            values = ['a'*40+'\n', 'b'*40+'\n', ('\0'.join(names)+'\0').encode()]
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            expected = ''.join(function.__name__+'=false\n'
+                for function in self.gameplay_historical_publishers()[:-1])
+            self.assertEqual(output.read_text(), expected)
+
     def gameplay_historical_publishers(self):
         from classify_interactive_change import runtime_required
         return (change.task_required, change.cleanup_required, change.recovery_required,
@@ -366,7 +442,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)
@@ -710,6 +786,6 @@ class StorageRoutingTests(unittest.TestCase):
             ('push','c'*40,'b'*40,'a'*40,known),
             ('push','a'*40,'a'*40,'a'*40,known),
             ('push','a'*40,'b'*40,'a'*40,[]),
-            ('push','a'*40,'b'*40,'a'*40,[change.JAVA+'ClientInput.java']),
+            ('push','a'*40,'b'*40,'a'*40,[change.JAVA+'ClientSessionBudget.java']),
             ('push','a'*40,'b'*40,'a'*40,['docs/HANDOFF.md'])):
             self.assertTrue(change.task_required(event,before,head,parent,names))

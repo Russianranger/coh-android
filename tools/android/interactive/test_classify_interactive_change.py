@@ -9,6 +9,37 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_sidebar_android_scope_bypasses_full_runtime_only_for_exact_direct_push(self):
+        from classify_storage_cleanup_change import SIDEBAR_ALLOWED
+        names = sorted(SIDEBAR_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for foreign in ('android/guest/client_startup_diagnostic.py', 'android/native/client-launcher.c',
+                'upstream/ouroboros/Game/src/game.c', 'assets/client-ui-sweep-manifest.json',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
+                'tools/android/interactive/test_client_sidebar_foreign.py',
+                'android/interactive/src/main/AndroidManifest.xml', 'foreign.py'):
+            with self.subTest(foreign=foreign):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'invalid', 'a'*40),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+
+    def test_sidebar_publication_checkpoint_cannot_mask_unrelated_changes(self):
+        names = ['docs/HANDOFF.md', 'docs/android-evidence/client-sidebar-0.13.18-publication.json']
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for foreign in ('foreign.md', 'android/guest/local_character_server.py',
+                'android/native/client-launcher.c'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+        self.assertTrue(change.runtime_required('push', 'c'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_gameplay_performance_only_bypasses_full_runtime_for_exact_reviewed_scope(self):
         from classify_storage_cleanup_change import GAMEPLAY_PERFORMANCE_ALLOWED
         names = sorted(GAMEPLAY_PERFORMANCE_ALLOWED)

@@ -28,11 +28,13 @@ public final class ClientActivity extends Activity {
     private ClientSurface display;
     private TextView status,detail,counter,logs,profileStatus;
     private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
+    private Button enterKey,showFps,fps10,fps30;
     private CheckBox performanceGraphics;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
     private final ClientInput.WalkingKeys walkingKeys=new ClientInput.WalkingKeys();
+    private final ClientInput.StartButton startButton=new ClientInput.StartButton();
     private final List<Button> movementButtons=new ArrayList<>();
     private final Set<Integer> heldButtons=new HashSet<>();
     private float rightX,rightY;
@@ -62,7 +64,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();dispatchPendingExport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);startButton.reset();inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;refreshPerformanceControls();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -72,9 +74,9 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.13.2",12,false));
+        controls.addView(text("Persistent local server · v0.13.18",12,false));
         controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
-        setup=button("Set up runtime (new install only)",()->request(ClientService.SETUP));controls.addView(setup);
+        setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
@@ -94,6 +96,13 @@ public final class ClientActivity extends Activity {
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
+        enterKey=button("Enter / Start",this::sendEnter);controls.addView(enterKey);
+        showFps=button("Show FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.SHOW_FPS));controls.addView(showFps);
+        LinearLayout fpsRow=new LinearLayout(this);
+        fps10=button("10 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_10));
+        fps30=button("30 FPS",()->sendPerformanceCommand(ClientInput.PerformanceCommand.FPS_30));
+        fpsRow.addView(fps10,new LinearLayout.LayoutParams(0,-2,1));
+        fpsRow.addView(fps30,new LinearLayout.LayoutParams(0,-2,1));controls.addView(fpsRow);
         controls.addView(text("Atlas movement · hold a button",12,true));
         addMovementRow(controls,"Forward",'w',"Back",'s',120001);
         addMovementRow(controls,"Left",'a',"Right",'d',120003);
@@ -113,12 +122,12 @@ public final class ClientActivity extends Activity {
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
         display.setInputListener(new ClientSurface.InputListener(){
             @Override public void onPointer(String session,int x,int y,int buttons){if(service!=null)service.sendPointer(session,x,y,buttons);}
-            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!textDialogVisible&&!movementSuppressed);}
+            @Override public void onReleaseAll(String session){resetLocalInputs();releaseRemoteInputs(session,!textDialogVisible&&!movementSuppressed&&!commandInputBusy());}
             @Override public void onCursor(float x,float y,boolean visible){cursor.move(x,y,visible);}
         });
-        right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text",12,false));
+        right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -143,24 +152,52 @@ public final class ClientActivity extends Activity {
             return true;
         });return b;
     }
-    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&hasWindowFocus()&&movementWindowOpen();}
+    private boolean canWalk(){return inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved&&!movementSuppressed&&!textDialogVisible&&!commandInputBusy()&&hasWindowFocus()&&movementWindowOpen();}
     private boolean movementWindowOpen(){return state!=null&&(state.movementDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.movementDeadlineUptimeMillis);}
-    private boolean gameInputOpen(){return inputActive&&movementWindowOpen()&&!movementSuppressed;}
+    private boolean commandInputBusy(){return service!=null&&service.isPerformanceCommandPending();}
+    private boolean gameInputOpen(){return inputActive&&movementWindowOpen()&&!movementSuppressed&&!commandInputBusy();}
+    private boolean ownedInputOpen(){return gameInputOpen()&&service!=null&&state!=null
+            &&state.busy&&state.inputReady&&!state.finishing&&!state.blocked&&!state.characterSaved
+            &&!shownSession.isEmpty()&&shownSession.equals(state.session)&&!textDialogVisible&&hasWindowFocus();}
+    private boolean canSendPerformanceCommand(){return ownedInputOpen()
+            &&("connected".equals(state.sessionPhase)||"grounded".equals(state.sessionPhase))
+            &&service.canSendPerformanceCommand();}
+    private void refreshPerformanceControls(){
+        boolean available=canSendPerformanceCommand();
+        if(showFps!=null)showFps.setEnabled(available);
+        if(fps10!=null)fps10.setEnabled(available);
+        if(fps30!=null)fps30.setEnabled(available);
+        if(enterKey!=null)enterKey.setEnabled(ownedInputOpen());
+    }
+    private void sendPerformanceCommand(ClientInput.PerformanceCommand command){
+        if(command==null||!canSendPerformanceCommand())return;
+        releaseControls(true);
+        if(!service.requestPerformanceCommand(command))
+            Toast.makeText(this,"Wait for Atlas input to be ready, then retry.",Toast.LENGTH_SHORT).show();
+        refreshMovementControls();refreshDeadlineControls();
+    }
+    private void sendEnter(){
+        if(!ownedInputOpen())return;
+        releaseControls(true);
+        if(!service.requestEnter())
+            Toast.makeText(this,"Enter was not queued. Wait for input ready and retry.",Toast.LENGTH_SHORT).show();
+    }
     private void disableTaskControls(){openTaskContact.setEnabled(false);captureAcceptedTask.setEnabled(false);completeTask.setEnabled(false);captureCompletedTask.setEnabled(false);}
     private void refreshDeadlineControls(){
         if(captureContact!=null)captureContact.setEnabled(inputActive&&service!=null&&state!=null
-                &&state.canSaveLogout&&!state.characterSaved&&!textDialogVisible&&hasWindowFocus()
+                &&state.canSaveLogout&&!state.characterSaved&&!textDialogVisible&&!commandInputBusy()&&hasWindowFocus()
                 &&movementWindowOpen()&&service.canCaptureContact());
         boolean taskAvailable=inputActive&&service!=null&&state!=null&&state.canSaveLogout&&!state.characterSaved
-                &&!textDialogVisible&&hasWindowFocus()&&movementWindowOpen();
+                &&!textDialogVisible&&!commandInputBusy()&&hasWindowFocus()&&movementWindowOpen();
         if(openTaskContact!=null)openTaskContact.setEnabled(taskAvailable&&service.canOpenTaskContact());
         if(captureAcceptedTask!=null)captureAcceptedTask.setEnabled(taskAvailable&&service.canCaptureTask(false));
         if(completeTask!=null)completeTask.setEnabled(taskAvailable&&service.canCompleteAcceptedTask());
         if(captureCompletedTask!=null)captureCompletedTask.setEnabled(taskAvailable&&service.canCaptureTask(true));
+        refreshPerformanceControls();
         if(state==null)return;
         if(!movementWindowOpen()&&!deadlineMovementSuppressed){deadlineMovementSuppressed=true;releaseControls(!movementSuppressed);refreshMovementControls();}
         display.setInputEnabled(gameInputOpen());typeText.setEnabled(gameInputOpen());
-        saveLogout.setEnabled(inputActive&&state.canSaveLogout&&service!=null&&service.canRequestSaveLogout()
+        saveLogout.setEnabled(inputActive&&!commandInputBusy()&&state.canSaveLogout&&service!=null&&service.canRequestSaveLogout()
                 &&(state.saveDeadlineUptimeMillis==0||SystemClock.uptimeMillis()<state.saveDeadlineUptimeMillis));
     }
     private void refreshMovementControls(){
@@ -169,12 +206,13 @@ public final class ClientActivity extends Activity {
         for(Button b:movementButtons){b.setEnabled(enabled);if(!enabled)b.setPressed(false);}
     }
     private void saveCharacter(){
+        if(commandInputBusy())return;
         boolean before=movementSuppressed;movementSuppressed=true;releaseControls();refreshMovementControls();
         if(service==null||!service.requestSaveLogout()){movementSuppressed=before;refreshMovementControls();}
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
     @Override protected void onStart(){super.onStart();lastTick=SystemClock.uptimeMillis();inputHandler.post(inputTick);bound=bindService(new Intent(this,ClientService.class),connection,BIND_AUTO_CREATE);}
-    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
+    @Override protected void onStop(){inputHandler.removeCallbacks(inputTick);releaseControls(true);startButton.reset();display.setInputEnabled(false);inputActive=false;display.setCaptureListener(null);captureEnabled=false;if(service!=null){service.setUiVisible(false);service.removeListener(listener);}service=null;if(bound){unbindService(connection);bound=false;}super.onStop();}
     private boolean profileIdle(ClientService.State next){
         return next!=null&&service!=null&&!next.busy&&!next.storageBusy&&!next.reportExporting
                 &&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();
@@ -296,8 +334,16 @@ public final class ClientActivity extends Activity {
         if(display!=null)display.releaseInput();
         releaseRemoteInputs(shownSession,discardPending);
     }
-    @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus)releaseControls();refreshMovementControls();}
+    @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(!focus){releaseControls();startButton.reset();}refreshMovementControls();refreshPerformanceControls();}
     @Override public boolean dispatchKeyEvent(KeyEvent event){
+        if((event.getSource()&InputDevice.SOURCE_GAMEPAD)==InputDevice.SOURCE_GAMEPAD
+                &&event.getKeyCode()==KeyEvent.KEYCODE_BUTTON_START){
+            if(event.getAction()==KeyEvent.ACTION_UP){startButton.release();return true;}
+            if(event.getAction()==KeyEvent.ACTION_DOWN){
+                if(startButton.press(event.getRepeatCount())&&ownedInputOpen())sendEnter();
+                return true;
+            }
+        }
         if(!gameInputOpen()||textDialogVisible||service==null)return super.dispatchKeyEvent(event);
         int code=event.getKeyCode();boolean down=event.getAction()==KeyEvent.ACTION_DOWN;
         if(event.getAction()!=KeyEvent.ACTION_DOWN&&event.getAction()!=KeyEvent.ACTION_UP)return super.dispatchKeyEvent(event);
@@ -315,7 +361,7 @@ public final class ClientActivity extends Activity {
             case KeyEvent.KEYCODE_DPAD_LEFT:keysym=0xff51;break;case KeyEvent.KEYCODE_DPAD_UP:keysym=0xff52;break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:keysym=0xff53;break;case KeyEvent.KEYCODE_DPAD_DOWN:keysym=0xff54;break;
             case KeyEvent.KEYCODE_ESCAPE:case KeyEvent.KEYCODE_BUTTON_B:keysym=0xff1b;break;
-            case KeyEvent.KEYCODE_ENTER:case KeyEvent.KEYCODE_NUMPAD_ENTER:keysym=0xff0d;break;
+            case KeyEvent.KEYCODE_ENTER:case KeyEvent.KEYCODE_NUMPAD_ENTER:keysym=ClientInput.RETURN_KEY;break;
             case KeyEvent.KEYCODE_TAB:keysym=0xff09;break;case KeyEvent.KEYCODE_DEL:keysym=0xff08;break;
             case KeyEvent.KEYCODE_FORWARD_DEL:keysym=0xffff;break;
             case KeyEvent.KEYCODE_SHIFT_LEFT:keysym=0xffe1;break;case KeyEvent.KEYCODE_SHIFT_RIGHT:keysym=0xffe2;break;

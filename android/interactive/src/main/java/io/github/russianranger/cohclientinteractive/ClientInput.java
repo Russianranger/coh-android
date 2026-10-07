@@ -7,6 +7,28 @@ import java.util.Map;
 public final class ClientInput {
     private ClientInput() {}
     public static final int MAX_TEXT = 32;
+    public static final int RETURN_KEY = 0xff0d;
+    /** Sidebar actions use only these fixed native commands, never editable text. */
+    public enum PerformanceCommand {
+        SHOW_FPS("show_fps"),
+        FPS_10("cap_10"),
+        FPS_30("cap_30");
+        public final String safeName;
+        PerformanceCommand(String safeName) {
+            this.safeName = safeName;
+        }
+    }
+    /** One native Enter transaction per physical Start press, including a short tap. */
+    public static final class StartButton {
+        private boolean held;
+        public boolean press(int repeatCount) {
+            if (held) return false;
+            held = true;
+            return repeatCount == 0;
+        }
+        public void release() { held = false; }
+        public void reset() { held = false; }
+    }
     public static final class Point {
         public final int x, y;
         Point(int x, int y) { this.x = x; this.y = y; }

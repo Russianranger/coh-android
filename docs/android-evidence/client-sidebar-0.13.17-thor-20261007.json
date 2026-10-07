@@ -1,0 +1,286 @@
+{
+  "format": 1,
+  "scope": "read_only_incomplete_Thor_0.13.17_test_review",
+  "support_zip": {
+    "filename": "coh-atlas-gameplay-20261007-135706.zip",
+    "bytes": 13989566,
+    "sha256": "00635a083885a47ec95184a232117c76f0bf7be15e2831dde451604e4abd022e"
+  },
+  "app_version": "0.13.17",
+  "session_id": "f484102adb834d36bc49117060fa2ec6",
+  "current_Game": {
+    "repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "manifest_sha256": "1843ade548de2c0cd06ef4672c40e0aff6e1fe15af8f0657c7290e80e9f1699e",
+    "base_client_executable_sha256": "4de0e49d028ed75271b44838bffb570ae0112460183d1c441174cf9d9dc282d4",
+    "client_executable_sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa",
+    "replacement_scope": "CityOfHeroes.exe_only",
+    "source_freshness_preserved": true,
+    "prepared_cache_schema_changed": false,
+    "renderer_changed": false,
+    "menus_and_background_cap_retained": true,
+    "runtime_maxfps_command_preserved": true,
+    "bounded_texture_errors": true,
+    "texture_load_fallback_and_assignments_preserved": true,
+    "physical_fps_improvement_validated": false
+  },
+  "actual_native_cap_records": [
+    {
+      "requested_cap": 30,
+      "effective_cap": 30,
+      "override_applied": 1,
+      "menu_cap": 10,
+      "inactive_cap": 10,
+      "create_bins": 0,
+      "bounded_texture_errors": 1,
+      "texture_key_limit": 64,
+      "texture_report_limit": 32,
+      "asset_loading_unchanged": 1
+    }
+  ],
+  "verified_launch_environment": {
+    "format": 1,
+    "policy": "current_verified_Game_attempt_only",
+    "enabled": true,
+    "launch_label": "actual-coh-client",
+    "producer_manifest_sha256": "1843ade548de2c0cd06ef4672c40e0aff6e1fe15af8f0657c7290e80e9f1699e",
+    "client_executable_sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa",
+    "effective_graphics_profile": "performance",
+    "gameplay_fps_requested": "30",
+    "bounded_texture_errors": "1",
+    "menus_and_background_cap_retained": true,
+    "shared_wine_environment_modified": false,
+    "physical_fps_improvement_validated": false
+  },
+  "renderer": {
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "renderer_classification": "software",
+    "vendor": "Mesa/X.org"
+  },
+  "startup": {
+    "operation_to_input_ready_seconds": 662.886,
+    "input_ready_to_observed_server_login_seconds": 277.118,
+    "operation_to_observed_server_login_seconds": 940.004,
+    "operation_to_observed_world_seconds": 1007.914,
+    "observed_server_login_to_observed_world_seconds": 67.91,
+    "native_map_connection_to_ready_seconds": 68.43,
+    "local_atlas_seconds": 223.32267,
+    "actual_client_start_seconds": 178.431482,
+    "extra_prelogin_delay_is_not_a_native_startup_stage": true
+  },
+  "status": {
+    "passed": true,
+    "character_reopen_verified": true,
+    "cleanup_verified": true,
+    "failures": [],
+    "normal_logout_requested": true,
+    "forced_stop_before_save": false,
+    "committed_sql_verified": true,
+    "powers_preserved": true,
+    "costume_preserved": true,
+    "committed_native_position_verified": true,
+    "interaction_completion_reason": "finish_requested",
+    "gameplay_verified": false,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    }
+  },
+  "native_gameplay": {
+    "engine_wall": {
+      "count": 2455,
+      "max_ms": 2917.639,
+      "mean_ms": 102.734,
+      "over_125ms_count": 339,
+      "over_200ms_count": 29,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "frame_interval": {
+      "count": 2455,
+      "max_ms": 2918.38,
+      "mean_cadence_hz": 9.609,
+      "mean_ms": 104.066,
+      "over_125ms_count": 363,
+      "over_200ms_count": 32,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "frame_wall": {
+      "count": 2455,
+      "max_ms": 2918.376,
+      "mean_ms": 103.429,
+      "over_125ms_count": 344,
+      "over_200ms_count": 30,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "pacing_wall": {
+      "count": 2455,
+      "max_ms": 12.179,
+      "mean_ms": 0.023,
+      "over_125ms_count": 0,
+      "over_200ms_count": 0,
+      "p50_upper_ms": 16,
+      "p95_upper_ms": 16
+    },
+    "submit_wall": {
+      "count": 2455,
+      "max_ms": 836.403,
+      "mean_ms": 70.479,
+      "over_125ms_count": 78,
+      "over_200ms_count": 7,
+      "p50_upper_ms": 83,
+      "p95_upper_ms": 125
+    },
+    "work_wall": {
+      "count": 2455,
+      "max_ms": 2918.373,
+      "mean_ms": 103.406,
+      "over_125ms_count": 344,
+      "over_200ms_count": 30,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    }
+  },
+  "texture_diagnostics": {
+    "bounded_flag_physically_enabled": true,
+    "console_lines": 17434,
+    "custom_texture_error_lines": 1024,
+    "gameplay_missing_texture_tuple_errors": 0,
+    "suppression_counter_records": [],
+    "repeated_error_path_physically_exercised": false,
+    "first_gameplay_error_preservation_physically_verified": false,
+    "note": "Startup emits 1,024 bounded missing-texture errors. No gameplay missing-texture tuple errors or suppression counter records occurred; this route does not qualify duplicate suppression benefit."
+  },
+  "input": {
+    "input_events_sent": 236,
+    "input_events_failed": 0,
+    "input_transport_observed": true,
+    "input_effect_verified": false,
+    "controller_input_validated": false
+  },
+  "input_defect_source": {
+    "file": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+    "physical_Start_mapped_to_Enter": false,
+    "Android_Enter_and_numpad_Enter_mapped": true,
+    "text_dialog_automatically_sends_Return": false,
+    "per_key_event_or_controller_mode_trace_exported": false,
+    "note": "The 0.13.17 dispatch switch lacks KEYCODE_BUTTON_START; unrecognized gamepad buttons fall through. The printable-text sender does not append Return. Aggregate input transport counts cannot identify Enter delivery.",
+    "audited_source_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e"
+  },
+  "scene_phases_ms_non_additive": {
+    "client_ready_queued": [
+      0
+    ],
+    "entities_network_and_processing": [
+      386
+    ],
+    "geometry_loader_completion": [
+      0
+    ],
+    "gfx_group_and_model_invalidation": [
+      0,
+      0
+    ],
+    "gfx_renderer_background_default_scene": [
+      81,
+      48
+    ],
+    "gfx_surviving_fx_preload": [
+      17941,
+      11237
+    ],
+    "gfx_tree_reset": [
+      1,
+      11
+    ],
+    "groups_collision_and_physics": [
+      3711
+    ],
+    "groups_crc_and_counts": [
+      0
+    ],
+    "groups_final_bounds_and_reset": [
+      41
+    ],
+    "groups_finish_load_map": [
+      1331
+    ],
+    "groups_initial_bounds": [
+      3667
+    ],
+    "groups_libraries_and_definitions": [
+      46398
+    ],
+    "groups_mission_and_finalize": [
+      65
+    ],
+    "groups_network_and_processing": [
+      56154
+    ],
+    "groups_references_and_trackers": [
+      661
+    ],
+    "groups_reset_and_header": [
+      28
+    ],
+    "groups_tracker_activation": [
+      4
+    ],
+    "relevant_textures_request": [
+      171
+    ],
+    "request_groups_setup": [
+      1
+    ],
+    "startup_final_fx_preload": [
+      119
+    ],
+    "startup_player_animations": [
+      4
+    ],
+    "texture_queue_completion": [
+      97
+    ]
+  },
+  "texture_index": {
+    "reused": true,
+    "native_layer_identity_migrated": true,
+    "original_header_bytes_sha256": "15bf62977115d7a76a3a89c86818cacb32e1242508527b4031c02b2dc2c5fe05",
+    "original_texture_files_unchanged": true,
+    "preparation_seconds": 43.751
+  },
+  "baseline_observations_not_performance_claims": {
+    "0.13.16": {
+      "local_atlas_seconds": 227.042736,
+      "client_start_seconds": 193.540713,
+      "native_map_connection_to_ready_seconds": 64.508,
+      "gameplay_mean_cadence_hz": 8.127
+    },
+    "0.13.17": {
+      "local_atlas_seconds": 223.32267,
+      "client_start_seconds": 178.431482,
+      "native_map_connection_to_ready_seconds": 68.43,
+      "gameplay_mean_cadence_hz": 9.609
+    },
+    "matched_route_or_standing_camera_movement_windows": false,
+    "controlled_10_vs_30_comparison_complete": false,
+    "physical_FPS_gain_validated": false
+  },
+  "limitations": [
+    "No GPU completion or Android/RFB display-latency measurement.",
+    "Native interval cadence is separate from Android delivered frames.",
+    "Thread CPU describes only the sampled main/render thread, not llvmpipe/Wine/FEX workers.",
+    "Histogram percentiles are bucket upper bounds; null means overflow.",
+    "Scene phases nest and must not be summed into startup or scene totals.",
+    "Native diagnostics are bounded and may omit a final partial ten-second window.",
+    "User reports the focused test was incomplete because Enter/chat commands could not be submitted.",
+    "No controlled 10/30 route comparison or labeled standing/camera/movement windows.",
+    "Temperatures are absent from this report.",
+    "No exact exported controller mode or per-key trace; Start defect established from source.",
+    "Native 30 cap was applied, but measured gameplay cadence remains about 9.6 Hz and pacing is almost zero.",
+    "The 4:37 input-ready-to-server-login interval is user interaction/wait, not a client initialization stage."
+  ]
+}

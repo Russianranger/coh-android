@@ -234,6 +234,22 @@ public final class InteractiveRfbClient implements Closeable {
         sendChatCommand("/contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact", expectedEpoch);
     }
 
+    /** One paired Enter edge, including login screens; never opens or types a command. */
+    public synchronized void sendEnter(long expectedEpoch) throws IOException {
+        requireCurrentInput(expectedEpoch);
+        tapCommandKey(0xff0d, expectedEpoch);
+    }
+
+    /** Only the fixed sidebar enum can enter this atomic chat-command route. */
+    public synchronized void sendPerformanceCommand(String safeName, long expectedEpoch) throws IOException {
+        final String command;
+        if ("show_fps".equals(safeName)) command = "/showfps 1";
+        else if ("cap_10".equals(safeName)) command = "/maxfps 10";
+        else if ("cap_30".equals(safeName)) command = "/maxfps 30";
+        else throw new IOException("Performance command is unavailable");
+        sendChatCommand(command, expectedEpoch);
+    }
+
     private void sendChatCommand(String command, long expectedEpoch) throws IOException {
         requireCurrentInput(expectedEpoch);
         releaseAllInputs();

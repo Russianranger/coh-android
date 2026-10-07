@@ -524,11 +524,47 @@ GAMEPLAY_PERFORMANCE_ALLOWED = GAMEPLAY_PERFORMANCE_SOURCES | frozenset({
 })
 
 
+# Android sidebar/input repair owns exactly these five Java sources. Native,
+# guest, runtime, resource and other Java mutations cannot join this lane.
+SIDEBAR_SOURCES = frozenset({
+    '.github/workflows/android-client-sidebar.yml',
+    'tools/android/interactive/build_client_sidebar_apk.py',
+    'tools/android/interactive/qualify_client_sidebar.py',
+    'tools/android/interactive/test_client_sidebar_package.py',
+    'tools/android/interactive/test_client_sidebar_commands.py',
+    'tools/android/interactive/test_client_sidebar_runtime.py',
+    'tools/android/interactive/test_input.py',
+    JAVA+'ClientActivity.java', JAVA+'ClientInput.java', JAVA+'InteractiveRfbClient.java',
+    JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
+})
+SIDEBAR_ALLOWED = SIDEBAR_SOURCES | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/HANDOFF.md', 'docs/COH-CLIENT-SIDEBAR-0.13.18.md',
+    'docs/COH-Atlas-Gameplay-0.13.18-testing.txt',
+    'docs/android-evidence/client-sidebar-0.13.17-thor-20261007.json',
+    'docs/android-evidence/client-sidebar-0.13.18-publication.json',
+})
+
+
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0'*40 and before == parent and head != before
         and names and set(names) <= allowed)
+
+
+def sidebar_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, SIDEBAR_ALLOWED)
+        and set(names) & SIDEBAR_SOURCES)
+
+
+def sidebar_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names,
+        {'docs/HANDOFF.md', 'docs/android-evidence/client-sidebar-0.13.18-publication.json'})
+        and 'docs/android-evidence/client-sidebar-0.13.18-publication.json' in names)
 
 
 def gameplay_performance_push(event, before, head, parent, names):
@@ -622,6 +658,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -640,6 +677,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -656,6 +694,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -674,6 +713,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -692,6 +732,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -708,6 +749,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -722,6 +764,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -735,6 +778,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -748,6 +792,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -760,6 +805,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -771,6 +817,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -781,6 +828,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -790,6 +838,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -798,6 +847,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
@@ -805,6 +855,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False

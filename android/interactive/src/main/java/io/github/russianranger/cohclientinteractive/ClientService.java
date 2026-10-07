@@ -129,6 +129,23 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
                 &&active.sendPointer(selectedSession,x,y,mask);
     }
+    public boolean requestEnter(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null
+                &&active.requestEnter(session);
+    }
+    public boolean isPerformanceCommandPending(){
+        ClientRuntime active=runtime;return active!=null&&active.isPerformanceCommandPending();
+    }
+    public boolean canSendPerformanceCommand(){
+        ClientRuntime active=runtime;
+        return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null
+                &&active.canSendPerformanceCommand();
+    }
+    public boolean requestPerformanceCommand(ClientInput.PerformanceCommand command){
+        ClientRuntime active=runtime;
+        return command!=null&&canSendPerformanceCommand()&&active!=null&&active.requestPerformanceCommand(command);
+    }
     public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(selectedSession);}
     /** Our own text dialog keeps the queued target-field tap before releasing held input. */
     public void releaseInput(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.releaseAllInputs(selectedSession);}

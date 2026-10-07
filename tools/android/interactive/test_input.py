@@ -108,6 +108,35 @@ public class InputHarness {
             walking.update(0,0,true,owners,rejectFirst);check(!owners.contains(110001));
             check(attempts[0]==3);
           }
+        } else if(mode.equals("enter")) {
+          long before=System.nanoTime();ref[0].sendEnter(ref[0].inputEpoch());
+          check(System.nanoTime()-before>=220_000_000L);
+        } else if(mode.startsWith("performance_")) {
+          String name=mode.substring("performance_".length());
+          ref[0].sendKey(0xffe3,true);
+          ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());
+        } else if(mode.equals("reject_performance")) {
+          int before=output.size(),rejected=0;
+          for(String name:new String[]{null,"","showfps","/maxfps 30","cap_60","CAP_30","cap_30\n"}) {
+            try{ref[0].sendPerformanceCommand(name,ref[0].inputEpoch());}
+            catch(IOException expected){rejected++;}
+          }
+          check(rejected==7&&output.size()==before);
+          long stale=ref[0].inputEpoch();ref[0].cancelPendingInput();
+          try{ref[0].sendPerformanceCommand("cap_30",stale);throw new AssertionError();}
+          catch(InteractiveRfbClient.InputCancelledException expected){}
+          try{ref[0].sendEnter(stale);throw new AssertionError();}
+          catch(InteractiveRfbClient.InputCancelledException expected){}
+          check(output.size()==before);
+        } else if(mode.equals("cancel_performance") || mode.equals("cancel_enter")) {
+          final long epoch=ref[0].inputEpoch();final boolean[] cancelled={false};
+          Thread pending=new Thread(()->{try{
+            if(mode.equals("cancel_enter"))ref[0].sendEnter(epoch);else ref[0].sendPerformanceCommand("cap_30",epoch);
+          }catch(InteractiveRfbClient.InputCancelledException expected){cancelled[0]=true;}
+           catch(IOException error){throw new IllegalStateException(error);}});
+          pending.start();check(commandKeySent.await(1,java.util.concurrent.TimeUnit.SECONDS));
+          ref[0].cancelPendingInput();pending.join(1000);check(!pending.isAlive()&&cancelled[0]);
+          ref[0].releaseAllInputs();
         } else if(mode.equals("save_logout")) {
           long before=System.nanoTime();ref[0].sendSaveLogout(ref[0].inputEpoch());
           check(System.nanoTime()-before>=3_000_000_000L);
@@ -278,6 +307,27 @@ class InputTests(unittest.TestCase):
         keys = [0xff0d] + list(map(ord, '/quittologin')) + [0xff0d]
         self.assertEqual([struct.pack('>BBHI', 4, down, 0, key) for key in keys for down in (1, 0)],
                          messages[1:-1])
+
+    def test_sidebar_enter_sends_one_settled_pair_without_chat_or_text(self):
+        self.assertEqual([struct.pack('>BBHI',4,down,0,0xff0d) for down in (1,0)],
+                         self.messages(self.run_harness('enter'))[1:-1])
+
+    def test_fixed_performance_commands_release_held_control_then_type_atomic_chat(self):
+        control=[struct.pack('>BBHI',4,down,0,0xffe3) for down in (1,0)]
+        for name,command in [('show_fps','/showfps 1'),('cap_10','/maxfps 10'),('cap_30','/maxfps 30')]:
+            with self.subTest(name=name):
+                keys=[0xff0d]+list(map(ord,command))+[0xff0d]
+                expected=control+[struct.pack('>BBHI',4,down,0,key) for key in keys for down in (1,0)]
+                self.assertEqual(expected,self.messages(self.run_harness('performance_'+name))[1:-1])
+
+    def test_performance_unknown_identifier_and_stale_command_epoch_write_nothing(self):
+        self.assertEqual([],self.messages(self.run_harness('reject_performance'))[1:-1])
+
+    def test_focus_stop_cancellation_interrupts_enter_and_performance_and_releases_key(self):
+        expected=[struct.pack('>BBHI',4,down,0,0xff0d) for down in (1,0)]
+        for mode in ('cancel_performance','cancel_enter'):
+            with self.subTest(mode=mode):
+                self.assertEqual(expected,self.messages(self.run_harness(mode))[1:-1])
 
     def test_save_logout_cancellation_releases_partial_command_key(self):
         messages = self.messages(self.run_harness('cancel_logout'))

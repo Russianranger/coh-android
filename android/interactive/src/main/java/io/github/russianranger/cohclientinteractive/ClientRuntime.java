@@ -93,6 +93,8 @@ public final class ClientRuntime {
     private final ThreadPoolExecutor inputWorker = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new ArrayBlockingQueue<Runnable>(128), runnable -> new Thread(runnable, "coh-interactive-input"));
     private volatile boolean inputReady, finishRequested;
+    private volatile boolean performanceCommandPending;
+    private long performanceCommandGeneration;
     private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
     private final ClientSessionBudget sessionBudget = new ClientSessionBudget();
     private final List<Map<String,Object>> sessionBudgetEvents = new ArrayList<>();
@@ -578,6 +580,57 @@ public final class ClientRuntime {
         if (keysym <= 0) return false;
         return queueInput(selectedSession, (active, epoch) -> active.sendKey(keysym, down, epoch), down);
     }
+    /** Ordinary paired Enter remains available in the owned login input phase. */
+    public synchronized boolean requestEnter(String selectedSession) {
+        return queueInput(selectedSession, (active, epoch) -> {
+            active.sendEnter(epoch);
+            recordLifecycle("sidebar_enter_submitted sent_utc_ms=" + System.currentTimeMillis());
+        }, true);
+    }
+    public boolean isPerformanceCommandPending() { return performanceCommandPending; }
+    private boolean performanceCommandInputAllowed() {
+        return session != null && !session.isEmpty() && reopen && inputReady && !finishRequested && !finished && !cancelled && !producerCompleted
+                && connectedCapturedReady && characterConnectedEvent != null && observedClientPid > 0
+                && !saveLogoutRequested && characterSavedEvent == null
+                && (!stuckRequested || relocationCapturedReady)
+                && !(taskContactRequested && taskContactReceipt == null)
+                && !(taskCompletionRequested && taskCompletionReceipt == null)
+                && sessionBudget.canMove(SystemClock.uptimeMillis());
+    }
+    public synchronized boolean canSendPerformanceCommand() {
+        return !performanceCommandPending && decoder != null && !inputWorker.isShutdown()
+                && performanceCommandInputAllowed();
+    }
+    public synchronized boolean requestPerformanceCommand(ClientInput.PerformanceCommand command) {
+        if (command == null || !canSendPerformanceCommand()) return false;
+        final String selectedSession = session;
+        final long selectedPid = observedClientPid;
+        final long token = ++performanceCommandGeneration;
+        performanceCommandPending = true;
+        boolean queued = queueInput(selectedSession, (active, epoch) -> {
+            synchronized (ClientRuntime.this) {
+                if (token != performanceCommandGeneration || !performanceCommandPending || !selectedSession.equals(session)
+                        || observedClientPid != selectedPid || !performanceCommandInputAllowed())
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            recordLifecycle("performance_command_dispatch name=" + command.safeName
+                    + " dispatch_utc_ms=" + System.currentTimeMillis());
+            active.sendPerformanceCommand(command.safeName, epoch);
+            recordLifecycle("performance_command_submitted name=" + command.safeName
+                    + " submitted_utc_ms=" + System.currentTimeMillis() + " native_effect_verified=false");
+            stage("FPS command sent", "Check the in-game FPS display. The selected value is a cap.");
+        }, true, token);
+        if (!queued) { performanceCommandPending = false; return false; }
+        recordLifecycle("performance_command_queued name=" + command.safeName);
+        notifyInputState();
+        return true;
+    }
+    private synchronized void completePerformanceCommand(long token) {
+        if (token != 0 && token == performanceCommandGeneration && performanceCommandPending) {
+            performanceCommandPending = false;
+            notifyInputState();
+        }
+    }
     /** Bounds manual contact-view evidence; it never proves a native dialog opened. */
     private static final class ContactCaptureWindow {
         static final int MAX_REQUESTS=3, FRAMES_PER_REQUEST=3;
@@ -610,7 +663,7 @@ public final class ClientRuntime {
         int count(){return count;}
     }
     public synchronized boolean canCaptureContact() {
-        return reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+        return !performanceCommandPending && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
                 && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
                 && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
                 && sessionBudget.canMove(SystemClock.uptimeMillis())
@@ -647,22 +700,27 @@ public final class ClientRuntime {
                 && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
                 && sessionBudget.canMove(SystemClock.uptimeMillis());
     }
+    /** New input is reserved while a sidebar command types; native task evidence
+     * and captures already requested retain their ordinary availability gate. */
+    private boolean taskInputAvailable() {
+        return !performanceCommandPending && taskControlsAvailable();
+    }
     public synchronized boolean canCaptureTask(boolean completed) {
-        if(!taskControlsAvailable())return false;
+        if(!taskInputAvailable())return false;
         return completed ? taskCompletedEvent!=null && taskCompletionReceipt!=null
                 && taskCompletedCapture.canRequest(SystemClock.uptimeMillis())
                 : taskAcceptedEvent!=null && !taskCompletionRequested
                 && taskAcceptedCapture.canRequest(SystemClock.uptimeMillis());
     }
     public synchronized boolean canOpenTaskContact() {
-        return taskControlsAvailable() && !taskContactRequested && taskAcceptedEvent==null && !taskCompletionRequested;
+        return taskInputAvailable() && !taskContactRequested && taskAcceptedEvent==null && !taskCompletionRequested;
     }
     public synchronized boolean requestOpenTaskContact() {
         if(!canOpenTaskContact())return false;
         final String selectedSession=session;
         final long selectedPid=observedClientPid;
         if(!queueInput(selectedSession,(active,epoch)->{
-            if(!taskControlsAvailable() || taskAcceptedEvent!=null)
+            if(!taskInputAvailable() || taskAcceptedEvent!=null)
                 throw new InteractiveRfbClient.InputCancelledException();
             active.sendOpenTaskContact(epoch);
             try {
@@ -703,7 +761,7 @@ public final class ClientRuntime {
         notifyInputState();return true;
     }
     public synchronized boolean canCompleteAcceptedTask() {
-        return taskControlsAvailable() && taskAcceptedEvent!=null && taskCompletedEvent==null
+        return taskInputAvailable() && taskAcceptedEvent!=null && taskCompletedEvent==null
                 && !taskCompletionRequested && taskAcceptedCapture.count()==ContactCaptureWindow.FRAMES_PER_REQUEST;
     }
     public synchronized boolean requestCompleteAcceptedTask() {
@@ -712,7 +770,7 @@ public final class ClientRuntime {
         final String selectedSession=session;
         final long selectedPid=observedClientPid;
         if(!queueInput(selectedSession,(active,epoch)->{
-            if(!taskControlsAvailable() || accepted!=taskAcceptedEvent || taskCompletedEvent!=null)
+            if(!taskInputAvailable() || accepted!=taskAcceptedEvent || taskCompletedEvent!=null)
                 throw new InteractiveRfbClient.InputCancelledException();
             active.sendCompleteAcceptedTask(epoch);
             try {
@@ -751,8 +809,12 @@ public final class ClientRuntime {
         return queueInput(selectedSession, action, false);
     }
     private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay) {
+        return queueInput(selectedSession, action, gameplay, 0);
+    }
+    private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay, long performanceToken) {
         if (!inputReady || finishRequested || finished || cancelled || producerCompleted
                 || session == null || !session.equals(selectedSession)
+                || (performanceCommandPending && performanceToken != performanceCommandGeneration)
                 || (gameplay && !gameplayInputAllowed())
                 || (reopen && stuckRequested && !relocationCapturedReady)) return false;
         InteractiveRfbClient queuedDecoder = decoder;
@@ -763,9 +825,10 @@ public final class ClientRuntime {
         try {
             inputWorker.execute(() -> {
                 InteractiveRfbClient active = decoder;
-                if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder
-                        || (gameplay && !gameplayInputAllowed())) return;
                 try {
+                    if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder
+                            || (performanceCommandPending && performanceToken != performanceCommandGeneration)
+                            || (gameplay && !gameplayInputAllowed())) return;
                     // The executor and decoder both serialize writes. Never retain
                     // key values or typed text in the evidence archive.
                     action.write(active, queuedEpoch);
@@ -780,6 +843,7 @@ public final class ClientRuntime {
                     // An intentionally discarded pending gesture is neither a
                     // sent input event nor a transport failure.
                 } catch (IOException failure) { inputFailure("Input transport write failed"); }
+                finally { completePerformanceCommand(performanceToken); }
             });
             return true;
         } catch (RejectedExecutionException full) {
@@ -792,8 +856,8 @@ public final class ClientRuntime {
     private void notifyInputState() {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
                 finishRequested && !finished, characterSavedReady,
-                reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
-                characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
+                !performanceCommandPending && characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
                 inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
@@ -820,7 +884,15 @@ public final class ClientRuntime {
         // Once accepted, normal Save owns its input epoch until delivery.
         // Surface disable/focus release must not interrupt the typed command;
         // explicit Stop and transport failure still cancel it separately.
-        if (discard && !saveLogoutRequested) { cancelPendingInput(); inputWorker.getQueue().clear(); }
+        if (discard && !saveLogoutRequested) {
+            cancelPendingInput(); inputWorker.getQueue().clear();
+            if (performanceCommandPending) {
+                performanceCommandPending = false;
+                ++performanceCommandGeneration;
+                recordLifecycle("performance_command_cancelled_by_input_release");
+                notifyInputState();
+            }
+        }
         if (decoder == null || clientWindowObservedUptime < 0) return;
         try { inputWorker.execute(this::releaseOnInputWorker); }
         catch (RejectedExecutionException full) {
@@ -833,7 +905,7 @@ public final class ClientRuntime {
         }
     }
     public synchronized boolean requestReturnToSafeGround() {
-        if (!reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
+        if (performanceCommandPending || !reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
                 || !sessionBudget.canMove(SystemClock.uptimeMillis()) || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
                 || saveLogoutRequested || characterSavedEvent != null) return false;
         final String relocationSession = session;
@@ -863,7 +935,7 @@ public final class ClientRuntime {
 
     /** Save readiness is separate from the connected-session capability used for movement and task input. */
     public synchronized boolean canRequestSaveLogout() {
-        return inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+        return !performanceCommandPending && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
                 && characterConnectedEvent != null && (!reopen || (connectedCapturedReady
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis())))
                 && characterSavedEvent == null && !saveLogoutRequested && taskSaveReady();
