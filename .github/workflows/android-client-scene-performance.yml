@@ -27,7 +27,7 @@ permissions:
   actions: read
 concurrency:
   group: android-client-scene-performance-publication
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   changes:
     runs-on: ubuntu-24.04

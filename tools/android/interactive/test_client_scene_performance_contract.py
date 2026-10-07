@@ -25,7 +25,7 @@ def bind_source_digests(inputs):
 
 def foreign_source_variants(inputs):
     """Include invented leaves with correctly recomputed enclosing bindings."""
-    for name in ('pg_header', 'pg_fixture', 'pg_extra', 'pg_patch', 'event_source', 'texture',
+    for name in ('pg_header', 'pg_fixture', 'pg_extra', 'pg_patch', 'event_source', 'texture', 'event_bool', 'event_float',
             'pg_digest', 'game_digest', 'progress_digest'):
         changed = copy.deepcopy(inputs)
         events = changed['character_events']; progress = events['progress_build_input']; game = progress['game_build_input']
@@ -36,6 +36,8 @@ def foreign_source_variants(inputs):
         elif name == 'pg_patch': pg['patch_sha256'] = 'f'*64
         elif name == 'event_source': events['source_sha256'][next(iter(events['source_sha256']))] = 'f'*64
         elif name == 'texture': changed['client_texture']['parse6_schema_changes'] = True
+        elif name == 'event_bool': events['schema_version'] = True
+        elif name == 'event_float': events['schema_version'] = 1.0
         bind_source_digests(changed)
         if name == 'pg_digest': game['postgresql_build_input_canonical_sha256'] = 'f'*64
         elif name == 'game_digest': progress['game_build_input_canonical_sha256'] = 'f'*64

@@ -69,7 +69,10 @@ def scene_source_inputs_equivalent(received, accepted):
         events['progress_build_input_canonical_sha256'] = source_sha(progress)
         return result
 
-    require(normalized(received) == normalized(accepted), 'Scene/frame retained source ancestry differs')
+    # JSON preserves boolean/integer/float distinctions that Python dict
+    # equality collapses; only the five explicitly normalized fields may vary.
+    encode = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    require(encode(normalized(received)) == encode(normalized(accepted)), 'Scene/frame retained source ancestry differs')
     return True
 
 

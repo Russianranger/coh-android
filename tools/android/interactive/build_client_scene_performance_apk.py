@@ -6,6 +6,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import tempfile
@@ -45,7 +46,7 @@ CHECKS = ('native_scene_frame_and_guest_controls_verified',
 ACTUAL_NATIVE_ANCESTRY_CHECKS = {'status': 'passed', 'actual_external_donor_and_win32_receipts_verified': True,
     'full_guest_typed_client_wrapper_verified': True, 'older_native_history_unchanged': True,
     'raw_source_histories_preserved': True, 'rejected_foreign_variants': ['pg_header', 'pg_fixture',
-        'pg_extra', 'pg_patch', 'event_source', 'texture', 'pg_digest', 'game_digest', 'progress_digest']}
+        'pg_extra', 'pg_patch', 'event_source', 'texture', 'event_bool', 'event_float', 'pg_digest', 'game_digest', 'progress_digest']}
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/build_client_scene_performance_apk.py',
     'tools/android/interactive/test_client_scene_performance_package.py',
@@ -432,6 +433,14 @@ def verify_report(args, commit):
     return report, checksum, notes
 
 
+def require_current_release_head(api, commit):
+    head = api.request('/git/ref/heads/'+BRANCH)
+    require(isinstance(commit, str) and re.fullmatch(r'[0-9a-f]{40}', commit)
+        and isinstance(head, dict) and head.get('ref') == 'refs/heads/'+BRANCH
+        and head.get('object', {}).get('type') == 'commit' and head['object'].get('sha') == commit,
+        'Publication candidate has been superseded by the current continuation branch head')
+
+
 def publish_release(api, report, assets, notes):
     require(tuple(path.name for path in assets) == (APK_NAME, APK_NAME+'.sha256', NOTES_NAME), 'Unexpected release assets')
     builder().checked_file(assets[0], report)
@@ -442,6 +451,7 @@ def publish_release(api, report, assets, notes):
         else:
             require(not path.startswith('/releases/'), 'Existing release is never replaced')
             require(existing.get('object', {}).get('type') == 'commit' and existing['object'].get('sha') == report['repository_commit'], 'Existing tag points elsewhere')
+    require_current_release_head(api, report['repository_commit'])
     release = api.request('/releases', {'tag_name': RELEASE_TAG, 'target_commitish': report['repository_commit'],
         'name': 'COH Atlas Gameplay 0.13.16 — native scene and frame performance',
         'body': notes+'\n\nAPK SHA-256: `'+report['sha256']+'`.\n[Hosted qualification](https://github.com/'+REPOSITORY+'/actions/runs/'+os.environ.get('GITHUB_RUN_ID', '')+').\n',
@@ -452,6 +462,7 @@ def publish_release(api, report, assets, notes):
         pin = builder().file_pin(path)
         require(uploaded.get('state') == 'uploaded' and uploaded.get('name') == path.name and uploaded.get('size') == pin['bytes']
             and uploaded.get('digest') == 'sha256:'+pin['sha256'], 'Release upload differs')
+    require_current_release_head(api, report['repository_commit'])
     published = api.request('/releases/'+str(release['id']), {'draft': False, 'prerelease': True, 'make_latest': 'false'}, method='PATCH')
     require(published.get('id') == release['id'] and published.get('draft') is False and published.get('prerelease') is True
         and published.get('tag_name') == RELEASE_TAG, 'Publication incomplete')

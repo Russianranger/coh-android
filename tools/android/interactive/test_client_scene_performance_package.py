@@ -9,6 +9,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest import mock
+import urllib.error
 import zipfile
 
 import build_client_scene_performance_apk as package
@@ -231,6 +232,7 @@ class ClientScenePerformancePackageTests(unittest.TestCase):
             self.assertNotIn(forbidden, source)
         self.assertIn('coh-thor-performance-packaging-evidence', source); self.assertIn('run-id: 37411543214', source)
         self.assertIn("PYTHONHASHSEED: '73416'", source); self.assertIn("PYTHONHASHSEED: '1615'", source)
+        self.assertIn('cancel-in-progress: true', source)
         self.assertLess(source.index('Fresh-process SDK source payload'), source.index('Publish only the newly qualified'))
         public = source.split('  public-audit:', 1)[1]
         self.assertIn('contents: read', public); self.assertNotIn('contents: write', public)
@@ -243,6 +245,43 @@ class ClientScenePerformancePackageTests(unittest.TestCase):
             with self.subTest(source=name):
                 self.assertTrue(any(fnmatch.fnmatchcase(name, pattern) for pattern in patterns),
                     'Every source that can suppress an old pipeline must trigger its current owner')
+
+    def test_superseded_head_blocks_release_creation_and_publication(self):
+        for scenario in ('current', 'stale_before_creation', 'stale_during_upload'):
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as temporary:
+                folder = Path(temporary); assets = tuple(folder/name for name in
+                    (package.APK_NAME, package.APK_NAME+'.sha256', package.NOTES_NAME))
+                for path in assets: path.write_bytes(b'fully-verified-release-fixture')
+                report = dict(pin(assets[0].read_bytes()), repository_commit=COMMIT)
+                api = mock.Mock(); heads = []
+
+                def request(path, data=None, **kwargs):
+                    if path == '/git/ref/heads/'+package.BRANCH:
+                        heads.append(path)
+                        stale = scenario == 'stale_before_creation' or (scenario == 'stale_during_upload' and len(heads) > 1)
+                        return {'ref': 'refs/heads/'+package.BRANCH,
+                            'object': {'type': 'commit', 'sha': 'b'*40 if stale else COMMIT}}
+                    if path.startswith(('/releases/tags/', '/git/ref/tags/')):
+                        raise urllib.error.HTTPError('https://api.github.com', 404, 'Not Found', {}, None)
+                    if path == '/releases':
+                        return {'id': 1, 'draft': True, 'prerelease': True, 'tag_name': package.RELEASE_TAG}
+                    if path.startswith('/releases/1/assets?'):
+                        record = pin(data.read_bytes())
+                        return {'state': 'uploaded', 'name': data.name, 'size': record['bytes'], 'digest': 'sha256:'+record['sha256']}
+                    self.assertEqual(path, '/releases/1')
+                    return {'id': 1, 'draft': False, 'prerelease': True, 'tag_name': package.RELEASE_TAG,
+                        'html_url': 'https://github.com/'+package.REPOSITORY+'/releases/tag/'+package.RELEASE_TAG}
+
+                api.request.side_effect = request
+                if scenario == 'current':
+                    self.assertIn(package.RELEASE_TAG, package.publish_release(api, report, assets, 'qualified notes'))
+                    self.assertEqual(len(heads), 2)
+                else:
+                    with self.assertRaisesRegex(ValueError, 'superseded'):
+                        package.publish_release(api, report, assets, 'qualified notes')
+                    self.assertFalse(any(call.kwargs.get('method') == 'PATCH' for call in api.request.call_args_list))
+                    if scenario == 'stale_before_creation':
+                        self.assertFalse(any(call.kwargs.get('method') == 'POST' for call in api.request.call_args_list))
 
 
 if __name__ == '__main__': unittest.main()
