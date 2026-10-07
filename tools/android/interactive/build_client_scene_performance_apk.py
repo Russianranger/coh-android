@@ -42,6 +42,10 @@ ADDED_PAYLOADS = frozenset()
 CHECKS = ('native_scene_frame_and_guest_controls_verified',
     'retained_ui_beacon_gameplay_postgresql_and_recovery_guards_verified',
     'exact_game_only_payload_shell_source_and_server_extraction_verified')
+ACTUAL_NATIVE_ANCESTRY_CHECKS = {'status': 'passed', 'actual_external_donor_and_win32_receipts_verified': True,
+    'full_guest_typed_client_wrapper_verified': True, 'older_native_history_unchanged': True,
+    'raw_source_histories_preserved': True, 'rejected_foreign_variants': ['pg_header', 'pg_fixture',
+        'pg_extra', 'pg_patch', 'event_source', 'texture', 'pg_digest', 'game_digest', 'progress_digest']}
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/build_client_scene_performance_apk.py',
     'tools/android/interactive/test_client_scene_performance_package.py',
@@ -168,12 +172,26 @@ def validate_native(directory, commit, donor):
         require(native.get('run_url') == 'https://github.com/'+REPOSITORY+'/actions/runs/'+os.environ['GITHUB_RUN_ID'],
             'Native Game must be compiled and qualified in this exact current run')
     provenance = donor['immutable_donor_provenance']
+    validate_native_source_ancestry(native['retained_source_inputs'], provenance['native_responsiveness']['build_inputs'])
     require(native['base_client_executable'] == provenance['native_client_startup_followup']['files']['CityOfHeroes.exe']
-        and native['retained_source_inputs'] == provenance['native_responsiveness']['build_inputs']
         and native['schema_sources_sha256'] == provenance['native_responsiveness']['retained_cache']['schema_sources_sha256']
         and native['build_input']['base_client_startup_followup_build_input']
             == provenance['native_client_startup_followup']['build_input'], 'Native Game ancestry or cache schema differs')
     return native
+
+
+def validate_native_source_ancestry(received, accepted):
+    # Recompute every frozen source recipe independently for each raw history.
+    # The guest comparison then permits only the enumerated PG checkout EOLs
+    # and their three verified enclosing digests, without relabeling either.
+    baseline = native_producer.base.base.base.baseline
+    for inputs in (received, accepted):
+        require(isinstance(inputs, dict) and set(inputs) == set(baseline.INPUTS),
+            'Native Game retained source input inventory differs')
+        for name, receipt in inputs.items():
+            require(receipt == baseline.expected_source_receipt(name, receipt),
+                'Native Game independently recomputed ancestry differs: '+name)
+    return shared.native_contract.scene_source_inputs_equivalent(received, accepted)
 
 
 def client_manifest(donor, native):
@@ -294,7 +312,9 @@ def validate_qualification(receipt, commit):
         and set(receipt.get('checks', {})) == set(CHECKS) and all(value is True for value in receipt['checks'].values())
         and all(receipt.get(key) is False for key in FALSE_FLAGS)
         and receipt.get('native_client_recompiled') is True and receipt.get('native_client_compiled_in_current_run') is True
-        and receipt.get('native_client_package_reused') is False, 'Exact source-bound performance qualification required')
+        and receipt.get('native_client_package_reused') is False
+        and receipt.get('actual_native_ancestry_validation') == ACTUAL_NATIVE_ANCESTRY_CHECKS,
+        'Exact source-bound performance qualification required')
     contract = module('client_scene_performance_qualification_contract', ROOT/QUALIFICATION_SCRIPT)
     suites = receipt.get('test_suites', {})
     require(set(suites) == set(contract.TEST_MODULES) and receipt.get('check_suites') == contract.CHECK_SUITES

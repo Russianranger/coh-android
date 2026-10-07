@@ -77,6 +77,7 @@ def qualification():
         'donor': package.donor_link(), 'checks': {name: True for name in package.CHECKS},
         **{name: False for name in package.FALSE_FLAGS}, 'native_client_recompiled': True,
         'native_client_compiled_in_current_run': True, 'native_client_package_reused': False,
+        'actual_native_ancestry_validation': copy.deepcopy(package.ACTUAL_NATIVE_ANCESTRY_CHECKS),
         'test_suites': {name: {'status': 'passed', 'skipped': 0, 'tests_run': 1} for name in q.TEST_MODULES},
         'tests_run': len(q.TEST_MODULES), 'check_suites': copy.deepcopy(q.CHECK_SUITES),
         'source_files': {name: pin(b'source') for name in package.SOURCE_FILES},
@@ -106,6 +107,26 @@ class ClientScenePerformancePackageTests(unittest.TestCase):
                     native.validate_source(source)
                 target.write_bytes(raw)
             self.assertEqual(native.validate_source(source)[0], expected)
+
+    def test_recomputed_native_ancestry_accepts_proven_pg_encoding_only(self):
+        import hashlib
+        from test_client_scene_performance_contract import bind_source_digests, foreign_source_variants
+        baseline = package.native_producer.base.base.base.baseline
+        received = {name: baseline.expected_source_receipt(name, {'progress_build_input':
+            __import__('prepare_mapserver_progress_source').expected_progress_receipt()})
+            if name == 'character_events' else baseline.expected_source_receipt(name, {}) for name in baseline.INPUTS}
+        accepted = copy.deepcopy(received)
+        pg = accepted['character_events']['progress_build_input']['game_build_input']['postgresql_build_input']
+        for name in pg['overlay_sha256']:
+            raw = (package.ROOT/'database/postgresql/overlay'/name).read_bytes().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+            pg['overlay_sha256'][name] = hashlib.sha256(raw).hexdigest()
+        bind_source_digests(accepted)
+        before = copy.deepcopy((received, accepted))
+        self.assertTrue(package.validate_native_source_ancestry(received, accepted))
+        self.assertTrue(package.validate_native_source_ancestry(accepted, received))
+        for name, changed in foreign_source_variants(received):
+            with self.subTest(mutation=name), self.assertRaises(ValueError): package.validate_native_source_ancestry(changed, accepted)
+        self.assertEqual((received, accepted), before)
 
     def test_fresh_native_package_verification_reads_actual_cmake_flags_even_with_recomputed_pin(self):
         native = package.native_producer; baseline = native.base.base.base.baseline
@@ -193,12 +214,13 @@ class ClientScenePerformancePackageTests(unittest.TestCase):
         receipt = qualification()
         with mock.patch.object(package, 'builder'):
             package.validate_qualification(receipt, COMMIT)
-            for mutation in ('skip', 'suite', 'source', 'pg', 'native_reused'):
+            for mutation in ('skip', 'suite', 'source', 'pg', 'native_reused', 'actual_ancestry'):
                 changed = copy.deepcopy(receipt)
                 if mutation == 'skip': next(iter(changed['test_suites'].values()))['skipped'] = 1
                 elif mutation == 'suite': changed['test_suites'].pop(next(iter(changed['test_suites'])))
                 elif mutation == 'source': changed['source_files'].pop(next(iter(package.SOURCE_FILES)))
                 elif mutation == 'pg': changed['postgresql_levelup_fixtures'] = []
+                elif mutation == 'actual_ancestry': changed['actual_native_ancestry_validation']['rejected_foreign_variants'] = []
                 else: changed['native_client_package_reused'] = True
                 with self.subTest(mutation=mutation), self.assertRaises(ValueError): package.validate_qualification(changed, COMMIT)
 

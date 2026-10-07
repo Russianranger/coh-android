@@ -4,6 +4,7 @@
 The enclosing signed APK inventories pin this receipt. It never promotes the
 candidate executable to the stock reference or rewrites prepared-cache history.
 """
+import copy
 import hashlib
 import json
 import math
@@ -23,6 +24,53 @@ def require(value, message):
 
 def canonical_sha(value):
     return hashlib.sha256((json.dumps(value, sort_keys=True, indent=2) + '\n').encode()).hexdigest()
+
+
+def scene_source_inputs_equivalent(received, accepted):
+    """Allow only the two already proven PG C/H checkout encodings for this layer.
+
+    Preserve both raw histories. Each enclosing compact source-receipt digest is
+    verified before comparing normalized copies; all other receipt fields must
+    remain identical to the accepted producer. Older layers keep exact equality.
+    """
+    encodings = {
+        'Common/sql/pg_compat.h': (
+            '2ca4c8befd57a07f16d71b4f6eeeec4ba0acde601883c1c50907c48769d137e7',
+            '119ee1649b56cd859145a582e4d042bd3b3721831cba7c3b5acf9086a447e04e'),
+        'DBServer/src/pg_persistence_test.c': (
+            'c822b932db21a81cb97b951f00011c461d0d88a55f1f93ba8738df6326741433',
+            '30fbf6ac294cc0c104287ea1450d579d31d61b6a03fc49dceadbf5aaa9cbd3c2')}
+
+    def source_sha(value):
+        return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+    def normalized(inputs):
+        require(isinstance(inputs, dict) and set(inputs) == {'character_events', 'client_texture', 'graphics_profile'},
+            'Scene/frame retained source input inventory differs')
+        result = copy.deepcopy(inputs)
+        events = result['character_events']
+        require(isinstance(events, dict) and isinstance(events.get('progress_build_input'), dict),
+            'Scene/frame missing retained progress source receipt')
+        progress = events['progress_build_input']
+        require(isinstance(progress.get('game_build_input'), dict), 'Scene/frame missing retained game source receipt')
+        game = progress['game_build_input']
+        require(isinstance(game.get('postgresql_build_input'), dict), 'Scene/frame missing retained PG source receipt')
+        pg = game['postgresql_build_input']
+        require(isinstance(pg.get('overlay_sha256'), dict) and set(pg['overlay_sha256']) == set(encodings)
+            and all(pg['overlay_sha256'][name] in variants for name, variants in encodings.items()),
+            'Scene/frame PG source encoding is not an independently proven LF/CRLF variant')
+        require(game.get('postgresql_build_input_canonical_sha256') == source_sha(pg)
+            and progress.get('game_build_input_canonical_sha256') == source_sha(game)
+            and events.get('progress_build_input_canonical_sha256') == source_sha(progress),
+            'Scene/frame retained source ancestry digest differs')
+        for name, variants in encodings.items(): pg['overlay_sha256'][name] = variants[0]
+        game['postgresql_build_input_canonical_sha256'] = source_sha(pg)
+        progress['game_build_input_canonical_sha256'] = source_sha(game)
+        events['progress_build_input_canonical_sha256'] = source_sha(progress)
+        return result
+
+    require(normalized(received) == normalized(accepted), 'Scene/frame retained source ancestry differs')
+    return True
 
 
 def pe_record(record):
@@ -132,7 +180,7 @@ def client_scene_performance_contract(package, candidate=None):
         and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
         and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
         and manifest.get('retained_native_dependencies_changed') is False
-        and manifest.get('retained_source_inputs') == candidate['build_inputs']
+        and scene_source_inputs_equivalent(manifest.get('retained_source_inputs'), candidate['build_inputs'])
         and manifest.get('schema_sources_sha256') == candidate['retained_cache']['schema_sources_sha256']
         and manifest.get('base_client_executable') == previous
         and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False

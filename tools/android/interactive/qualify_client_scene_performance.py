@@ -60,6 +60,7 @@ def qualify(args):
     base = derivative.builder(); commit = base.source_commit(args.repository_commit)
     donor = derivative.validate_donor(args.donor_apk, args.donor_build_report); java = derivative.current_sources(donor)
     native = derivative.validate_native(args.client_directory, commit, donor)
+    actual_native_ancestry = importlib.import_module('test_client_scene_performance_contract').validate_actual_native_ancestry(donor, native)
     pins = {name: base.file_pin(ROOT/name) for name in source_paths(donor)}
     results = regressions()
     save = importlib.import_module('test_startup_bundle_save')
@@ -84,6 +85,7 @@ def qualify(args):
         'baseline_payloads_verified': 75, 'immutable_visual_and_beacon_payloads_verified': True,
         'native_client_recompiled': True, 'native_client_compiled_in_current_run': True,
         'native_client_package_reused': False, 'native_client_scene_performance': native,
+        'actual_native_ancestry_validation': actual_native_ancestry,
         **{key: False for key in derivative.FALSE_FLAGS},
         'performance_claim_scope': 'Hosted checks prove bounded native scene/frame diagnostics and surviving FX preload equivalence, '
             'Game-only replacement with exact retained renderer/Wine/FEX/UI/beacons/server caches and all save/recovery guards. '
