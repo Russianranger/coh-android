@@ -49,6 +49,7 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/test_client_sidebar_commands.py',
     'tools/android/interactive/test_client_sidebar_runtime.py',
     'tools/android/interactive/test_input.py',
+    'tools/android/interactive/test_fresh_profile_recovery.py',
     'tools/android/interactive/classify_storage_cleanup_change.py',
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/test_classify_storage_cleanup_change.py',
@@ -181,6 +182,7 @@ def validate_qualification(receipt, commit):
         and receipt.get('retained_native_source_and_Win32_proof_verified') is True, 'Exact Android-only sidebar qualification required')
     contract = module('client_sidebar_qualification_contract', ROOT/QUALIFICATION_SCRIPT)
     suites = receipt.get('test_suites', {})
+    contract.validate_suite_inventory()
     require(set(suites) == set(contract.TEST_MODULES) and receipt.get('check_suites') == contract.CHECK_SUITES
         and all(item.get('status') == 'passed' and item.get('skipped') == 0 and type(item.get('tests_run')) is int and item['tests_run'] > 0
             for item in suites.values()) and receipt.get('tests_run') == sum(item['tests_run'] for item in suites.values()),

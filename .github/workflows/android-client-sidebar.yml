@@ -8,6 +8,7 @@ on:
       - tools/android/interactive/qualify_client_sidebar.py
       - tools/android/interactive/test_client_sidebar*.py
       - tools/android/interactive/test_input.py
+      - tools/android/interactive/test_fresh_profile_recovery.py
       - tools/android/interactive/classify_storage_cleanup_change.py
       - tools/android/interactive/classify_interactive_change.py
       - tools/android/interactive/test_classify_storage_cleanup_change.py

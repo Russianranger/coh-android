@@ -129,6 +129,16 @@ class ClientSidebarPackageTests(unittest.TestCase):
                 else: changed['retained_native_source_and_Win32_proof_verified'] = False
                 with self.subTest(mutation=mutation), self.assertRaises(ValueError): package.validate_qualification(changed, COMMIT)
 
+    def test_every_advertised_check_executes_its_actual_suite_before_qualification(self):
+        contract = package.module('sidebar_inventory_regression', package.ROOT/package.QUALIFICATION_SCRIPT)
+        self.assertEqual(len(contract.RETAINED_TEST_MODULES), 80)
+        self.assertEqual(set(contract.TEST_MODULES) - set(contract.RETAINED_TEST_MODULES),
+            {'test_input', 'test_client_sidebar_commands', 'test_client_sidebar_runtime', 'test_client_sidebar_package'})
+        contract.validate_suite_inventory()
+        missing_input = tuple(name for name in contract.TEST_MODULES if name != 'test_input')
+        with mock.patch.object(contract, 'TEST_MODULES', missing_input), self.assertRaisesRegex(ValueError, 'suite contract'):
+            contract.regressions()
+
     def test_workflow_never_rebuilds_native_and_has_fresh_and_public_sdk_audits(self):
         source = (package.ROOT/package.WORKFLOW).read_text()
         self.assertNotIn('windows-', source); self.assertNotIn('cmake ', source); self.assertNotIn('package_client_gameplay_performance_native.py', source)

@@ -538,6 +538,9 @@ SIDEBAR_SOURCES = frozenset({
     JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
 })
 SIDEBAR_ALLOWED = SIDEBAR_SOURCES | frozenset({
+    # The retained host fixture must declare the new production pending-command
+    # field. It is a reviewed companion, never a sidebar owner marker by itself.
+    'tools/android/interactive/test_fresh_profile_recovery.py',
     'tools/android/interactive/classify_storage_cleanup_change.py',
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/test_classify_storage_cleanup_change.py',

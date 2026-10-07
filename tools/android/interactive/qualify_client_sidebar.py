@@ -19,7 +19,7 @@ import qualify_client_gameplay_performance as previous
 import qualify_startup_schedule as closure
 
 RETAINED_TEST_MODULES = previous.TEST_MODULES
-TEST_MODULES = RETAINED_TEST_MODULES + ('test_client_sidebar_commands',
+TEST_MODULES = RETAINED_TEST_MODULES + ('test_input', 'test_client_sidebar_commands',
     'test_client_sidebar_runtime', 'test_client_sidebar_package')
 CHECK_SUITES = {
     'fixed_sidebar_commands_and_start_enter_verified': ['test_client_sidebar_commands',
@@ -36,7 +36,13 @@ def source_paths(donor):
     return sorted(closure.source_closure(names))
 
 
+def validate_suite_inventory():
+    derivative.require(len(set(TEST_MODULES)) == len(TEST_MODULES) and set(CHECK_SUITES) == set(derivative.CHECKS)
+        and all(suites and set(suites) <= set(TEST_MODULES) for suites in CHECK_SUITES.values()), 'Exact qualification suite contract required')
+
+
 def regressions():
+    validate_suite_inventory()
     results = {}
     for name in TEST_MODULES:
         suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(name))
@@ -68,8 +74,6 @@ def qualify(args):
     derivative.require(repaired.REQUIRE_POSTGRESQL is True and repaired.POSTGRES_FIXTURES_RUN == repaired.REQUIRED_POSTGRES_FIXTURES,
         'Every real retained PostgreSQL level-up fixture is required')
     for name, pin in pins.items(): base.checked_file(ROOT/name, pin)
-    derivative.require(len(set(TEST_MODULES)) == len(TEST_MODULES) and set(CHECK_SUITES) == set(derivative.CHECKS)
-        and all(suites and set(suites) <= set(TEST_MODULES) for suites in CHECK_SUITES.values()), 'Exact qualification suite contract required')
     checks = {name: all(results[suite]['status'] == 'passed' and results[suite]['skipped'] == 0
         and results[suite]['tests_run'] > 0 for suite in suites) for name, suites in CHECK_SUITES.items()}
     receipt = {'format': 1, 'status': 'passed' if all(checks.values()) else 'failed', 'scope': derivative.QUALIFICATION_SCOPE,

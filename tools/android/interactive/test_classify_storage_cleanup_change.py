@@ -12,6 +12,20 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_sidebar_retained_fresh_profile_fixture_correction_is_an_exact_companion(self):
+        fixture = 'tools/android/interactive/test_fresh_profile_recovery.py'
+        names = ['tools/android/interactive/build_client_sidebar_apk.py', fixture]
+        self.assertTrue(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertNotIn(fixture, change.SIDEBAR_SOURCES)
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for foreign in ('tools/android/interactive/test_fresh_profile_recovery_extra.py',
+                        'tools/android/interactive/test_storage_recovery_ui.py'):
+                    self.assertFalse(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+
     def test_sidebar_exact_android_scope_routes_to_its_owner_without_older_native_publication(self):
         names = sorted(change.SIDEBAR_ALLOWED)
         self.assertTrue(change.sidebar_push('push', 'a'*40, 'b'*40, 'a'*40, names))

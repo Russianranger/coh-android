@@ -9,6 +9,15 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_sidebar_fixture_qualification_correction_does_not_admit_neighboring_tests(self):
+        names = ['tools/android/interactive/build_client_sidebar_apk.py',
+            'tools/android/interactive/test_fresh_profile_recovery.py']
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for foreign in ('tools/android/interactive/test_fresh_profile_recovery_extra.py',
+                'tools/android/interactive/test_storage_recovery_ui.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+        self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_sidebar_android_scope_bypasses_full_runtime_only_for_exact_direct_push(self):
         from classify_storage_cleanup_change import SIDEBAR_ALLOWED
         names = sorted(SIDEBAR_ALLOWED)

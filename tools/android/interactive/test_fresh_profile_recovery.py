@@ -63,7 +63,7 @@ class ClientAcceptance {static boolean taskSaveReady(Object a,Object b,int c,int
 class ClientRuntime {
     public enum ProfileState { ABSENT, READY, PRESERVE }
     final Context context;
-    boolean reopen,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested;
+    boolean reopen,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
     JSONObject manifest,characterConnectedEvent=new JSONObject(),characterSavedEvent,taskAcceptedEvent,taskCompletedEvent,taskContactReceipt,taskCompletionReceipt;
     Capture taskAcceptedCapture=new Capture(),taskCompletedCapture=new Capture();
     ClientSessionBudget sessionBudget=new ClientSessionBudget();String session="session";long observedClientPid=1;
@@ -110,10 +110,18 @@ public class FreshProfileRecoveryHost {
         case "oversized_marker":write(profile.resolve("profile.json"),"x".repeat(4097));break;
         case "unreadable":StorageFiles.readFailure=true;break;
         case "changed_before_creation":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);Files.createDirectories(profile);reject(()->runtime.requireCharacterProfile(false));break;
-        case "creator_save":runtime.manifest=new JSONObject();runtime.manifest.values.put("task_gate_required",true);runtime.reopen=false;need(!runtime.taskGateRequired());need(runtime.taskSaveReady());need(runtime.canRequestSaveLogout());runtime.reopen=true;need(runtime.taskGateRequired());need(!runtime.taskSaveReady());need(!runtime.canRequestSaveLogout());break;
+        case "creator_save":
+        case "creator_save_pending":
+            runtime.manifest=new JSONObject();runtime.manifest.values.put("task_gate_required",true);runtime.reopen=false;
+            need(!runtime.taskGateRequired());need(runtime.taskSaveReady());need(runtime.canRequestSaveLogout());
+            if(args[0].equals("creator_save_pending")) {
+                runtime.performanceCommandPending=true;need(!runtime.canRequestSaveLogout());
+                runtime.performanceCommandPending=false;need(runtime.canRequestSaveLogout());
+            }
+            runtime.reopen=true;need(runtime.taskGateRequired());need(!runtime.taskSaveReady());need(!runtime.canRequestSaveLogout());break;
         default:throw new AssertionError("unknown fixture");
         }
-        if(!new HashSet<>(Arrays.asList("absent","missing_ancestor","ready","creator_save")).contains(args[0])) {
+        if(!new HashSet<>(Arrays.asList("absent","missing_ancestor","ready","creator_save","creator_save_pending")).contains(args[0])) {
             need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.PRESERVE);
             reject(()->runtime.requireCharacterProfile(false));reject(()->runtime.requireCharacterProfile(true));
         }
@@ -175,6 +183,7 @@ class FreshProfileRecoveryTests(unittest.TestCase):
     def test_unreadable_metadata_disables_creation(self): self.run_policy('unreadable')
     def test_profile_appearing_after_review_is_never_overwritten(self): self.run_policy('changed_before_creation')
     def test_creator_can_save_without_weakening_the_reopened_task_gate(self): self.run_policy('creator_save')
+    def test_pending_sidebar_transaction_defers_creator_save_until_completed(self): self.run_policy('creator_save_pending')
 
     def test_profile_preflight_precedes_staging_and_process_launch_under_the_lock(self):
         source = (JAVA / 'ClientRuntime.java').read_text()
