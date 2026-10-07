@@ -1,3 +1,45 @@
+# Thor 30 FPS continuation — 2026-10-07
+
+**Current scope is the client scene/frame pass and 30 FPS experiment. Stay in Atlas; zoning remains deferred.** This checkpoint supersedes older instructions to keep gameplay capped at 10 FPS for every test and the incorrect advice that a Game/helper update needs no runtime setup. Historical release sections below remain preserved.
+
+## Published 0.13.17 / version code 32
+
+All hosted gates and the independent actual-public-APK audit passed.
+Frozen Game/APK source: `4a57ffe3b75612fb9c356de9c4150729736e849e`.
+Tag: `coh-atlas-gameplay-v0.13.17`; release **405766496**; APK asset **618702599**.
+APK: **1,557,375,588 bytes**; SHA-256
+`2da7436d165662b47780c19241cbcf3c16ef3bb903fb94f79b231f3f0c390bf3`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17.apk) · [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.17)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.17/COH-Atlas-Gameplay-0.13.17-testing.txt).
+
+Owner run **37622107943**: [qualification/publication/public audit](https://github.com/Russianranger/coh-android/actions/runs/37622107943).
+All five jobs passed: changes, native client, qualification, APK and public audit.
+**1,197 tests / 80 suites / zero skips**; all seven real PostgreSQL fixtures.
+**9,628 source pins** and all 19 retained Java sources were rehashed locally against the frozen receipt. Actual Game is **9,477,120 bytes**, SHA-256
+`5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa`.
+Genuine Win32 native scene/frame/gameplay proofs, actual CMake Game-only build, schema and DLL-import closure passed.
+The 75 outer runtime payloads contain 68 byte-identical retained payloads and exactly seven authorized Game/helper/manifest replacements, zero additions. All 20 client DLLs, Android DEX/resources, server binaries and immutable visual/beacon payloads remain retained. SDK 35 source/payload/signature checks passed before publication and again on the actual public APK. The signing certificate remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+
+Detailed source/asset/receipt/archive pins and audit scope are in
+`docs/android-evidence/performance-0.13.17-publication.json`. Independent continuation checks authenticated five small evidence archives and their unique safe members, matched release/tag/API asset digests to APK/checksum/testing receipts, and revalidated the actual native package and complete qualification/source closure. The hosted public job independently downloaded the full APK, checksum and notes; this continuation did not download a second 1.55 GB APK.
+
+Qualification review fixed one concrete integration issue before source freeze: the exact packaging receipt omitted the new actual-scene-predecessor proof field. A real typed ancestry integration test now binds the returned proof to the gate. No qualification failure required changes to the accepted scene/frame implementation.
+
+Main and draft PR #1 remain separate; the post-publication checkpoint is documentation only. Do not rebuild or replace 0.13.17 from a later documentation head. Use the exact frozen source above for audits.
+
+The 0.13.16 physical export confirmed reopen, save verification and owned cleanup. Its support ZIP is pinned in `docs/android-evidence/performance-0.13.16-thor-20261007.json`. Reopen-to-login was 691.012 s, login-to-world 67.676 s, local Atlas 227.043 s and actual client startup 193.541 s. The successful runtime setup took 99.431 s. This update run refreshed owned Atlas caches and revalidated visual bytes; an unchanged warm run is still needed. Do not claim a .16 startup/FPS gain from the stopwatch alone.
+
+The gameplay sample averaged 123.047 ms per frame, 104.452 ms main wall work and 17.752 ms explicit pacing. Main-thread CPU averaged about 20.96 ms per frame in pure gameplay windows; wall work is not CPU time. The console had 24,856 custom-texture errors; nine identities accounted for 23,832 repetitions. See `docs/COH-PERFORMANCE-0.13.17.md` for evidence and measurement limits.
+
+The new append-only Game layer selects only `COH_CLIENT_GAMEPLAY_FPS=10|30` after argument parsing, excludes cache generation, retains menu/background limits and preserves later `/maxfps` commands. Verified Performance launches request 30; standard/Compatibility request 10. It bounds repeated diagnostics at the two `changeTexture()` Errorf calls using 64 exact full keys and at most 32 progress records. Every texture load, fallback, assignment and appearance update remains. Further/null/oversized identities retain the original error path. Suppression records are progress lower bounds, not final totals. This is a diagnostic-overhead optimization, not an asset repair or proof of sustained 30 FPS. The old scene/frame patches and producers remain frozen. Android Java/DEX, server binaries, assets, graphics stack, resolution, persistence and gameplay validation stay retained.
+
+Install the update preserving app data, imports, runtime and character, then run **Set up runtime once**, even though the retained UI button says “new install only.” Wait for Runtime ready before Reopen. The manifest generation changes with native/helper bytes and readiness deliberately remains fail closed. No data reset or asset reimport is needed.
+
+Follow `docs/COH-Atlas-Gameplay-0.13.17-testing.txt`: record first and warm startup phases, progressive appearance and playable world entry; use `/showfps 1`, compare `/maxfps 10` then `/maxfps 30` over the same Performance route; capture stationary/camera/populated movement/building/unseen-scenery hitches, temperatures, stability, save and reopen. Export the complete outer `coh-atlas-gameplay-*.zip` after each run before later operations replace it. Native records are in `guest-report.zip/client-evidence/client-console.log`: retained `COH_CLIENT_SCENE_PHASE_V1` and `COH_CLIENT_FRAME_TIMING_V1`, plus new `COH_CLIENT_GAMEPLAY_PROFILE_V1` and `COH_CLIENT_TEXTURE_ERRORS_V1`. The report's current typed producer/control fields must bind the actual Game. Frame streams have 120 roughly ten-second windows each; begin focused tests promptly after entering the world. Thread CPU excludes llvmpipe/Wine/FEX workers; renderer submit/backpressure/presentation wall time is not GPU completion. Texture completion phases do not isolate per-texture decode/upload cost; nested phases must not be added twice.
+
+Physical .17 performance and stability remain pending the next AYN Thor export. Continue optimization from that evidence; do not start zoning or reimplement accepted scene/frame changes.
+
 # Release recovery verification — 2026-10-07
 
 Recovered continuation head `7850376508fe544c1d4a4c817d20f241b3324f20`.
