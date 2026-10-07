@@ -1,3 +1,58 @@
+# Thor sidebar FPS controls and Start/Enter continuation — 2026-10-07
+
+**Current release: 0.13.18 / version code 33. Physical Start/Enter and the controlled 10/30 FPS route remain pending on AYN Thor. Stay in Atlas; zoning remains deferred.** This checkpoint supersedes the incomplete 0.13.17 test instructions below. Continue scene/frame optimization from the next complete physical export; do not reimplement the accepted native changes.
+
+## Published Android-only 0.13.18
+
+All hosted qualification, Android build/signing, fresh prepublication audit and independent actual-public-APK audit passed.
+Frozen APK/Android source: `d1e455f8d0047ac02398d17c5df1001375522f98`.
+Retained Game/runtime source: `4a57ffe3b75612fb9c356de9c4150729736e849e`.
+Tag: `coh-atlas-gameplay-v0.13.18`; release **405864570**; APK asset **618968033**.
+APK: **1,557,379,684 bytes**; SHA-256
+`d7fb00ae5406208a2497c7b9ea9659403a422dd0698404cd968112a4ba7b8ca1`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18.apk) · [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.18) · [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18-testing.txt).
+
+Owner run **37637034415**: [qualification/publication/public audit](https://github.com/Russianranger/coh-android/actions/runs/37637034415).
+All four jobs passed: changes, qualification, APK and public audit.
+**1,264 tests / 84 suites / zero skips**, including all seven real PostgreSQL fixtures.
+Independent continuation rehashed all **9,638 frozen source pins**, all 19 authored Java sources, the five authorized Java changes and fourteen retained sources. The exact published 0.13.17 Game and source-bound Win32/ancestry/schema/import proofs are reused and revalidated; no native rebuild was needed.
+Game: **9,477,120 bytes**, SHA-256
+`5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa`.
+
+Android Java/DEX is rebuilt; Android resources remain retained and the Android binary manifest changes only version fields. **All 75 outer runtime payloads are byte-identical to 0.13.17**, including native client/server archives, guest helpers, assets, beacons, caches and the runtime manifest. Runtime manifest SHA-256 remains
+`09f2cd20846d99e44f950300177eb9b7cb14dea624c51487a93a19d4f953e113`.
+SDK 35, signer identity, ZIP alignment, exact payload/source closure, checksum and testing notes passed both prepublication and independent actual public-byte audits. Signing certificate remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+Receipt/archive/API/source pins are in `docs/android-evidence/client-sidebar-0.13.18-publication.json`. The hosted public job fetched the full public APK; this continuation authenticated the small evidence archives and release asset digests rather than downloading another 1.55 GB APK.
+
+## Completed fix and qualification boundary
+
+The 0.13.17 physical comparison was blocked because controller Start was absent from the dispatch switch and Send text sends printable text without Return. Sidebar **Show FPS**, **10 FPS**, **30 FPS** now submit only the fixed native commands through the retained atomic chat route, including Enter. Sidebar **Enter / Start** and controller Start send a bounded paired Enter, once per physical press; repeats and release do not resubmit. Enter is available in the owned input-ready login phase; FPS actions require the current post-Atlas connection and fresh world views. Close existing chat/dialogs with B/Esc before each FPS command. Submission status is not native acknowledgement.
+
+Owned session/PID/decoder/input-epoch, visibility/focus, cancellation, queue/deadline and save/task guards remain authoritative. Pending FPS input reserves the command route briefly; ordinary automatic Surface disable uses an ordered release, while explicit pause/focus loss/Stop cancels. Review found and corrected one concrete race: native accepted/completed task evidence must remain accepted during FPS typing. The executable regression runs the actual event blocks and preserves save readiness.
+
+The first hosted candidate `e93419d067d3e9b62b02335de1557bb8a4166bab` / run **37635556758** stopped on a retained recovery host fixture missing the new pending-command field; nothing was published. The fixture now models the field and proves pending input defers creator Save without weakening the reopened task gate. Local review also caught an input suite advertised but absent from execution; the final 84-suite inventory explicitly includes `test_input` and rejects incomplete inventories before running. These narrow qualification corrections changed no native/runtime payload.
+
+Install as an update preserving app data, imports and character. **If 0.13.17 already shows Runtime ready, this Android-only update needs no additional setup or asset import:** the audited runtime identity and bytes are unchanged. A new installation or older/unready runtime still needs ordinary setup. The sidebar setup label now reads **Set up / update runtime**. This conditional rule does not apply to future Game/helper/manifest updates; 0.13.17 itself required setup after its native/helper generation changed.
+
+## Incomplete physical 0.13.17 evidence and next Thor run
+
+The supplied `coh-atlas-gameplay-20261007-135706.zip` is pinned in
+`docs/android-evidence/client-sidebar-0.13.17-thor-20261007.json`.
+It confirms **662.886 s (11:03) to input readiness**, **223.323 s local Atlas**, **178.431 s client startup**, and **67.910 s observed login to world**. The extra **277.118 s before server login** is interaction/wait, not a native initialization stage. Reopen, normal save and owned cleanup passed; the requested FPS/control route was incomplete and temperatures were absent.
+
+The actual native Performance launch selected 30 FPS, but the uncontrolled gameplay sample averaged **9.609 Hz**, **103.406 ms main work**, **70.479 ms submit wall time** and **0.023 ms explicit pacing**. This points away from intentional pacing in that sample; it does not prove a controlled FPS/startup gain. No gameplay missing-texture tuple errors or suppression progress records occurred, so this run did not exercise duplicate-error suppression benefit. Nested scene timings and worker-CPU limits remain as documented.
+
+Follow `docs/COH-Atlas-Gameplay-0.13.18-testing.txt`:
+verify short/held controller Start and sidebar Enter; after Atlas use Show FPS, then compare 10 and 30 over the same Performance/800x600/llvmpipe standing, camera, populated-movement and building/unseen-scenery route. Record each segment's timestamps, FPS/range, geometry/texture/NPC pauses, temperatures/fan/charging, progressive world appearance, all startup phases, stability and any crash. Verify normal save and warm reopen/persistence. Use **Export latest report after each run**, before another operation replaces its evidence, and send the **complete outer `coh-atlas-gameplay-*.zip`** plus timing/FPS/temperature notes.
+
+New safe `performance_command_queued`, `performance_command_dispatch`, `performance_command_submitted` and `sidebar_enter_submitted` timestamps are in `operation.log` and the lifecycle in `android-client-report.json`. They prove submission only. Native records remain in `guest-report.zip/client-evidence/client-console.log`:
+`COH_CLIENT_GAMEPLAY_PROFILE_V1`, `COH_CLIENT_TEXTURE_ERRORS_V1`,
+`COH_CLIENT_FRAME_TIMING_V1` and `COH_CLIENT_SCENE_PHASE_V1`.
+They separate explicit pacing, main work/thread CPU, submission/backpressure, presentation and long-frame distributions, with geometry/texture completion phases. Thread CPU excludes llvmpipe/Wine/FEX workers; GPU completion and individual texture decode/upload remain unisolated; nested phases must not be added twice. Streams are bounded to 120 roughly ten-second windows each, so begin the focused route promptly after world entry.
+
+Main and draft PR #1 remain separate. The post-publication checkpoint is documentation only: audit/reproduce 0.13.18 from the frozen APK source above, not a later documentation head. Physical 0.13.18 control success, stability and performance gains remain pending.
+
 # Thor 30 FPS continuation — 2026-10-07
 
 **Current scope is the client scene/frame pass and 30 FPS experiment. Stay in Atlas; zoning remains deferred.** This checkpoint supersedes older instructions to keep gameplay capped at 10 FPS for every test and the incorrect advice that a Game/helper update needs no runtime setup. Historical release sections below remain preserved.
