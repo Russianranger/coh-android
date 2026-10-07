@@ -22,12 +22,42 @@ open/freshness/decode work accounts for 16.982 s, leaving most scene wall time
 unexplained by the existing diagnostics. Initial native client startup remains
 approximately 203 s; local Atlas 203.396 s warm / 235.665 s first.
 
-**0.13.16 / version code 31 is the current candidate. Publication is pending the
-actual Win32 Game build, hosted qualification and independent public-byte audit.**
-The frozen source SHA, release/run/receipt pins and final hosted result must be
-recorded after those gates finish; physical 0.13.16 timings are not yet measured.
+**0.13.16 / version code 31 is published. All hosted gates and the independent
+actual-public-APK audit passed. Physical 0.13.16 timings remain unmeasured.**
+Frozen Game/APK source: `d41aab3dd1a2f169a0ec71ff47d56767a8eb65e5`.
+Tag: `coh-atlas-gameplay-v0.13.16`; release **405309851**; APK asset **617312668**.
+Public APK: **1,557,359,204 bytes**; SHA-256
+`ddb1f26913291295248cd4195d0184c02b24849921a6b47fda391dd7af26c7d7`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.16)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16-testing.txt).
+The existing application ID and certificate
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`
+preserve install-as-update behavior. Keep runtime, imported assets, app data and
+the existing character. Complete the offered Game/helper update once; measure
+it separately and include it in true launcher-open-to-login elapsed time.
 
-Implemented candidate:
+Hosted owner run **37559820885** at the frozen source:
+[qualification and publication](https://github.com/Russianranger/coh-android/actions/runs/37559820885).
+All five jobs passed: changes **112594362113**, native Game **112594493301**,
+qualification **112597185524**, APK **112598693474**, public audit **112599879027**.
+The Win32 Game is **9,473,024 bytes**, SHA-256
+`4de0e49d028ed75271b44838bffb570ae0112460183d1c441174cf9d9dc282d4`.
+Genuine Win32 QPC/thread-CPU/TLS/concurrent-JSON harnesses and the actual MSVC
+Game build passed. Raw CMakeCache proves Win32 and persistence fixtures OFF for
+this Game build; source/reverse-patch checks cover seven sources and two headers.
+Native imports retain the same 21 DLL names with no delay imports. All 12 Actions
+runs at this source completed successfully.
+
+Final qualification: **1,163 tests / 76 suites / zero skips**, all seven real
+PostgreSQL fixtures (three emission, four level-up), **9,615 source pins** and
+**19 unchanged authored Java sources**. Fresh SDK 35/package/signer/source and
+inner/outer conservation audits passed. The separate read-only public audit
+downloaded the actual APK, checksum and testing notes and verified their bytes.
+Exact run/job/artifact/receipt pins and preservation results are in
+`docs/android-evidence/performance-0.13.16-publication.json`.
+
+Implemented in 0.13.16:
 - Opt-in `gfxReload` skips the FX preload immediately discarded by the following
   cache invalidation. Both invalidations, sky reset/order and mandatory surviving
   FX preload remain. Ordinary initialization and default fallback remain stock.
@@ -57,11 +87,23 @@ Further BIN metadata preloading was rejected because actual accepted cache
 dependencies already belong to stock-scanned trees. Android screenshot capture
 and translated priority-call changes are deferred pending native frame evidence.
 
-Hosted candidate gates retain all 70 prior suites plus six scene/frame/report
-suites and seven real PostgreSQL fixtures. The actual MSVC Win32 Game build and
-native scene/frame harnesses are mandatory, followed by fresh-process SDK 35,
-signer/source/75-member conservation checks and a separate public APK audit.
-Hosted checks cannot establish physical FPS or guaranteed scene savings.
+Hosted qualification retained all 70 prior suites plus six scene/frame/report
+suites. Packaging proves exactly **75 outer payloads: 68 byte-identical, seven
+authorized replacements, zero additions**. Only Game changes within the client
+runtime; all **20 client dependencies** remain byte-identical. DEX/resources,
+server extraction, all visual/UI/GEO/beacon/cache payloads and the signer remain
+unchanged. Hosted checks establish retained contracts and payload preservation;
+physical FX/UI/gameplay acceptance and elapsed/FPS gains remain next-Thor gates.
+
+Windows staging now preserves LF. The frozen donor's native ancestry contains
+two independently proven PostgreSQL C/H LF/CRLF variants and their three enclosing
+digests. Only this new scene layer compares verified, normalized copies using
+typed canonical JSON; raw histories and older-layer exact comparisons remain
+unchanged. Actual external donor/new Win32 receipts and all four encoding
+combinations pass; 11 foreign mutations, including boolean/float substitutions,
+fail. Publication checks the live continuation head before draft creation and
+again before making it public; superseded runs are cancelled. These fixes change
+receipt validation/publication behavior and do not alter the native C patches.
 
 Phase analysis and ranked candidates: `docs/COH-PERFORMANCE-0.13.16.md`.
 Focused Thor instructions: `docs/COH-Atlas-Gameplay-0.13.16-testing.txt`.
