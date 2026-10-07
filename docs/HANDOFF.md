@@ -1,3 +1,85 @@
+# Client scene-loading and native frame continuation — 2026-10-07
+
+**Physical 0.13.15 first-update and warm runs are accepted. Scene loading and
+gameplay smoothness are the current priority. Keep the accepted llvmpipe
+renderer, 800×600 profile and 10 FPS cap. Zoning remains deferred.**
+
+Starting continuation head: `f346ccd3e2979dc12369de9c31f97e418745cb8f` on
+`codex/character-persistence-continuation`; main and draft PR #1 remain separate.
+The accepted 0.13.15 APK/source/signing identity are unchanged. The two physical
+support ZIPs are pinned in
+`docs/android-evidence/performance-0.13.15-thor-20261007.json`. Both pass ordinary
+save/reopen/cleanup proof; the existing character, powers and costume persist.
+
+Observed first-update Reopen-to-world is **781.815 s**; warm is **677.999 s**
+(user stopwatches approximately 13 min / 11:30). Private server preparation
+fell from 508.398 s in 0.13.14 to 39.585 / 32.555 s; both use the same compatible
+server cache with zero linked/copied files and no beacon regeneration. Warm
+visual preparation performs zero archive reads, hashing, decoding or installs.
+The 0.13.15 warm native client scene interval from MapServer connection to
+current CLIENT_READY is **77.793 s** (first 75.330 s). Recorded post-connect BIN
+open/freshness/decode work accounts for 16.982 s, leaving most scene wall time
+unexplained by the existing diagnostics. Initial native client startup remains
+approximately 203 s; local Atlas 203.396 s warm / 235.665 s first.
+
+**0.13.16 / version code 31 is the current candidate. Publication is pending the
+actual Win32 Game build, hosted qualification and independent public-byte audit.**
+The frozen source SHA, release/run/receipt pins and final hosted result must be
+recorded after those gates finish; physical 0.13.16 timings are not yet measured.
+
+Implemented candidate:
+- Opt-in `gfxReload` skips the FX preload immediately discarded by the following
+  cache invalidation. Both invalidations, sky reset/order and mandatory surviving
+  FX preload remain. Ordinary initialization and default fallback remain stock.
+- Bounded native JSON scene diagnostics separate groups, entities, collision,
+  geometry and texture completion, preload/invalidation and CLIENT_READY phases.
+  Nested intervals must not be summed as independent work.
+- Bounded native QPC frame aggregates distinguish menu/loading/gameplay, main
+  work, engine time, cap/pacing wait, render submission, presentation interval and
+  actual SwapBuffers wall time. Histogram bounds, stutter counts and calling
+  thread CPU time are reported every 10 seconds, with fixed memory and report
+  limits. These are native cadence/CPU measurements, not Android delivered FPS
+  or GPU completion. llvmpipe/FEX worker CPU is outside the observed thread.
+- The verified new Game launch replaces verbose per-resource BIN timing prints
+  with these aggregates. Source freshness, BIN/schema/CRC validation and accepted
+  known-string copy/dependency preload controls remain enabled and unchanged.
+- Exact older-Game migration and texture-header receipt rebinding preserve warm
+  worktree/server/texture caches; only the Game executable and four guest helpers
+  plus their manifests may change. All 20 client dependencies and the other 68
+  outer payload members must remain identical to 0.13.15.
+
+Intentionally retained: Wine/FEX/Mesa stack, renderer/cap/resolution, Android
+shell/dex/controls/audio, server binaries, all UI/visual/GEO/beacon payloads,
+resource formats/freshness/collision/physics/network waits, quest tracking,
+NPC movement, combat/task logic, character persistence and recovery. No asset
+reimport, beacon generation, UI sweep, GPU experiment or zoning implementation.
+Further BIN metadata preloading was rejected because actual accepted cache
+dependencies already belong to stock-scanned trees. Android screenshot capture
+and translated priority-call changes are deferred pending native frame evidence.
+
+Hosted candidate gates retain all 70 prior suites plus six scene/frame/report
+suites and seven real PostgreSQL fixtures. The actual MSVC Win32 Game build and
+native scene/frame harnesses are mandatory, followed by fresh-process SDK 35,
+signer/source/75-member conservation checks and a separate public APK audit.
+Hosted checks cannot establish physical FPS or guaranteed scene savings.
+
+Phase analysis and ranked candidates: `docs/COH-PERFORMANCE-0.13.16.md`.
+Focused Thor instructions: `docs/COH-Atlas-Gameplay-0.13.16-testing.txt`.
+Update in place, retain imported assets/runtime/app data/character, complete any
+offered Game/helper update once and time it separately. Measure first and warm
+launcher-open/Reopen-to-login/world, Atlas, actual client and login-to-world.
+Spend 30 seconds each standing, walking, rotating the camera, in populated areas,
+in several-NPC combat, opening UI and tracking objectives/pathing; note each
+activity's local start time. Use ordinary Save/log out then Finish and export
+both complete support ZIPs including operation.log, Android report, inner
+guest-report.zip/latest-report.json and client/server consoles. The client
+console must contain `COH_CLIENT_FRAME_TIMING_V1` and
+`COH_CLIENT_SCENE_PHASE_V1`; use
+`tools/android/interactive/analyze_client_scene_performance.py` for bounded
+weighted summaries. Physical preservation and savings remain next-test gates.
+
+---
+
 # Current performance continuation — 2026-10-06
 
 **Physical 0.13.14 is accepted for the observed UI, native Atlas beaconization,

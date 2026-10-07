@@ -127,5 +127,76 @@ class ClientPreloadLaunchTests(unittest.TestCase):
         self.assertEqual(d.ctx.report['client_startup_followup'], self.original_report)
 
 
+class ClientSceneLaunchTests(unittest.TestCase):
+    def setUp(self):
+        ClientPreloadLaunchTests.setUp(self)
+        d = self.diagnostic
+        d.client_scene_performance = True
+        self.scene = {
+            'repository_commit': 'e' * 40, 'manifest_sha256': 'f' * 64,
+            'client_executable_sha256': GAME_SHA, 'replacement_scope': 'CityOfHeroes.exe_only',
+            'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
+            'renderer_changed': False, 'bounded_diagnostics': True,
+            'surviving_fx_preload_preserved': True}
+        d.ctx.report['client_scene_performance'] = copy.deepcopy(self.scene)
+        for name in ('COH_CLIENT_SCENE_PROFILE', 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD',
+                     'COH_CLIENT_FRAME_TIMING'):
+            d.wine_env[name] = 'inherited-untrusted-value'
+        self.original_env = dict(d.wine_env)
+
+    def test_verified_initial_and_retry_have_bounded_profiles_and_disable_legacy_resource_logging(self):
+        d = self.diagnostic
+        for label in ('actual-coh-client', 'actual-coh-client-retry'):
+            d.launch_client_attempt(label=label)
+            environment = d.ctx.start.call_args.kwargs['env']
+            for name in ('COH_CLIENT_SCENE_PROFILE', 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD',
+                         'COH_CLIENT_FRAME_TIMING', 'COH_CLIENT_DEPENDENCY_PRELOAD',
+                         'COH_CLIENT_KNOWN_STRING_COPY'):
+                self.assertEqual(environment[name], '1')
+            self.assertEqual(environment['COH_CLIENT_BIN_PROFILE'], '0')
+            self.assertEqual(d.ctx.report['client_scene_performance_environment']['launch_label'], label)
+            self.assertTrue(d.ctx.report['client_scene_performance_environment']['enabled'])
+            self.assertEqual(d.wine_env, self.original_env)
+            self.assertEqual(d.ctx.report['client_scene_performance'], self.scene)
+            self.assertEqual(Path.cwd(), self.original_cwd)
+
+    def test_old_or_truthy_scene_producer_retains_old_bin_policy_and_strips_scene_controls(self):
+        d = self.diagnostic
+        for flag in (False, None, 1, '1', {'verified': True}):
+            with self.subTest(flag=flag):
+                d.client_scene_performance = flag
+                d.launch_client_attempt()
+                environment = d.ctx.start.call_args.kwargs['env']
+                for name in ('COH_CLIENT_SCENE_PROFILE', 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD',
+                             'COH_CLIENT_FRAME_TIMING'):
+                    self.assertNotIn(name, environment)
+                self.assertEqual(environment['COH_CLIENT_BIN_PROFILE'], '1')
+                self.assertEqual(environment['COH_CLIENT_DEPENDENCY_PRELOAD'], '1')
+                self.assertFalse(d.ctx.report['client_scene_performance_environment']['enabled'])
+                self.assertEqual(d.wine_env, self.original_env)
+
+    def test_foreign_game_or_unverified_scene_semantics_fail_before_client_or_retry_launch(self):
+        d = self.diagnostic
+        mutations = [('client_executable_sha256', 'e' * 64), ('manifest_sha256', ''),
+                     ('repository_commit', 'foreign'), ('replacement_scope', 'all_native'),
+                     ('source_freshness_preserved', False), ('prepared_cache_schema_changed', True),
+                     ('renderer_changed', True), ('bounded_diagnostics', 1),
+                     ('surviving_fx_preload_preserved', False)]
+        for field, value in mutations:
+            scene = copy.deepcopy(self.scene); scene[field] = value
+            d.ctx.report['client_scene_performance'] = scene
+            for label in ('actual-coh-client', 'actual-coh-client-retry'):
+                with self.subTest(field=field, label=label), self.assertRaisesRegex(
+                        reopen.base.DiagnosticError, 'current verified Game producer'):
+                    d.launch_client_attempt(label=label)
+                d.ctx.start.assert_not_called()
+                self.assertEqual(d.wine_env, self.original_env)
+        d.ctx.report['client_scene_performance'] = self.scene
+        d.client_startup_followup = False
+        with self.assertRaisesRegex(reopen.base.DiagnosticError, 'current verified Game producer'):
+            d.launch_client_attempt()
+        d.ctx.start.assert_not_called()
+
+
 if __name__ == '__main__':
     unittest.main()

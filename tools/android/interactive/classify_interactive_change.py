@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push
+from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push, scene_performance_push, scene_performance_docs
 
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
@@ -209,6 +209,7 @@ RESPONSIVENESS_ONLY |= UI_BEACON_ALLOWED | REOPEN_STARTUP_REPAIR_ALLOWED | LEVEL
 
 
 def runtime_required(event, before, head, parent, names):
+    if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     paths = set(names)
     # A specifically marked bundle must stay within its reviewed source

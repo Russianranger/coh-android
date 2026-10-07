@@ -12,6 +12,26 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_game_only_scene_performance_routes_historical_publishers_closed_and_unknowns_open(self):
+        from classify_interactive_change import runtime_required
+        names = sorted(change.SCENE_PERFORMANCE_ALLOWED)
+        historical = (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required, change.bundle_required,
+            change.visual_required, change.loading_required, change.streaming_required,
+            change.asset_closure_required, change.startup_followup_required,
+            change.levelup_ui_repair_required, change.reopen_startup_repair_required,
+            change.ui_beacon_required, runtime_required)
+        self.assertTrue(change.scene_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in historical:
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for forbidden in ('android/native/client-launcher.c', 'android/guest/local_character_server.py',
+                        'assets/client-ui-sweep-manifest.json', 'upstream/ouroboros/Game/src/game.c', 'foreign.py'):
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[forbidden]))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_guest_only_performance_routes_all_historical_publishers_closed(self):
         from classify_interactive_change import runtime_required
         names = sorted(change.PERFORMANCE_ALLOWED-{'docs/android-evidence/performance-0.13.15-publication.json'})
@@ -262,7 +282,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

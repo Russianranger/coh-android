@@ -1,0 +1,47 @@
+COH Atlas Gameplay 0.13.16 — client scene loading and native frame timing
+
+Install as an update over 0.13.15. Preserve runtime, imported data, THORHERO
+and app data. Complete the offered helper/Game update once before Reopen phase
+timing. Record update duration separately and include it in the true
+launcher-open-to-login total. Use the same Performance preset and 10 FPS cap.
+Remain in Atlas; this test does not add zoning or change the renderer.
+
+Run once after update and then a second warm run after normal save/logout/Finish.
+- Record Reopen to login, local Atlas startup and actual client startup.
+- Record character selection to playable world, noting time spent selecting.
+- Record Reopen to playable world and any long preparation that repeats.
+- The report's native connection-to-CLIENT_READY timing excludes selection.
+
+Once in the world, note the local start time for each activity and spend about
+30 seconds on each. Give the native aggregate recorder at least 10 seconds
+between activity changes:
+- Stand still in Atlas.
+- Walk through Atlas and rotate the camera.
+- Move through a populated area.
+- Fight several NPCs using the existing character.
+- Open/close ordinary UI windows.
+- Track an objective and observe NPC pursuit/pathing; note stutters.
+Record visible native FPS if available, preset, temperature and any regular
+one-second pauses. The Android delivered-frame counter is not native game FPS.
+The current profile remains software llvmpipe and has a 10 FPS cap.
+
+Confirm complete observed UI, FX/powers/character artwork, terrain/models and
+absence of the beacon warning. Do not recreate characters or reimport assets.
+Use ordinary Save character/log out; wait for Saved character verified, then
+Finish. Confirm character, level, XP and powers on the next normal reopen.
+
+Export the COMPLETE outer coh-atlas-gameplay-*.zip after EACH run. Retain
+android-client-report.json, operation.log and guest-report.zip. Inner files
+include latest-report.json, client-evidence/client-console.log,
+client-evidence/character-atlas-console.txt and character-server-logs.zip.
+The client console now contains COH_CLIENT_SCENE_PHASE_V1 and
+COH_CLIENT_FRAME_TIMING_V1 records. Native frames are aggregated every 10s,
+bounded to 120 windows per main/presentation stream; the final partial window
+may be absent. Scene phases nest and are not an additive startup total.
+If a stage fails, Abort, wait for owned cleanup and export that run's ZIP.
+
+The release retains Wine/FEX/Mesa, all graphics DLLs, MapServer/DbServer,
+UI/visual/GEO/beacon/cache payloads, Android shell/DEX, controls and persistence.
+One source-bound Game update skips an FX preload discarded by the next cache
+invalidation while retaining the required final preload. Hosted equivalence
+and provenance checks do not establish physical scene-time or FPS gains.

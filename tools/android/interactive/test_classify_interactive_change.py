@@ -9,6 +9,16 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_scene_performance_is_finite_game_only_and_requires_immediate_parent(self):
+        from classify_storage_cleanup_change import SCENE_PERFORMANCE_ALLOWED
+        names = sorted(SCENE_PERFORMANCE_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for foreign in ('android/guest/local_character_server.py', 'android/native/client-launcher.c',
+                'upstream/ouroboros/Game/src/game.c', 'foreign.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+        self.assertTrue(change.runtime_required('push', 'c'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_startup_followup_marker_has_priority_and_cannot_hide_historical_scope(self):
         names = sorted(change.CLIENT_STARTUP_FOLLOWUP_ALLOWED)
         self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))

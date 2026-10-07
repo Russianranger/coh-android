@@ -330,6 +330,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'client_startup_followup' in package:
         previous_client = package['client_startup_followup']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if 'client_scene_performance' in package:
+        previous_client = package['client_scene_performance']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -350,7 +353,8 @@ def prepare_worktree(root, data, assets, identity, context):
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
-        layer = ('client_startup_followup' if 'client_startup_followup' in package else
+        layer = ('client_scene_performance' if 'client_scene_performance' in package else
+                 'client_startup_followup' if 'client_startup_followup' in package else
                  'client_loading' if 'client_loading' in package else 'startup_bundle_client')
         if layer not in package or not report.get('reused'):
             return report
@@ -361,7 +365,8 @@ def prepare_worktree(root, data, assets, identity, context):
                                       'native': native_closure_identity(old_native)})
         report['source_root_preserved'] = True
         report['native_texture_index_migration'] = {
-            'format': 1, 'policy': ('verified_client_startup_followup_layer_v1' if layer == 'client_startup_followup'
+            'format': 1, 'policy': ('verified_client_scene_performance_layer_v1' if layer == 'client_scene_performance'
+                                    else 'verified_client_startup_followup_layer_v1' if layer == 'client_startup_followup'
                                     else 'verified_client_loading_layer_v1' if layer == 'client_loading'
                                     else 'verified_startup_client_layer_v1'),
             'previous_client_identity': {'content_identity_sha256': old_content,
@@ -861,6 +866,19 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'replacement_scope': 'CityOfHeroes.exe_only',
                 'metadata_preload_only': True, 'source_freshness_preserved': True,
                 'prepared_cache_schema_changed': False, 'physical_startup_savings_validated': False}
+        self.client_scene_performance = 'client_scene_performance' in package
+        if self.client_scene_performance:
+            wrapper = package['client_scene_performance']
+            self.ctx.report['client_scene_performance'] = {
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'replacement_scope': 'CityOfHeroes.exe_only',
+                'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
+                'renderer_changed': False, 'bounded_diagnostics': True,
+                'surviving_fx_preload_preserved': True, 'physical_scene_savings_validated': False,
+                'physical_fps_improvement_validated': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
                         source_commit=SOURCE, data_commit=DATA,
                         client_executable_sha256=self.client_executable_sha256)
@@ -931,8 +949,23 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
         command = [self.args.wine, base.windows_path(self.args.assets / 'client-launcher.exe'), self.args.session_id,
                    base.windows_path(self.work / 'CityOfHeroes.exe'), base.windows_path(self.work)]
         client_environment = dict(self.wine_env)
+        for name in ('COH_CLIENT_SCENE_PROFILE', 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD', 'COH_CLIENT_FRAME_TIMING'):
+            client_environment.pop(name, None)
         if getattr(self, 'client_startup_followup', False):
             client_environment['COH_CLIENT_DEPENDENCY_PRELOAD'] = '1'
+        if getattr(self, 'client_scene_performance', False) is True:
+            producer = self.ctx.report.get('client_scene_performance', {})
+            require(producer.get('client_executable_sha256') == self.client_executable_sha256
+                and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
+                and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
+                and producer.get('source_freshness_preserved') is True
+                and producer.get('prepared_cache_schema_changed') is False
+                and producer.get('renderer_changed') is False
+                and producer.get('bounded_diagnostics') is True
+                and producer.get('surviving_fx_preload_preserved') is True,
+                'Startup scene controls lack their current verified Game producer')
+            client_environment.update(COH_CLIENT_SCENE_PROFILE='1',
+                COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD='1', COH_CLIENT_FRAME_TIMING='1', COH_CLIENT_BIN_PROFILE='0')
         previous = Path.cwd()
         try:
             os.chdir(self.work)

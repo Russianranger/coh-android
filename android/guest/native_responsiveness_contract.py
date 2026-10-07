@@ -104,12 +104,109 @@ def client_contract(package, receipt=None):
         executable = client_loading_contract(package, candidate)
     if 'client_startup_followup' in package:
         executable = client_startup_followup_contract(package, candidate)
+    if 'client_scene_performance' in package:
+        executable = client_scene_performance_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
             and package.get('android_execution_validated') is False and package.get('gameplay_validated') is False,
             'Client candidate changed its retained DLL closure')
     return executable
+
+
+def client_scene_performance_contract(package, candidate=None):
+    """Preserve the accepted Game ancestry, schema and every DLL dependency."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = client_startup_followup_contract(package, candidate)
+    accepted = package['client_startup_followup']
+    wrapper = package.get('client_scene_performance')
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+        'base_client_startup_followup_manifest_sha256', 'base_client_executable'}
+        and wrapper['base_client_startup_followup_manifest_sha256'] == accepted['manifest_sha256']
+        and wrapper['base_client_executable'] == previous, 'Scene/frame must retain the exact accepted Game producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+        and manifest.get('format') == 1 and manifest.get('role') == 'bounded_client_scene_and_frame_performance'
+        and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+        and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+        and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+        and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
+        and manifest.get('retained_native_dependencies_changed') is False
+        and manifest.get('retained_source_inputs') == candidate['build_inputs']
+        and manifest.get('schema_sources_sha256') == candidate['retained_cache']['schema_sources_sha256']
+        and manifest.get('base_client_executable') == previous
+        and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False
+        and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+        and set(manifest.get('files', {})) == {'CityOfHeroes.exe'}, 'Scene/frame changed native dependency or cache ancestry')
+    build = manifest.get('build_input', {})
+    files = {'Game/src/game.c', 'Game/src/graphics/gfx.c', 'Game/src/clientcomm/clientcomm.c',
+        'Game/src/group/groupnetrecv.c', 'Common/seq/gfxtree.c', 'Common/seq/gfxtree.h',
+        'Game/src/render/thread/rt_win_init.c'}
+    patches = {'patches/client-scene-performance/0001-scene-loading-phase-and-preload.patch',
+        'patches/client-scene-performance/0002-native-frame-timing.patch'}
+    controls = {
+        'scene_profile': {'environment_variable': 'COH_CLIENT_SCENE_PROFILE', 'enabled_value': '1',
+            'disabled_by_default': True, 'record_prefix': 'COH_CLIENT_SCENE_PHASE_V1', 'bounded': True},
+        'discarded_fx_preload': {'environment_variable': 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD',
+            'enabled_value': '1', 'disabled_by_default': True, 'stock_fallback_preserved': True,
+            'surviving_post_invalidation_preload_preserved': True},
+        'frame_profile': {'environment_variable': 'COH_CLIENT_FRAME_TIMING', 'enabled_value': '1',
+            'disabled_by_default': True, 'record_prefix': 'COH_CLIENT_FRAME_TIMING_V1',
+            'aggregate_only': True, 'bounded': True}}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+        'base_client_startup_followup_build_input', 'patches_sha256', 'source_sha256', 'patched_sha256',
+        'overlay_sha256', 'reverse_patch_exact_base_verified', 'controls', 'build_targets', 'configuration',
+        'architecture', 'cache_encoding_changed', 'parse6_schema_changes', 'source_freshness_changed',
+        'graphics_profile_changes', 'renderer_changed', 'gameplay_validation_changes', 'runtime_execution_validated'}
+        and build.get('format') == 1 and build.get('role') == manifest['role'] and build.get('source_commit') == SOURCE
+        and build.get('base_client_startup_followup_build_input') == accepted['manifest']['build_input']
+        and build.get('reverse_patch_exact_base_verified') is True and build.get('controls') == controls
+        and build.get('build_targets') == ['Game'] and build.get('configuration') == 'OptDebug'
+        and build.get('architecture') == 'Win32'
+        and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+            'source_freshness_changed', 'graphics_profile_changes', 'renderer_changed',
+            'gameplay_validation_changes', 'runtime_execution_validated')), 'Scene/frame native recipe changed correctness or renderer')
+    for field, names in (('patches_sha256', patches), ('source_sha256', files), ('patched_sha256', files),
+            ('overlay_sha256', {'Game/src/cohClientSceneTiming.h', 'Game/src/cohClientFrameTiming.h'})):
+        require(isinstance(build.get(field), dict) and set(build[field]) == names
+            and all(HEX64.fullmatch(str(value)) for value in build[field].values()), 'Scene/frame native source inventory differs')
+    require(all(build['source_sha256'][name] != build['patched_sha256'][name] for name in files), 'Scene/frame recipe did not change declared sources')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and set(checks) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'build_input', 'scene', 'frame'} and checks.get('format') == 1
+        and checks.get('status') == 'passed' and checks.get('platform') == 'windows'
+        and checks.get('architecture') == 'Win32' and checks.get('configuration') == 'OptDebug'
+        and checks.get('build_input') == build, 'Scene/frame real Win32 proof differs')
+    for role in ('scene', 'frame'):
+        proof = checks.get(role, {})
+        require(isinstance(proof, dict) and proof.get('format') == 1 and proof.get('status') == 'passed'
+            and proof.get('platform') == 'windows' and proof.get('architecture') == 'Win32'
+            and proof.get('configuration') == 'OptDebug' and proof.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+            and HEX64.fullmatch(str(proof.get('harness_sha256', ''))), 'Scene/frame source-bound Win32 harness proof missing')
+        patch = ('patches/client-scene-performance/0001-scene-loading-phase-and-preload.patch' if role == 'scene'
+            else 'patches/client-scene-performance/0002-native-frame-timing.patch')
+        header = 'Game/src/cohClientSceneTiming.h' if role == 'scene' else 'Game/src/cohClientFrameTiming.h'
+        require(proof.get('patch_sha256') == build['patches_sha256'][patch]
+            and proof.get('header_sha256') == build['overlay_sha256'][header], 'Scene/frame harness source differs from Game source')
+    require(all(checks['scene'].get(name) is True for name in ('baseline_fallback_verified',
+        'discarded_preload_elision_verified', 'surviving_preload_and_invalidation_verified',
+        'scene_phase_bound_verified', 'scene_failure_and_wait_paths_preserved'))
+        and checks['scene'].get('physical_scene_savings_validated') is False,
+        'Scene Win32 proof did not preserve surviving preload, fallback or waits')
+    require(all(checks['frame'].get(name) is True for name in ('wall_pacing_and_submission_separation_verified',
+        'presentation_swap_wall_verified', 'histogram_upper_bounds_verified',
+        'menu_loading_gameplay_mixed_states_verified', 'report_rate_and_120_report_cap_verified',
+        'disabled_without_clock_cpu_or_logging_verified', 'clock_failure_nonfatal_verified',
+        'fixed_buffer_full_state_format_verified', 'genuine_win32_qpc_and_thread_cpu_verified',
+        'genuine_win32_tls_and_concurrent_json_verified'))
+        and HEX64.fullmatch(str(checks['frame'].get('production_harness_sha256', '')))
+        and checks['frame'].get('physical_frame_rate_or_gpu_latency_validated') is False,
+        'Frame Win32 proof did not preserve bounded aggregate diagnostics')
+    record = manifest['files']['CityOfHeroes.exe']; pe_record(record)
+    require(record != previous and record['pe_machine'] == previous['pe_machine']
+        and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
+        'Scene/frame Game imports exceed retained DLL closure')
+    return record
 
 
 def startup_bundle_client_contract(package, candidate=None):

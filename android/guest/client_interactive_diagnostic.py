@@ -201,6 +201,9 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         # without enabling it for Wine initialization or either server.
         environment = dict(self.wine_env)
         environment.pop('COH_CLIENT_DEPENDENCY_PRELOAD', None)
+        for name in ('COH_CLIENT_SCENE_PROFILE', 'COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD',
+                     'COH_CLIENT_FRAME_TIMING'):
+            environment.pop(name, None)
         enabled = getattr(self, 'client_startup_followup', False) is True
         producer = self.ctx.report.get('client_startup_followup')
         if enabled:
@@ -222,6 +225,34 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             'client_executable_sha256': self.client_executable_sha256 if enabled else None,
             'shared_wine_environment_modified': False,
             'native_execution_validated': False, 'physical_startup_savings_validated': False}
+        scene_enabled = getattr(self, 'client_scene_performance', False) is True
+        scene = self.ctx.report.get('client_scene_performance')
+        if scene_enabled:
+            require(enabled and isinstance(scene, dict)
+                    and scene.get('client_executable_sha256') == self.client_executable_sha256
+                    and re.fullmatch(r'[0-9a-f]{64}', str(scene.get('manifest_sha256', '')))
+                    and re.fullmatch(r'[0-9a-f]{40}', str(scene.get('repository_commit', '')))
+                    and scene.get('replacement_scope') == 'CityOfHeroes.exe_only'
+                    and scene.get('source_freshness_preserved') is True
+                    and scene.get('prepared_cache_schema_changed') is False
+                    and scene.get('renderer_changed') is False
+                    and scene.get('bounded_diagnostics') is True
+                    and scene.get('surviving_fx_preload_preserved') is True,
+                    'Client scene controls lack their current verified Game producer')
+            environment.update(COH_CLIENT_SCENE_PROFILE='1',
+                COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD='1', COH_CLIENT_FRAME_TIMING='1',
+                COH_CLIENT_BIN_PROFILE='0')
+        self.ctx.report['client_scene_performance_environment'] = {
+            'format': 1, 'policy': 'current_verified_Game_attempt_only',
+            'enabled': scene_enabled, 'launch_label': label,
+            'producer_manifest_sha256': scene['manifest_sha256'] if scene_enabled else None,
+            'client_executable_sha256': self.client_executable_sha256 if scene_enabled else None,
+            'scene_profile': '1' if scene_enabled else None,
+            'defer_discarded_fx_preload': '1' if scene_enabled else None,
+            'frame_timing': '1' if scene_enabled else None,
+            'legacy_bin_profile': '0' if scene_enabled else environment.get('COH_CLIENT_BIN_PROFILE'),
+            'shared_wine_environment_modified': False,
+            'native_execution_validated': False, 'physical_fps_improvement_validated': False}
         previous = Path.cwd()
         try:
             os.chdir(self.work)
