@@ -493,11 +493,53 @@ SCENE_PERFORMANCE_ALLOWED = SCENE_PERFORMANCE_SOURCES | frozenset({
 })
 
 
+# The 30 FPS experiment is a separate, source-bound Game continuation. Directory
+# globs deliberately do not belong here: an unreviewed patch/header or a mixed
+# server/runtime/Java/asset change still requests historical full qualification.
+GAMEPLAY_PERFORMANCE_SOURCES = frozenset({
+    '.github/workflows/android-client-gameplay-performance.yml',
+    'tools/android/interactive/package_client_gameplay_performance_native.py',
+    'tools/android/interactive/build_client_gameplay_performance_apk.py',
+    'tools/android/interactive/qualify_client_gameplay_performance.py',
+    'tools/android/interactive/test_client_gameplay_performance_package.py',
+    'tools/android/interactive/test_client_gameplay_performance_native.py',
+    'tools/android/interactive/test_client_gameplay_performance_source.py',
+    'tools/android/interactive/test_client_gameplay_performance_contract.py',
+    'patches/client-gameplay-performance/0001-gameplay-cap-and-texture-diagnostics.patch',
+    'database/client-gameplay-performance/overlay/Game/src/cohClientGameplayPerformance.h',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/texture_header_index.py',
+})
+GAMEPLAY_PERFORMANCE_ALLOWED = GAMEPLAY_PERFORMANCE_SOURCES | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/HANDOFF.md', 'docs/COH-PERFORMANCE-0.13.17.md',
+    'docs/COH-Atlas-Gameplay-0.13.17-testing.txt',
+    'docs/android-evidence/performance-0.13.16-thor-20261007.json',
+    'docs/android-evidence/performance-0.13.17-publication.json',
+})
+
+
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
         and before != '0'*40 and before == parent and head != before
         and names and set(names) <= allowed)
+
+
+def gameplay_performance_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, GAMEPLAY_PERFORMANCE_ALLOWED)
+        and set(names) & GAMEPLAY_PERFORMANCE_SOURCES)
+
+
+def gameplay_performance_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names,
+        {'docs/HANDOFF.md', 'docs/android-evidence/performance-0.13.17-publication.json'})
+        and 'docs/android-evidence/performance-0.13.17-publication.json' in names)
 
 
 def scene_performance_push(event, before, head, parent, names):
@@ -580,6 +622,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not ui_beacon_docs(event, before, head, parent, names)
@@ -597,6 +640,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (reopen_startup_repair_docs(event, before, head, parent, names)
@@ -612,6 +656,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not ((bounded_push(event, before, head, parent, names)
@@ -629,6 +674,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     """Keep historical 0.13.1 publication out of a qualified recovery derivative."""
@@ -646,6 +692,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     """The newer source-bound startup derivative owns only its explicit scope."""
@@ -661,6 +708,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     """Keep the historical 0.13.4 release out of the bounded setup wrapper."""
@@ -674,6 +722,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (bundle_push(event, before, head, parent, names)
@@ -686,6 +735,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (bundle_push(event, before, head, parent, names)
@@ -698,6 +748,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (visual_push(event, before, head, parent, names)
@@ -709,6 +760,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (client_loading_push(event, before, head, parent, names)
@@ -719,6 +771,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (client_streaming_push(event, before, head, parent, names)
@@ -728,6 +781,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (client_asset_closure_push(event, before, head, parent, names)
@@ -736,6 +790,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not (client_startup_followup_push(event, before, head, parent, names)
@@ -743,12 +798,14 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     return not levelup_ui_repair_push(event, before, head, parent, names)
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
     if performance_push(event, before, head, parent, names): return False
     # Source candidates always qualify; an exact publication checkpoint is docs only.

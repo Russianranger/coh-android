@@ -253,10 +253,14 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
             'legacy_bin_profile': '0' if scene_enabled else environment.get('COH_CLIENT_BIN_PROFILE'),
             'shared_wine_environment_modified': False,
             'native_execution_validated': False, 'physical_fps_improvement_validated': False}
+        command = self.launcher_command()
+        graphics_profile = ('performance' if command[-1] == '--character-creation'
+            and environment.get('COH_CLIENT_GRAPHICS_PROFILE') == 'performance' else 'standard')
+        startup.apply_client_gameplay_environment(self, environment, label, graphics_profile)
         previous = Path.cwd()
         try:
             os.chdir(self.work)
-            self.client = self.ctx.start(label, self.launcher_command(), env=environment)
+            self.client = self.ctx.start(label, command, env=environment)
         finally:
             os.chdir(previous)
 

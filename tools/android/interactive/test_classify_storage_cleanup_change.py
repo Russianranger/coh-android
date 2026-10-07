@@ -12,6 +12,90 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def gameplay_historical_publishers(self):
+        from classify_interactive_change import runtime_required
+        return (change.task_required, change.cleanup_required, change.recovery_required,
+            change.receipt_required, change.schedule_required, change.setup_required,
+            change.bundle_required, change.visual_required, change.loading_required,
+            change.streaming_required, change.asset_closure_required,
+            change.startup_followup_required, change.levelup_ui_repair_required,
+            change.reopen_startup_repair_required, change.ui_beacon_required,
+            runtime_required)
+
+    def test_gameplay_performance_routes_exact_new_game_lane_away_from_older_publishers(self):
+        names = sorted(change.GAMEPLAY_PERFORMANCE_ALLOWED)
+        self.assertTrue(change.gameplay_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.scene_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+
+    def test_gameplay_performance_rejects_mixed_and_unreviewed_same_directory_changes(self):
+        names = sorted(change.GAMEPLAY_PERFORMANCE_ALLOWED)
+        forbidden = ('android/native/client-launcher.c', 'android/guest/local_character_server.py',
+            change.JAVA+'ClientRuntime.java', 'android/interactive/src/main/AndroidManifest.xml',
+            'android/runtime-lock.json', 'assets/client-ui-sweep-manifest.json',
+            'upstream/ouroboros/Game/src/game.c',
+            'patches/client-gameplay-performance/0002-unreviewed.patch',
+            'database/client-gameplay-performance/overlay/Game/src/unreviewed.h',
+            'tools/android/interactive/test_client_gameplay_performance_unreviewed.py',
+            'foreign.py')
+        for foreign in forbidden:
+            with self.subTest(foreign=foreign):
+                mixed = names+[foreign]
+                self.assertFalse(change.gameplay_performance_push('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+                for function in self.gameplay_historical_publishers():
+                    with self.subTest(function=function.__name__):
+                        self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+
+    def test_gameplay_performance_requires_source_marker_and_unambiguous_direct_push(self):
+        names = sorted(change.GAMEPLAY_PERFORMANCE_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40,
+                    sorted(change.GAMEPLAY_PERFORMANCE_ALLOWED-change.GAMEPLAY_PERFORMANCE_SOURCES))):
+            with self.subTest(event=event, before=before, head=head, files=files):
+                self.assertFalse(change.gameplay_performance_push(event, before, head, parent, files))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function(event, before, head, parent, files))
+
+    def test_gameplay_publication_checkpoint_is_exact_docs_only(self):
+        names = ['docs/HANDOFF.md', 'docs/android-evidence/performance-0.13.17-publication.json']
+        self.assertTrue(change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.gameplay_performance_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+['unreviewed.md']))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+        for files in (['docs/HANDOFF.md'], names+['docs/COH-PERFORMANCE-0.13.17.md'],
+                names+['android/guest/client_startup_diagnostic.py']):
+            self.assertFalse(change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, files))
+
+    def test_gameplay_classifier_cli_closes_each_historical_owner_gate(self):
+        names = sorted(change.GAMEPLAY_PERFORMANCE_ALLOWED)
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)/'scope-output.txt'
+            environment = {'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40,
+                'GITHUB_OUTPUT': str(output)}
+            values = ['a'*40+'\n', 'b'*40+'\n', ('\0'.join(names)+'\0').encode()]
+            with mock.patch.dict(change.os.environ, environment), \
+                    mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                change.main()
+            expected = ''.join(function.__name__+'=false\n'
+                for function in self.gameplay_historical_publishers()[:-1])
+            self.assertEqual(output.read_text(), expected)
+
     def test_game_only_scene_performance_routes_historical_publishers_closed_and_unknowns_open(self):
         from classify_interactive_change import runtime_required
         names = sorted(change.SCENE_PERFORMANCE_ALLOWED)
@@ -282,7 +366,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

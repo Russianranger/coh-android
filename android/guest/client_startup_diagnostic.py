@@ -333,6 +333,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'client_scene_performance' in package:
         previous_client = package['client_scene_performance']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if 'client_gameplay_performance' in package:
+        previous_client = package['client_gameplay_performance']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -353,7 +356,8 @@ def prepare_worktree(root, data, assets, identity, context):
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
-        layer = ('client_scene_performance' if 'client_scene_performance' in package else
+        layer = ('client_gameplay_performance' if 'client_gameplay_performance' in package else
+                 'client_scene_performance' if 'client_scene_performance' in package else
                  'client_startup_followup' if 'client_startup_followup' in package else
                  'client_loading' if 'client_loading' in package else 'startup_bundle_client')
         if layer not in package or not report.get('reused'):
@@ -365,7 +369,8 @@ def prepare_worktree(root, data, assets, identity, context):
                                       'native': native_closure_identity(old_native)})
         report['source_root_preserved'] = True
         report['native_texture_index_migration'] = {
-            'format': 1, 'policy': ('verified_client_scene_performance_layer_v1' if layer == 'client_scene_performance'
+            'format': 1, 'policy': ('verified_client_gameplay_performance_layer_v1' if layer == 'client_gameplay_performance'
+                                    else 'verified_client_scene_performance_layer_v1' if layer == 'client_scene_performance'
                                     else 'verified_client_startup_followup_layer_v1' if layer == 'client_startup_followup'
                                     else 'verified_client_loading_layer_v1' if layer == 'client_loading'
                                     else 'verified_startup_client_layer_v1'),
@@ -803,6 +808,43 @@ def cache_inventory(work, deadline, entry_limit=4096):
     return result
 
 
+def apply_client_gameplay_environment(owner, environment, label, graphics_profile):
+    """Enable only the current typed Game's controls on an owned client attempt."""
+    for name in ('COH_CLIENT_GAMEPLAY_FPS', 'COH_CLIENT_BOUNDED_TEXTURE_ERRORS'):
+        environment.pop(name, None)
+    enabled = getattr(owner, 'client_gameplay_performance', False) is True
+    producer = owner.ctx.report.get('client_gameplay_performance')
+    fps = '30' if graphics_profile == 'performance' else '10'
+    if enabled:
+        require(getattr(owner, 'client_scene_performance', False) is True
+            and isinstance(producer, dict)
+            and re.fullmatch(r'[0-9a-f]{64}', str(getattr(owner, 'client_executable_sha256', '')))
+            and producer.get('client_executable_sha256') == owner.client_executable_sha256
+            and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', '')))
+            and re.fullmatch(r'[0-9a-f]{40}', str(producer.get('repository_commit', '')))
+            and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and producer.get('source_freshness_preserved') is True
+            and producer.get('prepared_cache_schema_changed') is False
+            and producer.get('renderer_changed') is False
+            and producer.get('menus_and_background_cap_retained') is True
+            and producer.get('runtime_maxfps_command_preserved') is True
+            and producer.get('bounded_texture_errors') is True
+            and producer.get('texture_load_fallback_and_assignments_preserved') is True,
+            'Gameplay controls lack their current verified Game producer')
+        environment.update(COH_CLIENT_GAMEPLAY_FPS=fps, COH_CLIENT_BOUNDED_TEXTURE_ERRORS='1')
+    owner.ctx.report['client_gameplay_performance_environment'] = {
+        'format': 1, 'policy': 'current_verified_Game_attempt_only', 'enabled': enabled,
+        'launch_label': label,
+        'producer_manifest_sha256': producer['manifest_sha256'] if enabled else None,
+        'client_executable_sha256': owner.client_executable_sha256 if enabled else None,
+        'effective_graphics_profile': graphics_profile if enabled else None,
+        'gameplay_fps_requested': fps if enabled else None,
+        'bounded_texture_errors': '1' if enabled else None,
+        'menus_and_background_cap_retained': True,
+        'shared_wine_environment_modified': False,
+        'physical_fps_improvement_validated': False}
+
+
 class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
     def __init__(self, args, context):
         super().__init__(args, context)
@@ -878,6 +920,20 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
                 'renderer_changed': False, 'bounded_diagnostics': True,
                 'surviving_fx_preload_preserved': True, 'physical_scene_savings_validated': False,
+                'physical_fps_improvement_validated': False}
+        self.client_gameplay_performance = 'client_gameplay_performance' in package
+        if self.client_gameplay_performance:
+            wrapper = package['client_gameplay_performance']
+            self.ctx.report['client_gameplay_performance'] = {
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'replacement_scope': 'CityOfHeroes.exe_only',
+                'source_freshness_preserved': True, 'prepared_cache_schema_changed': False,
+                'renderer_changed': False, 'menus_and_background_cap_retained': True,
+                'runtime_maxfps_command_preserved': True, 'bounded_texture_errors': True,
+                'texture_load_fallback_and_assignments_preserved': True,
                 'physical_fps_improvement_validated': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
                         source_commit=SOURCE, data_commit=DATA,
@@ -966,6 +1022,8 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'Startup scene controls lack their current verified Game producer')
             client_environment.update(COH_CLIENT_SCENE_PROFILE='1',
                 COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD='1', COH_CLIENT_FRAME_TIMING='1', COH_CLIENT_BIN_PROFILE='0')
+        # The four-argument startup launcher always uses its standard profile.
+        apply_client_gameplay_environment(self, client_environment, 'actual-coh-client', 'standard')
         previous = Path.cwd()
         try:
             os.chdir(self.work)
