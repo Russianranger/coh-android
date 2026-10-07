@@ -222,7 +222,7 @@ int main(void) {
 def compile_harness(directory, windows=False, production=False):
     directory = Path(directory)
     source = directory / ('production.c' if production else 'frame.c')
-    source.write_text(production_harness() if production else harness())
+    source.write_bytes((production_harness() if production else harness()).encode('utf-8'))
     if os.name == 'nt':
         compiler = shutil.which('cl')
         if not compiler:
@@ -237,7 +237,11 @@ def compile_harness(directory, windows=False, production=False):
             raise ValueError('C compiler required')
         binary = source.with_suffix('')
         command = [compiler, '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror', str(source), '-o', str(binary)]
-    subprocess.run(command, cwd=directory, check=True, capture_output=True, text=True)
+    try:
+        subprocess.run(command, cwd=directory, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError('Frame fixture compilation failed:\n' +
+            (error.stdout or '') + (error.stderr or '')) from error
     if windows or production:
         sys.path.insert(0, str(ROOT / 'tools'))
         from package_reference_runtime import file_record

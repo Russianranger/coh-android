@@ -2,9 +2,11 @@
 import hashlib
 from pathlib import Path
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(Path(__file__).parent), str(ROOT / 'tools')]
@@ -17,7 +19,8 @@ FILES = ('Game/src/game.c', 'Game/src/render/thread/rt_win_init.c')
 
 
 def sources(after_scene=False):
-    original = {name: (ROOT / 'upstream/ouroboros' / name).read_text() for name in FILES}
+    original = {name: (ROOT / 'upstream/ouroboros' / name).read_bytes().replace(b'\r\n', b'\n').decode('utf-8')
+                for name in FILES}
     if after_scene:
         original['Game/src/game.c'] = scene.sources()[1]['Game/src/game.c']
     with tempfile.TemporaryDirectory(prefix='coh-frame-source-') as directory:
@@ -25,15 +28,19 @@ def sources(after_scene=False):
         for name, value in original.items():
             path = source / name
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(value)
+            path.write_bytes(value.encode('utf-8'))
         patch = (ROOT / frame.PATCH).read_bytes().replace(b'\r\n', b'\n')
         names = tuple(line[6:] for line in patch.decode().splitlines() if line.startswith('+++ b/'))
         if names != FILES:
             raise ValueError('Frame patch changes an unexpected native source')
-        apply_patch(source, patch)
-        current = {name: (source / name).read_text() for name in FILES}
+        try:
+            apply_patch(source, patch)
+        except subprocess.CalledProcessError as error:
+            raise RuntimeError('Frame fixture patch failed: ' +
+                (error.stderr or b'').decode('utf-8', errors='replace')) from error
+        current = {name: (source / name).read_bytes().decode('utf-8') for name in FILES}
         loading.reverse_patch(source, patch)
-        if any((source / name).read_text() != value for name, value in original.items()):
+        if any((source / name).read_bytes() != value.encode('utf-8') for name, value in original.items()):
             raise ValueError('Frame reverse proof did not reproduce the complete input')
         return original, current
 
@@ -52,6 +59,21 @@ def strip_hooks(text):
 
 
 class FrameSourceTests(unittest.TestCase):
+    def test_scene_and_frame_fixtures_keep_exact_bytes_under_windows_text_translation(self):
+        ordinary_write = Path.write_text
+        def windows_write(path, text, *args, **kwargs):
+            kwargs.setdefault('newline', '\r\n')
+            return ordinary_write(path, text, *args, **kwargs)
+        # Reproduce Windows's native text mode even when the host is Linux.
+        # Scene and frame apply/reverse proofs must survive without text-mode
+        # reads silently normalizing a different physical byte stream.
+        with mock.patch.object(Path, 'write_text', windows_write):
+            self.assertTrue(scene.source_proof())
+            for after_scene in (False, True):
+                old, current = sources(after_scene)
+                for name in FILES:
+                    self.assertEqual(strip_hooks(current[name]), old[name])
+
     def test_complete_sources_keep_native_behavior_with_and_without_scene_layer(self):
         for after_scene in (False, True):
             old, current = sources(after_scene)

@@ -30,20 +30,27 @@ def digest(path):
 
 
 def sources():
-    old = {name: (ROOT / 'upstream/ouroboros' / name).read_text() for name in FILES}
+    old = {name: (ROOT / 'upstream/ouroboros' / name).read_bytes().replace(b'\r\n', b'\n').decode('utf-8')
+           for name in FILES}
     with tempfile.TemporaryDirectory(prefix='coh-scene-patch-proof-') as temporary:
         source = Path(temporary)
         for name, value in old.items():
             path = source / name
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(value)
+            # Path.write_text translates LF to CRLF on Windows. These scratch
+            # fixtures must have the same exact LF bytes as the native recipe.
+            path.write_bytes(value.encode('utf-8'))
         patch = (ROOT / PATCH).read_bytes().replace(b'\r\n', b'\n')
         names = tuple(line[6:] for line in patch.decode().splitlines() if line.startswith('+++ b/'))
         assert names == FILES, 'Unexpected scene source member'
-        apply_patch(source, patch)
-        new = {name: (source / name).read_text() for name in FILES}
+        try:
+            apply_patch(source, patch)
+        except subprocess.CalledProcessError as error:
+            raise RuntimeError('Scene fixture patch failed: ' +
+                (error.stderr or b'').decode('utf-8', errors='replace')) from error
+        new = {name: (source / name).read_bytes().decode('utf-8') for name in FILES}
         loading.reverse_patch(source, patch)
-        assert all((source / name).read_text() == value for name, value in old.items())
+        assert all((source / name).read_bytes() == value.encode('utf-8') for name, value in old.items())
     return old, new
 
 
@@ -170,7 +177,7 @@ int main(int argc,char **argv) {
 
 
 def compile_harness(directory, windows=False):
-    path = Path(directory) / 'scene-proof.c'; path.write_text(harness())
+    path = Path(directory) / 'scene-proof.c'; path.write_bytes(harness().encode('utf-8'))
     if windows:
         compiler = shutil.which('cl'); assert compiler, 'Actual Win32 MSVC required'
         binary = Path(directory) / 'scene-proof.exe'
@@ -179,7 +186,11 @@ def compile_harness(directory, windows=False):
         compiler = shutil.which('cc') or shutil.which('gcc'); assert compiler, 'C compiler required'
         binary = Path(directory) / 'scene-proof'
         command = [compiler, '-std=c11', '-O2', str(path), '-o', str(binary)]
-    subprocess.run(command, cwd=directory, check=True, capture_output=True, text=True)
+    try:
+        subprocess.run(command, cwd=directory, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError('Scene fixture compilation failed:\n' +
+            (error.stdout or '') + (error.stderr or '')) from error
     return binary
 
 
