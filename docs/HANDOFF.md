@@ -1,3 +1,66 @@
+# Published Thor GPU-start repair — 2026-10-08
+
+**Current test APK: 0.13.21 / version code 36, published and independently
+audited. All six owner jobs passed.** Frozen APK source:
+`20b559420b1bb0978b7eac6e6eecdfe2a468f693`; retained Game source:
+`a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4`.
+
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.21)
+· [Owner qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37837207655)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21-testing.txt).
+
+Release 407231536; APK asset 622911506. APK 1,560,283,912 bytes; SHA-256
+`67a8fe01d8f6e7cbb5139d7d1cecc7706d33b25671d0072a93808b1fc04bbe76`.
+Tag `coh-atlas-gameplay-v0.13.21` resolves directly to the frozen APK source.
+Signer remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+The independently downloaded public APK passed SDK 35 package/version 36,
+signature v2/v3, exact source/payload/retained-producer and donor conservation
+checks; public checksum and testing notes were also downloaded and verified.
+
+**1,470 tests / 99 suites / zero skips**, including all seven real PostgreSQL
+fixtures, passed. Actual Windows PE32 production compilation and native guard
+qualification passed with `/W4 /WX`. The earlier unpublished candidate at
+`cbb62e7730c00914b2ad53cc79c96dbc8a337ec0`, run 37836795752, stopped at MSVC
+C4701 on an uninitialized rectangle in a failed client-size query. Initializing
+that rectangle preserved rejection behavior and fixed the production build;
+no APK was published by that failed candidate.
+
+Exactly 73 of 77 runtime payloads remain byte-identical; four helper/archive/
+verification payloads change. Two reviewed Java evidence validators and DEX
+change; seventeen authored Java sources and Android resources retain exact
+bytes. Game and 20 DLLs, Turnip/Mesa/native Vulkan, servers, assets, Wine/FEX/rootfs,
+display/input and strict save rules remain retained. No Mesa or native Game
+recompilation occurred. All original GPU producer source/ABI proof stays
+explicit in the probe-only repair receipt. Machine-readable publication,
+input ZIP hashes, asset pins and evidence artifact IDs/ZIP digests are in
+`docs/android-evidence/gpu-repair-0.13.21-publication.json`.
+
+The physical .20 Software export measures 9.382 native Hz in 30-cap gameplay;
+its guest save/reopen passes, while Android completion was falsely rejected
+by the legacy 1210-second cap. Production-method replay now accepts only the
+matching Android-approved bounded native budget. The physical GPU export
+never starts Game; it passed driver/draw prerequisites and failed post-swap
+GL_FRONT proof, then masked the original error on background-pipe cleanup.
+The repaired visible two-pattern gate and cleanup retain all capability/
+identity/safety boundaries. These are automated fixes, not physical .21
+Game/GPU or performance validation.
+
+One historical .13.4 recipe run 37836795523 rejected the newer two-Java boundary
+against its frozen one-Java allowlist. Its regression guards pass in the .21
+qualification; that old recipe was preserved, and no .13.4 APK was rebuilt.
+
+**Next:** install .21 as an update, run Set up / update runtime once, select
+GPU test before Reopen, and export the full outer report after failure or
+Save/Finish. No clear-data/reimport and no repeated long Software benchmark.
+If Atlas opens, corroborate actual Game hardware backend, use the matched
+30-cap route, inspect material/input/combat/UI/save correctness, black tearing
+and temperatures. Actual GPU Game FPS, visuals and black-glitch resolution
+remain unverified; stable 30+ FPS remains the target. Continue from the test
+evidence rather than repeating this completed release. Startup/zoning remain
+deferred. The prepublication source checkpoint below is retained as history.
+
 # Thor GPU-start failure repair — 2026-10-08
 
 **0.13.21 candidate / version code 36; publication not yet claimed in this
@@ -7,7 +70,7 @@ repair; do not repeat .20/Mesa/Game builds or the unchanged Software benchmark.
 Read `docs/COH-PERFORMANCE-0.13.21.md` for exact report hashes and measured
 boundaries, and `docs/COH-Atlas-Gameplay-0.13.21-testing.txt` for device steps.
 
-The GPU report passed Adreno740/Turnip native queue and Wine WGL draw/texture/
+The GPU report passed Adreno 740/Turnip native queue and Wine WGL draw/texture/
 ARB/VBO/FBO checks, then returned exit10 at GL_FRONT post-swap readback.
 Background Wine output holders masked that original error during generic
 shutdown. The helper now finalizes the isolated prefix, owned token workers
@@ -25,7 +88,7 @@ match Android's already-approved native session/PID/time receipt and bounded
 monotonic deadline. Save/producer/payload/current-APK checks stay strict.
 
 The new probe-only package/build workflow retains the exact audited public
-.20 donor APK, 73 of77 outer runtime payloads, Game/20DLLs, Mesa/Turnip/native
+.20 donor APK, 73 of 77 outer runtime payloads, Game and 20 DLLs, Mesa/Turnip/native
 Vulkan probe, assets, servers, Wine/FEX/rootfs, display/input and signing
 identity. Only small WGL PE32 compilation, two Java validators/DEX, GPU helper,
 GPU archive and verification/version metadata change. The old producer source/
@@ -33,16 +96,16 @@ ABI receipts remain explicit; no new driver/native Game compilation occurs.
 
 **Release gates:** `.github/workflows/android-client-gpu-repair.yml` compiles
 production Win32/WGL, packages the retained driver with the repaired probe,
-runs all96 retained suites plus3 new/continuation suites with7 real PostgreSQL
+runs all 96 retained suites plus 3 new/continuation suites with 7 real PostgreSQL
 fixtures, builds/signs .21, audits before publishing, then independently
 redownloads and audits the actual public APK. Record final owner source SHA,
 run, release/asset/APK pins and zero-skip totals after all jobs pass. Existing
 .20 and earlier publication evidence below remains preserved.
 
 **Next physical milestone:** GPU preflight then actual Game renderer/Atlas
-correctness and matched30-cap route. Use actual frame cadence and renderer/
+correctness and matched 30-cap route. Use actual frame cadence and renderer/
 presentation costs to choose the next optimization. Black tearing remains
-unresolved; do not promise30FPS or infer hardware Game rendering from probes.
+unresolved; do not promise 30 FPS or infer hardware Game rendering from probes.
 Keep startup/zoning deferred and preserve character/imported data.
 
 # Interrupted-session recovery and renderer report analysis — 2026-10-08
