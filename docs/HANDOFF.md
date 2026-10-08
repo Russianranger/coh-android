@@ -1,3 +1,34 @@
+# Interrupted-session recovery and renderer report analysis — 2026-10-08
+
+**Device APK remains the completed, published 0.13.20 below.** Recovery found
+one clean working tree at `883effea98e4527eef6287af5f62e89ecb777838`, no stashes
+or unfinished local APK, and no newer release or active release build. Live
+GitHub release/tag/assets and all six jobs of owner run **37788954170** agree
+with the existing audited publication. The two failed GPU recipe candidates
+were already corrected before publication. No implementation, driver build,
+Game compilation or APK publication needs to be repeated for that milestone.
+
+The subsequent work is host tooling: a reusable bounded
+`tools/android/interactive/analyze_client_renderer_performance.py`, focused
+measurement/evidence tests and a read-only report-analysis CI job. It separates
+stable native cap windows from transition/unclassified coverage, keeps renderer
+and presentation streams unaligned, and includes GPU prerequisite/fallback versus
+actual Game backend evidence, capture costs and strict save failures. See
+[report analysis](COH-RENDERER-REPORT-ANALYSIS.md) for usage and measurement limits.
+The complete latest `.19` ZIP was available and matched its already recorded
+`592f0be66bf6da1eace77f5e7e13df9c5e5d2c051410cddcde4c99e8cd75dcea` hash.
+All **19 report tests** passed locally (nine new renderer tests plus the ten
+retained startup/scene tests); the CLI also processed that actual outer ZIP.
+Runtime, Android, Game, server, assets and save rules are unchanged by this
+host-only continuation. No new device FPS improvement is claimed.
+
+**Next: physically compare Software and GPU test in 0.13.20, exporting each
+complete outer report.** GPU selection/probe success alone is insufficient.
+Fix a specific failed prerequisite if it falls back; if Game confirms Zink and
+remains correct, use native frame/renderer costs to choose the next optimization.
+Black tearing remains unexplained. Keep stable 30+ FPS as the primary target;
+stay in Atlas and keep startup/zoning work deferred for this pass.
+
 # Thor opt-in GPU continuation — 2026-10-08
 
 **Current release: 0.13.20 / version code 35. All hosted and actual public-byte gates passed. GPU activation, stable 30 FPS, temperatures and visual correctness remain pending on AYN Thor. Startup is acceptable for this pass; stay in Atlas and do not begin zoning.** This checkpoint supersedes earlier test instructions below. Retain the accepted Game scene/frame optimizations.
