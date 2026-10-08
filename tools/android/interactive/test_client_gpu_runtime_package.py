@@ -9,12 +9,15 @@ import argparse
 import copy
 import ctypes
 import hashlib
+import importlib.util
+import io
 import json
 import os
 from pathlib import Path
 import stat
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from unittest import mock
@@ -23,6 +26,11 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import package_client_gpu_runtime as gpu
+
+BUILD_SPEC = importlib.util.spec_from_file_location('coh_gpu_source_builder',
+    gpu.ROOT / 'tools/android/gpu-runtime/build.py')
+source_build = importlib.util.module_from_spec(BUILD_SPEC)
+BUILD_SPEC.loader.exec_module(source_build)
 
 COMMIT = '1' * 40
 RUN = 'https://github.com/Russianranger/coh-android/actions/runs/123456'
@@ -314,6 +322,76 @@ class ProductionPeBindingTests(unittest.TestCase):
             checks['fixture_bytes'] = len(changed); checks['fixture_sha256'] = hashlib.sha256(changed).hexdigest()
             with self.assertRaisesRegex(ValueError, 'helper code differs'):
                 gpu.validate_pe32_helpers(checks, directory)
+
+
+class SourceExtractionTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix='coh-source-tar-')
+        self.directory = Path(self.temporary.name)
+        self.addCleanup(self.temporary.cleanup)
+
+    def archive(self, members):
+        path = self.directory / 'source.tar'
+        with tarfile.open(path, 'w') as archive:
+            for name, kind, value in members:
+                member = tarfile.TarInfo(name)
+                member.mode = 0o7777  # source extraction strips special/write bits
+                member.type = kind
+                if kind == tarfile.REGTYPE:
+                    member.size = len(value)
+                    archive.addfile(member, io.BytesIO(value))
+                else:
+                    if kind in (tarfile.SYMTYPE, tarfile.LNKTYPE):
+                        member.linkname = value
+                    archive.addfile(member)
+        return path
+
+    def extract(self, members):
+        source_build.unpack(self.archive(members), self.directory, 'source-1')
+
+    def test_actual_tar_data_and_confined_early_symlink_are_staged_on_bookworm_path(self):
+        with mock.patch.object(tarfile.TarFile, 'extractall', side_effect=AssertionError('Unsupported API')):
+            self.extract([('source-1/alias', tarfile.SYMTYPE, 'sub/data'),
+                ('source-1', tarfile.DIRTYPE, ''), ('source-1/sub', tarfile.DIRTYPE, ''),
+                ('source-1/sub/data', tarfile.REGTYPE, b'actual tar bytes')])
+        self.assertEqual((self.directory / 'source-1/alias').read_bytes(), b'actual tar bytes')
+        self.assertTrue((self.directory / 'source-1/alias').is_symlink())
+        self.assertEqual(stat.S_IMODE((self.directory / 'source-1/sub/data').stat().st_mode), 0o755)
+        with self.assertRaisesRegex(ValueError, 'Fresh'):
+            self.extract([('source-1/a', tarfile.REGTYPE, b'x')])
+
+    def test_unsafe_paths_duplicates_special_files_and_hardlinks_fail_before_writes(self):
+        cases = [('../escape', tarfile.REGTYPE, b'x'), ('/source-1/abs', tarfile.REGTYPE, b'x'),
+            ('source-1/a/../b', tarfile.REGTYPE, b'x'), ('different-root/a', tarfile.REGTYPE, b'x'),
+            ('source-1/a\\b', tarfile.REGTYPE, b'x'), ('source-1/a//b', tarfile.REGTYPE, b'x'),
+            ('source-1/fifo', tarfile.FIFOTYPE, ''), ('source-1/hard', tarfile.LNKTYPE, 'source-1/data')]
+        for member in cases:
+            with self.subTest(member=member):
+                with self.assertRaisesRegex(ValueError, 'Unsafe'):
+                    self.extract([('source-1/data', tarfile.REGTYPE, b'first'), member])
+                self.assertFalse((self.directory / 'source-1').exists())
+        with self.assertRaisesRegex(ValueError, 'Unsafe'):
+            self.extract([('source-1/data', tarfile.REGTYPE, b'a'), ('source-1/data', tarfile.REGTYPE, b'b')])
+
+    def test_link_escape_missing_target_and_parent_link_descent_fail_before_writes(self):
+        for target in ('../../escape', '/outside', 'missing', '../different-root/data'):
+            with self.subTest(target=target), self.assertRaisesRegex(ValueError, 'Escaping or missing'):
+                self.extract([('source-1/data', tarfile.REGTYPE, b'x'), ('source-1/link', tarfile.SYMTYPE, target)])
+            self.assertFalse((self.directory / 'source-1').exists())
+        with self.assertRaisesRegex(ValueError, 'descends'):
+            self.extract([('source-1/dir', tarfile.DIRTYPE, ''), ('source-1/link', tarfile.SYMTYPE, 'dir'),
+                ('source-1/link/child', tarfile.REGTYPE, b'x')])
+        self.assertFalse((self.directory / 'source-1').exists())
+
+    def test_source_member_and_total_expansion_bounds_fail_without_materializing_payload(self):
+        archive = self.archive([('source-1/a', tarfile.REGTYPE, b'x')])
+        oversized = tarfile.TarInfo('source-1/a'); oversized.size = 64 * 1024 * 1024 + 1
+        for members, message in (([oversized], 'Unsafe'), ([oversized] * 9, 'expansion'),
+                ([tarfile.TarInfo('source-1')] * 25001, 'expansion')):
+            with mock.patch.object(tarfile.TarFile, 'getmembers', return_value=members):
+                with self.assertRaisesRegex(ValueError, message):
+                    source_build.unpack(archive, self.directory, 'source-1')
+            self.assertFalse((self.directory / 'source-1').exists())
 
 
 if __name__ == '__main__':

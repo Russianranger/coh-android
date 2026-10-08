@@ -5,6 +5,8 @@ import hashlib
 import json
 import pathlib
 import platform
+import posixpath
+import shutil
 import subprocess
 import tarfile
 import urllib.request
@@ -29,11 +31,54 @@ def download(pin, destination):
     return dict(bytes=total, sha256=digest.hexdigest(), url=pin['url'])
 
 
-def unpack(path, output):
-    # Authenticated upstream archives may contain ordinary source symlinks.
-    # Python's data filter confines those links, paths and metadata to this build.
+def unpack(path, output, source_root):
+    # Bookworm's Python lacks extractall(filter=...). Extract authenticated
+    # source data explicitly, with links staged after all regular files.
+    output = output.resolve()
+    root = output / source_root
+    if root.exists() or root.is_symlink():
+        raise ValueError('Fresh source directory required')
     with tarfile.open(path) as archive:
-        archive.extractall(output, filter='data')
+        members = archive.getmembers()
+        if not 0 < len(members) <= 25000 or sum(m.size for m in members) > 512 * 1024 * 1024:
+            raise ValueError('Excessive source archive expansion')
+        names = {}
+        for member in members:
+            name = member.name.rstrip('/')
+            parts = pathlib.PurePosixPath(name).parts
+            if (not parts or parts[0] != source_root or name.startswith('/') or
+                    '\\' in name or '\x00' in name or posixpath.normpath(name) != name or
+                    any(part in ('.', '..') for part in name.split('/')) or
+                    name in names or not (member.isreg() or member.isdir() or member.issym()) or
+                    member.size < 0 or member.size > 64 * 1024 * 1024):
+                raise ValueError('Unsafe source archive member')
+            names[name] = member
+        for name, member in names.items():
+            for parent in pathlib.PurePosixPath(name).parents:
+                if str(parent) in names and not names[str(parent)].isdir():
+                    raise ValueError('Source archive descends through a file or link')
+            if member.issym():
+                target = member.linkname
+                resolved = posixpath.normpath(posixpath.join(posixpath.dirname(name), target))
+                if (not target or target.startswith('/') or '\\' in target or '\x00' in target or
+                        resolved.split('/')[0] != source_root or resolved not in names):
+                    raise ValueError('Escaping or missing source archive link')
+        for name, member in names.items():
+            destination = output / name
+            if member.isdir():
+                destination.mkdir(parents=True, exist_ok=True)
+            elif member.isreg():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                with archive.extractfile(member) as source, destination.open('xb') as target:
+                    shutil.copyfileobj(source, target, length=1024 * 1024)
+                if destination.stat().st_size != member.size:
+                    raise ValueError('Truncated source archive member')
+                destination.chmod(0o755 if member.mode & 0o111 else 0o644)
+        for name, member in names.items():
+            if member.issym():
+                destination = output / name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.symlink_to(member.linkname)
 
 
 def main():
@@ -49,7 +94,7 @@ def main():
     for name in ('glslang', 'mesa'):
         path = work / (name + ('.tar.gz' if name == 'glslang' else '.tar.xz'))
         sources[name] = download(lock[name], path)
-        unpack(path, work)
+        unpack(path, work, name + '-' + lock[name]['version'])
     glslang = work / 'glslang-15.1.0'
     run(['cmake', '-S', str(glslang), '-B', '/build/glslang-build', '-G', 'Ninja',
          '-DCMAKE_BUILD_TYPE=Release', '-DENABLE_OPT=OFF', '-DBUILD_TESTING=OFF', '-DGLSLANG_TESTS=OFF'])
