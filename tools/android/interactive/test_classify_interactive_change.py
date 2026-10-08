@@ -9,6 +9,16 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_gpu_profile_reuses_owned_runtime_and_rejects_unreviewed_neighbor_paths(self):
+        from classify_storage_cleanup_change import GPU_PROFILE_ALLOWED, GPU_PROFILE_DOCS, gpu_profile_push
+        for names in (sorted(GPU_PROFILE_ALLOWED), sorted(GPU_PROFILE_DOCS)):
+            self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,names))
+            for foreign in ('android/guest/native_responsiveness_contract.py',
+                    'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
+                    'android/runtime-lock.json', 'unreviewed.py'):
+                self.assertFalse(gpu_profile_push('push','a'*40,'b'*40,'a'*40,names+[foreign]))
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names+[foreign]))
+
     def test_renderer_attribution_setup_fixture_companion_retains_standalone_setup_owner(self):
         from classify_storage_cleanup_change import renderer_attribution_push, setup_push, setup_required
         fixture = 'tools/android/interactive/test_setup_service.py'

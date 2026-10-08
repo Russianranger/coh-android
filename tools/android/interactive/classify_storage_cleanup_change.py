@@ -594,6 +594,59 @@ RENDERER_ATTRIBUTION_ALLOWED = RENDERER_ATTRIBUTION_SOURCES | RENDERER_ATTRIBUTI
 })
 
 
+
+# The opt-in GPU experiment reuses the complete audited .19 Game/client stack.
+# Only these exact Android/helper/driver-producer files may join this owner.
+GPU_PROFILE_SOURCES = frozenset({
+    '.github/workflows/android-client-gpu-profile.yml',
+    'tools/android/interactive/build_client_gpu_profile_apk.py',
+    'tools/android/interactive/qualify_client_gpu_profile.py',
+    'tools/android/interactive/package_client_gpu_runtime.py',
+    'tools/android/interactive/test_client_gpu_profile_package.py',
+    'tools/android/interactive/test_client_gpu_profile.py',
+    'tools/android/interactive/test_client_gpu_runtime_package.py',
+    'tools/android/interactive/test_coh_vulkan_gpu_probe.py',
+    'tools/android/interactive/test_coh_gpu_probe_native.py',
+    'tools/android/gpu-runtime/Dockerfile',
+    'tools/android/gpu-runtime/lock.json',
+    'tools/android/gpu-runtime/base-abi.json',
+    'tools/android/gpu-runtime/build.py',
+    'android/native/coh-gpu-probe.c',
+    'android/native/coh-vulkan-gpu-probe.c',
+    JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java',
+    'android/guest/client_gpu_profile.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/client_interactive_diagnostic.py',
+})
+# Existing shared Android/helper paths retain their prior owner when edited
+# alone. An explicit new GPU source must accompany this new qualification lane.
+GPU_PROFILE_MARKERS = GPU_PROFILE_SOURCES - frozenset({
+    JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/client_interactive_diagnostic.py',
+})
+GPU_PROFILE_DOCS = frozenset({'docs/HANDOFF.md',
+    'docs/android-evidence/gpu-profile-0.13.20-publication.json'})
+GPU_PROFILE_ALLOWED = GPU_PROFILE_SOURCES | GPU_PROFILE_DOCS | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-PERFORMANCE-0.13.20.md',
+    'docs/COH-Atlas-Gameplay-0.13.20-testing.txt',
+    'docs/android-evidence/gpu-profile-0.13.19-thor-20261008.json',
+})
+
+
+def gpu_profile_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, GPU_PROFILE_ALLOWED)
+        and set(names) & GPU_PROFILE_MARKERS)
+
+
+def gpu_profile_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, GPU_PROFILE_DOCS)
+        and 'docs/android-evidence/gpu-profile-0.13.20-publication.json' in names)
+
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
@@ -602,6 +655,7 @@ def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
 
 
 def renderer_attribution_push(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, RENDERER_ATTRIBUTION_ALLOWED)
         and set(names) & RENDERER_ATTRIBUTION_SOURCES)
 
@@ -612,6 +666,7 @@ def renderer_attribution_docs(event, before, head, parent, names):
 
 
 def sidebar_push(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, SIDEBAR_ALLOWED)
         and set(names) & SIDEBAR_SOURCES)
@@ -624,6 +679,7 @@ def sidebar_docs(event, before, head, parent, names):
 
 
 def gameplay_performance_push(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, GAMEPLAY_PERFORMANCE_ALLOWED)
         and set(names) & GAMEPLAY_PERFORMANCE_SOURCES)
@@ -636,6 +692,7 @@ def gameplay_performance_docs(event, before, head, parent, names):
 
 
 def scene_performance_push(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, SCENE_PERFORMANCE_ALLOWED)
         and set(names) & SCENE_PERFORMANCE_SOURCES)
@@ -648,6 +705,7 @@ def scene_performance_docs(event, before, head, parent, names):
 
 
 def performance_push(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, PERFORMANCE_ALLOWED)
         and set(names) & PERFORMANCE_SOURCES)
@@ -717,6 +775,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -737,6 +796,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -755,6 +815,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -775,6 +836,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -795,6 +857,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -813,6 +876,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -829,6 +893,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -844,6 +909,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -859,6 +925,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -873,6 +940,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -886,6 +954,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -898,6 +967,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -909,6 +979,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -919,6 +990,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
@@ -928,6 +1000,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False

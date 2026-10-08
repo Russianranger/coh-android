@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import presentation_diagnostic as presentation
 import game_hang_evidence
 import native_responsiveness_contract as native_candidate
+import client_gpu_profile
 base, require = presentation.base, presentation.require
 SCOPE = 'actual_client_startup_guest'
 SOURCE = '0b75ade0c801735e10c5798f641948a45cc50488'
@@ -886,6 +887,10 @@ def apply_client_gameplay_environment(owner, environment, label, graphics_profil
     apply_client_renderer_environment(owner, environment, label)
 
 
+def apply_client_gpu_environment(owner, environment, label):
+    return client_gpu_profile.apply_profile(owner, environment, label)
+
+
 class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
     def __init__(self, args, context):
         super().__init__(args, context)
@@ -1084,6 +1089,7 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 COH_CLIENT_DEFER_DISCARDED_FX_PRELOAD='1', COH_CLIENT_FRAME_TIMING='1', COH_CLIENT_BIN_PROFILE='0')
         # The four-argument startup launcher always uses its standard profile.
         apply_client_gameplay_environment(self, client_environment, 'actual-coh-client', 'standard')
+        client_environment = apply_client_gpu_environment(self, client_environment, 'actual-coh-client')
         previous = Path.cwd()
         try:
             os.chdir(self.work)
@@ -1205,10 +1211,14 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                     target.write_bytes(payload)
 
     def cleanup(self):
+        gpu_failures = client_gpu_profile.cleanup_probes(self)
         if self.observer:
             self.observer.close()
             self.observer = None
-        return super().cleanup()
+        failures = super().cleanup()
+        if gpu_failures:
+            self.cleanup_status['owned_processes_reaped'] = False
+        return failures + gpu_failures + client_gpu_profile.cleanup_directories(self)
 
 
 def persist_report(args, context, capture_dir, *, evidence_limit=None):

@@ -128,6 +128,7 @@ public final class ClientRuntime {
     private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
     private String manifestHash, session, operation, runId, error;
     private String graphicsProfileRequested="standard";
+    private String gpuProfileRequested="software";
     private File generation, operationDir;
     private boolean operationOwned;
     private static Object setupFinalizationOwner;
@@ -163,6 +164,17 @@ public final class ClientRuntime {
     public static void setPerformanceGraphicsEnabled(Context context, boolean enabled) {
         context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
                 .edit().putBoolean("performance-graphics", enabled).apply();
+    }
+    public static String gpuProfileEnabled(Context context) {
+        String selected=context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .getString("gpu-profile", "software");
+        return "turnip".equals(selected)?"turnip":"software";
+    }
+    public static synchronized void setGpuProfileEnabled(Context context, String selected) {
+        if(!"software".equals(selected)&&!"turnip".equals(selected))throw new IllegalArgumentException("Unknown renderer profile");
+        if(operationInProgress())return;
+        context.getSharedPreferences("client-launch-options", Context.MODE_PRIVATE)
+                .edit().putString("gpu-profile", selected).apply();
     }
     public boolean isCleanupBlocked() { return cleanupBlocked(context); }
     /** Shared ownership keeps storage work and report export away from a live guest. */
@@ -424,6 +436,7 @@ public final class ClientRuntime {
         if (selectedSession == null || !selectedSession.matches("[0-9a-f]{32}")) throw new IOException("Invalid client session identity");
         begin(reopen ? "character_reopen" : "character_creation", selectedSession);
         graphicsProfileRequested=performanceGraphicsEnabled(context)?"performance":"standard";
+        gpuProfileRequested=gpuProfileEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
         boolean launched = false, passed = false, cleanup = false, guestPassed = false;
@@ -468,6 +481,7 @@ public final class ClientRuntime {
                     "PATH=/opt/coh/pgsql/bin:/usr/local/bin:/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "TMPDIR=/tmp",
                     "PYTHONUNBUFFERED=1", "PYTHONDONTWRITEBYTECODE=1",
                     "COH_CLIENT_GRAPHICS_PROFILE="+graphicsProfileRequested,
+                    "COH_CLIENT_GPU_PROFILE="+gpuProfileRequested,
                     "/usr/bin/python3", "/opt/coh/" + (reopen ? "character_reopen_diagnostic.py" : "character_creation_diagnostic.py"), "--state", "/state", "--assets", "/opt/coh",
                     "--pg-bin", "/opt/coh/pgsql/bin", "--wine", "/opt/wine/bin/wine", "--wineserver", "/opt/wine/bin/wineserver",
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
@@ -1544,7 +1558,36 @@ public final class ClientRuntime {
             files.remove(entry.getKey(), entry.getValue(), parent);
     }
 
+    private boolean gpuProfileReportMatches(JSONObject report) throws Exception {
+        JSONObject profile=report.optJSONObject("client_gpu_profile");
+        if(profile==null||!Integer.valueOf(1).equals(profile.opt("format"))
+                ||!session.equals(profile.optString("session_id"))
+                ||!gpuProfileRequested.equals(profile.optString("requested"))
+                ||!("actual-coh-client".equals(profile.optString("launch_label"))
+                    ||"actual-coh-client-retry".equals(profile.optString("launch_label")))
+                ||!Boolean.TRUE.equals(profile.opt("probe_cleanup_safe")))return false;
+        for(String flag:new String[]{"shared_wine_environment_modified","game_prefix_modified_by_probe",
+                "game_rendering_validated","hardware_acceleration_validated","physical_fps_improvement_validated",
+                "automatic_mid_game_fallback"})
+            if(!Boolean.FALSE.equals(profile.opt(flag)))return false;
+        String selected=profile.optString("selected"),state=profile.optString("state");
+        if("software".equals(gpuProfileRequested))
+            return "software".equals(selected)&&"software_default".equals(state)&&profile.isNull("fallback_reason");
+        if("software".equals(selected)) {
+            Object reason=profile.opt("fallback_reason");
+            return "software_fallback".equals(state)&&reason instanceof String
+                    &&((String)reason).length()>0&&((String)reason).length()<=500;
+        }
+        JSONObject nativeProbe=profile.optJSONObject("vulkan_probe"),wineProbe=profile.optJSONObject("wine_gl_probe");
+        JSONObject pin=manifest.getJSONObject("files").getJSONObject("hardware-renderer.zip");
+        return "turnip".equals(selected)&&"selected_after_probes".equals(state)
+                &&profile.isNull("fallback_reason")&&pin.getString("sha256").equals(profile.optString("archive_sha256"))
+                &&nativeProbe!=null&&wineProbe!=null&&"passed".equals(nativeProbe.optString("status"))
+                &&"passed".equals(wineProbe.optString("status"))&&Boolean.TRUE.equals(wineProbe.opt("passed"));
+    }
+
     private boolean guestAccepted(JSONObject report) throws Exception {
+        if(manifest.has("client_gpu_profile")&&!gpuProfileReportMatches(report))return false;
         if (!(report.optBoolean("passed") && "passed".equals(report.optString("status"))
                 && session.equals(report.optString("session_id"))
                 && (reopen ? Boolean.TRUE.equals(manifest.opt("startup_only_reopen")) ? "actual_character_startup_timing_guest" : "actual_character_reopen_guest" : "actual_character_creation_guest").equals(report.optString("scope"))
@@ -1742,6 +1785,7 @@ public final class ClientRuntime {
                     .put("gameplay_validated", false).put("game_rendering_validated", false)
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
                     .put("graphics_profile_requested", graphicsProfileRequested)
+                    .put("gpu_profile_requested", gpuProfileRequested)
                     .put("fresh_profile_creation_requested", !reopen && "character_creation".equals(operation))
                     .put("startup_only_reopen", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                     .put("character_profile_state", characterProfileState(context).name())

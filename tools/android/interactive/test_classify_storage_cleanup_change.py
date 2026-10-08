@@ -12,6 +12,44 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_gpu_profile_exact_scope_defers_historical_publishers_without_native_mutations(self):
+        names = sorted(change.GPU_PROFILE_ALLOWED)
+        self.assertTrue(change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names), function.__name__)
+        for path in ('android/guest/native_responsiveness_contract.py',
+                change.JAVA+'ClientSurface.java', change.JAVA+'ClientService.java',
+                'patches/client-renderer-attribution/0001-renderer-attribution-and-visible-fps.patch',
+                'upstream/ouroboros/Game/src/graphics/gfx.c', 'android/runtime-lock.json',
+                'tools/android/gpu-runtime/unreviewed.py', 'android/native/coh-extra-probe.c'):
+            self.assertFalse(change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names+[path]), path)
+            for function in self.gameplay_historical_publishers():
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[path]), function.__name__+': '+path)
+
+    def test_gpu_profile_owner_requires_immediate_parent_and_explicit_source_marker(self):
+        self.assertFalse(change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md']))
+        for path in change.GPU_PROFILE_SOURCES-change.GPU_PROFILE_MARKERS:
+            self.assertFalse(change.gpu_profile_push('push','a'*40,'b'*40,'a'*40,[path]), path)
+            self.assertTrue(change.gpu_profile_push('push','a'*40,'b'*40,'a'*40,
+                [path,'tools/android/interactive/build_client_gpu_profile_apk.py']), path)
+        self.assertFalse(change.renderer_attribution_push('push','a'*40,'b'*40,'a'*40,
+            sorted(change.GPU_PROFILE_ALLOWED)))
+        for event, before, head, parent in (('workflow_dispatch','a'*40,'b'*40,'a'*40),
+                ('push','0'*40,'b'*40,'0'*40), ('push','c'*40,'b'*40,'a'*40),
+                ('push','a'*40,'a'*40,'a'*40)):
+            self.assertFalse(change.gpu_profile_push(event,before,head,parent,sorted(change.GPU_PROFILE_ALLOWED)))
+        for path in change.GPU_PROFILE_MARKERS:
+            self.assertTrue(change.gpu_profile_push('push','a'*40,'b'*40,'a'*40,[path]), path)
+
+    def test_gpu_profile_docs_are_exact_publication_checkpoint(self):
+        names = sorted(change.GPU_PROFILE_DOCS)
+        self.assertTrue(change.gpu_profile_docs('push','a'*40,'b'*40,'a'*40,names))
+        self.assertFalse(change.gpu_profile_push('push','a'*40,'b'*40,'a'*40,names))
+        for function in self.gameplay_historical_publishers():
+            self.assertFalse(function('push','a'*40,'b'*40,'a'*40,names), function.__name__)
+        self.assertFalse(change.gpu_profile_docs('push','a'*40,'b'*40,'a'*40,['docs/HANDOFF.md']))
+        self.assertFalse(change.gpu_profile_docs('push','a'*40,'b'*40,'a'*40,names+['foreign.md']))
+
     def test_renderer_attribution_setup_fixture_is_only_an_exact_companion(self):
         fixture = 'tools/android/interactive/test_setup_service.py'
         names = ['tools/android/interactive/build_client_renderer_attribution_apk.py', fixture]
@@ -575,7 +613,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

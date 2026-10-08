@@ -257,6 +257,7 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         graphics_profile = ('performance' if command[-1] == '--character-creation'
             and environment.get('COH_CLIENT_GRAPHICS_PROFILE') == 'performance' else 'standard')
         startup.apply_client_gameplay_environment(self, environment, label, graphics_profile)
+        environment = startup.apply_client_gpu_environment(self, environment, label)
         previous = Path.cwd()
         try:
             os.chdir(self.work)

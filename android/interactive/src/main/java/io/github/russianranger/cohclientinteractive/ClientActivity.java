@@ -30,6 +30,7 @@ public final class ClientActivity extends Activity {
     private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30;
     private CheckBox performanceGraphics;
+    private Spinner gpuProfile;
     private CursorOverlay cursor;
     private final Handler inputHandler=new Handler(Looper.getMainLooper());
     private final ClientInput.KeyOwners heldKeys=new ClientInput.KeyOwners();
@@ -74,7 +75,7 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.13.19",12,false));
+        controls.addView(text("Persistent local server · v0.13.20",12,false));
         controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
@@ -84,6 +85,20 @@ public final class ClientActivity extends Activity {
         performanceGraphics.setOnCheckedChangeListener((button,checked)->ClientRuntime.setPerformanceGraphicsEnabled(this,checked));
         controls.addView(performanceGraphics);
         controls.addView(text("Lower detail and effects; 600×450 world with the same 800×600 interface. Turn off before launch to use your saved graphics settings.",12,false));
+        controls.addView(text("Renderer for next launch",12,true));
+        gpuProfile=new Spinner(this);
+        ArrayAdapter<String> gpuChoices=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Software (current)","GPU test"});
+        gpuProfile.setAdapter(gpuChoices);
+        gpuProfile.setSelection("turnip".equals(ClientRuntime.gpuProfileEnabled(this))?1:0);
+        gpuProfile.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override public void onItemSelected(AdapterView<?> parent,View view,int position,long id){
+                if(gpuProfile.isEnabled())ClientRuntime.setGpuProfileEnabled(ClientActivity.this,position==1?"turnip":"software");
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent){}
+        });
+        controls.addView(gpuProfile);
+        controls.addView(text("GPU test checks the private driver before launch. If unavailable, it starts with Software and records the reason. Change this after finishing a run.",12,false));
         run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
         createFresh=button("Create fresh THORHERO",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
@@ -242,7 +257,7 @@ public final class ClientActivity extends Activity {
     private void render(ClientService.State next){
         if(next.busy&&next.session.isEmpty())display.clearFrames();
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
-        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
+        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&!next.storageBusy&&idle){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
