@@ -383,6 +383,27 @@ class SourceExtractionTests(unittest.TestCase):
                 ('source-1/link/child', tarfile.REGTYPE, b'x')])
         self.assertFalse((self.directory / 'source-1').exists())
 
+    def test_mesa26_finite_license_catalog_is_preserved_as_deterministic_bytes(self):
+        source = self.directory / 'mesa-26.0.0'
+        originals = {}
+        for name in source_build.MESA_LICENSE_FILES:
+            path = source / name; path.parent.mkdir(parents=True, exist_ok=True)
+            originals[name] = ('Exact upstream text: ' + name + '\n').encode()
+            path.write_bytes(originals[name])
+        self.assertFalse((source / 'COPYING').exists())
+        url = gpu.lock()['mesa']['url']
+        first = source_build.mesa_notices(source, url)
+        self.assertEqual(first, source_build.mesa_notices(source, url))
+        for name, original in originals.items():
+            self.assertIn(('## Upstream ' + name + '\n\n').encode() + original, first)
+        extra = source / 'licenses/unexpected'; extra.write_bytes(b'new license')
+        with self.assertRaisesRegex(ValueError, 'catalog differs'):
+            source_build.mesa_notices(source, url)
+        extra.unlink()
+        (source / 'licenses/MIT').unlink()
+        with self.assertRaisesRegex(ValueError, 'catalog differs'):
+            source_build.mesa_notices(source, url)
+
     def test_source_member_and_total_expansion_bounds_fail_without_materializing_payload(self):
         archive = self.archive([('source-1/a', tarfile.REGTYPE, b'x')])
         oversized = tarfile.TarInfo('source-1/a'); oversized.size = 64 * 1024 * 1024 + 1

@@ -11,6 +11,10 @@ import subprocess
 import tarfile
 import urllib.request
 
+MESA_LICENSE_FILES = ('docs/license.rst', 'licenses/Apache-2.0', 'licenses/BSL-1.0',
+    'licenses/GPL-1.0-or-later', 'licenses/GPL-2.0-only', 'licenses/MIT',
+    'licenses/SGI-B-2.0', 'licenses/exceptions/Linux-Syscall-Note')
+
 
 def run(argv, cwd=None):
     subprocess.run(argv, cwd=cwd, check=True)
@@ -81,6 +85,28 @@ def unpack(path, output, source_root):
                 destination.symlink_to(member.linkname)
 
 
+def mesa_notices(source, source_url):
+    # Mesa 26 provides docs/license.rst and a finite licenses/ catalog instead
+    # of a root COPYING file. Retain these upstream texts without modification.
+    discovered = {path.relative_to(source).as_posix() for path in (source / 'licenses').rglob('*')
+        if path.is_file() or path.is_symlink()}
+    if discovered != set(MESA_LICENSE_FILES[1:]):
+        raise ValueError('Pinned Mesa license catalog differs')
+    parts = [('# Mesa Turnip 26.0.0\n\nSource: ' + source_url + '\n\n').encode()]
+    total = 0
+    for name in MESA_LICENSE_FILES:
+        path = source / name
+        if not path.is_file() or path.is_symlink() or not 0 < path.stat().st_size <= 64 * 1024:
+            raise ValueError('Missing or unsafe pinned Mesa license text')
+        data = path.read_bytes()
+        data.decode('utf-8')
+        total += len(data)
+        if total > 128 * 1024:
+            raise ValueError('Excessive Mesa license text')
+        parts.extend([('## Upstream ' + name + '\n\n').encode(), data, b'\n\n'])
+    return b''.join(parts)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=pathlib.Path, required=True)
@@ -107,10 +133,9 @@ def main():
     probe = args.output / 'coh-vulkan-gpu-probe'
     run(['cc', *lock['probe_compile_args'], '/src/coh-vulkan-gpu-probe.c', '-o', str(probe), '-lvulkan'])
     run(['strip', str(driver), str(probe)])
-    # Mesa's copyright notice is retained verbatim; the compiler stays in the image.
-    notices = (work / 'mesa-26.0.0/COPYING').read_text()
-    (args.output / 'THIRD_PARTY_NOTICES.md').write_text(
-        '# Mesa Turnip 26.0.0\n\nSource: ' + lock['mesa']['url'] + '\n\n' + notices)
+    # The entire upstream license catalog is retained; the compiler stays in the image.
+    (args.output / 'THIRD_PARTY_NOTICES.md').write_bytes(
+        mesa_notices(work / 'mesa-26.0.0', lock['mesa']['url']))
     receipt = dict(format=1, architecture='aarch64', platform='linux',
         debian_image=lock['debian_image'], source_archives=sources,
         mesa_options=lock['mesa_options'], probe_compile_args=lock['probe_compile_args'],
