@@ -29,7 +29,7 @@ BOOL_FIELDS = (
     'dxt1_render', 'dxt3_render', 'dxt5_render', 'dxt1_mipmaps', 'dxt3_mipmaps',
     'dxt5_mipmaps', 'dxt1_subimage', 'dxt3_subimage', 'dxt5_subimage',
     'bgra_render', 'bgra_subimage', 'backbuffer_render', 'swapped',
-    'frontbuffer_readback', 'cleanup_ok',
+    'presented_pattern_first', 'presented_pattern_second', 'presented_readback', 'cleanup_ok',
 )
 FIXTURE_MARKER = 'COH_GPU_PROBE_BUILD:host_fixture'
 PRODUCTION_MARKER = 'COH_GPU_PROBE_BUILD:production'
@@ -43,12 +43,22 @@ static void positive(struct probe_result *r) {
     r->fp_max_local_parameters = 32;
     r->fp_max_temporaries = 17;
     r->fp_max_native_temporaries = 17;
+    r->frontbuffer_readback = 1;
+    r->presentation_client_width = r->presentation_client_height = PRESENTATION_SIZE;
+    r->presentation_attempts_first = r->presentation_attempts_second = 1;
+    {
+        unsigned int i;
+        for (i = 0; i < SAMPLE_COUNT; ++i) {
+            memcpy(r->presented_pixels_first[i],pattern_rgba[i],3);
+            memcpy(r->presented_pixels_second[i],presentation_alternate_rgba[i],3);
+        }
+    }
     POSITIVE_FIELDS
 }
 
 int main(int argc, char **argv) {
     struct probe_result r;
-    unsigned char actual[4][4], expected[4][4], data[64], bgra[60];
+    unsigned char actual[4][4], expected[4][4], data[64], bgra[60], rgb[4][3];
     unsigned int i;
     char string[1025], copied[513];
     if (argc != 2) return 2;
@@ -67,6 +77,65 @@ int main(int argc, char **argv) {
         actual[1][3] = 251; printf("%d",pixels_match(actual,pattern_rgba));
     } else if (!strcmp(argv[1],"channel_corrupt")) {
         actual[3][2] = 251; printf("%d",pixels_match(actual,pattern_rgba));
+    } else if (!strcmp(argv[1],"presentation_coordinates")) {
+        int x, y;
+        for (i = 0; i < SAMPLE_COUNT; ++i) {
+            if (!presentation_coordinates(64,64,i,&x,&y)) return 9;
+            printf("%d,%d;",x,y);
+        }
+        printf("%d%d%d%d%d%d",presentation_coordinates(64,64,4,&x,&y),
+            presentation_coordinates(63,64,0,&x,&y),presentation_coordinates(64,65,0,&x,&y),
+            presentation_coordinates(-64,64,0,&x,&y),presentation_coordinates(64,64,0,NULL,&y),
+            presentation_coordinates(64,64,0,&x,NULL));
+    } else if (!strcmp(argv[1],"presentation_pixels")) {
+        for (i = 0; i < SAMPLE_COUNT; ++i) memcpy(rgb[i],presentation_alternate_rgba[i],3);
+        printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        printf("%d",presentation_pixels_match(r.presented_pixels_first,presentation_alternate_rgba));
+        memset(rgb,0,sizeof(rgb)); printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        for (i = 0; i < SAMPLE_COUNT; ++i) {
+            rgb[i][0] = presentation_alternate_rgba[i][2]; rgb[i][1] = presentation_alternate_rgba[i][1];
+            rgb[i][2] = presentation_alternate_rgba[i][0];
+        }
+        printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        for (i = 0; i < SAMPLE_COUNT; ++i) memcpy(rgb[i],presentation_alternate_rgba[i ^ 1],3);
+        printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        for (i = 0; i < SAMPLE_COUNT; ++i) memcpy(rgb[i],presentation_alternate_rgba[i ^ 2],3);
+        printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        for (i = 0; i < SAMPLE_COUNT; ++i) memcpy(rgb[i],presentation_alternate_rgba[i],3);
+        rgb[0][0] += 3; rgb[1][1] -= 3;
+        printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+        rgb[0][0] += 1; printf("%d",presentation_pixels_match(rgb,presentation_alternate_rgba));
+    } else if (!strcmp(argv[1],"presentation_poll_transition")) {
+        unsigned int attempts = 0, elapsed = 0;
+        int verdict;
+        printf("%d",presentation_poll_step(10,10,&attempts,&elapsed,1,
+            r.presented_pixels_first,presentation_alternate_rgba));
+        printf("%d",presentation_poll_step(10,30,&attempts,&elapsed,1,
+            r.presented_pixels_first,presentation_alternate_rgba));
+        verdict = presentation_poll_step(10,50,&attempts,&elapsed,1,
+            r.presented_pixels_second,presentation_alternate_rgba);
+        printf("%d:%u:%u",verdict,attempts,elapsed);
+        if (attempts != 3 || elapsed != 40) return 10;
+    } else if (!strcmp(argv[1],"presentation_poll_bounds")) {
+        unsigned int attempts = 0, elapsed = 0;
+        int verdict = 0;
+        printf("%d,",presentation_poll_step(0,0,&attempts,&elapsed,0,r.presented_pixels_first,pattern_rgba));
+        printf("%d,",presentation_poll_step(0,2000,&attempts,&elapsed,0,r.presented_pixels_first,pattern_rgba));
+        attempts = 0;
+        printf("%d,",presentation_poll_step(0,2001,&attempts,&elapsed,1,r.presented_pixels_first,pattern_rgba));
+        attempts = 100;
+        printf("%d,",presentation_poll_step(0,0,&attempts,&elapsed,1,r.presented_pixels_first,pattern_rgba));
+        attempts = 0;
+        printf("%d,",presentation_poll_step(0xfffffff0u,0,&attempts,&elapsed,1,r.presented_pixels_first,pattern_rgba));
+        if (elapsed != 16) return 11;
+        attempts = 0;
+        printf("%d,",presentation_poll_step(0,2000,&attempts,&elapsed,1,r.presented_pixels_first,pattern_rgba));
+        attempts = 0;
+        for (i = 0; i < 100; ++i) {
+            verdict = presentation_poll_step(0,0,&attempts,&elapsed,0,r.presented_pixels_first,pattern_rgba);
+            if ((i < 99 && verdict != 0) || (i == 99 && verdict != -1)) return 12;
+        }
+        printf("%d:%u",verdict,attempts);
     } else if (!strcmp(argv[1],"identity")) {
         const char *identities[] = {
             "zink Vulkan 1.3 (FD740)", "ZINK (Adreno 740)",
@@ -135,7 +204,26 @@ int main(int argc, char **argv) {
         r.gl_error = 0x0502; printf("%d",result_passes(&r)); positive(&r);
         r.fp_max_local_parameters = 96; r.fp_max_temporaries = 256; printf("%d",result_passes(&r));
     } else if (!strcmp(argv[1],"failure_json")) {
-        r.frontbuffer_readback = 0; print_result(&r,"post_swap_frontbuffer_readback","Mesa","zink","4.6");
+        r.presented_pattern_second = r.presented_readback = 0;
+        print_result(&r,"post_swap_presented_pattern_second","Mesa","zink","4.6");
+    } else if (!strcmp(argv[1],"front_diagnostic")) {
+        r.frontbuffer_readback = 0; r.frontbuffer_gl_error = 0x0502;
+        printf("%d\n",result_passes(&r)); print_result(&r,"","Mesa","zink","4.6");
+    } else if (!strcmp(argv[1],"presentation_boundaries")) {
+        r.presentation_attempts_first = 0; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_attempts_first = 101; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_attempts_second = 0; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_attempts_second = 101; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_elapsed_ms_first = 2001; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_elapsed_ms_second = 2001; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_client_width = 63; printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_client_height = 65; printf("%d",result_passes(&r)); positive(&r);
+        r.presented_pixels_first[0][0] = 251; printf("%d",result_passes(&r)); positive(&r);
+        memcpy(r.presented_pixels_second,r.presented_pixels_first,sizeof(r.presented_pixels_second));
+        printf("%d",result_passes(&r)); positive(&r);
+        r.presentation_attempts_first = r.presentation_attempts_second = 100;
+        r.presentation_elapsed_ms_first = r.presentation_elapsed_ms_second = 2000;
+        printf("%d",result_passes(&r));
     } else if (!strcmp(argv[1],"inconsistent_failure")) {
         print_result(&r,"driver_error","Mesa","zink","4.6");
     } else return 3;
@@ -211,7 +299,7 @@ class CohGpuProbeNativeTests(unittest.TestCase):
     @staticmethod
     def record(output):
         prefix, _, payload = output.partition(' ')
-        if prefix != 'COH_GPU_PROBE_V1':
+        if prefix != 'COH_GPU_PROBE_V2':
             raise AssertionError(output)
         return json.loads(payload)
 
@@ -223,6 +311,30 @@ class CohGpuProbeNativeTests(unittest.TestCase):
         for mode in ('blank', 'mirrored', 'alpha_corrupt', 'channel_corrupt'):
             with self.subTest(mode=mode):
                 self.assertEqual(self.output(mode), '0')
+
+    def test_presented_coordinates_convert_real_gl_pixels_and_reject_wrong_client_bounds(self):
+        self.assertEqual(self.output('presentation_coordinates'), '16,47;48,47;16,15;48,15;000000')
+
+    def test_presented_screen_rgb_rejects_stale_blank_reflections_and_channel_swaps(self):
+        self.assertEqual(self.output('presentation_pixels'), '10000010')
+
+    def test_presented_polling_waits_for_the_second_pattern_and_bounds_unowned_or_late_pixels(self):
+        self.assertEqual(self.output('presentation_poll_transition'), '001:3:40')
+        self.assertEqual(self.output('presentation_poll_bounds'), '0,-1,-1,-1,1,1,-1:100')
+
+    def test_presented_conjunction_rechecks_pixels_dimensions_attempts_and_deadlines(self):
+        self.assertEqual(self.output('presentation_boundaries'), '00000000001')
+
+    def test_front_gl_readback_is_separate_diagnostic_and_never_substitutes_screen_proof(self):
+        accepted, output = self.output('front_diagnostic').split('\n', 1)
+        self.assertEqual(accepted, '1')
+        record = self.record(output)
+        self.assertIs(record['passed'], True)
+        self.assertIs(record['frontbuffer_readback'], False)
+        self.assertEqual(record['frontbuffer_gl_error'], 0x0502)
+        self.assertIs(record['presented_readback'], True)
+        self.assertEqual(record['presented_pixels_first'], [[255,0,0],[0,255,0],[0,0,255],[255,255,255]])
+        self.assertEqual(record['presented_pixels_second'], [[41,93,173],[211,57,99],[77,201,33],[163,29,227]])
 
     def test_renderer_identity_is_only_a_prerequisite_and_rejects_software(self):
         self.assertEqual(self.output('identity'), '11' + '0' * 10)
@@ -259,13 +371,15 @@ class CohGpuProbeNativeTests(unittest.TestCase):
         self.assertEqual(record['fp_max_native_temporaries'], 17)
         self.assertEqual(record['scope'], 'bounded_wgl_gpu_prerequisites')
         self.assertEqual(record['build_marker'], FIXTURE_MARKER)
+        self.assertEqual(record['format'], 2)
+        self.assertEqual(record['presentation_method'], 'win32_screen_getpixel_two_patterns')
         for field in BOOL_FIELDS:
             self.assertIs(record[field], True, field)
         for field in ('game_rendering_validated', 'cg_shaders_validated',
                       'android_surface_validated', 'hardware_acceleration_validated'):
             self.assertIs(record[field], False, field)
 
-    def test_missing_actual_frontbuffer_proof_and_failure_stage_prevent_success_json(self):
+    def test_missing_actual_presented_proof_and_failure_stage_prevent_success_json(self):
         for mode in ('failure_json', 'inconsistent_failure'):
             with self.subTest(mode=mode):
                 record = self.record(self.output(mode))
@@ -279,6 +393,9 @@ class CohGpuProbeNativeTests(unittest.TestCase):
         for call in ('wglCreateContext(', 'wglMakeCurrent(', 'glGetString(GL_EXTENSIONS)',
                      'glDrawElements(GL_TRIANGLES', 'glReadPixels(', 'SwapBuffers(dc)',
                      'glReadBuffer(GL_FRONT)', 'a->program_string(',
+                     'GetDC(NULL)', 'GetPixel(screen_dc,', 'ClientToScreen(window,&point)',
+                     'WindowFromPoint(point) != window', 'GetClientRect(window,&client)',
+                     'SetWindowPos(window,HWND_TOPMOST,', 'MsgWaitForMultipleObjects(',
                      'a->program_local_parameter(C_FRAGMENT_PROGRAM, 31,',
                      'a->get_program(C_FRAGMENT_PROGRAM, C_MAX_PROGRAM_TEMPORARIES',
                      'a->get_program(C_FRAGMENT_PROGRAM, C_MAX_PROGRAM_NATIVE_TEMPORARIES',
@@ -309,6 +426,7 @@ class CohGpuProbeNativeTests(unittest.TestCase):
                           'a->delete_framebuffers(', 'a->delete_renderbuffers(',
                           'a->delete_buffers(', 'a->delete_programs(', 'glDeleteTextures(',
                           'wglDeleteContext(context)', 'ReleaseDC(window,dc)',
+                          'ReleaseDC(NULL,screen_dc)',
                           'DestroyWindow(window)', 'UnregisterClassA('):
             self.assertIn(statement, source)
         self.assertIn('if (!no_gl_error(r)) success = 0;', source)
@@ -372,7 +490,9 @@ def expected_guard_modes():
     return ('pointer_bits', 'correct', 'rounding', 'blank', 'mirrored', 'alpha_corrupt',
             'channel_corrupt', 'identity', 'booleans_fail_closed', 'extensions',
             'bounded_extension', 'json', 'bounded_string', 'null_string', 'bgra', 'blocks',
-            'boundaries', 'positive', 'failure_json', 'inconsistent_failure')
+            'boundaries', 'positive', 'failure_json', 'inconsistent_failure',
+            'presentation_coordinates', 'presentation_pixels', 'presentation_poll_transition',
+            'presentation_poll_bounds', 'presentation_boundaries', 'front_diagnostic')
 
 
 def _unique_object(pairs):
@@ -397,16 +517,25 @@ def _sha(value):
     return type(value) is str and re.fullmatch(r'[0-9a-f]{64}', value) is not None
 
 
-def _guard_record(stdout, failure='', front=True, renderer='zink'):
+def _guard_record(stdout, failure='', front=True, front_error=0, presented=True, renderer='zink'):
     prefix, _, payload = stdout.partition(' ')
-    _require(prefix == 'COH_GPU_PROBE_V1', 'Unexpected helper record prefix')
+    _require(prefix == 'COH_GPU_PROBE_V2', 'Unexpected helper record prefix')
     actual = json.loads(payload, object_pairs_hook=_unique_object)
     expected = {
-        'format': 1, 'build_marker': FIXTURE_MARKER, 'status': 'failed' if failure else 'passed',
+        'format': 2, 'build_marker': FIXTURE_MARKER, 'status': 'failed' if failure else 'passed',
         'passed': not bool(failure), 'failure': failure, 'scope': 'bounded_wgl_gpu_prerequisites',
         'pointer_bits': 32, 'win32_error': 0, 'gl_error': 0,
         'gl_vendor': 'Mesa', 'gl_renderer': renderer, 'gl_version': '4.6',
         **{field: True for field in BOOL_FIELDS}, 'frontbuffer_readback': front,
+        'frontbuffer_gl_error': front_error,
+        'presented_pattern_second': presented, 'presented_readback': presented,
+        'presentation_method': 'win32_screen_getpixel_two_patterns',
+        'presentation_sample_count': 4, 'presentation_pattern_count': 2,
+        'presentation_client_width': 64, 'presentation_client_height': 64,
+        'presentation_attempts_first': 1, 'presentation_attempts_second': 1,
+        'presentation_elapsed_ms_first': 0, 'presentation_elapsed_ms_second': 0,
+        'presented_pixels_first': [[255,0,0],[0,255,0],[0,0,255],[255,255,255]],
+        'presented_pixels_second': [[41,93,173],[211,57,99],[77,201,33],[163,29,227]],
         'fp_max_local_parameters': 32, 'fp_max_temporaries': 17, 'fp_max_native_temporaries': 17,
         'game_rendering_validated': False, 'cg_shaders_validated': False,
         'android_surface_validated': False, 'hardware_acceleration_validated': False,
@@ -474,6 +603,10 @@ def validate_windows_checks(checks):
         'booleans_fail_closed': '0' * (len(BOOL_FIELDS) + 1), 'extensions': '10010000',
         'bounded_extension': '0', 'bgra': ','.join(map(str, [41,93,173,255] * 15)) + ';1',
         'blocks': '8:255:255;16:255:85;16:255:120;', 'boundaries': '000001',
+        'presentation_coordinates': '16,47;48,47;16,15;48,15;000000',
+        'presentation_pixels': '10000010', 'presentation_poll_transition': '001:3:40',
+        'presentation_poll_bounds': '0,-1,-1,-1,1,1,-1:100',
+        'presentation_boundaries': '00000000001',
     }
     for mode, expected in expected_text.items():
         _require(guards[mode]['stdout'] == expected, f'Executed guard mismatch {mode}')
@@ -483,8 +616,11 @@ def validate_windows_checks(checks):
     accepted, _, positive = guards['positive']['stdout'].partition('\n')
     _require(accepted == '1', 'Positive conjunction did not execute')
     _guard_record(positive, renderer='zink FD740')
-    _guard_record(guards['failure_json']['stdout'], 'post_swap_frontbuffer_readback', False)
+    _guard_record(guards['failure_json']['stdout'], 'post_swap_presented_pattern_second', presented=False)
     _guard_record(guards['inconsistent_failure']['stdout'], 'driver_error')
+    accepted, _, diagnostic = guards['front_diagnostic']['stdout'].partition('\n')
+    _require(accepted == '1', 'Front GL diagnostic must not substitute or invalidate actual presented proof')
+    _guard_record(diagnostic, front=False, front_error=0x0502)
     return checks
 
 

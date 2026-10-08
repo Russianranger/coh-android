@@ -1,0 +1,74 @@
+COH Atlas Gameplay 0.13.21 — GPU launch and completion evidence repair
+
+Your .20 Software result is the reference: llvmpipe, about 9.38 native FPS in
+the measured 30-cap gameplay windows, with saving/reopening verified by the
+guest. No additional long Software benchmark is needed for this repair.
+
+1. Install this APK as an update. Keep app data, imported assets and your
+existing character. Run Set up / update runtime ONCE and wait for Runtime
+ready. The repaired helper/probe changes the runtime generation; do not clear
+data or reimport assets. Keep Performance graphics, 800x600, and the same fan
+mode and charging state used for the .20 test.
+
+2. Select GPU test BEFORE Reopen. Note the displayed selected renderer or
+fallback reason. It runs bounded native Vulkan and Wine OpenGL checks before
+Game.exe. GPU selection alone does not prove Game is hardware rendered.
+If the check fails or stops, export the COMPLETE outer report immediately,
+before another operation replaces it. A safe Software fallback should retain
+the original failed probe stage and its cleanup evidence.
+
+3. If Atlas opens, close chat with B/Esc, tap Show FPS and 30 FPS, and allow
+ten seconds to settle. Record about thirty seconds each standing still,
+rotating the camera, walking through populated Atlas, and approaching
+buildings or previously unseen scenery. Leave ten-second gaps and note
+segment timestamps. Do not zone. Note actual FPS/ranges, hitches and
+temperature at entry, route end and peak; startup timing remains optional.
+
+4. Check movement, combat, NPCs, heads/hands, scenery, water, transparency,
+powers, chat and quest UI. Note black flashes/tearing, missing textures,
+flicker, crashes or control regressions, including when they occurred.
+Stable 30 FPS remains the goal; this repair has no verified Thor FPS gain.
+
+5. Save normally, release controls for the displayed wait, wait for Saved
+character verified, then Finish. Export the COMPLETE coh-atlas-gameplay-*.zip
+now. If completion fails, export that result without clearing data or
+assuming character loss. Send it with FPS/temperature/visual notes.
+
+6. If GPU regresses, stop/export, wait for owned cleanup, select Software,
+and reopen the existing character to confirm the working fallback. Do not
+change the renderer during a Game session. A short Software save/Finish
+also checks the repaired launcher completion validation if desired.
+
+What changed: the .20 GPU report passed Turnip device/queue, Wine ARB/VBO/FBO,
+DXT/BGRA drawing and SwapBuffers checks but failed GL_FRONT readback. Game
+never started. The .21 presentation gate requires TWO different actual
+visible screen patterns after swaps, with checked pixel coordinates/window
+ownership and bounded polling; GL_FRONT remains a separate diagnostic.
+This is still prerequisite proof, not Game/material/Android visual acceptance.
+
+A failed Wine leader may leave owned background services holding stdout.
+The repair verifies private-prefix shutdown, token-owned worker cleanup and
+output EOF before classifying the original failure. Only proven-safe failure
+permits Software fallback; cancellation/health/uncertain cleanup remains fatal.
+Ordinary WGL timeout or malformed/local oversized output follows the same
+cleanup proof. Global operation output/health/deadline failures stay fatal.
+
+The .20 Software guest verified SQL/reopen/powers/costume/current-session save,
+but Android rejected 1304.498 seconds against an obsolete 1210-second ceiling.
+The current gameplay budget legitimately starts after connection. The repair
+accepts the exact native budget only when it matches Android's approved
+session/PID/time receipt and bounded monotonic deadline. Save and identity
+checks remain strict.
+
+Game.exe, twenty DLLs, servers, assets, Wine/FEX/rootfs, display/input transport,
+Mesa/Turnip driver and native Vulkan probe retain exact .20 payload bytes.
+Only the WGL probe, GPU helper, two Java evidence validators/DEX and runtime
+verification/version metadata change. Existing native frame/scene/renderer/
+presentation metrics and Android capture diagnostics remain in support logs.
+
+The guest client_gpu_profile/attempts receipts retain requested/selected mode,
+original fallback_reason, raw Wine probe stage/exit status, both RGB patterns,
+GL_FRONT diagnostics and cleanup. Actual Game vendor/renderer/version and
+COH_CLIENT_FRAME_TIMING_V1 / COH_CLIENT_RENDERER_ATTRIBUTION_V1 in the console
+must corroborate hardware execution and performance. Send the full outer ZIP;
+screenshots or a renderer setting alone cannot establish the active backend.

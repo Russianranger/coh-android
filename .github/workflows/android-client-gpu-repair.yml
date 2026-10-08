@@ -1,0 +1,480 @@
+name: Thor GPU presentation and owned cleanup repair
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-gpu-repair.yml
+      - tools/android/interactive/build_client_gpu_repair_apk.py
+      - tools/android/interactive/qualify_client_gpu_repair.py
+      - tools/android/interactive/package_client_gpu_repair.py
+      - tools/android/interactive/test_client_gpu_repair_package.py
+      - tools/android/interactive/test_client_gpu_repair_evidence.py
+      - tools/android/interactive/test_client_gpu_profile.py
+      - tools/android/interactive/test_coh_gpu_probe_native.py
+      - tools/android/interactive/analyze_client_renderer_performance.py
+      - tools/android/interactive/test_client_renderer_performance_report.py
+      - android/native/coh-gpu-probe.c
+      - android/guest/client_gpu_profile.py
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java
+      - docs/COH-PERFORMANCE-0.13.21.md
+      - docs/COH-Atlas-Gameplay-0.13.21-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-gpu-repair-publication
+  cancel-in-progress: true
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Preserve any already published performance release
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          python3 - <<'PY'
+          import ast
+          import sys
+          import subprocess
+          import json
+          import os
+          from pathlib import Path
+          import urllib.error
+          import urllib.request
+          tree = ast.parse(Path('tools/android/interactive/build_client_gpu_repair_apk.py').read_text())
+          tags = [node.value.value for node in tree.body if isinstance(node, ast.Assign)
+              and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)
+              and node.targets[0].id == 'RELEASE_TAG' and isinstance(node.value, ast.Constant)]
+          if tags != ['coh-atlas-gameplay-v0.13.21']:
+              raise ValueError('Exact explicit performance release tag required')
+          request = urllib.request.Request('https://api.github.com/repos/Russianranger/coh-android/releases/tags/'+tags[0],
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              sys.path.insert(0, 'tools/android/interactive')
+              from build_client_gpu_repair_apk import validate_existing_release
+              validate_existing_release(release)
+              required = False
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('required='+str(required).lower()+'\n')
+          print(json.dumps({'release_tag': tags[0], 'publication_required': required,
+              'existing_release_modified': False, 'existing_release_skip_scope': 'complete_public_metadata_only',
+              'interrupted_public_audit_recovery': 'rerun failed jobs of the original owner run'}, sort_keys=True))
+          PY
+  probe:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 20
+    steps:
+      - name: Preserve exact LF probe source on Windows
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Compile actual PE32 WGL compatibility probe and execute native guard qualification
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/gpu-probe -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          cl /nologo /std:c11 /O2 /MT /W4 /WX /TC android/native/coh-gpu-probe.c /Fo:out/gpu-probe/coh-gpu-probe.obj /Fe:out/gpu-probe/coh-gpu-probe.exe /link opengl32.lib gdi32.lib user32.lib
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_coh_gpu_probe_native.py --windows-qualify --output out/gpu-probe/coh-gpu-probe-native-checks.json --production-probe out/gpu-probe/coh-gpu-probe.exe --commit "$env:GITHUB_SHA" --github-run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/gpu-probe/build.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\gpu-probe\build.cmd 2>&1 | Tee-Object out/gpu-probe/qualification.txt
+          if ($LASTEXITCODE -ne 0) { throw 'PE32 production probe or native guard qualification failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-gpu-repair-probe
+          path: |
+            out/gpu-probe/coh-gpu-probe.exe
+            out/gpu-probe/coh-gpu-probe-native-checks.json
+            out/gpu-probe/*helper*
+            out/gpu-probe/qualification.txt
+          if-no-files-found: error
+          retention-days: 90
+  gpu:
+    needs: [changes, probe]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-probe
+          path: out/gpu-probe
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-runtime
+          path: out/client-gpu-repair-retained-gpu
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - name: Retain exact published Mesa and Vulkan bytes; package only the new WGL probe
+        run: >-
+          python3 tools/android/interactive/package_client_gpu_repair.py
+          --output out/client-gpu-repair-runtime
+          --donor-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --repository-commit "$GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-gpu-repair-runtime
+          path: out/client-gpu-repair-runtime/
+          if-no-files-found: error
+          retention-days: 90
+  qualify:
+    needs: [changes, probe, gpu]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-renderer-attribution-native
+          path: out/client-gpu-repair-retained-native
+          run-id: 37723301707
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-runtime
+          path: out/client-gpu-repair-runtime
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-runtime
+          path: out/client-gpu-repair-retained-gpu
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-probe
+          path: out/gpu-probe
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-profile-packaging-evidence
+          path: out/client-gpu-repair-donor/evidence
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - name: Recover exact immutable audited public donor
+        run: python3 tools/android/interactive/build_client_gpu_repair_apk.py download-donor --output out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+      - name: Install host-only Vulkan headers and software fixture driver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan-dev mesa-vulkan-drivers
+      - name: Qualify every retained gameplay guard and all seven real PostgreSQL fixtures
+        run: >-
+          python3 tools/android/interactive/qualify_client_gpu_repair.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+          --donor-build-report out/client-gpu-repair-donor/evidence/client-gpu-profile-apk-build-report.json
+          --client-directory out/client-gpu-repair-retained-native
+          --gpu-directory out/client-gpu-repair-runtime
+          --donor-gpu-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --output out/client-gpu-repair-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-gpu-repair-qualification
+          path: out/client-gpu-repair-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, probe, gpu, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-renderer-attribution-native
+          path: out/client-gpu-repair-retained-native
+          run-id: 37723301707
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-runtime
+          path: out/client-gpu-repair-runtime
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-runtime
+          path: out/client-gpu-repair-retained-gpu
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-probe
+          path: out/gpu-probe
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-profile-packaging-evidence
+          path: out/client-gpu-repair-donor/evidence
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover exact immutable audited public donor
+        run: python3 tools/android/interactive/build_client_gpu_repair_apk.py download-donor --output out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build reviewed evidence Java/helper/probe repair retaining Game and Mesa bytes
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_gpu_repair_apk.py build
+          --donor-apk out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+          --donor-build-report out/client-gpu-repair-donor/evidence/client-gpu-profile-apk-build-report.json
+          --qualification out/client-gpu-repair-qualification.json
+          --client-directory out/client-gpu-repair-retained-native
+          --gpu-directory out/client-gpu-repair-runtime
+          --donor-gpu-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-gpu-repair-apk/COH-Atlas-Gameplay-0.13.21.apk
+      - name: Fresh-process SDK source payload and signer audit before publication
+        env:
+          PYTHONHASHSEED: '73420'
+        run: >-
+          python3 tools/android/interactive/build_client_gpu_repair_apk.py audit
+          --apk out/client-gpu-repair-apk/COH-Atlas-Gameplay-0.13.21.apk
+          --build-report out/client-gpu-repair-apk/client-gpu-repair-apk-build-report.json
+          --donor-apk out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+          --donor-build-report out/client-gpu-repair-donor/evidence/client-gpu-profile-apk-build-report.json
+          --qualification out/client-gpu-repair-qualification.json
+          --client-directory out/client-gpu-repair-retained-native
+          --gpu-directory out/client-gpu-repair-runtime
+          --donor-gpu-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-gpu-repair-packaging-evidence
+          path: |
+            out/client-gpu-repair-apk/client-gpu-repair-apk-build-report.json
+            out/client-gpu-repair-apk/COH-Atlas-Gameplay-0.13.21-testing.txt
+            out/client-gpu-repair-apk/COH-Atlas-Gameplay-0.13.21.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-gpu-repair-apk
+          path: out/client-gpu-repair-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified GPU repair prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_gpu_repair_apk.py publish
+          --apk out/client-gpu-repair-apk/COH-Atlas-Gameplay-0.13.21.apk
+          --build-report out/client-gpu-repair-apk/client-gpu-repair-apk-build-report.json
+          --donor-apk out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+          --donor-build-report out/client-gpu-repair-donor/evidence/client-gpu-profile-apk-build-report.json
+          --qualification out/client-gpu-repair-qualification.json
+          --client-directory out/client-gpu-repair-retained-native
+          --gpu-directory out/client-gpu-repair-runtime
+          --donor-gpu-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, probe, gpu, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '2019'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-renderer-attribution-native
+          path: out/client-gpu-repair-retained-native
+          run-id: 37723301707
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-runtime
+          path: out/client-gpu-repair-runtime
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-runtime
+          path: out/client-gpu-repair-retained-gpu
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-probe
+          path: out/gpu-probe
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-profile-packaging-evidence
+          path: out/client-gpu-repair-donor/evidence
+          run-id: 37788954170
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-gpu-repair-packaging-evidence
+          path: out/client-gpu-repair-public
+      - name: Ensure SDK 35 audit tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Recover exact public donor for independent conservation audit
+        run: python3 tools/android/interactive/build_client_gpu_repair_apk.py download-donor --output out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+      - name: Download actual public APK checksum and testing notes
+        timeout-minutes: 12
+        run: >-
+          python3 tools/android/interactive/build_client_gpu_repair_apk.py download-public
+          --output out/client-gpu-repair-public
+          --build-report out/client-gpu-repair-public/client-gpu-repair-apk-build-report.json
+      - name: Independent fresh-job public SDK signer exact payload and source audit
+        run: >-
+          python3 tools/android/interactive/build_client_gpu_repair_apk.py audit
+          --apk out/client-gpu-repair-public/COH-Atlas-Gameplay-0.13.21.apk
+          --build-report out/client-gpu-repair-public/client-gpu-repair-apk-build-report.json
+          --donor-apk out/client-gpu-repair-donor/COH-Atlas-Gameplay-0.13.20.apk
+          --donor-build-report out/client-gpu-repair-donor/evidence/client-gpu-profile-apk-build-report.json
+          --qualification out/client-gpu-repair-qualification.json
+          --client-directory out/client-gpu-repair-retained-native
+          --gpu-directory out/client-gpu-repair-runtime
+          --donor-gpu-directory out/client-gpu-repair-retained-gpu
+          --probe-directory out/gpu-probe
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+      - name: Record only the completed independent public byte audit
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(Path('out/client-gpu-repair-public/client-gpu-repair-apk-build-report.json').read_bytes())
+          if report['repository_commit'] != os.environ['GITHUB_SHA']: raise ValueError('Audited source differs')
+          result = {'format': 1, 'status': 'passed', 'repository_commit': os.environ['GITHUB_SHA'],
+              'sha256': report['sha256'], 'bytes': report['bytes'],
+              'public_url': 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.21/COH-Atlas-Gameplay-0.13.21.apk',
+              'public_apk_checksum_and_notes_verified': True, 'sdk_signer_payload_audit_passed': True,
+              'fresh_process_prepublication_audit_passed': True, 'physical_performance_validated': False,
+              'runtime_refresh_required': True, 'save_acceptance_relaxed': False,
+              'native_Game_recompiled': False, 'software_default_preserved': True,
+              'mesa_driver_compiled_in_current_run': False, 'native_vulkan_probe_compiled_in_current_run': False,
+              'wgl_probe_compiled_in_current_run': True, 'two_reviewed_Java_evidence_validators_recompiled': True,
+              'physical_hardware_renderer_validated': False}
+          Path('out/client-gpu-repair-public-audit.json').write_text(json.dumps(result, indent=2, sort_keys=True)+'\n')
+          print('COH_CLIENT_GPU_REPAIR_PUBLIC_AUDIT_V1 '+json.dumps(result, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-gpu-repair-public-byte-audit
+          path: out/client-gpu-repair-public-audit.json
+          if-no-files-found: error
+          retention-days: 90

@@ -10,7 +10,9 @@
 #include <ctype.h>
 #include <stddef.h>
 
-enum { STRING_LIMIT = 512, EXTENSION_LIMIT = 262144, SAMPLE_COUNT = 4 };
+enum { STRING_LIMIT = 512, EXTENSION_LIMIT = 262144, SAMPLE_COUNT = 4,
+       PRESENTATION_SIZE = 64, PRESENTATION_TIMEOUT_MS = 2000,
+       PRESENTATION_MAX_ATTEMPTS = 100, PRESENTATION_WAIT_MS = 20 };
 #ifdef COH_GPU_PROBE_TEST
 #define BUILD_MARKER "COH_GPU_PROBE_BUILD:host_fixture"
 #else
@@ -21,6 +23,53 @@ static const unsigned char pattern_rgba[4][4] = {
     {255, 0, 0, 255}, {0, 255, 0, 255},
     {0, 0, 255, 255}, {255, 255, 255, 255}
 };
+/* Deliberately different at every quadrant and channel. A stale first frame,
+ * blank image, channel swap or vertical/horizontal reflection cannot match. */
+static const unsigned char presentation_alternate_rgba[4][4] = {
+    {41,93,173,255}, {211,57,99,255},
+    {77,201,33,255}, {163,29,227,255}
+};
+
+/* GL samples are ordered bottom-left, bottom-right, top-left, top-right.
+ * Win32 screen/client y increases downwards; convert the actual GL pixel,
+ * including its one-pixel offset, rather than simply reversing quadrants. */
+static int presentation_coordinates(int width, int height, unsigned int sample,
+                                      int *x, int *y) {
+    static const int quadrant[4][2] = {{1,1},{3,1},{1,3},{3,3}};
+    if (!x || !y || width != PRESENTATION_SIZE || height != PRESENTATION_SIZE ||
+        sample >= SAMPLE_COUNT) return 0;
+    *x = width * quadrant[sample][0] / 4;
+    *y = height - 1 - height * quadrant[sample][1] / 4;
+    return *x >= 0 && *x < width && *y >= 0 && *y < height;
+}
+
+/* GDI screen readback proves RGB only. Alpha retains its independent GL/FBO
+ * checks below and is never fabricated as screen-readback evidence. */
+static int presentation_pixels_match(const unsigned char actual[SAMPLE_COUNT][3],
+                                      const unsigned char expected[SAMPLE_COUNT][4]) {
+    unsigned int i, j;
+    for (i = 0; i < SAMPLE_COUNT; ++i) for (j = 0; j < 3; ++j) {
+        int delta = (int)actual[i][j] - (int)expected[i][j];
+        if (delta < -3 || delta > 3) return 0;
+    }
+    return 1;
+}
+
+/* Pure bounded polling guard is exercised by the actual-source host fixture.
+ * The caller timestamps after reading: even a correct image returned beyond
+ * the deadline must fail. Unsigned subtraction tolerates GetTickCount wrap. */
+static int presentation_poll_step(unsigned int started, unsigned int now,
+                                   unsigned int *attempts, unsigned int *elapsed,
+                                   int owned_pixels,
+                                   const unsigned char actual[SAMPLE_COUNT][3],
+                                   const unsigned char expected[SAMPLE_COUNT][4]) {
+    if (!attempts || !elapsed || *attempts >= PRESENTATION_MAX_ATTEMPTS) return -1;
+    ++*attempts;
+    *elapsed = now - started;
+    if (*elapsed > PRESENTATION_TIMEOUT_MS) return -1;
+    if (owned_pixels && presentation_pixels_match(actual,expected)) return 1;
+    return *attempts >= PRESENTATION_MAX_ATTEMPTS || *elapsed >= PRESENTATION_TIMEOUT_MS ? -1 : 0;
+}
 /* Little-endian, all index zero: red opaque DXT1; green alpha136 DXT3;
  * blue alpha200 DXT5. Alternate blocks exercise the compressed subimage. */
 static const unsigned char dxt_blocks[3][16] = {
@@ -140,8 +189,13 @@ struct probe_result {
     int dxt1_mipmaps, dxt3_mipmaps, dxt5_mipmaps;
     int dxt1_subimage, dxt3_subimage, dxt5_subimage;
     int bgra_render, bgra_subimage, backbuffer_render, swapped, frontbuffer_readback;
+    int presented_pattern_first, presented_pattern_second, presented_readback;
+    unsigned int presentation_attempts_first, presentation_attempts_second;
+    unsigned int presentation_elapsed_ms_first, presentation_elapsed_ms_second;
+    int presentation_client_width, presentation_client_height;
+    unsigned char presented_pixels_first[SAMPLE_COUNT][3], presented_pixels_second[SAMPLE_COUNT][3];
     int cleanup_ok;
-    unsigned long gl_error, win32_error;
+    unsigned long gl_error, win32_error, frontbuffer_gl_error;
 };
 
 static int result_passes(const struct probe_result *r) {
@@ -156,13 +210,31 @@ static int result_passes(const struct probe_result *r) {
         r->dxt1_mipmaps && r->dxt3_mipmaps && r->dxt5_mipmaps &&
         r->dxt1_subimage && r->dxt3_subimage && r->dxt5_subimage &&
         r->bgra_render && r->bgra_subimage && r->backbuffer_render && r->swapped &&
-        r->frontbuffer_readback && r->cleanup_ok && !r->gl_error;
+        r->presented_pattern_first && r->presented_pattern_second && r->presented_readback &&
+        r->presentation_client_width == PRESENTATION_SIZE &&
+        r->presentation_client_height == PRESENTATION_SIZE &&
+        r->presentation_attempts_first >= 1 && r->presentation_attempts_first <= PRESENTATION_MAX_ATTEMPTS &&
+        r->presentation_attempts_second >= 1 && r->presentation_attempts_second <= PRESENTATION_MAX_ATTEMPTS &&
+        r->presentation_elapsed_ms_first <= PRESENTATION_TIMEOUT_MS &&
+        r->presentation_elapsed_ms_second <= PRESENTATION_TIMEOUT_MS &&
+        presentation_pixels_match(r->presented_pixels_first,pattern_rgba) &&
+        presentation_pixels_match(r->presented_pixels_second,presentation_alternate_rgba) &&
+        r->cleanup_ok && !r->gl_error;
+}
+
+static void print_presented_pixels(const unsigned char pixels[SAMPLE_COUNT][3]) {
+    unsigned int i;
+    putchar('[');
+    for (i = 0; i < SAMPLE_COUNT; ++i)
+        printf("%s[%u,%u,%u]",i ? "," : "",(unsigned int)pixels[i][0],
+               (unsigned int)pixels[i][1],(unsigned int)pixels[i][2]);
+    putchar(']');
 }
 
 static void print_result(const struct probe_result *r, const char *failure,
                           const char *vendor, const char *renderer, const char *version) {
     int passed = result_passes(r) && failure && !*failure;
-    printf("COH_GPU_PROBE_V1 {\"format\":1,\"build_marker\":\"" BUILD_MARKER "\",\"status\":\"%s\",\"passed\":%s,\"failure\":",
+    printf("COH_GPU_PROBE_V2 {\"format\":2,\"build_marker\":\"" BUILD_MARKER "\",\"status\":\"%s\",\"passed\":%s,\"failure\":",
            passed ? "passed" : "failed", passed ? "true" : "false");
     json_string(failure);
     printf(",\"scope\":\"bounded_wgl_gpu_prerequisites\",\"pointer_bits\":%d,\"win32_error\":%lu,\"gl_error\":%lu,\"gl_vendor\":",
@@ -181,7 +253,19 @@ static void print_result(const struct probe_result *r, const char *failure,
     EMIT_BOOL(dxt1_subimage); EMIT_BOOL(dxt3_subimage); EMIT_BOOL(dxt5_subimage);
     EMIT_BOOL(bgra_render); EMIT_BOOL(bgra_subimage); EMIT_BOOL(backbuffer_render);
     EMIT_BOOL(swapped); EMIT_BOOL(frontbuffer_readback); EMIT_BOOL(cleanup_ok);
+    EMIT_BOOL(presented_pattern_first); EMIT_BOOL(presented_pattern_second); EMIT_BOOL(presented_readback);
 #undef EMIT_BOOL
+    printf(",\"frontbuffer_gl_error\":%lu,\"presentation_method\":\"win32_screen_getpixel_two_patterns\","
+           "\"presentation_sample_count\":%d,\"presentation_pattern_count\":2,"
+           "\"presentation_client_width\":%d,\"presentation_client_height\":%d,"
+           "\"presentation_attempts_first\":%u,\"presentation_attempts_second\":%u,"
+           "\"presentation_elapsed_ms_first\":%u,\"presentation_elapsed_ms_second\":%u,"
+           "\"presented_pixels_first\":",
+           r->frontbuffer_gl_error,SAMPLE_COUNT,r->presentation_client_width,r->presentation_client_height,
+           r->presentation_attempts_first,r->presentation_attempts_second,
+           r->presentation_elapsed_ms_first,r->presentation_elapsed_ms_second);
+    print_presented_pixels(r->presented_pixels_first);
+    fputs(",\"presented_pixels_second\":",stdout); print_presented_pixels(r->presented_pixels_second);
     printf(",\"fp_max_local_parameters\":%d,\"fp_max_temporaries\":%d,\"fp_max_native_temporaries\":%d,",
            r->fp_max_local_parameters, r->fp_max_temporaries, r->fp_max_native_temporaries);
     puts("\"game_rendering_validated\":false,\"cg_shaders_validated\":false,\"android_surface_validated\":false,\"hardware_acceleration_validated\":false}");
@@ -410,6 +494,67 @@ static int draw_readback(struct probe_result *r, const unsigned char expected[SA
     return read_samples(r, actual, expected, width, height);
 }
 
+static int pump_probe_messages(HWND window) {
+    MSG message;
+    unsigned int i;
+    /* A continuously refilled message queue cannot turn this into an unbounded
+     * wait. The outer screen polling and caller's process timeout remain bound. */
+    for (i = 0; i < 64 && PeekMessageA(&message,NULL,0,0,PM_REMOVE); ++i) {
+        if (message.message == WM_QUIT) return 0;
+        TranslateMessage(&message); DispatchMessageA(&message);
+    }
+    return IsWindow(window) && IsWindowVisible(window) && !IsIconic(window);
+}
+
+static int read_presented_pattern(HWND window, HDC screen_dc, struct probe_result *r,
+                                    const unsigned char expected[SAMPLE_COUNT][4],
+                                    unsigned char actual[SAMPLE_COUNT][3],
+                                    unsigned int *attempts, unsigned int *elapsed) {
+    unsigned int started = (unsigned int)GetTickCount();
+    for (;;) {
+        RECT client;
+        unsigned int i;
+        int owned = pump_probe_messages(window) && GetClientRect(window,&client);
+        int verdict;
+        if (owned) {
+            r->presentation_client_width = (int)(client.right - client.left);
+            r->presentation_client_height = (int)(client.bottom - client.top);
+            owned = client.left == 0 && client.top == 0 &&
+                r->presentation_client_width == PRESENTATION_SIZE &&
+                r->presentation_client_height == PRESENTATION_SIZE;
+        }
+        memset(actual,0,SAMPLE_COUNT * 3);
+        for (i = 0; owned && i < SAMPLE_COUNT; ++i) {
+            int x, y;
+            POINT point;
+            COLORREF color;
+            if (!presentation_coordinates(r->presentation_client_width,r->presentation_client_height,
+                                          i,&x,&y)) { owned = 0; break; }
+            point.x = x; point.y = y;
+            /* Read the visible screen, never this OpenGL DC or an FBO/back
+             * image. ClientToScreen uses device coordinates. WindowFromPoint
+             * prevents an occluding/stale foreign window from supplying proof.
+             * GetDC/GetPixel/ClientToScreen/WindowFromPoint contracts:
+             * learn.microsoft.com/en-us/windows/win32/api/{winuser,wingdi}/
+             * nf-winuser-getdc, nf-wingdi-getpixel, nf-winuser-clienttoscreen,
+             * nf-winuser-windowfrompoint. This validates private X presentation,
+             * not the subsequent Android Surface or Game/Cg execution. */
+            if (!ClientToScreen(window,&point) || WindowFromPoint(point) != window) {
+                owned = 0; break;
+            }
+            color = GetPixel(screen_dc,(int)point.x,(int)point.y);
+            if (color == CLR_INVALID || WindowFromPoint(point) != window) { owned = 0; break; }
+            actual[i][0] = GetRValue(color); actual[i][1] = GetGValue(color); actual[i][2] = GetBValue(color);
+        }
+        verdict = presentation_poll_step(started,(unsigned int)GetTickCount(),attempts,elapsed,
+                                         owned,actual,expected);
+        if (verdict) return verdict > 0;
+        /* Gives Wine/X11 presentation messages time to arrive without an
+         * indefinite GetMessage wait or a render-loop retry hiding bad pixels. */
+        MsgWaitForMultipleObjects(0,NULL,FALSE,PRESENTATION_WAIT_MS,QS_ALLINPUT);
+    }
+}
+
 static int texture_properties(struct probe_result *r, GLint level, GLenum format, GLint width) {
     GLint compressed = 0, internal = 0, actual_width = 0, actual_height = 0;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, level, C_TEXTURE_COMPRESSED, &compressed);
@@ -514,10 +659,10 @@ static int run_render_tests(const struct gl_api *a, struct objects *o, struct pr
         !compressed_test(a,o,r,1,&r->dxt3_render,&r->dxt3_mipmaps,&r->dxt3_subimage) ||
         !compressed_test(a,o,r,2,&r->dxt5_render,&r->dxt5_mipmaps,&r->dxt5_subimage)) goto done;
     a->bind_framebuffer(C_FRAMEBUFFER,0);
-    glDrawBuffer(GL_BACK); glReadBuffer(GL_BACK); glViewport(0,0,64,64);
+    glDrawBuffer(GL_BACK); glReadBuffer(GL_BACK); glViewport(0,0,PRESENTATION_SIZE,PRESENTATION_SIZE);
     glBindTexture(GL_TEXTURE_2D,o->textures[0]); texture_parameters();
     glTexImage2D(GL_TEXTURE_2D,0,C_RGBA8,2,2,0,GL_RGBA,GL_UNSIGNED_BYTE,pattern_rgba);
-    r->backbuffer_render = draw_readback(r,pattern_rgba,64,64);
+    r->backbuffer_render = draw_readback(r,pattern_rgba,PRESENTATION_SIZE,PRESENTATION_SIZE);
     success = r->backbuffer_render;
 done:
     if (a->bind_framebuffer) a->bind_framebuffer(C_FRAMEBUFFER,0);
@@ -560,7 +705,7 @@ int main(int argc, char **argv) {
     PIXELFORMATDESCRIPTOR requested, chosen;
     HINSTANCE instance = GetModuleHandleA(NULL);
     HWND window = NULL;
-    HDC dc = NULL;
+    HDC dc = NULL, screen_dc = NULL;
     HGLRC context = NULL;
     int registered = 0, current = 0, format, completed = 0, cleanup_ok = 1;
     const char *failure = "arguments", *extensions, *vendor, *renderer, *version;
@@ -576,16 +721,23 @@ int main(int argc, char **argv) {
     failure = "pointer_bits";
     if (r.pointer_bits != 32) goto done;
     klass.style = CS_OWNDC; klass.lpfnWndProc = window_proc;
-    klass.hInstance = instance; klass.lpszClassName = "COHGpuProbeV1";
+    klass.hInstance = instance; klass.lpszClassName = "COHGpuProbeV2";
     failure = "window_class";
     if (!RegisterClassA(&klass)) goto done;
     registered = 1;
     failure = "window_create";
-    window = CreateWindowA(klass.lpszClassName,"COH GPU prerequisite probe",WS_OVERLAPPEDWINDOW,
-                           0,0,128,128,NULL,NULL,instance,NULL);
+    window = CreateWindowA(klass.lpszClassName,"COH GPU prerequisite probe",
+                           WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                           16,16,PRESENTATION_SIZE,PRESENTATION_SIZE,NULL,NULL,instance,NULL);
     if (!window) goto done;
     /* Only the caller's private diagnostic X server receives this window. */
     ShowWindow(window,SW_SHOW); UpdateWindow(window);
+    failure = "window_visible_client";
+    if (!SetWindowPos(window,HWND_TOPMOST,16,16,PRESENTATION_SIZE,PRESENTATION_SIZE,SWP_SHOWWINDOW) ||
+        !pump_probe_messages(window)) goto done;
+    failure = "screen_dc";
+    screen_dc = GetDC(NULL);
+    if (!screen_dc) goto done;
     failure = "window_dc";
     dc = GetDC(window);
     if (!dc) goto done;
@@ -633,10 +785,38 @@ int main(int argc, char **argv) {
     failure = "swap_buffers";
     r.swapped = SwapBuffers(dc) != 0;
     if (!r.swapped || !no_gl_error(&r)) goto done;
-    failure = "post_swap_frontbuffer_readback";
-    glReadBuffer(GL_FRONT);
-    r.frontbuffer_readback = read_samples(&r,front,pattern_rgba,64,64);
-    if (!r.frontbuffer_readback) goto done;
+    /* GLX/Kopper swap semantics need not retain a readable GL_FRONT image.
+     * Keep that old check as a diagnostic, with its own error channel, then
+     * independently require actual visible-screen pixels after TWO swaps. */
+    {
+        struct probe_result diagnostic;
+        memset(&diagnostic,0,sizeof(diagnostic));
+        glReadBuffer(GL_FRONT);
+        r.frontbuffer_readback = read_samples(&diagnostic,front,pattern_rgba,
+                                              PRESENTATION_SIZE,PRESENTATION_SIZE);
+        r.frontbuffer_gl_error = diagnostic.gl_error;
+    }
+    glReadBuffer(GL_BACK); glFinish();
+    if (!no_gl_error(&r)) goto done;
+    failure = "post_swap_presented_pattern_first";
+    r.presented_pattern_first = read_presented_pattern(window,screen_dc,&r,pattern_rgba,
+        r.presented_pixels_first,&r.presentation_attempts_first,&r.presentation_elapsed_ms_first);
+    if (!r.presented_pattern_first) goto done;
+    /* Rendering a second distinct pattern and proving it on-screen rejects an
+     * unchanged first frame even if SwapBuffers itself reports success. */
+    failure = "second_backbuffer_readback";
+    glBindTexture(GL_TEXTURE_2D,objects.textures[0]);
+    glTexImage2D(GL_TEXTURE_2D,0,C_RGBA8,2,2,0,GL_RGBA,GL_UNSIGNED_BYTE,presentation_alternate_rgba);
+    if (!draw_readback(&r,presentation_alternate_rgba,PRESENTATION_SIZE,PRESENTATION_SIZE)) goto done;
+    failure = "second_swap_buffers";
+    r.swapped = SwapBuffers(dc) != 0;
+    glFinish();
+    if (!r.swapped || !no_gl_error(&r)) goto done;
+    failure = "post_swap_presented_pattern_second";
+    r.presented_pattern_second = read_presented_pattern(window,screen_dc,&r,presentation_alternate_rgba,
+        r.presented_pixels_second,&r.presentation_attempts_second,&r.presentation_elapsed_ms_second);
+    r.presented_readback = r.presented_pattern_first && r.presented_pattern_second;
+    if (!r.presented_readback) goto done;
     completed = 1;
 done:
     if (!completed) r.win32_error = GetLastError();
@@ -646,6 +826,7 @@ done:
         if (!wglDeleteContext(context)) cleanup_ok = 0;
     }
     if (dc && !ReleaseDC(window,dc)) cleanup_ok = 0;
+    if (screen_dc && !ReleaseDC(NULL,screen_dc)) cleanup_ok = 0;
     if (window && !DestroyWindow(window)) cleanup_ok = 0;
     if (registered && !UnregisterClassA(klass.lpszClassName,instance)) cleanup_ok = 0;
     r.cleanup_ok = cleanup_ok;

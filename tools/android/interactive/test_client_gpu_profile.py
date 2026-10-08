@@ -31,13 +31,20 @@ def native_result():
 
 
 def wgl_result():
-    value = {'format': 1, 'pointer_bits': 32, 'scope': 'bounded_wgl_gpu_prerequisites', 'status': 'passed',
+    value = {'format': 2, 'pointer_bits': 32, 'scope': 'bounded_wgl_gpu_prerequisites', 'status': 'passed',
         'passed': True, 'failure': '', 'win32_error': 0, 'gl_error': 0, 'gl_vendor': 'Mesa',
         'gl_renderer': 'zink Vulkan 1.3(Turnip Adreno 740)', 'gl_version': '4.6 Mesa',
         'fp_max_local_parameters': 32, 'fp_max_temporaries': 17, 'fp_max_native_temporaries': 17}
     value['build_marker'] = 'COH_GPU_PROBE_BUILD:production'
     value.update({key: True for key in gpu.WGL_TRUE})
     value.update({key: False for key in gpu.AUTHORITY_FALSE})
+    value.update(frontbuffer_readback=False, frontbuffer_gl_error=0,
+        presentation_method='win32_screen_getpixel_two_patterns', presentation_sample_count=4,
+        presentation_pattern_count=2, presentation_client_width=64, presentation_client_height=64,
+        presentation_attempts_first=1, presentation_attempts_second=2, presentation_elapsed_ms_first=0,
+        presentation_elapsed_ms_second=10,
+        presented_pixels_first=[[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 255]],
+        presented_pixels_second=[[41, 93, 173], [211, 57, 99], [77, 201, 33], [163, 29, 227]])
     return value
 
 
@@ -188,11 +195,53 @@ class ProbeTests(unittest.TestCase):
 
     def test_duplicate_json_duplicate_marker_incomplete_and_oversized_output_fail_closed(self):
         valid = marker(gpu.WGL_PREFIX, wgl_result())
-        cases = [valid + valid, '', valid[:-2], valid.replace('"format": 1', '"format": 1, "format": 1'),
+        cases = [valid + valid, '', valid[:-2], valid.replace('"format": 2', '"format": 2, "format": 2'),
                  'x' * (gpu.PROBE_OUTPUT_LIMIT + 1) + valid]
         for output in cases:
             with self.subTest(size=len(output)), self.assertRaises((gpu.GPUProfileError, ValueError)):
                 gpu.validate_wgl_probe(output)
+
+    def test_front_readback_is_diagnostic_and_two_presented_patterns_are_required(self):
+        value = wgl_result()
+        for front, error in ((False, 0), (False, 0x502), (True, 0)):
+            result = dict(value, frontbuffer_readback=front, frontbuffer_gl_error=error)
+            self.assertEqual(gpu.validate_wgl_probe(marker(gpu.WGL_PREFIX, result)), result)
+        variants = [('presentation_method', 'gl_readpixels_front'), ('presentation_sample_count', True),
+            ('presentation_sample_count', 3), ('presentation_pattern_count', 1),
+            ('presentation_client_width', 63), ('presentation_client_height', 65),
+            ('presentation_attempts_first', 0), ('presentation_attempts_second', 101),
+            ('presentation_elapsed_ms_first', -1), ('presentation_elapsed_ms_second', 2001),
+            ('presentation_elapsed_ms_first', True), ('frontbuffer_gl_error', True),
+            ('frontbuffer_gl_error', -1), ('frontbuffer_gl_error', 0x100000000),
+            ('frontbuffer_readback', 1), ('presented_pixels_first', []),
+            ('presented_pixels_second', value['presented_pixels_first']),
+            ('presented_pixels_first', [[0, 0, 0]] * 4),
+            ('presented_pixels_first', list(reversed(value['presented_pixels_first']))),
+            ('presented_pixels_first', [[255, True, 0]] + value['presented_pixels_first'][1:]),
+            ('presented_pixels_first', [[258, 0, 0]] + value['presented_pixels_first'][1:]),
+            ('presented_pixels_second', [[41, 93, 169]] + value['presented_pixels_second'][1:]),
+            ('presented_pixels_second', [[41, 93, 173, 255]] + value['presented_pixels_second'][1:])]
+        for key, wrong in variants:
+            with self.subTest(key=key, wrong=wrong), self.assertRaises(gpu.GPUProfileError):
+                gpu.validate_wgl_probe(marker(gpu.WGL_PREFIX, dict(value, **{key: wrong})))
+        for key in ('presented_pixels_first', 'presentation_method', 'frontbuffer_gl_error'):
+            changed = dict(value); del changed[key]
+            with self.subTest(missing=key), self.assertRaises(gpu.GPUProfileError):
+                gpu.validate_wgl_probe(marker(gpu.WGL_PREFIX, changed))
+        for old in (marker('COH_GPU_PROBE_V1 ', dict(value, format=1)),
+                    marker(gpu.WGL_PREFIX, dict(value, format=1))):
+            with self.assertRaises(gpu.GPUProfileError): gpu.validate_wgl_probe(old)
+
+    def test_failed_prerequisite_reports_original_bounded_failure_stage(self):
+        failed = dict(wgl_result(), status='failed', passed=False, win32_error=5,
+                      presented_pattern_second=False, presented_readback=False,
+                      failure='post_swap_presented_pattern_second')
+        for stage in ('post_swap_frontbuffer_readback', 'post_swap_presented_pattern_second'):
+            with self.subTest(stage=stage), self.assertRaisesRegex(gpu.GPUProfileError, stage):
+                gpu.validate_wgl_probe(marker(gpu.WGL_PREFIX, dict(failed, failure=stage)))
+        for failure in ('x' * 129, 'stage\nunsafe', 7):
+            with self.subTest(failure=failure), self.assertRaisesRegex(gpu.GPUProfileError, 'invalid_result'):
+                gpu.validate_wgl_probe(marker(gpu.WGL_PREFIX, dict(failed, failure=failure)))
 
 
 class PolicyTests(unittest.TestCase):
@@ -367,6 +416,66 @@ class PolicyTests(unittest.TestCase):
             for owned in context.children: owned.stop()
         self.assertTrue(all(not owned.reader.is_alive() for owned in context.children))
 
+    def test_nonzero_wine_leader_with_escaped_output_worker_falls_back_after_private_cleanup(self):
+        failed = dict(wgl_result(), status='failed', passed=False, win32_error=5,
+            failure='post_swap_presented_pattern_second', presented_pattern_second=False,
+            presented_readback=False)
+        script = self.directory / 'wine-fixture.py'
+        worker_file = self.directory / 'fixture-worker.pid'
+        script.write_text('import pathlib,subprocess,sys\n'
+            'worker=subprocess.Popen([sys.executable,"-c","import time;time.sleep(30)"],start_new_session=True)\n'
+            'pathlib.Path(' + repr(str(worker_file)) + ').write_text(str(worker.pid))\n'
+            'print(' + repr(marker(gpu.WGL_PREFIX, failed)) + ',end="",flush=True)\n'
+            'raise SystemExit(10)\n')
+        context = base.Context(self.owner.root, 30); context.event = mock.Mock()
+        context.report.update(self.owner.ctx.report)
+        self.owner.ctx = context; self.owner.args.wine = Path(sys.executable)
+        context.run = mock.Mock(return_value={'exit_code': 0})
+        baseline = dict(os_environment(), **self.baseline)
+        original_run, original_private = gpu.run_probe, gpu.private_wgl_probe
+        def run(owner, label, command, environment, timeout, **keywords):
+            if label == 'gpu-native-vulkan-prerequisites':
+                return marker(gpu.NATIVE_PREFIX, native_result())
+            return original_run(owner, label, command, environment, timeout, **keywords)
+        def private(owner, environment, _executable, directory, receipt):
+            return original_private(owner, environment, script, directory, receipt)
+        try:
+            with (mock.patch.object(gpu, 'platform_is_arm64', return_value=True),
+                    mock.patch.object(base, 'arm64_elf'), mock.patch.object(base, 'verify_pe32'),
+                    mock.patch.object(base, 'windows_path', side_effect=str),
+                    mock.patch.object(gpu, 'run_probe', side_effect=run),
+                    mock.patch.object(gpu, 'private_wgl_probe', side_effect=private)):
+                result = gpu.apply_profile(self.owner, baseline, 'actual-coh-client')
+            receipt = context.report['client_gpu_profile']
+            self.assertEqual(result, baseline)
+            self.assertEqual(receipt['state'], 'software_fallback')
+            self.assertIs(receipt['probe_cleanup_safe'], True)
+            self.assertEqual(receipt['wine_probe_leader_exit_code'], 10)
+            self.assertEqual(receipt['wine_gl_probe'], failed)
+            self.assertEqual(receipt['wine_probe_failure_stage'], failed['failure'])
+            self.assertIn(failed['failure'], receipt['fallback_reason'])
+            self.assertIs(receipt['probe_process_cleanup']['complete'], True)
+            child = context.children[0]
+            self.assertIs(child.forced_stop, False)
+            self.assertFalse(child.reader.is_alive()); self.assertFalse(child.writer.is_alive())
+            self.assertIs(child.completion['private_prefix_shutdown_and_output_eof'], True)
+            self.assertTrue(context.report['processes'][0]['output_capture_closed'])
+            prefix = context.run.call_args.kwargs['env']['WINEPREFIX']
+            self.assertNotEqual(prefix, baseline['WINEPREFIX']); self.assertFalse(Path(prefix).exists())
+            self.assertNotEqual(context.run.call_args.kwargs['env']['COH_WINE_SESSION'], baseline['COH_WINE_SESSION'])
+            self.assertNotEqual(context.run.call_args.kwargs['env']['COH_WINE_SESSION'], 'original-token')
+            context.run.assert_called_once()
+            self.assertEqual(context.run.call_args.args[:2],
+                ('gpu-probe-prefix-stop', [self.owner.args.wineserver, '-k']))
+        finally:
+            # Fixture-only emergency cleanup, in case an assertion exposes a
+            # regression before the real token owner finishes its shutdown.
+            if worker_file.exists():
+                import os, signal
+                try: os.kill(int(worker_file.read_text()), signal.SIGKILL)
+                except ProcessLookupError: pass
+            for child in context.children: child.stop()
+
     def test_isolated_wine_prefix_token_and_descendant_cleanup_never_touch_game_prefix(self):
         directory = self.directory / 'probe'; directory.mkdir()
         tokens = {'COH_WINE_SESSION': 'probe-only-token'}
@@ -374,9 +483,10 @@ class PolicyTests(unittest.TestCase):
         self.owner.ctx.secrets = []
         self.owner.ctx.run.return_value = {'exit_code': 0}
         receipt = {'probe_cleanup_safe': True}
-        child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), output=bytearray(),
+        child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(), output=bytearray(),
                                 overflow=False, completion={'output_capture_open': True},
                                 text=lambda: marker(gpu.WGL_PREFIX, wgl_result()))
+        child.process.poll.return_value = 0
         child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
         with (mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
                 mock.patch.object(gpu, 'run_probe', return_value=child) as probe):
@@ -389,6 +499,157 @@ class PolicyTests(unittest.TestCase):
         self.assertFalse((directory / 'wineprefix').exists())
         process_owner.cleanup.assert_called_once(); self.assertIs(receipt['probe_cleanup_safe'], True)
         self.assertEqual(result, wgl_result())
+
+    def test_nonzero_private_probe_cleanup_ownercheck_and_output_bounds_remain_fatal(self):
+        failed = dict(wgl_result(), status='failed', passed=False, failure='post_swap_presented_pattern_second',
+                      presented_pattern_second=False, presented_readback=False)
+        output = marker(gpu.WGL_PREFIX, failed)
+        for scenario in ('owner_failure', 'prefix_stop_failure', 'reader_open', 'writer_open',
+                         'leader_live', 'owner_check'):
+            directory = self.directory / scenario; directory.mkdir()
+            owner = SimpleNamespace(ctx=mock.Mock(secrets=[], report={}), args=self.owner.args)
+            owner.ctx.run.return_value = {'exit_code': 1 if scenario == 'prefix_stop_failure' else 0}
+            process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-token'},
+                                      receipt={'complete': scenario != 'owner_failure'})
+            if scenario == 'owner_failure':
+                process_owner.cleanup.side_effect = base.DiagnosticError('Cannot verify Wine descendant ownership')
+            child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+                output=bytearray(output.encode()), overflow=False,
+                completion={'output_capture_open': True}, text=lambda: output)
+            child.process.poll.return_value = None if scenario == 'leader_live' else 10
+            child.reader.is_alive.return_value = scenario == 'reader_open'
+            child.writer.is_alive.return_value = scenario == 'writer_open'
+            if scenario == 'owner_check': owner.ctx.check.side_effect = base.Cancelled('Stop requested')
+            receipt = {'probe_cleanup_safe': True}
+            with (self.subTest(scenario=scenario),
+                    mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
+                    mock.patch.object(gpu, 'run_probe', return_value=child)):
+                expected = base.Cancelled if scenario == 'owner_check' else gpu.GPUCleanupError
+                with self.assertRaises(expected):
+                    gpu.private_wgl_probe(owner, self.baseline, directory / 'probe.exe', directory, receipt)
+            self.assertEqual(receipt['probe_cleanup_safe'], scenario == 'owner_check')
+            self.assertEqual(receipt['wine_probe_leader_exit_code'], None if scenario == 'leader_live' else 10)
+            self.assertEqual(receipt['wine_gl_probe'], failed)
+            self.assertEqual(receipt['wine_probe_failure_stage'], failed['failure'])
+            self.assertEqual(owner.ctx.run.call_args.kwargs['env']['WINEPREFIX'], str(directory / 'wineprefix'))
+            self.assertNotEqual(owner.ctx.run.call_args.kwargs['env']['WINEPREFIX'], '/accepted-prefix')
+
+    def test_private_probe_ordinary_timeout_and_oversized_result_reject_only_after_cleanup(self):
+        output = marker(gpu.WGL_PREFIX, wgl_result())
+        for scenario in ('timeout', 'oversized_output', 'global_overflow'):
+            directory = self.directory / scenario; directory.mkdir()
+            owner = SimpleNamespace(ctx=mock.Mock(secrets=[], report={}), args=self.owner.args)
+            owner.ctx.run.return_value = {'exit_code': 0}
+            process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-token'}, receipt={'complete': True})
+            pending = gpu.GPUProfileError('GPU probe timed out: gpu-wine-prerequisites') if scenario == 'timeout' else None
+            child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+                output=bytearray((output + ('x' * gpu.PROBE_OUTPUT_LIMIT if scenario != 'timeout' else '')).encode()),
+                overflow=scenario == 'global_overflow', completion={'output_capture_open': True},
+                gpu_probe_error=pending, text=lambda: output)
+            child.process.poll.return_value = -15
+            child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
+            if scenario == 'global_overflow':
+                owner.ctx.check.side_effect = base.DiagnosticError('Owned process exceeded output bound')
+            receipt = {'probe_cleanup_safe': True}
+            with (self.subTest(scenario=scenario),
+                    mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
+                    mock.patch.object(gpu, 'run_probe', return_value=child)):
+                expected = base.DiagnosticError if scenario == 'global_overflow' else gpu.GPUProfileError
+                with self.assertRaises(expected) as raised:
+                    gpu.private_wgl_probe(owner, self.baseline, directory / 'probe.exe', directory, receipt)
+            self.assertIs(receipt['probe_cleanup_safe'], True)
+            self.assertIs(child.completion['private_prefix_shutdown_and_output_eof'], True)
+            self.assertFalse((directory / 'wineprefix').exists())
+            if pending is not None:
+                self.assertIs(raised.exception, pending)
+                self.assertEqual(receipt['wine_probe_execution_failure']['message'], str(pending))
+            else: self.assertNotIn('wine_gl_probe', receipt)
+
+    def test_private_probe_timeout_keeps_child_for_owned_prefix_shutdown(self):
+        context = base.Context(self.directory, 30); context.event = mock.Mock()
+        owner = SimpleNamespace(ctx=context)
+        child = gpu.run_probe(owner, 'bounded-wgl-timeout',
+            [sys.executable, '-c', 'import time;time.sleep(30)'], os_environment(), .1,
+            allow_background_output=True)
+        try:
+            self.assertIsInstance(child.gpu_probe_error, gpu.GPUProfileError)
+            self.assertIn('timed out', str(child.gpu_probe_error))
+            self.assertIsNone(child.process.poll())
+            self.assertIs(child.forced_stop, False)
+            self.assertTrue(child.reader.is_alive())
+            self.assertEqual(child.completion['policy'], 'private_prefix_shutdown_after_probe_failure')
+        finally: child.stop()
+
+    def test_one_shot_cancellation_and_health_check_failures_cannot_be_downgraded(self):
+        for index, failure in enumerate((base.Cancelled('Stop'), base.DiagnosticError('Server health failed'),
+                                         base.DiagnosticError('Overall diagnostic deadline exceeded'))):
+            directory = self.directory / ('health-' + str(index)); directory.mkdir()
+            owner, baseline = make_owner(directory)
+            owner.ctx.secrets = []; owner.ctx.run.return_value = {'exit_code': 0}
+            owner.ctx.check.side_effect = [failure, None]
+            process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-token'}, receipt={'complete': True})
+            child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+                output=bytearray(marker(gpu.WGL_PREFIX, wgl_result()).encode()), overflow=False,
+                completion={'output_capture_open': True}, text=lambda: marker(gpu.WGL_PREFIX, wgl_result()))
+            child.process.poll.return_value = 0
+            child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
+            with (self.subTest(failure=failure), mock.patch.object(gpu, 'platform_is_arm64', return_value=True),
+                    mock.patch.object(base, 'arm64_elf'), mock.patch.object(base, 'verify_pe32'),
+                    mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
+                    mock.patch.object(gpu, 'run_probe', side_effect=[marker(gpu.NATIVE_PREFIX, native_result()), child]),
+                    self.assertRaises(type(failure)) as raised):
+                gpu.apply_profile(owner, baseline, 'actual-coh-client')
+            self.assertIs(raised.exception, failure)
+            owner.ctx.check.assert_called_once()
+            self.assertIs(owner.ctx.report['client_gpu_profile']['probe_cleanup_safe'], True)
+            self.assertNotEqual(owner.ctx.report['client_gpu_profile']['state'], 'software_fallback')
+
+    def test_replaced_prefix_never_directs_initial_or_final_shutdown_at_unowned_directory(self):
+        for replacement in ('symlink', 'inode'):
+            directory = self.directory / replacement; directory.mkdir()
+            external = directory / 'accepted-prefix'; external.mkdir(); (external / 'keep').write_text('saved data')
+            owner = SimpleNamespace(ctx=mock.Mock(secrets=[], report={}), args=self.owner.args)
+            owner.ctx.run.return_value = {'exit_code': 0}
+            process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-token'}, receipt={'complete': True})
+            child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+                output=bytearray(marker(gpu.WGL_PREFIX, wgl_result()).encode()), overflow=False,
+                completion={'output_capture_open': False}, text=lambda: marker(gpu.WGL_PREFIX, wgl_result()))
+            child.process.poll.return_value = 0
+            child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
+            def replace(*_args, **_keywords):
+                prefix = directory / 'wineprefix'; prefix.rename(directory / 'original-prefix')
+                if replacement == 'symlink': prefix.symlink_to(external, target_is_directory=True)
+                else: prefix.mkdir(); (prefix / 'keep').write_text('unowned prefix')
+                return child
+            receipt = {'probe_cleanup_safe': True}
+            with (self.subTest(replacement=replacement),
+                    mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
+                    mock.patch.object(gpu, 'run_probe', side_effect=replace),
+                    self.assertRaisesRegex(gpu.GPUCleanupError, 'prefix changed')):
+                gpu.private_wgl_probe(owner, self.baseline, directory / 'probe.exe', directory, receipt)
+            owner.ctx.run.assert_not_called(); self.assertIs(receipt['probe_cleanup_safe'], False)
+            self.assertTrue(gpu.cleanup_probes(owner))
+            owner.ctx.run.assert_not_called(); self.assertIs(receipt['probe_cleanup_safe'], False)
+            process_owner.cleanup.assert_called_once()
+            self.assertEqual((external / 'keep').read_text(), 'saved data')
+            self.assertTrue((directory / 'original-prefix').exists())
+
+    def test_success_receipt_with_nonzero_leader_is_rejected_after_proven_cleanup(self):
+        directory = self.directory / 'nonzero-passed'; directory.mkdir()
+        process_owner = mock.Mock(environment={'COH_WINE_SESSION': 'private-token'}, receipt={'complete': True})
+        self.owner.ctx.run.return_value = {'exit_code': 0}; self.owner.ctx.secrets = []
+        child = SimpleNamespace(reader=mock.Mock(), writer=mock.Mock(), process=mock.Mock(),
+            output=bytearray(marker(gpu.WGL_PREFIX, wgl_result()).encode()), overflow=False,
+            completion={'output_capture_open': True}, text=lambda: marker(gpu.WGL_PREFIX, wgl_result()))
+        child.process.poll.return_value = 10
+        child.reader.is_alive.return_value = False; child.writer.is_alive.return_value = False
+        receipt = {'probe_cleanup_safe': True}
+        with (mock.patch.object(device, 'DeviceWineProcessOwner', return_value=process_owner),
+                mock.patch.object(gpu, 'run_probe', return_value=child),
+                self.assertRaisesRegex(gpu.GPUProfileError, 'exited without success: 10')):
+            gpu.private_wgl_probe(self.owner, self.baseline, directory / 'probe.exe', directory, receipt)
+        self.assertIs(receipt['probe_cleanup_safe'], True)
+        self.assertFalse((directory / 'wineprefix').exists())
 
     def test_final_probe_owner_failure_marks_parent_cleanup_unsafe(self):
         owner = mock.Mock(); owner.args.wineserver = Path('/wine/wineserver')

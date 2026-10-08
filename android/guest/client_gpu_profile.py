@@ -25,7 +25,7 @@ ARCHIVE_LIMIT = 64 * 1024 * 1024
 UNCOMPRESSED_LIMIT = 128 * 1024 * 1024
 PROBE_OUTPUT_LIMIT = 64 * 1024
 NATIVE_PREFIX = 'COH_VULKAN_GPU_PROBE_V1 '
-WGL_PREFIX = 'COH_GPU_PROBE_V1 '
+WGL_PREFIX = 'COH_GPU_PROBE_V2 '
 MESA_SOURCE_SHA256 = '2a44e98e64d5c36cec64633de2d0ec7eff64703ee25b35364ba8fcaa84f33f72'
 GAME_SOURCE_COMMIT = 'a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4'
 GAME_SHA256 = 'adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44'
@@ -34,7 +34,8 @@ WGL_TRUE = ('zink_nonsoftware', 'multitexture', 'texture_compression', 'arb_vert
     'bgra_extension', 'api_loaded', 'arb_programs', 'multitexture_render', 'vbo_render',
     'npot_depth24_fbo', 'dxt1_render', 'dxt3_render', 'dxt5_render', 'dxt1_mipmaps',
     'dxt3_mipmaps', 'dxt5_mipmaps', 'dxt1_subimage', 'dxt3_subimage', 'dxt5_subimage',
-    'bgra_render', 'bgra_subimage', 'backbuffer_render', 'swapped', 'frontbuffer_readback', 'cleanup_ok')
+    'bgra_render', 'bgra_subimage', 'backbuffer_render', 'swapped', 'presented_pattern_first',
+    'presented_pattern_second', 'presented_readback', 'cleanup_ok')
 AUTHORITY_FALSE = ('game_rendering_validated', 'cg_shaders_validated',
                    'android_surface_validated', 'hardware_acceleration_validated')
 
@@ -207,18 +208,52 @@ def validate_wgl_probe(output):
     value = parse_probe(output, WGL_PREFIX)
     fields = set(WGL_TRUE) | set(AUTHORITY_FALSE) | {'format', 'pointer_bits', 'scope', 'status', 'passed',
         'failure', 'win32_error', 'gl_error', 'gl_vendor', 'gl_renderer', 'gl_version',
-        'fp_max_local_parameters', 'fp_max_temporaries', 'fp_max_native_temporaries', 'build_marker'}
+        'fp_max_local_parameters', 'fp_max_temporaries', 'fp_max_native_temporaries', 'build_marker',
+        'frontbuffer_readback', 'frontbuffer_gl_error', 'presentation_method', 'presentation_sample_count',
+        'presentation_pattern_count', 'presentation_client_width', 'presentation_client_height',
+        'presentation_attempts_first', 'presentation_attempts_second', 'presentation_elapsed_ms_first',
+        'presentation_elapsed_ms_second', 'presented_pixels_first', 'presented_pixels_second'}
     require(set(value) == fields, 'Wine GPU prerequisite probe fields differ')
-    require(type(value.get('format')) is int and value['format'] == 1
+    require(type(value.get('format')) is int and value['format'] == 2
             and type(value.get('pointer_bits')) is int and value['pointer_bits'] == 32
-            and value.get('scope') == 'bounded_wgl_gpu_prerequisites' and value.get('status') == 'passed'
-            and value.get('build_marker') == 'COH_GPU_PROBE_BUILD:production'
-            and value.get('passed') is True and value.get('failure') == ''
-            and type(value.get('gl_error')) is int and value['gl_error'] == 0
+            and value.get('scope') == 'bounded_wgl_gpu_prerequisites'
+            and value.get('build_marker') == 'COH_GPU_PROBE_BUILD:production',
+            'Wine GPU prerequisite probe changed scope')
+    require(value.get('status') == 'passed' and value.get('passed') is True
+            and value.get('failure') == '',
+            'Wine GPU prerequisite probe failed: ' + (value['failure']
+                if isinstance(value.get('failure'), str)
+                and re.fullmatch(r'[a-z0-9_]{1,128}', value['failure']) else 'invalid_result'))
+    require(type(value.get('gl_error')) is int and value['gl_error'] == 0
             and type(value.get('win32_error')) is int and value['win32_error'] == 0,
             'Wine GPU prerequisite probe failed or changed scope')
     require(all(value.get(key) is False for key in AUTHORITY_FALSE), 'Wine probe exceeds its actual prerequisite scope')
     require(all(value.get(key) is True for key in WGL_TRUE), 'Wine GPU pixel or native client capability proof is incomplete')
+    require(type(value['frontbuffer_readback']) is bool and type(value['frontbuffer_gl_error']) is int
+            and 0 <= value['frontbuffer_gl_error'] <= 0xffffffff,
+            'Wine GPU front-buffer diagnostic fields differ')
+    require(value['presentation_method'] == 'win32_screen_getpixel_two_patterns',
+            'Wine GPU presented-pixel method differs')
+    for key, expected in (('presentation_sample_count', 4), ('presentation_pattern_count', 2),
+                          ('presentation_client_width', 64), ('presentation_client_height', 64)):
+        require(type(value[key]) is int and value[key] == expected,
+                'Wine GPU presented-pixel geometry differs: ' + key)
+    for suffix in ('first', 'second'):
+        attempts, elapsed = value['presentation_attempts_' + suffix], value['presentation_elapsed_ms_' + suffix]
+        require(type(attempts) is int and 1 <= attempts <= 100
+                and type(elapsed) is int and 0 <= elapsed <= 2000,
+                'Wine GPU presented-pixel observation exceeded its bound: ' + suffix)
+    patterns = (((255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255)),
+                ((41, 93, 173), (211, 57, 99), (77, 201, 33), (163, 29, 227)))
+    for suffix, expected in zip(('first', 'second'), patterns):
+        pixels = value['presented_pixels_' + suffix]
+        require(isinstance(pixels, list) and len(pixels) == 4,
+                'Wine GPU presented-pixel samples differ: ' + suffix)
+        for pixel, target in zip(pixels, expected):
+            require(isinstance(pixel, list) and len(pixel) == 3
+                    and all(type(channel) is int and 0 <= channel <= 255 and abs(channel - wanted) <= 3
+                            for channel, wanted in zip(pixel, target)),
+                    'Wine GPU presented pixels differ: ' + suffix)
     require(type(value.get('fp_max_local_parameters')) is int and value['fp_max_local_parameters'] >= 32
             and type(value.get('fp_max_temporaries')) is int and value['fp_max_temporaries'] >= 17
             and type(value.get('fp_max_native_temporaries')) is int and value['fp_max_native_temporaries'] >= 17,
@@ -233,28 +268,50 @@ def validate_wgl_probe(output):
 
 
 def run_probe(owner, label, command, environment, timeout, *, allow_background_output=False):
-    """Use the current process ledger, capped output, and owned group shutdown."""
-    child = owner.ctx.start(label, command, env=environment)
+    """Keep a private-prefix leader's exit status until its owner proves EOF.
+
+    The native path requires zero exit and output EOF immediately. The Wine
+    path retains its owned child and original error; only private_wgl_probe can
+    reject it after stopping the isolated prefix and proving leader exit/EOF.
+    """
+    import diagnostic as base
+    try:
+        child = owner.ctx.start(label, command, env=environment)
+    except base.DiagnosticError as error:
+        owner.gpu_probe_owner_check_failure = error
+        raise
+    child.gpu_probe_error = None
     deadline = time.monotonic() + timeout
     try:
         while child.process.poll() is None or (child.reader.is_alive() and not allow_background_output):
-            owner.ctx.check()
+            check_probe_owner(owner)
             require(len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow, 'GPU probe exceeded output bound')
             require(time.monotonic() < deadline, 'GPU probe timed out: ' + label)
             time.sleep(.05)
         child.writer.join(timeout=1)
         if allow_background_output:
             child.reader.join(timeout=.2)
-        owner.ctx.check()
+        check_probe_owner(owner)
         require(len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow, 'GPU probe exceeded output bound')
         child.completion = {'policy': 'leader_exit_with_owned_background_output' if allow_background_output
                             else 'leader_exit_and_output_eof', 'leader_exit_code': child.process.poll(),
                             'output_capture_open': child.reader.is_alive(),
                             'elapsed_seconds': round(time.monotonic() - child.started, 3)}
         result = owner.ctx.record(child)
-        require(result['exit_code'] == 0, 'GPU probe exited without success: ' + label)
+        if not allow_background_output:
+            require(result['exit_code'] == 0, 'GPU probe exited without success: ' + label)
         return child if allow_background_output else child.text()
     except BaseException as error:
+        if allow_background_output:
+            # Services may retain the capture pipe in separate Wine sessions.
+            # Keep the child witness for the private-token cleanup instead of
+            # deciding safety from group-only stop while those services live.
+            child.gpu_probe_error = error
+            child.completion = {'policy': 'private_prefix_shutdown_after_probe_failure',
+                'leader_exit_code': child.process.poll(), 'output_capture_open': child.reader.is_alive(),
+                'elapsed_seconds': round(time.monotonic() - child.started, 3),
+                'failure_type': type(error).__name__}
+            return child
         stop_error = None
         try:
             child.stop()
@@ -270,6 +327,37 @@ def run_probe(owner, label, command, environment, timeout, *, allow_background_o
         raise
 
 
+def check_probe_owner(owner):
+    """An operation-health failure is fatal even if a later check recovers."""
+    try:
+        owner.ctx.check()
+    except BaseException as error:
+        owner.gpu_probe_owner_check_failure = error
+        raise
+
+
+def record_wgl_probe(child, receipt):
+    """Retain a bounded failed result even if later private cleanup is unsafe."""
+    receipt['wine_probe_leader_exit_code'] = child.process.poll()
+    receipt['wine_probe_output_bytes'] = len(child.output)
+    try:
+        if child.overflow or len(child.output) > PROBE_OUTPUT_LIMIT:
+            return
+        value = parse_probe(child.text(), WGL_PREFIX)
+    except (GPUProfileError, ValueError):
+        return
+    receipt['wine_gl_probe'] = value
+    failure = value.get('failure')
+    if isinstance(failure, str) and re.fullmatch(r'[a-z0-9_]{1,128}', failure):
+        receipt['wine_probe_failure_stage'] = failure
+
+
+def verify_private_prefix(prefix, identity):
+    require(isinstance(prefix, Path) and not prefix.is_symlink() and prefix.is_dir()
+            and (prefix.stat().st_dev, prefix.stat().st_ino) == identity,
+            'Private GPU probe prefix changed before cleanup')
+
+
 def private_wgl_probe(owner, environment, executable, directory, receipt):
     """Separate prefix/token prevents probe cleanup from touching the running server."""
     import diagnostic as base
@@ -283,6 +371,7 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
     prefix = directory / 'wineprefix'
     prefix.mkdir(mode=0o700)
     prefix_identity = (prefix.stat().st_dev, prefix.stat().st_ino)
+    process_owner.gpu_prefix_identity = prefix_identity
     probe_environment = dict(environment)
     probe_environment.update(process_owner.environment)
     probe_environment['WINEPREFIX'] = str(prefix)
@@ -291,11 +380,17 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
     try:
         child = run_probe(owner, 'gpu-wine-prerequisites', [owner.args.wine, base.windows_path(executable)],
                           probe_environment, 90, allow_background_output=True)
+        probe_error = getattr(child, 'gpu_probe_error', None)
+        if probe_error is not None:
+            receipt['wine_probe_execution_failure'] = {'type': type(probe_error).__name__,
+                'message': str(probe_error)[:500]}
+        record_wgl_probe(child, receipt)
     finally:
         receipt['wine_probe_initialization_and_execution_seconds'] = round(time.monotonic() - started, 3)
         # Only this prefix is shut down. The accepted Game/server prefix and its
         # current lifecycle/readiness markers are never read or modified here.
         try:
+            verify_private_prefix(prefix, prefix_identity)
             shutdown = owner.ctx.run('gpu-probe-prefix-stop', [owner.args.wineserver, '-k'], timeout=3,
                                      env=probe_environment, cleanup=True, check=False)
             process_owner.cleanup(time.monotonic() + 3)
@@ -308,36 +403,49 @@ def private_wgl_probe(owner, environment, executable, directory, receipt):
             if 'child' in locals():
                 child.reader.join(timeout=1)
                 child.writer.join(timeout=1)
-                require(not child.reader.is_alive() and not child.writer.is_alive()
-                        and len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow,
-                        'Private GPU probe output did not close within its bound')
+                require(child.process.poll() is not None
+                        and not child.reader.is_alive() and not child.writer.is_alive(),
+                        'Private GPU probe leader/output shutdown could not be proved')
                 child.completion['output_capture_open'] = False
+                child.completion['private_prefix_shutdown_and_output_eof'] = True
                 owner.ctx.record(child, refresh=True)
-            require(not prefix.is_symlink() and prefix.is_dir()
-                    and (prefix.stat().st_dev, prefix.stat().st_ino) == prefix_identity,
-                    'Private GPU probe prefix changed before cleanup')
+                record_wgl_probe(child, receipt)
+            verify_private_prefix(prefix, prefix_identity)
             shutil.rmtree(prefix)
             receipt['probe_cleanup_safe'] = True
         except BaseException as error:
             receipt['probe_cleanup_safe'] = False
             receipt['probe_process_cleanup'] = process_owner.receipt
             raise GPUCleanupError('GPU probe cleanup needs attention: ' + str(error)[:300]) from error
-    return validate_wgl_probe(child.text())
+    check_probe_owner(owner)
+    require(len(child.output) <= PROBE_OUTPUT_LIMIT and not child.overflow,
+            'GPU probe output exceeded its bound')
+    if probe_error is not None:
+        raise probe_error
+    result = validate_wgl_probe(child.text())
+    require(child.process.poll() == 0,
+            'Wine GPU prerequisite probe exited without success: ' + str(child.process.poll()))
+    return result
 
 
 def cleanup_probes(owner):
     """Retry unsafe isolated owners in final cleanup; never claim them reaped."""
     failures = []
     deadline = time.monotonic() + 3
-    for process_owner, environment, _prefix, receipt in getattr(owner, 'gpu_probe_owners', []):
+    for process_owner, environment, prefix, receipt in getattr(owner, 'gpu_probe_owners', []):
         if receipt.get('probe_cleanup_safe') is True:
             continue
         try:
             require(time.monotonic() < deadline, 'GPU final cleanup bound expired')
-            owner.ctx.run('gpu-probe-final-prefix-stop', [owner.args.wineserver, '-k'],
-                          timeout=max(.1, min(1, deadline - time.monotonic())),
-                          env=environment, cleanup=True, check=False)
-            process_owner.cleanup(deadline)
+            try:
+                verify_private_prefix(prefix, process_owner.gpu_prefix_identity)
+                owner.ctx.run('gpu-probe-final-prefix-stop', [owner.args.wineserver, '-k'],
+                              timeout=max(.1, min(1, deadline - time.monotonic())),
+                              env=environment, cleanup=True, check=False)
+            finally:
+                # A replaced prefix must never direct wineserver at a different
+                # session. Its original token workers remain safe to inspect.
+                process_owner.cleanup(deadline)
             receipt['probe_cleanup_safe'] = process_owner.receipt.get('complete') is True
             require(receipt['probe_cleanup_safe'], 'Isolated GPU probe descendants remain')
         except Exception as error:
@@ -399,6 +507,7 @@ def apply_profile(owner, baseline, label):
     owner.ctx.report['client_gpu_profile'] = receipt
     if requested == 'software':
         return dict(baseline)
+    owner.gpu_probe_owner_check_failure = None
     try:
         require(requested == 'turnip', 'Unknown requested GPU profile')
         require(count <= 4, 'GPU profile attempt count exceeded bound')
@@ -439,7 +548,9 @@ def apply_profile(owner, baseline, label):
     except Exception as error:
         # Cancellation, server-health failure, or the overall deadline remains
         # fatal. Only an ordinary rejected optional prerequisite may fall back.
-        owner.ctx.check()
+        if getattr(owner, 'gpu_probe_owner_check_failure', None) is not None:
+            raise owner.gpu_probe_owner_check_failure
+        check_probe_owner(owner)
         require(receipt['probe_cleanup_safe'] is True, 'Unsafe GPU probe cannot start a fallback Game')
         receipt.update(state='software_fallback', fallback_reason=(type(error).__name__ + ': ' + str(error))[:500])
         owner.ctx.event('stage', status='running', message='No GPU available; using Software. ' + receipt['fallback_reason'])

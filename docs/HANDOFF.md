@@ -1,3 +1,50 @@
+# Thor GPU-start failure repair — 2026-10-08
+
+**0.13.21 candidate / version code 36; publication not yet claimed in this
+source checkpoint.** The user's new .20 exports establish unchanged Software
+performance and a failed GPU preflight before Game starts. Resume this narrow
+repair; do not repeat .20/Mesa/Game builds or the unchanged Software benchmark.
+Read `docs/COH-PERFORMANCE-0.13.21.md` for exact report hashes and measured
+boundaries, and `docs/COH-Atlas-Gameplay-0.13.21-testing.txt` for device steps.
+
+The GPU report passed Adreno740/Turnip native queue and Wine WGL draw/texture/
+ARB/VBO/FBO checks, then returned exit10 at GL_FRONT post-swap readback.
+Background Wine output holders masked that original error during generic
+shutdown. The helper now finalizes the isolated prefix, owned token workers
+and EOF before classifying the failed leader, retains the raw original
+failure, and permits fallback only with proven cleanup. Ordinary WGL timeout/
+malformed/local output-bound rejection follows that proof; cancellation,
+health/global output/deadline failures remain fatal. The real WGL V2
+presentation gate requires two different actual screen-pixel patterns;
+GL_FRONT remains diagnostic. No full Game/GPU or FPS claim is granted by it.
+
+The Software guest strictly verified save/reopen/SQL/powers/costume but Android
+rejected its valid 1304.498-second current-session observation against a legacy
+1210-second cap. Two reviewed Java validators now require the guest budget to
+match Android's already-approved native session/PID/time receipt and bounded
+monotonic deadline. Save/producer/payload/current-APK checks stay strict.
+
+The new probe-only package/build workflow retains the exact audited public
+.20 donor APK, 73 of77 outer runtime payloads, Game/20DLLs, Mesa/Turnip/native
+Vulkan probe, assets, servers, Wine/FEX/rootfs, display/input and signing
+identity. Only small WGL PE32 compilation, two Java validators/DEX, GPU helper,
+GPU archive and verification/version metadata change. The old producer source/
+ABI receipts remain explicit; no new driver/native Game compilation occurs.
+
+**Release gates:** `.github/workflows/android-client-gpu-repair.yml` compiles
+production Win32/WGL, packages the retained driver with the repaired probe,
+runs all96 retained suites plus3 new/continuation suites with7 real PostgreSQL
+fixtures, builds/signs .21, audits before publishing, then independently
+redownloads and audits the actual public APK. Record final owner source SHA,
+run, release/asset/APK pins and zero-skip totals after all jobs pass. Existing
+.20 and earlier publication evidence below remains preserved.
+
+**Next physical milestone:** GPU preflight then actual Game renderer/Atlas
+correctness and matched30-cap route. Use actual frame cadence and renderer/
+presentation costs to choose the next optimization. Black tearing remains
+unresolved; do not promise30FPS or infer hardware Game rendering from probes.
+Keep startup/zoning deferred and preserve character/imported data.
+
 # Interrupted-session recovery and renderer report analysis — 2026-10-08
 
 **Device APK remains the completed, published 0.13.20 below.** Recovery found

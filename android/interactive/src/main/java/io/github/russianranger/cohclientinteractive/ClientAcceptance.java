@@ -193,6 +193,58 @@ final class ClientAcceptance {
                 && Boolean.FALSE.equals(report.get("input_effect_verified"))
                 && ("finish_requested".equals(reason) || "interaction_timeout".equals(reason));
     }
+
+    /** Reopen may grant a new 20 minute window only after an owned native connection. */
+    static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session,
+            long clientPid, long windowStarted, long windowEnded, long budgetDeadline,
+            long launcherStarted, long operationStarted) {
+        Map<?, ?> report = object(value);
+        Object seconds = report.get("observation_seconds");
+        if (!(seconds instanceof Number)) return false;
+        double observed = ((Number) seconds).doubleValue();
+        if (!Double.isFinite(observed) || observed < 30) return false;
+        if (acceptedBudgets == null || acceptedBudgets.isEmpty()) return observed <= 1210;
+        Object rows = report.get("character_session_budgets");
+        if (!(rows instanceof List) || ((List<?>) rows).size() != acceptedBudgets.size()
+                || acceptedBudgets.size() > 2 || !number(report.get("interaction_timeout_seconds"), 1200)
+                || session == null || !session.matches("[0-9a-f]{32}") || clientPid <= 0
+                || operationStarted < 0 || launcherStarted < operationStarted || windowStarted < launcherStarted
+                || windowEnded < windowStarted || budgetDeadline <= windowStarted
+                || budgetDeadline - operationStarted > 5400000 || budgetDeadline - launcherStarted > 2100000
+                || windowEnded - budgetDeadline > 10000
+                || observed > (budgetDeadline - windowStarted) / 1000.0 + 10
+                || observed > (windowEnded - windowStarted) / 1000.0 + 10) return false;
+        // These events were accepted by ClientSessionBudget.apply during this
+        // operation, after the current character-connected/relocated event.
+        // A guest report alone cannot extend the old menu observation bound.
+        String[] integers = {"format", "client_pid", "character_id", "map_id", "revision",
+                "generated_utc_ms", "deadline_utc_ms", "save_request_deadline_utc_ms", "movement_deadline_utc_ms"};
+        for (int i = 0; i < acceptedBudgets.size(); i++) {
+            Map<?, ?> accepted = object(acceptedBudgets.get(i)), row = object(((List<?>) rows).get(i));
+            if (!"character_session_budget".equals(accepted.get("type"))
+                    || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
+                    || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
+                    || !number(row.get("map_id"), 1) || !number(row.get("revision"), i + 1)
+                    || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
+                    || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
+            for (String name : integers) {
+                Object reported = row.get(name), approved = accepted.get(name);
+                if (!(reported instanceof Integer || reported instanceof Long)
+                        || !(approved instanceof Integer || approved instanceof Long)
+                        || ((Number) reported).longValue() != ((Number) approved).longValue()) return false;
+            }
+            for (String name : new String[]{"session_id", "name", "account", "phase"})
+                if (!row.get(name).equals(accepted.get(name))) return false;
+            for (String name : new String[]{"native_client_ready_observed", "reopen_verified"})
+                if (!yes(row.get(name)) || !yes(accepted.get(name))) return false;
+            if (i == 1)
+                for (String name : new String[]{"ordinary_stuck_observed", "stable_ground_verified",
+                        "recovery_requested", "recovery_verified"})
+                    if (!yes(row.get(name)) || !yes(accepted.get(name))) return false;
+        }
+        return true;
+    }
+
     static boolean cleanupSafe(Object value) {
         Map<?, ?> report = object(value), execution = object(report.get("cleanup_execution"));
         Object children = report.get("processes");

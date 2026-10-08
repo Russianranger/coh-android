@@ -1609,9 +1609,10 @@ public final class ClientRuntime {
         for (String key : new String[]{"client_process_started", "renderer_initialized", "all_data_loaded",
                 "client_main_loop_reached", "client_window_observed", "startup_observed"})
             if (!Boolean.TRUE.equals(report.opt(key))) return false;
-        double observed = report.optDouble("observation_seconds", -1);
         double elapsed = report.optDouble("startup_elapsed_seconds", -1);
-        if (!Double.isFinite(observed) || observed < 30 || observed > 1210
+        if (!ClientAcceptance.clientObservationAccepted(jsonValue(report), sessionBudgetEvents,
+                session, observedClientPid, clientWindowObservedUptime, clientWindowEndedUptime,
+                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime)
                 || !Double.isFinite(elapsed) || elapsed < 0 || elapsed > 900) return false;
         JSONObject launch = report.optJSONObject("client_launch");
         if (launch == null || !session.equals(launch.optString("session_id")) || observedClientPid < 1
