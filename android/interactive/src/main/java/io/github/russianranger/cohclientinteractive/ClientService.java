@@ -217,6 +217,11 @@ public final class ClientService extends Service {
         record.put("captured_elapsed_ms",c.capturedAtUptimeMillis);record.put("sequence",c.sequence);record.put("surface_generation",c.surfaceGeneration);
         record.put("source_width",c.width);record.put("source_height",c.height);record.put("surface_width",c.surfaceWidth);record.put("surface_height",c.surfaceHeight);
         record.put("sha256",c.sha256);record.put("non_uniform",c.nonUniform);
+        record.put("pixel_copy_wall_ms",c.pixelCopyWallMs);record.put("encoding_wall_ms",c.encodingWallMs);
+        record.put("encoding_cpu_ms",c.encodingCpuMs);record.put("presentation_freeze_ms",c.presentationFreezeMs);
+        record.put("encode_queue_wall_ms",c.encodeQueueWallMs);record.put("encoding_on_ui_thread",c.encodingOnUiThread);
+        record.put("pending_frames_peak",c.pendingFramesPeak);record.put("frames_coalesced_during_copy",c.framesCoalescedDuringCopy);
+        r.recordCaptureTiming(record);
         r.recordSurfaceCapture(record,c.png);if(c.nonUniform)certified++;publish();
     }
     public void recordCertificationError(String error){

@@ -552,6 +552,48 @@ SIDEBAR_ALLOWED = SIDEBAR_SOURCES | frozenset({
 })
 
 
+# This continuation appends one source-bound Game renderer attribution layer,
+# four reviewed Android capture/report sources and the exact guest safety
+# helpers. No directory glob or inherited broad scope can join this owner.
+RENDERER_ATTRIBUTION_SOURCES = frozenset({
+    '.github/workflows/android-client-renderer-attribution.yml',
+    'tools/android/interactive/package_client_renderer_attribution_native.py',
+    'tools/android/interactive/build_client_renderer_attribution_apk.py',
+    'tools/android/interactive/qualify_client_renderer_attribution.py',
+    'tools/android/interactive/test_client_renderer_attribution_package.py',
+    'tools/android/interactive/test_client_renderer_attribution_native.py',
+    'tools/android/interactive/test_client_renderer_attribution_source.py',
+    'tools/android/interactive/test_client_renderer_attribution_contract.py',
+    'patches/client-renderer-attribution/0001-renderer-attribution-and-visible-fps.patch',
+    'database/client-renderer-attribution/overlay/Game/src/cohClientRendererAttribution.h',
+    JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java',
+    JAVA+'ClientService.java', JAVA+'ClientSurface.java',
+    'tools/android/interactive/test_client_surface_capture.py',
+    'tools/android/interactive/test_client_capture_metrics.py',
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/texture_header_index.py',
+    'android/guest/local_character_server.py',
+    'tools/android/interactive/test_stock_power_delta.py',
+})
+RENDERER_ATTRIBUTION_DOCS = frozenset({
+    'docs/HANDOFF.md',
+    'docs/android-evidence/renderer-attribution-0.13.19-publication.json',
+})
+RENDERER_ATTRIBUTION_ALLOWED = RENDERER_ATTRIBUTION_SOURCES | RENDERER_ATTRIBUTION_DOCS | frozenset({
+    # This retained setup fixture now models the reviewed Surface cancellation
+    # API. It may accompany this lane but keeps its old owner when edited alone.
+    'tools/android/interactive/test_setup_service.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-PERFORMANCE-0.13.19.md',
+    'docs/COH-Atlas-Gameplay-0.13.19-testing.txt',
+    'docs/android-evidence/renderer-attribution-0.13.18-thor-20261008.json',
+})
+
+
 def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
     return bool(event == 'push' and re.fullmatch('[0-9a-f]{40}', before or '')
         and re.fullmatch('[0-9a-f]{40}', head or '')
@@ -559,7 +601,18 @@ def bounded_push(event, before, head, parent, names, allowed=ALLOWED):
         and names and set(names) <= allowed)
 
 
+def renderer_attribution_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, RENDERER_ATTRIBUTION_ALLOWED)
+        and set(names) & RENDERER_ATTRIBUTION_SOURCES)
+
+
+def renderer_attribution_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, RENDERER_ATTRIBUTION_DOCS)
+        and 'docs/android-evidence/renderer-attribution-0.13.19-publication.json' in names)
+
+
 def sidebar_push(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, SIDEBAR_ALLOWED)
         and set(names) & SIDEBAR_SOURCES)
 
@@ -571,6 +624,7 @@ def sidebar_docs(event, before, head, parent, names):
 
 
 def gameplay_performance_push(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, GAMEPLAY_PERFORMANCE_ALLOWED)
         and set(names) & GAMEPLAY_PERFORMANCE_SOURCES)
 
@@ -582,6 +636,7 @@ def gameplay_performance_docs(event, before, head, parent, names):
 
 
 def scene_performance_push(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, SCENE_PERFORMANCE_ALLOWED)
         and set(names) & SCENE_PERFORMANCE_SOURCES)
 
@@ -593,6 +648,7 @@ def scene_performance_docs(event, before, head, parent, names):
 
 
 def performance_push(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     return bool(bounded_push(event, before, head, parent, names, PERFORMANCE_ALLOWED)
         and set(names) & PERFORMANCE_SOURCES)
 
@@ -661,6 +717,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -680,6 +737,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -697,6 +755,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -716,6 +775,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -735,6 +795,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -752,6 +813,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -767,6 +829,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -781,6 +844,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -795,6 +859,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -808,6 +873,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -820,6 +886,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -831,6 +898,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -841,6 +909,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -850,6 +919,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False
@@ -858,6 +928,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False
     if gameplay_performance_push(event, before, head, parent, names) or gameplay_performance_docs(event, before, head, parent, names): return False
     if scene_performance_push(event, before, head, parent, names) or scene_performance_docs(event, before, head, parent, names): return False

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.Debug;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.PixelCopy;
@@ -17,6 +18,9 @@ import android.view.SurfaceView;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 
@@ -45,9 +49,14 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         public final boolean nonUniform;
         /** This capture owns its PNG bytes; the view neither retains nor subsequently changes them. */
         public final byte[] png;
+        /** Capture costs are separate from native frame timings and RFB update rate. */
+        public final long pixelCopyWallMs, encodingWallMs, encodingCpuMs, presentationFreezeMs, encodeQueueWallMs;
+        public final boolean encodingOnUiThread;
+        public final int pendingFramesPeak, framesCoalescedDuringCopy;
 
         private Capture(Frame frame, int sw, int sh, int generation, long capturedAt,
-                String hash, boolean varied, byte[] bytes) {
+                String hash, boolean varied, byte[] bytes, CaptureWork work,
+                long encodingWall, long encodingCpu, long encodingQueue, boolean onUiThread) {
             session = frame.session.id;
             sequence = frame.sequence;
             width = frame.width;
@@ -59,6 +68,14 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             sha256 = hash;
             nonUniform = varied;
             png = bytes;
+            pixelCopyWallMs = Math.max(0, capturedAt - work.startedAt);
+            presentationFreezeMs = Math.max(0, work.freezeEndedAt - work.startedAt);
+            encodingWallMs = encodingWall;
+            encodingCpuMs = encodingCpu;
+            encodeQueueWallMs = encodingQueue;
+            encodingOnUiThread = onUiThread;
+            pendingFramesPeak = work.pendingFramesPeak;
+            framesCoalescedDuringCopy = Math.max(0, work.framesDuringCopy - 1);
         }
     }
 
@@ -69,8 +86,18 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Paint paint = new Paint();
     private final Object pendingLock = new Object();
+    // One process-wide encoder also bounds Activity recreation. A direct handoff
+    // has no waiting queue. Each view's owned token prevents another PixelCopy
+    // bitmap while its worker or main-thread delivery runs; idle threads retire.
+    private static final ThreadPoolExecutor captureEncoder = new ThreadPoolExecutor(0, 1, 5,
+            TimeUnit.SECONDS, new SynchronousQueue<>(), runnable -> {
+                Thread thread = new Thread(runnable, "coh-surface-capture");
+                thread.setDaemon(true);
+                return thread;
+            });
     private volatile Session session;
     private volatile Listener listener;
+    private volatile long listenerEpoch;
     private Frame pending;
     private boolean renderPosted;
     // All remaining mutable state is confined to the main thread.
@@ -84,6 +111,8 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     private Bitmap displayed;
     private boolean ready;
     private boolean capturePending;
+    private CaptureWork captureWork;
+    private boolean detached;
     private boolean captureTimerPosted;
     private int surfaceGeneration;
     private long nextCaptureAt;
@@ -111,6 +140,30 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         }
     }
 
+    private static final class CaptureWork {
+        final Frame frame;
+        final Listener target;
+        final long listenerEpoch, startedAt;
+        final int generation, surfaceWidth, surfaceHeight;
+        final RectF content;
+        final Bitmap bitmap;
+        volatile boolean cancelled;
+        boolean copyFinished, recycled;
+        long capturedAt, freezeEndedAt, encodeRequestedAt;
+        int framesDuringCopy, pendingFramesPeak;
+        CaptureWork(Frame frame, Listener target, long epoch, int generation,
+                int sw, int sh, RectF content, Bitmap bitmap, long startedAt) {
+            this.frame = frame; this.target = target; listenerEpoch = epoch;
+            this.generation = generation; surfaceWidth = sw; surfaceHeight = sh;
+            this.content = content; this.bitmap = bitmap; this.startedAt = startedAt;
+        }
+        // PixelCopy owns the bitmap until its callback; then only the encoder owns
+        // it. Cancellation invalidates delivery but never recycles under a writer.
+        synchronized void recycle() {
+            if (!recycled) { recycled = true; bitmap.recycle(); }
+        }
+    }
+
     public ClientSurface(Context context) {
         super(context);
         paint.setFilterBitmap(false);
@@ -132,6 +185,7 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         }
         main.post(() -> {
             if (session != next) return;
+            invalidateCapture();
             releaseInput();
             pointerX = inputWidth / 2f; pointerY = inputHeight / 2f;
             if (lastFrame != null && lastFrame.session != next) lastFrame = null;
@@ -146,6 +200,7 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         if (Looper.myLooper() != Looper.getMainLooper())
             throw new IllegalStateException("Clear client frames on the UI thread");
         releaseInput();
+        invalidateCapture();
         synchronized (pendingLock) { session = null; pending = null; }
         lastFrame = null;
         main.removeCallbacks(captureTimer);
@@ -154,8 +209,13 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     }
 
     public void setCaptureListener(Listener listener) {
-        this.listener = listener;
+        synchronized (pendingLock) {
+            this.listener = listener;
+            listenerEpoch++;
+        }
         main.post(() -> {
+            if (captureWork != null && captureWork.listenerEpoch != listenerEpoch)
+                invalidateCapture();
             if (this.listener == null) {
                 main.removeCallbacks(captureTimer);
                 captureTimerPosted = false;
@@ -173,6 +233,10 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         synchronized (pendingLock) {
             if (session == null) return;
             pending = new Frame(session, argb.clone(), width, height, sequence);
+            if (capturePending && captureWork != null) {
+                if (captureWork.framesDuringCopy < Integer.MAX_VALUE) captureWork.framesDuringCopy++;
+                captureWork.pendingFramesPeak = 1; // Only the newest frame is retained.
+            }
         }
         scheduleRender();
     }
@@ -186,7 +250,7 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     }
 
     private void scheduleCapture() {
-        if (!ready || listener == null || lastFrame == null || lastFrame.session != session
+        if (!ready || detached || captureWork != null || listener == null || lastFrame == null || lastFrame.session != session
                 || captureTimerPosted) return;
         captureTimerPosted = true;
         main.postAtTime(captureTimer, Math.max(SystemClock.uptimeMillis(), nextCaptureAt));
@@ -197,7 +261,7 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         synchronized (pendingLock) {
             renderPosted = false;
             // Freeze presentation until PixelCopy completes so sequence identifies the copied frame.
-            if (!ready || capturePending) return;
+            if (!ready || detached || capturePending) return;
             frame = pending != null ? pending : lastFrame;
             pending = null;
         }
@@ -243,49 +307,115 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
             pointerX = Math.min(pointerX, inputWidth - 1); pointerY = Math.min(pointerY, inputHeight - 1);
         }
         updateCursor();
-        if (listener == null) return;
+        if (listener == null || captureWork != null) return;
         long now = SystemClock.uptimeMillis();
         if (now < nextCaptureAt) {
             scheduleCapture();
             return;
         }
         nextCaptureAt = now + CAPTURE_INTERVAL_MS;
-        final int sw = surfaceWidth, sh = surfaceHeight;
-        final RectF content = destination;
         // Evidence is only read from the real Android Surface, never from the RFB pixel array.
         final Bitmap captured = Bitmap.createBitmap(CAPTURE_WIDTH, CAPTURE_HEIGHT, Bitmap.Config.ARGB_8888);
-        capturePending = true;
+        final CaptureWork work;
+        synchronized (pendingLock) {
+            work = new CaptureWork(frame, listener, listenerEpoch, generation,
+                    surfaceWidth, surfaceHeight, destination, captured, SystemClock.uptimeMillis());
+            captureWork = work;
+            capturePending = true;
+        }
         try {
-            PixelCopy.request(this, captured, result -> {
-                capturePending = false;
-                try {
-                    if (!ready || generation != surfaceGeneration || frame.session != session) return;
-                    if (result != PixelCopy.SUCCESS) {
-                        reportError("PixelCopy result " + result);
-                        return;
-                    }
-                    long capturedAt = SystemClock.uptimeMillis();
-                    nextCaptureAt = Math.max(nextCaptureAt, capturedAt + CAPTURE_INTERVAL_MS);
-                    boolean varied = hasNonUniformContent(captured, content, sw, sh);
-                    BoundedPngOutput output = new BoundedPngOutput();
-                    if (!captured.compress(Bitmap.CompressFormat.PNG, 100, output))
-                        throw new IllegalStateException("PNG encoding failed");
-                    byte[] png = output.toByteArray();
-                    Listener target = listener;
-                    if (target != null) target.onCapture(new Capture(frame, sw, sh, generation,
-                            capturedAt, sha256(png), varied, png));
-                } catch (RuntimeException ex) {
-                    reportError("Surface capture: " + ex.getClass().getSimpleName());
-                } finally {
-                    captured.recycle();
-                    scheduleRenderIfPending();
-                    scheduleCapture();
-                }
-            }, main);
+            PixelCopy.request(this, captured, result -> copied(work, result), main);
         } catch (RuntimeException ex) {
+            if (!work.copyFinished) {
+                finishCopy(work);
+                work.recycle();
+                completeCapture(work, null, "PixelCopy request: " + ex.getClass().getSimpleName());
+            }
+        }
+    }
+
+    private boolean currentCapture(CaptureWork work) {
+        return !work.cancelled && ready && !detached && work.generation == surfaceGeneration
+                && work.frame.session == session && work.target != null
+                && work.target == listener && work.listenerEpoch == listenerEpoch;
+    }
+
+    private void invalidateCapture() {
+        synchronized (pendingLock) {
+            if (captureWork != null) {
+                captureWork.cancelled = true;
+                if (captureWork.freezeEndedAt == 0) captureWork.freezeEndedAt = SystemClock.uptimeMillis();
+            }
             capturePending = false;
-            captured.recycle();
-            reportError("PixelCopy request: " + ex.getClass().getSimpleName());
+        }
+        scheduleRenderIfPending();
+    }
+
+    private void finishCopy(CaptureWork work) {
+        synchronized (pendingLock) {
+            work.copyFinished = true;
+            work.capturedAt = SystemClock.uptimeMillis();
+            if (work.freezeEndedAt == 0) work.freezeEndedAt = work.capturedAt;
+            if (captureWork == work) capturePending = false;
+        }
+        // Resume the actual Surface before scan, compression and SHA-256 begin.
+        scheduleRenderIfPending();
+    }
+
+    private void copied(CaptureWork work, int result) {
+        if (work.copyFinished) return;
+        finishCopy(work);
+        if (!currentCapture(work) || result != PixelCopy.SUCCESS) {
+            work.recycle();
+            completeCapture(work, null, result == PixelCopy.SUCCESS ? null : "PixelCopy result " + result);
+            return;
+        }
+        nextCaptureAt = Math.max(nextCaptureAt, work.capturedAt + CAPTURE_INTERVAL_MS);
+        try {
+            work.encodeRequestedAt = SystemClock.uptimeMillis();
+            captureEncoder.execute(() -> encodeCapture(work));
+        } catch (RuntimeException ex) {
+            work.recycle();
+            completeCapture(work, null, "Capture encoder: " + ex.getClass().getSimpleName());
+        }
+    }
+
+    private void encodeCapture(CaptureWork work) {
+        long started = SystemClock.uptimeMillis(), cpuStarted = Debug.threadCpuTimeNanos();
+        boolean onUiThread = Looper.myLooper() == Looper.getMainLooper();
+        Capture capture = null;
+        String failure = null;
+        try {
+            if (work.cancelled) return;
+            boolean varied = hasNonUniformContent(work.bitmap, work.content, work.surfaceWidth, work.surfaceHeight);
+            BoundedPngOutput output = new BoundedPngOutput();
+            if (!work.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output))
+                throw new IllegalStateException("PNG encoding failed");
+            byte[] png = output.toByteArray();
+            String hash = sha256(png);
+            capture = new Capture(work.frame, work.surfaceWidth, work.surfaceHeight, work.generation,
+                    work.capturedAt, hash, varied, png, work,
+                    Math.max(0, SystemClock.uptimeMillis() - started),
+                    Math.max(0, Debug.threadCpuTimeNanos() - cpuStarted) / 1000000,
+                    Math.max(0, started - work.encodeRequestedAt), onUiThread);
+        } catch (RuntimeException ex) {
+            failure = "Surface capture: " + ex.getClass().getSimpleName();
+        } finally {
+            work.recycle();
+            final Capture result = capture;
+            final String error = failure;
+            main.post(() -> completeCapture(work, result, error));
+        }
+    }
+
+    private void completeCapture(CaptureWork work, Capture capture, String failure) {
+        try {
+            if (currentCapture(work)) {
+                if (failure != null) work.target.onCaptureError(failure);
+                else if (capture != null) work.target.onCapture(capture);
+            }
+        } finally {
+            synchronized (pendingLock) { if (captureWork == work) captureWork = null; }
             scheduleRenderIfPending();
             scheduleCapture();
         }
@@ -439,11 +569,13 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
     @Override public void surfaceCreated(SurfaceHolder holder) {
         ready = true;
         surfaceGeneration++;
+        invalidateCapture();
         scheduleRender();
     }
 
     @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         surfaceGeneration++;
+        invalidateCapture();
         scheduleRender();
     }
 
@@ -452,11 +584,29 @@ public final class ClientSurface extends SurfaceView implements SurfaceHolder.Ca
         ready = false;
         updateCursor();
         surfaceGeneration++;
+        invalidateCapture();
         main.removeCallbacks(captureTimer);
         captureTimerPosted = false;
         if (displayed != null) {
             displayed.recycle();
             displayed = null;
         }
+    }
+
+    @Override protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        detached = false;
+    }
+
+    @Override protected void onDetachedFromWindow() {
+        releaseInput();
+        detached = true;
+        ready = false;
+        surfaceGeneration++;
+        invalidateCapture();
+        main.removeCallbacks(captureTimer);
+        captureTimerPosted = false;
+        if (displayed != null) { displayed.recycle(); displayed = null; }
+        super.onDetachedFromWindow();
     }
 }

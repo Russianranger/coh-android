@@ -12,6 +12,125 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_renderer_attribution_setup_fixture_is_only_an_exact_companion(self):
+        fixture = 'tools/android/interactive/test_setup_service.py'
+        names = ['tools/android/interactive/build_client_renderer_attribution_apk.py', fixture]
+        self.assertIn(fixture, change.RENDERER_ATTRIBUTION_ALLOWED)
+        self.assertNotIn(fixture, change.RENDERER_ATTRIBUTION_SOURCES)
+        self.assertTrue(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertTrue(change.setup_push('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertTrue(change.setup_required('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        for function in self.gameplay_historical_publishers():
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+            for foreign in ('tools/android/interactive/test_setup_service_neighbor.py',
+                    'tools/android/interactive/test_setup_memory_package.py'):
+                with self.subTest(function=function.__name__, foreign=foreign):
+                    self.assertFalse(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+
+    def test_renderer_attribution_routes_its_exact_native_capture_and_guest_lane(self):
+        names = sorted(change.RENDERER_ATTRIBUTION_ALLOWED)
+        self.assertTrue(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for owner in (change.sidebar_push, change.gameplay_performance_push,
+                change.scene_performance_push, change.performance_push):
+            self.assertFalse(owner('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+
+    def test_renderer_attribution_individual_reviewed_owner_paths_route_without_broad_globs(self):
+        for name in sorted(change.RENDERER_ATTRIBUTION_SOURCES):
+            with self.subTest(source=name):
+                self.assertTrue(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, [name]))
+                for owner in (change.sidebar_push, change.gameplay_performance_push,
+                        change.scene_performance_push, change.performance_push):
+                    self.assertFalse(owner('push', 'a'*40, 'b'*40, 'a'*40, [name]))
+                for function in self.gameplay_historical_publishers():
+                    self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, [name]))
+        self.assertTrue(all(not any(character in name for character in '*?[')
+            for name in change.RENDERER_ATTRIBUTION_ALLOWED))
+
+    def test_renderer_attribution_cannot_hide_native_server_asset_or_neighbor_mutations(self):
+        names = sorted(change.RENDERER_ATTRIBUTION_ALLOWED)
+        forbidden = ('android/native/client-launcher.c', 'android/runtime-lock.json',
+            'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+            'upstream/ouroboros/MapServer/src/entity/entity.c',
+            'android/guest/local_login_server.py', 'android/guest/client_interactive_diagnostic.py',
+            'android/guest/native_training_save.py', 'android/guest/local_character_server_neighbor.py',
+            change.JAVA+'ClientInput.java', change.JAVA+'InteractiveRfbClient.java',
+            change.JAVA+'ClientSurfaceNeighbor.java', 'android/interactive/src/main/AndroidManifest.xml',
+            'android/interactive/src/main/res/drawable/foreign.xml',
+            'assets/client-visual-manifest.json', 'assets/atlas-beacons.zip',
+            'patches/client-renderer-attribution/0002-unreviewed.patch',
+            'database/client-renderer-attribution/overlay/Game/src/unreviewed.h',
+            'tools/android/interactive/test_client_renderer_attribution_unreviewed.py',
+            'tools/android/interactive/test_client_surface_capture_neighbor.py',
+            'tools/android/interactive/test_stock_power_delta_neighbor.py',
+            'tools/android/interactive/package_client_gameplay_performance_native.py',
+            'tools/android/interactive/build_client_sidebar_apk.py',
+            'patches/client-gameplay-performance/0001-gameplay-cap-and-texture-diagnostics.patch',
+            'tools/android/interactive/test_fresh_profile_recovery.py', 'foreign.py')
+        for foreign in forbidden:
+            with self.subTest(foreign=foreign):
+                self.assertNotIn(foreign, change.RENDERER_ATTRIBUTION_ALLOWED)
+                mixed = names+[foreign]
+                self.assertFalse(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+
+    def test_renderer_attribution_requires_exact_source_marker_and_immediate_parent(self):
+        names = sorted(change.RENDERER_ATTRIBUTION_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, None, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40,
+                    sorted(change.RENDERER_ATTRIBUTION_ALLOWED-change.RENDERER_ATTRIBUTION_SOURCES))):
+            with self.subTest(event=event, before=before, head=head, files=files):
+                self.assertFalse(change.renderer_attribution_push(event, before, head, parent, files))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function(event, before, head, parent, files))
+
+    def test_renderer_attribution_publication_checkpoint_is_exact_docs_only(self):
+        names = sorted(change.RENDERER_ATTRIBUTION_DOCS)
+        self.assertTrue(change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            with self.subTest(function=function.__name__):
+                self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names))
+                for foreign in ('docs/COH-PERFORMANCE-0.13.19.md',
+                        'docs/android-evidence/renderer-attribution-0.13.19-publication-neighbor.json',
+                        'android/guest/local_character_server.py', 'foreign.md'):
+                    self.assertFalse(change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+                self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names))
+                self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md']))
+        for foreign in ('foreign.md', 'android/native/client-launcher.c'):
+            for function in self.gameplay_historical_publishers():
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+
+    def test_renderer_attribution_classifier_cli_defers_all_fifteen_historical_gate_outputs(self):
+        for names in (sorted(change.RENDERER_ATTRIBUTION_ALLOWED), sorted(change.RENDERER_ATTRIBUTION_DOCS)):
+            with self.subTest(names=names), tempfile.TemporaryDirectory() as temporary:
+                output = Path(temporary)/'scope-output.txt'
+                environment = {'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40,
+                    'GITHUB_OUTPUT': str(output)}
+                values = ['a'*40+'\n', 'b'*40+'\n', ('\0'.join(names)+'\0').encode()]
+                with mock.patch.dict(change.os.environ, environment), \
+                        mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    change.main()
+                expected = ''.join(function.__name__+'=false\n'
+                    for function in self.gameplay_historical_publishers()[:-1])
+                self.assertEqual(output.read_text(), expected)
+
     def test_sidebar_retained_fresh_profile_fixture_correction_is_an_exact_companion(self):
         fixture = 'tools/android/interactive/test_fresh_profile_recovery.py'
         names = ['tools/android/interactive/build_client_sidebar_apk.py', fixture]
@@ -456,7 +575,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

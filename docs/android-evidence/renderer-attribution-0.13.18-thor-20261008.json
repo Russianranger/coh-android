@@ -1,0 +1,701 @@
+{
+  "RFB_viewer_evidence": {
+    "brief_black_tearing_root_cause_established": false,
+    "decode_draw_capture_queue_timing_exported": false,
+    "decoded_update_count": 3905,
+    "native_game_FPS_from_decoded_count": null,
+    "non_uniform_retained_captures": 8,
+    "note": "All eight retained interaction captures passed PixelCopy/nonuniform checks, which cannot exclude brief tearing between retained captures. Decoded updates include menus/loading and partial desktop updates; this count is not native game FPS.",
+    "per_update_rect_corruption_telemetry_exported": false,
+    "retained_interaction_captures": 8,
+    "source_height": 600,
+    "source_width": 800,
+    "successful_pixel_copy_captures": 8,
+    "surface_generations": [
+      2
+    ]
+  },
+  "app_version": "0.13.18",
+  "client_thread_followup": {
+    "client_CPU_affinity_allowed": "0-7",
+    "client_threads": 20,
+    "effective_Mesa_environment_exported": false,
+    "evidence": "guest-report.zip/client-evidence/owned-processes.json",
+    "host_PID": 19824,
+    "interval_CPU_worker_profile": false,
+    "named_llvmpipe_workers": 7,
+    "named_workers": [
+      "llvmpipe-0",
+      "llvmpipe-1",
+      "llvmpipe-2",
+      "llvmpipe-3",
+      "llvmpipe-4",
+      "llvmpipe-5",
+      "llvmpipe-6"
+    ],
+    "snapshot_UTC": "2026-10-08T02:29:52Z",
+    "worker_tuning_winner_established": false
+  },
+  "command_effect_caution": "Queued/dispatch/submitted records explicitly set native_effect_verified=false. No native runtime cap-state acknowledgement was emitted. Pacing changes independently support cap switching, and retained screenshots show the native FPS counter.",
+  "command_queue_dispatch_submission_events": [
+    {
+      "event": "performance_command_queued name=show_fps",
+      "uptime_ms": 488800473
+    },
+    {
+      "event": "performance_command_dispatch name=show_fps dispatch_utc_ms=1791426314456",
+      "uptime_ms": 488800474
+    },
+    {
+      "event": "performance_command_submitted name=show_fps submitted_utc_ms=1791426317693 native_effect_verified=false",
+      "uptime_ms": 488803710
+    },
+    {
+      "event": "performance_command_queued name=cap_10",
+      "uptime_ms": 488811187
+    },
+    {
+      "event": "performance_command_dispatch name=cap_10 dispatch_utc_ms=1791426325171",
+      "uptime_ms": 488811188
+    },
+    {
+      "event": "performance_command_submitted name=cap_10 submitted_utc_ms=1791426328410 native_effect_verified=false",
+      "uptime_ms": 488814427
+    },
+    {
+      "event": "performance_command_queued name=cap_30",
+      "uptime_ms": 488880662
+    },
+    {
+      "event": "performance_command_dispatch name=cap_30 dispatch_utc_ms=1791426394645",
+      "uptime_ms": 488880663
+    },
+    {
+      "event": "performance_command_submitted name=cap_30 submitted_utc_ms=1791426397882 native_effect_verified=false",
+      "uptime_ms": 488883899
+    }
+  ],
+  "command_segment_observations": {
+    "after_cap_10_submission_main_conservative": {
+      "console_emission_bounds": [
+        {
+          "emission_after_utc": "2026-10-08 02:25:40.149",
+          "emission_before_utc": "2026-10-08 02:25:41.171"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:25:49.402",
+          "emission_before_utc": "2026-10-08 02:25:50.935"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:00.490",
+          "emission_before_utc": "2026-10-08 02:26:00.959"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:07.376",
+          "emission_before_utc": "2026-10-08 02:26:10.975"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:19.923",
+          "emission_before_utc": "2026-10-08 02:26:21.938"
+        }
+      ],
+      "engine_wall": {
+        "count": 422,
+        "max_ms": 604.589,
+        "mean_ms": 114.703,
+        "over_125ms_count": 82,
+        "over_200ms_count": 20,
+        "p50_upper_ms": 100,
+        "p95_upper_ms": 200
+      },
+      "frame_interval": {
+        "count": 422,
+        "max_ms": 605.576,
+        "mean_cadence_hz": 8.422,
+        "mean_ms": 118.741,
+        "over_125ms_count": 95,
+        "over_200ms_count": 20,
+        "p50_upper_ms": 110,
+        "p95_upper_ms": 200
+      },
+      "frame_wall": {
+        "count": 422,
+        "max_ms": 605.572,
+        "mean_ms": 118.085,
+        "over_125ms_count": 91,
+        "over_200ms_count": 20,
+        "p50_upper_ms": 110,
+        "p95_upper_ms": 200
+      },
+      "pacing_wall": {
+        "count": 422,
+        "max_ms": 79.16,
+        "mean_ms": 25.615,
+        "over_125ms_count": 0,
+        "over_200ms_count": 0,
+        "p50_upper_ms": 33,
+        "p95_upper_ms": 83
+      },
+      "report_numbers": [
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "submit_wall": {
+        "count": 422,
+        "max_ms": 205.258,
+        "mean_ms": 25.205,
+        "over_125ms_count": 5,
+        "over_200ms_count": 1,
+        "p50_upper_ms": 16,
+        "p95_upper_ms": 100
+      },
+      "thread_cpu_ms": 7610.0,
+      "thread_cpu_ms_per_frame_or_present": 18.033,
+      "window_ms": 50108.452,
+      "work_wall": {
+        "count": 422,
+        "max_ms": 605.569,
+        "mean_ms": 92.47,
+        "over_125ms_count": 84,
+        "over_200ms_count": 20,
+        "p50_upper_ms": 83,
+        "p95_upper_ms": 200
+      }
+    },
+    "after_cap_10_submission_presentation_approximate": {
+      "console_emission_bounds": [
+        {
+          "emission_after_utc": "2026-10-08 02:25:40.149",
+          "emission_before_utc": "2026-10-08 02:25:41.171"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:25:50.935",
+          "emission_before_utc": "2026-10-08 02:25:51.929"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:00.982",
+          "emission_before_utc": "2026-10-08 02:26:01.407"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:10.975",
+          "emission_before_utc": "2026-10-08 02:26:14.452"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:26:19.923",
+          "emission_before_utc": "2026-10-08 02:26:21.938"
+        }
+      ],
+      "present_wall": {
+        "count": 426,
+        "max_ms": 101.502,
+        "mean_ms": 28.326,
+        "over_125ms_count": 0,
+        "over_200ms_count": 0,
+        "p50_upper_ms": 33,
+        "p95_upper_ms": 66
+      },
+      "presentation_interval": {
+        "count": 426,
+        "max_ms": 595.293,
+        "mean_cadence_hz": 8.438,
+        "mean_ms": 118.508,
+        "over_125ms_count": 128,
+        "over_200ms_count": 30,
+        "p50_upper_ms": 110,
+        "p95_upper_ms": 250
+      },
+      "report_numbers": [
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "swap_wall": {
+        "count": 426,
+        "max_ms": 100.943,
+        "mean_ms": 27.527,
+        "over_125ms_count": 0,
+        "over_200ms_count": 0,
+        "p50_upper_ms": 33,
+        "p95_upper_ms": 66
+      },
+      "thread_cpu_ms": 10770.0,
+      "thread_cpu_ms_per_frame_or_present": 25.282,
+      "window_ms": 50484.153
+    },
+    "after_cap_30_submission_main_conservative": {
+      "console_emission_bounds": [
+        {
+          "emission_after_utc": "2026-10-08 02:26:57.941",
+          "emission_before_utc": "2026-10-08 02:27:02.898"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:10.880",
+          "emission_before_utc": "2026-10-08 02:27:12.400"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:20.386",
+          "emission_before_utc": "2026-10-08 02:27:23.396"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:31.180",
+          "emission_before_utc": "2026-10-08 02:27:31.617"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:40.879",
+          "emission_before_utc": "2026-10-08 02:27:41.351"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:50.703",
+          "emission_before_utc": "2026-10-08 02:27:52.624"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:01.310",
+          "emission_before_utc": "2026-10-08 02:28:01.694"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:11.213",
+          "emission_before_utc": "2026-10-08 02:28:14.035"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:21.165",
+          "emission_before_utc": "2026-10-08 02:28:21.855"
+        }
+      ],
+      "engine_wall": {
+        "count": 909,
+        "max_ms": 478.443,
+        "mean_ms": 97.829,
+        "over_125ms_count": 167,
+        "over_200ms_count": 28,
+        "p50_upper_ms": 83,
+        "p95_upper_ms": 200
+      },
+      "frame_interval": {
+        "count": 909,
+        "max_ms": 479.826,
+        "mean_cadence_hz": 10.035,
+        "mean_ms": 99.648,
+        "over_125ms_count": 175,
+        "over_200ms_count": 31,
+        "p50_upper_ms": 100,
+        "p95_upper_ms": 200
+      },
+      "frame_wall": {
+        "count": 909,
+        "max_ms": 479.815,
+        "mean_ms": 98.786,
+        "over_125ms_count": 170,
+        "over_200ms_count": 29,
+        "p50_upper_ms": 100,
+        "p95_upper_ms": 200
+      },
+      "pacing_wall": {
+        "count": 909,
+        "max_ms": 0.045,
+        "mean_ms": 0.005,
+        "over_125ms_count": 0,
+        "over_200ms_count": 0,
+        "p50_upper_ms": 16,
+        "p95_upper_ms": 16
+      },
+      "report_numbers": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "submit_wall": {
+        "count": 909,
+        "max_ms": 460.195,
+        "mean_ms": 41.02,
+        "over_125ms_count": 16,
+        "over_200ms_count": 3,
+        "p50_upper_ms": 50,
+        "p95_upper_ms": 100
+      },
+      "thread_cpu_ms": 16130.0,
+      "thread_cpu_ms_per_frame_or_present": 17.745,
+      "window_ms": 90371.848,
+      "work_wall": {
+        "count": 909,
+        "max_ms": 479.803,
+        "mean_ms": 98.781,
+        "over_125ms_count": 170,
+        "over_200ms_count": 29,
+        "p50_upper_ms": 100,
+        "p95_upper_ms": 200
+      }
+    },
+    "after_cap_30_submission_presentation_approximate": {
+      "console_emission_bounds": [
+        {
+          "emission_after_utc": "2026-10-08 02:26:57.941",
+          "emission_before_utc": "2026-10-08 02:27:02.898"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:10.880",
+          "emission_before_utc": "2026-10-08 02:27:12.400"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:20.386",
+          "emission_before_utc": "2026-10-08 02:27:23.396"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:31.180",
+          "emission_before_utc": "2026-10-08 02:27:31.617"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:41.351",
+          "emission_before_utc": "2026-10-08 02:27:41.604"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:27:50.703",
+          "emission_before_utc": "2026-10-08 02:27:52.624"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:01.310",
+          "emission_before_utc": "2026-10-08 02:28:01.694"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:11.213",
+          "emission_before_utc": "2026-10-08 02:28:14.035"
+        },
+        {
+          "emission_after_utc": "2026-10-08 02:28:21.165",
+          "emission_before_utc": "2026-10-08 02:28:21.855"
+        }
+      ],
+      "present_wall": {
+        "count": 909,
+        "max_ms": 234.304,
+        "mean_ms": 29.654,
+        "over_125ms_count": 3,
+        "over_200ms_count": 1,
+        "p50_upper_ms": 33,
+        "p95_upper_ms": 66
+      },
+      "presentation_interval": {
+        "count": 909,
+        "max_ms": 471.631,
+        "mean_cadence_hz": 10.046,
+        "mean_ms": 99.545,
+        "over_125ms_count": 157,
+        "over_200ms_count": 26,
+        "p50_upper_ms": 100,
+        "p95_upper_ms": 200
+      },
+      "report_numbers": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "swap_wall": {
+        "count": 909,
+        "max_ms": 233.21,
+        "mean_ms": 28.783,
+        "over_125ms_count": 2,
+        "over_200ms_count": 1,
+        "p50_upper_ms": 33,
+        "p95_upper_ms": 66
+      },
+      "thread_cpu_ms": 21710.0,
+      "thread_cpu_ms_per_frame_or_present": 23.883,
+      "window_ms": 90510.087
+    },
+    "counter_visual_observation": {
+      "capture-122.png": {
+        "FPS": 9.29,
+        "milliseconds_per_frame": 107.7
+      },
+      "capture-128.png": {
+        "FPS": 13.54,
+        "milliseconds_per_frame": 73.8
+      },
+      "location": "Very top, overlapping compass/status text; no FPS label",
+      "observer": "fps_profile parallel read-only image inspection",
+      "show_fps_native_effect_visually_observed": true
+    },
+    "physical_30_FPS_sustained": false,
+    "same_route_or_activity_windows_controlled": false,
+    "selection_policy": "Exclude initial scene-entry, command-boundary windows and logout. Window placement bounded by adjacent dated console lines; diagnostics use native relative clocks without UTC timestamps. Presentation roles are unclassified."
+  },
+  "current_Game": {
+    "base_client_executable_sha256": "4de0e49d028ed75271b44838bffb570ae0112460183d1c441174cf9d9dc282d4",
+    "bounded_texture_errors": true,
+    "client_executable_sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa",
+    "manifest_sha256": "1843ade548de2c0cd06ef4672c40e0aff6e1fe15af8f0657c7290e80e9f1699e",
+    "menus_and_background_cap_retained": true,
+    "physical_fps_improvement_validated": false,
+    "prepared_cache_schema_changed": false,
+    "renderer_changed": false,
+    "replacement_scope": "CityOfHeroes.exe_only",
+    "repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "runtime_maxfps_command_preserved": true,
+    "source_freshness_preserved": true,
+    "texture_load_fallback_and_assignments_preserved": true
+  },
+  "format": 1,
+  "initial_native_cap_records": [
+    {
+      "asset_loading_unchanged": 1,
+      "bounded_texture_errors": 1,
+      "create_bins": 0,
+      "effective_cap": 30,
+      "inactive_cap": 10,
+      "menu_cap": 10,
+      "override_applied": 1,
+      "requested_cap": 30,
+      "texture_key_limit": 64,
+      "texture_report_limit": 32
+    }
+  ],
+  "input": {
+    "controller_input_validated": false,
+    "input_effect_verified": false,
+    "input_events_failed": 0,
+    "input_events_sent": 1333,
+    "input_transport_observed": true
+  },
+  "limitations": [
+    "No GPU completion or Android/RFB display-latency measurement.",
+    "Native interval cadence is separate from Android delivered frames.",
+    "Thread CPU describes only the sampled main/render thread, not llvmpipe/Wine/FEX workers.",
+    "Histogram percentiles are bucket upper bounds; null means overflow.",
+    "Scene phases nest and must not be summed into startup or scene totals.",
+    "Native diagnostics are bounded and may omit a final partial ten-second window.",
+    "Activity and paths were not labelled into matched standing/camera/movement windows.",
+    "Runtime command submission alone does not establish exact native cap/showfps state.",
+    "Presentation telemetry is unclassified and overlap selection is approximate.",
+    "Temperatures and per-frame RFB transport/decode/draw timings are not recorded.",
+    "Brief user-observed black tearing is not isolated by retained screenshots or current native frame aggregates.",
+    "Final persistence gate failed; successful cleanup is separate from committed-save acceptance."
+  ],
+  "measured_bottleneck": "In conservative post30 windows native work averages98.781ms against a33.3ms target with0.005ms pacing. Submission/backpressure averages41.020ms; sampled mainCPU17.745ms/frame is far below wall work and excludes renderer/Wine/FEX worker CPU. Existing metrics do not separate remaining engine phases or pinpoint a render-queue wait.",
+  "overall_native_gameplay": {
+    "engine_wall": {
+      "count": 2057,
+      "max_ms": 2668.037,
+      "mean_ms": 102.81,
+      "over_125ms_count": 328,
+      "over_200ms_count": 61,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "frame_interval": {
+      "count": 2057,
+      "max_ms": 2668.55,
+      "mean_cadence_hz": 9.527,
+      "mean_ms": 104.96,
+      "over_125ms_count": 362,
+      "over_200ms_count": 63,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "frame_wall": {
+      "count": 2057,
+      "max_ms": 2668.546,
+      "mean_ms": 104.318,
+      "over_125ms_count": 347,
+      "over_200ms_count": 62,
+      "p50_upper_ms": 100,
+      "p95_upper_ms": 200
+    },
+    "pacing_wall": {
+      "count": 2057,
+      "max_ms": 84.187,
+      "mean_ms": 8.665,
+      "over_125ms_count": 0,
+      "over_200ms_count": 0,
+      "p50_upper_ms": 16,
+      "p95_upper_ms": 66
+    },
+    "submit_wall": {
+      "count": 2057,
+      "max_ms": 831.167,
+      "mean_ms": 40.037,
+      "over_125ms_count": 31,
+      "over_200ms_count": 5,
+      "p50_upper_ms": 33,
+      "p95_upper_ms": 100
+    },
+    "work_wall": {
+      "count": 2057,
+      "max_ms": 2668.543,
+      "mean_ms": 95.653,
+      "over_125ms_count": 338,
+      "over_200ms_count": 62,
+      "p50_upper_ms": 83,
+      "p95_upper_ms": 200
+    }
+  },
+  "persistence_and_cleanup": {
+    "android_logout_delivery_recorded": true,
+    "android_passed": false,
+    "character_saved_event": null,
+    "cleanup": {
+      "owned_processes_reaped": true,
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true
+    },
+    "cleanup_verified": true,
+    "committed_sql_verified": false,
+    "failures": [
+      "Committed existing character rows changed after reopen: powers"
+    ],
+    "game_crash_established": false,
+    "guest_passed": false,
+    "guest_status": "failed",
+    "note": "Final failure is the saved-row comparison gate, not evidence of a client or Android crash. False preservation flags after this exception do not prove lost powers or costume data.",
+    "ordinary_logout_requested": true,
+    "parallel_persistence_investigation": "runtime_update identified retained15powers unchangedbyUID andone added Temporary_Powers.Day_Job_Powers.Day_Job_Movement_Increase_Lesser row UID680838905; root is qualifying that finding separately."
+  },
+  "power_delta_followup": {
+    "added_powers": 1,
+    "baseline_powers_semantically_preserved_by_positive_UID": 15,
+    "baseline_rows_reindexed": true,
+    "category": "Temporary_Powers",
+    "current_report_save_gate_status": "failed",
+    "new_UID": 680838905,
+    "power": "Day_Job_Movement_Increase_Lesser",
+    "qualification_must_not_be_retroactively_changed": true,
+    "runtime_grant_provenance_independently_verified": false,
+    "set": "Day_Job_Powers",
+    "stock_grant_predicates_missing_from_export": true,
+    "stock_origin_compatible": true
+  },
+  "prior_0.13.17_observations_only": {
+    "causal_performance_improvement_established": false,
+    "client_start_seconds": 178.431482,
+    "gameplay_mean_cadence_hz": 9.609,
+    "gameplay_mean_work_ms": 103.406,
+    "local_atlas_seconds": 223.32267,
+    "matched_route_temperature_or_warm_state": false,
+    "same_native_Game": true,
+    "scene_entry_seconds": 68.43
+  },
+  "scene_phases_ms_non_additive": {
+    "client_ready_queued": [
+      1
+    ],
+    "entities_network_and_processing": [
+      306
+    ],
+    "geometry_loader_completion": [
+      1
+    ],
+    "gfx_group_and_model_invalidation": [
+      2,
+      0
+    ],
+    "gfx_renderer_background_default_scene": [
+      99,
+      43
+    ],
+    "gfx_surviving_fx_preload": [
+      18605,
+      10217
+    ],
+    "gfx_tree_reset": [
+      0,
+      12
+    ],
+    "groups_collision_and_physics": [
+      3586
+    ],
+    "groups_crc_and_counts": [
+      0
+    ],
+    "groups_final_bounds_and_reset": [
+      40
+    ],
+    "groups_finish_load_map": [
+      1308
+    ],
+    "groups_initial_bounds": [
+      3100
+    ],
+    "groups_libraries_and_definitions": [
+      43367
+    ],
+    "groups_mission_and_finalize": [
+      60
+    ],
+    "groups_network_and_processing": [
+      52131
+    ],
+    "groups_references_and_trackers": [
+      518
+    ],
+    "groups_reset_and_header": [
+      24
+    ],
+    "groups_tracker_activation": [
+      4
+    ],
+    "relevant_textures_request": [
+      262
+    ],
+    "request_groups_setup": [
+      0
+    ],
+    "startup_final_fx_preload": [
+      73
+    ],
+    "startup_player_animations": [
+      3
+    ],
+    "texture_queue_completion": [
+      98
+    ]
+  },
+  "scope": "read_only_Thor_0.13.18_physical_review",
+  "session_id": "f467f05c6a9c446faf789f22fdc1fbdc",
+  "startup": {
+    "actual_client_start_seconds": 168.144742,
+    "client_visual_asset_preparation_seconds": 30.761671,
+    "guest_to_client_ready": 578.371841,
+    "input_ready_to_server_login_observation_seconds": 34.558,
+    "local_atlas_seconds": 232.15597,
+    "login_to_world_observation": 68.509,
+    "native_map_connection_to_ready_seconds": 63.358,
+    "operation_to_input_ready_seconds": 580.454,
+    "operation_to_login_observation": 615.012,
+    "operation_to_world_observation": 683.521,
+    "unlabelled_preparation_and_gaps": 41.430316
+  },
+  "support_zip": {
+    "bytes": 10166662,
+    "filename": "coh-atlas-gameplay-20261008-023006.zip",
+    "sha256": "3474f571b7cc0b552c07980274c834b192e19d6260622c4de0a899f4b19b6dbd"
+  },
+  "texture_diagnostics": {
+    "console_lines": 17668,
+    "counter_records": [],
+    "gameplay_missing_tuple_error_lines": 0,
+    "repeated_gameplay_error_path_exercised": false,
+    "startup_custom_texture_error_lines": 1024
+  },
+  "user_observations": {
+    "10_and_30_felt_different": true,
+    "FPS_counter_not_noticed": true,
+    "FPS_remains_low": true,
+    "brief_occasional_black_tearing_in_30_mode": true,
+    "startup_about_same": true
+  }
+}

@@ -1,0 +1,153 @@
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -1,4 +1,6 @@
+ #include "graphics/gfx.h"
++#define COH_RA_IMPLEMENTATION
++#include "cohClientRendererAttribution.h"
+ #include "graphics/gfxSettings.h"
+ #include <utilitieslib/utils/mathutil.h>
+ #include "seq/gfxtree.h"
+@@ -410,7 +412,8 @@
+     }
+     if (!game_state.e3screenshot && game_state.fps && game_state.showfps && !doingHeadShot())
+     {
+-           xyprintf(38 + TEXT_JUSTIFY,line++,"% 2.2f (%0.1fm/fm)", game_state.fps, 1000.f/game_state.fps);
++           xyprintf(COH_RA_FPS_COLUMN,COH_RA_FPS_ROW,"FPS %.2f | %.1f ms/frame", game_state.fps, 1000.f/game_state.fps);
++           line++;
+     }
+      if (!game_state.e3screenshot && game_state.showfps && !doingHeadShot())
+     {
+@@ -1549,6 +1552,7 @@
+ {
+     static bool firstTime = true;
+     int fxdebugsave = game_state.fxdebug;
++    cohRaMainBegin(!force_render_world && !headShot && !no_drawing, game_state.allow_frames_buffered, rdrIsThreaded(), game_state.sliLimit, game_state.frame_delay, game_state.maxfps, game_state.showfps);
+     rdrBeginMarker(__FUNCTION__);
+ 
+     rdrInitTopOfFrame();
+@@ -1733,6 +1737,7 @@
+ 
+     PERFINFO_AUTO_STOP();
+     rdrEndMarker();
++    cohRaMainEnd(!force_render_world && !headShot && !no_drawing);
+ }
+ 
+ #define AUTOPERF_TIME 5
+--- a/Game/src/win/win_init.c
++++ b/Game/src/win/win_init.c
+@@ -7,6 +7,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include "win/win_init.h"
++#include "cohClientRendererAttribution.h"
+ #include <utilitieslib/stdtypes.h>
+ #include <utilitieslib/utils/error.h>
+ #include <utilitieslib/utils/cmdoldparse.h>
+@@ -1494,16 +1495,19 @@
+     if (!frame_done_signal)
+         frame_done_signal = CreateEvent(0,0,0,0);
+ 
++    cohRaPhaseBegin(COH_RA_WAIT);
+     PERFINFO_AUTO_START("while(frames_buffered)",1);
+     while(frames_buffered > game_state.allow_frames_buffered)
+     {
+         rdrQueueMonitor();
++        cohRaWaitIteration();
+         WaitForSingleObject( frame_done_signal, 10 );
+         if (!first && frames_buffered)
+             Sleep(1);
+         first = 0;
+     }
+     PERFINFO_AUTO_STOP();
++    cohRaPhaseEnd(COH_RA_WAIT);
+ 
+     PERFINFO_AUTO_START("queue_swap",1);
+     InterlockedIncrement(&frames_buffered);
+--- a/Game/src/render/thread/rt_queue.c
++++ b/Game/src/render/thread/rt_queue.c
+@@ -1,6 +1,7 @@
+ #define RT_PRIVATE
+ #include "win/win_init.h"
+ #include "render/thread/rt_queue.h"
++#include "cohClientRendererAttribution.h"
+ #include "assert.h"
+ #include "render/rendertree.h"
+ #include "cmdparse/cmdgame.h"
+@@ -114,6 +115,7 @@
+         xcase DRAWCMD_SWAPBUFFER:
+             wtSetFlushRequested(render_thread, 0);
+             windowUpdateDirect();
++            cohRaRendererEnd();
+         xcase DRAWCMD_INITDEFAULTS:
+             rdrInitDirect();
+         xcase DRAWCMD_FOG:
+@@ -123,7 +125,9 @@
+ 
+         // get data from gl
+         xcase DRAWCMD_GETFRAMEBUFFER:
++            cohRaPhaseBegin(COH_RA_READBACK);
+             rdrGetFrameBufferDirect(data);
++            cohRaPhaseEnd(COH_RA_READBACK);
+         xcase DRAWCMD_GETTEXINFO:
+             rdrGetTexInfoDirect(data);
+ 
+@@ -131,9 +135,13 @@
+         xcase DRAWCMD_TEXFREE:
+             rdrTexFreeDirect(*(int*)data);
+         xcase DRAWCMD_TEXCOPY:
++            cohRaPhaseBegin(COH_RA_TEXCOPY);
+             texCopyDirect(data);
++            cohRaPhaseEnd(COH_RA_TEXCOPY);
+         xcase DRAWCMD_TEXSUBCOPY:
++            cohRaPhaseBegin(COH_RA_TEXSUBCOPY);
+             texSubCopyDirect(data);
++            cohRaPhaseEnd(COH_RA_TEXSUBCOPY);
+         xcase DRAWCMD_GENTEXHANDLES:
+             rdrGenTexHandles();
+ 
+@@ -186,7 +194,9 @@
+         xcase DRAWCMD_CONVERTRGBBUFFER:
+             modelConvertRgbBufferDirect(data);
+         xcase DRAWCMD_CREATEVBO:
++            cohRaPhaseBegin(COH_RA_VBO);
+             createVboDirect(data);
++            cohRaPhaseEnd(COH_RA_VBO);
+         xcase DRAWCMD_FREEVBO:
+             modelFreeVboDirect(data);
+         xcase DRAWCMD_RESETVBOS:
+@@ -282,6 +292,7 @@
+         xcase DRAWCMD_INIT:
+             rdrInitOnceDirect();
+         xcase DRAWCMD_INITTOPOFFRAME:
++            cohRaRendererBegin();
+             rdrInitTopOfFrameDirect(data);
+         xcase DRAWCMD_INITTOPOFVIEW:
+             rdrInitTopOfViewDirect(data);
+@@ -332,7 +343,9 @@
+         xcase DRAWCMD_WATERSETPARAMS:
+             rdrWaterSetParamsDirect(data);
+         xcase DRAWCMD_FRAMEGRAB:
++            cohRaPhaseBegin(COH_RA_READBACK);
+             rdrFrameGrabDirect(data);
++            cohRaPhaseEnd(COH_RA_READBACK);
+         xcase DRAWCMD_SETREFLECTIONPLANE:
+             rdrSetReflectionPlaneDirect(data);
+ 
+--- a/Game/src/render/thread/rt_win_init.c
++++ b/Game/src/render/thread/rt_win_init.c
+@@ -1,4 +1,5 @@
+ #include "rt_win_init.h"
++#include "cohClientRendererAttribution.h"
+ #include "cohClientFrameTiming.h"
+ #include "render/thread/ogl.h"
+ #include <utilitieslib/utils/timing.h>
+@@ -394,7 +395,9 @@
+ 
+     rdrBeginMarker("SWAP");
+     cohFtSwapBegin();
++    cohRaPhaseBegin(COH_RA_SWAP);
+     SwapBuffers(hDC);
++    cohRaPhaseEnd(COH_RA_SWAP);
+     cohFtSwapEnd();
+     rdrEndMarker();
+ 

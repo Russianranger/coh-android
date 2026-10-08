@@ -58,6 +58,14 @@ public final class ClientRuntime {
     private final StringBuilder log = new StringBuilder();
     private final List<Map<String, Object>> surfaceSamples = new ArrayList<>();
     private final List<byte[]> surfacePngs = new ArrayList<>();
+    private static final int MAX_CAPTURE_TIMINGS = 20000;
+    private static final String[] CAPTURE_TIMING_KEYS = {"pixel_copy_wall_ms", "encoding_wall_ms",
+            "encoding_cpu_ms", "presentation_freeze_ms", "encode_queue_wall_ms"};
+    private final long[] captureTimingSums = new long[CAPTURE_TIMING_KEYS.length];
+    private final long[] captureTimingMaxima = new long[CAPTURE_TIMING_KEYS.length];
+    private long captureTimingSequence = -1, captureTimingCount, captureEncodingUiCount;
+    private long captureCoalescedFrames, capturePendingFramesPeak;
+    private boolean captureTimingLimitReached;
     private final List<Map<String, Object>> loginSamples = new ArrayList<>();
     private final List<byte[]> loginPngs = new ArrayList<>();
     private volatile long loginObservedUptime = -1, loginFrameWatermark = -1;
@@ -1031,6 +1039,57 @@ public final class ClientRuntime {
         try { write(new File(state, "stop-request"), "stop\n".getBytes(StandardCharsets.UTF_8)); }
         catch (IOException e) { line("Could not write stop request: " + e.getClass().getSimpleName()); }
     }
+    /** Constant-size diagnostics for successful owned captures, including unretained views.
+     * These measurements do not certify PNGs or change any readiness/save predicate. */
+    public synchronized void recordCaptureTiming(Map<String, Object> record) {
+        if (finished || session == null || !session.equals(record.get("session_id"))
+                || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0
+                || clientWindowFrameWatermark < 0 || !Boolean.TRUE.equals(record.get("pixel_copy_success"))) return;
+        long captured = captureMetric(record.get("captured_elapsed_ms"), Long.MAX_VALUE);
+        long sequence = captureMetric(record.get("sequence"), Long.MAX_VALUE);
+        if (captured < clientWindowObservedUptime || captured > SystemClock.uptimeMillis()
+                || sequence <= clientWindowFrameWatermark || sequence <= captureTimingSequence) return;
+        long[] values = new long[CAPTURE_TIMING_KEYS.length];
+        for (int i=0; i<values.length; i++) {
+            values[i] = captureMetric(record.get(CAPTURE_TIMING_KEYS[i]), 300000);
+            if (values[i] < 0) return;
+        }
+        long pending = captureMetric(record.get("pending_frames_peak"), Integer.MAX_VALUE);
+        long coalesced = captureMetric(record.get("frames_coalesced_during_copy"), Integer.MAX_VALUE);
+        Object onUi = record.get("encoding_on_ui_thread");
+        if (pending < 0 || coalesced < 0 || !(onUi instanceof Boolean)) return;
+        if (captureTimingCount >= MAX_CAPTURE_TIMINGS) { captureTimingLimitReached = true; return; }
+        captureTimingSequence = sequence; captureTimingCount++;
+        for (int i=0; i<values.length; i++) {
+            captureTimingSums[i] += values[i];
+            captureTimingMaxima[i] = Math.max(captureTimingMaxima[i], values[i]);
+        }
+        if (Boolean.TRUE.equals(onUi)) captureEncodingUiCount++;
+        capturePendingFramesPeak = Math.max(capturePendingFramesPeak, pending);
+        captureCoalescedFrames += coalesced;
+    }
+    private static long captureMetric(Object raw, long maximum) {
+        if (!(raw instanceof Byte || raw instanceof Short || raw instanceof Integer || raw instanceof Long)) return -1;
+        long value = ((Number)raw).longValue();
+        return value < 0 || value > maximum ? -1 : value;
+    }
+    private synchronized Map<String,Object> captureDiagnostics() {
+        Map<String,Object> result = new LinkedHashMap<>();
+        result.put("format", 1); result.put("captures_observed", captureTimingCount);
+        result.put("maximum_captures", MAX_CAPTURE_TIMINGS); result.put("limit_reached", captureTimingLimitReached);
+        result.put("scope", "Successful current-session PixelCopy captures, including views not retained as proof. Surface copy/encoding costs only; retained PNG verification and callback costs are excluded.");
+        result.put("native_fps_measurement", false);
+        result.put("encoding_ui_thread_count", captureEncodingUiCount);
+        result.put("pending_frames_peak", capturePendingFramesPeak);
+        result.put("frames_coalesced_during_copy", captureCoalescedFrames);
+        for (int i=0; i<CAPTURE_TIMING_KEYS.length; i++) {
+            Map<String,Object> metric = new LinkedHashMap<>();
+            metric.put("sum", captureTimingSums[i]); metric.put("maximum", captureTimingMaxima[i]);
+            metric.put("mean", captureTimingCount == 0 ? 0.0 : (double)captureTimingSums[i]/captureTimingCount);
+            result.put(CAPTURE_TIMING_KEYS[i], metric);
+        }
+        return result;
+    }
     public synchronized void recordSurfaceCapture(Map<String, Object> record, byte[] png) {
         if (finished || session == null || !session.equals(record.get("session_id"))
                 || clientWindowObservedUptime < 0 || clientWindowEndedUptime >= 0 || png == null
@@ -1723,6 +1782,7 @@ public final class ClientRuntime {
             if (error != null) wrapper.put("app_error", error);
             if (receiverFailure != null) wrapper.put("receiver_error", receiverFailure);
             synchronized (this) {
+                wrapper.put("android_capture_diagnostics", new JSONObject(captureDiagnostics()));
                 wrapper.put("surface_captures", new JSONArray(surfaceSamples));
                 wrapper.put("login_captures", new JSONArray(loginSamples));
                 wrapper.put("character_captures", new JSONArray(characterSamples));

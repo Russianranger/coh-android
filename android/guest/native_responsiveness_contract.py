@@ -159,6 +159,8 @@ def client_contract(package, receipt=None):
         executable = client_scene_performance_contract(package, candidate)
     if 'client_gameplay_performance' in package:
         executable = client_gameplay_performance_contract(package, candidate)
+    if 'client_renderer_attribution' in package:
+        executable = client_renderer_attribution_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
@@ -271,6 +273,113 @@ def client_gameplay_performance_contract(package, candidate=None):
         'Gameplay performance Game imports exceed the retained DLL closure')
     return record
 
+
+
+def client_renderer_attribution_contract(package, candidate=None):
+    """Only extend the verified gameplay Game; retain its complete source history."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = client_gameplay_performance_contract(package, candidate)
+    accepted = package['client_gameplay_performance']
+    wrapper = package.get('client_renderer_attribution')
+    same_json = lambda first, second: json.dumps(first, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(second, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+        'base_client_gameplay_performance_manifest_sha256', 'base_client_executable'}
+        and wrapper['base_client_gameplay_performance_manifest_sha256'] == accepted['manifest_sha256']
+        and same_json(wrapper['base_client_executable'], previous),
+        'Renderer attribution must retain the exact accepted gameplay Game producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+        and type(manifest.get('format')) is int and manifest['format'] == 1
+        and manifest.get('role') == 'bounded_client_renderer_attribution'
+        and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+        and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+        and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+        and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
+        and manifest.get('retained_native_dependencies_changed') is False
+        and scene_source_inputs_equivalent(manifest.get('retained_source_inputs'), candidate['build_inputs'])
+        and same_json(manifest.get('schema_sources_sha256'), candidate['retained_cache']['schema_sources_sha256'])
+        and same_json(manifest.get('base_client_executable'), previous)
+        and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False
+        and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+        and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+        'Renderer attribution changed native dependencies or cache ancestry')
+    build = manifest.get('build_input', {})
+    files = {'Game/src/graphics/gfx.c', 'Game/src/win/win_init.c', 'Game/src/render/thread/rt_queue.c', 'Game/src/render/thread/rt_win_init.c'}
+    patches = {'patches/client-renderer-attribution/0001-renderer-attribution-and-visible-fps.patch'}
+    controls = {
+        'renderer_attribution': {'environment_variable': 'COH_CLIENT_RENDERER_ATTRIBUTION',
+            'enabled_value': '1', 'disabled_by_default': True,
+            'record_prefix': 'COH_CLIENT_RENDERER_ATTRIBUTION_V1',
+            'window_report_limit_per_thread': 120, 'state_record_limit': 64,
+            'aggregate_only': True, 'thread_cpu_window_boundaries_only': True,
+            'queue_pacing_rendering_loading_unchanged': True, 'worker_configuration_unchanged': True},
+        'visible_native_fps': {'native_showfps_command_preserved': True,
+            'sampling_unchanged': True, 'fps_and_ms_per_frame_label': True,
+            'font_grid_column': 1, 'font_grid_row': 14, 'native_pixel_x': 8, 'native_pixel_y': 112}}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+        'base_client_gameplay_performance_build_input', 'patches_sha256', 'source_sha256', 'patched_sha256',
+        'overlay_sha256', 'reverse_patch_exact_base_verified', 'controls', 'build_targets', 'configuration',
+        'architecture', 'cache_encoding_changed', 'parse6_schema_changes', 'source_freshness_changed',
+        'graphics_profile_changes', 'renderer_changed', 'gameplay_validation_changes',
+        'runtime_execution_validated', 'gameplay_frame_cap_changed', 'native_fps_display_changed'}
+        and type(build.get('format')) is int and build['format'] == 1
+        and build.get('role') == manifest['role'] and build.get('source_commit') == SOURCE
+        and same_json(build.get('base_client_gameplay_performance_build_input'), accepted['manifest']['build_input'])
+        and build.get('reverse_patch_exact_base_verified') is True and same_json(build.get('controls'), controls)
+        and build.get('build_targets') == ['Game'] and build.get('configuration') == 'OptDebug'
+        and build.get('architecture') == 'Win32' and build.get('gameplay_frame_cap_changed') is False and build.get('native_fps_display_changed') is True
+        and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+            'source_freshness_changed', 'graphics_profile_changes', 'renderer_changed',
+            'gameplay_validation_changes', 'runtime_execution_validated')),
+        'Renderer attribution native recipe changed correctness or renderer')
+    for field, names in (('patches_sha256', patches), ('source_sha256', files), ('patched_sha256', files),
+            ('overlay_sha256', {'Game/src/cohClientRendererAttribution.h'})):
+        require(isinstance(build.get(field), dict) and set(build[field]) == names
+            and all(HEX64.fullmatch(str(value)) for value in build[field].values()),
+            'Renderer attribution native source inventory differs')
+    require(all(build['source_sha256'][name] != build['patched_sha256'][name] for name in files)
+        and build['source_sha256']['Game/src/graphics/gfx.c'] == accepted['manifest']['build_input']['base_client_scene_performance_build_input']['patched_sha256']['Game/src/graphics/gfx.c'],
+        'Renderer attribution recipe did not extend the accepted gameplay/scene sources')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and set(checks) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'build_input', 'scene', 'frame', 'gameplay', 'renderer'}
+        and type(checks.get('format')) is int and checks['format'] == 1
+        and checks.get('status') == 'passed' and checks.get('platform') == 'windows'
+        and checks.get('architecture') == 'Win32' and checks.get('configuration') == 'OptDebug'
+        and same_json(checks.get('build_input'), build)
+        and all(same_json(checks.get(name), accepted['manifest']['windows_qualification'][name])
+            for name in ('scene', 'frame', 'gameplay')), 'Renderer attribution real Win32 retained scene/frame/gameplay proof differs')
+    proof = checks.get('renderer', {})
+    flags = ('gfx_backpressure_and_remainder_separation_verified',
+        'renderer_batch_swap_and_selected_callback_separation_verified',
+        'numeric_cap_showfps_state_changes_bounded_verified',
+        'unchanged_native_fps_sampling_and_bounded_position_verified',
+        'shared_translation_unit_tls_and_thread_isolation_verified',
+        'report_rate_histogram_counter_saturation_and_limits_verified',
+        'disabled_without_clock_cpu_or_logging_verified', 'clock_failure_nonfatal_verified',
+        'genuine_win32_qpc_thread_cpu_and_concurrent_json_verified',
+        'native_crt_macro_isolation_and_restoration_verified', 'thread_cpu_excludes_renderer_workers')
+    require(isinstance(proof, dict) and set(proof) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'compiler_options', 'patch_sha256', 'header_sha256', 'harness_sha256',
+        'production_harness_sha256', 'helper_sha256', 'production_helper_sha256', 'physical_fps_gain_validated', *flags}
+        and type(proof.get('format')) is int and proof['format'] == 1
+        and proof.get('status') == 'passed' and proof.get('platform') == 'windows'
+        and proof.get('architecture') == 'Win32' and proof.get('configuration') == 'OptDebug'
+        and proof.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+        and HEX64.fullmatch(str(proof.get('harness_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('production_harness_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('helper_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('production_helper_sha256', '')))
+        and all(proof.get(name) is True for name in flags)
+        and proof.get('physical_fps_gain_validated') is False
+        and proof.get('patch_sha256') == build['patches_sha256'][next(iter(patches))]
+        and proof.get('header_sha256') == build['overlay_sha256']['Game/src/cohClientRendererAttribution.h'],
+        'Renderer attribution source-bound Win32 harness proof missing')
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(not same_json(record, previous) and record['pe_machine'] == previous['pe_machine']
+        and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
+        'Renderer attribution Game imports exceed the retained DLL closure')
+    return record
 
 def client_scene_performance_contract(package, candidate=None):
     """Preserve the accepted Game ancestry, schema and every DLL dependency."""

@@ -9,6 +9,66 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_renderer_attribution_setup_fixture_companion_retains_standalone_setup_owner(self):
+        from classify_storage_cleanup_change import renderer_attribution_push, setup_push, setup_required
+        fixture = 'tools/android/interactive/test_setup_service.py'
+        names = ['tools/android/interactive/build_client_renderer_attribution_apk.py', fixture]
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertTrue(setup_push('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertTrue(setup_required('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, [fixture]))
+        for foreign in ('tools/android/interactive/test_setup_service_neighbor.py',
+                'tools/android/interactive/test_setup_memory_package.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+
+    def test_renderer_attribution_finite_game_guest_and_capture_scope_reuses_owned_runtime(self):
+        from classify_storage_cleanup_change import RENDERER_ATTRIBUTION_ALLOWED, RENDERER_ATTRIBUTION_SOURCES
+        names = sorted(RENDERER_ATTRIBUTION_ALLOWED)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for name in sorted(RENDERER_ATTRIBUTION_SOURCES):
+            with self.subTest(source=name):
+                self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, [name]))
+        for foreign in ('android/guest/client_interactive_diagnostic.py', 'android/guest/local_login_server.py',
+                'android/native/client-launcher.c', 'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+                'upstream/ouroboros/DBServer/src/container_sql.c', 'assets/client-visual-manifest.json',
+                'android/interactive/src/main/AndroidManifest.xml',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java',
+                'patches/client-renderer-attribution/unreviewed.patch',
+                'database/client-renderer-attribution/overlay/Game/src/unreviewed.h',
+                'tools/android/interactive/test_client_renderer_attribution_unreviewed.py',
+                'tools/android/interactive/build_client_sidebar_apk.py', 'foreign.py'):
+            with self.subTest(foreign=foreign):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+
+    def test_renderer_attribution_owner_marker_cannot_mask_ambiguous_history_or_docs_only(self):
+        from classify_storage_cleanup_change import RENDERER_ATTRIBUTION_ALLOWED, RENDERER_ATTRIBUTION_SOURCES
+        names = sorted(RENDERER_ATTRIBUTION_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, None, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, []),
+                ('push', 'a'*40, 'b'*40, 'a'*40, sorted(RENDERER_ATTRIBUTION_ALLOWED-RENDERER_ATTRIBUTION_SOURCES))):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertTrue(change.runtime_required(event, before, head, parent, files))
+
+    def test_renderer_attribution_publication_docs_cannot_hide_neighbors(self):
+        from classify_storage_cleanup_change import RENDERER_ATTRIBUTION_DOCS
+        names = sorted(RENDERER_ATTRIBUTION_DOCS)
+        self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for foreign in ('foreign.md', 'docs/COH-PERFORMANCE-0.13.19.md',
+                'android/native/client-launcher.c', 'android/guest/local_login_server.py'):
+            with self.subTest(foreign=foreign):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+        self.assertTrue(change.runtime_required('push', 'c'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_sidebar_fixture_qualification_correction_does_not_admit_neighboring_tests(self):
         names = ['tools/android/interactive/build_client_sidebar_apk.py',
             'tools/android/interactive/test_fresh_profile_recovery.py']

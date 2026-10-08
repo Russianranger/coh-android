@@ -1,0 +1,78 @@
+COH Atlas Gameplay 0.13.19 — renderer attribution and background capture
+
+1. Install the APK as an update, preserving app data, imported assets and your
+existing character. Run Set up / update runtime ONCE: this release changes Game
+and diagnostic helpers. Wait for Runtime ready. Do not clear data or reimport
+assets. Keep Performance graphics, 800x600 and llvmpipe for comparison.
+
+2. Record launcher-open/Reopen start and local clock/timezone. Separately note
+setup time if included. Time to login, character selection, first visible world,
+playable movement and total world entry. Record the displayed local Atlas and
+client-start durations. Note whether scenery becomes useful progressively or
+stalls before appearing. Repeat a warm reopen after exporting the first run.
+
+3. In Atlas, close chat/dialogs with B/Esc. Tap sidebar Show FPS and wait for
+submission. Look below the top HUD near the upper left for FPS and ms/frame.
+If absent or obscured, include a screenshot and note it; do not manually type.
+The existing Enter / Start button and controller Start send paired Enter even
+on a short tap. Holding Start should not repeat it. Sidebar FPS buttons already
+include Enter. A button submission is transport evidence; native state records
+and the visible counter corroborate the game's state separately.
+
+4. Tap 10 FPS, wait for submission and at least ten seconds to settle. Record
+about 30 seconds each: standing still; rotating the camera; walking through a
+populated area; approaching buildings/interior edges and previously unseen
+scenery in Atlas. Note start times, FPS range and pauses as geometry, textures
+or NPCs enter view. Allow ten seconds between activities. Do not zone.
+
+5. Close chat with B/Esc, tap 30 FPS, wait for submission/settling and repeat the
+SAME route and activities with the same graphics. A 30 FPS cap does not promise
+30 FPS. Note black flashes/tearing separately: activity, location, frequency,
+duration and whether they affect the whole scene or a strip/object. The capture
+worker change has not been physically verified to fix them. If unstable, return
+to 10 FPS and export. Begin the focused comparison promptly after world entry;
+native windows are bounded, so keep the route within roughly the first 15 minutes.
+
+6. Record temperatures at world entry, after each route and at end, peak reading,
+fan mode and charging state. Check movement, camera, NPCs, combat, UI and visible
+regressions/crashes. Release controls for the displayed save wait, use ordinary
+Save character / log out, wait for Saved character verified, then Finish.
+If save comparison fails, retain/export that FAILED report; do not clear data
+or assume character loss. Reopen only after cleanup and export, and verify the
+same character/XP/powers/costume. A startup-only run uses Stop and is not a save pass.
+
+7. Use Export latest report after EACH run, before another operation replaces
+the evidence. Send the COMPLETE outer coh-atlas-gameplay-*.zip plus your timings,
+activity timestamps, FPS ranges, temperatures and black-glitch observations.
+Do not send only screenshots or one inner log. The outer package contains:
+  operation.log — Android stages, safe fixed-command submission/lifecycle times;
+  android-client-report.json — Android capture metrics and retained screenshots;
+  guest-report.zip/latest-report.json — source identities, startup, lifecycle,
+    save result and any typed failed comparison/power delta;
+  guest-report.zip/client-evidence/client-console.log — native frame/scene/
+    renderer timings;
+  guest-report.zip/client-evidence/character-atlas-console.txt — local Atlas;
+  guest-report.zip/client-evidence/character-reopen-failed-after-snapshot.json
+    when a strict save comparison fails under the verified new producer.
+
+New Android field: android_capture_diagnostics. Its PixelCopy wall/freeze,
+encoding wall/CPU, encoder dispatch delay, actual encoding_ui_thread_count and
+coalesced-frame counts measure capture work, including unretained captures.
+Independent retained-PNG verification/callback time is excluded. These are
+not native FPS or RFB FPS and do not qualify gameplay.
+
+Native prefixes retained: COH_CLIENT_GAMEPLAY_PROFILE_V1,
+COH_CLIENT_TEXTURE_ERRORS_V1, COH_CLIENT_FRAME_TIMING_V1,
+COH_CLIENT_SCENE_PHASE_V1. New: COH_CLIENT_RENDERER_ATTRIBUTION_V1.
+Frame records separate intentional pacing wait and main work; scene records
+identify geometry/texture loading completion. New main gfx/backpressure split
+and renderer batch/swap/selected texture upload/VBO/readback distributions help
+locate long frames. Numeric native maxfps/showfps observations corroborate the
+chosen setting. Thread CPU covers only that thread, excluding llvmpipe/Wine/FEX
+workers. Renderer batches include queue gaps/driver waits; upload dispatch is
+not isolated disk/decode/GPU completion. Phases overlap: do not sum nested costs.
+Each native window stream stops after 120 roughly ten-second windows and state
+changes after 64. Full exports are needed to make the next optimization decision.
+
+Hosted qualification can establish correctness only. No physical startup/FPS
+gain or black-tearing fix is claimed until this Thor comparison is reviewed.

@@ -43,6 +43,98 @@ FALL_FLOOR_CLEARANCE = 1.0
 MANUAL_ATLAS_ENVIRONMENT = 'COH_WINE_DB_MANUAL_ATLAS'
 MANUAL_ATLAS_ACK = ('COH_WINE_DB_MANUAL_ATLAS=1 active: unused Launcher connection wait skipped; '
                     'manual Atlas launch; ordinary DbServer readiness required')
+POWER_DELTA_LIMIT = 128
+COMMUTER_POWER = 'Temporary_Powers.Day_Job_Powers.Day_Job_Movement_Increase_Lesser'
+# These pins describe the stock candidate, never evidence that this session
+# actually satisfied its time, material-volume and badge predicates.
+STOCK_DAYJOB_NATIVE_INPUTS = {
+    'MapServer/src/gameSys/DayJob.c': '0d2aeddac19f1ba1b9e91eb660a5d65537ba9fddb7c84a3fe59fabca194a2330',
+    'MapServer/src/entity/character_db.c': '688fa8a8678fa639457752dd2359980d248b4da3a9c2357af27f7bce47627f1d',
+    'MapServer/src/container/containercallbacks.c': '56b484eded5a1ac2148369c4fac51084cad6ad9c55de6cfec4cbcb2dda90fb73',
+    'MapServer/src/container/containerloadsave.c': '53eac63aab1577956d85a7cfacbe55fb63c856f6b185d9cb8e2b985117920aa8',
+}
+STOCK_DAYJOB_DATA_INPUTS = {
+    'data/defs/generic/jobs.dayjobs': '623310c40fc42f96ed32ade02abe82f04c41ca2399fdccffd19bb0e49202215e',
+    'data/defs/powers/temporary_powers_day_job_powers.powers': 'ad89404d95756799f6f7a553e11c365aa5f12ff9f2d4357fcf3f48980a65e406',
+}
+
+
+def stock_power_delta(previous, current, attributes):
+    """Describe a bounded selected-row difference; this cannot accept a save.
+
+    Positive UniqueID, rather than a mutable native packing index, identifies
+    each original power. The exact Commuter shape is only a stock-compatible
+    candidate: the retained MapServer emits no authoritative DayJob witness.
+    """
+    result = {'format': 1, 'optional': True, 'status': 'unavailable',
+        'save_acceptance_changed': False, 'dayjob_grant_verified': False,
+        'login_eligibility_verified': False, 'spatial_predicates_verified': False,
+        'badge_predicates_verified': False, 'sql_game_mutations_performed': False}
+    fields = set(evidence.SELECTED['powers'])
+    if not (type(previous) is list and type(current) is list
+            and 0 < len(previous) <= POWER_DELTA_LIMIT and 0 < len(current) <= POWER_DELTA_LIMIT
+            and type(attributes) is list and len(attributes) <= 100000):
+        return dict(result, reason='Power delta input exceeds the finite typed diagnostic scope')
+    names = {}
+    for attribute in attributes:
+        if not (type(attribute) is dict and type(attribute.get('id')) is int
+                and attribute['id'] > 0 and attribute['id'] not in names
+                and type(attribute.get('name')) is str and attribute['name'].isascii()
+                and 0 < len(attribute['name']) <= 255):
+            return dict(result, reason='Attribute mapping is not unique and typed')
+        names[attribute['id']] = attribute['name']
+    indexes = []
+    for rows in (previous, current):
+        index = {}
+        for row in rows:
+            if not (type(row) is dict and set(row) == fields
+                    and type(row['containerid']) is int and row['containerid'] == 1
+                    and type(row['uniqueid']) is int and 0 < row['uniqueid'] <= 0x7fffffff
+                    and row['uniqueid'] not in index
+                    and type(row['subid']) is int and 0 <= row['subid'] < POWER_DELTA_LIMIT
+                    and type(row['powerid']) is int and 0 < row['powerid'] <= POWER_DELTA_LIMIT
+                    and all(type(row[key]) is int and row[key] in names
+                            for key in ('categoryname', 'powersetname', 'powername'))
+                    and all(row[key] is None or type(row[key]) is int and 0 <= row[key] <= 0x7fffffff
+                            for key in ('powerlevelbought', 'powernumboostsbought',
+                                        'powersetlevelbought', 'buildnum'))):
+                return dict(result, reason='Power rows lack unique positive identity or typed selected fields')
+            index[row['uniqueid']] = row
+        indexes.append(index)
+    before, after = indexes
+    semantic = fields - {'subid', 'powerid'}
+    deleted = sorted(set(before) - set(after))
+    changed = []
+    for uid in sorted(set(before) & set(after)):
+        differences = sorted(key for key in semantic if not evidence._same(before[uid][key], after[uid][key]))
+        if differences:
+            changed.append({'uniqueid': uid, 'changed_fields': differences})
+    added = []
+    for row in current:
+        if row['uniqueid'] not in before:
+            added.append({'uniqueid': row['uniqueid'], 'selected_row': row.copy(),
+                'resolved_power': '.'.join(names[row[key]] for key in ('categoryname', 'powersetname', 'powername'))})
+    contiguous = all(row['subid'] == i and row['powerid'] == i + 1 for i, row in enumerate(current))
+    preserved = not deleted and not changed
+    result.update(status='observed', before_power_count=len(previous), after_power_count=len(current),
+        before_power_rows_sha256=digest_json(previous), after_power_rows_sha256=digest_json(current),
+        attribute_mapping_sha256=digest_json(attributes), prior_powers_preserved_by_uniqueid=preserved,
+        all_prior_semantic_fields_preserved=preserved, current_native_indexes_contiguous=contiguous,
+        deleted_uniqueids=deleted, changed_prior_powers=changed, added_powers=added)
+    if (preserved and contiguous and len(added) == 1
+            and added[0]['resolved_power'].casefold() == COMMUTER_POWER.casefold()
+            and type(added[0]['selected_row']['powerlevelbought']) is int
+            and added[0]['selected_row']['powerlevelbought'] == 1
+            and all(added[0]['selected_row'][key] is None
+                    for key in ('powernumboostsbought', 'powersetlevelbought', 'buildnum'))):
+        result.update(stock_compatible_candidate=COMMUTER_POWER,
+            stock_candidate_native_source_sha256=STOCK_DAYJOB_NATIVE_INPUTS.copy(),
+            stock_candidate_data_source_sha256=STOCK_DAYJOB_DATA_INPUTS.copy(),
+            unproved_predicates=['current_login_offline_time_over_120_seconds',
+                'live_material_volume_DJ_TrainStation', 'DJ_Commuter_badge_not_owned',
+                'native_DayJob_grant_and_current_owner_lifecycle'],
+            reason='Exact stock-compatible Commuter addition; no native grant or spatial witness, so strict save verification remains required')
+    return result
 
 
 def manual_atlas_wait_contract():
@@ -1436,6 +1528,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
     def __init__(self, owner):
         super().__init__(owner)
         self.baseline_snapshot = None
+        self.failed_after_snapshot = None
         self.creation_report.update(before_character_id=self.CHARACTER_ID,
             baseline_character_id=self.CHARACTER_ID, existing_character_verified=False,
             preserved_existing_identity=False, powers_preserved=False, costume_preserved=False,
@@ -1514,9 +1607,69 @@ class LocalCharacterReopenServer(LocalCharacterServer):
                 'row_counts': {name: len(value) for name, value in rows.items()},
                 'login_count': count, 'captured_utc': base.utc(), 'saved_position': position},
             sql_game_mutations_performed=False)
+        if self.stock_power_diagnostics_enabled():
+            self.creation_report['stock_power_lifecycle_before_login'] = self.stock_power_lifecycle(rows)
         self.ctx.event('existing_character_ready', session_id=self.owner.args.session_id,
             character_id=self.CHARACTER_ID, auth_id=auth_id, account=ACCOUNT, name=CHARACTER,
             existing_character_verified=True, before_login_count=count)
+
+    def stock_power_diagnostics_enabled(self):
+        """Supplemental reads belong only to the fully verified new Game lane."""
+        if getattr(self.owner, 'client_renderer_attribution', False) is not True:
+            return False
+        producer = self.ctx.report.get('client_renderer_attribution')
+        return (type(producer) is dict and producer.get('verified') is True
+            and re.fullmatch(r'[0-9a-f]{64}', str(getattr(self.owner, 'client_executable_sha256', ''))) is not None
+            and producer.get('client_executable_sha256') == self.owner.client_executable_sha256
+            and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('manifest_sha256', ''))) is not None
+            and re.fullmatch(r'[0-9a-f]{40}', str(producer.get('repository_commit', ''))) is not None
+            and producer.get('source_freshness_preserved') is True
+            and producer.get('renderer_changed') is False)
+
+    def stock_power_lifecycle(self, rows):
+        """Optional finite SQL observations; no DayJob eligibility or save pass."""
+        result = {'format': 1, 'optional': True, 'status': 'unavailable',
+            'dayjob_grant_verified': False, 'login_eligibility_verified': False,
+            'spatial_predicates_verified': False, 'sql_game_mutations_performed': False}
+        if not self.stock_power_diagnostics_enabled():
+            return dict(result, reason='Current typed renderer diagnostic producer is disabled')
+        try:
+            require(type(rows.get('powers')) is list and 0 < len(rows['powers']) <= POWER_DELTA_LIMIT,
+                    'Stock lifecycle power count exceeds finite scope')
+            parent = self.sql_rows('ents', ('containerid', 'lastactive'), ('containerid',), 'containerid=1')
+            extension = self.sql_rows('ents2', ('containerid', 'subid', 'lastdayjobsstart'),
+                                      ('containerid', 'subid'), 'containerid=1')
+            fields = ('containerid', 'subid', 'uniqueid', 'numcharges', 'usagetime', 'availabletime', 'creationtime')
+            powers = self.sql_rows('powers', fields, ('containerid', 'subid'), 'containerid=1')
+            require(len(parent) == 1 and set(parent[0]) == {'containerid', 'lastactive'}
+                    and type(parent[0]['containerid']) is int and parent[0]['containerid'] == 1
+                    and len(extension) == 1 and set(extension[0]) == {'containerid', 'subid', 'lastdayjobsstart'}
+                    and type(extension[0]['containerid']) is int and extension[0]['containerid'] == 1
+                    and type(extension[0]['subid']) is int and extension[0]['subid'] == 0,
+                    'Stock lifecycle parent identity differs')
+            timestamps = {'lastactive': parent[0]['lastactive'], 'lastdayjobsstart': extension[0]['lastdayjobsstart']}
+            require(all(value is None or type(value) is str and len(value) <= 64
+                    and re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}[T ][0-9]{2}:[0-9]{2}:[0-9]{2}'
+                                     r'(?:\.[0-9]{1,6})?(?:Z|[+-][0-9]{2}(?::[0-9]{2})?)?', value)
+                    for value in timestamps.values()), 'Stock lifecycle timestamp differs')
+            require(len(powers) == len(rows['powers']) and all(type(row) is dict and set(row) == set(fields)
+                    for row in powers), 'Stock lifecycle selected columns or count differ')
+            for selected, observed in zip(rows['powers'], powers):
+                require(all(evidence._same(selected[key], observed[key])
+                        for key in ('containerid', 'subid', 'uniqueid'))
+                        and all(observed[key] is None or type(observed[key]) is int
+                                and 0 <= observed[key] <= 0xffffffff for key in ('numcharges', 'creationtime'))
+                        and all(observed[key] is None or type(observed[key]) in (int, float)
+                                and math.isfinite(observed[key]) and abs(observed[key]) <= 0x7fffffff
+                                for key in ('usagetime', 'availabletime')),
+                        'Stock lifecycle power identity or typed values differ')
+            result.update(status='observed', timestamps=timestamps, powers=powers,
+                lifecycle_rows_sha256=digest_json(powers), selected_power_rows_sha256=digest_json(rows['powers']),
+                native_last_time_column='ents.lastactive', last_day_jobs_start_column='ents2.lastdayjobsstart',
+                observation_only=True)
+        except Exception as error:
+            result['reason'] = 'Optional bounded lifecycle observation unavailable: ' + type(error).__name__
+        return result
 
     def login_evidence(self):
         proof = super().login_evidence()
@@ -1595,6 +1748,8 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             existing_identity=before['identity'], expected_login_count=before['login_count'] + 1)
         if after is None:
             return None
+        if self.stock_power_diagnostics_enabled():
+            self.creation_report['stock_power_lifecycle_after_logout'] = self.stock_power_lifecycle(rows)
         # Only the typed current reader repair permits the finite first-training
         # transition or exact stock level-2 auto-set load normalization. It
         # observes stock native success and committed SQL; it
@@ -1627,8 +1782,26 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             if table == 'ents':
                 previous = [{key: value for key, value in row.items() if key != 'logincount'} for row in previous]
                 current = [{key: value for key, value in row.items() if key != 'logincount'} for row in current]
-            require(self.saved_selected_rows_match(table, previous, current),
-                    'Committed existing character rows changed after reopen: ' + table)
+            if not self.saved_selected_rows_match(table, previous, current):
+                # A typed SQL snapshot after logout is evidence of the observed
+                # difference, not a successful persistence proof. Preserve it
+                # even when strict selected-row comparison stops verification.
+                delta = stock_power_delta(before['rows']['powers'], after['rows']['powers'],
+                    self.schema['expected_attributes']['attributes'])
+                failure = {'format': 1, 'status': 'failed', 'failed_table': table,
+                    'save_verified': False, 'save_acceptance_changed': False,
+                    'after_snapshot_sha256': digest_json(after), 'power_delta': delta}
+                self.creation_report['save_comparison_failure'] = failure
+                observed = {'format': 1, 'status': 'failed', 'save_verified': False,
+                    'failed_table': table, 'snapshot': json.loads(json.dumps(after)),
+                    'snapshot_sha256': digest_json(after),
+                    'evidence_scope': 'typed_after_logout_SQL_observation_strict_save_comparison_failed'}
+                if len((json.dumps(observed, indent=2) + '\n').encode()) <= SNAPSHOT_LIMIT:
+                    self.failed_after_snapshot = observed
+                    failure['after_snapshot_export_status'] = 'available'
+                else:
+                    failure['after_snapshot_export_status'] = 'exceeded_bounded_export_scope'
+                require(False, 'Committed existing character rows changed after reopen: ' + table)
         delivery = self.relocation_delivery()
         requested = self.creation_report.get('recovery_requested') is True or delivery is not None
         self.creation_report['recovery_requested'] = requested
@@ -1779,6 +1952,10 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         if self.baseline_snapshot is not None:
             base.private_write(target / 'character-reopen-before-snapshot.json',
                                json.dumps(self.baseline_snapshot, indent=2) + '\n')
+        if self.failed_after_snapshot is not None:
+            raw = json.dumps(self.failed_after_snapshot, indent=2) + '\n'
+            require(len(raw.encode()) <= SNAPSHOT_LIMIT, 'Failed character SQL snapshot exceeded export bound')
+            base.private_write(target / 'character-reopen-failed-after-snapshot.json', raw)
         # Export-only optional diagnostics. No extra readiness polling, SQL
         # queries or native inputs are introduced by stationary contact proof.
         try:

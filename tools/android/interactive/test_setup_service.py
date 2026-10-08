@@ -248,15 +248,18 @@ public class SetupServiceHost {
 SURFACE_HOST = r'''
 import java.util.*;
 class Looper {static final Looper UI=new Looper();static Looper current=UI;static Looper myLooper(){return current;}static Looper getMainLooper(){return UI;}}
+class SystemClock {static long uptimeMillis(){return 1000L;}}
 class Bitmap {boolean recycled;void recycle(){if(Looper.current!=Looper.UI)throw new AssertionError("non UI recycle");recycled=true;}}
 class InteractiveRfbClient {static final int MAX_WIDTH=2048,MAX_HEIGHT=2048;}
 class SurfaceOwner {
     static class Session {final String id;Session(String id){this.id=id;}}
     static class Frame {final Session session;Frame(Session value,int[] pixels,int width,int height,long sequence){session=value;}}
     static class Main {final List<Runnable> pending=new ArrayList<>();void post(Runnable action){pending.add(action);}void removeCallbacks(Runnable action){pending.remove(action);}void drain(){while(!pending.isEmpty())pending.remove(0).run();}}
+    static class CaptureWork {boolean cancelled;long freezeEndedAt;int framesDuringCopy,pendingFramesPeak;}
+    boolean capturePending;CaptureWork captureWork;
     final Object pendingLock=new Object();Session session;Frame pending,lastFrame;Bitmap displayed;
     final Main main=new Main();final Runnable captureTimer=()->{};boolean captureTimerPosted;int inputWidth=800,inputHeight=600;float pointerX,pointerY;
-    void releaseInput(){}void scheduleRender(){}
+    void releaseInput(){}void scheduleRender(){}void scheduleRenderIfPending(){}
     SURFACE_METHODS
 }
 public class SetupSurfaceHost {
@@ -264,11 +267,13 @@ public class SetupSurfaceHost {
     public static void main(String[] args) {
         SurfaceOwner surface=new SurfaceOwner();surface.setSession(String.join("",Collections.nCopies(32,"a")));
         surface.setFrame(new int[4],2,2,1);surface.lastFrame=surface.pending;Bitmap old=new Bitmap();surface.displayed=old;surface.captureTimerPosted=true;surface.main.post(surface.captureTimer);
+        SurfaceOwner.CaptureWork inFlight=new SurfaceOwner.CaptureWork();surface.captureWork=inFlight;surface.capturePending=true;
         if(args[0].equals("non_ui")) {
             Looper.current=new Looper();try{surface.clearFrames();throw new AssertionError("non UI clear accepted");}catch(IllegalStateException expected){}
-            need(!old.recycled&&surface.session!=null,"off-thread clear mutated state");
+            need(!old.recycled&&surface.session!=null&&!inFlight.cancelled&&surface.capturePending,"off-thread clear mutated state");
         } else {
             surface.clearFrames();surface.main.drain();surface.setFrame(new int[4],2,2,2);
+            need(inFlight.cancelled&&inFlight.freezeEndedAt==1000L&&!surface.capturePending,"in-flight capture survived clear");
             need(surface.session==null&&surface.pending==null&&surface.lastFrame==null&&surface.displayed==null&&old.recycled&&!surface.captureTimerPosted,"old frame restored");
             if(args[0].equals("new_session")){surface.setSession(String.join("",Collections.nCopies(32,"b")));surface.setFrame(new int[4],2,2,3);surface.main.drain();need(surface.pending!=null&&surface.pending.session==surface.session,"new session blocked");}
         }
@@ -306,7 +311,7 @@ class SetupServiceTests(unittest.TestCase):
                     'private ClientRuntime.Result executeSetup(', 'private void finishSetupWorker(',
                     'private void failedOperationDispatch(', 'private File validSetupReport(', 'private void refreshFinishedSetup(')))),
             'surface': ('SetupSurfaceHost', SURFACE_HOST.replace('SURFACE_METHODS', '\n'.join(
-                production_method(surface, signature) for signature in ('public void setSession(', 'public void clearFrames(', 'public void setFrame(')))),
+                production_method(surface, signature) for signature in ('public void setSession(', 'public void clearFrames(', 'public void setFrame(', 'private void invalidateCapture(')))),
         }
         cls.fixtures = {}
         for key, (name, contents) in fixtures.items():
@@ -364,6 +369,9 @@ class SetupServiceTests(unittest.TestCase):
 
     def test_frame_release_recycles_only_on_ui_thread_and_rejects_queued_old_frames(self):
         self.scenarios('surface', 'clear', 'non_ui', 'new_session')
+
+    def test_frame_clear_cancels_inflight_copy_before_new_session(self):
+        self.scenarios('surface', 'capture_cancel')
 
     def test_actual_dispatch_and_support_report_wire_the_setup_boundary(self):
         service = (JAVA/'ClientService.java').read_text()
