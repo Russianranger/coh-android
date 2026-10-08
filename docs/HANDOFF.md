@@ -1,3 +1,51 @@
+# Thor renderer attribution and background capture continuation — 2026-10-08
+
+**Current release: 0.13.19 / version code 34. All hosted and actual public-byte gates passed; physical startup/FPS gains and any effect on the brief black glitches remain pending on AYN Thor. Stay in Atlas; zoning remains deferred.** This checkpoint supersedes older setup/testing instructions below. Do not reimplement the accepted scene/frame/0.13.17 optimizations.
+
+## Published and audited 0.13.19
+
+Frozen Game/APK/Android/helper source: `a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4`.
+Tag: `coh-atlas-gameplay-v0.13.19`; release **406398364**; APK asset **620658511**.
+APK: **1,557,408,356 bytes**; SHA-256
+`e4c04aff16056ba2fb2560b818355ada6c3fe95d7f5c219a37d3b2945b330241`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.19/COH-Atlas-Gameplay-0.13.19.apk) · [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.19) · [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.19/COH-Atlas-Gameplay-0.13.19-testing.txt).
+
+[Owner run **37723301707**](https://github.com/Russianranger/coh-android/actions/runs/37723301707): all five jobs passed (changes, genuine Win32/native client, qualification, APK, independent public audit). **1,345 tests / 91 suites / zero skips**, including all seven real PostgreSQL fixtures. Root independently rehashed all **9,656 source pins** and verified the authenticated native/qualification/build/public receipts, release/tag and asset/checksum/testing-note closure. The public job downloaded the actual full APK and independently ran SDK 35, signer, exact source/payload and predecessor-conservation checks.
+
+Actual Game: **9,487,872 bytes**, SHA-256
+`adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44`.
+Four reviewed Java sources/DEX change; fifteen authored Java sources remain retained. Of 75 outer payloads, exactly seven Game/helper/manifest replacements change and 68 remain byte-identical. All 20 client DLLs, servers, visual assets, beacons, prepared caches, schema, graphics driver, Wine/FEX and Android resources remain retained. The binary Android manifest changes only version fields. Signer certificate remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+Runtime manifest SHA-256 is
+`89f591caeb5e0d8731bcd28defeae35dc59c1435ed3b8d0a141702cfe805edf3`.
+Source/asset/archive/member/receipt pins and exact audit limits are in `docs/android-evidence/renderer-attribution-0.13.19-publication.json`.
+
+The first candidate `a32df4e24d1e80168f9b27897a2a1c2b8f9d9b57` / run **37721873467** passed genuine Win32 logic checks but the real Game build exposed the new header including windows.h before stock Winsock2. Nothing was published. Only the new renderer patch's include placement and its source-order regression were corrected; twelve affected tests passed and every hosted gate reran successfully. No old producer/layer, renderer, pacing or buffering policy changed.
+
+## Completed changes and physical evidence boundary
+
+The FPS label now reads FPS and ms/frame below the crowded top HUD at native (8,112), retaining native sampling and `/showfps`. Existing sidebar Show FPS/10 FPS/30 FPS commands include Enter; sidebar Enter / Start and controller Start remain paired, bounded input.
+
+PixelCopy bitmap scanning, PNG compression and the encoder's initial SHA run on one process-wide worker with zero waiting queue, rather than the Android UI thread. Presentation resumes as soon as the copy finishes; immutable bitmap ownership, current session/generation, cancellation, PNG limits and gameplay screenshot proofs remain guarded. Independent retained-PNG verification/callback work still runs on its retained path and is excluded from encoder timing. `android_capture_diagnostics` aggregates current-session successful capture timings, including unretained/uniform captures, without granting readiness/save authority.
+
+The append-only native layer adds main gfx/backpressure and renderer batch/swap/selected upload/VBO/readback wall-time distributions, numeric maxfps/showfps state observations and thread CPU measured at window boundaries. It preserves rendering, queue policy, FPS choices, resolution and worker configuration. Strict failed-save diagnostics add a typed after-snapshot/power delta and optional read-only stock lifecycle witnesses; save comparison is not relaxed and no server/SQL behavior changes.
+
+The supplied 0.13.18 export and latest user observation are pinned in `docs/android-evidence/renderer-attribution-0.13.18-thor-20261008.json`; analysis is in `docs/COH-PERFORMANCE-0.13.19.md`. Startup was reported about unchanged, FPS was not visible to the user, and 30 had occasional brief black tearing. Unmatched native intervals average **8.422 Hz at 10** and **10.035 Hz at 30**, with explicit pacing **25.615 ms** and **0.005 ms** respectively. This does not establish a controlled gain or sustained 30 FPS; it points away from intentional pacing as the limiting factor in the sampled 30 intervals. Black-glitch cause remains unconfirmed.
+
+That historical report's strict save comparison **failed** on one extra stock-compatible Commuter power, with all fifteen original semantic power rows preserved. There is no authoritative native DayJob grant/eligibility witness, so do not call the report a save pass or assume a crash/character loss. This release only improves evidence for a future failure. Do not add an unmeasured llvmpipe worker override.
+
+## Next Thor run and diagnostic export
+
+Install as an update preserving app data, imports and character. **Run Set up / update runtime ONCE and wait for Runtime ready:** Game/helpers/manifest changed, unlike Android-only 0.13.18. No asset reimport or data reset is required.
+
+Follow `docs/COH-Atlas-Gameplay-0.13.19-testing.txt`. Keep Performance, 800x600 and llvmpipe. Capture first and warm launcher/Reopen-to-login/world times, displayed local Atlas/client durations, selection-to-visible/playable world and progressive appearance/stalls. Close chat with B/Esc, tap Show FPS, then compare 10 and 30 over the same timed standing/camera/populated movement/building/unseen-scenery route. Capture FPS/ranges, geometry/texture/NPC pauses, black-glitch location/frequency/duration, temperatures/fan/charging, stability/crashes and ordinary strict save/reopen. Begin promptly after world entry; do not zone.
+
+Use **Export latest report after EACH run before another operation replaces it**, and send the **complete outer `coh-atlas-gameplay-*.zip`** with route timestamps and timing/FPS/temperature notes. Preserve FAILED exports if strict save comparison fails. The outer `operation.log` records Android stages/command submission; `android-client-report.json.android_capture_diagnostics` records copy/freeze/encoding wall/CPU/dispatch/coalescing and actual UI-encoder counts. The inner `guest-report.zip/latest-report.json` records identities/startup/lifecycle/save and typed failed comparison. `guest-report.zip/client-evidence/client-console.log` contains retained `COH_CLIENT_FRAME_TIMING_V1`, `COH_CLIENT_SCENE_PHASE_V1`, `COH_CLIENT_GAMEPLAY_PROFILE_V1`, `COH_CLIENT_TEXTURE_ERRORS_V1` and new **`COH_CLIENT_RENDERER_ATTRIBUTION_V1`**. Local Atlas is in `client-evidence/character-atlas-console.txt`; failed-after snapshots are retained in `client-evidence/character-reopen-failed-after-snapshot.json` when applicable.
+
+Frame records separate intentional pacing and main work; scene phases identify geometry/texture loading; renderer records separate gfx/backpressure, batch/swap and selected callback costs/spikes. Thread CPU excludes llvmpipe/Wine/FEX workers. Renderer batches include queue gaps/driver waits/scheduling, and selected texture callbacks do not isolate disk/decode/GPU completion. Nested phases overlap and must not be summed. Each window stream stops after 120 roughly ten-second windows per thread; numeric state changes stop after 64. Hosted qualification establishes correctness only.
+
+Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`; PR #1 remains open/draft. This publication checkpoint is documentation only: reproduce/audit the APK from the frozen source above, rather than a later documentation head.
+
 # Thor sidebar FPS controls and Start/Enter continuation — 2026-10-07
 
 **Current release: 0.13.18 / version code 33. Physical Start/Enter and the controlled 10/30 FPS route remain pending on AYN Thor. Stay in Atlas; zoning remains deferred.** This checkpoint supersedes the incomplete 0.13.17 test instructions below. Continue scene/frame optimization from the next complete physical export; do not reimplement the accepted native changes.
