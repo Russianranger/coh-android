@@ -1,12 +1,13 @@
 --- a/Game/src/graphics/gfx.c
 +++ b/Game/src/graphics/gfx.c
-@@ -1,4 +1,6 @@
- #include "graphics/gfx.h"
+@@ -68,5 +68,7 @@
+ #include "graphics/gfxLoadScreens.h"
+ #include "graphics/gfxDevHUD.h"
+ #include "UI/sprite/sprite_base.h"
 +#define COH_RA_IMPLEMENTATION
 +#include "cohClientRendererAttribution.h"
- #include "graphics/gfxSettings.h"
- #include <utilitieslib/utils/mathutil.h>
- #include "seq/gfxtree.h"
+
+ GfxState gfx_state;
 @@ -410,7 +412,8 @@
      }
      if (!game_state.e3screenshot && game_state.fps && game_state.showfps && !doingHeadShot())

@@ -85,6 +85,13 @@ fresh prepublication audit and independent actual-public-APK audit are gates.
 Final source, APK and receipt pins belong in HANDOFF/publication evidence only
 after those gates pass. Hosted correctness is not a physical performance result.
 
+The first hosted candidate `a32df4e24d1e80168f9b27897a2a1c2b8f9d9b57`
+in run 37721873467 passed genuine Win32 logic qualification but failed the real
+Game build: the new gfx header imported Windows before stock Winsock2 includes.
+No APK was published. Only the new header insertion moved below the complete
+stock include block, with an exact source-order regression; old native layers,
+global compiler flags, rendering, buffering and timing policy remain unchanged.
+
 Install as an update and run **Set up / update runtime once** for the changed
 native/helper generation. Preserve imported assets and the existing character.
 Follow `COH-Atlas-Gameplay-0.13.19-testing.txt`, export the complete outer report

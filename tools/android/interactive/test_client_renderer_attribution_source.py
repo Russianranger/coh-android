@@ -101,6 +101,33 @@ def command_case(dispatch, command):
 
 
 class RendererSourceTests(unittest.TestCase):
+    def test_renderer_header_preserves_stock_windows_and_winsock_include_order(self):
+        original, current = sources()
+        # Production diagnostics need Windows clocks, but must not make windows.h
+        # import legacy winsock.h before the stock wininclude/winsock2 chain.
+        boundary = '\nGfxState gfx_state;'
+        before = original[FILES[0]].split(boundary, 1)[0]
+        after = current[FILES[0]].split(boundary, 1)[0]
+        anchor = '#include "UI/sprite/sprite_base.h"\n'
+        added = '#define COH_RA_IMPLEMENTATION\n#include "cohClientRendererAttribution.h"\n'
+        self.assertEqual(before.count(anchor), 1)
+        self.assertEqual(after, before.replace(anchor, anchor+added))
+        self.assertLess(after.index('#include "cohClientSceneTiming.h"'), after.index(added))
+        self.assertLess(after.index('#include "win/win_init.h"'), after.index(added))
+        wininclude = (ROOT/'upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/utils/wininclude.h').read_text()
+        self.assertLess(wininclude.index('#include <winsock2.h>'), wininclude.index('#include <windows.h>'))
+        win_header = (ROOT/'upstream/ouroboros/Game/src/win/win_init.h').read_text()
+        render_header = (ROOT/'upstream/ouroboros/Game/src/render/thread/rt_win_init.h').read_text()
+        self.assertIn('#include <utilitieslib/utils/wininclude.h>', win_header)
+        self.assertIn('#include <utilitieslib/utils/wininclude.h>', render_header)
+        for name, stock_include in (
+            (FILES[1], '#include <utilitieslib/utils/wininclude.h>'),
+            (FILES[2], '#include "win/win_init.h"'),
+            (FILES[3], '#include "rt_win_init.h"')):
+            with self.subTest(source=name):
+                self.assertLess(current[name].index(stock_include),
+                    current[name].index('#include "cohClientRendererAttribution.h"'))
+
     def test_complete_accepted_sources_remain_exact_except_observations_and_fps_placement(self):
         self.assertTrue(source_proof())
 
