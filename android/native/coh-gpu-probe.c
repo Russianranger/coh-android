@@ -512,7 +512,7 @@ static int read_presented_pattern(HWND window, HDC screen_dc, struct probe_resul
                                     unsigned int *attempts, unsigned int *elapsed) {
     unsigned int started = (unsigned int)GetTickCount();
     for (;;) {
-        RECT client;
+        RECT client = {0};
         unsigned int i;
         int owned = pump_probe_messages(window) && GetClientRect(window,&client);
         int verdict;
