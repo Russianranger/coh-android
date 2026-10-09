@@ -109,9 +109,21 @@ class RenderPipelinePublication(unittest.TestCase):
         self.assertTrue(provenance['game_changed_from_public_0_13_21'])
         self.assertTrue(provenance['raw_producer_preserved'])
         self.assertEqual(builder.NATIVE_MANIFEST_PIN['sha256'], 'daa2b2f9b2000449da27a2386a891c13248252770e1f237e99927b1392cc756c')
-        for name in builder.HELPERS:
-            path = builder.ROOT/'android/guest'/name
-            self.assertEqual(builder.builder().file_pin(path), provenance['source_files']['android/guest/'+name])
+        current = {name:builder.builder().file_pin(builder.ROOT/name)
+            for name in provenance['source_files']}
+        changed = {name for name in current if current[name] != provenance['source_files'][name]}
+        if changed:
+            # The original producer remains frozen. A later qualified native
+            # layer may replace only its four explicitly reviewed guest readers.
+            import build_client_render_queue_apk as continuation
+            expected = {'android/guest/'+name for name in continuation.HELPERS}
+            self.assertEqual(changed, expected)
+            self.assertEqual(continuation.PARENT_NATIVE_SOURCE_FILES, provenance['source_files'])
+            self.assertEqual(continuation.native_producer().expected_receipt()[
+                'base_client_render_pipeline_build_input'], builder.native_producer().expected_receipt())
+            self.assertEqual(continuation.PARENT_NATIVE_COMMIT, provenance['repository_commit'])
+        else:
+            self.assertEqual(current, provenance['source_files'])
         with mock.patch.dict(builder.os.environ, {'GITHUB_RUN_ID': '42'}):
             current = builder.publication_provenance('b'*40)
         self.assertEqual(current['repository_commit'], 'b'*40)

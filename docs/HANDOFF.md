@@ -1,3 +1,52 @@
+# .25 render-worker optimization in progress; .24 device evidence recovered — 2026-10-09
+
+**Runtime setup and world login now pass on the AYN Thor. FPS regression remains
+confirmed.** The latest user report is .24, complete export
+`coh-atlas-gameplay-20261009-195656.zip`, SHA-256
+`ab4e657d9cbcf133f3875d11b3c951ad5cfc4e0381e1e9a19e512f6950136521`.
+The owned Game uses `zink (Turnip Adreno (TM) 740)` with no observed Software
+fallback. Setup completed in 342.591 seconds; the current session budget was
+accepted and ordinary strict Save/Finish passed. Saved native position changed;
+explicit input-effect/overall gameplay qualification remain false. Do not claim
+full controls qualification from submitted inputs alone.
+
+888 pure-gameplay intervals at observed cap30 average **194.165 ms / 5.150 Hz**;
+main CPU averages 54.245 ms/frame. Submission/graphics wall dominates; independent
+non-swap renderer wall is about180 ms and swap3.5 ms. Instrumented readback count
+is zero. Detailed pipeline timing was disabled and emitted no records, so sampler
+disabling did not restore performance. Pure GPU time, full-ring waits and scene
+phase costs remain unresolved. Existing 800x600 UI and render_scale0.75 are retained.
+The .21 user-observed smoother15–30FPS/no fidelity loss and successfulGPU startup
+remain completed milestones, not a sustained30FPS guarantee.
+
+Recovery began from clean `fffd44f108fbcb871e35570df17d934f2cc158cd` and confirmed
+.24 as the newest release, no newer remote work and no active native/publication
+build. Development remains on `codex/character-persistence-continuation`, draft
+PR#1; main remains behind. .24 stays the published APK until .25 gates pass.
+
+The .25 candidate coalesces repeated producer event signals for the render-worker
+instance and adds sparse setup/sort/draw and full-ring-wait observations. It
+preserves queue work/order, graphics fidelity, other workers/unthreaded behavior,
+.23 movement/save controls and sampler-off Reopen, .24 setup/Java/DEX, assets,
+character persistence and Software fallback. New Game compilation is required;
+completed GPU/probe/server/native ancestor builds must not be repeated. Current
+producer receipts remain separate from frozen ancestry. Host/native fixtures
+establish behavior and work reduction; no physical FPS gain is claimed.
+
+Reviewed raw evidence: `docs/android-evidence/render-queue-0.13.24-thor-20261009.json`.
+Implementation, timing scope and release gates: `docs/COH-PERFORMANCE-0.13.25.md`.
+Focused route: `docs/COH-Atlas-Gameplay-0.13.25-testing.txt`.
+
+**Exact next milestone:** finish native/host/SDK/public-download qualification,
+publish .25, then measure the same short GPU Atlas standing/camera/walking route
+and strict Save/Finish with unchanged visuals. This will test coalescing benefit
+and separate sparse scene wall from full-ring pressure; pure GPU duration remains
+unmeasured. Setup/login/GPU preflight are completed milestones. Startup, zoning
+and a long unchanged Software benchmark remain deferred.
+
+Earlier published checkpoints below remain history; their pending .24 setup
+milestone is superseded by the new physical evidence above.
+
 # Published .24 bounded runtime setup copy repair — 2026-10-09
 
 **Current test APK: 0.13.24 / version code 39, published; all five owner jobs

@@ -719,6 +719,74 @@ SESSION_REPAIR_ALLOWED = SESSION_REPAIR_SOURCES | SESSION_REPAIR_DOCS | frozense
 })
 
 
+# .25 appends the reviewed Game queue layer over the exact .24 Android shell.
+# Shared guest readers require a marker; Java/GPU/server/asset changes are excluded.
+RENDER_QUEUE_HELPERS = frozenset({
+    'android/guest/native_responsiveness_contract.py',
+    'android/guest/client_startup_diagnostic.py',
+    'android/guest/client_gpu_profile.py',
+    'android/guest/texture_header_index.py',
+})
+RENDER_QUEUE_SOURCES = RENDER_QUEUE_HELPERS | frozenset({
+    '.github/workflows/android-client-render-queue.yml',
+    'patches/client-render-queue/0001-coalesce-render-worker-wake-and-sparse-queue-timing.patch',
+    'database/client-render-queue/overlay/Game/src/cohClientRenderQueue.h',
+    'tools/android/interactive/package_client_render_queue_native.py',
+    'tools/android/interactive/build_client_render_queue_apk.py',
+    'tools/android/interactive/qualify_client_render_queue.py',
+    'tools/android/interactive/test_client_render_queue_native.py',
+    'tools/android/interactive/test_client_render_queue_source.py',
+    'tools/android/interactive/test_client_render_queue_worker.py',
+    'tools/android/interactive/test_client_render_queue_contract.py',
+    'tools/android/interactive/test_client_render_queue_package.py',
+    'tools/android/interactive/test_client_render_queue_guest.py',
+    'tools/android/interactive/analyze_client_render_queue.py',
+    'tools/android/interactive/test_analyze_client_render_queue.py',
+})
+RENDER_QUEUE_MARKERS = RENDER_QUEUE_SOURCES - RENDER_QUEUE_HELPERS
+# A source-equivalent host correction must explicitly reuse its completed Game.
+# Only these finite native producer inputs permit an automatic new Game build.
+RENDER_QUEUE_NATIVE_INPUTS = frozenset({
+    'patches/client-render-queue/0001-coalesce-render-worker-wake-and-sparse-queue-timing.patch',
+    'database/client-render-queue/overlay/Game/src/cohClientRenderQueue.h',
+    'tools/android/interactive/package_client_render_queue_native.py',
+    'tools/android/interactive/test_client_render_queue_native.py',
+    'tools/android/interactive/test_client_render_queue_source.py',
+    'tools/android/interactive/test_client_render_queue_worker.py',
+})
+RENDER_QUEUE_DOCS = frozenset({'docs/HANDOFF.md','docs/COH-PERFORMANCE-0.13.25.md',
+    'docs/android-evidence/render-queue-0.13.25-publication.json'})
+RENDER_QUEUE_ALLOWED = RENDER_QUEUE_SOURCES | RENDER_QUEUE_DOCS | frozenset({
+    'tools/android/interactive/test_client_render_pipeline_package.py',
+    'tools/android/interactive/test_client_session_repair_package.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-Atlas-Gameplay-0.13.25-testing.txt',
+    'docs/android-evidence/render-queue-0.13.24-thor-20261009.json',
+})
+
+
+def render_queue_push(event,before,head,parent,names):
+    return bool(bounded_push(event,before,head,parent,names,RENDER_QUEUE_ALLOWED)
+        and set(names)&RENDER_QUEUE_MARKERS)
+
+
+def render_queue_native_push(event,before,head,parent,names):
+    return bool(render_queue_push(event,before,head,parent,names)
+        and set(names)&RENDER_QUEUE_NATIVE_INPUTS)
+
+
+def render_queue_docs(event,before,head,parent,names):
+    return bool(bounded_push(event,before,head,parent,names,RENDER_QUEUE_DOCS)
+        and 'docs/android-evidence/render-queue-0.13.25-publication.json' in names)
+
+
+def render_queue_owned(event,before,head,parent,names):
+    return render_queue_push(event,before,head,parent,names) or render_queue_docs(event,before,head,parent,names)
+
+
 # .24 recompiles only the reviewed setup Java shell. Runtime/native/guest/asset
 # mutations cannot join this lane; existing shared paths require a new marker.
 SETUP_COPY_SOURCES = frozenset({
@@ -936,6 +1004,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -960,6 +1029,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -982,6 +1052,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1006,6 +1077,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1030,6 +1102,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1052,6 +1125,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1072,6 +1146,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1091,6 +1166,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1110,6 +1186,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1128,6 +1205,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1145,6 +1223,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1161,6 +1240,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1176,6 +1256,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1190,6 +1271,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
@@ -1203,6 +1285,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False

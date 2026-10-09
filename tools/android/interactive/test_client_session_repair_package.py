@@ -107,9 +107,18 @@ class SessionRepairPublication(unittest.TestCase):
         self.assertEqual(builder.RETAINED_NATIVE_SOURCE_FILES, history.RETAINED_NATIVE_SOURCE_FILES)
         self.assertTrue(set('android/guest/'+name for name in builder.NEW_HELPERS).isdisjoint(
             builder.RETAINED_NATIVE_SOURCE_FILES))
-        for name, pin in builder.RETAINED_NATIVE_SOURCE_FILES.items():
-            with self.subTest(name=name):
-                self.assertEqual(builder.builder().file_pin(builder.ROOT/name), pin)
+        current = {name:builder.builder().file_pin(builder.ROOT/name)
+            for name in builder.RETAINED_NATIVE_SOURCE_FILES}
+        changed = {name for name in current if current[name] != builder.RETAINED_NATIVE_SOURCE_FILES[name]}
+        if changed:
+            import build_client_render_queue_apk as continuation
+            self.assertEqual(changed, {'android/guest/'+name for name in continuation.HELPERS})
+            self.assertEqual(continuation.PARENT_NATIVE_SOURCE_FILES, builder.RETAINED_NATIVE_SOURCE_FILES)
+            self.assertEqual(continuation.native_producer().expected_receipt()[
+                'base_client_render_pipeline_build_input'], history.native_producer().expected_receipt())
+            self.assertEqual(continuation.PARENT_NATIVE_COMMIT, builder.native_build_provenance()['repository_commit'])
+        else:
+            self.assertEqual(current, builder.RETAINED_NATIVE_SOURCE_FILES)
 
     def test_original_native_producer_and_truthful_no_rebuild_flags_retained(self):
         self.assertEqual(builder.native_build_provenance(), history.native_build_provenance())

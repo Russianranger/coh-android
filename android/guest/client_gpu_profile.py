@@ -31,6 +31,8 @@ WGL_PREFIX = 'COH_GPU_PROBE_V2 '
 MESA_SOURCE_SHA256 = '2a44e98e64d5c36cec64633de2d0ec7eff64703ee25b35364ba8fcaa84f33f72'
 GAME_SOURCE_COMMIT = 'a4a658be25d2b5ca1393b7d3daedd83a7d9ca1f4'
 GAME_SHA256 = 'adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44'
+PIPELINE_SOURCE_COMMIT = '5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396'
+PIPELINE_GAME_SHA256 = '1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72'
 WGL_TRUE = ('zink_nonsoftware', 'multitexture', 'texture_compression', 'arb_vertex_program',
     'arb_fragment_program', 'framebuffer_extension', 'vertex_buffer_object', 's3tc', 'npot',
     'bgra_extension', 'api_loaded', 'arb_programs', 'multitexture_render', 'vbo_render',
@@ -504,6 +506,13 @@ def verified_render_pipeline_producer(owner):
             and isinstance(package, dict) and isinstance(producer, dict),
             'Render pipeline lacks its current typed Game producer')
     record = native_candidate.client_contract(package)
+    queue = (verified_render_queue_producer(owner)
+             if getattr(owner, 'client_render_queue', False) is True else None)
+    if queue is not None:
+        require(native_candidate.canonical_sha(package) == native_candidate.canonical_sha(owner.client_render_queue_package),
+                'Render pipeline and render queue differ in their current typed package')
+    pipeline_record = (native_candidate.client_render_pipeline_contract(package)
+                       if queue is not None else record)
     wrapper = package.get('client_render_pipeline')
     require(isinstance(wrapper, dict), 'Render pipeline typed extension is missing')
     parent = package['client_renderer_attribution']
@@ -519,7 +528,8 @@ def verified_render_pipeline_producer(owner):
             and producer.get('manifest_sha256') == wrapper['manifest_sha256']
             and producer.get('base_client_renderer_attribution_manifest_sha256') == parent['manifest_sha256']
             and producer.get('base_client_executable_sha256') == GAME_SHA256
-            and producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == record['sha256']
+            and producer.get('client_executable_sha256') == pipeline_record['sha256']
+            and getattr(owner, 'client_executable_sha256', None) == record['sha256']
             and producer.get('source_commit') == package['source_commit']
             and producer.get('data_commit') == package['data_commit']
             and producer.get('native_source_sha256') == native_candidate.canonical_sha(manifest['retained_source_inputs'])
@@ -535,11 +545,80 @@ def verified_render_pipeline_producer(owner):
             and producer.get('worker_wakeup_repaired') is True
             and producer.get('physical_fps_improvement_validated') is False,
             'Render pipeline lacks its current verified Game producer')
-    return {'policy': 'exact_retained_renderer_Game_then_full_typed_render_pipeline_v1',
+    result = {'policy': 'exact_retained_renderer_Game_then_full_typed_render_pipeline_v1',
             'repository_commit': manifest['repository_commit'],
             'manifest_sha256': wrapper['manifest_sha256'], 'client_executable_sha256': record['sha256'],
             'retained_renderer_repository_commit': GAME_SOURCE_COMMIT,
             'retained_renderer_manifest_sha256': parent['manifest_sha256'],
+            'retained_renderer_executable_sha256': GAME_SHA256,
+            'native_source_sha256': native_candidate.canonical_sha(manifest['retained_source_inputs'])}
+    if queue is not None:
+        result.update(policy='retained_pipeline_in_verified_render_queue_Game_attempt_v1',
+            pipeline_producer_executable_sha256=pipeline_record['sha256'],
+            current_Game_repository_commit=queue['repository_commit'],
+            current_Game_manifest_sha256=queue['manifest_sha256'],
+            typed_render_queue_extension=True)
+    return result
+
+
+def verified_render_queue_producer(owner):
+    """Extend the exact frozen .22 Game, retaining its raw source and Win32 proof."""
+    package = getattr(owner, 'client_render_queue_package', None)
+    producer = owner.ctx.report.get('client_render_queue')
+    require(getattr(owner, 'client_render_queue', False) is True
+            and getattr(owner, 'client_render_pipeline', False) is True
+            and isinstance(package, dict) and isinstance(producer, dict),
+            'Render queue lacks its current typed Game producer')
+    record = native_candidate.client_contract(package)
+    wrapper = package.get('client_render_queue')
+    require(isinstance(wrapper, dict), 'Render queue typed extension is missing')
+    parent = package['client_render_pipeline']
+    parent_manifest = parent['manifest']
+    renderer = package['client_renderer_attribution']['manifest']
+    manifest = wrapper['manifest']
+    historical = owner.ctx.report.get('client_render_pipeline')
+    require(parent_manifest['repository_commit'] == PIPELINE_SOURCE_COMMIT
+            and parent_manifest['files']['CityOfHeroes.exe']['sha256'] == PIPELINE_GAME_SHA256
+            and parent_manifest['files']['CityOfHeroes.exe']['size'] == 9494016
+            and wrapper['base_client_executable']['sha256'] == PIPELINE_GAME_SHA256
+            and renderer['repository_commit'] == GAME_SOURCE_COMMIT
+            and renderer['files']['CityOfHeroes.exe']['sha256'] == GAME_SHA256,
+            'Render queue does not extend the exact retained .22/.19 Game producers')
+    require(isinstance(historical, dict) and type(historical.get('format')) is int
+            and historical['format'] == 1 and historical.get('verified') is True
+            and historical.get('repository_commit') == PIPELINE_SOURCE_COMMIT
+            and historical.get('client_executable_sha256') == PIPELINE_GAME_SHA256
+            and historical.get('manifest_sha256') == parent['manifest_sha256'],
+            'Render queue changed its retained historical pipeline producer')
+    require(type(producer.get('format')) is int and producer['format'] == 1
+            and producer.get('verified') is True
+            and producer.get('repository_commit') == manifest['repository_commit']
+            and producer.get('manifest_sha256') == wrapper['manifest_sha256']
+            and producer.get('base_client_render_pipeline_manifest_sha256') == parent['manifest_sha256']
+            and producer.get('base_client_executable_sha256') == PIPELINE_GAME_SHA256
+            and producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == record['sha256']
+            and producer.get('source_commit') == package['source_commit']
+            and producer.get('data_commit') == package['data_commit']
+            and producer.get('native_source_sha256') == native_candidate.canonical_sha(manifest['retained_source_inputs'])
+            and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('data_source_sha256', '')))
+            and producer['data_source_sha256'] == owner.ctx.report.get('import_identity', {}).get('contract_sha256')
+            and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and producer.get('source_freshness_preserved') is True
+            and producer.get('prepared_cache_schema_changed') is False
+            and producer.get('renderer_changed') is False
+            and producer.get('graphics_fidelity_preserved') is True
+            and producer.get('gameplay_frame_cap_changed') is False
+            and producer.get('bounded_render_queue_diagnostics') is True
+            and producer.get('render_worker_wake_coalesced') is True
+            and producer.get('physical_fps_improvement_validated') is False,
+            'Render queue lacks its current verified Game producer')
+    return {'policy': 'exact_retained_pipeline_Game_then_full_typed_render_queue_v1',
+            'repository_commit': manifest['repository_commit'], 'manifest_sha256': wrapper['manifest_sha256'],
+            'client_executable_sha256': record['sha256'],
+            'retained_pipeline_repository_commit': PIPELINE_SOURCE_COMMIT,
+            'retained_pipeline_manifest_sha256': parent['manifest_sha256'],
+            'retained_pipeline_executable_sha256': PIPELINE_GAME_SHA256,
+            'retained_renderer_repository_commit': GAME_SOURCE_COMMIT,
             'retained_renderer_executable_sha256': GAME_SHA256,
             'native_source_sha256': native_candidate.canonical_sha(manifest['retained_source_inputs'])}
 
@@ -554,7 +633,12 @@ def current_game_producer(owner):
     if getattr(owner, 'client_render_pipeline', False) is True:
         require(producer.get('client_executable_sha256') == GAME_SHA256,
                 'GPU profile changed its retained historical Game producer')
-        return verified_render_pipeline_producer(owner)
+        # The pipeline attempt gate validates its raw historical report as well
+        # as a possible newer exact extension; GPU selection names the actual
+        # current Game producer independently of those retained layer receipts.
+        verified = verified_render_pipeline_producer(owner)
+        return (verified_render_queue_producer(owner)
+                if getattr(owner, 'client_render_queue', False) is True else verified)
     require(producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == GAME_SHA256,
             'GPU profile lacks the current verified .19 Game producer')
     return {'policy': 'exact_retained_renderer_Game_v1', 'repository_commit': GAME_SOURCE_COMMIT,

@@ -163,6 +163,8 @@ def client_contract(package, receipt=None):
         executable = client_renderer_attribution_contract(package, candidate)
     if 'client_render_pipeline' in package:
         executable = client_render_pipeline_contract(package, candidate)
+    if 'client_render_queue' in package:
+        executable = client_render_queue_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
@@ -487,6 +489,162 @@ def client_render_pipeline_contract(package, candidate=None):
     require(not same_json(record, previous) and record['pe_machine'] == previous['pe_machine']
         and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
         'Render pipeline Game imports exceed the retained DLL closure')
+    return record
+
+def _render_queue_windows_proof(proof, build):
+    """Require genuine Win32 metrics and the actual staged worker queue fixture."""
+    flags = ('main_gameplay_setup_sort_and_repeated_draw_aggregation_verified',
+        'phase_clocks_one_in_thirty_two_frames_verified',
+        'unsampled_and_disabled_without_wall_clocks_verified',
+        'nested_gfx_suppression_and_partial_frame_discard_verified',
+        'producer_snapshot_conservation_monotonicity_and_saturation_verified',
+        'bounded_ten_second_windows_and_120_report_limit_verified',
+        'invalid_clock_overflow_and_logging_bounds_nonfatal_verified',
+        'shared_translation_unit_tls_isolation_verified',
+        'genuine_win32_qpc_and_concurrent_json_verified',
+        'native_crt_macro_isolation_and_restoration_verified',
+        'queue_counters_include_non_gameplay_work', 'phase_wall_is_not_gpu_time',
+        'worker_source_bound_interleavings_verified')
+    pins = ('harness_sha256', 'helper_sha256', 'production_harness_sha256', 'production_helper_sha256')
+    require(isinstance(proof, dict) and set(proof) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'compiler_options', 'patch_sha256', 'header_sha256',
+        'physical_fps_gain_validated', 'worker_queue_fixture', 'worker_source_proof_sha256', *pins, *flags}
+        and type(proof.get('format')) is int and proof['format'] == 1
+        and proof.get('status') == 'passed' and proof.get('platform') == 'windows'
+        and proof.get('architecture') == 'Win32' and proof.get('configuration') == 'OptDebug'
+        and proof.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+        and all(HEX64.fullmatch(str(proof.get(name, ''))) for name in pins)
+        and HEX64.fullmatch(str(proof.get('worker_source_proof_sha256', '')))
+        and all(proof.get(name) is True for name in flags)
+        and proof.get('physical_fps_gain_validated') is False
+        and proof.get('patch_sha256') == build['patches_sha256']['patches/client-render-queue/0001-coalesce-render-worker-wake-and-sparse-queue-timing.patch']
+        and proof.get('header_sha256') == build['overlay_sha256']['Game/src/cohClientRenderQueue.h'],
+        'Render queue source-bound Win32 metrics proof missing')
+    worker = proof['worker_queue_fixture']
+    worker_flags = ('actual_staged_worker_body_and_api_verified',
+        'real_win32_auto_reset_events_and_threads_required',
+        'publication_before_reset_after_reset_and_before_wait_verified',
+        'fitting_burst_no_per_command_clock_or_locked_pending_operations_verified',
+        'diagnostics_disabled_and_enabled_same_dispatch_verified',
+        'delayed_claim_to_signal_across_consumer_rearm_verified',
+        'consumed_command_late_claim_before_next_reset_and_following_wake_verified',
+        'missing_post_reset_rearm_actual_worker_negative_control_rejected',
+        'failed_signal_rearms_pending_retry_verified',
+        'unthreaded_immediate_ordered_dispatch_verified',
+        'small_ring_wrap_pressure_heap_cancel_debug_messages_verified',
+        'ring_clock_failure_nonfatal_and_at_most_two_queries_per_block_verified',
+        'flush_monitor_idle_destruction_and_control_wakes_verified',
+        'barriers_and_process_waits_bounded')
+    counts = {'repeated_idle_publication_cycles': 72, 'burst_commands_per_case': 1024,
+        'legacy_burst_signal_count': 1024, 'coalesced_burst_signal_count': 1,
+        'coalesced_burst_locked_producer_operations': 1}
+    require(isinstance(worker, dict) and set(worker) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'compiler_options', 'source_sha256', 'header_sha256', 'harness_sha256',
+        'production_harness_sha256', 'physical_fps_gain_validated', *worker_flags, *counts}
+        and type(worker.get('format')) is int and worker['format'] == 1
+        and worker.get('status') == 'passed' and worker.get('platform') == 'windows'
+        and worker.get('architecture') == 'Win32' and worker.get('configuration') == 'OptDebug'
+        and worker.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+        and all(worker.get(name) is True for name in worker_flags)
+        and all(type(worker.get(name)) is int and worker[name] == value for name, value in counts.items())
+        and worker.get('physical_fps_gain_validated') is False
+        and worker.get('source_sha256') == build['patched_sha256']['libs/UtilitiesLib/src/components/WorkerThread.c']
+        and worker.get('header_sha256') == build['patched_sha256']['libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h']
+        and all(HEX64.fullmatch(str(worker.get(name, ''))) for name in ('harness_sha256', 'production_harness_sha256')),
+        'Render queue actual source-bound Win32 worker queue fixture missing')
+
+
+def client_render_queue_contract(package, candidate=None):
+    """Extend the frozen pipeline Game without changing any earlier source history."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = client_render_pipeline_contract(package, candidate)
+    accepted = package['client_render_pipeline']
+    wrapper = package.get('client_render_queue')
+    same_json = lambda first, second: json.dumps(first, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(second, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+        'base_client_render_pipeline_manifest_sha256', 'base_client_executable'}
+        and wrapper['base_client_render_pipeline_manifest_sha256'] == accepted['manifest_sha256']
+        and same_json(wrapper['base_client_executable'], previous),
+        'Render queue must retain the exact accepted pipeline Game producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+        and type(manifest.get('format')) is int and manifest['format'] == 1
+        and manifest.get('role') == 'bounded_client_render_queue'
+        and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+        and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+        and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+        and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
+        and manifest.get('retained_native_dependencies_changed') is False
+        and scene_source_inputs_equivalent(manifest.get('retained_source_inputs'), candidate['build_inputs'])
+        and same_json(manifest.get('schema_sources_sha256'), candidate['retained_cache']['schema_sources_sha256'])
+        and same_json(manifest.get('base_client_executable'), previous)
+        and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False
+        and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+        and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+        'Render queue changed native dependencies or cache ancestry')
+    build = manifest.get('build_input', {})
+    files = {'Game/src/graphics/gfx.c', 'Game/src/render/thread/rt_queue.c',
+        'libs/UtilitiesLib/src/components/WorkerThread.c',
+        'libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h'}
+    patches = {'patches/client-render-queue/0001-coalesce-render-worker-wake-and-sparse-queue-timing.patch'}
+    controls = {
+        'sparse_render_queue': {'environment_variable': 'COH_CLIENT_RENDER_QUEUE',
+            'enabled_value': '1', 'disabled_by_default': True,
+            'record_prefix': 'COH_CLIENT_RENDER_QUEUE_V1', 'window_report_ms': 10000,
+            'window_report_limit': 120, 'scene_sample_interval': 32,
+            'aggregate_only': True, 'main_scope': 'gameplay',
+            'queue_scope': 'process_cumulative', 'per_command_clocks': False,
+            'ring_clocks_only_when_blocked': True, 'blocking_gpu_measurement': False},
+        'worker_wake_coalescing': {'render_instance_opt_in': True,
+            'atomic_first_wake_acknowledgement': True, 'arm_before_event_reset': True,
+            'post_reset_rearm_preserved': True,
+            'empty_queue_recheck_preserved': True, 'control_wakes_unchanged': True,
+            'unthreaded_queue_unchanged': True, 'queue_capacity_unchanged': True,
+            'pending_commands_are_observations': True}}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+        'base_client_render_pipeline_build_input', 'base_native_repository_commit', 'patches_sha256', 'source_sha256', 'patched_sha256',
+        'overlay_sha256', 'reverse_patch_exact_base_verified', 'controls', 'build_targets', 'configuration',
+        'architecture', 'cache_encoding_changed', 'parse6_schema_changes', 'source_freshness_changed',
+        'graphics_profile_changes', 'renderer_changed', 'gameplay_validation_changes',
+        'runtime_execution_validated', 'gameplay_frame_cap_changed', 'native_fps_display_changed', 'worker_wakeup_changed'}
+        and type(build.get('format')) is int and build['format'] == 1
+        and build.get('role') == manifest['role'] and build.get('source_commit') == SOURCE
+        and build.get('base_native_repository_commit') == '5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396'
+        and same_json(build.get('base_client_render_pipeline_build_input'), accepted['manifest']['build_input'])
+        and build.get('reverse_patch_exact_base_verified') is True and same_json(build.get('controls'), controls)
+        and build.get('build_targets') == ['Game'] and build.get('configuration') == 'OptDebug'
+        and build.get('architecture') == 'Win32' and build.get('gameplay_frame_cap_changed') is False and build.get('native_fps_display_changed') is False and build.get('worker_wakeup_changed') is True
+        and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+            'source_freshness_changed', 'graphics_profile_changes', 'renderer_changed',
+            'gameplay_validation_changes', 'runtime_execution_validated')),
+        'Render queue native recipe changed correctness or renderer')
+    for field, names in (('patches_sha256', patches), ('source_sha256', files), ('patched_sha256', files),
+            ('overlay_sha256', {'Game/src/cohClientRenderQueue.h'})):
+        require(isinstance(build.get(field), dict) and set(build[field]) == names
+            and all(HEX64.fullmatch(str(value)) for value in build[field].values()),
+            'Render queue native source inventory differs')
+    require(all(build['source_sha256'][name] != build['patched_sha256'][name] for name in files)
+        and all(build['source_sha256'][name] == accepted['manifest']['build_input']['patched_sha256'][name]
+            for name in ('Game/src/graphics/gfx.c', 'Game/src/render/thread/rt_queue.c',
+                'libs/UtilitiesLib/src/components/WorkerThread.c'))
+        and build['source_sha256']['libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h'] ==
+            'f828e1250b46951ba75145e46d04408938f81e0e0b4c40ecd5634295784c77f2',
+        'Render queue recipe did not extend exact accepted pipeline/worker sources')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and set(checks) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'build_input', 'scene', 'frame', 'gameplay', 'renderer', 'pipeline', 'queue'}
+        and type(checks.get('format')) is int and checks['format'] == 1
+        and checks.get('status') == 'passed' and checks.get('platform') == 'windows'
+        and checks.get('architecture') == 'Win32' and checks.get('configuration') == 'OptDebug'
+        and same_json(checks.get('build_input'), build)
+        and all(same_json(checks.get(name), accepted['manifest']['windows_qualification'][name])
+            for name in ('scene', 'frame', 'gameplay', 'renderer', 'pipeline')), 'Render queue real Win32 retained scene/frame/gameplay proof differs')
+    proof = checks.get('queue', {})
+    _render_queue_windows_proof(proof, build)
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(not same_json(record, previous) and record['pe_machine'] == previous['pe_machine']
+        and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
+        'Render queue Game imports exceed the retained DLL closure')
     return record
 
 def client_scene_performance_contract(package, candidate=None):

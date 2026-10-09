@@ -343,6 +343,9 @@ def prepare_worktree(root, data, assets, identity, context):
     if 'client_render_pipeline' in package:
         previous_client = package['client_render_pipeline']['base_client_executable']
         previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
+    if 'client_render_queue' in package:
+        previous_client = package['client_render_queue']['base_client_executable']
+        previous_client_record = {'size': previous_client['size'], 'sha256': previous_client['sha256']}
     if candidate_receipt is not None:
         require(candidate_receipt['retained_cache']['archive'] == {
                     'bytes': (assets / 'client-caches.zip').stat().st_size, 'sha256': cache_sha},
@@ -363,7 +366,8 @@ def prepare_worktree(root, data, assets, identity, context):
         # verified before every call below. Recompute the old native content
         # identity from its frozen exact executable/DLL closure, rather than
         # accepting a prior marker's claimed identity or a generic schema flag.
-        layer = ('client_render_pipeline' if 'client_render_pipeline' in package else
+        layer = ('client_render_queue' if 'client_render_queue' in package else
+                 'client_render_pipeline' if 'client_render_pipeline' in package else
                  'client_renderer_attribution' if 'client_renderer_attribution' in package else
                  'client_gameplay_performance' if 'client_gameplay_performance' in package else
                  'client_scene_performance' if 'client_scene_performance' in package else
@@ -378,7 +382,8 @@ def prepare_worktree(root, data, assets, identity, context):
                                       'native': native_closure_identity(old_native)})
         report['source_root_preserved'] = True
         report['native_texture_index_migration'] = {
-            'format': 1, 'policy': ('verified_client_render_pipeline_layer_v1' if layer == 'client_render_pipeline'
+            'format': 1, 'policy': ('verified_client_render_queue_layer_v1' if layer == 'client_render_queue'
+                                    else 'verified_client_render_pipeline_layer_v1' if layer == 'client_render_pipeline'
                                     else 'verified_client_renderer_attribution_layer_v1' if layer == 'client_renderer_attribution'
                                     else 'verified_client_gameplay_performance_layer_v1' if layer == 'client_gameplay_performance'
                                     else 'verified_client_scene_performance_layer_v1' if layer == 'client_scene_performance'
@@ -858,6 +863,7 @@ def apply_client_renderer_environment(owner, environment, label):
         'client_executable_sha256': owner.client_executable_sha256 if enabled else None,
         'attribution_producer_executable_sha256': producer['client_executable_sha256'] if enabled else None,
         'typed_render_pipeline_extension': enabled and getattr(owner, 'client_render_pipeline', False) is True,
+        'typed_render_queue_extension': enabled and getattr(owner, 'client_render_queue', False) is True,
         'renderer_attribution': '1' if enabled else None,
         'record_prefix': 'COH_CLIENT_RENDERER_ATTRIBUTION_V1' if enabled else None,
         'shared_wine_environment_modified': False, 'physical_fps_improvement_validated': False}
@@ -879,6 +885,33 @@ def apply_client_render_pipeline_environment(owner, environment, label):
         'render_pipeline': '1' if enabled else None,
         'record_prefix': 'COH_CLIENT_RENDER_PIPELINE_V1' if enabled else None,
         'command_sample_interval': 16 if enabled else None,
+        'blocking_gpu_measurement': False, 'shared_wine_environment_modified': False,
+        'physical_fps_improvement_validated': False}
+    if enabled and producer.get('typed_render_queue_extension') is True:
+        owner.ctx.report['client_render_pipeline_environment'].update(
+            pipeline_producer_executable_sha256=producer['pipeline_producer_executable_sha256'],
+            pipeline_producer_repository_commit=producer['repository_commit'],
+            current_Game_repository_commit=producer['current_Game_repository_commit'],
+            current_Game_manifest_sha256=producer['current_Game_manifest_sha256'],
+            typed_render_queue_extension=True)
+
+
+def apply_client_render_queue_environment(owner, environment, label):
+    """Enable sparse diagnostics only on the current verified queue Game."""
+    environment.pop('COH_CLIENT_RENDER_QUEUE', None)
+    enabled = getattr(owner, 'client_render_queue', False) is True
+    producer = client_gpu_profile.verified_render_queue_producer(owner) if enabled else None
+    if enabled:
+        environment['COH_CLIENT_RENDER_QUEUE'] = '1'
+    owner.ctx.report['client_render_queue_environment'] = {
+        'format': 1, 'policy': 'current_verified_Game_attempt_only', 'enabled': enabled,
+        'launch_label': label,
+        'producer_manifest_sha256': producer['manifest_sha256'] if enabled else None,
+        'client_executable_sha256': producer['client_executable_sha256'] if enabled else None,
+        'native_source_sha256': producer['native_source_sha256'] if enabled else None,
+        'render_queue': '1' if enabled else None,
+        'record_prefix': 'COH_CLIENT_RENDER_QUEUE_V1' if enabled else None,
+        'frame_sample_interval': 32 if enabled else None,
         'blocking_gpu_measurement': False, 'shared_wine_environment_modified': False,
         'physical_fps_improvement_validated': False}
 
@@ -920,6 +953,7 @@ def apply_client_gameplay_environment(owner, environment, label, graphics_profil
         'physical_fps_improvement_validated': False}
     apply_client_renderer_environment(owner, environment, label)
     apply_client_render_pipeline_environment(owner, environment, label)
+    apply_client_render_queue_environment(owner, environment, label)
 
 
 def apply_client_gpu_environment(owner, environment, label):
@@ -1060,6 +1094,30 @@ class ClientStartupDiagnostic(presentation.PresentationDiagnostic):
                 'prepared_cache_schema_changed': False, 'renderer_changed': False,
                 'graphics_fidelity_preserved': True, 'gameplay_frame_cap_changed': False,
                 'bounded_render_pipeline_diagnostics': True, 'worker_wakeup_repaired': True,
+                'physical_fps_improvement_validated': False}
+        self.client_render_queue = 'client_render_queue' in package
+        if self.client_render_queue:
+            wrapper = package['client_render_queue']
+            self.client_render_queue_package = package
+            self.ctx.report['client_render_pipeline'].update(
+                client_executable_sha256=wrapper['base_client_executable']['sha256'],
+                producer_scope='retained_historical_render_pipeline_Game')
+            self.ctx.report['client_render_queue'] = {
+                'format': 1, 'verified': True,
+                'repository_commit': wrapper['manifest']['repository_commit'],
+                'manifest_sha256': wrapper['manifest_sha256'],
+                'base_client_render_pipeline_manifest_sha256': wrapper['base_client_render_pipeline_manifest_sha256'],
+                'base_client_executable_sha256': wrapper['base_client_executable']['sha256'],
+                'client_executable_sha256': self.client_executable_sha256,
+                'source_commit': SOURCE, 'data_commit': DATA,
+                'native_source_sha256': native_candidate.canonical_sha(wrapper['manifest']['retained_source_inputs']),
+                'native_source_sha256_policy': 'canonical_verified_source_receipts_v1',
+                'data_source_sha256': identity['contract_sha256'],
+                'data_source_sha256_policy': 'verified_import_contract_sha256',
+                'replacement_scope': 'CityOfHeroes.exe_only', 'source_freshness_preserved': True,
+                'prepared_cache_schema_changed': False, 'renderer_changed': False,
+                'graphics_fidelity_preserved': True, 'gameplay_frame_cap_changed': False,
+                'bounded_render_queue_diagnostics': True, 'render_worker_wake_coalesced': True,
                 'physical_fps_improvement_validated': False}
         self.ctx.passed(machine=platform.machine(), guest_uid=os.geteuid(), postgres_started=False,
                         source_commit=SOURCE, data_commit=DATA,
