@@ -23,6 +23,7 @@ final class SetupMemoryGuard {
     }
     private static final long MIB=1024L*1024, POLL_BYTES=MIB, POLL_MS=250;
     private static final long WRITE_WINDOW=8*MIB, PACE_MS=25, PAUSE_SLICE_MS=200;
+    private static final long IO_WINDOW=4*MIB, IO_HEALTHY_MS=125, IO_PRESSURE_MS=500, MAX_IO_CALLBACK_BYTES=64*MIB;
     private static final long MAX_PRESSURE_PAUSE_MS=15000, MAX_TOTAL_PAUSE_MS=60000;
     private final Sensor sensor;
     private final Clock clock;
@@ -33,6 +34,8 @@ final class SetupMemoryGuard {
     private long samples,checks,syncs,paceWindows,pressureEvents,pressureSamples,pausedMillis;
     private long lastSampleTime=-1,lastClock=-1,minAvailable=Long.MAX_VALUE,minHeapHeadroom=Long.MAX_VALUE;
     private long available,total,threshold,reserve,heapUsed,heapLimit;
+    private boolean lowMemory;
+    private long ioWindowBytes,ioWindowStarted=-1,ioPacedWindows,ioPacedMillis;
     private String status="not_started";
 
     SetupMemoryGuard(Sensor sensor,Clock clock,Waiter waiter,Check check) {
@@ -63,6 +66,7 @@ final class SetupMemoryGuard {
             status="unavailable";throw new IOException("Setup memory information is unavailable; setup stopped safely");
         }
         samples++;available=value.available;total=value.total;threshold=value.threshold;
+        lowMemory=value.lowMemory;
         heapUsed=value.heapUsed;heapLimit=value.heapLimit;
         reserve=Math.max(512*MIB,Math.min(1024*MIB,total/16));
         minAvailable=Math.min(minAvailable,available);minHeapHeadroom=Math.min(minHeapHeadroom,heapLimit-heapUsed);
@@ -111,15 +115,17 @@ final class SetupMemoryGuard {
     void beforeIo() throws IOException {
         cancellation();long value=now();
         if(lastSampleTime<0||sinceSample>=POLL_BYTES||value-lastSampleTime>=POLL_MS)checkpoint();
+        if(ioWindowStarted<0)ioWindowStarted=now();
     }
     private long add(long current,long amount) throws IOException {
         if(amount<0||current>Long.MAX_VALUE-amount)throw new IOException("Runtime setup byte counter exceeds limits");
         return current+amount;
     }
     void read(long bytes) throws IOException {
-        readBytes=add(readBytes,bytes);sinceSample=add(sinceSample,bytes);beforeIo();
+        boundedIo(bytes);readBytes=add(readBytes,bytes);sinceSample=add(sinceSample,bytes);beforeIo();paceIo(bytes);
     }
     void written(long bytes,Sync sync) throws IOException {
+        boundedIo(bytes);
         writtenBytes=add(writtenBytes,bytes);sinceSample=add(sinceSample,bytes);
         dirtyBytes=add(dirtyBytes,bytes);maxDirtyBytes=Math.max(maxDirtyBytes,dirtyBytes);
         writeWindowBytes=add(writeWindowBytes,bytes);
@@ -132,6 +138,28 @@ final class SetupMemoryGuard {
         beforeIo();
         while(writeWindowBytes>=WRITE_WINDOW) {
             writeWindowBytes-=WRITE_WINDOW;paceWindows++;pause(PACE_MS);beforeIo();
+        }
+        paceIo(bytes);
+    }
+    private void boundedIo(long bytes) throws IOException {
+        if(bytes<0||bytes>MAX_IO_CALLBACK_BYTES)throw new IOException("Runtime setup I/O callback exceeds its bound");
+    }
+    private void paceIo(long bytes) throws IOException {
+        long time=now();
+        if(ioWindowStarted<0)ioWindowStarted=time;
+        ioWindowBytes=add(ioWindowBytes,bytes);
+        while(ioWindowBytes>=IO_WINDOW) {
+            long interval=available-threshold<2*reserve?IO_PRESSURE_MS:IO_HEALTHY_MS;
+            long elapsed=now()-ioWindowStarted;
+            while(elapsed<interval) {
+                long before=now();pause(Math.min(PAUSE_SLICE_MS,interval-elapsed));
+                long after=now();
+                if(after<=before){status="unavailable";throw new IOException("Setup I/O wait clock is unavailable");}
+                ioPacedMillis=add(ioPacedMillis,after-before);beforeIo();
+                elapsed=now()-ioWindowStarted;
+                interval=available-threshold<2*reserve?IO_PRESSURE_MS:IO_HEALTHY_MS;
+            }
+            ioWindowBytes-=IO_WINDOW;ioPacedWindows++;ioWindowStarted=now();
         }
     }
     boolean syncNeeded() {return dirtyBytes>=WRITE_WINDOW;}
@@ -147,6 +175,9 @@ final class SetupMemoryGuard {
         result.put("persistent_pressure_limit_ms",MAX_PRESSURE_PAUSE_MS);result.put("total_pressure_pause_limit_ms",MAX_TOTAL_PAUSE_MS);
         result.put("resume_hysteresis_bytes",64*MIB);result.put("write_window_bytes",WRITE_WINDOW);
         result.put("write_window_pace_ms",PACE_MS);result.put("file_sync_policy","each closed regular file; active large file at write window");
+        result.put("combined_io_window_bytes",IO_WINDOW);result.put("maximum_io_callback_bytes",MAX_IO_CALLBACK_BYTES);
+        result.put("healthy_combined_io_bytes_per_second",32*MIB);result.put("pressure_combined_io_bytes_per_second",8*MIB);
+        result.put("combined_io_paced_windows",ioPacedWindows);result.put("combined_io_paced_ms",ioPacedMillis);
         result.put("checks",checks);result.put("samples",samples);result.put("read_bytes",readBytes);
         result.put("read_bytes_scope","aggregate guarded input bytes, including compressed source and decoded archive reads; not unique storage bytes");
         result.put("written_bytes",writtenBytes);result.put("file_syncs",syncs);result.put("paced_write_windows",paceWindows);
@@ -156,6 +187,7 @@ final class SetupMemoryGuard {
         result.put("minimum_java_heap_headroom_bytes",minHeapHeadroom==Long.MAX_VALUE?null:minHeapHeadroom);
         result.put("last_available_bytes",samples==0?null:available);result.put("last_total_bytes",samples==0?null:total);
         result.put("last_threshold_bytes",samples==0?null:threshold);result.put("last_reserve_bytes",samples==0?null:reserve);
+        result.put("last_low_memory",samples==0?null:lowMemory);
         result.put("last_java_heap_used_bytes",samples==0?null:heapUsed);result.put("last_java_heap_limit_bytes",samples==0?null:heapLimit);
         return result;
     }

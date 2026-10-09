@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.nio.channels.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.*;
@@ -49,6 +50,7 @@ class JSONObject {
     public String toString(){String token="host-json-"+(++serial);encoded.put(token,this);return token;}
 }
 class Build {static String[] SUPPORTED_ABIS={"arm64-v8a"};}
+class SystemClock {static long uptimeMillis(){return TarExtractor.owner.clockMillis;}}
 class CleanupGuard {static boolean blocked;static void requireClear()throws IOException{if(blocked)throw new IOException("cleanup blocked");}}
 class Outcome {boolean cancelled;boolean cancelled(){return cancelled;}}
 class MockHttp extends HttpURLConnection {
@@ -58,10 +60,42 @@ class MockHttp extends HttpURLConnection {
     public InputStream getInputStream(){return new ByteArrayInputStream("base-archive".getBytes(StandardCharsets.UTF_8));}
     public void disconnect(){}public boolean usingProxy(){return false;}public void connect(){}
 }
+class android {
+    static class system {
+        static class ErrnoException extends Exception {ErrnoException(Exception cause){super(cause);}}
+        static class StructStat {long st_nlink;StructStat(long links){st_nlink=links;}}
+        static class Os {
+            static StructStat lstat(String path)throws ErrnoException {
+                try {return new StructStat(((Number)Files.getAttribute(Paths.get(path),"unix:nlink",LinkOption.NOFOLLOW_LINKS)).longValue());}
+                catch(IOException|RuntimeException failure){throw new ErrnoException(failure);}
+            }
+        }
+    }
+    static class content {
+        static class res {
+            static class AssetManager {static final int ACCESS_STREAMING=2;}
+            static class AssetFileDescriptor implements Closeable {
+                final byte[] raw;final long declaredLength;
+                AssetFileDescriptor(byte[] bytes,long length){raw=bytes;declaredLength=length;}
+                long getDeclaredLength(){return declaredLength;}
+                long getLength(){return declaredLength;}
+                InputStream createInputStream()throws IOException{return new ByteArrayInputStream(raw);}
+                public void close(){}
+            }
+        }
+    }
+}
 class HostContext {
     final Map<String,byte[]> assets=new HashMap<>();
     int opens;
-    class Assets {InputStream open(String name)throws IOException{opens++;byte[] raw=assets.get(name);if(raw==null)throw new IOException("missing asset");return new ByteArrayInputStream(raw);}}
+    class Assets {
+        InputStream open(String name)throws IOException{opens++;byte[] raw=assets.get(name);if(raw==null)throw new IOException("missing asset");return new ByteArrayInputStream(raw);}
+        InputStream open(String name,int mode)throws IOException{return open(name);}
+        android.content.res.AssetFileDescriptor openFd(String name)throws IOException {
+            byte[] raw=assets.get(name);if(raw==null)throw new IOException("missing asset");
+            return new android.content.res.AssetFileDescriptor(raw,raw.length);
+        }
+    }
     Assets getAssets(){return new Assets();}
 }
 class TarExtractor {
@@ -104,6 +138,7 @@ class HostInstaller {
     File state,generation;
     JSONObject manifest,setupReceipt,published;
     String manifestHash;
+    String setupPhase="",setupDetail="";
     boolean cancelled;
     boolean memoryLow,memoryUnavailable,pressureOnAssets,cancelOnAssets,cancelOnHash,memoryAfterReady;
     long clockMillis;
@@ -117,6 +152,7 @@ class HostInstaller {
     HostInstaller(File files,HostContext context){home=new File(files,"m2");state=new File(home,"state");this.context=context;TarExtractor.owner=this;}
     String appVersion(){return "fixture";}
     void stage(String name,String text){
+        setupPhase=name;setupDetail=text;
         stages.add(text);
         if(name.equals("Copying runtime assets")&&pressureOnAssets){memoryLow=true;clockMillis+=250;}
         if(name.equals("Copying runtime assets")&&cancelOnAssets||name.equals("Verifying runtime asset")&&cancelOnHash){cancelled=true;outcome.cancelled=true;}
@@ -266,29 +302,38 @@ public class RuntimeSetupHost {
 '''
 
 
+def compile_runtime_setup_host(classes, host=HOST):
+    """Compile installer methods shared by repeat-setup and interrupted-copy tests."""
+    source = SOURCE.read_text()
+    methods = [production_method(source, signature) for signature in (
+        'public void setupRuntime(', 'public JSONObject getSetupReceipt(',
+        'private void loadManifest(', 'private void validateInstalled(',
+        'private void verify(', 'private File download(',
+        'private static void required(', 'private static byte[] read(File ',
+        'private static byte[] read(InputStream ', 'private static void write(',
+        'private static String hex(', 'private String sha(', 'private void check(')]
+    methods.extend(production_method(source, signature) for signature in (
+        'private boolean setupDirectory(', 'private void prepareSetupStaging(',
+        'private boolean reusableSetupAsset(', 'private InputStream openSetupAsset(',
+        'private void copySetupAsset('))
+    java = host.replace('PRODUCTION_METHODS', '\n'.join(methods))
+    # Host fixture helper calls the exact shipped hash/writer helpers.
+    java = java.replace('private static void write(', 'static void write(').replace(
+        'private static String hex(', 'static String hex(')
+    target = classes / 'RuntimeSetupHost.java'
+    target.write_text(java)
+    result = subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
+                             '-d', str(classes), str(target), str(CONTROL)], capture_output=True, text=True)
+    if result.returncode:
+        raise AssertionError(result.stderr)
+
+
 class RuntimeSetupReuseTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(prefix='coh-setup-reuse-host-')
         cls.classes = Path(cls.temporary.name)
-        source = SOURCE.read_text()
-        methods = [production_method(source, signature) for signature in (
-            'public void setupRuntime(', 'public JSONObject getSetupReceipt(',
-            'private void loadManifest(', 'private void validateInstalled(',
-            'private void verify(', 'private File download(',
-            'private static void required(', 'private static byte[] read(File ',
-            'private static byte[] read(InputStream ', 'private static void write(',
-            'private static String hex(', 'private String sha(', 'private void check(')]
-        java = HOST.replace('PRODUCTION_METHODS', '\n'.join(methods))
-        # Host fixture helper calls the exact shipped hash/writer helpers.
-        java = java.replace('private static void write(', 'static void write(').replace(
-            'private static String hex(', 'static String hex(')
-        target = cls.classes / 'RuntimeSetupHost.java'
-        target.write_text(java)
-        result = subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
-                                 '-d', str(cls.classes), str(target), str(CONTROL)], capture_output=True, text=True)
-        if result.returncode:
-            raise AssertionError(result.stderr)
+        compile_runtime_setup_host(cls.classes)
 
     @classmethod
     def tearDownClass(cls):

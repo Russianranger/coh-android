@@ -1,0 +1,211 @@
+{
+  "FPS_measured_in_this_operation": false,
+  "android13_source_review": {
+    "full_93MiB_native_inflate_allocation_established": false,
+    "large_compressed_assets_stream_in_64KiB_chunks": true,
+    "large_stored_assets_can_use_file_backed_mapped_input": true,
+    "source_tag": "android-13.0.0_r1",
+    "sources": [
+      "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-13.0.0_r1/libs/androidfw/Asset.cpp",
+      "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-13.0.0_r1/libs/androidfw/StreamingZipInflater.cpp",
+      "https://developer.android.com/reference/android/content/res/AssetFileDescriptor"
+    ]
+  },
+  "attachment": {
+    "bytes": 1463,
+    "members": [
+      "runtime-setup-service.json",
+      "wrapper.json"
+    ],
+    "name": "coh-atlas-gameplay-20261009-175938.zip",
+    "sha256": "bbd89bf357cee6e2e9006be2d028cec8d49cdaf6e23ef06a8c391ba2b7ff5046"
+  },
+  "device_reported": {
+    "android_sdk": 33,
+    "app_version": "0.13.23",
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "device": "AYN AYN Thor"
+  },
+  "exit_reason_interpretation": {
+    "code": 3,
+    "meaning": "Android records termination by the system low-memory killer under system memory pressure.",
+    "name": "REASON_LOW_MEMORY",
+    "primary_source": "https://developer.android.com/reference/android/app/ApplicationExitInfo#REASON_LOW_MEMORY"
+  },
+  "format": 1,
+  "game_started_in_this_operation": false,
+  "interpretation_limits": [
+    "The last small Java/native heap checkpoint does not measure the later peak or system-wide pressure.",
+    "ApplicationExitInfo RSS/PSS are recorded sampled process statistics, not proof of peak allocation at the kill.",
+    "No system available-memory, threshold, I/O guard metrics or current asset name were persisted in this supplied checkpoint.",
+    "The cumulative 1152 MiB copied value localizes a boundary but does not prove that a particular asset caused the kill.",
+    "No Game, GPU-startup, movement, saving or FPS test was reached; completed .21 GPU milestones remain intact.",
+    "The selected installer mitigation requires physical setup confirmation and does not establish an FPS gain."
+  ],
+  "last_checkpoint_interpretation": {
+    "detail": "1152 / 1275 MiB verified",
+    "elapsed_ms": 54176,
+    "java_heap_limit_bytes": 268435456,
+    "java_heap_used_bytes": 44750552,
+    "last_checkpoint_precedes_recorded_exit_ms": 754,
+    "native_heap_allocated_bytes": 28509200,
+    "phase": "Copying runtime assets"
+  },
+  "matched_android_exit": {
+    "importance": 100,
+    "pid": 19993,
+    "process_name": "io.github.russianranger.cohclientinteractive",
+    "pss_kib": 103709,
+    "reason": 3,
+    "rss_kib": 215648,
+    "status": 0,
+    "timestamp_utc_ms": 1791568756728
+  },
+  "public_APK_layout_review": {
+    "apk_sha256": "101780ae658f5adeaced4f5415bb856e6a65962f43175ccb9af2284777863cb2",
+    "asset_at_checkpoint_boundary_is_inferred_not_observed": true,
+    "interesting_assets": [
+      {
+        "apk_compressed_bytes": 207803201,
+        "apk_header_offset": 338079218,
+        "compression_method": 0,
+        "name": "atlas-world-supplement.zip",
+        "progress_after_bytes": 229161065,
+        "progress_before_bytes": 21357864,
+        "raw_bytes": 207803201
+      },
+      {
+        "apk_compressed_bytes": 859075775,
+        "apk_header_offset": 583806581,
+        "compression_method": 0,
+        "name": "client-visual-assets.zip",
+        "progress_after_bytes": 1126753795,
+        "progress_before_bytes": 267678020,
+        "raw_bytes": 859075775
+      },
+      {
+        "apk_compressed_bytes": 5307088,
+        "apk_header_offset": 1442882431,
+        "compression_method": 8,
+        "name": "client-visual-manifest.json",
+        "progress_after_bytes": 1175345794,
+        "progress_before_bytes": 1126753795,
+        "raw_bytes": 48591999
+      },
+      {
+        "apk_compressed_bytes": 783,
+        "apk_header_offset": 1478714903,
+        "compression_method": 8,
+        "name": "runtime-lock.json",
+        "progress_after_bytes": 1207180883,
+        "progress_before_bytes": 1207179195,
+        "raw_bytes": 1688
+      },
+      {
+        "apk_compressed_bytes": 99809,
+        "apk_header_offset": 1479043843,
+        "compression_method": 8,
+        "name": "runtime-probe.exe",
+        "progress_after_bytes": 1207426851,
+        "progress_before_bytes": 1207180883,
+        "raw_bytes": 245968
+      },
+      {
+        "apk_compressed_bytes": 308191,
+        "apk_header_offset": 1479143714,
+        "compression_method": 8,
+        "name": "server-animation-manifest.json",
+        "progress_after_bytes": 1208432645,
+        "progress_before_bytes": 1207426851,
+        "raw_bytes": 1005794
+      },
+      {
+        "apk_compressed_bytes": 49880567,
+        "apk_header_offset": 1479451980,
+        "compression_method": 8,
+        "name": "server-animations.pigg",
+        "progress_after_bytes": 1305517101,
+        "progress_before_bytes": 1208432645,
+        "raw_bytes": 97084456
+      }
+    ],
+    "runtime_file_count": 70,
+    "runtime_progress_total_bytes": 1337174625,
+    "scope": "actual_public_0.13.23_zip_central_directory_and_manifest_order"
+  },
+  "renderer_observed_in_this_operation": null,
+  "runtime_setup_service": {
+    "android_process_exit_history": {
+      "maximum_records": 4,
+      "own_processes_only": true,
+      "records": [
+        {
+          "importance": 100,
+          "pid": 19993,
+          "process_name": "io.github.russianranger.cohclientinteractive",
+          "pss_kib": 103709,
+          "reason": 3,
+          "rss_kib": 215648,
+          "status": 0,
+          "timestamp_utc_ms": 1791568756728
+        },
+        {
+          "importance": 400,
+          "pid": 5793,
+          "process_name": "io.github.russianranger.cohclientinteractive",
+          "pss_kib": 94799,
+          "reason": 10,
+          "rss_kib": 210356,
+          "status": 0,
+          "timestamp_utc_ms": 1791568659309
+        },
+        {
+          "importance": 400,
+          "pid": 30203,
+          "process_name": "io.github.russianranger.cohclientinteractive",
+          "pss_kib": 95728,
+          "reason": 10,
+          "rss_kib": 206244,
+          "status": 0,
+          "timestamp_utc_ms": 1791546232959
+        },
+        {
+          "importance": 400,
+          "pid": 13430,
+          "process_name": "io.github.russianranger.cohclientinteractive",
+          "pss_kib": 139700,
+          "reason": 10,
+          "rss_kib": 243948,
+          "status": 0,
+          "timestamp_utc_ms": 1791488209870
+        }
+      ],
+      "status": "available",
+      "trace_streams_requested": false
+    },
+    "android_sdk": 33,
+    "app_version": "0.13.23",
+    "application_id": "io.github.russianranger.cohclientinteractive",
+    "detail": "1152 / 1275 MiB verified",
+    "device": "AYN AYN Thor",
+    "elapsed_ms": 54176,
+    "format": 1,
+    "game_execution_requested": false,
+    "java_heap_limit_bytes": 268435456,
+    "java_heap_used_bytes": 44750552,
+    "native_heap_allocated_bytes": 28509200,
+    "phase": "Copying runtime assets",
+    "pid": 19993,
+    "recovered_utc_ms": 1791568768127,
+    "runtime_cleanup_requested": false,
+    "scope": "runtime_setup_service_diagnostic",
+    "started_utc_ms": 1791568701798,
+    "status": "interrupted",
+    "updated_utc_ms": 1791568755974
+  },
+  "scope": "Reviewed physical .23 interrupted runtime setup; Android system low-memory kill recorded, exact pressure source unresolved",
+  "selected_repair": "APK shell only: retain exact .23 runtime manifest/payloads; verify and reuse complete same-generation staged assets on interrupted retry, preserve atomic activation and strict pins, bound setup read/write work, persist system-memory and current-asset progress.",
+  "user_observation": "App crashed during Set up / update runtime.",
+  "wrapper_operation": "setup_recovery",
+  "wrapper_passed": false
+}

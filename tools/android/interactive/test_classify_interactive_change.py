@@ -9,6 +9,15 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_setup_copy_exact_scope_preserves_runtime_and_fails_closed_for_foreign_files(self):
+        from classify_storage_cleanup_change import SETUP_COPY_ALLOWED,SETUP_COPY_DOCS
+        for names in (sorted(SETUP_COPY_ALLOWED),sorted(SETUP_COPY_DOCS)):
+            self.assertFalse(change.runtime_required('push','a'*40,'b'*40,'a'*40,names))
+            for foreign in ('android/guest/client_interactive_diagnostic.py','assets/runtime-manifest.json',
+                    'upstream/ouroboros/Game/src/render/tex.c','unreviewed.py'):
+                self.assertTrue(change.runtime_required('push','a'*40,'b'*40,'a'*40,names+[foreign]))
+            self.assertTrue(change.runtime_required('workflow_dispatch','a'*40,'b'*40,'a'*40,names))
+
     def test_session_repair_exact_scope_retains_runtime_and_rejects_unknown_neighbors(self):
         from classify_storage_cleanup_change import SESSION_REPAIR_ALLOWED, SESSION_REPAIR_DOCS
         for names in (sorted(SESSION_REPAIR_ALLOWED), sorted(SESSION_REPAIR_DOCS)):

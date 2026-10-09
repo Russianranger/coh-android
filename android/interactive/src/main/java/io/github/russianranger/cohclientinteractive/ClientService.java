@@ -300,6 +300,46 @@ public final class ClientService extends Service {
             return version==null?"unknown":version.substring(0,Math.min(80,version.length()));
         } catch(Exception ignored){return "unknown";}
     }
+    private JSONObject setupSystemMemory() {
+        JSONObject value=new JSONObject();
+        try {
+            ActivityManager manager=(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+            if(manager==null)return value.put("available",false);
+            ActivityManager.MemoryInfo memory=new ActivityManager.MemoryInfo();manager.getMemoryInfo(memory);
+            return value.put("available",true).put("available_bytes",memory.availMem)
+                    .put("total_bytes",memory.totalMem).put("threshold_bytes",memory.threshold).put("low_memory",memory.lowMemory);
+        } catch(Exception failure) {
+            try {value.put("available",false).put("error",failure.getClass().getSimpleName());}catch(Exception ignored){}
+            return value;
+        }
+    }
+    private JSONObject setupProcessMemory() {
+        JSONObject value=new JSONObject();
+        try(InputStream in=Files.newInputStream(new File("/proc/self/status").toPath())) {
+            byte[] bytes=new byte[32768];int used=0,n;
+            while(used<bytes.length&&(n=in.read(bytes,used,bytes.length-used))!=-1) {
+                if(n==0)throw new IOException("Process memory sample made no progress");
+                used+=n;
+            }
+            if(used==bytes.length&&in.read()!=-1)throw new IOException("Process memory sample exceeds its bound");
+            int fields=0;
+            for(String line:new String(bytes,0,used,StandardCharsets.US_ASCII).split("\n")) {
+                String[] parts=line.trim().split("\\s+");
+                if(parts.length!=3||!parts[2].equals("kB"))continue;
+                String key=parts[0].equals("VmRSS:")?"rss_bytes":parts[0].equals("RssAnon:")?"anonymous_rss_bytes"
+                        :parts[0].equals("RssFile:")?"file_rss_bytes":parts[0].equals("RssShmem:")?"shared_rss_bytes":null;
+                if(key!=null) {
+                    long kib=Long.parseLong(parts[1]);
+                    if(kib<0||kib>Long.MAX_VALUE/1024)throw new IOException("Invalid process memory sample");
+                    value.put(key,kib*1024);fields++;
+                }
+            }
+            return value.put("available",fields>0).put("source","bounded_proc_self_status").put("maximum_source_bytes",bytes.length);
+        } catch(Exception failure) {
+            try {value=new JSONObject().put("available",false).put("error",failure.getClass().getSimpleName());}catch(Exception ignored){}
+            return value;
+        }
+    }
     private synchronized void checkpointSetup(String phase,String text,String status,boolean force) throws IOException {
         long now=SystemClock.uptimeMillis();
         String boundedPhase=phase==null?"":phase.substring(0,Math.min(80,phase.length()));
@@ -315,7 +355,12 @@ public final class ClientService extends Service {
                     .put("elapsed_ms",Math.max(0,System.currentTimeMillis()-setupStartedUtc))
                     .put("pid",android.os.Process.myPid()).put("java_heap_used_bytes",vm.totalMemory()-vm.freeMemory())
                     .put("java_heap_limit_bytes",vm.maxMemory()).put("native_heap_allocated_bytes",Debug.getNativeHeapAllocatedSize())
+                    .put("system_memory",setupSystemMemory())
+                    .put("process_memory",setupProcessMemory())
                     .put("game_execution_requested",false).put("runtime_cleanup_requested",false);
+            ClientRuntime activeRuntime=runtime;
+            JSONObject progress=activeRuntime==null?null:activeRuntime.getSetupProgressReceipt();
+            if(progress!=null)value.put("runtime_setup_progress",progress);
             String raw=value.toString();
             if(raw.length()>MAX_SETUP_EVIDENCE)throw new IOException("Setup checkpoint exceeded its bound");
             if(!getSharedPreferences(SETUP_PREFS,MODE_PRIVATE).edit().putBoolean("was_busy","running".equals(status))

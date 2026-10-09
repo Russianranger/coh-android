@@ -1,3 +1,44 @@
+# .23 runtime setup interruption reviewed; .24 installer repair in progress — 2026-10-09
+
+**Current public APK remains .23.** Recovery confirmed clean branch/head
+`be7b0ccfe0affbf8615e0b055559e532c379d950`, draft PR #1, unchanged main,
+latest .23 tag/release and all completed Actions. No newer work, active native
+build or accessible local build needed recovery. Existing .23 APK and its
+native/publication evidence remain available and are reused without rebuilding Game.
+
+The new Thor export `coh-atlas-gameplay-20261009-175938.zip` (1,463 bytes,
+SHA-256 `bbd89bf357cee6e2e9006be2d028cec8d49cdaf6e23ef06a8c391ba2b7ff5046`)
+records PID 19993 interrupted during `Copying runtime assets`,
+`1152 / 1275 MiB verified`, 54.176 seconds after setup started. Its matching
+Android exit record is reason 3 (`REASON_LOW_MEMORY`), importance 100, 754 ms
+later. Last recorded Java heap is 44.75 MB / 256 MiB, native heap 28.51 MB;
+PSS/RSS are historical samples, not peaks. System available memory and current
+asset were not recorded. This confirms an Android system low-memory kill and
+leaves the exact pressure source unresolved. It does not establish Java OOME.
+No Game/renderer/FPS/movement/save test was reached.
+
+The .24 Android-shell-only repair keeps the exact .23 runtime manifest, all 77
+payloads, original Game/GPU and existing ready-generation identity. It targets
+stored-asset source mappings with bounded descriptor streams, reuses only fully
+verified safe same-generation staging files on interrupted retry, paces setup
+I/O and persists system-memory/current-asset/guard metrics. Four existing Java
+classes and DEX change; accounts/imports/persistence, graphics, controls, save
+acceptance and .23 movement/sampler policies remain retained. Validation and
+publication are pending. Local validation passed all 79 relevant Java/setup
+tests and 114 package/classifier tests, with zero skips. Combined setup read/
+write/hash work is capped at 32 MiB/s, adaptively 8 MiB/s near the existing reserve;
+steady progress may take longer. No physical crash prevention or FPS gain is claimed.
+
+Evidence: `docs/android-evidence/setup-copy-0.13.23-thor-20261009.json`;
+implementation/limits: `docs/COH-SETUP-COPY-0.13.24.md`; focused test:
+`docs/COH-Atlas-Gameplay-0.13.24-testing.txt`. Exact next milestone: one data-
+preserving .24 setup attempt reaches Runtime ready (or promptly exports new
+memory/asset evidence), followed by accepted walking/Jump/save and the already
+requested short GPU 30-cap route. .21 GPU startup/improvement/fidelity milestones
+remain completed. Startup, zoning and long unchanged Software runs remain deferred.
+
+Earlier published checkpoints below remain history.
+
 # Published .23 movement deadline repair and rendering timing isolation — 2026-10-09
 
 **Current test APK: 0.13.23 / version code 38, published; all five owner jobs

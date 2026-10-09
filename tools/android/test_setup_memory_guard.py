@@ -223,7 +223,7 @@ public final class SetupMemoryGuardHost {
         need(number(env.guard,"maximum_active_dirty_bytes")==8*MIB,"Bound active dirty bytes for actual chunk size");
         need(number(env.guard,"active_dirty_bytes")==0,"Successful sync clears active dirty bytes");
         need(number(env.guard,"file_syncs")==1&&number(env.guard,"paced_write_windows")==1,"Record actual sync and pacing independently");
-        need(env.waited==25,"One write window introduces one short pacing wait");
+        need(env.waited==250,"Eight MiB also completes two minimum-duration combined I/O windows");
     }
     static void syncBeforePressure()throws IOException {
         Environment env=new Environment();env.guard.admit();
@@ -231,7 +231,7 @@ public final class SetupMemoryGuardHost {
         env.expectSyncBeforePressure=true;
         env.source=e->{need(e.syncCallbacks==1,"Active write sync must precede the triggering memory probe");return e.now<200?pressure():healthy();};
         env.output(65536);
-        need(env.waited==225&&env.paused==1&&env.resumed==1,"Flush before bounded pressure and pacing waits");
+        need(env.waited==350&&env.paused==1&&env.resumed==1,"Flush before bounded pressure and retained write pacing waits");
     }
     static void syncFailure()throws IOException {
         Environment env=new Environment();env.guard.admit();
@@ -239,20 +239,21 @@ public final class SetupMemoryGuardHost {
         IOException failure=new IOException("fixture flush failed");
         need(reject(()->env.guard.written(65536,()->{throw failure;}))==failure,"Keep the actual flush failure");
         need(number(env.guard,"file_syncs")==0&&number(env.guard,"active_dirty_bytes")==8*MIB,"Failed flush cannot claim clean data");
-        need(env.waited==0,"Failed flush cannot continue into pacing");
+        need(env.waited==125,"Failed flush cannot continue into pacing beyond the preceding completed I/O window");
     }
     static void pacingAcrossFiles()throws IOException {
         Environment env=new Environment();env.guard.admit();
         for(int i=0;i<256;i++){env.output(65536);env.guard.synced();}
         need(number(env.guard,"written_bytes")==16*MIB,"Keep global write totals across file closure");
         need(number(env.guard,"file_syncs")==256&&number(env.guard,"paced_write_windows")==2,"Small closed files must still receive global pacing");
-        need(number(env.guard,"maximum_active_dirty_bytes")==65536&&env.waited==50,"Closed files do not erase the global pacing window");
+        need(number(env.guard,"maximum_active_dirty_bytes")==65536&&env.waited==500,"Closed files do not erase the aggregate I/O pacing window");
     }
     static void cancelledDuringPacing()throws IOException {
-        Environment env=new Environment();env.guard.admit();env.cancelAfter=25;
+        Environment env=new Environment();env.guard.admit();
         for(int i=0;i<127;i++)env.output(65536);
+        env.cancelAfter=env.waited+25;
         need(reject(()->env.output(65536))==env.cancellation,"Pacing is operation-cancellable");
-        need(env.waited==25&&number(env.guard,"paced_write_windows")==1,"Stop after one short pacing slice");
+        need(env.waited==150&&number(env.guard,"paced_write_windows")==1,"Stop after the retained write pacing slice, following one completed aggregate window");
     }
     static void finishRechecks()throws IOException {
         Environment env=new Environment();env.guard.admit();env.source=e->pressure();
@@ -269,9 +270,12 @@ public final class SetupMemoryGuardHost {
         need(status(env.guard).equals("unavailable"),"Unusable clocks must fail closed");
         need(env.sleeps<=1,"An unmoving clock must not spin forever");
     }
-    static void byteLimits()throws IOException {
+    static void byteLimits()throws Exception {
         Environment env=new Environment();env.guard.admit();
-        env.guard.read(Long.MAX_VALUE);reject(()->env.guard.read(1));
+        reject(()->env.guard.read(Long.MAX_VALUE));reject(()->env.guard.written(Long.MAX_VALUE,()->{}));
+        need(number(env.guard,"read_bytes")==0&&number(env.guard,"written_bytes")==0&&env.waited==0,"Unbounded callback must fail before counters and pacing loops");
+        java.lang.reflect.Field counter=SetupMemoryGuard.class.getDeclaredField("readBytes");counter.setAccessible(true);counter.setLong(env.guard,Long.MAX_VALUE);
+        reject(()->env.guard.read(1));
         need(number(env.guard,"read_bytes")==Long.MAX_VALUE,"Byte overflow cannot wrap or erase prior count");
         Environment negative=new Environment();negative.guard.admit();
         reject(()->negative.guard.read(-1));reject(()->negative.guard.written(-1,()->{}));

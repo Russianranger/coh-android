@@ -1,0 +1,36 @@
+COH Atlas Gameplay 0.13.24 — bounded runtime copy and verified setup retry
+
+1. Install as an update. Keep app data, imported assets and THORHERO. Close any
+other running games, then run Set up / update runtime once. Allow the steady
+verification/copy progress to reach Runtime ready; installation is paced to
+reduce resource pressure and may take longer. No asset reimport is requested.
+
+2. If setup stops again, reopen the app and export the complete report immediately.
+Do not clear data or repeat setup before preserving that report. It now records
+the current asset/copy position, Android system-memory values and setup I/O guard
+counters. Note the last displayed phase and whether the app exited or showed an
+error. No gameplay test is required until Runtime ready.
+
+3. After Runtime ready, select GPU test and Reopen THORHERO using the same
+Performance preset, 800x600, fan and charging state. Confirm Jump is enabled;
+close focused chat/dialogs with B/Esc and check walking, X/Jump, camera and click.
+If Jump stays disabled, export immediately rather than waiting through an
+immobile session. The inherited status may still mention startup timing.
+
+4. Enable Show FPS and cap 30, settle ten seconds, then spend about 30 seconds
+standing, 30 seconds rotating the camera and 30 seconds walking the same short
+Atlas route. Note FPS range/dips, temperature and any visible fidelity regression.
+Release movement for the displayed neutral wait, Save character / log out, wait
+for Saved character verified, then Finish and export the COMPLETE outer ZIP.
+
+What changed: only the Android installer/diagnostics and DEX. Large stored APK
+assets use file-descriptor streams, setup work is paced, and fully checked files
+in the same interrupted staging generation can be reused. Corrupt or incomplete
+files must be recopied and all verification/activation guards stay required.
+The exact .23 runtime/Game/GPU/assets, movement deadline repair, older frame
+metrics, Reopen detailed-sampler-off policy and Software fallback remain retained.
+No native Game or GPU build was repeated, and no sustained FPS gain is claimed.
+
+The next result must establish setup completion, accepted walking/Jump/save
+authorization and actual GPU gameplay cadence with the detailed sampler off.
+No startup/zoning comparison or unchanged long Software benchmark is requested.

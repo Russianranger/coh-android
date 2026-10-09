@@ -153,6 +153,12 @@ public final class ClientRuntime {
         } catch (IOException e) { throw new IllegalStateException("Cannot open private client storage", e); }
     }
 
+    /** Compact active installer evidence; does not open or modify runtime files. */
+    public JSONObject getSetupProgressReceipt() throws Exception {
+        DiagnosticRuntime activeInstaller=installer;
+        return activeInstaller==null?null:activeInstaller.getSetupProgressReceipt();
+    }
+
     public static synchronized boolean cleanupBlocked(Context context) {
         initializeGuard(context.getApplicationContext());
         return blocked;

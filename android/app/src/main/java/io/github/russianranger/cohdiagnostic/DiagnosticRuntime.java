@@ -11,7 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardCopyOption;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +72,12 @@ public final class DiagnosticRuntime {
     /** Compact setup evidence; never inventories, prunes or launches the runtime. */
     public JSONObject getSetupReceipt() throws Exception {
         return setupReceipt==null?null:new JSONObject(setupReceipt.toString());
+    }
+    /** Live, bounded installer progress for the service's durable checkpoint. */
+    public JSONObject getSetupProgressReceipt() throws Exception {
+        JSONObject value=getSetupReceipt();
+        if(value!=null&&setupControl!=null)value.put("setup_memory_control",new JSONObject(setupControl.receipt()));
+        return value;
     }
     private String appVersion() {
         try{return context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName;}
@@ -131,11 +141,25 @@ public final class DiagnosticRuntime {
     private static String hex(byte[] bytes) {StringBuilder b=new StringBuilder();for(byte v:bytes)b.append(String.format(Locale.ROOT,"%02x",v&255));return b.toString();}
     private String sha(File file) throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");
-        try(InputStream in=new FileInputStream(file)) {
+        long processed=0,lastBytes=0,lastTime=SystemClock.uptimeMillis();
+        if(setupControl!=null&&setupReceipt!=null)setupReceipt.put("current_input_file",file.getName())
+                .put("current_input_operation","sha256").put("current_input_expected_bytes",file.length()).put("current_input_processed_bytes",0L);
+        // Reused staging candidates must never be read through a link. Other
+        // existing Wine/archive verification retains its original semantics.
+        boolean stagingAsset=generation!=null&&file.getParentFile().equals(new File(home,generation.getName()+".staging/assets"));
+        try(InputStream in=stagingAsset?Files.newInputStream(file.toPath(),LinkOption.NOFOLLOW_LINKS):new FileInputStream(file)) {
             byte[] buffer=new byte[65536];int n;
             while(true) {
                 check();if(setupControl!=null)setupControl.beforeIo();n=in.read(buffer);if(n<0)break;
                 if(setupControl!=null)setupControl.read(n);digest.update(buffer,0,n);
+                if(setupControl!=null&&setupReceipt!=null) {
+                    processed+=n;setupReceipt.put("current_input_processed_bytes",processed);
+                    long now=SystemClock.uptimeMillis();
+                    if(processed-lastBytes>=4L*1024*1024||now-lastTime>=1000) {
+                        setupProgress(setupPhase,"Verifying "+file.getName()+": "+processed/1048576+" / "+file.length()/1048576+" MiB");
+                        lastBytes=processed;lastTime=now;
+                    }
+                }
             }
         }
         return hex(digest.digest());
@@ -189,6 +213,119 @@ public final class DiagnosticRuntime {
     private static void required(File root,String name) throws IOException {
         if(!new File(root,name).isFile())throw new IOException("Incomplete runtime: "+name);
     }
+    private boolean setupDirectory(File directory) throws IOException {
+        return Files.isDirectory(directory.toPath(),LinkOption.NOFOLLOW_LINKS)
+                &&directory.getCanonicalFile().equals(directory.getAbsoluteFile());
+    }
+    private void prepareSetupStaging(File staging,JSONObject files) throws Exception {
+        if(!staging.equals(new File(home,generation.getName()+".staging"))
+                ||!generation.getName().matches("runtime-[0-9a-f]{16}")||!setupDirectory(home))
+            throw new IOException("Unsafe setup staging directory");
+        boolean retain=setupDirectory(staging);
+        Set<String> allowed=new HashSet<>(Arrays.asList("assets","rootfs","wine","pg","dbserver","schema","passwd","group","ready.json","passwd.part","group.part","ready.json.part"));
+        if(retain)try(java.nio.file.DirectoryStream<java.nio.file.Path> entries=Files.newDirectoryStream(staging.toPath())) {
+            int count=0;
+            for(java.nio.file.Path entry:entries)if(++count>32||!allowed.contains(entry.getFileName().toString())){retain=false;break;}
+        }
+        File assets=new File(staging,"assets");
+        if(retain&&Files.exists(assets.toPath(),LinkOption.NOFOLLOW_LINKS)) {
+            retain=setupDirectory(assets);
+            if(retain)try(java.nio.file.DirectoryStream<java.nio.file.Path> entries=Files.newDirectoryStream(assets.toPath())) {
+                int count=0;
+                for(java.nio.file.Path entry:entries) {
+                    String name=entry.getFileName().toString();
+                    if(++count>512||!name.matches("[A-Za-z0-9_.-]+")
+                            ||!files.has(name)&&!name.equals("runtime-manifest.json")&&!name.equals("runtime-manifest.json.part")){retain=false;break;}
+                }
+            }
+        }
+        if(!retain) {
+            if(Files.exists(staging.toPath(),LinkOption.NOFOLLOW_LINKS))TarExtractor.remove(staging,setupControl);
+            Files.createDirectory(staging.toPath());
+        } else {
+            // Discard success markers before any cancellable extraction-tree
+            // cleanup. An interrupted retry can never retain a ready marker.
+            Files.deleteIfExists(new File(staging,"ready.json").toPath());
+            Files.deleteIfExists(new File(staging,"ready.json.part").toPath());
+            // Only interrupted output in this exact manifest generation is
+            // retained. Extraction is restarted, with no account/import path.
+            for(String name:allowed)if(!name.equals("assets")) {
+                File path=new File(staging,name);
+                if(Files.exists(path.toPath(),LinkOption.NOFOLLOW_LINKS))TarExtractor.remove(path,setupControl);
+            }
+        }
+        if(!Files.exists(assets.toPath(),LinkOption.NOFOLLOW_LINKS))Files.createDirectory(assets.toPath());
+        // These small metadata outputs are rewritten, never opened through an
+        // interrupted link or an inherited .part file.
+        for(String name:new String[]{"runtime-manifest.json","runtime-manifest.json.part"}) {
+            File path=new File(assets,name);
+            if(Files.exists(path.toPath(),LinkOption.NOFOLLOW_LINKS))TarExtractor.remove(path,setupControl);
+        }
+        setupReceipt.put("same_generation_staging_retained",retain);
+    }
+    private boolean reusableSetupAsset(File file,JSONObject pin) throws Exception {
+        if(!file.getParentFile().equals(new File(home,generation.getName()+".staging/assets"))
+                ||!setupDirectory(file.getParentFile())||!Files.isRegularFile(file.toPath(),LinkOption.NOFOLLOW_LINKS)
+                ||file.length()!=pin.getLong("bytes"))return false;
+        try {if(android.system.Os.lstat(file.getPath()).st_nlink!=1)return false;}
+        catch(android.system.ErrnoException failure){return false;}
+        String digest=sha(file);check();
+        try {
+            return Files.isRegularFile(file.toPath(),LinkOption.NOFOLLOW_LINKS)
+                    &&file.length()==pin.getLong("bytes")&&android.system.Os.lstat(file.getPath()).st_nlink==1
+                    &&digest.equals(pin.getString("sha256"));
+        } catch(android.system.ErrnoException failure){return false;}
+    }
+    private InputStream openSetupAsset(String name,long expected) throws Exception {
+        android.content.res.AssetFileDescriptor descriptor;
+        try {descriptor=context.getAssets().openFd("runtime/"+name);}
+        catch(FileNotFoundException compressed) {
+            setupReceipt.put("current_asset_source","asset_stream");
+            return context.getAssets().open("runtime/"+name,android.content.res.AssetManager.ACCESS_STREAMING);
+        }
+        try {
+            if(descriptor.getDeclaredLength()!=expected)throw new IOException("Package member length mismatch: "+name);
+            InputStream input=descriptor.createInputStream();
+            setupReceipt.put("current_asset_source","asset_fd");
+            return new FilterInputStream(input) {
+                @Override public void close() throws IOException {
+                    try {super.close();}finally {descriptor.close();}
+                }
+            };
+        } catch(Exception failure) {descriptor.close();throw failure;}
+    }
+    private void copySetupAsset(File dest,String name,JSONObject pin) throws Exception {
+        if(!name.matches("[A-Za-z0-9_.-]+")||name.equals(".")||name.equals("..")||!dest.getName().equals(name)
+                ||!dest.getParentFile().equals(new File(home,generation.getName()+".staging/assets"))||!setupDirectory(dest.getParentFile()))
+            throw new IOException("Unsafe package destination");
+        long expected=pin.getLong("bytes");
+        if(expected<0||expected>2L*1024*1024*1024)throw new IOException("Invalid package member size");
+        if(Files.exists(dest.toPath(),LinkOption.NOFOLLOW_LINKS))TarExtractor.remove(dest,setupControl);
+        setupReceipt.put("current_input_file",name).put("current_input_operation","packaged_asset_copy")
+                .put("current_input_expected_bytes",expected).put("current_input_processed_bytes",0L);
+        setupControl.beforeIo();
+        try(InputStream in=openSetupAsset(name,expected);
+                FileChannel channel=FileChannel.open(dest.toPath(),StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS);
+                OutputStream out=Channels.newOutputStream(channel)) {
+            stage("Copying runtime asset",name);
+            byte[] buffer=new byte[65536];long copied=0,lastBytes=0,lastTime=SystemClock.uptimeMillis();
+            try {
+                while(copied<expected) {
+                    check();setupControl.beforeIo();
+                    int n=in.read(buffer,0,(int)Math.min(buffer.length,expected-copied));
+                    if(n<0)throw new EOFException("Package member truncated: "+name);
+                    if(n==0)throw new IOException("Package member made no progress: "+name);
+                    setupControl.read(n);out.write(buffer,0,n);setupControl.written(n,()->channel.force(true));copied+=n;
+                    setupReceipt.put("current_asset_copied_bytes",copied).put("current_input_processed_bytes",copied);
+                    long now=SystemClock.uptimeMillis();
+                    if(copied-lastBytes>=4L*1024*1024||now-lastTime>=1000) {
+                        setupProgress("Copying runtime assets",name+": "+copied/1048576+" / "+expected/1048576+" MiB copied");lastBytes=copied;lastTime=now;
+                    }
+                }
+                check();setupControl.beforeIo();if(in.read()!=-1)throw new IOException("Package member grew");
+            } finally {channel.force(true);setupControl.synced();}
+        }
+    }
     public void setupRuntime() throws Exception {
         CleanupGuard.requireClear();
         JSONObject report=new JSONObject();
@@ -197,7 +334,9 @@ public final class DiagnosticRuntime {
                 .put("installation_started",false).put("runtime_activated",false)
                 .put("download_started",false).put("downloaded_archive_bytes",0L)
                 .put("extraction_started",false).put("archives_extracted",0)
-                .put("runtime_payload_files_copied",0).put("runtime_contents_inventory_performed",false)
+                .put("runtime_payload_files_copied",0).put("runtime_payload_bytes_copied",0L)
+                .put("runtime_payload_files_reused",0).put("runtime_payload_bytes_reused",0L)
+                .put("runtime_contents_inventory_performed",false)
                 .put("automatic_cleanup_performed",false).put("staging_cleanup_deferred",false);
         setupCleanupDeferred=false;
         try {
@@ -222,8 +361,8 @@ public final class DiagnosticRuntime {
                 File wine=download(lock.getJSONObject("wine"),"Windows runtime");
                 File staging=new File(home,generation.getName()+".staging");
                 setupReceipt.put("installation_started",true);
-                if(staging.exists())TarExtractor.remove(staging,setupControl);staging.mkdirs();
                 try {
+                    prepareSetupStaging(staging,pinnedFiles);
                     File root=new File(staging,"rootfs"), win=new File(staging,"wine"), pg=new File(staging,"pg"), assets=new File(staging,"assets");
                     root.mkdirs();win.mkdirs();pg.mkdirs();assets.mkdirs();
                     stage("Unpacking runtime","Preparing the private database environment");
@@ -237,16 +376,26 @@ public final class DiagnosticRuntime {
                     stage("Copying runtime assets","Copying and verifying the packaged runtime assets");
                     long copied=0;
                     for(Iterator<String> it=files.keys();it.hasNext();) {
-                        String name=it.next(); if(!name.matches("[A-Za-z0-9_.-]+"))throw new IOException("Unsafe package member");
+                        String name=it.next(); if(!name.matches("[A-Za-z0-9_.-]+")||name.equals(".")||name.equals(".."))throw new IOException("Unsafe package member");
                         File dest=new File(assets,name);
-                        setupControl.beforeIo();
-                        try(InputStream in=context.getAssets().open("runtime/"+name);FileOutputStream out=new FileOutputStream(dest)) {
-                            TarExtractor.transfer(in,out,files.getJSONObject(name).getLong("bytes"),setupControl);if(in.read()!=-1)throw new IOException("Package member grew");
-                        }
+                        JSONObject pin=files.getJSONObject(name);long expected=pin.getLong("bytes");
+                        setupReceipt.put("current_asset",name).put("current_asset_expected_bytes",expected)
+                                .put("current_asset_copied_bytes",0L).put("current_asset_source","checking_staging")
+                                .put("runtime_payload_verified_bytes",copied);
                         stage("Verifying runtime asset",name);
-                        verify(dest,files.getJSONObject(name));check();
-                        setupReceipt.put("runtime_payload_files_copied",setupReceipt.getInt("runtime_payload_files_copied")+1);
-                        copied=Math.addExact(copied,files.getJSONObject(name).getLong("bytes"));
+                        if(reusableSetupAsset(dest,pin)) {
+                            setupReceipt.put("current_asset_source","verified_same_generation_staging")
+                                    .put("current_asset_copied_bytes",expected)
+                                    .put("runtime_payload_files_reused",setupReceipt.getInt("runtime_payload_files_reused")+1)
+                                    .put("runtime_payload_bytes_reused",Math.addExact(setupReceipt.getLong("runtime_payload_bytes_reused"),expected));
+                        } else {
+                            stage("Opening runtime asset",name);copySetupAsset(dest,name,pin);
+                            stage("Verifying runtime asset",name);verify(dest,pin);check();
+                            setupReceipt.put("runtime_payload_files_copied",setupReceipt.getInt("runtime_payload_files_copied")+1)
+                                    .put("runtime_payload_bytes_copied",Math.addExact(setupReceipt.getLong("runtime_payload_bytes_copied"),expected));
+                        }
+                        copied=Math.addExact(copied,expected);
+                        setupReceipt.put("runtime_payload_verified_bytes",copied);
                         stage("Copying runtime assets",copied/1048576+" / "+assetBytes/1048576+" MiB verified");
                     }
                     try(InputStream in=context.getAssets().open("runtime/runtime-manifest.json")){write(new File(assets,"runtime-manifest.json"),read(in,MAX_REPORT));}
@@ -275,12 +424,12 @@ public final class DiagnosticRuntime {
                     setupReceipt.put("runtime_activated",true);
                 } catch(OutOfMemoryError failure) {setupCleanupDeferred=true;throw failure;}
                 finally {
-                    if(staging.exists()) {
+                    if(Files.exists(staging.toPath(),LinkOption.NOFOLLOW_LINKS)) {
                         if(setupCleanupDeferred||setupControl.cleanupShouldDefer()||outcome.cancelled()||Thread.currentThread().isInterrupted()) {
                             setupCleanupDeferred=true;
                             // A deferred private staging tree never carries a
                             // success marker, including a Stop at publication.
-                            Files.deleteIfExists(new File(staging,"ready.json").toPath());
+                            if(setupDirectory(staging))Files.deleteIfExists(new File(staging,"ready.json").toPath());
                         }
                         else TarExtractor.remove(staging);
                     }
@@ -321,7 +470,16 @@ public final class DiagnosticRuntime {
     private void validateInstalled() throws Exception {
         required(generation,"rootfs/usr/bin/python3");required(generation,"wine/bin/wine");required(generation,"pg/opt/coh/pgsql/bin/postgres");
         JSONObject files=manifest.getJSONObject("files");
-        for(Iterator<String> it=files.keys();it.hasNext();){String name=it.next();verify(new File(generation,"assets/"+name),files.getJSONObject(name));}
+        for(Iterator<String> it=files.keys();it.hasNext();) {
+            String name=it.next();
+            if(!name.matches("[A-Za-z0-9_.-]+")||name.equals(".")||name.equals(".."))throw new IOException("Unsafe package member");
+            if(setupControl!=null) {
+                setupReceipt.put("current_asset",name).put("current_asset_expected_bytes",files.getJSONObject(name).getLong("bytes"))
+                        .put("current_asset_copied_bytes",0L).put("current_asset_source","installed_runtime");
+                stage("Verifying installed runtime asset",name);
+            }
+            verify(new File(generation,"assets/"+name),files.getJSONObject(name));
+        }
     }
     public Result runDiagnostics() throws Exception {
         return runDiagnostics(false,false);

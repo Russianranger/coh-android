@@ -143,7 +143,18 @@ class SharedPreferences {
 }
 class Context {
     static final int MODE_PRIVATE=0;static final Map<String,SharedPreferences> preferences=new HashMap<>();
+    static final String ACTIVITY_SERVICE="activity";
+    Object getSystemService(String name){return ActivityManager.missing?null:ActivityManager.manager;}
     SharedPreferences getSharedPreferences(String name,int mode){return preferences.computeIfAbsent(name,key->new SharedPreferences());}
+}
+class ActivityManager {
+    static final ActivityManager manager=new ActivityManager();static boolean unavailable,missing,lowMemory;
+    static long availableBytes=4L<<30,totalBytes=16L<<30,thresholdBytes=128L<<20;static int calls;
+    static class MemoryInfo {long availMem,totalMem,threshold;boolean lowMemory;}
+    void getMemoryInfo(MemoryInfo value){
+        calls++;if(unavailable)throw new IllegalStateException("fixture Android memory service unavailable");
+        value.availMem=availableBytes;value.totalMem=totalBytes;value.threshold=thresholdBytes;value.lowMemory=lowMemory;
+    }
 }
 class SystemClock {static long now=100;static long uptimeMillis(){return now;}}
 class Debug {static long getNativeHeapAllocatedSize(){return 4096;}}
@@ -155,6 +166,8 @@ class ClientRuntime {
     static boolean cleanupBlocked(Context context){return false;}
     static class Result {final boolean passed;final String summary;File report;Result(boolean yes){passed=yes;summary=yes?"Runtime ready":"Setup stopped";}}
     boolean oom,failure,stopped;int setups;
+    JSONObject setupProgress=new JSONObject().put("mode","not_started");
+    JSONObject getSetupProgressReceipt()throws IOException{return new JSONObject(setupProgress.toString());}
     Result setup()throws Exception {setups++;if(oom)throw new OutOfMemoryError("fixture heap");if(failure)throw new IOException("fixture IO");return new Result(!stopped);}
     static JSONObject setupProcessExitHistory(Context context){return new JSONObject().put("own_processes_only",true).put("maximum_records",4).put("trace_streams_requested",false);}
     RESERVATION_METHODS
@@ -306,7 +319,7 @@ class SetupServiceTests(unittest.TestCase):
                     'public static synchronized boolean operationInProgress(', 'public static synchronized Object acquireReportExport(',
                     'private static Object acquireIdleStorage('))).replace('SERVICE_METHODS', '\n'.join(
                 production_method(service, signature).replace('private ', '') for signature in (
-                    'public static JSONObject setupMemoryEvidence(', 'private synchronized void checkpointSetup(',
+                    'public static JSONObject setupMemoryEvidence(', 'private JSONObject setupSystemMemory(', 'private JSONObject setupProcessMemory(', 'private synchronized void checkpointSetup(',
                     'private File writeSetupRecoveryReport(', 'private void recoverSetupOperation(',
                     'private ClientRuntime.Result executeSetup(', 'private void finishSetupWorker(',
                     'private void failedOperationDispatch(', 'private File validSetupReport(', 'private void refreshFinishedSetup(')))),
