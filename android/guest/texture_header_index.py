@@ -223,7 +223,8 @@ def prepare(work, import_identity, executable_sha256, context):
                                                 'verified_client_startup_followup_layer_v1',
                                                 'verified_client_scene_performance_layer_v1',
                                                 'verified_client_gameplay_performance_layer_v1',
-                                                'verified_client_renderer_attribution_layer_v1')
+                                                'verified_client_renderer_attribution_layer_v1',
+                                                'verified_client_render_pipeline_layer_v1')
                         and native['native_source_closure_verified'] is True
                         and native['texture_header_struct_bytes'] == 32
                         and native['client_executable_sha256'] == executable_sha256

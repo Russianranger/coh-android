@@ -17,6 +17,8 @@ import time
 from types import SimpleNamespace
 import zipfile
 
+import native_responsiveness_contract as native_candidate
+
 ARCHIVE = 'hardware-renderer.zip'
 MANIFEST = 'hardware-renderer-manifest.json'
 MEMBERS = {MANIFEST, 'libvulkan_freedreno.so', 'coh-vulkan-gpu-probe',
@@ -489,6 +491,76 @@ def cleanup_directories(owner):
     return failures
 
 
+def verified_render_pipeline_producer(owner):
+    """Bind the current Game to the full typed extension of the retained .19 Game.
+
+    The payload/probe producer remains separately APK-pinned. Neither a claimed
+    current hash nor the old renderer report can authorize replacement bytes.
+    Revalidate the whole executable/DLL/source history on each owned attempt.
+    """
+    package = getattr(owner, 'client_render_pipeline_package', None)
+    producer = owner.ctx.report.get('client_render_pipeline')
+    require(getattr(owner, 'client_render_pipeline', False) is True
+            and isinstance(package, dict) and isinstance(producer, dict),
+            'Render pipeline lacks its current typed Game producer')
+    record = native_candidate.client_contract(package)
+    wrapper = package.get('client_render_pipeline')
+    require(isinstance(wrapper, dict), 'Render pipeline typed extension is missing')
+    parent = package['client_renderer_attribution']
+    parent_manifest = parent['manifest']
+    manifest = wrapper['manifest']
+    require(parent_manifest['repository_commit'] == GAME_SOURCE_COMMIT
+            and parent_manifest['files']['CityOfHeroes.exe']['sha256'] == GAME_SHA256
+            and wrapper['base_client_executable']['sha256'] == GAME_SHA256,
+            'Render pipeline does not extend the exact retained .19 Game producer')
+    require(type(producer.get('format')) is int and producer['format'] == 1
+            and producer.get('verified') is True
+            and producer.get('repository_commit') == manifest['repository_commit']
+            and producer.get('manifest_sha256') == wrapper['manifest_sha256']
+            and producer.get('base_client_renderer_attribution_manifest_sha256') == parent['manifest_sha256']
+            and producer.get('base_client_executable_sha256') == GAME_SHA256
+            and producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == record['sha256']
+            and producer.get('source_commit') == package['source_commit']
+            and producer.get('data_commit') == package['data_commit']
+            and producer.get('native_source_sha256') == native_candidate.canonical_sha(manifest['retained_source_inputs'])
+            and re.fullmatch(r'[0-9a-f]{64}', str(producer.get('data_source_sha256', '')))
+            and producer['data_source_sha256'] == owner.ctx.report.get('import_identity', {}).get('contract_sha256')
+            and producer.get('replacement_scope') == 'CityOfHeroes.exe_only'
+            and producer.get('source_freshness_preserved') is True
+            and producer.get('prepared_cache_schema_changed') is False
+            and producer.get('renderer_changed') is False
+            and producer.get('graphics_fidelity_preserved') is True
+            and producer.get('gameplay_frame_cap_changed') is False
+            and producer.get('bounded_render_pipeline_diagnostics') is True
+            and producer.get('worker_wakeup_repaired') is True
+            and producer.get('physical_fps_improvement_validated') is False,
+            'Render pipeline lacks its current verified Game producer')
+    return {'policy': 'exact_retained_renderer_Game_then_full_typed_render_pipeline_v1',
+            'repository_commit': manifest['repository_commit'],
+            'manifest_sha256': wrapper['manifest_sha256'], 'client_executable_sha256': record['sha256'],
+            'retained_renderer_repository_commit': GAME_SOURCE_COMMIT,
+            'retained_renderer_manifest_sha256': parent['manifest_sha256'],
+            'retained_renderer_executable_sha256': GAME_SHA256,
+            'native_source_sha256': native_candidate.canonical_sha(manifest['retained_source_inputs'])}
+
+
+def current_game_producer(owner):
+    """Preserve the exact .21 route and admit only its reviewed typed extension."""
+    producer = owner.ctx.report.get('client_renderer_attribution')
+    require(getattr(owner, 'client_renderer_attribution', False) is True
+            and isinstance(producer, dict) and producer.get('verified') is True
+            and producer.get('repository_commit') == GAME_SOURCE_COMMIT,
+            'GPU profile lacks its verified retained Game attribution producer')
+    if getattr(owner, 'client_render_pipeline', False) is True:
+        require(producer.get('client_executable_sha256') == GAME_SHA256,
+                'GPU profile changed its retained historical Game producer')
+        return verified_render_pipeline_producer(owner)
+    require(producer.get('client_executable_sha256') == getattr(owner, 'client_executable_sha256', None) == GAME_SHA256,
+            'GPU profile lacks the current verified .19 Game producer')
+    return {'policy': 'exact_retained_renderer_Game_v1', 'repository_commit': GAME_SOURCE_COMMIT,
+            'client_executable_sha256': GAME_SHA256}
+
+
 def apply_profile(owner, baseline, label):
     """Called immediately before each owned initial/retry Game launch."""
     requested = baseline.get('COH_CLIENT_GPU_PROFILE', 'software')
@@ -511,12 +583,7 @@ def apply_profile(owner, baseline, label):
     try:
         require(requested == 'turnip', 'Unknown requested GPU profile')
         require(count <= 4, 'GPU profile attempt count exceeded bound')
-        producer = owner.ctx.report.get('client_renderer_attribution')
-        require(getattr(owner, 'client_renderer_attribution', False) is True
-                and isinstance(producer, dict) and producer.get('verified') is True
-                and producer.get('repository_commit') == GAME_SOURCE_COMMIT
-                and producer.get('client_executable_sha256') == owner.client_executable_sha256 == GAME_SHA256,
-                'GPU profile lacks the current verified .19 Game producer')
+        receipt['game_producer'] = current_game_producer(owner)
         require(platform_is_arm64(), 'GPU test requires the retained native ARM64 guest')
         owner.ctx.event('stage', status='running', message='Checking GPU test prerequisites before Game launch')
         directory = owner.root / ('gpu-profile-' + owner.args.session_id + '-' + str(count))
@@ -524,6 +591,13 @@ def apply_profile(owner, baseline, label):
             owner.ctx.report.get('asset_sha256', {}).get(ARCHIVE), directory,
             on_created=lambda created: record_directory(owner, created))
         receipt.update(archive_receipt)
+        receipt['gpu_payload_producer'] = {
+            'policy': 'retained_APK_pinned_GPU_driver_and_finite_probes_v1',
+            'repository_commit': archive_receipt['manifest']['repository_commit'],
+            'run_url': archive_receipt['manifest']['run_url'],
+            'archive_sha256': archive_receipt['archive_sha256'],
+            'manifest_sha256': archive_receipt['manifest_sha256'],
+            'game_producer_distinct': True, 'actual_Game_renderer_observed': False}
         driver = directory / 'libvulkan_freedreno.so'
         icd = directory / 'turnip-private-icd.json'
         with icd.open('x', encoding='ascii') as stream:

@@ -1,0 +1,53 @@
+COH Atlas Gameplay 0.13.22 — render-worker wakeup and pipeline timings
+
+1. Install as an update, keeping app data, imports and your existing character.
+Run Set up / update runtime ONCE and wait for Runtime ready. Game and its
+verified helper/manifests change; do not clear data or reimport assets.
+Keep the same Performance graphics, 800x600, fan mode and charging state as
+the successful .21 GPU run. Startup timing and zoning remain deferred.
+
+2. Select GPU test before Reopen. Its successful .21 driver/probes are retained.
+If launch fails or unexpectedly falls back, export the COMPLETE outer ZIP
+immediately. Do not repeat a long Software test. Do not switch renderer during
+Game. The actual Game renderer in the export corroborates the selected mode.
+
+3. Once Atlas is playable, close chat with B/Esc, tap Show FPS and 30 FPS, and
+settle for ten seconds. Test about thirty seconds each standing still, rotating
+the camera, walking through populated Atlas, and approaching buildings or
+previously unseen scenery. Leave ten-second gaps. Record segment start times,
+FPS ranges/dips and hitches, plus temperature at entry, end and peak. Use the
+same short route as .21 if practical; no new .21 or Software baseline is needed.
+
+4. During that route check movement/camera, combat/NPCs, scenery, heads/hands,
+water/transparency, powers/inspirations, chat and quest UI. Report any missing
+textures, flicker, black flashes, crashes or control regression. Resolution,
+assets and visual features have not been reduced to obtain a higher FPS target.
+
+5. Save normally, release controls for the displayed wait, wait for Saved
+character verified, then Finish. Export the COMPLETE coh-atlas-gameplay-*.zip
+before another operation replaces it. Send it with FPS/segment/temperature and
+visual notes. Preserve/export a failed result too, without clearing data.
+
+6. Only if GPU regresses: stop/export, wait for owned cleanup, choose Software,
+and reopen briefly to check the working fallback. Export that failure/fallback
+result. An additional unchanged long Software route is unnecessary.
+
+What changed: a render-worker event handshake prevents queued work missing its
+wakeup. Bounded native pipeline timings identify main graphics phases, explicit
+queue-flush waits, active render-command time and gaps between commands. They
+supplement the existing frame/scene/renderer streams rather than proving pure
+GPU time. The .21 export confirmed actual Zink/Turnip Game and averaged about
+19.2 native FPS in conservatively classified 30-cap gameplay windows; your
+15–30 FPS/smoother/no-fidelity-loss observation is retained separately.
+
+The next test resolves whether .22 improves cadence or removes stalls, and which
+phase limits the remaining slow frames. Stable 30 FPS is the target, not a claim.
+No startup/zoning comparison or repeated GPU preflight repair is requested.
+
+The outer ZIP retains Android operation/capture evidence and guest-report.zip.
+Inside, client-evidence/client-console.log includes COH_CLIENT_FRAME_TIMING_V1,
+COH_CLIENT_RENDERER_ATTRIBUTION_V1 and COH_CLIENT_RENDER_PIPELINE_V1. The report
+also retains actual Game renderer, typed source/payload identities and strict
+save/cleanup evidence. Send the outer package, not a screenshot or one inner log.
+Phase nesting and independent sampling windows must not be added or aligned
+as if they measured one identical frame. Begin the route promptly after entry.

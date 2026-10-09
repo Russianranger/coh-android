@@ -161,6 +161,8 @@ def client_contract(package, receipt=None):
         executable = client_gameplay_performance_contract(package, candidate)
     if 'client_renderer_attribution' in package:
         executable = client_renderer_attribution_contract(package, candidate)
+    if 'client_render_pipeline' in package:
+        executable = client_render_pipeline_contract(package, candidate)
     expected['CityOfHeroes.exe'] = executable
     require(package.get('files') == expected and len(expected) == 21
             and package.get('source_commit') == SOURCE and package.get('data_commit') == DATA
@@ -379,6 +381,112 @@ def client_renderer_attribution_contract(package, candidate=None):
     require(not same_json(record, previous) and record['pe_machine'] == previous['pe_machine']
         and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
         'Renderer attribution Game imports exceed the retained DLL closure')
+    return record
+
+def client_render_pipeline_contract(package, candidate=None):
+    """Only extend the verified gameplay Game; retain its complete source history."""
+    candidate = embedded_receipt(package) if candidate is None else validate_receipt(candidate)
+    previous = client_renderer_attribution_contract(package, candidate)
+    accepted = package['client_renderer_attribution']
+    wrapper = package.get('client_render_pipeline')
+    same_json = lambda first, second: json.dumps(first, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(second, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    require(isinstance(wrapper, dict) and set(wrapper) == {'manifest', 'manifest_sha256',
+        'base_client_renderer_attribution_manifest_sha256', 'base_client_executable'}
+        and wrapper['base_client_renderer_attribution_manifest_sha256'] == accepted['manifest_sha256']
+        and same_json(wrapper['base_client_executable'], previous),
+        'Render pipeline must retain the exact accepted gameplay Game producer')
+    manifest = wrapper['manifest']
+    require(isinstance(manifest, dict) and wrapper['manifest_sha256'] == canonical_sha(manifest)
+        and type(manifest.get('format')) is int and manifest['format'] == 1
+        and manifest.get('role') == 'bounded_client_render_pipeline'
+        and re.fullmatch(r'[0-9a-f]{40}', str(manifest.get('repository_commit', '')))
+        and manifest.get('source_commit') == SOURCE and manifest.get('data_commit') == DATA
+        and manifest.get('configuration') == 'OptDebug' and manifest.get('architecture') == 'Win32'
+        and manifest.get('build_targets') == ['Game'] and manifest.get('postgresql_persistence_fixture') is False
+        and manifest.get('retained_native_dependencies_changed') is False
+        and scene_source_inputs_equivalent(manifest.get('retained_source_inputs'), candidate['build_inputs'])
+        and same_json(manifest.get('schema_sources_sha256'), candidate['retained_cache']['schema_sources_sha256'])
+        and same_json(manifest.get('base_client_executable'), previous)
+        and manifest.get('cache_encoding_changed') is False and manifest.get('runtime_execution_validated') is False
+        and manifest.get('replacement_scope') == 'CityOfHeroes.exe_only'
+        and set(manifest.get('files', {})) == {'CityOfHeroes.exe'},
+        'Render pipeline changed native dependencies or cache ancestry')
+    build = manifest.get('build_input', {})
+    files = {'Game/src/graphics/gfx.c', 'Game/src/render/thread/rt_queue.c',
+        'Game/src/render/thread/rt_queue.h', 'libs/UtilitiesLib/src/components/WorkerThread.c'}
+    patches = {'patches/client-render-pipeline/0001-render-worker-wake-and-focused-timing.patch'}
+    controls = {'render_pipeline': {'environment_variable': 'COH_CLIENT_RENDER_PIPELINE', 'enabled_value': '1', 'disabled_by_default': True, 'record_prefix': 'COH_CLIENT_RENDER_PIPELINE_V1', 'window_report_limit_per_thread': 120, 'command_sample_interval': 16, 'aggregate_only': True, 'thread_cpu_window_boundaries_only': True, 'blocking_gpu_measurement': False, 'main_scope': 'gameplay', 'renderer_scope': 'all_states_independent'}, 'worker_wake_repair': {'asleep_published_before_event_reset': True, 'empty_queue_recheck_preserved': True, 'producer_signals_unchanged': True, 'unthreaded_queue_unchanged': True, 'full_queue_flush_unchanged': True}}
+    require(isinstance(build, dict) and set(build) == {'format', 'role', 'source_commit',
+        'base_client_renderer_attribution_build_input', 'patches_sha256', 'source_sha256', 'patched_sha256',
+        'overlay_sha256', 'reverse_patch_exact_base_verified', 'controls', 'build_targets', 'configuration',
+        'architecture', 'cache_encoding_changed', 'parse6_schema_changes', 'source_freshness_changed',
+        'graphics_profile_changes', 'renderer_changed', 'gameplay_validation_changes',
+        'runtime_execution_validated', 'gameplay_frame_cap_changed', 'native_fps_display_changed', 'worker_wakeup_changed'}
+        and type(build.get('format')) is int and build['format'] == 1
+        and build.get('role') == manifest['role'] and build.get('source_commit') == SOURCE
+        and same_json(build.get('base_client_renderer_attribution_build_input'), accepted['manifest']['build_input'])
+        and build.get('reverse_patch_exact_base_verified') is True and same_json(build.get('controls'), controls)
+        and build.get('build_targets') == ['Game'] and build.get('configuration') == 'OptDebug'
+        and build.get('architecture') == 'Win32' and build.get('gameplay_frame_cap_changed') is False and build.get('native_fps_display_changed') is False and build.get('worker_wakeup_changed') is True
+        and all(build.get(key) is False for key in ('cache_encoding_changed', 'parse6_schema_changes',
+            'source_freshness_changed', 'graphics_profile_changes', 'renderer_changed',
+            'gameplay_validation_changes', 'runtime_execution_validated')),
+        'Render pipeline native recipe changed correctness or renderer')
+    for field, names in (('patches_sha256', patches), ('source_sha256', files), ('patched_sha256', files),
+            ('overlay_sha256', {'Game/src/cohClientRenderPipeline.h'})):
+        require(isinstance(build.get(field), dict) and set(build[field]) == names
+            and all(HEX64.fullmatch(str(value)) for value in build[field].values()),
+            'Render pipeline native source inventory differs')
+    require(all(build['source_sha256'][name] != build['patched_sha256'][name] for name in files)
+        and all(build['source_sha256'][name] == accepted['manifest']['build_input']['patched_sha256'][name]
+            for name in ('Game/src/graphics/gfx.c', 'Game/src/render/thread/rt_queue.c'))
+        and build['source_sha256']['Game/src/render/thread/rt_queue.h'] ==
+            '342f3bc31a3d0974a78e7be922cf01d9e1f46598e1ba280b86cf2b5a2dc0b33d'
+        and build['source_sha256']['libs/UtilitiesLib/src/components/WorkerThread.c'] ==
+            'eebaa5df2895cf7cc3cd8c7ec6faaba1b75f9e72fa0252e058a7abe8d4cf7c2c',
+        'Render pipeline recipe did not extend exact accepted renderer/worker sources')
+    checks = manifest.get('windows_qualification', {})
+    require(isinstance(checks, dict) and set(checks) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'build_input', 'scene', 'frame', 'gameplay', 'renderer', 'pipeline'}
+        and type(checks.get('format')) is int and checks['format'] == 1
+        and checks.get('status') == 'passed' and checks.get('platform') == 'windows'
+        and checks.get('architecture') == 'Win32' and checks.get('configuration') == 'OptDebug'
+        and same_json(checks.get('build_input'), build)
+        and all(same_json(checks.get(name), accepted['manifest']['windows_qualification'][name])
+            for name in ('scene', 'frame', 'gameplay', 'renderer')), 'Render pipeline real Win32 retained scene/frame/gameplay proof differs')
+    proof = checks.get('pipeline', {})
+    flags = ('main_gameplay_scope_verified', 'nested_gfx_phase_and_flush_suppression_verified',
+        'main_phase_flush_overlap_separation_verified',
+        'sampled_command_gap_and_batch_separation_verified',
+        'command_clock_sampling_one_in_sixteen_verified',
+        'shared_translation_unit_tls_and_thread_isolation_verified',
+        'report_rate_histogram_counter_saturation_and_limits_verified',
+        'disabled_without_clock_cpu_or_logging_verified',
+        'clock_failure_and_incomplete_diagnostics_nonfatal_verified',
+        'genuine_win32_qpc_thread_cpu_and_concurrent_json_verified',
+        'native_crt_macro_isolation_and_restoration_verified',
+        'worker_wake_handshake_source_bound_interleavings_verified',
+        'thread_cpu_excludes_renderer_workers')
+    require(isinstance(proof, dict) and set(proof) == {'format', 'status', 'platform', 'architecture',
+        'configuration', 'compiler_options', 'patch_sha256', 'header_sha256', 'harness_sha256',
+        'production_harness_sha256', 'helper_sha256', 'production_helper_sha256', 'physical_fps_gain_validated', *flags}
+        and type(proof.get('format')) is int and proof['format'] == 1
+        and proof.get('status') == 'passed' and proof.get('platform') == 'windows'
+        and proof.get('architecture') == 'Win32' and proof.get('configuration') == 'OptDebug'
+        and proof.get('compiler_options') == ['/O2', '/Oy-', '/MT', '/TC']
+        and HEX64.fullmatch(str(proof.get('harness_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('production_harness_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('helper_sha256', '')))
+        and HEX64.fullmatch(str(proof.get('production_helper_sha256', '')))
+        and all(proof.get(name) is True for name in flags)
+        and proof.get('physical_fps_gain_validated') is False
+        and proof.get('patch_sha256') == build['patches_sha256'][next(iter(patches))]
+        and proof.get('header_sha256') == build['overlay_sha256']['Game/src/cohClientRenderPipeline.h'],
+        'Render pipeline source-bound Win32 harness proof missing')
+    record = pe_record(manifest['files']['CityOfHeroes.exe'])
+    require(not same_json(record, previous) and record['pe_machine'] == previous['pe_machine']
+        and record['imports'] == previous['imports'] and record['delay_imports'] == previous['delay_imports'],
+        'Render pipeline Game imports exceed the retained DLL closure')
     return record
 
 def client_scene_performance_contract(package, candidate=None):

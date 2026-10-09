@@ -1,0 +1,392 @@
+name: Thor render worker wake repair and focused frame attribution
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-render-pipeline.yml
+      - patches/client-render-pipeline/**
+      - android/native/client-render-pipeline/**
+      - database/client-render-pipeline/**
+      - tools/android/interactive/package_client_render_pipeline_native.py
+      - tools/android/interactive/build_client_render_pipeline_apk.py
+      - tools/android/interactive/qualify_client_render_pipeline.py
+      - tools/android/interactive/test_client_render_pipeline*.py
+      - android/guest/native_responsiveness_contract.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/client_gpu_profile.py
+      - android/guest/texture_header_index.py
+      - docs/COH-PERFORMANCE-0.13.22.md
+      - docs/COH-Atlas-Gameplay-0.13.22-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-render-pipeline-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Preserve any complete existing publication
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import sys, json, os, urllib.error, urllib.request
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_render_pipeline_apk as current
+          if current.RELEASE_TAG != 'coh-atlas-gameplay-v0.13.22':
+              raise ValueError('Exact continuation release required')
+          request = urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response: release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              current.validate_existing_release(release)
+              required = False
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('required='+str(required).lower()+'\n')
+          print(json.dumps({'release_tag': current.RELEASE_TAG, 'publication_required': required,
+              'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False}))
+          PY
+  client:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 80
+    steps:
+      - name: Preserve exact LF native inputs on Windows
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Stage the immutable native chain and reviewed rendering continuation
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_client_render_pipeline_native.py stage --output out/client-render-pipeline-source
+          if ($LASTEXITCODE -ne 0) { throw 'Native render pipeline staging failed' }
+      - name: Qualify retained Win32 logic and current render-worker scheduling
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_scene_performance_native.py --windows-qualify --output out/client-scene-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_frame_timing_native.py --windows-qualify --output out/client-frame-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_gameplay_performance_native.py --windows-qualify --output out/client-gameplay-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_renderer_attribution_native.py --windows-qualify --output out/client-renderer-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_render_pipeline_native.py --windows-qualify --output out/client-pipeline-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/package_client_render_pipeline_native.py combine-checks --scene-checks out/client-scene-checks.json --frame-checks out/client-frame-checks.json --gameplay-checks out/client-gameplay-checks.json --renderer-checks out/client-renderer-checks.json --pipeline-checks out/client-pipeline-checks.json --output out/client-render-pipeline-native-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/client-render-pipeline.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\client-render-pipeline.cmd 2>&1 | Tee-Object out/contracts/client-render-pipeline.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Win32 render pipeline qualification failed' }
+      - name: Build only Game; retain successful GPU driver and probes
+        working-directory: out/client-render-pipeline-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Native render pipeline configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Native Game build failed' }
+      - name: Bind Game to exact native source, ancestry and Win32 receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_client_render_pipeline_native.py package
+          --directory out/client-render-pipeline-source/out/build/vs2026/bin/OptDebug
+          --source out/client-render-pipeline-source
+          --cache out/client-render-pipeline-source/out/build/vs2026/CMakeCache.txt
+          --checks out/client-render-pipeline-native-checks.json
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/client-render-pipeline-native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-pipeline-native
+          path: out/client-render-pipeline-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-render-pipeline-native-build-evidence
+          path: |
+            out/client-render-pipeline-source/*build-input.json
+            out/client-render-pipeline-source/responsiveness-source-input.json
+            out/client-render-pipeline-source/out/build/vs2026/CMakeCache.txt
+            out/client-render-pipeline-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/client-render-pipeline-native/*.json
+            out/client-*-checks.json
+            out/contracts/client-render-pipeline.txt
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: [changes, client]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-native
+          path: out/client-render-pipeline-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor-evidence --output out/client-render-pipeline-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor --output out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - name: Install host-only Vulkan headers and software fixture driver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan-dev mesa-vulkan-drivers
+      - name: Qualify all ninety-nine retained suites and focused new checks
+        run: >-
+          python3 tools/android/interactive/qualify_client_render_pipeline.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-render-pipeline-donor/evidence/client-gpu-repair-apk-build-report.json
+          --client-directory out/client-render-pipeline-native
+          --output out/client-render-pipeline-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-render-pipeline-qualification
+          path: out/client-render-pipeline-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-native
+          path: out/client-render-pipeline-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor-evidence --output out/client-render-pipeline-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor --output out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Build native Game continuation retaining the exact accepted .21 DEX and GPU archive
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py build
+          --donor-apk out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-render-pipeline-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-render-pipeline-qualification.json
+          --client-directory out/client-render-pipeline-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-render-pipeline-apk/COH-Atlas-Gameplay-0.13.22.apk
+      - name: Fresh-process SDK signer and actual native/payload audit before publication
+        env:
+          PYTHONHASHSEED: '73422'
+        run: >-
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py audit
+          --donor-apk out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-render-pipeline-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-render-pipeline-qualification.json
+          --client-directory out/client-render-pipeline-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-render-pipeline-apk/COH-Atlas-Gameplay-0.13.22.apk
+          --build-report out/client-render-pipeline-apk/client-render-pipeline-apk-build-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-pipeline-packaging-evidence
+          path: |
+            out/client-render-pipeline-apk/client-render-pipeline-apk-build-report.json
+            out/client-render-pipeline-apk/COH-Atlas-Gameplay-0.13.22-testing.txt
+            out/client-render-pipeline-apk/COH-Atlas-Gameplay-0.13.22.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-pipeline-apk
+          path: out/client-render-pipeline-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified continuation prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py publish
+          --donor-apk out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-render-pipeline-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-render-pipeline-qualification.json
+          --client-directory out/client-render-pipeline-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-render-pipeline-apk/COH-Atlas-Gameplay-0.13.22.apk
+          --build-report out/client-render-pipeline-apk/client-render-pipeline-apk-build-report.json
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, client, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '2022'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-native
+          path: out/client-render-pipeline-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Authenticate the original published .21 packaging artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor-evidence --output out/client-render-pipeline-donor/evidence
+      - name: Recover the exact physically accepted public .21 APK
+        run: python3 tools/android/interactive/build_client_render_pipeline_apk.py download-donor --output out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-render-pipeline-packaging-evidence
+          path: out/client-render-pipeline-public
+      - name: Download actual public APK, checksum and testing instructions
+        run: >-
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py download-public
+          --build-report out/client-render-pipeline-public/client-render-pipeline-apk-build-report.json
+          --output out/client-render-pipeline-public
+      - name: Independently audit actual public bytes against exact donor, native proof and SDK signer
+        run: >-
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py audit
+          --donor-apk out/client-render-pipeline-donor/COH-Atlas-Gameplay-0.13.21.apk
+          --donor-build-report out/client-render-pipeline-donor/evidence/client-gpu-repair-apk-build-report.json
+          --qualification out/client-render-pipeline-qualification.json
+          --client-directory out/client-render-pipeline-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+          --apk out/client-render-pipeline-public/COH-Atlas-Gameplay-0.13.22.apk
+          --build-report out/client-render-pipeline-public/client-render-pipeline-apk-build-report.json
+      - name: Record truthful public byte qualification
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('out/client-render-pipeline-public/client-render-pipeline-apk-build-report.json').read_text())
+          evidence = {key: report[key] for key in ('bytes', 'sha256', 'repository_commit', 'version_name', 'version_code',
+              'native_client_recompiled', 'java_or_dex_recompiled', 'mesa_driver_compiled_in_current_run',
+              'native_vulkan_probe_compiled_in_current_run', 'wgl_probe_compiled_in_current_run',
+              'successful_gpu_driver_and_both_probes_retained', 'software_fallback_preserved',
+              'runtime_refresh_required', 'physical_performance_validated', 'physical_fps_gain_validated')}
+          evidence.update(format=1, status='passed', fresh_process_prepublication_audit_passed=True,
+              public_apk_checksum_and_notes_verified=True, sdk_signer_payload_audit_passed=True,
+              public_url='https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.22/COH-Atlas-Gameplay-0.13.22.apk')
+          Path('out/client-render-pipeline-public-byte-audit.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-render-pipeline-public-byte-audit
+          path: out/client-render-pipeline-public-byte-audit.json
+          if-no-files-found: error
+          retention-days: 90
