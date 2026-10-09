@@ -1,0 +1,49 @@
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -2,6 +2,7 @@
+ 
+ #include "win/win_init.h"
+ #include "cohClientFrameTiming.h"
++#include "cohClientGameplayPerformance.h"
+ #include <utilitieslib/utils/winutil.h>
+ #include "UI/uiConsole.h"
+ #include "win/input.h"
+@@ -207,6 +208,8 @@
+         }
+     }
+     cmdAccessOverride(0);
++    cohGpApplyProfile(&game_state.maxfps, game_state.create_bins,
++        game_state.maxMenuFps, game_state.maxInactiveFps);
+ 
+     //    fileAddSearchPath("./data");
+     //    if(!game_state.nodebug){
+--- a/Game/src/entity/entclient.c
++++ b/Game/src/entity/entclient.c
+@@ -9,6 +9,7 @@
+ #include "graphics/FX/fx.h"
+ #include <utilitieslib/utils/error.h>
+ #include <utilitieslib/utils/SuperAssert.h>
++#include "cohClientGameplayPerformance.h"
+ #include "entity/entclient.h"
+ #include <utilitieslib/utils/error.h>
+ #include "entity/motion.h"
+@@ -3386,7 +3387,8 @@
+             {
+                 if( isDevelopmentMode() && !quickload )
+                 {
+-                    Errorf( "CUSTOM TEXTURE ERROR: %s wants nonexistent texture %s as texture 1 on bone %s.",
++                    if (cohGpTextureError(1u, e->seq->type->name, newtexture1, bone_NameFromId(bone)))
++                        Errorf( "CUSTOM TEXTURE ERROR: %s wants nonexistent texture %s as texture 1 on bone %s.",
+                             e->seq->type->name,
+                             newtexture1,
+                             bone_NameFromId(bone) );
+@@ -3413,7 +3415,8 @@
+             {
+                 if( isDevelopmentMode() && !quickload )
+                 {
+-                    Errorf( "CUSTOM TEXTURE ERROR: %s wants nonexistent texture %s as texture 2 on bone %s.",
++                    if (cohGpTextureError(2u, e->seq->type->name, newtexture2, bone_NameFromId(bone)))
++                        Errorf( "CUSTOM TEXTURE ERROR: %s wants nonexistent texture %s as texture 2 on bone %s.",
+                             e->seq->type->name,
+                             newtexture2,
+                             bone_NameFromId(bone) );

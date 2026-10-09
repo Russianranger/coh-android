@@ -1,0 +1,202 @@
+{
+  "format": 1,
+  "status": "published_and_independently_payload_verified",
+  "version_name": "0.13.7",
+  "version_code": 22,
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "repository_commit": "0da09e771cb472f4ec897c39b90cef675d007edf",
+  "workflow_run_id": 37198877717,
+  "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37198877717",
+  "workflow_conclusion": "success",
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.7",
+  "audited_at_utc": "2026-10-04T11:35:09.256758+00:00",
+  "public_apk": {
+    "name": "COH-Atlas-Gameplay-0.13.7.apk",
+    "bytes": 700131607,
+    "sha256": "ab21dc2e8a6ebecea0edf694187da83787f808a396d686e0d8312565f8373fc7",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.7/COH-Atlas-Gameplay-0.13.7.apk"
+  },
+  "public_checksum": {
+    "bytes": 96,
+    "sha256": "d3ee700d845a8aab421f7a719f0b4fb16f210ae15e68232146698af03abf2512"
+  },
+  "public_testing_notes": {
+    "name": "COH-Atlas-Gameplay-0.13.7-testing.txt",
+    "bytes": 3710,
+    "sha256": "ed0fac42522d3d53018ce3fe2f3018e8eed094a7a00cd36f450a9e62ee40a967",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.7/COH-Atlas-Gameplay-0.13.7-testing.txt"
+  },
+  "build_receipt": {
+    "bytes": 3263448,
+    "sha256": "48fac5edde017731cbd9331300af9ffb80d2c1973eb4a946f7e29546c30d8de9"
+  },
+  "qualification_receipt": {
+    "bytes": 902164,
+    "sha256": "c9eda9a5302b8f921dc245158f29e52b0dfbffde3d6e11d0b6e1b8e3dac80ee8"
+  },
+  "tests_run": 633,
+  "test_suites": 38,
+  "source_files_verified": 236,
+  "skipped_checks": 0,
+  "all_three_postgresql_regression_fixtures_passed": true,
+  "source_hashes_match_formal_qualification": true,
+  "public_apk_matches_ci_build_and_github_release_digest": true,
+  "public_checksum_and_testing_notes_verified": true,
+  "payloads_verified": 71,
+  "retained_donor_payloads": 64,
+  "replaced_apk_payloads": [
+    "assets/runtime/character_creation_diagnostic.py",
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/runtime-manifest.json"
+  ],
+  "added_apk_payloads": [
+    "assets/runtime/client-visual-assets.zip",
+    "assets/runtime/client-visual-manifest.json",
+    "assets/runtime/client_animation_package.py",
+    "assets/runtime/client_visual_assets.py"
+  ],
+  "authored_java_sources_retained_exactly": 19,
+  "memory_dex_retained": {
+    "bytes": 354660,
+    "sha256": "0662ba0cf83d32aa335f7cb38a44dbb8df2e1d9762cd06b41bed169d7aca0925"
+  },
+  "android_resources_retained_exactly": true,
+  "setup_memory_protection_preserved": true,
+  "native_client_zip_retained_exactly": true,
+  "native_client_zip_members": 22,
+  "client_dlls_retained_exactly": 20,
+  "native_game": {
+    "sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+    "size": 9446912,
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "cg.dll",
+      "cgGL.dll",
+      "COMDLG32.dll",
+      "DDRAW.dll",
+      "DINPUT8.dll",
+      "DSOUND.dll",
+      "GDI32.dll",
+      "GLU32.dll",
+      "IMM32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ole32.dll",
+      "OPENGL32.dll",
+      "PhysXCooking.dll",
+      "PhysXLoader.dll",
+      "SHELL32.dll",
+      "USER32.dll",
+      "VERSION.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "native_dbserver": {
+    "bytes": 1664000,
+    "sha256": "baf97a253ddccf29575801f66ef56cb7ce75f168062bb0c4ffef796b419c2029",
+    "pe_machine": 332,
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "delay_imports": []
+  },
+  "retained_mapserver_and_server_archives_match_donor": true,
+  "actual_server_archive_extraction_verified": true,
+  "client_manifest_members": 56,
+  "runtime_manifest_members": 64,
+  "retained_animation_tracks_verified": 5878,
+  "retained_animation_pigg": {
+    "animation_count": 5878,
+    "bytes": 97084456,
+    "metadata_bytes": 8703726,
+    "original_animation_bytes": 88380730,
+    "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+  },
+  "animation_original_bodies_and_cached_native_headers_verified": true,
+  "visual_archive": {
+    "bytes": 23887359,
+    "sha256": "2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809"
+  },
+  "visual_manifest": {
+    "bytes": 782080,
+    "sha256": "6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b"
+  },
+  "visual_files": 290,
+  "visual_original_bytes": 36583648,
+  "visual_geometry_files": 45,
+  "visual_texture_files": 245,
+  "visual_selected_payload_md5_sha256_and_cached_headers_verified": true,
+  "visual_requested_model_indices_and_source_proofs_verified": true,
+  "visual_missing_only_install_policy_verified": true,
+  "visual_runtime_constants_match_producer": true,
+  "known_absent_requested_models": [
+    {
+      "geometry": "data/player_library/male_collar.geo",
+      "model": "GEO_Collar_MAGIC"
+    }
+  ],
+  "known_unresolved_direct_material_names": [
+    "bf_boot_clogs",
+    "bm_boot_business_shoe",
+    "bm_chest_bum_flannel_01a",
+    "bm_eyes_glasses_01a",
+    "emblem_hero_corp"
+  ],
+  "full_global_visual_asset_closure": false,
+  "native_client_recompiled": false,
+  "native_mapserver_recompiled": false,
+  "native_dbserver_recompiled": false,
+  "java_or_dex_recompiled": false,
+  "imports_or_profile_recreated": false,
+  "physical_client_timing_validated": false,
+  "physical_visual_assets_validated": false,
+  "physical_gameplay_gates_repeated": false,
+  "first_publication_attempt": {
+    "workflow_run_id": 37198353830,
+    "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37198353830",
+    "repository_commit": "78218a5d2368af4020712dbc65900b40f1d2d4f1",
+    "host_qualification_checks_passed": 632,
+    "apk_assembled_signed_and_uploaded_as_ci_artifact": true,
+    "ci_artifact_apk": {
+      "bytes": 700131607,
+      "sha256": "58f938283796aaf9755c543bc9e1cbf6c60699c43ff810a707023f75b1eb77d5"
+    },
+    "public_release_created": false,
+    "failure_stage": "Publication verification rejected process-dependent client manifest serialization order",
+    "correction_commit": "0da09e771cb472f4ec897c39b90cef675d007edf",
+    "correction_scope": "Sort verification-manifest additions before the retained JSON encoder and test identical encoded bytes in two fresh processes with different hash seeds",
+    "runtime_helpers_native_binaries_and_visual_asset_bytes_changed_by_correction": false,
+    "first_attempt_artifact_used_as_final_public_release": false
+  },
+  "android_sdk_verification": {
+    "origin": "Completed CI official Android SDK 35 verification bound to the independently downloaded identical public APK SHA-256",
+    "local_sdk_reverification_performed": false,
+    "ci_signature_v2_v3_verified": true,
+    "ci_package_badging_verified": true,
+    "ci_binary_manifest_version_only_verified": true,
+    "ci_signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+    "public_binary_manifest_sha256": "2244e243b648e024e2eed8cc06540f2d24dc315f13873e526444e0a5fcfb4405",
+    "public_apk_sha256_bound_to_ci": "ab21dc2e8a6ebecea0edf694187da83787f808a396d686e0d8312565f8373fc7"
+  },
+  "implementation_commit": "78218a5d2368af4020712dbc65900b40f1d2d4f1",
+  "repository_state_at_publication": {
+    "main": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+    "tag": "0da09e771cb472f4ec897c39b90cef675d007edf",
+    "head": "0da09e771cb472f4ec897c39b90cef675d007edf",
+    "draft": true,
+    "state": "open"
+  },
+  "preserved_branch": "codex/character-persistence-continuation",
+  "apk_size_change_from_0_13_6_bytes": 23998809
+}

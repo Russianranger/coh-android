@@ -1,0 +1,72 @@
+COH Atlas Gameplay 0.13.10 — comprehensive captured-asset dependency sweep
+
+Install over the existing app and run Set up runtime once. Keep your imported
+assets, THORHERO, database, completed tasks and the same graphics preset.
+
+This asset-focused release adds exact original files selected from the 0.13.9
+report, stock costumes, all original Atlas world model/material tables and
+their blend, mask, bump, glow and enabled fallback dependencies. It includes
+heads, hand/glove geometry, NPC textures, ground/bench materials and observed
+missing effect/weapon geometry. Every previous visual leaf is preserved.
+Native Game, DLLs, DEX/Java, server binaries, startup behavior, cache formats,
+graphics and animation tracks are retained. No complete-global-coverage claim
+is made: several diagnostic categories were capped and original alias gaps
+remain. Appearance still requires the Thor test.
+
+The expansion adds 5,147 original leaves (412 GEOs and 4,735 textures), about
+795 MiB of decoded files. It is substantially larger than prior updates.
+Installation writes missing files to private storage with bounded per-file
+streaming; it does not preload all new textures/models into RAM. Only the named
+visual input limits and exact server staging budgets increase for this pack. The first
+visual installation and texture-header refresh take extra preparation time.
+Record that separately from actual Game launch-to-login. Existing caches and
+runtime reuse remain available. Startup optimization is the following step.
+
+The 0.13.9 report rejected earned XP/influence after combat. This update allows
+only changes exactly explained by the owned native reward logs, retaining all
+other selected character rows, ordinary logout and saved-position checks. It
+does not grant rewards or change the native server. The old raw report remains
+failed; host tests/replay qualify the correction, not a new physical save pass.
+
+One focused run
+1. Reopen saved THORHERO once. Record local Atlas preparation, actual client
+   launch-to-visible-login, and login-to-world time. Note user input time and
+   the first asset installation/header refresh separately.
+2. Compare the previously pale flowerbed/grass ground and white benches from
+   far and near. Check a few nearby NPC heads and hands/gloves. Capture examples
+   that improved and examples still incomplete; note NPC names when visible.
+   A short walk and retrace in the same session is enough for first-encounter
+   streaming comparison. Target/defeat is already accepted; a combat retest is
+   unnecessary for this asset review.
+3. Use ordinary Save character / log out, then Finish and save report. If a
+   stage fails, or you choose Abort instead, wait for owned cleanup and export
+   that attempt. Preserve app data.
+4. Export latest report and send the entire new
+   coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip, keeping guest-report.zip nested and
+   intact, plus the before/after screenshots and three timing observations.
+
+Pass: saved hero reaches Atlas, prior assets remain, new assets validate,
+compared NPC/ground appearances improve, and owned cleanup finishes with zero
+workers. Ordinary save, when requested, must preserve character identity,
+costume/powers and native saved position; exact native earned reward changes
+must no longer trigger the old changed-ents rejection.
+
+Fail: crash, inability to enter Atlas, loss of previously working assets,
+visual-package validation error, incomplete owned cleanup, or repeatable
+material client-startup regression. Export the failing attempt and identify
+the stage. Remaining isolated visual gaps are evidence for the next exact
+dependency pass, rather than a claim that every texture is restored.
+
+The support ZIP should include the current-session Android/guest report and
+client console; visual installed/reused/delta counts and package hashes;
+missing GEO/texture/material diagnostics and suppression totals; texture index
+record/hit counts, inventory/rebuild/reuse and preparation_phase_seconds;
+COH_CLIENT_BIN_PROFILE_V1 open/CRC/freshness/decode timings; console observer
+and identity timings; and ordinary save/reward/cleanup evidence when available.
+The retained Android exporter omits identity JSON files over 2 MiB, including
+this larger visual recipe. The runtime manifest and compact guest asset hashes
+still identify it exactly; the complete recipe is preserved in the repository.
+
+Keep the accepted creation, dialogue/task, persistence and target/defeat results.
+This candidate retains software llvmpipe. Full combat, hardware graphics and
+all-client asset completeness remain separate work.

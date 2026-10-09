@@ -1,0 +1,164 @@
+{
+  "format": 1,
+  "status": "passed",
+  "audited_at_utc": "2026-10-05T13:36:00.896095+00:00",
+  "repository": "Russianranger/coh-android",
+  "branch": "codex/character-persistence-continuation",
+  "repository_commit": "e552fadeb1f392ab2574be16df6b474933c8ed00",
+  "version_name": "0.13.12",
+  "version_code": 27,
+  "workflow_run_id": 37315299321,
+  "workflow_run_url": "https://github.com/Russianranger/coh-android/actions/runs/37315299321",
+  "workflow_conclusion": "success",
+  "jobs": [
+    {
+      "name": "changes",
+      "id": 111780408649,
+      "conclusion": "success"
+    },
+    {
+      "name": "dbserver",
+      "id": 111780621921,
+      "conclusion": "success"
+    },
+    {
+      "name": "assets",
+      "id": 111780621922,
+      "conclusion": "success"
+    },
+    {
+      "name": "qualify",
+      "id": 111783112506,
+      "conclusion": "success"
+    },
+    {
+      "name": "apk",
+      "id": 111785134152,
+      "conclusion": "success"
+    }
+  ],
+  "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.12",
+  "public_apk": {
+    "name": "COH-Atlas-Gameplay-0.13.12.apk",
+    "bytes": 1535588715,
+    "sha256": "ca692d986d7f8bf50d11be03348f07c436e7f3f1b6c5fab83e8ebe2bc932e749",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.12/COH-Atlas-Gameplay-0.13.12.apk"
+  },
+  "build_receipt": {
+    "bytes": 124125896,
+    "sha256": "6846719dcb007f74516c32ace836e5b54a43d90c6c93a48685f79eb22c004cea"
+  },
+  "qualification_receipt": {
+    "bytes": 60737818,
+    "sha256": "f0bb4dcaec3cbb485bf3a1de041d30da0cba3cca3a5e1c8cc6d5fecd3f4e3cc0"
+  },
+  "public_apk_matches_ci_build_and_github_release_digest": true,
+  "public_checksum_and_testing_notes_verified": true,
+  "payloads_verified": 72,
+  "retained_donor_payloads": 62,
+  "replaced_apk_payloads": [
+    "assets/runtime/client-manifest.json",
+    "assets/runtime/client-visual-assets.zip",
+    "assets/runtime/client-visual-manifest.json",
+    "assets/runtime/client_interactive_diagnostic.py",
+    "assets/runtime/client_visual_assets.py",
+    "assets/runtime/local_character_server.py",
+    "assets/runtime/runtime-manifest.json",
+    "assets/runtime/startup-dbserver-manifest.json",
+    "assets/runtime/startup-dbserver.exe"
+  ],
+  "added_apk_payloads": [
+    "assets/runtime/native_training_save.py"
+  ],
+  "retained_dex": {
+    "bytes": 355612,
+    "sha256": "e53a25bdb4da802efa3ed10bac3432c008f459d8b838d96ed6b037f389514626"
+  },
+  "android_resources_retained_exactly": true,
+  "authored_java_sources_retained_exactly": 19,
+  "client_dlls_retained_exactly": 20,
+  "native_client_zip_members": 22,
+  "native_game_retained_exactly": true,
+  "native_dbserver_recompiled": true,
+  "native_mapserver_recompiled": false,
+  "native_client_recompiled": false,
+  "new_dbserver_bound_to_current_win32_source": true,
+  "new_dbserver_save_contract": {
+    "provider": "PostgreSQL",
+    "table_type": "TT_SUBCONTAINER",
+    "scope": "physical_child_row_read_witness_and_order_only",
+    "match": "row_read_appends_no_non_default_field_compared_with_its_initial_line_count",
+    "effect": "retain_FAKE_STR_IDX_row_witness_before_later_diff_merge",
+    "row_order": "ORDER_BY_SubId_on_PostgreSQL_subcontainer_single_container_select_only",
+    "retained": [
+      "non_default_column_reads",
+      "SQL_Server_provider",
+      "parent_container_read_policy",
+      "all_row_and_column_commands",
+      "cancelled_provisional_child_INSERT_filter",
+      "FIFO_transaction_commit_before_completion",
+      "save_ACK_after_SQL_completion",
+      "permanent_failure_rollback_and_exit_without_ACK"
+    ],
+    "ignored_SQL_failures": false,
+    "UPSERT": false,
+    "schema_migration": false,
+    "profile_reset": false,
+    "android_execution_validated": false
+  },
+  "runtime_manifest_members": 65,
+  "retained_server_archives_match_donor": true,
+  "actual_server_archive_extraction_verified": true,
+  "tests_run": 962,
+  "test_suites": 62,
+  "skipped_checks": 0,
+  "source_files_verified": 6804,
+  "source_hashes_match_formal_qualification": true,
+  "postgresql_retained_fixtures": [
+    "cancelled_child_deletion_commits",
+    "delete_insert_replacement_commits",
+    "duplicate_insert_23505_rollback"
+  ],
+  "postgresql_levelup_fixtures": [
+    "empty_child_duplicate_23505_rollback",
+    "empty_child_training_commit",
+    "missing_child_insert_commit",
+    "shuffled_child_read_training_commit"
+  ],
+  "visual_files": 9613,
+  "visual_original_bytes": 1511101967,
+  "new_visual_files": 123,
+  "new_visual_payload_bytes": 5384150,
+  "previous_visual_files_retained_byte_for_byte": 9490,
+  "visual_original_compressed_streams": {
+    "retained_compressed_streams": 9490,
+    "all_streams_byte_identical": true
+  },
+  "hosted_discovery_plan_equals_frozen_source": true,
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "official_sdk_signature_badging_alignment_and_binary_manifest_checks_passed_in_ci": true,
+  "official_sdk_checks_bound_to_same_public_apk_sha256": true,
+  "local_official_sdk_or_signature_reverification_performed": false,
+  "local_sdk_limitation": "Official Android SDK tools are unavailable locally; hosted checks bind to identical independently downloaded public APK bytes.",
+  "runtime_refresh_required": true,
+  "previous_runtime_generation_retained": true,
+  "asset_reimport_required": false,
+  "full_global_visual_asset_closure": false,
+  "physical_gameplay_validated": false,
+  "physical_client_timing_validated": false,
+  "physical_visual_assets_validated": false,
+  "physical_levelup_validated": false,
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pull_request_number": 1,
+  "pull_request_open_and_draft": true,
+  "recovered_source_checkpoint": "8f602b83095989cc936fc77f89bacceb4a960aee",
+  "implementation_checkpoint": "1485dfa12236b66a3e409a0423f297ce9bc6ff3a",
+  "recovered_failure_run_id": 37314436172,
+  "unresolved_ui_texture_stems": [
+    "checkbar_meat_base_underlight_l",
+    "checkbar_meat_base_underlight_mid",
+    "checkbar_meat_base_underlight_r",
+    "checkbox_base_underlight",
+    "default_tray"
+  ]
+}

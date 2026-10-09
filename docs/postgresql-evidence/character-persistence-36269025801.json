@@ -1,0 +1,547 @@
+{
+  "status": "character_persistence_validation_failed",
+  "started_utc": "2026-09-26T20:28:06.513524+00:00",
+  "failures": [
+    "Unknown character status flags"
+  ],
+  "phases": [
+    {
+      "phase": "first_services_ready",
+      "time_utc": "2026-09-26T20:33:17.144112+00:00",
+      "status": "passed"
+    },
+    {
+      "phase": "account_empty",
+      "time_utc": "2026-09-26T20:33:18.776207+00:00",
+      "status": "passed"
+    }
+  ],
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "binary_sha256": {
+    "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+    "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+    "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+  },
+  "schema_report_sha256": "ae73b29e193d34950be2043c8fb0ef41b9055d75d573f83e6059e12d95f1a5bf",
+  "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+  "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+  "one_map_report_sha256": "ef45cc77ca53dfc00b4a44c7a61c1f13f8a0a5a4368b4f0b247f5ebea5b1b06c",
+  "source_contract": {
+    "list_id": 3,
+    "map_id": 1,
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "influence": 12345,
+    "source_sha256": {
+      "Utilities/TestClient/src/main.c": "cac8255edf1946c910386669856040342bc0e5900695a564c8522622bd38ed83",
+      "Utilities/TestClient/src/testClientCmdParse.c": "c0a31cdaedfa91fde32f4236f6fbc2f78eb171d8848dc7fd78c41f9c97975dd6",
+      "DBServer/src/status.c": "2856f764f8da7daeb695cc08fe35d6008957d9b1d1108d807585214faadd5174",
+      "Game/src/clientcomm/clientcomm.c": "9782f8d23d571e9f362f2359c5ec689860681b0da59a113b86333d5f75d6dffd",
+      "MapServer/src/cmdparse/cmdserver.c": "914c1eb79ff79c35c31f8aada3826dcb51757e7cfc519495bfae84340958f57b",
+      "Utilities/TestClient/src/externs.c": "4ea3b83f408e447cd189f49b18527fa3d395b92b63cd2b2c20676ebada5575bb",
+      "MapServer/src/cmdparse/cmdservercsr.c": "8f50b7d05468692e7de3833d7449c9a36446ab3672abe884e19497bce36c65aa",
+      "Utilities/TestClient/src/chatter.c": "ab7a72bb24bc5231234e5cc4cb1b5d6ecb1c3f31a30ececb3d1f26487139b3f2"
+    },
+    "resume_scope": "Stock order-sensitive -justlogin -character clears CREATE and STAY_CONNECTED",
+    "quit_ack_scope": "QuitNow confirms the request only; server status plus committed SQL are required"
+  },
+  "selected_sql_contract": {
+    "fields": {
+      "ents": [
+        "containerid",
+        "authid",
+        "authname",
+        "name",
+        "class",
+        "origin",
+        "level",
+        "experiencepoints",
+        "influencepoints",
+        "description",
+        "motto",
+        "datecreated"
+      ],
+      "ents2": [
+        "containerid",
+        "subid",
+        "curbuild",
+        "originalprimary",
+        "originalsecondary",
+        "praetorianprogress",
+        "playersubtype",
+        "influencetype"
+      ],
+      "powers": [
+        "containerid",
+        "subid",
+        "powerid",
+        "categoryname",
+        "powersetname",
+        "powername",
+        "powerlevelbought",
+        "powernumboostsbought",
+        "powersetlevelbought",
+        "buildnum",
+        "uniqueid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid",
+        "name",
+        "geom",
+        "tex1",
+        "tex2",
+        "displayname",
+        "region",
+        "bodyset",
+        "color1",
+        "color2",
+        "costumenum",
+        "fxname",
+        "color3",
+        "color4"
+      ]
+    },
+    "row_keys": {
+      "ents": [
+        "containerid"
+      ],
+      "ents2": [
+        "containerid",
+        "subid"
+      ],
+      "powers": [
+        "containerid",
+        "subid"
+      ],
+      "costumeparts": [
+        "containerid",
+        "subid"
+      ]
+    },
+    "separate_progression_field": "ents.logincount",
+    "expected_influence": 12345
+  },
+  "port_preflight": [
+    {
+      "service": "postgresql",
+      "protocol": "TCP",
+      "port": 15437,
+      "available_before_start": true
+    },
+    {
+      "service": "dbserver",
+      "protocol": "TCP",
+      "port": 6997,
+      "available_before_start": true
+    },
+    {
+      "service": "map_client",
+      "protocol": "UDP",
+      "port": 7001,
+      "available_before_start": true
+    }
+  ],
+  "diagnostic_version": "coh-persistence-diagnostic",
+  "diagnostic_version_source": "diagnostic fallback; reference package contains no patch version",
+  "version_compatibility_validated": false,
+  "no_version_check": true,
+  "character_persistence_validated": false,
+  "gameplay_validated": false,
+  "android_execution_validated": false,
+  "scope": "Fresh fake-auth create, influence command, protocol logout, committed SQL, service restart and short exact-name resume",
+  "network_scope": "Loopback queries; stock game listeners still bind INADDR_ANY on the private disposable host",
+  "raw_evidence_private": true,
+  "status_samples": [
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-26T20:31:30.412438+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-26T20:31:33.757659+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-26T20:31:37.086125+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-26T20:31:40.464310+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-26T20:31:43.796018+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:31:47.183276+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:31:50.275009+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:31:54.830804+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:31:59.269789+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:03.721014+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:08.130598+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:12.611241+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:17.066028+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:21.527070+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:25.866095+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:30.283531+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:34.673517+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:39.112882+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:43.539388+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:48.007570+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:52.412798+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:32:56.764815+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-26T20:33:01.157133+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-26T20:33:05.902501+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 8/8  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-26T20:33:10.438892+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-26T20:33:14.969872+00:00"
+    }
+  ],
+  "character_status_samples": [],
+  "snapshots": {},
+  "account": "CohPfba5e64b23",
+  "redacted_logs": [
+    {
+      "file": "selected-diagnostics.txt",
+      "sha256": "2a5c3dcc9bfd9c4ddb41e9eb36ab785c5241b7a2e3ddfa625b2f8975797ef64b",
+      "bytes": 145,
+      "scope": "Selected diagnostics; complete raw logs and container payloads remain private"
+    }
+  ],
+  "benign_catalog_notices": {
+    "count": 8,
+    "lines": [
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260926 20:31:21 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260926 20:31:21 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260926 20:31:21 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260926 20:31:21 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping"
+    ],
+    "line_limit": 100
+  },
+  "attribute_mapping_sha256": {
+    "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+    "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+    "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+  },
+  "character": {
+    "container_id": 1,
+    "name": "TEST14081",
+    "account": "CohPfba5e64b23"
+  },
+  "processes": [
+    {
+      "label": "first-dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 142.141
+    },
+    {
+      "label": "first-baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 129.516
+    },
+    {
+      "label": "first-baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 125.953
+    },
+    {
+      "label": "first-baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 122.625
+    },
+    {
+      "label": "first-baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 119.281
+    },
+    {
+      "label": "first-baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 115.891
+    },
+    {
+      "label": "first-baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 112.531
+    },
+    {
+      "label": "first-atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 111.297
+    },
+    {
+      "label": "first-ready-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 109.766
+    },
+    {
+      "label": "first-ready-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 104.969
+    },
+    {
+      "label": "first-ready-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 100.437
+    },
+    {
+      "label": "first-ready-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 96.047
+    },
+    {
+      "label": "first-ready-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 91.594
+    },
+    {
+      "label": "first-ready-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 87.109
+    },
+    {
+      "label": "first-ready-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 82.687
+    },
+    {
+      "label": "first-ready-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 78.203
+    },
+    {
+      "label": "first-ready-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 73.844
+    },
+    {
+      "label": "first-ready-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 69.437
+    },
+    {
+      "label": "first-ready-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 65.062
+    },
+    {
+      "label": "first-ready-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 60.672
+    },
+    {
+      "label": "first-ready-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 56.219
+    },
+    {
+      "label": "first-ready-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 51.734
+    },
+    {
+      "label": "first-ready-20",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 47.328
+    },
+    {
+      "label": "first-ready-21",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 42.922
+    },
+    {
+      "label": "first-ready-22",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 38.578
+    },
+    {
+      "label": "first-ready-23",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 34.0
+    },
+    {
+      "label": "first-ready-24",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 29.391
+    },
+    {
+      "label": "first-ready-25",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 24.719
+    },
+    {
+      "label": "create-client",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 19.672
+    },
+    {
+      "label": "find-created-character",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 8.703
+    },
+    {
+      "label": "created-status-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 4.156
+    }
+  ],
+  "shutdown_scope": "Owned disposable processes stopped; graceful whole-server shutdown remains unvalidated",
+  "finished_utc": "2026-09-26T20:33:38.478309+00:00"
+}

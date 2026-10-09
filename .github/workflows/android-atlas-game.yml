@@ -1,0 +1,303 @@
+name: Thor Atlas Park server candidate
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/atlasgame/**'
+      - 'android/guest/game_device*.py'
+      - 'android/guest/game_diagnostic.py'
+      - 'android/guest/game_hang_evidence.py'
+      - 'android/guest/game_map_progress.py'
+      - 'tools/android/atlasgame/**'
+      - '.github/workflows/android-atlas-game.yml'
+  pull_request:
+    paths:
+      - 'android/atlasgame/**'
+      - 'android/guest/game_device*.py'
+      - 'android/guest/game_diagnostic.py'
+      - 'android/guest/game_hang_evidence.py'
+      - 'android/guest/game_map_progress.py'
+      - 'tools/android/atlasgame/**'
+      - '.github/workflows/android-atlas-game.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-atlas-game-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check combined app, device policy and exact accepted inputs
+        run: |
+          python3 -m unittest discover -s tools/android/atlasgame -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/android/atlas -p 'test_*.py' -v
+          python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+  apk:
+    if: github.event_name != 'pull_request'
+    needs: tooling
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify hosted MapServer qualification and derive exact donor inputs
+        id: mapserver-progress-inputs
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          sys.path.insert(0, 'tools/android/atlasgame')
+          import prepare_device_assets as prepare
+          profile = prepare.MAPSERVER_PROGRESS_PROFILE
+          inputs = prepare.accepted_evidence(profile)
+          contract = prepare.bundle_contract(profile)
+          evidence = pathlib.Path('docs/android-evidence')
+          qualification = prepare.game.read_json(evidence / (
+              f"accepted-mapserver-progress-hosted-{contract['package_run_id']}.json"))
+          producer = inputs['mapserver_progress_producer']
+          outputs = {'run-id': qualification['run_id'],
+                     'repository-commit': inputs['repository_commit'],
+                     'package-sha256': inputs['game_package_sha256'],
+                     'donor-manifest-sha256': producer['manifest_sha256'],
+                     'mapserver-sha256': producer['mapserver_sha256']}
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              for key, value in outputs.items():
+                  print(f'{key}={value}', file=output)
+          destination = pathlib.Path('out/atlas-game')
+          destination.mkdir(parents=True, exist_ok=True)
+          receipt = {'format': 1, 'mapserver_progress_profile': profile,
+                     'apk_repository_commit': os.environ['GITHUB_SHA'],
+                     'qualified_mapserver_inputs': outputs}
+          (destination / 'qualified-mapserver-inputs.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/atlas-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/atlas-native/arm64-v8a
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/atlas-inputs/dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/atlas-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: resume-testclient-win32
+          path: out/atlas-inputs/resume
+          run-id: 36297542986
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-testclient-bridge
+          path: out/atlas-inputs/bridge
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-loopback-donors
+          path: out/atlas-inputs/game-listeners
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-mapserver-progress-donor
+          path: out/atlas-inputs/mapserver-progress
+          run-id: ${{ steps.mapserver-progress-inputs.outputs.run-id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-stack-probe
+          path: out/atlas-inputs/stack-probe
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-arm64-evidence
+          path: out/atlas-inputs/accepted-evidence
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+          log-accepted-android-sdk-licenses: false
+      - name: Install pinned Android build tools
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Reassemble the qualified MapServer donor and exact accepted supporting executables
+        env:
+          COH_MAPSERVER_DONOR_RUN_ID: ${{ steps.mapserver-progress-inputs.outputs.run-id }}
+          COH_MAPSERVER_DONOR_COMMIT: ${{ steps.mapserver-progress-inputs.outputs.repository-commit }}
+          COH_MAPSERVER_PACKAGE_SHA256: ${{ steps.mapserver-progress-inputs.outputs.package-sha256 }}
+          COH_MAPSERVER_DONOR_MANIFEST_SHA256: ${{ steps.mapserver-progress-inputs.outputs.donor-manifest-sha256 }}
+          COH_MAPSERVER_BINARY_SHA256: ${{ steps.mapserver-progress-inputs.outputs.mapserver-sha256 }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          donor = pathlib.Path('out/atlas-inputs/mapserver-progress')
+          assert hashlib.sha256((donor / 'build-info.json').read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_DONOR_MANIFEST_SHA256']
+          assert hashlib.sha256((donor / 'MapServer.exe').read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_BINARY_SHA256']
+          archive = pathlib.Path('out/atlas-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as source:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in source.namelist())
+              source.extractall('out/atlas-inputs/reference')
+          PY
+          python3 tools/android/game/package_game_runtime.py assemble \
+            --reference out/atlas-inputs/reference --dbserver out/atlas-inputs/dbserver \
+            --resume out/atlas-inputs/resume --bridge out/atlas-inputs/bridge \
+            --output out/atlas-inputs/game-package \
+            --repository-commit "$COH_MAPSERVER_DONOR_COMMIT" \
+            --dbserver-profile loopback --game-listener-profile loopback \
+            --loopback-game out/atlas-inputs/game-listeners \
+            --mapserver-progress out/atlas-inputs/mapserver-progress
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, shutil
+          actual = pathlib.Path('out/atlas-inputs/game-package/game-package.json')
+          accepted = pathlib.Path('docs/android-evidence') / (
+              'mapserver-progress-package-' + os.environ['COH_MAPSERVER_DONOR_RUN_ID'] + '.json')
+          assert hashlib.sha256(accepted.read_bytes()).hexdigest() == os.environ['COH_MAPSERVER_PACKAGE_SHA256']
+          # Assembly verifies every executable and dependency first. Mapping
+          # insertion order can differ by filesystem; only byte formatting is
+          # restored from the accepted receipt after exact semantic equality.
+          assert json.loads(actual.read_text()) == json.loads(accepted.read_text())
+          shutil.copyfile(accepted, actual)
+          PY
+      - name: Prepare current device harness with the explicitly qualified MapServer profile
+        run: |
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/atlas-inputs/schema
+          python3 tools/android/atlasgame/prepare_device_assets.py \
+            --assets out/atlas-inputs/runtime --package out/atlas-inputs/game-package \
+            --schema out/atlas-inputs/schema \
+            --game-data-manifest out/atlas-inputs/accepted-evidence/game-data/game-data-manifest.json \
+            --stack-probe out/atlas-inputs/stack-probe \
+            --output out/atlas-game/runtime --repository-commit "$GITHUB_SHA" \
+            --mapserver-progress-profile dispatch_progress_v1 \
+            --receipt out/atlas-game/device-assets-preparation.json
+          python3 tools/android/atlas/package_game_import.py \
+            --output out/atlas-game/import-assets --repository-commit "$GITHUB_SHA"
+      - name: Build and verify the separate Atlas Park test APK
+        run: >-
+          python3 tools/android/atlasgame/build_apk.py
+          --assets out/atlas-game/import-assets --runtime-assets out/atlas-game/runtime
+          --native out/atlas-native --repository-commit "$GITHUB_SHA"
+          --mapserver-progress-profile dispatch_progress_v1
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-atlas-test.jks"
+          --output out/atlas-game/COH-Atlas-Test-0.4.4.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-atlas-test-apk
+          path: |
+            out/atlas-game/COH-Atlas-Test-0.4.4.apk
+            out/atlas-game/COH-Atlas-Test-0.4.4.apk.sha256
+            out/atlas-game/atlas-game-apk-build-report.json
+            out/atlas-game/device-assets-preparation.json
+            out/atlas-game/qualified-mapserver-inputs.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-atlas-test-packaging-evidence
+          path: |
+            out/atlas-game/device-assets-preparation.json
+            out/atlas-game/atlas-game-apk-build-report.json
+            out/atlas-game/qualified-mapserver-inputs.json
+            out/atlas-game/runtime/runtime-manifest.json
+            out/atlas-game/import-assets/atlas-import-build.json
+            out/atlas-game/import-assets/atlas-import.properties
+          if-no-files-found: warn
+  runtime:
+    needs: apk
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 115
+    # GitHub requires this scope to read the existing unpublished asset ZIP.
+    # The job does not create, modify or publish a release.
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-atlas-test-apk
+          path: out/atlas-game
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/atlas-base-runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/atlas-accepted-proot
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover the pinned native runtime source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/atlas-base-runtime
+          --bundle out/atlas-accepted-proot/proot-corresponding-sources.tar.gz
+          --output out/android/source-cache/talloc-2.4.3.tar.gz
+          > out/atlas-game/talloc-source-receipt.json
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64
+          --output out/android/native --talloc-archive out/android/source-cache/talloc-2.4.3.tar.gz
+      - name: Retrieve the existing reviewed asset ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json
+          --output out/asset-inputs.zip --release-asset-id 588984151
+      - name: Qualify exact APK import and Atlas Park create save restart resume
+        run: >-
+          python3 tools/android/atlasgame/host_device_smoke.py
+          --apk out/atlas-game/COH-Atlas-Test-0.4.4.apk
+          --archive out/asset-inputs.zip --repository-commit "$GITHUB_SHA"
+          --mapserver-progress-profile dispatch_progress_v1
+          --proot out/android/native/linux-arm64 --work out/atlas-game-host
+          --evidence out/atlas-game-evidence --timeout-seconds 5400
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-atlas-test-arm64-evidence
+          path: |
+            out/atlas-game-evidence/
+            out/atlas-game/talloc-source-receipt.json
+            out/android/native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

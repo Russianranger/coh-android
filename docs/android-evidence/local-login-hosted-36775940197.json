@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "scope": "exact_apk_local_login_failed_host_review",
+  "run_id": 36775940197,
+  "repository_commit": "8d8ebd35396e193f426df686167c87e3d2eeee7a",
+  "status": "failed",
+  "apk_sha256": "a44265174954efe2ca3e5ebbaef85fc5c76a3409b7d606275bc1ab2f67203d0e",
+  "artifact_id": 11126361227,
+  "artifact_sha256": "1a8d077ef8749abdff0ed46d1daf2a399eb2c428cba072c892ae67089948a433",
+  "session_id": "f08bd331a7620ad90739a96651edee52",
+  "host_failure": "Host local login exceeded the existing interaction bound",
+  "guest_status": "cancelled",
+  "guest_failures": [
+    "Cancellation requested"
+  ],
+  "startup_elapsed_seconds": 438.599,
+  "server_ready": true,
+  "database_preserved": true,
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "owned_child_records": 67,
+  "remaining_owned_workers": 0,
+  "inspection_failures": 0,
+  "root_visual_review": {
+    "settings_opened": true,
+    "settings_closed_and_login_screen_recovered": true,
+    "account_COHLOCAL_visible": true,
+    "password_mask_visible": true,
+    "local_127_0_0_1_shard_visible": true,
+    "empty_character_selection_visible": false,
+    "failure_dialog": "Wrong game version; server dev:0050-48-100 57:48:55; client dev:0079-102-101 114:111:101"
+  },
+  "root_cause_source_inference": "Pinned AppVersion.c getDevVersion expects literal Ouroboros.exe beside each executable, ignores missing-file timestamp lookup failure, and formats uninitialized SYSTEMTIME. Qualified layouts instead contain CityOfHeroes.exe and DbServer.exe. The accepted TestClient explicitly uses no_version_check=1; GUI defaults to 0. Protocol version check precedes the optional development string comparison.",
+  "next_action": "Use the existing -noversioncheck 1 only for the local-login launcher profile, preserve strict package/source hashes and protocol check, then requalify on hosted ARM64. No device run requested.",
+  "reviewed_screenshots": {
+    "login-before-preposition_settings_close.png": "1e4a76bcdb249816ae40d8f2b6a42b3fa4c5ac68340e8dd525ee508e81357f44",
+    "login-before-observe_login_after_settings.png": "b639f462018dd8fa793714c2b0b4abda923736800029b34420d082476c03ef23",
+    "login-before-preposition_login.png": "f8fe91effa3b261d11ac1d655be2d87615d3b0090616a0936d0b7a406ef73402",
+    "login-before-select_local_server.png": "02232ae070b7a7332a1c2a3de03eb11a167714f52495208279176d74f6fe243c",
+    "client-frame-035.png": "be7fdec9b3f6a8fad1d29a6d3e12e0077e4024c12b8f95652acf49843620f1bb"
+  },
+  "android_execution_validated": false,
+  "local_login_validated": false,
+  "gameplay_validated": false
+}

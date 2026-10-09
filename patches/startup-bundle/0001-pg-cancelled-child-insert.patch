@@ -1,0 +1,38 @@
+--- a/DBServer/src/container_sql.c
++++ b/DBServer/src/container_sql.c
+@@ -327,6 +327,25 @@
+     *bind = 0;
+ }
+ 
++/* A null child-row diff can provisionally add a row, then remove the same
++ * row in mergeLineLists. PostgreSQL must not execute that cancelled INSERT:
++ * an older empty physical row can still exist, and a duplicate would abort
++ * the entire save transaction before the intended DELETE. Retain the DELETE
++ * and all updates. Real DELETE->INSERT replacements stay in their order. */
++static bool postgresChildInsertCancelled(ContainerTemplate *tplt, LineList *diff, unsigned index)
++{
++    unsigned next;
++    SlotInfo *slot = &tplt->slots[diff->row_cmds[index].idx];
++    if (slot->table->table_type != TT_SUBCONTAINER)
++        return false;
++    for (next = index + 1; next < diff->cmd_count; ++next) {
++        SlotInfo *candidate = &tplt->slots[diff->row_cmds[next].idx];
++        if (candidate->table == slot->table && candidate->sub_id == slot->sub_id)
++            return !diff->row_cmds[next].add;
++    }
++    return false;
++}
++
+ static void sqlContainerAddOrDelRows(ContainerTemplate *tplt, int *container_id, LineList *diff, char **estr, unsigned *bind, HSTMT stmt, SqlConn conn)
+ {
+     unsigned i;
+@@ -338,6 +357,9 @@
+         char *name = slot->table->name;
+ 
+         if (cmd->add) {
++            if (gDatabaseProvider == DBPROV_POSTGRESQL &&
++                postgresChildInsertCancelled(tplt, diff, i))
++                continue;
+             switch (slot->table->table_type) {
+                 xcase TT_CONTAINER:
+                     switch (gDatabaseProvider) {

@@ -1,0 +1,298 @@
+--- a/Common/seq/gfxtree.c
++++ b/Common/seq/gfxtree.c
+@@ -272,7 +272,7 @@
+ #endif
+ 
+ 
+-void gfxTreeInitCharacterAndFxTree()
++static void cohGfxTreeInitCharacterAndFxTree(int defer_discarded_fx)
+ {
+     if( gfxnode_mp )
+         destroyMemoryPoolGfxNode(gfxnode_mp);
+@@ -287,7 +287,8 @@
+     cam_info.simpleShadow = 0;
+     cam_info.simpleShadowUniqueId = 0;
+     skyNotifyGfxTreeDestroyed();
+-    fxPreloadGeometry();
++    if (!defer_discarded_fx)
++        fxPreloadGeometry();
+ 
+ #if 0
+     // fpe for test, load all geo and process to determine which ones need reprocessing
+@@ -304,9 +305,14 @@
+ }
+ 
+ // A. Allocate the gfxtree
+-void gfxTreeInit()
+-{
+-    gfxTreeInitCharacterAndFxTree();
++void gfxTreeInitCharacterAndFxTree()
++{
++    cohGfxTreeInitCharacterAndFxTree(0);
++}
++
++static void cohGfxTreeInit(int defer_discarded_fx)
++{
++    cohGfxTreeInitCharacterAndFxTree(defer_discarded_fx);
+ #ifdef CLIENT
+     gfxTreeInitSkyTree();
+ #endif
+@@ -315,6 +321,18 @@
+ #endif
+ }
+ 
++
++void gfxTreeInit()
++{
++    cohGfxTreeInit(0);
++}
++
++/* Only gfxReload may defer: it performs another cache invalidation and the
++ * mandatory surviving FX preload before returning to any consumer. */
++void gfxTreeInitForGfxReload()
++{
++    cohGfxTreeInit(1);
++}
+ 
+ ////////////////////////////////////////////////////////////////////////////
+ //General Tree Management:
+--- a/Common/seq/gfxtree.h
++++ b/Common/seq/gfxtree.h
+@@ -153,6 +153,7 @@
+ void gfxTreeInitGfxNodeWithObjectsTricks(GfxNode * node, TrickNode *trick);
+ void gfxTreeInitCharacterAndFxTree();
+ void gfxTreeInit();
++void gfxTreeInitForGfxReload();
+ #ifdef CLIENT
+ void gfxTreeInitSkyTree();
+ GfxNode *gfxTreeInsertSky(GfxNode *parent);
+--- a/Game/src/game.c
++++ b/Game/src/game.c
+@@ -8,6 +8,7 @@
+ #include "graphics/gfxwindow.h"
+ #include "graphics/fontdata.h"
+ #include <utilitieslib/utils/timing.h>
++#include "cohClientSceneTiming.h"
+ #include "sound/sound.h"
+ #include "graphics/sun.h"
+ #include "edit/edit.h"
+@@ -2072,15 +2073,18 @@
+ 
+     if (!game_state.minimal_loading)
+     {
++        DWORD coh_scene_phase = cohClientSceneBegin();
+         writeConsole(OUTPUT_DEBUG, "Preloading character animations");
+         seqPreLoadPlayerCharacterAnimations( SEQ_LOAD_FULL ); //after PreloadSeqInfos
+         writeConsole(OUTPUT_INFO, "Preloaded character animations");
++        cohClientScenePhase("startup_player_animations", &coh_scene_phase, 1);
+ 
+         PERFINFO_AUTO_STOP_START("middle19", 1);
+ 
+         writeConsole(OUTPUT_DEBUG, "Preloading FX geometry");
+         fxPreloadGeometry();
+         writeConsole(OUTPUT_INFO, "Preloaded FX geometry");
++        cohClientScenePhase("startup_final_fx_preload", &coh_scene_phase, 1);
+     }
+     PERFINFO_AUTO_STOP();
+ 
+--- a/Game/src/clientcomm/clientcomm.c
++++ b/Game/src/clientcomm/clientcomm.c
+@@ -6,6 +6,7 @@
+ #include <utilitieslib/utils/error.h>
+ #include "comm_game.h"
+ #include <utilitieslib/utils/timing.h>
++#include "cohClientSceneTiming.h"
+ #include <utilitieslib/network/net_link.h>
+ 
+ #include "cmdparse/cmdcommon.h"
+@@ -1842,6 +1843,7 @@
+ 
+ int commReqScene(int isInitialLogin)
+ {
++    DWORD coh_scene_phase = cohClientSceneBegin();
+     extern int load_bar_color;
+     Packet    *pak;
+     int        timeout=0;
+@@ -1874,6 +1876,7 @@
+         pak->reliable = 1;
+         pktSend(&pak,&comm_link);
+ 
++        cohClientScenePhase("request_groups_setup", &coh_scene_phase, 1);
+         testClientRandomDisconnect(TCS_commReqScene_1);
+ 
+         loadUpdate("Requesting scene",-1);
+@@ -1887,6 +1890,7 @@
+                 loadUpdate("Waiting for response from server...",-1);
+             }
+         }
++        cohClientScenePhase("groups_network_and_processing", &coh_scene_phase, !timeout && commConnected());
+         testClientRandomDisconnect(TCS_commReqScene_2);
+         if (timeout || !commConnected()){
+             printf("Server timeout\n");
+@@ -1915,6 +1919,7 @@
+                 loadUpdate("Waiting for response from server...",-1);
+             }
+         }
++        cohClientScenePhase("entities_network_and_processing", &coh_scene_phase, !timeout && commConnected());
+         testClientRandomDisconnect(TCS_commReqScene_4);
+         if (timeout || !commConnected()){
+             //FatalErrorf("Server timeout");
+@@ -1927,8 +1932,11 @@
+ 
+         PERFINFO_AUTO_START("load stuff", 1);
+             gfxLoadRelevantTextures();
++            cohClientScenePhase("relevant_textures_request", &coh_scene_phase, 1);
+             forceGeoLoaderToComplete(); // This doesn't seem to do anything?
++            cohClientScenePhase("geometry_loader_completion", &coh_scene_phase, 1);
+             texLoadQueueFinish();
++            cohClientScenePhase("texture_queue_completion", &coh_scene_phase, 1);
+             texDynamicUnload(1);
+         PERFINFO_AUTO_STOP();
+ 
+@@ -1944,6 +1952,7 @@
+ 
+         rdrNeedGammaReset(); // 'Cause I'm paranoid and people were seeing gamma bugs when mapmoving, and this is free.
+ 
++        cohClientScenePhase("client_ready_queued", &coh_scene_phase, 1);
+         testClientRandomDisconnect(TCS_commReqScene_5);
+         timerFree(timer);
+ 
+--- a/Game/src/group/groupnetrecv.c
++++ b/Game/src/group/groupnetrecv.c
+@@ -38,6 +38,7 @@
+ #include "bases/baseclientrecv.h"
+ #include "seq/anim.h"
+ #include <utilitieslib/utils/timing.h>
++#include "cohClientSceneTiming.h"
+ #include "group/grouputil.h"
+ #include "bases/baseparse.h"
+ #include "bases/baseRaid.h"
+@@ -773,6 +774,7 @@
+ // *************************************************************************
+ void worldReceiveGroups(Packet *pak)
+ {
++    DWORD coh_scene_phase = cohClientSceneBegin();
+     static TrackerHandle *handles;
+     static int handles_allocated;
+ 
+@@ -877,6 +879,7 @@
+         }
+         game_state.beacons_loaded = pktGetBits(pak, 1);
+ 
++    cohClientScenePhase("groups_reset_and_header", &coh_scene_phase, 1);
+     PERFINFO_AUTO_STOP_START("middle", 1);
+ 
+         {
+@@ -894,6 +897,7 @@
+                 receiveGroupFile(pak,0,grp_file);
+         }
+ 
++    cohClientScenePhase("groups_libraries_and_definitions", &coh_scene_phase, 1);
+     PERFINFO_AUTO_STOP_START("middle2", 1);
+ 
+         // Read in group references
+@@ -959,6 +963,7 @@
+             }
+         }
+ 
++    cohClientScenePhase("groups_references_and_trackers", &coh_scene_phase, 1);
+     PERFINFO_AUTO_STOP_START("middle3", 1);
+ 
+         {
+@@ -995,6 +1000,7 @@
+             }
+         }
+ 
++    cohClientScenePhase("groups_crc_and_counts", &coh_scene_phase, 1);
+     PERFINFO_AUTO_STOP_START("bottom", 1);
+ 
+         if (1 || new_world || defs_not_in_bottom_up_order)
+@@ -1003,6 +1009,7 @@
+             groupRecalcAllBounds();
+         }
+ 
++        cohClientScenePhase("groups_initial_bounds", &coh_scene_phase, 1);
+         // this reselects anything that was unselected so that the server update appears seamless
+         for (j=0;j<group_info.ref_max;j++)
+         {
+@@ -1041,17 +1048,20 @@
+             }
+         }
+ 
++        cohClientScenePhase("groups_tracker_activation", &coh_scene_phase, 1);
+         if (new_world)
+         {
+             //setAllClientFlags(); // JE: Moved to happen when defs are created, since not all defs are created at this point!
+             PERFINFO_AUTO_STOP_START("finishLoadMap", 1);
+             finishLoadMap(true, true, false);
+         }
++        cohClientScenePhase("groups_finish_load_map", &coh_scene_phase, 1);
+         PERFINFO_AUTO_STOP_START("groupRecalcAllBounds", 1);
+         groupRecalcAllBounds();
+         PERFINFO_AUTO_STOP_START("groupTrackersHaveBeenReset", 1);
+         groupTrackersHaveBeenReset();
+ //        PERFINFO_AUTO_STOP_START("groupDynBuildBreakableList", 1);
++        cohClientScenePhase("groups_final_bounds_and_reset", &coh_scene_phase, 1);
+         if(new_world && !newWorldIsBase())
+         {
+             PERFINFO_AUTO_STOP_START("groupCreateAllCtris", 1);
+@@ -1059,6 +1069,7 @@
+             PERFINFO_AUTO_STOP_START("groupInitNovodeX", 1);
+             groupInitNovodeX();
+         }
++        cohClientScenePhase("groups_collision_and_physics", &coh_scene_phase, 1);
+         PERFINFO_AUTO_STOP_START("MissionControlReprocess", 1);
+         MissionControlReprocess();
+         if (!new_world) {
+@@ -1069,6 +1080,7 @@
+         }
+ 
+         updateCutSceneCameras(); 
++        cohClientScenePhase("groups_mission_and_finalize", &coh_scene_phase, 1);
+ 
+     PERFINFO_AUTO_STOP();
+ }
+--- a/Game/src/graphics/gfx.c
++++ b/Game/src/graphics/gfx.c
+@@ -48,6 +48,7 @@
+ #include "graphics/vistray.h"
+ #include "demo.h"
+ #include <utilitieslib/utils/timing.h>
++#include "cohClientSceneTiming.h"
+ #include "entity/PowerInfo.h"
+ #include "fxinfo.h"
+ #include "graphics/FX/fxdebris.h"
+@@ -438,6 +439,7 @@
+ 
+ void gfxReload(int unloadAllModels)
+ {
++    DWORD coh_scene_phase = cohClientSceneBegin();
+     PERFINFO_AUTO_START("gfxReload", 1);
+         ErrorfResetCounts();
+         fxReInit();
+@@ -449,17 +451,24 @@
+         
+         entReset();
+         playerSetEnt(0);
+-        gfxTreeInit();
++        if (cohClientSceneDeferDiscardedFx())
++            gfxTreeInitForGfxReload();
++        else
++            gfxTreeInit();
++        cohClientScenePhase("gfx_tree_reset", &coh_scene_phase, 1);
+         PERFINFO_AUTO_START("groupReset", 1);
+             groupReset(); // We're freeing all the models below, free the world groups that reference them first!
+         PERFINFO_AUTO_STOP_CHECKED("groupReset");
+         modelFreeAllCache(unloadAllModels?(GEO_USED_BY_GFXTREE|GEO_USED_BY_WORLD|GEO_INIT_FOR_DRAWING|GEO_DONT_INIT_FOR_DRAWING):GEO_USED_BY_GFXTREE);
++        cohClientScenePhase("gfx_group_and_model_invalidation", &coh_scene_phase, 1);
+         fxPreloadGeometry();
++        cohClientScenePhase("gfx_surviving_fx_preload", &coh_scene_phase, 1);
+         rdrInit();
+         loadBG();
+         // Load a scene so we get some default ambient values for character creation, etc.
+         sunSetSkyFadeClient(0, 1, 0.0);
+         sceneLoad("scenes/default_scene.txt");
++        cohClientScenePhase("gfx_renderer_background_default_scene", &coh_scene_phase, 1);
+     PERFINFO_AUTO_STOP();
+ }
+ 

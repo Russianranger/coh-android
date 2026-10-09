@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "status": "archive_extraction_passed",
+  "recorded_utc": "2026-09-27T16:02:59.773967+00:00",
+  "repository": "Russianranger/coh-android",
+  "source_commit": "19d5ed63cb7124403ec6a47456a686f092a54feb",
+  "source_files": {
+    "android/runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "matches_commit": true
+    },
+    "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+      "bytes": 14749,
+      "sha256": "198c485d3749b0750472f27b45c44d41fe40dc1f566495d477d7970ba01156fa",
+      "matches_commit": true
+    },
+    "tools/android/test_archive.py": {
+      "bytes": 11533,
+      "sha256": "a79694f3aada64f24b691e6cc4f56576692f9948e7b8eba912f483488249f357",
+      "matches_commit": true
+    },
+    "tools/android/java/android/system/Os.java": {
+      "bytes": 835,
+      "sha256": "72cd19af5b572ae39a7753ac135d18957dd0d575fd066169d9d55769b8124151",
+      "matches_commit": true
+    },
+    "tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java": {
+      "bytes": 790,
+      "sha256": "9762bbb5f7fc8187b22c14a03ef732f9347433d43babd25c0a7c4f3a13b33bdb",
+      "matches_commit": true
+    }
+  },
+  "host": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "java_version": [
+      "openjdk version \"17.0.20\" 2026-07-21",
+      "OpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)",
+      "OpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)"
+    ],
+    "java_source_target": "--release 8"
+  },
+  "archives": {
+    "base": {
+      "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-probe-v1/runtime-arm64.tar.gz",
+      "bytes": 353710639,
+      "sha256": "08c639c26506dc6fbd15464bec475337087bb23cb7c0c5ace2db5240ee36424f",
+      "verified": true,
+      "archive": "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/base.tar.gz",
+      "destination": "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/rootfs"
+    },
+    "wine": {
+      "url": "https://github.com/Russianranger/lsb-android/releases/download/runtime-fex-v3/runtime-fex-arm64.tar.gz",
+      "bytes": 318095727,
+      "sha256": "030f38066af7b786c142e199cb84adec037840b0f029338849e43f99203a93e1",
+      "verified": true,
+      "archive": "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine.tar.gz",
+      "destination": "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine"
+    }
+  },
+  "extraction": {
+    "command": [
+      "python3",
+      "tools/android/test_archive.py",
+      "--classes",
+      "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/classes",
+      "--extract",
+      "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/base.tar.gz",
+      "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/rootfs",
+      "--extract",
+      "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine.tar.gz",
+      "/workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine"
+    ],
+    "exit_code": 0,
+    "markers": [
+      "COH_RUNTIME_EXTRACT_V1 PASS /workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/base.tar.gz /workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/rootfs",
+      "COH_RUNTIME_EXTRACT_V1 PASS /workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine.tar.gz /workspace/scratch/3f8f641e6504/m2-archive-extraction-19d5ed63/wine"
+    ],
+    "fresh_destinations": true,
+    "production_java_parser": true,
+    "host_android_system_os_adapter": true
+  },
+  "required_files": [
+    {
+      "path": "rootfs/usr/bin/python3",
+      "java_file_is_file": true,
+      "symlink_target": "python3.11",
+      "resolved_within_tree": true,
+      "resolved_path": "rootfs/usr/bin/python3.11"
+    },
+    {
+      "path": "rootfs/usr/bin/Xtigervnc",
+      "java_file_is_file": true,
+      "symlink_target": null,
+      "resolved_within_tree": true,
+      "resolved_path": "rootfs/usr/bin/Xtigervnc"
+    },
+    {
+      "path": "wine/bin/wine",
+      "java_file_is_file": true,
+      "symlink_target": null,
+      "resolved_within_tree": true,
+      "resolved_path": "wine/bin/wine"
+    },
+    {
+      "path": "wine/bin/wineserver",
+      "java_file_is_file": true,
+      "symlink_target": null,
+      "resolved_within_tree": true,
+      "resolved_path": "wine/bin/wineserver"
+    },
+    {
+      "path": "wine/lsb-fex.json",
+      "java_file_is_file": true,
+      "symlink_target": null,
+      "resolved_within_tree": true,
+      "resolved_path": "wine/lsb-fex.json"
+    }
+  ],
+  "wine_manifest": {
+    "sha256": "c186367efab62f9981586623f84644d3ae002fc678d3c167a8b0efad13522b89",
+    "matches_pin": true
+  },
+  "scope": {
+    "archive_compatibility_verified": true,
+    "android_execution_validated": false,
+    "arm64_execution_validated": false,
+    "postgresql_execution_validated": false,
+    "win32_odbc_validated": false,
+    "gameplay_validated": false,
+    "description": "Exact pinned archives extracted on Linux x86_64 by the production Java parser with host Os adapter. Required file resolution and FEX manifest hash checked. Android execution policy, ARM64 native runtime, PostgreSQL and Win32 ODBC execution remain separate gates."
+  }
+}

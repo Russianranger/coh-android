@@ -1,0 +1,250 @@
+{
+  "format": 1,
+  "result": "physical_thor_database_and_headless_client_diagnostic_passed",
+  "source": {
+    "archive_sha256": "d492dba07afa436f6fc8a205cc1063e6e2c0beacbeb7ca5e2bf5d01e0b74575d",
+    "report_sha256": "8c5ae07d1136948cbdcf4c9ad018c46b4e7e2cbc08244844647077a963d32fb5",
+    "raw_archive_published": false,
+    "record": "Selected diagnostic facts; original support archive remains private."
+  },
+  "user_attestation": {
+    "both_modes_passed": true,
+    "separate_database_only_report_supplied": false
+  },
+  "build": {
+    "source_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+    "hosted_run_id": 36364550345,
+    "app_id": "io.github.russianranger.cohdiagnostic",
+    "app_version": "0.1.5",
+    "runtime_manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+    "exported_manifest_sha256": "0a8d9baaa67cbe5084fd76ca36d2c12d03b5106abc41610484fb09fb383dcf06",
+    "manifest_content_matches_accepted": true,
+    "manifest_serialization_note": "The support export reserializes JSON; its bytes differ from the embedded manifest while all content matches.",
+    "reported_asset_hashes_match_manifest": true,
+    "accepted_apk_sha256": "bf78559ef47d3f679a93be48ca4127baa9c7238e838ed38799dffc7e0710ffd5",
+    "installed_apk_independently_hashed": false
+  },
+  "device": {
+    "model": "AYN AYN Thor",
+    "android_sdk": 33,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "armeabi"
+    ],
+    "wrapper_android_diagnostic_passed": true,
+    "guest_android_execution_validated": false,
+    "provenance_note": "The Android wrapper supplies device provenance; the guest deliberately does not self-attest Android execution."
+  },
+  "run": {
+    "started_utc": "2026-09-28T01:23:10.614564+00:00",
+    "finished_utc": "2026-09-28T01:24:05.958172+00:00",
+    "elapsed_seconds": 55.343608,
+    "diagnostic_mode": "database_and_client",
+    "status": "passed",
+    "failures": [],
+    "stages": [
+      {
+        "stage": "assets_and_architecture",
+        "status": "passed"
+      },
+      {
+        "stage": "initialize_owned_cluster",
+        "status": "passed"
+      },
+      {
+        "stage": "postgres_first_start",
+        "status": "passed"
+      },
+      {
+        "stage": "restricted_fixture_database",
+        "status": "passed"
+      },
+      {
+        "stage": "wine_prefix_and_driver",
+        "status": "passed"
+      },
+      {
+        "stage": "win32_odbc_driver",
+        "status": "passed"
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "status": "passed"
+      },
+      {
+        "stage": "win32_client_capabilities",
+        "status": "passed"
+      },
+      {
+        "stage": "odbc_fixture",
+        "status": "passed"
+      },
+      {
+        "stage": "postgres_clean_restart",
+        "status": "passed"
+      },
+      {
+        "stage": "postgres_restart_ready",
+        "status": "passed"
+      },
+      {
+        "stage": "odbc_after_restart",
+        "status": "passed"
+      }
+    ],
+    "cluster_reused": true,
+    "wine_initialization": {
+      "policy": "initialize_once_then_reuse",
+      "state": "ready",
+      "ready_prefix_reused": true,
+      "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+      "update_timestamp_removed": false,
+      "timeout_seconds": 600,
+      "registration_processes": 0,
+      "wow64_registration_processes": 0,
+      "registration_passes": 0,
+      "elapsed_seconds": 9.666
+    }
+  },
+  "database": {
+    "server_version": "PostgreSQL 18.6 on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit",
+    "same_cluster_graceful_restart": true,
+    "durability_verified_before_and_after_restart": true,
+    "win32_odbc_pointer_bits": 32,
+    "odbc_checks": [
+      "PASS all 65 stock DbServer ODBC connections coexist",
+      "PASS ID ordering, deleted highest ID, rollback and bulk-import startup state",
+      "PASS indexes: duplicate field names, idempotence, schema isolation, legacy cleanup",
+      "PASS foreign keys: absent table/constraint removal, add/remove, child rows, orphan rejection",
+      "PASS bound values: integer limits, byte 255, float, UTF-16, timestamp, 32 KiB bytea chunks, long text and NULL",
+      "PASS SQLColumns: canonical PostgreSQL types, Unicode varchar, text and bytea",
+      "PASS atomic schema rebuild: row data, deleted-highest ID, foreign keys, indexes, conversion/dependency rollback, ASCII name keys",
+      "PASS column migration and connection reopen"
+    ],
+    "restart_checks": [
+      "PASS persisted fixture after reconnect/restart/restore"
+    ]
+  },
+  "client_probe": {
+    "format": 1,
+    "status": "passed",
+    "failure_stage": "",
+    "pointer_bits": 32,
+    "win32_error": 0,
+    "scope": "headless_wgl_client_capabilities",
+    "gl": {
+      "vendor": "Mesa/X.org",
+      "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+      "version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer_class": "software",
+      "arb_vertex_program": true,
+      "arb_fragment_program": true,
+      "arb_shader_objects": true,
+      "framebuffer_extension": true,
+      "wgl_pbuffer_entrypoint": true,
+      "wgl_pixel_format_entrypoint": true,
+      "pbuffer_exercised": false
+    },
+    "render": {
+      "textured_quad_verified": true,
+      "samples_verified": 4,
+      "swap_buffers": true,
+      "rgb_samples": [
+        [
+          255,
+          0,
+          0
+        ],
+        [
+          0,
+          255,
+          0
+        ],
+        [
+          0,
+          0,
+          255
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ]
+    },
+    "input": {
+      "scope": "synthetic_own_window_and_device_creation_only",
+      "window_messages_verified": true,
+      "keyboard_message_mask": 3,
+      "mouse_message_mask": 7,
+      "directinput_devices_created": true,
+      "directinput_hresult": 0,
+      "physical_input_validated": false
+    },
+    "audio": {
+      "scope": "device_enumeration_only",
+      "enumeration_hresult": 0,
+      "devices": 0,
+      "default_reported": false,
+      "playback_validated": false
+    },
+    "cg_shaders_validated": false,
+    "game_rendering_validated": false,
+    "android_surface_validated": false,
+    "hardware_acceleration_validated": false
+  },
+  "cleanup": {
+    "complete": true,
+    "checks": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_shutdown": {
+      "stop_exit_code": 0,
+      "wait_exit_code": 0,
+      "prefix_lock_free": true,
+      "server_socket_inactive": true
+    },
+    "wine_process_cleanup": {
+      "policy": "same_real_uid_and_run_token",
+      "scanned_processes": 168,
+      "scanned_tasks": 36,
+      "dead_leaders_with_live_tasks": 3,
+      "owned_live_workers": 3,
+      "leader_exit_retries": 0,
+      "candidates": 3,
+      "term_signals": 3,
+      "kill_signals": 1,
+      "pidfd_signals": 4,
+      "identity_checked_signals": 0,
+      "inspection_failures": 0,
+      "remaining": 0,
+      "complete": true
+    },
+    "process_count": 30,
+    "all_input_and_output_captures_closed": true,
+    "wineboot": {
+      "label": "wineboot",
+      "elapsed_seconds": 9.664,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "completion": {
+        "policy": "leader_exit_with_owned_background_output",
+        "leader_exit_code": 0,
+        "output_capture_open": true,
+        "elapsed_seconds": 9.664
+      }
+    },
+    "exact_device_pipe_writer_inventoried": false
+  },
+  "remaining_device_checks": [
+    "Stop during active work then successful rerun",
+    "app reopen and suspend/resume",
+    "peak memory"
+  ],
+  "gameplay_validated": false
+}

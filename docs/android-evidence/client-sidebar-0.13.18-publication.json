@@ -1,0 +1,256 @@
+{
+  "apk": {
+    "bytes": 1557379684,
+    "filename": "COH-Atlas-Gameplay-0.13.18.apk",
+    "sha256": "d7fb00ae5406208a2497c7b9ea9659403a422dd0698404cd968112a4ba7b8ca1",
+    "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18.apk"
+  },
+  "authenticated_evidence_archives": {
+    "packaging": {
+      "Actions_digest_and_frozen_source_verified": true,
+      "artifact_id": 11490987752,
+      "artifact_name": "coh-client-sidebar-packaging-evidence",
+      "format": 1,
+      "repository_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+      "run_id": 37637034415,
+      "status": "passed",
+      "strict_members": {
+        "COH-Atlas-Gameplay-0.13.18-testing.txt": {
+          "bytes": 3882,
+          "sha256": "0f6328a630460324832008559075054a5621fce94f7d6d6d96b18c5363f9798e"
+        },
+        "COH-Atlas-Gameplay-0.13.18.apk.sha256": {
+          "bytes": 97,
+          "sha256": "4128f9ea2cc920bb426424c33e8da59e2462dfc98648f3a11ebea5f5164b8e8a"
+        },
+        "client-sidebar-apk-build-report.json": {
+          "bytes": 5077901,
+          "sha256": "4eb3708e2384303bcebfc51c5f572d7f29f82b28163ab2a5aaa26e89938bee71"
+        }
+      },
+      "zip": {
+        "bytes": 1206881,
+        "sha256": "ed410143f2beb6e3113076704f94217a9e82c8899abb6c5b01590d9cbdfb01ce"
+      }
+    },
+    "public": {
+      "Actions_digest_and_frozen_source_verified": true,
+      "artifact_id": 11490618775,
+      "artifact_name": "coh-client-sidebar-public-byte-audit",
+      "format": 1,
+      "repository_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+      "run_id": 37637034415,
+      "status": "passed",
+      "strict_members": {
+        "client-sidebar-public-audit.json": {
+          "bytes": 590,
+          "sha256": "d0390b97a2ec4df92c5295018b617f21f15a8ed03c2038ac965b86ec8ef7386e"
+        }
+      },
+      "zip": {
+        "bytes": 552,
+        "sha256": "f7ccbadbdb6ceae17ccbf5599b3e0255139b8c9542d5d2263209c1a86b063835"
+      }
+    },
+    "qualification": {
+      "Actions_digest_and_frozen_source_verified": true,
+      "artifact_id": 11490152594,
+      "artifact_name": "coh-client-sidebar-qualification",
+      "format": 1,
+      "repository_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+      "run_id": 37637034415,
+      "status": "passed",
+      "strict_members": {
+        "client-sidebar-qualification.json": {
+          "bytes": 1887016,
+          "sha256": "7440fd89ac4ed126e130b095584e285966786cd56651f885a2384aaaee037936"
+        }
+      },
+      "zip": {
+        "bytes": 496661,
+        "sha256": "b0daec7ea6cacc74a3bc2483c543966b18db4a3d5b49d7eef99af3cedef7af98"
+      }
+    }
+  },
+  "first_failed_candidate": {
+    "concrete_corrections": [
+      "Declare production pending-command field in extracted recovery HOST and verify creator Save deferral",
+      "Execute test_input explicitly and validate check-suite inventory before running"
+    ],
+    "failed_gate": "test_fresh_profile_recovery host compilation",
+    "published": false,
+    "repository_commit": "e93419d067d3e9b62b02335de1557bb8a4166bab",
+    "run_id": 37635556758
+  },
+  "format": 1,
+  "incomplete_physical_0_13_17": {
+    "audit_path": "docs/android-evidence/client-sidebar-0.13.17-thor-20261007.json",
+    "audit_pin": {
+      "bytes": 9369,
+      "sha256": "ac5530795566fd44fff7f8ed6c83acf2adb0eb0c475f183d28809e7a31921aab"
+    },
+    "comparison_complete": false
+  },
+  "independent_audit_scope": "Authenticated the three small Actions evidence ZIPs, unique safe member inventories and exact member bytes; rehashed frozen source and Java/native receipts; matched release/tag/API asset digests; hosted fresh public job independently downloaded and audited the actual full public APK, checksum and notes. This continuation did not download a second full APK.",
+  "independent_public_audit": {
+    "bytes": 1557379684,
+    "format": 1,
+    "fresh_process_prepublication_audit_passed": true,
+    "installed_runtime_identity_preserved": true,
+    "physical_sidebar_input_validated": false,
+    "public_apk_checksum_and_notes_verified": true,
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18.apk",
+    "receipt": {
+      "bytes": 590,
+      "sha256": "d0390b97a2ec4df92c5295018b617f21f15a8ed03c2038ac965b86ec8ef7386e"
+    },
+    "repository_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+    "sdk_signer_payload_audit_passed": true,
+    "sha256": "d7fb00ae5406208a2497c7b9ea9659403a422dd0698404cd968112a4ba7b8ca1",
+    "status": "passed"
+  },
+  "owner_run": {
+    "conclusion": "success",
+    "head_sha": "d1e455f8d0047ac02398d17c5df1001375522f98",
+    "id": 37637034415,
+    "jobs": [
+      {
+        "completed_at": "2026-10-07T14:29:20Z",
+        "conclusion": "success",
+        "id": 112845854747,
+        "name": "changes",
+        "started_at": "2026-10-07T14:28:55Z"
+      },
+      {
+        "completed_at": "2026-10-07T14:36:08Z",
+        "conclusion": "success",
+        "id": 112846091183,
+        "name": "qualify",
+        "started_at": "2026-10-07T14:29:24Z"
+      },
+      {
+        "completed_at": "2026-10-07T14:41:45Z",
+        "conclusion": "success",
+        "id": 112849419482,
+        "name": "apk",
+        "started_at": "2026-10-07T14:36:12Z"
+      },
+      {
+        "completed_at": "2026-10-07T14:43:39Z",
+        "conclusion": "success",
+        "id": 112852178428,
+        "name": "public-audit",
+        "started_at": "2026-10-07T14:41:49Z"
+      }
+    ],
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37637034415"
+  },
+  "packaging": {
+    "asset_reimport_required": false,
+    "binary_manifest_version_only_verified": true,
+    "changed_apk_payloads": [],
+    "changed_java_sources": [
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java",
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java"
+    ],
+    "guest_helpers_changed": false,
+    "installed_runtime_identity_preserved": true,
+    "java_or_dex_recompiled": true,
+    "java_sources": 19,
+    "native_client_recompiled": false,
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "receipt": {
+      "bytes": 5077901,
+      "sha256": "4eb3708e2384303bcebfc51c5f572d7f29f82b28163ab2a5aaa26e89938bee71"
+    },
+    "recompiled_dex": {
+      "bytes": 364076,
+      "sha256": "e713bc9e9057916c97c58087c8e1903221025d5242b8a155ffc1528a48b35562"
+    },
+    "retained_Game": {
+      "bytes": 9477120,
+      "sha256": "5b6cfb6d20eb5f6642d6d1124e6b5ba188e89f9ad58c26268f0be35d996134aa"
+    },
+    "retained_client_DLL_count": 20,
+    "retained_java_sources": 14,
+    "retained_native_repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+    "retained_native_source_and_Win32_proof_verified": true,
+    "retained_runtime_payloads": 75,
+    "runtime_manifest_changed": false,
+    "runtime_manifest_sha256": "09f2cd20846d99e44f950300177eb9b7cb14dea624c51487a93a19d4f953e113",
+    "runtime_payload_count": 75,
+    "runtime_refresh_required": false,
+    "server_extraction_preflight_status": "passed",
+    "signature_verified": true,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "physical_performance_gain_validated": false,
+  "physical_sidebar_input_validated": false,
+  "physical_testing_notes": "docs/COH-Atlas-Gameplay-0.13.18-testing.txt",
+  "published_at": "2026-10-07T14:41:42Z",
+  "qualification": {
+    "checks": {
+      "exact_android_only_payload_native_source_and_runtime_identity_verified": true,
+      "fixed_sidebar_commands_and_start_enter_verified": true,
+      "retained_gameplay_postgresql_and_recovery_guards_verified": true
+    },
+    "postgresql_emission_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ],
+    "postgresql_levelup_fixtures": [
+      "empty_child_duplicate_23505_rollback",
+      "empty_child_training_commit",
+      "missing_child_insert_commit",
+      "shuffled_child_read_training_commit"
+    ],
+    "receipt": {
+      "bytes": 1887016,
+      "sha256": "7440fd89ac4ed126e130b095584e285966786cd56651f885a2384aaaee037936"
+    },
+    "skipped": 0,
+    "source_pins_rehashed": 9638,
+    "suites": 84,
+    "tests_run": 1264
+  },
+  "release_assets": [
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18-testing.txt",
+      "digest": "sha256:0f6328a630460324832008559075054a5621fce94f7d6d6d96b18c5363f9798e",
+      "id": 618971263,
+      "name": "COH-Atlas-Gameplay-0.13.18-testing.txt",
+      "size": 3882,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18.apk",
+      "digest": "sha256:d7fb00ae5406208a2497c7b9ea9659403a422dd0698404cd968112a4ba7b8ca1",
+      "id": 618968033,
+      "name": "COH-Atlas-Gameplay-0.13.18.apk",
+      "size": 1557379684,
+      "state": "uploaded"
+    },
+    {
+      "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.18/COH-Atlas-Gameplay-0.13.18.apk.sha256",
+      "digest": "sha256:4128f9ea2cc920bb426424c33e8da59e2462dfc98648f3a11ebea5f5164b8e8a",
+      "id": 618971197,
+      "name": "COH-Atlas-Gameplay-0.13.18.apk.sha256",
+      "size": 97,
+      "state": "uploaded"
+    }
+  ],
+  "release_id": 405864570,
+  "release_tag": "coh-atlas-gameplay-v0.13.18",
+  "release_version": "0.13.18",
+  "repository_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+  "runtime_repository_commit": "4a57ffe3b75612fb9c356de9c4150729736e849e",
+  "status": "passed",
+  "tag_commit": "d1e455f8d0047ac02398d17c5df1001375522f98",
+  "version_code": 33,
+  "zoning_started": false
+}

@@ -1,0 +1,119 @@
+{
+  "format": 1,
+  "file": "coh-diagnostic-20260928-004623.zip",
+  "archive_sha256": "de98f5016db495dff265892c421c8db6ed5adbfc9f84ef33c064738e30fc4643",
+  "source_commit": "83f132ddb8077c9d5175ae7cd039e0754b70074e",
+  "app_version": "0.1.4",
+  "device": "AYN AYN Thor",
+  "android_sdk": 33,
+  "runtime_manifest_sha256": "18c57d8fa3bf464468609f6380b30c034f791857b3ed45930b378f226cd43a07",
+  "result": "all_eleven_functional_stages_passed_capture_still_open_with_no_tagged_process_candidates",
+  "failures": [
+    "Owned process input/output capture did not close: wineboot"
+  ],
+  "stages": [
+    {
+      "stage": "assets_and_architecture",
+      "status": "passed"
+    },
+    {
+      "stage": "initialize_owned_cluster",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_first_start",
+      "status": "passed"
+    },
+    {
+      "stage": "restricted_fixture_database",
+      "status": "passed"
+    },
+    {
+      "stage": "wine_prefix_and_driver",
+      "status": "passed"
+    },
+    {
+      "stage": "win32_odbc_driver",
+      "status": "passed"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed"
+    },
+    {
+      "stage": "odbc_fixture",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_clean_restart",
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_restart_ready",
+      "status": "passed"
+    },
+    {
+      "stage": "odbc_after_restart",
+      "status": "passed"
+    }
+  ],
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "state": "ready",
+    "ready_prefix_reused": false,
+    "runtime_lock_sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760",
+    "update_timestamp_removed": false,
+    "timeout_seconds": 600,
+    "registration_processes": 3,
+    "wow64_registration_processes": 1,
+    "registration_passes": 1,
+    "elapsed_seconds": 85.957
+  },
+  "wineboot": {
+    "label": "wineboot",
+    "elapsed_seconds": 85.955,
+    "exit_code": 0,
+    "forced_stop": true,
+    "output_capture_closed": false,
+    "input_closed": true,
+    "completion": {
+      "policy": "leader_exit_with_owned_background_output",
+      "leader_exit_code": 0,
+      "output_capture_open": true,
+      "elapsed_seconds": 85.955
+    }
+  },
+  "wine_shutdown": {
+    "stop_exit_code": 0,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 26,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": false
+  },
+  "cleanup_complete": false,
+  "asset_sha256": {
+    "001-coh-compat.sql": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a",
+    "odbc_probe.exe": "3a74c955b3ee3263e56cab2be2c41c6a3d935038caa366a93e4673d6795a9791",
+    "psqlodbc_x86.msi": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773",
+    "runtime-probe.exe": "fb4c429cf0d55bfa40c4af5724cbedbd264968e2caf0ce11c2712126fa1008f7",
+    "probe.dll": "bf57116f1dc52f0dc68e8be6ae636329bf6a344235b69514445eca7f761a8d24"
+  },
+  "causal_limit": "No tagged live process candidates were found; the report does not establish the pipe holder or reader thread state. Same cleanup failure persists despite successful functional checks.",
+  "scope": "Selected diagnostic facts only; original user archive remains private. Client probe was not requested."
+}

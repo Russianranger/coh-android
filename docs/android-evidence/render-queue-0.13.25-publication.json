@@ -1,0 +1,2288 @@
+{
+  "actions_artifact_zip_metadata": [
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646168432/zip",
+        "created_at": "2026-10-09T21:44:46Z",
+        "digest": "sha256:42f45821bc5f9257be5f369ee5245357303509dc7fdadbb7b4ad7df2da74a940",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11646168432,
+        "name": "coh-client-render-queue-packaging-evidence",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NjE2ODQzMg==",
+        "size_in_bytes": 1340799,
+        "updated_at": "2026-10-09T21:44:46Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646168432",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11646168432,
+      "name": "coh-client-render-queue-packaging-evidence",
+      "zip_bytes": 1340799,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "42f45821bc5f9257be5f369ee5245357303509dc7fdadbb7b4ad7df2da74a940"
+    },
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646139151/zip",
+        "created_at": "2026-10-09T21:49:11Z",
+        "digest": "sha256:cc58ed4b559f65d2a36ea713b1f1b37851d3c3d7ee6dafae9bbadcef75889929",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11646139151,
+        "name": "coh-client-render-queue-public-byte-audit",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NjEzOTE1MQ==",
+        "size_in_bytes": 792,
+        "updated_at": "2026-10-09T21:49:11Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646139151",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11646139151,
+      "name": "coh-client-render-queue-public-byte-audit",
+      "zip_bytes": 792,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "cc58ed4b559f65d2a36ea713b1f1b37851d3c3d7ee6dafae9bbadcef75889929"
+    },
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646079460/zip",
+        "created_at": "2026-10-09T21:40:46Z",
+        "digest": "sha256:ae48b6e8a9f00803f44fbdcbcfe80db9d6e3c9fc0af9156d675db1315404724f",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11646079460,
+        "name": "coh-client-render-queue-qualification",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NjA3OTQ2MA==",
+        "size_in_bytes": 563440,
+        "updated_at": "2026-10-09T21:40:46Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11646079460",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11646079460,
+      "name": "coh-client-render-queue-qualification",
+      "zip_bytes": 563440,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "ae48b6e8a9f00803f44fbdcbcfe80db9d6e3c9fc0af9156d675db1315404724f"
+    },
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11645992756/zip",
+        "created_at": "2026-10-09T21:28:53Z",
+        "digest": "sha256:7a0257af8d177578529fb629d9694bfde5665d2d81c11d2554e7e6a6fb0ca559",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11645992756,
+        "name": "coh-client-render-queue-native-build-evidence",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NTk5Mjc1Ng==",
+        "size_in_bytes": 39842,
+        "updated_at": "2026-10-09T21:28:53Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11645992756",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11645992756,
+      "name": "coh-client-render-queue-native-build-evidence",
+      "zip_bytes": 39842,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "7a0257af8d177578529fb629d9694bfde5665d2d81c11d2554e7e6a6fb0ca559"
+    },
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11645842971/zip",
+        "created_at": "2026-10-09T21:28:52Z",
+        "digest": "sha256:50408c3198f410a12930449f70c8214c929e68d9f033f1d6d4e33de1d7db5cb8",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11645842971,
+        "name": "coh-client-render-queue-native",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NTg0Mjk3MQ==",
+        "size_in_bytes": 4056854,
+        "updated_at": "2026-10-09T21:28:52Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11645842971",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11645842971,
+      "name": "coh-client-render-queue-native",
+      "zip_bytes": 4056854,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "50408c3198f410a12930449f70c8214c929e68d9f033f1d6d4e33de1d7db5cb8"
+    },
+    {
+      "api_provenance": {
+        "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11647375247/zip",
+        "created_at": "2026-10-09T21:45:03Z",
+        "digest": "sha256:7371231da6d3bb334340480b80ac8420aedb81554bf7bcf46e23ef0e97f8ae12",
+        "expired": false,
+        "expires_at": "2027-01-07T21:20:32Z",
+        "id": 11647375247,
+        "name": "coh-client-render-queue-apk",
+        "node_id": "MDg6QXJ0aWZhY3QxMTY0NzM3NTI0Nw==",
+        "size_in_bytes": 1566123751,
+        "updated_at": "2026-10-09T21:45:03Z",
+        "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/11647375247",
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "id": 37992855950,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11647375247,
+      "name": "coh-client-render-queue-apk",
+      "scope": "API metadata only; full APK artifact ZIP was not downloaded locally. Hosted actual public APK audit is separate.",
+      "zip_bytes": 1566123751,
+      "zip_digest_independently_verified": false,
+      "zip_sha256": "7371231da6d3bb334340480b80ac8420aedb81554bf7bcf46e23ef0e97f8ae12"
+    }
+  ],
+  "audit_scope": {
+    "hosted_prepublication_and_separate_actual_public_APK_SDK_audits_passed": true,
+    "recorded_native_proofs_replayed_locally": false,
+    "root_duplicate_full_public_APK_download_performed": false,
+    "root_source_recipe_CMake_actual_native_package_and_authenticated_receipts_verified": true
+  },
+  "changes": {
+    "added_runtime_payloads": [],
+    "changed_guest_helpers": [
+      "client_gpu_profile.py",
+      "client_startup_diagnostic.py",
+      "native_responsiveness_contract.py",
+      "texture_header_index.py"
+    ],
+    "changed_runtime_payloads": [
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client-runtime.zip",
+      "assets/runtime/client_gpu_profile.py",
+      "assets/runtime/client_startup_diagnostic.py",
+      "assets/runtime/native_responsiveness_contract.py",
+      "assets/runtime/runtime-manifest.json",
+      "assets/runtime/texture_header_index.py"
+    ],
+    "graphics_driver_changed": false,
+    "java_or_dex_recompiled": false,
+    "native_client_compiled_in_current_publication_run": false,
+    "native_client_compiled_in_current_run": false,
+    "native_client_recompiled": true,
+    "native_compilations": 1,
+    "new_Game": {
+      "bytes": 9499648,
+      "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+    },
+    "original_completed_native_build_reused": true,
+    "previous_runtime_generation_retained": true,
+    "runtime_refresh_required": true,
+    "world_assets_changed": false
+  },
+  "completed_0_13_24_device_milestones": {
+    "accepted_current_session_budget": true,
+    "evidence": "docs/android-evidence/render-queue-0.13.24-thor-20261009.json",
+    "evidence_pin": {
+      "bytes": 35947,
+      "name": "render-queue-0.13.24-thor-20261009.json",
+      "sha256": "a6bbd79e4694bdcfdb78a423741a83aa8d1210d9eca62a48348eb5649bbd456b"
+    },
+    "explicit_input_effect_verified": false,
+    "native_Game_renderer": {
+      "GPU_payload_sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38",
+      "GPU_time_measured": false,
+      "WGL_probe_passed": true,
+      "console_lines": [
+        55,
+        56,
+        57
+      ],
+      "fallback_reason": null,
+      "generic_flag_limit": "Conservative flag false is not loss of confirmed Turnip startup.",
+      "generic_hardware_flag": false,
+      "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "native_Vulkan_executed": true,
+      "native_Vulkan_probe_passed": true,
+      "renderer": "zink (Turnip Adreno (TM) 740)",
+      "requested": "turnip",
+      "selected": "turnip",
+      "vendor": "Collabora Ltd"
+    },
+    "ordinary_committed_save_and_cleanup_verified": true,
+    "overall_gameplay_qualified": false,
+    "pure_gameplay_frame_interval_mean_ms": 194.165104,
+    "reviewed_input": {
+      "bytes": 13704444,
+      "path": "/workspace/scratch/58ff2855521f/upload/coh-atlas-gameplay-20261009-195656.zip",
+      "sha256": "ab4e657d9cbcf133f3875d11b3c951ad5cfc4e0381e1e9a19e512f6950136521"
+    },
+    "setup_complete": true,
+    "world_login_complete": true
+  },
+  "donor": {
+    "actual_parent_Game": {
+      "bytes": 9494016,
+      "sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72"
+    },
+    "apk": {
+      "bytes": 1560316680,
+      "sha256": "7ae9e8b21e48c30e1d6b9373e676ec7b6eb4727db7fa7b313281fb30a8ab38b0"
+    },
+    "build_report_artifact_id": 11638093807,
+    "build_report_artifact_zip": {
+      "bytes": 1273548,
+      "sha256": "97fbb865b6e252ca69e5b2bbf5d12fcc9488741482cd3b6ff16d35e2d744ad41"
+    },
+    "previous_hosted_actual_public_byte_audit": {
+      "bytes": 1560316680,
+      "format": 1,
+      "fresh_process_prepublication_audit_passed": true,
+      "guest_helpers_changed": false,
+      "installed_runtime_identity_preserved": true,
+      "java_or_dex_recompiled": true,
+      "mesa_driver_compiled_in_current_run": false,
+      "native_client_compiled_in_current_publication_run": false,
+      "native_client_package_reused": true,
+      "native_client_recompiled": false,
+      "native_vulkan_probe_compiled_in_current_run": false,
+      "physical_fps_gain_validated": false,
+      "physical_performance_validated": false,
+      "physical_setup_memory_validated": false,
+      "public_apk_checksum_and_notes_verified": true,
+      "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.24/COH-Atlas-Gameplay-0.13.24.apk",
+      "receipt": {
+        "bytes": 1312,
+        "name": "setup-copy-repair-public-byte-audit.json",
+        "sha256": "42dcffb1052337f44ac0db6ce79343523b1eda55654e1e8043d7cc8e65e84c3b"
+      },
+      "repository_commit": "3d73e9b4c71fe3f87de6bf0bb41fc0ce50f3f6ce",
+      "retained_native_repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+      "runtime_manifest_changed": false,
+      "runtime_refresh_required": false,
+      "runtime_repository_commit": "ac255fee7546b28a4ae06074f385d3ad73b235ad",
+      "sdk_signer_payload_audit_passed": true,
+      "sha256": "7ae9e8b21e48c30e1d6b9373e676ec7b6eb4727db7fa7b313281fb30a8ab38b0",
+      "status": "passed",
+      "version_code": 39,
+      "version_name": "0.13.24",
+      "wgl_probe_compiled_in_current_run": false
+    },
+    "previous_publication_evidence_pin": {
+      "bytes": 52114,
+      "name": "setup-copy-0.13.24-publication.json",
+      "sha256": "19d3497232257ebede19b0a10db32b4c7c2842441f6f29f7372d5b2cb4eeb8fe"
+    },
+    "raw_build_receipt": {
+      "bytes": 5439187,
+      "name": "setup-copy-repair-apk-build-report.json",
+      "sha256": "8cee18527c30767fc6d49f0e423028a16ed342a4cd5a9d9d9ac4137c457991b5"
+    },
+    "repository_commit": "3d73e9b4c71fe3f87de6bf0bb41fc0ce50f3f6ce",
+    "run_id": 37973264500,
+    "runtime_repository_commit": "ac255fee7546b28a4ae06074f385d3ad73b235ad"
+  },
+  "failed_host_recovery_audit": {
+    "actual_comparison_head_commit_absent": true,
+    "actual_comparison_last_commit": "e69f2a66abf02e26712691bb1cd29955fe671e8b",
+    "artifacts_api_pin": {
+      "bytes": 42,
+      "sha256": "f7417e1fb877d3f5934f143cc38ad9e2905476e8f5ac6776507d09441efcd6f6"
+    },
+    "artifacts_produced": 0,
+    "client_job_id": 114029170228,
+    "client_job_url": "https://github.com/Russianranger/coh-android/actions/runs/37992199749/job/114029170228",
+    "comparison_pin": {
+      "bytes": 33321,
+      "sha256": "33bd2656295ca83d939a67063a9de030545f0791af6a2d04be76b0369c53a4d5"
+    },
+    "format": 1,
+    "guard_failure_step": {
+      "completed_at": "2026-10-09T21:16:15Z",
+      "conclusion": "failure",
+      "name": "Validate optional completed native reuse inputs",
+      "number": 4,
+      "started_at": "2026-10-09T21:16:10Z",
+      "status": "completed"
+    },
+    "jobs_pin": {
+      "bytes": 11195,
+      "sha256": "57f3c02d052ebac019dc7b1759d112cfee1b112859659ff5580a794dcea57412"
+    },
+    "log_pin": {
+      "bytes": 27086,
+      "sha256": "35274248c18a016836b843998bc5bc304117dcdf9cca16002e5332f09483bafe"
+    },
+    "native_build_repeated": false,
+    "native_download_started": false,
+    "native_run_id": 37988347729,
+    "native_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "publication_run_id": 37992199749,
+    "publication_source_commit": "e69f2a66abf02e26712691bb1cd29955fe671e8b",
+    "publication_tree": "944fc919a1566c29635c3099fd23addb0c2ba480",
+    "qualification_executed": false,
+    "reason_code": "github_compare_missing_head_commit_schema_guard",
+    "receipt": {
+      "bytes": 3881,
+      "name": "failed-recovery-audit.json",
+      "sha256": "781803f3273131e97a71df39aeef978ea78ecbef6f6f91328e0743648151c54f"
+    },
+    "run_pin": {
+      "bytes": 14984,
+      "sha256": "d1ff07234c43c3df2eee1f330cb5f08a4e37c66fa5f44a62972cb2a0a30778ef"
+    },
+    "scope": "The first host-only recovery guard expected a nonexistent REST compare.head_commit; actual comparison had the correct base/merge-base/last commit. This failed before original native artifact download, without rebuilding Game or executing qualification. Separate from the two original DockerHub PostgreSQL16 initialization failures.",
+    "skipped_native_steps": [
+      {
+        "completed_at": "2026-10-09T21:16:15Z",
+        "conclusion": "skipped",
+        "name": "Authenticate the original completed current Game artifact ZIP",
+        "number": 5,
+        "started_at": "2026-10-09T21:16:15Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-10-09T21:16:15Z",
+        "conclusion": "skipped",
+        "name": "Stage the immutable native chain and reviewed rendering continuation",
+        "number": 6,
+        "started_at": "2026-10-09T21:16:15Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-10-09T21:16:15Z",
+        "conclusion": "skipped",
+        "name": "Qualify retained Win32 logic and current render-worker scheduling",
+        "number": 7,
+        "started_at": "2026-10-09T21:16:15Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-10-09T21:16:15Z",
+        "conclusion": "skipped",
+        "name": "Build only Game; retain successful GPU driver and probes",
+        "number": 8,
+        "started_at": "2026-10-09T21:16:15Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-10-09T21:16:15Z",
+        "conclusion": "skipped",
+        "name": "Bind Game to exact native source, ancestry and Win32 receipts",
+        "number": 9,
+        "started_at": "2026-10-09T21:16:15Z",
+        "status": "completed"
+      }
+    ]
+  },
+  "failed_publication_infrastructure_attempts": {
+    "attempts": [
+      {
+        "checkout_step": {
+          "completed_at": "2026-10-09T21:05:30Z",
+          "conclusion": "skipped",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 3,
+          "started_at": "2026-10-09T21:05:30Z",
+          "status": "completed"
+        },
+        "conclusion": "failure",
+        "failed_step": {
+          "completed_at": "2026-10-09T21:05:30Z",
+          "conclusion": "failure",
+          "name": "Initialize containers",
+          "number": 2,
+          "started_at": "2026-10-09T21:05:15Z",
+          "status": "completed"
+        },
+        "initialization_failed_before_checkout": true,
+        "job_id": 114025638711,
+        "job_url": "https://github.com/Russianranger/coh-android/actions/runs/37988347729/job/114025638711",
+        "jobs_pin": {
+          "bytes": 14433,
+          "sha256": "e3526d34b16b8d2e01fceb4208f43ab17315061388ba00890465708c135f7957"
+        },
+        "log_pin": {
+          "bytes": 6702,
+          "sha256": "5652c2819f2502c399899ca113323eedb03a86c3cb83c91b5cfc960541a184eb"
+        },
+        "qualification_executed": false,
+        "qualification_step": {
+          "completed_at": "2026-10-09T21:05:30Z",
+          "conclusion": "skipped",
+          "name": "Qualify all 110 retained suites and focused new checks",
+          "number": 9,
+          "started_at": "2026-10-09T21:05:30Z",
+          "status": "completed"
+        },
+        "reason_code": "dockerhub_postgres16_pull_rate_limit",
+        "repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+        "run_attempt": 1,
+        "run_id": 37988347729,
+        "run_pin": {
+          "bytes": 15011,
+          "sha256": "0d4dd32798258800b05f26d70c0a42fd470c044a013b989e1e6a11810d0b9687"
+        },
+        "status": "completed"
+      },
+      {
+        "checkout_step": {
+          "completed_at": "2026-10-09T21:09:27Z",
+          "conclusion": "skipped",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 3,
+          "started_at": "2026-10-09T21:09:27Z",
+          "status": "completed"
+        },
+        "conclusion": "failure",
+        "failed_step": {
+          "completed_at": "2026-10-09T21:09:27Z",
+          "conclusion": "failure",
+          "name": "Initialize containers",
+          "number": 2,
+          "started_at": "2026-10-09T21:09:19Z",
+          "status": "completed"
+        },
+        "initialization_failed_before_checkout": true,
+        "job_id": 114027126542,
+        "job_url": "https://github.com/Russianranger/coh-android/actions/runs/37988347729/job/114027126542",
+        "jobs_pin": {
+          "bytes": 28834,
+          "sha256": "07a5439e323e9d267ca56da8e166b8a5d12956ab1b8542cfb392cea2b58b6bae"
+        },
+        "log_pin": {
+          "bytes": 6699,
+          "sha256": "ba2a3d1ce1b89d22917bf42a21f977d18981abad9f5df8503bc4ec1c1775ee87"
+        },
+        "qualification_executed": false,
+        "qualification_step": {
+          "completed_at": "2026-10-09T21:09:27Z",
+          "conclusion": "skipped",
+          "name": "Qualify all 110 retained suites and focused new checks",
+          "number": 9,
+          "started_at": "2026-10-09T21:09:27Z",
+          "status": "completed"
+        },
+        "reason_code": "dockerhub_postgres16_pull_rate_limit",
+        "repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+        "run_attempt": 2,
+        "run_id": 37988347729,
+        "run_pin": {
+          "bytes": 15077,
+          "sha256": "70f332c01769e9eb8a55420b459111c0f75826e960a9c425946f22dd3fe82997"
+        },
+        "status": "completed"
+      }
+    ],
+    "format": 1,
+    "native_compilations": 1,
+    "native_execution": {
+      "attempt2_inherited_client_api_job_id": 114027128003,
+      "completed_at": "2026-10-09T21:05:08Z",
+      "original_client_job_id": 114016088131,
+      "original_jobs_pin": {
+        "bytes": 14433,
+        "sha256": "e3526d34b16b8d2e01fceb4208f43ab17315061388ba00890465708c135f7957"
+      },
+      "retry_jobs_pin": {
+        "bytes": 28834,
+        "sha256": "07a5439e323e9d267ca56da8e166b8a5d12956ab1b8542cfb392cea2b58b6bae"
+      },
+      "same_execution_timestamps_and_steps": true,
+      "started_at": "2026-10-09T20:39:12Z"
+    },
+    "native_run_id": 37988347729,
+    "native_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "qualification_infrastructure_failure_count": 2,
+    "receipt": {
+      "bytes": 5144,
+      "name": "infrastructure-failures.json",
+      "sha256": "2aa8c0cf0505661ac5c5889ebd09f6b44bc380ee048c20802becd0e4c7162b02"
+    },
+    "scope": "One original Game compilation succeeded. Both qualification attempts failed initializing the PostgreSQL16 service before checkout or test execution; no qualification receipt or APK was produced. Attempt2 client API alias conserves the original execution timestamps and steps."
+  },
+  "format": 1,
+  "native_build_provenance": {
+    "compiled_in_current_publication_run": false,
+    "format": 1,
+    "game": {
+      "bytes": 9499648,
+      "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+    },
+    "game_changed_from_public_0_13_24": true,
+    "native_manifest": {
+      "bytes": 89634,
+      "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+    },
+    "parent_native_build_provenance": {
+      "actions_artifact_id": 11614276232,
+      "artifact_zip": {
+        "bytes": 4050020,
+        "sha256": "b8d169ccd859115c1c9178ec0a5cfd199fb4b4a8c7cb94585ca7ee68de91d51b"
+      },
+      "compiled_in_current_publication_run": false,
+      "format": 1,
+      "game": {
+        "bytes": 9494016,
+        "sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72"
+      },
+      "game_changed_from_public_0_13_21": true,
+      "native_manifest": {
+        "bytes": 77379,
+        "sha256": "daa2b2f9b2000449da27a2386a891c13248252770e1f237e99927b1392cc756c"
+      },
+      "raw_producer_preserved": true,
+      "repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+      "run_id": 37924638566,
+      "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37924638566",
+      "source_files": {
+        "android/guest/client_gpu_profile.py": {
+          "bytes": 37236,
+          "sha256": "4bbd06c6d134a5b9b10dba20cbfc5f4f17025b816fdbab18758c284081474e06"
+        },
+        "android/guest/client_startup_diagnostic.py": {
+          "bytes": 86085,
+          "sha256": "8fa3ed50c020875afda40837e98b2cdb9ea25fd0229f46dc9457c44037dd1517"
+        },
+        "android/guest/native_responsiveness_contract.py": {
+          "bytes": 65728,
+          "sha256": "1b8067b2cca6cc7b3ce4f0a33e8f546133b65ace9d7b594b66b3fd5296d266c2"
+        },
+        "android/guest/texture_header_index.py": {
+          "bytes": 17786,
+          "sha256": "ac3106db257c900adc13439b09679cb4081d3b10648999a8096867fae86139d8"
+        },
+        "database/client-render-pipeline/overlay/Game/src/cohClientRenderPipeline.h": {
+          "bytes": 13466,
+          "sha256": "5926207d7fd59ab99f1a727cc6ec68e3ab34c01a23d315bf16e0a60e9660cc81"
+        },
+        "patches/client-render-pipeline/0001-render-worker-wake-and-focused-timing.patch": {
+          "bytes": 6217,
+          "sha256": "4315bf293d5a195d09f605dbc703cf69584719ccc22df135a470ffecea1163e4"
+        },
+        "tools/android/interactive/package_client_render_pipeline_native.py": {
+          "bytes": 16746,
+          "sha256": "7d61320a13a2c7904c73019568225ff3302635a846adc65fa1152f1622bf0d0e"
+        },
+        "tools/android/interactive/test_client_render_pipeline_contract.py": {
+          "bytes": 9904,
+          "sha256": "6f1105ceb401d0ccda4af7ae2b9f0d9b942d02dcb6dc503390a285baba65367c"
+        },
+        "tools/android/interactive/test_client_render_pipeline_native.py": {
+          "bytes": 22971,
+          "sha256": "95373284566035ab9dc95dfc78f70118fef5bc81b90163b9c2999abc18f5c504"
+        },
+        "tools/android/interactive/test_client_render_pipeline_source.py": {
+          "bytes": 12378,
+          "sha256": "db1ea10ab75c0c60e48c310e21685f92bc517c963bedf469cd3dfe4d561edac5"
+        },
+        "upstream/ouroboros/Game/src/graphics/gfx.c": {
+          "bytes": 58931,
+          "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e"
+        },
+        "upstream/ouroboros/Game/src/render/thread/rt_queue.c": {
+          "bytes": 15858,
+          "sha256": "e1121ae5462da63b896289a60b2d16b4e913180e8c009cbf398fcba7fb8946d6"
+        },
+        "upstream/ouroboros/Game/src/render/thread/rt_queue.h": {
+          "bytes": 7420,
+          "sha256": "342f3bc31a3d0974a78e7be922cf01d9e1f46598e1ba280b86cf2b5a2dc0b33d"
+        },
+        "upstream/ouroboros/libs/UtilitiesLib/src/components/WorkerThread.c": {
+          "bytes": 11897,
+          "sha256": "eebaa5df2895cf7cc3cd8c7ec6faaba1b75f9e72fa0252e058a7abe8d4cf7c2c"
+        }
+      },
+      "source_recipe_independently_recomputed": true
+    },
+    "raw_producer_preserved": true,
+    "repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "run_id": 37988347729,
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37988347729",
+    "source_files": {
+      "database/client-render-queue/overlay/Game/src/cohClientRenderQueue.h": {
+        "bytes": 13621,
+        "sha256": "a4dce09f9eea2f6280884215d4fb9f7d4f04e3c5f98ed00ded8846a43273bc00"
+      },
+      "patches/client-render-queue/0001-coalesce-render-worker-wake-and-sparse-queue-timing.patch": {
+        "bytes": 12346,
+        "sha256": "59a5509111c0e68254eedbad8d550d07ccff9b7ade2fcba7fdde7838a74ea4a5"
+      },
+      "tools/android/interactive/package_client_render_queue_native.py": {
+        "bytes": 16345,
+        "sha256": "1d361d39cabd429049b070e6606a764d6ad28a3a014d612aef2db91d5338877a"
+      },
+      "tools/android/interactive/test_client_render_queue_native.py": {
+        "bytes": 22485,
+        "sha256": "1b7ec4bb058a9bebe5773158dea8dcb5929e3303347d7b85e41b5ed1ca922989"
+      },
+      "tools/android/interactive/test_client_render_queue_source.py": {
+        "bytes": 16483,
+        "sha256": "d8a9f7c466c6868918d25319087538105e8698e9979f482a6a3d4ba8fd0db6be"
+      },
+      "tools/android/interactive/test_client_render_queue_worker.py": {
+        "bytes": 27601,
+        "sha256": "25c00b7b87d4915bfc872b9f21e75c99ad5436dbb4d121440e8a0c7279d79c84"
+      },
+      "upstream/ouroboros/Game/src/graphics/gfx.c": {
+        "bytes": 58931,
+        "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e"
+      },
+      "upstream/ouroboros/Game/src/render/thread/rt_queue.c": {
+        "bytes": 15858,
+        "sha256": "e1121ae5462da63b896289a60b2d16b4e913180e8c009cbf398fcba7fb8946d6"
+      },
+      "upstream/ouroboros/libs/UtilitiesLib/include/utilitieslib/components/WorkerThread.h": {
+        "bytes": 2468,
+        "sha256": "f828e1250b46951ba75145e46d04408938f81e0e0b4c40ecd5634295784c77f2"
+      },
+      "upstream/ouroboros/libs/UtilitiesLib/src/components/WorkerThread.c": {
+        "bytes": 11897,
+        "sha256": "eebaa5df2895cf7cc3cd8c7ec6faaba1b75f9e72fa0252e058a7abe8d4cf7c2c"
+      }
+    },
+    "source_recipe_independently_recomputed": true
+  },
+  "native_manifest_receipt": {
+    "bytes": 89634,
+    "name": "client-render-queue-native-manifest.json",
+    "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+  },
+  "native_reuse": {
+    "actual_original_native_zip": {
+      "bytes": 4056854,
+      "name": "coh-client-render-queue-native.zip",
+      "sha256": "9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7"
+    },
+    "current_reuse_only_evidence_member_count": 4,
+    "format": 1,
+    "native_build_repeated": false,
+    "native_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "original_build_proof_evidence_zip": {
+      "bytes": 132750,
+      "name": "coh-client-render-queue-native-build-evidence.zip",
+      "sha256": "22a23eeb78a3e05b5507d501829e1f63dd7c77f4fde4f8281e9bcae33be30b27"
+    },
+    "original_native_artifact_id": 11645013072,
+    "original_native_artifact_zip": {
+      "bytes": 4056854,
+      "sha256": "9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7"
+    },
+    "original_native_run_id": 37988347729,
+    "original_source_fixture_and_CMake_member_count": 27,
+    "publication_source_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "receipt": {
+      "bytes": 680,
+      "name": "client-render-queue-native-reuse.json",
+      "sha256": "6dd52557f3e5a74b53a48e115cfcf40d608dc896954caeb492a8921c23d1c6e2"
+    },
+    "reviewed_host_only_changes": [
+      ".github/workflows/android-client-render-queue.yml",
+      "tools/android/interactive/build_client_render_queue_apk.py",
+      "tools/android/interactive/test_client_render_queue_package.py"
+    ],
+    "status": "passed"
+  },
+  "next_milestone": "Install .25 as an update preserving data/imports/character. Keep the GPU Performance profile, existing render scale0.75/UI800x600 and fan/charging state. Run a short same-position Atlas standing/camera/walking route at cap30, then ordinary strict Save/Finish and export the complete outer ZIP. Compare native cadence, sparse scene setup/sort/draw and full-ring waits without claiming GPU duration or sustained FPS gains before physical results. Setup/login/GPU-preflight are completed; startup/zoning and a long unchanged Software benchmark remain deferred.",
+  "original_native_actions_artifact_zip_metadata": [
+    {
+      "api_provenance": {
+        "digest": "sha256:22a23eeb78a3e05b5507d501829e1f63dd7c77f4fde4f8281e9bcae33be30b27",
+        "expired": false,
+        "id": 11645028019,
+        "name": "coh-client-render-queue-native-build-evidence",
+        "size_in_bytes": 132750,
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "c512e912a004b66886a7667640aa1a967e95de64",
+          "id": 37988347729,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11645028019,
+      "name": "coh-client-render-queue-native-build-evidence",
+      "zip_bytes": 132750,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "22a23eeb78a3e05b5507d501829e1f63dd7c77f4fde4f8281e9bcae33be30b27"
+    },
+    {
+      "api_provenance": {
+        "digest": "sha256:9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7",
+        "expired": false,
+        "id": 11645013072,
+        "name": "coh-client-render-queue-native",
+        "size_in_bytes": 4056854,
+        "workflow_run": {
+          "head_branch": "codex/character-persistence-continuation",
+          "head_repository_id": 1368730125,
+          "head_sha": "c512e912a004b66886a7667640aa1a967e95de64",
+          "id": 37988347729,
+          "repository_id": 1368730125
+        }
+      },
+      "expired": false,
+      "id": 11645013072,
+      "name": "coh-client-render-queue-native",
+      "zip_bytes": 4056854,
+      "zip_digest_independently_verified": true,
+      "zip_sha256": "9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7"
+    }
+  ],
+  "original_native_owner": {
+    "conclusion": "failure",
+    "head_sha": "c512e912a004b66886a7667640aa1a967e95de64",
+    "id": 37988347729,
+    "native_job": {
+      "conclusion": "success",
+      "id": 114016088131,
+      "name": "client",
+      "run_attempt": 1,
+      "status": "completed"
+    },
+    "run_attempt": 1,
+    "scope": "Only the original Game job passed; both original qualification attempts failed during container initialization",
+    "status": "completed"
+  },
+  "owner": {
+    "conclusion": "success",
+    "created_at": "2026-10-09T21:20:31Z",
+    "head_sha": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "id": 37992855950,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 114031234526,
+        "name": "changes",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114031443549,
+        "name": "client",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114034177565,
+        "name": "qualify",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114038279798,
+        "name": "apk",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 114040343602,
+        "name": "public-audit",
+        "status": "completed"
+      }
+    ],
+    "run_attempt": 1,
+    "status": "completed",
+    "updated_at": "2026-10-09T21:49:14Z",
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37992855950",
+    "workflow": ".github/workflows/android-client-render-queue.yml"
+  },
+  "packaging_receipt": {
+    "bytes": 5775703,
+    "name": "client-render-queue-apk-build-report.json",
+    "sha256": "8ab8b985b9fbb586032354d300e338163f2fdaadfa8b1d5fe474345570f14c1e"
+  },
+  "physical_0_13_21_milestone": {
+    "GPU_execution_time_measured": false,
+    "device": "AYN AYN Thor",
+    "evidence": "docs/android-evidence/renderer-sync-0.13.21-thor-20261009.json",
+    "logged_GL_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "logged_Game_renderer": "zink (Turnip Adreno (TM) 740)",
+    "logged_hardware_backend_observed": true,
+    "native_30_cap_pure_gameplay": {
+      "frames": 5196,
+      "max_interval_ms": 349.706,
+      "mean_cadence_hz": 19.161,
+      "mean_frame_interval_ms": 52.189,
+      "p95_histogram_upper_ms": 125,
+      "window_ms": 271141.021,
+      "windows": 27
+    },
+    "observation_vs_measurement": "User FPS ranges, smoother play and no observed fidelity loss are preserved separately from conservatively classified native log-window cadence. Existing renderer batch elapsed time includes gaps and does not establish pure GPU rendering time.",
+    "reviewed_input": {
+      "bytes": 14019289,
+      "filename": "coh-atlas-gameplay-20261009-111411.zip",
+      "sha256": "ef9993c8d48c38ce558e875c3a17cbf8606a19150a160659f08270f7ce68381b"
+    },
+    "user_observations": {
+      "GPU_test_succeeded": true,
+      "gameplay_regularly_15_to_30_FPS": true,
+      "no_observed_graphical_degradation_or_fidelity_reduction": true,
+      "observation_source": "User report in 2026-10-09 continuation request; not derived from log counters.",
+      "occasional_dips_below_range": true,
+      "substantially_smoother_than_previous_Software_tests": true,
+      "sustained_30_FPS_claimed": false
+    }
+  },
+  "physical_0_13_25_claims": {
+    "device_test_completed": false,
+    "graphical_fidelity_physically_validated": false,
+    "physical_fps_gain_validated": false,
+    "sustained_30_FPS_claimed": false
+  },
+  "prepublication_SDK_audit": {
+    "authority": "Hosted apk job before release publication",
+    "binary_manifest_version_only_verified": true,
+    "package_badging_verified": true,
+    "payload_bytes_verified": true,
+    "signature_verified": true
+  },
+  "public_byte_audit": {
+    "authority": "Separate hosted public-audit job downloaded actual public APK/checksum/notes",
+    "bytes": 1560345352,
+    "format": 1,
+    "fresh_process_prepublication_audit_passed": true,
+    "java_or_dex_recompiled": false,
+    "mesa_driver_compiled_in_current_run": false,
+    "native_build_repository_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+    "native_client_compiled_in_current_publication_run": false,
+    "native_client_recompiled": true,
+    "native_vulkan_probe_compiled_in_current_run": false,
+    "physical_fps_gain_validated": false,
+    "physical_performance_validated": false,
+    "public_apk_checksum_and_notes_verified": true,
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk",
+    "receipt": {
+      "bytes": 1285,
+      "name": "client-render-queue-public-byte-audit.json",
+      "sha256": "44910ed3666588789a42d510ebdfca7cce9a2cf70fec0054621b254183630773"
+    },
+    "repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "retained_native_repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+    "runtime_refresh_required": true,
+    "runtime_repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "sdk_signer_payload_audit_passed": true,
+    "sha256": "5decd49a11652842d25bf47b07cccf2638d21760f3cd6b035bf934a8e2cfdd76",
+    "software_fallback_preserved": true,
+    "status": "passed",
+    "successful_gpu_driver_and_both_probes_retained": true,
+    "version_code": 40,
+    "version_name": "0.13.25",
+    "wgl_probe_compiled_in_current_run": false
+  },
+  "publication_provenance": {
+    "donor_apk_repository_commit": "3d73e9b4c71fe3f87de6bf0bb41fc0ce50f3f6ce",
+    "donor_runtime_repository_commit": "ac255fee7546b28a4ae06074f385d3ad73b235ad",
+    "format": 1,
+    "parent_native_build_repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+    "parent_native_build_run_id": 37924638566,
+    "parent_native_producer_relabelled": false,
+    "repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37992855950"
+  },
+  "qualification": {
+    "actual_native_ancestry_validation": {
+      "actual_external_donor_and_win32_receipts_verified": true,
+      "actual_pipeline_Game_predecessor_verified": true,
+      "full_guest_typed_client_wrapper_verified": true,
+      "older_native_history_unchanged": true,
+      "raw_source_histories_preserved": true,
+      "rejected_foreign_variants": [
+        "pg_header",
+        "pg_fixture",
+        "pg_extra",
+        "pg_patch",
+        "event_source",
+        "texture",
+        "event_bool",
+        "event_float",
+        "pg_digest",
+        "game_digest",
+        "progress_digest"
+      ],
+      "status": "passed"
+    },
+    "check_suites": {
+      "exact_Game_only_payload_024_Android_shell_and_successful_GPU_bytes_verified": [
+        "test_client_render_queue_package",
+        "test_client_render_queue_contract",
+        "test_client_render_queue_guest",
+        "test_setup_copy_repair_package",
+        "test_client_gpu_repair_package",
+        "test_client_gpu_runtime_package",
+        "test_client_gpu_profile",
+        "test_coh_gpu_probe_native"
+      ],
+      "native_queue_wake_coalescing_sparse_attribution_and_owned_controls_verified": [
+        "test_client_render_queue_native",
+        "test_client_render_queue_source",
+        "test_client_render_queue_worker",
+        "test_client_render_queue_contract",
+        "test_client_render_queue_package",
+        "test_client_render_queue_guest",
+        "test_analyze_client_render_queue"
+      ],
+      "retained_gameplay_postgresql_gpu_cleanup_and_recovery_guards_verified": [
+        "test_startup_schedule_package",
+        "test_startup_schedule",
+        "test_world_asset_reuse",
+        "test_atlas_world_assets",
+        "test_local_launcher_wait",
+        "test_character_readiness",
+        "test_character_server",
+        "test_character_reopen_guest",
+        "test_ground_repair",
+        "test_task_gate_integration",
+        "test_task_gate_evidence",
+        "test_runtime_setup_reuse",
+        "test_fresh_profile_recovery",
+        "test_storage_recovery_ui",
+        "test_storage_audit",
+        "test_wine_refresh",
+        "test_server_worktree_reuse",
+        "test_server_cache_package",
+        "test_texture_header_index",
+        "test_session_budget_guest",
+        "test_stable_worktree_identity",
+        "test_classify_interactive_change",
+        "test_classify_storage_cleanup_change",
+        "test_task_receipt_cleanup_package",
+        "test_task_receipt_cleanup",
+        "test_setup_memory_package",
+        "test_setup_memory_guard",
+        "test_setup_service",
+        "test_archive",
+        "test_startup_bundle_package",
+        "test_startup_bundle_client",
+        "test_startup_bundle_dbserver",
+        "test_startup_bundle_save",
+        "test_native_client_upgrade",
+        "test_client_animation_package",
+        "test_client_visual_assets",
+        "test_client_visual_schedule",
+        "test_client_visual_package",
+        "test_client_stage_acceptance",
+        "test_client_loading_package",
+        "test_client_loading_native",
+        "test_client_loading_contract",
+        "test_acceptance",
+        "test_client_streaming_package",
+        "test_client_console_markers",
+        "test_client_visual_candidates",
+        "test_client_asset_closure_package",
+        "test_client_visual_sweep",
+        "test_combat_reward_save",
+        "test_client_visual_tricks",
+        "test_client_visual_geometry",
+        "test_client_startup_followup_limits",
+        "test_client_startup_followup_native",
+        "test_client_startup_followup_contract",
+        "test_client_appearance_assets",
+        "test_client_appearance_costumes",
+        "test_levelup_ui_repair_dbserver",
+        "test_client_ui_repair_assets",
+        "test_levelup_ui_repair_contract",
+        "test_client_preload_launch",
+        "test_training_save",
+        "test_reopen_dbserver_thread_name",
+        "test_client_ui_sweep_assets",
+        "test_atlas_beacon_package",
+        "test_beacon_runtime_profiles",
+        "test_generate_atlas_beacons",
+        "test_prepare_atlas_beacon_generator_source",
+        "test_character_map_data",
+        "test_thor_performance_package",
+        "test_thor_performance_report",
+        "test_client_scene_performance_native",
+        "test_client_frame_timing_native",
+        "test_client_frame_timing_source",
+        "test_client_scene_performance_contract",
+        "test_client_scene_performance_package",
+        "test_client_scene_performance_report",
+        "test_client_gameplay_performance_native",
+        "test_client_gameplay_performance_source",
+        "test_client_gameplay_performance_contract",
+        "test_client_gameplay_performance_package",
+        "test_input",
+        "test_client_sidebar_commands",
+        "test_client_sidebar_runtime",
+        "test_client_sidebar_package",
+        "test_client_renderer_attribution_native",
+        "test_client_renderer_attribution_source",
+        "test_client_renderer_attribution_contract",
+        "test_client_renderer_attribution_package",
+        "test_client_surface_capture",
+        "test_client_capture_metrics",
+        "test_stock_power_delta",
+        "test_client_gpu_profile_package",
+        "test_client_gpu_profile",
+        "test_coh_gpu_probe_native",
+        "test_coh_vulkan_gpu_probe",
+        "test_client_gpu_runtime_package",
+        "test_client_gpu_repair_package",
+        "test_client_renderer_performance_report",
+        "test_client_gpu_repair_evidence",
+        "test_client_render_pipeline_native",
+        "test_client_render_pipeline_source",
+        "test_client_render_pipeline_contract",
+        "test_client_render_pipeline_package",
+        "test_client_render_pipeline_guest",
+        "test_client_render_pipeline_report",
+        "test_client_session_repair_package",
+        "test_client_session_repair_java",
+        "test_setup_copy_repair_package",
+        "test_setup_copy_memory",
+        "test_setup_io_memory"
+      ]
+    },
+    "checks": {
+      "exact_Game_only_payload_024_Android_shell_and_successful_GPU_bytes_verified": true,
+      "native_queue_wake_coalescing_sparse_attribution_and_owned_controls_verified": true,
+      "retained_gameplay_postgresql_gpu_cleanup_and_recovery_guards_verified": true
+    },
+    "focused_suites": {
+      "test_analyze_client_render_queue": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 13
+      },
+      "test_client_render_queue_contract": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 6
+      },
+      "test_client_render_queue_guest": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 10
+      },
+      "test_client_render_queue_native": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 4
+      },
+      "test_client_render_queue_package": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 22
+      },
+      "test_client_render_queue_source": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 6
+      },
+      "test_client_render_queue_worker": {
+        "skipped": 0,
+        "status": "passed",
+        "tests_run": 3
+      }
+    },
+    "new_suites": 7,
+    "performance_claim_scope": "Hosted checks qualify render-worker redundant wake coalescing, sparse scene/full-ring timing, the actual current Game Win32/OptDebug producer and immutable .22 predecessor, exact retained twenty DLLs, all nineteen .24 Java sources and actual .24 DEX/resources, the successful GPU driver/WGL/Vulkan probes, servers/save/recovery and all seven PostgreSQL fixtures, imported assets/cache/schema and Software fallback. The .24 user reports setup/login completion; no physical sustained FPS gain is established by host checks.",
+    "postgresql_emission_fixtures": [
+      "cancelled_child_deletion_commits",
+      "delete_insert_replacement_commits",
+      "duplicate_insert_23505_rollback"
+    ],
+    "postgresql_levelup_fixtures": [
+      "empty_child_duplicate_23505_rollback",
+      "empty_child_training_commit",
+      "missing_child_insert_commit",
+      "shuffled_child_read_training_commit"
+    ],
+    "real_postgresql_fixtures": 7,
+    "receipt": {
+      "bytes": 2229296,
+      "name": "client-render-queue-qualification.json",
+      "sha256": "6995ff623336d8f07a904aa54655f4b3a8bb14fe4398e197a8f9790bc4158fab"
+    },
+    "retained_suites": 110,
+    "skipped": 0,
+    "source_file_pins": 9739,
+    "status": "passed",
+    "suites": 117,
+    "tests_run": 1673
+  },
+  "release": {
+    "assets": [
+      {
+        "bytes": 1917,
+        "id": 626261743,
+        "name": "COH-Atlas-Gameplay-0.13.25-testing.txt",
+        "sha256": "fac9c808142c705e2e5f8f3f483238bc620d685f8deae1663b23df252bd8e1fe",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25-testing.txt"
+      },
+      {
+        "bytes": 1560345352,
+        "id": 626259614,
+        "name": "COH-Atlas-Gameplay-0.13.25.apk",
+        "sha256": "5decd49a11652842d25bf47b07cccf2638d21760f3cd6b035bf934a8e2cfdd76",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk"
+      },
+      {
+        "bytes": 97,
+        "id": 626261720,
+        "name": "COH-Atlas-Gameplay-0.13.25.apk.sha256",
+        "sha256": "ce9c8c4b25f45ea5de88b2bb921014e1e7105874037ddef5adc11f57f166e518",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk.sha256"
+      }
+    ],
+    "id": 408372602,
+    "prerelease": true,
+    "published_at": "2026-10-09T21:46:54Z",
+    "tag": "coh-atlas-gameplay-v0.13.25",
+    "tag_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.25"
+  },
+  "repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+  "repository_tree": "20a5f8450b98550f820363b1e50cfa0c70e704d3",
+  "retained": {
+    "Android_byte_verification_authority": "Hosted exact donor, prepublication and separate actual-public-APK audits; root verifies authenticated receipts and source pins",
+    "GPU_archive": {
+      "bytes": 2865215,
+      "sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38"
+    },
+    "Java_sources": 19,
+    "Mesa_driver_compiled_in_current_run": false,
+    "Software_fallback_preserved": true,
+    "Vulkan_probe_compiled_in_current_run": false,
+    "WGL_probe_compiled_in_current_run": false,
+    "actual_public_024_DEX": {
+      "bytes": 385504,
+      "sha256": "b265f3942e6695498ddf671dd45176f04ccf865628522522bce5cd411b226aaf"
+    },
+    "android_resources": {
+      "res/drawable/ic_coh_client.xml": {
+        "bytes": 1000,
+        "sha256": "0518048aa0a4f2434494e0eb0780322dd395ba92b280789e34cce400256d24eb"
+      },
+      "resources.arsc": {
+        "bytes": 852,
+        "sha256": "a1fa0500d49ca08dc6af7b507d05b7308fb8ea3c8d706c488267643f9df112e6"
+      }
+    },
+    "baseline_payloads": 77,
+    "byte_identical_payload_pins": {
+      "assets/atlas/atlas-assets-index.tsv": {
+        "bytes": 2379733,
+        "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+      },
+      "assets/atlas/atlas-import.properties": {
+        "bytes": 923,
+        "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+      },
+      "assets/atlas/atlas-text-index.tsv": {
+        "bytes": 21187391,
+        "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+      },
+      "assets/atlas/atlas-text.zip": {
+        "bytes": 312807038,
+        "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+      },
+      "assets/runtime/001-coh-compat.sql": {
+        "bytes": 7788,
+        "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+      },
+      "assets/runtime/THIRD_PARTY_NOTICES.md": {
+        "bytes": 2184,
+        "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+      },
+      "assets/runtime/accepted-runtime-manifest.json": {
+        "bytes": 4128,
+        "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+      },
+      "assets/runtime/atlas-beacon-manifest.json": {
+        "bytes": 934650,
+        "sha256": "ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4"
+      },
+      "assets/runtime/atlas-beacons.zip": {
+        "bytes": 16150904,
+        "sha256": "0c7f602d31a438c6e67409bbb89da5d45ee3aacf13c96a50de9401d7973b2949"
+      },
+      "assets/runtime/atlas-world-supplement-manifest.json": {
+        "bytes": 4258210,
+        "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+      },
+      "assets/runtime/atlas-world-supplement.zip": {
+        "bytes": 207803201,
+        "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+      },
+      "assets/runtime/atlas_beacon_package.py": {
+        "bytes": 34541,
+        "sha256": "7445774cb8df831dc9aef21e57dda03677cdf11f6e7194ed726464364e160130"
+      },
+      "assets/runtime/atlas_world_assets.py": {
+        "bytes": 24268,
+        "sha256": "4189cff59dce2f9da6d045d754ecc1fda56a09241124f842566b1da69b5865b6"
+      },
+      "assets/runtime/character-avatar-defaults-manifest.json": {
+        "bytes": 28554,
+        "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+      },
+      "assets/runtime/character-avatar-defaults.zip": {
+        "bytes": 1842488,
+        "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+      },
+      "assets/runtime/character_avatar_assets.py": {
+        "bytes": 15165,
+        "sha256": "a19e1bf49f6d89b80e5be212cd8bbee5a9c4c7601305af50c9653e5cab927f73"
+      },
+      "assets/runtime/character_creation_diagnostic.py": {
+        "bytes": 24584,
+        "sha256": "409b5f50b9e2f4c69de9c073e9f4a80f917b6e5229a03c48f330fa6233cd53a3"
+      },
+      "assets/runtime/character_reopen_diagnostic.py": {
+        "bytes": 12662,
+        "sha256": "45b9b101f9144dc2ab2f31e4371d9d0ae0aa7796afc943146525ad05518492f4"
+      },
+      "assets/runtime/character_server_data_cache.py": {
+        "bytes": 32868,
+        "sha256": "d742fe7348424db7406281c1346b845ec092d2a30725e4005b63de750e041bb7"
+      },
+      "assets/runtime/character_session_budget.py": {
+        "bytes": 8214,
+        "sha256": "4d122b53c9a8a3ca454af4aef4a6768a5b97bc52278770a0f4d219bdcda98fc2"
+      },
+      "assets/runtime/client-caches.zip": {
+        "bytes": 27071659,
+        "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+      },
+      "assets/runtime/client-launcher.exe": {
+        "bytes": 246319,
+        "sha256": "fd8a3724bd009d122fe98e03229e62516b5ee31245db9c093dfaceef73bd11db"
+      },
+      "assets/runtime/client-prerequisites.zip": {
+        "bytes": 18757,
+        "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+      },
+      "assets/runtime/client-probe.exe": {
+        "bytes": 470392,
+        "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+      },
+      "assets/runtime/client-visual-assets.zip": {
+        "bytes": 859075775,
+        "sha256": "5f91b7d4ebe91e6a547923d702e2fcd56d7fc1d36fb7bffbb66463562d977d60"
+      },
+      "assets/runtime/client-visual-manifest.json": {
+        "bytes": 48591999,
+        "sha256": "8587015400e1af639e2118649f0d9c77a089d564bfe2c97cbf9d80baaee5f9a2"
+      },
+      "assets/runtime/client_animation_package.py": {
+        "bytes": 12408,
+        "sha256": "c6a291400e2614cab6007d6cb7c1dfd898a1a1b31b9a6f6985856ef6ec8150e4"
+      },
+      "assets/runtime/client_attempt_retry.py": {
+        "bytes": 12707,
+        "sha256": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380"
+      },
+      "assets/runtime/client_interactive_diagnostic.py": {
+        "bytes": 31748,
+        "sha256": "8ac5555163aa3fd67ff9080bbf956a5f73f161a15b60c2fd310f979160cdb594"
+      },
+      "assets/runtime/client_login_diagnostic.py": {
+        "bytes": 15316,
+        "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+      },
+      "assets/runtime/client_visual_assets.py": {
+        "bytes": 26514,
+        "sha256": "b560fa3004c05fcbeb30668c1f98aa1002d472513022ce5d6c202109fe399f89"
+      },
+      "assets/runtime/dbserver-package.tar.gz": {
+        "bytes": 2133821,
+        "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+      },
+      "assets/runtime/dbserver-schema.tar.gz": {
+        "bytes": 1139794,
+        "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+      },
+      "assets/runtime/dbserver_diagnostic.py": {
+        "bytes": 50159,
+        "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+      },
+      "assets/runtime/diagnostic.py": {
+        "bytes": 69529,
+        "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+      },
+      "assets/runtime/game-package.tar.gz": {
+        "bytes": 10976915,
+        "sha256": "d781779ea33b99591ed9972ee09aa614cf4eb6c5afc355bb88197f20881fe67d"
+      },
+      "assets/runtime/game_device_diagnostic.py": {
+        "bytes": 51035,
+        "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+      },
+      "assets/runtime/game_diagnostic.py": {
+        "bytes": 79950,
+        "sha256": "0d7d13c0c6ad134cb099e4a838b951f6873e331f5c6f7d21464882084f842541"
+      },
+      "assets/runtime/game_evidence.py": {
+        "bytes": 25884,
+        "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+      },
+      "assets/runtime/game_hang_evidence.py": {
+        "bytes": 22400,
+        "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+      },
+      "assets/runtime/game_map_progress.py": {
+        "bytes": 14789,
+        "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+      },
+      "assets/runtime/hardware-renderer.zip": {
+        "bytes": 2865215,
+        "sha256": "55f50f8434375cb6587bbfc81b7e9829bdbc8f7ba9a8403eb705315e17ce6f38"
+      },
+      "assets/runtime/local_character_server.py": {
+        "bytes": 133022,
+        "sha256": "68ff5b9580d7eec441c4053505269c9617ab2768e0171c6bd2efe8e8dd06da8f"
+      },
+      "assets/runtime/local_login_server.py": {
+        "bytes": 21351,
+        "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+      },
+      "assets/runtime/native-responsiveness.json": {
+        "bytes": 40754,
+        "sha256": "e3005754339365b88a41af12dadc2afd540033ba9ee927a18f9e353387e41fc3"
+      },
+      "assets/runtime/native_character_events.py": {
+        "bytes": 6484,
+        "sha256": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6"
+      },
+      "assets/runtime/native_training_save.py": {
+        "bytes": 17455,
+        "sha256": "a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc"
+      },
+      "assets/runtime/odbc_probe.exe": {
+        "bytes": 270071,
+        "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+      },
+      "assets/runtime/postgresql-build.json": {
+        "bytes": 163117,
+        "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+      },
+      "assets/runtime/postgresql-runtime.tar.gz": {
+        "bytes": 9280905,
+        "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+      },
+      "assets/runtime/presentation_diagnostic.py": {
+        "bytes": 17396,
+        "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+      },
+      "assets/runtime/probe.dll": {
+        "bytes": 82761,
+        "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+      },
+      "assets/runtime/proot-build.json": {
+        "bytes": 3236,
+        "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+      },
+      "assets/runtime/psqlodbc_x86.msi": {
+        "bytes": 4079616,
+        "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+      },
+      "assets/runtime/runtime-lock.json": {
+        "bytes": 1688,
+        "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+      },
+      "assets/runtime/runtime-probe.exe": {
+        "bytes": 245968,
+        "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+      },
+      "assets/runtime/server-animation-manifest.json": {
+        "bytes": 1005794,
+        "sha256": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f"
+      },
+      "assets/runtime/server-animations.pigg": {
+        "bytes": 97084456,
+        "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+      },
+      "assets/runtime/server-cache-manifest.json": {
+        "bytes": 39041,
+        "sha256": "4e1a4c9c148509ef34245768f64ca2be4bb83659db845c6ef94ed594666b3fff"
+      },
+      "assets/runtime/server-caches.zip": {
+        "bytes": 29825263,
+        "sha256": "7439d4557ae9fd74bb4bb4a324b6a676829387124be0817eb1da3c8adff10b17"
+      },
+      "assets/runtime/server_animation_package.py": {
+        "bytes": 10482,
+        "sha256": "9fcbc32e2aa7f43151f4ec1c4ddc51e6c12202d81076fb5521936721f5174f81"
+      },
+      "assets/runtime/server_cache_package.py": {
+        "bytes": 20625,
+        "sha256": "2d38757408f978fc5b79245e6bc590b0f368ee695f3854acea6fb38cf3173d33"
+      },
+      "assets/runtime/server_message_cache_format.py": {
+        "bytes": 4921,
+        "sha256": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec"
+      },
+      "assets/runtime/startup-dbserver-manifest.json": {
+        "bytes": 32549,
+        "sha256": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087"
+      },
+      "assets/runtime/startup-dbserver.exe": {
+        "bytes": 1664512,
+        "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+      },
+      "assets/runtime/stationary_contact_evidence.py": {
+        "bytes": 11472,
+        "sha256": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d"
+      },
+      "assets/runtime/task-gate.json": {
+        "bytes": 300,
+        "sha256": "df780496663132d0537ed748634fcb9bc262094536ef3b53a831e860bf2b7bdc"
+      },
+      "assets/runtime/task_gate_evidence.py": {
+        "bytes": 30573,
+        "sha256": "8907f38418645156596947ad4f01c091c2e0473b4bb3eb9b7b358df207fd5de1"
+      },
+      "lib/arm64-v8a/libproot-loader.so": {
+        "bytes": 17624,
+        "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+      },
+      "lib/arm64-v8a/libproot.so": {
+        "bytes": 263648,
+        "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+      }
+    },
+    "byte_identical_payloads": 70,
+    "changed_Java_sources": [],
+    "client_DLLs": 20,
+    "java_source_pins": {
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+        "bytes": 1294,
+        "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+        "bytes": 6109,
+        "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+        "bytes": 879,
+        "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+        "bytes": 1017,
+        "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+        "bytes": 1208,
+        "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+        "bytes": 48243,
+        "sha256": "23f4eea3ea7af5da43adc093825b1e05fa093dbe003369057eab23653cb491e2"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java": {
+        "bytes": 11876,
+        "sha256": "883368efd3539318628730fff0e1c9a90d1497458da1cd96dd32c73350d46af7"
+      },
+      "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+        "bytes": 23110,
+        "sha256": "cfb529976e2b89b385ece37e0ecab3759153d011910e9fddf375be7338b01b87"
+      },
+      "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+        "bytes": 37139,
+        "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+        "bytes": 23866,
+        "sha256": "22868daa2784e5a6605755a34fba409458577431fcc1ad3ed733c5202ff7fb14"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+        "bytes": 48757,
+        "sha256": "55150fc792615354a5ff439191cf017aa59d38f708fa3f6e86eff5a5723c4282"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java": {
+        "bytes": 6032,
+        "sha256": "a368c9c0304e3c40cdf07dde0a55b154653185f7e03c5b754c70751f9eda4089"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+        "bytes": 145593,
+        "sha256": "7b6ef2542aeecdcf8ce3e651f3a60d0e29722d4ea6505d20ea415abc7538f41c"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+        "bytes": 53166,
+        "sha256": "74b6bd3b6c6db32e1fc4f3d9da47f3fa034f24cd8e36696d9de5eee76a4b4df7"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java": {
+        "bytes": 3992,
+        "sha256": "cec651b85c510a2f01742d2e2311b2201f13e6adec0eea9c4c22f6c41282b43a"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+        "bytes": 26928,
+        "sha256": "40e290b36f6e9b71b4bf03fffbc1fc2ba9b021e622bfae997a3c2a7c0694674e"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+        "bytes": 16608,
+        "sha256": "175525c10e018fc073420137e6b6fe3a12eb46fa3537cdfbf7abc4e1bb831619"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java": {
+        "bytes": 48552,
+        "sha256": "25db7e0e6ff9685f52cf20af2d56909e7c94628bfe92ad6dd812b19da85e8909"
+      },
+      "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java": {
+        "bytes": 17358,
+        "sha256": "b335c98ac87cdc07e6b74a48cebd6b4231f7ed0ee2c0e6e00d562fb98204fab2"
+      }
+    },
+    "native_dbserver_recompiled": false,
+    "native_mapserver_recompiled": false,
+    "successful_GPU_driver_and_both_probes_retained": true,
+    "visual_fidelity_preserved_by_payload_and_recipe": true
+  },
+  "retained_parent_native_build_provenance": {
+    "actions_artifact_id": 11614276232,
+    "artifact_zip": {
+      "bytes": 4050020,
+      "sha256": "b8d169ccd859115c1c9178ec0a5cfd199fb4b4a8c7cb94585ca7ee68de91d51b"
+    },
+    "compiled_in_current_publication_run": false,
+    "format": 1,
+    "game": {
+      "bytes": 9494016,
+      "sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72"
+    },
+    "game_changed_from_public_0_13_21": true,
+    "native_manifest": {
+      "bytes": 77379,
+      "sha256": "daa2b2f9b2000449da27a2386a891c13248252770e1f237e99927b1392cc756c"
+    },
+    "raw_producer_preserved": true,
+    "repository_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+    "run_id": 37924638566,
+    "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37924638566",
+    "source_files": {
+      "android/guest/client_gpu_profile.py": {
+        "bytes": 37236,
+        "sha256": "4bbd06c6d134a5b9b10dba20cbfc5f4f17025b816fdbab18758c284081474e06"
+      },
+      "android/guest/client_startup_diagnostic.py": {
+        "bytes": 86085,
+        "sha256": "8fa3ed50c020875afda40837e98b2cdb9ea25fd0229f46dc9457c44037dd1517"
+      },
+      "android/guest/native_responsiveness_contract.py": {
+        "bytes": 65728,
+        "sha256": "1b8067b2cca6cc7b3ce4f0a33e8f546133b65ace9d7b594b66b3fd5296d266c2"
+      },
+      "android/guest/texture_header_index.py": {
+        "bytes": 17786,
+        "sha256": "ac3106db257c900adc13439b09679cb4081d3b10648999a8096867fae86139d8"
+      },
+      "database/client-render-pipeline/overlay/Game/src/cohClientRenderPipeline.h": {
+        "bytes": 13466,
+        "sha256": "5926207d7fd59ab99f1a727cc6ec68e3ab34c01a23d315bf16e0a60e9660cc81"
+      },
+      "patches/client-render-pipeline/0001-render-worker-wake-and-focused-timing.patch": {
+        "bytes": 6217,
+        "sha256": "4315bf293d5a195d09f605dbc703cf69584719ccc22df135a470ffecea1163e4"
+      },
+      "tools/android/interactive/package_client_render_pipeline_native.py": {
+        "bytes": 16746,
+        "sha256": "7d61320a13a2c7904c73019568225ff3302635a846adc65fa1152f1622bf0d0e"
+      },
+      "tools/android/interactive/test_client_render_pipeline_contract.py": {
+        "bytes": 9904,
+        "sha256": "6f1105ceb401d0ccda4af7ae2b9f0d9b942d02dcb6dc503390a285baba65367c"
+      },
+      "tools/android/interactive/test_client_render_pipeline_native.py": {
+        "bytes": 22971,
+        "sha256": "95373284566035ab9dc95dfc78f70118fef5bc81b90163b9c2999abc18f5c504"
+      },
+      "tools/android/interactive/test_client_render_pipeline_source.py": {
+        "bytes": 12378,
+        "sha256": "db1ea10ab75c0c60e48c310e21685f92bc517c963bedf469cd3dfe4d561edac5"
+      },
+      "upstream/ouroboros/Game/src/graphics/gfx.c": {
+        "bytes": 58931,
+        "sha256": "9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e"
+      },
+      "upstream/ouroboros/Game/src/render/thread/rt_queue.c": {
+        "bytes": 15858,
+        "sha256": "e1121ae5462da63b896289a60b2d16b4e913180e8c009cbf398fcba7fb8946d6"
+      },
+      "upstream/ouroboros/Game/src/render/thread/rt_queue.h": {
+        "bytes": 7420,
+        "sha256": "342f3bc31a3d0974a78e7be922cf01d9e1f46598e1ba280b86cf2b5a2dc0b33d"
+      },
+      "upstream/ouroboros/libs/UtilitiesLib/src/components/WorkerThread.c": {
+        "bytes": 11897,
+        "sha256": "eebaa5df2895cf7cc3cd8c7ec6faaba1b75f9e72fa0252e058a7abe8d4cf7c2c"
+      }
+    },
+    "source_recipe_independently_recomputed": true
+  },
+  "retained_runtime_repository_commit": "ac255fee7546b28a4ae06074f385d3ad73b235ad",
+  "root_fresh_production_qualification_reader": {
+    "receipt": {
+      "bytes": 1654,
+      "name": "fresh-production-qualification-reader.json",
+      "sha256": "9b10f3e6ba0e3ddf4d67f4fbf1a0a7583f585a1681d6114041bd4d424c58b0c2"
+    },
+    "result": {
+      "SDK_signature_checks_rerun_locally": false,
+      "actual_public_025_APK_bytes_opened_locally": false,
+      "donor_native_wrapper_witness_scope": "Cached .23 client-runtime member matched to authenticated .24 payload pin; no .24 DEX witness",
+      "format": 1,
+      "frozen_source_worktree": true,
+      "mutable_final_documentation_used": false,
+      "native_actual_package_PE_CMake_and_typed_Win32_proof_validated": true,
+      "native_build_repeated": false,
+      "native_compiled_in_current_publication_run": false,
+      "native_manifest_pin": {
+        "bytes": 89634,
+        "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+      },
+      "native_proof_executables_rerun": false,
+      "native_reuse_receipt_pin": {
+        "bytes": 680,
+        "sha256": "6dd52557f3e5a74b53a48e115cfcf40d608dc896954caeb492a8921c23d1c6e2"
+      },
+      "native_run_id": 37988347729,
+      "native_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+      "original_native_API_and_host_only_source_comparison_revalidated": true,
+      "qualification_pin": {
+        "bytes": 2229296,
+        "sha256": "6995ff623336d8f07a904aa54655f4b3a8bb14fe4398e197a8f9790bc4158fab"
+      },
+      "repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+      "run_id": 37992855950,
+      "runtime_and_client_manifests_reconstructed_with_frozen_production_encoder": true,
+      "scope": "Fresh production native-package/qualification reader over frozen detached local source checkout and hash-bound unchanged .24 native wrapper witness",
+      "source_file_pins_verified": 9739,
+      "status": "passed",
+      "tests_reexecuted": false,
+      "tests_run": 1673,
+      "tree": "20a5f8450b98550f820363b1e50cfa0c70e704d3",
+      "validation_exemptions": []
+    }
+  },
+  "root_independent_receipt_and_source_audit": {
+    "receipt": {
+      "bytes": 25648,
+      "name": "root-receipt-source-audit.json",
+      "sha256": "fbb3ee5ba369123f9a6a8cfc8c0a395d9cbcb3bbddfb66490cb96f5cd70c4f75"
+    },
+    "result": {
+      "audit_boundaries": {
+        "SDK_signature_checks_rerun_locally": false,
+        "actual_public_024_APK_bytes_opened_locally": false,
+        "actual_public_025_APK_bytes_opened_locally": false,
+        "actual_public_025_APK_downloaded_locally": false,
+        "cached_023_APK_whole_file_rehashed_in_this_audit": false,
+        "cached_023_client_runtime_member_matched_to_authenticated_024_payload_pin": true,
+        "hosted_actual_public_025_APK_checksum_notes_SDK_signer_payload_audit_receipt_verified": true,
+        "native_build_repeated": false,
+        "native_proof_executables_rerun": false,
+        "physical_fps_gain_validated": false
+      },
+      "authenticated_actions_artifacts": {
+        "coh-client-render-queue-native": {
+          "bytes": 4056854,
+          "external_API_digest_verified": true,
+          "id": 11645842971,
+          "members": {
+            "CMakeCache.txt": {
+              "bytes": 39605,
+              "sha256": "a65a0315986efbc02501b283a79c777cdd3e50decdb67b2db745790fb2a24a83"
+            },
+            "CityOfHeroes.exe": {
+              "bytes": 9499648,
+              "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+            },
+            "client-render-queue-native-checks.json": {
+              "bytes": 38077,
+              "sha256": "c514c93df8fc33008fb0ed528d40569b89ccbf3176a3d63544e9df8a54ac6c1b"
+            },
+            "client-render-queue-native-manifest.json": {
+              "bytes": 89634,
+              "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+            }
+          },
+          "name": "coh-client-render-queue-native",
+          "sha256": "50408c3198f410a12930449f70c8214c929e68d9f033f1d6d4e33de1d7db5cb8"
+        },
+        "coh-client-render-queue-native-build-evidence": {
+          "bytes": 39842,
+          "external_API_digest_verified": true,
+          "id": 11645992756,
+          "members": {
+            "client-render-queue-native-reuse.json": {
+              "bytes": 680,
+              "sha256": "6dd52557f3e5a74b53a48e115cfcf40d608dc896954caeb492a8921c23d1c6e2"
+            },
+            "client-render-queue-native/CMakeCache.txt": {
+              "bytes": 39605,
+              "sha256": "a65a0315986efbc02501b283a79c777cdd3e50decdb67b2db745790fb2a24a83"
+            },
+            "client-render-queue-native/client-render-queue-native-checks.json": {
+              "bytes": 38077,
+              "sha256": "c514c93df8fc33008fb0ed528d40569b89ccbf3176a3d63544e9df8a54ac6c1b"
+            },
+            "client-render-queue-native/client-render-queue-native-manifest.json": {
+              "bytes": 89634,
+              "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+            }
+          },
+          "name": "coh-client-render-queue-native-build-evidence",
+          "sha256": "7a0257af8d177578529fb629d9694bfde5665d2d81c11d2554e7e6a6fb0ca559"
+        },
+        "coh-client-render-queue-packaging-evidence": {
+          "bytes": 1340799,
+          "external_API_digest_verified": true,
+          "id": 11646168432,
+          "members": {
+            "COH-Atlas-Gameplay-0.13.25-testing.txt": {
+              "bytes": 1917,
+              "sha256": "fac9c808142c705e2e5f8f3f483238bc620d685f8deae1663b23df252bd8e1fe"
+            },
+            "COH-Atlas-Gameplay-0.13.25.apk.sha256": {
+              "bytes": 97,
+              "sha256": "ce9c8c4b25f45ea5de88b2bb921014e1e7105874037ddef5adc11f57f166e518"
+            },
+            "client-render-queue-apk-build-report.json": {
+              "bytes": 5775703,
+              "sha256": "8ab8b985b9fbb586032354d300e338163f2fdaadfa8b1d5fe474345570f14c1e"
+            }
+          },
+          "name": "coh-client-render-queue-packaging-evidence",
+          "sha256": "42f45821bc5f9257be5f369ee5245357303509dc7fdadbb7b4ad7df2da74a940"
+        },
+        "coh-client-render-queue-public-byte-audit": {
+          "bytes": 792,
+          "external_API_digest_verified": true,
+          "id": 11646139151,
+          "members": {
+            "client-render-queue-public-byte-audit.json": {
+              "bytes": 1285,
+              "sha256": "44910ed3666588789a42d510ebdfca7cce9a2cf70fec0054621b254183630773"
+            }
+          },
+          "name": "coh-client-render-queue-public-byte-audit",
+          "sha256": "cc58ed4b559f65d2a36ea713b1f1b37851d3c3d7ee6dafae9bbadcef75889929"
+        },
+        "coh-client-render-queue-qualification": {
+          "bytes": 563440,
+          "external_API_digest_verified": true,
+          "id": 11646079460,
+          "members": {
+            "client-render-queue-qualification.json": {
+              "bytes": 2229296,
+              "sha256": "6995ff623336d8f07a904aa54655f4b3a8bb14fe4398e197a8f9790bc4158fab"
+            }
+          },
+          "name": "coh-client-render-queue-qualification",
+          "sha256": "ae48b6e8a9f00803f44fbdcbcfe80db9d6e3c9fc0af9156d675db1315404724f"
+        }
+      },
+      "donor_build_receipt_pin": {
+        "bytes": 5439187,
+        "sha256": "8cee18527c30767fc6d49f0e423028a16ed342a4cd5a9d9d9ac4137c457991b5"
+      },
+      "elapsed_seconds": 59.967,
+      "failed_recovery_audit_receipt_pin": {
+        "bytes": 3881,
+        "sha256": "781803f3273131e97a71df39aeef978ea78ecbef6f6f91328e0743648151c54f"
+      },
+      "format": 1,
+      "fresh_production_reader_pin": {
+        "bytes": 1654,
+        "sha256": "9b10f3e6ba0e3ddf4d67f4fbf1a0a7583f585a1681d6114041bd4d424c58b0c2"
+      },
+      "host_only_recovery": {
+        "current_client_native_reuse_and_skipped_build_steps": {
+          "Authenticate the original completed current Game artifact ZIP": {
+            "completed_at": "2026-10-09T21:25:48Z",
+            "conclusion": "success",
+            "name": "Authenticate the original completed current Game artifact ZIP",
+            "number": 5,
+            "started_at": "2026-10-09T21:22:27Z",
+            "status": "completed"
+          },
+          "Bind Game to exact native source, ancestry and Win32 receipts": {
+            "completed_at": "2026-10-09T21:25:48Z",
+            "conclusion": "skipped",
+            "name": "Bind Game to exact native source, ancestry and Win32 receipts",
+            "number": 9,
+            "started_at": "2026-10-09T21:25:48Z",
+            "status": "completed"
+          },
+          "Build only Game; retain successful GPU driver and probes": {
+            "completed_at": "2026-10-09T21:25:48Z",
+            "conclusion": "skipped",
+            "name": "Build only Game; retain successful GPU driver and probes",
+            "number": 8,
+            "started_at": "2026-10-09T21:25:48Z",
+            "status": "completed"
+          },
+          "Qualify retained Win32 logic and current render-worker scheduling": {
+            "completed_at": "2026-10-09T21:25:48Z",
+            "conclusion": "skipped",
+            "name": "Qualify retained Win32 logic and current render-worker scheduling",
+            "number": 7,
+            "started_at": "2026-10-09T21:25:48Z",
+            "status": "completed"
+          },
+          "Stage the immutable native chain and reviewed rendering continuation": {
+            "completed_at": "2026-10-09T21:25:48Z",
+            "conclusion": "skipped",
+            "name": "Stage the immutable native chain and reviewed rendering continuation",
+            "number": 6,
+            "started_at": "2026-10-09T21:25:48Z",
+            "status": "completed"
+          },
+          "Validate optional completed native reuse inputs": {
+            "completed_at": "2026-10-09T21:22:27Z",
+            "conclusion": "success",
+            "name": "Validate optional completed native reuse inputs",
+            "number": 4,
+            "started_at": "2026-10-09T21:22:22Z",
+            "status": "completed"
+          },
+          "Verify exact current or explicitly reused native producer": {
+            "completed_at": "2026-10-09T21:28:50Z",
+            "conclusion": "success",
+            "name": "Verify exact current or explicitly reused native producer",
+            "number": 10,
+            "started_at": "2026-10-09T21:25:48Z",
+            "status": "completed"
+          }
+        },
+        "native_build_repeated": false,
+        "native_reuse_receipt": {
+          "format": 1,
+          "native_build_repeated": false,
+          "native_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+          "original_native_artifact_id": 11645013072,
+          "original_native_artifact_zip": {
+            "bytes": 4056854,
+            "sha256": "9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7"
+          },
+          "original_native_run_id": 37988347729,
+          "publication_source_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+          "reviewed_host_only_changes": [
+            ".github/workflows/android-client-render-queue.yml",
+            "tools/android/interactive/build_client_render_queue_apk.py",
+            "tools/android/interactive/test_client_render_queue_package.py"
+          ],
+          "status": "passed"
+        },
+        "native_source_and_runtime_integration_unchanged_since_original_build": true,
+        "new_native_evidence_members": 4,
+        "new_native_evidence_reuse_only": true,
+        "reviewed_host_only_changes": [
+          ".github/workflows/android-client-render-queue.yml",
+          "tools/android/interactive/build_client_render_queue_apk.py",
+          "tools/android/interactive/test_client_render_queue_package.py"
+        ]
+      },
+      "hosted_public_audit_receipt_pin": {
+        "bytes": 1285,
+        "sha256": "44910ed3666588789a42d510ebdfca7cce9a2cf70fec0054621b254183630773"
+      },
+      "infrastructure_failures_receipt_pin": {
+        "bytes": 5144,
+        "sha256": "2aa8c0cf0505661ac5c5889ebd09f6b44bc380ee048c20802becd0e4c7162b02"
+      },
+      "java": {
+        "DEX_and_resources_byte_authority": "Authenticated hosted .24/.25 actual APK SDK/payload audits",
+        "changed": [],
+        "local_024_dex_bytes_opened": false,
+        "retained_024_dex_receipt_pin": {
+          "bytes": 385504,
+          "sha256": "b265f3942e6695498ddf671dd45176f04ccf865628522522bce5cd411b226aaf"
+        },
+        "source_pins": {
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+            "bytes": 1294,
+            "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+            "bytes": 6109,
+            "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+            "bytes": 879,
+            "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+            "bytes": 1017,
+            "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+            "bytes": 1208,
+            "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+            "bytes": 48243,
+            "sha256": "23f4eea3ea7af5da43adc093825b1e05fa093dbe003369057eab23653cb491e2"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java": {
+            "bytes": 11876,
+            "sha256": "883368efd3539318628730fff0e1c9a90d1497458da1cd96dd32c73350d46af7"
+          },
+          "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+            "bytes": 23110,
+            "sha256": "cfb529976e2b89b385ece37e0ecab3759153d011910e9fddf375be7338b01b87"
+          },
+          "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+            "bytes": 37139,
+            "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+            "bytes": 23866,
+            "sha256": "22868daa2784e5a6605755a34fba409458577431fcc1ad3ed733c5202ff7fb14"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+            "bytes": 48757,
+            "sha256": "55150fc792615354a5ff439191cf017aa59d38f708fa3f6e86eff5a5723c4282"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java": {
+            "bytes": 6032,
+            "sha256": "a368c9c0304e3c40cdf07dde0a55b154653185f7e03c5b754c70751f9eda4089"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+            "bytes": 145593,
+            "sha256": "7b6ef2542aeecdcf8ce3e651f3a60d0e29722d4ea6505d20ea415abc7538f41c"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+            "bytes": 53166,
+            "sha256": "74b6bd3b6c6db32e1fc4f3d9da47f3fa034f24cd8e36696d9de5eee76a4b4df7"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSessionBudget.java": {
+            "bytes": 3992,
+            "sha256": "cec651b85c510a2f01742d2e2311b2201f13e6adec0eea9c4c22f6c41282b43a"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+            "bytes": 26928,
+            "sha256": "40e290b36f6e9b71b4bf03fffbc1fc2ba9b021e622bfae997a3c2a7c0694674e"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+            "bytes": 16608,
+            "sha256": "175525c10e018fc073420137e6b6fe3a12eb46fa3537cdfbf7abc4e1bb831619"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageAudit.java": {
+            "bytes": 48552,
+            "sha256": "25db7e0e6ff9685f52cf20af2d56909e7c94628bfe92ad6dd812b19da85e8909"
+          },
+          "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/StorageFiles.java": {
+            "bytes": 17358,
+            "sha256": "b335c98ac87cdc07e6b74a48cebd6b4231f7ed0ee2c0e6e00d562fb98204fab2"
+          }
+        },
+        "sources": 19
+      },
+      "limitations": [
+        "Current public APK, DEX/resources/signature and binary-manifest byte verification are hosted authorities; local checks authenticate their receipts/API pins.",
+        "Only the cached .23 client-runtime member supplies the unchanged .24 parent wrapper; .23 DEX is never read or used as .24 DEX.",
+        "Native Game bytes and source-bound Win32/CMake proof are validated without build or proof-executable replay.",
+        "No sustained physical FPS gain or GPU completion timing is established."
+      ],
+      "native_build_run_id": 37988347729,
+      "native_build_source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+      "native_build_tree": "ba3797fa8b015ff881e5649b6216b32479f1796d",
+      "native_compiled_in_current_publication_run": false,
+      "native_manifest_receipt_pin": {
+        "bytes": 89634,
+        "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+      },
+      "native_reuse_receipt_pin": {
+        "bytes": 680,
+        "sha256": "6dd52557f3e5a74b53a48e115cfcf40d608dc896954caeb492a8921c23d1c6e2"
+      },
+      "original_API_record_pins": {
+        "artifacts_api": {
+          "bytes": 1876,
+          "sha256": "9b0645066f097da82e016daec8889f51ee3558f8e11eae6981eccfe97f7890eb"
+        },
+        "jobs": {
+          "bytes": 14433,
+          "sha256": "e3526d34b16b8d2e01fceb4208f43ab17315061388ba00890465708c135f7957"
+        },
+        "run": {
+          "bytes": 15011,
+          "sha256": "0d4dd32798258800b05f26d70c0a42fd470c044a013b989e1e6a11810d0b9687"
+        },
+        "source_comparison": {
+          "bytes": 47966,
+          "sha256": "fb3f79f92098b8de68d5d9d887a4486bbdc0e20fb3a85de0953b07f7d8435840"
+        }
+      },
+      "original_authenticated_actions_artifacts": {
+        "coh-client-render-queue-native": {
+          "bytes": 4056854,
+          "external_API_digest_verified": true,
+          "id": 11645013072,
+          "members": {
+            "CMakeCache.txt": {
+              "bytes": 39605,
+              "sha256": "a65a0315986efbc02501b283a79c777cdd3e50decdb67b2db745790fb2a24a83"
+            },
+            "CityOfHeroes.exe": {
+              "bytes": 9499648,
+              "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+            },
+            "client-render-queue-native-checks.json": {
+              "bytes": 38077,
+              "sha256": "c514c93df8fc33008fb0ed528d40569b89ccbf3176a3d63544e9df8a54ac6c1b"
+            },
+            "client-render-queue-native-manifest.json": {
+              "bytes": 89634,
+              "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+            }
+          },
+          "name": "coh-client-render-queue-native",
+          "sha256": "9fc53a1e7f939a25ffdd0eb7feebe1dd13089f31ee4c8bc25002fcdae354c4e7"
+        },
+        "coh-client-render-queue-native-build-evidence": {
+          "bytes": 132750,
+          "external_API_digest_verified": true,
+          "id": 11645028019,
+          "members": {
+            "client-frame-checks.json": {
+              "bytes": 1227,
+              "sha256": "5379987fabd5ea07dbaf9cff0cd8f8ecff07cfbbd36ef582d5d9295c4522f135"
+            },
+            "client-gameplay-checks.json": {
+              "bytes": 1262,
+              "sha256": "c5a075faa744fb5af5c7f022bac5db041095aaa48a6940132846055e4ccd8939"
+            },
+            "client-pipeline-checks.json": {
+              "bytes": 1606,
+              "sha256": "2e650321af7b64b25be20c51e4be9df6a1d337bd6a56d7562318d93cb01299d4"
+            },
+            "client-queue-checks.json": {
+              "bytes": 3604,
+              "sha256": "4e9db09d75cbe181c180c36dc284da8da179d5482dbde2f80f516d5bf449e85c"
+            },
+            "client-render-queue-native-checks.json": {
+              "bytes": 38077,
+              "sha256": "c514c93df8fc33008fb0ed528d40569b89ccbf3176a3d63544e9df8a54ac6c1b"
+            },
+            "client-render-queue-native/client-render-queue-native-checks.json": {
+              "bytes": 38077,
+              "sha256": "c514c93df8fc33008fb0ed528d40569b89ccbf3176a3d63544e9df8a54ac6c1b"
+            },
+            "client-render-queue-native/client-render-queue-native-manifest.json": {
+              "bytes": 89634,
+              "sha256": "3d7bc219573c1ba0dba2819c4d74902ccc8379b499061491d00a46c7dd030f9a"
+            },
+            "client-render-queue-source/character-events-build-input.json": {
+              "bytes": 15377,
+              "sha256": "b663ac59742ed9cb36be60c58a91275fd195789ee24cd26149cdad5271da1d5c"
+            },
+            "client-render-queue-source/client-gameplay-performance-build-input.json": {
+              "bytes": 15683,
+              "sha256": "cc9e4b5dda3850a8432deb5d5744c4ff9953f18ae1585fe6e30bf5af1358eb09"
+            },
+            "client-render-queue-source/client-graphics-build-input.json": {
+              "bytes": 1239,
+              "sha256": "3df43f20f8c3a65b4582553d6a03b9d21a901c53dbc52d11acc333fe09b14284"
+            },
+            "client-render-queue-source/client-loading-native-build-input.json": {
+              "bytes": 5476,
+              "sha256": "d9edba951579ae01680d0f1a8711af508a4c9cc5682c8696aa0f84360a77cd5c"
+            },
+            "client-render-queue-source/client-render-pipeline-build-input.json": {
+              "bytes": 22502,
+              "sha256": "4987ac05bd3c53a2a0de651582bdc0c5c8d7f03ba8f80bdb23a6b00730c46895"
+            },
+            "client-render-queue-source/client-render-queue-build-input.json": {
+              "bytes": 26478,
+              "sha256": "fe1d0127a55b548ccc7fcd61faec6350f32ae22575fab289b3e414054227c36f"
+            },
+            "client-render-queue-source/client-renderer-attribution-build-input.json": {
+              "bytes": 19002,
+              "sha256": "8cbdd8287af4905e27f23701811e30b4d11ef88a3ac4d489e32d30003c7d1ad0"
+            },
+            "client-render-queue-source/client-scene-performance-build-input.json": {
+              "bytes": 12937,
+              "sha256": "cdfa44327f8f2ef7624a724aa8b8ae2483c181e781a0aca70860c9353bc46877"
+            },
+            "client-render-queue-source/client-startup-followup-build-input.json": {
+              "bytes": 9131,
+              "sha256": "0c975b39f8c0d5655f2d4a97ee00e3303218910d7e895ae4757712fd06d03d28"
+            },
+            "client-render-queue-source/client-texture-build-input.json": {
+              "bytes": 1618,
+              "sha256": "209d01c796b2296df4a08d7ce6c41e2fe8d8ca03bdd28b3817509357ee94d1e5"
+            },
+            "client-render-queue-source/game-loopback-build-input.json": {
+              "bytes": 6287,
+              "sha256": "6fd2bd793e3b4dc3c45da77c865fe79993d1191b9d8debcbd2fa544958ff69b0"
+            },
+            "client-render-queue-source/mapserver-progress-build-input.json": {
+              "bytes": 10207,
+              "sha256": "9e72545e93f3e0410b81bb60cc9a166707b24e5d4f875b8b565413280b5c2dce"
+            },
+            "client-render-queue-source/out/build/vs2026/CMakeCache.txt": {
+              "bytes": 39605,
+              "sha256": "a65a0315986efbc02501b283a79c777cdd3e50decdb67b2db745790fb2a24a83"
+            },
+            "client-render-queue-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml": {
+              "bytes": 268034,
+              "sha256": "6dab620bacc09a8956517f9a375d707294c2145b70b6f3f8fb706828d51f45b4"
+            },
+            "client-render-queue-source/postgresql-build-input.json": {
+              "bytes": 2069,
+              "sha256": "6f21bb9493b4d56a9c06e6122b62ebab7673ada00daa5b1d9c12c59de7046230"
+            },
+            "client-render-queue-source/responsiveness-source-input.json": {
+              "bytes": 20607,
+              "sha256": "9db04b43deb4ae2f2e46ff6ef9c7348f35a3524be6d97f59ac3faf1359f43b92"
+            },
+            "client-render-queue-source/startup-bundle-client-build-input.json": {
+              "bytes": 3037,
+              "sha256": "3a3bb3563cf60f853adc015f6bdfb133621f225aa48faecd9ba1ee9de81047fe"
+            },
+            "client-renderer-checks.json": {
+              "bytes": 1502,
+              "sha256": "63e60d879f8b9bc487f7bfa2b5d8d639cf95584817a72dbae397792fbf994f8b"
+            },
+            "client-scene-checks.json": {
+              "bytes": 751,
+              "sha256": "5e92fa85b7f9c2d29a6d4be09cc96c037fad180c7f95237ad18e28f0e5f90061"
+            },
+            "contracts/client-render-queue.txt": {
+              "bytes": 2901,
+              "sha256": "ca9389e149a52a991125ea820b9d7ae62f1ebfeecb37a3d7812e4c83a0167f4b"
+            }
+          },
+          "name": "coh-client-render-queue-native-build-evidence",
+          "sha256": "22a23eeb78a3e05b5507d501829e1f63dd7c77f4fde4f8281e9bcae33be30b27"
+        }
+      },
+      "original_native_owner": {
+        "client_job_conclusion": "success",
+        "client_job_id": 114016088131,
+        "compiled_native_artifact_members": 4,
+        "five_job_publication_success_claimed": false,
+        "fixture_execution_authority": "Original successful Win32 native client job",
+        "original_build_evidence_members": 27,
+        "qualification_job_conclusion": "failure",
+        "qualification_job_id": 114025638711,
+        "run_attempt": 1,
+        "run_conclusion": "failure",
+        "run_id": 37988347729,
+        "run_url": "https://github.com/Russianranger/coh-android/actions/runs/37988347729",
+        "source_commit": "c512e912a004b66886a7667640aa1a967e95de64",
+        "tree": "ba3797fa8b015ff881e5649b6216b32479f1796d"
+      },
+      "packaging_receipt_pin": {
+        "bytes": 5775703,
+        "sha256": "8ab8b985b9fbb586032354d300e338163f2fdaadfa8b1d5fe474345570f14c1e"
+      },
+      "parent_native_run_id": 37924638566,
+      "parent_native_source_commit": "5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396",
+      "publication_run_id": 37992855950,
+      "publication_source_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+      "publication_tree": "20a5f8450b98550f820363b1e50cfa0c70e704d3",
+      "qualification": {
+        "new_suites": 7,
+        "real_postgresql_fixtures": 7,
+        "retained_suites": 110,
+        "skipped": 0,
+        "suites": 117,
+        "tests_reexecuted_locally": false,
+        "tests_run": 1673
+      },
+      "qualification_receipt_pin": {
+        "bytes": 2229296,
+        "sha256": "6995ff623336d8f07a904aa54655f4b3a8bb14fe4398e197a8f9790bc4158fab"
+      },
+      "qualified_frozen_source_verification": {
+        "bytes": 118034801,
+        "files": 9739,
+        "frozen_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+        "mutable_worktree_documentation_used": false
+      },
+      "release_assets_API_pins": {
+        "COH-Atlas-Gameplay-0.13.25-testing.txt": {
+          "bytes": 1917,
+          "id": 626261743,
+          "sha256": "fac9c808142c705e2e5f8f3f483238bc620d685f8deae1663b23df252bd8e1fe",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25-testing.txt"
+        },
+        "COH-Atlas-Gameplay-0.13.25.apk": {
+          "bytes": 1560345352,
+          "id": 626259614,
+          "sha256": "5decd49a11652842d25bf47b07cccf2638d21760f3cd6b035bf934a8e2cfdd76",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk"
+        },
+        "COH-Atlas-Gameplay-0.13.25.apk.sha256": {
+          "bytes": 97,
+          "id": 626261720,
+          "sha256": "ce9c8c4b25f45ea5de88b2bb921014e1e7105874037ddef5adc11f57f166e518",
+          "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk.sha256"
+        }
+      },
+      "runtime": {
+        "cached_023_runtime_member_witness_pin": {
+          "bytes": 8677341,
+          "sha256": "cb4b87542e6b171d112d2c898faa86297b7518f1390787cd98bdd8ec59d28079"
+        },
+        "changed": [
+          "assets/runtime/client-manifest.json",
+          "assets/runtime/client-runtime.zip",
+          "assets/runtime/client_gpu_profile.py",
+          "assets/runtime/client_startup_diagnostic.py",
+          "assets/runtime/native_responsiveness_contract.py",
+          "assets/runtime/runtime-manifest.json",
+          "assets/runtime/texture_header_index.py"
+        ],
+        "current_Game_actual_pin": {
+          "bytes": 9499648,
+          "sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+        },
+        "payloads": 77,
+        "queue_signal_scope": "Command producer notifications; full-ring/flush/monitor/shutdown control wakes excluded",
+        "retained_native_DLLs": 20,
+        "retained_parent_Game_actual_pin": {
+          "bytes": 9494016,
+          "sha256": "1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72"
+        },
+        "retained_to_024": 70,
+        "startup_only_reopen": true,
+        "task_gate_required": true
+      },
+      "scope": "Independent authenticated .25 Actions receipts, frozen source/native bytes and release/API provenance; hash-bound unchanged .24 runtime wrapper witness from cached .23 only",
+      "status": "passed"
+    },
+    "status": "passed"
+  },
+  "runtime_manifest_sha256": "2035584523b5c19c6359c145ea7a366c1172e115031d70f5cdc8be742c83160c",
+  "runtime_repository_commit": "d6c7a89ef4f73b563a188d9f4562411f1e917dbe",
+  "scope": "native_render_queue_wake_coalescing_and_sparse_scene_full_ring_attribution_retaining_public_0_13_24",
+  "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+  "status": "passed",
+  "version_code": 40,
+  "version_name": "0.13.25"
+}

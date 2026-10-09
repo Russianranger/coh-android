@@ -1,0 +1,165 @@
+name: Thor bounded runtime setup memory and cancellation
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-setup-memory.yml
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java
+      - android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java
+      - android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java
+      - tools/android/interactive/build_setup_memory_apk.py
+      - tools/android/interactive/qualify_setup_memory.py
+      - tools/android/interactive/test_setup_memory_package.py
+      - tools/android/interactive/test_setup_service.py
+      - tools/android/test_setup_memory_guard.py
+      - tools/android/test_archive.py
+      - tools/android/interactive/test_runtime_setup_reuse.py
+      - docs/COH-Atlas-Gameplay-0.13.5-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-setup-memory-publication
+  cancel-in-progress: false
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      setup_required: ${{ steps.scope.outputs.setup_required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_storage_cleanup_change.py
+  qualify:
+    needs: changes
+    if: needs.changes.outputs.setup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-task-receipt-cleanup-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37171443387
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.4 donor
+        run: python3 tools/android/interactive/build_setup_memory_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.4.apk
+      - name: Qualify setup heap streaming cancellation and retained runtime identity
+        run: >-
+          python3 tools/android/interactive/qualify_setup_memory.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.4.apk
+          --donor-build-report out/donor-evidence/task-receipt-cleanup-apk-build-report.json
+          --output out/setup-memory-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-setup-memory-qualification
+          path: out/setup-memory-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, qualify]
+    if: needs.changes.outputs.setup_required != 'false' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-task-receipt-cleanup-packaging-evidence
+          path: out/donor-evidence
+          run-id: 37171443387
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-setup-memory-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover immutable public 0.13.4 donor
+        run: python3 tools/android/interactive/build_setup_memory_apk.py download-donor --output out/donor/COH-Atlas-Gameplay-0.13.4.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build the bounded setup wrapper retaining all 67 payloads exactly
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_setup_memory_apk.py build
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.4.apk
+          --donor-build-report out/donor-evidence/task-receipt-cleanup-apk-build-report.json
+          --qualification out/setup-memory-qualification.json
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/setup-memory/COH-Atlas-Gameplay-0.13.5.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-memory-packaging-evidence
+          path: |
+            out/setup-memory/setup-memory-apk-build-report.json
+            out/setup-memory/COH-Atlas-Gameplay-0.13.5-testing.txt
+            out/setup-memory/COH-Atlas-Gameplay-0.13.5.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-setup-memory-apk
+          path: out/setup-memory/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only qualified new 0.13.5 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_setup_memory_apk.py publish
+          --apk out/setup-memory/COH-Atlas-Gameplay-0.13.5.apk
+          --build-report out/setup-memory/setup-memory-apk-build-report.json
+          --donor-apk out/donor/COH-Atlas-Gameplay-0.13.4.apk
+          --donor-build-report out/donor-evidence/task-receipt-cleanup-apk-build-report.json
+          --qualification out/setup-memory-qualification.json
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"

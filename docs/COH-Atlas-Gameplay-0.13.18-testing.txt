@@ -1,0 +1,58 @@
+COH Atlas Gameplay 0.13.18 — sidebar FPS controls and Start/Enter
+
+Install as an update, preserving app data, imported assets and your character.
+If 0.13.17 already reports Runtime ready, this Android-only update retains the
+exact runtime manifest and payloads: no additional runtime setup or import is
+needed. A new installation or an older/unready runtime still needs setup.
+The sidebar setup label now says Set up / update runtime.
+
+Use the same Performance graphics, 800x600 interface and llvmpipe renderer.
+Start now sends one paired Enter press, including short taps, without repeating
+when held. The sidebar Enter / Start button provides the same action. Verify a
+short Start tap and sidebar Enter can submit/open chat; verify holding Start
+does not issue repeated Enter presses. Close Android text entry before using
+Start. L3 / Send text still sends text into the game; Start submits it afterward.
+
+After Atlas connection and fresh client views, close chat/dialogs with B/Esc.
+Use the sidebar Show FPS button; it automatically sends /showfps 1 including
+Enter. Wait until submission finishes and confirm the native FPS display.
+Then tap 10 FPS (sends /maxfps 10), wait until submission finishes, and test
+about 30 seconds each: standing, camera rotation, walking through populated
+scenery, and approaching buildings/interior edges or unseen scenery in Atlas.
+Record each activity's local start time, native FPS/range and visible pauses
+when geometry, textures or NPCs enter view. Allow at least 10 seconds between
+activities. Close chat/dialogs with B/Esc before each sidebar command.
+
+Tap 30 FPS (sends /maxfps 30) and repeat the same route with the same graphics.
+The buttons submit commands; they do not claim a native acknowledgement or
+sustained 30 FPS. They are disabled before the world gate, during submission,
+logout/save, pause and cleanup. Input is paused briefly while a command types.
+If 30 FPS is unstable, use 10 FPS and export the evidence. Zoning is deferred.
+
+Record first and warm launcher-open/Reopen to login, local Atlas startup,
+actual client-start duration, character selection to first visible world and
+playable movement, and total world-entry time. Separate setup/typing time.
+Note whether the world appears progressively or stalls before becoming usable.
+Record temperatures at world entry, after each route and at the end, peak
+reading, fan mode and charging. Check combat, NPC movement, UI, visuals, controls
+and crashes/regressions. Save normally, wait for Saved character verified, then
+Finish/cleanup and export before another operation replaces the evidence.
+Repeat a warm reopen and confirm character/XP/powers/costume persistence.
+
+Use Export latest report after EACH run. Send the COMPLETE outer
+coh-atlas-gameplay-*.zip plus timing/FPS/temperature notes. The package retains
+operation.log, android-client-report.json and guest-report.zip with
+latest-report.json and client-evidence/client-console.log. New safe command
+request/submission timestamps are recorded in the Android operation log and
+report lifecycle. They identify input submission, not native application.
+
+The retained native console records include COH_CLIENT_GAMEPLAY_PROFILE_V1,
+COH_CLIENT_TEXTURE_ERRORS_V1, COH_CLIENT_FRAME_TIMING_V1 and
+COH_CLIENT_SCENE_PHASE_V1. Frame records separate explicit pacing, main work
+wall time, sampled thread CPU, submission/backpressure, presentation/SwapBuffers
+and long-frame distributions. Scene phases cover geometry/texture completion;
+they nest and must not be added twice. Thread CPU excludes llvmpipe/Wine/FEX
+workers; GPU completion and individual texture decode/upload are not isolated.
+Frame streams are bounded to 120 roughly ten-second windows each; begin the
+focused route promptly after world entry. The 0.13.17 test was incomplete, and
+no controlled FPS/startup gain or physical 0.13.18 control success is claimed.

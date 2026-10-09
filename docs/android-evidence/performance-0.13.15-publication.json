@@ -1,0 +1,367 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "guest_only_startup_cache_and_gameplay_observer_performance",
+  "repository_commit": "d31685579a04307c38356918a81a22997a858c83",
+  "continuation_branch": "codex/character-persistence-continuation",
+  "starting_head": "8de212e60520d1af66dfcd2f25481f57a85e1d34",
+  "version_name": "0.13.15",
+  "version_code": 30,
+  "release": {
+    "id": 404301936,
+    "tag": "coh-atlas-gameplay-v0.13.15",
+    "url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.15",
+    "draft": false,
+    "prerelease": true,
+    "target_commitish": "d31685579a04307c38356918a81a22997a858c83",
+    "published_at": "2026-10-06T04:08:42Z",
+    "assets": [
+      {
+        "id": 614435219,
+        "name": "COH-Atlas-Gameplay-0.13.15-testing.txt",
+        "bytes": 2308,
+        "sha256": "2b6d7209bf35f63466570c30e0f058c9e5201faf90b250cd71d7b95b22673930",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15-testing.txt"
+      },
+      {
+        "id": 614432886,
+        "name": "COH-Atlas-Gameplay-0.13.15.apk",
+        "bytes": 1557338724,
+        "sha256": "f43586fcc36ffc3a88fd8f3dfdb756d174604527e9a1dab140f97f36fbdaf8fb",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15.apk"
+      },
+      {
+        "id": 614435184,
+        "name": "COH-Atlas-Gameplay-0.13.15.apk.sha256",
+        "bytes": 97,
+        "sha256": "7762e1e1d64818e32270154349771cd971257b636f4ad61bb39d0c1806c7ca26",
+        "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15.apk.sha256"
+      }
+    ]
+  },
+  "hosted_run": {
+    "id": 37411543214,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543214",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-06T03:59:09Z",
+    "completed_at": "2026-10-06T04:10:44Z",
+    "jobs": [
+      {
+        "id": 112100860111,
+        "name": "changes",
+        "conclusion": "success",
+        "started_at": "2026-10-06T03:59:13Z",
+        "completed_at": "2026-10-06T03:59:40Z"
+      },
+      {
+        "id": 112100983226,
+        "name": "qualify",
+        "conclusion": "success",
+        "started_at": "2026-10-06T03:59:43Z",
+        "completed_at": "2026-10-06T04:03:20Z"
+      },
+      {
+        "id": 112101888443,
+        "name": "apk",
+        "conclusion": "success",
+        "started_at": "2026-10-06T04:03:23Z",
+        "completed_at": "2026-10-06T04:08:46Z"
+      },
+      {
+        "id": 112103210518,
+        "name": "public-audit",
+        "conclusion": "success",
+        "started_at": "2026-10-06T04:08:49Z",
+        "completed_at": "2026-10-06T04:10:43Z"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 11389553450,
+      "name": "coh-thor-performance-public-byte-audit",
+      "zip_bytes": 531,
+      "zip_sha256": "91e7be3e5e35b2517f3d2633b61c386da49cbf1c112998a8613f70bd4c19ebb8",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543214/artifacts/11389553450"
+    },
+    {
+      "id": 11388964767,
+      "name": "coh-thor-performance-packaging-evidence",
+      "zip_bytes": 1152263,
+      "zip_sha256": "79f37d577f1fc3014e3300b68f6f03c976e4d7cee0ccc3f07e38b1f29f10b398",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543214/artifacts/11388964767"
+    },
+    {
+      "id": 11388854922,
+      "name": "coh-thor-performance-apk",
+      "zip_bytes": 1562220068,
+      "zip_sha256": "eb2f908ee37dbf77f6776092a89ce5b8dcb6cf94bdd16c44ecbd5fb09ff2f7a8",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543214/artifacts/11388854922"
+    },
+    {
+      "id": 11388779701,
+      "name": "coh-thor-performance-qualification",
+      "zip_bytes": 477269,
+      "zip_sha256": "7fe15857a208adaae4496862438ade5c6dc6e676bf8cb434905fbbdd4aa5070d",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543214/artifacts/11388779701"
+    }
+  ],
+  "verified_receipt_files": {
+    "thor-performance-qualification.json": {
+      "bytes": 1814321,
+      "sha256": "ee7506baf3858757263da6e4d859114fe935d5f1a4e6a6e9dad5aa32aa1c42d3",
+      "tests_run": 1124,
+      "suite_count": 70,
+      "skipped": 0,
+      "source_file_count": 9590,
+      "unchanged_java_file_count": 19,
+      "postgresql_emission_fixtures": [
+        "cancelled_child_deletion_commits",
+        "delete_insert_replacement_commits",
+        "duplicate_insert_23505_rollback"
+      ],
+      "postgresql_levelup_fixtures": [
+        "empty_child_duplicate_23505_rollback",
+        "empty_child_training_commit",
+        "missing_child_insert_commit",
+        "shuffled_child_read_training_commit"
+      ]
+    },
+    "thor-performance-apk-build-report.json": {
+      "bytes": 4878263,
+      "sha256": "d71a3ee8b83a9bd1d2749e4efa37682dd915d36a1a6c2009e091bfb687974f39"
+    },
+    "thor-performance-public-audit.json": {
+      "bytes": 540,
+      "sha256": "73fb3292e6031004469c510e40e0ec69a10e7edb3b1beb734b2d3464d3b5dd80",
+      "receipt": {
+        "bytes": 1557338724,
+        "format": 1,
+        "fresh_process_prepublication_audit_passed": true,
+        "physical_performance_validated": false,
+        "public_apk_checksum_and_notes_verified": true,
+        "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.15/COH-Atlas-Gameplay-0.13.15.apk",
+        "repository_commit": "d31685579a04307c38356918a81a22997a858c83",
+        "sdk_signer_payload_audit_passed": true,
+        "sha256": "f43586fcc36ffc3a88fd8f3dfdb756d174604527e9a1dab140f97f36fbdaf8fb",
+        "status": "passed"
+      }
+    },
+    "COH-Atlas-Gameplay-0.13.15.apk.sha256": {
+      "bytes": 97,
+      "sha256": "7762e1e1d64818e32270154349771cd971257b636f4ad61bb39d0c1806c7ca26"
+    },
+    "COH-Atlas-Gameplay-0.13.15-testing.txt": {
+      "bytes": 2308,
+      "sha256": "2b6d7209bf35f63466570c30e0f058c9e5201faf90b250cd71d7b95b22673930"
+    }
+  },
+  "qualification": {
+    "tests_run": 1124,
+    "suites": 70,
+    "skipped": 0,
+    "postgresql_fixture_count": 7,
+    "postgresql_server": "16.15",
+    "source_files": 9590,
+    "unchanged_authored_java_files": 19
+  },
+  "conservation": {
+    "payload_members": 75,
+    "replaced": 6,
+    "byte_identical": 69,
+    "added": 0,
+    "replaced_paths": [
+      "assets/runtime/character_server_data_cache.py",
+      "assets/runtime/client-manifest.json",
+      "assets/runtime/client_interactive_diagnostic.py",
+      "assets/runtime/local_character_server.py",
+      "assets/runtime/local_login_server.py",
+      "assets/runtime/runtime-manifest.json"
+    ],
+    "wine_fex_mesa_unchanged": true,
+    "native_game_mapserver_dbserver_unchanged": true,
+    "android_shell_dex_resources_unchanged": true,
+    "original_ui_visual_geo_beacon_payloads_unchanged": true,
+    "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282"
+  },
+  "other_workflow_outcomes": [
+    {
+      "id": 37411547378,
+      "name": "Thor real DbServer candidate",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547378"
+    },
+    {
+      "id": 37411547490,
+      "name": "Character persistence",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547490"
+    },
+    {
+      "id": 37411547421,
+      "name": "Thor client presentation candidate",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547421"
+    },
+    {
+      "id": 37411547540,
+      "name": "Thor Atlas asset import candidate",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547540"
+    },
+    {
+      "id": 37411547390,
+      "name": "Thor Atlas Park server candidate",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547390"
+    },
+    {
+      "id": 37411547739,
+      "name": "Character session and Atlas transfer",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547739"
+    },
+    {
+      "id": 37411547486,
+      "name": "PostgreSQL backend",
+      "event": "pull_request",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411547486"
+    },
+    {
+      "id": 37411543067,
+      "name": "Thor original UI sweep and native Atlas beacons",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543067"
+    },
+    {
+      "id": 37411542964,
+      "name": "Thor Atlas asset closure and exact reward save acceptance",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411542964"
+    },
+    {
+      "id": 37411543052,
+      "name": "Thor storage audit cleanup and retained runtime",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543052"
+    },
+    {
+      "id": 37411543316,
+      "name": "Thor client loading and LOD enemy visual repair",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543316"
+    },
+    {
+      "id": 37411542986,
+      "name": "Thor Atlas-first startup and source-bound DbServer supplement",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411542986"
+    },
+    {
+      "id": 37411543014,
+      "name": "Thor saved-character DbServer startup repair",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543014"
+    },
+    {
+      "id": 37411543133,
+      "name": "Thor verified startup cache and client lookup bundle",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543133"
+    },
+    {
+      "id": 37411543232,
+      "name": "Thor task acceptance command completion and animation pack",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543232"
+    },
+    {
+      "id": 37411543005,
+      "name": "Thor level-up save and append-only UI repair",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543005"
+    },
+    {
+      "id": 37411542963,
+      "name": "Thor bounded storage and fresh-profile recovery",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411542963"
+    },
+    {
+      "id": 37411543063,
+      "name": "Thor real DbServer candidate",
+      "event": "push",
+      "conclusion": "success",
+      "url": "https://github.com/Russianranger/coh-android/actions/runs/37411543063"
+    }
+  ],
+  "physical_0_13_14": {
+    "support_file": "coh-atlas-gameplay-20261006-033901.zip",
+    "bytes": 13208853,
+    "sha256": "d698a8152880a321d29b94365d831b3eea9bde358baca76361095961dae5a60c",
+    "bounded_report": "performance-0.13.14-thor-20261006.json",
+    "server_preparation_seconds": 508.398404,
+    "dbserver_stage_seconds": 538.664218,
+    "atlas_seconds": 198.837659,
+    "client_native_initialization_seconds": 198.172,
+    "compatible_cache_key": "d3f6b18b9ea8bf59a848686a",
+    "user_accepted": [
+      "observed_ui_completeness",
+      "atlas_native_beaconization",
+      "quest_objective_tracking",
+      "npc_pathing",
+      "combat",
+      "task_completion"
+    ]
+  },
+  "hosted_performance_counts": {
+    "cold_metadata_calls_before": 4608,
+    "cold_metadata_calls_after": 793,
+    "reduction_percent": 82.8,
+    "warm_fixture_leaves": 4002,
+    "warm_new_links": 0,
+    "warm_new_copies": 0,
+    "warm_cache_key_and_native_bins_preserved": true,
+    "claim_scope": "Hosted metadata-operation counts and correctness; no physical elapsed-time/FPS prediction."
+  },
+  "physical_0_13_15": {
+    "validated": false,
+    "startup_before_after_elapsed_gain": null,
+    "fps_gain": null,
+    "gameplay_fps_cap": 10,
+    "required_tests": [
+      "first_run_after_update",
+      "second_warm_run",
+      "startup_phase_comparison",
+      "focused_atlas_ui_objective_pathing_combat_persistence_check",
+      "gameplay_stutter_comparison"
+    ],
+    "instructions": "../COH-Atlas-Gameplay-0.13.15-testing.txt",
+    "export": "Complete outer coh-atlas-gameplay-*.zip after each saved/logout/Finish run.",
+    "timing_scope": "Include any offered helper/runtime-update duration in true launcher-open-to-login; separately measure Reopen after the update."
+  },
+  "intentionally_deferred": [
+    "zoning",
+    "renderer_or_vulkan_experiments",
+    "native_streaming_upload_drawcall_allocation_changes",
+    "graphics_resolution_or_10fps_cap_changes"
+  ]
+}

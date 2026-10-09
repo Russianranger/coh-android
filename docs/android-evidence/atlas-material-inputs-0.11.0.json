@@ -1,0 +1,2404 @@
+{
+  "format": 1,
+  "status": "verified_material_inputs_device_validation_pending",
+  "source_run_id": 36913457461,
+  "source_repository_commit": "07eb3ecb6c14747f08fd6125523dbbb347fd5de8",
+  "source_console": {
+    "bytes": 38814681,
+    "sha256": "6587e51ea90570ba520aab496db5c79ea823bed71684d25b3b9bc8fb5eaf4756"
+  },
+  "baseline_world": {
+    "archive_pin": {
+      "bytes": 203438405,
+      "sha256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60"
+    },
+    "manifest_sha256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+    "file_count": 2877,
+    "files_sha256": "c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d",
+    "payload_bytes": 309655940
+  },
+  "revised_world": {
+    "scope": "atlas_world_geometry_texture_supplement",
+    "archive": "atlas-world-supplement.zip",
+    "archive_pin": {
+      "bytes": 207803201,
+      "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+    },
+    "manifest_file": "atlas-world-supplement-manifest.json",
+    "manifest_pin": {
+      "bytes": 4258210,
+      "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+    },
+    "file_count": 2904,
+    "payload_bytes": 318611871,
+    "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+    "installation": "private_client_and_server_worktrees_missing_files_only",
+    "imported_assets_modified": false,
+    "accepted_cache_archive_modified": false,
+    "runtime_visual_validated": false,
+    "gameplay_validated": false
+  },
+  "added_texture_files": {
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": {
+      "pin": {
+        "bytes": 175099,
+        "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_dirty_concrete_01",
+          "console_line": "Texture Trick \"x_AP_dirty_concrete_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        },
+        {
+          "alias": "x_AP_dirty_brick_floor_01",
+          "console_line": "Texture Trick \"x_AP_dirty_brick_floor_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        },
+        {
+          "alias": "X_AP_Drity_Asphalt_01",
+          "console_line": "Texture Trick \"X_AP_Drity_Asphalt_01\" references missing texture \"AP_ConcreteGrunge_01_d\".",
+          "target": "AP_ConcreteGrunge_01_d"
+        }
+      ],
+      "source": {
+        "bytes": 175099,
+        "cached_header_id": 685,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "f80e46abb9405fe6e0354f7c8dd8acfe",
+        "offset": 28587090,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityBlocks/AP_ConcreteGrunge_01_d.texture",
+        "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 128080,
+        "stored_sha256": "73275f64e648527be9d007cc7bf1a4353ffc07b76c5da2a683ba3465854a071b"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": {
+      "pin": {
+        "bytes": 44033,
+        "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_BaseConcrete_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_BaseConcrete_01\" references missing texture \"ap_cityhall_baseconcrete_01_ns\".",
+          "target": "ap_cityhall_baseconcrete_01_ns"
+        }
+      ],
+      "source": {
+        "bytes": 44033,
+        "cached_header_id": 687,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "f7bd06b99cb371d817329760821c7846",
+        "offset": 28744441,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_BaseConcrete_01_NS.texture",
+        "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 27297,
+        "stored_sha256": "3b61b12fe9dd767b2037bd88c23951de2fb6ef39f73370ea3654d7dda05e071b"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": {
+      "pin": {
+        "bytes": 175147,
+        "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Border_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_01\" references missing texture \"AP_CityHall_Border_01_NS\".",
+          "target": "AP_CityHall_Border_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 175147,
+        "cached_header_id": 689,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "870dd839b172b100fc2e84b2091d216b",
+        "offset": 28825914,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_01_NS.texture",
+        "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 121238,
+        "stored_sha256": "5ecb281f069485db779d7be9bae45f6e43971abec7b6b076c9377e7636a8803f"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": {
+      "pin": {
+        "bytes": 44075,
+        "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Border_02",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_02\" references missing texture \"AP_CityHall_Border_02_NS\".",
+          "target": "AP_CityHall_Border_02_NS"
+        }
+      ],
+      "source": {
+        "bytes": 44075,
+        "cached_header_id": 691,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "b243f12f616eeed1ab33de9d1f751724",
+        "offset": 28963366,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_02_NS.texture",
+        "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 31578,
+        "stored_sha256": "fdb4a6db823a97dadcdf642373c90eb7727d195923a2ba956de34e8adf9aa70c"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": {
+      "pin": {
+        "bytes": 87787,
+        "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Border_03",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_03\" references missing texture \"AP_CityHall_Border_03_NS\".",
+          "target": "AP_CityHall_Border_03_NS"
+        }
+      ],
+      "source": {
+        "bytes": 87787,
+        "cached_header_id": 693,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "befe2da7ddf299ba70a9fc727664f929",
+        "offset": 29025302,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_03_NS.texture",
+        "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 68709,
+        "stored_sha256": "700ce109da86d5444880979f837c05275e5a8fd28e6bfbafa3d33aaaaf4681c5"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": {
+      "pin": {
+        "bytes": 175147,
+        "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Border_04",
+          "console_line": "Texture Trick \"X_AP_CityHall_Border_04\" references missing texture \"AP_CityHall_Border_04_NS\".",
+          "target": "AP_CityHall_Border_04_NS"
+        }
+      ],
+      "source": {
+        "bytes": 175147,
+        "cached_header_id": 695,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3a082e38e31a914d9c9c27bc85129969",
+        "offset": 29150207,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Border_04_NS.texture",
+        "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 24395620-29748375/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 105287,
+        "stored_sha256": "4280dfccdfccf003b2071072f011d729485952a6c147fb89fbdb13c550d34078"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": {
+      "pin": {
+        "bytes": 1398509,
+        "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Concrete_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Concrete_01\" references missing texture \"AP_CityHall_Concrete_01_NS\".",
+          "target": "AP_CityHall_Concrete_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 1398509,
+        "cached_header_id": 697,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "ced9663ed560464737b92632374cba6c",
+        "offset": 29748376,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Concrete_01_NS.texture",
+        "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 29748376-30897869/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 1149494,
+        "stored_sha256": "8833da66197ac73e6f2b3c58e6a24f32f904d9d079be88df2bd5f95a225543bd"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": {
+      "pin": {
+        "bytes": 349932,
+        "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Details_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Details_01\" references missing texture \"AP_CityHall_Details_01_NS\".",
+          "target": "AP_CityHall_Details_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 349932,
+        "cached_header_id": 700,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "91dd18dc3ebcd9d88c478f3dd202d9b2",
+        "offset": 31018106,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Details_01_NS.texture",
+        "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31018106-31259941/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 241836,
+        "stored_sha256": "9019d0df3db5127b34132701c92743ffcfc692b16bf962c87814d57bb8d98a50"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": {
+      "pin": {
+        "bytes": 349929,
+        "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Dome_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Dome_01\" references missing texture \"AP_CityHall_Dome_01_NS\".",
+          "target": "AP_CityHall_Dome_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 349929,
+        "cached_header_id": 702,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "0e7420b6b321c3ae5d84a2f75f1ed55d",
+        "offset": 31395391,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Dome_01_NS.texture",
+        "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31395391-31605582/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 210192,
+        "stored_sha256": "24beb3d573e3634fb89bbf860a3cd3579011da53fb7d99b3cd8df8e13db97dbd"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": {
+      "pin": {
+        "bytes": 11254,
+        "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Gold_D",
+          "console_line": "Texture Trick \"X_AP_CityHall_Gold_D\" references missing texture \"AP_CityHall_Gold_NS\".",
+          "target": "AP_CityHall_Gold_NS"
+        }
+      ],
+      "source": {
+        "bytes": 11254,
+        "cached_header_id": 704,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "fbe2e23d4e3e675488f36b413f414884",
+        "offset": 31637649,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Gold_NS.texture",
+        "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 3884,
+        "stored_sha256": "0cc2ecf97d5880d2e865ccfb45c193fdb4abb8638ff850dee535e42ae25e0f14"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": {
+      "pin": {
+        "bytes": 22248,
+        "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Marble",
+          "console_line": "Texture Trick \"X_AP_CityHall_Marble\" references missing texture \"AP_CityHall_Marble_NS\".",
+          "target": "AP_CityHall_Marble_NS"
+        }
+      ],
+      "source": {
+        "bytes": 22248,
+        "cached_header_id": 706,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3a392fc0173f4c551caf8bf24d9c0490",
+        "offset": 31674271,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Marble_NS.texture",
+        "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 12335,
+        "stored_sha256": "1f56c7b843c7fbd4484201ada938e5b10663435d39145d3ebf111d81a89f622b"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": {
+      "pin": {
+        "bytes": 87787,
+        "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Pillar_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Pillar_01\" references missing texture \"AP_CityHall_Pillar_01_NS\".",
+          "target": "AP_CityHall_Pillar_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 87787,
+        "cached_header_id": 708,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "66bdde2d758a05d8f22ba5daf65cd8b2",
+        "offset": 31713404,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Pillar_01_NS.texture",
+        "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 52940,
+        "stored_sha256": "848d4912801f27d1975d606a2726eb8e83ae32d5cdd6a81edc7bc51b8466d893"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": {
+      "pin": {
+        "bytes": 44024,
+        "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Plaque_01",
+          "console_line": "Texture Trick \"X_AP_CityHall_Plaque_01\" references missing texture \"AP_CityHall_Plaque_NS\".",
+          "target": "AP_CityHall_Plaque_NS"
+        }
+      ],
+      "source": {
+        "bytes": 44024,
+        "cached_header_id": 710,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "1eadcaaa4fd9176fca6716b2fea5fb72",
+        "offset": 31800469,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Plaque_NS.texture",
+        "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31605583-31941536/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 17896,
+        "stored_sha256": "5a60418ad848ea8529a64e7cf9b2e1e440127504dee0de5294cb467b752e87ff"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": {
+      "pin": {
+        "bytes": 349930,
+        "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_CityHall_Tiles",
+          "console_line": "Texture Trick \"X_AP_CityHall_Tiles\" references missing texture \"AP_CityHall_Tiles_01_NS\".",
+          "target": "AP_CityHall_Tiles_01_NS"
+        }
+      ],
+      "source": {
+        "bytes": 349930,
+        "cached_header_id": 712,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "5bf0bcb74c010781605880f06df56053",
+        "offset": 31941537,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/CityHall/AP_CityHall_Tiles_01_NS.texture",
+        "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 31941537-32203955/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 262419,
+        "stored_sha256": "ae186d3f57105eb6831d920c8014d87dabd01035e57db179a622a3eea530e554"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": {
+      "pin": {
+        "bytes": 349939,
+        "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_oilstains_decal_01",
+          "console_line": "Texture Trick \"x_AP_oilstains_decal_01\" references missing texture \"AP_oilstains_decal_01_n.tga\".",
+          "target": "AP_oilstains_decal_01_n.tga"
+        }
+      ],
+      "source": {
+        "bytes": 349939,
+        "cached_header_id": 145,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "80cd8344deaaf6e97d3e961e6d6b4d1a",
+        "offset": 11556513,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Auto_Marks/AP_oilstains_decal_01_n.texture",
+        "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388",
+        "source_archive": "stage2c.pigg",
+        "source_archive_bytes": 98053608,
+        "source_content_range": "bytes 11216605-13843617/98053608",
+        "source_etag": "\"ff04ac39150a1dfbf95a525592bac23d\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:35 GMT",
+        "source_metadata_sha256": "4488fef97114839957a4834125ca3805871dfa06269a4707c80ab6d89dc12298",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+        "stored_bytes": 155351,
+        "stored_sha256": "915fd28f331e2688b806e8d45edd38c242ce20a4e976dc50868a3784e7082bc6"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": {
+      "pin": {
+        "bytes": 1398507,
+        "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_crack_decal_01",
+          "console_line": "Texture Trick \"x_AP_crack_decal_01\" references missing texture \"AP_crack_decal_01_n\".",
+          "target": "AP_crack_decal_01_n"
+        }
+      ],
+      "source": {
+        "bytes": 1398507,
+        "cached_header_id": 147,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "60635b37f1b2893adf77781005f8c648",
+        "offset": 12404605,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Cracks/AP_crack_decal_01_n.texture",
+        "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f",
+        "source_archive": "stage2c.pigg",
+        "source_archive_bytes": 98053608,
+        "source_content_range": "bytes 11216605-13843617/98053608",
+        "source_etag": "\"ff04ac39150a1dfbf95a525592bac23d\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:26:35 GMT",
+        "source_metadata_sha256": "4488fef97114839957a4834125ca3805871dfa06269a4707c80ab6d89dc12298",
+        "source_url": "https://dists.thunderspy.org/piggs/stage2c.pigg",
+        "stored_bytes": 180800,
+        "stored_sha256": "03886f927218367b9d16ca85faa9c021decebbe01f8501f9af42f7479934409c"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": {
+      "pin": {
+        "bytes": 175099,
+        "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_grass_decal_01",
+          "console_line": "Texture Trick \"x_AP_grass_decal_01\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_02",
+          "console_line": "Texture Trick \"x_AP_grass_decal_02\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_03",
+          "console_line": "Texture Trick \"x_AP_grass_decal_03\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        },
+        {
+          "alias": "x_AP_grass_decal_04",
+          "console_line": "Texture Trick \"x_AP_grass_decal_04\" references missing texture \"AP_grass_detail_01_b\".",
+          "target": "AP_grass_detail_01_b"
+        }
+      ],
+      "source": {
+        "bytes": 175099,
+        "cached_header_id": 717,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "7c47296468db4bb9570d98ec73c22587",
+        "offset": 32814880,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Decals/Grass/AP_grass_detail_01_b.texture",
+        "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 32814880-32964580/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 149701,
+        "stored_sha256": "d4a60412677d02c35dbbb6ba1750f7b4e052c95eb1c8b435fa1aced8c09b8c84"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": {
+      "pin": {
+        "bytes": 44027,
+        "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca"
+      },
+      "requests": [
+        {
+          "alias": "X_Door_Atlas_Generic_Double",
+          "console_line": "Texture Trick \"X_Door_Atlas_Generic_Double\" references missing texture \"Door_Atlas_Generic_Double_D\".",
+          "target": "Door_Atlas_Generic_Double_D"
+        }
+      ],
+      "source": {
+        "bytes": 44027,
+        "cached_header_id": 0,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "39bc08c40acccd969cd27597c5ad311b",
+        "offset": 424560,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Doors/Door_Atlas_Generic_Double_D.texture",
+        "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca",
+        "source_archive": "texWorldCZ.pigg",
+        "source_archive_bytes": 184436277,
+        "source_content_range": "bytes 424560-441855/184436277",
+        "source_etag": "\"bef8e01b6cfc0a86c2f56a0e835a4f65\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:31:52 GMT",
+        "source_metadata_sha256": "9eb787e0d8d0df99b22e791ec17e896611883ac62e2178ddfd283a5d7c659a8f",
+        "source_url": "https://dists.thunderspy.org/piggs/texWorldCZ.pigg",
+        "stored_bytes": 17296,
+        "stored_sha256": "014b86d69d3807943328f6b62c6eb23120b0f532857ddba59b7d1672a1e644a4"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": {
+      "pin": {
+        "bytes": 349930,
+        "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_agapanthus",
+          "console_line": "Texture Trick \"x_AP_agapanthus\" references missing texture \"AP_agapanthus_01_b.tga\".",
+          "target": "AP_agapanthus_01_b.tga"
+        }
+      ],
+      "source": {
+        "bytes": 349930,
+        "cached_header_id": 718,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "c4cd4befee00dc0bdf3604e5905ae99a",
+        "offset": 32964581,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_agapanthus_01_b.texture",
+        "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 32964581-33017923/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 53343,
+        "stored_sha256": "36e0cd2300faa4283a16fa270b486f48183eb7485f884801e56085ac5619a7ec"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": {
+      "pin": {
+        "bytes": 1398500,
+        "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_ivy_01",
+          "console_line": "Texture Trick \"x_AP_ivy_01\" references missing texture \"AP_ivy_01_dc\".",
+          "target": "AP_ivy_01_dc"
+        }
+      ],
+      "source": {
+        "bytes": 1398500,
+        "cached_header_id": 721,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "80976dc1721e7e273da20be9084da50d",
+        "offset": 33447590,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_ivy_01_dc.texture",
+        "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 33447590-33832819/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 385230,
+        "stored_sha256": "16c36edb4b3956fce1573bd4309d415833c25194a09c6ff9a4783dbe466199aa"
+      }
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": {
+      "pin": {
+        "bytes": 349933,
+        "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9"
+      },
+      "requests": [
+        {
+          "alias": "x_AP_ivy_creepers_01",
+          "console_line": "Texture Trick \"x_AP_ivy_creepers_01\" references missing texture \"AP_ivy_creepers_01_dc\".",
+          "target": "AP_ivy_creepers_01_dc"
+        }
+      ],
+      "source": {
+        "bytes": 349933,
+        "cached_header_id": 723,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "ccfdc641c19b7c593bd27981919b59b2",
+        "offset": 33872306,
+        "path": "texture_library/WORLD/City_Zones/Atlas_Park_makeover/Nature/bushes/AP_ivy_creepers_01_dc.texture",
+        "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 33872306-33926224/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 53919,
+        "stored_sha256": "3345617164e13b57fbb6c3a3e6beb3393784be3a7a62a49843f2979a3d66a525"
+      }
+    },
+    "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": {
+      "pin": {
+        "bytes": 175084,
+        "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205"
+      },
+      "requests": [
+        {
+          "alias": "X_Male_Statue_Atlas_01",
+          "console_line": "Texture Trick \"X_Male_Statue_Atlas_01\" references missing texture \"Male_Statue_Atlas_AO\".",
+          "target": "Male_Statue_Atlas_AO"
+        }
+      ],
+      "source": {
+        "bytes": 175084,
+        "cached_header_id": 892,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "0213142eee0b7833228b1e1b75dfa506",
+        "offset": 41004337,
+        "path": "texture_library/WORLD/City_Zones/Hero_Statues/Male/Male_Statue_Atlas_AO.texture",
+        "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 41004337-41088631/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 84295,
+        "stored_sha256": "9c61612c1efa9265e73a7ba9dd24a2a2f5b77d5c9c8185eabb04e01cd203f751"
+      }
+    },
+    "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": {
+      "pin": {
+        "bytes": 175187,
+        "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15"
+      },
+      "requests": [
+        {
+          "alias": "X_Male_Statue_Atlas_Globe_01",
+          "console_line": "Texture Trick \"X_Male_Statue_Atlas_Globe_01\" references missing texture \"Statue_Globe_02_N\".",
+          "target": "Statue_Globe_02_N"
+        }
+      ],
+      "source": {
+        "bytes": 175187,
+        "cached_header_id": 914,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "37d1da95095661983758bbe4bcc52c44",
+        "offset": 43091139,
+        "path": "texture_library/WORLD/City_Zones/Hero_Statues/Shared/Statue_Globe_02_N.texture",
+        "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 43091139-43207504/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 116366,
+        "stored_sha256": "2215ac859fe84f9c3dee5154c8a55b55addc4cba52cc6067fec38c913f74544a"
+      }
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": {
+      "pin": {
+        "bytes": 349908,
+        "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_treeleaf01",
+          "console_line": "Texture Trick \"X_AP_treeleaf01\" references missing texture \"Alas_tree01_d\".",
+          "target": "Alas_tree01_d"
+        }
+      ],
+      "source": {
+        "bytes": 349908,
+        "cached_header_id": 1130,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "3de1a253b7ac540e5a4e9e44a8b9eeef",
+        "offset": 54841457,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/Alas_tree01_d.texture",
+        "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 54137306-55192437/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 90191,
+        "stored_sha256": "a685cc8cd8c15a50cf42575b5aaee4d0bcd454f8031a656aea96b7e42322c239"
+      }
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": {
+      "pin": {
+        "bytes": 349910,
+        "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_treelroots01",
+          "console_line": "Texture Trick \"X_AP_treelroots01\" references missing texture \"Alas_treebase_n\".",
+          "target": "Alas_treebase_n"
+        }
+      ],
+      "source": {
+        "bytes": 349910,
+        "cached_header_id": 1132,
+        "compressed": false,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "c88cbabbaf65139f954677ceaeeace28",
+        "offset": 55192438,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/Alas_treebase_n.texture",
+        "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 55192438-55542347/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 349910,
+        "stored_sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081"
+      }
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": {
+      "pin": {
+        "bytes": 349906,
+        "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_rock01",
+          "console_line": "Texture Trick \"X_AP_rock01\" references missing texture \"AP_rock01_d.tga\".",
+          "target": "AP_rock01_d.tga"
+        }
+      ],
+      "source": {
+        "bytes": 349906,
+        "cached_header_id": 1135,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "cf6a3269d10d2baf7b79bd864e95dcd6",
+        "offset": 55598084,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Nature/AP_rock01_d.texture",
+        "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 55542348-56247492/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 180604,
+        "stored_sha256": "2b8366b28779f1339c87737bba41849aea19209900470983d2f2a75f7e18d597"
+      }
+    },
+    "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": {
+      "pin": {
+        "bytes": 175100,
+        "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82"
+      },
+      "requests": [
+        {
+          "alias": "X_AP_Asphalt_01",
+          "console_line": "Texture Trick \"X_AP_Asphalt_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+          "target": "Plaza_Concrete_LinedSlab_02_Z"
+        },
+        {
+          "alias": "X_AP_BrickTile_01",
+          "console_line": "Texture Trick \"X_AP_BrickTile_01\" references missing texture \"Plaza_Concrete_LinedSlab_02_Z\".",
+          "target": "Plaza_Concrete_LinedSlab_02_Z"
+        }
+      ],
+      "source": {
+        "bytes": 175100,
+        "cached_header_id": 1160,
+        "compressed": true,
+        "integrity": "exact_http_206_range_stable_etag_zlib_size_and_table_md5_passed",
+        "md5_table": "364c7f9219da3c580d027401a9069695",
+        "offset": 58021791,
+        "path": "texture_library/WORLD/City_Zones/Praetoria/Plaza/Surfaces/Plaza_Concrete_LinedSlab_02_Z.texture",
+        "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82",
+        "source_archive": "stage3g.pigg",
+        "source_archive_bytes": 83430571,
+        "source_content_range": "bytes 58021791-58129357/83430571",
+        "source_etag": "\"c8be9d73551b60af27167366245052e5\"",
+        "source_last_modified": "Sun, 28 Sep 2025 02:28:33 GMT",
+        "source_metadata_sha256": "0aefad56244c0270183cc6a4e7734db71c71d43cecaccecff536f0276fc62564",
+        "source_url": "https://dists.thunderspy.org/piggs/stage3g.pigg",
+        "stored_bytes": 107567,
+        "stored_sha256": "194ede250c8bdc5df45aa33d76d6ba76620ee73e4240515d8566f252878cdd2b"
+      }
+    }
+  },
+  "added_file_count": 27,
+  "added_payload_bytes": 8955931,
+  "existing_payload_pins_preserved": true,
+  "recorded_requests_verified_against_raw_console": true,
+  "renderer_or_native_changes": false,
+  "full_material_or_world_closure": false,
+  "runtime_visual_validated": false,
+  "gameplay_validated": false,
+  "physical_android_validated": false,
+  "supported_device_upgrade": "accepted character-creation 0.9.0 profile without a world installation marker; imports and saved character preserved",
+  "range_preparation": {
+    "initial_existing_verified_ranges_reused": 14,
+    "initial_fresh_exact_http_ranges": 13,
+    "reproduction_selected_ranges": 27,
+    "selected_stored_bytes": 4357758,
+    "reproduced_archive_byte_identical": true,
+    "original_donor_deflate_streams_preserved": true,
+    "source_archives_fully_downloaded": false,
+    "source_archive_sha256_verified": false
+  },
+  "source_validation_receipt": {
+    "bytes": 36392,
+    "sha256": "b0d8bc2678f63c6fa687ab8aad4f934f102cf324a3882c4c1319150aae91d5f8"
+  },
+  "texture_headers": {
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT1",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": {
+      "width": 256,
+      "height": 256,
+      "payload_format": "DXT1",
+      "dds_mip_count": 9,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": {
+      "width": 512,
+      "height": 256,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": {
+      "width": 256,
+      "height": 128,
+      "payload_format": "DXT5",
+      "dds_mip_count": 9,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": {
+      "width": 512,
+      "height": 256,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": {
+      "width": 128,
+      "height": 128,
+      "payload_format": "DXT5",
+      "dds_mip_count": 8,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": {
+      "width": 512,
+      "height": 128,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": {
+      "width": 128,
+      "height": 128,
+      "payload_format": "DXT1",
+      "dds_mip_count": 8,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": {
+      "width": 512,
+      "height": 128,
+      "payload_format": "DXT1",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": {
+      "width": 128,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": {
+      "width": 256,
+      "height": 256,
+      "payload_format": "DXT1",
+      "dds_mip_count": 9,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT1",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT1",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": {
+      "width": 256,
+      "height": 128,
+      "payload_format": "ARGB8888",
+      "dds_mip_count": 9,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": {
+      "width": 1024,
+      "height": 1024,
+      "payload_format": "DXT5",
+      "dds_mip_count": 11,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": {
+      "width": 1024,
+      "height": 1024,
+      "payload_format": "DXT5",
+      "dds_mip_count": 11,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT1",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": {
+      "width": 512,
+      "height": 512,
+      "payload_format": "DXT5",
+      "dds_mip_count": 10,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    },
+    "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": {
+      "width": 1024,
+      "height": 1024,
+      "payload_format": "DXT5",
+      "dds_mip_count": 11,
+      "header_bounds_verified": true,
+      "payload_size_verified": true,
+      "dds_mip_bounds_verified": true,
+      "baseline_loader_accepts_container": true,
+      "baseline_loader_accepts_payload_format": true,
+      "runtime_compatibility": "unverified"
+    }
+  },
+  "publication": {
+    "workflow_run_id": 36937373454,
+    "repository_commit": "1649e807d2b2310170e775c53bafa24cd932638a",
+    "release_id": 401414533,
+    "release_tag": "coh-atlas-gameplay-v0.11.0",
+    "release_url": "https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.11.0",
+    "published": true,
+    "prerelease": true,
+    "release_assets": [
+      {
+        "id": 604293177,
+        "name": "COH-Atlas-Gameplay-0.11.0-testing.txt",
+        "size": 2376,
+        "digest": "sha256:9d90fad3f76bf9515423cc3e6ee3d4f04de522302868d7438ecd4eeb763b6a26",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.0/COH-Atlas-Gameplay-0.11.0-testing.txt"
+      },
+      {
+        "id": 604292740,
+        "name": "COH-Atlas-Gameplay-0.11.0.apk",
+        "size": 595099993,
+        "digest": "sha256:e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.0/COH-Atlas-Gameplay-0.11.0.apk"
+      },
+      {
+        "id": 604293161,
+        "name": "COH-Atlas-Gameplay-0.11.0.apk.sha256",
+        "size": 96,
+        "digest": "sha256:d0337a02b9ee28654c5103b66d859a001ce9a8dc88013fba6091567335f5825d",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.11.0/COH-Atlas-Gameplay-0.11.0.apk.sha256"
+      }
+    ],
+    "packaging_artifact": {
+      "id": 11198950591,
+      "bytes": 12826,
+      "sha256": "03b28afdb1729d148a86ea51e1b5175ccf2cfed2267945c4444acbfd511935a5"
+    },
+    "build_report_pin": {
+      "bytes": 45992,
+      "sha256": "cc0ad0f09bf06f598e6f65e706260fa9bb1a90e699ad1794d9df9ff1625d1d00"
+    },
+    "build_report": {
+      "format": 1,
+      "apk": "COH-Atlas-Gameplay-0.11.0.apk",
+      "bytes": 595099993,
+      "sha256": "e3a0760d23ef57747343ee8fd0c76e68a92194df040062266f3dc282cd15a924",
+      "repository_commit": "1649e807d2b2310170e775c53bafa24cd932638a",
+      "application_id": "io.github.russianranger.cohclientinteractive",
+      "version_name": "0.11.0",
+      "version_code": 6,
+      "abi": "arm64-v8a",
+      "signer_certificate_sha256": "92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282",
+      "signing_key_created": false,
+      "signature_verified": true,
+      "package_badging_verified": true,
+      "payload_bytes_verified": true,
+      "qualified_backend_reused": true,
+      "guest_files_changed": true,
+      "native_libraries_changed": false,
+      "client_or_server_recompiled": false,
+      "world_supplement_reconstructed": true,
+      "runtime_manifest_sha256": "48875b392fa657aae84dce4815d614178bbd7b82eef19f1044219a9bf07784e2",
+      "runtime_manifest": {
+        "format": 1,
+        "repository_commit": "1649e807d2b2310170e775c53bafa24cd932638a",
+        "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+        "files": {
+          "001-coh-compat.sql": {
+            "bytes": 7788,
+            "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+          },
+          "THIRD_PARTY_NOTICES.md": {
+            "bytes": 2184,
+            "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+          },
+          "client-probe.exe": {
+            "bytes": 470392,
+            "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+          },
+          "diagnostic.py": {
+            "bytes": 69529,
+            "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+          },
+          "odbc_probe.exe": {
+            "bytes": 270071,
+            "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+          },
+          "postgresql-build.json": {
+            "bytes": 163117,
+            "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+          },
+          "postgresql-runtime.tar.gz": {
+            "bytes": 9280905,
+            "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+          },
+          "probe.dll": {
+            "bytes": 82761,
+            "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+          },
+          "proot-build.json": {
+            "bytes": 3236,
+            "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+          },
+          "psqlodbc_x86.msi": {
+            "bytes": 4079616,
+            "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+          },
+          "runtime-lock.json": {
+            "bytes": 1688,
+            "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+          },
+          "runtime-probe.exe": {
+            "bytes": 245968,
+            "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+          },
+          "accepted-runtime-manifest.json": {
+            "bytes": 4128,
+            "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+          },
+          "atlas-world-supplement-manifest.json": {
+            "bytes": 4258210,
+            "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+          },
+          "atlas-world-supplement.zip": {
+            "bytes": 207803201,
+            "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+          },
+          "atlas_world_assets.py": {
+            "bytes": 13795,
+            "sha256": "554f6d76343dda55907b60811a2c93deb6ac76c8815534f6b3705ec08c27d494"
+          },
+          "character-avatar-defaults-manifest.json": {
+            "bytes": 28554,
+            "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+          },
+          "character-avatar-defaults.zip": {
+            "bytes": 1842488,
+            "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+          },
+          "character_avatar_assets.py": {
+            "bytes": 8776,
+            "sha256": "2cd97c629ae5d82cd278fc74078e797c72fea20c0061f16b5a307be6a9741ef3"
+          },
+          "character_creation_diagnostic.py": {
+            "bytes": 14288,
+            "sha256": "169ddad093517209bc972b14f12d0c1c92df1435ff019e6a72b8d1d4e4fc2d9a"
+          },
+          "character_reopen_diagnostic.py": {
+            "bytes": 3990,
+            "sha256": "d818c3d499648e060ec4f1ea3af64786df1953f5f52844ab7af7fca45bdc6b6e"
+          },
+          "client-caches.zip": {
+            "bytes": 27071659,
+            "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+          },
+          "client-launcher.exe": {
+            "bytes": 245249,
+            "sha256": "c0c84ea38e3da27168ec23988228bd3c55f463904b446139843dc3fd65d8c662"
+          },
+          "client-manifest.json": {
+            "bytes": 4874,
+            "sha256": "4f2bd36030a6a8b0a23ce5ab6857a5f7e668071b9864a5cef1a255703ad67dac"
+          },
+          "client-prerequisites.zip": {
+            "bytes": 18757,
+            "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+          },
+          "client-runtime.zip": {
+            "bytes": 8575422,
+            "sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335"
+          },
+          "client_interactive_diagnostic.py": {
+            "bytes": 20972,
+            "sha256": "07f7a7d541659bd44be8f1f7c996c5164bbb70423479a66f9398ec9bd2f156e7"
+          },
+          "client_login_diagnostic.py": {
+            "bytes": 15316,
+            "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+          },
+          "client_startup_diagnostic.py": {
+            "bytes": 57425,
+            "sha256": "60b2e64d7d06e83faeb4cc5744ec3d8d6f09cb93ed18f0ededfbf60b73de3686"
+          },
+          "dbserver-package.tar.gz": {
+            "bytes": 2133821,
+            "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+          },
+          "dbserver-schema.tar.gz": {
+            "bytes": 1139794,
+            "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+          },
+          "dbserver_diagnostic.py": {
+            "bytes": 50159,
+            "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+          },
+          "game-package.tar.gz": {
+            "bytes": 10937463,
+            "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+          },
+          "game_device_diagnostic.py": {
+            "bytes": 51035,
+            "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+          },
+          "game_diagnostic.py": {
+            "bytes": 79536,
+            "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+          },
+          "game_evidence.py": {
+            "bytes": 25884,
+            "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+          },
+          "game_hang_evidence.py": {
+            "bytes": 22400,
+            "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+          },
+          "game_map_progress.py": {
+            "bytes": 14789,
+            "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+          },
+          "local_character_server.py": {
+            "bytes": 53201,
+            "sha256": "e1bf584623824fc559b15cfe8b3eb1add53240610001b455e0b371152b2112df"
+          },
+          "local_login_server.py": {
+            "bytes": 19921,
+            "sha256": "b3704d9d60f513198fa4b5198ba474ffeeb5aca099d51aa30c318f8b044a4e7f"
+          },
+          "presentation_diagnostic.py": {
+            "bytes": 17396,
+            "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+          }
+        },
+        "runtime_probe": {
+          "executable": "runtime-probe.exe",
+          "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+          "dll": "probe.dll"
+        },
+        "client_probe": {
+          "executable": "client-probe.exe",
+          "marker": "COH_CLIENT_PROBE_V1 ",
+          "scope": "headless_wgl_client_capabilities",
+          "optional": true
+        },
+        "client_probe_windows_libraries": [
+          "GDI32.dll",
+          "KERNEL32.dll",
+          "OPENGL32.DLL",
+          "USER32.dll",
+          "dinput8.dll",
+          "msvcrt.dll"
+        ],
+        "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+        "odbc_ansi_compatibility": {
+          "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+          "compile_aliases": {
+            "SQLDriverConnectA": "SQLDriverConnect",
+            "SQLExecDirectA": "SQLExecDirect"
+          },
+          "verified_windows_manager_imports": [
+            "SQLAllocHandle",
+            "SQLBindParameter",
+            "SQLColumnsW",
+            "SQLDisconnect",
+            "SQLDriverConnect",
+            "SQLEndTran",
+            "SQLExecDirect",
+            "SQLFetch",
+            "SQLFreeHandle",
+            "SQLGetData",
+            "SQLGetDiagRec",
+            "SQLGetDiagRecA",
+            "SQLGetInfoW",
+            "SQLMoreResults",
+            "SQLSetConnectAttr",
+            "SQLSetEnvAttr"
+          ],
+          "fixture_sql_and_acceptance_markers_changed": false,
+          "wide_driver_version_workaround": {
+            "compile_define": "COH_ODBC_WIDE_INFO=1",
+            "api": "SQLGetInfoW",
+            "result_encoding": "UTF-16 with strict ASCII conversion",
+            "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+            "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+          },
+          "wide_columns_workaround": {
+            "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+            "api": "SQLColumnsW",
+            "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+            "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+            "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion"
+          },
+          "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+        },
+        "scope": "Qualified reopening backend with a revised missing-only Atlas material supplement; gameplay and revised world remain device-unvalidated",
+        "accepted_base_runtime": {
+          "run_id": 36364550345,
+          "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+          "manifest_file": "accepted-runtime-manifest.json",
+          "manifest_sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203",
+          "manifest": {
+            "format": 1,
+            "repository_commit": "9dc58f62c58dc4fc5c01288071429bf2aa06d2f4",
+            "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+            "files": {
+              "001-coh-compat.sql": {
+                "bytes": 7788,
+                "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+              },
+              "THIRD_PARTY_NOTICES.md": {
+                "bytes": 2184,
+                "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+              },
+              "client-probe.exe": {
+                "bytes": 470392,
+                "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+              },
+              "diagnostic.py": {
+                "bytes": 69529,
+                "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+              },
+              "odbc_probe.exe": {
+                "bytes": 270071,
+                "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+              },
+              "postgresql-build.json": {
+                "bytes": 163117,
+                "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+              },
+              "postgresql-runtime.tar.gz": {
+                "bytes": 9280905,
+                "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+              },
+              "probe.dll": {
+                "bytes": 82761,
+                "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+              },
+              "proot-build.json": {
+                "bytes": 3236,
+                "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+              },
+              "psqlodbc_x86.msi": {
+                "bytes": 4079616,
+                "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+              },
+              "runtime-lock.json": {
+                "bytes": 1688,
+                "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+              },
+              "runtime-probe.exe": {
+                "bytes": 245968,
+                "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+              }
+            },
+            "runtime_probe": {
+              "executable": "runtime-probe.exe",
+              "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+              "dll": "probe.dll"
+            },
+            "client_probe": {
+              "executable": "client-probe.exe",
+              "marker": "COH_CLIENT_PROBE_V1 ",
+              "scope": "headless_wgl_client_capabilities",
+              "optional": true
+            },
+            "client_probe_windows_libraries": [
+              "GDI32.dll",
+              "KERNEL32.dll",
+              "OPENGL32.DLL",
+              "USER32.dll",
+              "dinput8.dll",
+              "msvcrt.dll"
+            ],
+            "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+            "odbc_ansi_compatibility": {
+              "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+              "compile_aliases": {
+                "SQLDriverConnectA": "SQLDriverConnect",
+                "SQLExecDirectA": "SQLExecDirect"
+              },
+              "verified_windows_manager_imports": [
+                "SQLAllocHandle",
+                "SQLBindParameter",
+                "SQLColumnsW",
+                "SQLDisconnect",
+                "SQLDriverConnect",
+                "SQLEndTran",
+                "SQLExecDirect",
+                "SQLFetch",
+                "SQLFreeHandle",
+                "SQLGetData",
+                "SQLGetDiagRec",
+                "SQLGetDiagRecA",
+                "SQLGetInfoW",
+                "SQLMoreResults",
+                "SQLSetConnectAttr",
+                "SQLSetEnvAttr"
+              ],
+              "fixture_sql_and_acceptance_markers_changed": false,
+              "wide_driver_version_workaround": {
+                "compile_define": "COH_ODBC_WIDE_INFO=1",
+                "api": "SQLGetInfoW",
+                "result_encoding": "UTF-16 with strict ASCII conversion",
+                "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L2975",
+                "reason": "Avoid ANSI-to-wide SQLGetInfo forwarding with a private driver handle"
+              },
+              "wide_columns_workaround": {
+                "compile_define": "COH_ODBC_WIDE_COLUMNS=1",
+                "api": "SQLColumnsW",
+                "filter_encoding": "UTF-16 schema/table; unchanged NULL catalog/column filters",
+                "wine_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/proxyodbc.c#L1113",
+                "reason": "Avoid ANSI SQLColumns rejecting optional NULL filters during conversion"
+              },
+              "diagnostic_progress": "unbuffered output and credential-free ODBC call line numbers"
+            },
+            "scope": "APK build inputs; not proof of Android execution or gameplay"
+          }
+        },
+        "client_bundle": {
+          "format": 1,
+          "scope": "actual_character_reopen_guest",
+          "guest_script": "character_reopen_diagnostic.py",
+          "executable": "CityOfHeroes.exe",
+          "reference_run_id": 36088012664,
+          "width": 800,
+          "height": 600,
+          "transport": "private_unix_rfb",
+          "server_packages_included": true,
+          "local_server": {
+            "package_run_id": 36460867428,
+            "package_manifest_sha256": "95f62cc81b0743c13652e55aee01aed6871fc96d70a84b8dfd62fb8a0d9fe0d6",
+            "package_repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+            "schema_manifest_sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92",
+            "schema_acceptance_run_id": 36088012666,
+            "package_archive": "dbserver-package.tar.gz",
+            "schema_archive": "dbserver-schema.tar.gz",
+            "listener_policy": "device",
+            "variant": "normal",
+            "persistent_profile": "android-local-login",
+            "mapserver_included": true,
+            "mapserver": {
+              "package_run_id": 36630872719,
+              "package_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+              "package_manifest_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+              "package_archive": "game-package.tar.gz",
+              "mapserver_progress_profile": "dispatch_progress_v1",
+              "mapserver_progress_producer": {
+                "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+                "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+                "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+              },
+              "dbserver_profile": "loopback",
+              "game_listener_profile": "loopback",
+              "archive_pin": {
+                "bytes": 10937463,
+                "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+              },
+              "apk_donor_run_id": 36638344040,
+              "apk_donor_sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547"
+            }
+          },
+          "game_assets_external": true,
+          "avatar_supplement": {
+            "scope": "default_male_avatar_supplement",
+            "archive": "character-avatar-defaults.zip",
+            "archive_pin": {
+              "bytes": 1842488,
+              "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+            },
+            "manifest_file": "character-avatar-defaults-manifest.json",
+            "manifest_pin": {
+              "bytes": 28554,
+              "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+            },
+            "file_count": 21,
+            "payload_bytes": 2980122,
+            "installation": "private_client_worktree_missing_files_only",
+            "imported_assets_modified": false,
+            "prepared_caches_modified": false,
+            "runtime_visual_validated": false,
+            "gameplay_validated": false
+          },
+          "world_supplement": {
+            "scope": "atlas_world_geometry_texture_supplement",
+            "archive": "atlas-world-supplement.zip",
+            "archive_pin": {
+              "bytes": 207803201,
+              "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+            },
+            "manifest_file": "atlas-world-supplement-manifest.json",
+            "manifest_pin": {
+              "bytes": 4258210,
+              "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+            },
+            "file_count": 2904,
+            "payload_bytes": 318611871,
+            "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+            "installation": "private_client_and_server_worktrees_missing_files_only",
+            "imported_assets_modified": false,
+            "accepted_cache_archive_modified": false,
+            "runtime_visual_validated": false,
+            "gameplay_validated": false
+          },
+          "android_execution_validated": false,
+          "gameplay_validated": false
+        }
+      },
+      "world_derivative": {
+        "format": 1,
+        "scope": "missing_only_material_shader_texture_resources",
+        "retained_original_files": 2877,
+        "original_world_manifest": {
+          "bytes": 4209334,
+          "sha256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203"
+        },
+        "added_files": {
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityblocks/ap_concretegrunge_01_d.texture": {
+            "bytes": 175099,
+            "sha256": "305541139ecc57f584639611651d0f55fd2874e5e8abf7e280bf74ab6779f557"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_baseconcrete_01_ns.texture": {
+            "bytes": 44033,
+            "sha256": "f3e8488fb59790d5750bea9e42a50f5ab6765da3b5d500947f8373b4c1baf38f"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_01_ns.texture": {
+            "bytes": 175147,
+            "sha256": "d1e21413477589ea46da49c92c948a2d0e43dee1729031911e9ef9fec54d3bc8"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_02_ns.texture": {
+            "bytes": 44075,
+            "sha256": "1f60d4d094578590cf9cdbaf6f100ad4b33274d7614897bfa0e19787a7359a26"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_03_ns.texture": {
+            "bytes": 87787,
+            "sha256": "776244435164578dfe8a2f7f01af5034abd649cacc697081a308b2c7d1e288a7"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_border_04_ns.texture": {
+            "bytes": 175147,
+            "sha256": "5ad3d76fa86762654db68aad1491abe6d696ecf32cb673303e705aeb59204d06"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_concrete_01_ns.texture": {
+            "bytes": 1398509,
+            "sha256": "28ce1c6261d9fbeab45486400cb59689249ff896d395838653a72e2a81e0a411"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_details_01_ns.texture": {
+            "bytes": 349932,
+            "sha256": "54fbc6525caebcf6c89080a09ad36ee873b895527f649b148baac148ca8ab960"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_dome_01_ns.texture": {
+            "bytes": 349929,
+            "sha256": "57a11b2ddf07eab077701374e4ae735a995ff0f8f22becfa56bb04c140f6e6b0"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_gold_ns.texture": {
+            "bytes": 11254,
+            "sha256": "d7b09cb00d5fa8f7fb7f3d0b24731b1b39d8469474192585663482d7d08958a0"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_marble_ns.texture": {
+            "bytes": 22248,
+            "sha256": "f54262b7920e45f1914553debf10847d9905d34e78914c4dfecb80f1a526a69c"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_pillar_01_ns.texture": {
+            "bytes": 87787,
+            "sha256": "73409cddf7590052497a96f024fa0848e798675327632db36787cc6b7a4eecfe"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_plaque_ns.texture": {
+            "bytes": 44024,
+            "sha256": "6283a70ebf380bef3a87f4c15dfc58908fc860bfff8acabdc3ee4242f52cb765"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/cityhall/ap_cityhall_tiles_01_ns.texture": {
+            "bytes": 349930,
+            "sha256": "e687c635ea483f3eea1d69ebf7ba757fd3e56994dbf7b687ed3e32cf64ada775"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/decals/auto_marks/ap_oilstains_decal_01_n.texture": {
+            "bytes": 349939,
+            "sha256": "d0baaa577cff9f52fc03a363629ffa0e87e8bf0844371c81d19a7ceeb8947388"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/decals/cracks/ap_crack_decal_01_n.texture": {
+            "bytes": 1398507,
+            "sha256": "61ec4e17889e0222effa7861d0df33e6950dcf91cbb347e6d973511a93ca262f"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/decals/grass/ap_grass_detail_01_b.texture": {
+            "bytes": 175099,
+            "sha256": "f98e11fbc24284253a438cf2f8a22bce5cdea506a0cec632f3e567acf05dd27f"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/doors/door_atlas_generic_double_d.texture": {
+            "bytes": 44027,
+            "sha256": "78ea94981ca3b2b0736d0a8ad3eb43e88fb3cd55a28d5b8d57243a4a2e0cdcca"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_agapanthus_01_b.texture": {
+            "bytes": 349930,
+            "sha256": "82f5db35e01862744613f8eda6a1b99a4824d3d40d67646e82177bd35f57f362"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_01_dc.texture": {
+            "bytes": 1398500,
+            "sha256": "4c060302e6c91192499adc09b2b36423ba19b0a224b05ed9e48e86f5ce4df336"
+          },
+          "data/texture_library/world/city_zones/atlas_park_makeover/nature/bushes/ap_ivy_creepers_01_dc.texture": {
+            "bytes": 349933,
+            "sha256": "b37ab5984967995823a10375a2d88b77de56f3a3d3161d3cd0cf61fbe173a1f9"
+          },
+          "data/texture_library/world/city_zones/hero_statues/male/male_statue_atlas_ao.texture": {
+            "bytes": 175084,
+            "sha256": "3895d914c2a1b8dc3d12517e5023eb5358f5a17409d73e19c378382bd359c205"
+          },
+          "data/texture_library/world/city_zones/hero_statues/shared/statue_globe_02_n.texture": {
+            "bytes": 175187,
+            "sha256": "ad720f9c55096d3cfed761f4583c3dad13ffe5f3b45d2f51cc9aeea5ff399d15"
+          },
+          "data/texture_library/world/city_zones/praetoria/nature/alas_tree01_d.texture": {
+            "bytes": 349908,
+            "sha256": "23155804baeec962bc85a12b879bda5d26c7578e241cee0741de8c698df2b3a1"
+          },
+          "data/texture_library/world/city_zones/praetoria/nature/alas_treebase_n.texture": {
+            "bytes": 349910,
+            "sha256": "c28886680156f349ffa7dab94f3526996eb565efaf24e1c9dce8e84d55dd3081"
+          },
+          "data/texture_library/world/city_zones/praetoria/nature/ap_rock01_d.texture": {
+            "bytes": 349906,
+            "sha256": "6a3266dcf6abff2bd0a05750e8e9a7db7d5c189a1162d5a67ac278faed21c41f"
+          },
+          "data/texture_library/world/city_zones/praetoria/plaza/surfaces/plaza_concrete_linedslab_02_z.texture": {
+            "bytes": 175100,
+            "sha256": "594e84c2c3def6ee7bf0c968d905a794a2f2786d18baeb997006402ae8b17f82"
+          }
+        },
+        "added_file_count": 27,
+        "added_payload_bytes": 8955931,
+        "changed_apk_payloads": [
+          "assets/runtime/atlas-world-supplement-manifest.json",
+          "assets/runtime/atlas-world-supplement.zip",
+          "assets/runtime/atlas_world_assets.py",
+          "assets/runtime/client-manifest.json",
+          "assets/runtime/runtime-manifest.json"
+        ],
+        "helper_immutable_pin_delta": {
+          "donor": {
+            "MANIFEST_SHA256": "2566bed7c2948b53ac169e090086613da571ec45008d72a6eb00e092acc2d203",
+            "ARCHIVE_SHA256": "499d50fe7bb399465dcd30d046dec99551dd5f98181947e98f9d5d99a3880c60",
+            "ARCHIVE_BYTES": 203438405,
+            "PAYLOAD_BYTES": 309655940,
+            "FILE_COUNT": 2877,
+            "FILES_SHA256": "c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d"
+          },
+          "current": {
+            "MANIFEST_SHA256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+            "ARCHIVE_SHA256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+            "ARCHIVE_BYTES": 207803201,
+            "PAYLOAD_BYTES": 318611871,
+            "FILE_COUNT": 2904,
+            "FILES_SHA256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4"
+          }
+        },
+        "source_manifest": {
+          "bytes": 4258210,
+          "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+        },
+        "archive": {
+          "bytes": 207803201,
+          "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+        },
+        "materialization": {
+          "scope": "atlas_world_geometry_texture_supplement",
+          "archive": "atlas-world-supplement.zip",
+          "archive_pin": {
+            "bytes": 207803201,
+            "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+          },
+          "manifest_file": "atlas-world-supplement-manifest.json",
+          "manifest_pin": {
+            "bytes": 4258210,
+            "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+          },
+          "file_count": 2904,
+          "payload_bytes": 318611871,
+          "files_sha256": "1e61d6991a83949750184b2b8cc6496310730d53598c66b58445ec9b2f6d69d4",
+          "installation": "private_client_and_server_worktrees_missing_files_only",
+          "imported_assets_modified": false,
+          "accepted_cache_archive_modified": false,
+          "runtime_visual_validated": false,
+          "gameplay_validated": false,
+          "status": "extended_verified_baseline_archive",
+          "downloaded_ranges": 27,
+          "source_archives_fully_downloaded": false,
+          "source_archive_sha256_verified": false,
+          "original_donor_deflate_streams_reused": true,
+          "baseline_archive_verified": true,
+          "baseline_payloads_preserved": true,
+          "selected_donor_files": 27,
+          "selected_transfer_bytes": 4357758
+        },
+        "qualified_backend_preserved": true,
+        "revised_world_host_tested": false,
+        "full_apk_host_tested": false,
+        "runtime_visual_validated": false,
+        "gameplay_validated": false,
+        "retained_original_files_sha256": "c21ea231a2cd280faef2ae915c9c21776548718421031d4c1382604183eaf19d"
+      },
+      "payloads": {
+        "assets/atlas/atlas-assets-index.tsv": {
+          "bytes": 2379733,
+          "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+        },
+        "assets/atlas/atlas-import.properties": {
+          "bytes": 923,
+          "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+        },
+        "assets/atlas/atlas-text-index.tsv": {
+          "bytes": 21187391,
+          "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+        },
+        "assets/atlas/atlas-text.zip": {
+          "bytes": 312807038,
+          "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+        },
+        "assets/runtime/001-coh-compat.sql": {
+          "bytes": 7788,
+          "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+        },
+        "assets/runtime/THIRD_PARTY_NOTICES.md": {
+          "bytes": 2184,
+          "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+        },
+        "assets/runtime/accepted-runtime-manifest.json": {
+          "bytes": 4128,
+          "sha256": "fba5afaeb8ceaa4fb113102e436f3677d957a1c09d1d20f543cca630979d4203"
+        },
+        "assets/runtime/atlas-world-supplement-manifest.json": {
+          "bytes": 4258210,
+          "sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86"
+        },
+        "assets/runtime/atlas-world-supplement.zip": {
+          "bytes": 207803201,
+          "sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f"
+        },
+        "assets/runtime/atlas_world_assets.py": {
+          "bytes": 13795,
+          "sha256": "554f6d76343dda55907b60811a2c93deb6ac76c8815534f6b3705ec08c27d494"
+        },
+        "assets/runtime/character-avatar-defaults-manifest.json": {
+          "bytes": 28554,
+          "sha256": "2a96ff8fb24b686502d62e1e1ed25453681d4c15389c59b1f35ce3fbf1a5feb7"
+        },
+        "assets/runtime/character-avatar-defaults.zip": {
+          "bytes": 1842488,
+          "sha256": "03f980c983702c2c9d21b0f674903e151129d0554b25d800b8724036f2cb4a29"
+        },
+        "assets/runtime/character_avatar_assets.py": {
+          "bytes": 8776,
+          "sha256": "2cd97c629ae5d82cd278fc74078e797c72fea20c0061f16b5a307be6a9741ef3"
+        },
+        "assets/runtime/character_creation_diagnostic.py": {
+          "bytes": 14288,
+          "sha256": "169ddad093517209bc972b14f12d0c1c92df1435ff019e6a72b8d1d4e4fc2d9a"
+        },
+        "assets/runtime/character_reopen_diagnostic.py": {
+          "bytes": 3990,
+          "sha256": "d818c3d499648e060ec4f1ea3af64786df1953f5f52844ab7af7fca45bdc6b6e"
+        },
+        "assets/runtime/client-caches.zip": {
+          "bytes": 27071659,
+          "sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051"
+        },
+        "assets/runtime/client-launcher.exe": {
+          "bytes": 245249,
+          "sha256": "c0c84ea38e3da27168ec23988228bd3c55f463904b446139843dc3fd65d8c662"
+        },
+        "assets/runtime/client-manifest.json": {
+          "bytes": 4874,
+          "sha256": "4f2bd36030a6a8b0a23ce5ab6857a5f7e668071b9864a5cef1a255703ad67dac"
+        },
+        "assets/runtime/client-prerequisites.zip": {
+          "bytes": 18757,
+          "sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e"
+        },
+        "assets/runtime/client-probe.exe": {
+          "bytes": 470392,
+          "sha256": "24bd3e6927afaddd63fe9a4b0fac240a28383ab5e2c7d8d41d5b4d0781214cd0"
+        },
+        "assets/runtime/client-runtime.zip": {
+          "bytes": 8575422,
+          "sha256": "fa5413b346ffaca21e415be612bff67c2bb24ea1627028eec12d1ae8416cc335"
+        },
+        "assets/runtime/client_interactive_diagnostic.py": {
+          "bytes": 20972,
+          "sha256": "07f7a7d541659bd44be8f1f7c996c5164bbb70423479a66f9398ec9bd2f156e7"
+        },
+        "assets/runtime/client_login_diagnostic.py": {
+          "bytes": 15316,
+          "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+        },
+        "assets/runtime/client_startup_diagnostic.py": {
+          "bytes": 57425,
+          "sha256": "60b2e64d7d06e83faeb4cc5744ec3d8d6f09cb93ed18f0ededfbf60b73de3686"
+        },
+        "assets/runtime/dbserver-package.tar.gz": {
+          "bytes": 2133821,
+          "sha256": "83df206a4d41cf0b4b141b6486287ee6bf9ffe7f8125d9e970979cd87b33ca80"
+        },
+        "assets/runtime/dbserver-schema.tar.gz": {
+          "bytes": 1139794,
+          "sha256": "637b3aeb7ec1bbf9f57f9f46cadd9eafd84254e920fe7e09a29280bdea9ea792"
+        },
+        "assets/runtime/dbserver_diagnostic.py": {
+          "bytes": 50159,
+          "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+        },
+        "assets/runtime/diagnostic.py": {
+          "bytes": 69529,
+          "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+        },
+        "assets/runtime/game-package.tar.gz": {
+          "bytes": 10937463,
+          "sha256": "5d677b9e26def071929d73ffe23ef62418d3dc6c9385abb470b9607af0c47864"
+        },
+        "assets/runtime/game_device_diagnostic.py": {
+          "bytes": 51035,
+          "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+        },
+        "assets/runtime/game_diagnostic.py": {
+          "bytes": 79536,
+          "sha256": "7155dfb29c8c1370d08abfd793295e0116888f120d4258aabaa5d44d43bbe539"
+        },
+        "assets/runtime/game_evidence.py": {
+          "bytes": 25884,
+          "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+        },
+        "assets/runtime/game_hang_evidence.py": {
+          "bytes": 22400,
+          "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+        },
+        "assets/runtime/game_map_progress.py": {
+          "bytes": 14789,
+          "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+        },
+        "assets/runtime/local_character_server.py": {
+          "bytes": 53201,
+          "sha256": "e1bf584623824fc559b15cfe8b3eb1add53240610001b455e0b371152b2112df"
+        },
+        "assets/runtime/local_login_server.py": {
+          "bytes": 19921,
+          "sha256": "b3704d9d60f513198fa4b5198ba474ffeeb5aca099d51aa30c318f8b044a4e7f"
+        },
+        "assets/runtime/odbc_probe.exe": {
+          "bytes": 270071,
+          "sha256": "455a5c4398d508b7938a422430303776b26a67e6f52d16c02580f34e13508ffb"
+        },
+        "assets/runtime/postgresql-build.json": {
+          "bytes": 163117,
+          "sha256": "4c8ac536362df3df5f4afb3717fb7dbc6d216ac3fdad8fff0a7b8f79d8a943a9"
+        },
+        "assets/runtime/postgresql-runtime.tar.gz": {
+          "bytes": 9280905,
+          "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+        },
+        "assets/runtime/presentation_diagnostic.py": {
+          "bytes": 17396,
+          "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+        },
+        "assets/runtime/probe.dll": {
+          "bytes": 82761,
+          "sha256": "746135e7a22624cee2c46fc6fef5762277f44e57e6f50184eb41d585491cfd1b"
+        },
+        "assets/runtime/proot-build.json": {
+          "bytes": 3236,
+          "sha256": "40d76879b73cbc596cd5eab5f9dc5297494b9c54186d2e2bb521cff82eb88f13"
+        },
+        "assets/runtime/psqlodbc_x86.msi": {
+          "bytes": 4079616,
+          "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+        },
+        "assets/runtime/runtime-lock.json": {
+          "bytes": 1688,
+          "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+        },
+        "assets/runtime/runtime-probe.exe": {
+          "bytes": 245968,
+          "sha256": "1205adc31f5324d42c30cf83aa1de4d847e2da4b3ee23f28deebac23f49d1842"
+        },
+        "assets/runtime/runtime-manifest.json": {
+          "bytes": 17140,
+          "sha256": "48875b392fa657aae84dce4815d614178bbd7b82eef19f1044219a9bf07784e2"
+        },
+        "lib/arm64-v8a/libproot-loader.so": {
+          "bytes": 17624,
+          "sha256": "95a47c09e5401637ce034304362bd179682fba470a9dab78d8be0a56d1f0745c"
+        },
+        "lib/arm64-v8a/libproot.so": {
+          "bytes": 263648,
+          "sha256": "54726f8ce0396df083ec3b71906312220311539f2a95e6b53de61cff5436bd5f"
+        }
+      },
+      "java_sources": {
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+          "bytes": 14107,
+          "sha256": "5320d57d177a0fc98821087edf5e1d27e7de4b2ff0c54ef24434cb8dd21898df"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientActivity.java": {
+          "bytes": 27685,
+          "sha256": "852c92df81d70358c21ac4fdc3970f8cbb548c60bc7e7eb552ff76457c8f7d81"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientInput.java": {
+          "bytes": 5221,
+          "sha256": "bf7f24bb8e9451f5308cfaed55a4f0cb5502e6028d398b2a09a779b0301e430e"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+          "bytes": 88143,
+          "sha256": "c96cd6e896735e05d2697a0a45d3f80e7517922cf0a45c565b7643d035d59162"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+          "bytes": 16486,
+          "sha256": "d5dc98066ce06ce2514ef929f01ed8a9544661c613c935da9b124c07120e4c75"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+          "bytes": 19627,
+          "sha256": "6d1a4901e0489f4a304bb8805d035cc699f18e788bae4d59a2625d9f438f515a"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+          "bytes": 15027,
+          "sha256": "4267d511c292a52262949d0f4a74067f7653409ffad24c5693bbd3066668bf63"
+        },
+        "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+          "bytes": 37139,
+          "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+          "bytes": 14749,
+          "sha256": "198c485d3749b0750472f27b45c44d41fe40dc1f566495d477d7970ba01156fa"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+          "bytes": 879,
+          "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+          "bytes": 1017,
+          "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+          "bytes": 1208,
+          "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+          "bytes": 1294,
+          "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+          "bytes": 28774,
+          "sha256": "d7c52a856a8c625ccc5657acf68a5c8cf128a18e2ae0820bd8e2bdd593c4e4c3"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+          "bytes": 6109,
+          "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+        }
+      },
+      "preserved_sources": {
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/CleanupGuard.java": {
+          "bytes": 1294,
+          "sha256": "b695b469a0e43276c304bf7e8a46c467e792fe0d8cede095e6fe9fa10d0878b3"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DbServerAcceptance.java": {
+          "bytes": 6109,
+          "sha256": "d1e74551a51fe1a5e52774582184ad02d53b528c5a357f82034755b220d370a6"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DeviceHosts.java": {
+          "bytes": 879,
+          "sha256": "f5911d577902f24a4ab6323d710b8835e8d809722cdd281d5fad61496e8ec5f6"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticOutcome.java": {
+          "bytes": 1017,
+          "sha256": "9602b52d52a84bd2ce15b85ad766d66c2c9c9554e68d8c071410da262bf7479d"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticReports.java": {
+          "bytes": 1208,
+          "sha256": "afbd4cab1ad3246b7cf5af6cc0ade2c420c1982062fb515a4cb33104e14198b8"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/DiagnosticRuntime.java": {
+          "bytes": 28774,
+          "sha256": "d7c52a856a8c625ccc5657acf68a5c8cf128a18e2ae0820bd8e2bdd593c4e4c3"
+        },
+        "android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java": {
+          "bytes": 14749,
+          "sha256": "198c485d3749b0750472f27b45c44d41fe40dc1f566495d477d7970ba01156fa"
+        },
+        "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": {
+          "bytes": 37139,
+          "sha256": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientAcceptance.java": {
+          "bytes": 14107,
+          "sha256": "5320d57d177a0fc98821087edf5e1d27e7de4b2ff0c54ef24434cb8dd21898df"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java": {
+          "bytes": 88143,
+          "sha256": "c96cd6e896735e05d2697a0a45d3f80e7517922cf0a45c565b7643d035d59162"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientService.java": {
+          "bytes": 16486,
+          "sha256": "d5dc98066ce06ce2514ef929f01ed8a9544661c613c935da9b124c07120e4c75"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java": {
+          "bytes": 19627,
+          "sha256": "6d1a4901e0489f4a304bb8805d035cc699f18e788bae4d59a2625d9f438f515a"
+        },
+        "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/InteractiveRfbClient.java": {
+          "bytes": 15027,
+          "sha256": "4267d511c292a52262949d0f4a74067f7653409ffad24c5693bbd3066668bf63"
+        },
+        "android/native/client-launcher.c": {
+          "bytes": 11367,
+          "sha256": "37be3edc3b205a0ebbacd24acaa0fc542f004508a2c443ffa99f447072c370a5"
+        }
+      },
+      "source_manifest": {
+        "bytes": 1519,
+        "sha256": "705fa09d479f1598a71cf2d1ba7b0b9b7c612935dd3b94712c7d90e29da124e2"
+      },
+      "generated_manifest": {
+        "bytes": 1517,
+        "sha256": "ba697afeb022a7659d396eafbc65a7dd0a7a58d6ed9f11aa429e498ba9b91958"
+      },
+      "testing_notes": {
+        "name": "COH-Atlas-Gameplay-0.11.0-testing.txt",
+        "bytes": 2376,
+        "sha256": "9d90fad3f76bf9515423cc3e6ee3d4f04de522302868d7438ecd4eeb763b6a26"
+      },
+      "qualification_donor": {
+        "run_id": 36920583713,
+        "repository_commit": "204615c6c4a809d6b814c7174b81448cffea3f7a",
+        "apk": {
+          "name": "COH-Character-Reopen-0.10.0.apk",
+          "bytes": 590725465,
+          "sha256": "ee9c09a3bda8a7f68af1e481e8c85e96c14ee0ea6ab414dbcda2ca730dd73688"
+        },
+        "build_report": {
+          "name": "interactive-apk-build-report.json",
+          "bytes": 38185,
+          "sha256": "587088a83e4d70e8dab88f8362367bc532b94e86412bf372750ac060728a689f"
+        },
+        "artifact": {
+          "id": 11192425448,
+          "name": "coh-client-interaction-apk",
+          "bytes": 553313601,
+          "sha256": "82a769943a7237465c26d42e419fa54e39ec6ab6010376f566a752a1c47f6a90"
+        },
+        "evidence_artifact": {
+          "id": 11198317943,
+          "name": "coh-client-interaction-arm64-evidence",
+          "bytes": 142304789,
+          "sha256": "2593eb8f5e4527649e785b9316979f86833d784970b9554c4b4ce8387d9487aa"
+        },
+        "qualification_run_id": 36929550592,
+        "qualification_head_sha": "f7c6c3a6b60cb727813d8b2cf344076c2db1bdf8",
+        "qualification_driver": {
+          "name": "client-evidence/qualification-driver.json",
+          "bytes": 37063,
+          "sha256": "284a5da5f02d84c0cfaa16721ebffc9356487b16ce23119d974a5b0419639748"
+        },
+        "host_harness_sources": {
+          ".github/workflows/android-character-reopen-qualified-apk.yml": {
+            "bytes": 11384,
+            "sha256": "bd7574fc0a0217d6a8ed7dffc5998259dd6d373219acadab708f79321d892185"
+          },
+          "tools/android/interactive/character_host_smoke.py": {
+            "bytes": 48019,
+            "sha256": "c9216504faf04bb4989f6affee11020a17d421cc8cda05490bb672500d6b7e6d"
+          },
+          "tools/android/interactive/character_reopen_host_smoke.py": {
+            "bytes": 31079,
+            "sha256": "241d8f89f5595b545bfdbb344ce4bd78fca94047ecc897e023402725b5b20115"
+          },
+          "tools/android/interactive/host_smoke.py": {
+            "bytes": 32269,
+            "sha256": "35376a0d5e4c68e3e722afe7ce44a0822ba2eec7d8c34b13d96fbf552ee0d594"
+          },
+          "tools/android/interactive/login_host_smoke.py": {
+            "bytes": 26741,
+            "sha256": "6bad4166fc83219edfb617e44e3d1b834f520739b446d67ab9dddad9fc6e937f"
+          }
+        },
+        "host_report": {
+          "name": "client-evidence/host-client-report.json",
+          "bytes": 298621,
+          "sha256": "a9451cf4f20c53cfd6ca37333e9054fac2907d73fbb07b8f0f4dc05e4320b3da"
+        },
+        "visual_review": {
+          "bytes": 14099,
+          "sha256": "8fdb1165d1986bbb2c5fed9696f071972d89e74d7f83e276abefe9f9f7566898"
+        },
+        "visual_evidence_frames": [
+          {
+            "name": "client-evidence/reopen/connected_captures-001.png",
+            "bytes": 295556,
+            "sha256": "624c8545e843cbb2006e8676ffbecebfc4adaadad962fadcc7a3384cc2e78dd3"
+          },
+          {
+            "name": "client-evidence/reopen/world_after_stuck_captures-001.png",
+            "bytes": 295284,
+            "sha256": "d66f976246bdcd8a72cf0117b35481c134ccf048aa2a369d162a69e3360d12e5"
+          }
+        ]
+      },
+      "scope": "Android Atlas gameplay input and missing material-texture candidate retaining the qualified reopening backend; revised world inputs and complete APK await device validation",
+      "device_validated": false,
+      "gameplay_validated": false,
+      "installation": "In-place retained-signer update from accepted Character Creation 0.9.0. Refresh runtime; preserve THORHERO, private database, Wine profile and imported assets."
+    },
+    "reviewed_packaging_boundaries": {
+      "same_app_and_signer": true,
+      "only_two_java_ui_input_sources_changed": true,
+      "exactly_five_world_bound_apk_payloads_changed": true,
+      "all_2877_original_world_payloads_preserved": true,
+      "exactly_27_new_texture_targets": true,
+      "backend_native_libraries_preserved": true,
+      "client_and_server_not_recompiled": true
+    },
+    "device_validation_pending": true
+  }
+}

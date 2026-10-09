@@ -1,0 +1,48 @@
+{
+  "run_id": 36176806895,
+  "workflow_commit": "fe98dd5a9761fb05d79b9b3f9f39a771eb9ea687",
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36176806895",
+  "gates": [
+    {
+      "status": "reference_template_comparison_passed_gameplay_unvalidated",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+      "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+      "started_utc": "2026-09-25T19:05:41.461304+00:00",
+      "finished_utc": "2026-09-25T19:06:09.934246+00:00",
+      "failures": [],
+      "gameplay_validated": false,
+      "identical_fresh_output_count": 56,
+      "expected_output_count": 56,
+      "elapsed_seconds": 25.89,
+      "mapserver_sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "output_differences": [],
+      "artifact_id": 10883007512,
+      "archive_sha256": "2746438d739a2f13c5d3d15fb96ff6e717de471b635ebdb5fd2100842e46d7c5",
+      "archive_bytes": 1513061,
+      "archive_path": "docs/reference-runtime-evidence/reference-template-comparison-36176806895.zip",
+      "report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b"
+    },
+    {
+      "status": "atlas_park_protocol_ready_observation_passed_gameplay_unvalidated",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+      "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+      "started_utc": "2026-09-25T19:11:34.604107+00:00",
+      "finished_utc": "2026-09-25T19:16:14.425674+00:00",
+      "failures": [],
+      "gameplay_validated": false,
+      "observed_ready_seconds": 62.235,
+      "hold_seconds_requested": 60.0,
+      "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+      "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+      "mapserver_sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "dbserver_sha256": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+      "artifact_id": 10883566731,
+      "archive_sha256": "1d65cd6e2f4556a02da488f1312370a624ef29a56fbee7a81e2a2202818769d4",
+      "archive_bytes": 281534,
+      "archive_path": "docs/postgresql-evidence/postgresql-one-map-36176806895.zip",
+      "report_sha256": "ef45cc77ca53dfc00b4a44c7a61c1f13f8a0a5a4368b4f0b247f5ebea5b1b06c"
+    }
+  ]
+}

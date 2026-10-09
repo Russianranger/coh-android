@@ -1,0 +1,389 @@
+#!/usr/bin/env python3
+"""Conserve the physically accepted public 0.13.14 APK for guest-only performance."""
+from __future__ import annotations
+import argparse
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+import zipfile
+
+import build_ui_beacon_apk as previous
+
+ROOT, require, module, shared = previous.ROOT, previous.require, previous.module, previous.shared
+REPOSITORY, BRANCH, SIGNER = previous.REPOSITORY, previous.BRANCH, previous.SIGNER
+DONOR_COMMIT = '25f821da9e782281953412543057054abd8dd320'
+DONOR_RUN_ID = 37392793426
+DONOR_APK_NAME = 'COH-Atlas-Gameplay-0.13.14.apk'
+DONOR_APK = {'bytes': 1557338724, 'sha256': '1dab30d097978e6d8b7e299e868a932d73c924410dcc20d4e6e51f36353b11ee'}
+DONOR_BUILD = {'bytes': 145658691, 'sha256': '3ffc2478f7bee8e04a9c72f97e1a77521a4e6a87c5645855eb226b306106bba5'}
+DONOR_URL = 'https://github.com/'+REPOSITORY+'/releases/download/coh-atlas-gameplay-v0.13.14/'+DONOR_APK_NAME
+VERSION_NAME, VERSION_CODE = '0.13.15', 30
+APK_NAME, REPORT_NAME = 'COH-Atlas-Gameplay-0.13.15.apk', 'thor-performance-apk-build-report.json'
+NOTES_NAME = 'COH-Atlas-Gameplay-0.13.15-testing.txt'
+NOTES = ROOT/'docs'/NOTES_NAME
+RELEASE_TAG = 'coh-atlas-gameplay-v0.13.15'
+WORKFLOW = '.github/workflows/android-thor-performance.yml'
+QUALIFICATION_SCRIPT = 'tools/android/interactive/qualify_thor_performance.py'
+QUALIFICATION_SCOPE = 'guest_only_startup_and_event_driven_diagnostics_retaining_public_0_13_14'
+HELPERS = frozenset({'client_interactive_diagnostic.py', 'local_character_server.py', 'character_server_data_cache.py', 'local_login_server.py'})
+REPLACED_PAYLOADS = frozenset('assets/runtime/'+name for name in HELPERS|{'client-manifest.json', 'runtime-manifest.json'})
+ADDED_PAYLOADS = frozenset()
+CHECKS = ('performance_caches_and_lightweight_diagnostics_verified',
+    'retained_ui_beacon_gameplay_postgresql_and_recovery_guards_verified',
+    'exact_guest_only_payload_shell_source_and_server_extraction_verified')
+SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
+    'tools/android/interactive/build_thor_performance_apk.py',
+    'tools/android/interactive/test_thor_performance_package.py',
+    'tools/android/interactive/analyze_thor_performance.py',
+    'tools/android/interactive/test_thor_performance_report.py',
+    'tools/android/interactive/test_character_readiness.py',
+    'tools/android/interactive/test_character_server.py',
+    'tools/android/interactive/test_character_map_data.py',
+    'tools/android/interactive/test_server_worktree_reuse.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-PERFORMANCE-0.13.15.md', 'docs/'+NOTES_NAME,
+    'docs/android-evidence/performance-0.13.14-thor-20261006.json',
+    *('android/guest/'+name for name in HELPERS)})
+# The earlier public audit correction is verification-only and already reviewed.
+REVIEWED_DONOR_SOURCE_CHANGES = SOURCE_FILES | frozenset({
+    'tools/android/interactive/build_ui_beacon_apk.py',
+    'tools/android/interactive/test_ui_beacon_package.py',
+    '.github/workflows/android-ui-beacon.yml',
+    '.github/workflows/android-ui-beacon-public-audit.yml'})
+IMMUTABLE_PROVENANCE = ('runtime_timestamps', 'runtime_timestamps_receipt',
+    'server_animation_manifest', 'server_cache_manifest', 'retained_server_cache_archive',
+    'native_responsiveness', 'native_package_receipt', 'native_launcher', 'startup_only_reopen',
+    'native_client_startup', 'native_client_loading', 'native_source_commit',
+    'native_source_provenance', 'native_client_startup_followup', 'native_dbserver', 'native_levelup_ui_repair')
+FALSE_FLAGS = ('native_dbserver_recompiled', 'native_client_recompiled', 'native_mapserver_recompiled',
+    'java_or_dex_recompiled', 'physical_gameplay_validated', 'physical_client_timing_validated',
+    'physical_visual_assets_validated', 'asset_reimport_required', 'world_assets_changed',
+    'prepared_cache_archive_changed', 'graphics_driver_changed', 'wine_or_fex_changed')
+
+
+def builder(*, repaired=False):
+    base = previous.builder()
+    if repaired: base.VERSION_NAME, base.VERSION_CODE, base.APK_NAME = VERSION_NAME, VERSION_CODE, APK_NAME
+    return base
+
+
+def read_json(path):
+    path = Path(path)
+    require(path.is_file() and not path.is_symlink() and 0 < path.stat().st_size <= 256*1024**2,
+        'Missing linked or unbounded performance receipt: '+path.name)
+    return json.loads(path.read_bytes())
+
+
+def donor_link():
+    return {'run_id': DONOR_RUN_ID, 'repository_commit': DONOR_COMMIT, 'apk': DONOR_APK, 'build_report': DONOR_BUILD}
+
+
+def validate_donor_receipt(path):
+    builder().checked_file(path, DONOR_BUILD); donor = read_json(path); q = donor.get('qualification', {})
+    require(donor.get('format') == 1 and donor.get('repository_commit') == DONOR_COMMIT
+        and donor.get('runtime_repository_commit') == DONOR_COMMIT and donor.get('apk') == DONOR_APK_NAME
+        and {key: donor.get(key) for key in DONOR_APK} == DONOR_APK
+        and donor.get('application_id') == builder().APP_ID and donor.get('version_name') == '0.13.14'
+        and donor.get('version_code') == 29 and donor.get('abi') == 'arm64-v8a'
+        and donor.get('signer_certificate_sha256') == SIGNER and donor.get('signing_key_created') is False
+        and all(donor.get(key) is True for key in ('signature_verified', 'package_badging_verified',
+            'binary_manifest_version_only_verified', 'payload_bytes_verified', 'setup_memory_guards_preserved'))
+        and len(donor.get('payloads', {})) == 75 and len(donor.get('java_sources', {})) == 19
+        and q.get('status') == 'passed' and q.get('scope') == previous.QUALIFICATION_SCOPE
+        and q.get('repository_commit') == DONOR_COMMIT and q.get('tests_run') == 1102
+        and len(q.get('source_files', {})) == 9581 and len(q.get('test_suites', {})) == 68
+        and all(item.get('status') == 'passed' and item.get('skipped') == 0 for item in q['test_suites'].values())
+        and donor.get('server_payload_extraction_preflight', {}).get('status') == 'passed'
+        and donor['visual_package']['manifest']['file_count'] == 10401
+        and donor['visual_original_streams']['retained_compressed_streams'] == 9613,
+        'Exact physically accepted public 0.13.14 donor receipt differs')
+    return donor
+
+
+def validate_retained_sources(donor):
+    for name, pin in donor['qualification']['source_files'].items():
+        require(isinstance(name, str) and not Path(name).is_absolute() and '..' not in Path(name).parts
+            and chr(92) not in name, 'Unsafe retained source path')
+        if name not in REVIEWED_DONOR_SOURCE_CHANGES: builder().checked_file(ROOT/name, pin)
+
+
+def validate_donor(apk, receipt):
+    base = builder(); base.checked_file(apk, DONOR_APK); donor = validate_donor_receipt(receipt)
+    base.verify_packaged_payloads(apk, donor['payloads'])
+    with zipfile.ZipFile(apk) as archive:
+        shell = {'classes.dex': donor['retained_dex'], **donor['retained_android_resources']}
+        require(previous.previous.prior.archive_inventory(archive) == set(donor['payloads'])|set(shell)|{'AndroidManifest.xml'},
+            'Unexpected public donor inventory')
+        for name, pin in shell.items():
+            raw = archive.read(name)
+            require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == pin, 'Donor Android shell differs')
+        require(json.loads(archive.read('assets/runtime/runtime-manifest.json')) == donor['runtime_manifest'],
+            'Donor runtime provenance differs')
+        donor['_client_verification'] = json.loads(archive.read('assets/runtime/client-manifest.json'))
+        for name in HELPERS: donor.setdefault('_helper_sources', {})[name] = archive.read('assets/runtime/'+name)
+    require(previous.previous.prior.verify_apk_server_archives(apk) == donor['server_payload_extraction_preflight'],
+        'Donor actual server extraction differs')
+    validate_retained_sources(donor)
+    return donor
+
+
+def current_sources(donor):
+    base = builder(); sources = previous.previous.prior.retained.java_sources(base, ROOT/'out/no-generated-java')
+    pins = {path.relative_to(ROOT).as_posix(): base.file_pin(path) for path in sources if path.is_relative_to(ROOT)}
+    require(len(pins) == 19 and pins == donor['java_sources'], 'All 19 authored Java sources must remain exact')
+    for name, pin in donor['preserved_sources'].items(): base.checked_file(ROOT/name, pin)
+    base.checked_file(ROOT/'android/interactive/src/main/AndroidManifest.xml', donor['source_manifest'])
+    for name, pin in donor['payloads'].items():
+        if name.startswith('assets/runtime/') and (name.endswith('.py') or name.endswith('/task-gate.json')):
+            if Path(name).name not in HELPERS: base.checked_file(ROOT/'android/guest'/Path(name).name, pin)
+    require({name for name in HELPERS if base.file_pin(ROOT/'android/guest'/name) != donor['payloads']['assets/runtime/'+name]} == HELPERS,
+        'Exactly the reviewed performance guest helpers must change')
+    validate_retained_sources(donor)
+    return pins
+
+
+def verification_manifests(donor, updates, commit):
+    require(set(updates) == HELPERS, 'Unexpected performance replacement inputs')
+    client = copy.deepcopy(donor['_client_verification']); client['files'].update(updates)
+    runtime = copy.deepcopy(donor['runtime_manifest']); runtime['files'].update(updates)
+    encoded = shared.encoded(client)
+    runtime['files']['client-manifest.json'] = {'bytes': len(encoded), 'sha256': hashlib.sha256(encoded).hexdigest()}
+    runtime['repository_commit'] = commit; runtime['scope'] = QUALIFICATION_SCOPE
+    runtime['thor_performance'] = {'format': 1, 'repository_commit': commit, 'donor_repository_commit': DONOR_COMMIT,
+        'all_visual_beacon_native_and_android_payloads_retained': True,
+        'physical_gameplay_validated': False, 'physical_timing_validated': False,
+        'native_recompiled': False, 'changed_guest_helpers': sorted(HELPERS)}
+    require(set(client['files']) == set(donor['_client_verification']['files'])
+        and set(runtime['files']) == set(donor['runtime_manifest']['files']), 'Runtime inventory must remain exact')
+    return client, runtime
+
+
+def extract_and_repair(apk, donor, destination, commit):
+    base = builder(); current_sources(donor); destination.mkdir(parents=True)
+    with zipfile.ZipFile(apk) as archive:
+        for entry in archive.infolist():
+            if entry.filename == 'AndroidManifest.xml' or entry.filename.startswith('META-INF/'): continue
+            require(entry.filename in set(donor['payloads'])|set(donor['retained_android_resources'])|{'classes.dex'}, 'Unexpected donor member')
+            target = destination/entry.filename; target.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(entry) as source, target.open('xb') as output: shutil.copyfileobj(source, output, 1024*1024)
+    require(all(base.file_pin(destination/name) == pin for name, pin in donor['payloads'].items()), 'Extracted donor bytes differ')
+    assets = destination/'assets/runtime'
+    for name in sorted(HELPERS): shutil.copyfile(ROOT/'android/guest'/name, assets/name)
+    updates = {name: base.file_pin(assets/name) for name in sorted(HELPERS)}
+    client, runtime = verification_manifests(donor, updates, commit)
+    for name, value in (('client-manifest.json', client), ('runtime-manifest.json', runtime)):
+        (assets/name).write_bytes(shared.encoded(value))
+    payloads = {name: base.file_pin(destination/name) for name in sorted(donor['payloads'])}
+    require({name for name in payloads if payloads[name] != donor['payloads'][name]} == REPLACED_PAYLOADS,
+        'Unexpected performance payload replacement')
+    preflight = previous.previous.prior.verify_server_archives(assets)
+    require(preflight == donor['server_payload_extraction_preflight'], 'Retained server extraction differs')
+    return runtime, payloads, preflight
+
+
+def verify_derivative(apk, donor, payloads, commit):
+    base = builder()
+    require(set(payloads) == set(donor['payloads']) and
+        {name for name in payloads if payloads[name] != donor['payloads'][name]} == REPLACED_PAYLOADS,
+        'Candidate guest-only payload boundaries differ')
+    base.verify_packaged_payloads(apk, payloads)
+    with zipfile.ZipFile(apk) as archive:
+        shell = {'classes.dex': donor['retained_dex'], **donor['retained_android_resources']}
+        require(previous.previous.prior.archive_inventory(archive) == set(payloads)|set(shell)|{'AndroidManifest.xml'}, 'Unexpected candidate inventory')
+        for name, pin in shell.items():
+            raw = archive.read(name)
+            require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == pin, 'Retained Android shell differs')
+        for name in HELPERS:
+            require(payloads['assets/runtime/'+name] == base.file_pin(ROOT/'android/guest'/name), 'Authored performance helper differs')
+        client, runtime = verification_manifests(donor, {name: payloads['assets/runtime/'+name] for name in sorted(HELPERS)}, commit)
+        client_raw = archive.read('assets/runtime/client-manifest.json')
+        require(json.loads(client_raw) == client, 'Candidate client provenance differs')
+        client_pin = {'bytes': len(client_raw), 'sha256': hashlib.sha256(client_raw).hexdigest()}
+        require(client_pin == payloads['assets/runtime/client-manifest.json'], 'Candidate embedded client byte pin differs')
+        runtime['files']['client-manifest.json'] = client_pin
+        require(json.loads(archive.read('assets/runtime/runtime-manifest.json')) == runtime, 'Candidate runtime provenance differs')
+    require(previous.previous.prior.verify_apk_server_archives(apk) == donor['server_payload_extraction_preflight'], 'Candidate server extraction differs')
+    return runtime
+
+
+def validate_qualification(receipt, commit):
+    require(receipt.get('format') == 1 and receipt.get('status') == 'passed' and receipt.get('scope') == QUALIFICATION_SCOPE
+        and receipt.get('repository_commit') == commit and receipt.get('donor') == donor_link()
+        and set(receipt.get('checks', {})) == set(CHECKS) and all(value is True for value in receipt['checks'].values())
+        and all(receipt.get(key) is False for key in FALSE_FLAGS), 'Exact source-bound performance qualification required')
+    contract = module('thor_performance_qualification_contract', ROOT/QUALIFICATION_SCRIPT)
+    suites = receipt.get('test_suites', {})
+    require(set(suites) == set(contract.TEST_MODULES) and receipt.get('check_suites') == contract.CHECK_SUITES
+        and all(item.get('status') == 'passed' and item.get('skipped') == 0 and type(item.get('tests_run')) is int and item['tests_run'] > 0
+            for item in suites.values()) and receipt.get('tests_run') == sum(item['tests_run'] for item in suites.values()), 'Complete unskipped suite inventory required')
+    require(SOURCE_FILES <= set(receipt.get('source_files', {})), 'Current performance source closure incomplete')
+    for name, pin in receipt['source_files'].items():
+        require(isinstance(name, str) and not Path(name).is_absolute() and '..' not in Path(name).parts and chr(92) not in name, 'Unsafe source path')
+        builder().checked_file(ROOT/name, pin)
+    require(receipt.get('postgresql_emission_fixtures') == ['cancelled_child_deletion_commits', 'delete_insert_replacement_commits', 'duplicate_insert_23505_rollback']
+        and receipt.get('postgresql_levelup_fixtures') == sorted(previous.previous.prior.levelup_postgresql_fixtures()), 'All seven real PostgreSQL fixtures required')
+    return receipt
+
+
+def repair_android_manifest(source, destination):
+    base = builder(); base.verify_source_manifest(source); tree = ET.parse(source)
+    tree.getroot().set(base.ANDROID+'versionName', VERSION_NAME); tree.getroot().set(base.ANDROID+'versionCode', str(VERSION_CODE))
+    ET.register_namespace('android', base.ANDROID[1:-1]); tree.write(destination, encoding='utf-8', xml_declaration=True)
+    builder(repaired=True).verify_source_manifest(destination)
+
+
+def download(args):
+    require(not args.output.exists() and not args.output.is_symlink(), 'Fresh donor required'); args.output.parent.mkdir(parents=True, exist_ok=True)
+    with urllib.request.urlopen(DONOR_URL, timeout=120) as source, args.output.open('xb') as target:
+        total = 0
+        while chunk := source.read(1024*1024):
+            total += len(chunk); require(total <= DONOR_APK['bytes'], 'Oversized donor'); target.write(chunk)
+    builder().checked_file(args.output, DONOR_APK)
+
+
+def build(args):
+    base, current = builder(), builder(repaired=True); commit = base.source_commit(args.repository_commit)
+    donor = validate_donor(args.donor_apk, args.donor_build_report); q = validate_qualification(read_json(args.qualification), commit)
+    java = current_sources(donor); password = base.signing_password_spec(args.password_env)
+    base.verify_signing_identity(args.keystore, 'coh-client-interactive', SIGNER, password)
+    require(args.output.name == APK_NAME and not args.output.exists() and not args.output.is_symlink(), 'Fresh candidate APK required')
+    base.checked_file(args.testing_notes); require(0 < args.testing_notes.stat().st_size <= 65536, 'Bounded notes required')
+    for tool in (args.android_jar, args.build_tools/'aapt2', args.build_tools/'zipalign', args.build_tools/'lib/apksigner.jar'):
+        require(tool.is_file() and not tool.is_symlink(), 'Required Android tool missing')
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='coh-thor-performance-', dir=args.output.parent) as temporary:
+        work = Path(temporary); runtime, payloads, preflight = extract_and_repair(args.donor_apk, donor, work/'donor', commit)
+        manifest = work/'AndroidManifest.xml'; repair_android_manifest(ROOT/'android/interactive/src/main/AndroidManifest.xml', manifest)
+        resources, unsigned, aligned, signed = (work/name for name in ('resources.zip', 'unsigned.apk', 'aligned.apk', 'signed.apk'))
+        base.run(args.build_tools/'aapt2', 'compile', '--dir', ROOT/'android/interactive/src/main/res', '-o', resources)
+        base.run(args.build_tools/'aapt2', 'link', '-I', args.android_jar, '--manifest', manifest, '--min-sdk-version', '26', '--target-sdk-version', '35', resources, '-o', unsigned)
+        with zipfile.ZipFile(unsigned) as archive:
+            require(previous.previous.prior.archive_inventory(archive) == {'AndroidManifest.xml', 'resources.arsc', 'res/drawable/ic_coh_client.xml'}, 'Generated Android inventory differs')
+            for name, pin in donor['retained_android_resources'].items():
+                raw = archive.read(name); require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == pin, 'Android resources changed beyond version')
+        with zipfile.ZipFile(unsigned, 'a', zipfile.ZIP_DEFLATED) as archive:
+            base.append_payloads(archive, [(work/'donor'/name, name) for name in sorted(payloads)]); archive.write(work/'donor/classes.dex', 'classes.dex')
+        base.run(args.build_tools/'zipalign', '-f', '4', unsigned, aligned)
+        base.run('java', '-jar', args.build_tools/'lib/apksigner.jar', 'sign', '--ks', args.keystore, '--ks-key-alias', 'coh-client-interactive', '--ks-pass', password, '--key-pass', password, '--out', signed, aligned)
+        certificate = previous.previous.prior.verify_signature(signed, args.build_tools); base.run(args.build_tools/'zipalign', '-c', '4', signed)
+        current.verify_badging(base.run(args.build_tools/'aapt2', 'dump', 'badging', signed))
+        verify_derivative(signed, donor, payloads, commit); previous.previous.prior.verify_binary_manifest(signed, args.donor_apk, args.build_tools)
+        shutil.copyfile(signed, args.output)
+        report = {'format': 1, 'apk': APK_NAME, **base.file_pin(args.output), 'repository_commit': commit,
+            'runtime_repository_commit': commit, 'application_id': base.APP_ID, 'version_name': VERSION_NAME, 'version_code': VERSION_CODE,
+            'abi': 'arm64-v8a', 'scope': QUALIFICATION_SCOPE, 'donor': donor_link(), 'signer_certificate_sha256': certificate,
+            'signing_key_created': False, 'signature_verified': True, 'package_badging_verified': True,
+            'binary_manifest_version_only_verified': True, 'payload_bytes_verified': True, 'payloads': payloads,
+            'changed_apk_payloads': sorted(REPLACED_PAYLOADS), 'replaced_apk_payloads': sorted(REPLACED_PAYLOADS),
+            'added_apk_payloads': [], 'baseline_payloads_verified': 75, 'retained_baseline_payloads_verified': 75-len(REPLACED_PAYLOADS),
+            'java_sources': java, 'changed_java_sources': [], 'retained_dex': donor['retained_dex'],
+            'retained_android_resources': donor['retained_android_resources'], 'preserved_sources': donor['preserved_sources'],
+            'source_manifest': donor['source_manifest'], 'qualification': q, 'qualification_receipt': base.file_pin(args.qualification),
+            'testing_notes': base.file_pin(args.testing_notes), **{key: False for key in FALSE_FLAGS},
+            'runtime_refresh_required': True, 'previous_runtime_generation_retained': True, 'setup_memory_guards_preserved': True,
+            'all_published_visual_resources_retained': True, 'server_payload_extraction_preflight': preflight,
+            'runtime_manifest': runtime, 'runtime_manifest_sha256': payloads['assets/runtime/runtime-manifest.json']['sha256'],
+            'immutable_donor_provenance': {name: donor[name] for name in IMMUTABLE_PROVENANCE}}
+        (args.output.parent/REPORT_NAME).write_text(json.dumps(report, indent=2, sort_keys=True)+'\n')
+    shutil.copyfile(args.testing_notes, args.output.parent/NOTES_NAME)
+    args.output.with_suffix('.apk.sha256').write_text(report['sha256']+'  '+APK_NAME+'\n')
+    verify_report(argparse.Namespace(**vars(args), apk=args.output, build_report=args.output.parent/REPORT_NAME), commit)
+    print('Qualified guest performance APK:', args.output, report['sha256']); return report
+
+
+def verify_report(args, commit):
+    donor = validate_donor(args.donor_apk, args.donor_build_report); base, current = builder(), builder(repaired=True)
+    q = validate_qualification(read_json(args.qualification), commit); report = read_json(args.build_report)
+    require(report.get('format') == 1 and report.get('apk') == APK_NAME and report.get('repository_commit') == commit
+        and report.get('runtime_repository_commit') == commit and report.get('donor') == donor_link() and report.get('scope') == QUALIFICATION_SCOPE
+        and report.get('application_id') == base.APP_ID and report.get('version_name') == VERSION_NAME and report.get('version_code') == VERSION_CODE
+        and report.get('signer_certificate_sha256') == SIGNER and report.get('signing_key_created') is False
+        and report.get('qualification') == q and report.get('qualification_receipt') == base.file_pin(args.qualification)
+        and report.get('java_sources') == current_sources(donor) and report.get('changed_java_sources') == []
+        and report.get('retained_dex') == donor['retained_dex'] and report.get('retained_android_resources') == donor['retained_android_resources']
+        and report.get('preserved_sources') == donor['preserved_sources'] and report.get('source_manifest') == donor['source_manifest']
+        and report.get('immutable_donor_provenance') == {name: donor[name] for name in IMMUTABLE_PROVENANCE}
+        and report.get('changed_apk_payloads') == sorted(REPLACED_PAYLOADS) and report.get('replaced_apk_payloads') == sorted(REPLACED_PAYLOADS)
+        and report.get('added_apk_payloads') == [] and report.get('baseline_payloads_verified') == 75
+        and report.get('retained_baseline_payloads_verified') == 75-len(REPLACED_PAYLOADS)
+        and all(report.get(key) is True for key in ('signature_verified', 'package_badging_verified', 'binary_manifest_version_only_verified',
+            'payload_bytes_verified', 'runtime_refresh_required', 'previous_runtime_generation_retained', 'setup_memory_guards_preserved', 'all_published_visual_resources_retained'))
+        and all(report.get(key) is False for key in FALSE_FLAGS), 'Performance build receipt differs')
+    base.checked_file(args.apk, report); runtime = verify_derivative(args.apk, donor, report['payloads'], commit)
+    require(report.get('runtime_manifest') == runtime and report.get('runtime_manifest_sha256') == report['payloads']['assets/runtime/runtime-manifest.json']['sha256'], 'Runtime provenance differs')
+    previous.previous.prior.verify_binary_manifest(args.apk, args.donor_apk, args.build_tools)
+    previous.previous.prior.verify_signature(args.apk, args.build_tools)
+    base.run(args.build_tools/'zipalign', '-c', '4', args.apk)
+    current.verify_badging(base.run(args.build_tools/'aapt2', 'dump', 'badging', args.apk))
+    checksum = args.apk.with_suffix('.apk.sha256'); require(checksum.read_text() == report['sha256']+'  '+APK_NAME+'\n', 'Checksum differs')
+    notes = args.apk.parent/NOTES_NAME; base.checked_file(notes, report['testing_notes']); base.checked_file(args.testing_notes, report['testing_notes'])
+    return report, checksum, notes
+
+
+def publish_release(api, report, assets, notes):
+    require(tuple(path.name for path in assets) == (APK_NAME, APK_NAME+'.sha256', NOTES_NAME), 'Unexpected release assets')
+    builder().checked_file(assets[0], report)
+    for path in ('/releases/tags/'+RELEASE_TAG, '/git/ref/tags/'+RELEASE_TAG):
+        try: existing = api.request(path)
+        except urllib.error.HTTPError as error:
+            if error.code != 404: raise
+        else:
+            require(not path.startswith('/releases/'), 'Existing release is never replaced')
+            require(existing.get('object', {}).get('type') == 'commit' and existing['object'].get('sha') == report['repository_commit'], 'Existing tag points elsewhere')
+    release = api.request('/releases', {'tag_name': RELEASE_TAG, 'target_commitish': report['repository_commit'],
+        'name': 'COH Atlas Gameplay 0.13.15 — startup and gameplay performance',
+        'body': notes+'\n\nAPK SHA-256: `'+report['sha256']+'`.\n[Hosted qualification](https://github.com/'+REPOSITORY+'/actions/runs/'+os.environ.get('GITHUB_RUN_ID', '')+').\n',
+        'draft': True, 'prerelease': True, 'generate_release_notes': False, 'make_latest': 'false'}, method='POST')
+    require(type(release.get('id')) is int and release.get('draft') is True and release.get('tag_name') == RELEASE_TAG, 'Unexpected release')
+    for path in assets:
+        uploaded = api.request('/releases/'+str(release['id'])+'/assets?'+urllib.parse.urlencode({'name': path.name}), path, method='POST', upload=True)
+        pin = builder().file_pin(path)
+        require(uploaded.get('state') == 'uploaded' and uploaded.get('name') == path.name and uploaded.get('size') == pin['bytes']
+            and uploaded.get('digest') == 'sha256:'+pin['sha256'], 'Release upload differs')
+    published = api.request('/releases/'+str(release['id']), {'draft': False, 'prerelease': True, 'make_latest': 'false'}, method='PATCH')
+    require(published.get('id') == release['id'] and published.get('draft') is False and published.get('prerelease') is True
+        and published.get('tag_name') == RELEASE_TAG, 'Publication incomplete')
+    return published.get('html_url')
+
+
+def publish(args):
+    require(os.environ.get('GITHUB_REPOSITORY') == REPOSITORY and os.environ.get('GITHUB_REF') == 'refs/heads/'+BRANCH
+        and os.environ.get('GITHUB_EVENT_NAME') in ('push', 'workflow_dispatch'), 'Publication requires continuation branch')
+    commit = builder().source_commit(os.environ.get('GITHUB_SHA')); report, checksum, notes = verify_report(args, commit)
+    api = module('thor_performance_github', Path(__file__).with_name('build_atlas_gameplay_apk.py'))
+    print('Published performance prerelease:', publish_release(api.GitHub(os.environ.get('GH_TOKEN')), report, (args.apk, checksum, notes), notes.read_text()))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__); commands = parser.add_subparsers(dest='command', required=True)
+    fetch = commands.add_parser('download-donor'); fetch.add_argument('--output', type=Path, required=True)
+    for name in ('build', 'audit', 'publish'):
+        command = commands.add_parser(name)
+        for argument in ('donor-apk', 'donor-build-report', 'qualification', 'build-tools'):
+            command.add_argument('--'+argument, type=Path, required=True)
+        command.add_argument('--testing-notes', type=Path, default=NOTES)
+        command.add_argument('--repository-commit', default=os.environ.get('GITHUB_SHA'))
+        if name == 'build':
+            command.add_argument('--android-jar', type=Path, required=True); command.add_argument('--keystore', type=Path, required=True)
+            command.add_argument('--password-env', default='COH_INTERACTIVE_KEYSTORE_PASSWORD'); command.add_argument('--output', type=Path, required=True)
+        else:
+            command.add_argument('--apk', type=Path, required=True); command.add_argument('--build-report', type=Path, required=True)
+    args = parser.parse_args()
+    if args.command == 'download-donor': download(args)
+    elif args.command == 'build': build(args)
+    elif args.command == 'publish': publish(args)
+    else: print('Public candidate verified:', verify_report(args, builder().source_commit(args.repository_commit))[0]['sha256'])
+
+
+if __name__ == '__main__': main()

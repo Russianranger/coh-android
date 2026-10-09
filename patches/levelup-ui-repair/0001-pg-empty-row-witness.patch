@@ -1,0 +1,54 @@
+--- a/DBServer/src/container_sql.c
++++ b/DBServer/src/container_sql.c
+@@ -591,7 +591,10 @@
+ 
+     table->sql_select_link[conn] = stmt = sqlConnStmtAlloc(conn);
+ 
+-    estrPrintf(&table->sql_select_query[conn], "SELECT * FROM dbo.%s WHERE ContainerId = ?;", table->name);
++    /* The merger consumes monotonically increasing child slot indices.
++     * PostgreSQL does not preserve primary-key order in heap/updated rows. */
++    estrPrintf(&table->sql_select_query[conn], "SELECT * FROM dbo.%s WHERE ContainerId = ?%s;", table->name,
++        gDatabaseProvider == DBPROV_POSTGRESQL && table->table_type == TT_SUBCONTAINER ? " ORDER BY SubId" : "");
+ 
+     retcode = sqlConnStmtPrepare(stmt, table->sql_select_query[conn], estrLength(&table->sql_select_query[conn]), conn);
+     bindInputParameter(stmt, 0, CFTYPE_INT, id_ptr, NULL);
+@@ -688,6 +691,7 @@
+     SQLLEN *results = row_results[conn];
+     bool found = false;
+     int sub_id = -1; // -1 indicates this is not a subcontainer
++    int row_start_count = list->count;
+     int idx = 0;
+     int col;
+ 
+@@ -827,7 +831,11 @@
+ 
+     // No non-NULL values were found for this row, in order to indicate the
+     // existence of this row in the database, add a fake entry.
+-    if (!list->count) {
++    if (!list->count || (gDatabaseProvider == DBPROV_POSTGRESQL &&
++            table->table_type == TT_SUBCONTAINER && list->count == row_start_count)) {
++        /* Preserve this physical PostgreSQL child row even after earlier
++         * rows supplied fields. A later non-default diff must UPDATE it,
++         * rather than INSERT over its existing (ContainerId,SubId) key. */
+         LineTracker    *line = dynArrayAdd(&list->lines, sizeof(list->lines[0]), &list->count, &list->max_lines, 1);
+         line->str_idx = FAKE_STR_IDX;
+         line->is_str = 1;
+--- a/libs/UtilitiesLib/src/utils/utils.c
++++ b/libs/UtilitiesLib/src/utils/utils.c
+@@ -2261,10 +2261,14 @@
+     handle = _beginthreadex(security,stack_size,start_address,arglist,initflag,thrdaddr);
+     if(handle)
+     {
+-        char threadname[128];
++        char *threadname = NULL;
+         assertYouMayFreezeThisThread((HANDLE)handle,*thrdaddr);
+-        sprintf(threadname, "%s(%d)", filename, linenumber);
++        /* __FILE__ may exceed the old 128-byte diagnostic buffer in staged
++         * builds. Preserve the complete name without overflowing thread
++         * startup; SetThreadName consumes this text synchronously. */
++        estrPrintf(&threadname, "%s(%d)", filename, linenumber);
+         SetThreadName(*thrdaddr,threadname);
++        estrDestroy(&threadname);
+     }
+     return handle;
+ }

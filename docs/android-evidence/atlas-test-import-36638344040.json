@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "hosted_JVM_import_of_exact_Atlas_APK_assets",
+  "repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "java_source_sha256": {
+    "android/atlas/src/main/java/io/github/russianranger/cohatlas/AtlasAssetImporter.java": "e5da4a7a4a0cd3a55be56055f5556537e66095b190d466d9c9838990a0f5c46b",
+    "tools/android/atlas/java/io/github/russianranger/cohatlas/HostImport.java": "1164a1df37d8502b663dd4e51b0b7cb17d3d107d58812416503643ed93de3896"
+  },
+  "apk_payloads": {
+    "atlas-assets-index.tsv": {
+      "bytes": 2379733,
+      "sha256": "1df633c5dc22667861380824f09eb6d98463a0ae025fd756b1e15ca29b933480"
+    },
+    "atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293"
+    },
+    "atlas-text-index.tsv": {
+      "bytes": 21187391,
+      "sha256": "35bc97e032b286677bde32122c8cb3d14146bba2ded1f1fdc1a9a9486d37a5e8"
+    },
+    "atlas-text.zip": {
+      "bytes": 312807038,
+      "sha256": "53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c"
+    }
+  },
+  "file_count": 173011,
+  "total_bytes": 2977730517,
+  "accepted_game_data_manifest_sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4",
+  "imported_files_independently_rehashed": true,
+  "exact_APK_payloads_verified": true,
+  "recovery_and_previous_generation_preservation": true,
+  "interrupted_reimport_preserves_current": true,
+  "generation": "generation-6b9eaa4783d743378778fc45f5d70dcb",
+  "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+  "receipt_sha256": "51d684f9e965d6e1c6c1da39335f057a1f98d1be0f3621a8cb1dcaf3d2b0ca80",
+  "elapsed_seconds": 54.536957
+}

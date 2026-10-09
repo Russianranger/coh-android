@@ -1,0 +1,129 @@
+{
+  "format": 1,
+  "scope": "physical_0.13.12_saved_character_reopen_failure",
+  "repository_head_observed": "ed1b69bca04f4bf56e43f6dbc6115b0578934812",
+  "apk_source_commit": "e552fadeb1f392ab2574be16df6b474933c8ed00",
+  "report": {
+    "name": "coh-atlas-gameplay-20261005-135502.zip",
+    "bytes": 1019466,
+    "sha256": "d96a393d681b8068e84b0d2647997996b9cf42a568d969255fd6536a6e14209f",
+    "guest_report": {
+      "bytes": 21122,
+      "sha256": "efb79b55b609386b790fd35ba00ebd5ff1f9a05417d30ea93e0e25d405d8e6d4"
+    },
+    "native_console": {
+      "bytes": 3864,
+      "sha256": "1bc0cb8d302fb501369503a70537c447f07c4a5e4e66c2de688249230e6776bd"
+    },
+    "native_error_log": {
+      "bytes": 397,
+      "sha256": "57a5139db708eb6cda7fa41b5a596bb20390afe45f50ba28e92df662045b8977"
+    }
+  },
+  "device": "AYN AYN Thor",
+  "app_version": "0.13.12",
+  "operation": "character_reopen",
+  "user_observation": "Reopen THORHERO did not reach character selection; Android remained running.",
+  "native_evidence": {
+    "stage": "local_dbserver_startup",
+    "sql_connected_utc": "2026-10-05T13:54:27Z",
+    "assertion": {
+      "file": "quick_sprintf.c",
+      "line": 101,
+      "expression": "(size_t)(tail-buf+1) <= buf_size",
+      "reported_time_utc": "2026-10-05T13:54:27Z"
+    },
+    "accepted_prefix_ports": [
+      6989,
+      6997,
+      6971,
+      6996,
+      6992
+    ],
+    "assertion_debug_listener": {
+      "protocol": "tcp",
+      "address": "127.0.0.1",
+      "port": 52015,
+      "source": "upstream/ouroboros/libs/UtilitiesLib/src/utils/SuperAssert.c:listenThreadMain / BASE_LISTEN_PORT"
+    },
+    "guard_error": "Unexpected or duplicate game listener evidence",
+    "dbserver_sha256": "834ff8846777436324c146f1cebdc58bad8383f6f369e9da04973115149c1e70",
+    "client_process_started": false,
+    "mapserver_started": false,
+    "no_game_listener_exception_requested": true
+  },
+  "timings": {
+    "runtime_setup_elapsed_ms": 99460,
+    "reopen_elapsed_ms": 94328,
+    "completed_stages": [
+      {
+        "stage": "client_inputs",
+        "started_utc": "2026-10-05T13:53:00.496728+00:00",
+        "finished_utc": "2026-10-05T13:53:01.744783+00:00"
+      },
+      {
+        "stage": "client_private_data",
+        "started_utc": "2026-10-05T13:53:01.745101+00:00",
+        "finished_utc": "2026-10-05T13:53:01.902137+00:00"
+      },
+      {
+        "stage": "persistent_server_profile",
+        "started_utc": "2026-10-05T13:53:01.905056+00:00",
+        "finished_utc": "2026-10-05T13:53:02.505493+00:00"
+      },
+      {
+        "stage": "postgres_local_login",
+        "started_utc": "2026-10-05T13:53:02.506080+00:00",
+        "finished_utc": "2026-10-05T13:53:03.000969+00:00"
+      },
+      {
+        "stage": "presentation_display",
+        "started_utc": "2026-10-05T13:53:39.386463+00:00",
+        "finished_utc": "2026-10-05T13:53:39.496658+00:00"
+      },
+      {
+        "stage": "wine_initialization",
+        "started_utc": "2026-10-05T13:53:39.497044+00:00",
+        "finished_utc": "2026-10-05T13:53:47.890543+00:00"
+      },
+      {
+        "stage": "local_login_odbc",
+        "started_utc": "2026-10-05T13:53:47.891837+00:00",
+        "finished_utc": "2026-10-05T13:54:00.914919+00:00"
+      }
+    ],
+    "actual_client_startup_measured": false,
+    "atlas_startup_measured": false
+  },
+  "preservation": {
+    "existing_character_id_observed": 1,
+    "no_training_attempt_in_this_session": true,
+    "postgres_graceful_shutdown": true,
+    "owned_processes_reaped": true,
+    "wine_prefix_stopped": true,
+    "live_xp_level_power_snapshot_captured": false,
+    "source_asset_import_reused": true
+  },
+  "limits": [
+    "No client process or character selection was reached.",
+    "This archive does not establish training, UI restoration, new power persistence or client startup savings.",
+    "The listener guard correctly rejected the assertion listener; it must not be loosened."
+  ],
+  "root_cause": {
+    "function": "x_beginthreadex",
+    "file": "upstream/ouroboros/libs/UtilitiesLib/src/utils/utils.c",
+    "called_from": "TaskThread::start / SQL FIFO worker initialization",
+    "embedded_filename": "D:\\a\\coh-android\\coh-android\\out\\levelup-ui-repair-db-source\\libs\\UtilitiesLib\\include\\utilitieslib\\UtilsCXX\\taskthread.hpp",
+    "embedded_filename_bytes": 123,
+    "line_number": 110,
+    "formatted_name_bytes": 128,
+    "required_bytes_including_nul": 129,
+    "old_buffer_capacity": 128,
+    "executable_witness": {
+      "bytes": 1664512,
+      "sha256": "834ff8846777436324c146f1cebdc58bad8383f6f369e9da04973115149c1e70"
+    },
+    "inference": "Native assertion location and startup phase agree with the exact embedded worker filename exceeding the fixed diagnostic buffer.",
+    "repair_scope": "complete dynamically allocated diagnostic thread name only; PostgreSQL row-witness repair retained"
+  }
+}

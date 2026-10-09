@@ -1,0 +1,45 @@
+COH Atlas Gameplay 0.13.0 — one new task/save gate, plus server animation packing
+
+Install this update over 0.12.1. Keep the existing imported assets, COHLOCAL
+profile and THORHERO; do not clear application data or recreate the character.
+Tap Refresh runtime once after installing, then start the existing-character
+run. Log in with COHLOCAL / offline and enter THORHERO as usual.
+
+This build retains the accepted startup caches, Wine metadata and stable data
+paths. It adds an exact server-only animation pack with loose-file fallback,
+and includes the ordinary-save position observer correction. Prior movement,
+ground recovery and ordinary NPC contact tests remain accepted. You do not
+need to repeat them or perform a separate startup-only run.
+
+1. Once Atlas connection and the existing fresh-view controls are ready, close
+   help/game dialogs. Tap Open task contact. This sends the stock fixed command
+   /contactdialog Contacts/Atlas_Park/Matthew_Habashy.contact, so his model or
+   physical location is not needed. Choose and accept What Was Lost / Part One:
+   Demons and Gangsters yourself. Accept exactly one task. Its five-Hellions
+   objective does not require combat for this diagnostic.
+2. Open the accepted task in the journal. Wait for Accepted task verified, tap
+   Capture accepted task, and keep that journal view visible until the capture
+   batch finishes. The app records three fresh views bound to this session.
+3. Close the journal and contact dialog with B. Tap Complete accepted task
+   once. The fixed helper sends /completetask 0 through the stock game command
+   route. It does not edit SQL or assign another task. Wait for Task completion
+   verified; native command effects and the same SQL task must agree.
+4. Open the completed task's journal entry. Tap Capture completed task and keep
+   it visible until the three fresh views finish. Close dialogs, follow the
+   existing movement/Save countdowns and release controls for 60 seconds before
+   Save. Tap Save; stay still through ordinary logout. Save is unavailable until
+   both task phases and their capture batches are verified.
+5. After Saved character verified, tap Finish and export the complete ZIP. Send
+   that ZIP with your approximate startup time and any visible/task behavior
+   notes. Startup phase timings and animation/cache diagnostics are included.
+
+The saved checkpoint is a successfully completed task pending contact return.
+Returning to Matthew for later story progression/reward turn-in is not required
+or claimed by this gate. Combat, mission maps and Ms. Liberty rendering are
+outside this test. Animation packing targets part of the roughly 83-second
+sequencer phase; its actual Thor time savings remain to be measured.
+
+If an existing task is already in the journal, or a phase never verifies, keep
+that character/task intact and export the report. Do not reset the profile,
+clear tasks, repeatedly press completion, or start another long run merely to
+recover a diagnostic result. The original exported status remains evidence.

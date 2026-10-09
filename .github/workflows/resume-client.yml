@@ -1,0 +1,62 @@
+name: Resume-only diagnostic TestClient
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate source and package checks
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($pattern in @('test_prepare_resume_client_source.py', 'test_package_resume_client.py')) {
+            python -m unittest discover -s tools -p $pattern -v
+            if ($LASTEXITCODE -ne 0) { throw "Tests failed: $pattern" }
+          }
+      - name: Verify and stage separate diagnostic source
+        run: python tools/prepare_resume_client_source.py --output out/resume-source
+      - name: Configure Win32 diagnostic client
+        working-directory: out/resume-source
+        run: >-
+          cmake --preset vs2026
+          "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe"
+          -DCOH_PG_PERSISTENCE_TESTS=OFF
+      - name: Build diagnostic TestClient
+        working-directory: out/resume-source
+        run: cmake --build out/build/vs2026 --config OptDebug --parallel --target TestClient
+      - name: Package diagnostic client and receipts
+        env:
+          BUILD_COMMIT: ${{ github.sha }}
+          BUILD_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: >-
+          python tools/package_resume_client.py
+          --binary-directory out/resume-source/out/build/vs2026/bin/OptDebug
+          --build-input out/resume-source/resume-client-build-input.json
+          --cmake-cache out/resume-source/out/build/vs2026/CMakeCache.txt
+          --output out/resume-package
+          --repository-commit "$env:BUILD_COMMIT"
+          --run-url "$env:BUILD_RUN_URL"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resume-testclient-win32
+          path: out/resume-package/runtime/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resume-testclient-win32-symbols
+          path: out/resume-package/symbols/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30

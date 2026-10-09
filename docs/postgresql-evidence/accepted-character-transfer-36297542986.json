@@ -1,0 +1,741 @@
+{
+  "recorded_utc": "2026-09-27T06:04:43.164886+00:00",
+  "repository": "Russianranger/coh-android",
+  "workflow_run": {
+    "id": 36297542986,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36297542986",
+    "commit": "5f2c561058a186de59d3f27301eea210bd4bb66d",
+    "conclusion": "success",
+    "terminal_status_updated_utc": "2026-09-27T05:56:06Z",
+    "jobs": [
+      {
+        "id": 108559063605,
+        "name": "tooling (windows-2025-vs2026)",
+        "conclusion": "success"
+      },
+      {
+        "id": 108559063688,
+        "name": "tooling (ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 108559293435,
+        "name": "resume-client / build",
+        "conclusion": "success"
+      },
+      {
+        "id": 108560197056,
+        "name": "character (transfer)",
+        "conclusion": "success"
+      },
+      {
+        "id": 108560197117,
+        "name": "character (sustained)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "artifact": {
+    "id": 10924242591,
+    "name": "character-transfer-evidence",
+    "bytes": 15804,
+    "sha256": "260589aa765e330a891f8769fe33108c22769c829d122110e4b2098041a5ce42",
+    "archive": "character-transfer-36297542986.zip",
+    "report": "character-transfer-36297542986.json",
+    "members": [
+      {
+        "path": "character-persistence-report.json",
+        "bytes": 165363,
+        "sha256": "c6af529c96d1ddd3cfd83d2c86aea0f7ce28bd0af264e41b76ddbe4e2f709e1b"
+      },
+      {
+        "path": "selected-diagnostics.txt",
+        "bytes": 3717,
+        "sha256": "103057dd286acf6202cc2a1860dd9687b17d50841f97d7d8c102fead928e8178"
+      }
+    ]
+  },
+  "report": {
+    "status": "fresh_fakeauth_character_map_roundtrip_second_save_passed_gameplay_unvalidated",
+    "failures": [],
+    "phases": [
+      {
+        "phase": "first_services_ready",
+        "time_utc": "2026-09-27T05:49:41.895951+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "account_empty",
+        "time_utc": "2026-09-27T05:49:42.992160+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "created_connected",
+        "time_utc": "2026-09-27T05:50:14.604241+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "influence_observed_while_connected",
+        "time_utc": "2026-09-27T05:50:17.130817+00:00",
+        "status": "passed",
+        "value": 12345,
+        "scope": "CMD debug live entity conPrintf response plus connected MapId1 status; no forced save"
+      },
+      {
+        "phase": "protocol_logout_committed",
+        "time_utc": "2026-09-27T05:50:22.856038+00:00",
+        "status": "passed",
+        "quitnow_is_save_ack": false,
+        "client_forced_stop_before_commit": false
+      },
+      {
+        "phase": "restart_services_ready",
+        "time_utc": "2026-09-27T05:51:04.312245+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "restart_saved_state",
+        "time_utc": "2026-09-27T05:51:05.467955+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "missing_name_refused_without_mutation",
+        "time_utc": "2026-09-27T05:51:11.977666+00:00",
+        "status": "passed"
+      },
+      {
+        "phase": "restored_currency_while_connected",
+        "time_utc": "2026-09-27T05:51:19.119115+00:00",
+        "status": "passed",
+        "value": 12345
+      },
+      {
+        "phase": "sustained_connected_observation",
+        "time_utc": "2026-09-27T05:52:29.640475+00:00",
+        "status": "passed",
+        "required_seconds": 60,
+        "observed_seconds": 64.95299999999997,
+        "sample_count": 12,
+        "maximum_sample_gap_seconds": 6.234000000000037,
+        "connected_map_id": 1,
+        "current_server_heartbeats": true
+      },
+      {
+        "phase": "clone101_prestarted_ready",
+        "time_utc": "2026-09-27T05:52:43.404634+00:00",
+        "status": "passed",
+        "map_id": 101,
+        "udp_port": 7002
+      },
+      {
+        "phase": "transfer1_arrived_and_committed",
+        "time_utc": "2026-09-27T05:53:01.182883+00:00",
+        "status": "passed",
+        "map_id": 101,
+        "udp_port": 7002
+      },
+      {
+        "phase": "transfer2_arrived_and_committed",
+        "time_utc": "2026-09-27T05:53:18.990773+00:00",
+        "status": "passed",
+        "map_id": 1,
+        "udp_port": 7001
+      },
+      {
+        "phase": "second_influence_observed_while_connected",
+        "time_utc": "2026-09-27T05:53:21.355279+00:00",
+        "status": "passed",
+        "value": 23456
+      },
+      {
+        "phase": "second_protocol_logout_committed",
+        "time_utc": "2026-09-27T05:53:27.943524+00:00",
+        "status": "passed",
+        "quitnow_is_save_ack": false,
+        "client_forced_stop_before_commit": false
+      }
+    ],
+    "character": {
+      "container_id": 1,
+      "name": "TEST59440",
+      "account": "CohP3b45b37396"
+    },
+    "missing_name_probe": {
+      "requested_name": "CohAbsent08548cd7c29b",
+      "exit_code": 3,
+      "explicit_refusal": true,
+      "creation_or_scene_observed": false,
+      "counts_as_login_or_save": false,
+      "character_count_before": 1,
+      "character_count_after": 1,
+      "independent_sql_unchanged": true
+    },
+    "resume_probe": {
+      "slot": 0,
+      "database_id": 1,
+      "database_id_source": "processed MapServer player entity update",
+      "exact_name": "TEST59440",
+      "creation_disabled": true,
+      "scene_exchange_observed": true,
+      "processed_server_update_for_original_player": true,
+      "active_gameplay_confirmed": false,
+      "scope": "Connected existing-character session; combat, movement and rendered gameplay unvalidated"
+    },
+    "sustained_observation": {
+      "required_seconds": 60,
+      "observed_seconds": 64.95299999999997,
+      "sample_count": 12,
+      "maximum_sample_gap_seconds": 6.234000000000037,
+      "connected_map_id": 1,
+      "current_server_heartbeats": true
+    },
+    "transfer_map_startup": {
+      "baseline": {
+        "map_id": 101,
+        "ready": false,
+        "not_started": true,
+        "raw": "101 maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+        "sampled_utc": "2026-09-27T05:52:30.855742+00:00"
+      },
+      "ready": {
+        "map_id": 101,
+        "ready": true,
+        "network_age_seconds": 2,
+        "stats_age_seconds": 2,
+        "address": "127.0.0.1",
+        "port": 7002,
+        "raw": "101 City_01_01.txt S: 2/2  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+        "sampled_utc": "2026-09-27T05:52:43.404634+00:00"
+      }
+    },
+    "transfer_legs": [
+      {
+        "epoch": 1,
+        "from_map_id": 1,
+        "to_map_id": 101,
+        "requested_utc": "2026-09-27T05:52:46.945559+00:00",
+        "command": "mapmove 101",
+        "departure_character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 1,
+          "static_map_id": 1,
+          "sampled_utc": "2026-09-27T05:52:44.570848+00:00"
+        },
+        "maps_before": {
+          "1": {
+            "map_id": 1,
+            "ready": true,
+            "network_age_seconds": 4,
+            "stats_age_seconds": 4,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "raw": "1 City_01_01.txt S: 4/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+            "sampled_utc": "2026-09-27T05:52:45.750172+00:00"
+          },
+          "101": {
+            "map_id": 101,
+            "ready": true,
+            "network_age_seconds": 5,
+            "stats_age_seconds": 5,
+            "address": "127.0.0.1",
+            "port": 7002,
+            "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+            "sampled_utc": "2026-09-27T05:52:46.945559+00:00"
+          }
+        },
+        "arrival": {
+          "processed_update": {
+            "epoch": 1,
+            "database_id": 1,
+            "name": "TEST59440",
+            "base_map_id": 1,
+            "instance_number": 2,
+            "address": "127.0.0.1",
+            "port": 7002,
+            "database_id_source": "processed MapServer player entity update",
+            "instance_number_is_map_container_id": false,
+            "map_id": 101,
+            "static_map_id": 101,
+            "exact_destination_endpoint_verified": true,
+            "in_map_transfer": false
+          },
+          "map_status": {
+            "map_id": 101,
+            "ready": true,
+            "network_age_seconds": 1,
+            "stats_age_seconds": 9,
+            "address": "127.0.0.1",
+            "port": 7002,
+            "raw": "101 City_01_01.txt S: 1/9  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+            "sampled_utc": "2026-09-27T05:52:50.196072+00:00"
+          },
+          "character_status": {
+            "loaded": true,
+            "connected": true,
+            "in_map_transfer": false,
+            "map_id": 101,
+            "static_map_id": 101,
+            "sampled_utc": "2026-09-27T05:52:51.369955+00:00"
+          },
+          "observed_utc": "2026-09-27T05:52:51.369955+00:00"
+        },
+        "live_currency": {
+          "player": "TEST59440",
+          "account": "CohP3b45b37396",
+          "influence": 12345,
+          "time_utc": "2026-09-27T05:52:52.625487+00:00",
+          "sequence": 25
+        },
+        "sql_comparison": {
+          "identity_unchanged": true,
+          "selected_rows_unchanged": true,
+          "committed_login_count": 2,
+          "expected_session_login_count": 2,
+          "additional_transfer_login": false,
+          "row_counts": {
+            "ents": 1,
+            "ents2": 1,
+            "powers": 10,
+            "costumeparts": 13
+          },
+          "sql_scope": "Committed ordinary entity update; no forced save or SQL mutation"
+        },
+        "committed_sql_observed_utc": "2026-09-27T05:52:55.461068+00:00",
+        "status": "passed",
+        "settled_utc": "2026-09-27T05:52:57.830788+00:00",
+        "settled_map_status": {
+          "map_id": 101,
+          "ready": true,
+          "network_age_seconds": 5,
+          "stats_age_seconds": 5,
+          "address": "127.0.0.1",
+          "port": 7002,
+          "raw": "101 City_01_01.txt S: 5/5  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+          "sampled_utc": "2026-09-27T05:52:56.638017+00:00"
+        },
+        "settled_character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 101,
+          "static_map_id": 101,
+          "sampled_utc": "2026-09-27T05:52:57.830788+00:00"
+        },
+        "account_character_count": 1
+      },
+      {
+        "epoch": 2,
+        "from_map_id": 101,
+        "to_map_id": 1,
+        "requested_utc": "2026-09-27T05:53:04.626920+00:00",
+        "command": "mapmove 1",
+        "departure_character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 101,
+          "static_map_id": 101,
+          "sampled_utc": "2026-09-27T05:53:02.317831+00:00"
+        },
+        "maps_before": {
+          "1": {
+            "map_id": 1,
+            "ready": true,
+            "network_age_seconds": 2,
+            "stats_age_seconds": 2,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "raw": "1 City_01_01.txt S: 2/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+            "sampled_utc": "2026-09-27T05:53:03.470595+00:00"
+          },
+          "101": {
+            "map_id": 101,
+            "ready": true,
+            "network_age_seconds": 3,
+            "stats_age_seconds": 3,
+            "address": "127.0.0.1",
+            "port": 7002,
+            "raw": "101 City_01_01.txt S: 3/3  Ip:127.0.0.1:7002   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+            "sampled_utc": "2026-09-27T05:53:04.626920+00:00"
+          }
+        },
+        "arrival": {
+          "processed_update": {
+            "epoch": 2,
+            "database_id": 1,
+            "name": "TEST59440",
+            "base_map_id": 1,
+            "instance_number": 1,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "database_id_source": "processed MapServer player entity update",
+            "instance_number_is_map_container_id": false,
+            "map_id": 1,
+            "static_map_id": 1,
+            "exact_destination_endpoint_verified": true,
+            "in_map_transfer": false
+          },
+          "map_status": {
+            "map_id": 1,
+            "ready": true,
+            "network_age_seconds": 1,
+            "stats_age_seconds": 7,
+            "address": "127.0.0.1",
+            "port": 7001,
+            "raw": "1 City_01_01.txt S: 1/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+            "sampled_utc": "2026-09-27T05:53:08.440963+00:00"
+          },
+          "character_status": {
+            "loaded": true,
+            "connected": true,
+            "in_map_transfer": false,
+            "map_id": 1,
+            "static_map_id": 1,
+            "sampled_utc": "2026-09-27T05:53:09.560761+00:00"
+          },
+          "observed_utc": "2026-09-27T05:53:09.560761+00:00"
+        },
+        "live_currency": {
+          "player": "TEST59440",
+          "account": "CohP3b45b37396",
+          "influence": 12345,
+          "time_utc": "2026-09-27T05:53:10.793617+00:00",
+          "sequence": 30
+        },
+        "sql_comparison": {
+          "identity_unchanged": true,
+          "selected_rows_unchanged": true,
+          "committed_login_count": 2,
+          "expected_session_login_count": 2,
+          "additional_transfer_login": false,
+          "row_counts": {
+            "ents": 1,
+            "ents2": 1,
+            "powers": 10,
+            "costumeparts": 13
+          },
+          "sql_scope": "Committed ordinary entity update; no forced save or SQL mutation"
+        },
+        "committed_sql_observed_utc": "2026-09-27T05:53:13.428448+00:00",
+        "status": "passed",
+        "settled_utc": "2026-09-27T05:53:15.726365+00:00",
+        "settled_map_status": {
+          "map_id": 1,
+          "ready": true,
+          "network_age_seconds": 3,
+          "stats_age_seconds": 3,
+          "address": "127.0.0.1",
+          "port": 7001,
+          "raw": "1 City_01_01.txt S: 3/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:02 Info ",
+          "sampled_utc": "2026-09-27T05:53:14.560092+00:00"
+        },
+        "settled_character_status": {
+          "loaded": true,
+          "connected": true,
+          "in_map_transfer": false,
+          "map_id": 1,
+          "static_map_id": 1,
+          "sampled_utc": "2026-09-27T05:53:15.726365+00:00"
+        },
+        "account_character_count": 1
+      }
+    ],
+    "second_live_currency_evidence": {
+      "player": "TEST59440",
+      "account": "CohP3b45b37396",
+      "influence": 23456,
+      "time_utc": "2026-09-27T05:53:20.040415+00:00",
+      "sequence": 31
+    },
+    "second_logout_comparison": {
+      "phase": "second_logout",
+      "identity_unchanged": true,
+      "selected_rows_unchanged": false,
+      "only_expected_influence_change": true,
+      "login_count_before": 1,
+      "login_count_after": 2,
+      "row_counts": {
+        "ents": 1,
+        "ents2": 1,
+        "powers": 10,
+        "costumeparts": 13
+      }
+    },
+    "attribute_mapping_sha256": {
+      "attributes": "19a5b30a15442027e6ee6a05d1cd43898c353334bb2cb10e4ceb1aefaeb5b097",
+      "badgestatsattributes": "cc37f654c2a7160a4191c553d3a726eb904bfef40d6eee172f05197d4066411c",
+      "pophelpattributes": "aadbef3e6bb10c9945d6ec166d30aaec0c386c607e47ab1e6931fc1a6ca320bf"
+    },
+    "binary_sha256": {
+      "DbServer.exe": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+      "MapServer.exe": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+      "TestClient.exe": "b3fb7eea681e0c5ea1d448ef9d93a5a827342f646e58ba259e7092969ac16f31"
+    },
+    "diagnostic_testclient_sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+    "console_observers": [
+      {
+        "label": "create-client",
+        "ready": true,
+        "method": "exact_pid_console_screen_buffer",
+        "raw_evidence_private": true,
+        "buffer_rows_limit": 16384,
+        "capture_byte_limit": 16777216,
+        "width": 200,
+        "height": 16384,
+        "snapshots": 663,
+        "used_rows": 145,
+        "final_snapshot": true,
+        "observer": {
+          "label": "create-client-console-observer",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 233.875
+        }
+      },
+      {
+        "label": "missing-name-client",
+        "ready": true,
+        "method": "exact_pid_console_screen_buffer",
+        "raw_evidence_private": true,
+        "buffer_rows_limit": 16384,
+        "capture_byte_limit": 16777216,
+        "width": 200,
+        "height": 16384,
+        "snapshots": 24,
+        "used_rows": 156,
+        "final_snapshot": true,
+        "observer": {
+          "label": "missing-name-client-console-observer",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 152.297
+        }
+      },
+      {
+        "label": "sustained-resume-client",
+        "ready": true,
+        "method": "exact_pid_console_screen_buffer",
+        "raw_evidence_private": true,
+        "buffer_rows_limit": 16384,
+        "capture_byte_limit": 16777216,
+        "width": 200,
+        "height": 16384,
+        "snapshots": 2714,
+        "used_rows": 235,
+        "final_snapshot": true,
+        "observer": {
+          "label": "sustained-resume-client-console-observer",
+          "exit_code": 0,
+          "forced_stop": false,
+          "elapsed_seconds": 145.844
+        }
+      }
+    ],
+    "file": "character-transfer-36297542986.json",
+    "login_count_progression": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    "protocol_saves_before_forced_cleanup": true,
+    "console_observers_finalized": true,
+    "same_resumed_client_pid": 9884,
+    "selected_row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 10,
+      "costumeparts": 13
+    }
+  },
+  "per_leg_sql_scope": "Independent reads establish currently committed selected state after each arrival; they do not acknowledge or timestamp a new identical transfer write. The later distinct live change to 23456 and committed protocol logout before cleanup establish the fresh final-save result.",
+  "diagnostic_build": {
+    "artifact": {
+      "id": 10924366939,
+      "name": "resume-testclient-win32",
+      "size_in_bytes": 3151423,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10924366939",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10924366939/zip",
+      "expired": false,
+      "created_at": "2026-09-27T05:41:59Z",
+      "expires_at": "2026-10-27T05:41:58Z",
+      "updated_at": "2026-09-27T05:41:59Z",
+      "digest": "sha256:609bef18e9fbfc0fb03b14cc897ec2944db3baa86f1be1e40811d3d93fe21cc1",
+      "workflow_run": {
+        "id": 36297542986,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "5f2c561058a186de59d3f27301eea210bd4bb66d"
+      }
+    },
+    "symbols_artifact": {
+      "id": 10924097344,
+      "name": "resume-testclient-win32-symbols",
+      "size_in_bytes": 26395411,
+      "url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10924097344",
+      "archive_download_url": "https://api.github.com/repos/Russianranger/coh-android/actions/artifacts/10924097344/zip",
+      "expired": false,
+      "created_at": "2026-09-27T05:42:00Z",
+      "expires_at": "2026-10-27T05:41:59Z",
+      "updated_at": "2026-09-27T05:42:00Z",
+      "digest": "sha256:2623d3d5819b9c05a71597407593ecf5d03e1519ea3aa79342bd2de194b62c1a",
+      "workflow_run": {
+        "id": 36297542986,
+        "repository_id": 1368730125,
+        "head_repository_id": 1368730125,
+        "head_branch": "codex/character-persistence-continuation",
+        "head_sha": "5f2c561058a186de59d3f27301eea210bd4bb66d"
+      }
+    },
+    "manifest_file": "resume-testclient-build-36297542986.json",
+    "source_receipt_file": "resume-testclient-source-36297542986.json",
+    "executable": {
+      "sha256": "94c87a8166c1be8847a5fe106230eb894eb7543e628d8ed167cc09068827c856",
+      "size": 3143168,
+      "pe_machine": 332,
+      "imports": [
+        "ADVAPI32.dll",
+        "GDI32.dll",
+        "IPHLPAPI.DLL",
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "WS2_32.dll"
+      ],
+      "delay_imports": []
+    },
+    "patch_sha256": "9a424a1befb942ae462df3ad636cdb69a168aaf406bcd936382fc6a891b95f01",
+    "transfer_proof": {
+      "schema_version": 1,
+      "marker": "COH_RESUME_ONLY_TRANSFER_UPDATE",
+      "epoch": "successful_doMapXfer",
+      "endpoint": "connected_peer",
+      "readiness": "processed_SERVER_UPDATE",
+      "identity": "initial_received_player_entity"
+    }
+  },
+  "tooling": {
+    "windows": {
+      "character_passed": 68,
+      "map_passed": 13,
+      "diagnostic_client_passed": 38,
+      "skipped": 0
+    },
+    "linux": {
+      "character_passed": 63,
+      "map_passed": 13,
+      "diagnostic_client_passed": 38,
+      "skipped": 5
+    }
+  },
+  "sustained_regression": {
+    "run_id": 36297542986,
+    "job_id": 108560197117,
+    "commit": "5f2c561058a186de59d3f27301eea210bd4bb66d",
+    "conclusion": "success",
+    "artifact": {
+      "id": 10924718014,
+      "name": "character-session-evidence",
+      "bytes": 12686,
+      "sha256": "862c3e5d98ca79f8f24ad7932c0c9c7a6c113d27591da5dfd53de346f19ec53a",
+      "archive": "character-session-36297542986.zip",
+      "report": "character-session-36297542986.json",
+      "members": [
+        {
+          "path": "character-persistence-report.json",
+          "bytes": 119810,
+          "sha256": "171717635677d3f0ebf41ef662eb6b848fcb5ed70af8f8a01f221db9992f569a"
+        },
+        {
+          "path": "selected-diagnostics.txt",
+          "bytes": 2307,
+          "sha256": "876321e2bdd3cfd836a304d07d437eb806c7151d763837d964dc688af15e58c7"
+        }
+      ]
+    },
+    "status": "fresh_fakeauth_character_sustained_resume_second_save_passed_gameplay_unvalidated",
+    "failures": [],
+    "phases_passed": 12,
+    "character": {
+      "container_id": 1,
+      "name": "TEST36933",
+      "account": "CohP5cb2fd7ace"
+    },
+    "sustained_observation": {
+      "required_seconds": 60,
+      "observed_seconds": 62.531999999999925,
+      "sample_count": 10,
+      "maximum_sample_gap_seconds": 7.343999999999824,
+      "connected_map_id": 1,
+      "current_server_heartbeats": true
+    },
+    "login_count_progression": [
+      1,
+      1,
+      1,
+      2
+    ]
+  },
+  "legacy_regression": {
+    "run_id": 36297326643,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36297326643",
+    "commit": "3848133e5e644f4c166cc9e7f3e027288d06c2fd",
+    "conclusion": "success",
+    "artifact_id": 10925075906,
+    "archive": "character-persistence-36297326643.zip",
+    "bytes": 8363,
+    "sha256": "d5da5a7da3f2f966b70f4fa9976ea55349c31cbc8a7d6135eb05f9a0db449a13",
+    "report": "character-persistence-36297326643.json"
+  },
+  "postgresql_regression": {
+    "run_id": 36297326629,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/36297326629",
+    "commit": "3848133e5e644f4c166cc9e7f3e027288d06c2fd",
+    "conclusion": "success",
+    "jobs_passed": [
+      "PostgreSQL 16 and ODBC",
+      "PostgreSQL 18 and ODBC",
+      "Win32 PostgreSQL ODBC",
+      "Real DbServer PostgreSQL persistence"
+    ]
+  },
+  "regression_commit_scope": {
+    "runtime_code_identical_between_implementation_and_retry": true,
+    "retry_changed_files": [
+      "docs/HANDOFF.md",
+      "docs/MAP_TRANSFER_VALIDATION.md",
+      "docs/postgresql-evidence/character-transfer-tooling-36297326622.json",
+      "tools/test_prepare_resume_client_source.py"
+    ]
+  },
+  "first_failed_attempt": {
+    "run_id": 36297326622,
+    "commit": "3848133e5e644f4c166cc9e7f3e027288d06c2fd",
+    "conclusion": "failure",
+    "stage": "Windows compiled-C test fixture; no diagnostic build or game runtime executed",
+    "record": "character-transfer-tooling-36297326622.json"
+  },
+  "accepted_inputs": {
+    "reference_run": 36088012664,
+    "schema_run": 36088012666,
+    "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+    "template_and_map_run": 36176806895,
+    "reviewed_asset_id": 588984151,
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3"
+  },
+  "scope": "Fresh character/save/restart, missing-name refusal, sustained resume, Atlas1 to clone101 to Atlas1, then second protocol save",
+  "unvalidated": [
+    "Mission/door and new-zone transfers",
+    "Automatic Launcher startup",
+    "Combat, movement and rendered/custom-client gameplay",
+    "Auxiliary services and graceful whole-server shutdown",
+    "Android execution, APK packaging and performance"
+  ],
+  "next_gate": "M2 Thor diagnostic Android APK: app-owned ARM64 PostgreSQL, process supervision, Win32 runtime/ODBC probe and durable restart without Termux or root."
+}

@@ -1,0 +1,120 @@
+{
+  "format": 1,
+  "status": "passed",
+  "verified_at_utc": "2026-09-28T20:25:17.042644+00:00",
+  "scope": "offline replay of preserved hosted ARM64 Atlas character-persistence evidence",
+  "run_id": 36460005201,
+  "tested_commit": "cfc8ac477e449037213d5242f43480acf4f1cb85",
+  "current_commit": "d1907dbb7d74da060ecda8ccb112b06d3a582fe7",
+  "checks": {
+    "preservation_archive": {
+      "status": "passed",
+      "bytes": 1025309,
+      "sha256": "88a3fd3eafddd254ffbc32577b2b4d2f8ad7252332a4812ca7a0836110380c1b",
+      "member_count": 43,
+      "all_member_sizes_and_sha256_match": true,
+      "bounded_safe_extraction": true
+    },
+    "standalone_preserved_files": {
+      "status": "passed",
+      "file_count": 3,
+      "raw_report_byte_exact": true,
+      "report_sha256": "1ae4f1b76f779c45c7bed0656e433368d72a2bc85e0d2ed940b06da8d08c6704"
+    },
+    "tested_validator_sources": {
+      "status": "passed",
+      "commit": "cfc8ac477e449037213d5242f43480acf4f1cb85",
+      "sha256": {
+        "tools/android/game/host_game_smoke.py": "cdbf1ce2d18c795fdc9aca1571b222c984e281e4c9ea751d836a4bf5ec1d918b",
+        "tools/android/dbserver/host_dbserver_smoke.py": "a6c79675e5709989fbf4333265a9d3eecfa62fe7a42069c03ae217081e4addf0",
+        "tools/android/game/stack_probe_receipt.py": "c3dd851ef1bf68719df2dedb29b7052ef3ca1e52bee0e6fd05b00e730a46035e",
+        "tools/android/prepare_assets.py": "9528ee9a0b3476568c5078db4991dd61e5b712e5ecc218d38c56a59e6f067b0d",
+        "tools/package_reference_runtime.py": "53de7076e7798b527e8d6cb823d877693668c3474b32cad810ac4fe752f3dd59"
+      }
+    },
+    "capture_payload_hashes": {
+      "status": "passed",
+      "game_capture_count": 11,
+      "service_capture_count": 15
+    },
+    "validate_report": {
+      "status": "passed"
+    },
+    "validate_capture_files": {
+      "status": "passed"
+    },
+    "validate_service_captures": {
+      "status": "passed"
+    },
+    "guest_sources": {
+      "status": "passed",
+      "file_count": 4
+    },
+    "preserved_terminal_run_and_jobs": {
+      "status": "passed",
+      "run_conclusion": "success",
+      "jobs": {
+        "tooling": "success",
+        "bridge": "success",
+        "runtime": "success"
+      }
+    }
+  },
+  "limitations": [
+    "Offline replay of preserved evidence; no fresh runtime, Android device, graphical client, gameplay, or hardware-acceleration test was executed.",
+    "Original 8,991,283-byte Actions ZIP is not present locally. Its historical SHA-256 was not freshly verified; this replay verifies the 1,025,309-byte preservation ZIP and every one of its members.",
+    "The full game-data manifest is intentionally omitted from the preservation ZIP. Fixed-input expectations were independently derived from the hash-verified 62-file schema overlay, but completeness against the omitted full data inventory was not freshly revalidated.",
+    "Game/runtime executable bytes and complete binary inventories are not present in this archive. Their recorded package hashes were cross-checked, not recomputed from executable bytes.",
+    "Workflow success is checked against preserved raw run/jobs JSON. Live remote workflow state was not queried by this replay.",
+    "This Atlas result does not resolve the separate intermittent DbServer signal-11 failure documented by the accepted receipt."
+  ],
+  "proved": {
+    "stages_passed": 18,
+    "character": {
+      "container_id": 1,
+      "name": "TEST48625",
+      "account": "CohAa82e8aaa56"
+    },
+    "login_count_sequence": [
+      1,
+      1,
+      2
+    ],
+    "influence": 12345,
+    "selected_row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 13
+    },
+    "cleanup_complete": true,
+    "elapsed_seconds": 1963.43549
+  },
+  "local_regression_tests": {
+    "source_commit": "d1907dbb7d74da060ecda8ccb112b06d3a582fe7",
+    "atlas": {
+      "discovered": 93,
+      "passed": 92,
+      "skipped": 1,
+      "skip_reason": "Native x86 MSVC Windows observer; covered by accepted hosted Windows job"
+    },
+    "proot_download": {
+      "passed": 3
+    },
+    "extract_talloc_source": {
+      "passed": 8
+    },
+    "total_passed": 103,
+    "failures": 0,
+    "setup_note": "Initial sparse checkout omitted the assets manifest; fetched assets and repeated the Atlas suite successfully."
+  },
+  "live_remote_observation": {
+    "run_id": 36460005201,
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "cfc8ac477e449037213d5242f43480acf4f1cb85",
+    "repository_queued_runs": 0,
+    "repository_in_progress_runs": 0,
+    "scope": "GitHub API snapshot during takeover verification; not internal agent-session status."
+  }
+}

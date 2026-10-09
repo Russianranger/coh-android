@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "version": "18.6",
+  "source": {
+    "url": "https://ftp.postgresql.org/pub/source/v18.6/postgresql-18.6.tar.bz2",
+    "sha256": "555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f",
+    "bytes": 22632314
+  },
+  "builder_image": "debian@sha256:0c8bbb8e987a035fe1d9704eb2e571b7e9a836e1caa46345290674b45b69e417",
+  "builder_platform": "linux/arm64",
+  "debian_snapshot": "20260918T000000Z",
+  "runtime_base_sha256": "08c639c26506dc6fbd15464bec475337087bb23cb7c0c5ace2db5240ee36424f",
+  "runtime_abi": "aarch64-linux-gnu/glibc-2.36",
+  "prefix": "/opt/coh/pgsql",
+  "configure": [
+    "--prefix=/opt/coh/pgsql",
+    "--without-icu",
+    "--without-readline",
+    "--without-zlib",
+    "--without-lz4",
+    "--without-zstd",
+    "--without-libxml",
+    "--without-liburing"
+  ],
+  "configure_environment": {
+    "CFLAGS": "-O2",
+    "USE_UNNAMED_POSIX_SEMAPHORES": "1"
+  }
+}

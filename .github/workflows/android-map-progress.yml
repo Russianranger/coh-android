@@ -1,0 +1,267 @@
+name: Opt-in MapServer startup and tick ARM64 diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/character-persistence-continuation
+    paths:
+      - '.github/workflows/android-map-progress.yml'
+      - 'database/mapserver-progress/**'
+      - 'patches/mapserver-progress/**'
+      - 'tools/prepare_mapserver_progress_source.py'
+      - 'tools/test_prepare_mapserver_progress_source.py'
+      - 'tools/android/game/package_mapserver_progress.py'
+      - 'tools/android/game/test_package_mapserver_progress.py'
+      - 'tools/android/game/test_mapserver_progress.py'
+      - 'tools/android/game/test_game_map_progress.py'
+      - 'android/guest/game_map_progress.py'
+      - 'android/guest/game_diagnostic.py'
+      - 'android/guest/game_hang_evidence.py'
+      - 'tools/android/game/host_game_smoke.py'
+      - 'tools/android/game/package_game_runtime.py'
+      - 'tools/android/game/test_game_diagnostic.py'
+      - 'tools/android/game/test_game_hang_evidence.py'
+      - 'tools/android/game/test_host_game_smoke.py'
+      - 'tools/android/game/test_package_game_runtime.py'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-map-progress-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify progress provenance, bounded observation and unchanged game gates
+        run: |
+          python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+          python3 -m unittest discover -s tools -p 'test_prepare_mapserver_progress_source.py' -v
+          python3 -m unittest discover -s tools -p 'test_prepare_game_loopback_source.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_proot_download.py' -v
+          python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
+  mapserver-progress:
+    needs: tooling
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify real Win32 producer and independent observer contracts
+        shell: pwsh
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/mapserver-progress-contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/game/test_mapserver_progress.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/mapserver-progress-contracts/native-contracts.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\mapserver-progress-contracts\native-contracts.cmd 2>&1 | Tee-Object out/mapserver-progress-contracts/native-contracts.txt
+          if ($LASTEXITCODE -ne 0) { throw 'MapServer progress native Windows contracts failed' }
+      - name: Stage separately identified opt-in MapServer progress source
+        shell: pwsh
+        run: |
+          python tools/prepare_mapserver_progress_source.py --output out/mapserver-progress-source
+          if ($LASTEXITCODE -ne 0) { throw 'MapServer progress source preparation failed' }
+      - name: Build only the Win32 MapServer diagnostic donor
+        working-directory: out/mapserver-progress-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'MapServer progress configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --target MapServer --parallel
+          if ($LASTEXITCODE -ne 0) { throw 'MapServer progress build failed' }
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/mapserver-progress-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - name: Verify accepted reference dependency closure
+        shell: python
+        run: |
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/mapserver-progress-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as source:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in source.namelist())
+              source.extractall('out/mapserver-progress-inputs/reference')
+      - name: Package current MapServer with explicit source and run provenance
+        shell: pwsh
+        run: >-
+          python tools/android/game/package_mapserver_progress.py
+          --directory out/mapserver-progress-source/out/build/vs2026/bin/OptDebug
+          --build-input out/mapserver-progress-source/mapserver-progress-build-input.json
+          --cache out/mapserver-progress-source/out/build/vs2026/CMakeCache.txt
+          --reference out/mapserver-progress-inputs/reference
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/mapserver-progress-donor
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-mapserver-progress-donor
+          path: out/mapserver-progress-donor/runtime/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wine-mapserver-progress-symbols
+          path: out/mapserver-progress-donor/symbols/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-mapserver-progress-build-evidence
+          path: |
+            out/mapserver-progress-contracts/
+            out/mapserver-progress-source/mapserver-progress-build-input.json
+            out/mapserver-progress-source/game-loopback-build-input.json
+            out/mapserver-progress-source/out/build/vs2026/CMakeCache.txt
+            out/mapserver-progress-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/mapserver-progress-donor/runtime/build-info.json
+          if-no-files-found: warn
+  runtime:
+    needs: mapserver-progress
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 100
+    # GitHub requires this scope to read the existing unpublished asset ZIP.
+    # This job does not create, modify or publish a release.
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-mapserver-progress-donor
+          path: out/mapserver-progress-inputs/mapserver-progress
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-testclient-bridge
+          path: out/mapserver-progress-inputs/bridge
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-stack-probe
+          path: out/mapserver-progress-inputs/stack-probe
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-game-loopback-donors
+          path: out/mapserver-progress-inputs/game-listeners
+          run-id: 36510836956
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: wine-dbserver-package
+          path: out/mapserver-progress-inputs/dbserver
+          run-id: 36460867428
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: reference-win32-runtime
+          path: out/mapserver-progress-inputs/reference-archive
+          run-id: 36088012664
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: resume-testclient-win32
+          path: out/mapserver-progress-inputs/resume
+          run-id: 36297542986
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-diagnostic-runtime-inputs
+          path: out/mapserver-progress-inputs/runtime
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-proot-android-source-and-build
+          path: out/mapserver-progress-inputs/accepted-proot-sources
+          run-id: 36364550345
+          github-token: ${{ github.token }}
+      - name: Recover exact accepted talloc source
+        run: >-
+          python3 tools/android/extract_talloc_source.py
+          --assets out/mapserver-progress-inputs/runtime
+          --bundle out/mapserver-progress-inputs/accepted-proot-sources/proot-corresponding-sources.tar.gz
+          --output out/mapserver-progress-inputs/source-cache/talloc-2.4.3.tar.gz
+          > out/mapserver-progress-inputs/talloc-source-receipt.json
+      - name: Assemble explicit MapServer donor with unchanged accepted supporting binaries
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, zipfile
+          archive = pathlib.Path('out/mapserver-progress-inputs/reference-archive/coh-reference-win32.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == 'dd551750de26765297a45310bba51817b36a942d23f97d4da7f0d1365f49d3aa'
+          with zipfile.ZipFile(archive) as source:
+              assert all('/' not in n and '\\' not in n and n not in ('.', '..') for n in source.namelist())
+              source.extractall('out/mapserver-progress-inputs/reference')
+          PY
+          python3 tools/android/game/package_game_runtime.py assemble \
+            --reference out/mapserver-progress-inputs/reference \
+            --dbserver out/mapserver-progress-inputs/dbserver \
+            --resume out/mapserver-progress-inputs/resume \
+            --bridge out/mapserver-progress-inputs/bridge \
+            --loopback-game out/mapserver-progress-inputs/game-listeners \
+            --mapserver-progress out/mapserver-progress-inputs/mapserver-progress \
+            --output out/mapserver-progress-package --repository-commit "$GITHUB_SHA" \
+            --dbserver-profile loopback --game-listener-profile loopback
+      - name: Retrieve existing reviewed asset input
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json
+          --output out/mapserver-progress-inputs/asset-inputs.zip --release-asset-id 588984151
+      - name: Stage full reviewed game data and accepted schema
+        run: |
+          python3 tools/runtime_asset_bundle.py stage --archive out/mapserver-progress-inputs/asset-inputs.zip --manifest assets/reference-inputs-manifest.json --output out/mapserver-progress-inputs/reviewed-assets
+          python3 tools/android/game/prepare_game_data.py --asset-data out/mapserver-progress-inputs/reviewed-assets --output out/mapserver-progress-inputs/game-data
+          python3 tools/android/dbserver/prepare_dbserver_schema.py --output out/mapserver-progress-inputs/schema
+      - name: Install host runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential gawk default-jdk-headless iproute2 util-linux
+      - name: Build matching native ARM64 PRoot
+        run: >-
+          python3 tools/android/build_proot.py --target linux-arm64 --output out/mapserver-progress-native
+          --talloc-archive out/mapserver-progress-inputs/source-cache/talloc-2.4.3.tar.gz
+      - name: Run all eighteen game stages with owned MapServer progress diagnostics
+        run: >-
+          python3 tools/android/game/host_game_smoke.py
+          --assets out/mapserver-progress-inputs/runtime --package out/mapserver-progress-package
+          --data out/mapserver-progress-inputs/game-data --schema out/mapserver-progress-inputs/schema
+          --stack-probe out/mapserver-progress-inputs/stack-probe
+          --proot out/mapserver-progress-native/linux-arm64
+          --work out/mapserver-progress-host --evidence out/mapserver-progress-evidence
+          --dbserver-profile loopback --game-listener-profile loopback
+          --mapserver-progress-profile dispatch_progress_v1 --timeout-seconds 3600
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wine-mapserver-progress-arm64-evidence
+          path: |
+            out/mapserver-progress-evidence/
+            out/mapserver-progress-package/game-package.json
+            out/mapserver-progress-inputs/mapserver-progress/build-info.json
+            out/mapserver-progress-inputs/game-data/game-data-manifest.json
+            out/mapserver-progress-inputs/schema/schema-manifest.json
+            out/mapserver-progress-inputs/bridge/bridge-build.json
+            out/mapserver-progress-inputs/stack-probe/stack-probe-build.json
+            out/mapserver-progress-inputs/talloc-source-receipt.json
+            out/mapserver-progress-native/linux-arm64/proot-build-receipt.json
+          if-no-files-found: warn

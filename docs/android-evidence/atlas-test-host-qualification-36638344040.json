@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "status": "passed",
+  "scope": "exact_APK_import_and_isolated_ARM64_device_adapter",
+  "candidate_repository_commit": "e30c0b58b0e53534f92e77cdb7b8b93fe3ddc5ce",
+  "apk": {
+    "bytes": 355130247,
+    "sha256": "e502b80d91c92164021684d2ea311e9e9d5c99c1b9ac178c67619844f3c5d547"
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false,
+  "stages": 18,
+  "full_game_captures_verified": true,
+  "network_namespace_verified": true,
+  "imported_generation_verified": true,
+  "accepted_package_run_id": 36510836956,
+  "selected_package_run_id": 36630872719,
+  "selected_package_repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+  "selected_package_manifest_sha256": "ef1e5b1aa7cad69f2e25d286cc579531c86417d3f7f1a5de86843a350f4024cd",
+  "mapserver_progress_profile": "dispatch_progress_v1",
+  "mapserver_progress_producer": {
+    "repository_commit": "003b07bcd98cb100c1505c15670c07d11a240c8f",
+    "manifest_sha256": "b8b79639fbb180fd5f039c6d03f4f5f95d0cc4df7fd7db9b21779fb008c731e1",
+    "mapserver_sha256": "52f85c9e2cccfe88eb92f0a2c379a45b14eb997339ce902ed7ba5d470f3690fb"
+  },
+  "elapsed_seconds": 1990.790313
+}

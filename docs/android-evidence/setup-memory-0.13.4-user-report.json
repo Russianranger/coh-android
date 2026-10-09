@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "scope": "user_reported_runtime_setup_interruption",
+  "recorded_date_utc": "2026-10-04",
+  "reported_build": "0.13.4",
+  "apk_source_commit": "6d16acf8330774e5fee4c0410c9cc56746d60b58",
+  "publication_receipt": "docs/android-evidence/task-receipt-cleanup-0.13.4-publication.json",
+  "user_statement": "Running the set up runtime crashed all apps. Please work on ensuring the low memory killer does not take effect",
+  "new_device_log_bundle_available": false,
+  "android_low_memory_kill_confirmed": false,
+  "interrupted_setup_phase_known": false,
+  "physical_setup_completed": false,
+  "previous_physical_gameplay_acceptances_retained": true,
+  "implementation_scope": "Setup-only bounded memory/IO control, cancellation, safe staging publication, and interruption diagnostics. Retain all 67 public 0.13.4 runtime payloads exactly; no global Android LMK changes or new gameplay gate."
+}

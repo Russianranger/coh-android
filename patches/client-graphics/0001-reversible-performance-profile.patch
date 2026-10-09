@@ -1,0 +1,41 @@
+diff --git a/Game/src/graphics/gfxSettings.c b/Game/src/graphics/gfxSettings.c
+index 0f3a93aae..e846a9f5e 100644
+--- a/Game/src/graphics/gfxSettings.c
++++ b/Game/src/graphics/gfxSettings.c
+@@ -1,4 +1,5 @@
+ #include "graphics/gfxSettings.h"
++#include "graphics/cohAndroidGraphicsProfile.h"
+ #include "cmdparse/cmdgame.h"
+ #include "graphics/font.h"
+ #include "clientcomm/autoResumeInfo.h"
+@@ -42,6 +43,7 @@ void printGfxSettings()
+ 
+ 
+ GfxSettings globalGfxSettingsForNextTime;
++static CohAndroidGraphicsProfile cohAndroidGraphicsProfile;
+ 
+ 
+ OptionWater gfxGetMaxWaterMode()
+@@ -350,6 +352,9 @@ void gfxGetSettings( GfxSettings * gfxSettings )
+ void gfxGetSettingsForNextTime( GfxSettings * gfxSettings )
+ {
+     *gfxSettings = globalGfxSettingsForNextTime;
++    /* Runtime quality overrides must not become the user's saved preference.
++       Normal account/name and window-position persistence below still applies. */
++    cohAndroidGraphicsProfileSaved(&cohAndroidGraphicsProfile, gfxSettings);
+ 
+     //If you are in windowed mode and you aren't supposed to go into 
+     //fullscreen next time, then save your screenx and y
+@@ -849,6 +854,12 @@ void gfxApplySettings( GfxSettings * gfxSettings, int pastStartUp, bool onlyDyna
+     U32 gfx_features_enable=0;
+     U32 gfx_features_disable=0;
+     static int lastShadowShaderSelection = -1;
++    int profileWasCaptured = cohAndroidGraphicsProfile.captured;
++    int androidPerformance = cohAndroidGraphicsProfileApply(&cohAndroidGraphicsProfile,
++        getenv("COH_CLIENT_GRAPHICS_PROFILE"), gfxSettings, gfxGetMinAdvancedSettings);
++
++    if (androidPerformance && !profileWasCaptured)
++        printf("COH_ANDROID_GRAPHICS_PROFILE_V1 performance render_scale=0.75 ui=800x600 saved_settings_preserved=1\n");
+ 
+     assert(gfxSettings->filledIn);
+ 

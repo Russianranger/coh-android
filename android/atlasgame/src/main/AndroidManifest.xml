@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.russianranger.cohatlastest"
+    android:versionCode="5" android:versionName="0.4.4">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:label="COH Atlas Test" android:icon="@drawable/ic_coh_atlas"
+        android:theme="@style/AtlasTheme" android:allowBackup="false" android:extractNativeLibs="true"
+        android:supportsRtl="true" android:usesCleartextTraffic="false">
+        <activity android:name="io.github.russianranger.cohatlastest.AtlasActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="io.github.russianranger.cohatlastest.AtlasGameService" android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-started game runtime installation, verified asset import and bounded local Atlas Park server checks with progress and Stop" />
+        </service>
+    </application>
+</manifest>

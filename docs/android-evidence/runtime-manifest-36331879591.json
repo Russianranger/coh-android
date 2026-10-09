@@ -1,0 +1,58 @@
+{
+  "format": 1,
+  "repository_commit": "c1006cf7c1f4b7691407ae99b90e417a1a28d3ce",
+  "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+  "files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "diagnostic.py": {
+      "bytes": 32843,
+      "sha256": "e37922c297f14101037d8ee1e1d523f2e82fbcd433e9369eba65750930480f7c"
+    },
+    "odbc_probe.exe": {
+      "bytes": 267388,
+      "sha256": "61402e7e8c0ab48ef64a27d34903271c0021430735a3b6221f7f431aa2676dd0"
+    },
+    "postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "b2bdfb4963e27eaba5ea5cf67c55c132f612e46e6d7e61f653dd08807cb35e60"
+    },
+    "postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "81411e8f90f6e426f67b191b72bceaefccdd93fbb7a39c45cf816bc7035b2337"
+    },
+    "proot-build.json": {
+      "bytes": 3236,
+      "sha256": "aa6343f651ea6ed37b634973ee9109861000a8992726e41506ae20f18c4f4d4a"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 238151,
+      "sha256": "2e5507469a15ee05761678437a00cda1740a431e9d3ce9b71b387167a73fc118"
+    }
+  },
+  "runtime_probe": {
+    "executable": "runtime-probe.exe",
+    "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+    "dll": "probe.dll"
+  },
+  "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+  "scope": "APK build inputs; not proof of Android execution or gameplay"
+}

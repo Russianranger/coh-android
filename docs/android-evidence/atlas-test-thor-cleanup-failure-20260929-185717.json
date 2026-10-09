@@ -1,0 +1,365 @@
+{
+  "format": 1,
+  "review_status": "partial_device_capture_and_first_save_verified_full_gate_failed",
+  "app_version": "0.4.2",
+  "device": "AYN AYN Thor",
+  "candidate_repository_commit": "ea5c0e18d2971d8ae9ade3f6655cea7da87e30f5",
+  "runtime_manifest_sha256": "3d1c522df288580e27fd06f22508c6f601c6e952d5d96d0ab04610ce687d9554",
+  "provenance": "Uploaded runtime manifest is semantically identical to qualified 0.4.2; reported original manifest hash, guest source hashes, donor binaries, import contract and generation receipt match. cdf7921 is subsequent documentation/evidence only, not a new app candidate.",
+  "source_artifacts": {
+    "atlas-test-report.json": {
+      "bytes": 1605,
+      "sha256": "a4836dafe00c8569d4c6137d184ad86ac49a8260b9a4e545b133b85d29ac1400"
+    },
+    "runtime-report.zip": {
+      "bytes": 290883,
+      "sha256": "2a37c6ef5b51fe2d21a116b598beabc8c2988d8e898baba1431663f7972bacb2"
+    },
+    "lifecycle.log": {
+      "bytes": 184,
+      "sha256": "8b7abaa844ecb9086090240cbb767adcddee9d2c6e8d91d1a9b2b06e51620226"
+    },
+    "operation.log": {
+      "bytes": 16010,
+      "sha256": "53043bcbe804badbc89e606751dd1804f00ed4435bcb6620db6523cbc6563491"
+    },
+    "atlas-import.properties": {
+      "bytes": 923,
+      "sha256": "500be57ce3425a3aac52d6eaf43a05560a19f894d32eb2fa353f2c0de19265f8"
+    }
+  },
+  "all_exported_capture_hashes_verified": true,
+  "capture_counts": {
+    "game-captures": 5,
+    "game-service-captures": 8,
+    "game-hang-captures": 3
+  },
+  "passed_stage_count": 13,
+  "failed_stage": "game_restart",
+  "primary_failure": "Cannot verify Wine descendant ownership",
+  "app_status": "cleanup_failed",
+  "cleanup_blocked": true,
+  "diagnosis": "The first character session and committed SQL save completed. The internal Wine ownership scanner failed during planned restart cleanup, after wineserver stop and wait succeeded. scan() wraps OSError/ValueError/KeyError/IndexError as this exact error; the recorded message differs from the PermissionError branch. No original exception type, errno, failing operation or PID is exported, so the exact transient/proc parsing cause cannot be proved. Final cleanup later recorded no remaining owned processes and all stop/reap checks true, but inspection_failures=1 is cumulative and the existing app acceptance deliberately rejects it. This is an ownership-verification failure at the restart boundary, not a first-save failure or a DbServer startup timeout.",
+  "character": {
+    "container_id": 1,
+    "name": "TEST24402",
+    "account": "CohAdba4556381"
+  },
+  "live_currency": {
+    "player": "TEST24402",
+    "account": "CohAdba4556381",
+    "influence": 12345,
+    "elapsed_ms": 340879,
+    "sequence": 18
+  },
+  "first_save": {
+    "protocol_quit": true,
+    "quitnow_is_save_ack": false,
+    "disconnected_before_sql": true,
+    "independent_committed_sql": true,
+    "forced_stop_before_save": false,
+    "login_count": 1,
+    "influence": 12345,
+    "snapshot_sha256": "4eedd911f3b85a8a4c41958a26f1825388c3bf318437777c94c931c349b36ecc",
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 13
+    }
+  },
+  "device_dbserver_startup": {
+    "first": {
+      "scope": "service_startup_entry_through_positive_main_loop",
+      "budget_seconds": 600,
+      "milestones": {
+        "schema_and_listener": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 48.529
+        },
+        "positive_main_loop": {
+          "status": "passed",
+          "elapsed_since_startup_seconds": 61.675
+        }
+      }
+    }
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "wine_shutdown": {
+    "stop_exit_code": 1,
+    "wait_exit_code": 0,
+    "prefix_lock_free": true,
+    "server_socket_inactive": true
+  },
+  "wine_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 303,
+    "scanned_tasks": 121,
+    "dead_leaders_with_live_tasks": 8,
+    "owned_live_workers": 8,
+    "leader_exit_retries": 0,
+    "candidates": 3,
+    "term_signals": 9,
+    "kill_signals": 2,
+    "pidfd_signals": 11,
+    "identity_checked_signals": 0,
+    "inspection_failures": 1,
+    "remaining": 0,
+    "complete": true,
+    "permission_read_retries": 0,
+    "worker_exit_rechecks": 0,
+    "permission_observations": [],
+    "permission_observations_omitted": 0
+  },
+  "timing_seconds": {
+    "outer_attempt": 2642.069,
+    "guest_attempt": 2641.145637,
+    "restart_started_to_hang_capture": 2.701998,
+    "secondary_windows_observer": 16.387,
+    "game_private_runtime": 675.379457,
+    "assets_and_architecture": 0.015852,
+    "initialize_owned_cluster": 3.660553,
+    "postgres_first_start": 0.390025,
+    "restricted_fixture_database": 1.298604,
+    "wine_prefix_and_driver": 104.083619,
+    "win32_odbc_driver": 1.552725,
+    "win32_runtime_dll": 0.675244,
+    "game_services_first": 1449.835405,
+    "atlas_ready_observation": 32.132387,
+    "game_create_and_connect": 340.602582,
+    "game_live_currency": 4.191577,
+    "game_protocol_logout_first": 4.945354
+  },
+  "secondary_observer": {
+    "windows_error": "game-hang-windows timed out",
+    "windows_processes_found": 0,
+    "postgres_sessions": 0,
+    "dispatch_active_phase": null,
+    "linux_owned_groups_found": 1,
+    "linux_identity": {
+      "proc_pid": 4417,
+      "pid": 4417,
+      "starttime": 34995984
+    },
+    "linux_tasks": [
+      {
+        "pid": 4417,
+        "state": "Z",
+        "starttime": 34995984
+      },
+      {
+        "pid": 4421,
+        "state": "S",
+        "starttime": 34996036
+      },
+      {
+        "pid": 4422,
+        "state": "R",
+        "starttime": 34996051
+      },
+      {
+        "pid": 4430,
+        "state": "S",
+        "starttime": 34996190
+      }
+    ],
+    "interpretation": "Captured after planned restart had already stopped and cleared the game services. The observer then bootstrapped Wine, found no game Windows processes and timed out on output closure. It followed the original ownership error and cannot explain an earlier game-service hang. An inactive retained first-run dispatch file is not live progress evidence."
+  },
+  "selected_process_receipts": {
+    "game-wine-stop": {
+      "label": "game-wine-stop",
+      "elapsed_seconds": 2.31,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 2.31
+      }
+    },
+    "game-wine-wait": {
+      "label": "game-wine-wait",
+      "elapsed_seconds": 0.061,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.061
+      }
+    },
+    "game-hang-windows": {
+      "label": "game-hang-windows",
+      "elapsed_seconds": 16.224,
+      "exit_code": 1,
+      "forced_stop": true,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "failure_observation": {
+        "leader_exit_code": 1,
+        "output_capture_open": true,
+        "elapsed_seconds": 15.022,
+        "reason": "game-hang-windows timed out"
+      }
+    },
+    "owned-wine-stop": {
+      "label": "owned-wine-stop",
+      "elapsed_seconds": 0.059,
+      "exit_code": 1,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 1,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.059
+      }
+    },
+    "owned-wine-wait": {
+      "label": "owned-wine-wait",
+      "elapsed_seconds": 0.071,
+      "exit_code": 0,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true,
+      "completion": {
+        "policy": "leader_exit_and_output_eof",
+        "leader_exit_code": 0,
+        "output_capture_open": false,
+        "elapsed_seconds": 0.07
+      }
+    },
+    "first-dbserver": {
+      "label": "first-dbserver",
+      "elapsed_seconds": 1852.667,
+      "exit_code": -15,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    },
+    "first-atlas": {
+      "label": "first-atlas",
+      "elapsed_seconds": 1789.176,
+      "exit_code": -15,
+      "forced_stop": false,
+      "output_capture_closed": true,
+      "input_closed": true
+    }
+  },
+  "resource_summary": {
+    "android_samples": 264,
+    "minimum_available_memory_bytes": 6731780096,
+    "minimum_free_storage_bytes": 217267236864,
+    "low_memory_samples": 0,
+    "thermal_statuses": [
+      0
+    ],
+    "wine_fex_maximum_sampled_rss_kib": 4307132,
+    "rss_scope": "run_token_owned_Wine_FEX_processes_only",
+    "rss_instantaneous_peak_measured": false,
+    "rss_pss_measured": false
+  },
+  "lifecycle_lines": [
+    "1790705595539 elapsed_ms=0 operation_requested kind=atlas_server_test ui_visible=true screen_interactive=true",
+    "1790708237605 elapsed_ms=2642066 operation_finished status=cleanup_failed"
+  ],
+  "cancelled": false,
+  "recommended_next_step": "Preserve this failure and add bounded scanner exception diagnostics plus tests for evidenced process-exit/proc-read classes before selecting a narrow correction. Keep private-token ownership, identity checks, cumulative unresolved-failure rejection and the full 18-stage gate intact; do not treat remaining=0 alone as safe acceptance.",
+  "limits": [
+    "No completed game restart, PostgreSQL restart, exact-name resume or second save",
+    "No full Android Atlas or gameplay acceptance",
+    "Uploaded reports bind runtime input identities; the installed APK itself was not included for an independent whole-file hash",
+    "An unresolved earlier inspection failure is not proof that a process remains alive after final cleanup",
+    "The 0.4.1 PermissionError retry path was not exercised in this run",
+    "Lifecycle contains only operation request and finish; no Stop or background transition was recorded",
+    "Sampled resources are not an instantaneous peak or proof excluding all memory-related events",
+    "Observer output cannot identify the scanner exception that preceded it"
+  ],
+  "android_atlas_test_passed": false,
+  "generated_character_persistence_validated": false,
+  "gameplay_validated": false,
+  "capture_files": {
+    "game-captures/first-console.txt": {
+      "bytes": 8330,
+      "sha256": "eadcba0a9760d2ee1306ee0d8e8e998ab84cc60e1aebfca9e7db320531eb9fb2"
+    },
+    "game-captures/first-events.jsonl": {
+      "bytes": 3310,
+      "sha256": "4c73e38c1f7ae08e04fb0f8a5205fc397052a118402e82f69f4d375779ae2900"
+    },
+    "game-captures/first-ready.json": {
+      "bytes": 278,
+      "sha256": "de5d2c5674ae27885d482863dc0127a618203b578d5d7af7ee447cd72e738d14"
+    },
+    "game-captures/first-result.json": {
+      "bytes": 331,
+      "sha256": "56aebc613bf33a02945325cc08963f40fb75a1f4f384f6a751c1a3687aed892e"
+    },
+    "game-captures/first-snapshot.json": {
+      "bytes": 4968,
+      "sha256": "ad6d00e6fcd5c1f78dd13654c7498e175e619ba31ab297eecad0e401de2e10d2"
+    },
+    "game-service-captures/first-atlas-stdout.txt": {
+      "bytes": 1016011,
+      "sha256": "e7898b4d4c66380cfd7439e0d9a8e90856ea96df4a5d1fe175911cff1b4820aa"
+    },
+    "game-service-captures/first-dbserver-stdout.txt": {
+      "bytes": 9724,
+      "sha256": "9ce4a1b4a3a1b519533f43f55b6d98fe2d04f8d1399ec57ffe2a94348b4f5341"
+    },
+    "game-service-captures/log-001.txt": {
+      "bytes": 76,
+      "sha256": "760136f9f00f0042a9d165df5f2502c1f25c810b31f844b412c70fe515997d24"
+    },
+    "game-service-captures/log-002.txt": {
+      "bytes": 16923,
+      "sha256": "84bd9eab9ad0f426a07ce9622432eb1c3556021b49ccba8434a0e6096f4d99dd"
+    },
+    "game-service-captures/log-003.txt": {
+      "bytes": 93,
+      "sha256": "1e1d8ec5416b9d87a180af017d24c2edb4c640dd2645566797f836ae80acdb5a"
+    },
+    "game-service-captures/log-004.txt": {
+      "bytes": 1048614,
+      "sha256": "fdc1c8af87ac608b527ffedbad37ba1701a14e5d6fccc36c7c40f13aec6c5805"
+    },
+    "game-service-captures/log-005.txt": {
+      "bytes": 825585,
+      "sha256": "8d9684381354601fcee1fff0fefd1573091aa455493a5b91b64f7e4a1d379eb8"
+    },
+    "game-service-captures/manifest.json": {
+      "bytes": 2248,
+      "sha256": "d087382328e1fb83cd4d87700ce2af2acfd267caeda4ae1d7b5f7f7ecb21e18e"
+    },
+    "game-hang-captures/manifest.json": {
+      "bytes": 784,
+      "sha256": "091221bb45f406613e8848877892c7c36816018c4b722f0e8ca657471772a12c"
+    },
+    "game-hang-captures/snapshot.json": {
+      "bytes": 17326,
+      "sha256": "5de5ee6711e15875d96d81cc83e7ebe0019815f0e2e87dc02d610712ffbc9815"
+    },
+    "game-hang-captures/windows-contexts.jsonl": {
+      "bytes": 1804,
+      "sha256": "87763407a5cafe5fba4127515b05a4f91fc1b41c4504d0711969002f49d4d6b2"
+    }
+  },
+  "preserved_attachment_bundle": {
+    "name": "atlas-test-thor-042-20260929-185717.zip",
+    "bytes": 484028,
+    "sha256": "8c3e3fbc94bd3cf8e8e0fb48196de719540e29c071a7071ef098ca19fac2828c",
+    "content": "Exact user-supplied six attachments; ZIP packaging added during review"
+  }
+}

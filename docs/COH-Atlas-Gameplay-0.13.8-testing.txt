@@ -1,0 +1,62 @@
+COH Atlas Gameplay 0.13.8 — client binary loading and Atlas/Hellion visuals
+
+Install over the existing app and run Set up runtime once. Preserve imports,
+THORHERO, the database and completed tasks. Keep the same graphics preset and
+startup/reopen option used for 0.13.7. No uninstall, clear data or reimport is
+required. Android setup memory protections, server caches, DbServer, MapServer,
+graphics libraries and the existing animation pack are preserved.
+
+This pass adds 33 exact original visual files (8 THUG geometry files and 25
+textures), about 2.65 MB decoded. It supplies the six Blood Brother Chopper /
+Hellions_Axe_Thug costume variants and selected Atlas vegetation primary and
+fallback materials. All 290 visual files from 0.13.7 remain unchanged; stock
+LOD distance and rendering stay in use. Complete global asset coverage and
+combat are still open.
+
+The new Game layer uses a known-length string copy for its existing allocation
+path, enabled only for this validated producer. Explicit-length copies retain
+the stock secure CRT behavior, and the stock path remains available with the
+flag unset. Per-BIN diagnostics separately measure opening/CRC, source-freshness
+checks and decoding. Native cache formats, source checks and memory ownership
+are preserved. Win32 equivalence and representative copy benchmarks qualify
+this path; total client startup savings require this device run.
+
+The Android acceptance validator now recognizes the exact 14-stage report,
+including both passed visual/animation preparation stages and their APK pins.
+It preserves all session, import, surface, save and cleanup checks. The false
+Android flag in the successful 0.13.7 report is recorded in HANDOFF.md and is
+not a reason to repeat the task/save gameplay gate.
+
+The first upgraded run rebuilds the texture-header index for the 25 added
+textures. Record this preparation separately from actual Game startup. The
+verified native upgrade preserves the current client worktree, generated BIN
+caches and absolute server links. It does not recreate the imported asset tree.
+
+1. Reopen saved THORHERO once with the same preset. Note server/Atlas readiness,
+   actual client launch to visible login, and login-to-world time. Separate
+   time spent entering credentials/selecting the hero if convenient.
+2. Take comparable far/near screenshots of the white vegetation/objects around
+   Atlas and describe anything that still appears white or invisible. Check
+   Blood Brother Chopper/Hellion visibility if one is nearby. There is no need
+   to complete combat, a task, character creation, storage cleanup or a second
+   boot. Merely describe NPC appearance; preserve your accepted gameplay results.
+3. Use Abort operation, wait for owned cleanup, and Export latest report.
+   Cancellation is expected for this focused timing/visual review. Ordinary
+   Save / logout is available if wanted; its gate is already accepted.
+   If any stage fails, export the current report and preserve app data.
+
+The report should include:
+- client_loading producer/base/native pins and the worktree/cache migration;
+- COH_CLIENT_BIN_PROFILE_V1 open/freshness/decode times and known-length copies;
+- actual client, sequencer, powers, FX and login/connection timings;
+- visual install/reuse counts and animation validation/preparation time;
+- texture-index regeneration/reuse, hits/ordinary reads and serial preparation;
+- missing geometry/material samples and suppressed totals;
+- owned cleanup, PostgreSQL shutdown and remaining worker count.
+
+Known original gaps remain: GEO_Collar_MAGIC is absent from male_collar.geo;
+five older direct material names (BF_Boot_Clogs, BM_Eyes_Glasses_01a,
+BM_Boot_Business_Shoe, BM_Chest_Bum_Flannel_01a, Emblem_Hero_Corp) lack donor
+files. Available costume overrides remain supplied without guessed aliases.
+Other NPC/weapon FX/world assets can still be absent. Software llvmpipe remains;
+hardware graphics acceleration and complete visual coverage are separate gates.

@@ -1,0 +1,121 @@
+{
+  "format": 1,
+  "scope": "host_regression_of_exact_native_point_credits_in_ordinary_existing_character_save",
+  "version_target": "0.13.10",
+  "raw_device_report_reclassified_as_pass": false,
+  "physical_fix_validation": "pending",
+  "original_device_evidence": "docs/android-evidence/client-streaming-0.13.9-device-result.json",
+  "defect": {
+    "raw_guest_and_android_passed": false,
+    "error": "Committed existing character rows changed after reopen: ents",
+    "baseline_reward_values": {
+      "experiencepoints": null,
+      "influencepoints": null
+    },
+    "captured_final_reward_values": {
+      "experiencepoints": 25,
+      "influencepoints": 14
+    },
+    "other_selected_field_differences": [
+      "logincount: 4 -> 5 (ordinary graphical login)"
+    ],
+    "native_positive_credits": [
+      {
+        "experiencepoints": 15,
+        "influencepoints": 7,
+        "native_timestamp": "261004 22:34:20",
+        "line_sha256": "3d9a821fb695ba5c34e1267673d5bc7f575f36ad89d7bd6b397d19e5485a50cf"
+      },
+      {
+        "experiencepoints": 10,
+        "influencepoints": 7,
+        "native_timestamp": "261004 22:34:53",
+        "line_sha256": "ab2045b15c484e735e6fe0d93f7403fa6bdd79ce3130eb379177cbe9cbe5fc64"
+      }
+    ]
+  },
+  "change_boundary": {
+    "runtime_helper": "android/guest/local_character_server.py",
+    "donor_helper_sha256": "041b6d6adfd9a5e7e6ecff9463b897a9beb2b3b734f999d85126b9a7cd7b06ff",
+    "candidate_helper_sha256": "015316e5baf43f35c6f9944946f503a00bd297702bacaa0d165ff0b29f4d02bb",
+    "new_top_level_functions": [
+      "native_reward_credit_evidence"
+    ],
+    "modified_methods": [
+      "LocalCharacterReopenServer.validate_saved_rows",
+      "LocalCharacterReopenServer.saved_selected_rows_match",
+      "LocalCharacterReopenServer.saved_metadata",
+      "LocalCharacterTaskReopenServer.saved_selected_rows_match"
+    ],
+    "native_executables_changed": false,
+    "runtime_payload_slots_added": 0,
+    "game_mutations_performed": false,
+    "setup_server_runtime_position_producer_changed": false,
+    "cache_format_changed": false
+  },
+  "credit_contract": {
+    "connection_binding": "previously_validated_current_session_reopen_connection",
+    "native_log_contains_character_db_id": false,
+    "native_log_contains_session_or_client_pid": false,
+    "hero_identity_required": "THORHERO:COHLOCAL",
+    "character_id_required": 1,
+    "auth_id_required": "same positive validated auth ID as preserved parent SQL and native ready proof",
+    "routes": [
+      "owned local Atlas rewards.log level 0",
+      "owned embedded DbServer Atlas rewards log loopback prefix"
+    ],
+    "window": "observed current ready watermark through current native logout timer, no later than current clock",
+    "timestamp_precision_ms": 1000,
+    "sql_allowed_deltas": "baseline nullable zero plus exact complete XP/influence sum; all other selected fields strict except already accepted LoginCount +1",
+    "point_values": "nonnegative int32; debt, prestige and supergroup must be zero; positive award required to permit any reward-field drift",
+    "duplicate_positive_credits": "reject even across mirrored logger routes",
+    "truncated_or_over_bound_inventory": "reject",
+    "incomplete_owned_award_tail": "reject",
+    "ordinary_logout_delivery_and_terminal_position_gates": "retained",
+    "task_profile": "authored exact task credit contract retained, missing task proof uses strict equality and cannot fall back to ordinary native credit exception"
+  },
+  "full_unmodified_device_log_host_replay": {
+    "installed_connection_proof_used": true,
+    "sender_receipt": "synthetic (original raw failure occurred before receipt entered final proof)",
+    "native_credit_inventory_changed": false,
+    "candidate_count": 4,
+    "parsed_reward_count": 4,
+    "positive_credit_count": 2,
+    "experiencepoints_delta": 25,
+    "influencepoints_delta": 14,
+    "ordinary_device_save_result_claimed": false
+  },
+  "validation": {
+    "test_script": "tools/android/interactive/test_combat_reward_save.py",
+    "test_script_sha256": "86f45ec9ae1779f3d1b9bced60375ce428e5491b6598e0442764b78dad832417",
+    "command": "python -m unittest discover -s tools/android/interactive -p test_combat_reward_save.py -v",
+    "test_count": 15,
+    "passed": true,
+    "related_host_suites": {
+      "test_combat_reward_save.py": 15,
+      "test_character_reopen_guest.py": 20,
+      "test_character_server.py": 24,
+      "test_character_reopen_host.py": 12,
+      "test_task_gate_integration.py": 11,
+      "test_task_gate_evidence.py": 16,
+      "test_stationary_contact_evidence.py": 12,
+      "test_character_logout_position.py": 10,
+      "test_acceptance.py": 9,
+      "test_task_gate_native_contract.py": 11
+    },
+    "related_host_test_total": 140,
+    "related_host_tests_passed": true,
+    "missing_sparse_source_pin_fixtures_hydrated_from_current_HEAD": true,
+    "full_owned_logout_pipeline_and_retained_guest_save_contract_tested": true,
+    "each_other_selected_field_mutation_tested": true
+  },
+  "limits": [
+    "The new acceptance helper has only host validation; next APK needs ordinary Thor Save confirmation after gameplay.",
+    "Native point lines carry no DB ID/session/PID; identity depends on the prior independently validated owned connection.",
+    "One-second native timestamps cannot establish ordering within the logout second.",
+    "Identical positive awards in one second or mirrored reward routes conservatively fail acceptance.",
+    "Debt, prestige, supergroup, negative point changes, level changes or other unsupported selected-row changes conservatively fail acceptance.",
+    "The task profile retains its narrower authored reward semantics.",
+    "This validation does not claim visual completeness or eliminate remaining model/texture gaps."
+  ]
+}

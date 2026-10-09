@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "status": "failed_before_runtime_dependency_download",
+  "run_id": 36427680960,
+  "attempt": 1,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36427680960",
+  "repository_commit": "82386fd48c2352a2ce65d5920f7857e8b92ec442",
+  "runtime_job_id": 108946147544,
+  "failed_step": {
+    "number": 13,
+    "name": "Build matching native ARM64 PRoot",
+    "command": "python3 tools/android/build_proot.py --target linux-arm64 --output out/android/native"
+  },
+  "failure_utc": "2026-09-28T13:23:09.2716943Z",
+  "error": "PRoot build failed: The read operation timed out",
+  "exit_code": 1,
+  "dependency": {
+    "name": "talloc",
+    "version": "2.4.3",
+    "url": "https://www.samba.org/ftp/talloc/talloc-2.4.3.tar.gz",
+    "required_sha256": "dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd",
+    "read_timeout_seconds": 60,
+    "proot_pinned_git_fetch_succeeded": true,
+    "classification": "Pinned dependency transport read timeout before source preparation/build completed."
+  },
+  "preceding_steps": {
+    "tooling": "passed",
+    "bridge_and_observer_build": "passed",
+    "composite_package_assembly": "passed",
+    "reviewed_data_and_schema_staging": "passed"
+  },
+  "staged_package": {
+    "repository_commit": "82386fd48c2352a2ce65d5920f7857e8b92ec442",
+    "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+    "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+    "dbserver_donor": {
+      "run_id": 36425508780,
+      "repository_commit": "41f3aff596826e22e2774375e11590de895ca33d",
+      "manifest_sha256": "656c7e764798dc7ecee01cef836cd758177fd9cdcf1477799517e9d5a959c632"
+    },
+    "normal_dbserver_sha256": "3d6098da1655a380f09d7c0ba5b984c98b68b1294f75128c28b08be851cf1830",
+    "postgresql_persistence_fixture": false
+  },
+  "archive": {
+    "artifact_id": 10972316852,
+    "name": "wine-game-arm64-evidence",
+    "bytes": 8519420,
+    "sha256": "0e0fda5903e62de3f59df386fbf515880c49fecf90124516125bd0f771d48f13",
+    "download_hash_independently_verified": true,
+    "safe_extraction_verified": true
+  },
+  "archive_files": {
+    "wine-game/game-package.json": {
+      "bytes": 93735,
+      "sha256": "f8d59e306fbfb4dcd2f7d1416be66fb2d7a6c62a328faaa373f06c09af9e5cfe"
+    },
+    "dbserver-schema/schema-manifest.json": {
+      "bytes": 4865901,
+      "sha256": "b89136892e69ceb39db640613d3f8a34abf2ef8e75e947f4034728b935938b92"
+    },
+    "bridge/bridge-build.json": {
+      "bytes": 776,
+      "sha256": "cb54bbf0742edd1ac96edd7e106cce87a3eb753523aa871a8687445ce7686be0"
+    },
+    "game-data/game-data-manifest.json": {
+      "bytes": 32184737,
+      "sha256": "b367cc35d3f3826d9988ffa5dadb0a240ffc0967f0d248586e54d8ac545615f4"
+    }
+  },
+  "archive_file_count": 4,
+  "runtime_started": false,
+  "runtime_report_present": false,
+  "postgres_or_game_process_evidence_present": false,
+  "hang_capture_present": false,
+  "dispatch_before_present": false,
+  "dispatch_after_present": false,
+  "interpretation": "Infrastructure failure only. This attempt provides no new evidence about Atlas startup, enabled ARM64 dispatch publication, character persistence or the restart correction.",
+  "preservation": "The concise receipt binds the four-file archive. Large data/schema manifests are not duplicated in the repository.",
+  "next_step": {
+    "action": "Apply reviewed bounded transport retries and launch a new run without changing pinned dependency bytes.",
+    "reviewed_isolated_commit": "3dc466764252355ead31d19729ae8c5efb8ca510",
+    "status_at_receipt": "planned"
+  },
+  "android_execution_validated": false,
+  "gameplay_validated": false
+}

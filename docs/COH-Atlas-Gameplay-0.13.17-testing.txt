@@ -1,0 +1,61 @@
+COH Atlas Gameplay 0.13.17 — 30 FPS gameplay and bounded texture diagnostics
+
+Install as an update and preserve all app data, imports, runtime and character.
+Run Set up runtime ONCE after this native/helper update, even though the older
+button says new install only. The manifest identifies a new runtime generation.
+Wait for Runtime ready before Reopen. Record setup time separately; include it
+in the true first launcher-open total. No asset reimport or data reset is needed.
+
+Use the same Performance preset, 800x600 and llvmpipe renderer. This verified
+Game launch requests gameplay maxfps 30; menu/inactive caps remain 10. Compatibility
+retains 10. This is an experiment, not an established stable 30 FPS improvement.
+Stay in Atlas; zoning remains deferred.
+
+Record launcher-open/Reopen to login, local Atlas startup, actual client start,
+character selection to first visible world and playable movement, and total
+launcher-open/Reopen to playable Atlas. Separate typing/selection/update time.
+Note whether scenery appears progressively or a blank/frozen screen persists.
+
+Immediately after world entry, type /showfps 1.
+For matching graphics, type /maxfps 10, then spend about 30 seconds each standing,
+rotating the camera, walking through populated scenery, and approaching a
+building/interior edge or unseen scenery within Atlas. Record activity local
+start times, actual FPS/range, visible pauses, pop-in and approximate hitch times.
+Then type /maxfps 30 and repeat the same route. Allow at least 10 seconds between
+activity changes. Confirm command response/FPS changes; if a command fails,
+record that rather than treating Android delivered-frame counts as native FPS.
+Do not change the graphics preset between matching 10/30 observations.
+
+Fight several NPCs, use powers, open ordinary UI, track an objective and confirm
+NPC movement/pathing, terrain, character/FX artwork and controls. Note crashes,
+freezes, missing visuals or regular pauses. Record temperature at world entry,
+after each 10/30 sequence and at the end, peak temperature, fan mode and charging.
+30 FPS may still drop below its cap; both stable periods and hitches are evidence.
+
+Save character/log out normally, wait for Saved character verified, then Finish
+and owned cleanup. Export before another run overwrites the latest evidence.
+Close/reopen normally for a second warm run and repeat timings/route. Confirm
+character, level, XP, powers and costume persistence. If a stage fails, Abort,
+wait for cleanup and export that failed run.
+
+Use Export latest report after EACH run and send the COMPLETE outer
+coh-atlas-gameplay-*.zip plus timing/FPS/temperature notes. Preserve operation.log,
+android-client-report.json and guest-report.zip. The inner ZIP includes
+latest-report.json, client-evidence/client-console.log,
+client-evidence/character-atlas-console.txt and character-server-logs.zip.
+
+New cap/texture controls and suppression records are in the client console,
+alongside COH_CLIENT_SCENE_PHASE_V1 and COH_CLIENT_FRAME_TIMING_V1. Look for
+COH_CLIENT_GAMEPLAY_PROFILE_V1 and COH_CLIENT_TEXTURE_ERRORS_V1.
+Frame aggregates distinguish explicit pacing, main wall work and thread CPU,
+submission/backpressure and presentation/SwapBuffers wall time; scene phases
+cover group/entity/collision/geometry/texture completion. Histograms/maxima
+and long-frame counts identify spikes. Work-wall includes other waits; sampled
+thread CPU excludes llvmpipe/Wine/FEX workers. No GPU completion or individual
+texture decode/upload cost is promised. Scene phases nest: do not add them twice.
+Frame streams are bounded to 120 roughly 10-second windows each; a final partial
+window may be absent. Begin focused tests promptly after world entry.
+
+The next agent can run analyze_client_scene_performance.py on the COMPLETE outer
+ZIP; raw cap/texture diagnostic records and physical timestamps must also be read.
+No 0.13.17 physical FPS/startup savings or stability claim has been made yet.

@@ -1,0 +1,14 @@
+{
+  "workflow_run": 36281169823,
+  "commit": "68d4736b54d4f8297bb5467232af565e4d8b3db1",
+  "job_id": 108513124828,
+  "job": "tooling (windows-2025-vs2026)",
+  "conclusion": "failure",
+  "tests_run": 52,
+  "errors": 1,
+  "failing_test": "test_console_ready_before_release_and_final_diagnostics_retained_after_exit",
+  "diagnostic": "TestClient console observer failed: [WinError 5] Access is denied.",
+  "runtime_job": "skipped by failed tooling dependency",
+  "scope": "Windows observer startup failure, not an engine persistence result",
+  "log_url": "https://github.com/Russianranger/coh-android/actions/runs/36281169823/job/108513124828"
+}

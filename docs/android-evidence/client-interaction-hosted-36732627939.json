@@ -1,0 +1,353 @@
+{
+  "format": 1,
+  "status": "not_qualified",
+  "scope": "exact_apk_actual_client_interaction_native_arm64_hosted_review",
+  "run_id": 36732627939,
+  "runtime_job_id": 109947557600,
+  "workflow_conclusion": "success",
+  "repository_commit": "73e2fa5623d2ca85c11166e5b2777fccf955a443",
+  "source_tree": "6c964966d82a4c3a6b524208a171ef1f62cc5338",
+  "apk": {
+    "bytes": 370556044,
+    "sha256": "bbf45610becb3b8e2309d67cab2e701b8ff8bf9cf14414c1fd044c87197533e7"
+  },
+  "evidence_artifact": {
+    "id": 11107455021,
+    "name": "coh-client-interaction-arm64-evidence",
+    "bytes": 24228148,
+    "sha256": "15b1746d5ed24e1044a9eb613e12fa3085f329703451fe6716e013f093a10fa5"
+  },
+  "raw_reports": {
+    "guest/latest-report.json": {
+      "bytes": 49060,
+      "sha256": "0d7a0937b30bc993e949540accd232ab385f0fe48152642b8eae32ae2c64da4b"
+    },
+    "client-evidence/host-client-report.json": {
+      "bytes": 19718,
+      "sha256": "8d1ae0698175c3b80e964af5eec6e0394e241b9ff932a745bb868493e5aa1b13"
+    }
+  },
+  "runtime_manifest_sha256": "d5635c0df5b19385f124ea212ec006865894a4d21d7d75b1346fcc0fd13b2f33",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "client_executable_sha256": "81885ffa8838ef8759c3526fa1cc0bd44f9108e92698b29054256dd0eb97a0ca",
+  "client_executable_modified": false,
+  "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+  "client_launch": {
+    "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+    "pid": 460
+  },
+  "mechanical_acceptance": {
+    "status": "passed",
+    "guest_status": "passed",
+    "guest_failures": [],
+    "host_status": "passed",
+    "host_failure": null,
+    "terminal_event_observed": true,
+    "readiness": {
+      "renderer_initialized": true,
+      "all_data_loaded": true,
+      "client_main_loop_reached": true,
+      "client_window_observed": true,
+      "startup_observed": true
+    },
+    "interaction_session_completed": true,
+    "producer_input_effect_verified": false,
+    "interaction_completion_reason": "finish_requested",
+    "finish_request": {
+      "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+      "client_pid": 460,
+      "action": "finish_interaction",
+      "bytes": 115,
+      "sha256": "131fcb45e513816bf47e6b915c1c37dca70a576394094bdce9f6db63c11b4bf9",
+      "received_utc": "2026-09-30T15:09:10.669079+00:00"
+    },
+    "owned_children_closed": 28,
+    "cleanup_complete": true,
+    "wine_cleanup_remaining": 0,
+    "wine_cleanup_inspection_failures": 0,
+    "presentation_socket_removed": true
+  },
+  "timing": {
+    "workflow_job_started_utc": "2026-09-30T14:57:52.7954677Z",
+    "host_step_started_utc": "2026-09-30T14:59:13.4771746Z",
+    "guest_started_utc": "2026-09-30T15:00:02.692216+00:00",
+    "private_data_ready_utc": "2026-09-30T15:01:30.206436+00:00",
+    "wine_initialization_seconds": 39.805,
+    "client_stage_started_utc": "2026-09-30T15:02:12.152999+00:00",
+    "startup_elapsed_seconds": 384.473,
+    "interaction_stage_started_utc": "2026-09-30T15:08:37.086082+00:00",
+    "live_observation_seconds": 33.808,
+    "interaction_stage_passed_utc": "2026-09-30T15:09:11.244032+00:00",
+    "guest_cleanup_finished_utc": "2026-09-30T15:09:14.147587+00:00",
+    "host_elapsed_seconds": 553.146,
+    "workflow_job_cleanup_utc": "2026-09-30T15:09:17.1024926Z"
+  },
+  "stages": [
+    {
+      "stage": "client_inputs",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:00:02.716388+00:00",
+      "finished_utc": "2026-09-30T15:00:02.754802+00:00"
+    },
+    {
+      "stage": "client_private_data",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:00:02.755031+00:00",
+      "finished_utc": "2026-09-30T15:01:30.206436+00:00"
+    },
+    {
+      "stage": "presentation_display",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:01:30.206725+00:00",
+      "finished_utc": "2026-09-30T15:01:30.262439+00:00"
+    },
+    {
+      "stage": "wine_initialization",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:01:30.262680+00:00",
+      "finished_utc": "2026-09-30T15:02:10.069198+00:00"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:02:10.069381+00:00",
+      "finished_utc": "2026-09-30T15:02:10.476169+00:00"
+    },
+    {
+      "stage": "actual_client_startup",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:02:12.152999+00:00",
+      "finished_utc": "2026-09-30T15:08:37.085877+00:00"
+    },
+    {
+      "stage": "actual_client_interaction",
+      "status": "passed",
+      "started_utc": "2026-09-30T15:08:37.086082+00:00",
+      "finished_utc": "2026-09-30T15:09:11.244032+00:00"
+    }
+  ],
+  "client_windows": [
+    {
+      "window_id": 16777219,
+      "title": "City of Heroes : PID: 460",
+      "width": 800,
+      "height": 600,
+      "mapped": true
+    }
+  ],
+  "graphics_observation": {
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software"
+  },
+  "post_readiness_captures": [
+    {
+      "file": "client-startup-external-000.png",
+      "elapsed_seconds": 427.42666994499996,
+      "frame_sha256": "7406ab2d8de21c4404af8f7da7c6d152f9b02efc783247e66700bf2d358f4bd8",
+      "png_sha256": "580f118a74b3d5c46ec6343f2bba160a5413ec694b975008ff8ff26c5d5a9079",
+      "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 838,
+      "frame_generation": 4,
+      "event_generation": 1
+    },
+    {
+      "file": "client-startup-external-001.png",
+      "elapsed_seconds": 428.62042493,
+      "frame_sha256": "0b126cb7e4c11f4067011f6b21105e206fdd04698bb551154f359ad47255196f",
+      "png_sha256": "11a1d4ce5a5b27aafa164151cde0df33ab6e95d1886b9a26d544aac13985563e",
+      "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 840,
+      "frame_generation": 4,
+      "event_generation": 1
+    },
+    {
+      "file": "client-startup-external-002.png",
+      "elapsed_seconds": 429.81900291399995,
+      "frame_sha256": "e83d0bfb43d7346f452dd189eaf66d0c58f6d2b1b1ec3e82d9bf718aabfaaf9c",
+      "png_sha256": "45845b95e69659b2e19193053952db0bc093986d9f248fa98df97aafbc3b1988",
+      "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+      "client_pid": 460,
+      "width": 800,
+      "height": 600,
+      "distinct_colors_capped": 8,
+      "frame_sequence": 842,
+      "frame_generation": 4,
+      "event_generation": 1
+    }
+  ],
+  "interaction_script": {
+    "scope": "host_rfb_pointer_keyboard_delivery",
+    "input_effect_verified": false,
+    "script_completed": true,
+    "test_marker": "COHINPUT",
+    "steps": [
+      {
+        "action": "cancel_graphics_prompt",
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "after_frame_sequence": 842,
+        "elapsed_since_ready": 2.392
+      },
+      {
+        "action": "type_visible_test_marker",
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "after_frame_sequence": 844,
+        "elapsed_since_ready": 3.891
+      },
+      {
+        "action": "open_login_settings",
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "after_frame_sequence": 846,
+        "elapsed_since_ready": 5.714
+      }
+    ],
+    "screenshots": [
+      {
+        "file": "interaction-before-input.png",
+        "png_sha256": "45845b95e69659b2e19193053952db0bc093986d9f248fa98df97aafbc3b1988",
+        "frame_sha256": "e83d0bfb43d7346f452dd189eaf66d0c58f6d2b1b1ec3e82d9bf718aabfaaf9c",
+        "frame_sequence": 842,
+        "frame_generation": 4,
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 2.392
+      },
+      {
+        "file": "interaction-after-cancel.png",
+        "png_sha256": "4095d42ca050fb438ee96b4bad6613b9d781bf0fbc8554023b4a2d59bdfe1387",
+        "frame_sha256": "f60c46a96a1ddce7131b2ce6508096b0a2b8c6da8b6223d2356b85baf98772c2",
+        "frame_sequence": 844,
+        "frame_generation": 4,
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 3.891
+      },
+      {
+        "file": "interaction-after-text.png",
+        "png_sha256": "45580e0e07cb480398a673b99855ac6b21cfa2927b05eeb2732955a950c6ea8d",
+        "frame_sha256": "2f7ff10ecb3e076d16a4f6bae2be7373219ec4271937c53939e58e07b140498e",
+        "frame_sequence": 846,
+        "frame_generation": 4,
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 5.714
+      },
+      {
+        "file": "interaction-settings.png",
+        "png_sha256": "18e39ac73394fe4f98a884df0aa98ce93e380f8a18bec5b2c9ce99099f9d758b",
+        "frame_sha256": "4c80ad1e88a9be06dfabb2bf5fa0dca32f98c547421cc04b601b80b01146f6a1",
+        "frame_sequence": 848,
+        "frame_generation": 4,
+        "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+        "client_pid": 460,
+        "width": 800,
+        "height": 600,
+        "elapsed_since_ready": 7.019
+      }
+    ],
+    "finish_request": {
+      "format": 1,
+      "session_id": "8672e2ade0dab3f8719219ef97cedc17",
+      "client_pid": 460,
+      "action": "finish_interaction",
+      "bytes": 115,
+      "sha256": "131fcb45e513816bf47e6b915c1c37dca70a576394094bdce9f6db63c11b4bf9"
+    }
+  },
+  "manual_visual_review": {
+    "status": "partial_failure",
+    "review_method": "Root and guest/host implementation agent inspected the four saved PNGs without rerunning the client.",
+    "login_screen_visible": true,
+    "first_start_graphics_prompt_visible_before_input": true,
+    "cancel_graphics_prompt_effect_verified": false,
+    "graphics_prompt_still_visible_after_cancel": true,
+    "typed_test_marker_visible": false,
+    "account_field_empty_after_text": true,
+    "settings_open_effect_verified": true,
+    "settings_open_behind_graphics_prompt": true,
+    "all_scripted_input_effects_verified": false,
+    "failures": [
+      "Cancel did not visibly dismiss the first-start graphics prompt.",
+      "COHINPUT was not visible in the account field after the typing step."
+    ],
+    "scope_note": "Mechanical session, frame freshness and cleanup passed; the requested visible interaction sequence did not pass. No Android input or gameplay qualification is claimed."
+  },
+  "diagnosis": {
+    "observed_host_behavior": "The original host script combined absolute pointer movement with button-down and sent account text immediately after its click.",
+    "source_evidence": [
+      "Game/src/win/input.c:880-962 records polled pointer coordinates at button-down and uses a 16-pixel/250-ms click window.",
+      "Game/src/win/input.c:1182-1184 classifies movement beyond the threshold while down as drag;1397-1403 polls absolute coordinates at the end of the input pass.",
+      "Game/src/formatter/smf_interact.c:2469 obtains account-widget click state through mouseClickHit.",
+      "Game/src/UI/uiDialog.c:1486 only blocks subsequent collision handling while the current pointer is inside this nonmodal dialog."
+    ],
+    "inference": "Pointer polling and account-focus timing plausibly explain the visual misses; exact Wine event ordering and window input focus were not recorded.",
+    "next_correction": "Neutral pointer movement followed by at least two fresh rendered frames before each 120-ms click, then a fresh frame after account click before typing. Keep client, caches, validation and 180-second session unchanged."
+  },
+  "client_worktree": {
+    "format": 1,
+    "source_data": "/game-import/data",
+    "import": {
+      "generation": "generation-0de305599d1f48c087079825b4e6e2f1",
+      "receipt_sha256": "30e6e06171fc692bf1ee9f2ea3221d48fd5744b32ccea209538f54a0e5f40313",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "package_sha256": "58c2e03acd2e6fc3d0d7980fa977a0dfd90595cb05f3ce978f720e2f8eacedf9",
+    "cache_archive_sha256": "5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051",
+    "prerequisites_archive_sha256": "cc8bd66c482233a8d5ee7f33e51015bb5981f993cad014378b3861550b520e0e",
+    "prerequisites_manifest_sha256": "32c27465763cd08b9a210a75f0661634143f39fbe02d4bdaec43c819715a3c1f",
+    "normalized_mtime_epoch": 1767225600,
+    "linked_files": 173005,
+    "copied_writable_files": 6,
+    "input_files": 173011,
+    "input_bytes": 2977730517,
+    "imported_inputs_readonly": true,
+    "imported_input_bytes_unchanged": true,
+    "imported_metadata_normalized": true,
+    "prepared_cache_files": 100,
+    "prepared_cache_bytes": 364703716,
+    "prepared_prerequisite_files": 3,
+    "prepared_prerequisite_bytes": 54948,
+    "writable_cache_roots": [
+      "bin",
+      "server/bin",
+      "geobin"
+    ],
+    "reused": false
+  },
+  "console": {
+    "bytes": 39463670,
+    "sha256": "12db3cad6fa47839ffb41933b835a13164763628df555ed1f3be2c4afdf33789",
+    "fileerror_occurrences": 150577,
+    "custom_texture_error_occurrences": 79935,
+    "native_console_truncation": false,
+    "scope_note": "Existing texture warning output was retained; it did not prevent client readiness."
+  },
+  "android_execution_validated": false,
+  "android_surface_validated": false,
+  "android_input_validated": false,
+  "hardware_acceleration_validated": false,
+  "gameplay_validated": false,
+  "server_started": false,
+  "accepted_atlas_and_physical_client_startup_retested": false
+}

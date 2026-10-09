@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "repository_commit": "6a87286219113bc11a5c3e1cdcb84ea87bea3495",
+  "candidate": "coh-m2-bookworm-arm64-wine10-fex2510",
+  "files": {
+    "001-coh-compat.sql": {
+      "bytes": 7788,
+      "sha256": "443ba977cdaf3e0a5c232986339f36ca8b19845943198177aaee5f191cd7f38a"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 2184,
+      "sha256": "48d16d70a0ffe699934754b178ce2b0e320bae001378e858bb8a8c6797673d8c"
+    },
+    "diagnostic.py": {
+      "bytes": 37912,
+      "sha256": "88a5e2fd2f57f45ff39c8d42827d1f6d753289c07182d258ce7fbca4463f17ac"
+    },
+    "odbc_probe.exe": {
+      "bytes": 267380,
+      "sha256": "493a3043e537d2a3bd1eecba1db4dfee9ab23bfa82d92f3a303e91f45565bc61"
+    },
+    "postgresql-build.json": {
+      "bytes": 163117,
+      "sha256": "4f72e85bbb48946dd562477ad12f31fb37b38bd931f951ae27fee17f4987191a"
+    },
+    "postgresql-runtime.tar.gz": {
+      "bytes": 9280905,
+      "sha256": "f34ff674df3b0c536e5bc65fa6bdc7999cc215a2aba392c01a2c58f28d7f2155"
+    },
+    "probe.dll": {
+      "bytes": 82761,
+      "sha256": "c6a57ae9eb6bf4102bb4840b1394a60234bd25b19efe79886f5c436acee1619c"
+    },
+    "proot-build.json": {
+      "bytes": 3236,
+      "sha256": "dce438ff6ca5c756f4d30036ad338b4f9973fa7bf6a35c32c7b015c3ddc90870"
+    },
+    "psqlodbc_x86.msi": {
+      "bytes": 4079616,
+      "sha256": "1b1c85f694ecad95fd3a0125a8b071669772bef098366738de48812124896773"
+    },
+    "runtime-lock.json": {
+      "bytes": 1688,
+      "sha256": "025e9bf55b214be4ff4709ec917ba326648a78feae8e97cd0131b72adca4f760"
+    },
+    "runtime-probe.exe": {
+      "bytes": 245968,
+      "sha256": "0127f7de65fae705ad560d3ad20adeb68874f1e22644b8f385d3772938bdfd22"
+    }
+  },
+  "runtime_probe": {
+    "executable": "runtime-probe.exe",
+    "marker": "COH_RUNTIME_PROBE_V1 PASS bits=32 dll=verified",
+    "dll": "probe.dll"
+  },
+  "compiler": "i686-w64-mingw32-gcc (GCC) 13-posix",
+  "odbc_ansi_compatibility": {
+    "wine_export_source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/odbc32/odbc32.spec",
+    "compile_aliases": {
+      "SQLDriverConnectA": "SQLDriverConnect",
+      "SQLExecDirectA": "SQLExecDirect",
+      "SQLColumnsA": "SQLColumns",
+      "SQLGetInfoA": "SQLGetInfo"
+    },
+    "verified_windows_manager_imports": [
+      "SQLAllocHandle",
+      "SQLBindParameter",
+      "SQLColumns",
+      "SQLDisconnect",
+      "SQLDriverConnect",
+      "SQLEndTran",
+      "SQLExecDirect",
+      "SQLFetch",
+      "SQLFreeHandle",
+      "SQLGetData",
+      "SQLGetDiagRec",
+      "SQLGetDiagRecA",
+      "SQLGetInfo",
+      "SQLMoreResults",
+      "SQLSetConnectAttr",
+      "SQLSetEnvAttr"
+    ],
+    "fixture_operations_changed": false
+  },
+  "scope": "APK build inputs; not proof of Android execution or gameplay"
+}

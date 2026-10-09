@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "platform": "linux-arm64-gnu-bookworm",
+  "debian_image": "debian@sha256:a1b86db52ce3daef089e45aabe36dfec4091f82464c25c1fdcf03de197cbe82a",
+  "mesa": {
+    "version": "26.0.0",
+    "url": "https://archive.mesa3d.org/mesa-26.0.0.tar.xz",
+    "bytes": 43776320,
+    "sha256": "2a44e98e64d5c36cec64633de2d0ec7eff64703ee25b35364ba8fcaa84f33f72"
+  },
+  "glslang": {
+    "version": "15.1.0",
+    "url": "https://codeload.github.com/KhronosGroup/glslang/tar.gz/refs/tags/15.1.0",
+    "sha256": "4bdcd8cdb330313f0d4deed7be527b0ac1c115ff272e492853a6e98add61b4bc"
+  },
+  "meson": "1.5.2",
+  "cmake": "3.31.6",
+  "driver": "turnip_kgsl",
+  "kgsl_a740_ids": [1124403713, 1124403968],
+  "kgsl_a740_development_mask": 4294967040,
+  "kgsl_a740_development_value": 117702656,
+  "mesa_options": [
+    "--buildtype=release", "-Dplatforms=x11", "-Dvulkan-drivers=freedreno",
+    "-Dfreedreno-kmds=kgsl", "-Dgallium-drivers=", "-Dglx=disabled",
+    "-Degl=disabled", "-Dgbm=disabled", "-Dopengl=false", "-Dgles1=disabled",
+    "-Dgles2=disabled", "-Dllvm=disabled", "-Dvideo-codecs=", "-Dbuild-tests=false"
+  ],
+  "probe_compile_args": ["-std=c11", "-O2", "-Wall", "-Wextra", "-Werror"]
+}

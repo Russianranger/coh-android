@@ -1,0 +1,451 @@
+name: Thor native Game scene and frame performance
+on:
+  push:
+    branches: [codex/character-persistence-continuation]
+    paths:
+      - .github/workflows/android-client-scene-performance.yml
+      - patches/client-scene-performance/**
+      - android/native/client-scene-performance/**
+      - database/client-scene-performance/**
+      - tools/android/interactive/package_client_scene_performance_native.py
+      - tools/android/interactive/build_client_scene_performance_apk.py
+      - tools/android/interactive/qualify_client_scene_performance.py
+      - tools/android/interactive/test_client_scene_performance*.py
+      - tools/android/interactive/test_client_frame_timing*.py
+      - tools/android/interactive/test_client_preload_launch.py
+      - tools/android/interactive/analyze_client_scene_performance.py
+      - tools/android/interactive/analyze_thor_performance.py
+      - tools/android/interactive/test_thor_performance_report.py
+      - android/guest/client_interactive_diagnostic.py
+      - android/guest/native_responsiveness_contract.py
+      - android/guest/client_startup_diagnostic.py
+      - android/guest/texture_header_index.py
+      - docs/COH-Atlas-Gameplay-0.13.16-testing.txt
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: android-client-scene-performance-publication
+  cancel-in-progress: true
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      required: ${{ steps.gate.outputs.required }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Preserve any already published performance release
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          python3 - <<'PY'
+          import ast
+          import sys
+          import subprocess
+          import json
+          import os
+          from pathlib import Path
+          import urllib.error
+          import urllib.request
+          tree = ast.parse(Path('tools/android/interactive/build_client_scene_performance_apk.py').read_text())
+          tags = [node.value.value for node in tree.body if isinstance(node, ast.Assign)
+              and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)
+              and node.targets[0].id == 'RELEASE_TAG' and isinstance(node.value, ast.Constant)]
+          if tags != ['coh-atlas-gameplay-v0.13.16']:
+              raise ValueError('Exact explicit performance release tag required')
+          request = urllib.request.Request('https://api.github.com/repos/Russianranger/coh-android/releases/tags/'+tags[0],
+              headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  release = json.load(response)
+          except urllib.error.HTTPError as error:
+              if error.code != 404: raise
+              required = True
+          else:
+              if release.get('tag_name') != tags[0] or type(release.get('id')) is not int:
+                  raise ValueError('Existing performance release differs')
+              required = False
+          if required and os.environ['GITHUB_EVENT_NAME'] == 'push':
+              sys.path.insert(0, 'tools/android/interactive')
+              from classify_storage_cleanup_change import scene_performance_push
+              head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+              parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^'], text=True).strip()
+              names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
+              required = scene_performance_push('push', os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('required='+str(required).lower()+'\n')
+          print(json.dumps({'release_tag': tags[0], 'publication_required': required,
+              'existing_release_modified': False}, sort_keys=True))
+          PY
+  client:
+    needs: changes
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 80
+    steps:
+      - name: Preserve exact LF native patch and helper inputs on Windows
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Stage the frozen native client chain and bounded scene and frame layers
+        shell: pwsh
+        run: |
+          python tools/android/interactive/package_client_scene_performance_native.py stage --output out/client-scene-performance-source
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup staging failed' }
+      - name: Qualify actual production scene and frame logic on Win32 before building Game
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation was not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_scene_performance_native.py --windows-qualify --output out/client-scene-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/test_client_frame_timing_native.py --windows-qualify --output out/client-frame-checks.json
+          if errorlevel 1 exit /b 1
+          python tools/android/interactive/package_client_scene_performance_native.py combine-checks --scene-checks out/client-scene-checks.json --frame-checks out/client-frame-checks.json --output out/client-scene-performance-native-checks.json
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/client-scene-performance.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\client-scene-performance.cmd 2>&1 | Tee-Object out/contracts/client-scene-performance.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Client loading native qualification failed' }
+      - name: Build only Game retaining the existing MapServer and graphics profile
+        working-directory: out/client-scene-performance-source
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
+          if ($LASTEXITCODE -ne 0) { throw 'Client startup Game build failed' }
+      - name: Package Game with exact source and schema receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_client_scene_performance_native.py package
+          --directory out/client-scene-performance-source/out/build/vs2026/bin/OptDebug
+          --source out/client-scene-performance-source
+          --cache out/client-scene-performance-source/out/build/vs2026/CMakeCache.txt
+          --checks out/client-scene-performance-native-checks.json
+          --repository-commit "$env:GITHUB_SHA"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/client-scene-performance-native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-scene-performance-native
+          path: out/client-scene-performance-native/
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-scene-performance-native-build-evidence
+          path: |
+            out/client-scene-performance-source/*build-input.json
+            out/client-scene-performance-source/responsiveness-source-input.json
+            out/client-scene-performance-source/out/build/vs2026/CMakeCache.txt
+            out/client-scene-performance-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
+            out/client-scene-performance-native/client-scene-performance-native-manifest.json
+            out/client-scene-performance-native-checks.json
+            out/client-scene-checks.json
+            out/client-frame-checks.json
+            out/contracts/client-scene-performance.txt
+          if-no-files-found: warn
+          retention-days: 90
+  qualify:
+    needs: [changes, client]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: coh-host-fixture
+          POSTGRES_DB: coh_test_startup_bundle
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
+      COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
+      PGHOST: 127.0.0.1
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: coh-host-fixture
+      PGDATABASE: coh_test_startup_bundle
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-native
+          path: out/client-scene-performance-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-thor-performance-packaging-evidence
+          path: out/client-scene-performance-donor/evidence
+          run-id: 37411543214
+          github-token: ${{ github.token }}
+      - name: Recover exact physically accepted public donor
+        run: python3 tools/android/interactive/build_client_scene_performance_apk.py download-donor --output out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+      - name: Qualify every retained gameplay guard and all seven real PostgreSQL fixtures
+        run: >-
+          python3 tools/android/interactive/qualify_client_scene_performance.py
+          --repository-commit "$GITHUB_SHA"
+          --donor-apk out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+          --donor-build-report out/client-scene-performance-donor/evidence/thor-performance-apk-build-report.json
+          --client-directory out/client-scene-performance-native
+          --output out/client-scene-performance-qualification.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-client-scene-performance-qualification
+          path: out/client-scene-performance-qualification.json
+          if-no-files-found: error
+          retention-days: 90
+  apk:
+    needs: [changes, client, qualify]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-native
+          path: out/client-scene-performance-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-thor-performance-packaging-evidence
+          path: out/client-scene-performance-donor/evidence
+          run-id: 37411543214
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-interactive-signing
+          path: ${{ runner.temp }}/coh-retained-signing
+          run-id: 36731428735
+          github-token: ${{ github.token }}
+      - name: Recover exact physically accepted public donor
+        run: python3 tools/android/interactive/build_client_scene_performance_apk.py download-donor --output out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+      - name: Ensure SDK 35 tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Build Game-only 0.13.16 conserving accepted servers visual beacon and Android bytes
+        env:
+          COH_INTERACTIVE_KEYSTORE_PASSWORD: android
+        run: >-
+          python3 tools/android/interactive/build_client_scene_performance_apk.py build
+          --donor-apk out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+          --donor-build-report out/client-scene-performance-donor/evidence/thor-performance-apk-build-report.json
+          --qualification out/client-scene-performance-qualification.json
+          --client-directory out/client-scene-performance-native
+          --repository-commit "$GITHUB_SHA"
+          --android-jar "$ANDROID_HOME/platforms/android-35/android.jar"
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
+          --output out/client-scene-performance-apk/COH-Atlas-Gameplay-0.13.16.apk
+      - name: Fresh-process SDK source payload and signer audit before publication
+        env:
+          PYTHONHASHSEED: '73416'
+        run: >-
+          python3 tools/android/interactive/build_client_scene_performance_apk.py audit
+          --apk out/client-scene-performance-apk/COH-Atlas-Gameplay-0.13.16.apk
+          --build-report out/client-scene-performance-apk/client-scene-performance-apk-build-report.json
+          --donor-apk out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+          --donor-build-report out/client-scene-performance-donor/evidence/thor-performance-apk-build-report.json
+          --qualification out/client-scene-performance-qualification.json
+          --client-directory out/client-scene-performance-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-scene-performance-packaging-evidence
+          path: |
+            out/client-scene-performance-apk/client-scene-performance-apk-build-report.json
+            out/client-scene-performance-apk/COH-Atlas-Gameplay-0.13.16-testing.txt
+            out/client-scene-performance-apk/COH-Atlas-Gameplay-0.13.16.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-scene-performance-apk
+          path: out/client-scene-performance-apk/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Publish only the newly qualified performance prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 tools/android/interactive/build_client_scene_performance_apk.py publish
+          --apk out/client-scene-performance-apk/COH-Atlas-Gameplay-0.13.16.apk
+          --build-report out/client-scene-performance-apk/client-scene-performance-apk-build-report.json
+          --donor-apk out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+          --donor-build-report out/client-scene-performance-donor/evidence/thor-performance-apk-build-report.json
+          --qualification out/client-scene-performance-qualification.json
+          --client-directory out/client-scene-performance-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+      - name: Remove owned signing staging
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
+  public-audit:
+    needs: [changes, client, qualify, apk]
+    if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONHASHSEED: '1615'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-native
+          path: out/client-scene-performance-native
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-thor-performance-packaging-evidence
+          path: out/client-scene-performance-donor/evidence
+          run-id: 37411543214
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-qualification
+          path: out
+      - uses: actions/download-artifact@v4
+        with:
+          name: coh-client-scene-performance-packaging-evidence
+          path: out/client-scene-performance-public
+      - name: Ensure SDK 35 audit tools
+        run: |
+          if [ ! -f "$ANDROID_HOME/platforms/android-35/android.jar" ] || [ ! -x "$ANDROID_HOME/build-tools/35.0.0/aapt2" ]; then
+            timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          fi
+      - name: Recover exact public donor for independent conservation audit
+        run: python3 tools/android/interactive/build_client_scene_performance_apk.py download-donor --output out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+      - name: Download actual public APK checksum and testing notes
+        timeout-minutes: 10
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import time
+          import urllib.request
+          directory = Path('out/client-scene-performance-public')
+          report = json.loads((directory/'client-scene-performance-apk-build-report.json').read_bytes())
+          base = 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/'
+          specs = {report['apk']: {'bytes': report['bytes'], 'sha256': report['sha256']},
+              report['apk']+'.sha256': {'bytes': 97, 'sha256': hashlib.sha256((report['sha256']+'  '+report['apk']+'\n').encode()).hexdigest()},
+              'COH-Atlas-Gameplay-0.13.16-testing.txt': report['testing_notes']}
+          for name, pin in specs.items():
+              destination = directory/name
+              destination.unlink(missing_ok=True)
+              for attempt in range(3):
+                  deadline = time.monotonic()+160
+                  digest, count = hashlib.sha256(), 0
+                  try:
+                      with urllib.request.urlopen(base+name, timeout=20) as response, destination.open('xb') as output:
+                          if response.status != 200: raise ValueError('Actual public bytes did not return HTTP 200')
+                          while chunk := response.read(1024*1024):
+                              if time.monotonic() >= deadline: raise TimeoutError('Bounded public download timed out')
+                              count += len(chunk)
+                              if count > pin['bytes']: raise ValueError('Oversized public asset')
+                              digest.update(chunk); output.write(chunk)
+                      if count != pin['bytes'] or digest.hexdigest() != pin['sha256']: raise ValueError('Public asset bytes differ')
+                      break
+                  except Exception:
+                      destination.unlink(missing_ok=True)
+                      if attempt == 2: raise
+                      time.sleep(5)
+          print('Actual three public release assets authenticated')
+          PY
+      - name: Independent fresh-job public SDK signer exact payload and source audit
+        run: >-
+          python3 tools/android/interactive/build_client_scene_performance_apk.py audit
+          --apk out/client-scene-performance-public/COH-Atlas-Gameplay-0.13.16.apk
+          --build-report out/client-scene-performance-public/client-scene-performance-apk-build-report.json
+          --donor-apk out/client-scene-performance-donor/COH-Atlas-Gameplay-0.13.15.apk
+          --donor-build-report out/client-scene-performance-donor/evidence/thor-performance-apk-build-report.json
+          --qualification out/client-scene-performance-qualification.json
+          --client-directory out/client-scene-performance-native
+          --build-tools "$ANDROID_HOME/build-tools/35.0.0"
+          --repository-commit "$GITHUB_SHA"
+      - name: Record only the completed independent public byte audit
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(Path('out/client-scene-performance-public/client-scene-performance-apk-build-report.json').read_bytes())
+          if report['repository_commit'] != os.environ['GITHUB_SHA']: raise ValueError('Audited source differs')
+          result = {'format': 1, 'status': 'passed', 'repository_commit': os.environ['GITHUB_SHA'],
+              'sha256': report['sha256'], 'bytes': report['bytes'],
+              'public_url': 'https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.16/COH-Atlas-Gameplay-0.13.16.apk',
+              'public_apk_checksum_and_notes_verified': True, 'sdk_signer_payload_audit_passed': True,
+              'fresh_process_prepublication_audit_passed': True, 'physical_performance_validated': False}
+          Path('out/client-scene-performance-public-audit.json').write_text(json.dumps(result, indent=2, sort_keys=True)+'\n')
+          print('COH_THOR_PERFORMANCE_PUBLIC_AUDIT_V1 '+json.dumps(result, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-scene-performance-public-byte-audit
+          path: out/client-scene-performance-public-audit.json
+          if-no-files-found: error
+          retention-days: 90

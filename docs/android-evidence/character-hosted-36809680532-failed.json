@@ -1,0 +1,116 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36809680532,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36809680532",
+  "runtime_job_id": 110202630923,
+  "repository_commit": "b17457ec83aa705b1c265f8d511da08b5823c382",
+  "apk_sha256": "bf4ca00fe09cff0acdeae21f6f61128428504e3fb6312e737691c61472346393",
+  "runtime_manifest_sha256": "3fd4b9a563fdb4f54a7f636a296278be195d6f8d36f4c30f6874c7b0d437b046",
+  "session_id": "52e1a84f6529c615427a20b552dccd0e",
+  "client_pid": 656,
+  "elapsed_seconds": 1545.772,
+  "host_failure": {
+    "type": "ValueError",
+    "message": "Private RFB transport ended before client startup observation completed"
+  },
+  "guest_failures": [
+    "Actual CoH window or startup evidence disappeared during observation"
+  ],
+  "failure_review": {
+    "root_cause": "The exact menu-only title check rejected the same owned client after its title changed to City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656. The guest then shut down during Atlas world loading.",
+    "scope": "Creation confirmation delivered and a loaded connected map-1 entity was reported by DbServer. No CLIENT_READY, committed save, complete avatar, or rendered Atlas acceptance is established."
+  },
+  "observed_progress": {
+    "atlas_ready": true,
+    "local_login_verified": true,
+    "character_id": 1,
+    "db_map_assignment_observed": true,
+    "character_samples": [
+      {
+        "loaded": true,
+        "connected": true,
+        "in_map_transfer": false,
+        "map_id": 1,
+        "static_map_id": 1,
+        "address": "127.0.0.1"
+      }
+    ],
+    "ocr_buttons": [
+      "No",
+      "Hero",
+      "Yes"
+    ],
+    "observed_window_titles": [
+      "City of Heroes : City_Zones/City_01_01/City_01_01.txt  PID: 656",
+      "Z:\\opt\\coh\\client-launcher.exe",
+      "Default IME",
+      "Default IME",
+      "Default IME"
+    ],
+    "connected_captures": 0,
+    "post_save_captures": 0
+  },
+  "character_proof": {
+    "verified": false,
+    "connected_on_atlas": false,
+    "committed_sql_verified": false,
+    "requested_logout_observed": false,
+    "logout_timer_observed": false,
+    "disconnected_before_sql": false,
+    "forced_stop_before_save": false,
+    "reopen_verified": false,
+    "gameplay_verified": false
+  },
+  "cleanup": {
+    "cleanup_complete": true,
+    "cleanup": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "owned_workers_remaining": 0,
+    "inspection_failures": 0,
+    "host_cleanup": {
+      "stop_requested": true,
+      "grace_seconds": 180,
+      "forced_quit": false,
+      "forced_kill": false,
+      "errors": [],
+      "process_reaped": true
+    },
+    "guest_evidence_export": {
+      "files": [
+        "latest-report.json",
+        "report.zip"
+      ],
+      "fallback_used": false,
+      "errors": []
+    },
+    "database_preserved": true
+  },
+  "evidence": {
+    "runtime_artifact_id": 11140555469,
+    "runtime_artifact_bytes": 63916740,
+    "runtime_artifact_sha256": "44fe549fbacd6f49eeb8bb537672e2245ce09c2af46c0b7ddcbdf6c27d241d6f",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 101181,
+        "sha256": "1347b9acd6866f720a329a76b6e7b882cb2e498044820d0d83a4c1958773c7df"
+      },
+      "latest-report.json": {
+        "bytes": 122939,
+        "sha256": "7911d0d562f71592e29bc3393da3608fa6ca28c9b47ba747eb3b77f44410ac3e"
+      },
+      "report.zip": {
+        "bytes": 2829131,
+        "sha256": "4a16419b7d14fd1f645fc14888f3ec88b5409539a7b8147994dc6c04fad199d3"
+      },
+      "client-frame-final.png": {
+        "bytes": 1560,
+        "sha256": "f73dd6a86f55f189758e97784b9030aee01655e07f0bfba3808b7131472aac7e"
+      }
+    }
+  }
+}

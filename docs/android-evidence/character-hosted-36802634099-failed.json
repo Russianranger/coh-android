@@ -1,0 +1,114 @@
+{
+  "format": 1,
+  "gate": "graphical_character_creation_hosted",
+  "status": "failed",
+  "run_id": 36802634099,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36802634099",
+  "repository_commit": "ae8054d6430c194e32344f47678e134395419046",
+  "apk": "COH-Character-Creation-0.9.0.apk",
+  "apk_bytes": 384802527,
+  "apk_sha256": "795be2b9b34352a7aa8905f4687f3aebbfd238e13b81e4e50e65ef06e53bac53",
+  "runtime_manifest_sha256": "361305cbc086a2b23384c264e99aac80692abac58862dce9c739666f98d35edc",
+  "session_id": "ae34f78e43e6d3faaa53471dc9c33f71",
+  "client_pid": 656,
+  "elapsed_seconds": 1557.666,
+  "recorded_failure": {
+    "type": "ValueError",
+    "message": "Command '['tesseract', 'stdin', 'stdout', '--psm', '11', 'tsv']' timed out after 20 seconds"
+  },
+  "failed_stage": "host_tutorial_prompt_ocr",
+  "observed_progress": {
+    "atlas_startup_passed_utc": "2026-10-01T02:06:35.338023+00:00",
+    "client_startup_passed_utc": "2026-10-01T02:13:37.522823+00:00",
+    "local_login_ready_utc": "2026-10-01T02:15:05.670667+00:00",
+    "character_list_sent": true,
+    "creator_register_screen_reached": true,
+    "character_name": "THORHERO",
+    "creator_values_visible": {
+      "origin": "Science",
+      "archetype": "Blaster",
+      "known_powers": [
+        "Snap Shot",
+        "Web Grenade"
+      ]
+    },
+    "last_visible_prompt": "Do you wish to play the tutorial?",
+    "host_ocr_timeout_seconds": 20,
+    "script_steps_recorded": 58,
+    "script_completed": false,
+    "connected_captures": 0,
+    "post_save_captures": 0
+  },
+  "visual_review": {
+    "reviewed_by": [
+      "root",
+      "independent_evidence_reviewer"
+    ],
+    "selected_screens": [
+      "character-57-before-register_play.png",
+      "client-frame-final.png"
+    ],
+    "observation": "Register page shows THORHERO and selected powers; final frame shows the tutorial Yes/No dialog. The male avatar preview is absent.",
+    "asset_gap": "Client console records missing male custom geometry and costume textures; the accepted import lacks the base avatar geometry and associated textures.",
+    "costume_rendering_accepted": false
+  },
+  "acceptance": {
+    "character_creation": false,
+    "character_map_entry": false,
+    "committed_character_save": false,
+    "android_execution": false,
+    "gameplay": false,
+    "hardware_acceleration": false,
+    "scope_note": "Hosted server startup, local login and creator navigation were observed. No character creation, character map connection or committed save is accepted."
+  },
+  "cleanup": {
+    "postgres_graceful_stop_observed": true,
+    "postgres_stop_utc": "2026-10-01T02:17:28.182712+00:00",
+    "postgres_stop_message": "waiting for server to shut down.... done\nserver stopped\n",
+    "proot_signal_9_observed": true,
+    "terminal_guest_result_observed": false,
+    "guest_report_exported": false,
+    "full_cleanup_verified": false,
+    "limitation": "The host stopped the failed session and the log ends with PRoot vpid 1 terminated with signal 9. PostgreSQL shutdown is recorded, but no final guest report proves all owned cleanup or profile preservation."
+  },
+  "evidence": {
+    "runtime_artifact": {
+      "file": "artifact.zip",
+      "bytes": 58192797,
+      "sha256": "a62a4067c5e67ff4c06cd15822a6b32e3e8e9cfec54f98ae4a5d17a23ba54df2"
+    },
+    "artifact_subdirectory": "client-evidence",
+    "files": {
+      "host-client-report.json": {
+        "bytes": 89175,
+        "sha256": "325ecc11cf34191f92877ad5bf15f3f117314881f072abe8f5e127b446b41cd9"
+      },
+      "host-client.log": {
+        "bytes": 98446,
+        "sha256": "67e627f500952fe2fdffe642b908cf7dc1186316d1249409eec309d914729d7a"
+      },
+      "character-57-before-register_play.png": {
+        "bytes": 416005,
+        "sha256": "d0d11fe1a31f5fc07f164639d36f3247803540964eb0d7560b3361f172222b6f"
+      },
+      "client-frame-final.png": {
+        "bytes": 410537,
+        "sha256": "0d686aa48c4000c806927266cb1030a594cab36986f0b23b7fa9ab715a2a7f24"
+      },
+      "post_login_captures-000.png": {
+        "bytes": 412442,
+        "sha256": "09fa0f102675e9f42db50a89b469ecccf6900aa8803f5ddca9628e5069198df6"
+      },
+      "character-53-before-accept_default_costume.png": {
+        "bytes": 451774,
+        "sha256": "0389f45b7af3970ec540072bd22a65fce7c91fc5dc0859df28819d1e0903f0d4"
+      }
+    },
+    "independent_apk_review": {
+      "file": "candidate-character/run-36802634099/independent-apk-verification.json",
+      "sha256": "b25ce026d29a311be57e9e43909bfaf1d074bd40e99dc92e4060025943c1693b",
+      "signature_verified": true
+    }
+  },
+  "followup": "Retain this failed qualification. Resolve hosted prompt handling and obtain complete guest cleanup/save evidence before delivery. Avatar asset completion is separate work required before rendering or gameplay claims."
+}

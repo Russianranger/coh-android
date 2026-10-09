@@ -1,0 +1,294 @@
+{
+  "format": 1,
+  "status": "accepted_by_user_with_remaining_performance_limits",
+  "source_zip": {
+    "name": "coh-atlas-gameplay-20261002-214857.zip",
+    "bytes": 14076881,
+    "sha256": "c4041668e6bbc5b7611cbac06b5c9217950cef8c8c50ccaaa6f4f380dd29d52d",
+    "android_client_report_sha256": "2b4c094dd17da3190a66cdfe13eed82ebf2fc5e9b9d5c155dab2a77aff0078c0",
+    "guest_report_zip_sha256": "616a6164593d3087688dfb04e2b1e4f5afbb86f61cba6809eb77470392084402"
+  },
+  "device": {
+    "model": "AYN AYN Thor",
+    "android_sdk": 33,
+    "app_version": "0.11.6",
+    "app_id": "io.github.russianranger.cohclientinteractive"
+  },
+  "operation": {
+    "name": "character_reopen",
+    "run_id": "1790975139788-767b29193733",
+    "session_id": "d4fdba467036485db5d218e829f5aa8a",
+    "guest_started_utc": "2026-10-02T21:05:40.493182+00:00",
+    "guest_finished_utc": "2026-10-02T21:47:08.584072+00:00",
+    "elapsed_guest_seconds": 2488.091,
+    "elapsed_android_operation_seconds": 2489.692,
+    "android_passed": true,
+    "guest_passed": true,
+    "process_exit_code": 0,
+    "guest_failures": []
+  },
+  "user_assessment": {
+    "server_startup": "same length of time",
+    "client": "smoother, far from perfect but better and more tolerable for testing; accepted for now",
+    "requested_next_work": "proceed to next milestone",
+    "safe_ground_recovery": "keep optional Return to safe ground action but remove mandatory check from normal testing",
+    "server_startup_goal_seconds": 300,
+    "server_startup_optimization": "deferred until later",
+    "gpu_acceleration": "deferred"
+  },
+  "automated_character_evidence": {
+    "account": "COHLOCAL",
+    "name": "THORHERO",
+    "character_id": 1,
+    "local_login_verified": true,
+    "character_reopen_verified": true,
+    "native_client_ready_observed": true,
+    "connected_on_atlas": true,
+    "committed_sql_verified": true,
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "identity_exactly_preserved": true,
+    "powers_exactly_preserved": true,
+    "power_rows": 7,
+    "costume_parts_exactly_preserved": true,
+    "costume_part_rows": 14,
+    "ents2_exactly_preserved": true,
+    "login_count_before": 6,
+    "login_count_after": 7,
+    "sql_game_mutations_performed_by_observer": false,
+    "ordinary_stuck_observed_in_this_run": true,
+    "stable_ground_verified_in_this_run": true,
+    "client_ready_observed_utc": "2026-10-02T21:39:14.337291+00:00",
+    "saved_utc": "2026-10-02T21:46:54.992760+00:00"
+  },
+  "startup_timing": {
+    "basis": "guest stage timestamps; stage elapsed values overlap named setup work where specified, so do not sum nested preparation timings",
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:05:40.501514+00:00",
+        "finished_utc": "2026-10-02T21:05:40.788935+00:00",
+        "elapsed_seconds": 0.287,
+        "finished_seconds_after_guest_start": 0.296
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:05:40.789513+00:00",
+        "finished_utc": "2026-10-02T21:05:40.934551+00:00",
+        "elapsed_seconds": 0.145,
+        "finished_seconds_after_guest_start": 0.441
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:05:40.938621+00:00",
+        "finished_utc": "2026-10-02T21:05:42.065991+00:00",
+        "elapsed_seconds": 1.127,
+        "finished_seconds_after_guest_start": 1.573
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:05:42.066467+00:00",
+        "finished_utc": "2026-10-02T21:05:42.461560+00:00",
+        "elapsed_seconds": 0.395,
+        "finished_seconds_after_guest_start": 1.968
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:07:48.203849+00:00",
+        "finished_utc": "2026-10-02T21:07:48.316024+00:00",
+        "elapsed_seconds": 0.112,
+        "finished_seconds_after_guest_start": 127.823
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:07:48.316937+00:00",
+        "finished_utc": "2026-10-02T21:08:56.843634+00:00",
+        "elapsed_seconds": 68.527,
+        "finished_seconds_after_guest_start": 196.35
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:08:56.844037+00:00",
+        "finished_utc": "2026-10-02T21:09:01.186662+00:00",
+        "elapsed_seconds": 4.343,
+        "finished_seconds_after_guest_start": 200.693
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:09:01.187742+00:00",
+        "finished_utc": "2026-10-02T21:16:37.811824+00:00",
+        "elapsed_seconds": 456.624,
+        "finished_seconds_after_guest_start": 657.319
+      },
+      {
+        "stage": "local_atlas_startup",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:16:38.239339+00:00",
+        "finished_utc": "2026-10-02T21:27:30.571436+00:00",
+        "elapsed_seconds": 652.332,
+        "finished_seconds_after_guest_start": 1310.078
+      },
+      {
+        "stage": "win32_runtime_dll",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:27:30.572021+00:00",
+        "finished_utc": "2026-10-02T21:27:31.136737+00:00",
+        "elapsed_seconds": 0.565,
+        "finished_seconds_after_guest_start": 1310.644
+      },
+      {
+        "stage": "actual_client_startup",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:27:33.573570+00:00",
+        "finished_utc": "2026-10-02T21:37:20.323370+00:00",
+        "elapsed_seconds": 586.75,
+        "finished_seconds_after_guest_start": 1899.83
+      },
+      {
+        "stage": "actual_client_interaction",
+        "status": "passed",
+        "started_utc": "2026-10-02T21:37:20.323859+00:00",
+        "finished_utc": "2026-10-02T21:47:03.622167+00:00",
+        "elapsed_seconds": 583.298,
+        "finished_seconds_after_guest_start": 2483.129
+      }
+    ],
+    "guest_start_to_dbserver_ready_seconds": 657.319,
+    "guest_start_to_atlas_ready_seconds": 1310.078,
+    "client_launcher_start_to_startup_observed_seconds": 586.255,
+    "guest_start_to_character_native_ready_seconds": 2013.844,
+    "client_worktree_reused": true,
+    "client_worktree_stage_seconds": 0.145,
+    "generated_cache_bytes_preserved": true,
+    "private_server_data_preparation_seconds": 411.25844,
+    "server_data_cache_reused": false,
+    "server_data_cache_created": true,
+    "server_data_cache_returned_after_cleanup": true,
+    "texture_header_index_preparation_seconds": 89.67,
+    "texture_header_index_reused": false,
+    "texture_header_index_records": 11367,
+    "wine_initialization_seconds": 68.512,
+    "wine_prefix_reused_without_registration": false,
+    "wine_refresh_reason": "wine_inf_timestamp_changed"
+  },
+  "client_presentation": {
+    "graphics_profile_requested": "performance",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "renderer_classification": "software",
+    "source_width": 800,
+    "source_height": 600,
+    "android_surface_validated": true,
+    "decoded_frame_count": 4218,
+    "fresh_android_pixelcopy_capture_counts": {
+      "surface_captures": 3,
+      "login_captures": 3,
+      "connected_captures": 3,
+      "relocation_captures": 3,
+      "character_captures": 3
+    },
+    "input_events_sent": 400,
+    "input_events_failed": 0,
+    "input_transport_observed": true,
+    "input_effect_automatically_verified": false,
+    "gameplay_automatically_verified": false,
+    "general_rendering_automatically_verified": false,
+    "hardware_acceleration_validated": false,
+    "fps_benchmark_available": false,
+    "visual_inspection": "Relocated capture shows THORHERO standing in Atlas outdoors with scenery and UI; final surface capture shows the login menu following ordinary logout. These still captures do not measure movement, animation smoothness or sustained frame rate. White or missing texture areas remain visible.",
+    "inspected_capture_pins": {
+      "android-relocated/capture-1.png": {
+        "bytes": 257541,
+        "sha256": "da05e77ac999b6bf3339d55403a324f35856c07fec4b037459525000f933acab"
+      },
+      "android-surface/capture-1.png": {
+        "bytes": 580448,
+        "sha256": "7e8b2e99d5357bc012da5a7c00fabc6fb9a6907bf8aa3739d339b680a9a6387d"
+      }
+    }
+  },
+  "cleanup": {
+    "android_cleanup_verified": true,
+    "cleanup_blocked": false,
+    "guest_cleanup_complete": true,
+    "cancelled": false,
+    "interaction_finish_requested": true,
+    "completion_reason": "finish_requested",
+    "input_worker_stopped": true,
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "android_process_exit_history": {
+    "status": "available",
+    "maximum_records": 4,
+    "own_processes_only": true,
+    "trace_streams_requested": false,
+    "records": [
+      {
+        "timestamp_utc_ms": 1790975094189,
+        "reason": 10,
+        "status": 0,
+        "importance": 400,
+        "pss_kib": 84215,
+        "rss_kib": 195800,
+        "pid": 5747,
+        "process_name": "io.github.russianranger.cohclientinteractive",
+        "timestamp_utc": "2026-10-02T21:04:54.189000+00:00",
+        "android_reason_name": "REASON_USER_REQUESTED",
+        "predates_current_guest_operation": true
+      },
+      {
+        "timestamp_utc_ms": 1790972946922,
+        "reason": 3,
+        "status": 0,
+        "importance": 100,
+        "pss_kib": 62715,
+        "rss_kib": 161964,
+        "pid": 5056,
+        "process_name": "io.github.russianranger.cohclientinteractive",
+        "timestamp_utc": "2026-10-02T20:29:06.922000+00:00",
+        "android_reason_name": "REASON_LOW_MEMORY",
+        "predates_current_guest_operation": true
+      },
+      {
+        "timestamp_utc_ms": 1790972884662,
+        "reason": 3,
+        "status": 0,
+        "importance": 100,
+        "pss_kib": 65505,
+        "rss_kib": 176088,
+        "pid": 2362,
+        "process_name": "io.github.russianranger.cohclientinteractive",
+        "timestamp_utc": "2026-10-02T20:28:04.662000+00:00",
+        "android_reason_name": "REASON_LOW_MEMORY",
+        "predates_current_guest_operation": true
+      },
+      {
+        "timestamp_utc_ms": 1790964160504,
+        "reason": 10,
+        "status": 0,
+        "importance": 400,
+        "pss_kib": 67406,
+        "rss_kib": 119728,
+        "pid": 3307,
+        "process_name": "io.github.russianranger.cohclientinteractive",
+        "timestamp_utc": "2026-10-02T18:02:40.504000+00:00",
+        "android_reason_name": "REASON_USER_REQUESTED",
+        "predates_current_guest_operation": true
+      }
+    ],
+    "reason_mapping_source": "https://developer.android.com/reference/android/app/ApplicationExitInfo",
+    "interpretation": "All four historical exits predate the current guest operation. Two reason-3 events show system memory pressure deaths at 20:28 and 20:29 UTC before the earlier 0.11.5 reopen failure. These records do not identify the active app version or operation at exit, prove a Java heap exhaustion cause, or show a crash during this completed 0.11.6 run. On Android 13, reason 10 can also represent an app update; it is not specific proof of an explicit user force stop."
+  },
+  "acceptance_scope": "0.11.6 packaging repair is physically confirmed by a completed reopen/save/cleanup run and the user accepts improved client responsiveness. No server startup improvement, sustained FPS target, GPU acceleration, general gameplay validation or complete texture correctness is claimed."
+}

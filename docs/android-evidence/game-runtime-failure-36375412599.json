@@ -1,0 +1,138 @@
+{
+  "format": 1,
+  "run_id": 36375412599,
+  "repository_commit": "52e11f87b0298c9195f276e4586fe9f53ce07635",
+  "status": "failed",
+  "stage": "game_services_first",
+  "evidence_basis": "Hash-verified fixed artifact inspected by read-only hosted workflow; exact report recovered through chunked job output",
+  "job_id": 108780324516,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/36375412599",
+  "failure": [
+    "game-query-first-ready timed out"
+  ],
+  "startup_query_timeout_seconds": 90,
+  "tooling_tests_passed": 60,
+  "bridge_build_and_native_contracts_passed": true,
+  "runtime_artifact": {
+    "id": 10951062037,
+    "bytes": 8706268,
+    "github_reported_sha256": "84a09dbc2d56307722802808afaa589af063591de2a6155bf762c3fff5e3debc",
+    "downloaded_bytes_independently_verified": true,
+    "sha256": "84a09dbc2d56307722802808afaa589af063591de2a6155bf762c3fff5e3debc"
+  },
+  "bridge_artifact": {
+    "id": 10950444232,
+    "bytes": 83311,
+    "sha256": "242d1cb44da5cfcdbbb85574ca55e9a4246266725331691d1af680cc80729752",
+    "downloaded_zip_sha256_verified": true
+  },
+  "observations": {
+    "dbserver_ready": true,
+    "atlas_ready": false,
+    "character_execution_started": false,
+    "last_successful_query_utc": "2026-09-28T04:15:50Z",
+    "failed_query_started_utc": "2026-09-28T04:16:52Z",
+    "failed_query_command_line_output_observed": false,
+    "last_atlas_output": "Retrieving AutoCommands.. ",
+    "postgres_sessions": {
+      "session_count": 65,
+      "groups": [
+        {
+          "backend_type": "client backend",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "operation": "transaction_control",
+          "sessions": 64,
+          "max_query_age_seconds": 922,
+          "max_transaction_age_seconds": null
+        },
+        {
+          "backend_type": "client backend",
+          "state": "idle",
+          "wait_event_type": "Client",
+          "wait_event": "ClientRead",
+          "operation": "other",
+          "sessions": 1,
+          "max_query_age_seconds": 143,
+          "max_transaction_age_seconds": null
+        }
+      ]
+    },
+    "postgres_graceful_shutdown_logged": true,
+    "owned_cleanup_independently_verified": true,
+    "atlas_registered_with_dbserver": true,
+    "query_output_buffering_caveat": "-nogui preserves stdout buffering; started timestamp uses stderr, so missing command-line/error-log output does not establish an early-startup stall."
+  },
+  "interpretation": "Atlas registered and finished map loading, then waited synchronously for the AutoCommands reply. The longer status-query deadline did not resolve the transition. Idle SQL sessions do not identify the blocked client-side operation; exact root cause remains unproved.",
+  "follow_up": "Capture simultaneous owned DbServer, Atlas and query thread stacks, socket state and exact last SQL text before cleanup. Determine whether AutoCommands reached DbServer foreground ODBC. Do not infer startup position from buffered stdout or extend deadlines without evidence.",
+  "execution_blocker": "409 environment_offline: Environment is not connected",
+  "regression_workflows": {
+    "thor": [
+      36375415529,
+      36375412603
+    ],
+    "postgresql": 36375415647,
+    "character_persistence": 36375415579,
+    "atlas_transfer": 36375415816
+  },
+  "evidence_inspection": {
+    "run_id": 36377967143,
+    "job_id": 108787584382,
+    "archive_sha256_verified": true,
+    "service_capture_hashes_verified": 4,
+    "source_run": 36375412599,
+    "local_workspace_available": false
+  },
+  "raw_report": {
+    "path": "docs/android-evidence/game-arm64-failed-36375412599.json",
+    "bytes": 72447,
+    "sha256": "db63ada08f12d7c589596277c7693261c21323caa4e50c568383c2f03242755f"
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true
+  },
+  "cleanup_complete": true,
+  "owned_process_cleanup": {
+    "policy": "same_real_uid_and_run_token",
+    "scanned_processes": 312,
+    "scanned_tasks": 4,
+    "dead_leaders_with_live_tasks": 0,
+    "owned_live_workers": 0,
+    "leader_exit_retries": 0,
+    "candidates": 0,
+    "term_signals": 0,
+    "kill_signals": 0,
+    "pidfd_signals": 0,
+    "identity_checked_signals": 0,
+    "inspection_failures": 0,
+    "remaining": 0,
+    "complete": true
+  },
+  "process_records": 58,
+  "all_process_captures_closed": true,
+  "service_capture_files": {
+    "first-dbserver-stdout.txt": {
+      "bytes": 3631,
+      "sha256": "fcc17ebed91311ed75c7a3b212f4ef7706e8e5eda6d78172ab2015ee4c0a0340"
+    },
+    "first-atlas-stdout.txt": {
+      "bytes": 880388,
+      "sha256": "0ed49e4c371a08ba66b0e4a055ffd991aa526d8802b762871bc96fcf07f9d11e"
+    },
+    "log-001.txt": {
+      "bytes": 802,
+      "sha256": "f89008496b3b331a1c333f7b70fcd333d934b9da765a015b4f80ee5388d7d95c"
+    },
+    "log-002.txt": {
+      "bytes": 819546,
+      "sha256": "7c2c38220119ca5d5075d9b3d5673084482fb17b86f88a0eb3aea1b46eb5db3e"
+    },
+    "manifest.json": {
+      "bytes": 1359,
+      "sha256": "2e3531d82a2fb0ff0480834842949b1d1a4a16e7eb77357a37a524dc5f600bf3"
+    }
+  }
+}

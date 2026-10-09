@@ -1,0 +1,989 @@
+{
+  "format": 1,
+  "scope": "current_saved_hero_client_animation_startup_and_partial_visual_improvement_with_remaining_lod_hostile_assets_and_android_stage_contract_mismatch",
+  "recorded_utc": "2026-10-04",
+  "tested_version": "0.13.7",
+  "source_branch": "codex/character-persistence-continuation",
+  "branch_head_at_analysis": "e3b5f42ae63bf0ec38034f42b6c6c63807685c40",
+  "main_preserved_at": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "bundle": {
+    "path": "coh-atlas-gameplay-20261004-121800.zip",
+    "bytes": 13287921,
+    "sha256": "5907cbe2875b61dc941221e21ec61dd9fe1010777a97ef11de27f365cd59c71e"
+  },
+  "source_files": [
+    {
+      "path": "android-client-report.json",
+      "bytes": 309255,
+      "sha256": "3b6f91ddfaee0a4a0ca30d799c1a2824f7c8178c0baa1b43e50b2e45f4b87432"
+    },
+    {
+      "path": "guest/latest-report.json",
+      "bytes": 234647,
+      "sha256": "9153fe0f178ab16c3598ccced6885d88b55007957a28814d608c3c321ef1f889"
+    },
+    {
+      "path": "guest/client-evidence/client-console.log",
+      "bytes": 1334723,
+      "sha256": "ebec9cac51bfa68b5dcd1ec40ec0c85b74041af1b4ef7faf5cf5bd1e2eb3ed5c"
+    },
+    {
+      "path": "guest/client-evidence/local-dbserver-console.txt",
+      "bytes": 19298,
+      "sha256": "8299e1a8ce57100f9e2327612efd575706ab829bb1f195e0fd8e0adaa46c0127"
+    },
+    {
+      "path": "guest/client-evidence/character-atlas-console.txt",
+      "bytes": 880565,
+      "sha256": "09c3e22c93df82138cc2483f193bb4e26c120319a8f2c68babf26dbd31dad70c"
+    },
+    {
+      "path": "guest/client-evidence/character-reopen-before-snapshot.json",
+      "bytes": 8683,
+      "sha256": "ac3c1cea10fff438e8c3f3a025d80c5b2aec1859d72e2885613d96a748887d16"
+    },
+    {
+      "path": "guest/client-evidence/character-saved-snapshot.json",
+      "bytes": 8683,
+      "sha256": "22f18835f94425042fa8e61638ec55b019ad8fe40d78faac0f32e6964ff2ac51"
+    },
+    {
+      "path": "guest/client-evidence/character-server-logs.zip",
+      "bytes": 8837,
+      "sha256": "cae87f3c7867dc57a2486e63ec0a70a31a24da7909e00f2d3c3c9358bb7dab36"
+    },
+    {
+      "path": "runtime-setup-service.json",
+      "bytes": 643,
+      "sha256": "4daa69e70b28e2483fe2784927d7106370296ba0e5f48f448762cf17e7dac328"
+    },
+    {
+      "path": "runtime-manifest.json",
+      "bytes": 23868,
+      "sha256": "1b39510d2823813b95d10936c574134d6b3c0027c1f28126c14eda38aab75e5f"
+    },
+    {
+      "path": "identities/client-manifest.json",
+      "bytes": 8270,
+      "sha256": "822d6b014f2196c57453ecfd7195fac1e9c3cc1e7dab3cfc077badee797e2389"
+    },
+    {
+      "path": "identities/client-visual-manifest.json",
+      "bytes": 782080,
+      "sha256": "6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "02-Screenshot_20261004-071338.png",
+      "bytes": 437704,
+      "sha256": "23398ca994591e77b42f0eee28cf30b50dc3194356c0a4f15908d54d713e5b5b",
+      "name": "Screenshot_20261004-071338.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "03-Screenshot_20261004-071240.png",
+      "bytes": 531348,
+      "sha256": "c6fa301ff1888de9d65a6e153670432fb3a97214e811617334096389f1831761",
+      "name": "Screenshot_20261004-071240.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "04-Screenshot_20261004-071226.png",
+      "bytes": 585328,
+      "sha256": "bdcd0585f65f488a3a3f125d7dc57d8e9bafe4a615151cafbeedb3aecebe24aa",
+      "name": "Screenshot_20261004-071226.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "05-Screenshot_20261004-071209.png",
+      "bytes": 584033,
+      "sha256": "c1f84b26b8ca715f5a8170805045cfcdf7ef2c2d634c2940d7ed0d800dfc8e5e",
+      "name": "Screenshot_20261004-071209.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "06-Screenshot_20261004-071111.png",
+      "bytes": 401301,
+      "sha256": "588e4953fa1e4fc94c85d39ae97390edd6a2ec43b4d690263e7d427cb0c1b482",
+      "name": "Screenshot_20261004-071111.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    },
+    {
+      "path": "07-Screenshot_20261004-071046.png",
+      "bytes": 421651,
+      "sha256": "92c12a0b9548e7f137b83964267b3fead1cdd065bb5d952560386e68f97bd335",
+      "name": "Screenshot_20261004-071046.png",
+      "width": 1920,
+      "height": 1080,
+      "scope": "user_supplied_current_visual_examples",
+      "exact_build_authenticated_by_image": false
+    }
+  ],
+  "user_observations": {
+    "server_start_with_animation_preparation_approximate_seconds": 360,
+    "actual_client_start_approximate_seconds": 264,
+    "login_to_world_including_input_approximate_seconds": 87,
+    "user_input_portion_approximate_seconds": 30,
+    "server_startup_improvement_accepted": true,
+    "client_startup_improvement_accepted": true,
+    "many_models_now_visible": true,
+    "white_distant_objects_change_to_visible_models_when_approached": true,
+    "hostile_npc_invisible_aggro_and_incoming_damage_observed": true,
+    "full_combat_milestone_claimed": false,
+    "requested_focus": [
+      "remaining missing models and distance-dependent white objects",
+      "continue actual client startup improvements"
+    ]
+  },
+  "device": {
+    "name": "AYN AYN Thor",
+    "android_sdk": 33,
+    "graphics_profile": "performance",
+    "vendor": "Mesa/X.org",
+    "renderer": "llvmpipe (LLVM 15.0.6, 128 bits)",
+    "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+    "renderer_classification": "software",
+    "hardware_acceleration_validated": false
+  },
+  "identities": {
+    "runtime_manifest_sha256": "9fc53087538ef5b2051858ff0d0e1c726312300936750eecc608d93e2214cd42",
+    "runtime_manifest_repository_commit": "0da09e771cb472f4ec897c39b90cef675d007edf",
+    "runtime_client_visual": {
+      "format": 1,
+      "repository_commit": "0da09e771cb472f4ec897c39b90cef675d007edf",
+      "donor_repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "retained_setup_memory_repository_commit": "31c8a1722f992e7a8334ef2256b4feaa9ca173be",
+      "retained_native_repository_commit": "53c885896e9b4d838be0f36a1f09237f04c08a00",
+      "native_dbserver_recompiled": false,
+      "native_client_recompiled": false,
+      "native_mapserver_recompiled": false,
+      "physical_client_timing_validated": false,
+      "physical_visual_assets_validated": false,
+      "existing_server_cache_and_save_fix_preserved": true
+    },
+    "session_id": "764f2f6336ff48e197f2b676dd0f6d49",
+    "run_id": "1791115108380-014d18470a38",
+    "native_client_producer": {
+      "repository_commit": "7b48762de0748e443a2df60c6e4b59e22b365e35",
+      "manifest_sha256": "c5c3b6ca552a6438162cfa52f6d8573fd44720dddb328e324161162329872fd7",
+      "base_client_executable_sha256": "1f42cc47eb6a1e10e361de70280bcfd8dcc86acd1a03b0a6529a6580a36995da",
+      "client_executable_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+      "replacement_scope": "CityOfHeroes.exe_only",
+      "prepared_cache_schema_changed": false,
+      "graphics_profile_changed": false,
+      "runtime_execution_validated": false
+    },
+    "native_game_matches_previous_device_result": true,
+    "client_content_identity_sha256": "88f43aec2e12dc4056604b3e9d0841f02c320df5914d6d04790662c527448302",
+    "client_worktree": "client-work-285adbfb0389ed61b577b734",
+    "client_worktree_reused": true,
+    "preserved_source_root": true,
+    "import": {
+      "generation": "generation-465fcafc89e648ecab66a94b14ad502b",
+      "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+      "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+      "file_count": 173011,
+      "total_bytes": 2977730517
+    },
+    "guest_client_asset_pins_verified": 56,
+    "guest_client_asset_pins_match_exported_client_and_runtime_manifests": true,
+    "published_apk_reference": {
+      "name": "COH-Atlas-Gameplay-0.13.7.apk",
+      "bytes": 700131607,
+      "sha256": "ab21dc2e8a6ebecea0edf694187da83787f808a396d686e0d8312565f8373fc7",
+      "url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.7/COH-Atlas-Gameplay-0.13.7.apk"
+    },
+    "apk_archive_independently_authenticated_by_uploaded_report": false
+  },
+  "runtime_setup": {
+    "status": "complete",
+    "phase": "Finished",
+    "elapsed_ms": 51126,
+    "java_heap_used_bytes": 12919952,
+    "java_heap_limit_bytes": 268435456,
+    "native_heap_allocated_bytes": 12975088,
+    "game_execution_requested": false,
+    "runtime_cleanup_requested": false
+  },
+  "instrumented_timing": {
+    "request_utc": "2026-10-04T11:58:28.380000+00:00",
+    "owned_atlas_ready_utc": "2026-10-04T12:03:44.656930+00:00",
+    "client_launcher_utc": "2026-10-04T12:04:43.725358+00:00",
+    "request_to_owned_atlas_ready_seconds": 316.27693,
+    "atlas_ready_to_client_launcher_seconds": 59.068428,
+    "native_client_startup_observed_seconds": 263.921,
+    "android_seconds_since_request": {
+      "client_window_observed_uptime_ms": 639.526,
+      "login_observed_uptime_ms": 668.829,
+      "character_connected_observed_uptime_ms": 736.768,
+      "character_saved_observed_uptime_ms": 1028.167,
+      "finished_uptime_ms": 1168.259
+    },
+    "android_login_observed_to_character_connected_seconds": 67.939,
+    "interpretation": "Owned guest readiness, Android frame/native connection observations and user-reported visual/input intervals have different boundaries. The instrumented login-to-connection interval includes input but is not the same as the user-reported 87-second visual/input interval."
+  },
+  "guest_stages": [
+    {
+      "stage": "client_inputs",
+      "started_utc": "2026-10-04T11:58:29.243552+00:00",
+      "finished_utc": "2026-10-04T11:58:29.662567+00:00",
+      "elapsed_seconds": 0.419015,
+      "status": "passed"
+    },
+    {
+      "stage": "client_private_data",
+      "started_utc": "2026-10-04T11:58:29.662841+00:00",
+      "finished_utc": "2026-10-04T11:58:29.813033+00:00",
+      "elapsed_seconds": 0.150192,
+      "status": "passed"
+    },
+    {
+      "stage": "persistent_server_profile",
+      "started_utc": "2026-10-04T11:58:29.815107+00:00",
+      "finished_utc": "2026-10-04T11:58:30.351265+00:00",
+      "elapsed_seconds": 0.536158,
+      "status": "passed"
+    },
+    {
+      "stage": "postgres_local_login",
+      "started_utc": "2026-10-04T11:58:30.351750+00:00",
+      "finished_utc": "2026-10-04T11:58:30.739319+00:00",
+      "elapsed_seconds": 0.387569,
+      "status": "passed"
+    },
+    {
+      "stage": "presentation_display",
+      "started_utc": "2026-10-04T11:58:48.377900+00:00",
+      "finished_utc": "2026-10-04T11:58:48.593536+00:00",
+      "elapsed_seconds": 0.215636,
+      "status": "passed"
+    },
+    {
+      "stage": "wine_initialization",
+      "started_utc": "2026-10-04T11:58:48.593979+00:00",
+      "finished_utc": "2026-10-04T11:58:57.311983+00:00",
+      "elapsed_seconds": 8.718004,
+      "status": "passed"
+    },
+    {
+      "stage": "local_login_odbc",
+      "started_utc": "2026-10-04T11:58:57.312935+00:00",
+      "finished_utc": "2026-10-04T11:59:10.253214+00:00",
+      "elapsed_seconds": 12.940279,
+      "status": "passed"
+    },
+    {
+      "stage": "local_dbserver_startup",
+      "started_utc": "2026-10-04T11:59:10.253950+00:00",
+      "finished_utc": "2026-10-04T11:59:51.417027+00:00",
+      "elapsed_seconds": 41.163077,
+      "status": "passed"
+    },
+    {
+      "stage": "local_atlas_startup",
+      "started_utc": "2026-10-04T11:59:51.854218+00:00",
+      "finished_utc": "2026-10-04T12:03:44.656930+00:00",
+      "elapsed_seconds": 232.802712,
+      "status": "passed"
+    },
+    {
+      "stage": "client_visual_assets",
+      "started_utc": "2026-10-04T12:03:44.663639+00:00",
+      "finished_utc": "2026-10-04T12:03:48.110048+00:00",
+      "elapsed_seconds": 3.446409,
+      "status": "passed"
+    },
+    {
+      "stage": "client_animation_pack",
+      "started_utc": "2026-10-04T12:03:48.110585+00:00",
+      "finished_utc": "2026-10-04T12:04:02.084827+00:00",
+      "elapsed_seconds": 13.974242,
+      "status": "passed"
+    },
+    {
+      "stage": "win32_runtime_dll",
+      "started_utc": "2026-10-04T12:04:02.087069+00:00",
+      "finished_utc": "2026-10-04T12:04:03.576446+00:00",
+      "elapsed_seconds": 1.489377,
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_startup",
+      "started_utc": "2026-10-04T12:04:43.487675+00:00",
+      "finished_utc": "2026-10-04T12:09:07.911345+00:00",
+      "elapsed_seconds": 264.42367,
+      "status": "passed"
+    },
+    {
+      "stage": "actual_client_interaction",
+      "started_utc": "2026-10-04T12:09:07.912339+00:00",
+      "finished_utc": "2026-10-04T12:17:51.512288+00:00",
+      "elapsed_seconds": 523.599949,
+      "status": "passed"
+    }
+  ],
+  "server_data_cache": {
+    "policy": "closed_owned_atlas_data_directory_v1",
+    "key": "53bae505c6a501b2b00335b5",
+    "reused": true,
+    "first_use_requires_full_staging": false,
+    "immutable_directory_checks": 8915,
+    "immutable_anchor_checks": 22,
+    "private_entries_checked": 2130,
+    "private_bytes": 816475711,
+    "changed_parent_directory_checks": 1,
+    "changed_parent_entry_checks": 50,
+    "changed_parent_paths": [
+      "."
+    ],
+    "checkout_elapsed_seconds": 7.052454,
+    "returned_after_owned_cleanup": true,
+    "credential_config_removed": true
+  },
+  "server_preparation": {
+    "elapsed_seconds": 11.127205,
+    "full_staging_repeated": false,
+    "postgres_seconds": 0.387569
+  },
+  "world_supplement": {
+    "manifest_sha256": "204a7f0da20cdbbb4ea8b8e2d9e9b5ebccfaa10d5213fff03bbb85cc7f9e3c86",
+    "archive_sha256": "c7ed82aaaf987410fa471e19ee2b19115ef660892a06f79e2e2401d5672b095f",
+    "file_count": 2904,
+    "installed_files": 0,
+    "reused_files": 2904,
+    "reuse_validation": "pinned_content_verification",
+    "decoded_files": 0,
+    "decoded_payload_bytes": 0,
+    "preparation_elapsed_seconds": 16.909072
+  },
+  "wine_initialization": {
+    "policy": "initialize_once_then_reuse",
+    "ready_prefix_reused": true,
+    "refresh_reason": "none",
+    "registration_passes": 0,
+    "elapsed_seconds": 8.712
+  },
+  "client_visual_supplement": {
+    "format": 1,
+    "scope": "atlas_client_missing_visual_assets",
+    "manifest_sha256": "6b93b50a2b4d2bf6d2b16b5827517dec20f8b666c4fb853ccd58906659945c1b",
+    "archive_sha256": "2cb25dbf8a5749c6e2cf9abc4a7dab305f5b2698d6c59e460d638b9756a40809",
+    "files_sha256": "f47229c7d9f2474b542f761b6058299c5400df709ba892e6ca3f9b35b839028e",
+    "file_count": 290,
+    "payload_bytes": 36583648,
+    "installed_files": 290,
+    "reused_files": 0,
+    "reuse_validation": "pinned_missing_only_client_visual_v1",
+    "fingerprint_reused": false,
+    "decoded_files": 290,
+    "decoded_payload_bytes": 36583648,
+    "verified_existing_bytes": 0,
+    "archive_read_bytes": 23887359,
+    "worktree": "client-work-285adbfb0389ed61b577b734",
+    "normalized_mtime_epoch": 1767225600,
+    "imported_files_modified": false,
+    "generated_caches_modified": false,
+    "existing_supplements_modified": false,
+    "runtime_visual_validated": false,
+    "full_global_asset_closure": false,
+    "unresolved_direct_material_names": [
+      "bf_boot_clogs",
+      "bm_boot_business_shoe",
+      "bm_chest_bum_flannel_01a",
+      "bm_eyes_glasses_01a",
+      "emblem_hero_corp"
+    ],
+    "absent_requested_models": [
+      {
+        "geometry": "data/player_library/male_collar.geo",
+        "model": "GEO_Collar_MAGIC"
+      }
+    ],
+    "unresolved_dependency_count": 6,
+    "preparation_elapsed_seconds": 3.445547
+  },
+  "client_animation_pack": {
+    "format": 1,
+    "installed": true,
+    "reused": false,
+    "pigg": {
+      "animation_count": 5878,
+      "bytes": 97084456,
+      "metadata_bytes": 8703726,
+      "original_animation_bytes": 88380730,
+      "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+    },
+    "client_contract": {
+      "format": 1,
+      "role": "exact_native_client_animation_storage",
+      "runtime": "/state/diagnostic/client-work-285adbfb0389ed61b577b734",
+      "source_data": "/game-import/data",
+      "import": {
+        "generation": "generation-465fcafc89e648ecab66a94b14ad502b",
+        "receipt_sha256": "c67e2df0575173e4c2bac3f6900d316d117a0126657db78b84c067a0b1b2b7fe",
+        "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+        "file_count": 173011,
+        "total_bytes": 2977730517
+      },
+      "game_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+      "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+      "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+      "asset_archive_sha256": "28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07",
+      "animation_inventory_sha256": "c3ac97e4a18d17bfa3de529c24597a668d099329cfdb663021688e248ec43a38",
+      "loose_animation_count": 5878
+    },
+    "storage": "owned_link_to_verified_runtime_payload",
+    "verified_payload_read_only": true,
+    "additional_animation_payload_bytes": 0,
+    "loose_inputs_preserved": true,
+    "native_animation_reader_changed": false,
+    "physical_startup_timing_validated": false,
+    "elapsed_seconds": 13.973
+  },
+  "texture_index": {
+    "format": 1,
+    "identity": "0517a35291b0fef4fec25da5f881deb7078966cd27a378890f824dcb8d4a37b5",
+    "records": 11612,
+    "inventory_sha256": "bf55b2b27baee34aa667754e9a43d440c7753894d5fad74465793d07a368b298",
+    "client_executable_sha256": "e9f8522e07305a51f9464004ffce3f1b85fa065af04ab6892beaf47d1d095cd2",
+    "identity_policy": "verified_client_content_v1",
+    "client_content_identity_sha256": "88f43aec2e12dc4056604b3e9d0841f02c320df5914d6d04790662c527448302",
+    "bytes": 2768051,
+    "sha256": "81b5990c14a41bb6107c59c2179081c18eeafe98379c3cd591f032e06f7bedcf",
+    "original_header_bytes_sha256": "221111ba70bd9c0fadb4f9f7ed4f84d9d913fe7de80e60f0cbc04504c358563b",
+    "reused": false,
+    "preparation_seconds": 38.941,
+    "legacy_identity_migrated": false,
+    "native_layer_identity_migrated": false,
+    "interrupted_envelope_recovered": false,
+    "native_file_opens_avoidable": 11612,
+    "original_texture_files_unchanged": true,
+    "native_fallback_available": true,
+    "native_hits": 11612,
+    "native_ordinary_reads": 0,
+    "native_miss_samples": 0,
+    "header_phase_seconds": 7.601
+  },
+  "texture_preparation_schedule": {
+    "status": "prepared_before_client",
+    "preparation_phase": "after_current_owned_atlas_readiness",
+    "overlapped_stage": "win32_runtime_dll",
+    "worker_started": true,
+    "worker_joined": true,
+    "shared_wine_prefix_access": false,
+    "private_server_cache_access": false,
+    "preparation_seconds": 38.963,
+    "actual_overlap_seconds": 1.487,
+    "overlap_timing_source": "current_owned_runtime_probe_completion",
+    "runtime_probe_completion_observed": true,
+    "wait_before_client_seconds": 37.46,
+    "physical_startup_savings_validated": false
+  },
+  "native_client_phases": [
+    {
+      "phase": "texture_headers",
+      "seconds": 7.601,
+      "start_marker": "Loading texture headers",
+      "end_marker": "Loaded texture headers",
+      "started_utc": "2026-10-04T12:05:16.379Z",
+      "finished_utc": "2026-10-04T12:05:23.980Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "lod",
+      "seconds": 5.681,
+      "start_marker": "Loading LOD info",
+      "end_marker": "Loaded LOD info",
+      "started_utc": "2026-10-04T12:05:49.770Z",
+      "finished_utc": "2026-10-04T12:05:55.451Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "sequencers",
+      "seconds": 53.764,
+      "start_marker": "Loading sequencers",
+      "end_marker": "Loaded sequencers",
+      "started_utc": "2026-10-04T12:05:55.467Z",
+      "finished_utc": "2026-10-04T12:06:49.231Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "powers_complete",
+      "seconds": 54.048,
+      "start_marker": "Loading powers",
+      "end_marker": "Loaded powers",
+      "started_utc": "2026-10-04T12:06:49.274Z",
+      "finished_utc": "2026-10-04T12:07:43.322Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "power_dictionary_and_boost_sets_subset",
+      "seconds": 50.641,
+      "start_marker": "Loading power dictionary and boost sets",
+      "end_marker": "Loaded power dictionary and boost sets",
+      "started_utc": "2026-10-04T12:06:50.540Z",
+      "finished_utc": "2026-10-04T12:07:41.181Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "fx_info",
+      "seconds": 29.694,
+      "start_marker": "Loading FX info",
+      "end_marker": "Loaded FX info",
+      "started_utc": "2026-10-04T12:08:07.387Z",
+      "finished_utc": "2026-10-04T12:08:37.081Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "cape_fx",
+      "seconds": 0.17,
+      "start_marker": "Loading cape FX",
+      "end_marker": "Loaded cape FX",
+      "started_utc": "2026-10-04T12:08:38.116Z",
+      "finished_utc": "2026-10-04T12:08:38.286Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "npc_definitions_and_validation",
+      "seconds": 1.193,
+      "start_marker": "Loading NPC definitions",
+      "end_marker": "Loaded NPC definitions",
+      "started_utc": "2026-10-04T12:08:38.315Z",
+      "finished_utc": "2026-10-04T12:08:39.508Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "particles",
+      "seconds": 1.126,
+      "start_marker": "Preloading particles",
+      "end_marker": "Preloaded particles",
+      "started_utc": "2026-10-04T12:08:40.310Z",
+      "finished_utc": "2026-10-04T12:08:41.436Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "costume_bins_and_validation",
+      "seconds": 9.387,
+      "start_marker": "Loading costume bins",
+      "end_marker": "Loaded costume bins",
+      "started_utc": "2026-10-04T12:08:41.437Z",
+      "finished_utc": "2026-10-04T12:08:50.824Z",
+      "timing_source": "owned current client console wall-clock markers"
+    },
+    {
+      "phase": "grouplibs",
+      "seconds": 19.433,
+      "start_marker": "Initialized network library",
+      "end_marker": "Loaded grouplibs: 3224 files, 75433 names",
+      "started_utc": "2026-10-04T12:05:30.335Z",
+      "finished_utc": "2026-10-04T12:05:49.768Z",
+      "timing_source": "inferred adjacent markers; may include intervening work"
+    },
+    {
+      "phase": "map_metadata_and_client_npcs",
+      "seconds": 23.649,
+      "start_marker": "Parsing .mapstats from mapstats.bin",
+      "end_marker": "Loading items",
+      "started_utc": "2026-10-04T12:07:43.323Z",
+      "finished_utc": "2026-10-04T12:08:06.972Z",
+      "timing_source": "inferred adjacent markers; includes mapstats, minimap, mapspecs and npcs_client"
+    },
+    {
+      "phase": "fx_behaviors",
+      "seconds": 0.293,
+      "start_marker": "Parsing .bhvr from behaviors.bin",
+      "end_marker": "Loaded FX behaviors",
+      "started_utc": "2026-10-04T12:08:37.161Z",
+      "finished_utc": "2026-10-04T12:08:37.454Z",
+      "timing_source": "owned current client console wall-clock markers"
+    }
+  ],
+  "observer_policy": {
+    "policy": "query_after_current_console_renderer_and_data_ready",
+    "deferred_checks": 52,
+    "registry_reset_before_launch": true,
+    "current_pid_window_and_registry_main_loop_required": true
+  },
+  "observer_metrics": {
+    "console_and_native_readiness": {
+      "calls": 156,
+      "total_ms": 83248.786,
+      "max_ms": 5527.859,
+      "last_ms": 8.77
+    },
+    "window_identity": {
+      "calls": 156,
+      "total_ms": 18363.19,
+      "max_ms": 941.267,
+      "last_ms": 58.78
+    },
+    "progress_registry": {
+      "calls": 21,
+      "total_ms": 33685.208,
+      "max_ms": 2782.992,
+      "last_ms": 1063.199
+    }
+  },
+  "character_observer_metrics": {
+    "native_log_reads": {
+      "scope": "owned_runtime_root_and_complete_logs_subtree",
+      "reads": 14,
+      "total_ms": 100.017,
+      "max_ms": 10.088,
+      "last_ms": 7.895,
+      "last_files": 10,
+      "last_bytes": 73439,
+      "last_directories": 5,
+      "last_entries": 44
+    },
+    "native_ready_to_observation_ms": 11121
+  },
+  "texture_diagnostic_aggregation": [
+    {
+      "phase": "tricks",
+      "reported_records": 1024,
+      "duplicate_records": 654,
+      "suppressed_records": 3433,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    },
+    {
+      "phase": "npc",
+      "reported_records": 1024,
+      "duplicate_records": 23566,
+      "suppressed_records": 26722,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    },
+    {
+      "phase": "costume",
+      "reported_records": 1024,
+      "duplicate_records": 10267,
+      "suppressed_records": 38978,
+      "sample_limit": 1024,
+      "retained_key_limit": 8192,
+      "validation_preserved": true
+    }
+  ],
+  "visual_defects": {
+    "user_acceptance_of_partial_visual_improvement": true,
+    "complete_visual_model_texture_gate_qualified": false,
+    "missing_assets_confirmed_in_console": true,
+    "visible_screenshot_observations": [
+      "many visible Atlas NPC models and HUD tray rings restored",
+      "remaining white patches near planting beds and world surfaces",
+      "remaining white NPC surfaces",
+      "user reports white distant objects becoming visible models when approached",
+      "user reports invisible hostile NPC"
+    ],
+    "screenshot_asset_attribution_verified": false,
+    "distance_dependent_placeholder_root_cause_proven": false,
+    "console_bytes": 1334723,
+    "console_lines": 23631,
+    "file_error_records": 3349,
+    "custom_texture_error_records": 1422,
+    "missing_geo_files": 391,
+    "missing_root_geo_records": 114,
+    "texture_swap_warning_records": 4,
+    "global_missing_error_counts_do_not_identify_atlas_visual_cause": true,
+    "renderer_remains_software": true
+  },
+  "limited_incoming_combat_observation": {
+    "source_archive": "guest/client-evidence/character-server-logs.zip",
+    "power_log": {
+      "path": "logs/dbserver/powers_2026-10-04-12-00-00.log",
+      "bytes": 1742,
+      "sha256": "414235f8bc60c14366af35e2378179909c051521d3bc626e85b4f1a7857e28d2"
+    },
+    "entity_log": {
+      "path": "logs/dbserver/entity_2026-10-04-12-00-00.log",
+      "bytes": 6662,
+      "sha256": "afef9ac724d2140da2543e68fce9743511f4128dd162262562bc566771adc886"
+    },
+    "native_entity_name": "Blood Brother Chopper",
+    "native_power": "Hellions.Hellions_Minion_Revolver.Revolver",
+    "native_target": "THORHERO:COHLOCAL",
+    "native_power_activation_records": 5,
+    "native_power_hit_records": 3,
+    "first_activation_utc": "2026-10-04T12:13:37Z",
+    "last_activation_utc": "2026-10-04T12:13:48Z",
+    "activation_target_position_first": [
+      -215.411,
+      0.0,
+      251.365
+    ],
+    "initial_resume_hp": 102.5,
+    "ordinary_logout_hp": 98.24,
+    "native_records_corroborate_incoming_attack_and_hp_loss": true,
+    "user_reported_hostile_model_invisible": true,
+    "full_combat_gate_qualified": false,
+    "player_attack_damage_or_enemy_defeat_qualified": false,
+    "costume_attribution": "Blood Brother Chopper display name maps to Hellions_Axe_Thug; costumes Thug_Hellion_01 through Thug_Hellion_06, independently checked against pinned source definitions by lod_asset_repair agent",
+    "power_name_alone_does_not_identify_villain_costume": true,
+    "costume_source_attribution": {
+      "villain_def": "Hellions_Axe_Thug",
+      "villain_group": "Hellions",
+      "display_name_message_key": "P222712670",
+      "costume_names": [
+        "Thug_Hellion_01",
+        "Thug_Hellion_02",
+        "Thug_Hellion_03",
+        "Thug_Hellion_04",
+        "Thug_Hellion_05",
+        "Thug_Hellion_06"
+      ],
+      "pinned_data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+      "reviewed_branch_head": "e3b5f42ae63bf0ec38034f42b6c6c63807685c40",
+      "sources": [
+        {
+          "path": "upstream/i24/data/defs/villains/hellions.villain",
+          "bytes": 78325,
+          "sha256": "af4f0ef52cadfc9cfbd488d723995f4598452664006e9fa0d98382139123926d"
+        },
+        {
+          "path": "upstream/i24/data/texts/english/villains/villains.xls.ms",
+          "bytes": 374158,
+          "sha256": "4b2cbbddcae4a98a5c233a8dcfe34c52b59cf8ff75feaaa8eda92d4e1705d822"
+        }
+      ],
+      "independently_verified_against_native_name_and_power": true
+    }
+  },
+  "save_result": {
+    "requested_logout_observed": true,
+    "logout_timer_observed": true,
+    "disconnected_before_sql": true,
+    "forced_stop_before_save": false,
+    "committed_sql_verified": true,
+    "committed_native_position_verified": true,
+    "selected_rows_preserved": true,
+    "powers_preserved": true,
+    "costume_preserved": true,
+    "preserved_existing_identity": true,
+    "character_id": 1,
+    "before_login_count": 3,
+    "login_count": 4,
+    "saved_utc": "2026-10-04T12:15:36.266215+00:00",
+    "snapshot_sha256": "8fb8c5fcfcc90f081aa312c2f5ce783add7f033ac5fa1633a102d1c7346d8184",
+    "ordinary_logout_requested": true,
+    "row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "before_row_counts": {
+      "ents": 1,
+      "ents2": 1,
+      "powers": 7,
+      "costumeparts": 14
+    },
+    "save_event": {
+      "type": "character_saved",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-04T12:15:36.547021+00:00",
+      "session_id": "764f2f6336ff48e197f2b676dd0f6d49",
+      "client_pid": 648,
+      "character_id": 1,
+      "name": "THORHERO",
+      "committed_sql_verified": true,
+      "reopen_verified": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "preserved_existing_identity": true,
+      "committed_native_position_verified": true,
+      "recovery_requested": false,
+      "recovery_verified": false
+    },
+    "sql_game_mutations_performed_by_harness": false,
+    "23505_or_pg_fifo_failed_in_owned_db_console": false
+  },
+  "cleanup": {
+    "postgres_graceful": true,
+    "wine_prefix_stopped": true,
+    "owned_processes_reaped": true,
+    "android_cleanup_verified": true,
+    "cleanup_blocked": false,
+    "owned_worker_remaining": 0,
+    "wine_process_cleanup_complete": true,
+    "inspection_failures": 0,
+    "permission_read_retries": 1,
+    "permission_observations": [
+      {
+        "group_pid": 12881,
+        "group_starttime": 75879612,
+        "worker_tid": 14726,
+        "worker_starttime": 75897910,
+        "operation": "worker_environment",
+        "errno": 13,
+        "error_type": "PermissionError",
+        "attempt": 1,
+        "worker_state_before": "R",
+        "resolution": "verified_disappearance",
+        "worker_state_after": "R"
+      }
+    ],
+    "process_exit_code": 0,
+    "failures": []
+  },
+  "android_diagnostic_acceptance": {
+    "raw_android_passed": false,
+    "raw_android_status": "client_incomplete",
+    "raw_android_app_error": "The guest completed, but its current-session client evidence did not match this APK.",
+    "raw_guest_passed": true,
+    "raw_guest_status": "passed",
+    "raw_guest_scope": "actual_character_startup_timing_guest",
+    "raw_guest_mode": "actual_character_startup_timing",
+    "raw_gameplay_validated": false,
+    "raw_character_reopen_verified": false,
+    "guest_existing_character_verified": true,
+    "guest_reopen_verified": true,
+    "raw_android_surface_validated": false,
+    "session_and_asset_pin_mismatch_detected": false,
+    "observed_guest_stages": 14,
+    "retained_java_expected_stages": 12,
+    "new_guest_stages": [
+      "client_visual_assets",
+      "client_animation_pack"
+    ],
+    "rejection_source": "android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientRuntime.java guestAccepted exact stage count/order",
+    "rejection_proven_from_retained_java_and_current_report": true,
+    "classification": "Android diagnostic contract mismatch caused by adding two guest preparation stages while retaining prior DEX; not evidence that client or server failed",
+    "raw_false_flags_preserved": true,
+    "pending_fix_requires_precise_stage_and_pin_validation": true
+  },
+  "comparison_to_0_13_6": {
+    "prior_receipt": "client-visual-0.13.6-device-result.json",
+    "prior_native_client_startup_observed_seconds": 445.942,
+    "current_native_client_startup_observed_seconds": 263.921,
+    "client_launcher_observation_reduction_seconds": 182.021,
+    "prior_guest_stage_elapsed_seconds": 446.411411,
+    "current_guest_stage_elapsed_seconds": 264.42367,
+    "guest_stage_reduction_seconds": 181.987741,
+    "prior_request_to_owned_atlas_ready_seconds": 329.701164,
+    "current_request_to_owned_atlas_ready_seconds": 316.27693,
+    "prior_texture_records": 11367,
+    "current_texture_records": 11612,
+    "current_first_use_texture_index_rebuilt": true,
+    "new_texture_files_added": 245,
+    "native_phases": [
+      {
+        "phase": "texture_headers",
+        "prior_seconds": 7.55,
+        "current_seconds": 7.601,
+        "reduction_seconds": -0.051
+      },
+      {
+        "phase": "lod",
+        "prior_seconds": 12.351,
+        "current_seconds": 5.681,
+        "reduction_seconds": 6.67
+      },
+      {
+        "phase": "sequencers",
+        "prior_seconds": 95.325,
+        "current_seconds": 53.764,
+        "reduction_seconds": 41.561
+      },
+      {
+        "phase": "powers_complete",
+        "prior_seconds": 59.427,
+        "current_seconds": 54.048,
+        "reduction_seconds": 5.379
+      },
+      {
+        "phase": "power_dictionary_and_boost_sets_subset",
+        "prior_seconds": 53.625,
+        "current_seconds": 50.641,
+        "reduction_seconds": 2.984
+      },
+      {
+        "phase": "fx_info",
+        "prior_seconds": 27.095,
+        "current_seconds": 29.694,
+        "reduction_seconds": -2.599
+      },
+      {
+        "phase": "cape_fx",
+        "prior_seconds": 22.152,
+        "current_seconds": 0.17,
+        "reduction_seconds": 21.982
+      },
+      {
+        "phase": "npc_definitions_and_validation",
+        "prior_seconds": 3.378,
+        "current_seconds": 1.193,
+        "reduction_seconds": 2.185
+      },
+      {
+        "phase": "particles",
+        "prior_seconds": 23.115,
+        "current_seconds": 1.126,
+        "reduction_seconds": 21.989
+      },
+      {
+        "phase": "costume_bins_and_validation",
+        "prior_seconds": 7.462,
+        "current_seconds": 9.387,
+        "reduction_seconds": -1.925
+      },
+      {
+        "phase": "grouplibs",
+        "prior_seconds": 54.725,
+        "current_seconds": 19.433,
+        "reduction_seconds": 35.292
+      },
+      {
+        "phase": "map_metadata_and_client_npcs",
+        "prior_seconds": 33.184,
+        "current_seconds": 23.649,
+        "reduction_seconds": 9.535
+      },
+      {
+        "phase": "fx_behaviors",
+        "prior_seconds": 22.295,
+        "current_seconds": 0.293,
+        "reduction_seconds": 22.002
+      }
+    ],
+    "interpretation": "Observed client startup improved by approximately 182 seconds. Sequencer phase improved by approximately 42 seconds; remaining improvement spans other phases and cannot be attributed wholly to animation packaging. Atlas native startup duration remains roughly 233 seconds; overall server readiness decrease includes shorter wrapper preparation."
+  },
+  "acceptance": {
+    "0_13_7_client_startup_improvement": true,
+    "0_13_7_partial_models_textures_and_hud_improvement": true,
+    "retained_server_cache_and_ordinary_save_behavior_this_attempt": true,
+    "runtime_setup_this_attempt": true,
+    "startup_300_second_target_qualified": false,
+    "complete_visual_model_texture_gate_qualified": false,
+    "full_combat_gate_qualified": false,
+    "new_mandatory_physical_gate_claimed": false,
+    "prior_acceptances_preserved": [
+      "native login",
+      "character creation/default costume",
+      "prior save/reopen",
+      "Atlas render/movement",
+      "contact dialogue",
+      "manual task acceptance/completion",
+      "storage cleanup",
+      "fresh profile recovery"
+    ]
+  }
+}

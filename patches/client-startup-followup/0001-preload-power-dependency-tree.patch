@@ -1,0 +1,46 @@
+--- a/libs/UtilitiesLib/src/utils/textparser.c
++++ b/libs/UtilitiesLib/src/utils/textparser.c
+@@ -2280,6 +2280,34 @@
+     return FSA_EXPLORE_DIRECTORY;
+ }
+ 
++// The verified Android worktree is fixed for this launch. Preload stock
++// FolderCache metadata before out-of-directory power/animation lookups.
++// Every original FileList/date/CRC check and fallback still executes. Equal
++// loose/PIG timestamps keep the original PIG reader (FolderNodeAdd policy).
++extern FolderCache *folder_cache;
++static void cohClientPreloadDependencies(const char *dir,
++    const char *filemask, const char *persistfile)
++{
++    const char *enabled = getenv("COH_CLIENT_DEPENDENCY_PRELOAD");
++    const char *tree = NULL;
++    if (!enabled || strcmp(enabled, "1") != 0 || !folder_cache
++        || !dir || !filemask || !persistfile)
++        return;
++    if (strcmp(dir, "defs/powers/") == 0 && strcmp(filemask, ".powers") == 0
++        && strcmp(persistfile, "bin/powers.bin") == 0)
++        tree = "Menu";
++    else if (strcmp(dir, "sequencers") == 0 && strcmp(filemask, ".txt") == 0
++        && strcmp(persistfile, "bin/sequencers.bin") == 0)
++        tree = "player_library/animations";
++    if (tree)
++    {
++        DWORD begin = GetTickCount();
++        FolderCacheRequestTree(folder_cache, tree);
++        printf("COH_CLIENT_DEPENDENCY_PRELOAD_V1 tree=%s cache=%s milliseconds=%.3f source_freshness_preserved=1 crc_validation_preserved=1\n",
++            tree, persistfile, (double)(DWORD)(GetTickCount() - begin));
++    }
++}
++
+ SimpleBufHandle ParserIsPersistNewer(const char* dir, const char* filemask, const char* persistfile, ParseTable pti[], DefineContext* defines)
+ {
+     FileList binlist = NULL;
+@@ -2317,6 +2345,8 @@
+     // read the file table from the bin file first
+     if (!FileListRead(&binlist, binfile))
+         goto IsPersist_Fail;
++
++    cohClientPreloadDependencies(dir, filemask, persistfile);
+ 
+     // assemble file list from directories
+     FileListCreate(&lf_filedates);

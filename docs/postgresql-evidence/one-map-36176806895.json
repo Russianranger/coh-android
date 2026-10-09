@@ -1,0 +1,1271 @@
+{
+  "status": "atlas_park_protocol_ready_observation_passed_gameplay_unvalidated",
+  "source_commit": "0b75ade0c801735e10c5798f641948a45cc50488",
+  "data_commit": "d51533ec8e6a9cf726b9214968077a05fdcf19f3",
+  "reference_repository_commit": "775a0dd770adac045484805dbbb5f68054c7a354",
+  "dbserver_sha256": "fb62028b24bf3165bdcf09e80909d02df5391f89986b9e0454934909a67d93f8",
+  "mapserver_sha256": "59e210e9f4cc8440f43d5b26a9ad78fb441e2a08458f7824708457509c887ba4",
+  "comparison_report_sha256": "5425672253f7e6f9de4751500115052ac9ca1f0d2fe78471ddeec93add47eb4b",
+  "comparison_inputs_sha256": "078fe831204363a957100b98bebc5d9616ae425e6f9947ff2c1022fc5d297ca9",
+  "map_contract": {
+    "map_id": 1,
+    "map_key": "atlaspark",
+    "map_path": "maps/City_Zones/City_01_01/City_01_01.txt",
+    "status_source": "DBServer mapStatusCb via DBCLIENT_REQ_CONTAINER_STATUS",
+    "ready_transition": "registerDbClient starting=1; dbClientReadyForPlayers starting=0"
+  },
+  "hold_seconds_requested": 60.0,
+  "startup_timeout_seconds": 900.0,
+  "port_preflight": [
+    {
+      "service": "postgresql",
+      "protocol": "TCP",
+      "port": 15436,
+      "available_before_start": true
+    },
+    {
+      "service": "dbserver",
+      "protocol": "TCP",
+      "port": 6997,
+      "available_before_start": true
+    },
+    {
+      "service": "map_client",
+      "protocol": "UDP",
+      "port": 7001,
+      "available_before_start": true
+    }
+  ],
+  "map_client_udp_port": 7001,
+  "map_client_tcp_listener": "disabled (-tcp 0)",
+  "network_scope": "Queries and database connections use loopback; unmodified game listeners bind INADDR_ANY on the disposable host",
+  "scope": "One Atlas Park MapServer with DB-confirmed ready status and recent stats during a bounded observation",
+  "gameplay_validated": false,
+  "character_persistence_validated": false,
+  "client_login_validated": false,
+  "asset_coverage_complete": false,
+  "queued_error_count": null,
+  "queued_error_limit": "Normal executable does not report queued startup error count; diagnostics captured, missing-asset list is not exhaustive",
+  "started_utc": "2026-09-25T19:11:34.604107+00:00",
+  "status_samples": [
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:13:58.635967+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:13:59.740702+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:00.845020+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:01.949791+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:03.053417+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:04.158003+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:05.262257+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:06.365941+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:07.471174+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:08.575726+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:09.679805+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:10.782980+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:11.887186+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "missing": true,
+      "raw": "invalid container request",
+      "sampled_utc": "2026-09-25T19:14:12.990003+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:14.134581+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:15.993557+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:19.022069+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:22.111327+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:25.108620+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:28.164927+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:31.130293+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:33.980093+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:36.914900+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:39.800969+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:42.657611+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:45.565517+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:48.476613+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:51.400613+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": true,
+      "raw": "maps/City_Zones/City_01_01/City_01_01.txt NotReady 1 (Not started) Info ",
+      "sampled_utc": "2026-09-25T19:14:54.289509+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-25T19:14:57.296909+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 4/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-25T19:15:00.238950+00:00"
+    },
+    {
+      "ready": false,
+      "not_started": false,
+      "raw": "City_01_01.txt S: 7/7  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info  NotReady 1",
+      "sampled_utc": "2026-09-25T19:15:03.153928+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:06.185677+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 3,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 2/3  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:08.181634+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 8,
+      "stats_age_seconds": 9,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 8/9  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:14.010529+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 5,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 4/5  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:19.833955+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 1,
+      "stats_age_seconds": 1,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 1/1  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:25.676133+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 6,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 4/6  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:31.538991+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 0/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:37.390277+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 6,
+      "stats_age_seconds": 8,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 6/8  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:43.250491+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 2,
+      "stats_age_seconds": 4,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 2/4  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:49.106243+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 8,
+      "stats_age_seconds": 10,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 8/10 Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:00 Info ",
+      "sampled_utc": "2026-09-25T19:15:55.060701+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 4,
+      "stats_age_seconds": 6,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 4/6  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-25T19:16:01.092028+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 0/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-25T19:16:07.140867+00:00"
+    },
+    {
+      "ready": true,
+      "network_age_seconds": 0,
+      "stats_age_seconds": 2,
+      "address": "127.0.0.1",
+      "port": 7001,
+      "raw": "City_01_01.txt S: 0/2  Ip:127.0.0.1:7001   Mem:   0M Cpu:0:00.00 = 0.00 0.00  Up: 0:01 Info ",
+      "sampled_utc": "2026-09-25T19:16:07.431931+00:00"
+    }
+  ],
+  "failures": [],
+  "database_startup_gate": {
+    "captured_ready_diagnostic": false,
+    "listening_loopback_port": 6997,
+    "generated_schema_matches": true,
+    "protocol_readiness_proof": "Requires subsequent stock status response; socket/schema alone do not prove readiness"
+  },
+  "baseline_not_started_verified": true,
+  "redacted_logs": [
+    {
+      "file": "log-000.txt",
+      "source": "raw-logs/atlas-park-stderr.log",
+      "sha256": "e9a2cb5303982c24544f0cc45186336381978b757e44977bf7dc34827969be10",
+      "bytes": 629762
+    },
+    {
+      "file": "log-001.txt",
+      "source": "raw-logs/atlas-park-stdout.log",
+      "sha256": "ffc943b0c0c8830678a3cb13ee221e63046db710ab8d173546b9fb6a40af048d",
+      "bytes": 252024
+    },
+    {
+      "file": "log-002.txt",
+      "source": "raw-logs/baseline-0-stderr.log",
+      "sha256": "fe4402461f714d35c5213a2dc1ab821d9d226624b18393dc026e7b0fbc5434c3",
+      "bytes": 140
+    },
+    {
+      "file": "log-003.txt",
+      "source": "raw-logs/baseline-0-stdout.log",
+      "sha256": "a158ace494c998a39e43d49a6877b67d805f175ee7c02fe72c146f8b9e22b871",
+      "bytes": 149
+    },
+    {
+      "file": "log-004.txt",
+      "source": "raw-logs/baseline-1-stderr.log",
+      "sha256": "9d02d73e8174fbdacba531634f103af149f9cd232faa600bc0fbddda1864ed4d",
+      "bytes": 140
+    },
+    {
+      "file": "log-005.txt",
+      "source": "raw-logs/baseline-1-stdout.log",
+      "sha256": "a1d0f2db295e1b78f7074b061c3cbaa977f0e27c043e0e5a6ccb1bd2b9e6d798",
+      "bytes": 149
+    },
+    {
+      "file": "log-006.txt",
+      "source": "raw-logs/baseline-10-stderr.log",
+      "sha256": "ff01bad8e1d0cdfc7e23c979d237ac0b174ff3fb650e0d64736e2594a8641fb6",
+      "bytes": 140
+    },
+    {
+      "file": "log-007.txt",
+      "source": "raw-logs/baseline-10-stdout.log",
+      "sha256": "db6f9a892d1878f93b783cc023813f1da92428e2f18b5ef036312490227b2806",
+      "bytes": 149
+    },
+    {
+      "file": "log-008.txt",
+      "source": "raw-logs/baseline-11-stderr.log",
+      "sha256": "3d12848335aa23fb95f633e183796fcaada637740fc783a605e7e2b9810724c7",
+      "bytes": 140
+    },
+    {
+      "file": "log-009.txt",
+      "source": "raw-logs/baseline-11-stdout.log",
+      "sha256": "b8c1babedafbd26317b3ce0d82dbb48018ba4271958f9a764bb519722a4e3f28",
+      "bytes": 149
+    },
+    {
+      "file": "log-010.txt",
+      "source": "raw-logs/baseline-12-stderr.log",
+      "sha256": "f5536c6ba2439b2ccc5aad15da96292270d35196670d09bc4198dd1ffc034e3a",
+      "bytes": 140
+    },
+    {
+      "file": "log-011.txt",
+      "source": "raw-logs/baseline-12-stdout.log",
+      "sha256": "eb5201b487f17439977b585f7a57c723b476f5c441a77280ec38f51ccf08cf3e",
+      "bytes": 149
+    },
+    {
+      "file": "log-012.txt",
+      "source": "raw-logs/baseline-13-stderr.log",
+      "sha256": "6a55494d2f3999db97dcb3ead826101b0221b53a05d0b96c8ba3f5a304b9e63e",
+      "bytes": 140
+    },
+    {
+      "file": "log-013.txt",
+      "source": "raw-logs/baseline-13-stdout.log",
+      "sha256": "25cb0ecc88afa42034876f88870c504a6729b56d37f37a5512a90b3d519df26d",
+      "bytes": 149
+    },
+    {
+      "file": "log-014.txt",
+      "source": "raw-logs/baseline-14-stderr.log",
+      "sha256": "9a715e8cf20aeecd891aae67da2706a58b49f02f6a607f6df4fa4dd7b9477056",
+      "bytes": 140
+    },
+    {
+      "file": "log-015.txt",
+      "source": "raw-logs/baseline-14-stdout.log",
+      "sha256": "6dc9531a600ba259b30c44c34dc19407623c0741fadf8e2204bc6e7c8cfc4710",
+      "bytes": 198
+    },
+    {
+      "file": "log-016.txt",
+      "source": "raw-logs/baseline-2-stderr.log",
+      "sha256": "6fd7f521f572eb8f72ae1911b5143c4b21ab9dc6e81baea23f79837221655203",
+      "bytes": 140
+    },
+    {
+      "file": "log-017.txt",
+      "source": "raw-logs/baseline-2-stdout.log",
+      "sha256": "5cc0f9e07f0d621ad8c43ac17b9a6a63b112d5267e16ba2346c611018711cb58",
+      "bytes": 149
+    },
+    {
+      "file": "log-018.txt",
+      "source": "raw-logs/baseline-3-stderr.log",
+      "sha256": "0b4f16e9b3b4bbdb5a6554f4d7619639081e49ce8a46c4de439e0370bfb6c61b",
+      "bytes": 140
+    },
+    {
+      "file": "log-019.txt",
+      "source": "raw-logs/baseline-3-stdout.log",
+      "sha256": "d16e72235c381df6dd0929c54aaec503220b6ed578ae2548c3776817afc1f80f",
+      "bytes": 149
+    },
+    {
+      "file": "log-020.txt",
+      "source": "raw-logs/baseline-4-stderr.log",
+      "sha256": "facb4c7ee0040b79149ca638d221755491d760b274e6b422987c0e3cbd9bb5b2",
+      "bytes": 140
+    },
+    {
+      "file": "log-021.txt",
+      "source": "raw-logs/baseline-4-stdout.log",
+      "sha256": "0850a21e14fedea1c8702b3770c9f336cf21bb3ada4f3767efe588a798904009",
+      "bytes": 149
+    },
+    {
+      "file": "log-022.txt",
+      "source": "raw-logs/baseline-5-stderr.log",
+      "sha256": "f661bcee1bacf911c33869a6ac2adfd828c796569ac663dcd3c58d8c4d8d75ca",
+      "bytes": 140
+    },
+    {
+      "file": "log-023.txt",
+      "source": "raw-logs/baseline-5-stdout.log",
+      "sha256": "8dfe0294f723d4faea1ed60e686fc8e2ae30c90058240a4ff00a1b12374aaca6",
+      "bytes": 149
+    },
+    {
+      "file": "log-024.txt",
+      "source": "raw-logs/baseline-6-stderr.log",
+      "sha256": "48e70df6b83b1713a383400e6136dc55b956bb51febf2cd6d983ff4e87f01eb1",
+      "bytes": 140
+    },
+    {
+      "file": "log-025.txt",
+      "source": "raw-logs/baseline-6-stdout.log",
+      "sha256": "990f2c1af6c0c6315a03257bdc027b1e5f6a23bda1c3608720e8126c8b64d482",
+      "bytes": 149
+    },
+    {
+      "file": "log-026.txt",
+      "source": "raw-logs/baseline-7-stderr.log",
+      "sha256": "91b930b2b5c1384da284a8c0d719ebdbb281cd2ee4b8eaf02bb08820b6168fa9",
+      "bytes": 140
+    },
+    {
+      "file": "log-027.txt",
+      "source": "raw-logs/baseline-7-stdout.log",
+      "sha256": "d9945462a1a53d74247d0fe8c6c876fb0a03e7bfb0877d2ed1bf6e0b29ffe164",
+      "bytes": 149
+    },
+    {
+      "file": "log-028.txt",
+      "source": "raw-logs/baseline-8-stderr.log",
+      "sha256": "54501a5322a259d61bfe20c5d4fa400e2927eb9623e40c0a7f1ec929b8f2e075",
+      "bytes": 140
+    },
+    {
+      "file": "log-029.txt",
+      "source": "raw-logs/baseline-8-stdout.log",
+      "sha256": "6299b545950431d51291fb444d7131f399767302ac4161e10291ddc8f683d512",
+      "bytes": 149
+    },
+    {
+      "file": "log-030.txt",
+      "source": "raw-logs/baseline-9-stderr.log",
+      "sha256": "102cba5b3f2e64ae4b0fe4457503c7b0faed4fd79b9bdfea105700c52f337488",
+      "bytes": 140
+    },
+    {
+      "file": "log-031.txt",
+      "source": "raw-logs/baseline-9-stdout.log",
+      "sha256": "6ae9ebbebb50192aa8d94ffbc452b3bdc6f44ddb7a84791191b776d538f79c15",
+      "bytes": 149
+    },
+    {
+      "file": "log-032.txt",
+      "source": "raw-logs/dbserver-stderr.log",
+      "sha256": "eb55cb268b909cf9a142969267d8b38b6278cb86ef5b2cc207768bb7d37212f9",
+      "bytes": 2101
+    },
+    {
+      "file": "log-033.txt",
+      "source": "raw-logs/dbserver-stdout.log",
+      "sha256": "ac76ab692fda69d8854158388be0ece5d85ce9adced84b8592a1a815eb9e85e4",
+      "bytes": 1362
+    },
+    {
+      "file": "log-034.txt",
+      "source": "raw-logs/final-status-stderr.log",
+      "sha256": "e386f6bcaad757d93ce304f24eb59701082beb501c737006a2ca9b1de7c155a0",
+      "bytes": 140
+    },
+    {
+      "file": "log-035.txt",
+      "source": "raw-logs/final-status-stdout.log",
+      "sha256": "58bf9d2e57f713b2e07a61da6c9b9368904d55a452643f8e782ca17864ca2397",
+      "bytes": 227
+    },
+    {
+      "file": "log-036.txt",
+      "source": "raw-logs/observe-18-stderr.log",
+      "sha256": "af66c6b23a3841575e0e4728c7d70b5fcfcf9cb75d166614fd00d56f2ce1b849",
+      "bytes": 140
+    },
+    {
+      "file": "log-037.txt",
+      "source": "raw-logs/observe-18-stdout.log",
+      "sha256": "a08bab16edcfa87286867375391f5ae22f3a8f5aafbfd359f45ff6ca2fc4d513",
+      "bytes": 227
+    },
+    {
+      "file": "log-038.txt",
+      "source": "raw-logs/observe-19-stderr.log",
+      "sha256": "51a07b51bb32d31e0e5ebbe1733e25e517d0daced7baac9b47fadba6a68d045e",
+      "bytes": 140
+    },
+    {
+      "file": "log-039.txt",
+      "source": "raw-logs/observe-19-stdout.log",
+      "sha256": "55b0b3c425e4f0a20e54e59420d3542de6226ec192cc00892b9a77d972819131",
+      "bytes": 227
+    },
+    {
+      "file": "log-040.txt",
+      "source": "raw-logs/observe-20-stderr.log",
+      "sha256": "a9512456408155a8c75f7f25bcc2776139fdb52da2e993aa520b8780ffb7a511",
+      "bytes": 140
+    },
+    {
+      "file": "log-041.txt",
+      "source": "raw-logs/observe-20-stdout.log",
+      "sha256": "ac9c1f5b9c0418fa17f013a809ba4bb60d60b9ee81ee9caec06458233bc562f5",
+      "bytes": 227
+    },
+    {
+      "file": "log-042.txt",
+      "source": "raw-logs/observe-21-stderr.log",
+      "sha256": "427dfa270037ae5a822e94fa976d8b09c92769fa29ff1f9d3099e9f422418520",
+      "bytes": 140
+    },
+    {
+      "file": "log-043.txt",
+      "source": "raw-logs/observe-21-stdout.log",
+      "sha256": "31afb7ac77bb0a40d75faad585d4beeabd4d7aef028611698212bfa1d745bae2",
+      "bytes": 227
+    },
+    {
+      "file": "log-044.txt",
+      "source": "raw-logs/observe-22-stderr.log",
+      "sha256": "d3b11fec098d959bc67143e31c2600855ea17260393a76d6505c6bbe2f043a8f",
+      "bytes": 140
+    },
+    {
+      "file": "log-045.txt",
+      "source": "raw-logs/observe-22-stdout.log",
+      "sha256": "d66021ca8787a2dc90fc0b39ca454010390792332d53ba5f89f41e18714ea01b",
+      "bytes": 227
+    },
+    {
+      "file": "log-046.txt",
+      "source": "raw-logs/observe-23-stderr.log",
+      "sha256": "7eef9bcc083516c974d4a8862a3a9068ff0220237b8f7d68dfc67d7384227c27",
+      "bytes": 140
+    },
+    {
+      "file": "log-047.txt",
+      "source": "raw-logs/observe-23-stdout.log",
+      "sha256": "1e36dd80ebee0c38e2e43f1ffcfb4022908fe6ff52ebf2d93316b6a12e3fecbc",
+      "bytes": 227
+    },
+    {
+      "file": "log-048.txt",
+      "source": "raw-logs/observe-24-stderr.log",
+      "sha256": "772f345ad5fbb432af4f3ddceddd0702c17ff488af8e03a08d5dd955b33aab2f",
+      "bytes": 140
+    },
+    {
+      "file": "log-049.txt",
+      "source": "raw-logs/observe-24-stdout.log",
+      "sha256": "7e465d7549d2dabf61fa58c7761624a6b5b3f6d7b82c79b841733bd95ed7daf7",
+      "bytes": 227
+    },
+    {
+      "file": "log-050.txt",
+      "source": "raw-logs/observe-25-stderr.log",
+      "sha256": "299b0fd26c4d625f7d347cf5972ee0b89d6c9fb3ddecaa871b13b9ea6ec3a0a7",
+      "bytes": 140
+    },
+    {
+      "file": "log-051.txt",
+      "source": "raw-logs/observe-25-stdout.log",
+      "sha256": "582d363c5cda2a4be5defc7dcf7f685ee827a74e01841800308f02c14da5f2e3",
+      "bytes": 227
+    },
+    {
+      "file": "log-052.txt",
+      "source": "raw-logs/observe-26-stderr.log",
+      "sha256": "dcee67695741db7d434d9e3dedc9967438411b0f2c3eebc4e8ba2621074edf45",
+      "bytes": 140
+    },
+    {
+      "file": "log-053.txt",
+      "source": "raw-logs/observe-26-stdout.log",
+      "sha256": "c9c980ef3df31e41074592ece79db21176495192937e8f7afd8a1bd7c732f3d5",
+      "bytes": 227
+    },
+    {
+      "file": "log-054.txt",
+      "source": "raw-logs/observe-27-stderr.log",
+      "sha256": "bc2bdacd28e7d6ad22346d0cc765ff80dd4dc9aec91cd5b2996ee9032c1779e7",
+      "bytes": 140
+    },
+    {
+      "file": "log-055.txt",
+      "source": "raw-logs/observe-27-stdout.log",
+      "sha256": "32df98e46d3ab11235277d5b0982c10d1c464b3b325980ceaad7881dff5e840e",
+      "bytes": 227
+    },
+    {
+      "file": "log-056.txt",
+      "source": "raw-logs/observe-28-stderr.log",
+      "sha256": "e386f6bcaad757d93ce304f24eb59701082beb501c737006a2ca9b1de7c155a0",
+      "bytes": 140
+    },
+    {
+      "file": "log-057.txt",
+      "source": "raw-logs/observe-28-stdout.log",
+      "sha256": "9a441802ea5e9a76c4d8acb2a8559c2b817cdbad487b9bb2891f358232e7d0aa",
+      "bytes": 227
+    },
+    {
+      "file": "log-058.txt",
+      "source": "raw-logs/startup-0-stderr.log",
+      "sha256": "a171259659a528195b8c61196e2016eb5a16c92300f5bbdb640a213698d3b5ea",
+      "bytes": 140
+    },
+    {
+      "file": "log-059.txt",
+      "source": "raw-logs/startup-0-stdout.log",
+      "sha256": "9a72ddd10a9300dd2ba005bc9b8a9cc76be904686c5c5998d83a5d7e7402113d",
+      "bytes": 198
+    },
+    {
+      "file": "log-060.txt",
+      "source": "raw-logs/startup-1-stderr.log",
+      "sha256": "18a41391403aeb6c0724445aea0b8011f7683dd4f92ed2a2c27856517afb8a2a",
+      "bytes": 140
+    },
+    {
+      "file": "log-061.txt",
+      "source": "raw-logs/startup-1-stdout.log",
+      "sha256": "a33b35a723f640b857bc727f8c8d7dc682c50d05e794f5803bf3c8cba9511905",
+      "bytes": 198
+    },
+    {
+      "file": "log-062.txt",
+      "source": "raw-logs/startup-10-stderr.log",
+      "sha256": "d3db3ae2ef7f4b85f427a80e1d7c8c4ba626444972c53a7b5946baae7db8531e",
+      "bytes": 140
+    },
+    {
+      "file": "log-063.txt",
+      "source": "raw-logs/startup-10-stdout.log",
+      "sha256": "dd56aa8fe155d93d0cbaf0ef53fd7ae76fedb87b228b4d5d0cd33ab0d1b2ecd5",
+      "bytes": 198
+    },
+    {
+      "file": "log-064.txt",
+      "source": "raw-logs/startup-11-stderr.log",
+      "sha256": "699662289b1eccf91950bedffd8ae66b202888631fe599c90648f2f6526d346b",
+      "bytes": 140
+    },
+    {
+      "file": "log-065.txt",
+      "source": "raw-logs/startup-11-stdout.log",
+      "sha256": "9fdff3d18afc6e1685167761e6162ecbb5c15377749cb5d3dea62d07d8dce532",
+      "bytes": 198
+    },
+    {
+      "file": "log-066.txt",
+      "source": "raw-logs/startup-12-stderr.log",
+      "sha256": "0444fb0a27e59ef58d6e7abc34efbc27c852f3a846f0c74ffeff21db60a54622",
+      "bytes": 140
+    },
+    {
+      "file": "log-067.txt",
+      "source": "raw-logs/startup-12-stdout.log",
+      "sha256": "a1c6c80a9b54db06a55fdf44d2ebeed6f0f61351b178b3a05b4dbd55dc06a565",
+      "bytes": 198
+    },
+    {
+      "file": "log-068.txt",
+      "source": "raw-logs/startup-13-stderr.log",
+      "sha256": "d394c34319fb5ee57b7a9bc513a7b4614ec7dc1548bace107aaacbe7d1db2db9",
+      "bytes": 140
+    },
+    {
+      "file": "log-069.txt",
+      "source": "raw-logs/startup-13-stdout.log",
+      "sha256": "28681f4018c9caaece10bb74926137a561d9718aa39102deac4335d9640a1d11",
+      "bytes": 198
+    },
+    {
+      "file": "log-070.txt",
+      "source": "raw-logs/startup-14-stderr.log",
+      "sha256": "db5dd360d1c71f774f7bdc65e82d55f340b09230ae3b741787eb6c04a2dd0273",
+      "bytes": 140
+    },
+    {
+      "file": "log-071.txt",
+      "source": "raw-logs/startup-14-stdout.log",
+      "sha256": "8126541f4eb414cb7744c17615ede3c5292310eb22c38f196206ef698325dea4",
+      "bytes": 238
+    },
+    {
+      "file": "log-072.txt",
+      "source": "raw-logs/startup-15-stderr.log",
+      "sha256": "76e5aa8c0c0dfc67f891d336830ed4f8a7936279c54647da59599689259d1283",
+      "bytes": 140
+    },
+    {
+      "file": "log-073.txt",
+      "source": "raw-logs/startup-15-stdout.log",
+      "sha256": "5a2b36c4325d07e3d03abd86c269392a8331b4135572bb6533efce7d2d45bdda",
+      "bytes": 238
+    },
+    {
+      "file": "log-074.txt",
+      "source": "raw-logs/startup-16-stderr.log",
+      "sha256": "407ce6ee6f3ad337a6b5f20f3678f7ea973f7bd525c3b931d229b31937f7757d",
+      "bytes": 140
+    },
+    {
+      "file": "log-075.txt",
+      "source": "raw-logs/startup-16-stdout.log",
+      "sha256": "b94aca20161c68d6c5d324967c381a09ed8b92e673b1e2442ef62e11f2398017",
+      "bytes": 238
+    },
+    {
+      "file": "log-076.txt",
+      "source": "raw-logs/startup-17-stderr.log",
+      "sha256": "c5024b8851d32a63ec5392cbc0a45a458a50d206bbc353c7fa91b06b11b6ce3c",
+      "bytes": 140
+    },
+    {
+      "file": "log-077.txt",
+      "source": "raw-logs/startup-17-stdout.log",
+      "sha256": "00669377d34d587ae3d65658d67c0dd2c994647ebade25d298e27a61fbdca684",
+      "bytes": 227
+    },
+    {
+      "file": "log-078.txt",
+      "source": "raw-logs/startup-2-stderr.log",
+      "sha256": "0fcb9cdbb21609efe5c35e2bf02536d0681836fb8108568beb4fc3ad28f5fd98",
+      "bytes": 140
+    },
+    {
+      "file": "log-079.txt",
+      "source": "raw-logs/startup-2-stdout.log",
+      "sha256": "f52d1337476edcd3ec16c57b019b5deba9ddb4a095efc720f63196a2a66867ba",
+      "bytes": 198
+    },
+    {
+      "file": "log-080.txt",
+      "source": "raw-logs/startup-3-stderr.log",
+      "sha256": "0a60eed428ffad8824851e22e0313842ec0c474c07660b92542c68c2274e1d15",
+      "bytes": 140
+    },
+    {
+      "file": "log-081.txt",
+      "source": "raw-logs/startup-3-stdout.log",
+      "sha256": "df9d7227d8024d92775d9683cf5cf3cfa7962242f3bf4f3a1c965e7315ef1b4f",
+      "bytes": 198
+    },
+    {
+      "file": "log-082.txt",
+      "source": "raw-logs/startup-4-stderr.log",
+      "sha256": "d54c249e5ba47a5b2b2d62ecfe129dc6109f5b59b5b82826b8cf8370bc2ebc7e",
+      "bytes": 140
+    },
+    {
+      "file": "log-083.txt",
+      "source": "raw-logs/startup-4-stdout.log",
+      "sha256": "336bd15e598e5cf5f55ef214f6a7fa2425104ff7d2d9250d474a473aea316a94",
+      "bytes": 198
+    },
+    {
+      "file": "log-084.txt",
+      "source": "raw-logs/startup-5-stderr.log",
+      "sha256": "d653100ca62a911aaa19e6bc997fbe0bc7e6501ccb19a17d301a3712c1690a58",
+      "bytes": 140
+    },
+    {
+      "file": "log-085.txt",
+      "source": "raw-logs/startup-5-stdout.log",
+      "sha256": "fb51c9513f822391098bff38a790a644cef73a45219ee4109f79f89bf1ebf280",
+      "bytes": 198
+    },
+    {
+      "file": "log-086.txt",
+      "source": "raw-logs/startup-6-stderr.log",
+      "sha256": "380e53c680b96a937c8f24c193557789592a0553422c3aac81d1976394222d3d",
+      "bytes": 140
+    },
+    {
+      "file": "log-087.txt",
+      "source": "raw-logs/startup-6-stdout.log",
+      "sha256": "2818516329b8cbe98206d2efc1623fa2f4a1c2fee9806b65a43637361b035f56",
+      "bytes": 198
+    },
+    {
+      "file": "log-088.txt",
+      "source": "raw-logs/startup-7-stderr.log",
+      "sha256": "439b6dfc63a5379720bce9737cfe931a0c3a3d68a7269d12ff399ff2d81efd0e",
+      "bytes": 140
+    },
+    {
+      "file": "log-089.txt",
+      "source": "raw-logs/startup-7-stdout.log",
+      "sha256": "821ecac9a883b86d7398014a27c67f222ec197b387d277b9021435156fda0eac",
+      "bytes": 198
+    },
+    {
+      "file": "log-090.txt",
+      "source": "raw-logs/startup-8-stderr.log",
+      "sha256": "d4af44fc0df46342c8f5299963146edcf465a20f924c33693dda044aa45dce01",
+      "bytes": 140
+    },
+    {
+      "file": "log-091.txt",
+      "source": "raw-logs/startup-8-stdout.log",
+      "sha256": "22e375df112766a304a3b6413b8781c04842cc9b1ae4ff07095a3e2be2b26657",
+      "bytes": 198
+    },
+    {
+      "file": "log-092.txt",
+      "source": "raw-logs/startup-9-stderr.log",
+      "sha256": "2ac311613bf963365078db1418745bed5d87ec586199b0e73daa2bc61182a7a0",
+      "bytes": 140
+    },
+    {
+      "file": "log-093.txt",
+      "source": "raw-logs/startup-9-stdout.log",
+      "sha256": "4681c55c78fa6bd499d8d0d74a4d0d110ff7a17e954aba15451952700b19389d",
+      "bytes": 198
+    },
+    {
+      "file": "log-094.txt",
+      "source": "runtime/logs/dbserver/error_2026-09-25-19-00-00.log",
+      "sha256": "a0af7643597e17040ad7b40cb8a8c458ec561588e2d2d77061523b20037fb88c",
+      "bytes": 1720714
+    },
+    {
+      "file": "log-095.txt",
+      "source": "runtime/logs/mapserver/error.log",
+      "sha256": "f90cbfffc3b62207ca5326b6b2daf4d0d88e18229f032d7af80b1bfb60065663",
+      "bytes": 834111
+    }
+  ],
+  "benign_catalog_notices": {
+    "count": 8,
+    "lines": [
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260925 19:13:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260925 19:13:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents\" does not exist, skipping",
+      "260925 19:13:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping",
+      "260925 19:13:52 -1 SQLERROR: -1 00000 NOTICE: relation \"ents2\" does not exist, skipping"
+    ],
+    "line_limit": 100
+  },
+  "warning_lines": [
+    "Load door animation points.. Warning: orphaned EmergeFromMe point at 128.00, 221.50, 1024.00 (needs at least one ExitPoint)",
+    "Warning: orphaned EmergeFromMe point at -640.00, 221.50, -640.00 (needs at least one ExitPoint)",
+    "Warning: orphaned EmergeFromMe point at 636.50, 1.04, -1043.50 (needs at least one ExitPoint)",
+    "Warning: couldn't find window named TempConsoleTitle: 6092",
+    "Warning: No launcher specified to start the following server applications:"
+  ],
+  "observed_ready_seconds": 62.235,
+  "generated_output_count": 1328,
+  "comparison_caches_reused": false,
+  "shutdown_scope": "Owned disposable processes stopped; graceful game-service shutdown unvalidated",
+  "processes": [
+    {
+      "label": "dbserver",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 146.188
+    },
+    {
+      "label": "baseline-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 137.719
+    },
+    {
+      "label": "baseline-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 134.797
+    },
+    {
+      "label": "baseline-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 133.688
+    },
+    {
+      "label": "baseline-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 132.594
+    },
+    {
+      "label": "baseline-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 131.485
+    },
+    {
+      "label": "baseline-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 130.375
+    },
+    {
+      "label": "baseline-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 129.281
+    },
+    {
+      "label": "baseline-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 128.172
+    },
+    {
+      "label": "baseline-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 127.063
+    },
+    {
+      "label": "baseline-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 125.969
+    },
+    {
+      "label": "baseline-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 124.86
+    },
+    {
+      "label": "baseline-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 123.75
+    },
+    {
+      "label": "baseline-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 122.656
+    },
+    {
+      "label": "baseline-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 121.547
+    },
+    {
+      "label": "baseline-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 120.438
+    },
+    {
+      "label": "atlas-park",
+      "exit_code": 1,
+      "forced_stop": true,
+      "elapsed_seconds": 119.516
+    },
+    {
+      "label": "startup-0",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 118.547
+    },
+    {
+      "label": "startup-1",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 115.516
+    },
+    {
+      "label": "startup-2",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 112.422
+    },
+    {
+      "label": "startup-3",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 109.438
+    },
+    {
+      "label": "startup-4",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 106.375
+    },
+    {
+      "label": "startup-5",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 103.406
+    },
+    {
+      "label": "startup-6",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 100.563
+    },
+    {
+      "label": "startup-7",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 97.625
+    },
+    {
+      "label": "startup-8",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 94.735
+    },
+    {
+      "label": "startup-9",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 91.875
+    },
+    {
+      "label": "startup-10",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 88.969
+    },
+    {
+      "label": "startup-11",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 86.063
+    },
+    {
+      "label": "startup-12",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 83.141
+    },
+    {
+      "label": "startup-13",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 80.25
+    },
+    {
+      "label": "startup-14",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 77.235
+    },
+    {
+      "label": "startup-15",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 74.297
+    },
+    {
+      "label": "startup-16",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 71.391
+    },
+    {
+      "label": "startup-17",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 68.344
+    },
+    {
+      "label": "observe-18",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 66.36
+    },
+    {
+      "label": "observe-19",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 60.531
+    },
+    {
+      "label": "observe-20",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 54.703
+    },
+    {
+      "label": "observe-21",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 48.86
+    },
+    {
+      "label": "observe-22",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 43.0
+    },
+    {
+      "label": "observe-23",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 37.141
+    },
+    {
+      "label": "observe-24",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 31.281
+    },
+    {
+      "label": "observe-25",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 25.422
+    },
+    {
+      "label": "observe-26",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 19.469
+    },
+    {
+      "label": "observe-27",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 13.438
+    },
+    {
+      "label": "observe-28",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 7.391
+    },
+    {
+      "label": "final-status",
+      "exit_code": 0,
+      "forced_stop": false,
+      "elapsed_seconds": 7.11
+    }
+  ],
+  "finished_utc": "2026-09-25T19:16:14.425674+00:00"
+}

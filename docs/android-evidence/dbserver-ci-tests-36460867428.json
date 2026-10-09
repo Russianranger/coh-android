@@ -1,0 +1,69 @@
+{
+  "run_id": 36460867428,
+  "repository_commit": "eed2ce1f5388195f65a07853919761a93657aca6",
+  "tooling": {
+    "job_id": 109058781675,
+    "suites": [
+      {
+        "name": "prepare Wine source",
+        "run": 18,
+        "passed": 18,
+        "skipped": 0
+      },
+      {
+        "name": "DbServer tooling",
+        "run": 73,
+        "passed": 65,
+        "skipped": 8
+      },
+      {
+        "name": "accepted talloc recovery",
+        "run": 8,
+        "passed": 8,
+        "skipped": 0
+      }
+    ],
+    "selected_log_lines": [
+      "2026-09-28T17:50:06.5293873Z Ran 18 tests in 2.331s",
+      "2026-09-28T17:50:06.5294213Z OK",
+      "2026-09-28T17:50:09.5945910Z Ran 73 tests in 2.883s",
+      "2026-09-28T17:50:09.5946276Z OK (skipped=8)",
+      "2026-09-28T17:50:09.7377961Z Ran 8 tests in 0.027s",
+      "2026-09-28T17:50:09.7378331Z OK"
+    ]
+  },
+  "windows": {
+    "job_id": 109059043544,
+    "dispatch_tests": 4,
+    "fixed_inputs_tests": 4,
+    "loopback_tests": 11,
+    "all_passed": true,
+    "selected_log_lines": [
+      "2026-09-28T17:50:50.4052562Z test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops (__main__.DispatchProgressWindowsTests.test_disabled_mode_has_no_file_or_thread_and_marker_calls_remain_noops) ... ok\r",
+      "2026-09-28T17:50:50.4871320Z test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress (__main__.DispatchProgressWindowsTests.test_enabled_mapping_is_visible_externally_with_identity_and_ordered_progress) ... ok\r",
+      "2026-09-28T17:50:50.5440643Z test_existing_file_is_refused_without_modifying_evidence (__main__.DispatchProgressWindowsTests.test_existing_file_is_refused_without_modifying_evidence) ... ok\r",
+      "2026-09-28T17:50:50.7144030Z test_relative_missing_parent_and_directory_paths_are_refused (__main__.DispatchProgressWindowsTests.test_relative_missing_parent_and_directory_paths_are_refused) ... ok\r",
+      "2026-09-28T17:50:50.7153235Z Ran 4 tests in 11.590s\r",
+      "2026-09-28T17:50:50.7154048Z OK\r",
+      "2026-09-28T17:50:51.3300337Z test_absent_option_never_calls_library_or_acknowledges (__main__.FixedInputsWindowsTests.test_absent_option_never_calls_library_or_acknowledges) ... ok\r",
+      "2026-09-28T17:50:51.3419527Z test_exact_one_calls_library_once_then_acknowledges (__main__.FixedInputsWindowsTests.test_exact_one_calls_library_once_then_acknowledges) ... ok\r",
+      "2026-09-28T17:50:51.3560166Z test_existing_cache_refusal_does_not_acknowledge_activation (__main__.FixedInputsWindowsTests.test_existing_cache_refusal_does_not_acknowledge_activation) ... ok\r",
+      "2026-09-28T17:50:51.4557762Z test_invalid_options_never_call_library_or_acknowledge (__main__.FixedInputsWindowsTests.test_invalid_options_never_call_library_or_acknowledge) ... ok\r",
+      "2026-09-28T17:50:51.4570045Z Ran 4 tests in 0.645s\r",
+      "2026-09-28T17:50:51.4570575Z OK\r",
+      "2026-09-28T17:50:52.6485693Z test_activation_after_any_bind_attempt_is_refused (__main__.LoopbackBindTests.test_activation_after_any_bind_attempt_is_refused) ... ok\r",
+      "2026-09-28T17:50:52.6743520Z test_default_bind_failure_returns_without_fatal_policy (__main__.LoopbackBindTests.test_default_bind_failure_returns_without_fatal_policy) ... ok\r",
+      "2026-09-28T17:50:52.6992287Z test_default_keeps_wildcard_bind_and_no_extra_winsock_observation (__main__.LoopbackBindTests.test_default_keeps_wildcard_bind_and_no_extra_winsock_observation) ... ok\r",
+      "2026-09-28T17:50:52.9470182Z test_endpoint_observation_failures_close_before_exit (__main__.LoopbackBindTests.test_endpoint_observation_failures_close_before_exit) ... ok\r",
+      "2026-09-28T17:50:53.0305870Z test_explicit_loopback_and_requested_ports_are_preserved (__main__.LoopbackBindTests.test_explicit_loopback_and_requested_ports_are_preserved) ... ok\r",
+      "2026-09-28T17:50:53.1475791Z test_invalid_environment_never_enables_or_binds (__main__.LoopbackBindTests.test_invalid_environment_never_enables_or_binds) ... ok\r",
+      "2026-09-28T17:50:53.2278612Z test_nonloopback_family_and_null_inputs_cannot_reach_bind (__main__.LoopbackBindTests.test_nonloopback_family_and_null_inputs_cannot_reach_bind) ... ok\r",
+      "2026-09-28T17:50:53.2419056Z test_repeat_activation_is_refused_without_second_ack (__main__.LoopbackBindTests.test_repeat_activation_is_refused_without_second_ack) ... ok\r",
+      "2026-09-28T17:50:53.2683472Z test_unavailable_requested_socket_cannot_be_ignored (__main__.LoopbackBindTests.test_unavailable_requested_socket_cannot_be_ignored) ... ok\r",
+      "2026-09-28T17:50:53.2955217Z test_wildcard_tcp_udp_use_actual_loopback_ephemeral_endpoints (__main__.LoopbackBindTests.test_wildcard_tcp_udp_use_actual_loopback_ephemeral_endpoints) ... ok\r",
+      "2026-09-28T17:50:53.7739688Z test_windows_crlf_patch_stages_the_exact_receipted_native_contract (__main__.LoopbackPatchStagingTests.test_windows_crlf_patch_stages_the_exact_receipted_native_contract) ... ok\r",
+      "2026-09-28T17:50:53.7741843Z Ran 11 tests in 2.206s\r",
+      "2026-09-28T17:50:53.7742423Z OK\r"
+    ]
+  }
+}
