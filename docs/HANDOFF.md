@@ -1,69 +1,113 @@
-# Successful Thor GPU milestone and rendering continuation — 2026-10-09
+# Published render-worker continuation and completed Thor GPU milestone — 2026-10-09
 
-**0.13.21 GPU Game startup is physically completed.** The user reports regular
-15–30 FPS, occasional lower dips, substantially smoother gameplay than Software,
-and no observed graphical degradation or fidelity loss. The supplied
-`coh-atlas-gameplay-20261009-111411.zip` confirms actual Game
-`zink (Turnip Adreno (TM) 740)` / GL 4.3 compatibility Mesa 22.3.6, successful
-Android/guest completion, SQL/position/powers/costume, reopened identity and
-cleanup. Treat the successful startup and observed improvement as completed
-milestones. Do not repeat the .21 WGL repair or unchanged long Software benchmark.
+**Current test APK: 0.13.22 / version code 37, published and independently
+public-audited. All five publication jobs passed.** Frozen APK/runtime source:
+`b8ea2e6c7edf67e5ffa8dc30d05d6f516930550e`. Actual Game build source:
+`5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396`, original Windows/native owner
+`37924638566`; publication/qualification/public-audit owner `37928364819`.
+Game was built once and reused without recompilation or relabeling.
+Development remains on `codex/character-persistence-continuation`, draft PR #1;
+main remains behind at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
 
-The reviewed log's 5,196 conservatively classified pure-gameplay 30-cap samples
-average **52.189 ms / 19.161 native Hz**, p95 histogram upper bound 125 ms,
-maximum 349.706 ms. This is native thread cadence, not GPU completion/display
-FPS or a controlled route comparison. User observations remain separate.
-Exact report hash, payload/source/backend pins, independent representative
-windows and limits are in
-`docs/android-evidence/renderer-sync-0.13.21-thor-20261009.json`.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.22/COH-Atlas-Gameplay-0.13.22.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.22)
+· [Publication qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37928364819)
+· [Testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.22/COH-Atlas-Gameplay-0.13.22-testing.txt).
 
-Recovery independently checked commits/branches/tags/releases/open PRs and
-Actions. Development head remained `75cc2947b180f34bb5c2ef8857bdfaf367ba85ef`,
-main `04d62616e2e1b41b10f35a04d4c798e43680d5ba`, PR #1 open/draft, latest published
-APK .21 at frozen source `20b559420b1bb0978b7eac6e6eecdfe2a468f693`.
-All six .21 owner/public-audit jobs and recent Actions were complete. The
-accessible workspace had no existing COH checkout, local changes/stashes or
-active COH build; a clean clone preserves the exact development state. This
-says nothing about an inaccessible former workspace. No completed/active
-build was duplicated.
-
-**0.13.22 is the next candidate; publication is not yet claimed here.** Existing
-renderer non-swap batch time includes queue idle gaps, and main gfx remainder
-includes hidden flushes. SLI frame waits are inactive (`sli_limit=0`); selected
-texture/VBO callbacks and readback do not explain representative sustained slow
-windows. About 3 ms swap and 2.675 ms mean Android capture freeze do not dominate
-the measured native costs. Do not call this pure GPU-bound evidence.
-
-The continuation fixes a concrete render-worker event race by arming its asleep
-flag before resetting/rechecking the empty queue. This preserves ordered draw
-commands and avoids extra per-command event calls. New bounded pipeline timings
-split main graphics phases, explicit queue-flush wait, active render-command
-wall time and gaps. Independent review of the abstract interleavings confirms
-the old missed wake and repaired handshake. Actual Windows Game and retained/new
-Win32 checks passed in run `37924638566`, native source
-`5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396`. Game is 9,494,016 bytes, SHA-256
+APK 1,560,308,488 bytes; SHA-256
+`cae5d5700ef4f2d8a054709024a11263ec2fe442255554b4b68f3f28dc79876c`.
+Release 407889321, APK asset 624900486; direct tag resolves to frozen APK source.
+Signer remains
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+Game 9,494,016 bytes; SHA-256
 `1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72`.
-That run's qualification stopped on a shallow checkout missing the parent
-commit needed by a retained routing test; no APK was built/published. The
-host-only recovery adds the required history and exact routing lane, then
-authenticates/reuses the successful native artifact without recompilation or
-relabeling. Native source/run and current publication source/run stay separate.
-Full retained qualification, packaging and public audit remain release gates.
 
-Use .21 as immutable donor and append to the accepted Game source chain.
-Retain the working GPU driver/probes, Software fallback, resolution/assets/
-shaders/features, Android UI/controls/capture, servers, saving and persistence.
-No new physical FPS gain is claimed. See `docs/COH-PERFORMANCE-0.13.22.md` and
-`docs/COH-Atlas-Gameplay-0.13.22-testing.txt`. Record the final owner source/run,
-APK/source/payload/signature and independently downloaded public audit after
-all release gates pass.
+**1,527 tests / 105 suites / zero skips**, including all seven real PostgreSQL
+fixtures, passed. The original actual Win32 Game build and native guard checks
+passed; the recovery independently recomputed its native source recipe and
+validated the original Game/CMake/Windows proof. Fresh-process SDK 35 version,
+signature v2/v3, exact typed/canonical nested package, source/ancestry, payload
+and donor-conservation checks passed before publication. A separate job
+independently downloaded the public APK, checksum and testing notes and repeated
+those audits. Exact original/current owners, artifact/container/member pins and
+publication evidence are in
+`docs/android-evidence/render-pipeline-0.13.22-publication.json`.
+The separate local download also passed whole-file API pins, full typed/canonical
+actual Game wrapper, original native artifact/CMake/Windows proof, 70/77 payload
+conservation, all 19 Java sources/DEX/resources/20 DLLs, binary manifest version-only
+change, and independently reconstructed outer provenance. Its complete result is
+embedded in the publication receipt (raw result 12,036 bytes, SHA-256
+`00d5f1f6536e630cf380fdd5ee2c05b54cc4610c59446b0deb00703dab093316`).
+Local auditing did not reverify SDK signing or rerun Windows proof executables;
+those checks passed in their recorded hosted jobs.
 
-**Exact next milestone:** physically test .22 GPU Atlas at retained .21 fidelity,
-using a short 30-cap standing/camera/populated-walk/new-scenery route and normal
-save/Finish; export the full outer ZIP with segment/FPS/temperature/visual notes.
-Use the new measured phase/queue split to choose the next remaining rendering
-optimization toward sustained 30 FPS or better. Startup and zoning stay deferred.
-Earlier checkpoints below remain history.
+The continuation fixes a concrete render-worker event race: declaring sleep
+after resetting the event and checking an empty queue could miss a producer's
+wake. The consumer now arms sleep before reset/recheck and clears it after
+finding work or returning from the wait. Queue order, draw commands, buffering
+policy and unthreaded/full-queue behavior stay intact. Bounded new
+`COH_CLIENT_RENDER_PIPELINE_V1` records separate main graphics phases, explicit
+queue-flush waits, sampled active render-command wall time and gaps. No blocking
+GPU query or glFinish is introduced. Main phase overlap, CPU/window scope and
+independent renderer sampling remain explicit; command execution can include
+driver blocking and gaps can include scheduling/producer waits.
+
+**0.13.21 GPU Game startup and observed improvement are completed device
+milestones.** The user reports regular 15–30 FPS, occasional lower dips,
+substantially smoother gameplay than Software and no observed fidelity loss.
+The supplied `coh-atlas-gameplay-20261009-111411.zip` confirms actual Game
+`zink (Turnip Adreno (TM) 740)` / OpenGL 4.3 compatibility Mesa 22.3.6, successful
+Android/guest completion, SQL/position/powers/costume, reopened identity and
+cleanup. Keep these observations separate from the following log measurements.
+Do not repeat the .21 WGL repair or an unchanged long Software benchmark.
+
+Conservatively classified pure-gameplay 30-cap windows contain 5,196 samples
+across 271.141 seconds: mean interval 52.189 ms / 19.161 native cadence Hz,
+p95 histogram upper bound 125 ms, maximum 349.706 ms. Native cadence is neither
+display refresh nor pure GPU completion or a controlled route comparison.
+Main work averages 48.951 ms with 18.008 ms main CPU/frame. Slow renderer windows
+have 53–69 ms non-swap batch wall time but only 6–7 ms renderer CPU; batches
+include queue-idle gaps. About 3 ms swap, zero readback, small selected uploads
+and 2.675 ms mean Android capture freeze do not explain the dominant native
+cost. Capture encoding can compete for CPU. Existing evidence does not isolate
+scene CPU, driver/GPU execution or queue synchronization as the remaining
+limiter. Exact records, source/backend/report pins and limits are in
+`docs/android-evidence/renderer-sync-0.13.21-thor-20261009.json` and
+`docs/COH-PERFORMANCE-0.13.22.md`.
+
+Recovery initially verified branch/head `75cc2947b180f34bb5c2ef8857bdfaf367ba85ef`,
+main, tags/releases, draft PR #1 and all six successful .21 jobs; no newer work
+or active COH build was present in the accessible workspace. That does not
+establish the state of an inaccessible former workspace. The first .22 owner
+completed the native build but qualification stopped because a shallow checkout
+lacked the parent commit required by a retained routing test; it built/published
+no APK. The host-only recovery adds history and an exact administrative routing
+lane, authenticates the completed artifact and preserves its original metadata.
+Local preflight passed all 1,527 tests but lacked seven PostgreSQL fixtures;
+those fixtures then passed in the authoritative hosted qualification.
+
+Exactly 70 of 77 runtime payloads stay byte-identical to the accepted .21 donor;
+only Game's archive, four typed integration helpers and two manifests change.
+All 19 Java sources, DEX/resources and 20 native DLLs stay exact. The working
+GPU archive/probes, Software fallback, resolution/assets/shaders/features,
+Android UI/controls/capture, servers, saving, character persistence, Wine/FEX
+and prepared cache/schema remain retained. No Mesa/probe rebuild, asset
+reimport, visual-feature reduction or save-rule relaxation occurred.
+
+**Remaining uncertainty:** .22 has no physical FPS, temperature, visual or
+control validation yet. Stable 30 FPS or better is the target, not a claim.
+Startup and zoning remain deferred.
+
+**Exact next milestone:** install .22 as an update, run Set up / update runtime
+once, select GPU test before Reopen, keep the successful .21 800x600 Performance
+preset/fan/charging state, select Show FPS and 30 FPS, and settle ten seconds.
+Use about thirty seconds each standing, camera rotation, populated walking and
+new-scenery approach, with ten-second gaps and segment/FPS/temperature/visual
+notes. Save normally, wait for Saved character verified, Finish and export the
+complete outer ZIP. Use its frame/phase/queue attribution to choose the largest
+remaining rendering cost toward sustained 30 FPS. Only a GPU regression calls
+for a short cleanup-proved Software fallback check. Earlier checkpoints below
+remain history.
 
 # Published Thor GPU-start repair — 2026-10-08
 

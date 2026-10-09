@@ -60,7 +60,7 @@ Exact identities, representative independent records, analyzer output pins
 and limits are retained in
 `android-evidence/renderer-sync-0.13.21-thor-20261009.json`.
 
-## Next implementation and qualification
+## Implementation and completed publication
 
 The native continuation repairs a concrete render-worker lost-wakeup race:
 the worker previously declared itself asleep after resetting the event and
@@ -111,13 +111,34 @@ separately; Game, Mesa and both GPU probes are not rebuilt. The package verifier
 also checks the actual nested client manifest through its full typed ancestry
 and exact canonical bytes, including boolean/integer/float rejection tests.
 
-Publication requires actual Windows Game/native checks, the complete retained
-99-suite qualification plus focused new checks and seven real PostgreSQL
-fixtures, exact donor conservation, SDK/signing/source/payload verification,
-and independent download/audit of the published APK. This source checkpoint
-does not claim those jobs have completed or a new APK has been published.
+Publication completed at frozen APK/runtime source
+`b8ea2e6c7edf67e5ffa8dc30d05d6f516930550e`, owner run `37928364819`.
+All five jobs passed: source/publication gate, retained native recovery,
+qualification, APK packaging/publication and independent public-byte audit.
+**1,527 tests across 105 suites, zero skips**, including all seven actual
+PostgreSQL fixtures, passed. The original Windows build/checks remain bound to
+source `5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396` / run `37924638566`;
+no completed native build was repeated or relabeled. Local preflight ran all
+1,527 tests but lacked seven PostgreSQL fixtures; CI executed those fixtures.
 
-Follow `COH-Atlas-Gameplay-0.13.22-testing.txt` after the release gates pass.
+SDK 35 package/version code 37, signature v2/v3 and retained certificate,
+actual typed/canonical nested Game ancestry, exact donor conservation and
+source/payload checks passed in a fresh process before publication. An
+independent job downloaded the public APK, checksum and testing notes and
+repeated the signer/source/native/payload audits. The APK is 1,560,308,488 bytes,
+SHA-256 `cae5d5700ef4f2d8a054709024a11263ec2fe442255554b4b68f3f28dc79876c`.
+Exact release/tag/assets, original/current owners, artifacts and audit evidence
+are recorded in `android-evidence/render-pipeline-0.13.22-publication.json`.
+
+A second independently downloaded public APK passed exact whole-file pins,
+actual typed/canonical nested and outer manifest reconstruction, original native
+artifact/Game/source/schema/CMake/proof identities, 70/77 payload conservation,
+all 19 Java sources/DEX/resources/20 DLLs and binary Android version-only checks.
+Its full result is embedded in the publication evidence above. Local signing
+verification and Windows proof executable reruns were not performed; their
+recorded hosted checks passed. Neither audit establishes physical FPS gains.
+
+Follow `COH-Atlas-Gameplay-0.13.22-testing.txt` for the next physical test.
 No sustained FPS gain, lower temperature, or visual correctness for the changed
 Game is claimed before physical testing. The exact next milestone is a
 successful .22 GPU Atlas route at retained fidelity, with native frame/pipeline

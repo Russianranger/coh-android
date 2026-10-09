@@ -1,4 +1,7 @@
 name: Thor render worker wake repair and focused frame attribution
+# Public 0.13.22 APK source: b8ea2e6c7edf67e5ffa8dc30d05d6f516930550e.
+# Game remains the original 5af0e27cc / run 37924638566 build; the completed
+# release gate below prevents rebuilding or republishing this checkpoint.
 on:
   push:
     branches: [codex/character-persistence-continuation]
