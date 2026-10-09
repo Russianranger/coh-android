@@ -126,8 +126,32 @@ Release gates include the actual staged WorkerThread compiled and run on Win32,
 adversarial wake interleavings, burst conservation, disabled-diagnostics work,
 ring pressure/cancellation/unthreaded behavior, sparse header fixtures, retained
 regressions and real PostgreSQL fixtures, exact donor/native/helper/DEX closure,
-SDK/signing and a separate actual-public-download audit. Publication-specific
-counts, hashes and links are recorded after those gates pass.
+SDK/signing and a separate actual-public-download audit. All gates passed for
+the published .25 APK: **1,673 tests / 117 suites / zero skips**, seven real
+PostgreSQL fixtures, 9,739 source pins, retained .24 Java/DEX, 70 unchanged runtime
+payloads and seven bounded changes. The independent root receipt/source audit
+and fresh frozen-source production reader passed with no exemptions. The root
+review authenticated bounded artifacts and source pins; the separate hosted
+audit downloaded and verified the actual public APK with SDK tools.
+
+Publication/runtime source is `d6c7a89ef4f73b563a188d9f4562411f1e917dbe`,
+[owner 37992855950](https://github.com/Russianranger/coh-android/actions/runs/37992855950).
+The one Game compilation and original Win32 proof remain owned by
+`c512e912a004b66886a7667640aa1a967e95de64` / `37988347729`; the final publisher
+reused those exact bytes. Two original qualification attempts hit Docker Hub's
+PostgreSQL pull limit before tests, and the first host recovery stopped on an
+incorrect GitHub comparison-field assumption. Host PostgreSQL 16 and validation
+of GitHub's actual complete commit/ancestry response resolved those publication
+issues. No failed recovery rebuilt Game. Failed attempts and successful native
+ownership remain separate in the publication evidence.
+
+[Published APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk):
+1,560,345,352 bytes, SHA-256
+`5decd49a11652842d25bf47b07cccf2638d21760f3cd6b035bf934a8e2cfdd76`.
+Game: 9,499,648 bytes, SHA-256
+`5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b`.
+Exact release/artifact/native/source/SDK receipts and conservative physical-test
+flags are in `android-evidence/render-queue-0.13.25-publication.json`.
 
 The next physical milestone is the same short GPU Atlas route, with walking,
 camera and ordinary Save/Finish, to determine whether this synchronization change

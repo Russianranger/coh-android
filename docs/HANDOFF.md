@@ -1,7 +1,59 @@
-# .25 render-worker optimization in progress; .24 device evidence recovered — 2026-10-09
+# Published .25 render-worker wake coalescing — 2026-10-09
 
-**Runtime setup and world login now pass on the AYN Thor. FPS regression remains
-confirmed.** The latest user report is .24, complete export
+**Current test APK: 0.13.25 / version code 40. All five publication jobs passed,
+including the separate audit of the actual public APK. Physical .25 FPS gains
+and sustained 30 FPS remain unverified.** Publication/runtime source:
+`d6c7a89ef4f73b563a188d9f4562411f1e917dbe`, owner `37992855950`.
+New Game source: `c512e912a004b66886a7667640aa1a967e95de64`, original native owner
+`37988347729`. Game was compiled once; the final publisher authenticated and
+reused that exact executable and its original Win32 proofs. Development remains
+on `codex/character-persistence-continuation`, open draft PR #1; main remains
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.25)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37992855950)
+· [Focused testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.25/COH-Atlas-Gameplay-0.13.25-testing.txt).
+
+APK: **1,560,345,352 bytes**, SHA-256
+`5decd49a11652842d25bf47b07cccf2638d21760f3cd6b035bf934a8e2cfdd76`.
+Game: 9,499,648 bytes, SHA-256
+`5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b`.
+Runtime manifest/generation SHA-256:
+`2035584523b5c19c6359c145ea7a366c1172e115031d70f5cdc8be742c83160c`.
+Install as an update, preserve app data/imports/THORHERO, and apply the runtime
+update once to activate the changed Game. No asset reimport or setup benchmark
+is requested.
+
+Validation: **1,673 tests across 117 suites, zero skips, seven real PostgreSQL
+fixtures and 9,739 qualified source pins**. Original Win32 scheduling fixtures
+passed. The paused 1,024-command worker fixture reduces producer event calls
+from 1,024 to one with ordered dispatch conserved; this is work reduction, not
+a device FPS result. The fresh-process SDK/signature/payload audit and separate
+actual-public-download audit passed. An independent root receipt/source audit
+and a fresh frozen-source production reader also passed with no exemptions;
+they did not replay native builds, tests or the large public APK download.
+
+All 19 .24 Java sources and the exact .24 DEX are retained. Seventy of 77 runtime
+payloads remain byte-identical; the seven changes are the Game archive, four
+verification helpers and two manifests. Twenty client DLLs, successful GPU
+driver/probes, server/assets, graphics settings, controls, character persistence,
+ordinary Save/Finish and Software fallback remain preserved. Game/GPU/probe/
+server builds were not repeated in the final publication run.
+
+Recovery history is explicit: the original native job passed, but its two host
+qualification attempts failed before checkout/tests because Docker Hub denied
+the PostgreSQL image pull. Host recovery uses PostgreSQL 16 directly on the
+runner. The first host recovery (`e69f2a66abf02e26712691bb1cd29955fe671e8b`,
+owner `37992199749`) stopped before artifact download because its comparison
+reader expected a nonexistent GitHub `head_commit` field. The final reader
+validates the actual complete commit list, ancestry and exact three-file
+host-only diff. No recovery attempt rebuilt Game; the failed attempts published
+no APK. Original build ownership and failed attempts are retained separately from the
+successful final publisher in the evidence below.
+
+**Runtime setup and world login now pass on the AYN Thor. The .24 FPS regression
+is confirmed.** The latest physical report is .24, complete export
 `coh-atlas-gameplay-20261009-195656.zip`, SHA-256
 `ab4e657d9cbcf133f3875d11b3c951ad5cfc4e0381e1e9a19e512f6950136521`.
 The owned Game uses `zink (Turnip Adreno (TM) 740)` with no observed Software
@@ -10,37 +62,40 @@ accepted and ordinary strict Save/Finish passed. Saved native position changed;
 explicit input-effect/overall gameplay qualification remain false. Do not claim
 full controls qualification from submitted inputs alone.
 
-888 pure-gameplay intervals at observed cap30 average **194.165 ms / 5.150 Hz**;
+888 pure-gameplay intervals at observed cap 30 average **194.165 ms / 5.150 Hz**;
 main CPU averages 54.245 ms/frame. Submission/graphics wall dominates; independent
-non-swap renderer wall is about180 ms and swap3.5 ms. Instrumented readback count
+non-swap renderer wall is about 180 ms and swap 3.5 ms. Instrumented readback count
 is zero. Detailed pipeline timing was disabled and emitted no records, so sampler
 disabling did not restore performance. Pure GPU time, full-ring waits and scene
-phase costs remain unresolved. Existing 800x600 UI and render_scale0.75 are retained.
-The .21 user-observed smoother15–30FPS/no fidelity loss and successfulGPU startup
-remain completed milestones, not a sustained30FPS guarantee.
+phase costs remain unresolved. Existing 800×600 UI and render scale 0.75 are retained.
+The .21 user-observed smoother 15–30 FPS/no fidelity loss and successful GPU startup
+remain completed milestones, not a sustained 30 FPS guarantee.
 
 Recovery began from clean `fffd44f108fbcb871e35570df17d934f2cc158cd` and confirmed
-.24 as the newest release, no newer remote work and no active native/publication
-build. Development remains on `codex/character-persistence-continuation`, draft
-PR#1; main remains behind. .24 stays the published APK until .25 gates pass.
+.24 as the newest release at that time, with no newer remote work or active
+native/publication build. The .25 publication above supersedes that checkpoint.
 
-The .25 candidate coalesces repeated producer event signals for the render-worker
+The .25 release coalesces repeated producer event signals for the render-worker
 instance and adds sparse setup/sort/draw and full-ring-wait observations. It
 preserves queue work/order, graphics fidelity, other workers/unthreaded behavior,
 .23 movement/save controls and sampler-off Reopen, .24 setup/Java/DEX, assets,
-character persistence and Software fallback. New Game compilation is required;
-completed GPU/probe/server/native ancestor builds must not be repeated. Current
-producer receipts remain separate from frozen ancestry. Host/native fixtures
+character persistence and Software fallback. The required new Game compilation
+is complete; completed GPU/probe/server/native ancestor builds were retained.
+Current producer receipts remain separate from frozen ancestry. Host/native fixtures
 establish behavior and work reduction; no physical FPS gain is claimed.
 
 Reviewed raw evidence: `docs/android-evidence/render-queue-0.13.24-thor-20261009.json`.
+Publication evidence: `docs/android-evidence/render-queue-0.13.25-publication.json`.
 Implementation, timing scope and release gates: `docs/COH-PERFORMANCE-0.13.25.md`.
 Focused route: `docs/COH-Atlas-Gameplay-0.13.25-testing.txt`.
 
-**Exact next milestone:** finish native/host/SDK/public-download qualification,
-publish .25, then measure the same short GPU Atlas standing/camera/walking route
-and strict Save/Finish with unchanged visuals. This will test coalescing benefit
-and separate sparse scene wall from full-ring pressure; pure GPU duration remains
+**Exact next milestone:** physically test .25 on the same short GPU Atlas route:
+ten seconds settling, then about 30 seconds standing, 30 seconds rotating the
+camera and 30 seconds walking; confirm walking/Jump/camera/click, then strict
+Save/Finish and the complete outer report ZIP. Keep the same graphics, fan and
+charging settings. Export early if movement is stuck or performance unusable.
+This will test whether coalescing helps and separate sparse scene wall from
+full-ring pressure; pure GPU duration remains
 unmeasured. Setup/login/GPU preflight are completed milestones. Startup, zoning
 and a long unchanged Software benchmark remain deferred.
 
