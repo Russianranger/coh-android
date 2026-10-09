@@ -1,19 +1,54 @@
-# Thor .22 regression reviewed; .23 session repair and timing isolation — 2026-10-09
+# Published .23 movement deadline repair and rendering timing isolation — 2026-10-09
 
-**First qualification passed; host-only receipt correction is ready. .23 is
-not yet published.** Initial .23 source `d2e686582f493b6951eff4ad44b50b269081cabc`,
-owner `37963422463`, passed all 107 suites / 1,556 tests / zero skips, including
-all seven real PostgreSQL fixtures. Packaging stopped before writing an APK:
-the new contract check compared JSON insertion order against a sorted
-qualification record. Sorted typed comparison and a fresh-reader regression
-repair that check without changing guest or native bytes. The new owner must
-qualify its own source; no completed native Game build is repeated or relabeled.
-Recovery
-verified branch/head `71fca3f0679bc102f70297bbad395d1de5cacc6e`, open draft
-PR #1 and main at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. No newer remote
-work or active owner build was found. The pruned accessible workspace contained
-no previous checkout or local build; a clean clone recovered the exact branch.
-The current public APK remains .22 until the new owner completes publication.
+**Current test APK: 0.13.23 / version code 38, published; all five owner jobs
+passed, including the independent public-download SDK audit.** Frozen APK/runtime
+source: `ac255fee7546b28a4ae06074f385d3ad73b235ad`; publication owner
+`37965997791`. Development remains on `codex/character-persistence-continuation`,
+open draft PR #1. Main remains behind at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.23/COH-Atlas-Gameplay-0.13.23.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.23)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37965997791)
+· [Focused testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.23/COH-Atlas-Gameplay-0.13.23-testing.txt).
+
+APK 1,560,308,488 bytes; SHA-256
+`101780ae658f5adeaced4f5415bb856e6a65962f43175ccb9af2284777863cb2`.
+Release 408174624; APK asset 625687045; tag resolves directly to the frozen source.
+Signer remains `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+Game remains exactly the accepted .22 9,494,016-byte executable, SHA-256
+`1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72`,
+original source `5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396` / native owner
+`37924638566`. It was recovered without another native build or relabeling.
+
+**1,557 tests / 107 suites / zero skips**, all seven real PostgreSQL fixtures
+and 9,712 source pins passed. A separate fresh process accepted the authenticated
+qualification with no exemptions. SDK 35 version, retained signer, exact
+canonical/typed native ancestry, all 77 payloads and donor-conservation checks
+passed before publication and again on independently downloaded public bytes.
+Exactly 67/77 payloads remain identical to the .21 donor; the .22 Game and all
+20 DLLs, 19 Java sources, DEX/resources and working GPU archive/probes remain
+retained. The separate local download also passed actual whole-file/API pins,
+all payloads, the canonical typed Game wrapper, source/native proof, seven helpers,
+all Java/DEX/resources/DLLs, exact GPU archive and independently reconstructed
+runtime manifests. Against the attached .22 runtime's 70 file pins, exactly three
+helpers and its client verification manifest change; Game/GPU bytes remain exact.
+Its raw result is 4,111 bytes, SHA-256
+`56c485bd33cd5f054ec9903c574994651f8df4f1ce4d0f93c0924ac139f9bf7e`.
+Local auditing did not rerun Windows executables or SDK signing; those checks
+passed in their recorded hosted owners. Exact jobs, APK/tag/signing/ZIP/member
+pins, qualification, both audits and the failed-attempt history are recorded in
+`docs/android-evidence/session-repair-0.13.23-publication.json`.
+
+Recovery started at `71fca3f0679bc102f70297bbad395d1de5cacc6e`; current refs,
+PR, releases and Actions showed no newer work or active owner build. The pruned
+accessible workspace had no previous checkout/local build; a clean clone
+recovered the exact branch. Initial .23 source
+`d2e686582f493b6951eff4ad44b50b269081cabc` / owner `37963422463` passed
+1,556 tests / 107 suites / zero skips and all seven PostgreSQL fixtures, then
+packaging stopped before writing an APK because the new contract compared JSON
+member order against the sorted qualification record. The host-only correction
+uses sorted typed JSON and a fresh-reader regression. The successful new owner
+qualified its own source; original guest/Game bytes and native proof were retained.
 
 The user reports .22 FPS worse and no walking after world entry, while clicks
 and camera rotation work. Screenshot: 4.86 FPS / 205.8 ms. The attached export
@@ -35,7 +70,9 @@ The inherited startup-only policy does not itself block movement or saving.
 Its status wording remains misleading, but normal Save/strict committed proof/
 Finish are supported when the budget is accepted. Keep this policy to preserve
 tasks and avoid repeating the authored-task gate. The failed .22 test requested
-no save; cleanup completed and no fatal native exception was observed.
+no save; cleanup completed and no fatal native exception was observed. Later
+observation stopped when the owned game-window/evidence check lost evidence;
+that separate late failure has not been explained or physically reproduced.
 
 .23 Reopen disables the added detailed pipeline timing after the typed current
 Game gate, retaining earlier frame/scene/renderer counters. The exact .22 Game,

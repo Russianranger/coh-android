@@ -86,7 +86,34 @@ contract comparison used insertion-order bytes while qualification sorted JSON
 keys. The host-only correction compares sorted typed JSON and adds a fresh
 interpreter reader regression; guest and native bytes stay unchanged. New
 publication must qualify its own source; the old receipt is not relabeled.
-Publication validation and exact download pins will be recorded separately.
+The successful frozen APK/runtime source is
+`ac255fee7546b28a4ae06074f385d3ad73b235ad`, owner `37965997791`.
+All five owner jobs passed: 1,557 tests / 107 suites / zero skips, all seven
+real PostgreSQL fixtures and 9,712 source pins; fresh-process SDK 35 signer,
+version, canonical native ancestry and payload audits passed before publication
+and again on the independently downloaded public APK/checksum/testing notes.
+The exact .21 donor comparison retains 67/77 payloads; the attached .22 runtime
+comparison changes only three helper file pins and its client verification
+manifest. Original Game, GPU archive and all visual assets remain retained.
+
+[0.13.23 APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.23/COH-Atlas-Gameplay-0.13.23.apk):
+1,560,308,488 bytes, SHA-256
+`101780ae658f5adeaced4f5415bb856e6a65962f43175ccb9af2284777863cb2`.
+Release 408174624, APK asset 625687045, version code 38 and original signer
+`92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+A separate local actual public download also passed whole-file/API pins,
+all 77 payloads, full canonical typed Game ancestry, original native/source proof,
+seven frozen helpers, 19 Java sources/DEX/resources/20 DLLs, exact GPU archive
+and independently reconstructed runtime manifests. Its 4,111-byte raw result,
+SHA-256 `56c485bd33cd5f054ec9903c574994651f8df4f1ce4d0f93c0924ac139f9bf7e`,
+is embedded in `android-evidence/session-repair-0.13.23-publication.json` with the
+exact jobs, authenticated receipts and original/current owners. SDK signing and
+Windows execution remain their hosted checks; neither was claimed locally.
+Runtime `task_gate_required=True` remains exact to the donor. The startup-only
+operation policy suppresses redundant authored-task qualification and still
+permits ordinary Save/Finish after an accepted budget.
+The later .22 observation stopped after an owned window/evidence check lost
+evidence; no fatal native exception was established, and that cause remains open.
 
 ## Exact next milestone
 
