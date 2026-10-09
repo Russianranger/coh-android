@@ -1,41 +1,82 @@
-# .23 runtime setup interruption reviewed; .24 installer repair in progress — 2026-10-09
+# Published .24 bounded runtime setup copy repair — 2026-10-09
 
-**Current public APK remains .23.** Recovery confirmed clean branch/head
-`be7b0ccfe0affbf8615e0b055559e532c379d950`, draft PR #1, unchanged main,
-latest .23 tag/release and all completed Actions. No newer work, active native
-build or accessible local build needed recovery. Existing .23 APK and its
-native/publication evidence remain available and are reused without rebuilding Game.
+**Current test APK: 0.13.24 / version code 39, published; all five owner jobs
+passed, including the separate actual-public-download SDK audit.** New APK/Java
+source: `3d73e9b4c71fe3f87de6bf0bb41fc0ce50f3f6ce`; publication owner
+`37973264500`. Runtime source and installed generation remain exactly .23:
+`ac255fee7546b28a4ae06074f385d3ad73b235ad`. Original Game/native source remains
+`5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396` / native owner `37924638566`.
+These producers are recorded separately; no native or GPU build was repeated.
+Development stays on `codex/character-persistence-continuation`, draft PR #1;
+main stays at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
 
-The new Thor export `coh-atlas-gameplay-20261009-175938.zip` (1,463 bytes,
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.24/COH-Atlas-Gameplay-0.13.24.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.24)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37973264500)
+· [Focused testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.24/COH-Atlas-Gameplay-0.13.24-testing.txt).
+
+APK 1,560,316,680 bytes; SHA-256
+`7ae9e8b21e48c30e1d6b9373e676ec7b6eb4727db7fa7b313281fb30a8ab38b0`.
+Release 408226138; APK asset 625833895; tag resolves to the frozen new APK source.
+Signer remains `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282`.
+**1,605 tests / 110 suites / zero skips**, all seven real PostgreSQL fixtures and
+9,721 source pins passed. Root separately authenticated all five bounded evidence
+ZIPs by API size/digest/owner, accepted qualification in a fresh production reader
+without exemptions, and verified frozen sources, reviewed Java hashes, retained
+actual .23 donor bytes/native proof and current receipt/release pins. Actual .24
+SDK signing, version-only binary manifest and public APK bytes were checked by
+the successful hosted audits; root did not duplicate the large public download or
+replay native executables. Exact jobs, artifact/member/receipt pins, producer
+ancestry and audit limits are in
+`docs/android-evidence/setup-copy-0.13.24-publication.json`.
+
+Recovery started from clean .23 documentation checkpoint
+`be7b0ccfe0affbf8615e0b055559e532c379d950`. Branches, tags, release, PR, Actions
+and accessible local state showed no newer work or active build to recover.
+Historical Game, GPU/probe and publication owners skipped this bounded change;
+only the new Java/DEX shell was compiled and published.
+
+The Thor export `coh-atlas-gameplay-20261009-175938.zip` (1,463 bytes,
 SHA-256 `bbd89bf357cee6e2e9006be2d028cec8d49cdaf6e23ef06a8c391ba2b7ff5046`)
 records PID 19993 interrupted during `Copying runtime assets`,
-`1152 / 1275 MiB verified`, 54.176 seconds after setup started. Its matching
-Android exit record is reason 3 (`REASON_LOW_MEMORY`), importance 100, 754 ms
-later. Last recorded Java heap is 44.75 MB / 256 MiB, native heap 28.51 MB;
-PSS/RSS are historical samples, not peaks. System available memory and current
-asset were not recorded. This confirms an Android system low-memory kill and
-leaves the exact pressure source unresolved. It does not establish Java OOME.
-No Game/renderer/FPS/movement/save test was reached.
+`1152 / 1275 MiB verified`, after 54.176 seconds. Matching Android exit reason
+3 (`REASON_LOW_MEMORY`), importance 100, is 754 ms later. Java heap was last
+44.75 MB / 256 MiB, native allocated heap 28.51 MB; exit RSS/PSS are historical
+samples, not peaks. This establishes a system low-memory kill, not Java OOME or
+its precise pressure source. Current asset/system available memory were absent;
+the inferred .pigg boundary is not an observed culprit. Verified Android 13 source
+uses streaming for large compressed assets, so a whole 93 MiB inflate allocation
+is unsupported. No Game/renderer/movement/save/FPS test was reached in this export.
+Evidence and limits: `docs/android-evidence/setup-copy-0.13.23-thor-20261009.json`.
 
-The .24 Android-shell-only repair keeps the exact .23 runtime manifest, all 77
-payloads, original Game/GPU and existing ready-generation identity. It targets
-stored-asset source mappings with bounded descriptor streams, reuses only fully
-verified safe same-generation staging files on interrupted retry, paces setup
-I/O and persists system-memory/current-asset/guard metrics. Four existing Java
-classes and DEX change; accounts/imports/persistence, graphics, controls, save
-acceptance and .23 movement/sampler policies remain retained. Validation and
-publication are pending. Local validation passed all 79 relevant Java/setup
-tests and 114 package/classifier tests, with zero skips. Combined setup read/
-write/hash work is capped at 32 MiB/s, adaptively 8 MiB/s near the existing reserve;
-steady progress may take longer. No physical crash prevention or FPS gain is claimed.
+The repair changes exactly four existing Java classes plus DEX; 15 of 19 Java
+sources, all 77 runtime payloads, both runtime manifests/generation hash, Game,
+GPU/probes, resources, guest helpers and assets remain exact .23. Stored APK
+assets use bounded descriptor streams; compressed assets retain streaming. Only
+fully size/hash verified, single-link regular files in the exact owned staging
+generation are reused on retry. Corrupt/partial/linked files are recopied; unsafe
+staging and success markers cannot activate a runtime. Combined setup read/write/
+hash work is paced to 32 MiB/s under healthy memory, adaptively 8 MiB/s near the
+existing reserve, while retaining sync/cancellation/pressure guards. Durable
+checkpoints add asset/copy/hash progress, system available/threshold/low-water
+memory, process anonymous/file RSS and I/O guard counters. Setup may take longer;
+account/import/character state, ready generations and atomic activation are
+preserved. Existing ready .23 runtimes need no generation refresh or asset reimport.
 
-Evidence: `docs/android-evidence/setup-copy-0.13.23-thor-20261009.json`;
-implementation/limits: `docs/COH-SETUP-COPY-0.13.24.md`; focused test:
-`docs/COH-Atlas-Gameplay-0.13.24-testing.txt`. Exact next milestone: one data-
-preserving .24 setup attempt reaches Runtime ready (or promptly exports new
-memory/asset evidence), followed by accepted walking/Jump/save and the already
-requested short GPU 30-cap route. .21 GPU startup/improvement/fidelity milestones
-remain completed. Startup, zoning and long unchanged Software runs remain deferred.
+**Physical .24 setup survival remains unverified.** The exact pressure mechanism,
+.23 walking/Jump authorization repair and same-Game Reopen sampler isolation/FPS
+outcome remain pending. The .21 successful GPU startup and user-observed smoother
+15–30 FPS/no fidelity loss stay completed milestones; sustained 30 FPS is not
+established. Implementation/validation limits: `docs/COH-SETUP-COPY-0.13.24.md`.
+
+**Exact next milestone:** install .24 as an update, keep data/imports/THORHERO,
+and run Setup once to Runtime ready. If interrupted, reopen and export immediately
+before another operation. After ready, retain GPU/800x600/fan/charging settings,
+confirm accepted walking and Jump, then the short 30-second standing/camera/walking
+30-cap route, normal neutral wait, verified Save/Finish and complete outer ZIP.
+This resolves setup recovery first, then movement and ordinary GPU frame cadence.
+Startup, zoning and another long unchanged Software comparison remain deferred.
+See `docs/COH-Atlas-Gameplay-0.13.24-testing.txt`.
 
 Earlier published checkpoints below remain history.
 

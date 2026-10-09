@@ -67,9 +67,25 @@ memory values and compact guard counters. This is a resource-pressure mitigation
 more precise next diagnostic, not a physically proven crash or FPS improvement.
 Steadier installation may take longer; gameplay I/O and frame pacing are unchanged.
 
-Implementation is complete. All 79 relevant Java/setup tests and 114 package/
-classifier tests passed without skips. Authoritative full hosted qualification,
-APK signing and public-download auditing are pending. Device evidence and its interpretation limits are in
+0.13.24 / version code 39 is published from frozen APK/Java source
+`3d73e9b4c71fe3f87de6bf0bb41fc0ce50f3f6ce`, owner `37973264500`.
+All five jobs passed: recovery, qualification, APK publication and the separate
+actual-public-download SDK audit, with its changes gate. Full qualification:
+**1,605 tests / 110 suites / zero skips**, all seven real PostgreSQL fixtures,
+9,721 source pins. Root authenticated the five bounded evidence ZIPs, checked a
+fresh production qualification reader and independently verified frozen sources,
+retained actual .23 donor/native bytes and current receipt/release pins. Root did
+not repeat the large .24 APK download, SDK checks or native proof execution.
+
+[Download APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.24/COH-Atlas-Gameplay-0.13.24.apk)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/37973264500).
+
+APK: 1,560,316,680 bytes, SHA-256
+`7ae9e8b21e48c30e1d6b9373e676ec7b6eb4727db7fa7b313281fb30a8ab38b0`.
+Exact source/runtime/native producer distinction, changed Java/new DEX pins,
+all 77 retained payloads, signer and authenticated artifact/member/job evidence:
+`android-evidence/setup-copy-0.13.24-publication.json`.
+Physical setup completion, crash prevention and FPS improvement remain pending. Device evidence and its interpretation limits are in
 `android-evidence/setup-copy-0.13.23-thor-20261009.json`.
 
 ## Exact next milestone
