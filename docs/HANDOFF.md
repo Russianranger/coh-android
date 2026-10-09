@@ -1,6 +1,14 @@
 # Thor .22 regression reviewed; .23 session repair and timing isolation — 2026-10-09
 
-**Implementation ready for qualification; .23 is not yet published.** Recovery
+**First qualification passed; host-only receipt correction is ready. .23 is
+not yet published.** Initial .23 source `d2e686582f493b6951eff4ad44b50b269081cabc`,
+owner `37963422463`, passed all 107 suites / 1,556 tests / zero skips, including
+all seven real PostgreSQL fixtures. Packaging stopped before writing an APK:
+the new contract check compared JSON insertion order against a sorted
+qualification record. Sorted typed comparison and a fresh-reader regression
+repair that check without changing guest or native bytes. The new owner must
+qualify its own source; no completed native Game build is repeated or relabeled.
+Recovery
 verified branch/head `71fca3f0679bc102f70297bbad395d1de5cacc6e`, open draft
 PR #1 and main at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. No newer remote
 work or active owner build was found. The pruned accessible workspace contained

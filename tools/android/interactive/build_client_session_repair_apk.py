@@ -105,6 +105,19 @@ def session_repair_contract():
         'physical_fps_gain_validated': False}
 
 
+def session_repair_contract_matches(value):
+    """Compare typed JSON independently of serialization member order.
+
+    Qualification writes sorted members, whereas the inherited APK encoder
+    preserves insertion order. A fresh reader must accept either object order
+    while still rejecting Python's bool/int/float equality collisions.
+    """
+    return type(value) is dict and json.dumps(value, sort_keys=True,
+        separators=(',', ':'), allow_nan=False) == json.dumps(
+            session_repair_contract(), sort_keys=True,
+            separators=(',', ':'), allow_nan=False)
+
+
 def verification_manifests(donor, updates, commit, native):
     client, runtime = _original_verification_manifests(donor, updates, commit, native)
     runtime['client_render_pipeline']['native_recompiled'] = False
@@ -123,8 +136,7 @@ def payload_boundaries(payloads, donor):
 
 def validate_qualification(q, commit):
     _original_validate_qualification(q, commit)
-    require(type(q.get('client_session_repair')) is dict
-        and shared.encoded(q['client_session_repair']) == shared.encoded(session_repair_contract()),
+    require(session_repair_contract_matches(q.get('client_session_repair')),
         'Exact .23 owned session budget and unchanged Game instrumentation isolation required')
     return q
 
@@ -187,8 +199,7 @@ def verify_report(args, commit):
     native = validate_native(args.client_directory, commit, donor); report = read_json(args.build_report)
     require(report.get('format') == 1 and report.get('apk') == APK_NAME and report.get('repository_commit') == commit
         and report.get('runtime_repository_commit') == commit and report.get('retained_runtime_repository_commit') == DONOR_COMMIT
-        and type(report.get('client_session_repair')) is dict
-        and shared.encoded(report['client_session_repair']) == shared.encoded(session_repair_contract())
+        and session_repair_contract_matches(report.get('client_session_repair'))
         and report.get('scope') == QUALIFICATION_SCOPE and report.get('donor') == donor_link()
         and report.get('application_id') == builder().APP_ID and report.get('version_name') == VERSION_NAME and report.get('version_code') == VERSION_CODE
         and report.get('abi') == 'arm64-v8a' and report.get('signer_certificate_sha256') == SIGNER and report.get('signing_key_created') is False

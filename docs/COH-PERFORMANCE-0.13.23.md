@@ -79,6 +79,13 @@ prepared cache and save acceptance. Startup and zoning remain deferred.
 
 Input pins, representative source/backend evidence, clocks and interpretation
 limits are recorded in `android-evidence/session-repair-0.13.22-thor-20261009.json`.
+The initial owner `37963422463`, source `d2e686582f493b6951eff4ad44b50b269081cabc`,
+passed all 107 suites / 1,556 tests / zero skips, including all seven real
+PostgreSQL fixtures. Packaging stopped before creating an APK because a new
+contract comparison used insertion-order bytes while qualification sorted JSON
+keys. The host-only correction compares sorted typed JSON and adds a fresh
+interpreter reader regression; guest and native bytes stay unchanged. New
+publication must qualify its own source; the old receipt is not relabeled.
 Publication validation and exact download pins will be recorded separately.
 
 ## Exact next milestone

@@ -2,6 +2,12 @@
 """Adversarial boundaries for the host-only .23 session repair publication."""
 import copy
 import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 from unittest import mock
 
@@ -154,6 +160,36 @@ class SessionRepairPublication(unittest.TestCase):
                 wrong['client_session_repair'][field] = value
                 with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                     builder.validate_qualification(wrong, 'a'*40)
+
+    def test_fresh_reader_accepts_sorted_qualification_and_report_member_order(self):
+        # The qualifier writes sorted JSON, while the retained APK encoder
+        # preserves insertion order. Replay both writers in a fresh process
+        # through the actual duplicate-key-rejecting publication reader.
+        document = {'client_session_repair': builder.session_repair_contract()}
+        code = '''
+import sys
+from pathlib import Path
+from unittest import mock
+import build_client_session_repair_apk as builder
+for name in sys.argv[1:]:
+    receipt = builder.read_json(Path(name))
+    assert builder.session_repair_contract_matches(receipt['client_session_repair'])
+    with mock.patch.object(builder, '_original_validate_qualification', return_value=receipt):
+        assert builder.validate_qualification(receipt, 'a'*40) is receipt
+    receipt['client_session_repair']['format'] = True
+    assert not builder.session_repair_contract_matches(receipt['client_session_repair'])
+'''
+        with tempfile.TemporaryDirectory(prefix='coh-session-repair-reader-') as temporary:
+            qualification, report = (Path(temporary)/name for name in ('qualification.json', 'report.json'))
+            qualification.write_text(json.dumps(document, sort_keys=True, indent=2)+'\n')
+            report.write_bytes(builder.shared.encoded(document))
+            self.assertNotEqual(qualification.read_bytes(), report.read_bytes())
+            environment = dict(os.environ, PYTHONPATH=os.pathsep.join(
+                str(path) for path in sys.path if path))
+            completed = subprocess.run([sys.executable, '-c', code,
+                str(qualification), str(report)], cwd=builder.ROOT,
+                env=environment, check=False, capture_output=True, text=True, timeout=30)
+            self.assertEqual(completed.returncode, 0, completed.stdout+completed.stderr)
 
     def test_workflow_has_one_host_owner_no_native_rebuild_and_actual_public_byte_audit(self):
         import yaml
