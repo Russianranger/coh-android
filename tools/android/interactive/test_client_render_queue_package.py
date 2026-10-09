@@ -1,7 +1,9 @@
 """Adversarial Game-only .25 publication over the actual .24 Android shell."""
 import argparse
+import contextlib
 import copy
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -9,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
 from unittest import mock
 import zipfile
 
@@ -185,7 +188,7 @@ class RenderQueuePublication(unittest.TestCase):
         self.assertFalse(workflow['concurrency']['cancel-in-progress'])
         client=workflow['jobs']['client'];self.assertEqual(client['runs-on'],'windows-2025-vs2026')
         native_builds=[step for step in client['steps'] if 'cmake --build' in step.get('run','')]
-        self.assertEqual(len(native_builds),1);self.assertEqual(native_builds[0]['if'],"inputs.reuse_native_run_id == ''")
+        self.assertEqual(len(native_builds),1);self.assertEqual(native_builds[0]['if'],"needs.changes.outputs.reuse_native_run_id == ''")
         self.assertIn('--target Game',native_builds[0]['run']);self.assertIn('--config OptDebug',native_builds[0]['run'])
         self.assertIn('validate-native-reuse',text);self.assertIn('vcvars32.bat',text)
         self.assertIn('test_client_render_queue_native.py --windows-qualify',text)
@@ -211,6 +214,75 @@ class RenderQueuePublication(unittest.TestCase):
                 if step.get('uses','').startswith('actions/checkout@'):
                     self.assertEqual(step['with']['fetch-depth'],2)
                     self.assertFalse(step['with']['persist-credentials'])
+
+    def test_actual_workflow_gate_reuses_only_exact_bounded_c512_host_recovery(self):
+        import yaml
+        workflow=yaml.safe_load((builder.ROOT/builder.WORKFLOW).read_text())
+        step=next(s for s in workflow['jobs']['changes']['steps'] if s.get('id')=='gate')
+        code=step['run'].split("python3 - <<'PY'\n",1)[1].rsplit('\nPY',1)[0]
+        source='c512e912a004b66886a7667640aa1a967e95de64';head='b'*40
+        names=[builder.WORKFLOW,'tools/android/interactive/test_client_render_queue_package.py']
+        def run_gate(changed,parent=source,before=None,event='push',reuse_run='',reuse_source='',published=False):
+            def checked(arguments,**kwargs):
+                if arguments==['git','rev-parse','HEAD']:return head+'\n'
+                if arguments==['git','rev-parse','HEAD^']:return parent+'\n'
+                self.assertEqual(arguments,['git','diff','--name-only','-z',parent,head])
+                return ('\0'.join(changed)+'\0').encode()
+            with tempfile.TemporaryDirectory(prefix='coh-render-queue-gate-') as temporary:
+                output=Path(temporary)/'outputs'
+                environment={'GH_TOKEN':'fixture','GITHUB_EVENT_NAME':event,'COH_PUSH_BEFORE':before or parent,
+                    'COH_REUSE_NATIVE_RUN':reuse_run,'COH_REUSE_NATIVE_COMMIT':reuse_source,'GITHUB_OUTPUT':str(output)}
+                request=mock.Mock(return_value=io.BytesIO(json.dumps(release()).encode())) if published else mock.Mock(
+                    side_effect=urllib.error.HTTPError('https://fixture',404,'absent',{},None))
+                with mock.patch.dict(os.environ,environment),mock.patch('urllib.request.urlopen',request),\
+                        mock.patch('subprocess.check_output',side_effect=checked),contextlib.redirect_stdout(io.StringIO()):
+                    exec(compile(code,builder.WORKFLOW,'exec'),{})
+                return dict(line.split('=',1) for line in output.read_text().splitlines())
+        expected={'required':'true','reuse_native_run_id':'37988347729','reuse_native_source_commit':source}
+        self.assertEqual(run_gate(names),expected)
+        for parent,before,changed in (('a'*40,None,names),(source,'a'*40,names),
+                (source,None,names+['android/guest/client_gpu_profile.py']),
+                (source,None,names+['unreviewed.py'])):
+            with self.subTest(parent=parent,before=before,changed=changed):
+                result=run_gate(changed,parent,before);self.assertEqual(result['required'],'false')
+                self.assertEqual(result['reuse_native_run_id'],'')
+        native=run_gate(names+['tools/android/interactive/package_client_render_queue_native.py'])
+        self.assertEqual(native['required'],'true');self.assertEqual(native['reuse_native_run_id'],'')
+        self.assertEqual(run_gate(names,published=True)['required'],'false')
+        self.assertEqual(run_gate([],event='workflow_dispatch',reuse_run='42',reuse_source='a'*40),
+            {'required':'true','reuse_native_run_id':'42','reuse_native_source_commit':'a'*40})
+        for run,commit in (('42',''),('','a'*40),('0','a'*40),('42','a'*39)):
+            with self.subTest(run=run,commit=commit),self.assertRaises(ValueError):
+                run_gate([],event='workflow_dispatch',reuse_run=run,reuse_source=commit)
+
+    def test_workflow_resolved_reuse_outputs_skip_all_native_work_and_preserve_cache_evidence(self):
+        import yaml
+        workflow=yaml.safe_load((builder.ROOT/builder.WORKFLOW).read_text())
+        changes=workflow['jobs']['changes'];client=workflow['jobs']['client']
+        self.assertIn('reuse_native_run_id',changes['outputs']);self.assertIn('reuse_native_source_commit',changes['outputs'])
+        for step in client['steps']:
+            command=step.get('run','')
+            if ('package_client_render_queue_native.py stage' in command or 'vcvars32.bat' in command
+                    or 'cmake --build' in command or 'package_client_render_queue_native.py package' in command):
+                self.assertEqual(step['if'],"needs.changes.outputs.reuse_native_run_id == ''")
+            if 'REUSE_NATIVE_RUN' in step.get('env',{}):
+                self.assertEqual(step['env']['REUSE_NATIVE_RUN'],'${{ needs.changes.outputs.reuse_native_run_id }}')
+                self.assertEqual(step['env']['REUSE_NATIVE_COMMIT'],'${{ needs.changes.outputs.reuse_native_source_commit }}')
+        evidence=next(s for s in client['steps'] if s.get('with',{}).get('name')=='coh-client-render-queue-native-build-evidence')
+        self.assertIn('out/client-render-queue-native/CMakeCache.txt',evidence['with']['path'])
+
+    def test_workflow_uses_host_PostgreSQL16_with_real_required_fixture_credentials(self):
+        import yaml
+        workflow=yaml.safe_load((builder.ROOT/builder.WORKFLOW).read_text());qualify=workflow['jobs']['qualify']
+        self.assertNotIn('services',qualify)
+        self.assertEqual(qualify['env']['COH_REQUIRE_STARTUP_BUNDLE_PG'],'1')
+        self.assertEqual(qualify['env']['COH_REQUIRE_LEVELUP_UI_REPAIR_PG'],'1')
+        step=next(s for s in qualify['steps'] if s.get('name')=='Start required host PostgreSQL 16 fixtures')
+        command=step['run'];self.assertIn('postgresql-16 postgresql-client-16',command)
+        self.assertIn('sudo pg_ctlcluster 16 main start',command);self.assertIn('sudo pg_createcluster 16 main',command)
+        self.assertIn("server_version_num",command);self.assertIn("current_user = 'postgres'",command)
+        self.assertIn("current_database() = 'coh_test_startup_bundle'",command)
+        subprocess.run(['bash','-n'],input=command,text=True,check=True,capture_output=True)
 
 
 class RenderQueueActualPackageTests(unittest.TestCase):

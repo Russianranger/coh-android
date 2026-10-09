@@ -39,6 +39,8 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       required: ${{ steps.gate.outputs.required }}
+      reuse_native_run_id: ${{ steps.gate.outputs.reuse_native_run_id }}
+      reuse_native_source_commit: ${{ steps.gate.outputs.reuse_native_source_commit }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -49,9 +51,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           COH_PUSH_BEFORE: ${{ github.event.before }}
+          COH_REUSE_NATIVE_RUN: ${{ inputs.reuse_native_run_id }}
+          COH_REUSE_NATIVE_COMMIT: ${{ inputs.reuse_native_source_commit }}
         run: |
           python3 - <<'PY'
-          import sys, json, os, urllib.error, urllib.request
+          import sys, json, os, re, urllib.error, urllib.request
           from pathlib import Path
           sys.path.insert(0, 'tools/android/interactive')
           import build_client_render_queue_apk as current
@@ -68,6 +72,11 @@ jobs:
               current.validate_existing_release(release)
               required = False
           recovery_dispatch_required = False
+          reuse_run = os.environ.get('COH_REUSE_NATIVE_RUN', '')
+          reuse_commit = os.environ.get('COH_REUSE_NATIVE_COMMIT', '')
+          if not ((not reuse_run and not reuse_commit) or
+                  (re.fullmatch('[1-9][0-9]*', reuse_run) and re.fullmatch('[0-9a-f]{40}', reuse_commit))):
+              raise ValueError('Both exact completed native owner and source are required')
           if required and os.environ['GITHUB_EVENT_NAME'] == 'push':
               import subprocess
               from classify_storage_cleanup_change import render_queue_push, render_queue_native_push
@@ -76,12 +85,23 @@ jobs:
               names = subprocess.check_output(['git','diff','--name-only','-z',parent,head]).decode().rstrip('\0').split('\0')
               owned = render_queue_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
               required = render_queue_native_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
+              pinned_host_recovery = (owned and not required and
+                  parent == 'c512e912a004b66886a7667640aa1a967e95de64' and
+                  set(names) <= current.HOST_NATIVE_REUSE_FILES)
+              if pinned_host_recovery:
+                  required = True
+                  reuse_run = '37988347729'
+                  reuse_commit = 'c512e912a004b66886a7667640aa1a967e95de64'
               recovery_dispatch_required = owned and not required
-          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output: output.write('required='+str(required).lower()+'\n')
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('required='+str(required).lower()+'\n')
+              output.write('reuse_native_run_id='+reuse_run+'\n')
+              output.write('reuse_native_source_commit='+reuse_commit+'\n')
           print(json.dumps({'release_tag': current.RELEASE_TAG, 'publication_required': required,
               'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False,
               'recovery_dispatch_required': recovery_dispatch_required,
-              'recovery_policy': 'Source-equivalent host corrections require explicit completed native reuse dispatch; automatic Game build is suppressed.'}))
+              'reuse_native_run_id': reuse_run, 'reuse_native_source_commit': reuse_commit,
+              'recovery_policy': 'The bounded c512 host recovery reuses its authenticated completed Game; other source-equivalent host corrections require explicit reuse dispatch.'}))
           PY
   client:
     needs: changes
@@ -101,8 +121,8 @@ jobs:
       - name: Validate optional completed native reuse inputs
         shell: pwsh
         env:
-          REUSE_NATIVE_RUN: ${{ inputs.reuse_native_run_id }}
-          REUSE_NATIVE_COMMIT: ${{ inputs.reuse_native_source_commit }}
+          REUSE_NATIVE_RUN: ${{ needs.changes.outputs.reuse_native_run_id }}
+          REUSE_NATIVE_COMMIT: ${{ needs.changes.outputs.reuse_native_source_commit }}
           GH_TOKEN: ${{ github.token }}
         run: |
           python -c "import os,re; r=os.environ.get('REUSE_NATIVE_RUN',''); c=os.environ.get('REUSE_NATIVE_COMMIT',''); assert (not r and not c) or (re.fullmatch('[1-9][0-9]*',r) and re.fullmatch('[0-9a-f]{40}',c)), 'Both exact completed native owner and source are required'"
@@ -112,7 +132,7 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw 'Native owner/source audit rejected reuse' }
           }
       - name: Authenticate the original completed current Game artifact ZIP
-        if: inputs.reuse_native_run_id != ''
+        if: needs.changes.outputs.reuse_native_run_id != ''
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -120,13 +140,13 @@ jobs:
           python tools/android/interactive/build_client_render_queue_apk.py download-native-reuse --receipt out/client-render-queue-native-reuse.json --repository-commit $env:GITHUB_SHA --output out/client-render-queue-native
           if ($LASTEXITCODE -ne 0) { throw 'Original completed Game artifact authentication failed' }
       - name: Stage the immutable native chain and reviewed rendering continuation
-        if: inputs.reuse_native_run_id == ''
+        if: needs.changes.outputs.reuse_native_run_id == ''
         shell: pwsh
         run: |
           python tools/android/interactive/package_client_render_queue_native.py stage --output out/client-render-queue-source
           if ($LASTEXITCODE -ne 0) { throw 'Native render queue staging failed' }
       - name: Qualify retained Win32 logic and current render-worker scheduling
-        if: inputs.reuse_native_run_id == ''
+        if: needs.changes.outputs.reuse_native_run_id == ''
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -157,7 +177,7 @@ jobs:
           cmd /c .\out\contracts\client-render-queue.cmd 2>&1 | Tee-Object out/contracts/client-render-queue.txt
           if ($LASTEXITCODE -ne 0) { throw 'Win32 render queue qualification failed' }
       - name: Build only Game; retain successful GPU driver and probes
-        if: inputs.reuse_native_run_id == ''
+        if: needs.changes.outputs.reuse_native_run_id == ''
         working-directory: out/client-render-queue-source
         shell: pwsh
         run: |
@@ -166,7 +186,7 @@ jobs:
           cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
           if ($LASTEXITCODE -ne 0) { throw 'Native Game build failed' }
       - name: Bind Game to exact native source, ancestry and Win32 receipts
-        if: inputs.reuse_native_run_id == ''
+        if: needs.changes.outputs.reuse_native_run_id == ''
         shell: pwsh
         run: >-
           python tools/android/interactive/package_client_render_queue_native.py package
@@ -181,8 +201,8 @@ jobs:
         id: producer
         shell: pwsh
         env:
-          REUSE_NATIVE_RUN: ${{ inputs.reuse_native_run_id }}
-          REUSE_NATIVE_COMMIT: ${{ inputs.reuse_native_source_commit }}
+          REUSE_NATIVE_RUN: ${{ needs.changes.outputs.reuse_native_run_id }}
+          REUSE_NATIVE_COMMIT: ${{ needs.changes.outputs.reuse_native_source_commit }}
         run: |
           $code = @'
           import os,sys,json
@@ -214,6 +234,7 @@ jobs:
             out/client-render-queue-source/out/build/vs2026/CMakeCache.txt
             out/client-render-queue-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
             out/client-render-queue-native/*.json
+            out/client-render-queue-native/CMakeCache.txt
             out/client-*-checks.json
             out/contracts/client-render-queue.txt
             out/client-render-queue-native-reuse.json
@@ -224,19 +245,6 @@ jobs:
     if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: coh-host-fixture
-          POSTGRES_DB: coh_test_startup_bundle
-        ports: [5432:5432]
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
     env:
       COH_REQUIRE_STARTUP_BUNDLE_PG: '1'
       COH_REQUIRE_LEVELUP_UI_REPAIR_PG: '1'
@@ -250,6 +258,24 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 2
+      - name: Start required host PostgreSQL 16 fixtures
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16
+          if pg_lsclusters --no-header | awk '$1 == "16" && $2 == "main" { found = 1 } END { exit !found }'; then
+            if ! /usr/lib/postgresql/16/bin/pg_isready --host "$PGHOST" --port "$PGPORT"; then
+              sudo pg_ctlcluster 16 main start
+            fi
+          else
+            sudo pg_createcluster 16 main --port 5432 --start
+          fi
+          test "$(sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --tuples-only --no-align --command "SELECT current_setting('server_version_num')::integer / 10000")" = 16
+          sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --set ON_ERROR_STOP=1 --command "ALTER ROLE postgres WITH LOGIN PASSWORD 'coh-host-fixture'"
+          coh_fixture_database_exists="$(sudo -u postgres psql --no-psqlrc --host /var/run/postgresql --port 5432 --dbname postgres --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT 1 FROM pg_database WHERE datname = 'coh_test_startup_bundle'")"
+          if [ "$coh_fixture_database_exists" != 1 ]; then
+            sudo -u postgres createdb --host /var/run/postgresql --port 5432 --owner postgres coh_test_startup_bundle
+          fi
+          test "$(psql --no-psqlrc --set ON_ERROR_STOP=1 --tuples-only --no-align --command "SELECT current_user = 'postgres' AND current_database() = 'coh_test_startup_bundle' AND current_setting('server_version_num')::integer / 10000 = 16")" = t
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-render-queue-native
