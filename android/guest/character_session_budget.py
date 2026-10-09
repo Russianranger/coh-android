@@ -4,6 +4,7 @@ import re
 
 CONNECTED_SECONDS = 1200
 LAUNCHER_BUDGET_SECONDS = 34 * 60
+PRESENTATION_BUDGET_SECONDS = 35 * 60
 OPERATION_RESERVE_SECONDS = 120
 RECOVERY_MAX_AGE_MS = 600000
 SAVE_REQUEST_AGE_MS = 420000
@@ -26,16 +27,25 @@ def utc_milliseconds(value):
 
 class SessionBudget:
     """Connection grants a finite play/save window; optional recovery can shorten it."""
-    def __init__(self, session_id, client_pid, launcher_started, operation_deadline):
+    def __init__(self, session_id, client_pid, launcher_started, operation_deadline,
+                 *, presentation_ready=None):
         require(isinstance(session_id, str) and re.fullmatch(r'[0-9a-f]{32}', session_id)
                 and type(client_pid) is int and 0 < client_pid <= 4294967295,
                 'Invalid reopen budget session or owned client identity')
         require(finite_seconds(launcher_started) and finite_seconds(operation_deadline),
                 'Invalid reopen budget launcher or operation deadline')
+        require(presentation_ready is None or finite_seconds(presentation_ready)
+                and presentation_ready <= launcher_started,
+                'Invalid reopen budget presentation clock')
         self.session_id, self.client_pid = session_id, client_pid
         self.launcher_started = launcher_started
         self.hardcap = min(launcher_started + LAUNCHER_BUDGET_SECONDS,
                            operation_deadline - OPERATION_RESERVE_SECONDS)
+        if presentation_ready is not None:
+            # Match the earlier Android display bound without extending the
+            # launcher, operation, neutral-wait or ordinary-save allowances.
+            self.hardcap = min(self.hardcap,
+                               presentation_ready + PRESENTATION_BUDGET_SECONDS)
         require(finite_seconds(self.hardcap) and self.hardcap > launcher_started,
                 'Reopen budget has no reserved launcher/operation lifetime')
         self.revision = 0

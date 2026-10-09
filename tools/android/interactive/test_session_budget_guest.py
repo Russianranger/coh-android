@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import math
 import sys
+import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -158,6 +159,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
             report={'character_reopen': proof()}, event=Mock())
         diagnostic.connected_announced = True
         diagnostic.launcher_started_monotonic = 0
+        diagnostic.presentation_ready_monotonic = 0
         with patch.object(reopen.time, 'monotonic', return_value=1214), \
              patch.object(reopen.time, 'time', return_value=(UTC_START + 1214000) / 1000):
             self.assertEqual(diagnostic.interaction_deadline(1802, {'pid': PID}), 2040)
@@ -181,6 +183,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
                 report={'character_reopen': proof()}, event=Mock())
             diagnostic.connected_announced = True
             diagnostic.launcher_started_monotonic = 0
+            diagnostic.presentation_ready_monotonic = 0
             with self.subTest(poll_returned=now), \
                  patch.object(reopen.time, 'monotonic', return_value=now), \
                  patch.object(reopen.time, 'time', return_value=(UTC_START + int(now * 1000)) / 1000), \
@@ -198,6 +201,7 @@ class SessionBudgetGuestTests(unittest.TestCase):
                 report={'character_reopen': value}, event=Mock())
             diagnostic.connected_announced = True
             diagnostic.launcher_started_monotonic = 0
+            diagnostic.presentation_ready_monotonic = 0
             with patch.object(reopen.time, 'monotonic', return_value=400), \
                  patch.object(reopen.time, 'time', return_value=(UTC_START + 400000) / 1000):
                 self.assertEqual(diagnostic.interaction_deadline(1802, {'pid': PID}), 1600)
@@ -239,6 +243,125 @@ class SessionBudgetGuestTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'neutral wait'):
             budget.connected(proof(), 1214, UTC_START + 1214000)
         self.assertEqual(budget.revision, 0)
+
+    def test_thor_22_slow_launcher_preparation_fits_retained_android_display_bound(self):
+        # Actual .22 display16:05:51.426, launcher16:06:53.901, connect16:21:11.342.
+        # Android kept a35min display bound; old launcher+34min exceeded it2.475s.
+        display_utc_ms = 1791561951426
+        launch_seconds = 62.475
+        connected_seconds = (1791562871342 - display_utc_ms) / 1000
+        legacy = policy.SessionBudget(SESSION, PID, launch_seconds, 5400)
+        old = legacy.connected(proof(), connected_seconds, 1791562871342)
+        self.assertEqual(old['deadline_utc_ms'], 1791564053901)
+
+        diagnostic = reopen.StartupOnlyCharacterReopenDiagnostic.__new__(
+            reopen.StartupOnlyCharacterReopenDiagnostic)
+        diagnostic.args = SimpleNamespace(session_id=SESSION)
+        diagnostic.ctx = SimpleNamespace(deadline=5400,
+            report={'character_reopen': proof()}, event=Mock())
+        diagnostic.connected_announced = True
+        diagnostic.presentation_ready_monotonic = 0
+        diagnostic.launcher_started_monotonic = launch_seconds
+        with patch.object(reopen.time, 'monotonic', return_value=connected_seconds), \
+             patch.object(reopen.time, 'time', return_value=1791562871342 / 1000):
+            self.assertEqual(diagnostic.interaction_deadline(1802, {'pid': PID}), 2100)
+        event = diagnostic.ctx.report['character_session_budgets'][0]
+        self.assertEqual(event['deadline_utc_ms'], 1791564051426)
+        self.assertEqual(old['deadline_utc_ms'] - event['deadline_utc_ms'], 2475)
+        self.assertEqual(event['save_request_deadline_utc_ms'], 1791563871426)
+        self.assertEqual(event['movement_deadline_utc_ms'], 1791563811426)
+        self.assertGreater(event['movement_deadline_utc_ms'], event['generated_utc_ms'])
+        diagnostic.ctx.event.assert_called_once()
+
+    def test_faster_launcher_preparation_preserves_prior_deadlines_and_reserves(self):
+        for preparation_seconds in (0, 20, 59.999, 60):
+            old = policy.SessionBudget(SESSION, PID, preparation_seconds, 5400)
+            bounded = policy.SessionBudget(SESSION, PID, preparation_seconds, 5400,
+                presentation_ready=0)
+            now = 1200
+            with self.subTest(preparation_seconds=preparation_seconds):
+                self.assertEqual(bounded.hardcap, old.hardcap)
+                self.assertEqual(bounded.connected(proof(), now, UTC_START + 1200000),
+                                 old.connected(proof(), now, UTC_START + 1200000))
+
+    def test_long_preparation_shortens_guest_bound_and_retains_operation_reserve(self):
+        for operation_end, expected_end in ((5400, 2100), (2100, 1980)):
+            budget = policy.SessionBudget(SESSION, PID, 120.001, operation_end,
+                presentation_ready=0)
+            with self.subTest(operation_end=operation_end):
+                self.assertEqual(budget.hardcap, expected_end)
+                event = budget.connected(proof(), 1500, UTC_START + 1500000)
+                self.assertEqual(event['deadline_utc_ms'], UTC_START + expected_end * 1000)
+                self.assertEqual(event['deadline_utc_ms'] - event['save_request_deadline_utc_ms'], 180000)
+                self.assertEqual(event['save_request_deadline_utc_ms'] - event['movement_deadline_utc_ms'], 60000)
+                self.assertLessEqual(budget.deadline, 120.001 + policy.LAUNCHER_BUDGET_SECONDS)
+                self.assertLessEqual(budget.deadline, operation_end - policy.OPERATION_RESERVE_SECONDS)
+
+    def test_invalid_or_future_presentation_clock_cannot_grant_reopen_budget(self):
+        for presentation in (-1, False, math.nan, math.inf, 120.002):
+            with self.subTest(presentation=presentation), \
+                 self.assertRaisesRegex(ValueError, 'presentation clock'):
+                policy.SessionBudget(SESSION, PID, 120.001, 5400,
+                    presentation_ready=presentation)
+        with self.assertRaisesRegex(ValueError, 'reserved launcher'):
+            policy.SessionBudget(SESSION, PID, 2100, 5400, presentation_ready=0)
+
+    def test_presentation_cap_never_grants_connection_without_neutral_and_save_reserves(self):
+        for now, accepted in ((1859.999, True), (1860, False), (1860.001, False), (2100, False)):
+            budget = policy.SessionBudget(SESSION, PID, 120, 5400, presentation_ready=0)
+            with self.subTest(now=now):
+                if accepted:
+                    event = budget.connected(proof(), now, UTC_START + 1859999)
+                    self.assertEqual(event['movement_deadline_utc_ms'] - event['generated_utc_ms'], 1)
+                    self.assertEqual(event['deadline_utc_ms'], UTC_START + 2100000)
+                else:
+                    with self.assertRaises(ValueError):
+                        budget.connected(proof(), now, UTC_START + int(now * 1000))
+                    self.assertEqual(budget.revision, 0)
+                    self.assertEqual(budget.events, [])
+
+    def test_owned_presentation_clock_is_recorded_before_display_event_and_launcher_preparation(self):
+        class StopBeforeLaunch(Exception):
+            pass
+        diagnostic = interactive.ClientInteractiveDiagnostic.__new__(interactive.ClientInteractiveDiagnostic)
+        diagnostic.args = SimpleNamespace(session_id=SESSION, startup_timeout_seconds=900,
+            wine='/usr/bin/wine', assets=Path('/assets'))
+        diagnostic.wine_env = {'DISPLAY': ':1'}
+        diagnostic.presentation_socket = Path('/presentation-socket/view.sock')
+        diagnostic.initialize = Mock()
+        diagnostic.start_wine = Mock()
+        diagnostic.mark_wine_ready = Mock()
+        diagnostic.reset_client_startup_inputs = Mock()
+        diagnostic.capture = Mock()
+        diagnostic.launch_client_attempt = Mock(side_effect=StopBeforeLaunch)
+        diagnostic.ctx = SimpleNamespace(stage=Mock(), run=Mock(return_value={'output': ''}),
+            passed=Mock(), event=Mock())
+        with tempfile.TemporaryDirectory() as directory:
+            diagnostic.finish_path = Path(directory) / 'finish.json'
+            with patch.object(interactive, 'XObserver'), \
+                 patch.object(interactive.base, 'validate_runtime_probe', return_value={}), \
+                 patch.object(interactive.time, 'monotonic', return_value=10.25), \
+                 self.assertRaises(StopBeforeLaunch):
+                diagnostic.ctx.event.side_effect = lambda name, **fields: self.assertEqual(
+                    diagnostic.presentation_ready_monotonic, 10.25)
+                diagnostic.execute()
+        diagnostic.ctx.event.assert_called_once_with('client_display_ready', session_id=SESSION,
+            width=800, height=600, socket_path='/presentation-socket/view.sock', startup_timeout_seconds=900)
+        diagnostic.launch_client_attempt.assert_called_once_with()
+
+    def test_reopen_hook_refuses_missing_owned_presentation_clock(self):
+        diagnostic = reopen.CharacterReopenDiagnostic.__new__(reopen.CharacterReopenDiagnostic)
+        diagnostic.args = SimpleNamespace(session_id=SESSION)
+        diagnostic.ctx = SimpleNamespace(deadline=5400,
+            report={'character_reopen': proof()}, event=Mock())
+        diagnostic.connected_announced = True
+        diagnostic.launcher_started_monotonic = 0
+        with patch.object(reopen.time, 'monotonic', return_value=1214), \
+             patch.object(reopen.time, 'time', return_value=(UTC_START + 1214000) / 1000), \
+             self.assertRaisesRegex(Exception, 'owned presentation clock'):
+            diagnostic.interaction_deadline(1802, {'pid': PID})
+        self.assertFalse(hasattr(diagnostic, 'session_budget'))
+        diagnostic.ctx.event.assert_not_called()
 
 
 if __name__ == '__main__':

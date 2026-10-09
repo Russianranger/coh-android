@@ -60,6 +60,8 @@ def read_finish_request(path, session, pid):
 
 
 class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
+    ISOLATE_FOCUSED_RENDER_PIPELINE = False
+
     def __init__(self, args, context):
         super().__init__(args, context)
         self.finish_path = args.state / 'interaction-finish.json'
@@ -257,6 +259,25 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         graphics_profile = ('performance' if command[-1] == '--character-creation'
             and environment.get('COH_CLIENT_GRAPHICS_PROFILE') == 'performance' else 'standard')
         startup.apply_client_gameplay_environment(self, environment, label, graphics_profile)
+        if self.ISOLATE_FOCUSED_RENDER_PIPELINE is True and getattr(self, 'client_render_pipeline', False) is True:
+            # Keep the exact qualified Game and its retained frame/renderer
+            # aggregates, but isolate the newer focused timers after the Thor
+            # .22 regression. This changes only this owned attempt's opt-in.
+            producer = startup.client_gpu_profile.verified_render_pipeline_producer(self)
+            receipt = self.ctx.report.get('client_render_pipeline_environment')
+            require(isinstance(receipt, dict) and receipt.get('enabled') is True
+                and receipt.get('client_executable_sha256') == producer['client_executable_sha256']
+                and receipt.get('producer_manifest_sha256') == producer['manifest_sha256']
+                and receipt.get('native_source_sha256') == producer['native_source_sha256']
+                and receipt.get('launch_label') == label
+                and environment.get('COH_CLIENT_RENDER_PIPELINE') == '1',
+                'Focused diagnostics isolation lacks the current verified Game attempt')
+            environment['COH_CLIENT_RENDER_PIPELINE'] = '0'
+            receipt.update(enabled=False, render_pipeline='0', record_prefix=None,
+                command_sample_interval=None, performance_isolation=True,
+                disabled_reason='thor_0_13_22_performance_regression_isolation',
+                frame_timing_retained=environment.get('COH_CLIENT_FRAME_TIMING') == '1',
+                renderer_attribution_retained=environment.get('COH_CLIENT_RENDERER_ATTRIBUTION') == '1')
         environment = startup.apply_client_gpu_environment(self, environment, label)
         previous = Path.cwd()
         try:
@@ -279,6 +300,11 @@ class ClientInteractiveDiagnostic(startup.ClientStartupDiagnostic):
         self.ctx.stage('actual_client_startup')
         self.observer = XObserver(self.wine_env['DISPLAY'])
         self.capture('before-client')
+        # Android starts its existing 35-minute bound when it receives this
+        # owned display event. Launcher preparation can take longer than the
+        # one-minute allowance between that event and the launcher bound.
+        # Remember the earlier clock so reopen cannot emit a later deadline.
+        self.presentation_ready_monotonic = time.monotonic()
         self.ctx.event('client_display_ready', session_id=self.args.session_id, width=800, height=600,
                        socket_path=str(self.presentation_socket), startup_timeout_seconds=self.args.startup_timeout_seconds)
         # The launcher's -nogui diagnostic-UI profile preserves the actual game

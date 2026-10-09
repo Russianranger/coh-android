@@ -16,6 +16,7 @@ import package_client_render_pipeline_native as native
 import test_client_render_pipeline_native as native_tests
 import test_client_renderer_attribution_contract as previous
 import test_client_gpu_profile as gpu_tests
+import character_reopen_diagnostic as reopen
 
 contract, guest, index = previous.contract, previous.guest, previous.index
 gpu = gpu_tests.gpu
@@ -186,6 +187,11 @@ def install_pipeline(owner):
 class RenderPipelineLaunchTests(unittest.TestCase):
     def setUp(self):
         previous.RendererLaunchTests.setUp(self)
+        # Creation retains .22 focused instrumentation. Saved-character reopen
+        # has an independently tested .23 isolation policy below.
+        creation = reopen.creation.CharacterCreationDiagnostic.__new__(reopen.creation.CharacterCreationDiagnostic)
+        creation.__dict__.update(self.diagnostic.__dict__)
+        self.diagnostic = creation
         self.package = install_pipeline(self.diagnostic)
         for name in ('client_startup_followup', 'client_scene_performance', 'client_gameplay_performance'):
             self.diagnostic.ctx.report[name]['client_executable_sha256'] = self.diagnostic.client_executable_sha256
@@ -229,6 +235,77 @@ class RenderPipelineLaunchTests(unittest.TestCase):
                 ('data_source_sha256', 'e' * 64), ('graphics_fidelity_preserved', 1),
                 ('renderer_changed', True), ('worker_wakeup_repaired', False),
                 ('physical_fps_improvement_validated', True)):
+            d.ctx.report['client_render_pipeline'] = dict(accepted, **{field: wrong})
+            for label in ('actual-coh-client', 'actual-coh-client-retry'):
+                with self.subTest(field=field, label=label), self.assertRaises(gpu.GPUProfileError):
+                    d.launch_client_attempt(label=label)
+                d.ctx.start.assert_not_called()
+                self.assertEqual(d.wine_env, self.original_env)
+
+
+class ReopenRenderPipelineIsolationTests(unittest.TestCase):
+    def setUp(self):
+        RenderPipelineLaunchTests.setUp(self)
+
+    def select_reopen(self, cls=reopen.StartupOnlyCharacterReopenDiagnostic):
+        diagnostic = cls.__new__(cls)
+        diagnostic.__dict__.update(self.diagnostic.__dict__)
+        self.diagnostic = diagnostic
+        return diagnostic
+
+    def test_owned_saved_character_initial_and_retry_isolate_only_new_metrics(self):
+        for cls in (reopen.CharacterReopenDiagnostic, reopen.StartupOnlyCharacterReopenDiagnostic):
+            d = self.select_reopen(cls)
+            before = copy.deepcopy(d.ctx.report['client_renderer_attribution'])
+            for label in ('actual-coh-client', 'actual-coh-client-retry'):
+                with self.subTest(mode=cls.__name__, label=label):
+                    d.launch_client_attempt(label=label)
+                    env = d.ctx.start.call_args.kwargs['env']
+                    self.assertEqual(env['COH_CLIENT_RENDER_PIPELINE'], '0')
+                    self.assertEqual(env['COH_CLIENT_FRAME_TIMING'], '1')
+                    self.assertEqual(env['COH_CLIENT_RENDERER_ATTRIBUTION'], '1')
+                    self.assertEqual(env['COH_CLIENT_GAMEPLAY_FPS'], '30')
+                    self.assertEqual(d.wine_env, self.original_env)
+                    self.assertEqual(d.ctx.report['client_renderer_attribution'], before)
+                    receipt = d.ctx.report['client_render_pipeline_environment']
+                    self.assertEqual(receipt['client_executable_sha256'], d.client_executable_sha256)
+                    self.assertEqual(receipt['launch_label'], label)
+                    self.assertFalse(receipt['enabled'])
+                    self.assertEqual(receipt['render_pipeline'], '0')
+                    self.assertIsNone(receipt['record_prefix'])
+                    self.assertIsNone(receipt['command_sample_interval'])
+                    self.assertTrue(receipt['performance_isolation'])
+                    self.assertEqual(receipt['disabled_reason'], 'thor_0_13_22_performance_regression_isolation')
+                    self.assertTrue(receipt['frame_timing_retained'])
+                    self.assertTrue(receipt['renderer_attribution_retained'])
+                    self.assertFalse(receipt['physical_fps_improvement_validated'])
+
+    def test_false_or_untyped_pipeline_never_gains_reopen_override(self):
+        # The prior typed renderer has no focused extension. No inherited or
+        # truthy value can enable the new extension or create an isolation claim.
+        previous.RendererLaunchTests.setUp(self)
+        d = self.select_reopen()
+        d.wine_env['COH_CLIENT_RENDER_PIPELINE'] = 'inherited-untrusted'
+        baseline = dict(d.wine_env)
+        for flag in (False, None, 1, '1', {}):
+            d.client_render_pipeline = flag
+            for label in ('actual-coh-client', 'actual-coh-client-retry'):
+                with self.subTest(flag=flag, label=label):
+                    d.launch_client_attempt(label=label)
+                    env = d.ctx.start.call_args.kwargs['env']
+                    self.assertNotIn('COH_CLIENT_RENDER_PIPELINE', env)
+                    self.assertEqual(env['COH_CLIENT_FRAME_TIMING'], '1')
+                    self.assertEqual(env['COH_CLIENT_RENDERER_ATTRIBUTION'], '1')
+                    self.assertFalse(d.ctx.report['client_render_pipeline_environment']['enabled'])
+                    self.assertNotIn('performance_isolation', d.ctx.report['client_render_pipeline_environment'])
+                    self.assertEqual(d.wine_env, baseline)
+
+    def test_forged_current_game_cannot_reach_reopen_isolation_or_retry_launch(self):
+        d = self.select_reopen()
+        accepted = copy.deepcopy(d.ctx.report['client_render_pipeline'])
+        for field, wrong in (('verified', 1), ('format', True), ('repository_commit', 'f' * 40),
+                ('manifest_sha256', 'e' * 64), ('client_executable_sha256', gpu.GAME_SHA256),
+                ('native_source_sha256', 'e' * 64), ('physical_fps_improvement_validated', True)):
             d.ctx.report['client_render_pipeline'] = dict(accepted, **{field: wrong})
             for label in ('actual-coh-client', 'actual-coh-client-retry'):
                 with self.subTest(field=field, label=label), self.assertRaises(gpu.GPUProfileError):

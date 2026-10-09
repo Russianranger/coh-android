@@ -682,6 +682,58 @@ RENDER_PIPELINE_ALLOWED = RENDER_PIPELINE_SOURCES | RENDER_PIPELINE_DOCS | froze
 })
 
 
+# .23 is exactly a three-helper session repair over the completed .22 Game.
+# A shared helper/test alone keeps its historical owner; unknown native, Android
+# or asset neighbors cannot defer the historical qualification workflows.
+SESSION_REPAIR_SOURCES = frozenset({
+    '.github/workflows/android-client-session-repair.yml',
+    'tools/android/interactive/build_client_session_repair_apk.py',
+    'tools/android/interactive/qualify_client_session_repair.py',
+    'tools/android/interactive/test_client_session_repair_package.py',
+    'tools/android/interactive/test_client_session_repair_java.py',
+    'tools/android/interactive/test_session_budget_guest.py',
+    'tools/android/interactive/test_character_reopen_guest.py',
+    'tools/android/interactive/test_client_render_pipeline_guest.py',
+    'android/guest/client_interactive_diagnostic.py',
+    'android/guest/character_reopen_diagnostic.py',
+    'android/guest/character_session_budget.py',
+})
+SESSION_REPAIR_MARKERS = frozenset({
+    '.github/workflows/android-client-session-repair.yml',
+    'tools/android/interactive/build_client_session_repair_apk.py',
+    'tools/android/interactive/qualify_client_session_repair.py',
+    'tools/android/interactive/test_client_session_repair_package.py',
+    'tools/android/interactive/test_client_session_repair_java.py',
+})
+SESSION_REPAIR_DOCS = frozenset({
+    'docs/HANDOFF.md', 'docs/COH-PERFORMANCE-0.13.23.md',
+    'docs/android-evidence/session-repair-0.13.23-publication.json',
+})
+SESSION_REPAIR_ALLOWED = SESSION_REPAIR_SOURCES | SESSION_REPAIR_DOCS | frozenset({
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'docs/COH-Atlas-Gameplay-0.13.23-testing.txt',
+    'docs/android-evidence/session-repair-0.13.22-thor-20261009.json',
+})
+
+
+def session_repair_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, SESSION_REPAIR_ALLOWED)
+        and set(names) & SESSION_REPAIR_MARKERS)
+
+
+def session_repair_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, SESSION_REPAIR_DOCS)
+        and 'docs/android-evidence/session-repair-0.13.23-publication.json' in names)
+
+
+def session_repair_owned(event, before, head, parent, names):
+    return session_repair_push(event, before, head, parent, names) or session_repair_docs(
+        event, before, head, parent, names)
+
+
 def render_pipeline_push(event, before, head, parent, names):
     return bool(bounded_push(event, before, head, parent, names, RENDER_PIPELINE_ALLOWED)
         and set(names) & RENDER_PIPELINE_MARKERS)
@@ -834,6 +886,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -856,6 +909,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -876,6 +930,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -898,6 +953,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -920,6 +976,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -940,6 +997,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -958,6 +1016,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -975,6 +1034,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -992,6 +1052,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1008,6 +1069,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1023,6 +1085,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1037,6 +1100,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1050,6 +1114,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1062,6 +1127,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
@@ -1073,6 +1139,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if session_repair_owned(event, before, head, parent, names): return False
     if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False

@@ -9,6 +9,17 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_session_repair_exact_scope_retains_runtime_and_rejects_unknown_neighbors(self):
+        from classify_storage_cleanup_change import SESSION_REPAIR_ALLOWED, SESSION_REPAIR_DOCS
+        for names in (sorted(SESSION_REPAIR_ALLOWED), sorted(SESSION_REPAIR_DOCS)):
+            self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+            for foreign in ('android/guest/client_gpu_profile.py',
+                    'android/guest/native_responsiveness_contract.py', 'assets/client-runtime.zip',
+                    'upstream/ouroboros/libs/UtilitiesLib/src/components/WorkerThread.c', 'foreign.py'):
+                self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+            self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+            self.assertTrue(change.runtime_required('push', 'c'*40, 'b'*40, 'a'*40, names))
+
     def test_render_pipeline_exact_sources_and_publication_docs_reuse_owned_runtime(self):
         from classify_storage_cleanup_change import RENDER_PIPELINE_ALLOWED, RENDER_PIPELINE_DOCS, RENDER_PIPELINE_MARKERS
         for names in (sorted(RENDER_PIPELINE_ALLOWED), sorted(RENDER_PIPELINE_DOCS)):

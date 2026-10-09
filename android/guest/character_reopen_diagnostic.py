@@ -45,6 +45,7 @@ def save_verified(proof, session):
 
 class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     STARTUP_ONLY = False
+    ISOLATE_FOCUSED_RENDER_PIPELINE = True
     REPORT_KEY = 'character_reopen'
     REQUIRED = REQUIRED
     identity_verified = staticmethod(character_identity)
@@ -105,8 +106,12 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
         if not hasattr(self, 'session_budget'):
             require(session_budget.finite_seconds(deadline) and now < deadline,
                     'Native connection arrived after the current menu deadline')
+            presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
+            require(session_budget.finite_seconds(presentation_ready),
+                    'Reopen budget lacks the current owned presentation clock')
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
-                self.launcher_started_monotonic, self.ctx.deadline)
+                self.launcher_started_monotonic, self.ctx.deadline,
+                presentation_ready=presentation_ready)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:

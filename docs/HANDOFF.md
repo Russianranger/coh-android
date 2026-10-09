@@ -1,3 +1,59 @@
+# Thor .22 regression reviewed; .23 session repair and timing isolation — 2026-10-09
+
+**Implementation ready for qualification; .23 is not yet published.** Recovery
+verified branch/head `71fca3f0679bc102f70297bbad395d1de5cacc6e`, open draft
+PR #1 and main at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. No newer remote
+work or active owner build was found. The pruned accessible workspace contained
+no previous checkout or local build; a clean clone recovered the exact branch.
+The current public APK remains .22 until the new owner completes publication.
+
+The user reports .22 FPS worse and no walking after world entry, while clicks
+and camera rotation work. Screenshot: 4.86 FPS / 205.8 ms. The attached export
+confirms the published .22 Game and actual Zink / Turnip Adreno 740, GL 4.3 Mesa
+22.3.6. GPU startup remains successful. Pure 30-cap gameplay windows measured
+152.044 ms / 6.577 native cadence Hz across 2,192 frames / 333.294 seconds.
+Main CPU averages 43.335 ms/frame; viewport wall averages 119.111 ms. Routes and
+input availability differ from .21; this is not a matched performance experiment.
+
+Movement is blocked by `character_session_budget_rejected`. Presentation-ready
++35 minutes ends at 16:40:51.426 UTC, but launcher +34 minutes emitted
+16:40:53.901. Preparation lasted 62.475 seconds, exceeding the prior one-minute
+allowance by 2.475 seconds. Android retains revision zero, so walking/Jump/save
+are gated while pointer input remains open. The correction caps the guest at
+the owned presentation clock as well as launcher/operation limits. It shortens
+deadlines and preserves Android's strict guard, neutral and save reserves.
+
+The inherited startup-only policy does not itself block movement or saving.
+Its status wording remains misleading, but normal Save/strict committed proof/
+Finish are supported when the budget is accepted. Keep this policy to preserve
+tasks and avoid repeating the authored-task gate. The failed .22 test requested
+no save; cleanup completed and no fatal native exception was observed.
+
+.23 Reopen disables the added detailed pipeline timing after the typed current
+Game gate, retaining earlier frame/scene/renderer counters. The exact .22 Game,
+wakeup repair and completed original Windows proof are reused; no native or
+GPU/probe build is repeated. Authenticated artifacts show identical .21/.22
+optimized flags/toolchain. Scene CPU, hidden full-ring waits and instrumentation
+cost remain unresolved. The next short test isolates added timing cost before
+another native optimization; no FPS recovery or stable30 claim is made.
+
+Three guest helpers change for .23. The nineteen authored Java sources, DEX,
+resources, twenty DLLs, assets/resolution/effects, GPU archive/probes, Software
+fallback, servers, Wine/FEX, prepared cache/schema and save acceptance remain
+retained. Existing .21 physical GPU improvement and fidelity observations are
+completed milestones, not invalidated by this separate .22 regression.
+
+Evidence: `docs/android-evidence/session-repair-0.13.22-thor-20261009.json`;
+implementation and interpretation limits: `docs/COH-PERFORMANCE-0.13.23.md`;
+focused test: `docs/COH-Atlas-Gameplay-0.13.23-testing.txt`.
+The exact next milestone is accepted walking/Jump/save authorization and a
+90-second GPU standing/camera/walking route with RP timing disabled on the same
+Game, ordinary Save/Finish and complete outer export. If FPS stays poor, measure
+scene/sort/submission and full-ring blocking before choosing a native change.
+Startup and zoning remain deferred; do not request another long Software run.
+
+Earlier published checkpoints below remain history.
+
 # Published render-worker continuation and completed Thor GPU milestone — 2026-10-09
 
 **Current test APK: 0.13.22 / version code 37, published and independently
