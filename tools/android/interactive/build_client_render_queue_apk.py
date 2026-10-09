@@ -580,12 +580,48 @@ def validate_native_reuse_records(run, jobs, artifacts, comparison, source_commi
         and artifact.get('workflow_run', {}).get('id') == run['id']
         and artifact['workflow_run'].get('head_sha') == source_commit,
         'Authenticated original current queue Game artifact required')
-    require(comparison.get('base_commit', {}).get('sha') == source_commit
-        and comparison.get('head_commit', {}).get('sha') == publication_commit
-        and comparison.get('status') in ('ahead','identical')
-        and type(comparison.get('total_commits')) is int and 0 <= comparison['total_commits'] <= 64
+    compare_path = REPOSITORY+'/compare/'+source_commit+'...'+publication_commit
+    commits = comparison.get('commits')
+    count = comparison.get('total_commits')
+    require(comparison.get('url') == 'https://api.github.com/repos/'+compare_path
+        and comparison.get('html_url') == 'https://github.com/'+compare_path
+        and comparison.get('base_commit', {}).get('sha') == source_commit
+        and comparison.get('merge_base_commit', {}).get('sha') == source_commit
+        and comparison.get('status') == ('identical' if source_commit == publication_commit else 'ahead')
+        and type(count) is int and 0 <= count <= 64
+        and type(comparison.get('ahead_by')) is int and comparison['ahead_by'] == count
+        and type(comparison.get('behind_by')) is int and comparison['behind_by'] == 0
+        and type(commits) is list and len(commits) == count
         and type(comparison.get('files')) is list and len(comparison['files']) < 300,
         'Bounded forward native-to-publication source history required')
+    # GitHub's compare response has no head_commit field. Its complete,
+    # chronological commits list must end at the requested publication SHA.
+    parents_by_commit = {}
+    known = {source_commit}
+    for item in commits:
+        require(type(item) is dict and type(item.get('sha')) is str
+            and re.fullmatch('[0-9a-f]{40}', item['sha'])
+            and item['sha'] not in known and type(item.get('parents')) is list
+            and 0 < len(item['parents']) <= 65,
+            'Complete distinct forward comparison commits required')
+        parents = []
+        for parent in item['parents']:
+            require(type(parent) is dict and type(parent.get('sha')) is str
+                and parent['sha'] in known, 'Comparison commit ancestry must remain inside the complete forward history')
+            parents.append(parent['sha'])
+        require(len(parents) == len(set(parents)), 'Duplicate comparison commit parents rejected')
+        parents_by_commit[item['sha']] = parents
+        known.add(item['sha'])
+    require((source_commit == publication_commit and count == 0) or
+        (source_commit != publication_commit and count > 0 and commits[-1]['sha'] == publication_commit),
+        'Complete comparison history must end at the exact publication source')
+    ancestors = {publication_commit}
+    pending = [publication_commit]
+    while pending:
+        for parent in parents_by_commit.get(pending.pop(), []):
+            if parent not in ancestors:
+                ancestors.add(parent); pending.append(parent)
+    require(ancestors == known, 'Comparison history contains commits outside the exact publication ancestry')
     names = []
     for item in comparison['files']:
         name = item.get('filename')
@@ -594,8 +630,8 @@ def validate_native_reuse_records(run, jobs, artifacts, comparison, source_commi
             'Native reuse permits only reviewed host publication corrections')
         names.append(name)
     require(len(names) == len(set(names)) and ((source_commit == publication_commit and not names
-        and comparison['total_commits'] == 0) or (source_commit != publication_commit and bool(names)
-        and comparison['total_commits'] > 0)), 'Native reuse source comparison identity differs')
+        and count == 0) or (source_commit != publication_commit and bool(names)
+        and count > 0)), 'Native reuse source comparison identity differs')
     return {'format':1,'status':'passed','native_source_commit':source_commit,
         'publication_source_commit':publication_commit,'original_native_run_id':run['id'],
         'original_native_artifact_id':artifact['id'],'original_native_artifact_zip':{

@@ -86,7 +86,7 @@ jobs:
               owned = render_queue_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
               required = render_queue_native_push('push',os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
               pinned_host_recovery = (owned and not required and
-                  parent == 'c512e912a004b66886a7667640aa1a967e95de64' and
+                  parent == 'e69f2a66abf02e26712691bb1cd29955fe671e8b' and
                   set(names) <= current.HOST_NATIVE_REUSE_FILES)
               if pinned_host_recovery:
                   required = True
@@ -101,7 +101,7 @@ jobs:
               'existing_release_modified': False, 'completed_gpu_probe_and_driver_builds_repeated': False,
               'recovery_dispatch_required': recovery_dispatch_required,
               'reuse_native_run_id': reuse_run, 'reuse_native_source_commit': reuse_commit,
-              'recovery_policy': 'The bounded c512 host recovery reuses its authenticated completed Game; other source-equivalent host corrections require explicit reuse dispatch.'}))
+              'recovery_policy': 'The bounded e69 host recovery reuses the authenticated c512 completed Game; other source-equivalent host corrections require explicit reuse dispatch.'}))
           PY
   client:
     needs: changes

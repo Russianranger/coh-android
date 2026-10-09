@@ -51,8 +51,12 @@ def reuse_records():
     artifacts={'total_count':1,'artifacts':[{'name':'coh-client-render-queue-native',
         'id':123,'expired':False,'size_in_bytes':12345,'digest':'sha256:'+'c'*64,
         'workflow_run':{'id':42,'head_sha':source}}]}
-    comparison={'base_commit':{'sha':source},'head_commit':{'sha':publication},
-        'status':'ahead','total_commits':1,'files':[{
+    compare_path=builder.REPOSITORY+'/compare/'+source+'...'+publication
+    comparison={'url':'https://api.github.com/repos/'+compare_path,
+        'html_url':'https://github.com/'+compare_path,
+        'base_commit':{'sha':source},'merge_base_commit':{'sha':source},
+        'status':'ahead','ahead_by':1,'behind_by':0,'total_commits':1,
+        'commits':[{'sha':publication,'parents':[{'sha':source}]}],'files':[{
             'filename':'tools/android/interactive/build_client_render_queue_apk.py','status':'modified'}]}
     return run,jobs,artifacts,comparison,source,publication
 
@@ -155,6 +159,47 @@ class RenderQueuePublication(unittest.TestCase):
         self.assertFalse(receipt['native_build_repeated'])
         self.assertNotEqual(receipt['native_source_commit'],receipt['publication_source_commit'])
 
+    def test_actual_compare_API_shape_requires_complete_exact_forward_head_ancestry(self):
+        records=copy.deepcopy(reuse_records());comparison=records[3]
+        self.assertNotIn('head_commit',comparison)
+        builder.validate_native_reuse_records(*records)
+        source,publication=records[-2:];middle='c'*40
+        comparison['commits']=[{'sha':middle,'parents':[{'sha':source}]},
+            {'sha':publication,'parents':[{'sha':middle}]}]
+        comparison['total_commits']=comparison['ahead_by']=2
+        builder.validate_native_reuse_records(*records)
+        for variant in ('truncated','missing_commits','wrong_final','fabricated_head','foreign_url',
+                'foreign_html','merge_base','behind','ahead_count','boolean_count','over_limit',
+                'foreign_parent','duplicate_commit','reverse_order','orphan_commit','cycle',
+                'duplicate_parent','missing_parents'):
+            wrong=copy.deepcopy(records);candidate=wrong[3]
+            if variant=='truncated':candidate['commits'].pop(0)
+            elif variant=='missing_commits':candidate.pop('commits')
+            elif variant in ('wrong_final','fabricated_head'):
+                candidate['commits'][-1]['sha']='d'*40
+                if variant=='fabricated_head':candidate['head_commit']={'sha':publication}
+            elif variant=='foreign_url':candidate['url']=candidate['url'].replace(builder.REPOSITORY,'foreign/repository')
+            elif variant=='foreign_html':candidate['html_url']=candidate['html_url'].replace(builder.REPOSITORY,'foreign/repository')
+            elif variant=='merge_base':candidate['merge_base_commit']['sha']='d'*40
+            elif variant=='behind':candidate['behind_by']=1
+            elif variant=='ahead_count':candidate['ahead_by']=1
+            elif variant=='boolean_count':candidate['total_commits']=True
+            elif variant=='over_limit':candidate['total_commits']=candidate['ahead_by']=65
+            elif variant=='foreign_parent':candidate['commits'][0]['parents'][0]['sha']='d'*40
+            elif variant=='duplicate_commit':candidate['commits'][1]=copy.deepcopy(candidate['commits'][0])
+            elif variant=='reverse_order':candidate['commits'].reverse()
+            elif variant=='orphan_commit':candidate['commits'][-1]['parents']=[{'sha':source}]
+            elif variant=='cycle':candidate['commits'][0]['parents']=[{'sha':publication}]
+            elif variant=='duplicate_parent':candidate['commits'][0]['parents']*=2
+            else:candidate['commits'][0].pop('parents')
+            with self.subTest(variant=variant),self.assertRaises(ValueError):
+                builder.validate_native_reuse_records(*wrong)
+        identical=list(copy.deepcopy(reuse_records()));comparison=identical[3];identical[-1]=identical[-2]
+        comparison['url']='https://api.github.com/repos/'+builder.REPOSITORY+'/compare/'+source+'...'+source
+        comparison['html_url']='https://github.com/'+builder.REPOSITORY+'/compare/'+source+'...'+source
+        comparison.update(status='identical',ahead_by=0,behind_by=0,total_commits=0,commits=[],files=[])
+        self.assertEqual(builder.validate_native_reuse_records(*identical)['reviewed_host_only_changes'],[])
+
     def test_reuse_rejects_active_foreign_failed_incomplete_or_native_modified_owners(self):
         for variant in ('active','source','workflow','branch','job_failed','job_active','jobs_page',
                 'duplicate_job','artifact_expired','artifact_duplicate','artifact_digest',
@@ -215,14 +260,16 @@ class RenderQueuePublication(unittest.TestCase):
                     self.assertEqual(step['with']['fetch-depth'],2)
                     self.assertFalse(step['with']['persist-credentials'])
 
-    def test_actual_workflow_gate_reuses_only_exact_bounded_c512_host_recovery(self):
+    def test_actual_workflow_gate_reuses_only_exact_bounded_e69_host_recovery(self):
         import yaml
         workflow=yaml.safe_load((builder.ROOT/builder.WORKFLOW).read_text())
         step=next(s for s in workflow['jobs']['changes']['steps'] if s.get('id')=='gate')
         code=step['run'].split("python3 - <<'PY'\n",1)[1].rsplit('\nPY',1)[0]
-        source='c512e912a004b66886a7667640aa1a967e95de64';head='b'*40
-        names=[builder.WORKFLOW,'tools/android/interactive/test_client_render_queue_package.py']
-        def run_gate(changed,parent=source,before=None,event='push',reuse_run='',reuse_source='',published=False):
+        source='c512e912a004b66886a7667640aa1a967e95de64'
+        recovery_parent='e69f2a66abf02e26712691bb1cd29955fe671e8b';head='b'*40
+        names=[builder.WORKFLOW,'tools/android/interactive/build_client_render_queue_apk.py',
+            'tools/android/interactive/test_client_render_queue_package.py']
+        def run_gate(changed,parent=recovery_parent,before=None,event='push',reuse_run='',reuse_source='',published=False):
             def checked(arguments,**kwargs):
                 if arguments==['git','rev-parse','HEAD']:return head+'\n'
                 if arguments==['git','rev-parse','HEAD^']:return parent+'\n'
@@ -240,9 +287,9 @@ class RenderQueuePublication(unittest.TestCase):
                 return dict(line.split('=',1) for line in output.read_text().splitlines())
         expected={'required':'true','reuse_native_run_id':'37988347729','reuse_native_source_commit':source}
         self.assertEqual(run_gate(names),expected)
-        for parent,before,changed in (('a'*40,None,names),(source,'a'*40,names),
-                (source,None,names+['android/guest/client_gpu_profile.py']),
-                (source,None,names+['unreviewed.py'])):
+        for parent,before,changed in (('a'*40,None,names),(source,None,names),(recovery_parent,'a'*40,names),
+                (recovery_parent,None,names+['android/guest/client_gpu_profile.py']),
+                (recovery_parent,None,names+['unreviewed.py'])):
             with self.subTest(parent=parent,before=before,changed=changed):
                 result=run_gate(changed,parent,before);self.assertEqual(result['required'],'false')
                 self.assertEqual(result['reuse_native_run_id'],'')
