@@ -39,8 +39,16 @@ flag before resetting/rechecking the empty queue. This preserves ordered draw
 commands and avoids extra per-command event calls. New bounded pipeline timings
 split main graphics phases, explicit queue-flush wait, active render-command
 wall time and gaps. Independent review of the abstract interleavings confirms
-the old missed wake and repaired handshake; real Windows/native and full
-retained qualification remain publication gates.
+the old missed wake and repaired handshake. Actual Windows Game and retained/new
+Win32 checks passed in run `37924638566`, native source
+`5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396`. Game is 9,494,016 bytes, SHA-256
+`1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72`.
+That run's qualification stopped on a shallow checkout missing the parent
+commit needed by a retained routing test; no APK was built/published. The
+host-only recovery adds the required history and exact routing lane, then
+authenticates/reuses the successful native artifact without recompilation or
+relabeling. Native source/run and current publication source/run stay separate.
+Full retained qualification, packaging and public audit remain release gates.
 
 Use .21 as immutable donor and append to the accepted Game source chain.
 Retain the working GPU driver/probes, Software fallback, resolution/assets/

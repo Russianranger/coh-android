@@ -12,6 +12,108 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_render_pipeline_exact_scope_defers_all_historical_publishers(self):
+        names = sorted(change.RENDER_PIPELINE_ALLOWED)
+        self.assertTrue(change.render_pipeline_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names), function.__name__)
+        for marker in change.RENDER_PIPELINE_MARKERS:
+            with self.subTest(marker=marker):
+                self.assertTrue(change.render_pipeline_push('push', 'a'*40, 'b'*40, 'a'*40, [marker]))
+                for function in self.gameplay_historical_publishers():
+                    self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, [marker]), function.__name__)
+        self.assertTrue(all(not any(character in name for character in '*?[')
+            for name in change.RENDER_PIPELINE_ALLOWED))
+
+    def test_render_pipeline_shared_helpers_and_administrative_files_require_owner_marker(self):
+        marker = 'tools/android/interactive/build_client_render_pipeline_apk.py'
+        shared = change.RENDER_PIPELINE_SOURCES-change.RENDER_PIPELINE_MARKERS
+        administrative = {
+            'tools/android/interactive/classify_storage_cleanup_change.py',
+            'tools/android/interactive/classify_interactive_change.py',
+            'tools/android/interactive/test_classify_storage_cleanup_change.py',
+            'tools/android/interactive/test_classify_interactive_change.py',
+        }
+        self.assertEqual(shared, {
+            'android/guest/client_gpu_profile.py',
+            'android/guest/client_startup_diagnostic.py',
+            'android/guest/native_responsiveness_contract.py',
+            'android/guest/texture_header_index.py',
+        })
+        self.assertLessEqual(administrative, change.RENDER_PIPELINE_ALLOWED)
+        self.assertTrue(administrative.isdisjoint(change.RENDER_PIPELINE_SOURCES))
+        for path in shared | administrative:
+            with self.subTest(path=path):
+                self.assertFalse(change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, [path]))
+                self.assertTrue(change.render_pipeline_push('push', 'a'*40, 'b'*40, 'a'*40, [path, marker]))
+
+    def test_render_pipeline_cannot_hide_native_runtime_assets_or_neighboring_changes(self):
+        names = sorted(change.RENDER_PIPELINE_ALLOWED)
+        for foreign in ('android/native/client-launcher.c', 'android/runtime-lock.json',
+                'upstream/ouroboros/UtilitiesLib/utils/WorkerThread.c',
+                'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+                'upstream/ouroboros/MapServer/src/entity/entity.c',
+                'android/guest/local_character_server.py', 'android/guest/local_login_server.py',
+                change.JAVA+'ClientSurface.java', 'android/interactive/src/main/AndroidManifest.xml',
+                'assets/client-visual-manifest.json',
+                'patches/client-render-pipeline/0002-unreviewed.patch',
+                'database/client-render-pipeline/overlay/Game/src/unreviewed.h',
+                'tools/android/interactive/test_client_render_pipeline_unreviewed.py',
+                'tools/android/interactive/build_client_gpu_profile_apk.py', 'foreign.py'):
+            with self.subTest(foreign=foreign):
+                self.assertNotIn(foreign, change.RENDER_PIPELINE_ALLOWED)
+                mixed = names+[foreign]
+                self.assertFalse(change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, mixed))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, mixed), function.__name__)
+
+    def test_render_pipeline_requires_immediate_parent_and_nonempty_owner_scope(self):
+        names = sorted(change.RENDER_PIPELINE_ALLOWED)
+        for event, before, head, parent, files in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+                ('push', '0'*40, 'b'*40, '0'*40, names),
+                ('push', 'c'*40, 'b'*40, 'a'*40, names),
+                ('push', 'invalid', 'b'*40, 'a'*40, names),
+                ('push', 'a'*40, 'invalid', 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, None, names),
+                ('push', 'a'*40, 'a'*40, 'a'*40, names),
+                ('push', 'a'*40, 'b'*40, 'a'*40, [])):
+            with self.subTest(event=event, before=before, head=head, files=files):
+                self.assertFalse(change.render_pipeline_owned(event, before, head, parent, files))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function(event, before, head, parent, files), function.__name__)
+        self.assertFalse(change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, ['docs/HANDOFF.md']))
+
+    def test_render_pipeline_publication_checkpoint_is_exact_docs_only(self):
+        names = sorted(change.RENDER_PIPELINE_DOCS)
+        self.assertTrue(change.render_pipeline_docs('push', 'a'*40, 'b'*40, 'a'*40, names))
+        self.assertFalse(change.render_pipeline_push('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for function in self.gameplay_historical_publishers():
+            self.assertFalse(function('push', 'a'*40, 'b'*40, 'a'*40, names), function.__name__)
+            for foreign in ('docs/COH-PERFORMANCE-0.13.22.md',
+                    'docs/android-evidence/render-pipeline-0.13.22-publication-neighbor.json',
+                    'android/guest/local_character_server.py', 'foreign.md'):
+                self.assertFalse(change.render_pipeline_docs('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]))
+                self.assertTrue(function('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]), function.__name__)
+            self.assertTrue(function('push', 'c'*40, 'b'*40, 'a'*40, names), function.__name__)
+            self.assertTrue(function('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names), function.__name__)
+
+    def test_render_pipeline_classifier_cli_defers_all_fifteen_historical_gate_outputs(self):
+        for names in (sorted(change.RENDER_PIPELINE_ALLOWED), sorted(change.RENDER_PIPELINE_DOCS)):
+            with self.subTest(names=names), tempfile.TemporaryDirectory() as temporary:
+                output = Path(temporary)/'scope-output.txt'
+                environment = {'GITHUB_EVENT_NAME': 'push', 'COH_PUSH_BEFORE': 'a'*40,
+                    'GITHUB_OUTPUT': str(output)}
+                values = ['a'*40+'\n', 'b'*40+'\n', ('\0'.join(names)+'\0').encode()]
+                with mock.patch.dict(change.os.environ, environment), \
+                        mock.patch.object(change.subprocess, 'check_output', side_effect=values), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    change.main()
+                expected = ''.join(function.__name__+'=false\n'
+                    for function in self.gameplay_historical_publishers()[:-1])
+                self.assertEqual(output.read_text(), expected)
+
     def test_gpu_profile_exact_scope_defers_historical_publishers_without_native_mutations(self):
         names = sorted(change.GPU_PROFILE_ALLOWED)
         self.assertTrue(change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names))
@@ -613,7 +715,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

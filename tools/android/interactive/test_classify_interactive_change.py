@@ -9,6 +9,44 @@ spec.loader.exec_module(change)
 
 
 class QualificationRoutingTests(unittest.TestCase):
+    def test_render_pipeline_exact_sources_and_publication_docs_reuse_owned_runtime(self):
+        from classify_storage_cleanup_change import RENDER_PIPELINE_ALLOWED, RENDER_PIPELINE_DOCS, RENDER_PIPELINE_MARKERS
+        for names in (sorted(RENDER_PIPELINE_ALLOWED), sorted(RENDER_PIPELINE_DOCS)):
+            self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names))
+        for marker in RENDER_PIPELINE_MARKERS:
+            self.assertFalse(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, [marker]), marker)
+        names = sorted(RENDER_PIPELINE_ALLOWED)
+        for foreign in ('android/native/client-launcher.c', 'android/runtime-lock.json',
+                'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+                'android/guest/local_character_server.py', 'assets/client-visual-manifest.json',
+                'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/ClientSurface.java',
+                'patches/client-render-pipeline/unreviewed.patch',
+                'database/client-render-pipeline/overlay/Game/src/unreviewed.h',
+                'tools/android/interactive/test_client_render_pipeline_unreviewed.py', 'foreign.py'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]), foreign)
+
+    def test_render_pipeline_scope_cannot_mask_ambiguous_history_or_docs_neighbors(self):
+        from classify_storage_cleanup_change import RENDER_PIPELINE_ALLOWED, RENDER_PIPELINE_DOCS
+        names = sorted(RENDER_PIPELINE_ALLOWED)
+        for event, before, head, parent in (
+                ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40),
+                ('pull_request', 'a'*40, 'b'*40, 'a'*40),
+                ('push', '0'*40, 'b'*40, '0'*40),
+                ('push', 'c'*40, 'b'*40, 'a'*40),
+                ('push', 'invalid', 'b'*40, 'a'*40),
+                ('push', 'a'*40, 'invalid', 'a'*40),
+                ('push', 'a'*40, 'b'*40, None),
+                ('push', 'a'*40, 'a'*40, 'a'*40)):
+            with self.subTest(event=event, before=before, head=head):
+                self.assertTrue(change.runtime_required(event, before, head, parent, names))
+        names = sorted(RENDER_PIPELINE_DOCS)
+        for foreign in ('docs/COH-PERFORMANCE-0.13.22.md',
+                'docs/android-evidence/render-pipeline-0.13.22-publication-neighbor.json',
+                'android/guest/local_character_server.py', 'foreign.md'):
+            self.assertTrue(change.runtime_required('push', 'a'*40, 'b'*40, 'a'*40, names+[foreign]), foreign)
+        self.assertTrue(change.runtime_required('push', 'c'*40, 'b'*40, 'a'*40, names))
+        self.assertTrue(change.runtime_required('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names))
+
     def test_gpu_profile_reuses_owned_runtime_and_rejects_unreviewed_neighbor_paths(self):
         from classify_storage_cleanup_change import GPU_PROFILE_ALLOWED, GPU_PROFILE_DOCS, gpu_profile_push
         for names in (sorted(GPU_PROFILE_ALLOWED), sorted(GPU_PROFILE_DOCS)):

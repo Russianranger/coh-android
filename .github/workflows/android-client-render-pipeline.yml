@@ -33,6 +33,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
       - name: Preserve any complete existing publication
         id: gate
         env:
@@ -62,67 +63,32 @@ jobs:
   client:
     needs: changes
     if: needs.changes.outputs.required == 'true' && github.repository == 'Russianranger/coh-android' && github.ref == 'refs/heads/codex/character-persistence-continuation'
-    runs-on: windows-2025-vs2026
-    timeout-minutes: 80
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - name: Preserve exact LF native inputs on Windows
-        shell: pwsh
-        run: git config --global core.autocrlf false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Stage the immutable native chain and reviewed rendering continuation
-        shell: pwsh
-        run: |
-          python tools/android/interactive/package_client_render_pipeline_native.py stage --output out/client-render-pipeline-source
-          if ($LASTEXITCODE -ne 0) { throw 'Native render pipeline staging failed' }
-      - name: Qualify retained Win32 logic and current render-worker scheduling
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
-          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          if (-not $installation) { throw 'MSVC installation was not found' }
-          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
-          $batch = @"
-          @echo off
-          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_scene_performance_native.py --windows-qualify --output out/client-scene-checks.json
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_frame_timing_native.py --windows-qualify --output out/client-frame-checks.json
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_gameplay_performance_native.py --windows-qualify --output out/client-gameplay-checks.json
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_renderer_attribution_native.py --windows-qualify --output out/client-renderer-checks.json
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/test_client_render_pipeline_native.py --windows-qualify --output out/client-pipeline-checks.json
-          if errorlevel 1 exit /b 1
-          python tools/android/interactive/package_client_render_pipeline_native.py combine-checks --scene-checks out/client-scene-checks.json --frame-checks out/client-frame-checks.json --gameplay-checks out/client-gameplay-checks.json --renderer-checks out/client-renderer-checks.json --pipeline-checks out/client-pipeline-checks.json --output out/client-render-pipeline-native-checks.json
-          if errorlevel 1 exit /b 1
-          "@
-          Set-Content -Path out/contracts/client-render-pipeline.cmd -Value $batch -Encoding ASCII
-          cmd /c .\out\contracts\client-render-pipeline.cmd 2>&1 | Tee-Object out/contracts/client-render-pipeline.txt
-          if ($LASTEXITCODE -ne 0) { throw 'Win32 render pipeline qualification failed' }
-      - name: Build only Game; retain successful GPU driver and probes
-        working-directory: out/client-render-pipeline-source
-        shell: pwsh
-        run: |
-          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
-          if ($LASTEXITCODE -ne 0) { throw 'Native render pipeline configure failed' }
-          cmake --build out/build/vs2026 --config OptDebug --parallel --target Game
-          if ($LASTEXITCODE -ne 0) { throw 'Native Game build failed' }
-      - name: Bind Game to exact native source, ancestry and Win32 receipts
-        shell: pwsh
+          fetch-depth: 2
+      - name: Recover exact completed Game and Win32 proof without another native build
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: >-
-          python tools/android/interactive/package_client_render_pipeline_native.py package
-          --directory out/client-render-pipeline-source/out/build/vs2026/bin/OptDebug
-          --source out/client-render-pipeline-source
-          --cache out/client-render-pipeline-source/out/build/vs2026/CMakeCache.txt
-          --checks out/client-render-pipeline-native-checks.json
-          --repository-commit "$env:GITHUB_SHA"
-          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          python3 tools/android/interactive/build_client_render_pipeline_apk.py download-retained-native
           --output out/client-render-pipeline-native
+      - name: Record original native and current publication owners separately
+        run: |
+          python3 - <<'PY'
+          import os, sys, json
+          from pathlib import Path
+          sys.path.insert(0, 'tools/android/interactive')
+          import build_client_render_pipeline_apk as current
+          evidence = {'format': 1, 'status': 'passed',
+              'native_build_provenance': current.native_build_provenance(),
+              'publication_provenance': current.publication_provenance(os.environ['GITHUB_SHA']),
+              'native_compile_repeated': False, 'native_manifest_relabelled': False}
+          Path('out/client-render-pipeline-native-recovery.json').write_text(json.dumps(evidence, indent=2, sort_keys=True)+'\n')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-render-pipeline-native
@@ -130,18 +96,10 @@ jobs:
           if-no-files-found: error
           retention-days: 90
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: coh-client-render-pipeline-native-build-evidence
-          path: |
-            out/client-render-pipeline-source/*build-input.json
-            out/client-render-pipeline-source/responsiveness-source-input.json
-            out/client-render-pipeline-source/out/build/vs2026/CMakeCache.txt
-            out/client-render-pipeline-source/out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml
-            out/client-render-pipeline-native/*.json
-            out/client-*-checks.json
-            out/contracts/client-render-pipeline.txt
-          if-no-files-found: warn
+          name: coh-client-render-pipeline-native-recovery-evidence
+          path: out/client-render-pipeline-native-recovery.json
+          if-no-files-found: error
           retention-days: 90
   qualify:
     needs: [changes, client]
@@ -173,6 +131,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-render-pipeline-native
@@ -218,6 +177,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-render-pipeline-native
@@ -321,6 +281,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
       - uses: actions/download-artifact@v4
         with:
           name: coh-client-render-pipeline-native
@@ -375,7 +336,8 @@ jobs:
           from pathlib import Path
           report = json.loads(Path('out/client-render-pipeline-public/client-render-pipeline-apk-build-report.json').read_text())
           evidence = {key: report[key] for key in ('bytes', 'sha256', 'repository_commit', 'version_name', 'version_code',
-              'native_client_recompiled', 'java_or_dex_recompiled', 'mesa_driver_compiled_in_current_run',
+              'native_client_recompiled', 'native_client_compiled_in_current_publication_run',
+              'reused_previous_native_build', 'raw_native_producer_preserved', 'java_or_dex_recompiled', 'mesa_driver_compiled_in_current_run',
               'native_vulkan_probe_compiled_in_current_run', 'wgl_probe_compiled_in_current_run',
               'successful_gpu_driver_and_both_probes_retained', 'software_fallback_preserved',
               'runtime_refresh_required', 'physical_performance_validated', 'physical_fps_gain_validated')}

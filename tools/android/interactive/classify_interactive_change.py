@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push, scene_performance_push, scene_performance_docs, gameplay_performance_push, gameplay_performance_docs, sidebar_push, sidebar_docs, renderer_attribution_push, renderer_attribution_docs, gpu_profile_push, gpu_profile_docs
+from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push, scene_performance_push, scene_performance_docs, gameplay_performance_push, gameplay_performance_docs, sidebar_push, sidebar_docs, renderer_attribution_push, renderer_attribution_docs, gpu_profile_push, gpu_profile_docs, render_pipeline_owned
 
 SHELL_ONLY = frozenset({
     'tools/android/interactive/character_host_smoke.py',
@@ -209,6 +209,7 @@ RESPONSIVENESS_ONLY |= UI_BEACON_ALLOWED | REOPEN_STARTUP_REPAIR_ALLOWED | LEVEL
 
 
 def runtime_required(event, before, head, parent, names):
+    if render_pipeline_owned(event, before, head, parent, names): return False
     if gpu_profile_push(event, before, head, parent, names) or gpu_profile_docs(event, before, head, parent, names): return False
     if renderer_attribution_push(event, before, head, parent, names) or renderer_attribution_docs(event, before, head, parent, names): return False
     if sidebar_push(event, before, head, parent, names) or sidebar_docs(event, before, head, parent, names): return False

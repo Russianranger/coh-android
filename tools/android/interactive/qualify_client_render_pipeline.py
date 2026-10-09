@@ -96,9 +96,11 @@ def qualify(args):
         'native_client_render_pipeline': native, 'retained_native_client_renderer_attribution': donor['native_client_renderer_attribution'],
         'client_gpu_runtime': donor['client_gpu_runtime'], 'actual_external_donor_and_full_guest_wrapper_verified': True,
         'actual_native_ancestry_validation': actual_ancestry,
+        'native_build_provenance': derivative.native_build_provenance(),
+        'publication_provenance': derivative.publication_provenance(commit),
         **dict.fromkeys(derivative.FALSE_FLAGS, False), **dict.fromkeys(derivative.TRUE_FLAGS, True),
         'performance_claim_scope': 'Hosted checks prove the render-worker wake race repair and focused client/renderer/flush '
-            'attribution, actual current Game Win32 proof and full typed immutable ancestry, exact retained twenty DLLs, '
+            'attribution, retained completed Game Win32 proof and original source/run provenance and full typed immutable ancestry, exact retained twenty DLLs, '
             'all nineteen authored Java sources and Android DEX/resources, successful .21 Mesa driver/WGL/Vulkan probes, '
             'all server/save/recovery rules, prepared assets/cache/schema and the Software fallback. '
             'The .21 hardware milestone is physically accepted; sustained .22 FPS gains and temperatures require Thor testing.'}

@@ -100,6 +100,27 @@ class RenderPipelinePublication(unittest.TestCase):
         self.assertIn('native_client_recompiled', builder.TRUE_FLAGS)
         self.assertEqual(builder.DONOR_GAME['sha256'], 'adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44')
 
+    def test_recovery_keeps_completed_native_commit_proof_and_helper_bytes(self):
+        provenance = builder.native_build_provenance()
+        self.assertEqual(provenance['repository_commit'], '5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396')
+        self.assertEqual(provenance['run_id'], 37924638566)
+        self.assertEqual(provenance['actions_artifact_id'], 11614276232)
+        self.assertFalse(provenance['compiled_in_current_publication_run'])
+        self.assertTrue(provenance['game_changed_from_public_0_13_21'])
+        self.assertTrue(provenance['raw_producer_preserved'])
+        self.assertEqual(builder.NATIVE_MANIFEST_PIN['sha256'], 'daa2b2f9b2000449da27a2386a891c13248252770e1f237e99927b1392cc756c')
+        for name in builder.HELPERS:
+            path = builder.ROOT/'android/guest'/name
+            self.assertEqual(builder.builder().file_pin(path), provenance['source_files']['android/guest/'+name])
+        with mock.patch.dict(builder.os.environ, {'GITHUB_RUN_ID': '42'}):
+            current = builder.publication_provenance('b'*40)
+        self.assertEqual(current['repository_commit'], 'b'*40)
+        self.assertEqual(current['retained_native_build_repository_commit'], provenance['repository_commit'])
+        self.assertNotEqual(current['run_url'], provenance['run_url'])
+        self.assertFalse(current['native_build_relabelled']); self.assertFalse(current['native_build_repeated'])
+        self.assertIn('native_client_compiled_in_current_publication_run', builder.FALSE_FLAGS)
+        self.assertIn('reused_previous_native_build', builder.TRUE_FLAGS)
+
     def test_retained_suite_inventory_and_original_public_evidence_pin(self):
         import qualify_client_render_pipeline as qualification
         qualification.validate_suite_inventory()
@@ -112,23 +133,84 @@ class RenderPipelinePublication(unittest.TestCase):
         apk = next(value for value in publication['release']['assets'] if value['name'] == builder.DONOR_APK_NAME)
         self.assertEqual(builder.DONOR_APK, {name: apk[name] for name in ('bytes', 'sha256')})
 
-    def test_workflow_compiles_only_game_and_reuses_signer(self):
+    def test_workflow_recovers_exact_completed_Game_without_rebuilding_and_reuses_signer(self):
         import yaml
         workflow = yaml.safe_load((builder.ROOT/builder.WORKFLOW).read_text())
         self.assertEqual(set(workflow['jobs']), {'changes', 'client', 'qualify', 'apk', 'public-audit'})
         self.assertFalse(workflow['concurrency']['cancel-in-progress'])
-        self.assertEqual(workflow['jobs']['client']['runs-on'], 'windows-2025-vs2026')
+        self.assertEqual(workflow['jobs']['client']['runs-on'], 'ubuntu-24.04')
         client_steps = workflow['jobs']['client']['steps']
-        command = next(step['run'] for step in client_steps if 'Build only Game' in step.get('name', ''))
-        self.assertIn('--target Game', command)
+        command = next(step['run'] for step in client_steps if 'Recover exact completed Game' in step.get('name', ''))
+        self.assertIn('download-retained-native', command)
         all_text = (builder.ROOT/builder.WORKFLOW).read_text()
-        for forbidden in ('package_client_gpu_repair.py', 'gpu-runtime/build.py', 'coh-gpu-probe.c /Fo', 'coh-vulkan-gpu-probe.c'):
+        for forbidden in ('cmake --build', 'vcvars32.bat', '--target Game', 'package_client_gpu_repair.py', 'gpu-runtime/build.py', 'coh-gpu-probe.c /Fo', 'coh-vulkan-gpu-probe.c'):
             self.assertNotIn(forbidden, all_text)
         signing = [step for step in workflow['jobs']['apk']['steps'] if step.get('with', {}).get('name') == 'coh-client-interactive-signing']
         self.assertEqual(len(signing), 1); self.assertEqual(signing[0]['with']['run-id'], 36731428735)
+        for job in workflow['jobs'].values():
+            for step in job['steps']:
+                if step.get('uses', '').startswith('actions/checkout@'):
+                    self.assertEqual(step['with']['fetch-depth'], 2)
         public_steps = workflow['jobs']['public-audit']['steps']
         self.assertTrue(any('download-public' in step.get('run', '') for step in public_steps))
         self.assertTrue(any(' audit' in step.get('run', '') for step in public_steps))
+
+
+class RenderPipelineActualPackagePublication(unittest.TestCase):
+    def setUp(self):
+        import test_client_render_pipeline_contract as contracts
+        fixture = contracts.RenderPipelineContractTests(
+            'test_typed_layer_extends_exact_renderer_Game_and_preserves_every_previous_wrapper')
+        self.addCleanup(fixture.doCleanups)
+        fixture.setUp()
+        self.native = fixture.derivative()['client_render_pipeline']['manifest']
+        self.donor = {'_native_client_manifest': copy.deepcopy(fixture.donor),
+            'immutable_donor_provenance': {
+                'native_responsiveness': copy.deepcopy(fixture.donor['native_responsiveness']['receipt'])}}
+        self.expected = builder.client_manifest(self.donor, self.native)
+
+    def test_actual_canonical_wrapper_passes_full_typed_history_without_mutating_inputs(self):
+        before = copy.deepcopy((self.donor, self.native))
+        raw = builder.shared.encoded(self.expected)
+        checked = builder.validate_client_package_bytes(raw, self.donor, self.native)
+        self.assertEqual(checked, self.expected)
+        self.assertEqual((self.donor, self.native), before)
+        self.assertEqual(builder.shared.native_contract.client_contract(checked),
+            self.native['files']['CityOfHeroes.exe'])
+
+    def test_bool_int_float_collisions_in_actual_wrapper_are_rejected_before_expected_comparison(self):
+        for name, replacement in (('format', True), ('format', 1.0),
+                ('worker_wakeup_changed', 1), ('worker_wakeup_changed', 1.0),
+                ('runtime_execution_validated', 0), ('runtime_execution_validated', 0.0)):
+            actual = copy.deepcopy(self.expected)
+            manifest = actual['client_render_pipeline']['manifest']
+            if name == 'format':
+                manifest[name] = replacement
+            else:
+                manifest['build_input'][name] = replacement
+            # The prior audit accepted this comparison even though the actual
+            # nested producer no longer has its original types/canonical hash.
+            self.assertEqual(actual, self.expected)
+            with self.subTest(name=name, replacement=replacement):
+                with mock.patch.object(builder.shared.native_contract, 'client_contract',
+                        wraps=builder.shared.native_contract.client_contract) as typed:
+                    with self.assertRaises(ValueError):
+                        builder.validate_client_package_bytes(
+                            builder.shared.encoded(actual), self.donor, self.native)
+                self.assertEqual(typed.call_count, 1)
+                received = typed.call_args.args[0]['client_render_pipeline']['manifest']
+                value = received[name] if name == 'format' else received['build_input'][name]
+                self.assertIs(type(value), type(replacement))
+
+    def test_typed_valid_but_noncanonical_actual_encoding_is_rejected(self):
+        self.assertEqual(builder.shared.native_contract.client_contract(self.expected),
+            self.native['files']['CityOfHeroes.exe'])
+        canonical = builder.shared.encoded(self.expected)
+        for raw in (json.dumps(self.expected, sort_keys=True).encode(), canonical.rstrip(b'\n')):
+            self.assertEqual(builder.read_json_value(raw), self.expected)
+            self.assertNotEqual(raw, canonical)
+            with self.subTest(raw_bytes=len(raw)), self.assertRaises(ValueError):
+                builder.validate_client_package_bytes(raw, self.donor, self.native)
 
 
 if __name__ == '__main__': unittest.main()

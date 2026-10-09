@@ -94,6 +94,23 @@ reviewed Game archive, four typed native integration helpers and two
 verification/provenance manifests change.
 Do not rebuild Mesa or repeat the WGL repair. Startup and zoning remain deferred.
 
+The first owner run `37924638566` completed actual Windows Game compilation,
+the retained/new Win32 checks and source binding at native source
+`5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396`. The produced Game is 9,494,016
+bytes, SHA-256
+`1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72`.
+Qualification then stopped because its shallow checkout lacked the parent
+commit required by a retained publication-routing test. No APK was built or
+published by that failed run.
+
+The host-only recovery fetches the required history and gives this continuation
+an exact administrative routing lane. It authenticates and reuses the completed
+native artifact, keeping its original source, run, build recipe, Windows proof,
+CMake evidence and Game bytes. The current publication source/run is recorded
+separately; Game, Mesa and both GPU probes are not rebuilt. The package verifier
+also checks the actual nested client manifest through its full typed ancestry
+and exact canonical bytes, including boolean/integer/float rejection tests.
+
 Publication requires actual Windows Game/native checks, the complete retained
 99-suite qualification plus focused new checks and seven real PostgreSQL
 fixtures, exact donor conservation, SDK/signing/source/payload verification,

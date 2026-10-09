@@ -34,6 +34,15 @@ DONOR_EVIDENCE = {'bytes': 1255583, 'sha256': '2aad94d4dacd07d1c02fafafc9e41f8b6
 DONOR_EVIDENCE_ARCHIVE = 'published-0.13.21-packaging-evidence.zip'
 DONOR_EVIDENCE_NAMES = frozenset({DONOR_REPORT_NAME, 'COH-Atlas-Gameplay-0.13.21-testing.txt', DONOR_APK_NAME+'.sha256'})
 DONOR_GAME = {'bytes': 9487872, 'sha256': 'adcabb11135fe44b2c1f997a088ec58e4ea0d90e9defaa9f88efea34538caa44'}
+# The first .22 owner completed Game and genuine Win32 qualification. Its host
+# qualification stopped on shallow checkout history; retain this exact producer.
+NATIVE_BUILD_COMMIT, NATIVE_BUILD_RUN_ID = '5af0e27ccf6fbb53d5b3ff5c2c2f3bf5a1d58396', 37924638566
+NATIVE_ARTIFACT_ID = 11614276232
+NATIVE_ARTIFACT = {'bytes': 4050020, 'sha256': 'b8d169ccd859115c1c9178ec0a5cfd199fb4b4a8c7cb94585ca7ee68de91d51b'}
+NATIVE_MANIFEST_PIN = {'bytes': 77379, 'sha256': 'daa2b2f9b2000449da27a2386a891c13248252770e1f237e99927b1392cc756c'}
+NATIVE_GAME = {'bytes': 9494016, 'sha256': '1953fa3ed1bee3dcdecaed14ccd369730a13bc4addf06ddfc283f7f6f9211b72'}
+RETAINED_NATIVE_SOURCE_FILES = {'android/guest/client_gpu_profile.py': {'bytes': 37236, 'sha256': '4bbd06c6d134a5b9b10dba20cbfc5f4f17025b816fdbab18758c284081474e06'}, 'android/guest/client_startup_diagnostic.py': {'bytes': 86085, 'sha256': '8fa3ed50c020875afda40837e98b2cdb9ea25fd0229f46dc9457c44037dd1517'}, 'android/guest/native_responsiveness_contract.py': {'bytes': 65728, 'sha256': '1b8067b2cca6cc7b3ce4f0a33e8f546133b65ace9d7b594b66b3fd5296d266c2'}, 'android/guest/texture_header_index.py': {'bytes': 17786, 'sha256': 'ac3106db257c900adc13439b09679cb4081d3b10648999a8096867fae86139d8'}, 'database/client-render-pipeline/overlay/Game/src/cohClientRenderPipeline.h': {'bytes': 13466, 'sha256': '5926207d7fd59ab99f1a727cc6ec68e3ab34c01a23d315bf16e0a60e9660cc81'}, 'patches/client-render-pipeline/0001-render-worker-wake-and-focused-timing.patch': {'bytes': 6217, 'sha256': '4315bf293d5a195d09f605dbc703cf69584719ccc22df135a470ffecea1163e4'}, 'tools/android/interactive/package_client_render_pipeline_native.py': {'bytes': 16746, 'sha256': '7d61320a13a2c7904c73019568225ff3302635a846adc65fa1152f1622bf0d0e'}, 'tools/android/interactive/test_client_render_pipeline_contract.py': {'bytes': 9904, 'sha256': '6f1105ceb401d0ccda4af7ae2b9f0d9b942d02dcb6dc503390a285baba65367c'}, 'tools/android/interactive/test_client_render_pipeline_native.py': {'bytes': 22971, 'sha256': '95373284566035ab9dc95dfc78f70118fef5bc81b90163b9c2999abc18f5c504'}, 'tools/android/interactive/test_client_render_pipeline_source.py': {'bytes': 12378, 'sha256': 'db1ea10ab75c0c60e48c310e21685f92bc517c963bedf469cd3dfe4d561edac5'}, 'upstream/ouroboros/Game/src/graphics/gfx.c': {'bytes': 58931, 'sha256': '9965ea6a472a8b693015540a53142cdf023a2399ecc9dc88f338c5f0b4f42a7e'}, 'upstream/ouroboros/Game/src/render/thread/rt_queue.c': {'bytes': 15858, 'sha256': 'e1121ae5462da63b896289a60b2d16b4e913180e8c009cbf398fcba7fb8946d6'}, 'upstream/ouroboros/Game/src/render/thread/rt_queue.h': {'bytes': 7420, 'sha256': '342f3bc31a3d0974a78e7be922cf01d9e1f46598e1ba280b86cf2b5a2dc0b33d'}, 'upstream/ouroboros/libs/UtilitiesLib/src/components/WorkerThread.c': {'bytes': 11897, 'sha256': 'eebaa5df2895cf7cc3cd8c7ec6faaba1b75f9e72fa0252e058a7abe8d4cf7c2c'}}
+
 DONOR_URL = 'https://github.com/'+REPOSITORY+'/releases/download/coh-atlas-gameplay-v0.13.21/'+DONOR_APK_NAME
 VERSION_NAME, VERSION_CODE = '0.13.22', 37
 APK_NAME, REPORT_NAME = 'COH-Atlas-Gameplay-0.13.22.apk', 'client-render-pipeline-apk-build-report.json'
@@ -54,18 +63,29 @@ CHECKS = ('native_render_pipeline_and_owned_current_game_controls_verified',
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/build_client_render_pipeline_apk.py',
     'tools/android/interactive/test_client_render_pipeline_package.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
     'tools/android/interactive/analyze_client_render_pipeline.py',
     'tools/android/interactive/test_client_render_pipeline_report.py',
     'docs/android-evidence/renderer-sync-0.13.21-thor-20261009.json',
     'docs/COH-PERFORMANCE-0.13.22.md', 'docs/'+NOTES_NAME,
     *('android/guest/'+name for name in HELPERS)})
-REVIEWED_DONOR_SOURCE_CHANGES = frozenset({'docs/HANDOFF.md', *('android/guest/'+name for name in HELPERS)})
-FALSE_FLAGS = ('native_dbserver_recompiled', 'native_mapserver_recompiled', 'java_or_dex_recompiled',
+REVIEWED_DONOR_SOURCE_CHANGES = frozenset({'docs/HANDOFF.md', *('android/guest/'+name for name in HELPERS),
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+})
+FALSE_FLAGS = ('native_client_compiled_in_current_publication_run', 'native_client_compiled_in_current_run',
+    'native_dbserver_recompiled', 'native_mapserver_recompiled', 'java_or_dex_recompiled',
     'graphics_driver_changed', 'mesa_driver_compiled_in_current_run', 'native_vulkan_probe_compiled_in_current_run',
     'wgl_probe_compiled_in_current_run', 'physical_performance_validated', 'physical_fps_gain_validated',
     'asset_reimport_required', 'world_assets_changed', 'prepared_cache_archive_changed',
     'wine_or_fex_changed', 'save_acceptance_relaxed', 'zoning_implemented')
-TRUE_FLAGS = ('native_client_recompiled', 'retained_android_dex_and_resources_verified',
+TRUE_FLAGS = ('native_client_recompiled', 'reused_previous_native_build', 'native_client_package_reused',
+    'raw_native_producer_preserved', 'retained_android_dex_and_resources_verified',
     'successful_gpu_driver_and_both_probes_retained', 'software_fallback_preserved',
     'graphical_fidelity_preserved_by_payload_and_recipe', 'runtime_refresh_required', 'previous_runtime_generation_retained')
 RETAINED_FIELDS = previous.old.RETAINED_RECEIPT_FIELDS + ('client_gpu_runtime',)
@@ -169,17 +189,40 @@ def validate_donor(apk, receipt):
     current_sources(donor); return donor
 
 
+def native_build_provenance():
+    return {'format': 1, 'repository_commit': NATIVE_BUILD_COMMIT, 'run_id': NATIVE_BUILD_RUN_ID,
+        'run_url': 'https://github.com/'+REPOSITORY+'/actions/runs/'+str(NATIVE_BUILD_RUN_ID),
+        'actions_artifact_id': NATIVE_ARTIFACT_ID, 'artifact_zip': NATIVE_ARTIFACT,
+        'native_manifest': NATIVE_MANIFEST_PIN, 'game': NATIVE_GAME,
+        'source_files': RETAINED_NATIVE_SOURCE_FILES,
+        'source_recipe_independently_recomputed': True, 'raw_producer_preserved': True,
+        'compiled_in_current_publication_run': False, 'game_changed_from_public_0_13_21': True}
+
+
+def publication_provenance(commit):
+    owner = os.environ.get('GITHUB_RUN_ID')
+    require(owner is None or re.fullmatch(r'[1-9][0-9]*', owner), 'Exact current publication owner required')
+    return {'format': 1, 'repository_commit': commit,
+        'run_url': 'https://github.com/'+REPOSITORY+'/actions/runs/'+owner if owner else None,
+        'retained_native_build_repository_commit': NATIVE_BUILD_COMMIT,
+        'retained_native_build_run_id': NATIVE_BUILD_RUN_ID,
+        'native_build_relabelled': False, 'native_build_repeated': False}
+
+
 def validate_native(directory, commit, donor):
-    producer = native_producer(); native = producer.validate_package(directory, commit)
+    builder().source_commit(commit)
+    producer = native_producer()
+    for name, expected in RETAINED_NATIVE_SOURCE_FILES.items(): builder().checked_file(ROOT/name, expected)
+    builder().checked_file(Path(directory)/producer.MANIFEST, NATIVE_MANIFEST_PIN)
+    builder().checked_file(Path(directory)/'CityOfHeroes.exe', NATIVE_GAME)
+    native = producer.validate_package(directory, NATIVE_BUILD_COMMIT)
     require(native['base_client_executable'] == donor['native_client_renderer_attribution']['files']['CityOfHeroes.exe']
         and native['build_input']['base_client_renderer_attribution_build_input'] == donor['native_client_renderer_attribution']['build_input'],
-        'New native Game must extend the exact physically accepted .21/.19 Game ancestry')
+        'Retained new Game must extend the exact physically accepted .21/.19 Game ancestry')
     engine.validate_native_source_ancestry(native['retained_source_inputs'], donor['immutable_donor_provenance']['native_responsiveness']['build_inputs'])
-    require(native['schema_sources_sha256'] == donor['immutable_donor_provenance']['native_responsiveness']['retained_cache']['schema_sources_sha256'],
-        'Prepared native cache schema changed')
-    if os.environ.get('GITHUB_RUN_ID'):
-        require(native['run_url'] == 'https://github.com/'+REPOSITORY+'/actions/runs/'+os.environ['GITHUB_RUN_ID'],
-            'Game must be built and qualified in this exact owner run')
+    require(native['schema_sources_sha256'] == donor['immutable_donor_provenance']['native_responsiveness']['retained_cache']['schema_sources_sha256']
+        and native['run_url'] == native_build_provenance()['run_url'],
+        'Prepared cache schema or original completed native producer identity changed')
     return native
 
 
@@ -193,6 +236,23 @@ def client_manifest(donor, native):
         'base_client_executable': copy.deepcopy(donor['_native_client_manifest']['files']['CityOfHeroes.exe'])}
     shared.native_contract.client_contract(result, donor['immutable_donor_provenance']['native_responsiveness'])
     return result
+
+
+def validate_client_package_bytes(raw, donor, native):
+    """Qualify the actual nested JSON with typed ancestry and exact encoding.
+
+    Python object equality collapses bool/int/float distinctions. Validate the
+    received wrapper itself before requiring the canonical bytes the builder
+    writes, rather than qualifying only an independently generated expectation.
+    """
+    package = read_json_value(raw)
+    record = shared.native_contract.client_contract(
+        package, donor['immutable_donor_provenance']['native_responsiveness'])
+    expected = client_manifest(donor, native)
+    require(raw == shared.encoded(expected)
+        and record == native['files']['CityOfHeroes.exe'],
+        'Actual native client wrapper bytes or typed producer differ')
+    return package
 
 
 def replace_client_archive(path, donor, native, directory):
@@ -210,7 +270,7 @@ def replace_client_archive(path, donor, native, directory):
         received = engine.startup.startup.client_member_pins(archive)
         require(set(received) == set(donor['_client_members']) and all(received[n] == donor['_client_members'][n]
             for n in received if n not in {'CityOfHeroes.exe', 'client-package.json'}), 'Retained twenty client DLL bytes changed')
-        require(read_json_value(archive.read('client-package.json')) == expected, 'Actual native client wrapper differs')
+        validate_client_package_bytes(archive.read('client-package.json'), donor, native)
     output.replace(path)
 
 
@@ -221,7 +281,9 @@ def verification_manifests(donor, updates, commit, native):
     runtime['files']['client-manifest.json'] = pin(shared.encoded(client))
     runtime.update(repository_commit=commit, scope=QUALIFICATION_SCOPE)
     runtime['client_render_pipeline'] = {'format': 1, 'repository_commit': commit, 'donor_repository_commit': DONOR_COMMIT,
-        'native_recompiled': True, 'native_manifest_sha256': shared.native_contract.canonical_sha(native),
+        'native_recompiled': True, 'native_compiled_in_current_publication_run': False,
+        'native_build_provenance': native_build_provenance(), 'publication_provenance': publication_provenance(commit),
+        'native_manifest_sha256': shared.native_contract.canonical_sha(native),
         'replacement_scope': 'CityOfHeroes.exe_only', 'changed_guest_helpers': sorted(HELPERS),
         'successful_gpu_driver_and_both_probes_retained': True, 'android_dex_and_resources_retained': True,
         'graphical_fidelity_preserved': True, 'physical_performance_validated': False}
@@ -268,8 +330,9 @@ def verify_derivative(apk, donor, payloads, commit, native):
         with archive.open('assets/runtime/client-runtime.zip') as source, tempfile.TemporaryFile() as target:
             shutil.copyfileobj(source, target, 1024*1024); target.seek(0)
             with zipfile.ZipFile(target) as client_zip:
-                package = read_json_value(client_zip.read('client-package.json')); members = engine.startup.startup.client_member_pins(client_zip)
-                require(package == client_manifest(donor, native) and members['CityOfHeroes.exe'] ==
+                validate_client_package_bytes(client_zip.read('client-package.json'), donor, native)
+                members = engine.startup.startup.client_member_pins(client_zip)
+                require(members['CityOfHeroes.exe'] ==
                     {'bytes': native['files']['CityOfHeroes.exe']['size'], 'sha256': native['files']['CityOfHeroes.exe']['sha256']}
                     and set(members) == set(donor['_client_members']) and all(members[n] == donor['_client_members'][n]
                         for n in members if n not in {'CityOfHeroes.exe', 'client-package.json'}), 'Actual Game/typed wrapper/retained DLL bytes differ')
@@ -283,6 +346,8 @@ def validate_qualification(q, commit):
         and q.get('repository_commit') == commit and q.get('runtime_repository_commit') == commit
         and q.get('donor') == donor_link() and q.get('checks') == dict.fromkeys(CHECKS, True)
         and q.get('actual_native_ancestry_validation') == ACTUAL_NATIVE_ANCESTRY_CHECKS
+        and q.get('native_build_provenance') == native_build_provenance()
+        and q.get('publication_provenance') == publication_provenance(commit)
         and q.get('changed_java_sources') == [] and q.get('retained_java_sources_verified') == 19
         and q.get('baseline_payloads_verified') == 77
         and q.get('actual_external_donor_and_full_guest_wrapper_verified') is True
@@ -348,7 +413,9 @@ def build(args):
             'baseline_payloads_verified': 77, 'retained_baseline_payloads_verified': 70, 'retained_dex': donor['recompiled_dex'],
             'java_sources': donor['java_sources'], 'changed_java_sources': [], 'retained_java_sources_verified': 19,
             'qualification': q, 'qualification_receipt': base.file_pin(args.qualification), 'testing_notes': base.file_pin(args.testing_notes),
-            'native_client_render_pipeline': native, 'runtime_manifest': runtime,
+            'native_client_render_pipeline': native, 'native_build_provenance': native_build_provenance(),
+            'publication_provenance': publication_provenance(commit), 'retained_native_repository_commit': NATIVE_BUILD_COMMIT,
+            'runtime_manifest': runtime,
             'runtime_manifest_sha256': payloads['assets/runtime/runtime-manifest.json']['sha256'],
             **dict.fromkeys(FALSE_FLAGS, False), **dict.fromkeys(TRUE_FLAGS, True), **{name: donor[name] for name in RETAINED_FIELDS}}
         (args.output.parent/REPORT_NAME).write_bytes(shared.encoded(report))
@@ -368,6 +435,9 @@ def verify_report(args, commit):
         and report.get('abi') == 'arm64-v8a' and report.get('signer_certificate_sha256') == SIGNER and report.get('signing_key_created') is False
         and report.get('qualification') == q and report.get('qualification_receipt') == builder().file_pin(args.qualification)
         and report.get('native_client_render_pipeline') == q.get('native_client_render_pipeline') == native
+        and report.get('native_build_provenance') == q.get('native_build_provenance') == native_build_provenance()
+        and report.get('publication_provenance') == q.get('publication_provenance') == publication_provenance(commit)
+        and report.get('retained_native_repository_commit') == NATIVE_BUILD_COMMIT
         and q.get('client_gpu_runtime') == donor['client_gpu_runtime']
         and q.get('retained_native_client_renderer_attribution') == donor['native_client_renderer_attribution']
         and report.get('java_sources') == q.get('java_sources') == donor['java_sources'] and report.get('changed_java_sources') == []
@@ -404,25 +474,55 @@ def validate_existing_release(release):
 bounded_download = previous.bounded_download
 
 
-def download_donor_evidence(args):
-    """Fetch only the immutable evidence artifact; never rebuild an old probe."""
-    require(not args.output.exists() and not args.output.is_symlink(), 'Fresh evidence directory required'); args.output.mkdir(parents=True)
+def authenticated_artifact_download(artifact_id, destination, expected):
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, request, fp, code, msg, headers, newurl): return None
-    request = urllib.request.Request('https://api.github.com/repos/'+REPOSITORY+'/actions/artifacts/'+str(DONOR_EVIDENCE_ID)+'/zip',
+    request = urllib.request.Request('https://api.github.com/repos/'+REPOSITORY+'/actions/artifacts/'+str(artifact_id)+'/zip',
         headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
     try:
-        with urllib.request.build_opener(NoRedirect()).open(request, timeout=30) as response: raise ValueError('Artifact API must redirect to immutable ZIP')
+        with urllib.request.build_opener(NoRedirect()).open(request, timeout=30) as response:
+            raise ValueError('Artifact API must redirect to immutable ZIP')
     except urllib.error.HTTPError as error:
         require(error.code == 302 and urllib.parse.urlparse(error.headers['Location']).scheme == 'https', 'Unexpected artifact redirect')
         location = error.headers['Location']
-    target = args.output/DONOR_EVIDENCE_ARCHIVE; bounded_download(location, target, DONOR_EVIDENCE)
+    bounded_download(location, destination, expected)
+
+
+def download_donor_evidence(args):
+    """Fetch only the immutable evidence artifact; never rebuild an old probe."""
+    require(not args.output.exists() and not args.output.is_symlink(), 'Fresh evidence directory required'); args.output.mkdir(parents=True)
+    target = args.output/DONOR_EVIDENCE_ARCHIVE
+    authenticated_artifact_download(DONOR_EVIDENCE_ID, target, DONOR_EVIDENCE)
     members = donor_evidence_members(target)
     with zipfile.ZipFile(target) as archive:
         for name in sorted(members):
             destination = args.output/name; destination.write_bytes(archive.read(name)); builder().checked_file(destination, members[name])
     print('Authenticated original published .21 packaging evidence; driver and probes retained')
     print('Authenticated donor build-report pin:', json.dumps(members[DONOR_REPORT_NAME], sort_keys=True))
+
+
+def download_retained_native(args):
+    """Recover the completed Game and genuine Win32 proof without relabelling."""
+    producer = native_producer()
+    for name, expected in RETAINED_NATIVE_SOURCE_FILES.items(): builder().checked_file(ROOT/name, expected)
+    require(not args.output.exists() and not args.output.is_symlink(), 'Fresh retained native output required')
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='coh-completed-native-', dir=args.output.parent) as temporary:
+        archive_path = Path(temporary)/'completed-native.zip'
+        authenticated_artifact_download(NATIVE_ARTIFACT_ID, archive_path, NATIVE_ARTIFACT)
+        with zipfile.ZipFile(archive_path) as archive:
+            names = {'CityOfHeroes.exe', 'CMakeCache.txt', producer.MANIFEST, producer.CHECKS}
+            require(retained.archive_inventory(archive) == names, 'Exact completed native four-file inventory required')
+            args.output.mkdir()
+            for name in sorted(names):
+                entry = archive.getinfo(name)
+                require(not entry.is_dir() and 0 < entry.file_size <= 64*1024**2, 'Unbounded completed native file')
+                (args.output/name).write_bytes(archive.read(name))
+    builder().checked_file(args.output/producer.MANIFEST, NATIVE_MANIFEST_PIN)
+    builder().checked_file(args.output/'CityOfHeroes.exe', NATIVE_GAME)
+    native = producer.validate_package(args.output, NATIVE_BUILD_COMMIT)
+    require(native['run_url'] == native_build_provenance()['run_url'], 'Original completed native run relabelled')
+    print('Retained completed native build:', json.dumps(native_build_provenance(), sort_keys=True))
 
 
 def publish_release(api, report, assets, notes):
@@ -471,7 +571,7 @@ def download_public(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__); commands = parser.add_subparsers(dest='command', required=True)
-    for name in ('download-donor', 'download-donor-evidence'):
+    for name in ('download-donor', 'download-donor-evidence', 'download-retained-native'):
         command = commands.add_parser(name); command.add_argument('--output', type=Path, required=True)
     command = commands.add_parser('download-public'); command.add_argument('--output', type=Path, required=True); command.add_argument('--build-report', type=Path, required=True)
     for name in ('build', 'audit', 'publish'):
@@ -486,6 +586,7 @@ def main():
     args = parser.parse_args()
     if args.command == 'download-donor': bounded_download(DONOR_URL, args.output, DONOR_APK)
     elif args.command == 'download-donor-evidence': download_donor_evidence(args)
+    elif args.command == 'download-retained-native': download_retained_native(args)
     elif args.command == 'download-public': download_public(args)
     elif args.command == 'build': build(args)
     elif args.command == 'publish': publish(args)
