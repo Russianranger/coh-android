@@ -752,6 +752,7 @@ ZONING_ALLOWED = ZONING_MARKERS | ZONING_DOCS | frozenset({
     'tools/android/interactive/test_client_sidebar_commands.py',
     'tools/android/interactive/test_client_sidebar_runtime.py',
     'tools/android/interactive/test_fresh_profile_recovery.py',
+    'tools/android/interactive/test_client_gpu_repair_evidence.py',
 })
 
 
