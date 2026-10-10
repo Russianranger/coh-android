@@ -1,3 +1,36 @@
+# CURRENT — .25 accepted physical baseline; Atlas instance zoning in progress — 2026-10-10
+
+**The user physically tested .25 and accepts its much improved FPS as the new
+serviceable testing baseline. Sustained 30 FPS remains unmet. The user now
+requests zoning implementation; the prior FPS-first deferral is superseded.**
+
+The complete report `coh-atlas-gameplay-20261010-183224.zip` verifies .25 runtime
+`d6c7a89ef4f73b563a188d9f4562411f1e917dbe`, native Game
+`c512e912a004b66886a7667640aa1a967e95de64`, and Zink/Turnip Adreno 740. Eight pure
+cap-30 gameplay windows measure 1,866 frames, **42.959 ms / 23.278 Hz**. Ordinary
+SQL/native-position save and cleanup pass; identity, powers, costume, XP and
+influence remain preserved. Generic input/gameplay qualification flags remain
+false, separately from the user's FPS acceptance. See
+`docs/android-evidence/render-queue-0.13.25-thor-20261010.json`.
+
+Recovery verified clean branch head `c30af19ade11df9237d33f2b9beeb6bebac6d1cb`,
+unchanged main and draft PR #1, .25 as the newest publication and no active
+workflows. A new local checkout was created; the previous agent's private
+working tree is unavailable. No prior work was reset or discarded.
+
+The next release candidate is **0.13.26 / code 41**, controlled Atlas instance
+zoning 1 ↔ 101. The implementation must preserve the exact .25 native Game,
+servers, graphics and world payloads, prepare the destination before native
+transfer, verify fresh arrival and ordinary save, and reopen a saved supported
+destination without changing SQL MapId/position. It is not a new-city asset
+qualification. `docs/COH-ZONING-0.13.26.md` describes the finite scope and
+`docs/COH-Atlas-Gameplay-0.13.26-testing.txt` describes pending device checks.
+
+**Publication is pending. The available APK remains .25 until the .26
+qualification, SDK/signature/payload checks and public-download audit complete.**
+Do not rebuild the accepted native executables or request another .25 FPS test.
+Older sections below are historical.
+
 # Published .25 render-worker wake coalescing — 2026-10-09
 
 **Current test APK: 0.13.25 / version code 40. All five publication jobs passed,

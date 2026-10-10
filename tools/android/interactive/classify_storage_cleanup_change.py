@@ -719,6 +719,57 @@ SESSION_REPAIR_ALLOWED = SESSION_REPAIR_SOURCES | SESSION_REPAIR_DOCS | frozense
 })
 
 
+# .26 owns the finite Android/guest Atlas instance transfer extension. Native
+# executables, drivers, assets and their build recipes cannot join this lane.
+ZONING_MARKERS = frozenset({
+    '.github/workflows/android-client-zoning.yml',
+    'tools/android/interactive/build_client_zoning_apk.py',
+    'tools/android/interactive/qualify_client_zoning.py',
+    'tools/android/interactive/test_client_zoning_package.py',
+    'tools/android/interactive/test_client_zoning_java.py',
+    'tools/android/interactive/test_character_zoning.py',
+    'android/guest/character_zoning.py',
+    'android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java',
+})
+ZONING_DOCS = frozenset({
+    'docs/HANDOFF.md', 'docs/COH-ZONING-0.13.26.md',
+    'docs/COH-Atlas-Gameplay-0.13.26-testing.txt',
+    'docs/android-evidence/render-queue-0.13.25-thor-20261010.json',
+    'docs/android-evidence/zoning-0.13.26-publication.json',
+})
+ZONING_ALLOWED = ZONING_MARKERS | ZONING_DOCS | frozenset({
+    'android/guest/local_character_server.py',
+    'android/guest/character_reopen_diagnostic.py',
+    'android/guest/character_creation_diagnostic.py',
+    'android/guest/character_session_budget.py',
+    JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
+    JAVA+'InteractiveRfbClient.java',
+    JAVA+'ClientAcceptance.java', JAVA+'ClientSessionBudget.java',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/interactive/test_client_sidebar_commands.py',
+    'tools/android/interactive/test_client_sidebar_runtime.py',
+    'tools/android/interactive/test_fresh_profile_recovery.py',
+})
+
+
+def zoning_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, ZONING_ALLOWED)
+        and set(names) & ZONING_MARKERS)
+
+
+def zoning_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, ZONING_DOCS)
+        and set(names) & {'docs/android-evidence/render-queue-0.13.25-thor-20261010.json',
+                         'docs/android-evidence/zoning-0.13.26-publication.json'})
+
+
+def zoning_owned(event, before, head, parent, names):
+    return zoning_push(event, before, head, parent, names) or zoning_docs(event, before, head, parent, names)
+
+
 # .25 appends the reviewed Game queue layer over the exact .24 Android shell.
 # Shared guest readers require a marker; Java/GPU/server/asset changes are excluded.
 RENDER_QUEUE_HELPERS = frozenset({
@@ -1004,6 +1055,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1029,6 +1081,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1052,6 +1105,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1077,6 +1131,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1102,6 +1157,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1125,6 +1181,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1146,6 +1203,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1166,6 +1224,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1186,6 +1245,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1205,6 +1265,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1223,6 +1284,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1240,6 +1302,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1256,6 +1319,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1271,6 +1335,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False
@@ -1285,6 +1350,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
     if session_repair_owned(event, before, head, parent, names): return False

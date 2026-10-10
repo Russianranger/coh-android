@@ -324,7 +324,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             self.connected_announced = True
             self.ctx.event('character_connected', session_id=self.args.session_id, client_pid=launch['pid'],
                 character_id=current['character_id'], name=CHARACTER_NAME, account=login.server.ACCOUNT,
-                map_id=1, **self.connected_event_data(current))
+                map_id=current['map_id'], **self.connected_event_data(current))
         if proof is not None:
             require(self.connected_announced and self.proof_verified(proof, self.args.session_id),
                     'Graphical character protocol save is incomplete')

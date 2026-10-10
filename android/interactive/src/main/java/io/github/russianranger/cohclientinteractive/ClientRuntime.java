@@ -103,6 +103,10 @@ public final class ClientRuntime {
     private volatile boolean inputReady, finishRequested;
     private volatile boolean performanceCommandPending;
     private long performanceCommandGeneration;
+    private final ClientZoning zoning = new ClientZoning();
+    private final List<Map<String,Object>> zoningEvents = new ArrayList<>();
+    private final List<Map<String,Object>> zoningSamples = new ArrayList<>();
+    private final List<byte[]> zoningPngs = new ArrayList<>();
     private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
     private final ClientSessionBudget sessionBudget = new ClientSessionBudget();
     private final List<Map<String,Object>> sessionBudgetEvents = new ArrayList<>();
@@ -494,6 +498,7 @@ public final class ClientRuntime {
                     "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
                     "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "1200", "--timeout-seconds", "5400"));
             if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
+            if (zoningEnabled()) command.add("--zoning");
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
             builder.environment().put("PROOT_LOADER", loader.getPath());
             builder.environment().put("PROOT_TMP_DIR", prootTmp.getPath());
@@ -615,11 +620,11 @@ public final class ClientRuntime {
             recordLifecycle("sidebar_enter_submitted sent_utc_ms=" + System.currentTimeMillis());
         }, true);
     }
-    public boolean isPerformanceCommandPending() { return performanceCommandPending; }
+    public boolean isPerformanceCommandPending() { return performanceCommandPending || zoning.blocksInput(); }
     private boolean performanceCommandInputAllowed() {
         return session != null && !session.isEmpty() && reopen && inputReady && !finishRequested && !finished && !cancelled && !producerCompleted
                 && connectedCapturedReady && characterConnectedEvent != null && observedClientPid > 0
-                && !saveLogoutRequested && characterSavedEvent == null
+                && !saveLogoutRequested && characterSavedEvent == null && !zoning.blocksInput()
                 && (!stuckRequested || relocationCapturedReady)
                 && !(taskContactRequested && taskContactReceipt == null)
                 && !(taskCompletionRequested && taskCompletionReceipt == null)
@@ -653,9 +658,81 @@ public final class ClientRuntime {
         notifyInputState();
         return true;
     }
+    private boolean zoningEnabled() {
+        return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
+                && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
+    }
+    public String zoningStatus() {
+        if(!zoningEnabled())return "Atlas instance zoning becomes available after runtime update and Reopen.";
+        if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
+        if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
+        String phase=zoning.phase();
+        if("idle".equals(phase))return ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested";
+        if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())+" · you may keep playing";
+        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+" ready · tap Travel when ready";
+        if("capturing".equals(phase))return "Native arrival verified · collecting fresh view "+zoning.captures()+"/3";
+        if("prepare_failed".equals(phase))return "Destination preparation failed · current map remains available; Save or export";
+        if("failed".equals(phase))return "Transfer not verified · Abort and export; Reopen preserves the saved map";
+        return "Travelling to "+ClientZoning.name(zoning.targetMap())+" · awaiting native arrival";
+    }
+    private boolean zoningRecoveryAllowed(){
+        return !zoningEnabled() || (zoning.enabled() && zoning.epoch()==0 && zoning.currentMap()==1);
+    }
+    public int zoningCurrentMap(){return zoning.currentMap();}
+    public synchronized boolean canPrepareZoning() {
+        return zoningEnabled() && !stuckRequested && zoning.canPrepare() && canSendPerformanceCommand()
+                && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
+    }
+    public synchronized boolean canTravelZoning() {
+        return zoningEnabled() && !stuckRequested && zoning.canTravel() && canSendPerformanceCommand()
+                && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
+    }
+    private JSONObject zoningRequest(String action,long stamp) throws Exception {
+        return new JSONObject().put("format",1).put("session_id",session).put("client_pid",observedClientPid)
+                .put("character_id",1).put("epoch",zoning.epoch()).put("action",action)
+                .put("from_map_id",zoning.currentMap()).put("to_map_id",zoning.targetMap())
+                .put("prepare".equals(action)?"requested_utc_ms":"sent_utc_ms",stamp);
+    }
+    public synchronized boolean requestPrepareZoning() {
+        if(!canPrepareZoning())return false;
+        long utc=System.currentTimeMillis();
+        if(!zoning.prepare(utc))return false;
+        try { write(new File(state,"character-zoning-request.json"),zoningRequest("prepare",utc).toString().getBytes(StandardCharsets.UTF_8)); }
+        catch(Exception failed){zoning.fail();recordLifecycle("zoning_prepare_request_failed");notifyInputState();return false;}
+        recordLifecycle("zoning_prepare_requested epoch="+zoning.epoch());
+        stage("Preparing destination",zoningStatus());notifyInputState();return true;
+    }
+    public synchronized boolean requestTravelZoning() {
+        if(!canTravelZoning())return false;
+        final String selectedSession=session;final long selectedPid=observedClientPid;
+        final int selectedEpoch=zoning.epoch(),target=zoning.targetMap();
+        final long token=++performanceCommandGeneration;
+        if(!zoning.beginTravel())return false;
+        performanceCommandPending=true;
+        boolean queued=queueInput(selectedSession,(active,inputEpoch)->{
+            synchronized(ClientRuntime.this){
+                if(!zoning.commandInFlight()||zoning.epoch()!=selectedEpoch||observedClientPid!=selectedPid
+                        ||!selectedSession.equals(session)||saveLogoutRequested||!sessionBudget.canMove(SystemClock.uptimeMillis()))
+                    throw new InteractiveRfbClient.InputCancelledException();
+            }
+            active.sendMapMove(target,inputEpoch);
+            synchronized(ClientRuntime.this){
+                try {
+                    long sent=System.currentTimeMillis();JSONObject receipt=zoningRequest("mapmove",sent);
+                    if(!zoning.delivered(sent))throw new IOException("Zoning command ownership changed");
+                    write(new File(state,"character-zoning-delivery.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                    recordLifecycle("zoning_mapmove_delivered epoch="+selectedEpoch+" native_arrival_verified=false");
+                    stage("Travelling",zoningStatus());
+                }catch(Exception failure){zoning.fail();throw new IOException("Could not record completed zoning delivery",failure);}
+            }
+        },false,token);
+        if(!queued){performanceCommandPending=false;zoning.fail();notifyInputState();return false;}
+        stage("Travelling",zoningStatus());notifyInputState();return true;
+    }
     private synchronized void completePerformanceCommand(long token) {
         if (token != 0 && token == performanceCommandGeneration && performanceCommandPending) {
             performanceCommandPending = false;
+            if(zoning.commandInFlight()) { zoning.fail(); stage("Transfer not delivered",zoningStatus()); }
             notifyInputState();
         }
     }
@@ -691,7 +768,7 @@ public final class ClientRuntime {
         int count(){return count;}
     }
     public synchronized boolean canCaptureContact() {
-        return !performanceCommandPending && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+        return !zoning.blocksInput() && !performanceCommandPending && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
                 && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
                 && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
                 && sessionBudget.canMove(SystemClock.uptimeMillis())
@@ -723,7 +800,7 @@ public final class ClientRuntime {
         catch(RejectedExecutionException unavailable) { recordLifecycle("contact_view_refresh_queue_unavailable"); }
     }
     private boolean taskControlsAvailable() {
-        return taskGateRequired() && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+        return !zoning.blocksInput() && taskGateRequired() && reopen && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
                 && connectedCapturedReady && characterConnectedEvent!=null && !saveLogoutRequested
                 && characterSavedEvent==null && (!stuckRequested || relocationCapturedReady)
                 && sessionBudget.canMove(SystemClock.uptimeMillis());
@@ -817,8 +894,8 @@ public final class ClientRuntime {
         notifyInputState();return true;
     }
     private boolean gameplayInputAllowed() {
-        return !reopen || sessionBudget.revision() < 1
-                || (!saveLogoutRequested && sessionBudget.canMove(SystemClock.uptimeMillis()));
+        return !zoning.blocksInput() && (!reopen || sessionBudget.revision() < 1
+                || (!saveLogoutRequested && sessionBudget.canMove(SystemClock.uptimeMillis())));
     }
     /** Release held inputs even if the activity is paused when its movement cutoff arrives. */
     public synchronized void enforceSessionDeadlines() {
@@ -842,6 +919,7 @@ public final class ClientRuntime {
     private synchronized boolean queueInput(String selectedSession, InputWrite action, boolean gameplay, long performanceToken) {
         if (!inputReady || finishRequested || finished || cancelled || producerCompleted
                 || session == null || !session.equals(selectedSession)
+                || (zoning.blocksInput() && performanceToken == 0)
                 || (performanceCommandPending && performanceToken != performanceCommandGeneration)
                 || (gameplay && !gameplayInputAllowed())
                 || (reopen && stuckRequested && !relocationCapturedReady)) return false;
@@ -855,6 +933,7 @@ public final class ClientRuntime {
                 InteractiveRfbClient active = decoder;
                 try {
                     if (!inputReady || finishRequested || finished || cancelled || producerCompleted || active != queuedDecoder
+                            || (zoning.blocksInput() && performanceToken == 0)
                             || (performanceCommandPending && performanceToken != performanceCommandGeneration)
                             || (gameplay && !gameplayInputAllowed())) return;
                     // The executor and decoder both serialize writes. Never retain
@@ -884,8 +963,8 @@ public final class ClientRuntime {
     private void notifyInputState() {
         listener.onInputState(inputReady && !finishRequested && !producerCompleted && !cancelled && !finished,
                 finishRequested && !finished, characterSavedReady,
-                !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
-                !performanceCommandPending && characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
+                zoningRecoveryAllowed() && !zoning.blocksInput() && !performanceCommandPending && reopen && sessionBudget.canMove(SystemClock.uptimeMillis()) && connectedCapturedReady && !stuckRequested && !saveLogoutRequested,
+                !zoning.blocksInput() && !performanceCommandPending && characterConnectedEvent != null && (!reopen || (connectedCapturedReady && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis()))) && !saveLogoutRequested && characterSavedEvent == null,
                 inputSent, inputFailed, readyDeadlineUptimeMillis, sessionBudget.phase(), sessionBudget.saveDeadline(), sessionBudget.movementDeadline());
     }
     private synchronized void inputFailure(String detail) {
@@ -912,7 +991,7 @@ public final class ClientRuntime {
         // Once accepted, normal Save owns its input epoch until delivery.
         // Surface disable/focus release must not interrupt the typed command;
         // explicit Stop and transport failure still cancel it separately.
-        if (discard && !saveLogoutRequested) {
+        if (discard && !saveLogoutRequested && !zoning.commandInFlight()) {
             cancelPendingInput(); inputWorker.getQueue().clear();
             if (performanceCommandPending) {
                 performanceCommandPending = false;
@@ -933,7 +1012,7 @@ public final class ClientRuntime {
         }
     }
     public synchronized boolean requestReturnToSafeGround() {
-        if (performanceCommandPending || !reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
+        if (!zoningRecoveryAllowed() || zoning.blocksInput() || performanceCommandPending || !reopen || !inputReady || finished || finishRequested || cancelled || producerCompleted
                 || !sessionBudget.canMove(SystemClock.uptimeMillis()) || !connectedCapturedReady || characterConnectedEvent == null || stuckRequested
                 || saveLogoutRequested || characterSavedEvent != null) return false;
         final String relocationSession = session;
@@ -956,14 +1035,14 @@ public final class ClientRuntime {
         })) return false;
         stuckRequested = true;
         recordLifecycle("ordinary_character_relocation_requested");
-        stage("Returning to safe ground", "The ordinary /stuck command is queued. Stay still while the server checks two stable Atlas positions; this takes at least 25 seconds. Save remains disabled until ground verification and three fresh Android views.");
+        stage("Returning to safe ground", "The ordinary /stuck command is queued. Stay still while the server checks two stable Atlas positions; this takes at least 25 seconds. Save remains disabled until ground verification and three fresh Android views. Save and reopen before starting zoning.");
         notifyInputState();
         return true;
     }
 
     /** Save readiness is separate from the connected-session capability used for movement and task input. */
     public synchronized boolean canRequestSaveLogout() {
-        return !performanceCommandPending && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
+        return !zoning.blocksInput() && !performanceCommandPending && inputReady && !finished && !finishRequested && !cancelled && !producerCompleted
                 && characterConnectedEvent != null && (!reopen || (connectedCapturedReady
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canSave(SystemClock.uptimeMillis())))
                 && characterSavedEvent == null && !saveLogoutRequested && taskSaveReady();
@@ -1148,11 +1227,12 @@ public final class ClientRuntime {
         boolean contactSample = characterConnectedEvent!=null && !saveLogoutRequested && characterSavedEvent==null
                 && (!stuckRequested || relocationCapturedReady) && sessionBudget.canMove(SystemClock.uptimeMillis())
                 && contactCapture.accepts(session,observedClientPid,characterConnectedEvent.optLong("character_id",-1),captured,((Number)sequence).longValue());
+        boolean zoningSample=zoning.canCapture(captured,((Number)sequence).longValue());
         boolean acceptedTaskSample=taskControlsAvailable() && taskAcceptedEvent!=null && !taskCompletionRequested
                 && taskAcceptedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
         boolean completedTaskSample=taskControlsAvailable() && taskCompletedEvent!=null && taskCompletionReceipt!=null
                 && taskCompletedCapture.accepts(session,observedClientPid,1,captured,((Number)sequence).longValue());
-        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample && !acceptedTaskSample && !completedTaskSample) return;
+        if (!startupSample && !loginSample && !connectedSample && !relocationSample && !characterSample && !interactionSample && !contactSample && !acceptedTaskSample && !completedTaskSample && !zoningSample) return;
         try {
             // Bind the retained bytes to the PixelCopy record. The source Surface
             // provides the nonuniform check; the PNG must be a bounded 800x600 image.
@@ -1166,6 +1246,14 @@ public final class ClientRuntime {
             sample.put("png_sha256", digest);
             sample.put("png_verified", true);
             sample.put("png_bytes", png.length);
+            if(zoningSample && zoning.capture(captured,((Number)sequence).longValue())) {
+                Map<String,Object> zoned=new LinkedHashMap<>(sample);
+                zoned.put("archive_path","android-zoning/capture-"+(zoningSamples.size()+1)+".png");
+                zoned.put("epoch",zoning.epoch());zoned.put("map_id",zoning.currentMap());
+                zoned.put("post_native_arrival_frame_observed",true);
+                zoningSamples.add(zoned);zoningPngs.add(png.clone());
+                if(zoning.captures()==3) {stage("Destination view captured",zoningStatus()+" · movement available; prepare the other instance to return");notifyInputState();}
+            }
             if(acceptedTaskSample || completedTaskSample) {
                 boolean completed=completedTaskSample;
                 ContactCaptureWindow window=completed?taskCompletedCapture:taskAcceptedCapture;
@@ -1220,6 +1308,7 @@ public final class ClientRuntime {
                     connectedCapturedReady = true;
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                         stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
+                    else if(zoningEnabled())stage("Ready for Atlas instance zoning","Prepare the other Atlas instance, then Travel when ready. Both destinations use the same Atlas Park scene. Keep current graphics settings. Return before the movement cutoff, then use ordinary Save and Finish.");
                     else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
@@ -1388,7 +1477,7 @@ public final class ClientRuntime {
                             recordLifecycle("local_login_observed");
                             stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
                         }
-                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
+                        if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
                                 && characterConnectedEvent == null && loginObservedUptime >= 0
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
@@ -1405,6 +1494,18 @@ public final class ClientRuntime {
                             recordLifecycle("character_connected_observed");
                             stage("Character connected", reopen ? "The existing THORHERO connected to Atlas. Waiting for fresh Android views and the bounded session window before movement, contact interaction and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
+                        }
+                        if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
+                                && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
+                            synchronized(this) {
+                                if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
+                                        characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames)) {
+                                    zoningEvents.add((Map<String,Object>)jsonValue(event));
+                                    recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
+                                    if("capturing".equals(zoning.phase()))requestContactFullUpdate();
+                                    stage("Atlas instance zoning",zoningStatus());notifyInputState();
+                                } else recordLifecycle("zoning_event_rejected");
+                            }
                         }
                         if (reopen && stuckRequested && connectedCapturedReady && characterRelocatedEvent == null
                                 && ClientAcceptance.characterRelocatedEvent(jsonValue(event), session, observedClientPid)
@@ -1443,6 +1544,7 @@ public final class ClientRuntime {
                                 && characterObservedUptime < 0 && loginObservedUptime >= 0
                                 && characterConnectedEvent != null
                                 && event.getLong("character_id") == characterConnectedEvent.getLong("character_id")
+                                && (!zoningEnabled() || (!zoning.blocksInput() && event.optBoolean("zoning_enabled") && event.optInt("map_id",-1)==zoning.currentMap()))
                                 && !cancelled && !finished && !producerCompleted) {
                             synchronized (this) {
                                 characterSavedEvent = event;
@@ -1469,7 +1571,8 @@ public final class ClientRuntime {
                             @SuppressWarnings("unchecked") Map<String,Object> value = (Map<String,Object>)jsonValue(event);
                             if (sessionBudget.apply(value, session, observedClientPid,
                                     characterConnectedEvent != null, characterRelocatedEvent != null,
-                                    relocationSentUtcMillis, System.currentTimeMillis(), now, hardCap)) {
+                                    relocationSentUtcMillis, System.currentTimeMillis(), now, hardCap,zoningEnabled(),
+                                    characterConnectedEvent==null?1:characterConnectedEvent.optInt("map_id",-1))) {
                                 synchronized (this) { sessionBudgetEvents.add(value); }
                                 readyDeadlineUptimeMillis = sessionBudget.deadline();
                                 recordLifecycle("character_session_budget_" + sessionBudget.phase());
@@ -1550,7 +1653,7 @@ public final class ClientRuntime {
         if (parent == null || parent.kind != StorageAudit.Kind.DIRECTORY)
             throw new IOException("Private guest output directory is unavailable");
         Map<String,StorageAudit.Stat> previous = new LinkedHashMap<>();
-        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "character-relocation.json", "latest-report.json", "report.zip", "character-task-contact.json", "character-task-completion.json"}) {
+        for (String name : new String[]{"stop-request", "interaction-finish.json", "character-logout.json", "character-relocation.json", "latest-report.json", "report.zip", "character-task-contact.json", "character-task-completion.json", "character-zoning-request.json", "character-zoning-delivery.json"}) {
             String path = "client/state/" + name;
             StorageAudit.Stat entry = files.stat(path);
             if (entry == null) continue;
@@ -1604,7 +1707,7 @@ public final class ClientRuntime {
                 && report.optJSONArray("failures") != null && report.getJSONArray("failures").length() == 0
                 && Boolean.TRUE.equals(report.opt("postgres_started")) && Boolean.TRUE.equals(report.opt("server_started"))
                 && Boolean.TRUE.equals(report.opt("mapserver_started"))
-                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid))
+                && (reopen ? ClientAcceptance.characterReopenVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterCreationVerified(jsonValue(report), jsonValue(characterSavedEvent), jsonValue(characterConnectedEvent), session, observedClientPid))
                 && Boolean.FALSE.equals(report.opt("android_surface_validated"))
                 && Boolean.FALSE.equals(report.opt("game_validated")) && Boolean.FALSE.equals(report.opt("gameplay_validated"))
                 && Boolean.FALSE.equals(report.opt("menu_visual_validated"))
@@ -1618,7 +1721,7 @@ public final class ClientRuntime {
         double elapsed = report.optDouble("startup_elapsed_seconds", -1);
         if (!ClientAcceptance.clientObservationAccepted(jsonValue(report), sessionBudgetEvents,
                 session, observedClientPid, clientWindowObservedUptime, clientWindowEndedUptime,
-                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime)
+                sessionBudget.deadline(), launcherBudgetStartedUptime, startedUptime,zoningEnabled())
                 || !Double.isFinite(elapsed) || elapsed < 0 || elapsed > 900) return false;
         JSONObject launch = report.optJSONObject("client_launch");
         if (launch == null || !session.equals(launch.optString("session_id")) || observedClientPid < 1
@@ -1703,7 +1806,7 @@ public final class ClientRuntime {
                     && ClientAcceptance.characterReopenAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), jsonValue(characterRelocatedEvent), connectedSamples, relocationSamples, characterSamples, session, observedClientPid,
                     startedUptime, endedUptime, connectedObservedUptime, connectedFrameWatermark, relocatedObservedUptime, relocatedFrameWatermark,
-                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
+                    characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark,zoningEnabled());
             return characterSavedReady && ClientAcceptance.characterCreationAccepted(jsonValue(report), jsonValue(characterSavedEvent),
                     jsonValue(characterConnectedEvent), characterSamples, session, observedClientPid, startedUptime, endedUptime,
                     characterObservedUptime, clientWindowEndedUptime, characterFrameWatermark);
@@ -1802,6 +1905,10 @@ public final class ClientRuntime {
                     .put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
                     .put("session_budget_revision", sessionBudget.revision()).put("session_budget_phase", sessionBudget.phase())
                     .put("session_budget_events", new JSONArray(sessionBudgetEvents))
+                    .put("zoning",new JSONObject().put("enabled",zoningEnabled()).put("phase",zoning.phase()).put("epoch",zoning.epoch())
+                        .put("current_map_id",zoning.currentMap()).put("target_map_id",zoning.targetMap())
+                        .put("events",new JSONArray(zoningEvents)).put("samples",new JSONArray(zoningSamples))
+                        .put("scope","Finite Atlas Park instance transfer; city geometry, portals and combat remain separate"))
                     .put("save_request_deadline_uptime_ms", sessionBudget.saveDeadline())
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)
@@ -1905,6 +2012,8 @@ public final class ClientRuntime {
                     zipBytes(out, (String) contactSamples.get(i).get("archive_path"), contactPngs.get(i)); }
                 synchronized (this) { for (int i=0;i<taskPngs.size();i++)
                     zipBytes(out, (String) taskSamples.get(i).get("archive_path"), taskPngs.get(i)); }
+                synchronized (this) { for (int i=0;i<zoningPngs.size();i++)
+                    zipBytes(out,(String)zoningSamples.get(i).get("archive_path"),zoningPngs.get(i)); }
                 synchronized (this) { zipText(out, "operation.log", log.toString()); }
                 zipText(out, "runtime-setup-service.json", ClientService.setupMemoryEvidence(context).toString());
                 if (manifest != null) zipText(out, "runtime-manifest.json", manifest.toString(2));

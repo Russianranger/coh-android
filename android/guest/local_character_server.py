@@ -1226,6 +1226,20 @@ class LocalCharacterServer(login.LocalLoginServer):
     def observe_connected_character(self):
         pass
 
+    def connected_status(self, sample):
+        return evidence.connected_on_atlas(sample)
+
+    def native_logout_record(self):
+        return logout_record(self.current_logs())
+
+    def native_positions(self):
+        values = self.current_native_events()
+        return (native_position_records(self.current_logs()) if values is None
+                else character_events.positions_after_ready(values))
+
+    def native_terminal_position(self, delivery, ready_utc_ms, now_utc_ms):
+        return native_logout_position(self.current_logs(), delivery, ready_utc_ms, now_utc_ms)
+
     def immediate_event_contract(self):
         package = getattr(self, 'map_package', {})
         return package.get('inputs', {}).get('mapserver_progress', {}).get('events_contract')
@@ -1312,7 +1326,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['character_progress_guard'] = {'before': before, 'after': after, 'passed': True}
         self.creation_report['character_samples'].append(sample)
         self.creation_report.update(character_id=identifier, auth_id=self.auth_id)
-        if evidence.connected_on_atlas(sample):
+        if self.connected_status(sample):
             self.creation_report['db_map_assignment_observed'] = True
             ready = self.native_ready_record()
             if ready is not None and not self.creation_report['connected_on_atlas']:
@@ -1330,7 +1344,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.session_id, client_pid, identifier,
             self.creation_report.get('client_ready_observed_utc_ms'), int(time.time() * 1000))
         if delivery is None: return None
-        logout = logout_record(self.current_logs())
+        logout = self.native_logout_record()
         if logout is None or not logout_follows_delivery(logout, delivery): return None
         rows = self.character_rows(identifier)
         snapshot = self.validate_saved_rows(rows, inventory)
@@ -1820,9 +1834,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
             self.owner.args.session_id, self.creation_report['client_pid'], self.CHARACTER_ID,
             ready_ms, int(time.time() * 1000))
         require(logout is not None, 'Save was not requested after the current native connection or optional recovery')
-        values = self.current_native_events()
-        positions = (native_position_records(self.current_logs()) if values is None
-                     else character_events.positions_after_ready(values))
+        positions = self.native_positions()
         # This proves the native position committed by ordinary logout, not
         # stable ground or collision geometry. No recovery command is needed.
         positions = [value for value in positions
@@ -1841,7 +1853,7 @@ class LocalCharacterReopenServer(LocalCharacterServer):
         # movement between the 30-second sample and ordinary logout. A stale
         # SQL position matching the earlier sample must still be refused.
         # Retained donors lacking that stock line keep the prior proof path.
-        terminal = native_logout_position(self.current_logs(), logout,
+        terminal = self.native_terminal_position(logout,
             self.creation_report['client_ready_observed_utc_ms'], int(time.time() * 1000))
         if terminal is not None:
             terminal.update(session_id=self.owner.args.session_id,

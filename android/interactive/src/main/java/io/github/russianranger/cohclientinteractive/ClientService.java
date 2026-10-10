@@ -146,6 +146,12 @@ public final class ClientService extends Service {
         ClientRuntime active=runtime;
         return command!=null&&canSendPerformanceCommand()&&active!=null&&active.requestPerformanceCommand(command);
     }
+    public String zoningStatus(){ClientRuntime active=runtime;return active==null?"Reopen THORHERO to start Atlas instance zoning.":active.zoningStatus();}
+    public int zoningCurrentMap(){ClientRuntime active=runtime;return active==null?0:active.zoningCurrentMap();}
+    public boolean canPrepareZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canPrepareZoning();}
+    public boolean canTravelZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canTravelZoning();}
+    public boolean requestPrepareZoning(){ClientRuntime active=runtime;return canPrepareZoning()&&active!=null&&active.requestPrepareZoning();}
+    public boolean requestTravelZoning(){ClientRuntime active=runtime;return canTravelZoning()&&active!=null&&active.requestTravelZoning();}
     public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(selectedSession);}
     /** Our own text dialog keeps the queued target-field tap before releasing held input. */
     public void releaseInput(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.releaseAllInputs(selectedSession);}

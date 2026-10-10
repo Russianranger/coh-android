@@ -28,7 +28,10 @@ def utc_milliseconds(value):
 class SessionBudget:
     """Connection grants a finite play/save window; optional recovery can shorten it."""
     def __init__(self, session_id, client_pid, launcher_started, operation_deadline,
-                 *, presentation_ready=None):
+                 *, presentation_ready=None, supported_maps=(1,)):
+        require(supported_maps in ((1,), (1, 101)), 'Unreviewed reopen budget maps')
+        self.supported_maps = supported_maps
+        self.map_id = 1
         require(isinstance(session_id, str) and re.fullmatch(r'[0-9a-f]{32}', session_id)
                 and type(client_pid) is int and 0 < client_pid <= 4294967295,
                 'Invalid reopen budget session or owned client identity')
@@ -67,23 +70,27 @@ class SessionBudget:
                 and type(proof.get('character_id')) is int and proof['character_id'] == 1
                 and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
                 and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
-                and type(proof.get('map_id')) is int and proof['map_id'] == 1
+                and type(proof.get('map_id')) is int and proof['map_id'] in self.supported_maps
+                and (self.supported_maps == (1,) or proof.get('zoning_enabled') is True)
                 and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
                 and all(proof.get(key) is True for key in ('connected_on_atlas', 'reopen_verified',
                     'existing_character_verified', 'preserved_existing_identity',
                     'native_client_ready_observed')),
                 'Reopen budget differs from the validated native character connection')
+        self.map_id = proof['map_id']
 
     def event(self, phase, now, now_utc_ms, deadline, *, save_ms=0, movement_ms=0):
         deadline_ms = now_utc_ms + int(round((deadline - now) * 1000))
         require(utc_milliseconds(deadline_ms) and now_utc_ms < deadline_ms,
                 'Reopen phase deadline is exhausted')
         value = {'format': 1, 'session_id': self.session_id, 'client_pid': self.client_pid,
-            'character_id': 1, 'name': 'THORHERO', 'account': 'COHLOCAL', 'map_id': 1,
+            'character_id': 1, 'name': 'THORHERO', 'account': 'COHLOCAL', 'map_id': self.map_id,
             'revision': self.revision, 'phase': phase, 'generated_utc_ms': now_utc_ms,
             'deadline_utc_ms': deadline_ms, 'save_request_deadline_utc_ms': save_ms,
             'movement_deadline_utc_ms': movement_ms, 'native_client_ready_observed': True,
             'reopen_verified': True}
+        if self.supported_maps == (1, 101):
+            value['zoning_enabled'] = True
         if phase == 'grounded':
             value.update(recovery_requested=True, recovery_verified=True,
                          ordinary_stuck_observed=True, stable_ground_verified=True)

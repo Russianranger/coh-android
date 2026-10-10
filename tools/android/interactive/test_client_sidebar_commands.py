@@ -93,6 +93,7 @@ class HostActivity extends BaseActivity {
     final List<Button> movementButtons=new ArrayList<>();
     Button button(String name,Runnable action){return new Button(name,action);}
     void showTextInput(){++textRequests;}
+    void refreshZoningControls(){}
     HostActivity(){LinearLayout controls=new LinearLayout(this);BUILD_CONTROLS}
     PRODUCTION_METHODS
     void refresh(){refreshDeadlineControls();}

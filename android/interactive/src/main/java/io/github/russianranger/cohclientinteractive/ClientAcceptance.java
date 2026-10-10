@@ -77,12 +77,15 @@ final class ClientAcceptance {
     }
 
     static boolean characterConnectedEvent(Object value, String session, long clientPid) {
+        return characterConnectedEvent(value,session,clientPid,false);
+    }
+    static boolean characterConnectedEvent(Object value, String session, long clientPid, boolean zoning) {
         Map<?, ?> event = object(value);
         return session != null && session.matches("[0-9a-f]{32}") && clientPid > 0
                 && "character_connected".equals(event.get("type"))
                 && session.equals(event.get("session_id")) && number(event.get("client_pid"), clientPid)
                 && positiveInteger(event.get("character_id")) && "THORHERO".equals(event.get("name"))
-                && "COHLOCAL".equals(event.get("account")) && number(event.get("map_id"), 1);
+                && "COHLOCAL".equals(event.get("account")) && supportedCharacterMap(event,zoning);
     }
 
     static boolean characterSavedEvent(Object value, String session, long clientPid) {
@@ -99,9 +102,16 @@ final class ClientAcceptance {
     }
 
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key) {
+        return characterPersistenceVerified(value,savedEvent,connectedEvent,session,clientPid,key,false);
+    }
+    private static boolean supportedCharacterMap(Map<?,?> value, boolean zoning) {
+        return number(value.get("map_id"),1) || (zoning && number(value.get("map_id"),101)
+                && yes(value.get("zoning_enabled")) && yes(value.get("connected_on_supported_map")));
+    }
+    private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key, boolean zoning) {
         Map<?, ?> report = object(value), character = object(report.get(key)), event = object(savedEvent);
         return localLoginVerified(value, session, clientPid) && characterSavedEvent(savedEvent, session, clientPid)
-                && characterConnectedEvent(connectedEvent, session, clientPid)
+                && characterConnectedEvent(connectedEvent, session, clientPid,zoning)
                 && number(event.get("character_id"), ((Number) object(connectedEvent).get("character_id")).longValue())
                 && yes(character.get("verified")) && session.equals(character.get("session_id"))
                 && number(character.get("client_pid"), clientPid) && positiveInteger(character.get("character_id"))
@@ -109,7 +119,8 @@ final class ClientAcceptance {
                 && "THORHERO".equals(character.get("name")) && "COHLOCAL".equals(character.get("account"))
                 && positiveInteger(character.get("auth_id"))
                 && number(object(report.get("local_login")).get("auth_id"), ((Number) character.get("auth_id")).longValue())
-                && yes(character.get("connected_on_atlas")) && number(character.get("map_id"), 1)
+                && yes(character.get("connected_on_atlas")) && supportedCharacterMap(character,zoning)
+                && (!zoning || (yes(event.get("zoning_enabled")) && number(event.get("map_id"),((Number)character.get("map_id")).longValue())))
                 && yes(character.get("committed_sql_verified")) && yes(character.get("requested_logout_observed"))
                 && yes(character.get("logout_timer_observed"))
                 && yes(character.get("disconnected_before_sql")) && Boolean.FALSE.equals(character.get("forced_stop_before_save"));
@@ -124,8 +135,11 @@ final class ClientAcceptance {
     }
 
     static boolean characterReopenConnectedEvent(Object value, String session, long clientPid) {
+        return characterReopenConnectedEvent(value,session,clientPid,false);
+    }
+    static boolean characterReopenConnectedEvent(Object value, String session, long clientPid, boolean zoning) {
         Map<?, ?> event = object(value);
-        return characterConnectedEvent(value, session, clientPid)
+        return characterConnectedEvent(value, session, clientPid,zoning)
                 && number(event.get("character_id"), 1) && number(event.get("baseline_character_id"), 1)
                 && yes(event.get("reopen_verified")) && yes(event.get("existing_character_verified"));
     }
@@ -144,9 +158,12 @@ final class ClientAcceptance {
 
     static boolean characterReopenVerified(Object value, Object savedEvent, Object connectedEvent,
                                            String session, long clientPid) {
+        return characterReopenVerified(value,savedEvent,connectedEvent,session,clientPid,false);
+    }
+    static boolean characterReopenVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, boolean zoning) {
         Map<?, ?> reopen = object(object(value).get("character_reopen"));
-        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_reopen")
-                && characterReopenConnectedEvent(connectedEvent, session, clientPid)
+        return characterPersistenceVerified(value, savedEvent, connectedEvent, session, clientPid, "character_reopen",zoning)
+                && characterReopenConnectedEvent(connectedEvent, session, clientPid,zoning)
                 && yes(reopen.get("reopen_verified")) && yes(reopen.get("existing_character_verified"))
                 && yes(reopen.get("preserved_existing_identity")) && yes(reopen.get("native_client_ready_observed"))
                 && yes(reopen.get("powers_preserved")) && yes(reopen.get("costume_preserved"))
@@ -173,7 +190,13 @@ final class ClientAcceptance {
                                            long started, long ended, long connectedObserved, long connectedFrameWatermark,
                                            long relocatedObserved, long relocatedFrameWatermark,
                                            long savedObserved, long windowEnded, long savedFrameWatermark) {
-        if (!characterReopenVerified(value, savedEvent, connectedEvent, session, clientPid)
+        return characterReopenAccepted(value,savedEvent,connectedEvent,relocatedEvent,connectedSamples,relocationSamples,savedSamples,session,clientPid,started,ended,connectedObserved,connectedFrameWatermark,relocatedObserved,relocatedFrameWatermark,savedObserved,windowEnded,savedFrameWatermark,false);
+    }
+    static boolean characterReopenAccepted(Object value, Object savedEvent, Object connectedEvent,
+            Object relocatedEvent, List<?> connectedSamples, List<?> relocationSamples, List<?> savedSamples, String session, long clientPid,
+            long started, long ended, long connectedObserved, long connectedFrameWatermark,
+            long relocatedObserved, long relocatedFrameWatermark, long savedObserved, long windowEnded, long savedFrameWatermark, boolean zoning) {
+        if (!characterReopenVerified(value, savedEvent, connectedEvent, session, clientPid,zoning)
                 || connectedObserved < started || savedObserved < connectedObserved
                 || !surfaceAccepted(savedSamples, session, started, ended, savedObserved, windowEnded, savedFrameWatermark)) return false;
         boolean requested = yes(object(object(value).get("character_reopen")).get("recovery_requested"));
@@ -198,6 +221,10 @@ final class ClientAcceptance {
     static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session,
             long clientPid, long windowStarted, long windowEnded, long budgetDeadline,
             long launcherStarted, long operationStarted) {
+        return clientObservationAccepted(value,acceptedBudgets,session,clientPid,windowStarted,windowEnded,budgetDeadline,launcherStarted,operationStarted,false);
+    }
+    static boolean clientObservationAccepted(Object value, List<?> acceptedBudgets, String session, long clientPid,
+            long windowStarted, long windowEnded, long budgetDeadline, long launcherStarted, long operationStarted, boolean zoning) {
         Map<?, ?> report = object(value);
         Object seconds = report.get("observation_seconds");
         if (!(seconds instanceof Number)) return false;
@@ -224,7 +251,7 @@ final class ClientAcceptance {
             if (!"character_session_budget".equals(accepted.get("type"))
                     || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
                     || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
-                    || !number(row.get("map_id"), 1) || !number(row.get("revision"), i + 1)
+                    || !(number(row.get("map_id"), 1) || zoning && number(row.get("map_id"),101) && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
                     || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
             for (String name : integers) {

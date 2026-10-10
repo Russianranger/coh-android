@@ -6,6 +6,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
 JAVA = ROOT/'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'
+ZONING_JAVA = ROOT/'android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java'
 
 
 def method(text, signature):
@@ -85,6 +86,8 @@ public final class SidebarRuntimeHost {
   JSONObject taskAcceptedEvent,taskCompletedEvent;
   String session="owned";
   Budget sessionBudget=new Budget();
+  ClientZoning zoning=new ClientZoning();
+  String zoningStatus(){return zoning.phase();}
   InteractiveRfbClient decoder=new InteractiveRfbClient();
   ThreadPoolExecutor inputWorker=new ThreadPoolExecutor(1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(128));
   List<String> log=Collections.synchronizedList(new ArrayList<>());
@@ -202,7 +205,7 @@ class SidebarRuntimeTests(unittest.TestCase):
             output=Path(temporary)
             source=output/'SidebarRuntimeHost.java'
             source.write_text(harness())
-            subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(output),str(JAVA/'ClientInput.java'),str(JAVA/'ClientAcceptance.java'),str(source)],check=True,capture_output=True,text=True)
+            subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(output),str(JAVA/'ClientInput.java'),str(JAVA/'ClientAcceptance.java'),str(ZONING_JAVA),str(source)],check=True,capture_output=True,text=True)
             result=subprocess.run(['java','-cp',str(output),'io.github.russianranger.cohclientinteractive.SidebarRuntimeHost'],check=True,capture_output=True,text=True,timeout=15)
             self.assertIn('PASS shipped runtime gates',result.stdout)
 

@@ -9,6 +9,7 @@ from test_storage_ui import production_method
 
 ROOT = Path(__file__).resolve().parents[3]
 JAVA = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive'
+ZONING_JAVA = ROOT / 'android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/ClientZoning.java'
 HOST = r'''
 package io.github.russianranger.cohclientinteractive;
 import java.io.*;
@@ -63,6 +64,7 @@ class ClientAcceptance {static boolean taskSaveReady(Object a,Object b,int c,int
 class ClientRuntime {
     public enum ProfileState { ABSENT, READY, PRESERVE }
     final Context context;
+    final ClientZoning zoning=new ClientZoning();
     boolean reopen,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
     JSONObject manifest,characterConnectedEvent=new JSONObject(),characterSavedEvent,taskAcceptedEvent,taskCompletedEvent,taskContactReceipt,taskCompletionReceipt;
     Capture taskAcceptedCapture=new Capture(),taskCompletedCapture=new Capture();
@@ -153,7 +155,7 @@ class FreshProfileRecoveryTests(unittest.TestCase):
         fixture = cls.path / 'FreshProfileRecoveryHost.java'
         fixture.write_text(HOST.replace('RUNTIME_METHODS', methods))
         compiler = ['javac'] if shutil.which('javac') else ['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main']
-        subprocess.run(compiler + ['-d', str(cls.path), str(JAVA / 'StorageAudit.java'), str(fixture)], check=True, capture_output=True, text=True)
+        subprocess.run(compiler + ['-d', str(cls.path), str(JAVA / 'StorageAudit.java'), str(ZONING_JAVA), str(fixture)], check=True, capture_output=True, text=True)
 
     @classmethod
     def tearDownClass(cls):

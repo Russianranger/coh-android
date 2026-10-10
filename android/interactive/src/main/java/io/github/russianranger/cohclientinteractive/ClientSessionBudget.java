@@ -20,6 +20,11 @@ public final class ClientSessionBudget {
     public synchronized boolean apply(Map<String,Object> event, String session, long pid,
             boolean connected, boolean grounded, long relocationSentUtc,
             long wallNow, long uptimeNow, long hardCapUptime) {
+        return apply(event,session,pid,connected,grounded,relocationSentUtc,wallNow,uptimeNow,hardCapUptime,false,1);
+    }
+    public synchronized boolean apply(Map<String,Object> event, String session, long pid,
+            boolean connected, boolean grounded, long relocationSentUtc,
+            long wallNow, long uptimeNow, long hardCapUptime, boolean zoning, int connectedMap) {
         if (event == null || session == null || !session.matches("[0-9a-f]{32}") || pid <= 0
                 || wallNow <= 0 || wallNow > Long.MAX_VALUE - 1201000
                 || uptimeNow < 0 || uptimeNow > Long.MAX_VALUE - 1201000 || hardCapUptime <= uptimeNow
@@ -27,7 +32,8 @@ public final class ClientSessionBudget {
                 || integer(event.get("format")) != 1 || !session.equals(event.get("session_id"))
                 || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != 1
                 || !"THORHERO".equals(event.get("name")) || !"COHLOCAL".equals(event.get("account"))
-                || integer(event.get("map_id")) != 1 || !connected
+                || !(integer(event.get("map_id")) == connectedMap && (connectedMap == 1
+                    || zoning && connectedMap == 101 && Boolean.TRUE.equals(event.get("zoning_enabled")))) || !connected
                 || !Boolean.TRUE.equals(event.get("native_client_ready_observed"))
                 || !Boolean.TRUE.equals(event.get("reopen_verified"))) return false;
         long next = integer(event.get("revision")), generated = integer(event.get("generated_utc_ms"));
@@ -40,7 +46,7 @@ public final class ClientSessionBudget {
             if (!"connected".equals(event.get("phase")) || save <= wallNow || movement <= generated
                     || movement != save - 60000 || end - save != 180000) return false;
         } else {
-            if (!"grounded".equals(event.get("phase")) || !grounded || deadline <= uptimeNow || relocationSentUtc <= 0
+            if (connectedMap != 1 || !"grounded".equals(event.get("phase")) || !grounded || deadline <= uptimeNow || relocationSentUtc <= 0
                     || relocationSentUtc > wallNow + 1000 || wallNow - relocationSentUtc > 600000
                     || !Boolean.TRUE.equals(event.get("ordinary_stuck_observed"))
                     || !Boolean.TRUE.equals(event.get("stable_ground_verified"))

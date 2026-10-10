@@ -27,6 +27,8 @@ public final class ClientActivity extends Activity {
     private ClientService.State state;
     private ClientSurface display;
     private TextView status,detail,counter,logs,profileStatus;
+    private Button prepareZone,travelZone,returnAtlas;
+    private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30;
     private CheckBox performanceGraphics;
@@ -76,7 +78,7 @@ public final class ClientActivity extends Activity {
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
         controls.addView(text("Persistent local server · v0.13.20",12,false));
-        controls.addView(text("Reopen THORHERO, accept one task, complete it with the stock command and save. Keep your app data, imported assets, costume and powers.",13,false));
+        controls.addView(text("Reopen THORHERO and test travel between two Atlas Park instances. Keep your app data, imports, graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
@@ -108,6 +110,12 @@ public final class ClientActivity extends Activity {
         captureAcceptedTask=button("Capture accepted task",()->{releaseControls();if(service!=null)service.requestTaskCapture(false);});controls.addView(captureAcceptedTask);
         completeTask=button("Complete accepted task",()->{releaseControls();if(service!=null)service.requestCompleteAcceptedTask();});controls.addView(completeTask);
         captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
+        controls.addView(text("Atlas instance zoning",16,true));
+        controls.addView(text("Both destinations use Atlas Park. Prepare the second instance while playing, then tap Travel. For the first test, return before Save. A later save/reopen test can save in either instance. Other city maps are a later step.",12,false));
+        zoningStatus=text("Reopen THORHERO to start Atlas instance zoning.",12,false);controls.addView(zoningStatus);
+        prepareZone=button("Prepare Atlas instance 2",()->{if(service!=null)service.requestPrepareZoning();refreshZoningControls();});controls.addView(prepareZone);
+        travelZone=button("Travel to prepared instance",this::travelToZone);controls.addView(travelZone);
+        returnAtlas=button("Prepare return to Atlas Park",()->{if(service!=null)service.requestPrepareZoning();refreshZoningControls();});controls.addView(returnAtlas);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
@@ -128,7 +136,7 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("Keep your current runtime and imported data after this update; setup and import do not restore a character database deleted by uninstalling. If no saved profile exists, use Create fresh THORHERO, create the character in the game, then Save character / log out and Finish. Reopen saved THORHERO resumes the task gate after that save. Log in with COHLOCAL / offline and enter THORHERO. After Atlas connection and fresh views, close help and game dialogs and tap Open task contact. Accept Matthew Habashy's What Was Lost / Part One: Demons and Gangsters task yourself; it mentions five Hellions, but the command below completes it without combat. Accept exactly one task. Open its journal entry and wait for Accepted task verified, then tap Capture accepted task and keep the journal visible until Accepted task view captured. Close the journal and contact dialog with B and tap Complete accepted task once; it sends /completetask 0 through the stock game command route. After Task completion verified, open its completed journal entry and tap Capture completed task. Follow the movement and Save countdowns, release controls for 60 seconds before Save, and stay still during logout. After Saved character verified, tap Finish and export. Prior contact tests remain accepted; Return to safe ground is optional if stuck.",12,false));
+        controls.addView(text("After installing this update, apply Set up / update runtime once and preserve your imported data. Reopen saved THORHERO with COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Prepare Atlas instance 2, then Travel after readiness; wait for native arrival and three fresh views before moving. Prepare return, then Travel back. Keep controls released for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and export the complete report. If loading stalls, Abort and export early; Reopen resumes the last saved supported instance.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -178,11 +186,25 @@ public final class ClientActivity extends Activity {
             &&("connected".equals(state.sessionPhase)||"grounded".equals(state.sessionPhase))
             &&service.canSendPerformanceCommand();}
     private void refreshPerformanceControls(){
+        refreshZoningControls();
         boolean available=canSendPerformanceCommand();
         if(showFps!=null)showFps.setEnabled(available);
         if(fps10!=null)fps10.setEnabled(available);
         if(fps30!=null)fps30.setEnabled(available);
         if(enterKey!=null)enterKey.setEnabled(ownedInputOpen());
+    }
+    private void refreshZoningControls(){
+        boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
+        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen THORHERO to start Atlas instance zoning.":service.zoningStatus());
+        if(prepareZone!=null)prepareZone.setEnabled(available&&service.zoningCurrentMap()==1&&service.canPrepareZoning());
+        if(returnAtlas!=null)returnAtlas.setEnabled(available&&service.zoningCurrentMap()==101&&service.canPrepareZoning());
+        if(travelZone!=null){travelZone.setEnabled(available&&service.canTravelZoning());travelZone.setText(service!=null&&service.zoningCurrentMap()==101?"Travel back to Atlas Park":"Travel to prepared instance");}
+    }
+    private void travelToZone(){
+        if(service==null||!service.canTravelZoning()||textDialogVisible||!hasWindowFocus())return;
+        releaseControls(true);
+        if(!service.requestTravelZoning())Toast.makeText(this,"Destination is not ready, or the movement window has ended.",Toast.LENGTH_SHORT).show();
+        refreshMovementControls();refreshDeadlineControls();
     }
     private void sendPerformanceCommand(ClientInput.PerformanceCommand command){
         if(command==null||!canSendPerformanceCommand())return;

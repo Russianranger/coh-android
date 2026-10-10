@@ -45,6 +45,7 @@ def save_verified(proof, session):
 
 class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
     STARTUP_ONLY = False
+    ZONING = False
     ISOLATE_FOCUSED_RENDER_PIPELINE = True
     REPORT_KEY = 'character_reopen'
     REQUIRED = REQUIRED
@@ -109,9 +110,10 @@ class CharacterReopenDiagnostic(creation.CharacterCreationDiagnostic):
             presentation_ready = getattr(self, 'presentation_ready_monotonic', None)
             require(session_budget.finite_seconds(presentation_ready),
                     'Reopen budget lacks the current owned presentation clock')
+            budget_options = {'supported_maps': (1, 101)} if self.ZONING else {}
             self.session_budget = session_budget.SessionBudget(self.args.session_id, launch['pid'],
                 self.launcher_started_monotonic, self.ctx.deadline,
-                presentation_ready=presentation_ready)
+                presentation_ready=presentation_ready, **budget_options)
         events = [self.session_budget.connected(proof, now, utc_ms)]
         if getattr(self, 'relocated_announced', False):
             if self.session_budget.revision < 2:
@@ -189,6 +191,43 @@ class StartupOnlyCharacterReopenDiagnostic(CharacterReopenDiagnostic):
     STARTUP_ONLY = True
 
 
+class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
+    """Explicit native Atlas1/101 handoff; preserved default reopen is unchanged."""
+    ZONING = True
+    REQUIRED = REQUIRED | {'character_zoning.py'}
+
+    @staticmethod
+    def identity_verified(proof, session):
+        import character_zoning
+        return character_zoning.character_identity(proof, session)
+
+    @staticmethod
+    def proof_verified(proof, session):
+        import character_zoning
+        return character_zoning.save_verified(proof, session)
+
+    def make_server(self):
+        import character_zoning
+        return character_zoning.LocalCharacterZoningServer(self)
+
+    def initialize(self):
+        for name in ('character-zoning-request.json', 'character-zoning-delivery.json'):
+            path = self.args.state / name
+            require(not path.exists() and not path.is_symlink(), 'Stale zoning request or delivery receipt')
+        manifest = character.dbserver.load_json(self.args.assets / 'runtime-manifest.json', 8 * 1024 * 1024)
+        require(manifest.get('character_zoning_enabled') is True,
+                'Zoning requires the verified explicit runtime profile')
+        super().initialize()
+        self.ctx.report['zoning_enabled'] = True
+
+    def connected_event_data(self, proof):
+        return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True)
+
+    def saved_event_data(self, proof):
+        return dict(super().saved_event_data(proof), zoning_enabled=True,
+                    connected_on_supported_map=True, map_id=proof['map_id'])
+
+
 def parse_reopen_arguments(argv):
     # Preserve the creator's shared parser and forward every retained argument.
     # Only this reopen entry point accepts the explicit startup-only switch.
@@ -199,9 +238,14 @@ def parse_reopen_arguments(argv):
 
 
 def main(argv=None):
-    startup_only, remaining = parse_reopen_arguments(argv)
+    parser = creation.argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    parser.add_argument('--zoning', action='store_true')
+    zoning, args = parser.parse_known_args(sys.argv[1:] if argv is None else argv)
+    startup_only, remaining = parse_reopen_arguments(args)
+    require(not (zoning.zoning and startup_only), 'Zoning and startup-only modes are separate')
     return creation.run(remaining,
-        StartupOnlyCharacterReopenDiagnostic if startup_only else CharacterReopenDiagnostic,
+        ZoningCharacterReopenDiagnostic if zoning.zoning else
+            StartupOnlyCharacterReopenDiagnostic if startup_only else CharacterReopenDiagnostic,
         STARTUP_SCOPE if startup_only else SCOPE,
         'actual_character_startup_timing' if startup_only else 'actual_character_reopen')
 

@@ -250,6 +250,12 @@ public final class InteractiveRfbClient implements Closeable {
         sendChatCommand(command, expectedEpoch);
     }
 
+    /** Only the two prepared Atlas instance IDs are eligible. */
+    public synchronized void sendMapMove(int mapId,long expectedEpoch) throws IOException {
+        if(mapId!=1&&mapId!=101)throw new IOException("Zoning destination is unavailable");
+        sendChatCommand("/mapmove "+mapId,expectedEpoch);
+    }
+
     private void sendChatCommand(String command, long expectedEpoch) throws IOException {
         requireCurrentInput(expectedEpoch);
         releaseAllInputs();
