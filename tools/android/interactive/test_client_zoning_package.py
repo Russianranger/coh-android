@@ -92,6 +92,7 @@ class ZoningPublication(unittest.TestCase):
     def test_manifests_preserve_native_producer_history_and_only_extend_helpers(self):
         donor = {'_client_verification':{'files':{name:package.pin(b'old') for name in package.HELPERS}},
             'runtime_manifest':{'repository_commit':package.DONOR_COMMIT,'scope':'accepted',
+                'startup_only_reopen':True,'task_gate_required':True,
                 'files':{name:package.pin(b'old') for name in package.HELPERS|{'client-manifest.json','client-runtime.zip'}},
                 'client_render_queue':{'original_owner':package.NATIVE_RUN_ID},'graphics':{'retained':True}},
             'native_build_provenance':{'repository_commit':package.NATIVE_COMMIT}}
@@ -103,6 +104,15 @@ class ZoningPublication(unittest.TestCase):
         self.assertEqual(runtime['graphics'],donor['runtime_manifest']['graphics'])
         self.assertEqual(runtime['files']['client-manifest.json'],package.pin(package.shared.encoded(client)))
         self.assertTrue(runtime['character_zoning_enabled'])
+        self.assertIs(runtime['startup_only_reopen'],False)
+        self.assertIs(runtime['task_gate_required'],False)
+        self.assertTrue(donor['runtime_manifest']['startup_only_reopen'])
+        self.assertTrue(donor['runtime_manifest']['task_gate_required'])
+        changed = {name for name in donor['runtime_manifest'] if not package.typed_equal(runtime[name],donor['runtime_manifest'][name])}
+        self.assertEqual(changed,{'repository_commit','scope','files','startup_only_reopen','task_gate_required'})
+        self.assertEqual(set(runtime)-set(donor['runtime_manifest']),{'character_zoning_enabled','client_zoning'})
+        for name in set(donor['runtime_manifest'])-changed:
+            self.assertTrue(package.typed_equal(runtime[name],donor['runtime_manifest'][name]))
         self.assertEqual(runtime['client_zoning']['map_container_ids'],[1,101])
         self.assertFalse(runtime['client_zoning']['native_Game_changed_from_public_0_13_25'])
         self.assertFalse(runtime['client_zoning']['physical_zoning_validated'])
@@ -129,7 +139,7 @@ class ZoningPublication(unittest.TestCase):
                 'retained_dex':package.pin(b'old-dex'),'retained_android_resources':{'resources.arsc':package.pin(b'resources')},
                 'server_payload_extraction_preflight':{'scope':'separately verified'},
                 '_client_verification':{'files':{name:package.pin(b'old') for name in package.HELPERS}},
-                'runtime_manifest':{'repository_commit':package.DONOR_COMMIT,
+                'runtime_manifest':{'repository_commit':package.DONOR_COMMIT,'startup_only_reopen':True,'task_gate_required':True,
                     'files':{name:package.pin(b'old') for name in package.HELPERS|{'client-manifest.json'}},
                     'client_render_queue':{'source':package.NATIVE_COMMIT,'owner':package.NATIVE_RUN_ID}},
                 'native_build_provenance':{'source':package.NATIVE_COMMIT}}
@@ -153,7 +163,8 @@ class ZoningPublication(unittest.TestCase):
                 for name in ('assets/runtime/client-runtime.zip','assets/runtime/hardware-renderer.zip'):
                     wrong = dict(candidate); wrong[name] = b'foreign native'
                     with self.subTest(name=name),self.assertRaises(ValueError): check(wrong)
-                for key,value in (('character_zoning_enabled',False),('repository_commit','b'*40),
+                for key,value in (('character_zoning_enabled',False),('startup_only_reopen',True),('task_gate_required',True),
+                        ('repository_commit','b'*40),
                         ('client_render_queue',{'source':'b'*40,'owner':1})):
                     wrong = dict(candidate); changed = dict(runtime); changed[key] = value
                     wrong['assets/runtime/runtime-manifest.json'] = package.shared.encoded(changed)

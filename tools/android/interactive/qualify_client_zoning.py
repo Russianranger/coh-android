@@ -96,6 +96,7 @@ def qualify(args):
         'native_client_render_queue':native,'native_build_provenance':donor['native_build_provenance'],
         'publication_provenance':derivative.publication_provenance(commit),'client_gpu_runtime':donor['client_gpu_runtime'],
         'actual_native_ancestry_validation':ancestry,'client_zoning':derivative.zoning_contract(),
+        'runtime_profile':dict(derivative.ZONING_PROFILE),
         **dict.fromkeys(derivative.FALSE_FLAGS,False),**dict.fromkeys(derivative.TRUE_FLAGS,True),
         'claim_scope':'Host qualification covers owned Atlas instance transfer controls, identity/endpoint/readiness and '
             'interruption guards, unchanged original Game/Win32/source proofs and native transfer callsite fixtures, '

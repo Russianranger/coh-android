@@ -267,6 +267,34 @@ class ZoningServerTests(unittest.TestCase):
             self.assertEqual(instance.active_map_id, 1)
             instance.sql.assert_not_called()
 
+    def test_saved_instance_startup_preserves_android_stage_with_exact_map101_proof(self):
+        instance = self.instance()
+        instance.active_map_id = 101
+        instance.maps = {}
+        instance.report = {}
+        instance.ctx.stage, instance.ctx.passed, instance.ctx.check = Mock(), Mock(), Mock()
+        instance.ctx.deadline = 1000
+        instance.query = Mock(side_effect=[
+            '101 City_01_01.txt NotReady 1 (Not started) Info\n', map_status(101)])
+        instance._spawn_map.side_effect = lambda map_id: instance.maps.update({map_id: {'ready': False}})
+        def activate(map_id):
+            instance.map_launch_utc_ms = NOW
+            instance.active_map_id = map_id
+        instance._activate = Mock(side_effect=activate)
+        with patch.object(zoning.time, 'monotonic', return_value=100):
+            instance.start_map()
+        instance.ctx.stage.assert_called_once_with('local_atlas_startup')
+        instance._spawn_map.assert_called_once_with(101)
+        instance._activate.assert_called_once_with(101)
+        self.assertTrue(instance.creation_report['map_ready'])
+        self.assertTrue(instance.ctx.report['mapserver_started'])
+        self.assertEqual(instance.creation_report['map_startup_guard']['protocol']['map_id'], 101)
+        ready_event = instance.ctx.passed.call_args.kwargs
+        self.assertTrue(ready_event['atlas_ready'])
+        self.assertTrue(ready_event['loopback_only'])
+        self.assertEqual(ready_event['map']['map_id'], 101)
+        self.assertEqual(ready_event['map']['port'], 7002)
+
     def test_prepare_only_queries_baseline_and_refuses_duplicate_overlap(self):
         instance = self.instance()
         instance._accept_prepare(request(), NOW)

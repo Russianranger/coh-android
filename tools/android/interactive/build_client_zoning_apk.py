@@ -50,6 +50,7 @@ NOTES, RELEASE_TAG = ROOT/'docs'/NOTES_NAME, 'coh-atlas-gameplay-v0.13.26'
 WORKFLOW = '.github/workflows/android-client-zoning.yml'
 QUALIFICATION_SCRIPT = 'tools/android/interactive/qualify_client_zoning.py'
 QUALIFICATION_SCOPE = 'owned_client_zoning_round_trip_retaining_public_0_13_25_native_and_graphics_baseline'
+ZONING_PROFILE = {'character_zoning_enabled':True, 'startup_only_reopen':False, 'task_gate_required':False}
 JAVA_ROOT = 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/'
 ZONING_JAVA_ROOT = 'android/zoning/src/main/java/io/github/russianranger/cohclientinteractive/'
 # Closed inventories are finalized with the implementation; additions cannot
@@ -252,7 +253,7 @@ def publication_provenance(commit):
 
 def zoning_contract():
     return {'format':1, 'changed_guest_helpers':sorted(HELPERS), 'added_guest_helpers':sorted(ADDED_HELPERS),
-        'character_zoning_enabled':True, 'map_container_ids':[1,101], 'base_map_id':1,
+        **ZONING_PROFILE, 'map_container_ids':[1,101], 'base_map_id':1,
         'scope':'Two owned Atlas instances; different-city zones remain deferred',
         'native_Game_sha256':DONOR_GAME['sha256'], 'native_Game_changed_from_public_0_13_25':False,
         'native_build_repeated':False, 'graphics_settings_changed':False, 'physical_zoning_validated':False}
@@ -264,7 +265,10 @@ def verification_manifests(donor, updates, commit):
     runtime = copy.deepcopy(donor['runtime_manifest']); runtime['files'].update(updates)
     runtime['files']['client-manifest.json'] = pin(shared.encoded(client))
     runtime.update(repository_commit=commit, scope=QUALIFICATION_SCOPE)
-    runtime['character_zoning_enabled'] = True
+    # The accepted donor still carries the historical startup/task flags. This
+    # explicit profile starts the zoning watcher and preserves ordinary Save;
+    # copying either flag would disable zoning or reintroduce a task-gated save.
+    runtime.update(ZONING_PROFILE)
     runtime['client_zoning'] = {**zoning_contract(), 'repository_commit':commit,
         'donor_apk_repository_commit':DONOR_COMMIT, 'native_build_provenance':donor['native_build_provenance'],
         'publication_provenance':publication_provenance(commit)}
@@ -323,6 +327,7 @@ def validate_qualification(q, commit, donor):
         and typed_equal(q.get('donor'), donor_link()) and typed_equal(q.get('checks'),dict.fromkeys(CHECKS,True))
         and q.get('native_build_provenance') == donor['native_build_provenance']
         and q.get('publication_provenance') == publication_provenance(commit)
+        and typed_equal(q.get('runtime_profile'),ZONING_PROFILE)
         and typed_equal(q.get('client_zoning'),zoning_contract())
         and typed_equal(q.get('actual_native_ancestry_validation'),previous.ACTUAL_NATIVE_ANCESTRY_CHECKS)
         and typed_equal(q.get('native_client_render_queue'),donor['native_client_render_queue'])
@@ -410,6 +415,7 @@ def build(args):
             'authored_java_sources_verified':19+len(JAVA_ADDITIONS),'generated_manifest':base.file_pin(manifest),
             'qualification':q,'qualification_receipt':base.file_pin(args.qualification),'testing_notes':base.file_pin(args.testing_notes),
             'publication_provenance':publication_provenance(commit),'client_zoning':zoning_contract(),
+            'runtime_profile':dict(ZONING_PROFILE),
             'runtime_manifest':runtime,'runtime_manifest_sha256':payloads['assets/runtime/runtime-manifest.json']['sha256'],
             **dict.fromkeys(FALSE_FLAGS,False),**dict.fromkeys(TRUE_FLAGS,True),**{name:donor[name] for name in RETAINED_FIELDS}}
         (args.output.parent/REPORT_NAME).write_bytes(shared.encoded(report))
@@ -433,6 +439,7 @@ def verify_report(args,commit):
         and report.get('signer_certificate_sha256') == SIGNER and report.get('signing_key_created') is False
         and typed_equal(report.get('qualification'),q) and report.get('qualification_receipt') == base.file_pin(args.qualification)
         and report.get('publication_provenance') == publication_provenance(commit) and typed_equal(report.get('client_zoning'),zoning_contract())
+        and typed_equal(report.get('runtime_profile'),ZONING_PROFILE)
         and report.get('java_sources') == q.get('java_sources') == java and report.get('changed_java_sources') == changed
         and report.get('added_java_sources') == sorted(JAVA_ADDITIONS) and report.get('retained_java_sources_verified') == 19-len(JAVA_CHANGES)
         and report.get('authored_java_sources_verified') == 19+len(JAVA_ADDITIONS) and report.get('donor_dex') == donor['retained_dex']

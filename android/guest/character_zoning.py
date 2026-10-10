@@ -289,7 +289,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             super().start_map()
             self._remember_active()
         else:
-            self.ctx.stage('local_atlas_instance_startup')
+            # Android's retained stage sequence names the Atlas startup phase;
+            # the exact saved instance is carried by its independent map proof.
+            self.ctx.stage('local_atlas_startup')
             baseline = parse_map_status(self.query(['-getstatus', '1', '101'], 'zoning-reopen-baseline'),
                                         101, allow_missing=True)
             require(baseline.get('not_started') is True, 'Saved destination already has an unowned MapServer')
