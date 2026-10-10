@@ -1,8 +1,59 @@
-# CURRENT — .25 accepted physical baseline; Atlas instance zoning in progress — 2026-10-10
+# CURRENT — .26 Atlas instance zoning published; .25 accepted physical baseline — 2026-10-10
 
 **The user physically tested .25 and accepts its much improved FPS as the new
 serviceable testing baseline. Sustained 30 FPS remains unmet. The user now
-requests zoning implementation; the prior FPS-first deferral is superseded.**
+requests zoning implementation; the prior FPS-first deferral is superseded.
+0.13.26 / version code 41 is published with all four publication jobs successful,
+including the independent audit of the actual public APK. Physical .26 zoning
+qualification remains pending.**
+
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.26)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/38077801231)
+· [Focused testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26-testing.txt).
+
+Publication/runtime source: `64a1833bc0d2dc1035c11188c6ae8c7fdb58244b`.
+APK: **1,560,361,816 bytes**, SHA-256
+`b14bfd307fc2c51bd628670efbed1e03fc2283408ee73546aa8b6fe8bbbf3c60`.
+Runtime manifest/generation SHA-256:
+`6b40f4335b7ed1216bc40ddd2e8639fbc6492f2c2cf47f5e64fc891cffdea351`.
+The exact accepted .25 Game is reused: source
+`c512e912a004b66886a7667640aa1a967e95de64`, original native owner `37988347729`,
+9,499,648 bytes, SHA-256
+`5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b`.
+No Game/server/graphics/probe rebuild was performed for this publication.
+
+This release implements native Atlas Park map **1 ↔ instance 101**, with separate
+owned MapServers using the same Atlas world. Preparation and travel are separate
+actions; fresh native arrival and three fresh Android views gate resumed
+controls/save. Ordinary verified save and reopening the saved destination retain
+SQL MapId/position and character data. Kings Row, Galaxy City and mission zoning
+remain unqualified; this is a bounded first instance-transfer milestone.
+
+Install as an update, preserving app data/imports/THORHERO, then apply **Set up /
+update runtime** once. Keep the accepted GPU/Performance/800×600 and visual
+settings, fan and charging conditions. Reopen, **Prepare Atlas instance 2**, then
+**Travel to prepared instance**; check arrival, walking, Jump, camera and click.
+**Prepare return to Atlas Park**, then **Travel back to Atlas Park**. Complete the
+normal neutral wait, **Save character / log out**, wait for **Saved character
+verified**, then **Finish** and export the complete outer report ZIP. After a
+successful round trip, separately save on 101, reopen there and return/save on 1.
+Record preparation separately from travel, FPS, temperature and artifacts. If
+unusable or stalled, export early. No asset reimport, data clearing, repeated .25
+benchmark or long Software comparison is requested.
+
+Validation: **1,749 tests across 122 suites, zero skips, seven real PostgreSQL
+fixtures and 9,770 qualified source pins**. All 117 retained suites remain in the
+gate. SDK package/signature, actual payload conservation, a fresh prepublication
+audit and the separate public-download audit passed. Independent receipt/source
+review passed without replaying native builds or the large APK download.
+Seventy-one of 77 donor runtime payloads are byte-identical; six helpers/manifests
+changed and one zoning helper was added. Six Java sources changed and one was
+added; 13 remain unchanged. The .24 setup repair, successful GPU support,
+Software fallback, world assets, graphics settings and strict save acceptance
+are preserved. Physical .26 controls, arrival, save/reopen on 101, two-map memory/
+temperature behavior and transfer duration remain pending. Host evidence does
+not qualify Thor zoning speed or a new physical FPS gain.
 
 The complete report `coh-atlas-gameplay-20261010-183224.zip` verifies .25 runtime
 `d6c7a89ef4f73b563a188d9f4562411f1e917dbe`, native Game
@@ -13,23 +64,23 @@ influence remain preserved. Generic input/gameplay qualification flags remain
 false, separately from the user's FPS acceptance. See
 `docs/android-evidence/render-queue-0.13.25-thor-20261010.json`.
 
-Recovery verified clean branch head `c30af19ade11df9237d33f2b9beeb6bebac6d1cb`,
-unchanged main and draft PR #1, .25 as the newest publication and no active
-workflows. A new local checkout was created; the previous agent's private
-working tree is unavailable. No prior work was reset or discarded.
+Recovery initially verified clean branch head
+`c30af19ade11df9237d33f2b9beeb6bebac6d1cb`, .25 as newest publication and no active
+workflows. A new local checkout was created; the previous agent's private working
+tree is unavailable. No prior work was reset or discarded. Development remains
+on `codex/character-persistence-continuation`, open draft PR #1; main remains
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`. The first .26 qualification attempt
+`38077272560` failed on an outdated Java test-harness API; it published nothing.
+The harness-fix run `38077528829` was superseded while pending. The final source
+also fixes inherited runtime-profile gates and saved-101 startup-stage parity;
+`38077801231` is the successful publication owner. All nine other workflows at
+that source also succeeded. No native Game rebuild was used to repair these
+attempts.
 
-The next release candidate is **0.13.26 / code 41**, controlled Atlas instance
-zoning 1 ↔ 101. The implementation must preserve the exact .25 native Game,
-servers, graphics and world payloads, prepare the destination before native
-transfer, verify fresh arrival and ordinary save, and reopen a saved supported
-destination without changing SQL MapId/position. It is not a new-city asset
-qualification. `docs/COH-ZONING-0.13.26.md` describes the finite scope and
-`docs/COH-Atlas-Gameplay-0.13.26-testing.txt` describes pending device checks.
-
-**Publication is pending. The available APK remains .25 until the .26
-qualification, SDK/signature/payload checks and public-download audit complete.**
-Do not rebuild the accepted native executables or request another .25 FPS test.
-Older sections below are historical.
+See `docs/COH-ZONING-0.13.26.md`, the packaged testing notes and
+`docs/android-evidence/zoning-0.13.26-publication.json` for exact scope/provenance.
+Older sections below are historical; their .25-unverified and zoning-deferred
+statements are superseded by this CURRENT section.
 
 # Published .25 render-worker wake coalescing — 2026-10-09
 

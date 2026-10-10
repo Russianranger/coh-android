@@ -80,13 +80,24 @@ synthetic SQL repair and can travel back to map 1.
 
 ## Validation and pending device evidence
 
-The publication gate preserves the .25 regression suite and seven real
-PostgreSQL fixtures, adds zoning state/receipt/recovery checks, and reuses
-authenticated native artifacts. SDK/signature/payload validation and a separate
-actual public-APK audit remain required before a release is declared published.
-Build and publication results are recorded in the current handoff after success.
+**0.13.26 / code 41 is published** from
+`64a1833bc0d2dc1035c11188c6ae8c7fdb58244b`.
+[APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk)
+SHA-256: `b14bfd307fc2c51bd628670efbed1e03fc2283408ee73546aa8b6fe8bbbf3c60`.
+
+All four jobs in [workflow 38077801231](https://github.com/Russianranger/coh-android/actions/runs/38077801231)
+passed, including the separate actual public-download audit. Qualification ran
+1,749 tests across 122 suites with zero skips, seven real PostgreSQL fixtures
+and 9,770 source pins. The 117 retained suites and authenticated original native
+proof remain in the gate. SDK/signature/package/payload checks passed; 71 of 77
+donor runtime payloads are identical, six helpers/manifests changed and one
+zoning helper was added. The exact .25 Game, servers, graphics and world assets
+were reused. Independent source/receipt review passed without repeating native
+builds or the large public APK download. Full publication evidence is in
+`android-evidence/zoning-0.13.26-publication.json`.
 
 Physical .26 arrival, map-101 save/reopen, memory/temperature behavior with two
 maps and transfer duration remain pending. The retained renderer has the accepted
 .25 physical baseline; host tests do not establish Thor zoning speed. Follow
-`COH-Atlas-Gameplay-0.13.26-testing.txt` after publication.
+`COH-Atlas-Gameplay-0.13.26-testing.txt` for the round trip and separate destination
+save/reopen checks. No repeat of the accepted .25 FPS benchmark is required.
