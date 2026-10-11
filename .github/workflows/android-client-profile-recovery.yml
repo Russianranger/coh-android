@@ -94,7 +94,16 @@ jobs:
         run: |
           timeout 180 sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16 libvulkan-dev mesa-vulkan-drivers
+          sudo apt-get install -y --no-install-recommends postgresql-16 postgresql-client-16 libvulkan-dev mesa-vulkan-drivers python3-pil python3-yaml tesseract-ocr tesseract-ocr-eng
+          python3 - <<'PY'
+          import shutil, subprocess, sys
+          from PIL import Image
+          import yaml
+          assert shutil.which('tesseract'), 'Required real OCR fixture executable missing'
+          languages = subprocess.check_output(['tesseract', '--list-langs'], text=True)
+          assert 'eng' in languages.splitlines(), 'Required real OCR English fixture missing'
+          print('Verified host image/YAML/OCR dependencies for', sys.executable)
+          PY
           sudo pg_ctlcluster 16 main start || /usr/lib/postgresql/16/bin/pg_isready --host "$PGHOST" --port "$PGPORT"
           sudo -u postgres psql --no-psqlrc --dbname postgres --set ON_ERROR_STOP=1 --command "ALTER ROLE postgres WITH LOGIN PASSWORD 'coh-host-fixture'"
           sudo -u postgres createdb --owner postgres coh_test_startup_bundle

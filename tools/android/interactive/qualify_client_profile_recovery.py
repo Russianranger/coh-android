@@ -101,8 +101,16 @@ def suite_donor_environment(name, historical_donor_apk):
 
 def regressions(historical_donor_apk):
     validate_suite_inventory()
+    # Exercise newly added host/UI/SQL dependencies before the expensive
+    # retained native fixtures and full asset mirrors. Inventory/coverage stay
+    # fixed; only the execution order changes, and every suite remains required.
+    heavy = ('test_client_animation_repair_package', 'test_client_profile_recovery_package')
+    fast = tuple(name for name in NEW_TEST_MODULES if name not in heavy)
+    execution = fast + tuple(name for name in RETAINED_TEST_MODULES if name not in heavy) + heavy
+    derivative.require(len(execution) == len(TEST_MODULES)
+        and set(execution) == set(TEST_MODULES), 'Every qualification suite must execute exactly once')
     results = {}
-    for name in TEST_MODULES:
+    for name in execution:
         captured = io.StringIO()
         with suite_donor_environment(name, historical_donor_apk), \
                 contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):

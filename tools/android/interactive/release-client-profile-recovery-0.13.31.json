@@ -4,5 +4,5 @@
   "donor_version": "0.13.30",
   "donor_commit": "a7658b64a7fbfad81ea08bbf5cf74c1388dc64fa",
   "asset_version": "1.0.0",
-  "publication_attempt": "complete-preparation-and-regression-audit-with-exact-historical-receipt-donor"
+  "publication_attempt": "complete-preparation-and-fail-fast-regressions-with-explicit-host-image-and-ocr-dependencies"
 }
