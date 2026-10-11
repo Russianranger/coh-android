@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_client_animation_repair_change import client_animation_repair_owned
+from classify_client_animation_repair_change import historical_repair_owned as client_animation_repair_owned
 from classify_client_receipt_repair_change import client_receipt_repair_owned
 
 CLIENT_ASSETS_ALLOWED = frozenset({

@@ -65,7 +65,7 @@ class ClientRuntime {
     public enum ProfileState { ABSENT, READY, PRESERVE }
     final Context context;
     final ClientZoning zoning=new ClientZoning();
-    boolean reopen,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
+    boolean reopen,resumeFirstCreation,inputReady=true,finished,finishRequested,cancelled,producerCompleted,connectedCapturedReady,stuckRequested,relocationCapturedReady,saveLogoutRequested,performanceCommandPending;
     JSONObject manifest,characterConnectedEvent=new JSONObject(),characterSavedEvent,taskAcceptedEvent,taskCompletedEvent,taskContactReceipt,taskCompletionReceipt;
     Capture taskAcceptedCapture=new Capture(),taskCompletedCapture=new Capture();
     ClientSessionBudget sessionBudget=new ClientSessionBudget();String session="session";long observedClientPid=1;
@@ -90,11 +90,13 @@ public class FreshProfileRecoveryHost {
     public static void main(String[] args)throws Exception {
         Path root=Files.createTempDirectory("coh-profile-recovery-"),profile=root.resolve("client/state/diagnostic/android-local-login");
         Context context=new Context(root.toFile());ClientRuntime runtime=new ClientRuntime(context);
-        if(!args[0].equals("absent")&&!args[0].equals("missing_ancestor")&&!args[0].equals("changed_before_creation"))valid(profile);
+        if(!args[0].equals("absent")&&!args[0].equals("missing_ancestor")&&!args[0].equals("changed_before_creation")&&!args[0].equals("resume_absent"))valid(profile);
         switch(args[0]) {
         case "absent":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);runtime.requireCharacterProfile(false);reject(()->runtime.requireCharacterProfile(true));need(ClientRuntime.profileRecoveryMessage(ClientRuntime.ProfileState.ABSENT).contains("external database backup"));break;
         case "missing_ancestor":Files.createDirectories(root.resolve("client"));need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);runtime.requireCharacterProfile(false);break;
-        case "ready":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);runtime.requireCharacterProfile(true);reject(()->runtime.requireCharacterProfile(false));break;
+        case "ready":need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);runtime.requireCharacterProfile(true);reject(()->runtime.requireCharacterProfile(false));need(ClientRuntime.profileRecoveryMessage(ClientRuntime.ProfileState.READY).contains("startup checks for a saved THORHERO"));break;
+        case "resume_ready":runtime.resumeFirstCreation=true;runtime.requireCharacterProfile(false);need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.READY);break;
+        case "resume_absent":runtime.resumeFirstCreation=true;reject(()->runtime.requireCharacterProfile(false));need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.ABSENT);break;
         case "uninitialized":StorageFiles.marker.put("initialized",false);break;
         case "wrong_identity":StorageFiles.marker.put("source_commit","f".repeat(40));break;
         case "extra_marker_key":StorageFiles.marker.put("unrecognized",true);break;
@@ -123,9 +125,10 @@ public class FreshProfileRecoveryHost {
             runtime.reopen=true;need(runtime.taskGateRequired());need(!runtime.taskSaveReady());need(!runtime.canRequestSaveLogout());break;
         default:throw new AssertionError("unknown fixture");
         }
-        if(!new HashSet<>(Arrays.asList("absent","missing_ancestor","ready","creator_save","creator_save_pending")).contains(args[0])) {
+        if(!new HashSet<>(Arrays.asList("absent","missing_ancestor","ready","resume_ready","resume_absent","creator_save","creator_save_pending")).contains(args[0])) {
             need(ClientRuntime.characterProfileState(context)==ClientRuntime.ProfileState.PRESERVE);
             reject(()->runtime.requireCharacterProfile(false));reject(()->runtime.requireCharacterProfile(true));
+            runtime.resumeFirstCreation=true;reject(()->runtime.requireCharacterProfile(false));
         }
         // Readiness performs no creation, truncation, directory walk or deletion.
         if(args[0].equals("ready")){need(Files.readString(profile.resolve("profile.json")).equals("marker"));need(Files.readString(profile.resolve("pgdata/PG_VERSION")).equals("17\n"));}
@@ -166,7 +169,9 @@ class FreshProfileRecoveryTests(unittest.TestCase):
 
     def test_fresh_profile_is_explicit_and_never_a_reopen_fallback(self): self.run_policy('absent')
     def test_missing_parent_does_not_create_any_profile_directories(self): self.run_policy('missing_ancestor')
-    def test_complete_profile_reopens_without_replacement_or_data_mutation(self): self.run_policy('ready')
+    def test_initialized_profile_requests_saved_character_check_without_replacement(self): self.run_policy('ready')
+    def test_explicit_resume_reuses_only_a_valid_initialized_profile(self): self.run_policy('resume_ready')
+    def test_resume_never_initializes_an_absent_profile(self): self.run_policy('resume_absent')
     def test_uninitialized_profile_is_preserved(self): self.run_policy('uninitialized')
     def test_wrong_native_identity_is_preserved(self): self.run_policy('wrong_identity')
     def test_unknown_marker_fields_are_preserved(self): self.run_policy('extra_marker_key')
@@ -197,6 +202,11 @@ class FreshProfileRecoveryTests(unittest.TestCase):
         entry = production_method(source, 'public Result runFreshCreation(')
         self.assertIn('runCharacter(selectedSession, false)', entry)
         self.assertNotIn('runFreshCreation', production_method(source, 'public Result run('))
+        resume = production_method(source, 'public Result runResumeCreation(')
+        self.assertIn('resumeFirstCreation = true;', resume)
+        self.assertIn('runCharacter(selectedSession, false)', resume)
+        self.assertIn('if (!reopen && resumeFirstCreation) command.add("--resume-empty-profile");', run)
+        self.assertNotIn('resumeFirstCreation = true;', entry)
 
 
 if __name__ == '__main__':

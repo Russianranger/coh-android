@@ -1,0 +1,245 @@
+{
+  "actual_guest_sources": {
+    "atlas_beacon_package.py": {
+      "bytes": 36026,
+      "sha256": "d7523f78fa2d1c20442ec66a4ebe2611f3d5df8597db2d3e1bf039104ed82503"
+    },
+    "atlas_world_assets.py": {
+      "bytes": 24825,
+      "sha256": "ff372738ba5954912080a3b9b6725e225bc887e2c1274bbf4a002640ed572b69"
+    },
+    "character_avatar_assets.py": {
+      "bytes": 15496,
+      "sha256": "e4e17c8931786490728c721d6db063b55b2e7e17d27813a3da355e72773a8ae1"
+    },
+    "character_creation_diagnostic.py": {
+      "bytes": 25253,
+      "sha256": "8c791b438b60082fb2a8770a4d878956b5d9de5916e40afc6167a4a47be3038d"
+    },
+    "character_reopen_diagnostic.py": {
+      "bytes": 15039,
+      "sha256": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24"
+    },
+    "character_server_data_cache.py": {
+      "bytes": 32868,
+      "sha256": "d742fe7348424db7406281c1346b845ec092d2a30725e4005b63de750e041bb7"
+    },
+    "character_session_budget.py": {
+      "bytes": 8816,
+      "sha256": "0659ebf7caf31eb898e9d5770a91f64d496d0cfc77f515229bae3e55780ae8fe"
+    },
+    "character_zoning.py": {
+      "bytes": 57652,
+      "sha256": "c6bb13eb60dc7f0af82c424d8e3de6772ed0d15fc4ae73d0479d1058bd438b3b"
+    },
+    "character_zoning_scheduler.py": {
+      "bytes": 20419,
+      "sha256": "dc76a478d6fefe83a9c298079bd9a199208fbebd28f189478ebe4a13143ab254"
+    },
+    "client_animation_package.py": {
+      "bytes": 12813,
+      "sha256": "622d6feecc5b0391abbc027c3ae3d67b5694746838c09aa2730ab2adf5baed38"
+    },
+    "client_attempt_retry.py": {
+      "bytes": 12707,
+      "sha256": "afc9f16471eda4e7d18a2bdbafab46f27999141217b5c2db998317897f1b8380"
+    },
+    "client_gpu_profile.py": {
+      "bytes": 43246,
+      "sha256": "77d850cf3d86b7846fdc925437d0e0ef9f44ce226a48fb975e3c6b9282e5f324"
+    },
+    "client_interactive_diagnostic.py": {
+      "bytes": 31748,
+      "sha256": "8ac5555163aa3fd67ff9080bbf956a5f73f161a15b60c2fd310f979160cdb594"
+    },
+    "client_login_diagnostic.py": {
+      "bytes": 15316,
+      "sha256": "7e226a43c0f7c6b6333e85481eee26942aa868d74d38f3e54ff521be56ba8fdf"
+    },
+    "client_startup_diagnostic.py": {
+      "bytes": 91242,
+      "sha256": "8ac9477951ff7a6252a1a72f8184242bb5c0863e604913ea452303e6d4696a53"
+    },
+    "client_visual_assets.py": {
+      "bytes": 26592,
+      "sha256": "a16936dc5be61ceb9e3152acaadfd6007212b5daaeb7d329171cd62da2c9690f"
+    },
+    "dbserver_diagnostic.py": {
+      "bytes": 50159,
+      "sha256": "6dd13390d2f299ad369251433f5a7ec5b13ad2454f5d873a136b7955120100a2"
+    },
+    "diagnostic.py": {
+      "bytes": 69529,
+      "sha256": "748975acf9b0c01b094166150112306edfc12c18656bc4b1926e00ea9460dbaf"
+    },
+    "game_device_diagnostic.py": {
+      "bytes": 51035,
+      "sha256": "ffdb2ca9de0c408fd87a34ba8c97400cd8b85374833198c1ab1e24ad0ebde6ca"
+    },
+    "game_diagnostic.py": {
+      "bytes": 80208,
+      "sha256": "f7867ab725ad1b717f507d76b6c488c77e168732a9fe878eb3336d936606e737"
+    },
+    "game_evidence.py": {
+      "bytes": 25884,
+      "sha256": "12aad81ef11d82507de4ab002bf7615da4adf689b150dde9143a9b149af4718d"
+    },
+    "game_hang_evidence.py": {
+      "bytes": 22400,
+      "sha256": "ab5fe714b97e3d432d48a3acc9cef59674c22bcc9cec2e8b2c9d427662d39aef"
+    },
+    "game_map_progress.py": {
+      "bytes": 14789,
+      "sha256": "b98bc8d2d117c71f8d06f2cd2057646861f75c04d52d5cf8bd515a5919c199ec"
+    },
+    "kings_row_beacon_package.py": {
+      "bytes": 9387,
+      "sha256": "9150ecf3f3887e3fa45a37f48f0f870a92dc4c0e3abc2d80679697d4bdcf7bca"
+    },
+    "local_character_server.py": {
+      "bytes": 141875,
+      "sha256": "ac611bbdb22468612570033f76ff46c7006c6cc191147a8ef481f023da745d8a"
+    },
+    "local_login_server.py": {
+      "bytes": 21351,
+      "sha256": "03afd9707d046ab65da5235efbcab70d1b55f9831d9b65b6b1b02d44f6a487de"
+    },
+    "native_character_events.py": {
+      "bytes": 6484,
+      "sha256": "2f9813e29530497e6834b21cfbcfc5fd9dd33fc8c64f49502eafab99f25b65b6"
+    },
+    "native_monorail_contract.py": {
+      "bytes": 4205,
+      "sha256": "45dfcca1585d549b751d6f7bcaa60037ab34751b1f2afe3095e69900832072d2"
+    },
+    "native_monorail_events.py": {
+      "bytes": 5877,
+      "sha256": "c40c96c4701582220dfee722c5315b9e565ace165278baedcc140ae3000572fd"
+    },
+    "native_responsiveness_contract.py": {
+      "bytes": 78410,
+      "sha256": "7523e2a32f9db8cbe308c8d8bceaa59bd490168cf6886791598810ef86910f85"
+    },
+    "native_training_save.py": {
+      "bytes": 17455,
+      "sha256": "a1bc4641eb96fed662274d742cea8ad51f47ab44fc0a35dec155da8a0e486fdc"
+    },
+    "presentation_diagnostic.py": {
+      "bytes": 17396,
+      "sha256": "751f163d6fb1c2573437f80bcb1484acc6ddb7219a625221f2f619e7683329df"
+    },
+    "server_animation_package.py": {
+      "bytes": 12619,
+      "sha256": "a8a32b3fce31bea5d4ff9a2e9089fa2cf26303392b87f6feecfa3eaf968cedab"
+    },
+    "server_cache_package.py": {
+      "bytes": 22143,
+      "sha256": "ba2c0b14f3622efe4f7a29246f096c2edb1065e69a38ea00625802f741c2f73d"
+    },
+    "server_message_cache_format.py": {
+      "bytes": 4921,
+      "sha256": "e70fa5aa8c591c866f0c72f3840495cd93024031936f92944c813a9901d3d6ec"
+    },
+    "stationary_contact_evidence.py": {
+      "bytes": 11472,
+      "sha256": "40ae7dde35df5d4d44c83bf2b85e52c1fc56171034dbcb483d55aeb0fa29f47d"
+    },
+    "task_gate_evidence.py": {
+      "bytes": 30573,
+      "sha256": "8907f38418645156596947ad4f01c091c2e0473b4bb3eb9b7b358df207fd5de1"
+    },
+    "texture_header_index.py": {
+      "bytes": 17875,
+      "sha256": "41adbf003f4ff481b158be09bba8393dd99f615ccb4a036470968596c93459ff"
+    },
+    "zone_asset_package.py": {
+      "bytes": 14689,
+      "sha256": "c9380472304c0a968a01fd83412ec6fd8ab050edbb9418a0dcc409e59f069105"
+    }
+  },
+  "apk": {
+    "bytes": 41199716,
+    "name": "COH-Atlas-Gameplay-0.13.30.apk",
+    "public_url": "https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.30/COH-Atlas-Gameplay-0.13.30.apk",
+    "release_tag": "coh-atlas-gameplay-v0.13.30",
+    "sha256": "7568c4ea5ccbf05b7455ab23b51101d98d551eb4d48d94e0a07d613133832e17"
+  },
+  "cache_return_prerequisites": "stubbed_only; no native process was launched",
+  "earlier_input_parent_transient": "A previous host fixture run observed a root-directory metadata change; cause not established. The repeat full Atlas and Kings staging passes retained unchanged production guards. No production staging fix or guard relaxation was applied.",
+  "exception": "diagnostic.DiagnosticError: Kings native dependency differs from the owned Atlas runtime",
+  "execution_environment": "Host Python filesystem orchestration over exact immutable APK guest helpers and all original Assets1.0.0 leaves; not Wine/FEX/Android.",
+  "format": 1,
+  "helper_repository_path": "android/guest/local_character_server.py",
+  "host_disk_scope": "Current repeated complete orchestration peaked near30GiB on32GiB host overlay (all downloaded volumes/payloads/original-import fixture/prior release evidence plus owned runtime). This is not measured Thor device storage.",
+  "live_database_and_saved_character_executed": false,
+  "mechanism": "Atlas verifies original map closure then replaces only DbServer with the independently qualified manual startup supplement; Kings compares that resulting Atlas file against original game-package DbServer pin.",
+  "method": "LocalCharacterServer.prepare_kings_row_runtime",
+  "native_runtime_booted": false,
+  "original_import": {
+    "all_leaf_sha256_checked": true,
+    "android_import_service_executed": false,
+    "bytes": 2977730517,
+    "contract_sha256": "adf389319248eea549e4096ff12e5dca38ccfe9241eaa9fad4d136441b4cf293",
+    "files": 173011,
+    "inventory_sha256": "52a6d86f7dafdaeb4f98e6314484d67cdfc6faf288b01adfb34876ae1594f186"
+  },
+  "original_map_package_dbserver": {
+    "bytes": 1661440,
+    "delay_imports": [],
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "pe_machine": 332,
+    "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+  },
+  "packaged_source_sha256": "ac611bbdb22468612570033f76ff46c7006c6cc191147a8ef481f023da745d8a",
+  "pending_stages": [
+    "Kings_native_closure_copy",
+    "Kings_prepared_caches_animations_graph",
+    "owned_cache_return_and_configuration_removal",
+    "full_saved_reopen_reuse"
+  ],
+  "physical_execution_validated": false,
+  "prior_stages_executed": [
+    "all_required_runtime_input_pins",
+    "complete_original_import_each_leaf_sha256",
+    "actual_client_prepare_worktree_cold",
+    "avatar_and_world_install",
+    "actual_LocalCharacterServer_payloads",
+    "actual_full_Atlas_prepare_runtime",
+    "Atlas_strict_CheckedInputResolver_verify",
+    "actual_visual_animation_zones_and_audio_orchestration_after_explicit_readiness_stubs",
+    "actual_full_Kings_source_mirror",
+    "Kings_strict_CheckedInputResolver_verify",
+    "Kings_collision_geometry_install_and_data_cache_seal"
+  ],
+  "production_method_path": "assets/runtime/local_character_server.py:LocalCharacterServer.prepare_kings_row_runtime",
+  "qualified_atlas_manual_dbserver": {
+    "bytes": 1664512,
+    "delay_imports": [],
+    "imports": [
+      "ADVAPI32.dll",
+      "GDI32.dll",
+      "IPHLPAPI.DLL",
+      "KERNEL32.dll",
+      "ODBC32.dll",
+      "USER32.dll",
+      "WINMM.dll",
+      "WS2_32.dll"
+    ],
+    "pe_machine": 332,
+    "sha256": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba"
+  },
+  "qualified_whole_cycle": false,
+  "readiness_boundary_for_visual_orchestration": "explicitly_stubbed_after_complete_Atlas_filesystem_preparation",
+  "release": "0.13.30",
+  "status": "failed_at_production_contract",
+  "worker_sql_and_native_launch": "not_executed"
+}

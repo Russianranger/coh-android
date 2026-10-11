@@ -372,7 +372,7 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
         return {}
 
 
-def run(argv, diagnostic_type, scope, mode):
+def parse_arguments(argv, mode):
     parser = argparse.ArgumentParser(description=__doc__)
     for name, default in [('state', '/state'), ('assets', '/opt/coh'), ('pg-bin', '/opt/coh/pgsql/bin'),
                           ('wine', '/opt/wine/bin/wine'), ('wineserver', '/opt/wine/bin/wineserver'),
@@ -386,7 +386,15 @@ def run(argv, diagnostic_type, scope, mode):
     parser.add_argument('--observation-seconds', type=int, default=30)
     parser.add_argument('--timeout-seconds', type=int, default=OVERALL_SECONDS)
     parser.add_argument('--interaction-seconds', type=int, default=INTERACTION_SECONDS)
-    args = parser.parse_args(argv)
+    parser.set_defaults(resume_empty_profile=False)
+    if mode == 'actual_character_creation':
+        parser.add_argument('--resume-empty-profile', action='store_true',
+            help='Explicitly resume the first creation in an initialized profile with no character rows')
+    return parser.parse_args(argv)
+
+
+def run(argv, diagnostic_type, scope, mode):
+    args = parse_arguments(argv, mode)
     base.OUTPUT_LIMIT = interactive.CLIENT_OUTPUT_LIMIT
     os.umask(0o077)
     context = CharacterContext(args.state, args.timeout_seconds)
@@ -395,7 +403,8 @@ def run(argv, diagnostic_type, scope, mode):
         mapserver_started=False, game_validated=False, menu_visual_validated=False,
         android_surface_validated=False, hardware_acceleration_validated=False,
         client_process_started=False, startup_observed=False, interaction_session_completed=False,
-        input_effect_verified=False, interaction_timeout_seconds=args.interaction_seconds)
+        input_effect_verified=False, interaction_timeout_seconds=args.interaction_seconds,
+        resume_first_creation_requested=args.resume_empty_profile)
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda _sig, _frame: setattr(context, 'cancel_requested', True))
     diagnostic, validated = None, False
@@ -409,6 +418,10 @@ def run(argv, diagnostic_type, scope, mode):
         context.report.update(status='cancelled', failures=[str(exc)])
     except Exception as exc:
         context.report.update(status='failed', failures=[str(exc)])
+        # A presentation EOF can precede slow owned cleanup and report export.
+        # This announces failure only; it does not prove cleanup or acceptance.
+        context.event('character_session_failed', session_id=args.session_id,
+            status='failed', passed=False, failures=context.report['failures'])
     finally:
         context.server_health = None
         if diagnostic is not None:
@@ -444,7 +457,7 @@ def run(argv, diagnostic_type, scope, mode):
                 context.report['failures'].append('Cannot persist character report: ' + str(exc))
                 try: base.private_write(args.state / 'latest-report.json', json.dumps(base.redacted_value(context.report, context.secrets), indent=2) + '\n')
                 except Exception: pass
-        context.event('result', status=context.report['status'], passed=context.report['passed'],
+        context.event('result', session_id=args.session_id, status=context.report['status'], passed=context.report['passed'],
                       report='/state/latest-report.json', failures=context.report['failures'])
     return 0 if context.report['passed'] else 2 if context.report['status'] == 'cancelled' else 1
 

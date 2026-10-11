@@ -44,7 +44,8 @@ public final class ClientRuntime {
         }
     }
 
-    /** A missing app-private profile is different from an interrupted or saved profile. */
+    /** READY identifies an initialized database profile, never proof of a saved character.
+     * Missing profile and incomplete retained data require separate actions. */
     public enum ProfileState { ABSENT, READY, PRESERVE }
 
     private static final long MAX_JSON = 2L * 1024 * 1024, MAX_LOG = 1024 * 1024;
@@ -76,6 +77,7 @@ public final class ClientRuntime {
     private final List<byte[]> connectedPngs = new ArrayList<>();
     private volatile long connectedObservedUptime = -1, connectedFrameWatermark = -1;
     private volatile boolean connectedCapturedReady, relocationCapturedReady, stuckRequested, reopen;
+    private boolean resumeFirstCreation;
     private final List<Map<String, Object>> relocationSamples = new ArrayList<>();
     private final List<byte[]> relocationPngs = new ArrayList<>();
     private volatile long relocatedObservedUptime = -1, relocatedFrameWatermark = -1;
@@ -136,7 +138,7 @@ public final class ClientRuntime {
     private volatile LocalSocket socket;
     private volatile InteractiveRfbClient decoder;
     private volatile DiagnosticRuntime installer;
-    private volatile boolean cancelled, finished, closingReceiver, runLaunched, producerCompleted;
+    private volatile boolean cancelled, finished, closingReceiver, runLaunched, producerCompleted, producerFailed;
     private volatile String receiverFailure;
     private volatile long decodedFrames;
     private volatile int frameWidth, frameHeight;
@@ -283,14 +285,16 @@ public final class ClientRuntime {
         if (profile == ProfileState.ABSENT)
             return "No saved character profile is present. After a fresh install, use Create fresh THORHERO once, then save normally. An earlier character requires an external database backup.";
         if (profile == ProfileState.READY)
-            return "The existing character database is present. Reopen THORHERO to continue the task check.";
+            return "The initialized character profile is available; startup checks for a saved THORHERO. If first creation stopped before a save, use Resume first character creation. Existing characters are preserved.";
         return "Existing character data is incomplete or unreadable. It has been preserved; export the report. Fresh creation is unavailable while any profile data remains.";
     }
     private void requireCharacterProfile(boolean reopening) throws IOException {
         ProfileState profile = characterProfileState(context);
         if (reopening && profile != ProfileState.READY)
             throw new IOException(profileRecoveryMessage(profile));
-        if (!reopening && profile != ProfileState.ABSENT)
+        if (!reopening && resumeFirstCreation && profile != ProfileState.READY)
+            throw new IOException("Resuming first creation requires the existing initialized profile. " + profileRecoveryMessage(profile));
+        if (!reopening && !resumeFirstCreation && profile != ProfileState.ABSENT)
             throw new IOException("Fresh creation was refused because character profile data already exists. " + profileRecoveryMessage(profile));
     }
     private static File guard(Context context) { return new File(context.getFilesDir(), "client/cleanup-guard.json"); }
@@ -471,6 +475,7 @@ public final class ClientRuntime {
     }
 
     public Result run(String selectedSession) throws Exception {
+        resumeFirstCreation = false;
         return runCharacter(selectedSession, true);
     }
 
@@ -479,6 +484,13 @@ public final class ClientRuntime {
         return runFreshCreation(selectedSession);
     }
     public Result runFreshCreation(String selectedSession) throws Exception {
+        resumeFirstCreation = false;
+        return runCharacter(selectedSession, false);
+    }
+
+    /** Explicit recovery of an initialized empty profile; the guest checks real SQL before native launch. */
+    public Result runResumeCreation(String selectedSession) throws Exception {
+        resumeFirstCreation = true;
         return runCharacter(selectedSession, false);
     }
 
@@ -538,6 +550,7 @@ public final class ClientRuntime {
                     "--execution-platform", "android", "--session-id", session, "--profile", "android-local-login",
                     "--game-data", "/game-import/data", "--socket-dir", "/presentation-socket",
                     "--startup-timeout-seconds", "900", "--observation-seconds", "30", "--interaction-seconds", "1200", "--timeout-seconds", "5400"));
+            if (!reopen && resumeFirstCreation) command.add("--resume-empty-profile");
             if (reopen && Boolean.TRUE.equals(manifest.opt("startup_only_reopen"))) command.add("--startup-only");
             if (zoningEnabled()) command.add("--zoning");
             ProcessBuilder builder = new ProcessBuilder(command).redirectErrorStream(true);
@@ -609,6 +622,11 @@ public final class ClientRuntime {
                 catch (Exception invalid) { error = "Guest acceptance evidence is invalid: " + invalid.getClass().getSimpleName(); }
                 if (launched && processExit == 0 && report.optBoolean("passed") && !guestPassed && error == null)
                     error = "The guest completed, but its current-session client evidence did not match this APK.";
+                if (launched && processExit != 0 && !cancelled) {
+                    String guestFailure = currentGuestFailureMessage(report, session);
+                    if (guestFailure != null && (error == null || error.startsWith("Local display connection failed:")))
+                        error = guestFailure;
+                }
                 if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
                         && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
@@ -630,7 +648,7 @@ public final class ClientRuntime {
                 : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
                 : guestPassed ? label + " check incomplete. Export the latest report."
-                : label + " check failed. Export the latest report.";
+                : label + " check failed. " + (error == null ? "" : error + " ") + "Export the latest report.";
         stage(passed ? label + " check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? label + " check stopped"
                 : guestPassed ? label + " check incomplete" : label + " check failed", summary);
         return new Result(passed, latestReport, summary);
@@ -1116,7 +1134,7 @@ public final class ClientRuntime {
         if (active == null) return;
         try { active.releaseAllInputs(); recordLifecycle("held_input_released"); }
         catch (IOException failure) {
-            if (!producerCompleted && !closingReceiver && !cancelled) inputFailure("Input release failed");
+            if (!producerCompleted && !producerFailed && !closingReceiver && !cancelled) inputFailure("Input release failed");
         }
     }
     public synchronized void releaseAllInputs(String selectedSession) {
@@ -1592,16 +1610,19 @@ public final class ClientRuntime {
                 }
             }
         } catch (Exception e) {
-            if (e instanceof EOFException && !closingReceiver && !cancelled && !producerCompleted) {
-                long grace = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
-                while (!closingReceiver && !cancelled && !producerCompleted && System.nanoTime() < grace) {
-                    try { Thread.sleep(20); } catch (InterruptedException ignored) { break; }
-                }
-            }
-            if (!closingReceiver && !cancelled && !producerCompleted)
-                receiverFailure = e instanceof EOFException ? "Display socket closed before client observation completed" : message(e);
-            else if (producerCompleted) recordLifecycle("display_socket_closed_after_producer: " + message(e));
+            handleReceiverClosure(e);
         } finally { closeReceiver(); }
+    }
+    private void handleReceiverClosure(Exception e) {
+        if (e instanceof EOFException && !closingReceiver && !cancelled && !producerCompleted && !producerFailed) {
+            long grace = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+            while (!closingReceiver && !cancelled && !producerCompleted && !producerFailed && System.nanoTime() < grace) {
+                try { Thread.sleep(20); } catch (InterruptedException ignored) { break; }
+            }
+        }
+        if (!closingReceiver && !cancelled && !producerCompleted && !producerFailed)
+            receiverFailure = e instanceof EOFException ? "Display socket closed before client observation completed" : message(e);
+        else if (producerCompleted || producerFailed) recordLifecycle("display_socket_closed_after_producer: " + message(e));
     }
     private void closeReceiver() {
         LocalSocket active = socket; socket = null;
@@ -1621,6 +1642,7 @@ public final class ClientRuntime {
                     String text = pending.toString(); pending.setLength(0);
                     if (!omitted) try {
                         JSONObject event = new JSONObject(text);
+                        observeFailedGuestResult(event);
                         if ("client_display_ready".equals(event.optString("type"))
                                 && session.equals(event.optString("session_id"))
                                 && event.optInt("width", -1) == 800 && event.optInt("height", -1) == 600
@@ -2120,13 +2142,14 @@ public final class ClientRuntime {
                     .put("hardware_acceleration_validated", false).put("controller_input_validated", false)
                     .put("graphics_profile_requested", graphicsProfileRequested)
                     .put("gpu_profile_requested", gpuProfileRequested)
-                    .put("fresh_profile_creation_requested", !reopen && "character_creation".equals(operation))
+                    .put("fresh_profile_creation_requested", !reopen && !resumeFirstCreation && "character_creation".equals(operation))
+                    .put("resume_first_creation_requested", !reopen && resumeFirstCreation && "character_creation".equals(operation))
                     .put("startup_only_reopen", reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                     .put("character_profile_state", characterProfileState(context).name())
                     .put("input_effect_verified", false).put("input_events_sent", inputSent).put("input_events_failed", inputFailed)
                     .put("input_transport_observed", inputSent > 0 && inputFailed == 0)
                     .put("input_worker_stopped", inputWorker.isTerminated())
-                    .put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
+                    .put("guest_failure_observed", producerFailed).put("finish_requested", finishRequested).put("interaction_deadline_uptime_ms", readyDeadlineUptimeMillis)
                     .put("session_budget_revision", sessionBudget.revision()).put("session_budget_phase", sessionBudget.phase())
                     .put("session_budget_events", new JSONArray(sessionBudgetEvents))
                     .put("zoning",new JSONObject().put("enabled",zoningEnabled()).put("phase",zoning.phase()).put("epoch",zoning.epoch())
@@ -2284,6 +2307,40 @@ public final class ClientRuntime {
         listener.onLog(text);
     }
     private void stage(String name, String detail) { listener.onStage(name, detail); line(name + ": " + detail); }
+    private void observeFailedGuestResult(JSONObject event) {
+        if (failedGuestResult(event, session)) {
+            producerFailed = true;
+            if ("result".equals(event.optString("type"))) producerCompleted = true;
+            inputReady = false; clientWindowEndedUptime = SystemClock.uptimeMillis();
+            recordLifecycle("guest_failed_result_observed type=" + event.optString("type")); releaseAllInputs(session); notifyInputState();
+        }
+    }
+    static boolean failedGuestResult(JSONObject event, String selectedSession) {
+        return ("result".equals(event.optString("type")) || "character_session_failed".equals(event.optString("type")))
+                && selectedSession != null && !selectedSession.isEmpty()
+                && selectedSession.equals(event.optString("session_id"))
+                && "failed".equals(event.optString("status")) && Boolean.FALSE.equals(event.opt("passed"))
+                && event.optJSONArray("failures") != null && event.optJSONArray("failures").length() > 0
+                && event.optJSONArray("failures").opt(0) instanceof String;
+    }
+    static String currentGuestFailureMessage(JSONObject report, String selectedSession) {
+        String scope = report.optString("scope");
+        if (selectedSession == null || selectedSession.isEmpty() || !selectedSession.equals(report.optString("session_id"))
+                || !"failed".equals(report.optString("status")) || !Boolean.FALSE.equals(report.opt("passed"))
+                || !("actual_character_creation_guest".equals(scope) || "actual_character_reopen_guest".equals(scope)
+                    || "actual_character_startup_timing_guest".equals(scope))) return null;
+        return guestFailureMessage(report);
+    }
+    /** Only the bounded, sanitized first guest failure is presented; recovery wrappers never confer a pass. */
+    static String guestFailureMessage(JSONObject report) {
+        JSONArray failures = report.optJSONArray("failures");
+        if (failures == null || failures.length() == 0) return "The guest exited before completing its checks.";
+        Object first = failures.opt(0);
+        if (!(first instanceof String)) return "The guest failure report is invalid.";
+        String detail = clean((String) first).replaceAll("[\\p{Cntrl}]", " ").trim();
+        if (detail.isEmpty()) return "The guest exited before completing its checks.";
+        return detail.length() <= 512 ? detail : detail.substring(0, 512) + "…";
+    }
     private static String clean(String value) {
         return (value == null ? "" : value).replaceAll("(?i)(password|pwd|token|secret)(\\s*[=:]\\s*)([^;\\s]+)", "$1$2[redacted]");
     }

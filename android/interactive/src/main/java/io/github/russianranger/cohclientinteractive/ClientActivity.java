@@ -29,7 +29,7 @@ public final class ClientActivity extends Activity {
     private TextView status,detail,counter,logs,profileStatus;
     private Button travelZone, recoverReports;
     private TextView zoningStatus;
-    private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
+    private Button setup,importAssets,run,createFresh,resumeCreation,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30;
     private CheckBox performanceGraphics;
     private Spinner gpuProfile;
@@ -69,7 +69,7 @@ public final class ClientActivity extends Activity {
     };
     private final ServiceConnection connection=new ServiceConnection(){
         @Override public void onServiceConnected(ComponentName name,IBinder binder){service=((ClientService.LocalBinder)binder).service();service.setUiVisible(true);service.addListener(listener);dispatchPendingImport();dispatchPendingExport();}
-        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);startButton.reset();inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;refreshPerformanceControls();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
+        @Override public void onServiceDisconnected(ComponentName name){releaseControls(true);startButton.reset();inputActive=false;refreshMovementControls();display.setInputEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();service=null;refreshPerformanceControls();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);status.setText("Service disconnected");detail.setText("Reopen this screen to reconnect.");}
     };
     @Override public void onCreate(Bundle saved){
         super.onCreate(saved);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -109,6 +109,7 @@ public final class ClientActivity extends Activity {
         controls.addView(text("GPU test checks the private driver before launch. If unavailable, it starts with Software and records the reason. Change this after finishing a run.",12,false));
         run=button("2 · Reopen saved THORHERO",()->request(ClientService.RUN));controls.addView(run);
         createFresh=button("Create fresh THORHERO",this::confirmFreshProfile);createFresh.setVisibility(View.GONE);controls.addView(createFresh);
+        resumeCreation=button("Resume first character creation",this::confirmResumeCreation);resumeCreation.setVisibility(View.GONE);controls.addView(resumeCreation);
         profileStatus=text("Checking saved character profile…",12,false);controls.addView(profileStatus);
         returnGround=button("Return to safe ground (optional)",()->{releaseControls();if(service!=null)service.requestReturnToSafeGround();});controls.addView(returnGround);
         captureContact=button("Capture contact dialog",()->{releaseControls();if(service!=null)service.requestContactCapture();});controls.addView(captureContact);
@@ -155,7 +156,7 @@ public final class ClientActivity extends Activity {
         });
         right.addView(text("After Atlas connection: Left stick: WASD · X: jump · Right stick: cursor · A: click/talk · B: Esc · Shoulders: right click / turn view · D-pad: arrows · L3: text · Start: Enter",12,false));
 
-        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
+        setContentView(root);root.requestApplyInsets();setup.setEnabled(false);importAssets.setEnabled(false);run.setEnabled(false);createFresh.setEnabled(false);resumeCreation.setEnabled(false);stop.setEnabled(false);export.setEnabled(false);storage.setEnabled(false);finish.setEnabled(false);typeText.setEnabled(false);saveLogout.setEnabled(false);returnGround.setEnabled(false);captureContact.setEnabled(false);disableTaskControls();refreshMovementControls();refreshPerformanceControls();
     }
     private TextView text(String value,int size,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(Color.rgb(221,234,245));t.setPadding(0,dp(3),0,dp(7));if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private Button button(String label,Runnable click){Button b=new Button(this);b.setText(label);b.setAllCaps(false);b.setTextSize(13);b.setOnClickListener(v->click.run());return b;}
@@ -264,10 +265,15 @@ public final class ClientActivity extends Activity {
     private boolean canCreateFreshProfile(ClientService.State next){
         return profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.ABSENT;
     }
+    private boolean canResumeFirstCreation(ClientService.State next){
+        return profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.READY;
+    }
     private void refreshProfileControls(ClientService.State next){
         run.setEnabled(profileIdle(next)&&next.profileState==ClientRuntime.ProfileState.READY);
         createFresh.setVisibility(next.profileState==ClientRuntime.ProfileState.ABSENT?View.VISIBLE:View.GONE);
         createFresh.setEnabled(canCreateFreshProfile(next));
+        resumeCreation.setVisibility(next.profileState==ClientRuntime.ProfileState.READY?View.VISIBLE:View.GONE);
+        resumeCreation.setEnabled(canResumeFirstCreation(next));
         setTextIfChanged(profileStatus,next.profileNote);
     }
     private void confirmFreshProfile(){
@@ -277,6 +283,14 @@ public final class ClientActivity extends Activity {
                 .setNegativeButton("Cancel",null).setPositiveButton("Start character creation",(dialog,which)->{
                     // The profile or operation may change while this confirmation is open.
                     if(canCreateFreshProfile(state))request(ClientService.CREATE);
+                }).show();
+    }
+    private void confirmResumeCreation(){
+        if(!canResumeFirstCreation(state))return;
+        new AlertDialog.Builder(this).setTitle("Resume first character creation?")
+                .setMessage("Continue the first creation attempt using the existing initialized profile and imported assets. The database is preserved. Startup checks its real character rows; any existing character makes this request stop before the game opens. If THORHERO was already saved, use Reopen saved THORHERO. Log in with COHLOCAL / offline, create THORHERO, then Save character / log out and Finish and export.")
+                .setNegativeButton("Cancel",null).setPositiveButton("Resume first creation",(dialog,which)->{
+                    if(canResumeFirstCreation(state))request(ClientService.RESUME_FIRST_CREATION);
                 }).show();
     }
     private void refreshAbortControl(ClientService.State next){
@@ -524,9 +538,14 @@ public final class ClientActivity extends Activity {
         for(int i=0;i<labels.length;i++){
             File report=reports.get(i);String run=report.getParentFile().getName();long utc=report.lastModified();
             try{utc=Long.parseLong(run.substring(0,run.indexOf('-')));}catch(Exception ignored){}
-            labels[i]=format.format(new Date(utc))+" · "+(report.getName().contains("interrupted")?"interrupted / unverified":"completed archive")+" · "+storageBytes(report.length());
+            labels[i]=format.format(new Date(utc))+" · "+reportArchiveLabel(report.getName())+" · "+storageBytes(report.length());
         }
         new AlertDialog.Builder(this).setTitle("Retained reports · newest first").setItems(labels,(dialog,index)->chooseReportDestination(reports.get(index))).setNegativeButton("Cancel",null).show();
+    }
+    static String reportArchiveLabel(String name){
+        if(name.startsWith("coh-interrupted-guest-"))return "Recovered guest evidence · session unverified";
+        if(name.contains("interrupted"))return "Recovered / incomplete report";
+        return "completed archive";
     }
     private void chooseReportDestination(File report){
         pendingExport=report.getPath();

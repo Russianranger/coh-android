@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 /** Foreground ownership for runtime setup, verified asset import and bounded client startup. */
 public final class ClientService extends Service {
-    public static final String SETUP="coh.client.SETUP", RUN="coh.client.RUN", CREATE="coh.client.CREATE", IMPORT="coh.client.IMPORT", STOP="coh.client.STOP", FINISH="coh.client.FINISH", STORAGE_SCAN="coh.client.STORAGE_SCAN", STORAGE_CLEAN="coh.client.STORAGE_CLEAN", EXPORT_REPORT="coh.client.EXPORT_REPORT", RECOVER_REPORTS="coh.client.RECOVER_REPORTS";
+    public static final String SETUP="coh.client.SETUP", RUN="coh.client.RUN", CREATE="coh.client.CREATE", RESUME_FIRST_CREATION="coh.client.RESUME_FIRST_CREATION", IMPORT="coh.client.IMPORT", STOP="coh.client.STOP", FINISH="coh.client.FINISH", STORAGE_SCAN="coh.client.STORAGE_SCAN", STORAGE_CLEAN="coh.client.STORAGE_CLEAN", EXPORT_REPORT="coh.client.EXPORT_REPORT", RECOVER_REPORTS="coh.client.RECOVER_REPORTS";
     private static final String CHANNEL="client", PREFS="client_ui";
     private static final int NOTICE=61;
     public interface Listener { void onState(State state); void onFrame(int[] pixels,int width,int height,long sequence); }
@@ -371,7 +371,7 @@ public final class ClientService extends Service {
             finally{ClientRuntime.releaseStorage(owner);if(recoveryWake.isHeld())recoveryWake.release();}
             final File selected=recovered;final String error=failure;
             main.post(()->{reportExporting=false;if(destroyed)return;if(selected!=null)report=selected;
-                stage=error==null?"Reports recovered":"Recovery needs attention";detail=error==null?"Choose Reports to export a retained session. Interrupted reports remain explicitly unverified.":"Existing evidence was retained. "+error;
+                stage=error==null?"Reports recovered":"Recovery needs attention";detail=error==null?"Choose Reports to export retained evidence. Recovered guest evidence has unverified session attribution; its wrapper does not prove an Android interruption or a passed test.":"Existing evidence was retained. "+error;
                 getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("report",report==null?null:report.getPath()).commit();
                 stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
         });
@@ -710,19 +710,19 @@ public final class ClientService extends Service {
         if(FINISH.equals(action)){requestFinish();return START_NOT_STICKY;}
         if(STOP.equals(action)&&storageBusy){storageStopRequested.set(true);storageStatus="Cancelling storage work; waiting for owned file operations to finish…";publish();notifyStatus();return START_NOT_STICKY;}
         if(STOP.equals(action)){ClientRuntime r=runtime;if(busy&&!stopping&&r!=null&&r.requestStop()){stopping=true;stage="Stopping";detail=setupWorkerOwnsWake?"Waiting for runtime setup to stop safely.":"Waiting for the client and Wine to close.";publish();notifyStatus();}return START_NOT_STICKY;}
-        if(!SETUP.equals(action)&&!IMPORT.equals(action)&&!RUN.equals(action)&&!CREATE.equals(action))return START_NOT_STICKY;
+        if(!SETUP.equals(action)&&!IMPORT.equals(action)&&!RUN.equals(action)&&!CREATE.equals(action)&&!RESUME_FIRST_CREATION.equals(action))return START_NOT_STICKY;
         if(busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()||ClientRuntime.cleanupBlocked(this)){blocked=ClientRuntime.cleanupBlocked(this);if(blocked){stage="Cleanup needs attention";detail="Export the report, force-stop this app in Android settings, then reopen.";publish();}return START_NOT_STICKY;}
-        if(RUN.equals(action)||CREATE.equals(action)){
+        if(RUN.equals(action)||CREATE.equals(action)||RESUME_FIRST_CREATION.equals(action)){
             refreshProfileState();
             if((CREATE.equals(action)&&profileState!=ClientRuntime.ProfileState.ABSENT)
-                    ||(RUN.equals(action)&&profileState!=ClientRuntime.ProfileState.READY)){
+                    ||((RUN.equals(action)||RESUME_FIRST_CREATION.equals(action))&&profileState!=ClientRuntime.ProfileState.READY)){
                 stage=profileState==ClientRuntime.ProfileState.ABSENT?"Saved profile missing":"Saved profile needs attention";
                 detail=profileNote;publish();return START_NOT_STICKY;
             }
         }
         final android.net.Uri importUri=intent.getData();
         if(IMPORT.equals(action)&&importUri==null)return START_NOT_STICKY;
-        final boolean setup=SETUP.equals(action), importing=IMPORT.equals(action), creating=CREATE.equals(action);final String selectedSession;
+        final boolean setup=SETUP.equals(action), importing=IMPORT.equals(action), resuming=RESUME_FIRST_CREATION.equals(action), creating=CREATE.equals(action)||resuming;final String selectedSession;
         final Object setupOwner;
         try{setupOwner=setup?ClientRuntime.acquireSetupReservation(this):null;}
         catch(IOException failure){stage="Previous operation finishing";detail=failure.getMessage();publish();return START_NOT_STICKY;}
@@ -730,7 +730,7 @@ public final class ClientService extends Service {
         try {
         storagePlan=null;
         busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
-        session=(RUN.equals(action)||CREATE.equals(action))?UUID.randomUUID().toString().replace("-",""):"";
+        session=(RUN.equals(action)||creating)?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
         detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).commit();
@@ -750,7 +750,7 @@ public final class ClientService extends Service {
         runtime=instance;instance.setUiVisible(uiVisible);instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;
-            try{result=setup?executeSetup(instance):importing?instance.importAssets(importUri):(creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
+            try{result=setup?executeSetup(instance):importing?instance.importAssets(importUri):(resuming?instance.runResumeCreation(selectedSession):creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
             finally{if(setup)finishSetupWorker(operationWake,failure,setupOwner,result,instance.getLatestReport());}
             final ClientRuntime.Result outcome=result;final Exception error=failure;
             main.post(()->{

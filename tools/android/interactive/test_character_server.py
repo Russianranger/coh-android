@@ -194,6 +194,7 @@ class CharacterLifecycleTests(unittest.TestCase):
         value.ctx.deadline = 10000
         child = Mock(); value.ctx.start = Mock(return_value=child)
         value.inventory.return_value = []
+        value.sql = Mock(return_value='0')
         status = f'1 {server.evidence.MAP_PATH} S: 0/0 Ip: 127.0.0.1:7001 Mem: 0\n'
         value.query.side_effect = ['invalid container request\n', status.rstrip('\n') + ' NotReady 1\n', status]
         def tick(number):
@@ -208,6 +209,7 @@ class CharacterLifecycleTests(unittest.TestCase):
                 patch.object(server.time, 'sleep'):
             value.start()
         parent.assert_called_once_with()
+        value.sql.assert_called_once_with("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True)
         port.assert_called_once_with(7001, server.socket.SOCK_DGRAM)
         value.ctx.start.assert_called_once_with('local-character-atlas', ['/usr/bin/env',
             '--chdir=' + str(value.runtime), Path('/wine'), server.base.windows_path(value.runtime / 'MapServer.exe'),

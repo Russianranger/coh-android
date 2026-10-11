@@ -53,6 +53,13 @@ def client_animation_repair_owned(event, before, head, parent, names):
             and CLIENT_ANIMATION_REPAIR_PUBLICATION in paths)))
 
 
+def historical_repair_owned(*context):
+    # Preserve the exact historical .30 owner while routing the separately
+    # reviewed .31 Java/guest lane through its own finite allowlist.
+    from classify_client_profile_recovery_change import client_profile_recovery_owned
+    return client_animation_repair_owned(*context) or client_profile_recovery_owned(*context)
+
+
 def main():
     required = True
     try:
@@ -60,7 +67,7 @@ def main():
         parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^@'], text=True).strip()
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
-        required = not client_animation_repair_owned(os.environ.get('GITHUB_EVENT_NAME'),
+        required = not historical_repair_owned(os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass

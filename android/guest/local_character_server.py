@@ -728,6 +728,7 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
 
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
+    requires_saved_character = False
     REPORT_KEY = 'character_creation'
     def __init__(self, owner):
         super().__init__(owner)
@@ -746,6 +747,83 @@ class LocalCharacterServer(login.LocalLoginServer):
             'disconnected_before_sql': False, 'forced_stop_before_save': False,
             'reopen_verified': False, 'gameplay_verified': False, 'map_samples': [], 'character_samples': []}
         self.ctx.report[self.REPORT_KEY] = self.creation_report
+
+    def initialize(self):
+        """Check the requested operation against SQL before starting Wine.
+
+        An initialized PostgreSQL profile is not evidence that native creation
+        ever saved a character. Resuming that first creation is explicit and
+        never removes or replaces the persistent profile.
+        """
+        resume = getattr(self.owner.args, 'resume_empty_profile', False)
+        require(type(resume) is bool, 'Invalid first-creation resume request')
+        self.creation_report['resume_first_creation_requested'] = resume
+        require(not (self.requires_saved_character and resume),
+                'First-creation resume is separate from saved-character reopen')
+        if not self.requires_saved_character:
+            if resume:
+                require(self.profile.is_dir() and not self.profile.is_symlink()
+                        and login.profile_record(self.profile / 'profile.json')['initialized'] is True,
+                        'Resume first character creation requires the existing initialized profile; preserve all data')
+            else:
+                require(not self.profile.exists() and not self.profile.is_symlink(),
+                        'Character profile already exists; use Resume first character creation only if it has no characters')
+        super().initialize()
+        reused = self.report.get('profile_reused') is True
+        require(self.requires_saved_character or reused is resume,
+                'First-creation request does not match persistent profile reuse; preserve all data')
+        presence = self.sql("SELECT CASE WHEN to_regclass('dbo.ents') IS NULL THEN 'missing' ELSE 'present' END;", game=True)
+        require(presence in ('missing', 'present'), 'Character inventory table identity is unreadable; preserve all data')
+        inventory = self.inventory() if presence == 'present' else []
+        require(type(inventory) is list, 'Character inventory is unreadable; preserve all data')
+        eligibility = {'format': 1, 'checked_before_wine': True,
+            'operation': 'reopen_saved_character' if self.requires_saved_character else
+                'resume_first_creation' if resume else 'fresh_first_creation',
+            'resume_first_creation_requested': resume, 'profile_reused': reused,
+            'inventory_table_present': presence == 'present', 'character_count': len(inventory),
+            'empty_inventory_verified': not inventory, 'sql_game_mutations_performed': False,
+            'committed_character_rows_verified': False, 'eligible': False}
+        self.creation_report['profile_eligibility'] = eligibility
+        self.ctx.report['character_profile_eligibility'] = eligibility
+        if self.requires_saved_character:
+            require(inventory,
+                    'No saved THORHERO exists in this preserved profile. Use Resume first character creation, then save normally before Reopen.')
+            require(all(type(row) is dict and set(row) == set(evidence.IDENTITY_FIELDS)
+                        and type(row.get('name')) is str and type(row.get('authname')) is str
+                        and type(row.get('containerid')) is int and row['containerid'] > 0
+                        and type(row.get('authid')) is int and 0 < row['authid'] <= 4294967295
+                        for row in inventory),
+                    'Character inventory contains incomplete or invalid identities; preserve all data and export the report')
+            candidates = [row for row in inventory
+                          if row.get('name', '').casefold() == CHARACTER.casefold()
+                          or row.get('containerid') == 1]
+            require(len(candidates) == 1, 'Expected exactly the saved THORHERO ID 1; preserve all characters')
+            identity = candidates[0]
+            auth_id = identity.get('authid')
+            require(type(identity.get('containerid')) is int and identity['containerid'] == 1
+                    and identity.get('name') == CHARACTER and identity.get('authname') == ACCOUNT
+                    and type(auth_id) is int and 0 < auth_id <= 4294967295
+                    and [row for row in inventory if row.get('authid') == auth_id] == [identity],
+                    'Saved THORHERO identity differs from the accepted local character; preserve all characters')
+            rows = self.character_rows(1)
+            parents = rows.get('ents', [])
+            require(len(parents) == 1 and type(parents[0].get('logincount')) is int
+                    and 0 < parents[0]['logincount'] < 2**31 - 1,
+                    'Saved THORHERO has no committed login baseline; preserve all data and export the report')
+            snapshot = validate_character_rows(rows, inventory, inventory,
+                self.schema['expected_attributes'], auth_id,
+                existing_identity=identity, expected_login_count=parents[0]['logincount'])
+            require(snapshot is not None,
+                    'Saved THORHERO powers or costume are incomplete; preserve all data and export the report')
+            eligibility['committed_character_rows_verified'] = True
+        else:
+            require(not inventory,
+                    'First character creation requires a completely empty inventory. Existing characters were preserved; use Reopen for saved THORHERO.')
+            high_water = self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) if presence == 'present' else '0'
+            require(high_water == '0',
+                    'This empty profile has already allocated character IDs. Creation ID 1 cannot be qualified; preserve all data and export the report instead of resetting it.')
+            eligibility.update(character_id_high_water=0, supported_first_character_id=1)
+        eligibility['eligible'] = True
 
     def payloads(self):
         super().payloads()
@@ -1022,6 +1100,46 @@ class LocalCharacterServer(login.LocalLoginServer):
         if hasattr(self, 'kings_row_data_cache'):
             self.kings_row_data_cache.release(self.kings_row_runtime / 'data', self.owner.cleanup_status)
 
+    def copy_kings_native_dependencies(self, target):
+        """Keep Atlas's qualified DbServer replacement scoped to Atlas only."""
+        dependencies = {}
+        manual = getattr(self, 'manual_atlas_startup', None)
+        for name, pin in self.map_package['files'].items():
+            source = self.runtime / name
+            origin = 'owned_atlas_runtime'
+            if name == 'DbServer.exe' and manual is not None:
+                manifest = self.owner.args.assets / 'startup-dbserver-manifest.json'
+                require(type(manual) is dict and manual.get('enabled') is True
+                        and manual.get('base_package_archive_changed') is False
+                        and manual.get('other_native_targets_changed') is False
+                        and manifest.is_file() and not manifest.is_symlink()
+                        and base.file_hash(manifest) == manual.get('manifest_sha256'),
+                        'Kings preparation requires the verified Atlas-only DbServer supplement')
+                document = dbserver.load_json(manifest, 2 * 1024 * 1024)
+                replacement = document.get('files', {}).get(name, {})
+                require(document.get('replacement_scope') == 'fresh_owned_manual_atlas_runtime_DbServer.exe_only'
+                        and document.get('base_normal_executable') == pin
+                        and replacement.get('sha256') == manual.get('executable_sha256')
+                        and source.is_file() and not source.is_symlink()
+                        and source.stat().st_size == replacement.get('bytes')
+                        and base.file_hash(source) == replacement.get('sha256'),
+                        'Installed Atlas manual DbServer differs from its qualified supplement')
+                # Kings starts only its MapServer. Its unused DbServer member
+                # retains the stock game-package closure; Atlas remains the
+                # sole running DbServer with the qualified save/read repair.
+                source = self.map_package_dir / name
+                origin = 'verified_original_game_package'
+            require(source.is_file() and not source.is_symlink()
+                    and source.stat().st_size == pin['bytes'] and base.file_hash(source) == pin['sha256'],
+                    'Kings native dependency differs from its qualified source: ' + name)
+            destination = target / name
+            require(not destination.exists() and not destination.is_symlink(), 'Kings native dependency already exists')
+            shutil.copyfile(source, destination); destination.chmod(0o400)
+            require(destination.stat().st_size == pin['bytes'] and base.file_hash(destination) == pin['sha256'],
+                    'Copied Kings native dependency differs: ' + name)
+            dependencies[name] = {'source': origin, 'bytes': pin['bytes'], 'sha256': pin['sha256']}
+        return dependencies
+
     def prepare_kings_row_runtime(self):
         """One owned Map 5 tree, prepared on first native station request only.
 
@@ -1074,13 +1192,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             staged['bytes'] += sum(pin['bytes'] for pin in self.zone_asset_document['kings_row_collision_files'].values())
             staged['copied_private_files'] += len(targets)
             cache.seal(target / 'data', staged)
-        for name, pin in self.map_package['files'].items():
-            source = self.runtime / name
-            require(source.is_file() and not source.is_symlink() and base.file_hash(source) == pin['sha256'],
-                    'Kings native dependency differs from the owned Atlas runtime')
-            destination = target / name
-            require(not destination.exists() and not destination.is_symlink(), 'Kings native dependency already exists')
-            shutil.copyfile(source, destination); destination.chmod(0o400)
+        dependencies = self.copy_kings_native_dependencies(target)
         # Preserve the current private DbServer connection, including its stock
         # logging policy. Never reuse a cached session's credential file.
         config = target / 'data/server/db/servers.cfg'
@@ -1099,6 +1211,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK)
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
+            'native_dependencies': dependencies,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
             'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'elapsed_seconds': round(time.monotonic() - started, 6)}
@@ -1196,8 +1309,10 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def capture_baseline(self):
         self.baseline = self.inventory()
-        require(not any(row['name'].casefold() == CHARACTER.casefold() for row in self.baseline),
-                'THORHERO already exists; it was preserved. Export this report instead of deleting it.')
+        require(not self.baseline,
+                'First character creation requires an empty inventory; every existing character was preserved. Export this report instead of deleting it.')
+        require(self.sql("SELECT dbo.coh_container_high_water('dbo.ents'::regclass);", game=True) == '0',
+                'Character IDs changed before creation; preserve the profile and export the report')
         self.creation_report.update(baseline_character_count=len(self.baseline),
                                     baseline_identity_sha256=digest_json(self.baseline))
 
@@ -1660,6 +1775,7 @@ class LocalCharacterServer(login.LocalLoginServer):
 class LocalCharacterReopenServer(LocalCharacterServer):
     """Reopen one preserved real player; SQL is evidence and never a game input."""
     REPORT_KEY = 'character_reopen'
+    requires_saved_character = True
     CHARACTER_ID = 1
 
     def __init__(self, owner):

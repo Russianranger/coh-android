@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_client_animation_repair_change import client_animation_repair_owned
+from classify_client_animation_repair_change import historical_repair_owned as client_animation_repair_owned
 
 
 CLIENT_RECEIPT_REPAIR_MARKER = 'tools/android/interactive/release-client-receipt-repair-0.13.29.json'

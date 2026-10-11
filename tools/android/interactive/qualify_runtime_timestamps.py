@@ -31,7 +31,8 @@ ARCHIVES = {
              'bytes': 318095727, 'sha256': '030f38066af7b786c142e199cb84adec037840b0f029338849e43f99203a93e1'},
 }
 EXTRACTOR = 'android/app/src/main/java/io/github/russianranger/cohdiagnostic/TarExtractor.java'
-HOST_SOURCES = ('tools/android/java/android/system/Os.java',
+HOST_SOURCES = ('android/app/src/main/java/io/github/russianranger/cohdiagnostic/SetupMemoryGuard.java',
+                'tools/android/java/android/system/Os.java',
                 'tools/android/java/io/github/russianranger/cohdiagnostic/ExtractRuntimeHost.java')
 SOURCE_FILES = frozenset((EXTRACTOR, *HOST_SOURCES, 'android/runtime-lock.json',
                          'tools/android/interactive/qualify_runtime_timestamps.py'))

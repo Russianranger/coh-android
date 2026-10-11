@@ -62,19 +62,31 @@ class AnimationRepairPackageTests(unittest.TestCase):
         self.assertEqual(donor, original)
         with self.assertRaises(ValueError): package.verification_manifests(donor, {'unknown.py': native}, 'e'*40)
 
-    def test_actual_029_donor_and_installer_preflight_are_process_deterministic(self):
+    def test_actual_030_historical_payload_and_installer_preflight_are_process_deterministic(self):
         apk = Path(os.environ.get('COH_ANIMATION_TEST_DONOR_APK', package.ROOT/'out/donor.apk')).resolve()
         report = Path(os.environ.get('COH_ANIMATION_TEST_DONOR_REPORT',
-            package.ROOT/'out/donor-evidence/client-receipt-repair-apk-build-report.json')).resolve()
-        self.assertTrue(apk.is_file() and report.is_file(), 'Exact public .29 APK and report required; no fixture skip')
-        script = '''import json,sys,tempfile
+            package.ROOT/'out/donor-evidence/client-animation-repair-apk-build-report.json')).resolve()
+        self.assertTrue(apk.is_file() and report.is_file(), 'Exact public .30 APK and report required; no fixture skip')
+        script = '''import json,sys,tempfile,zipfile
 from pathlib import Path
 sys.path.insert(0,sys.argv[1])
-import build_client_animation_repair_apk as p
-d=p.validate_donor(Path(sys.argv[2]),Path(sys.argv[3]))
-with tempfile.TemporaryDirectory() as td:
-    runtime,payloads,preflight=p.extract_and_repair(Path(sys.argv[2]),d,Path(td)/'donor','a'*40)
-    print(json.dumps({'payloads':payloads,'preflight':preflight},sort_keys=True))
+import build_client_profile_recovery_apk as p
+import qualify_runtime_asset_preflight as assets
+import os
+apk,report=Path(sys.argv[2]),Path(sys.argv[3])
+p.builder().checked_file(apk,p.DONOR_APK);p.builder().checked_file(report,p.DONOR_BUILD)
+d=json.loads(report.read_text())
+p.require(d['repository_commit']==p.DONOR_COMMIT and d['payloads'] and len(d['payloads'])==69,
+          'Exact authenticated historical .30 receipt required')
+with tempfile.TemporaryDirectory() as td,zipfile.ZipFile(apk) as archive:
+    for name,expected in dict(d['payloads'],**{'classes.dex':d['retained_dex']},**d['retained_android_resources']).items():
+        p.require(p.pin(archive.read(name))==expected,'Historical .30 payload changed: '+name)
+    runtime=Path(td)
+    for name in sorted(d['payloads']):
+        if name.startswith('assets/runtime/'):
+            (runtime/Path(name).name).write_bytes(archive.read(name))
+    preflight=assets.preflight(runtime,assets.ensure_assets(Path(os.environ['COH_ANIMATION_REPAIR_ASSET_CACHE'])))
+    print(json.dumps({'payloads':d['payloads'],'preflight':{'runtime_assets':preflight}},sort_keys=True))
 '''
         results = []
         for seed in ('1', '73422'):

@@ -20,7 +20,7 @@ class ClientRuntime {
     static boolean operationInProgress(){return owned;}
 }
 class ClientService {
-    static final String CREATE="coh.client.CREATE";
+    static final String CREATE="coh.client.CREATE",RESUME_FIRST_CREATION="coh.client.RESUME_FIRST_CREATION";
     static class State {
         boolean busy,storageBusy,reportExporting,blocked;
         ClientRuntime.ProfileState profileState=ClientRuntime.ProfileState.ABSENT;
@@ -45,13 +45,14 @@ class AlertDialog {
 class HostActivity {
     ClientService service=new ClientService();ClientService.State state=new ClientService.State();
     boolean exporting;
-    Button run=new Button(),createFresh=new Button(),stop=new Button();TextView profileStatus=new TextView();
+    Button run=new Button(),createFresh=new Button(),resumeCreation=new Button(),stop=new Button();TextView profileStatus=new TextView();
     List<String> actions=new ArrayList<>();
     void request(String action){actions.add(action);}
     void setTextIfChanged(TextView view,String value){view.setText(value);}
     ACTIVITY_METHODS
     void refresh(){refreshProfileControls(state);refreshAbortControl(state);}
     void confirm(){confirmFreshProfile();}
+    void resume(){confirmResumeCreation();}
 }
 public class StorageRecoveryUiHost {
     static void need(boolean value){if(!value)throw new AssertionError();}
@@ -59,16 +60,20 @@ public class StorageRecoveryUiHost {
     public static void main(String[] args)throws Exception {
         HostActivity ui=new HostActivity();
         switch(args[0]) {
-        case "absent":ui.refresh();need(ui.createFresh.visibility==View.VISIBLE&&ui.createFresh.enabled&&!ui.run.enabled);need(ui.profileStatus.text.equals(ui.state.profileNote));break;
-        case "ready":ui.state.profileState=ClientRuntime.ProfileState.READY;ui.state.profileNote="Saved profile ready";ui.refresh();need(ui.run.enabled&&!ui.createFresh.enabled&&ui.createFresh.visibility==View.GONE);need(ui.profileStatus.text.equals("Saved profile ready"));break;
-        case "preserve":ui.state.profileState=ClientRuntime.ProfileState.PRESERVE;ui.state.profileNote="Existing profile is incomplete; preserve it";ui.refresh();need(!ui.run.enabled&&!ui.createFresh.enabled&&ui.createFresh.visibility==View.GONE);need(ui.profileStatus.text.contains("preserve"));ui.confirm();need(AlertDialog.shown==null);noLaunch(ui);break;
-        case "busy":for(int flag=0;flag<7;flag++){ui=new HostActivity();if(flag==0)ui.state.busy=true;if(flag==1)ui.state.storageBusy=true;if(flag==2)ui.state.reportExporting=true;if(flag==3)ui.state.blocked=true;if(flag==4)ui.exporting=true;if(flag==5)ClientRuntime.owned=true;if(flag==6)ui.service=null;ui.refresh();need(!ui.createFresh.enabled&&!ui.run.enabled);ui.confirm();need(AlertDialog.shown==null);noLaunch(ui);ClientRuntime.owned=false;}break;
-        case "ready_busy":for(int flag=0;flag<4;flag++){ui=new HostActivity();ui.state.profileState=ClientRuntime.ProfileState.READY;if(flag==0)ui.state.busy=true;if(flag==1)ui.state.storageBusy=true;if(flag==2)ui.state.reportExporting=true;if(flag==3)ui.state.blocked=true;ui.refresh();need(!ui.run.enabled&&!ui.createFresh.enabled);}break;
+        case "absent":ui.refresh();need(ui.createFresh.visibility==View.VISIBLE&&ui.createFresh.enabled&&!ui.run.enabled&&!ui.resumeCreation.enabled&&ui.resumeCreation.visibility==View.GONE);need(ui.profileStatus.text.equals(ui.state.profileNote));break;
+        case "ready":ui.state.profileState=ClientRuntime.ProfileState.READY;ui.state.profileNote="Saved profile ready";ui.refresh();need(ui.run.enabled&&!ui.createFresh.enabled&&ui.createFresh.visibility==View.GONE&&ui.resumeCreation.enabled&&ui.resumeCreation.visibility==View.VISIBLE);need(ui.profileStatus.text.equals("Saved profile ready"));break;
+        case "preserve":ui.state.profileState=ClientRuntime.ProfileState.PRESERVE;ui.state.profileNote="Existing profile is incomplete; preserve it";ui.refresh();need(!ui.run.enabled&&!ui.createFresh.enabled&&ui.createFresh.visibility==View.GONE&&!ui.resumeCreation.enabled&&ui.resumeCreation.visibility==View.GONE);need(ui.profileStatus.text.contains("preserve"));ui.confirm();need(AlertDialog.shown==null);noLaunch(ui);break;
+        case "busy":for(int flag=0;flag<7;flag++){ui=new HostActivity();if(flag==0)ui.state.busy=true;if(flag==1)ui.state.storageBusy=true;if(flag==2)ui.state.reportExporting=true;if(flag==3)ui.state.blocked=true;if(flag==4)ui.exporting=true;if(flag==5)ClientRuntime.owned=true;if(flag==6)ui.service=null;ui.refresh();need(!ui.createFresh.enabled&&!ui.run.enabled&&!ui.resumeCreation.enabled&&ui.resumeCreation.visibility==View.GONE);ui.confirm();need(AlertDialog.shown==null);noLaunch(ui);ClientRuntime.owned=false;}break;
+        case "ready_busy":for(int flag=0;flag<7;flag++){ui=new HostActivity();ui.state.profileState=ClientRuntime.ProfileState.READY;if(flag==0)ui.state.busy=true;if(flag==1)ui.state.storageBusy=true;if(flag==2)ui.state.reportExporting=true;if(flag==3)ui.state.blocked=true;if(flag==4)ui.exporting=true;if(flag==5)ClientRuntime.owned=true;if(flag==6)ui.service=null;ui.refresh();need(!ui.run.enabled&&!ui.createFresh.enabled&&!ui.resumeCreation.enabled);ui.resume();need(AlertDialog.shown==null);noLaunch(ui);ClientRuntime.owned=false;}break;
         case "confirm":ui.confirm();need(AlertDialog.shown!=null);noLaunch(ui);need(AlertDialog.shown.message.contains("no saved profile")&&AlertDialog.shown.message.contains("do not restore")&&AlertDialog.shown.message.contains("current runtime and imported assets"));AlertDialog.shown.accept();need(ui.actions.equals(Arrays.asList(ClientService.CREATE)));break;
         case "cancel":ui.confirm();AlertDialog.shown.cancel();noLaunch(ui);break;
         case "stale_ready":ui.confirm();ui.state.profileState=ClientRuntime.ProfileState.READY;AlertDialog.shown.accept();noLaunch(ui);break;
         case "stale_preserve":ui.confirm();ui.state.profileState=ClientRuntime.ProfileState.PRESERVE;AlertDialog.shown.accept();noLaunch(ui);break;
         case "stale_owner":ui.confirm();ClientRuntime.owned=true;AlertDialog.shown.accept();noLaunch(ui);break;
+        case "resume_confirm":ui.state.profileState=ClientRuntime.ProfileState.READY;ui.resume();need(AlertDialog.shown!=null);noLaunch(ui);need(AlertDialog.shown.message.contains("database is preserved")&&AlertDialog.shown.message.contains("real character rows")&&AlertDialog.shown.message.contains("any existing character"));AlertDialog.shown.accept();need(ui.actions.equals(Arrays.asList(ClientService.RESUME_FIRST_CREATION)));break;
+        case "resume_cancel":ui.state.profileState=ClientRuntime.ProfileState.READY;ui.resume();AlertDialog.shown.cancel();noLaunch(ui);break;
+        case "resume_stale":for(ClientRuntime.ProfileState profile:new ClientRuntime.ProfileState[]{ClientRuntime.ProfileState.ABSENT,ClientRuntime.ProfileState.PRESERVE}){ui=new HostActivity();ui.state.profileState=ClientRuntime.ProfileState.READY;ui.resume();ui.state.profileState=profile;AlertDialog.shown.accept();noLaunch(ui);}break;
+        case "resume_stale_owner":ui.state.profileState=ClientRuntime.ProfileState.READY;ui.resume();ClientRuntime.owned=true;AlertDialog.shown.accept();noLaunch(ui);break;
         case "null":ui.state=null;ui.confirm();need(AlertDialog.shown==null);noLaunch(ui);break;
         case "abort":ui.refresh();need(!ui.stop.enabled);ui.state.storageBusy=true;ui.refresh();need(ui.stop.enabled&&ui.stop.text.equals("Cancel storage scan / cleanup"));ui.state.storageBusy=false;ui.state.busy=true;ui.refresh();need(ui.stop.enabled&&ui.stop.text.equals("Abort operation"));break;
         default:throw new AssertionError("Unknown recovery UI scenario");
@@ -83,8 +88,8 @@ class StorageRecoveryUiTests(unittest.TestCase):
     def setUpClass(cls):
         activity = (JAVA / 'ClientActivity.java').read_text()
         methods = [production_method(activity, signature) for signature in (
-            'private boolean profileIdle(', 'private boolean canCreateFreshProfile(',
-            'private void refreshProfileControls(', 'private void confirmFreshProfile(',
+            'private boolean profileIdle(', 'private boolean canCreateFreshProfile(', 'private boolean canResumeFirstCreation(',
+            'private void refreshProfileControls(', 'private void confirmFreshProfile(', 'private void confirmResumeCreation(',
             'private void refreshAbortControl(')]
         cls.folder = tempfile.TemporaryDirectory(prefix='coh-storage-recovery-ui-')
         cls.path = Path(cls.folder.name)
@@ -101,7 +106,11 @@ class StorageRecoveryUiTests(unittest.TestCase):
                        check=True, capture_output=True, text=True)
 
     def test_missing_profile_offers_only_explicit_creation(self): self.scenario('absent')
-    def test_verified_profile_offers_only_reopen(self): self.scenario('ready')
+    def test_initialized_profile_offers_explicit_resume_and_sql_gated_reopen_requests(self): self.scenario('ready')
+    def test_resume_confirmation_explains_sql_empty_guard_and_preservation(self): self.scenario('resume_confirm')
+    def test_resume_cancel_never_launches(self): self.scenario('resume_cancel')
+    def test_resume_rechecks_profile_if_it_changes_while_confirmation_open(self): self.scenario('resume_stale')
+    def test_resume_rechecks_operation_owner_while_confirmation_open(self): self.scenario('resume_stale_owner')
     def test_partial_profile_stays_visible_and_cannot_be_overwritten(self): self.scenario('preserve')
     def test_creation_rejects_all_competing_operations_and_disconnection(self): self.scenario('busy')
     def test_reopen_rejects_busy_storage_export_and_cleanup_guard(self): self.scenario('ready_busy')

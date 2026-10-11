@@ -1,4 +1,83 @@
-# CURRENT — .30 animation compatibility repair published and public bytes verified; physical Thor retest pending — 2026-10-11 UTC
+# CURRENT — .31 empty-profile recovery and Kings dependency repair; comprehensive qualification in progress — 2026-10-11 UTC
+
+The latest supplied archive `coh-atlas-gameplay-20261011-201802.zip` records an
+**actual saved-character reopen**, not fresh creation. Its guest interval was
+20:13:59.770246–20:17:33.595465 UTC (**213.825 seconds**). The .30 animation repair,
+full Atlas server preparation, PostgreSQL/ODBC and native **DbServer Ready** all
+passed on Thor. The final read-only `dbo.ents` inventory was **`[]`**. Reopen then
+refused `Expected exactly the existing THORHERO ID 1; preserve all characters`.
+MapServer and Game did not launch. Cleanup completed; this report does not show
+character deletion, Android killing, a timeout or a GPU crash. The recovery
+wrapper has unverified session attribution and does not establish an Android
+interruption. [Exact sanitized evidence](android-evidence/client-profile-recovery-0.13.30-device-result.json).
+
+The launcher classified an initialized PostgreSQL profile as ready to reopen,
+even though initialization precedes native character creation and its committed
+save. The empty inventory is consistent with the earlier reported pre-creation
+failures; the UI hid creation and offered a reopen that could not pass. The
+post-DbServer snapshot cannot establish all earlier row history, because stock
+native startup can purge incomplete character rows. New eligibility checks must
+refuse incomplete rows before that native startup. The retained .30 save
+guard was protective, but this creates an explicit recovery dead end.
+
+**.31 is being prepared; it is not yet a verified published release.** The
+repair adds an explicit **Resume first character creation** action for an
+initialized profile. Read-only SQL must prove the whole character inventory is
+empty before Wine/native startup. Existing characters remain preserved and
+cause creation refusal. Reopen stays a separate operation, requires its saved
+identity, and never creates a replacement. The accepted fixed-ID-1 scope also
+requires an unadvanced character allocator for resumed first creation. No
+profile reset, deletion, synthesized character or relaxed save acceptance is
+part of this repair. Invalid/incomplete profiles remain preserved for report
+export and review.
+
+The expanded actual .30 host preparation check has also reproduced a real
+**Kings Row native-dependency assembly failure**, after complete Atlas
+preparation and cold Kings data staging passed. Atlas has the authenticated
+manual DbServer supplement, but the Kings copier compares it against the
+original package executable. The .31 helper repair must verify that active
+Atlas supplement and copy the unused stock Kings DbServer from its original
+authenticated package, retaining strict checks for every other dependency.
+The existing manual supplement remains scoped to Atlas; no native rebuild
+or second DbServer launch is required. [Exact negative reproduction evidence](android-evidence/client-profile-recovery-0.13.30-full-startup-negative.json)
+records the authenticated .30 APK and retained native pins; .30 has not passed
+complete orchestration.
+
+Comprehensive qualification requires **177 suites**, retaining all 149 .30
+suites and all seven real PostgreSQL save fixtures, add all fourteen real SQL eligibility cases, replay the actual UI
+routing and post-failure input cleanup, and run the actual candidate packaged helpers through complete Atlas
+and Kings Row runtime preparation, including cold and reused server worktrees.
+The prior .30 gate exercised real leaf asset installers but did not execute the
+full private server mirror or native game boot. New proof must identify each
+executed stage and every remaining native/device boundary. Full native Game,
+physical creation, save/reopen, GPU rendering and monorail behavior remain Thor
+gates; a host orchestration pass cannot certify them.
+
+The existing published release remains **0.13.30 / code 45**, and all four
+Assets **1.0.0** volumes remain reusable. The .31 candidate retains every native
+member and the complete .30 game archive, Wine/FEX/GPU and imported asset bytes;
+its Android Java/Dex rebuild is explicitly limited to routing/error presentation,
+and two guest helpers plus enclosing manifests change. Do not uninstall, clear
+app data or reimport completed assets. Keep PR #1 **draft and unmerged**; main
+remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. The two earlier feasibility
+research projects remain separate.
+
+All twelve routine follow-up runs for the previous documentation commit
+`41f93ebfe60bcfbb4e345734577babecc8f3fab1` are now completed/successful.
+Character persistence, session and Atlas tooling checks passed; their native
+jobs skipped. They are not a new native full-session qualification. The .31
+dedicated run and public-byte evidence remain pending at this source handoff.
+
+Next gates: qualify the complete candidate, verify dedicated CI and public
+bytes before declaring .31 published, then use the explicit resume action on
+Thor, create THORHERO and perform an ordinary verified save. Export, reopen and
+verify identity/map/position before testing both monorail directions and a Kings
+Row save/reopen. Record the exact current-session failure and full outer report
+if any gate fails.
+
+---
+
+# Historical — .30 animation compatibility repair published and public bytes verified; physical Thor retest pending — 2026-10-11 UTC
 
 **Published: COH Atlas Gameplay 0.13.30 / version code 45**, tag
 `coh-atlas-gameplay-v0.13.30`, targeting source commit

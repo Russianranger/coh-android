@@ -1,16 +1,18 @@
 """Exercise the real guest callers for the larger visual pack and restart tree.
 
-Payload size fixtures mock file stat/hash, and byte-boundary staging uses sparse
-readonly inputs. These checks exercise the actual guards without large buffers
+Payload size fixtures use real sparse files and mock their content hashes;
+byte-boundary staging uses sparse readonly inputs. These checks exercise the
+actual path, inode and size guards without large buffers
 or any accepted physical game-test repetition.
 """
 from contextlib import ExitStack
+import json
 from pathlib import Path
 import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT/'android/guest'))
@@ -28,37 +30,34 @@ class ClientAssetCallerLimitsTests(unittest.TestCase):
         hashes = {name: 'a'*64 for name in sizes}
         manifest = {'format': 1, 'scope': client.SCOPE,
             'files': {name: {'bytes': expected[name], 'sha256': hashes[name]} for name in sizes}}
-        paths = {}
-        for name, size in sizes.items():
-            path = Mock(name=name)
-            path.is_file.return_value = True
-            path.is_symlink.return_value = False
-            path.stat.return_value = SimpleNamespace(st_size=size)
-            paths[name] = path
-        reverse = {id(path): name for name, path in paths.items()}
-        paths.setdefault('client-manifest.json', Mock())
         def digest(path):
-            name = reverse[id(path)]
+            name = Path(path).name
             return (digest_overrides or {}).get(name, hashes[name])
-        assets = MagicMock()
-        assets.__truediv__.side_effect = lambda name: paths[name]
-        with patch.object(client, 'read_json', return_value=manifest), \
-                patch.object(client.base, 'file_hash', side_effect=digest), \
-                patch.object(client.base, 'verify_pe32') as verify_pe:
-            result = client.verify_assets(assets)
-        self.assertEqual(verify_pe.call_count, 3)
-        self.assertEqual(result, hashes)
+        with tempfile.TemporaryDirectory(prefix='coh-client-asset-caps-') as temporary:
+            assets = Path(temporary)
+            for name, size in sizes.items():
+                with (assets / name).open('wb') as stream:
+                    stream.truncate(size)
+            (assets / 'client-manifest.json').write_text(json.dumps(manifest))
+            # The real verifier fingerprints each file before and after hashing.
+            # Keep those checks active; sparse files avoid allocating pack bytes.
+            with patch.object(client.base, 'file_hash', side_effect=digest), \
+                    patch.object(client.base, 'verify_pe32') as verify_pe, \
+                    patch.dict(client._VERIFIED_ASSET_STATES):
+                result = client.verify_assets(assets)
+            self.assertEqual(verify_pe.call_count, 3)
+            self.assertEqual(result, hashes)
         return result
 
     def test_complete_current_inventory_accepts_actual_larger_pack_and_manifest(self):
         self.assertGreater(visual.ARCHIVE_BYTES, 128*1024**2)
-        self.assertLessEqual(visual.ARCHIVE_BYTES, 512*1024**2)
+        self.assertLessEqual(visual.ARCHIVE_BYTES, 1024**3)
         self.verify({'client-visual-assets.zip': visual.ARCHIVE_BYTES,
             'client-visual-manifest.json': producer.MANIFEST_PIN['bytes']})
 
     def test_exact_visual_names_have_finite_archive_and_manifest_caps(self):
-        for name, limit in (('client-visual-assets.zip', 512*1024**2),
-                ('client-visual-manifest.json', 16*1024**2)):
+        for name, limit in (('client-visual-assets.zip', 1024**3),
+                ('client-visual-manifest.json', 64*1024**2)):
             with self.subTest(name=name, size=limit):
                 self.verify({name: limit})
             with self.subTest(name=name, size=limit+1), \

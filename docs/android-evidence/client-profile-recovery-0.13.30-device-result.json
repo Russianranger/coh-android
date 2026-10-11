@@ -1,0 +1,367 @@
+{
+  "format": 1,
+  "scope": "recovered_0_13_30_reopen_empty_profile_result_and_profile_recovery_gap",
+  "recorded_date_utc": "2026-10-11",
+  "status": "device_guest_failure_recorded_no_physical_gameplay_or_zoning_pass",
+  "sanitization": {
+    "raw_upload_unmodified": true,
+    "credentials_included": false,
+    "raw_import_generation_or_file_paths_included": false,
+    "session_or_device_identifiers_included": false,
+    "canonical_test_character_and_account_names_only": true
+  },
+  "archive": {
+    "filename": "coh-atlas-gameplay-20261011-201802.zip",
+    "bytes": 57853,
+    "sha256": "79e10ad70111e07edbe252ffdfb0b0f9454b2ab1f47c1c3b9e91ddb071498dd3",
+    "members": {
+      "recovery-manifest.json": {
+        "bytes": 276,
+        "sha256": "b693e3df1b4cf761323fdfb135a30680fa4bc6b33c236a460095e12b79de7ad5"
+      },
+      "previous-guest/latest-report.json": {
+        "bytes": 108332,
+        "sha256": "4c662dccf105260a850e6edb33e9b70c432113ec15b14b437874fb391bcf2a72"
+      },
+      "previous-guest/report.zip": {
+        "bytes": 30657,
+        "sha256": "327691f8c511ef1b08e308004f1f40da2cd18595c88e47243396a9778c05a1d8"
+      }
+    }
+  },
+  "recovery": {
+    "format": 1,
+    "status": "interrupted_unverified",
+    "passed": false,
+    "verified": false,
+    "recovery_kind": "previous_guest_outputs",
+    "session_attribution_verified": false,
+    "note": "Preserved diagnostic evidence only. No successful Finish, character save, or zoning qualification is inferred."
+  },
+  "evidence_integrity": {
+    "inner_report_members": {
+      "latest-report.json": {
+        "bytes": 108332,
+        "sha256": "4c662dccf105260a850e6edb33e9b70c432113ec15b14b437874fb391bcf2a72"
+      },
+      "client-evidence/character-server-logs.zip": {
+        "bytes": 796,
+        "sha256": "9848a353053b536abd329626ef8809c6d056572ff7be624526943d4d7e6f220c"
+      },
+      "client-evidence/character-zoning.json": {
+        "bytes": 1316,
+        "sha256": "70df1637e0053b7b37fc402ba0b39514a96346271b47138afa63a93b1e41f465"
+      },
+      "client-evidence/local-dbserver-console.txt": {
+        "bytes": 7561,
+        "sha256": "eda88911ff1427df8f560479ebfbb9b3fa8ad6b457043bbd28a942bbe29d50ff"
+      }
+    },
+    "inner_latest_report_byte_identical_to_outer_preserved_report": true,
+    "outer_android_report_present": false,
+    "android_recovery_checkpoint_present": false,
+    "android_process_exit_history_present": false
+  },
+  "identity": {
+    "guest_scope": "actual_character_reopen_guest",
+    "diagnostic_mode": "actual_character_reopen",
+    "execution_platform_requested": "android",
+    "machine": "aarch64",
+    "version_association": "Guest helper pins match the published .30 payload, including its qualified animation compatibility repair. This previous-guest recovery wrapper does not authenticate an Android app version or Android session attribution.",
+    "payload_sha256": {
+      "game-package.tar.gz": "36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa",
+      "local_character_server.py": "ac611bbdb22468612570033f76ff46c7006c6cc191147a8ef481f023da745d8a",
+      "server_animation_package.py": "a8a32b3fce31bea5d4ff9a2e9089fa2cf26303392b87f6feecfa3eaf968cedab",
+      "character_creation_diagnostic.py": "8c791b438b60082fb2a8770a4d878956b5d9de5916e40afc6167a4a47be3038d",
+      "character_reopen_diagnostic.py": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24",
+      "asset-pack-manifest.json": "9570447b93e7d6e42768e1b0e16b791256b82d509d9caf007aca5c88cd7fd05c",
+      "server-animation-manifest.json": "8f752dceeffa632287602176f26722c3129fcdc9941709793d8b26d22151859f",
+      "server-animations.pigg": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b",
+      "startup-dbserver.exe": "ea1d43d7a1ed61559376563bd8bad68987fbf47a4ec41f0d6fe8fe16cfe933ba",
+      "startup-dbserver-manifest.json": "949a15e5a796c5c63cf94d3b16072762f9f310545ca28184f5a714d897c9f087",
+      "atlas-beacon-manifest.json": "ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4",
+      "kings-row-beacon-manifest.json": "0b2ade9719e30fe4267782a8affa556c6245a02ad9f421a57195c115afde4694"
+    },
+    "accepted_Game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "mapserver_producer": {
+      "repository_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+      "manifest_sha256": "a574d7ca0ada390c9b1841f04cb5e5163138008915315166cff4961de7ef5487",
+      "mapserver_sha256": "53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713"
+    }
+  },
+  "observed_failure": {
+    "status": "failed",
+    "failures": [
+      "Expected exactly the existing THORHERO ID 1; preserve all characters"
+    ],
+    "started_utc": "2026-10-11T20:13:59.770246+00:00",
+    "finished_utc": "2026-10-11T20:17:33.595465+00:00",
+    "elapsed_seconds": 213.825219,
+    "phase": "post_DbServer_readiness_existing_character_baseline",
+    "source": {
+      "path": "android/guest/local_character_server.py",
+      "class": "LocalCharacterReopenServer",
+      "method": "capture_baseline",
+      "published_0_13_30_line": 1715
+    },
+    "postgres_started": true,
+    "server_started": true,
+    "mapserver_started": false,
+    "client_process_started": false,
+    "existing_character_verified": false,
+    "stages": [
+      {
+        "stage": "client_inputs",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:13:59.819557+00:00",
+        "finished_utc": "2026-10-11T20:14:03.384226+00:00",
+        "elapsed_seconds": 3.564669
+      },
+      {
+        "stage": "client_private_data",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:14:03.384538+00:00",
+        "finished_utc": "2026-10-11T20:14:03.600630+00:00",
+        "elapsed_seconds": 0.216092
+      },
+      {
+        "stage": "persistent_server_profile",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:14:03.604044+00:00",
+        "finished_utc": "2026-10-11T20:14:04.173335+00:00",
+        "elapsed_seconds": 0.569291
+      },
+      {
+        "stage": "postgres_local_login",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:14:04.174064+00:00",
+        "finished_utc": "2026-10-11T20:14:04.667403+00:00",
+        "elapsed_seconds": 0.493339
+      },
+      {
+        "stage": "presentation_display",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:14:19.750400+00:00",
+        "finished_utc": "2026-10-11T20:14:19.962438+00:00",
+        "elapsed_seconds": 0.212038
+      },
+      {
+        "stage": "wine_initialization",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:14:19.963131+00:00",
+        "finished_utc": "2026-10-11T20:15:22.741202+00:00",
+        "elapsed_seconds": 62.778071
+      },
+      {
+        "stage": "local_login_odbc",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:15:22.741897+00:00",
+        "finished_utc": "2026-10-11T20:15:26.991251+00:00",
+        "elapsed_seconds": 4.249354
+      },
+      {
+        "stage": "local_dbserver_startup",
+        "status": "passed",
+        "started_utc": "2026-10-11T20:15:26.992409+00:00",
+        "finished_utc": "2026-10-11T20:17:29.169491+00:00",
+        "elapsed_seconds": 122.177082
+      }
+    ]
+  },
+  "inventory_evidence": {
+    "operation": "read_only_existing_character_inventory",
+    "sql_helper": "LocalCharacterServer.inventory -> sql_rows(ents, IDENTITY_FIELDS, containerid)",
+    "rows": [],
+    "process_label": "sql-fixture",
+    "exit_code": 0,
+    "elapsed_seconds": 0.055,
+    "raw_output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "profile_reused": true,
+    "profile_initialized": true,
+    "database_preserved_reported": true,
+    "prior_postgresql_shutdown_utc": "2026-10-11 19:12:16 UTC",
+    "relationship_to_prior_attempt": "The previous shutdown timestamp matches the .29 creation attempt that failed animation verification before DbServer launch. Retaining its initialized profile could explain this empty inventory, but does not establish all prior profile history or rule out native startup cleanup of incomplete rows.",
+    "character_deletion_observed": false,
+    "deletion_absence_proved": false,
+    "absence_scope": "This report observes an empty inventory only after native DbServer startup. It contains neither a pre-start inventory nor prior successful-save proof. Native startup can purge incomplete character rows, so an empty post-start inventory cannot prove that no characters previously existed. No deletion event is recorded and no Android-attributed complete archive is supplied."
+  },
+  "passed_gates": {
+    "client_payload_pins": true,
+    "imported_immutable_inputs_preserved": true,
+    "postgres_durability_verified": true,
+    "x86_odbc_driver_loaded": true,
+    "prepared_server_definition_caches": true,
+    "qualified_animation_compatibility": {
+      "format": 1,
+      "actual_mapserver_sha256": "53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713",
+      "original_cache_donor_mapserver_sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+      "cache_donor_identity_preserved": true,
+      "physical_loading_gain_validated": false,
+      "policy": "exact_qualified_monorail_consumer_preserves_animation_loader",
+      "native_build_repository_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+      "native_build_manifest": {
+        "bytes": 17207,
+        "sha256": "a574d7ca0ada390c9b1841f04cb5e5163138008915315166cff4961de7ef5487"
+      },
+      "monorail_receipt_sha256": "e0ab383a91b83c258bfacbc44acf328f1a0c1435c0e4a385eb5ad643566f3178",
+      "retained_schema_sources_sha256": {
+        "Common/seq/seqload.c": "8c2761ceeabcc564f89d943780579a4f401ffb344f9ad6e7f5e73660c2b9b60f",
+        "Common/seq/seqload.h": "d5e18647985c120bb9637827cc594c39db35bef45c8fb1312eed329675dadff9",
+        "libs/UtilitiesLib/include/utilitieslib/utils/textparser.h": "737a1208ae67a0212c79128050d1ac34ba68b9b04d1979f83b2d697f08593e28",
+        "libs/UtilitiesLib/src/utils/textparser.c": "22be253a9e48e2565086e051d469ff92e68c2ae5a84802d8dc3d90713c766fef"
+      },
+      "changed_source_sha256": {
+        "MapServer/CMakeLists.txt": "88e9cc8e0eb9b4d50cd379062d7b1f993f0883c2977daf80df57507fe0f5af14",
+        "MapServer/src/door.c": "8bf53acf10f29b7f20ce96322d04f69201be9090a2fafe1ae95ac43b6a3aa2ce",
+        "MapServer/src/svr/svr_init.c": "398081161ebe9e9253b326e8a5f94f502a7bc0a9974a442f1ce83a46ee0f9ae3",
+        "MapServer/src/svr/svr_tick.c": "a3810c112556b258ee2456a51eb28d6afeefd14b81c2fa97ed431659ae42a3d5"
+      },
+      "parser_or_definition_sources_changed": false,
+      "original_animation_producer_mapserver_sha256": "6a5bf60b2130c31df74f1767510de65c581652caa90f639a5a6e4a9453b47d36",
+      "animation_identity_preserved": true,
+      "native_animation_reader_changed": false
+    },
+    "animation_pack": {
+      "installed": true,
+      "reused": false,
+      "pigg": {
+        "animation_count": 5878,
+        "bytes": 97084456,
+        "metadata_bytes": 8703726,
+        "original_animation_bytes": 88380730,
+        "sha256": "465d69a266f2b07afd800b8a7bd3f5e63fa16a24955391f826264d7f8d3a968b"
+      },
+      "loose_inputs_preserved": true
+    },
+    "atlas_beacon_graph": {
+      "format": 3,
+      "status": "installed_verified_graph",
+      "map": "maps/city_zones/city_01_01/city_01_01.txt",
+      "server_geometry_profile": "required_original_object_geometry",
+      "full_world_crc": "0xb0c21ded",
+      "installed_files": 2,
+      "input_files_checked": 5637,
+      "input_payload_bytes_hashed": 494184162,
+      "archive_decoded": true,
+      "fingerprint_walk": true,
+      "input_inventory_walk": true,
+      "native_graph_readback_qualified": true,
+      "preparation_elapsed_seconds": 60.162665
+    },
+    "kings_row_graph_metadata": {
+      "verified": true,
+      "map_id": 5,
+      "installation_deferred": true,
+      "native_graph_readback_qualified": true,
+      "physical_zoning_verified": false,
+      "manifest_sha256": "0b2ade9719e30fe4267782a8affa556c6245a02ad9f421a57195c115afde4694"
+    },
+    "DbServer_native_ready_observed": true,
+    "DbServer_native_ready_utc": "2026-10-11T20:17:28+00:00",
+    "server_data_cache_reused": true
+  },
+  "timing": {
+    "scope": "Retained guest timestamps and per-phase timers; no playable-world or physical zoning measurement.",
+    "wine_initialization_seconds": 62.768,
+    "dbserver_startup": {
+      "runtime_preparation_seconds": 72.802174,
+      "runtime_configuration_seconds": 0.004685,
+      "native_launch_started_utc": "2026-10-11T20:16:39.799598+00:00",
+      "native_dispatch_ready_seconds": 48.565395,
+      "schema_snapshot_seconds": 0.804454,
+      "runtime_preparation_phase_seconds": {
+        "base_schema_and_native_runtime": 0.093504,
+        "required_original_geometry": 4.190414,
+        "server_data_cache_checkout": 4.272648,
+        "warm_schema_restore": 0.145459,
+        "native_dependencies_and_manual_atlas": 0.065204,
+        "prepared_server_definition_caches": 1.883105,
+        "server_animation_pack": 1.972495,
+        "atlas_beacon_graph": 60.166113
+      }
+    }
+  },
+  "closed_logs": {
+    "server_archive": {
+      "path": "character-server-logs.zip",
+      "bytes": 796,
+      "sha256": "9848a353053b536abd329626ef8809c6d056572ff7be624526943d4d7e6f220c",
+      "manifest_sha256": "54de1074e3ede8d79f2b9c2f7dd8a7a992459206b65902e7cfb97e3dc1dc4c83",
+      "file_count": 1,
+      "source_bytes": 802,
+      "exported_bytes": 802,
+      "source_bytes_after_read": 802,
+      "collection_phase": "closed_server_logs",
+      "truncated": false,
+      "redacted_files": 0
+    },
+    "server_log_paths": [
+      "logs/dbserver/error_2026-10-11-20-00-00.log"
+    ],
+    "source_bytes": 802,
+    "exported_bytes": 802,
+    "truncated": false,
+    "interpretation": "The preserved SQLSTATE 00000 NOTICE records are guarded constraint-drop notices. Native DbServer continues through initialization to Ready. Catalog cache text fallback is present. No additional terminal error, MapServer launch or client launch is recorded."
+  },
+  "cleanup": {
+    "complete": true,
+    "execution": {
+      "diagnostic_initialized": true,
+      "wine_started": true,
+      "owned_child_count": 28
+    },
+    "results": {
+      "postgres_graceful": true,
+      "wine_prefix_stopped": true,
+      "owned_processes_reaped": true
+    },
+    "wine_owned_remaining": 0,
+    "wine_cleanup_complete": true,
+    "presentation_socket_removed": true,
+    "interpretation": "DbServer termination and the presentation process forced stop occur during owned cleanup; this archive does not establish an Android kill, timeout or OOM."
+  },
+  "physical_validation": {
+    "guest_execution_reported_android": true,
+    "android_session_attribution_verified": false,
+    "saved_character_reopen_verified": false,
+    "native_MapServer_execution_validated": false,
+    "native_client_execution_validated": false,
+    "GPU_execution_validated": false,
+    "gameplay_validated": false,
+    "physical_Thor_gameplay_validated": false,
+    "physical_Thor_save_reopen_validated": false,
+    "physical_Thor_monorail_validated": false
+  },
+  "presentation_audit": {
+    "recovery_kind": "previous_guest_outputs",
+    "generic_wrapper_reason": "ClientReports.preservePrevious archives arbitrary retained guest outputs using a fixed interrupted_unverified envelope. It does not classify the inner guest terminal status or authenticate an Android operation.",
+    "recover_wrapper_is_evidence_of_Android_interruption": false,
+    "completed_android_report_present": false,
+    "old_UI_failure_summary_omitted_guest_failure": true,
+    "old_export_label_source": "Archive filename contains interrupted, not inner guest status.",
+    "recommendation": "Present a bounded sanitized guest failure after matching the current session; label recovered guest evidence as unverified recovery without implying an Android kill. Preserve strict attribution and pass gates."
+  },
+  "pending_gates": [
+    "Host recovery-path regression for existing initialized profile with no saved character, preserving database and unrelated characters.",
+    "Explicit first-creation recovery using read-only inventory eligibility before native launch.",
+    "Comprehensive packaged startup, saved reopen, Atlas/Kings Row preparation and persistence audits.",
+    "Physical Thor creation through world entry and ordinary verified save.",
+    "Physical Thor reopen preserving identity, powers, costume and saved position.",
+    "Physical Thor Atlas-to-Kings-Row-to-Atlas monorail and post-travel save/reopen."
+  ],
+  "source_audit": {
+    "scope": "retained_stock_DbServer_startup_policy_read_only_source_audit",
+    "source": {
+      "path": "upstream/ouroboros/DBServer/src/dbinit.c",
+      "bytes": 79450,
+      "sha256": "622e6394553241b910c2bd1ebe17aa7672cb94f9aa71a5bd0f1f03d3bd740007",
+      "native_cleanup_line": 1214
+    },
+    "native_call": "tpltDeleteAll(ent_list->tplt, \"AuthName\", false)",
+    "source_comment": "get rid of incomplete characters",
+    "consequence": "The ordinary native startup path can delete incomplete character rows. The .30 upload contains no pre-start inventory, so the observed empty post-start inventory cannot prove absence before startup.",
+    "native_policy_changed_by_0_13_30": false,
+    "0_13_31_candidate_protection": "Read-only character eligibility and inventory checks before Wine/DbServer launch must reject incomplete, foreign or provisional character rows. Explicit first-creation recovery is allowed only for the verified empty inventory and must never silently replace existing rows.",
+    "candidate_protection_qualification_status": "Host and public release evidence recorded separately; this device report does not establish candidate qualification or physical execution."
+  }
+}

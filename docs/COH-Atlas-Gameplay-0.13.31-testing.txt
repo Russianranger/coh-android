@@ -1,0 +1,264 @@
+COH Atlas Gameplay 0.13.31 / version code 46
+Compatible assets: COH Assets 1.0.0 (unchanged)
+
+APK release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.31
+APK download after publication:
+https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.31/COH-Atlas-Gameplay-0.13.31.apk
+APK checksum after publication:
+https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.31/COH-Atlas-Gameplay-0.13.31.apk.sha256
+Assets release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-assets-v1.0.0
+
+Publication requires the dedicated workflow and independent public-byte audit;
+these testing notes alone do not establish publication. Physical .31 creation,
+MapServer/game startup, ordinary save/reopen and Kings Row travel remain pending.
+
+WHAT THIS REPAIRS AND WHAT THE LATEST REPORT SHOWS
+
+The recovered .30 report ran the saved-character reopen operation. The earlier
+reported creation attempts stopped before reaching character creation. It passed
+runtime preparation, the animation compatibility check, Atlas caches and native
+DbServer readiness, then failed with "Expected exactly the existing THORHERO ID
+1; preserve all characters" because the real character inventory was empty.
+MapServer and the game client had not launched. The retained guest interval was
+213.825 seconds (about 3m34s), including 72.802 seconds of runtime preparation
+and 48.565 seconds from native DbServer launch to readiness. Cleanup completed,
+including PostgreSQL shutdown and owned Wine process cleanup.
+
+The app previously treated an initialized database profile as a saved character:
+it offered Reopen while hiding first creation. A database can be initialized
+without a character ever having been saved. .31 adds the explicit "Resume first
+character creation" action for this case. It reuses the initialized profile and
+compatible imports. A read-only SQL inventory guard runs before Wine startup:
+resume requires a completely empty inventory and allocator high-water 0, so
+the first supported character can receive ID 1. Any existing character or an
+advanced allocator makes it stop before native launch; neither is deleted or
+rewound. Reopen verifies the accepted saved THORHERO identity and complete
+committed parent, extension, power and costume rows before Wine, then checks
+again after DbServer readiness. No profile reset, character deletion or fabricated save is
+performed. Incomplete or unreadable profiles remain preserved and require a
+report, rather than being replaced automatically.
+
+The outer recovery archive is explicitly interrupted/unverified and does not
+verify attribution to the interrupted app session, a completed save or an
+Android kill. Its retained guest evidence establishes the reported preparation
+and DbServer result; it does not establish MapServer/game startup or gameplay.
+The latest failure is an operation-selection/persistence-state error, with no
+reported GPU crash or failure of the .30 animation repair. The empty inventory
+was observed after DbServer startup, so it cannot establish all earlier row
+history: stock startup can purge incomplete character rows. The new early SQL
+guard refuses partial rows before launching that native startup. Existing
+characters and provisional rows remain preserved for review.
+
+.31 changes the Android creation/reopen controls and request dispatch, the DEX,
+and two guest helpers (local_character_server.py and
+character_creation_diagnostic.py), together with their enclosing manifests.
+The accepted native Game/server binaries, native game archive, GPU assets,
+working renderer and all four Assets 1.0.0 volumes are retained. The .29 receipt
+repair and .30 exact animation compatibility repair remain in place. The known
+working .25/.26 runtime compatibility and strict ordinary-save proof remain the
+baseline. This is not an FPS or startup-speed optimization.
+
+The broader host check also reproduced a later .30 Kings Row preparation
+blocker: Atlas correctly installs the qualified manual DbServer, while the
+Kings dependency copier expected the original DbServer package hash. The
+.31 fix verifies the active Atlas supplement and takes the unused Kings
+DbServer copy from its authenticated original package. MapServer and every
+other runtime dependency remain strictly checked. No native executable is
+rebuilt, and no second DbServer is launched for Kings Row. This is a host
+reproduction and repair, not evidence of physical monorail travel.
+
+The comprehensive release gate must exercise the actual candidate APK's full
+Atlas and Kings Row prepare_runtime paths, cold preparation and validated cache
+reuse with the real versioned asset payloads, plus operation selection, real
+PostgreSQL empty/saved/conflicting inventory fixtures, save/reopen proof checks,
+cleanup/recovery/export checks and the retained regression suites. Host runtime
+preparation does not boot the native services or game and does not qualify a
+physical Thor. Native boot, graphical creation, ordinary save and both monorail
+directions remain separate device gates. Use the published workflow/evidence
+record for the actual completed checks, rather than inferring a pass from these
+instructions or a planned gate.
+
+EXISTING INSTALLATION -- KEEP YOUR PROFILE AND IMPORTS
+
+1. If evidence from the previous attempt is still needed, use "Recover
+   interrupted reports" and export the retained archive before another test.
+   Keep the complete recovered ZIP, even though it cannot certify a save.
+2. Install .31 over the existing app. Do not uninstall, clear app data or
+   reimport already verified Assets 1.0.0. Keep the initialized profile,
+   existing characters and completed imports. Uninstalling deletes private
+   saves/imports; diagnostic ZIPs are not a database restore backup.
+3. Run "Set up / update runtime" ONCE and wait for "Runtime ready". The APK
+   installation alone does not refresh the installed guest helpers. Setup may
+   retain an older runtime generation until reviewed storage cleanup.
+4. Choose the operation that matches your actual save history:
+   - If THORHERO was previously saved and "Saved character verified" appeared,
+     use "2 · Reopen saved THORHERO". Select that existing character in the game;
+     keep its identity, costume and powers.
+   - If first creation stopped before any character was saved, the initialized
+     profile now offers "Resume first character creation". Read its confirmation
+     and select "Resume first creation". This is the recovery path for the
+     latest empty-inventory report. It continues creation using the preserved
+     database and checks that no character already exists before Wine launches.
+   - If the app reports no profile, use "Create fresh THORHERO", then "Start
+     character creation". That path is only for an absent profile.
+   - If profile data is incomplete/unreadable, or resume refuses because a
+     character exists or its allocator has advanced, preserve it and export. A saved THORHERO uses Reopen;
+     a conflicting identity needs diagnosis. Do not clear data or delete a
+     character to force an action to become available.
+5. Log in with account COHLOCAL and password offline. For creation/resume,
+   create THORHERO as a Primal Earth Hero and skip the tutorial. For reopen,
+   select the existing THORHERO and click Enter Game; do not create or delete
+   characters. First record whether the operation passes inventory eligibility,
+   native server readiness and world connection.
+6. Keep the app foreground during preparation and follow its stage/progress.
+   A several-minute preparation is not by itself a stall. The recovered .30
+   report took about 3m34s before its inventory error; .31 moves the eligibility
+   guard earlier but makes no overall loading-time promise. Record elapsed time
+   and the last visible stage/error. On a failure, use "Abort operation" as
+   available, wait for cleanup, then export immediately. Asset reimport is not
+   a remedy for a preserved-profile eligibility refusal.
+7. Once connected, verify basic movement and camera. Creation/resume allows
+   "Save character / log out" once connected. On reopen and monorail sessions,
+   follow the app's movement/save countdowns and ordinary 60-second neutral wait.
+   Release all controls, choose Save, and wait for "Saved character verified".
+   Then choose "Finish and save report" and export the complete ZIP.
+   If that verification never appears, do not claim a completed save.
+8. Reopen in a separate session and verify the saved map/position, costume and
+   powers. Complete another ordinary verified save and report before the
+   separate Kings Row monorail test. Reopen is not the way to finish an empty
+   profile's interrupted first creation.
+
+FRESH INSTALLATION OR MISSING ASSETS ONLY
+
+A fresh installation is unnecessary for this repair. For an actually fresh app
+or an incomplete earlier import, use all four original Assets 1.0.0 volumes:
+
+Base -- 1,630,092,780 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip
+SHA-256: 6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d
+
+Reference -- 615,545,248 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip
+SHA-256: e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e
+
+Zones -- 1,693,058,889 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Zones.zip
+SHA-256: f3a3f78caceeccbe00dc97723244e12910161e2c952347e70e83b56a29558087
+
+Audio -- 848,122,891 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip
+SHA-256: 2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b
+
+Each ZIP also has an adjacent .sha256 file on the Assets release. On Thor,
+install the APK, allow installation from your chosen file/browser app when
+Android requests it, and open COH. Use "Import asset pack part" for each intact
+ZIP separately, in any order. Do not unzip or combine the volumes. The app
+shows missing parts and retains every completed import if a later one fails;
+retry only the incomplete part. Run "Set up / update runtime" once after all
+four verify, then choose "Create fresh THORHERO" and complete ordinary save and
+reopen as described above. Keep the downloaded ZIPs for reinstalls.
+
+All four are needed when moving from .27 or earlier; the old standalone Atlas
+import is insufficient. Reference contains those original resources. Complete
+verified Assets 1.0.0 imports from .28/.29/.30 can be reused for .31. No Assets
+1.0.1, replacement pack or repeated import is required.
+
+STORAGE
+
+The four downloaded ZIPs total 4,786,819,808 bytes (about 4.46 GiB), unchanged
+from .28. For a clean installation with downloads retained, plan 25-30 GiB free
+INTERNAL storage. This is conservative planning headroom, not a measured Thor
+installed footprint. Private imports, expanded resources, rootfs/Wine, caches,
+reports and runtime generations require more than the download size. New zone/
+audio archives and their decoded files alone account for about 5.815 GiB.
+
+Import admission requires approximately 3.654 GiB free (twice the largest
+volume payload plus 512 MiB); setup checks for 5 GiB free at entry. These are
+admission checks, not total-size guarantees. An existing compatible installation
+does not need another asset copy for .31, but runtime refresh still needs
+working space. SD storage can hold downloads; private runtime data needs
+internal storage. With no session running, use "Storage and cleanup" to scan
+and review older generations. Do not delete character data manually.
+
+MONORAIL TEST -- AFTER CREATION/REOPEN AND VERIFIED SAVE PASS
+
+1. Keep "GPU test", the accepted Performance/800x600 selection, visual settings,
+   fan and charging state. Enable Show FPS and 30 FPS. The retained Performance
+   preset already uses a 600x450 world within an 800x600 interface; .31 adds no
+   resolution, draw-distance or visual-feature reduction.
+2. Reopen saved THORHERO. Walk to the actual Atlas Park monorail entrance,
+   click it and choose Kings Row. Preparation happens automatically. Stay near
+   the station and in the app until arrival; walking away can invalidate the
+   request. Do not treat clicking the station without arrival as a travel pass.
+3. Record station-selection-to-usable-world time, FPS range/dips, temperature,
+   errors and visible artifacts. First preparation, later validated cache reuse
+   and an already resident server are separate cases. None proves a cold
+   Android filesystem cache. Host timings are not Thor timings.
+4. In Kings Row check walking, Jump, camera, clicking, buildings, terrain,
+   textures, NPCs and audio. Return through its monorail station to Atlas Park.
+   If stuck or unusable, abort and export early; do not run an immobile benchmark.
+5. Neutral wait -> Save character / log out -> Saved character verified ->
+   Finish and save report -> export -> reopen and confirm map and position.
+   In a separate focused session, save normally in Kings Row and reopen there.
+   Check both transfer directions and both saved-map reopen cases.
+6. If an older save starts in Atlas instance 101, use its return control, then
+   save, finish and reopen before Kings Row. Finish/reopen after safe-ground
+   recovery before zoning. There are at most two resident MapServers and four
+   transfer epochs in a finite 20-minute connected window, with save time
+   reserved. If too little transfer time remains, save, finish and reopen.
+
+COMPLETE LOG/REPORT EXPORT -- NORMAL, FAILED OR INTERRUPTED
+
+1. For a normal session, save and wait for "Saved character verified", then
+   "Finish and save report". For a failure, use "Abort operation" early as
+   available, wait for owned-process cleanup, and preserve the failed report.
+   Record the selected action (Create, Resume or Reopen), last visible stage,
+   exact error, elapsed time and whether save verification appeared.
+2. Select "Reports / export", then the matching UTC timestamp/type/size in
+   "Retained reports · newest first". In Android's Create document picker,
+   choose Downloads or an SD destination, Save, and wait for "Report exported".
+3. Attach the COMPLETE OUTER coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip, including
+   for a failure. Do not extract/repack it or attach only an inner guest ZIP,
+   latest-report.json or screenshots: they omit outer lifecycle/session evidence.
+   The complete ZIP contains the available guest/native logs and report evidence;
+   add your timing/FPS/temperature notes and last visible stage/error.
+4. "Export incomplete" retains the private report. Select it again and retry;
+   the previous destination may contain only a partial copy. Exports are bounded
+   to 512 MiB per report and a five-minute copy. After copying visibly begins,
+   switching apps and returning is an optional foreground-export check.
+5. After an interruption, reopen the app and select "Recover interrupted
+   reports" BEFORE another test, then export that retained interrupted archive.
+   Recovered entries may read "Recovered guest evidence · session unverified"
+   or "Recovered / incomplete report"; select the matching retained entry.
+   Say whether "Saved character verified" appeared. Recovery preserves evidence;
+   it does not certify an incomplete run or reconstruct missing logs. Do not
+   deliberately kill an unsaved run to test recovery.
+6. With the session finished, open "Storage and cleanup", run its scan and
+   choose "Export storage report". For import/setup/storage trouble, attach the
+   resulting coh-storage-*.json alongside the outer gameplay ZIP. Review any
+   proposed cleanup before selecting it. An exported diagnostic report is not
+   a character database backup; do not uninstall as an export or repair step.
+
+KNOWN LIMITS AND PENDING DEVICE GATES
+
+Only the Atlas Park-Kings Row station pair is enabled. The 66-map/72-archive
+inventory audit does not make every zone playable. Six map source graphs retain
+documented authored gaps; original FX/appearance and audio-reference gaps remain.
+Audio container validation does not prove physical playback.
+
+The .30 recovered ARM64 report reached native DbServer readiness after full
+Atlas runtime preparation and exact animation validation. It then refused an
+empty inventory on the Reopen path before MapServer/game launch. That is device
+report evidence with interrupted/unverified wrapper attribution, rather than a
+completed .30 gameplay or save pass. Host .31 full preparation, payload identity
+and PostgreSQL operation-eligibility checks do not imply native runtime boot.
+
+Physical .31 resume/fresh creation, MapServer/game connection, ordinary saved
+THORHERO reopen, both monorail directions, Kings Row save/reopen, controls,
+visual/audio correctness, storage/export reliability, loading time, peak memory
+and sustained 30 FPS remain test gates. The stricter and broader host gate is
+intended to expose remaining host-checkable failures before delivery; it cannot
+promise that no untested device-dependent issue remains. Keep the working
+renderer and strict save checks; no long Software comparison is requested.

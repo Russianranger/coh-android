@@ -129,7 +129,7 @@ class StorageAudit {
 class HostService extends Context {
     static final int NOTICE=61,STOP_FOREGROUND_REMOVE=1,START_NOT_STICKY=2;
     static final String POWER_SERVICE="power",ACTIVITY_SERVICE="activity",NOTIFICATION_SERVICE="notice",CHANNEL="client";
-    static final String SETUP="setup",IMPORT="import",RUN="run",CREATE="create",STOP="stop",FINISH="finish",STORAGE_SCAN="scan",STORAGE_CLEAN="clean";
+    static final String SETUP="setup",IMPORT="import",RUN="run",CREATE="create",RESUME_FIRST_CREATION="resume",EXPORT_REPORT="export",RECOVER_REPORTS="recover",STOP="stop",FINISH="finish",STORAGE_SCAN="scan",STORAGE_CLEAN="clean";
     boolean destroyed,busy,storageBusy,reportExporting,foregroundFails,stopping,inputReady,characterSaved,setupWorkerOwnsWake;
     PowerManager.WakeLock wake;final Runnable sessionDeadlineTick=()->{};final Object screenReceiver=new Object();final List<Object> listeners=new ArrayList<>();
     final AtomicBoolean storageStopRequested=new AtomicBoolean();byte[] storageRecoveryReserve;
@@ -146,6 +146,9 @@ class HostService extends Context {
     Assets getAssets(){return new Assets();}
     SharedPreferences getSharedPreferences(String name,int mode){preferences.add(name);return prefs;}
     static final int MODE_PRIVATE=0;
+    List<File> retainedReports(){return Arrays.asList(report);}
+    void startReportExport(Intent intent){throw new AssertionError("unrelated export action reached profile dispatch fixture");}
+    void recoverReports(){throw new AssertionError("unrelated recovery action reached profile dispatch fixture");}
     void publish(){published++;}boolean requestFinish(){return true;}void startForeground(int id,Object value){if(foregroundFails)throw new RuntimeException("foreground rejected");foreground++;}void stopForeground(int kind){}void stopSelf(){}void unregisterReceiver(Object receiver){}
     void storage(Intent intent,boolean cleaning){startStorage(intent,cleaning);}
     void checkpoint(String mode,String phase,int entries,String path,long elapsed)throws IOException{checkpointStorage(mode,phase,entries,path,elapsed);}
@@ -186,6 +189,8 @@ public class StorageUiHost {
         case "unsupported_exits":Build.VERSION.SDK_INT=29;JSONObject unsupported=service.exits();need(unsupported.values.get("status").equals("unsupported_api")&&service.exitManager.packageName==null);preserved(service,original);break;
         case "missing_reopen":service.onStartCommand(new Intent().action(HostService.RUN),0,0);need(service.stage.equals("Saved profile missing")&&service.foreground==0&&service.worker.pending.isEmpty()&&!service.busy);preserved(service,original);break;
         case "preserved_create":ClientRuntime.profile=ClientRuntime.ProfileState.PRESERVE;service.onStartCommand(new Intent().action(HostService.CREATE),0,0);need(service.stage.equals("Saved profile needs attention")&&service.foreground==0&&service.worker.pending.isEmpty()&&!service.busy);preserved(service,original);break;
+        case "missing_resume":service.onStartCommand(new Intent().action(HostService.RESUME_FIRST_CREATION),0,0);need(service.stage.equals("Saved profile missing")&&service.foreground==0&&service.worker.pending.isEmpty()&&!service.busy);preserved(service,original);break;
+        case "preserved_resume":ClientRuntime.profile=ClientRuntime.ProfileState.PRESERVE;service.onStartCommand(new Intent().action(HostService.RESUME_FIRST_CREATION),0,0);need(service.stage.equals("Saved profile needs attention")&&service.foreground==0&&service.worker.pending.isEmpty()&&!service.busy);preserved(service,original);break;
         case "ready_create":ClientRuntime.profile=ClientRuntime.ProfileState.READY;service.onStartCommand(new Intent().action(HostService.CREATE),0,0);need(service.stage.equals("Saved profile needs attention")&&service.foreground==0&&service.worker.pending.isEmpty()&&!service.busy);preserved(service,original);break;
         case "destroyed_terminal":service.storage(new Intent(),false);service.destroyed=true;service.worker.drain();need(service.prefs.terminalCommitted&&service.prefs.terminalOwned&&!ClientRuntime.operationInProgress());need(new File(service.prefs.getString("report","")).isFile()&&!service.prefs.getBoolean("was_busy",true));preserved(service,original);break;
         case "stale_cancel":service.storageStopRequested.set(true);service.storage(new Intent(),false);need(!service.storageStopRequested.get());service.worker.drain();need(StorageAudit.scans==1&&service.storagePlan!=null&&!ClientRuntime.operationInProgress());preserved(service,original);break;
@@ -262,6 +267,8 @@ class StorageUiTests(unittest.TestCase):
     def test_exit_diagnostic_reads_only_own_bounded_records_without_trace_stream(self): self.scenario('exit_scope')
     def test_older_android_records_unsupported_exit_history(self): self.scenario('unsupported_exits')
     def test_service_refuses_missing_profile_reopen_before_mutating_report(self): self.scenario('missing_reopen')
+    def test_service_refuses_absent_profile_resume_before_mutating_report(self): self.scenario('missing_resume')
+    def test_service_refuses_incomplete_profile_resume_before_mutating_report(self): self.scenario('preserved_resume')
     def test_service_refuses_incomplete_profile_creation_before_mutating_report(self): self.scenario('preserved_create')
     def test_service_refuses_creation_over_existing_profile_before_mutating_report(self): self.scenario('ready_create')
     def test_destroyed_service_commits_terminal_report_before_releasing_owner(self): self.scenario('destroyed_terminal')

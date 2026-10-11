@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from classify_client_animation_repair_change import client_animation_repair_owned, CLIENT_ANIMATION_REPAIR_ALLOWED
+from classify_client_animation_repair_change import historical_repair_owned as client_animation_repair_owned, CLIENT_ANIMATION_REPAIR_ALLOWED
 from classify_client_assets_change import client_assets_owned, CLIENT_ASSETS_ALLOWED
 from classify_client_receipt_repair_change import client_receipt_repair_owned, CLIENT_RECEIPT_REPAIR_ALLOWED
 
