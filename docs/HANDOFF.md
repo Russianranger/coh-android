@@ -1,4 +1,57 @@
-# CURRENT — .28 published and public bytes verified; physical Thor tests pending — 2026-10-11 UTC
+# CURRENT — .28 physical startup failure reproduced; .29 packaging repair awaiting publication — 2026-10-11 UTC
+
+The supplied Thor recovery report records a deterministic **pre-launch** failure:
+`Game listener donor receipt bytes differ`. Its contained fresh-character guest
+attempt ran from 18:11:52.345498 to 18:14:29.388838 UTC (157.043 seconds), including
+152.149 seconds preparing private client data. PostgreSQL, the native servers,
+Wine and Game had not started. The recovered wrapper is `interrupted_unverified`;
+its session attribution is unverified, so it does not establish an Android
+timeout, low-memory kill or GPU crash. See
+[device evidence](android-evidence/client-receipt-repair-0.13.29-device-failure.json).
+
+The published .28 game package recursively sorted two historical embedded JSON
+receipts. Their content and native binaries remained correct, but unchanged guest
+startup checks reconstruct the original receipt bytes and require their original
+SHA-256. The listener check fails first; the MapServer producer check would fail
+next. This was reproduced directly against the authenticated public .28 APK.
+The .28 public-byte audit remains valid for its stated scope; it did not execute
+these final serialized guest startup contracts. Earlier host native checks ran
+before serialization, and the subsequent preflight checked extraction/inventory.
+
+**Prepared fix: 0.13.29 / version code 44.** Restore only the authenticated key
+order in those two receipts, preserve their semantic values, and update the two
+enclosing runtime manifests. All 25 native members, guest helpers and strict
+save acceptance, DEX/resources, Game/GPU/Wine/FEX and Assets 1.0.0 remain exact.
+The actual fresh-create and saved-reopen payload validators pass on independently
+extracted repaired archive bytes. Both original failures have regressions.
+The dedicated publication lane also requires every retained .28 suite, all seven
+real PostgreSQL fixtures, SDK signer/version checks, fresh-process reconstruction
+and an audit of the actual public .29 APK. **Publication is pending at this
+commit; no physical .29 recovery or performance claim is made.**
+
+Repaired game archive: 10,943,638 bytes, SHA-256
+`36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa`.
+Its manifest has identical parsed values and SHA-256
+`520713891e4d5be9d7a64fb736ef15e37e062a104513ec37bdaf09670898dab7`.
+
+Install .29 over .28 when publication completes, then run **Set up / update
+runtime** once. Keep already imported **Assets 1.0.0**; no asset reimport or
+uninstall is needed. Retry fresh creation, verified save, Finish and saved-character
+reopen first. Preserve the complete outer report ZIP. Only after that succeeds,
+continue the Atlas Park–Kings Row round trip and save/reopen gates in
+[.29 testing instructions](COH-Atlas-Gameplay-0.13.29-testing.txt).
+
+Next milestones: finish .29 CI and public-byte verification; obtain a physical
+fresh-create/save/reopen report; then qualify physical Kings Row travel, return,
+saved destination and loading/control/performance observations. Do not substitute
+host checks for Thor evidence or begin a long optimization research session.
+PR #1 remains draft and unmerged; the separate MapServer and ARM64 feasibility
+research projects remain outside this development task. Preserve the completed
+.28 native graph, native artifacts and asset release rather than regenerating them.
+
+---
+
+# Historical — .28 published and public bytes verified; physical Thor tests pending — 2026-10-11 UTC
 
 **Delivered:** COH Atlas Gameplay **0.13.28 / version code 43**, plus all four
 COH Assets **1.0.0** volumes, as public test prereleases. Both tags point to

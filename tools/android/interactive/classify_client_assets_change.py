@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from classify_client_receipt_repair_change import client_receipt_repair_owned
 
 CLIENT_ASSETS_ALLOWED = frozenset({
     'docs/android-evidence/zone-assets-1.0.0-all-maps.json',
@@ -123,14 +124,15 @@ def client_assets_owned(event,before,head,parent,names):
 def main():
     required=True
     try:
-        parent=subprocess.check_output(['git','rev-parse','HEAD^'],text=True).strip()
+        parent=subprocess.check_output(['git','rev-parse','HEAD^@'],text=True).strip()
         head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
         names=subprocess.check_output(['git','diff','--name-only','-z',parent,head]).decode().rstrip('\0').split('\0')
-        required=not client_assets_owned(os.environ.get('GITHUB_EVENT_NAME'),os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
+        context=(os.environ.get('GITHUB_EVENT_NAME'),os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
+        required=not (client_assets_owned(*context) or client_receipt_repair_owned(*context))
     except (OSError,subprocess.CalledProcessError,UnicodeError):pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('legacy_native_required='+str(required).lower()+'\n')
-    print('Historical native pipeline required' if required else 'Dedicated .28 source-bound native and asset pipeline owns this push')
+    print('Historical native pipeline required' if required else 'Dedicated source-bound publication pipeline owns this push')
 
 
 if __name__=='__main__':main()

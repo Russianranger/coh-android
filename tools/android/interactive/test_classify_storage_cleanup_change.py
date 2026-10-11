@@ -12,6 +12,95 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_receipt_repair_explicit_packaging_owner_defers_all_historical_publishers(self):
+        import classify_client_receipt_repair_change as repair
+        for names in (sorted(repair.CLIENT_RECEIPT_REPAIR_ALLOWED),
+                sorted(repair.CLIENT_RECEIPT_REPAIR_DOCS)):
+            self.assertTrue(repair.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names))
+            for function in self.gameplay_historical_publishers():
+                with self.subTest(function=function.__name__, names=names):
+                    self.assertFalse(function('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_receipt_repair_cannot_hide_any_guest_native_java_or_asset_change(self):
+        import classify_client_receipt_repair_change as repair
+        names = sorted(repair.CLIENT_RECEIPT_REPAIR_ALLOWED)
+        for foreign in ('android/guest/game_diagnostic.py',
+                'android/guest/native_responsiveness_contract.py',
+                'android/guest/local_character_server.py',
+                'android/native/client-launcher.c',change.JAVA+'ClientRuntime.java',
+                'assets/asset-pack-manifest.json','assets/client-runtime.zip',
+                'patches/monorail/0001-monorail.patch',
+                'database/monorail/overlay/MapServer/src/svr/wine_monorail.c',
+                'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+                'tools/android/interactive/unknown-repair.py',
+                'docs/android-evidence/client-receipt-repair-0.13.29-unreviewed.json'):
+            mixed = names+[foreign]
+            with self.subTest(foreign=foreign):
+                self.assertFalse(repair.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,mixed))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function('push','a'*40,'b'*40,'a'*40,mixed),function.__name__)
+
+    def test_receipt_repair_requires_its_marker_and_one_direct_parent_push(self):
+        import classify_client_receipt_repair_change as repair
+        names = sorted(repair.CLIENT_RECEIPT_REPAIR_ALLOWED)
+        for event,before,head,parent,files in (
+                ('workflow_dispatch','a'*40,'b'*40,'a'*40,names),
+                ('pull_request','a'*40,'b'*40,'a'*40,names),
+                ('push','c'*40,'b'*40,'a'*40,names),
+                ('push','0'*40,'b'*40,'0'*40,names),
+                ('push','a'*40,'0'*40,'a'*40,names),
+                ('push','a'*40,'a'*40,'a'*40,names),
+                ('push','invalid','b'*40,'a'*40,names),
+                ('push','a'*40,'invalid','a'*40,names),
+                ('push','a'*40,'b'*40,None,names),
+                ('push','a'*40,'b'*40,'a'*40+'\n'+'c'*40,names),
+                ('push','a'*40,'b'*40,'a'*40,[]),
+                ('push','a'*40,'b'*40,'a'*40,
+                    sorted(repair.CLIENT_RECEIPT_REPAIR_ALLOWED-{repair.CLIENT_RECEIPT_REPAIR_MARKER}))):
+            with self.subTest(event=event,before=before,head=head,parent=parent,files=files):
+                self.assertFalse(repair.client_receipt_repair_owned(event,before,head,parent,files))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function(event,before,head,parent,files),function.__name__)
+
+    def test_receipt_repair_final_evidence_owner_is_exact_docs_only(self):
+        import classify_client_receipt_repair_change as repair
+        for names in ([repair.CLIENT_RECEIPT_REPAIR_PUBLICATION],
+                sorted(repair.CLIENT_RECEIPT_REPAIR_DOCS)):
+            self.assertTrue(repair.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names))
+        for names in (['docs/HANDOFF.md'],
+                sorted(repair.CLIENT_RECEIPT_REPAIR_DOCS-{repair.CLIENT_RECEIPT_REPAIR_PUBLICATION}),
+                [repair.CLIENT_RECEIPT_REPAIR_PUBLICATION,
+                    'tools/android/interactive/build_client_receipt_repair_apk.py'],
+                [repair.CLIENT_RECEIPT_REPAIR_PUBLICATION,
+                    'docs/android-evidence/client-receipt-repair-0.13.29-donor-game-package.json']):
+            self.assertFalse(repair.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_receipt_repair_cli_defers_native_owners_and_rejects_merge_or_missing_history(self):
+        import classify_client_receipt_repair_change as repair
+        import classify_client_assets_change as assets
+        import classify_interactive_change as interactive
+        names = sorted(repair.CLIENT_RECEIPT_REPAIR_ALLOWED)
+        for module,key in ((repair,'legacy_native_required'),(assets,'legacy_native_required'),
+                (interactive,'runtime_required'),(change,'task_required')):
+            for parent,expected in (('a'*40,False),('a'*40+'\n'+'c'*40,True)):
+                with tempfile.TemporaryDirectory() as temporary:
+                    output=Path(temporary)/'scope-output.txt'
+                    environment={'GITHUB_EVENT_NAME':'push','COH_PUSH_BEFORE':'a'*40,
+                        'GITHUB_OUTPUT':str(output)}
+                    values=[parent+'\n','b'*40+'\n',('\0'.join(names)+'\0').encode()]
+                    with mock.patch.dict(module.os.environ,environment), \
+                            mock.patch.object(module.subprocess,'check_output',side_effect=values), \
+                            contextlib.redirect_stdout(io.StringIO()):
+                        module.main()
+                    self.assertIn(key+'='+str(expected).lower()+'\n',output.read_text())
+            with tempfile.TemporaryDirectory() as temporary:
+                output=Path(temporary)/'scope-output.txt'
+                with mock.patch.dict(module.os.environ,{'GITHUB_OUTPUT':str(output)}), \
+                        mock.patch.object(module.subprocess,'check_output',side_effect=OSError('no history')), \
+                        contextlib.redirect_stdout(io.StringIO()):
+                    module.main()
+                self.assertIn(key+'=true\n',output.read_text())
+
     def test_client_recovery_reuses_completed_native_work_but_refuses_unreviewed_payload_changes(self):
         from classify_interactive_change import runtime_required
         historical=(change.task_required,change.cleanup_required,change.recovery_required,
@@ -889,7 +978,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.CLIENT_ASSETS_ALLOWED if change.client_assets_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECOVERY_ALLOWED if change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.CLIENT_RECEIPT_REPAIR_ALLOWED if change.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_ASSETS_ALLOWED if change.client_assets_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECOVERY_ALLOWED if change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

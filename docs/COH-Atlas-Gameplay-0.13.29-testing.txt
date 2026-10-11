@@ -1,0 +1,164 @@
+COH Atlas Gameplay 0.13.29 / version code 44
+Compatible assets: COH Assets 1.0.0 (unchanged)
+
+APK release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.29
+APK download after publication:
+https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.29/COH-Atlas-Gameplay-0.13.29.apk
+Assets release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-assets-v1.0.0
+
+Publication requires the dedicated workflow and independent public-byte audit;
+these testing notes alone do not establish publication. Physical .29 startup,
+gameplay, Kings Row travel and save/reopen remain pending device qualification.
+
+WHAT THIS REPAIRS
+
+The supplied recovered report failed at persistent_server_profile with
+"Game listener donor receipt bytes differ", before any recorded child process,
+PostgreSQL, Wine, MapServer or client startup. Its guest interval was 157.043
+seconds (about 2m37s), including 152.149 seconds preparing private client data.
+It does not demonstrate a GPU failure, memory exhaustion or an Android kill.
+The outer recovery archive is explicitly interrupted/unverified and does not
+verify attribution to the interrupted session, a successful save or zoning.
+
+This is a packaging-only repair of the original key order of two historical
+embedded receipts. Their values and strict guest validators are unchanged.
+The accepted Game, all 25 native game-package members, guest code, Android
+DEX/resources, GPU stack and Assets 1.0.0 remain unchanged. This is not an FPS
+optimization or a new graphics profile. The accepted .25/.26 runtime behavior
+remains the compatibility baseline; the .27 physical report confirmed two
+Atlas-instance transfers and a save, not Kings Row or a later reopen cycle.
+
+EXISTING INSTALLATION -- PREFERRED REPAIR PATH
+
+1. Install .29 over the existing app. Do not uninstall, clear app data or
+   reimport already verified Assets 1.0.0. Keep the existing character and
+   completed imports. Uninstalling deletes private character saves/imports;
+   diagnostic ZIPs are not a restore backup.
+2. If evidence from the failed attempt is still needed, use Recover interrupted
+   reports and export the retained archive before starting another test.
+3. Run "Set up / update runtime" ONCE and wait for Runtime ready. This installs
+   the repaired package and enclosing manifests. The app may retain the old
+   runtime generation until reviewed cleanup. Merely installing the APK is not
+   the runtime refresh.
+4. If a saved THORHERO exists, use "2 · Reopen saved THORHERO". If the .28 attempt
+   failed before character creation, choose "Create fresh THORHERO" when the
+   app offers it. Do not clear preserved profile data to force creation.
+5. First verify that startup passes the former receipt failure and reaches the
+   login/world. Use COHLOCAL / offline; on the fresh-creation path create
+   THORHERO. Record elapsed time and the last visible stage if it fails.
+   This repair addresses validation, not preparation time: the prior report
+   spent 152.149 seconds preparing private client data before the failure.
+   Another several-minute preparation is not itself evidence of a stall. Keep
+   the app foreground, watch its stage/progress and capture the exact next
+   failure. No startup-latency improvement is claimed.
+   If startup fails, use Abort operation as available and export immediately;
+   do not repeat asset imports as a troubleshooting step.
+6. Once in the world, verify basic movement and camera. Release all controls for
+   the ordinary 60-second neutral wait, choose "Save character / log out", wait
+   for "Saved character verified", then "Finish and save report". Export the
+   complete report. Reopen and verify the saved map and position before the
+   separate monorail test below.
+
+FRESH INSTALLATION OR MISSING ASSETS ONLY
+
+No fresh installation is required for this repair. If installing fresh, or if
+an earlier import never completed, use the four original Assets 1.0.0 volumes:
+
+Base -- 1,630,092,780 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip
+Reference -- 615,545,248 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip
+Zones -- 1,693,058,889 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Zones.zip
+Audio -- 848,122,891 bytes:
+https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip
+
+Each file has an adjacent .sha256 checksum on the Assets release. Use
+"Import asset pack part" separately for each intact ZIP, in any order. Do not
+unzip or combine them. The app displays missing parts; completed imports survive
+a later failed part. Retry only the incomplete part. All four are needed when
+moving from .27 or earlier; the old standalone Atlas import is insufficient.
+Reference includes those original resources. After all four verify, run setup
+once, create THORHERO, complete a verified save, then reopen as described above.
+Keep the ZIPs for reinstalls. No Assets 1.0.1 or other replacement is required.
+
+STORAGE
+
+The four downloaded ZIPs total 4,786,819,808 bytes (about 4.46 GiB), unchanged
+from .28. For a clean installation with downloads retained, plan 25-30 GiB free
+INTERNAL storage. This is conservative planning headroom, not a measured Thor
+installed footprint. Private imports, expanded resources, rootfs/Wine, caches,
+reports and runtime generations require more than the download size. New zone/
+audio archives and their decoded files alone account for about 5.815 GiB.
+
+Import admission requires approximately 3.654 GiB free (twice the largest
+volume payload plus 512 MiB); setup checks for 5 GiB free at entry. These are
+admission checks, not total-size guarantees. An existing .28 installation does
+not need to download/import another asset copy for .29, but runtime refresh
+still needs working space. SD storage can hold downloads; private runtime data
+still needs internal storage. With no session running, use Storage and cleanup
+to scan and review older generations. Do not delete character data manually.
+
+MONORAIL TEST -- AFTER STARTUP AND SAVE/REOPEN PASS
+
+1. Keep "GPU test", the accepted Performance/800x600 selection, visual settings,
+   fan and charging state. Enable Show FPS and 30 FPS. The retained Performance
+   preset already uses a 600x450 world within an 800x600 interface; .29 adds no
+   resolution, draw-distance or visual-feature reduction.
+2. Reopen THORHERO, walk to the real Atlas Park monorail entrance, click it and
+   choose Kings Row. Preparation is automatic. Stay near the station and in
+   the app until arrival; walking away can invalidate the request.
+3. Record station-selection-to-usable-world time, FPS range/dips, temperature,
+   errors and visible artifacts. First preparation, later validated cache reuse
+   and a server already resident in the session are different cases. None by
+   itself proves a cold Android filesystem cache. Host times are not Thor times.
+4. In Kings Row check walking, Jump, camera, clicking, buildings, terrain,
+   textures, NPCs and audio. Return through its monorail station to Atlas Park.
+   If stuck or unusable, abort and export early; do not run an immobile benchmark.
+5. Neutral wait -> Save character / log out -> Saved character verified ->
+   Finish and save report -> export -> reopen and confirm map and position.
+   In another focused session, save normally in Kings Row and reopen there.
+6. If an older save starts in Atlas instance 101, use its return control, then
+   save, finish and reopen before Kings Row. Finish/reopen after safe-ground
+   recovery before zoning. There are at most two resident MapServers and four
+   transfer epochs in a finite 20-minute connected window with save time
+   reserved. If too little transfer time remains, save, finish and reopen.
+
+COMPLETE REPORT AND STORAGE EXPORT
+
+1. Normally save, wait for Saved character verified, then Finish and save report.
+   On failure, Abort operation early and preserve the failed report.
+2. Select "Reports / export", then the matching UTC timestamp/type/size in
+   "Retained reports · newest first". In Android's Create document picker,
+   choose Downloads or an SD destination, Save, and wait for "Report exported".
+3. Attach the COMPLETE OUTER coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip, including a
+   failure report. An inner guest ZIP or screenshots alone omit evidence. Add
+   your timing/FPS/temperature notes and the last visible stage/error.
+4. "Export incomplete" retains the private report. Select it again and retry;
+   the previous destination may contain only a partial copy. Exports are bounded
+   to 512 MiB per report and a five-minute copy. After copying visibly begins,
+   switching apps and returning is an optional foreground-export check.
+5. After an interruption, reopen and choose "Recover interrupted reports"
+   BEFORE a new test, then export the retained interrupted archive. Say whether
+   Saved character verified appeared. Recovery does not certify an incomplete
+   test or reconstruct missing evidence. Do not deliberately kill an unsaved run.
+6. With the session finished, open "Storage and cleanup", run its scan and
+   choose "Export storage report". For import/setup/storage trouble attach the
+   resulting coh-storage-*.json alongside the outer gameplay ZIP. Review any
+   proposed cleanup before selecting it.
+
+KNOWN LIMITS AND PENDING DEVICE GATES
+
+Only the Atlas Park-Kings Row station pair is enabled. The 66-map/72-archive
+inventory audit does not make every zone playable. Six map source graphs retain
+documented authored gaps; original FX/appearance and audio-reference gaps remain.
+Audio container validation does not prove physical playback.
+
+Restoring receipt serialization and passing unchanged guest payload validators
+are host evidence. They do not establish a successful full runtime boot on Thor.
+Physical .29 startup recovery, both monorail directions, Kings Row save/reopen,
+controls, visual/audio correctness, storage/export reliability, loading time,
+peak memory and sustained 30 FPS remain device test gates. Keep the working
+renderer and strict save checks; no long Software comparison is requested.

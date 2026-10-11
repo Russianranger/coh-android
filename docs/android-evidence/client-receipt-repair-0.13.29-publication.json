@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "status": "prepared_not_yet_published",
+  "version_name": "0.13.29",
+  "version_code": 44,
+  "release_tag": "coh-atlas-gameplay-v0.13.29",
+  "donor_commit": "96c7f44456d711d815704d20ff93c3f095ba974d",
+  "donor_public_apk_sha256": "2f0f924524e6eb19d18ec94406976676501187f99a87d170fa2fc914af2e1a8a",
+  "donor_public_byte_audit_run_id": 38154742520,
+  "asset_version": "1.0.0",
+  "asset_reimport_required": false,
+  "native_binaries_changed": false,
+  "guest_validators_changed": false,
+  "dex_changed": false,
+  "graphics_runtime_changed": false,
+  "repair": {
+    "scope": "restore_original_key_order_in_two_historical_embedded_game_package_receipts",
+    "listener_original_sha256": "d10e61be69555da91cea1f5b4a0f9852f0c564f9a768a91896b485f0774c0791",
+    "mapserver_producer_original_sha256": "e6234deaa55931551efca0e9450cfaea93f2462b194a2ebfa9a638d097c63c94",
+    "semantic_manifest_unchanged": true,
+    "native_members_unchanged": 25,
+    "archive_bytes": 10943638,
+    "archive_sha256": "36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa",
+    "manifest_sha256": "520713891e4d5be9d7a64fb736ef15e37e062a104513ec37bdaf09670898dab7",
+    "actual_fresh_create_payload_verified": true,
+    "actual_saved_reopen_payload_verified": true
+  },
+  "physical_recovery_validated": false,
+  "physical_kings_row_zoning_validated": false,
+  "pending_gates": [
+    "146 suites with zero skips and seven real PostgreSQL fixtures",
+    "signed APK build and independent fresh-process reconstruction",
+    "APK-only publication and actual public-byte audit",
+    "Thor fresh creation and verified save/reopen",
+    "Thor Atlas Park to Kings Row round trip and destination save/reopen"
+  ]
+}

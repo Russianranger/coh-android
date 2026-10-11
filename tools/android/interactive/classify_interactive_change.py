@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import subprocess
 from classify_client_assets_change import client_assets_owned
+from classify_client_receipt_repair_change import client_receipt_repair_owned
 from classify_storage_cleanup_change import STARTUP_ALLOWED, RECEIPT_ALLOWED, SETUP_ALLOWED, BUNDLE_ALLOWED, VISUAL_ALLOWED, CLIENT_LOADING_ALLOWED, CLIENT_STREAMING_ALLOWED, CLIENT_ASSET_CLOSURE_ALLOWED, CLIENT_STARTUP_FOLLOWUP_ALLOWED, LEVELUP_UI_REPAIR_ALLOWED, REOPEN_STARTUP_REPAIR_ALLOWED, UI_BEACON_ALLOWED, PERFORMANCE_ALLOWED, performance_push, scene_performance_push, scene_performance_docs, gameplay_performance_push, gameplay_performance_docs, sidebar_push, sidebar_docs, renderer_attribution_push, renderer_attribution_docs, gpu_profile_push, gpu_profile_docs, render_pipeline_owned, session_repair_owned, setup_copy_owned, render_queue_owned, zoning_owned, client_recovery_owned
 
 SHELL_ONLY = frozenset({
@@ -210,6 +211,7 @@ RESPONSIVENESS_ONLY |= UI_BEACON_ALLOWED | REOPEN_STARTUP_REPAIR_ALLOWED | LEVEL
 
 
 def runtime_required(event, before, head, parent, names):
+    if client_receipt_repair_owned(event, before, head, parent, names): return False
     if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
@@ -237,7 +239,7 @@ def runtime_required(event, before, head, parent, names):
 def main():
     required = True
     try:
-        parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^'], text=True).strip()
+        parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^@'], text=True).strip()
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
         required = runtime_required(os.environ.get('GITHUB_EVENT_NAME'),
