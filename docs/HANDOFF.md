@@ -1,58 +1,85 @@
-# CURRENT — .27 recovery/preparation candidate; Kings Row foundation — 2026-10-11 UTC
+# CURRENT — .27 report recovery and automatic Atlas preparation published — 2026-10-11 UTC
 
-**The user accepts .25 as the serviceable FPS baseline and physically completed
-two .26 transfers. They report that preparation tanked gameplay performance;
-transfer itself was acceptable. The current pass closes report/recovery gaps,
-adds automatic travel including preparation, researches preparation for at
-least 30 minutes, and builds the Kings Row asset foundation. Sustained 30 FPS
-remains unmet. No new physical performance result is claimed.**
+**0.13.27 / version code 42 is published, with all four publication jobs passed,
+including the separate audit of the actual public APK. The accepted .25 FPS
+baseline and the user's two successful .26 transfers remain completed results.
+The user reported severe gameplay slowdown during preparation; transfer itself
+was acceptable. Sustained 30 FPS and physical .27 preparation/recovery gains
+remain unverified. Do not repeat the already accepted transfer demonstration.**
 
-This is the candidate handoff before hosted qualification/publication.
-The latest completed public APK remains .26 until the .27 publication receipt
-records its independent public audit. Do not infer success from these source
-changes or duplicate an active build. Development stays on
-`codex/character-persistence-continuation`, draft PR #1; main is not merged.
-The recovered starting head was `2518f5df4b3b1907a70c0d72b7ac4a07be8a24c4`.
-No newer remote commits or active workflows were found at recovery.
+[Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.27/COH-Atlas-Gameplay-0.13.27.apk)
+· [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.27)
+· [Qualification/public audit](https://github.com/Russianranger/coh-android/actions/runs/38103463724)
+· [Focused testing notes](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.27/COH-Atlas-Gameplay-0.13.27-testing.txt).
 
-The one-action Travel flow includes cold destination preparation, native
-transfer and fresh arrival views in total loading time. Bounded stage/CPU/RSS
-and optional system-pressure observations support the next diagnosis. The
-reviewed preparation changes scan appended console bytes and conditionally
-apply/restorably verify destination-only Linux nice+5. They preserve Game,
-shared Wine processes and all graphics/native/asset payloads. A host reduction
-in observation work or foreground lateness is not a Thor speedup. Priority
-weighting may trade longer preparation for smoother gameplay.
+Publication/runtime source: `31fe36f64bd23648afc4ec3ba729e7f44dd7f40b`.
+APK: **1,560,390,578 bytes**, SHA-256 `25afcd1c4d4afb55990e295a5fdcf4daab18389d461f2ffaf7d9455676edd49f`.
+Runtime manifest/generation SHA-256: `94aa2c650dfb2d4a26864eb55f6e2386d98c00c269b8e6c17af515d5faeed098`.
+Validation: **1,845 tests across 128 suites, zero skips, seven real
+PostgreSQL fixtures**, authenticated donor/native proofs, SDK signature/package
+and payload conservation, fresh prepublication audit and independent public
+download/checksum/testing-notes audit. See
+`docs/android-evidence/recovery-0.13.27-publication.json` for completed receipts.
 
-Recovery checkpoints bounded metadata/captures, preserves older evidence before
-retry, exposes retained reports and copies exports under the foreground service.
-Owned dead-socket recovery fails closed on identity/liveness uncertainty.
-Ordinary verified Save remains mandatory; recovered interrupted evidence is not
-proof of character persistence or complete cleanup. The original successful .26
-run is still unavailable. The supplied later retry proves only stale-socket
-failure and never launches Game; its requested Turnip setting is not renderer
-attribution. The older low-memory exit cannot be assigned to Finish/background
-without the original session timestamps.
+The exact public .26 donor and accepted .25 Game are reused. Game source remains
+`c512e912a004b66886a7667640aa1a967e95de64`, original native owner `37988347729`,
+9,499,648 bytes, SHA-256
+`5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b`.
+No Game/server/GPU/probe build was repeated. Assets, caches, graphics settings,
+Software fallback, .24 setup repair and strict character-save acceptance remain.
+Development stays on `codex/character-persistence-continuation`, draft PR #1;
+main is not merged. The previous agent's private workspace remains unavailable.
 
-Kings Row is an offline dependency and original-geometry foundation, not an
-enabled destination. Atlas 1↔101 remain supported; missing city resource and
-native arrival/collision/beacon qualification gates stay closed. The user does
-not need to repeat the already successful two-transfer demonstration. The new
-focused test measures one-tap preparation and closes destination save/reopen and
-report export/recovery gaps, preserving imports, THORHERO and the accepted GPU,
-Performance, 800×600 and visual settings.
+One **Travel** tap now covers preparation, native transfer and three fresh
+destination views, with preparation included in total loading time. Reports
+retain cold/already-running destination state, stage/CPU/RSS/scheduling counters
+and optional system-pressure observations. Preparation reads appended console
+bytes and conditionally applies reversible destination-only Linux nice+5 after
+an isolated restore-permission probe. Unsupported kernels remain unchanged;
+Game/shared Wine are excluded. Lower priority may extend preparation while
+reducing gameplay contention. Research ran **1,815.219 seconds / 30.25 minutes**;
+host observations establish neither Thor speedup nor pure GPU time.
 
-See `docs/COH-RECOVERY-0.13.27.md`,
-`docs/COH-Atlas-Gameplay-0.13.27-testing.txt`,
-`docs/COH-ZONE-PREPARATION-RESEARCH-0.13.27.md`,
-`docs/android-evidence/zone-preparation-0.13.27-research.json` and
-`docs/android-evidence/kings-row-foundation-20261011.json`.
-The .27 builder authenticates the exact completed .26 APK and original
-`c512e912a004b66886a7667640aa1a967e95de64` Game, rather than rebuilding it.
-All 122 retained suites, focused new checks, seven real PostgreSQL fixtures,
-SDK/signature/payload checks and the independent public-download audit remain
-required. Publication completion replaces this candidate status with exact
-source, APK hash, run and completed results.
+Details: `docs/COH-RECOVERY-0.13.27.md`; research and rejected alternatives:
+`docs/COH-ZONE-PREPARATION-RESEARCH-0.13.27.md`; Kings Row inventory and unresolved
+dependencies: `docs/android-evidence/kings-row-foundation-20261011.json`.
+
+Bounded session/save/zoning checkpoints and selected captures survive interruption.
+Previous guest evidence is preserved idempotently before retirement; retained
+reports are selectable and foreground-service exports retain their private copy
+on failure. Dead-socket removal requires exact ownership, inode and liveness
+proof. An unresponsive provider can temporarily block further exports while
+runtime work is released. Recovered evidence is explicitly unverified and does
+not certify save, zoning or cleanup; overwritten .26 evidence cannot be recovered.
+The original successful .26 report is still missing. Its later retry never
+launched Game, and the older low-memory exit cannot be assigned to Finish.
+
+Kings Row remains **disabled**. Its offline visual foundation identifies 1,017
+candidate assets (96 geometry files, 921 textures); 52 original missing
+world-geometry payloads were verified offline. Complete resource closure,
+animation/audio/scripts, runtime compatibility, collision, beacons and native
+arrival remain unqualified. No partial city pack is installed. Atlas 1↔101 are
+the only enabled destinations.
+
+Install as an update, preserve app data/imports/THORHERO, then apply **Set up /
+update runtime** once. Recover/export earlier interrupted evidence first. Keep
+the accepted GPU/Performance/800×600, visual, fan and charging settings; Show FPS,
+cap 30. Reopen and tap **Travel** once; record tap-to-usable time, preparation FPS,
+temperature/artifacts and walking/Jump/camera/click behavior. Complete the neutral
+wait, **Save character / log out**, **Saved character verified**, **Finish**, and
+export. Reopen the saved destination/position, return and save/export normally.
+After external copying starts, background/reopen checks the service-owned export.
+Export early if unusable; no data clearing, asset reimport, deliberate unsaved
+force-stop or long Software comparison is requested. Physical .27 loading,
+recovery/export and destination save/reopen remain pending device evidence.
+
+The first .27 attempt, source `b7200c3b9bc7eb27e5d18e370c20207003736227`, run
+`38102442086`, qualified host tests but failed actual SDK 35 Java compilation on
+non-public socket APIs; it published nothing. Corrective source
+`31fe36f64bd23648afc4ec3ba729e7f44dd7f40b` uses public APIs with the same anchored
+identity gates and retains bounded compiler diagnostics. Only run `38103463724`
+owns the completed .27 publication above; failed work is not relabelled success.
+Older handoff sections below are historical.
 
 # Historical checkpoint — .26 two transfers physically confirmed; interruption/report recovery next — 2026-10-11 UTC
 
