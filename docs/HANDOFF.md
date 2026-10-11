@@ -1,52 +1,99 @@
-# CURRENT — .29 receipt repair passed on Thor; .30 animation compatibility repair awaiting qualification — 2026-10-11 UTC
+# CURRENT — .30 animation compatibility repair published and public bytes verified; physical Thor retest pending — 2026-10-11 UTC
 
-The new supplied recovery archive `coh-atlas-gameplay-20261011-191259.zip`
-contains a failed guest attempt lasting **388.877 seconds** (19:05:47.896461 to
-19:12:16.773008 UTC). It pins the repaired .29 game archive and **passes the
-previous persistent-server-profile receipt gate**, PostgreSQL startup, Wine
-initialization and x86 ODBC. It then fails with **`Animation runtime/native
-identity differs`** during server runtime preparation. DbServer, MapServer and
-Game have not launched. The contained guest report records complete cleanup;
-the recovery wrapper remains `interrupted_unverified` with unverified session
-attribution. Do not infer an Android kill, timeout or GPU crash.
+**Published: COH Atlas Gameplay 0.13.30 / version code 45**, tag
+`coh-atlas-gameplay-v0.13.30`, targeting source commit
+`a7658b64a7fbfad81ea08bbf5cf74c1388dc64fa`. [APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.30/COH-Atlas-Gameplay-0.13.30.apk)
+— **41,199,716 bytes**, SHA-256
+`7568c4ea5ccbf05b7455ab23b51101d98d551eb4d48d94e0a07d613133832e17`. [Checksum](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.30/COH-Atlas-Gameplay-0.13.30.apk.sha256).
+Public prerelease ID **409886055**, published 2026-10-11T19:52:22Z.
+The four existing **Assets 1.0.0** volumes remain exact and are reused.
 
-The animation manifest correctly preserves its historical producer MapServer
-`6a5bf60b...`, but its installer checked only that exact producer as a consumer.
-The accepted monorail MapServer is `53ff6ee0...`; the preceding definition-cache
-compatibility check already authenticates it. **Prepared .30 / version code 45**
-adds an exact additional animation consumer, bound to that binary and its
-qualified monorail receipt `e0ab383a...`, then verifies the existing source
-ancestry. Both the Atlas and Kings Row callers supply the authenticated package.
-Unknown binaries, altered/rehashed receipts, corrupt animations and unowned
-paths remain rejected. Original animation manifests/Pigg bytes, all native
-binaries, DEX/resources, graphics and Assets 1.0.0 stay unchanged. Save acceptance
-and character persistence code are not relaxed.
+The supplied recovery archive `coh-atlas-gameplay-20261011-191259.zip` records a
+**388.877-second** guest attempt (19:05:47.896461–19:12:16.773008 UTC). It contains
+the repaired .29 game archive, passes the former receipt check and starts
+PostgreSQL, Wine and x86 ODBC. It then fails with **`Animation runtime/native
+identity differs`** while preparing server assets, before DbServer, MapServer
+or Game launch. Cleanup completed. The outer recovery wrapper remains
+`interrupted_unverified` with unverified session attribution; this is not evidence
+of an Android kill, timeout or GPU crash. The complete public animation pack,
+original .29 packaged helper and retained MapServer reproduce that exact error
+on the host. [Device evidence](android-evidence/client-animation-repair-0.13.30-device-failure.json).
 
-The .29 host gates covered final game-package extraction and receipt validation,
-but did not exercise the later animation installer with the monorail binary.
-The .30 gate now must execute the actual packaged guest asset installers with
-the complete original animation, cache and Atlas/Kings beacon inputs, including
-fresh and reused installations, before signing or publishing. This remains host
-asset-preparation evidence, not a full native or physical Thor boot. **At this
-commit .30 qualification/publication is pending.** See the
-[new device evidence](android-evidence/client-animation-repair-0.13.30-device-failure.json)
-and [publication status](android-evidence/client-animation-repair-0.13.30-publication.json).
+The animation manifest preserves its original producer MapServer `6a5bf60b...`.
+The qualified monorail consumer is `53ff6ee0...`, with the same animation reader.
+.30 accepts only that additional exact binary and the authenticated monorail
+receipt `e0ab383a...`, then verifies its existing source ancestry. Both Atlas and
+Kings Row callers now pass the authenticated package. Unknown binaries,
+altered/rehashed receipts, corrupt archives and unowned paths remain rejected.
+Only `server_animation_package.py`, `local_character_server.py` and their two
+enclosing manifests change: **65 of 69 APK payloads remain identical**. The
+entire repaired .29 game archive, all 25 native members, DEX/resources, GPU,
+Wine/FEX, animation archives and all Assets 1.0.0 remain exact. Strict save
+acceptance and character persistence are unchanged. No native or Java/Dex build
+or asset republication occurred in this release lane.
 
-The apparent delay was mainly preparation: **250.224 seconds** building the
-cold server-data mirror, **56.717 seconds** first Wine initialization and
-**53.010 seconds** Atlas supplement preparation. The client worktree was reused
-in 0.215 seconds. The server mirror was sealed before failure and cleanup
-completed; reuse on the next attempt is expected but must be observed, not
-claimed as a measured speedup. Keep the existing installation and imported
-**Assets 1.0.0**. When .30 is published, update in place and run **Set up / update
-runtime** once; no asset reimport or uninstall is required.
+The .29 host gate checked final serialized game receipts but missed the later
+animation installation. The new gate imports the **actual packaged guest helpers
+in a fresh process**, verifies real original asset bytes, and performs animation,
+prepared-cache and beacon installation plus reuse for both Atlas and Kings Row.
+It covers **5,878 animations**, **93 prepared cache files per zone**, Atlas's
+**5,637 collision inputs**, Kings Row's **8,396 inputs** and its 52-file overlay.
+Actual fresh-create and saved-reopen payload validators pass. The native animation
+loader's nine source inputs remain pinned to the original baseline. These checks
+do **not** start a native runtime, execute the complete private worktree mirror,
+or establish physical Thor behavior.
 
-Next gates: qualified/public-byte audited .30 APK; physical startup and world
-entry; ordinary verified save, Finish and saved-character reopen; then actual
-Atlas Park–Kings Row round trip and Kings Row save/reopen. Preserve reports and
-keep graphics settings fixed. No new FPS/loading improvement is claimed.
-PR #1 remains draft/unmerged, main unchanged. MapServer optimization and ARM64
-feasibility research remain separate; do not start another research detour.
+[Dedicated run 38168147041](https://github.com/Russianranger/coh-android/actions/runs/38168147041) passed
+**149 suites / 2,004 tests / zero skips**, all seven real
+PostgreSQL fixtures and a source closure of **9,868 files**.
+APK job **114555024594** and separate public-download audit **114559944852**
+passed. The final audit downloaded the public APK, checksum and instructions,
+verified the retained signing certificate, version-only Android manifest changes,
+exact native/DEX/assets boundaries and actual packaged asset installers.
+Independent local public-byte comparison also passed. All **26 other associated
+source-commit runs succeeded**; 57 historical downstream jobs skipped redundant
+release/native/asset work. Their separate PR database fixture was not a release donor.
+
+Accepted packaging artifact **11714185603**;
+qualification artifact **11713004575**;
+public-byte audit artifact **11713107348**.
+[Consolidated pins, receipts, jobs and provenance](android-evidence/client-animation-repair-0.13.30-publication.json).
+All 13 public Assets 1.0.0 release members retain their original IDs, sizes and
+digests. .30 rechecks complete Base/Reference/Zones public bytes for the installer
+gate; Audio retains the original full public-byte audit. Native and graph producer
+owners remain historical, including the successful shipping MapServer job in an
+otherwise failed original run; this publication does not relabel their ancestry.
+
+**Install .30 over the existing app, then run Set up / update runtime once.**
+Do not uninstall, clear data or reimport already verified Assets 1.0.0. Preserve
+the existing character profile and completed imports. First test startup/world
+entry, ordinary verified save, Finish, export and saved-character reopen. Only
+then test Atlas Park–Kings Row travel both ways and a saved-character reopen in
+Kings Row. [Complete installation, storage, monorail and export instructions](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.30/COH-Atlas-Gameplay-0.13.30-testing.txt).
+
+The recorded delay included **250.224 seconds** building the cold server mirror,
+**56.717 seconds** first Wine initialization and **53.010 seconds** Atlas
+supplement preparation. The client worktree was reused in 0.215 seconds. This
+fix does not claim faster preparation or FPS. Next-attempt cache reuse must be
+observed; retain the foreground app and report the last stage on failure.
+For a clean installation, the four downloads total **4,786,819,808 bytes**
+(4.46 GiB); plan **25–30 GiB free internal storage** as conservative headroom,
+not a measured installed footprint. Existing verified imports are reusable.
+
+**Pending physical gates:** .30 startup recovery, verified save and reopen,
+both station directions and Kings Row save/reopen, controls, visuals/audio,
+normal/interrupted report export, storage, load time, peak memory and sustained
+FPS. Only the Atlas Park–Kings Row station pair is enabled; the 66-map/72-archive
+inventory does not qualify every zone. Export the complete outer gameplay ZIP;
+after interruption, Recover interrupted reports before starting another test.
+Use Export storage report for import/setup/storage issues. A recovered archive
+does not certify an incomplete save.
+
+Next milestones are the focused Thor startup/save/reopen report, then physical
+Kings Row travel. Fix demonstrated regressions while retaining the accepted
+.25/.26 runtime and renderer. PR #1 remains **draft and unmerged**, main unchanged
+at `04d62616e2e1b41b10f35a04d4c798e43680d5ba`. Keep the earlier MapServer and ARM64 feasibility research
+separate; no further optimization research is required before this delivery.
 
 ---
 
