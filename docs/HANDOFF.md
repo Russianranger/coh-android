@@ -1,4 +1,60 @@
-# CURRENT — .26 two transfers physically confirmed; interruption/report recovery next — 2026-10-11 UTC
+# CURRENT — .27 recovery/preparation candidate; Kings Row foundation — 2026-10-11 UTC
+
+**The user accepts .25 as the serviceable FPS baseline and physically completed
+two .26 transfers. They report that preparation tanked gameplay performance;
+transfer itself was acceptable. The current pass closes report/recovery gaps,
+adds automatic travel including preparation, researches preparation for at
+least 30 minutes, and builds the Kings Row asset foundation. Sustained 30 FPS
+remains unmet. No new physical performance result is claimed.**
+
+This is the candidate handoff before hosted qualification/publication.
+The latest completed public APK remains .26 until the .27 publication receipt
+records its independent public audit. Do not infer success from these source
+changes or duplicate an active build. Development stays on
+`codex/character-persistence-continuation`, draft PR #1; main is not merged.
+The recovered starting head was `2518f5df4b3b1907a70c0d72b7ac4a07be8a24c4`.
+No newer remote commits or active workflows were found at recovery.
+
+The one-action Travel flow includes cold destination preparation, native
+transfer and fresh arrival views in total loading time. Bounded stage/CPU/RSS
+and optional system-pressure observations support the next diagnosis. The
+reviewed preparation changes scan appended console bytes and conditionally
+apply/restorably verify destination-only Linux nice+5. They preserve Game,
+shared Wine processes and all graphics/native/asset payloads. A host reduction
+in observation work or foreground lateness is not a Thor speedup. Priority
+weighting may trade longer preparation for smoother gameplay.
+
+Recovery checkpoints bounded metadata/captures, preserves older evidence before
+retry, exposes retained reports and copies exports under the foreground service.
+Owned dead-socket recovery fails closed on identity/liveness uncertainty.
+Ordinary verified Save remains mandatory; recovered interrupted evidence is not
+proof of character persistence or complete cleanup. The original successful .26
+run is still unavailable. The supplied later retry proves only stale-socket
+failure and never launches Game; its requested Turnip setting is not renderer
+attribution. The older low-memory exit cannot be assigned to Finish/background
+without the original session timestamps.
+
+Kings Row is an offline dependency and original-geometry foundation, not an
+enabled destination. Atlas 1↔101 remain supported; missing city resource and
+native arrival/collision/beacon qualification gates stay closed. The user does
+not need to repeat the already successful two-transfer demonstration. The new
+focused test measures one-tap preparation and closes destination save/reopen and
+report export/recovery gaps, preserving imports, THORHERO and the accepted GPU,
+Performance, 800×600 and visual settings.
+
+See `docs/COH-RECOVERY-0.13.27.md`,
+`docs/COH-Atlas-Gameplay-0.13.27-testing.txt`,
+`docs/COH-ZONE-PREPARATION-RESEARCH-0.13.27.md`,
+`docs/android-evidence/zone-preparation-0.13.27-research.json` and
+`docs/android-evidence/kings-row-foundation-20261011.json`.
+The .27 builder authenticates the exact completed .26 APK and original
+`c512e912a004b66886a7667640aa1a967e95de64` Game, rather than rebuilding it.
+All 122 retained suites, focused new checks, seven real PostgreSQL fixtures,
+SDK/signature/payload checks and the independent public-download audit remain
+required. Publication completion replaces this candidate status with exact
+source, APK hash, run and completed results.
+
+# Historical checkpoint — .26 two transfers physically confirmed; interruption/report recovery next — 2026-10-11 UTC
 
 **The user physically tested .25 and accepts its much improved FPS as the new
 serviceable testing baseline. Sustained 30 FPS remains unmet. The user now

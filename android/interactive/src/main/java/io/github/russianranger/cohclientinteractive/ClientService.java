@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 /** Foreground ownership for runtime setup, verified asset import and bounded client startup. */
 public final class ClientService extends Service {
-    public static final String SETUP="coh.client.SETUP", RUN="coh.client.RUN", CREATE="coh.client.CREATE", IMPORT="coh.client.IMPORT", STOP="coh.client.STOP", FINISH="coh.client.FINISH", STORAGE_SCAN="coh.client.STORAGE_SCAN", STORAGE_CLEAN="coh.client.STORAGE_CLEAN";
+    public static final String SETUP="coh.client.SETUP", RUN="coh.client.RUN", CREATE="coh.client.CREATE", IMPORT="coh.client.IMPORT", STOP="coh.client.STOP", FINISH="coh.client.FINISH", STORAGE_SCAN="coh.client.STORAGE_SCAN", STORAGE_CLEAN="coh.client.STORAGE_CLEAN", EXPORT_REPORT="coh.client.EXPORT_REPORT", RECOVER_REPORTS="coh.client.RECOVER_REPORTS";
     private static final String CHANNEL="client", PREFS="client_ui";
     private static final int NOTICE=61;
     public interface Listener { void onState(State state); void onFrame(int[] pixels,int width,int height,long sequence); }
@@ -62,6 +62,7 @@ public final class ClientService extends Service {
     private volatile boolean busy, stopping, destroyed;
     private boolean storageBusy, reportExporting;
     private Object exportOwner;
+    private static final AtomicBoolean reportProviderOpening=new AtomicBoolean();
     private StorageAudit.Plan storagePlan;
     private String storageStatus="Scan storage after the current test has finished.";
     private File storageReport;
@@ -98,6 +99,7 @@ public final class ClientService extends Service {
         super.onCreate();main.post(sessionDeadlineTick);
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         manager.createNotificationChannel(new NotificationChannel(CHANNEL,"CoH saved character",NotificationManager.IMPORTANCE_LOW));
+        ClientRuntime.initializeReportStorage();
         blocked=ClientRuntime.cleanupBlocked(this);
         SharedPreferences p=getSharedPreferences(PREFS,MODE_PRIVATE);
         if(p.getBoolean("was_busy",false)){stage="Previous test interrupted";detail="The previous operation did not complete. Review its report before starting another test.";}
@@ -105,6 +107,8 @@ public final class ClientService extends Service {
             certified=p.getInt("certified",0);inputSent=p.getLong("input_sent",0);inputFailed=p.getLong("input_failed",0);}
         String saved=p.getString("report",null);
         if(saved!=null){try{File f=new File(saved).getCanonicalFile();if(f.isFile()&&f.getPath().startsWith(getFilesDir().getCanonicalPath()+File.separator))report=f;}catch(Exception ignored){}}
+        try{List<File> retained=retainedReports();if(!retained.isEmpty())report=retained.get(0);}catch(IOException ignored){}
+        if(p.getBoolean("export_busy",false)){stage="Report export interrupted";detail="The private report is retained. Choose it in Reports and export again.";p.edit().putBoolean("export_busy",false).commit();}
         recoverSetupOperation();
         SharedPreferences storage=getSharedPreferences("storage_ui",MODE_PRIVATE);
         String storagePath=storage.getString("report",null);
@@ -119,7 +123,7 @@ public final class ClientService extends Service {
     @Override public IBinder onBind(Intent intent){return binder;}
     public void addListener(Listener listener){listeners.add(listener);listener.onState(snapshot());deliverFrame(listener);}
     public void removeListener(Listener listener){listeners.remove(listener);}
-    public void setUiVisible(boolean visible){uiVisible=visible;if(!visible)discardPendingInputs();lifecycle("activity_visible="+visible);}
+    public void setUiVisible(boolean visible){uiVisible=visible;ClientRuntime active=runtime;if(active!=null)active.setUiVisible(visible);if(!visible)discardPendingInputs();lifecycle("activity_visible="+visible);}
     private void discardPendingInputs(){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(session);}
     public boolean sendKey(String selectedSession,int keysym,boolean down){
         ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&active!=null&&session.equals(selectedSession)
@@ -150,6 +154,8 @@ public final class ClientService extends Service {
     public int zoningCurrentMap(){ClientRuntime active=runtime;return active==null?0:active.zoningCurrentMap();}
     public boolean canPrepareZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canPrepareZoning();}
     public boolean canTravelZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canTravelZoning();}
+    public boolean canRequestZoning(){ClientRuntime active=runtime;return busy&&uiVisible&&inputReady&&!stopping&&!finishing&&!blocked&&active!=null&&active.canRequestZoning();}
+    public boolean requestZoning(){ClientRuntime active=runtime;return canRequestZoning()&&active!=null&&active.requestZoning();}
     public boolean requestPrepareZoning(){ClientRuntime active=runtime;return canPrepareZoning()&&active!=null&&active.requestPrepareZoning();}
     public boolean requestTravelZoning(){ClientRuntime active=runtime;return canTravelZoning()&&active!=null&&active.requestTravelZoning();}
     public void releaseAllInputs(String selectedSession){ClientRuntime active=runtime;if(active!=null)active.discardPendingInputs(selectedSession);}
@@ -240,14 +246,135 @@ public final class ClientService extends Service {
     /** Reserve the same process-wide ownership while a SAF export stream is open. */
     public Object beginReportExport(File selected) throws IOException {
         if(destroyed||busy||storageBusy||reportExporting||selected==null)throw new IOException("Wait for the current operation to finish");
-        File expected=report!=null&&report.getPath().equals(selected.getPath())?report:
-                storageReport!=null&&storageReport.getPath().equals(selected.getPath())?storageReport:null;
-        if(expected==null||!Files.isRegularFile(selected.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Select the current report again");
+        boolean retained=retainedReports().contains(selected);
+        boolean storageSelected=storageReport!=null&&storageReport.equals(selected);
+        if((!retained&&!storageSelected)||!Files.isRegularFile(selected.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Select a retained report again");
         exportOwner=ClientRuntime.acquireReportExport(this);reportExporting=true;publish();return exportOwner;
     }
     public void endReportExport(Object owner){
         ClientRuntime.releaseStorage(owner);
         main.post(()->{if(owner==exportOwner){exportOwner=null;reportExporting=false;publish();}});
+    }
+    public List<File> retainedReports() throws IOException {
+        return ClientReports.reports(getFilesDir().getCanonicalFile(),8);
+    }
+    /** A provider ignoring cancellation must not occupy the service worker indefinitely. */
+    private android.content.res.AssetFileDescriptor openReportDestination(android.net.Uri uri,android.os.CancellationSignal cancellation,AtomicBoolean expired,long deadline) throws IOException {
+        if(!reportProviderOpening.compareAndSet(false,true))throw new IOException("The previous document provider is still responding; choose another report after it closes");
+        final Object handoff=new Object();final CountDownLatch done=new CountDownLatch(1);
+        final java.util.concurrent.atomic.AtomicReference<android.content.res.AssetFileDescriptor> opened=new java.util.concurrent.atomic.AtomicReference<>();
+        final java.util.concurrent.atomic.AtomicReference<Exception> failure=new java.util.concurrent.atomic.AtomicReference<>();
+        Thread provider=new Thread(()->{
+            android.content.res.AssetFileDescriptor descriptor=null;
+            try{
+                descriptor=getContentResolver().openAssetFileDescriptor(uri,"w",cancellation);
+                synchronized(handoff){if(!expired.get()&&System.nanoTime()<deadline){opened.set(descriptor);descriptor=null;}}
+            }catch(Exception problem){failure.set(problem);}
+            finally{
+                if(descriptor!=null)try{descriptor.close();}catch(IOException ignored){}
+                reportProviderOpening.set(false);done.countDown();
+            }
+        },"coh-report-provider");provider.setDaemon(true);provider.start();
+        try {
+            if(!done.await(Math.max(1,deadline-System.nanoTime()),TimeUnit.NANOSECONDS)) {
+                synchronized(handoff){expired.set(true);android.content.res.AssetFileDescriptor late=opened.getAndSet(null);if(late!=null)late.close();}
+                throw new IOException("Document provider timed out");
+            }
+        }catch(InterruptedException interrupted){expired.set(true);Thread.currentThread().interrupt();throw new InterruptedIOException("Report export cancelled");}
+        synchronized(handoff){
+            android.content.res.AssetFileDescriptor descriptor=opened.getAndSet(null);
+            if(failure.get()!=null||descriptor==null||expired.get()){
+                if(descriptor!=null)descriptor.close();throw new IOException("Document provider could not open the export",failure.get());
+            }
+            return descriptor;
+        }
+    }
+    /** Nonblocking descriptor writes retain a real deadline even for a stalled SAF pipe. */
+    private java.io.OutputStream boundedReportOutput(android.content.res.AssetFileDescriptor asset,AtomicBoolean expired,long deadline) throws IOException {
+        if(asset.getStartOffset()!=0 || asset.getDeclaredLength()!=android.content.res.AssetFileDescriptor.UNKNOWN_LENGTH)
+            throw new IOException("Report destination is a bounded subsection; choose a whole-file destination");
+        final java.io.FileDescriptor descriptor=asset.getParcelFileDescriptor().getFileDescriptor();
+        try {
+            int flags=android.system.Os.fcntlInt(descriptor,android.system.OsConstants.F_GETFL,0);
+            android.system.Os.fcntlInt(descriptor,android.system.OsConstants.F_SETFL,flags|android.system.OsConstants.O_NONBLOCK);
+            if((android.system.Os.fcntlInt(descriptor,android.system.OsConstants.F_GETFL,0)&android.system.OsConstants.O_NONBLOCK)==0)throw new IOException("Report destination cannot use bounded writes");
+        }catch(android.system.ErrnoException failure){throw new IOException("Report destination cannot use bounded writes",failure);}
+        return new java.io.OutputStream(){
+            @Override public void write(int value)throws IOException{write(new byte[]{(byte)value},0,1);}
+            @Override public void write(byte[] bytes,int offset,int length)throws IOException{
+                int copied=0;
+                while(copied<length){
+                    if(expired.get()||System.nanoTime()>=deadline||Thread.currentThread().isInterrupted())throw new InterruptedIOException("Report export timed out or was cancelled");
+                    try{int n=android.system.Os.write(descriptor,bytes,offset+copied,length-copied);if(n<=0)throw new IOException("Report destination stopped accepting data");copied+=n;}
+                    catch(android.system.ErrnoException failure){
+                        if(failure.errno!=android.system.OsConstants.EAGAIN&&failure.errno!=android.system.OsConstants.EINTR)throw new IOException("Report destination write failed",failure);
+                        try{Thread.sleep(10);}catch(InterruptedException interrupted){Thread.currentThread().interrupt();throw new InterruptedIOException("Report export cancelled");}
+                    }
+                }
+            }
+        };
+    }
+    /** Export ownership survives Activity replacement and switching to the document provider. */
+    private void startReportExport(Intent intent) {
+        if(busy||storageBusy||reportExporting)return;
+        final android.net.Uri destination=intent.getData();final String path=intent.getStringExtra("report_source");
+        if(destination==null || !"content".equals(destination.getScheme()) || path==null){stopSelf();return;}
+        final File selected=new File(path);final Object owner;
+        try{owner=beginReportExport(selected);}catch(IOException failure){stage="Export unavailable";detail=failure.getMessage();publish();stopSelf();return;}
+        stage="Exporting report";detail="Keep the destination available. The private report remains retained.";
+        startForeground(NOTICE,notification());
+        final PowerManager.WakeLock exportWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-export");
+        exportWake.acquire(6*60*1000L);
+        getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",true).commit();
+        final java.util.concurrent.atomic.AtomicReference<java.io.OutputStream> stream=new java.util.concurrent.atomic.AtomicReference<>();
+        final AtomicBoolean timedOut=new AtomicBoolean();
+        final long exportDeadline=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(ClientReports.MAX_EXPORT_MILLIS);
+        final android.os.CancellationSignal exportCancellation=new android.os.CancellationSignal();
+        final Runnable timeout=()->{timedOut.set(true);new Thread(()->{
+            exportCancellation.cancel();java.io.OutputStream open=stream.get();if(open!=null)try{open.close();}catch(IOException ignored){}
+        },"coh-export-timeout").start();};
+        main.postDelayed(timeout,ClientReports.MAX_EXPORT_MILLIS);
+        publish();
+        worker.execute(()->{
+            boolean success=false;
+            try(android.content.res.AssetFileDescriptor destinationFile=openReportDestination(destination,exportCancellation,timedOut,exportDeadline)){
+                if(destinationFile==null||timedOut.get())throw new IOException("No export stream");
+                try(java.io.OutputStream out=boundedReportOutput(destinationFile,timedOut,exportDeadline)){
+                stream.set(out);
+                if(storageReport!=null&&storageReport.equals(selected)){
+                    long bytes=0;byte[] buffer=new byte[65536];
+                    try(InputStream in=Files.newInputStream(selected.toPath(),StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){
+                        int n;while((n=in.read(buffer))!=-1){bytes+=n;if(bytes>8L*1024*1024||timedOut.get())throw new IOException("Storage export limit reached");out.write(buffer,0,n);}
+                    }
+                }else ClientReports.export(getFilesDir().getCanonicalFile(),selected,out);
+                out.flush();if(timedOut.get())throw new IOException("Export timed out");success=true;
+                }
+            }catch(Exception failure){success=false;}
+            finally{stream.set(null);main.removeCallbacks(timeout);ClientRuntime.releaseStorage(owner);if(exportWake.isHeld())exportWake.release();}
+            final boolean completed=success&&!timedOut.get();
+            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",false).commit();
+            main.post(()->{exportOwner=null;reportExporting=false;if(destroyed)return;stage=completed?"Report exported":"Export incomplete";
+                detail=completed?"The complete report was copied. Its private copy is still available in Reports.":"The private report is retained. Choose a destination and export again; the destination may contain a partial copy.";
+                stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
+        });
+    }
+    private void recoverReports() {
+        if(busy||storageBusy||reportExporting)return;
+        final Object owner;
+        try{owner=ClientRuntime.acquireReportExport(this);}catch(IOException failure){return;}
+        reportExporting=true;stage="Recovering reports";detail="Preserving interrupted observations and previous guest output. Recovery does not certify an incomplete test.";
+        startForeground(NOTICE,notification());
+        final PowerManager.WakeLock recoveryWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-recovery");recoveryWake.acquire(6*60*1000L);publish();
+        worker.execute(()->{File recovered=null;String failure=null;
+            try{File root=getFilesDir().getCanonicalFile();ClientReports.recoverAll(root);ClientReports.preservePrevious(root);List<File> reports=retainedReports();if(!reports.isEmpty())recovered=reports.get(0);}
+            catch(Exception problem){failure=problem.getMessage();}
+            finally{ClientRuntime.releaseStorage(owner);if(recoveryWake.isHeld())recoveryWake.release();}
+            final File selected=recovered;final String error=failure;
+            main.post(()->{reportExporting=false;if(destroyed)return;if(selected!=null)report=selected;
+                stage=error==null?"Reports recovered":"Recovery needs attention";detail=error==null?"Choose Reports to export a retained session. Interrupted reports remain explicitly unverified.":"Existing evidence was retained. "+error;
+                getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("report",report==null?null:report.getPath()).commit();
+                stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
+        });
     }
     private String currentManifestSha() throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");
@@ -577,6 +704,8 @@ public final class ClientService extends Service {
     }
     @Override public int onStartCommand(Intent intent,int flags,int startId){
         String action=intent==null?null:intent.getAction();
+        if(EXPORT_REPORT.equals(action)){startReportExport(intent);return START_NOT_STICKY;}
+        if(RECOVER_REPORTS.equals(action)){recoverReports();return START_NOT_STICKY;}
         if(STORAGE_SCAN.equals(action)||STORAGE_CLEAN.equals(action)){startStorage(intent,STORAGE_CLEAN.equals(action));return START_NOT_STICKY;}
         if(FINISH.equals(action)){requestFinish();return START_NOT_STICKY;}
         if(STOP.equals(action)&&storageBusy){storageStopRequested.set(true);storageStatus="Cancelling storage work; waiting for owned file operations to finish…";publish();notifyStatus();return START_NOT_STICKY;}
@@ -600,11 +729,11 @@ public final class ClientService extends Service {
         PowerManager.WakeLock dispatchWake=null;
         try {
         storagePlan=null;
-        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";report=null;certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
+        busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||CREATE.equals(action))?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
         detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
-        getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).remove("report").apply();
+        getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).commit();
         selectedSession=session;
         if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}
         startForeground(NOTICE,notification());
@@ -618,7 +747,7 @@ public final class ClientService extends Service {
             @Override public void onInputState(boolean ready,boolean ending,boolean saved,boolean returnAvailable,boolean saveAvailable,long sent,long failed,long deadline,String phase,long saveDeadline,long movementDeadline){main.post(()->{if(!busy||destroyed)return;boolean noticeChanged=inputReady!=ready||finishing!=ending||characterSaved!=saved;inputReady=ready;finishing=ending;characterSaved=saved;canReturnGround=returnAvailable;canSaveLogout=saveAvailable;inputSent=sent;inputFailed=failed;readyDeadlineUptimeMillis=deadline;sessionPhase=phase;saveDeadlineUptimeMillis=saveDeadline;movementDeadlineUptimeMillis=movementDeadline;publish();if(noticeChanged)notifyStatus();});}
         });
         if(setup)instance.attachSetupReservation(setupOwner);
-        runtime=instance;instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
+        runtime=instance;instance.setUiVisible(uiVisible);instance.recordLifecycle("operation_requested setup="+setup+" activity_visible="+uiVisible);
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;
             try{result=setup?executeSetup(instance):importing?instance.importAssets(importUri):(creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
@@ -645,11 +774,11 @@ public final class ClientService extends Service {
     }
     private Notification notification(){
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,ClientActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
-        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle(storageBusy?"COH storage":"COH Character Reopen · "+stage).setContentText(storageBusy?storageStatus:detail).setContentIntent(open).setOngoing(busy||storageBusy).setOnlyAlertOnce(true);
+        Notification.Builder b=new Notification.Builder(this,CHANNEL).setSmallIcon(android.R.drawable.ic_menu_view).setContentTitle(storageBusy?"COH storage":"COH Character Reopen · "+stage).setContentText(storageBusy?storageStatus:detail).setContentIntent(open).setOngoing(busy||storageBusy||reportExporting).setOnlyAlertOnce(true);
         if(busy&&inputReady&&characterSaved)b.addAction(new Notification.Action.Builder(null,"Finish",PendingIntent.getService(this,2,new Intent(this,ClientService.class).setAction(FINISH),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         if(busy||storageBusy)b.addAction(new Notification.Action.Builder(null,storageBusy?"Cancel storage work":"Stop",PendingIntent.getService(this,1,new Intent(this,ClientService.class).setAction(STOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE)).build());
         return b.build();
     }
-    private void notifyStatus(){if(busy||storageBusy)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
+    private void notifyStatus(){if(busy||storageBusy||reportExporting)((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).notify(NOTICE,notification());}
     @Override public void onDestroy(){destroyed=true;if(storageBusy)storageStopRequested.set(true);main.removeCallbacks(sessionDeadlineTick);ClientRuntime r=runtime;if(r!=null)r.requestStop();worker.shutdown();listeners.clear();try{unregisterReceiver(screenReceiver);}catch(Exception ignored){}if(!setupWorkerOwnsWake&&wake!=null&&wake.isHeld())wake.release();super.onDestroy();}
 }

@@ -88,7 +88,7 @@ def source_lines(path):
             yield number, clean.split()
 
 
-def enttype_fx_requests(root, files, entity_names, fx_roots=()):
+def enttype_fx_requests(root, files, entity_names, fx_roots=(), *, native_path_normalization=False):
     """Follow silent base Graphics, exact named FX models and particle textures."""
     root = Path(root)
     result = {'geometry': {}, 'textures': {}, 'source_files': {}, 'unresolved_source_edges': []}
@@ -121,6 +121,10 @@ def enttype_fx_requests(root, files, entity_names, fx_roots=()):
 
     def source_path(value, parent):
         value = value.strip('"').replace('\\', '/').casefold().lstrip('/')
+        if native_path_normalization and '/fx/' in value:
+            # utilitieslib/utils/utils.c fxCleanFileName_s removes the prefix
+            # through /FX/, including authored game/data/fx/... references.
+            value = 'fx/' + value.split('/fx/', 1)[1]
         value = PurePosixPath(value).as_posix()
         if value.startswith(':'):
             key = parent.parent.relative_to(root/'upstream/i24/data').as_posix().casefold() + '/' + value[1:]

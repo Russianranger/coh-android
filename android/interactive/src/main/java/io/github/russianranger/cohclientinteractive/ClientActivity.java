@@ -22,12 +22,11 @@ import java.util.concurrent.*;
 /** Bounded touch, keyboard and Thor controller session for initial Atlas gameplay. */
 public final class ClientActivity extends Activity {
     private static final int EXPORT=11,NOTIFY=12,IMPORT=13,STORAGE_EXPORT=14;
-    private final ExecutorService exporter=Executors.newSingleThreadExecutor();
     private ClientService service;
     private ClientService.State state;
     private ClientSurface display;
     private TextView status,detail,counter,logs,profileStatus;
-    private Button prepareZone,travelZone,returnAtlas;
+    private Button travelZone, recoverReports;
     private TextView zoningStatus;
     private Button setup,importAssets,run,createFresh,stop,export,storage,finish,typeText,returnGround,saveLogout,captureContact,openTaskContact,captureAcceptedTask,completeTask,captureCompletedTask;
     private Button enterKey,showFps,fps10,fps30;
@@ -111,11 +110,9 @@ public final class ClientActivity extends Activity {
         completeTask=button("Complete accepted task",()->{releaseControls();if(service!=null)service.requestCompleteAcceptedTask();});controls.addView(completeTask);
         captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
         controls.addView(text("Atlas instance zoning",16,true));
-        controls.addView(text("Both destinations use Atlas Park. Prepare the second instance while playing, then tap Travel. For the first test, return before Save. A later save/reopen test can save in either instance. Other city maps are a later step.",12,false));
+        controls.addView(text("Tap Travel once: preparation, transfer and fresh destination views are timed together. Stay in this app until arrival. Both destinations use Atlas Park; Kings Row is unavailable until its assets are verified. Save in either supported instance.",12,false));
         zoningStatus=text("Reopen THORHERO to start Atlas instance zoning.",12,false);controls.addView(zoningStatus);
-        prepareZone=button("Prepare Atlas instance 2",()->{if(service!=null)service.requestPrepareZoning();refreshZoningControls();});controls.addView(prepareZone);
-        travelZone=button("Travel to prepared instance",this::travelToZone);controls.addView(travelZone);
-        returnAtlas=button("Prepare return to Atlas Park",()->{if(service!=null)service.requestPrepareZoning();refreshZoningControls();});controls.addView(returnAtlas);
+        travelZone=button("Travel to Atlas instance 2",this::travelToZone);controls.addView(travelZone);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
@@ -131,12 +128,13 @@ public final class ClientActivity extends Activity {
         addMovementRow(controls,"Left",'a',"Right",'d',120003);
         controls.addView(movementButton("Jump",' ',120005));
         stop=button("Abort operation",()->{movementSuppressed=true;releaseControls();refreshMovementControls();if(service!=null)startService(new Intent(this,ClientService.class).setAction(ClientService.STOP));});controls.addView(stop);
-        export=button("Export latest report",this::chooseExport);controls.addView(export);
+        export=button("Reports / export",this::chooseExport);controls.addView(export);
+        recoverReports=button("Recover interrupted reports",()->{if(service!=null)startForegroundService(new Intent(this,ClientService.class).setAction(ClientService.RECOVER_REPORTS));});controls.addView(recoverReports);
         storage=button("Storage and cleanup",this::showStorage);controls.addView(storage);
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("After installing this update, apply Set up / update runtime once and preserve your imported data. Reopen saved THORHERO with COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Prepare Atlas instance 2, then Travel after readiness; wait for native arrival and three fresh views before moving. Prepare return, then Travel back. Keep controls released for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and export the complete report. If loading stalls, Abort and export early; Reopen resumes the last saved supported instance.",12,false));
+        controls.addView(text("After installing this update, apply Set up / update runtime once and preserve your imported data. Reopen saved THORHERO with COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Tap Travel to Atlas instance 2 once and wait for arrival; use Travel back for the return. Keep controls released for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and choose Reports / export. After an interruption, use Recover interrupted reports to retain the available evidence. If loading stalls, Abort and export early; Reopen resumes the last saved supported instance.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
         TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
@@ -196,14 +194,12 @@ public final class ClientActivity extends Activity {
     private void refreshZoningControls(){
         boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
         if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen THORHERO to start Atlas instance zoning.":service.zoningStatus());
-        if(prepareZone!=null)prepareZone.setEnabled(available&&service.zoningCurrentMap()==1&&service.canPrepareZoning());
-        if(returnAtlas!=null)returnAtlas.setEnabled(available&&service.zoningCurrentMap()==101&&service.canPrepareZoning());
-        if(travelZone!=null){travelZone.setEnabled(available&&service.canTravelZoning());travelZone.setText(service!=null&&service.zoningCurrentMap()==101?"Travel back to Atlas Park":"Travel to prepared instance");}
+        if(travelZone!=null){travelZone.setEnabled(available&&service.canRequestZoning());travelZone.setText(service!=null&&service.zoningCurrentMap()==101?"Travel back to Atlas Park":"Travel to Atlas instance 2");}
     }
     private void travelToZone(){
-        if(service==null||!service.canTravelZoning()||textDialogVisible||!hasWindowFocus())return;
+        if(service==null||!service.canRequestZoning()||textDialogVisible||!hasWindowFocus())return;
         releaseControls(true);
-        if(!service.requestTravelZoning())Toast.makeText(this,"Destination is not ready, or the movement window has ended.",Toast.LENGTH_SHORT).show();
+        if(!service.requestZoning())Toast.makeText(this,"Travel is unavailable, or the movement window has ended.",Toast.LENGTH_SHORT).show();
         refreshMovementControls();refreshDeadlineControls();
     }
     private void sendPerformanceCommand(ClientInput.PerformanceCommand command){
@@ -279,6 +275,7 @@ public final class ClientActivity extends Activity {
     private void render(ClientService.State next){
         if(next.busy&&next.session.isEmpty())display.clearFrames();
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
+        recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
         boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
         if(storageDialogRequested&&!next.storageBusy&&idle){storageDialogRequested=false;showStorage();}
@@ -493,7 +490,21 @@ public final class ClientActivity extends Activity {
         ScrollView scroll=new ScrollView(this);scroll.addView(body);storageDialog=new AlertDialog.Builder(this).setTitle("Storage and cleanup").setView(scroll).setNegativeButton("Close",null).create();storageDialog.show();
     }
     private void chooseExport(){
-        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.report==null||exporting||ClientRuntime.operationInProgress())return;pendingExport=state.report.getPath();
+        if(service==null||state==null||state.busy||state.storageBusy||state.reportExporting||exporting||ClientRuntime.operationInProgress())return;
+        final List<File> reports;
+        try{reports=service.retainedReports();}catch(IOException failure){Toast.makeText(this,"Report inventory needs recovery. Use Recover interrupted reports.",Toast.LENGTH_LONG).show();return;}
+        if(reports.isEmpty()){Toast.makeText(this,"No completed report yet. Use Recover interrupted reports after an interrupted session.",Toast.LENGTH_LONG).show();return;}
+        String[] labels=new String[reports.size()];
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        for(int i=0;i<labels.length;i++){
+            File report=reports.get(i);String run=report.getParentFile().getName();long utc=report.lastModified();
+            try{utc=Long.parseLong(run.substring(0,run.indexOf('-')));}catch(Exception ignored){}
+            labels[i]=format.format(new Date(utc))+" · "+(report.getName().contains("interrupted")?"interrupted / unverified":"completed archive")+" · "+storageBytes(report.length());
+        }
+        new AlertDialog.Builder(this).setTitle("Retained reports · newest first").setItems(labels,(dialog,index)->chooseReportDestination(reports.get(index))).setNegativeButton("Cancel",null).show();
+    }
+    private void chooseReportDestination(File report){
+        pendingExport=report.getPath();
         Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("application/zip").addCategory(Intent.CATEGORY_OPENABLE);
         SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd-HHmmss",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));intent.putExtra(Intent.EXTRA_TITLE,"coh-atlas-gameplay-"+format.format(new Date())+".zip");
         try{startActivityForResult(intent,EXPORT);}catch(RuntimeException e){pendingExport=null;Toast.makeText(this,"No export destination is available.",Toast.LENGTH_LONG).show();}
@@ -511,13 +522,14 @@ public final class ClientActivity extends Activity {
         if(result!=RESULT_OK||data==null||data.getData()==null||selected==null)return;pendingExportSource=selected;pendingExportDestination=data.getData();dispatchPendingExport();
     }
     private void dispatchPendingExport(){
-        if(service==null||pendingExportSource==null||pendingExportDestination==null||exporting)return;
-        final ClientService ownerService=service;final String selected=pendingExportSource;final android.net.Uri uri=pendingExportDestination;pendingExportSource=null;pendingExportDestination=null;
-        final Object owner;try{owner=ownerService.beginReportExport(new File(selected));}catch(IOException e){Toast.makeText(this,"Wait for the current operation, then export again.",Toast.LENGTH_LONG).show();return;}
-        exporting=true;if(state!=null)render(state);
-        try{exporter.execute(()->{String message;try(InputStream in=new FileInputStream(selected);OutputStream out=getContentResolver().openOutputStream(uri,"w")){if(out==null)throw new IOException("No export stream");byte[] buffer=new byte[65536];int n;while((n=in.read(buffer))!=-1)out.write(buffer,0,n);message="Report exported";}catch(Exception e){message="Export failed. Try another destination.";}finally{ownerService.endReportExport(owner);}final String finish=message;runOnUiThread(()->{exporting=false;if(state!=null)render(state);Toast.makeText(this,finish,Toast.LENGTH_LONG).show();});});}
-        catch(RuntimeException e){ownerService.endReportExport(owner);exporting=false;if(state!=null)render(state);Toast.makeText(this,"Export could not start. Try again.",Toast.LENGTH_LONG).show();}
+        if(service==null||pendingExportSource==null||pendingExportDestination==null)return;
+        final String selected=pendingExportSource;final android.net.Uri uri=pendingExportDestination;
+        try{
+            Intent intent=new Intent(this,ClientService.class).setAction(ClientService.EXPORT_REPORT).setData(uri)
+                    .putExtra("report_source",selected).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startForegroundService(intent);pendingExportSource=null;pendingExportDestination=null;
+        }catch(RuntimeException failure){Toast.makeText(this,"Export could not start. The private report is retained.",Toast.LENGTH_LONG).show();}
     }
     @Override protected void onSaveInstanceState(Bundle out){out.putString("export",pendingExport);out.putString("storage_export",pendingStorageExport);out.putString("export_source",pendingExportSource);out.putString("export_destination",pendingExportDestination==null?null:pendingExportDestination.toString());out.putString("action",pendingAction);out.putString("import_uri",pendingImport==null?null:pendingImport.toString());out.putBoolean("import_waiting",importWaiting);super.onSaveInstanceState(out);}
-    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();if(storageDialog!=null)storageDialog.dismiss();exporter.shutdown();super.onDestroy();}
+    @Override protected void onDestroy(){if(activeTextDialog!=null)activeTextDialog.dismiss();if(storageDialog!=null)storageDialog.dismiss();super.onDestroy();}
 }

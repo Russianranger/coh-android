@@ -194,7 +194,7 @@ class StartupOnlyCharacterReopenDiagnostic(CharacterReopenDiagnostic):
 class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
     """Explicit native Atlas1/101 handoff; preserved default reopen is unchanged."""
     ZONING = True
-    REQUIRED = REQUIRED | {'character_zoning.py'}
+    REQUIRED = REQUIRED | {'character_zoning.py', 'character_zoning_scheduler.py'}
 
     @staticmethod
     def identity_verified(proof, session):

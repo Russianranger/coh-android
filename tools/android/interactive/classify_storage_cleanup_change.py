@@ -719,6 +719,68 @@ SESSION_REPAIR_ALLOWED = SESSION_REPAIR_SOURCES | SESSION_REPAIR_DOCS | frozense
 })
 
 
+# .27 owns a closed Android/guest recovery and preparation extension over .26.
+# Native executables, GPU drivers, graphics settings and installed world assets
+# cannot enter this lane. Kings Row work here is an offline dependency audit.
+CLIENT_RECOVERY_MARKERS = frozenset({
+    '.github/workflows/android-client-recovery.yml',
+    'tools/android/interactive/build_client_recovery_apk.py',
+    'tools/android/interactive/qualify_client_recovery.py',
+    'tools/android/interactive/test_client_recovery_package.py',
+    'tools/android/interactive/test_client_report_recovery_java.py',
+    'tools/android/interactive/test_client_socket_recovery_java.py',
+    'tools/android/interactive/test_client_report_lifecycle_java.py',
+    'tools/android/interactive/test_character_zoning_scheduler.py',
+    'android/guest/character_zoning_scheduler.py',
+    'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java',
+    'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientSocketRecovery.java',
+})
+CLIENT_RECOVERY_DOCS = frozenset({
+    'docs/HANDOFF.md', 'docs/COH-RECOVERY-0.13.27.md',
+    'docs/COH-Atlas-Gameplay-0.13.27-testing.txt',
+    'docs/COH-ZONE-PREPARATION-RESEARCH-0.13.27.md',
+    'docs/android-evidence/recovery-0.13.27-publication.json',
+    'docs/android-evidence/zone-preparation-0.13.27-research.json',
+    'docs/android-evidence/kings-row-foundation-20261011.json',
+})
+CLIENT_RECOVERY_ALLOWED = CLIENT_RECOVERY_MARKERS | CLIENT_RECOVERY_DOCS | frozenset({
+    'android/guest/local_character_server.py',
+    'android/guest/character_reopen_diagnostic.py',
+    'android/guest/character_zoning.py',
+    JAVA+'ClientActivity.java', JAVA+'ClientRuntime.java', JAVA+'ClientService.java',
+    'tools/android/interactive/audit_kings_row_foundation.py',
+    'tools/android/interactive/test_kings_row_foundation.py',
+    'tools/android/interactive/client_appearance_costumes.py',
+    'tools/android/interactive/discover_client_appearance_assets.py',
+    'tools/android/interactive/test_character_zoning.py',
+    'tools/android/interactive/test_client_zoning_java.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_interactive_change.py',
+    'tools/android/interactive/test_client_sidebar_commands.py',
+    'tools/android/interactive/test_client_sidebar_runtime.py',
+    'tools/android/interactive/test_fresh_profile_recovery.py',
+    'tools/android/interactive/test_setup_service.py',
+    'tools/android/interactive/test_client_gpu_repair_evidence.py',
+})
+
+
+def client_recovery_push(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, CLIENT_RECOVERY_ALLOWED)
+        and set(names) & CLIENT_RECOVERY_MARKERS)
+
+
+def client_recovery_docs(event, before, head, parent, names):
+    return bool(bounded_push(event, before, head, parent, names, CLIENT_RECOVERY_DOCS)
+        and 'docs/android-evidence/recovery-0.13.27-publication.json' in names)
+
+
+def client_recovery_owned(event, before, head, parent, names):
+    return client_recovery_push(event, before, head, parent, names) or client_recovery_docs(
+        event, before, head, parent, names)
+
+
 # .26 owns the finite Android/guest Atlas instance transfer extension. Native
 # executables, drivers, assets and their build recipes cannot join this lane.
 ZONING_MARKERS = frozenset({
@@ -1056,6 +1118,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1082,6 +1145,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1106,6 +1170,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1132,6 +1197,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1158,6 +1224,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1182,6 +1249,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1204,6 +1272,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1225,6 +1294,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1246,6 +1316,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1266,6 +1337,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1285,6 +1357,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1303,6 +1376,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1320,6 +1394,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1336,6 +1411,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False
@@ -1351,6 +1427,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
     if setup_copy_owned(event, before, head, parent, names): return False

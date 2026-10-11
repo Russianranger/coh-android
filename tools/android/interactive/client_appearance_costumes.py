@@ -311,7 +311,8 @@ class Sources:
                 'source_sha256': self.pins[key]['sha256'], 'line': line, **extra}
 
 
-def atlas_requests(root, files, *, map_files=None, extra_npcs=(), extra_enttypes=(), extra_factions=()):
+def atlas_requests(root, files, *, map_files=None, extra_npcs=(), extra_enttypes=(), extra_factions=(),
+                   spawnarea_file='server/spawnarea/city_01_01.txt'):
     """Discover the finite Atlas map → actor/generator → costume/type closure.
 
     ``files`` keys may have or omit data/. GEO cached_header fields are bytes.
@@ -430,7 +431,12 @@ def atlas_requests(root, files, *, map_files=None, extra_npcs=(), extra_enttypes
 
     # Global definitions precede map overrides exactly as the server loads them.
     spawn_index, generator_index = {}, {}
-    spawn_paths = [sources.resolve('server/spawnarea/globals.txt'), sources.resolve('server/spawnarea/city_01_01.txt')]
+    if (not isinstance(spawnarea_file, str) or not re.fullmatch(
+            r'server/spawnarea/[a-z0-9_]+\.txt', spawnarea_file)):
+        raise ValueError('Unsafe map spawnarea source')
+    spawn_paths = [sources.resolve('server/spawnarea/globals.txt'), sources.resolve(spawnarea_file)]
+    if spawnarea_file != 'server/spawnarea/city_01_01.txt' and spawn_paths[-1] is None:
+        raise ValueError('Missing map spawnarea source: ' + spawnarea_file)
     for path in filter(None, spawn_paths):
         for node in walk(end_blocks(sources.read(path), {'spawnarea', 'npc', 'critter', 'car', 'generator', 'group', 'member'})):
             if node.key.casefold() in {'npc', 'critter', 'car', 'generator', 'group'} and node.args:

@@ -15,15 +15,48 @@ import stat
 import time
 
 import local_character_server as character
+import character_session_budget as session_budget
+import character_zoning_scheduler as scheduler
 
 base, require = character.base, character.require
 MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1},
         101: {'name': 'Atlas Park instance 2', 'port': 7002, 'instance': 2}}
 MAX_EPOCHS = 4
 PREPARE_SECONDS = 600
+WARM_PREPARE_SECONDS = 90
 TRANSFER_SECONDS = 180
 REQUEST_AGE_MS = 120000
 NUMBER = character.character_events.NUMBER
+
+
+def travel_window(deadline, now, now_ms, preparation_seconds):
+    """Reserve arrival, neutral wait and ordinary save within the existing cap."""
+    require(type(deadline) in (int, float) and math.isfinite(deadline),
+            'Zoning requires the existing connected session budget')
+    movement_end = deadline - (session_budget.NEUTRAL_RESERVE_MS
+                              + session_budget.SAVE_PROOF_RESERVE_MS) / 1000
+    departure = movement_end - TRANSFER_SECONDS
+    require(now + preparation_seconds < departure,
+            'Not enough session time for preparation, arrival and ordinary save; save and reopen')
+    return {'preparation_budget_seconds': preparation_seconds,
+        'transfer_budget_seconds': TRANSFER_SECONDS,
+        'departure_deadline_utc_ms': now_ms + int((departure - now) * 1000),
+        'session_deadline_utc_ms': now_ms + int((deadline - now) * 1000),
+        'session_budget_extended': False}
+
+
+def scan_new_console(owned):
+    """Scan each appended byte once, retaining overlap for split crash markers."""
+    output = owned['process'].output
+    offset, size = owned.get('crash_scan_offset', 0), len(output)
+    require(size >= offset, 'Owned zoning console was truncated')
+    # Pattern has one bounded fixed prefix and an uppercase suffix. Its exact
+    # failure prefix alone is decisive, including when split across writes.
+    chunk = bytes(output[max(0, offset - 64):size])
+    require(re.search(rb'Program crash detected|Exception caught: EXCEPTION_[A-Z_]+', chunk) is None,
+            'Owned zoning MapServer crashed')
+    owned['crash_scan_offset'] = size
+    owned['console_bytes_scanned'] = owned.get('console_bytes_scanned', 0) + len(chunk)
 
 
 def supported(map_id):
@@ -236,6 +269,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'supported_maps': MAPS, 'events': [], 'transfers': [], 'epoch_limit': MAX_EPOCHS,
             'new_city_asset_coverage': False, 'sql_game_mutations_performed': False,
             'target_seconds': 30, 'physical_zoning_validated': False}
+        self.zoning_report.update(preparations=[], native_build_reused=True,
+            total_travel_includes_preparation=True, preparation_overlap_with_gameplay=True,
+            cold_definition='destination_process_not_resident_filesystem_cache_unknown',
+            finite_process_limit=2, preparation_stage_observations=[], preparation_schedulers=[])
         self.ctx.report['character_zoning'] = self.zoning_report
         self.creation_report.update(zoning_enabled=True, connected_on_supported_map=False)
 
@@ -324,6 +361,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
         environment = dict(self.owner.wine_env, **{character.evidence.GAME_LOOPBACK_ENV: '1',
             character.progress.ENVIRONMENT: base.windows_path(path)})
+        pacing = None
+        if self.pending is not None:
+            pacing = scheduler.PreparationScheduler(self.owner, map_id)
+            environment.update(pacing.environment)
+            self.zoning_report['preparation_schedulers'].append(pacing.report)
+            self._scheduler_observation('capability', pacing)
         if map_id == 1 and self.immediate_event_contract() is not None:
             character.character_events.validate_contract(self.immediate_event_contract())
             environment[character.character_events.ENVIRONMENT] = self.owner.args.session_id
@@ -335,21 +378,54 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
             '-idleExitTimeout', '0', '-donotautogroup'], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
-                             'launch_utc_ms': launch_ms, 'ready': False}
+                             'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing}
+
+    def _scheduler_observation(self, phase, pacing):
+        report = pacing.report
+        if not isinstance(report, dict):
+            return
+        self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
+            client_pid=self.creation_report['client_pid'], character_id=1, epoch=self.epoch,
+            map_id=report['map_id'], observation_kind='scheduler', scheduler_phase=phase,
+            observed_utc_ms=int(time.time() * 1000), observed_monotonic_ms=int(time.monotonic()*1000),
+            capability=report['capability'], changed_threads=report['changed_threads'],
+            restored_threads=report['restored_threads'], exited_threads=report['exited_threads'],
+            restore_complete=report['restore_complete'], exact_destination_only=True,
+            physical_performance_gain_verified=False)
+
+    def _restore_preparation(self, pacing):
+        previously_restored = pacing.restored
+        pacing.restore()
+        if not previously_restored:
+            self._scheduler_observation('restored', pacing)
 
     def _map_progress(self, map_id):
         owned = self.maps[map_id]
         require(owned['process'].process.poll() is None and not owned['process'].overflow,
                 'Owned zoning MapServer exited or overflowed')
-        console = owned['process'].text()
-        require(re.search(r'Program crash detected|Exception caught: EXCEPTION_[A-Z_]+', console) is None,
-                'Owned zoning MapServer crashed')
+        scan_new_console(owned)
         try:
             owned['previous'] = character.progress.read_record(owned['progress_path'], owned.get('previous'))
         except (FileNotFoundError, character.progress.PublicationPending):
             return None
         if map_id == self.active_map_id:
             self.map_previous = owned['previous']
+        if self.pending is not None and map_id == self.pending['to_map_id']:
+            sample = owned['previous']
+            stage = sample['stage'] if sample['tick_completed'] == 0 else 'COMPLETED_TICK'
+            if stage != owned.get('last_observed_stage'):
+                owned['last_observed_stage'] = stage
+                rows = self.zoning_report['preparation_stage_observations']
+                if len(rows) < 128:
+                    observation = {'epoch': self.epoch, 'map_id': map_id,
+                        'observed_utc_ms': int(time.time() * 1000),
+                        'observed_monotonic_ms': int(time.monotonic() * 1000),
+                        'stage': stage, 'windows_pid': sample['windows_pid'],
+                        'tick_completed': sample['tick_completed'],
+                        'native_stage_duration_measured': False}
+                    rows.append(observation)
+                    self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
+                        client_pid=self.creation_report['client_pid'], character_id=1, **observation)
         return owned['previous']
 
     def health(self):
@@ -361,6 +437,21 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             require(not owned['process'].overflow, 'Zoning MapServer console overflowed')
             if owned.get('ready'):
                 require(owned['process'].process.poll() is None, 'Ready zoning destination exited; export the report')
+
+    def map_crash_observation(self):
+        scans = getattr(self, '_active_console_scans', None)
+        if scans is None:
+            scans = self._active_console_scans = {}
+        owned = scans.setdefault(self.map_process, {'process': self.map_process})
+        try:
+            scan_new_console(owned)
+        except base.DiagnosticError:
+            # Decode/hash the complete console only upon the unchanged native
+            # crash marker; retained rich failure evidence stays identical.
+            crash = super().map_crash_observation()
+            require(crash is not None, 'Owned zoning console history changed')
+            return crash
+        return None
 
     def current_native_events(self):
         return super().current_native_events() if self.active_map_id == 1 else None
@@ -396,6 +487,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'target_map_id': target, 'current_map_name': MAPS[self.active_map_id]['name'],
             'target_map_name': MAPS[target]['name'], 'generated_utc_ms': int(time.time() * 1000),
             'epoch_limit': MAX_EPOCHS, **fields}
+        if self.pending is not None:
+            for key in ('requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
+                        'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
+                        'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended'):
+                if key in self.pending:
+                    value[key] = self.pending[key]
         self.zoning_report['events'].append(value)
         self.zoning_report['status'] = status
         self.ctx.event('character_zoning', **value)
@@ -433,12 +530,17 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(self.creation_report.get('recovery_requested') is False
                 and not (self.owner.args.state / 'character-relocation.json').exists(),
                 'Finish the current recovery/save session before testing zoning')
+        target = value['to_map_id']
+        resident = target in self.maps
+        window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
+            time.monotonic(), now_ms, WARM_PREPARE_SECONDS if resident else PREPARE_SECONDS)
         self.epoch += 1
         self.request_history[self.epoch] = dict(value)
-        self.pending = dict(value, phase='baseline', deadline=time.monotonic() + PREPARE_SECONDS,
-                            next_query=0, transfer_requested=False)
+        self.pending = dict(value, phase='baseline',
+            deadline=time.monotonic() + window['preparation_budget_seconds'], **window,
+            next_query=0, transfer_requested=False, preparation_started_utc_ms=now_ms,
+            preparation_kind='resident_warm' if resident else 'cold')
         self._emit('preparing', current_map_verified=True, destination_ready=False)
-        target = value['to_map_id']
         if target in self.maps:
             self.pending['phase'] = 'map_ready'
         else:
@@ -452,6 +554,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(value['to_map_id'] == self.pending['to_map_id']
                 and value['sent_utc_ms'] >= self.pending['ready_utc_ms'],
                 'Zoning command preceded destination readiness')
+        require(now_ms < self.pending['departure_deadline_utc_ms']
+                and value['sent_utc_ms'] < self.pending['departure_deadline_utc_ms'],
+                'Zoning command exceeded the reserved arrival and ordinary-save budget')
         require(self.live_progress(self._map_progress(value['to_map_id'])), 'Prepared destination became stale')
         self.delivery_history[self.epoch] = dict(value)
         self.pending.update(phase='arrival', delivery=dict(value), transfer_requested=True,
@@ -515,11 +620,22 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'native_timestamp_precision_ms': 1000, 'same_client_pid': self.creation_report['client_pid'],
                 'observed_transfer_flag_or_disconnected': pending.get('observed_transition', False),
                 'arrival_native_verified': True, 'sql_transfer_commit_acknowledged': False}
+            leg.update({key: pending[key] for key in ('requested_utc_ms', 'preparation_kind',
+                'preparation_started_utc_ms', 'preparation_ready_utc_ms', 'preparation_elapsed_ms')
+                if key in pending})
+            leg.update(native_transfer_observed_ms=leg['elapsed_ms'],
+                total_to_native_arrival_ms=now_ms - pending.get('requested_utc_ms',
+                    pending['delivery']['sent_utc_ms']),
+                native_ready_after_send_lower_bound_ms=max(0, native['utc_ms'] - pending['delivery']['sent_utc_ms']),
+                native_ready_after_send_upper_bound_ms=max(0, native['utc_ms'] + 999 - pending['delivery']['sent_utc_ms']),
+                observer_queries_included=True, fresh_android_display_included=False)
             self.zoning_report['transfers'].append(leg)
             self._emit('arrived', current_map_verified=True, destination_ready=True,
                 arrival_native_verified=True, mapserver_pid=current['windows_pid'],
                 elapsed_ms=leg['elapsed_ms'], exact_destination_endpoint_verified=True,
-                character_identity_preserved=True, native_ready_utc_ms=native['utc_ms'])
+                character_identity_preserved=True, native_ready_utc_ms=native['utc_ms'],
+                native_transfer_observed_ms=leg['native_transfer_observed_ms'],
+                total_to_native_arrival_ms=leg['total_to_native_arrival_ms'])
             self.pending = None
             return
         if self.zoning_query is None and time.monotonic() >= pending['next_query']:
@@ -563,6 +679,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 return
             pending, target = self.pending, self.pending['to_map_id']
             require(now < pending['deadline'], 'Zoning preparation or arrival timed out; export this report')
+            require(pending.get('transfer_requested') or
+                    not (self.owner.args.state / 'character-logout.json').exists(),
+                    'Preparation cancelled for the requested ordinary save')
             result = self._query_poll()
             if pending['phase'] == 'arrival':
                 self._observe_arrival(result, now_ms)
@@ -574,15 +693,33 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self._spawn_map(target)
                 pending['phase'] = 'map_ready'
             if pending['phase'] == 'map_ready':
+                pacing = self.maps[target].get('scheduler')
                 current = self._map_progress(target)
+                if pacing is not None and current is not None:
+                    pacing.sample()
+                    if (isinstance(pacing.report, dict) and pacing.report['changed_threads']
+                            and not pacing.report.get('weighted_checkpoint_emitted')):
+                        pacing.report['weighted_checkpoint_emitted'] = True
+                        self._scheduler_observation('restored' if pacing.restored else 'weighted', pacing)
                 if result is not None and result[0] == 'prepared_map':
                     sample = parse_map_status(result[1], target)
                     if ready(sample, target) and self.live_progress(current):
+                        if pacing is not None:
+                            self._restore_preparation(pacing)
                         self.maps[target]['ready'] = True
                         logs = self.current_logs()
-                        prior = stock_ready(logs, target, 0, now_ms)
-                        pending.update(phase='ready', ready_utc_ms=now_ms, destination_status=sample,
-                                       prior_ready_hashes=[prior['line_sha256']] if prior else [])
+                        ready_now_ms = int(time.time() * 1000)
+                        require(time.monotonic() < pending['deadline'],
+                                'Preparation exhausted its budget before scheduler restoration')
+                        prior = stock_ready(logs, target, 0, ready_now_ms)
+                        pending.update(phase='ready', ready_utc_ms=ready_now_ms, destination_status=sample,
+                            prior_ready_hashes=[prior['line_sha256']] if prior else [],
+                            preparation_ready_utc_ms=ready_now_ms,
+                            preparation_elapsed_ms=ready_now_ms - pending['requested_utc_ms'])
+                        self.zoning_report.setdefault('preparations', []).append({key: pending[key]
+                            for key in ('epoch', 'from_map_id', 'to_map_id', 'requested_utc_ms',
+                                'preparation_started_utc_ms', 'preparation_ready_utc_ms',
+                                'preparation_elapsed_ms', 'preparation_kind')})
                         self._emit('ready', current_map_verified=True, destination_ready=True,
                                    mapserver_pid=current['windows_pid'])
                         return
@@ -590,6 +727,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     pending['next_query'] = now + 10
                     self._query_start(['-getstatus', '1', str(target)], 'prepared_map')
         except (base.DiagnosticError, OSError, ValueError, KeyError, TypeError) as failure:
+            if self.pending is not None:
+                pacing = self.maps.get(self.pending['to_map_id'], {}).get('scheduler')
+                if pacing is not None:
+                    # Restoration failure deliberately escapes this recoverable
+                    # preparation branch: never publish ready for weighted tasks.
+                    self._restore_preparation(pacing)
             uncertain = unseen_delivery or bool(self.pending and self.pending.get('transfer_requested'))
             self.zoning_report['failure'] = {'message': str(failure)[:300], 'transfer_requested': uncertain}
             self._emit('failed', message=str(failure)[:300], transfer_requested=uncertain,
@@ -617,6 +760,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def collect(self, target):
         super().collect(target)
+        self.zoning_report['console_scan_work'] = {
+            'destination_bytes': sum(row.get('console_bytes_scanned', 0) for row in self.maps.values()),
+            'active_bytes': sum(row.get('console_bytes_scanned', 0)
+                for row in getattr(self, '_active_console_scans', {}).values()),
+            'retained_overlap_bytes_per_sample': 64, 'full_decode_only_on_crash_or_export': True}
         for map_id, owned in self.maps.items():
             if owned['process'] is self.map_process:
                 continue

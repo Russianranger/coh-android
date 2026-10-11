@@ -16,6 +16,7 @@ JAVA = ROOT / 'android/interactive/src/main/java/io/github/russianranger/cohclie
 
 RUNTIME_HOST = r'''
 import java.io.*;
+import io.github.russianranger.cohclientinteractive.ClientReports;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -42,12 +43,12 @@ class DiagnosticRuntime {
 }
 class OwnedRuntime {
     static boolean operationActive;static String scenario;static Object setupFinalizationOwner,storageOwner;
-    boolean operationOwned,finished,inputReady=true,cancelled;
-    Context context=new Context();Object setupReservation;File work,operationDir,latestReport;
+    boolean operationOwned,finished,inputReady=true,cancelled,automaticTravel;
+    Context context=new Context();Object setupReservation;File work,home,operationDir,latestReport;
     String operation,session,runId,error;long startedUptime,endedUptime;
     DiagnosticRuntime installer;
-    ExecutorService inputWorker=Executors.newSingleThreadExecutor();
-    OwnedRuntime(File root){work=new File(root,"client");work.mkdirs();}
+    ExecutorService inputWorker=Executors.newSingleThreadExecutor(),checkpointWorker=Executors.newSingleThreadExecutor();
+    OwnedRuntime(File root){home=new File(root,"m2");work=new File(root,"client");work.mkdirs();}
     static boolean cleanupBlocked(Object context){return false;}
     static final String BLOCK_MESSAGE="blocked";
     static class Result {
@@ -94,8 +95,9 @@ public class SetupOwnerHost {
             OwnedRuntime.Result result=runtime.setup();
             need(result.passed!=args[0].equals("installer_exception"),"setup result differs");
         } catch(IOException|OutOfMemoryError expected){failed=true;}
-        boolean expectedFailure=args[0].endsWith("oom")||args[0].equals("publish_exception")||args[0].equals("other_owner")||args[0].equals("pointer_rollback");
+        boolean expectedFailure=args[0].endsWith("oom")||args[0].equals("publish_exception")||args[0].equals("other_owner");
         need(failed==expectedFailure,"failure did not reach boundary");
+        if(args[0].equals("pointer_rollback"))need(Arrays.equals(sentinel,Files.readAllBytes(runtime.work.toPath().resolve("latest-report.txt/keep"))),"previous report pointer was retired before replacement");
         need(OwnedRuntime.operationActive==args[0].equals("other_owner"),"wrong owner lock release");
         need(!runtime.operationOwned&&runtime.installer==null,"setup owner retained");
         if(args[0].equals("reservation_owner")) {
@@ -333,7 +335,7 @@ class SetupServiceTests(unittest.TestCase):
             file = directory/(name+'.java')
             file.write_text(contents)
             result = subprocess.run(['java', '-m', 'jdk.compiler/com.sun.tools.javac.Main', '--release', '8',
-                                     '-d', str(directory), str(file)], capture_output=True, text=True)
+                                     '-d', str(directory), str(ROOT/'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java'), str(file)], capture_output=True, text=True)
             if result.returncode:
                 raise AssertionError(result.stderr)
             cls.fixtures[key] = (directory, name)
@@ -356,7 +358,7 @@ class SetupServiceTests(unittest.TestCase):
     def test_success_optional_telemetry_and_io_failures_release_owner(self):
         self.scenarios('owner', 'success', 'installer_exception', 'receipt_exception', 'publish_exception')
 
-    def test_rejected_begin_preserves_other_owner_and_pointer_rollback_is_closed(self):
+    def test_rejected_begin_preserves_owner_and_previous_pointer_survives_until_replacement(self):
         self.scenarios('owner', 'other_owner', 'pointer_rollback', 'reservation_owner')
 
     def test_service_setup_and_cancellation_record_terminal_status_and_release_resources(self):

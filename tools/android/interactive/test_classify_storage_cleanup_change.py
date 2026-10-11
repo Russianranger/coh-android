@@ -12,6 +12,40 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_client_recovery_reuses_completed_native_work_but_refuses_unreviewed_payload_changes(self):
+        from classify_interactive_change import runtime_required
+        historical=(change.task_required,change.cleanup_required,change.recovery_required,
+            change.receipt_required,change.schedule_required,change.setup_required,
+            change.bundle_required,change.visual_required,change.loading_required,
+            change.streaming_required,change.asset_closure_required,change.startup_followup_required,
+            change.levelup_ui_repair_required,change.reopen_startup_repair_required,
+            change.ui_beacon_required,runtime_required)
+        for names in (sorted(change.CLIENT_RECOVERY_ALLOWED), sorted(change.CLIENT_RECOVERY_DOCS)):
+            self.assertTrue(change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names))
+            for function in historical:
+                self.assertFalse(function('push','a'*40,'b'*40,'a'*40,names),function.__name__)
+                for foreign in ('android/guest/native_character_events.py',
+                        'android/guest/native_responsiveness_contract.py',
+                        'assets/client-runtime.zip','assets/atlas-world-supplement-manifest.json',
+                        'upstream/ouroboros/Game/src/render/thread/rt_queue.c',
+                        'patches/character-events/0001-events.patch','unreviewed.py'):
+                    self.assertTrue(function('push','a'*40,'b'*40,'a'*40,names+[foreign]),function.__name__)
+
+    def test_client_recovery_requires_explicit_owner_and_single_commit_history(self):
+        marker='tools/android/interactive/build_client_recovery_apk.py'
+        shared=['android/guest/local_character_server.py',change.JAVA+'ClientRuntime.java']
+        for name in shared:
+            self.assertFalse(change.client_recovery_push('push','a'*40,'b'*40,'a'*40,[name]))
+            self.assertTrue(change.client_recovery_push('push','a'*40,'b'*40,'a'*40,[name,marker]))
+        names=sorted(change.CLIENT_RECOVERY_ALLOWED)
+        for event,before,head,parent in (('workflow_dispatch','a'*40,'b'*40,'a'*40),
+                ('push','c'*40,'b'*40,'a'*40),('push','0'*40,'b'*40,'0'*40),
+                ('push','a'*40,'a'*40,'a'*40),('push','a'*40,'b'*40,None)):
+            self.assertFalse(change.client_recovery_owned(event,before,head,parent,names))
+        self.assertFalse(change.client_recovery_docs('push','a'*40,'b'*40,'a'*40,['docs/HANDOFF.md']))
+        self.assertFalse(change.client_recovery_docs('push','a'*40,'b'*40,'a'*40,
+            sorted(change.CLIENT_RECOVERY_DOCS)+['docs/android-evidence/zoning-0.13.26-unreviewed.json']))
+
     def test_zoning_reuses_completed_native_work_but_refuses_unreviewed_payload_changes(self):
         from classify_interactive_change import runtime_required
         historical=(change.task_required,change.cleanup_required,change.recovery_required,
@@ -855,7 +889,7 @@ class StorageRoutingTests(unittest.TestCase):
             names.update(subprocess.check_output(['git', 'diff', '--name-only', '-z', 'HEAD^', 'HEAD'], cwd=root).decode().split('\0'))
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
-        allowed = change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        allowed = change.CLIENT_RECOVERY_ALLOWED if change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

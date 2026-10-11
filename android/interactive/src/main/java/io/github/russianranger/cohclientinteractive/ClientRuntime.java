@@ -18,6 +18,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.RejectedExecutionException;
@@ -104,7 +106,17 @@ public final class ClientRuntime {
     private volatile boolean performanceCommandPending;
     private long performanceCommandGeneration;
     private final ClientZoning zoning = new ClientZoning();
+    private volatile boolean uiVisible, automaticTravel;
+    private long zoningDepartureDeadlineUtc;
+    private final List<Map<String,Object>> zoningTimings = new ArrayList<>();
+    private final ExecutorService checkpointWorker = Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.atomic.AtomicReference<byte[]> pendingCheckpoint = new java.util.concurrent.atomic.AtomicReference<>();
+    private final java.util.concurrent.atomic.AtomicBoolean checkpointQueued = new java.util.concurrent.atomic.AtomicBoolean();
+    private volatile String checkpointFailure;
+    private final List<String> checkpointPngs = new ArrayList<>();
     private final List<Map<String,Object>> zoningEvents = new ArrayList<>();
+    private final List<Map<String,Object>> zoningPreparationObservations = new ArrayList<>();
+    private boolean zoningPreparationObservationLimitReached;
     private final List<Map<String,Object>> zoningSamples = new ArrayList<>();
     private final List<byte[]> zoningPngs = new ArrayList<>();
     private volatile long inputSent, inputFailed, readyDeadlineUptimeMillis;
@@ -147,6 +159,7 @@ public final class ClientRuntime {
             home = new File(files, "m2"); work = new File(files, "client");
             state = new File(work, "state");
             work.mkdirs();
+            initializeReportStorage();
             initializeGuard(this.context);
             File pointer = new File(work, "latest-report.txt");
             if (pointer.isFile()) {
@@ -315,20 +328,21 @@ public final class ClientRuntime {
             operationActive = true;
             operationOwned = true;
         }
+        try { ClientReports.recoverAll(home.getParentFile()); }
+        catch(IOException failure) {
+            synchronized(ClientRuntime.class){operationActive=false;operationOwned=false;}
+            throw failure;
+        }
         operation = kind; session = selectedSession;
         runId = System.currentTimeMillis() + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         operationDir = new File(work, "reports/" + runId); operationDir.mkdirs();
         startedUptime = SystemClock.uptimeMillis();
-        latestReport = null;
-        File pointer = new File(work, "latest-report.txt");
-        if (pointer.exists() && !pointer.delete()) {
-            synchronized (ClientRuntime.class) { operationActive = false; operationOwned = false; }
-            throw new IOException("Cannot invalidate the previous support report");
-        }
+        // A replacement report is not authoritative until its ZIP is committed.
+        // Keep the previous report discoverable even if this attempt is interrupted.
         recordLifecycle("operation_" + kind + "_started");
     }
     private void endOperation() {
-        try { finished = true; inputReady = false; inputWorker.shutdownNow(); }
+        try { finished = true; inputReady = false; automaticTravel=false; inputWorker.shutdownNow(); checkpointWorker.shutdown(); }
         finally { synchronized (ClientRuntime.class) {
             if (operationOwned) { operationActive = false; operationOwned = false; }
         } }
@@ -458,19 +472,19 @@ public final class ClientRuntime {
             imported = importer().inspect();
             if (imported == null) throw new IOException("Import the pinned Atlas assets before starting the client");
             state.mkdirs();
-            removePreviousGuestOutput();
             File tmp = new File(operationDir, "tmp"); tmp.mkdirs();
             File guestHosts = new File(operationDir, "hosts");
             write(guestHosts, localHosts(android.system.Os.uname().nodename).getBytes(StandardCharsets.US_ASCII));
             File prootTmp = new File(home.getParentFile(), "p").getCanonicalFile(); prootTmp.mkdirs();
-            File socketDir = new File(home.getParentFile(), "s").getCanonicalFile(); socketDir.mkdirs();
-            android.system.Os.chmod(socketDir.getPath(), 0700);
+            File socketDir = new File(home.getParentFile(), "s");
             File socketFile = new File(socketDir, "view.sock");
             if (prootTmp.getPath().getBytes(StandardCharsets.UTF_8).length + 27 > 107
                     || socketFile.getPath().getBytes(StandardCharsets.UTF_8).length > 106)
                 throw new IOException("Private app path is too long for local display sockets");
-            if (Files.exists(socketFile.toPath(), java.nio.file.LinkOption.NOFOLLOW_LINKS))
-                throw new IOException("A previous private display socket remains. Export the report before running another check.");
+            if (ClientSocketRecovery.prepare(context, home.getParentFile()))
+                recordLifecycle("dead_owned_display_socket_recovered");
+            ClientReports.preservePrevious(home.getParentFile());
+            removePreviousGuestOutput();
             File root = new File(generation, "rootfs"); new File(root, "presentation-socket").mkdirs();
             new File(root, "game-import").mkdirs();
             String nativeDir = context.getApplicationInfo().nativeLibraryDir;
@@ -662,29 +676,118 @@ public final class ClientRuntime {
         return reopen && manifest!=null && Boolean.TRUE.equals(manifest.opt("character_zoning_enabled"))
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
-    public String zoningStatus() {
+    public synchronized String zoningStatus() {
         if(!zoningEnabled())return "Atlas instance zoning becomes available after runtime update and Reopen.";
         if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
         if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
-        String phase=zoning.phase();
-        if("idle".equals(phase))return ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested";
-        if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())+" · you may keep playing";
-        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+" ready · tap Travel when ready";
-        if("capturing".equals(phase))return "Native arrival verified · collecting fresh view "+zoning.captures()+"/3";
+        String phase=zoning.phase();String elapsed="";
+        if(!zoningTimings.isEmpty()) {
+            Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
+            long duration=timing.containsKey("total_elapsed_ms")?((Number)timing.get("total_elapsed_ms")).longValue():Math.max(0,SystemClock.uptimeMillis()-((Number)timing.get("request_uptime_ms")).longValue());
+            elapsed=" · "+(duration/1000)+"s total";
+        }
+        if("idle".equals(phase))return ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested"+elapsed;
+        if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())
+                +(automaticTravel?" · travel follows automatically; stay in this app":" · automatic travel paused; tap Travel when ready")+elapsed;
+        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+" ready · tap Travel to continue";
+        if("capturing".equals(phase))return "Native arrival verified · collecting fresh view "+zoning.captures()+"/3"+elapsed;
         if("prepare_failed".equals(phase))return "Destination preparation failed · current map remains available; Save or export";
         if("failed".equals(phase))return "Transfer not verified · Abort and export; Reopen preserves the saved map";
-        return "Travelling to "+ClientZoning.name(zoning.targetMap())+" · awaiting native arrival";
+        return "Travelling to "+ClientZoning.name(zoning.targetMap())+" · awaiting native arrival"+elapsed;
     }
     private boolean zoningRecoveryAllowed(){
         return !zoningEnabled() || (zoning.enabled() && zoning.epoch()==0 && zoning.currentMap()==1);
     }
     public int zoningCurrentMap(){return zoning.currentMap();}
+    public synchronized void setUiVisible(boolean visible) {
+        uiVisible=visible;
+        if(!visible && automaticTravel){automaticTravel=false;if(!zoningTimings.isEmpty())zoningTimings.get(zoningTimings.size()-1).put("automatic_travel_cancelled_background",true);recordLifecycle("zoning_automatic_travel_cancelled_background");}
+    }
+    public synchronized boolean canRequestZoning(){return canPrepareZoning()||canTravelZoning();}
+    /** One user action covers preparation, native transfer and fresh destination views. */
+    public synchronized boolean requestZoning() {
+        if(!uiVisible || cancelled || finishRequested || !canRequestZoning())return false;
+        if(canTravelZoning()){
+            if(!zoningTimings.isEmpty()){Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);timing.put("user_actions",((Number)timing.get("user_actions")).intValue()+1);}
+            recordLifecycle("zoning_travel_resume_requested epoch="+zoning.epoch());return requestTravelZoning();
+        }
+        automaticTravel=true;
+        if(!requestPrepareZoning()){automaticTravel=false;return false;}
+        return true;
+    }
+    private synchronized void dispatchPreparedZoning() {
+        if(!"ready".equals(zoning.phase()) || !automaticTravel)return;
+        automaticTravel=false;
+        if(uiVisible && !cancelled && !finishRequested && canTravelZoning())requestTravelZoning();
+        else recordLifecycle("zoning_automatic_travel_cancelled_gate");
+    }
+    private void markZoningTime(String point) {
+        if(zoningTimings.isEmpty())return;
+        Map<String,Object> timing=zoningTimings.get(zoningTimings.size()-1);
+        if(!Integer.valueOf(zoning.epoch()).equals(timing.get("epoch")))return;
+        long now=SystemClock.uptimeMillis();
+        timing.put(point+"_uptime_ms",now);
+        timing.put("request_to_"+point+"_ms",Math.max(0,now-((Number)timing.get("request_uptime_ms")).longValue()));
+        if("fresh_views".equals(point))timing.put("total_elapsed_ms",Math.max(0,now-((Number)timing.get("request_uptime_ms")).longValue()));
+    }
+    private static long preparationInteger(Object value){return value instanceof Integer||value instanceof Long?((Number)value).longValue():Long.MIN_VALUE;}
+    private static boolean nativePreparationStage(String value){
+        return value.matches("INITIALIZED|STARTUP|MAP_LOAD|DB_SETUP|READY_PUBLISH|READY_PUBLISHED|RUNTIME_PRIORITY|RUNTIME_PRIORITY_DONE|HEAP_VALIDATE|HEAP_VALIDATED|SG_VERIFY|SG_VERIFIED|CALLBACKS_ENABLE|CALLBACKS_ENABLED|RANDOM_SEED|ITEM_POWER_REQUEST|ITEM_POWER_REQUESTED|ERROR_QUEUE_DRAIN|ERROR_QUEUE_DRAINED|READY_STDOUT|LAUNCHER_CONTACT|LATE_STARTUP_DONE|LOOP_PRE_TICK|TICK_BEGIN|TICK_TOP|DB_COMM|DB_COMM_DONE|FOLDER_CALLBACKS|FOLDER_CALLBACKS_DONE|TICK_TOP_DONE|ENTITY_UPDATE|GAME_LOGIC|TICK_BOTTOM|TICK_DONE|LOOP_POST_TICK|SLEEP|SLEEP_DONE|COMPLETED_TICK");
+    }
+    /** Sparse observed stages survive interruption; they never advance transfer/save state. */
+    private synchronized boolean recordZoningPreparation(Map<?,?> event) {
+        long observed=preparationInteger(event.get("observed_utc_ms")),mono=preparationInteger(event.get("observed_monotonic_ms"));
+        long now=System.currentTimeMillis();
+        if(!zoningEnabled()||session==null||!session.equals(event.get("session_id"))||observedClientPid<=0
+                ||!"character_zoning_preparation".equals(event.get("type"))
+                ||preparationInteger(event.get("client_pid"))!=observedClientPid||preparationInteger(event.get("character_id"))!=1
+                ||zoning.epoch()<1||preparationInteger(event.get("epoch"))!=zoning.epoch()
+                ||preparationInteger(event.get("map_id"))!=zoning.targetMap()||zoningTimings.isEmpty()
+                ||observed<((Number)zoningTimings.get(zoningTimings.size()-1).get("request_utc_ms")).longValue()
+                ||observed>now+1000||now-observed>120000||mono<0)return false;
+        Map<String,Object> row=new LinkedHashMap<>();
+        for(String key:new String[]{"type","session_id","client_pid","character_id","epoch","map_id","observed_utc_ms","observed_monotonic_ms"})row.put(key,event.get(key));
+        String kind=event.containsKey("observation_kind")?String.valueOf(event.get("observation_kind")):"native_stage";
+        row.put("observation_kind",kind);row.put("native_arrival_verified",false);
+        if("native_stage".equals(kind)) {
+            Object stage=event.get("stage");long pid=preparationInteger(event.get("windows_pid")),tick=preparationInteger(event.get("tick_completed"));
+            if(!(stage instanceof String)||!nativePreparationStage((String)stage)||pid<=0||tick<0
+                    ||!Boolean.FALSE.equals(event.get("native_stage_duration_measured")))return false;
+            row.put("stage",stage);row.put("windows_pid",pid);row.put("tick_completed",tick);row.put("native_stage_duration_measured",false);
+        }else if("scheduler".equals(kind)) {
+            Object phase=event.get("scheduler_phase"),capability=event.get("capability");
+            if(!Arrays.asList("capability","weighted","restored").contains(phase)||!(capability instanceof Map)
+                    ||!(((Map<?,?>)capability).get("supported") instanceof Boolean)
+                    ||!(event.get("restore_complete") instanceof Boolean)||!Boolean.TRUE.equals(event.get("exact_destination_only"))
+                    ||!Boolean.FALSE.equals(event.get("physical_performance_gain_verified")))return false;
+            row.put("scheduler_phase",phase);Map<String,Object> small=new LinkedHashMap<>();
+            small.put("supported",((Map<?,?>)capability).get("supported"));
+            for(String key:new String[]{"original_nice","lowered_nice","restored_nice","rlimit_nice_soft","rlimit_nice_hard","errno"}){
+                Object value=((Map<?,?>)capability).get(key);if(value!=null){long number=preparationInteger(value);if(number==Long.MIN_VALUE)return false;small.put(key,number);}
+            }
+            for(String key:new String[]{"reason","error_type"}){
+                Object value=((Map<?,?>)capability).get(key);if(value!=null){if(!(value instanceof String)||!((String)value).matches("[A-Za-z0-9_]{1,80}"))return false;small.put(key,value);}
+            }
+            row.put("capability",small);
+            for(String key:new String[]{"changed_threads","restored_threads","exited_threads"}){long count=preparationInteger(event.get(key));if(count<0||count>1000000)return false;row.put(key,count);}
+            row.put("restore_complete",event.get("restore_complete"));row.put("exact_destination_only",true);row.put("physical_performance_gain_verified",false);
+        }else return false;
+        if(!zoningPreparationObservations.isEmpty()){
+            Map<String,Object> previous=zoningPreparationObservations.get(zoningPreparationObservations.size()-1);
+            if(preparationInteger(previous.get("epoch"))==zoning.epoch()
+                    && (observed<preparationInteger(previous.get("observed_utc_ms"))||mono<preparationInteger(previous.get("observed_monotonic_ms"))))return false;
+            if(previous.equals(row))return false;
+        }
+        if(zoningPreparationObservations.size()>=128){if(!zoningPreparationObservationLimitReached){zoningPreparationObservationLimitReached=true;checkpoint();}return false;}
+        zoningPreparationObservations.add(row);checkpoint();return true;
+    }
     public synchronized boolean canPrepareZoning() {
         return zoningEnabled() && !stuckRequested && zoning.canPrepare() && canSendPerformanceCommand()
                 && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
     }
     public synchronized boolean canTravelZoning() {
         return zoningEnabled() && !stuckRequested && zoning.canTravel() && canSendPerformanceCommand()
+                && zoningDepartureDeadlineUtc>System.currentTimeMillis()
                 && sessionBudget.movementDeadline()-SystemClock.uptimeMillis()>60000;
     }
     private JSONObject zoningRequest(String action,long stamp) throws Exception {
@@ -697,13 +800,19 @@ public final class ClientRuntime {
         if(!canPrepareZoning())return false;
         long utc=System.currentTimeMillis();
         if(!zoning.prepare(utc))return false;
+        zoningDepartureDeadlineUtc=0;
+        Map<String,Object> timing=new LinkedHashMap<>();timing.put("epoch",zoning.epoch());
+        timing.put("request_utc_ms",utc);timing.put("request_uptime_ms",SystemClock.uptimeMillis());
+        timing.put("from_map_id",zoning.currentMap());timing.put("to_map_id",zoning.targetMap());
+        timing.put("one_action_requested",automaticTravel);timing.put("user_actions",1);zoningTimings.add(timing);
         try { write(new File(state,"character-zoning-request.json"),zoningRequest("prepare",utc).toString().getBytes(StandardCharsets.UTF_8)); }
         catch(Exception failed){zoning.fail();recordLifecycle("zoning_prepare_request_failed");notifyInputState();return false;}
         recordLifecycle("zoning_prepare_requested epoch="+zoning.epoch());
         stage("Preparing destination",zoningStatus());notifyInputState();return true;
     }
     public synchronized boolean requestTravelZoning() {
-        if(!canTravelZoning())return false;
+        if(!uiVisible || !canTravelZoning())return false;
+        automaticTravel=false;
         final String selectedSession=session;final long selectedPid=observedClientPid;
         final int selectedEpoch=zoning.epoch(),target=zoning.targetMap();
         final long token=++performanceCommandGeneration;
@@ -712,7 +821,8 @@ public final class ClientRuntime {
         boolean queued=queueInput(selectedSession,(active,inputEpoch)->{
             synchronized(ClientRuntime.this){
                 if(!zoning.commandInFlight()||zoning.epoch()!=selectedEpoch||observedClientPid!=selectedPid
-                        ||!selectedSession.equals(session)||saveLogoutRequested||!sessionBudget.canMove(SystemClock.uptimeMillis()))
+                        ||!selectedSession.equals(session)||!uiVisible||saveLogoutRequested
+                        ||zoningDepartureDeadlineUtc<=System.currentTimeMillis()||!sessionBudget.canMove(SystemClock.uptimeMillis()))
                     throw new InteractiveRfbClient.InputCancelledException();
             }
             active.sendMapMove(target,inputEpoch);
@@ -721,6 +831,7 @@ public final class ClientRuntime {
                     long sent=System.currentTimeMillis();JSONObject receipt=zoningRequest("mapmove",sent);
                     if(!zoning.delivered(sent))throw new IOException("Zoning command ownership changed");
                     write(new File(state,"character-zoning-delivery.json"),receipt.toString().getBytes(StandardCharsets.UTF_8));
+                    markZoningTime("delivery");
                     recordLifecycle("zoning_mapmove_delivered epoch="+selectedEpoch+" native_arrival_verified=false");
                     stage("Travelling",zoningStatus());
                 }catch(Exception failure){zoning.fail();throw new IOException("Could not record completed zoning delivery",failure);}
@@ -1252,7 +1363,11 @@ public final class ClientRuntime {
                 zoned.put("epoch",zoning.epoch());zoned.put("map_id",zoning.currentMap());
                 zoned.put("post_native_arrival_frame_observed",true);
                 zoningSamples.add(zoned);zoningPngs.add(png.clone());
-                if(zoning.captures()==3) {stage("Destination view captured",zoningStatus()+" · movement available; prepare the other instance to return");notifyInputState();}
+                if(zoning.captures()==3) {
+                    markZoningTime("fresh_views");retainCheckpointPng(zoned,zoningPngs.get(zoningPngs.size()-1));
+                    recordLifecycle("zoning_fresh_views_verified epoch="+zoning.epoch());
+                    stage("Destination view captured",zoningStatus()+" · movement available");notifyInputState();
+                }
             }
             if(acceptedTaskSample || completedTaskSample) {
                 boolean completed=completedTaskSample;
@@ -1306,9 +1421,10 @@ public final class ClientRuntime {
                 connectedSamples.add(connected); connectedPngs.add(png.clone());
                 if (connectedSamples.size() == 3) {
                     connectedCapturedReady = true;
+                    retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                         stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
-                    else if(zoningEnabled())stage("Ready for Atlas instance zoning","Prepare the other Atlas instance, then Travel when ready. Both destinations use the same Atlas Park scene. Keep current graphics settings. Return before the movement cutoff, then use ordinary Save and Finish.");
+                    else if(zoningEnabled())stage("Ready for Atlas instance zoning","Tap Travel once to prepare and enter the other Atlas instance. Both use the same Atlas Park scene. Keep current graphics settings; use ordinary Save and Finish before the session cutoff.");
                     else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
@@ -1333,6 +1449,7 @@ public final class ClientRuntime {
                 characterSamples.add(saved); characterPngs.add(png.clone());
                 if (characterSamples.size() == 3) {
                     characterSavedReady = true;
+                    retainCheckpointPng(saved,characterPngs.get(characterPngs.size()-1));recordLifecycle("character_saved_views_verified");
                     stage("Saved character verified", "THORHERO was committed to the local database and three fresh Android views were captured. Tap Finish and save report.");
                     notifyInputState();
                 }
@@ -1366,6 +1483,54 @@ public final class ClientRuntime {
         entry.put("event", clean(event)); entry.put("uptime_ms", SystemClock.uptimeMillis());
         if (session != null) entry.put("session_id", session);
         lifecycle.add(entry);
+        if(event.startsWith("operation_") || event.startsWith("character_") || event.startsWith("zoning_")
+                || event.startsWith("ordinary_character_") || event.startsWith("interaction_finish")
+                || event.startsWith("activity_visible="))checkpoint();
+    }
+    private static final ClientReports.IdentityReader REPORT_IDENTITIES=file->{
+        try {
+            android.system.StructStat stat=android.system.Os.lstat(file.getPath());
+            if(!android.system.OsConstants.S_ISREG(stat.st_mode))throw new IOException("Report is not a regular file");
+            return new ClientReports.FileIdentity(stat.st_nlink,stat.st_dev+":"+stat.st_ino);
+        }catch(android.system.ErrnoException failure){throw new IOException("Could not verify report identity",failure);}
+    };
+    static void initializeReportStorage(){ClientReports.setIdentityReader(REPORT_IDENTITIES);}
+    /** Small phase records contain identities and observations, never account credentials. */
+    private synchronized void checkpoint() {
+        if(operationDir==null || checkpointWorker.isShutdown())return;
+        try {
+            JSONObject evidence=new JSONObject().put("format",1).put("operation",operation).put("run_id",runId)
+                .put("session_id",session==null?JSONObject.NULL:session).put("app_version",appVersion())
+                .put("runtime_manifest_sha256",manifestHash).put("client_pid",observedClientPid)
+                .put("started_uptime_ms",startedUptime).put("checkpoint_uptime_ms",SystemClock.uptimeMillis())
+                .put("checkpoint_utc_ms",System.currentTimeMillis()).put("passed",false).put("interrupted_unverified",true)
+                .put("finish_requested",finishRequested).put("save_logout_requested",saveLogoutRequested)
+                .put("character_saved_views_observed",characterSavedReady).put("character_connected_event",characterConnectedEvent)
+                .put("character_saved_event",characterSavedEvent).put("zoning_events",new JSONArray(zoningEvents))
+                .put("zoning_timings",new JSONArray(zoningTimings)).put("zoning_samples",new JSONArray(zoningSamples))
+                .put("zoning_preparation_observations",new JSONArray(zoningPreparationObservations))
+                .put("zoning_preparation_observation_limit_reached",zoningPreparationObservationLimitReached)
+                .put("connected_samples",new JSONArray(connectedSamples)).put("character_samples",new JSONArray(characterSamples))
+                .put("selected_png_paths",new JSONArray(checkpointPngs)).put("lifecycle",new JSONArray(lifecycle));
+            pendingCheckpoint.set(evidence.toString().getBytes(StandardCharsets.UTF_8));
+            scheduleCheckpoint();
+        }catch(Exception failure){checkpointFailure=failure.getClass().getSimpleName();}
+    }
+    private void scheduleCheckpoint() {
+        if(!checkpointQueued.compareAndSet(false,true))return;
+        try { checkpointWorker.execute(()->{
+            try { byte[] bytes;while((bytes=pendingCheckpoint.getAndSet(null))!=null)ClientReports.checkpoint(operationDir,bytes); }
+            catch(Exception failure){checkpointFailure=failure.getClass().getSimpleName();}
+            finally{checkpointQueued.set(false);if(pendingCheckpoint.get()!=null&&!checkpointWorker.isShutdown())scheduleCheckpoint();}
+        }); }catch(RejectedExecutionException ended){checkpointQueued.set(false);}
+    }
+    private void retainCheckpointPng(Map<String,Object> sample,byte[] png) {
+        String path=String.valueOf(sample.get("archive_path"));
+        if(checkpointPngs.size()>=6 || checkpointPngs.contains(path))return;
+        checkpointPngs.add(path);
+        final byte[] selected=png;
+        try {checkpointWorker.execute(()->{try{ClientReports.png(operationDir,path,selected);}catch(IOException failure){checkpointFailure=failure.getClass().getSimpleName();}});}
+        catch(RejectedExecutionException ended){checkpointFailure="checkpoint_worker_closed";}
     }
     private void check() throws InterruptedIOException {
         if (cancelled || Thread.currentThread().isInterrupted()) throw new InterruptedIOException("Client operation stopped");
@@ -1495,15 +1660,23 @@ public final class ClientRuntime {
                             stage("Character connected", reopen ? "The existing THORHERO connected to Atlas. Waiting for fresh Android views and the bounded session window before movement, contact interaction and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
+                        if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
                         if (zoningEnabled() && "character_zoning".equals(event.optString("type"))
                                 && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
                             synchronized(this) {
                                 if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
                                         characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames)) {
                                     zoningEvents.add((Map<String,Object>)jsonValue(event));
+                                    if("ready".equals(zoning.phase())) {
+                                        Object departure=event.opt("departure_deadline_utc_ms");
+                                        zoningDepartureDeadlineUtc=departure instanceof Long||departure instanceof Integer?((Number)departure).longValue():0;
+                                        markZoningTime("ready");
+                                    }
+                                    if("capturing".equals(zoning.phase()))markZoningTime("native_arrival");
                                     recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
                                     if("capturing".equals(zoning.phase()))requestContactFullUpdate();
                                     stage("Atlas instance zoning",zoningStatus());notifyInputState();
+                                    dispatchPreparedZoning();
                                 } else recordLifecycle("zoning_event_rejected");
                             }
                         }
@@ -1879,6 +2052,11 @@ public final class ClientRuntime {
     }
 
     private void publish(JSONObject guest, boolean passed, boolean cleanup) throws IOException {
+        checkpoint();checkpointWorker.shutdown();
+        try {if(!checkpointWorker.awaitTermination(10,TimeUnit.SECONDS))checkpointFailure="checkpoint_flush_timed_out";}
+        catch(InterruptedException interrupted){Thread.currentThread().interrupt();checkpointFailure="checkpoint_flush_interrupted";}
+        byte[] lastCheckpoint=pendingCheckpoint.getAndSet(null);
+        if(lastCheckpoint!=null)try{ClientReports.checkpoint(operationDir,lastCheckpoint);}catch(IOException failure){checkpointFailure=failure.getClass().getSimpleName();}
         try {
             JSONObject wrapper = new JSONObject().put("format", 1).put("operation", operation).put("run_id", runId)
                     .put("session_id", session == null ? JSONObject.NULL : session).put("app_id", context.getPackageName())
@@ -1889,6 +2067,7 @@ public final class ClientRuntime {
                     .put("abis", new JSONArray(Arrays.asList(Build.SUPPORTED_ABIS)))
                     .put("runtime_manifest_sha256", manifestHash).put("started_uptime_ms", startedUptime)
                     .put("finished_uptime_ms", endedUptime).put("process_exit_code", processExit)
+                    .put("checkpoint_error",checkpointFailure==null?JSONObject.NULL:checkpointFailure)
                     .put("passed", passed).put("android_surface_validated", passed).put("interaction_session_completed", passed)
                     .put("menu_visual_validated", false).put("cleanup_verified", cleanup)
                     .put("cleanup_blocked", isCleanupBlocked()).put("cancelled", cancelled)
@@ -1908,6 +2087,9 @@ public final class ClientRuntime {
                     .put("zoning",new JSONObject().put("enabled",zoningEnabled()).put("phase",zoning.phase()).put("epoch",zoning.epoch())
                         .put("current_map_id",zoning.currentMap()).put("target_map_id",zoning.targetMap())
                         .put("events",new JSONArray(zoningEvents)).put("samples",new JSONArray(zoningSamples))
+                        .put("android_timings",new JSONArray(zoningTimings))
+                        .put("preparation_observations",new JSONArray(zoningPreparationObservations))
+                        .put("preparation_observation_limit_reached",zoningPreparationObservationLimitReached)
                         .put("scope","Finite Atlas Park instance transfer; city geometry, portals and combat remain separate"))
                     .put("save_request_deadline_uptime_ms", sessionBudget.saveDeadline())
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())

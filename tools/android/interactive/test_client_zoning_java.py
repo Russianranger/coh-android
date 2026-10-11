@@ -161,10 +161,18 @@ class ClientZoningRuntimeTests(unittest.TestCase):
     def test_shipped_runtime_reservation_receipt_and_recovery_exclusion(self):
         import test_client_sidebar_runtime as sidebar
         source=(JAVA/'ClientRuntime.java').read_text()
+        self.assertIn('zoning_preparation_observations',sidebar.method(source,'private synchronized void checkpoint('))
+        self.assertIn('preparation_observations',sidebar.method(source,'private void publish('))
+        self.assertIn('recordZoningPreparation',sidebar.method(source,'private void captureOutput('))
         runtime=sidebar.harness()
         actual='\n'.join(sidebar.method(source,name) for name in (
-            'private boolean zoningEnabled(', 'public String zoningStatus(',
+            'private boolean zoningEnabled(', 'public synchronized String zoningStatus(',
             'private boolean zoningRecoveryAllowed(', 'public int zoningCurrentMap(',
+            'public synchronized void setUiVisible(', 'public synchronized boolean canRequestZoning(',
+            'public synchronized boolean requestZoning(', 'private void markZoningTime(',
+            'private synchronized void dispatchPreparedZoning(',
+            'private static long preparationInteger(', 'private static boolean nativePreparationStage(',
+            'private synchronized boolean recordZoningPreparation(',
             'public synchronized boolean canPrepareZoning(', 'public synchronized boolean canTravelZoning(',
             'private JSONObject zoningRequest(', 'public synchronized boolean requestPrepareZoning(',
             'public synchronized boolean requestTravelZoning('))
@@ -174,12 +182,17 @@ class ClientZoningRuntimeTests(unittest.TestCase):
         runtime=runtime.replace(' void requestFullUpdate()throws IOException {}', ' void sendMapMove(int map,long epoch)throws IOException {sendPerformanceCommand("mapmove "+map,epoch);}\n void requestFullUpdate()throws IOException {}')
         runtime=runtime.replace('  String zoningStatus(){return zoning.phase();}', '''
   JSONObject manifest=new JSONObject().put("character_zoning_enabled",true);
+  boolean uiVisible=true,automaticTravel;long zoningDepartureDeadlineUtc;
+  List<Map<String,Object>> zoningTimings=new ArrayList<>();
+  List<Map<String,Object>> zoningPreparationObservations=new ArrayList<>();
+  boolean zoningPreparationObservationLimitReached;int checkpoints;
+  void checkpoint(){checkpoints++;}
   File state=new File("/not-written-host-fixture");
   List<String> receipts=Collections.synchronizedList(new ArrayList<>());
   void write(File path,byte[] bytes){receipts.add(path.getName()+":"+new String(bytes,StandardCharsets.UTF_8));}
 ''' + actual)
         test=r'''
- static void zoningQueue()throws Exception {
+ static void zoningQueue(boolean resume) throws Exception {
   String owner="0123456789abcdef0123456789abcdef";
   ClientRuntime r=new ClientRuntime();r.world();r.session=owner;long now=System.currentTimeMillis();
   try {
@@ -188,22 +201,48 @@ class ClientZoningRuntimeTests(unittest.TestCase):
    enabled.put("status","enabled");enabled.put("generated_utc_ms",now-10);enabled.put("current_map_verified",true);enabled.put("zoning_enabled",true);
    require(r.zoning.accept(enabled,owner,17,1,now,10,1));require(r.zoningRecoveryAllowed());
    r.stuckRequested=true;r.relocationCapturedReady=true;require(!r.canPrepareZoning());require(r.zoningStatus().contains("Save and reopen"));r.stuckRequested=false;
-   require(r.requestPrepareZoning());require(r.receipts.size()==1&&r.receipts.get(0).startsWith("character-zoning-request.json:"));
-   require(!r.zoningRecoveryAllowed()&&!r.canPrepareZoning()&&!r.canTravelZoning());require(r.canRequestSaveLogout());require(r.canSendPerformanceCommand());
+   require(r.requestZoning());require(r.automaticTravel);require(r.receipts.size()==1&&r.receipts.get(0).startsWith("character-zoning-request.json:"));
+   require(!r.zoningRecoveryAllowed()&&!r.canPrepareZoning()&&!r.canTravelZoning());
+   Map<String,Object> observation=new LinkedHashMap<>();
+   observation.put("type","character_zoning_preparation");observation.put("session_id",owner);observation.put("client_pid",17);observation.put("character_id",1);
+   observation.put("epoch",1);observation.put("map_id",101);observation.put("observed_utc_ms",System.currentTimeMillis());observation.put("observed_monotonic_ms",100L);
+   observation.put("stage","MAP_LOAD");observation.put("windows_pid",91);observation.put("tick_completed",0);observation.put("native_stage_duration_measured",false);
+   observation.put("unreviewed_secret","must-not-retain");require(r.recordZoningPreparation(observation));require(r.checkpoints==1);
+   require(!r.recordZoningPreparation(observation)&&!r.zoningPreparationObservations.get(0).containsKey("unreviewed_secret"));
+   for(String field:new String[]{"session_id","client_pid","character_id","epoch","map_id","observed_utc_ms","observed_monotonic_ms","stage","windows_pid","tick_completed","native_stage_duration_measured"}){
+    Map<String,Object> invalid=new LinkedHashMap<>(observation);invalid.put(field,field.equals("session_id")?"other":field.equals("stage")?"FAKE_STAGE":field.equals("native_stage_duration_measured")?true:-1);
+    require(!r.recordZoningPreparation(invalid));
+   }
+   Map<String,Object> scheduler=new LinkedHashMap<>(observation);scheduler.put("observation_kind","scheduler");scheduler.put("scheduler_phase","capability");scheduler.put("capability",Collections.singletonMap("supported",false));
+   scheduler.put("changed_threads",0);scheduler.put("restored_threads",0);scheduler.put("exited_threads",0);scheduler.put("restore_complete",false);scheduler.put("exact_destination_only",true);scheduler.put("physical_performance_gain_verified",false);
+   require(r.recordZoningPreparation(scheduler));require(!r.zoningPreparationObservations.get(1).containsKey("stage"));
+   scheduler.put("physical_performance_gain_verified",true);require(!r.recordZoningPreparation(scheduler));
+   for(int i=0;i<126;i++){observation.put("observed_monotonic_ms",101L+i);observation.put("tick_completed",i);require(r.recordZoningPreparation(observation));}
+   observation.put("observed_monotonic_ms",1000L);require(!r.recordZoningPreparation(observation));require(r.zoningPreparationObservations.size()==128&&r.zoningPreparationObservationLimitReached);
+   require(r.zoning.phase().equals("preparing")&&!r.zoning.blocksInput());require(r.canRequestSaveLogout());require(r.canSendPerformanceCommand());
    Map<String,Object> ready=new LinkedHashMap<>(enabled);ready.put("epoch",1);ready.put("status","ready");ready.put("generated_utc_ms",System.currentTimeMillis()+1);ready.put("destination_ready",true);
-   require(r.zoning.accept(ready,owner,17,1,System.currentTimeMillis()+1,20,2));require(r.canTravelZoning());
-   r.decoder.hold=true;require(r.requestTravelZoning());require(r.decoder.entered.await(1,TimeUnit.SECONDS));
+   require(r.zoning.accept(ready,owner,17,1,System.currentTimeMillis()+1,20,2));require(!r.canTravelZoning());r.zoningDepartureDeadlineUtc=System.currentTimeMillis()+600000;require(r.canTravelZoning());
+   r.markZoningTime("ready");r.decoder.hold=true;
+   if(resume){
+    r.setUiVisible(false);require(!r.automaticTravel&&!r.requestZoning()&&!r.requestTravelZoning());
+    r.dispatchPreparedZoning();require(r.decoder.writes.isEmpty());
+    r.setUiVisible(true);require(!r.automaticTravel);require(r.requestZoning());
+   }else {r.dispatchPreparedZoning();require(!r.automaticTravel);}
+   require(r.decoder.entered.await(1,TimeUnit.SECONDS));
    require(r.isPerformanceCommandPending()&&!r.canRequestSaveLogout()&&!r.canSendPerformanceCommand());
    require(!r.queueInput(owner,(a,e)->a.writes.add("overlap"),true));require(r.receipts.size()==1);
    r.queueRelease(owner,true);require(r.zoning.commandInFlight());r.decoder.proceed.countDown();r.idle();
    require(r.receipts.size()==2&&r.receipts.get(1).startsWith("character-zoning-delivery.json:"));
    require(r.receipts.get(1).contains("client_pid=17")&&r.receipts.get(1).contains("epoch=1")&&r.receipts.get(1).contains("to_map_id=101"));
    require(r.zoning.phase().equals("transferring")&&!r.canRequestSaveLogout());require(!r.decoder.writes.contains("overlap"));
+   r.markZoningTime("native_arrival");r.markZoningTime("fresh_views");
+   Map<String,Object> timing=r.zoningTimings.get(0);require(timing.containsKey("request_to_ready_ms")&&timing.containsKey("request_to_delivery_ms")&&timing.containsKey("request_to_native_arrival_ms")&&timing.containsKey("total_elapsed_ms"));
+   require(((Number)timing.get("total_elapsed_ms")).longValue()>=((Number)timing.get("request_to_delivery_ms")).longValue());
   }finally{r.decoder.proceed.countDown();r.close();}
  }
 '''
         start=runtime.index(' public static void main(String[] args)throws Exception {')
-        runtime=runtime[:start]+test+' public static void main(String[] args)throws Exception {zoningQueue();System.out.println("PASS runtime zoning");}\n}\n'
+        runtime=runtime[:start]+test+' public static void main(String[] args)throws Exception {zoningQueue(false);zoningQueue(true);System.out.println("PASS runtime zoning");}\n}\n'
         with tempfile.TemporaryDirectory(prefix='coh-zoning-runtime-') as temp:
             host=Path(temp)/'SidebarRuntimeHost.java';host.write_text(runtime)
             subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',temp,

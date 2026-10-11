@@ -148,6 +148,58 @@ class ReceiptTests(unittest.TestCase):
                 zoning.read_request(path)
 
 
+class PreparationObservationTests(unittest.TestCase):
+    def test_budget_reserves_full_cold_preparation_arrival_and_ordinary_save(self):
+        window = zoning.travel_window(2000, 100, NOW, 600)
+        self.assertEqual(window['departure_deadline_utc_ms'], NOW + 1480000)
+        self.assertEqual(window['session_deadline_utc_ms'], NOW + 1900000)
+        self.assertFalse(window['session_budget_extended'])
+        for deadline in (None, float('inf'), True, 1120, 1119):
+            with self.subTest(deadline=deadline), self.assertRaises(ERROR):
+                zoning.travel_window(deadline, 100, NOW, 600)
+        self.assertEqual(zoning.travel_window(1000, 100, NOW, 90)['preparation_budget_seconds'], 90)
+
+    def test_static_console_work_is_bounded_and_retains_every_split_crash_marker(self):
+        for marker in (b'Program crash detected', b'Exception caught: EXCEPTION_ACCESS_VIOLATION'):
+            for split in range(1, len(marker)):
+                process = SimpleNamespace(output=bytearray(b'x' * 133000))
+                owned = {'process': process}
+                zoning.scan_new_console(owned)
+                for _ in range(20):
+                    zoning.scan_new_console(owned)
+                self.assertEqual(owned['console_bytes_scanned'], 133000 + 20*64)
+                process.output.extend(marker[:split])
+                if b'Program crash detected' in marker[:split] or b'EXCEPTION_A' in marker[:split]:
+                    with self.assertRaises(ERROR): zoning.scan_new_console(owned)
+                else:
+                    zoning.scan_new_console(owned)
+                process.output.extend(marker[split:])
+                with self.subTest(marker=marker, split=split), self.assertRaises(ERROR):
+                    zoning.scan_new_console(owned)
+
+    def test_incremental_active_console_decodes_only_on_crash_with_retained_proof(self):
+        instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
+        process = Mock()
+        process.output = bytearray('unchanged utf8 é '.encode() * 1000)
+        process.text.side_effect = lambda: bytes(process.output).decode()
+        instance.map_process = process
+        for _ in range(20):
+            self.assertIsNone(instance.map_crash_observation())
+        process.text.assert_not_called()
+        process.output.extend(b'Program crash detected')
+        evidence = instance.map_crash_observation()
+        process.text.assert_called_once()
+        self.assertEqual(evidence['marker'], 'Program crash detected')
+        self.assertEqual(evidence['console_sha256'], zoning.hashlib.sha256(bytes(process.output)).hexdigest())
+
+    def test_console_truncation_is_never_treated_as_clean_history(self):
+        process = SimpleNamespace(output=bytearray(b'known console'))
+        owned = {'process': process}
+        zoning.scan_new_console(owned)
+        process.output.clear()
+        with self.assertRaises(ERROR): zoning.scan_new_console(owned)
+
+
 class NativeEvidenceTests(unittest.TestCase):
     def test_ready_binds_exact_instance_character_account_route_and_time(self):
         good = resume()
@@ -217,12 +269,13 @@ class ZoningServerTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         instance = zoning.LocalCharacterZoningServer.__new__(zoning.LocalCharacterZoningServer)
         instance.owner = SimpleNamespace(args=SimpleNamespace(state=Path(temporary.name), session_id=SESSION))
+        instance.owner.session_budget = SimpleNamespace(deadline=time.monotonic() + 2000)
         instance.ctx = SimpleNamespace(event=Mock(), report={'client_launch': {'pid': 44}})
         instance.owner.client = SimpleNamespace(process=Mock())
         instance.owner.client.process.poll.return_value = None
         instance.active_map_id = 1
         instance.creation_report = {'client_pid': 44, 'connected_on_atlas': True, 'recovery_requested': False}
-        instance.zoning_report = {'events': [], 'transfers': []}
+        instance.zoning_report = {'events': [], 'transfers': [], 'preparation_stage_observations': []}
         instance.pending = None
         instance.epoch = 0
         instance.maps = {1: {'ready': True}}
@@ -306,6 +359,81 @@ class ZoningServerTests(unittest.TestCase):
             instance._accept_prepare(request(epoch=2), NOW)
         self.assertEqual(instance.epoch, 1)
         instance._spawn_map.assert_not_called()
+
+    def test_cold_admission_preserves_save_budget_and_does_not_start_work_when_late(self):
+        instance = self.instance()
+        instance.owner.session_budget.deadline = 1120
+        with patch.object(zoning.time, 'monotonic', return_value=100), self.assertRaises(ERROR):
+            instance._accept_prepare(request(), NOW)
+        instance._spawn_map.assert_not_called()
+        instance._query_start.assert_not_called()
+        self.assertEqual(instance.epoch, 0)
+        self.assertEqual(instance.request_history, {})
+
+    def test_resident_return_has_truthful_shorter_preparation_allowance(self):
+        instance = self.instance()
+        instance.maps[101] = {'ready': True}
+        instance.owner.session_budget.deadline = 700
+        with patch.object(zoning.time, 'monotonic', return_value=100):
+            instance._accept_prepare(request(), NOW)
+        self.assertEqual(instance.pending['preparation_kind'], 'resident_warm')
+        self.assertEqual(instance.pending['preparation_budget_seconds'], 90)
+        self.assertEqual(instance.pending['phase'], 'map_ready')
+        self.assertEqual(instance.owner.session_budget.deadline, 700)
+        instance._spawn_map.assert_not_called()
+
+    def test_prepared_delivery_after_departure_cutoff_never_enters_arrival(self):
+        instance = self.instance()
+        instance._accept_prepare(request(), NOW)
+        instance.pending.update(phase='ready', ready_utc_ms=NOW, departure_deadline_utc_ms=NOW+100)
+        with self.assertRaises(ERROR):
+            instance._accept_delivery(request('mapmove', sent_utc_ms=NOW+100), NOW+100)
+        self.assertFalse(instance.pending['transfer_requested'])
+        self.assertEqual(instance.delivery_history, {})
+
+    def test_preparation_cancellation_restores_scheduler_then_preserves_ordinary_save(self):
+        instance = self.instance()
+        instance._accept_prepare(request(), NOW)
+        pacing = Mock()
+        instance.maps[101] = {'ready': False, 'scheduler': pacing}
+        (instance.owner.args.state/'character-logout.json').write_text('{}')
+        with patch.object(zoning.time, 'time', return_value=NOW/1000):
+            instance.tick_zoning()
+        pacing.restore.assert_called_once()
+        self.assertIsNone(instance.pending)
+        self.assertEqual(instance.zoning_report['events'][-1]['status'], 'failed')
+        self.assertTrue(instance.zoning_report['events'][-1]['current_map_verified'])
+        self.assertFalse(instance.zoning_report['events'][-1]['transfer_requested'])
+
+    def test_ready_requires_scheduler_restore_and_retains_request_to_ready_timing(self):
+        instance = self.instance()
+        instance._accept_prepare(request(), NOW)
+        pacing = Mock()
+        instance.maps[101] = {'ready': False, 'scheduler': pacing}
+        instance.pending['phase'] = 'map_ready'
+        instance._query_poll.return_value = ('prepared_map', map_status())
+        with patch.object(zoning.time, 'time', return_value=(NOW+15000)/1000):
+            instance.tick_zoning()
+        pacing.restore.assert_called_once()
+        ready = instance.zoning_report['events'][-1]
+        self.assertEqual(ready['status'], 'ready')
+        self.assertEqual(ready['requested_utc_ms'], NOW)
+        self.assertEqual(ready['preparation_elapsed_ms'], 15000)
+        self.assertEqual(ready['preparation_kind'], 'cold')
+        self.assertEqual(ready['preparation_ready_utc_ms'], NOW+15000)
+
+    def test_unverifiable_restore_cannot_publish_ready_or_claim_recoverable_prepare_failure(self):
+        instance = self.instance()
+        instance._accept_prepare(request(), NOW)
+        pacing = Mock()
+        pacing.restore.side_effect = ERROR('restore unavailable')
+        instance.maps[101] = {'ready': False, 'scheduler': pacing}
+        instance.pending['phase'] = 'map_ready'
+        instance._query_poll.return_value = ('prepared_map', map_status())
+        with patch.object(zoning.time, 'time', return_value=NOW/1000), self.assertRaises(ERROR):
+            instance.tick_zoning()
+        self.assertNotIn('ready', [row['status'] for row in instance.zoning_report['events']])
+        self.assertNotIn('preparation_failed', instance.zoning_report)
 
     def test_premature_stale_and_duplicate_delivery_cannot_begin_transfer(self):
         instance = self.instance()

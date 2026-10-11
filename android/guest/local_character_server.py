@@ -1157,17 +1157,21 @@ class LocalCharacterServer(login.LocalLoginServer):
         except (FileNotFoundError, progress.PublicationPending):
             return
 
+    def map_crash_observation(self):
+        console = self.map_process.text()
+        crash = re.search(r'Program crash detected|Exception caught: EXCEPTION_[A-Z_]+', console)
+        if crash is not None:
+            return {'marker': crash.group(), 'console_offset': crash.start(),
+                'context': console[max(0, crash.start() - 1000):crash.end() + 1000],
+                'console_sha256': hashlib.sha256(console.encode()).hexdigest()}
+
     def health(self):
         super().health()
         if self.map_process is not None:
-            console = self.map_process.text()
-            crash = re.search(r'Program crash detected|Exception caught: EXCEPTION_[A-Z_]+', console)
+            crash = self.map_crash_observation()
             if crash is not None:
-                self.creation_report['mapserver_crash'] = {
-                    'marker': crash.group(), 'console_offset': crash.start(),
-                    'context': console[max(0, crash.start() - 1000):crash.end() + 1000],
-                    'console_sha256': hashlib.sha256(console.encode()).hexdigest()}
-                require(False, 'Atlas crashed: ' + crash.group() + '; export the server console and report')
+                self.creation_report['mapserver_crash'] = crash
+                require(False, 'Atlas crashed: ' + crash['marker'] + '; export the server console and report')
             require(self.map_process.process.poll() is None, 'Atlas exited during character creation')
             require(not self.map_process.overflow, 'Atlas console exceeded capture bound')
 
