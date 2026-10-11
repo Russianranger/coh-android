@@ -1,3 +1,178 @@
+# CURRENT — .28 published and public bytes verified; physical Thor tests pending — 2026-10-11 UTC
+
+**Delivered:** COH Atlas Gameplay **0.13.28 / version code 43**, plus all four
+COH Assets **1.0.0** volumes, as public test prereleases. Both tags point to
+`96c7f44456d711d815704d20ff93c3f095ba974d`. Do not rebuild or replace these
+qualified files. Continue from the continuation branch; PR #1 remains draft
+and unmerged. Main remains `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+
+[Publication run 38152969976](https://github.com/Russianranger/coh-android/actions/runs/38152969976)
+passed **144 suites / 1,962 tests / zero skips**, seven real PostgreSQL fixtures,
+SDK manifest/retained signer checks, and independent fresh-process exact-payload
+reconstruction. Resources, shipping MapServer and completed native graph were
+reused. No new Game, GPU driver, DbServer or character persistence implementation
+was introduced by publication recovery.
+
+The original downstream public audit was skipped by GitHub's default success
+condition across intentionally skipped reusable producer jobs. The corrected
+condition is explicit. A separate **read-only** [public-byte audit 38154742520](https://github.com/Russianranger/coh-android/actions/runs/38154742520)
+checked out the exact published source and authenticated the accepted original
+publication/artifact owners. It downloaded the public APK, all four volumes,
+checksums, manifests and resource provenance, verified member hashes, and passed
+the original independent payload/signer/native-boundary verifier. Its actual
+audit workflow source is `2823b93494ead72105191eb3a54e22132dfc05e4`; its receipt distinguishes this
+audit owner from the original publication owner. **No release was rebuilt or
+replaced for this audit.**
+
+Receipt artifact: **11708366753**, ZIP SHA-256
+`d4ccb5e8d18e001e7d08472081ef2aa24b8032e86b925f729bd4053a59ee0974`. The durable consolidated record is
+[client-assets-0.13.28-publication.json](android-evidence/client-assets-0.13.28-publication.json).
+
+## Exact downloads and asset compatibility
+
+| Download | Exact bytes | SHA-256 |
+| --- | ---: | --- |
+| [COH-Atlas-Gameplay-0.13.28.apk](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.28/COH-Atlas-Gameplay-0.13.28.apk) | 41,195,620 | `2f0f924524e6eb19d18ec94406976676501187f99a87d170fa2fc914af2e1a8a` |
+| [COH-Assets-1.0.0-Base.zip](https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Base.zip) | 1,630,092,780 | `6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d` |
+| [COH-Assets-1.0.0-Reference.zip](https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Reference.zip) | 615,545,248 | `e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e` |
+| [COH-Assets-1.0.0-Zones.zip](https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Zones.zip) | 1,693,058,889 | `f3a3f78caceeccbe00dc97723244e12910161e2c952347e70e83b56a29558087` |
+| [COH-Assets-1.0.0-Audio.zip](https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/COH-Assets-1.0.0-Audio.zip) | 848,122,891 | `2c4bff8917d30a3835bd92e4f139a948f3c76f1e60900db01bc524b434e39d0b` |
+
+Each download has an adjacent `.sha256` file on its public release page.
+Four-volume download total: **4,786,819,808 bytes**; including the APK:
+**4,828,015,428 bytes** (about 4.50 GiB). The APK is about 41.2 MB.
+
+All four Assets 1.0.0 volumes are required for this first external-asset release,
+including an update from .27. The old standalone Atlas import is not sufficient;
+Reference contains those original assets. Future APKs may reuse these imported
+volumes only when their release declares this exact compatible descriptor.
+Do not unzip or combine the volumes.
+
+## Changes and preserved baseline
+
+Relative to the accepted .25/.26 runtime and .27 recovery baseline, .28 separates
+the small launcher APK from independently versioned assets, audits all **66 zone
+maps and 72 original archives**, adds original zone geometry/textures/audio and
+the qualified Kings Row beacon graph, repairs Android descriptor ownership,
+reuses immutable imported archives, and prepares the destination through the
+actual Atlas Park–Kings Row station menu. The original Flag_01 geometry/models
+missing from the supplied .27 log are present. Native readiness observation and
+cache reuse are host qualified; physical loading improvement is unmeasured.
+
+The accepted .25 Game, GPU renderer/driver choices, Software fallback, DbServer,
+strict verified-save acceptance, and reopen behavior remain the compatibility
+baseline. The .27 physical report established two Atlas-instance transfers and
+a verified save; it did not establish Kings Row travel or a later reopen cycle.
+There is no new .28 graphics reduction: the retained Performance preset already
+uses a 600×450 world inside the 800×600 interface.
+
+Completed native graph owner:
+[38143667104](https://github.com/Russianranger/coh-android/actions/runs/38143667104),
+source `d5e9f9f6bfa56da36f0c118bec26c764f60ef823`. Cold/reopened host world proofs
+and all eight source pins were independently validated: CRC `0xec7ae491`,
+281,178 combat / 281,176 connected beacons, 32 successful native routes, zero
+missing groups/root models, and owned-process cleanup. Original resources,
+shipping MapServer and host generator remain owned by run 38112251836/source
+492074101200f143fd19ba386f55de29ddfa5110. Historical failures and their fixes are
+preserved below; neither failed overall run is represented as wholly successful.
+
+## AYN Thor install and focused test
+
+1. For an existing character, install the APK over the existing app. **Uninstall
+   deletes private character saves and imported assets**; exported diagnostic
+   ZIPs are not a restore backup. A clean install therefore creates a new
+   THORHERO. Allow APK installation from the chosen Android download/file app
+   if Android prompts.
+2. Download Base, Reference, Zones and Audio. Use **Import asset pack part**
+   separately for each intact ZIP, in any order. Completed parts survive a
+   failed later import; retry only the incomplete part. When all parts verify,
+   run **Set up / update runtime** once.
+3. On a clean install, select **Create fresh THORHERO**, log in with
+   `COHLOCAL / offline`, and create THORHERO. Release controls for the normal
+   60-second neutral wait, choose **Save character / log out**, wait for
+   **Saved character verified**, then **Finish and save report**. Choose
+   **2 · Reopen saved THORHERO**.
+4. Keep **GPU test**, the accepted Performance/800×600 choice, visual settings,
+   fan and charging conditions. Enable **Show FPS** and the 30 FPS cap. Walk to
+   the real Atlas Park monorail entrance, click it and select Kings Row. Stay
+   nearby and keep the app foreground during first preparation. No manual
+   destination preparation or console transfer is required.
+5. Record station selection to usable world, preparation/transfer observations,
+   FPS range/dips and temperature. In Kings Row check walking, Jump, camera,
+   clicking, terrain, buildings, textures, NPCs and audio. Return through its
+   monorail station to Atlas. First preparation, validated cache reuse and a
+   server already resident in the session are distinct cases.
+6. Repeat the neutral wait → Save → **Saved character verified** →
+   **Finish and save report** → reopen, confirming map and position. Also test
+   an ordinary verified save in Kings Row and reopen there in a focused session.
+   If movement/loading fails, use **Abort operation** and export early rather
+   than continuing an immobile benchmark.
+7. For an older save in Atlas instance 101, return to Atlas, save, finish and
+   reopen before the monorail test. Finish/reopen after safe-ground recovery
+   before attempting zoning.
+
+## Storage and limitations
+
+Plan **25–30 GiB free internal storage before a clean install with downloads
+retained**. This is conservative planning headroom, not a measured Thor installed
+footprint. The four downloaded ZIPs total 4.46 GiB; private imports, expanded
+resources, rootfs/Wine, caches, reports and runtime generations require more.
+New zone/audio archives plus their decoded files alone require about 5.815 GiB.
+The largest volume's import admission check is about **3.654 GiB free**
+(2× payload plus 512 MiB); setup requires **5 GiB free at entry**. These checks
+are not total installed-size estimates. Downloads may reside on SD, but the
+app's private installation still needs internal storage. Retained older runtime
+generations can consume additional space until reviewed cleanup.
+
+Only the Atlas Park–Kings Row station pair is enabled. Audited resource inventory
+does not make all zones playable. Sixty zone source graphs resolve completely;
+six maps retain documented authored-source gaps (Dark Astoria 14/43, Nova
+Praetoria 36, Breakout 70, Croatoa 82, Rikti War Zone 85). Original FX/appearance
+and audio-reference gaps remain. Container validation does not prove playback.
+
+Sessions support **two resident MapServers**, **four transfer epochs**, and a
+**20-minute connected window** with time reserved for saving. Save/finish/reopen
+when insufficient transfer time remains. **Physical .28 Thor travel, Kings Row
+save/reopen, controls, visuals/audio, import/storage/export reliability, loading
+time, peak memory and sustained 30 FPS are all pending.** Host proofs do not
+establish physical behavior or performance.
+
+## Complete report export
+
+1. Normally perform the verified save and **Finish and save report**. If stuck,
+   **Abort operation** early and retain the failure report.
+2. Open **Reports / export**, then select the matching session by UTC timestamp,
+   type and size under **Retained reports · newest first**.
+3. In Android's Create document picker, choose Downloads or an SD destination,
+   select Save, and wait for **Report exported**.
+4. Attach the **complete outer** `coh-atlas-gameplay-YYYYMMDD-HHMMSS.zip`.
+   An inner guest ZIP or screenshots alone omit required evidence.
+5. **Export incomplete** retains the private report: retry exporting it; the
+   earlier destination file may be partial. Export is bounded to 512 MiB per
+   report and a five-minute copy; the foreground export path still needs Thor
+   confirmation.
+6. After Android terminates the app, reopen and select **Recover interrupted
+   reports before starting another session**, then export that archive. State
+   whether **Saved character verified** appeared. Do not deliberately terminate
+   an unsaved character to test recovery.
+7. Once the session is finished, open **Storage and cleanup**, run its scan,
+   then **Export storage report**. For import/setup/storage problems attach the
+   resulting `coh-storage-*.json` alongside the complete gameplay ZIP. Review
+   cleanup candidates before deleting any older runtime generation.
+
+## Next milestones
+
+Collect the focused physical Thor reports above; first qualify fresh import,
+both station directions, save/reopen including Kings Row, controls and complete
+exports. Repair only demonstrated regressions while preserving the accepted
+runtime/renderer. Then measure preparation, transfer, memory and FPS under
+controlled settings, and qualify additional destinations individually.
+The two earlier MapServer/ARM64 feasibility research projects remain separate;
+no long optimization research session was started as part of release delivery.
+Do not merge draft PR #1 without separate authorization.
+
+## Earlier recovery checkpoints (historical)
+
 # CURRENT — .28 passed 1,961 tests and compiled; deterministic payload repair — 2026-10-11 UTC
 
 Dedicated [run 38151300701](https://github.com/Russianranger/coh-android/actions/runs/38151300701),
