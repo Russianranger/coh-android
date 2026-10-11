@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "graph_qualified_publication_blocked_stale_test_fixtures",
+  "status": "full_qualification_passed_fresh_process_payload_order_repair",
   "version": "0.13.28",
   "version_code": 43,
   "asset_version": "1.0.0",
@@ -379,5 +379,35 @@
     "historical_atlas_pin_gate_preserved_and_refusal_tested": true,
     "all_repaired_tests_in_current_qualification": true,
     "beacon_reuse_run_id": 38143667104
+  },
+  "qualified_launcher_run": {
+    "id": 38151300701,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38151300701",
+    "source_commit": "d038dd75362db90da6c2e7551266311ecf63f2bb",
+    "conclusion": "failure",
+    "resource_rebuild": "skipped",
+    "native_rebuild": "skipped",
+    "qualification": "passed",
+    "suites": 144,
+    "tests": 1961,
+    "skips": 0,
+    "real_postgresql_fixtures": 7,
+    "qualification_artifact": {
+      "id": 11706907382,
+      "bytes": 538466,
+      "sha256": "d58329c926a706af7d5cb47281108cc31aad59879c721dbec3039034930bd558"
+    },
+    "qualification_receipt": {
+      "bytes": 2110832,
+      "sha256": "ab3c626dac16a121a0cf1eec0527863fe89515e0d3ad0ecc8c19e6a93303da48"
+    },
+    "apk_compile_and_same_process_audit": "passed",
+    "fresh_process_audit": "failure",
+    "failure": "Frozenset-derived manifest insertion order changes serialized payload pins across Python hash seeds",
+    "candidate_apk_sha256": "9cae808540669eeb18fd6ed3139a07edeb6616a63ebb43f6db0ade67fe5f6d64",
+    "candidate_apk_retained": false,
+    "public_audit": "skipped",
+    "accepted_game_gpu_dbserver_unchanged": true,
+    "physical_thor_validated": false
   }
 }

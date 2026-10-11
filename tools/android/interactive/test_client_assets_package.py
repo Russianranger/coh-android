@@ -1,11 +1,53 @@
 """Independent asset trust roots and the MapServer-only native change boundary."""
 import copy
 import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import textwrap
 import unittest
 from unittest import mock
 import build_client_assets_apk as package
 
 class AssetsPublication(unittest.TestCase):
+    def test_manifest_payload_bytes_match_across_independent_hash_seeds(self):
+        script=textwrap.dedent('''\
+            import json,sys
+            from unittest import mock
+            sys.path.insert(0,sys.argv[1])
+            import build_client_assets_apk as package
+            import native_monorail_contract
+            helpers=package.HELPERS|package.ADDED_HELPERS|{'game-package.tar.gz',
+                'asset-pack-manifest.json','kings-row-beacon-lock.json'}
+            updates={name:package.pin(name.encode()) for name in helpers}
+            retained={'client-runtime.zip':package.DONOR_GAME,'retained-first.py':package.pin(b'retained')}
+            donor={'_client_verification':{'files':dict(retained)},'runtime_manifest':{
+                'files':dict(retained),'client_bundle':{'local_server':{'mapserver':{
+                    'package_repository_commit':'b'*40,'package_run_id':123}}}}}
+            assets={'files':{name:package.pin(name.encode()) for name in frozenset({
+                'runtime/zones-world-supplement.zip','runtime/zones-audio-supplement.zip'})}}
+            with mock.patch.object(native_monorail_contract,'progress_contract',
+                    return_value={'producer':{'sha256':'d'*64}}):
+                client,runtime=package.verification_manifests(donor,updates,'a'*40,assets,
+                    {'build_input':{'contract':{'map_ids':[1,5]}}},{'repository_commit':'b'*40},
+                    {'repository_commit':'c'*40,'run_url':'https://github.com/Russianranger/coh-android/actions/runs/456'})
+            client_pin=package.pin(package.shared.encoded(client))
+            assert runtime['files']['client-manifest.json']==client_pin
+            assert client['files']['client-runtime.zip']==package.DONOR_GAME
+            assert donor['_client_verification']['files']==retained
+            print(json.dumps({'client-manifest.json':client_pin,
+                'runtime-manifest.json':package.pin(package.shared.encoded(runtime))},sort_keys=True))
+            ''')
+        outputs=[]
+        for seed in ('1','2','73422','2022'):
+            result=subprocess.run([sys.executable,'-c',script,str(Path(package.__file__).parent)],
+                env=dict(os.environ,PYTHONHASHSEED=seed,GITHUB_RUN_ID='123'),
+                capture_output=True,text=True,timeout=30)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            outputs.append(result.stdout)
+        self.assertEqual(len(set(outputs)),1,outputs)
+
     def test_exact_published_027_donor_is_pinned(self):
         evidence=json.loads((package.ROOT/'docs/android-evidence/recovery-0.13.27-publication.json').read_text())
         self.assertEqual(package.DONOR_APK,{k:evidence['apk'][k] for k in ('bytes','sha256')})

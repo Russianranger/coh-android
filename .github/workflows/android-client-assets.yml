@@ -200,6 +200,48 @@ jobs:
           --qualification out/client-assets-qualification.json --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --android-jar "$ANDROID_HOME/platforms/android-35/android.jar" --keystore "$RUNNER_TEMP/coh-retained-signing/coh-client-interactive.jks"
           --output out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk
+      - name: Preserve unaccepted APK and flat packaging diagnostics before the fresh process audit
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os, shutil
+          from pathlib import Path
+          output = Path('out/unaccepted-package-diagnostics')
+          output.mkdir(parents=True, exist_ok=True)
+          sources = [
+            Path('out/client-assets-apk') / name for name in (
+              'COH-Atlas-Gameplay-0.13.28.apk', 'client-assets-apk-build-report.json',
+              'COH-Atlas-Gameplay-0.13.28-testing.txt', 'COH-Atlas-Gameplay-0.13.28.apk.sha256')]
+          sources += [Path('out/asset-pack') / name for name in (
+            'asset-pack-manifest.json', 'asset-pack-build-report.json', 'kings-row-beacon-lock.json',
+            'COH-Assets-1.0.0-Base.zip.sha256', 'COH-Assets-1.0.0-Reference.zip.sha256',
+            'COH-Assets-1.0.0-Zones.zip.sha256', 'COH-Assets-1.0.0-Audio.zip.sha256')]
+          sources += [Path('out/client-assets-qualification.json')]
+          retained, missing = [], []
+          for source in sources:
+            if source.is_file() and not source.is_symlink():
+              shutil.copyfile(source, output / source.name)
+              retained.append(source.name)
+            else:
+              missing.append(str(source))
+          (output / 'UNACCEPTED.txt').write_text(
+            'DIAGNOSTIC CANDIDATES ONLY. These bytes are retained before the independent fresh-process audit. '
+            'Embedded reports do not certify that audit or authorize release publication. '
+            'Use only the separately qualified accepted artifacts and public-byte audit as release evidence.\n')
+          (output / 'diagnostic-retention.json').write_text(json.dumps({
+            'status': 'unaccepted_diagnostic_candidate', 'repository_commit': os.environ['GITHUB_SHA'],
+            'run_id': os.environ['GITHUB_RUN_ID'], 'fresh_process_audit_accepted': False,
+            'publication_authorized': False, 'retained_files': retained, 'missing_files': missing}, indent=2) + '\n')
+          PY
+      - name: Retain unaccepted diagnostic candidates independently of publication gates
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coh-client-assets-unaccepted-diagnostics
+          path: out/unaccepted-package-diagnostics/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
       - name: Fresh process SDK signer and complete payload audit
         env: {PYTHONHASHSEED: '73422'}
         run: >-

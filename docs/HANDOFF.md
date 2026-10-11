@@ -1,3 +1,32 @@
+# CURRENT — .28 passed 1,961 tests and compiled; deterministic payload repair — 2026-10-11 UTC
+
+Dedicated [run 38151300701](https://github.com/Russianranger/coh-android/actions/runs/38151300701),
+source `d038dd75362db90da6c2e7551266311ecf63f2bb`, reused every completed producer
+and passed **144 suites / 1,961 tests / zero skips**, including seven real
+PostgreSQL fixtures. The independently downloaded qualification receipt
+(artifact 11706907382) verifies unchanged accepted Game, GPU runtime and both
+DbServer archive proofs, with strict save acceptance and all physical flags false.
+Receipt SHA-256: `ab3c626dac16a121a0cf1eec0527863fe89515e0d3ad0ecc8c19e6a93303da48`.
+
+The APK compiled and passed its same-process payload, SDK manifest and retained
+signer checks. The separate process with a different Python hash seed then
+correctly rejected a reconstructed-payload mismatch. Reproduction identified
+unordered frozenset-derived insertion into JSON manifests: semantic contents
+matched, but serialized client/runtime manifest bytes varied between processes.
+The repair sorts new manifest insertions and retains the exact payload-equality
+checks. A subprocess regression proves identical pins with hash seeds 1, 2, 73422 and
+2022; all 16 focused packaging/reuse tests pass. No guest/runtime/native source or completed graph input changes.
+
+**There is still no published .28 APK or Assets 1.0.0 release at this checkpoint.**
+The next retry must reuse graph run 38143667104 and original resource/native/
+generator run 38112251836, repeat qualification for the new packaging source,
+then finish fresh-process signer/payload and actual public-byte audits. Always
+retain any built but unaccepted APK/report/asset metadata on a later failure.
+Do not regenerate the graph, merge draft PR #1, claim physical Thor qualification,
+or mix in the separate optimization/ARM64 research work.
+
+## Previous qualified-graph checkpoint (historical)
+
 # CURRENT — .28 graph qualified and retained; APK fixture repair pending publication — 2026-10-11 UTC
 
 Latest completed dedicated run [38143667104](https://github.com/Russianranger/coh-android/actions/runs/38143667104)

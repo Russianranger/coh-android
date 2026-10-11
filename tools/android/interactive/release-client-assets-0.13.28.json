@@ -9,5 +9,5 @@
   "generator_commit": "492074101200f143fd19ba386f55de29ddfa5110",
   "beacon_run_id": "38143667104",
   "beacon_commit": "d5e9f9f6bfa56da36f0c118bec26c764f60ef823",
-  "publication_attempt": "fixture-qualification-recovery"
+  "publication_attempt": "deterministic-package-audit"
 }

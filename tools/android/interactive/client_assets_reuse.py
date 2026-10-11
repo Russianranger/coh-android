@@ -42,6 +42,7 @@ RECOVERY_ONLY = frozenset({
     'tools/android/interactive/test_character_reopen_guest.py',
     'tools/android/interactive/test_client_startup_followup_limits.py',
     'tools/android/interactive/test_generate_atlas_beacons.py',
+    'tools/android/interactive/test_client_assets_package.py',
     'docs/HANDOFF.md', 'docs/COH-Atlas-Gameplay-0.13.28-testing.txt',
     'docs/COH-ASSETS-0.13.28.md',
     'docs/android-evidence/client-assets-0.13.28-publication.json',

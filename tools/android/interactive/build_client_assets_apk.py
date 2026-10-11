@@ -304,11 +304,14 @@ def asset_contract(directory, *, verify_volumes=False):
 def verification_manifests(donor, updates, commit, asset_manifest, monorail, game=None, native_build=None):
     require(set(updates) == HELPERS|ADDED_HELPERS|{'game-package.tar.gz','asset-pack-manifest.json','kings-row-beacon-lock.json'},
         'Exact reviewed helper, native MapServer, lock and asset descriptor inputs required')
+    # The retained JSON encoder preserves insertion order. New file entries must
+    # have one order across the independently seeded build and audit processes.
+    updates = {name:updates[name] for name in sorted(updates)}
     client = copy.deepcopy(donor['_client_verification']); client['files'].update(updates)
     runtime = copy.deepcopy(donor['runtime_manifest']); runtime['files'].update(updates)
     # Imported original archives retain their accepted pins; the new complete zone
     # supplements are independently bound by the APK-owned asset manifest.
-    for name, expected in asset_manifest['files'].items():
+    for name, expected in sorted(asset_manifest['files'].items()):
         if name.startswith('runtime/'):
             runtime['files'][name[8:]] = expected
             client['files'][name[8:]] = expected
@@ -379,7 +382,8 @@ def verify_derivative(apk, donor, payloads, dex_pin, commit, asset_directory, na
     with tempfile.TemporaryDirectory(prefix='coh-assets-audit-') as temporary:
         runtime,expected,preflight = extract_and_repair(apk=donor['_apk_path'],donor=donor,destination=Path(temporary)/'donor',
             commit=commit,asset_directory=asset_directory,native_directory=native_directory,native_commit=native_commit)
-        require(payloads == expected,'Reconstructed exact donor plus reviewed changes differs')
+        require(payloads == expected,'Reconstructed exact donor plus reviewed changes differs: '+', '.join(
+            name for name in sorted(set(payloads)|set(expected)) if payloads.get(name)!=expected.get(name)))
     with zipfile.ZipFile(apk) as archive:
         shell = {'classes.dex':dex_pin,**donor['retained_android_resources']}
         require(retained.archive_inventory(archive) == set(payloads)|set(shell)|{'AndroidManifest.xml'},'Small APK inventory differs')
