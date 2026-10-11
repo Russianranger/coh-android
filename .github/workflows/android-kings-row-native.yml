@@ -116,6 +116,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - name: Prove complete package validation is portable before expensive native generation
+        shell: pwsh
+        run: |
+          python tools/android/interactive/test_kings_row_beacons.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Windows Kings Row package validation fixtures failed' }
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -193,6 +198,12 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path out/kings-row-beacons/native-build -Force | Out-Null
+          New-Item -ItemType Directory -Path out/kings-row-beacons/unaccepted-candidates -Force | Out-Null
+          Set-Content -Path out/kings-row-beacons/unaccepted-candidates/README.txt -Value 'Diagnostic candidates only. These copies do not certify a passed graph or authorize publication. Acceptance requires the successful generation job, complete native proofs and the separate coh-kings-row-beacons artifact.' -Encoding UTF8
+          foreach ($name in @('kings-row-beacons.zip', 'kings-row-beacon-manifest.json', 'kings-row-beacon-lock.json', 'kings-row-beacon-generation-report.json')) {
+            $candidate = Join-Path out/kings-row-beacons $name
+            if (Test-Path -LiteralPath $candidate -PathType Leaf) { Copy-Item -LiteralPath $candidate -Destination out/kings-row-beacons/unaccepted-candidates/ }
+          }
           foreach ($name in @('kings-row-beacon-generator-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
             $source = Join-Path C:/kr-bcn-src $name
             if (Test-Path $source) { Copy-Item $source out/kings-row-beacons/native-build/ }
@@ -213,6 +224,7 @@ jobs:
             out/generator-reuse.json
             out/kings-row-beacons/evidence/
             out/kings-row-beacons/native-build/
+            out/kings-row-beacons/unaccepted-candidates/
             out/kings-row-beacons/kings-row-beacon-generation-report.json
           if-no-files-found: warn
           retention-days: 90

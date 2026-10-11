@@ -211,16 +211,19 @@ jobs:
           --apk out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk --build-report out/client-assets-apk/client-assets-apk-build-report.json
       - uses: actions/upload-artifact@v4
         with: {name: coh-client-assets-apk, path: out/client-assets-apk/, compression-level: 0, retention-days: 90, if-no-files-found: error}
+      - name: Stage flat packaging evidence for the independent public audit
+        run: |
+          mkdir out/packaging-evidence
+          cp out/client-assets-apk/client-assets-apk-build-report.json out/packaging-evidence/
+          cp out/client-assets-apk/COH-Atlas-Gameplay-0.13.28-testing.txt out/packaging-evidence/
+          cp out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk.sha256 out/packaging-evidence/
+          cp out/asset-pack/asset-pack-manifest.json out/packaging-evidence/
+          cp out/asset-pack/asset-pack-build-report.json out/packaging-evidence/
+          cp out/asset-pack/kings-row-beacon-lock.json out/packaging-evidence/
       - uses: actions/upload-artifact@v4
         with:
           name: coh-client-assets-packaging-evidence
-          path: |
-            out/client-assets-apk/client-assets-apk-build-report.json
-            out/client-assets-apk/COH-Atlas-Gameplay-0.13.28-testing.txt
-            out/client-assets-apk/COH-Atlas-Gameplay-0.13.28.apk.sha256
-            out/asset-pack/asset-pack-manifest.json
-            out/asset-pack/asset-pack-build-report.json
-            out/asset-pack/kings-row-beacon-lock.json
+          path: out/packaging-evidence/
           if-no-files-found: error
           retention-days: 90
       - name: Publish independent versioned assets and then the qualified small APK

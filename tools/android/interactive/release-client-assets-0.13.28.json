@@ -6,5 +6,6 @@
   "native_run_id": "38112251836",
   "native_commit": "492074101200f143fd19ba386f55de29ddfa5110",
   "generator_run_id": "38112251836",
-  "generator_commit": "492074101200f143fd19ba386f55de29ddfa5110"
+  "generator_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "publication_attempt": "portable-windows-validation-and-retained-candidates"
 }

@@ -6,15 +6,18 @@ No host tool enters the APK. No host elapsed time is an Android loading claim.
 """
 from __future__ import annotations
 import argparse
+import ast
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import time
+from types import SimpleNamespace
 import zipfile
 import generate_atlas_beacons as shared
 sys.path.insert(0, str(shared.ROOT/'tools'))
@@ -34,7 +37,9 @@ MAX_GENERATION_SECONDS = 14400
 SOURCE_FILES = ('tools/prepare_kings_row_beacon_generator_source.py', producer.PATCH,
                 'tools/android/interactive/generate_kings_row_beacons.py',
                 'tools/android/interactive/generate_atlas_beacons.py',
-                'tools/prepare_atlas_beacon_generator_source.py', producer.atlas.PATCH)
+                'tools/prepare_atlas_beacon_generator_source.py', producer.atlas.PATCH,
+                'android/guest/atlas_beacon_package.py',
+                'android/guest/kings_row_beacon_package.py')
 
 
 def extract_donor(apk, output):
@@ -173,10 +178,44 @@ def verify_profile(runtime,generator,evidence,profile,timeout):
     return native_evidence(path.read_bytes(),(runtime/DATE).read_bytes()),command
 
 
+def portable_definitions(path, names, namespace):
+    """Load exact portable source definitions without its Android-only imports."""
+    selected=[]; found=set()
+    for node in ast.parse(path.read_text(encoding='utf-8'),filename=str(path)).body:
+        if isinstance(node,ast.FunctionDef):
+            defined={node.name}
+        elif isinstance(node,ast.Assign):
+            defined={part.id for target in node.targets for part in ast.walk(target)
+                     if isinstance(part,ast.Name)}
+        else:
+            continue
+        if defined & names:
+            require(defined <= names and not defined & found,'Ambiguous portable beacon definitions')
+            selected.append(node);found.update(defined)
+    require(found==names,'Authoritative portable beacon definitions are missing')
+    exec(compile(ast.Module(body=selected,type_ignores=[]),str(path),'exec'),namespace)
+    return SimpleNamespace(**{name:namespace[name] for name in names})
+
+
+def manifest_validator():
+    """Run the shipped validator on Windows without importing guest processes.
+
+    As with the retained host world resolver, execute the actual source functions
+    and constants. No fcntl shim, skipped check, or second validator is involved.
+    """
+    namespace={'Path':Path,'PurePosixPath':PurePosixPath,'hashlib':hashlib,
+               'json':json,'re':re,'stat':stat}
+    atlas=portable_definitions(ROOT/'android/guest/atlas_beacon_package.py',
+        {'SOURCE_COMMIT','DATA_COMMIT','MAX_MANIFEST','MAX_GRAPH','MAX_INPUTS',
+         'require','canonical','regular','pin','safe'},dict(namespace))
+    return portable_definitions(ROOT/'android/guest/kings_row_beacon_package.py',
+        {'ARCHIVE','MANIFEST','LOCK','MAP','GRAPH','DATE','PROFILES',
+         'require','canonical','pin','input_name','read_manifest'},dict(namespace,atlas=atlas))
+
+
 def validate_package(directory,repository_commit=None):
     directory=Path(directory);value=json.loads((directory/MANIFEST).read_bytes());report=json.loads((directory/REPORT).read_bytes())
-    sys.path.insert(0,str(ROOT/'android/guest'))
-    import kings_row_beacon_package as guest
+    guest=manifest_validator()
     locked_value,lock=guest.read_manifest(directory/MANIFEST,directory/LOCK)
     require(locked_value==value and lock['archive']==pin(directory/ARCHIVE),'APK lock or graph differs')
     require(value['format']==1 and value['role']=='authentic_native_kings_row_beacon_graph' and value['map']==MAP

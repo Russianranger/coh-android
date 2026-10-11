@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "publication_blocked_recovery_in_progress",
+  "status": "publication_blocked_windows_validation_fixed_replacement_pending",
   "version": "0.13.28",
   "version_code": 43,
   "asset_version": "1.0.0",
@@ -286,15 +286,44 @@
     "id": 38133200295,
     "url": "https://github.com/Russianranger/coh-android/actions/runs/38133200295",
     "source_commit": "858b788532329ef3f79f3a1d5d8f1388be7f4c3e",
-    "status_at_checkpoint": "in_progress",
+    "status_at_checkpoint": "completed",
     "ownership_gate": "passed",
     "resource_rebuild": "skipped_reused",
     "shipping_mapserver_rebuild": "skipped_reused",
     "host_generator_source_receipt": "passed",
-    "native_graph_and_profiles": "in_progress",
-    "apk": "not_completed",
-    "public_byte_audit": "not_completed",
+    "native_graph_and_profiles": "passed_before_final_python_validation",
+    "apk": "skipped",
+    "public_byte_audit": "skipped",
     "generation_seconds_limit": 14400,
-    "job_minutes_limit": 270
+    "job_minutes_limit": 270,
+    "conclusion": "failure",
+    "failure": "Final validate_package imported Android-only fcntl on Windows",
+    "elapsed_native_seconds": 8794.593,
+    "cleanup_complete": true,
+    "retained_graph_payload": false,
+    "evidence_artifact": {
+      "id": 11703113905,
+      "name": "coh-kings-row-beacon-evidence",
+      "bytes": 989026,
+      "sha256": "09219bf913abcc8416a64ef98bf17a7bd25d9e7782ea3ab292d1e727a2e5a6e4",
+      "entries": 11
+    },
+    "lost_archive": {
+      "bytes": 23708312,
+      "sha256": "f1b18e22e27cab385928d589ce2d781cc330a50717b9d1045cf0d52a00db7c2c"
+    },
+    "native": {
+      "crc": "0xec7ae491",
+      "missing_groups": 0,
+      "missing_root_models": 0,
+      "combat": 281178,
+      "connected": 281176,
+      "ground_connections": 3105979,
+      "raised_connections": 4451559,
+      "blocks": 1019,
+      "paths": 32,
+      "cold_world": "passed",
+      "reopened_world": "passed"
+    }
   }
 }

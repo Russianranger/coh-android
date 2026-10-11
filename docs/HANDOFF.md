@@ -1,39 +1,52 @@
-# CURRENT — .28 publication recovered; missing beacon qualification in repair — 2026-10-11 UTC
+# CURRENT — .28 publication blocked by corrected Windows host validation — 2026-10-11 UTC
 
-Independent recovery confirmed branch `codex/character-persistence-continuation`
-at `492074101200f143fd19ba386f55de29ddfa5110`, with PR #1 open and draft.
-No .28 APK or Assets 1.0.0 public release/tag exists at this checkpoint.
-Dedicated publication run **38112251836** failed; resources and shipping
-MapServer/Windows monorail fixture succeeded, but beacon generation exceeded
-its explicit 5,400-second limit. APK packaging and public-byte audit were
-skipped. Other successful workflow conclusions do not establish publication.
+Recovered exact development branch `codex/character-persistence-continuation`
+from `492074101200f143fd19ba386f55de29ddfa5110`. PR #1 remains open and draft;
+main is not merged. The prior development workspaces had only empty remnants,
+with no accessible Git index/uncommitted files. Separate research checkouts
+remain untouched. .27 is still the latest completed release; no .28 APK or
+Assets 1.0.0 public release exists at this checkpoint.
 
-The failed native log records 336,308 beacons and processing through index
-174,899 at approximately 89.5 minutes, with all four owned roles alive before
-the deadline and successful cleanup afterward. This is progress, not evidence
-of a stalled worker. No completed graph or resumable checkpoint was retained.
-The recovery preserves the compiled host generator, shipping MapServer,
-resource/audio packages and original audit evidence. Only missing graph
-generation, its unchanged collision/CRC/readback/32-route proofs, launcher
-packaging, full regression qualification and public-byte audits remain.
+Original dedicated run [38112251836](https://github.com/Russianranger/coh-android/actions/runs/38112251836)
+completed resources, shipping MapServer and the host-only generator compile,
+but native graph generation hit its explicit 5,400-second bound. Recovery run
+[38133200295](https://github.com/Russianranger/coh-android/actions/runs/38133200295),
+source `858b788532329ef3f79f3a1d5d8f1388be7f4c3e`, authenticated and reused all
+three completed producers. With a bounded 14,400-second allowance, its native
+graph generation and both fresh cold/reopened world proofs completed in
+8,794.593 seconds. Native evidence records CRC `0xec7ae491`, zero missing
+groups/root models, 281,178 combat / 281,176 connected beacons, 3,105,979 ground
+and 4,451,559 raised connections, 1,019 blocks and 32 successful paths. All
+owned processes were cleaned up. These are host proofs, not Thor tests.
 
-The prior development checkout paths contain empty remnants, with no accessible
-Git index or uncommitted files to recover. A separate sparse checkout was made
-from the exact current development branch, never main. Research checkouts were
-left untouched. No accepted Game, DbServer or GPU rebuild is required. Do not
-merge PR #1. See `docs/android-evidence/client-assets-0.13.28-publication.json`
-for original run/artifact identities and explicit pending device gates.
+The recovery job then failed in the final Python package validator because its
+module import chain reached Android-only `fcntl` on Windows. The success-only
+graph upload never ran. Independently downloaded evidence artifact
+`11703113905` (SHA-256 `09219bf913abcc8416a64ef98bf17a7bd25d9e7782ea3ab292d1e727a2e5a6e4`)
+contains 11 logs/receipts/report entries, but no graph archive, manifest or lock.
+The report's 23,708,312-byte archive hash is evidence of produced bytes, not a
+recoverable payload. Do not claim that artifact supplies usable beacons.
 
+The narrow repair executes the exact shipped portable manifest validation
+functions/constants without importing Android processes; no guest/native
+validation check is weakened. A complete-package subprocess test forbids those
+imports and verifies malformed native/input packages are rejected. Windows
+runs that test before generation. Always-run evidence retention also preserves
+any generated candidate ZIP/manifest/lock/report so a late failure cannot discard
+the expensive output; candidates still require every qualification gate.
+Only the missing graph bytes must be regenerated. Completed resource packages,
+shipping MapServer and compiled host generator remain explicitly reused. The
+accepted Game, DbServer, GPU renderer and character persistence are unchanged.
 
-Recovery run [38133200295](https://github.com/Russianranger/coh-android/actions/runs/38133200295)
-is executing source `858b788532329ef3f79f3a1d5d8f1388be7f4c3e`.
-The authenticated ownership gate passed, resource and shipping MapServer jobs
-were skipped for reuse, and the retained generator source receipt passed.
-At this checkpoint native graph generation/fresh proofs remain in progress;
-APK/publication/public-byte gates have not completed. Do not rerun the completed
-resource or native compilation jobs. Inspect this run before dispatching any
-recovery. If generation finishes but later packaging fails, reuse its completed
-`coh-kings-row-beacons` artifact through the separate beacon owner fields.
+Remaining release gates: replacement graph/package validation; all retained
+regression and PostgreSQL fixtures; APK/signature/payload audit; public APK and
+all four asset-volume byte audits. Remaining device gates: fresh four-part
+import/setup, Atlas→Kings Row→Atlas station travel, controls/visuals/audio,
+verified save/finish/reopen (including in Kings Row), complete log export and
+measured storage/loading/FPS. Do not promise physical gains from host timing.
+See `docs/android-evidence/client-assets-0.13.28-publication.json` for receipts.
+Do not rerun completed native compiles/resources, merge PR #1, or mix in the
+separate MapServer/ARM64 feasibility research projects.
 
 ## Previous .28 implementation checkpoint (historical)
 
