@@ -75,13 +75,14 @@ def source_tokens(text):
 
 
 class Sources:
-    def __init__(self, root):
+    def __init__(self, root, *, max_source_files=MAX_SOURCE_FILES, max_source_total=MAX_SOURCE_TOTAL):
         self.root = Path(root)
         document, self.manifest_pin = bounded.load_json(self.root / 'docs/data-manifest.json')
         require(document.get('commit') == DATA, 'Companion data commit differs')
         self.entries = {data_path(row['path'][5:]): row for row in document['entries']
                         if row['path'].startswith('data/')}
         self.pins, self.rows, self.total = {}, {}, 0
+        self.max_source_files, self.max_source_total = max_source_files, max_source_total
 
     def read(self, name):
         name = data_path(name)
@@ -92,7 +93,7 @@ class Sources:
             require(pin_bytes(raw) == {'bytes': entry['size'], 'sha256': entry['sha256']},
                     'Companion source differs from pinned snapshot: ' + name)
             self.total += len(raw)
-            require(self.total <= MAX_SOURCE_TOTAL and len(self.rows) < MAX_SOURCE_FILES,
+            require(self.total <= self.max_source_total and len(self.rows) < self.max_source_files,
                     'Kings Row source closure exceeds audit bounds')
             self.pins['upstream/i24/' + entry['path']] = pin_bytes(raw)
             self.rows[name] = list(source_tokens(raw.decode('utf-8-sig')))

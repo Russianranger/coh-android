@@ -39,6 +39,25 @@ Game, graphics settings, drivers, DbServer and unchanged artifacts. The next
 handoff must replace this progress section with exact completed publication
 receipts and candid remaining device checks.
 
+Implementation now includes four asset import parts (Base, Reference, Zones,
+Audio), streamed and hash-pinned activation, immutable archive reuse, a storage
+descriptor leak repair, and atomic repair by reimport. The original-resource
+audit covers 66 named map files and 72 archive tables. Zones adds 23,876 original
+geometry/texture/audio files; Audio adds 2,177 sounds. Source-era group/audio
+gaps are explicitly retained rather than filled with invented substitutes.
+See `docs/COH-ASSETS-0.13.28.md` for boundaries and design details.
+
+Stock station requests now prepare Kings Row on demand, preserve compatible
+definition caches, use an isolated geometry/beacon-verified server tree, and
+resume normal native door validation. Immediate readiness events avoid the
+observed buffered-log delay. Map 5 connection/save/reopen adapters and Android
+acceptance have been reviewed together. Local tests pass, including descriptor
+ownership, asset import/repair, cache reuse and station identity guards.
+**Hosted Windows compilation, genuine Kings Row beacon proofs, full regression
+qualification, APK packaging and independent public-byte audits remain pending.**
+The new Game executable is not rebuilt; its accepted .25 bytes are reused.
+The focused .28 test is in `docs/COH-Atlas-Gameplay-0.13.28-testing.txt`.
+
 # Published .27 report recovery and automatic Atlas preparation — 2026-10-11 UTC
 
 **0.13.27 / version code 42 is published, with all four publication jobs passed,

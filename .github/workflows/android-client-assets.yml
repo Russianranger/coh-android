@@ -36,6 +36,7 @@ jobs:
             'native_commit':marker.get('native_commit',os.environ['GITHUB_SHA'])}
           assert re.fullmatch('[0-9a-f]{40}',values['native_commit'])
           assert all(not values[k] or re.fullmatch('[1-9][0-9]*',values[k]) for k in ('native_run_id','resource_run_id'))
+          assert not values['resource_run_id'] or values['native_run_id'], 'Resource reuse must also name the completed native run'
           request=urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
             headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
           try:
@@ -65,10 +66,16 @@ jobs:
         run: python3 tools/fetch_runtime_asset_bundle.py --receipt assets/reference-inputs-receipt.json --output out/resources/reference.zip --release-asset-id 588984151
       - name: Audit frozen source resources and assemble complete missing zone visuals and audio
         run: python3 tools/android/interactive/prepare_zones_world_assets.py --metadata-cache out/zone-metadata --payload-cache out/zone-payloads --output out/zones --workers 8
+      - name: Complete original audio from all fifteen standalone sound archives
+        run: python3 tools/android/interactive/prepare_zones_audio_assets.py --metadata-cache out/zone-metadata --payload-cache out/audio-payloads --output out/audio --workers 8
+      - name: Audit every named zone source graph against the original resource inventory
+        run: python3 tools/android/interactive/audit_zone_asset_coverage.py --metadata-cache out/zone-metadata --output out/zones/zone-asset-coverage.json
       - name: Stage exact zone inputs
         run: |
           cp out/zones/zones-world-supplement.zip out/resources/
           cp out/zones/zones-world-supplement-manifest.json out/resources/
+          cp out/zones/zones-world-supplement-provenance.json out/resources/
+          cp out/zones/zone-asset-coverage.json out/resources/
       - uses: actions/upload-artifact@v4
         with:
           name: coh-assets-resource-inputs
@@ -78,9 +85,20 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
+          name: coh-assets-audio-inputs
+          path: out/audio/
+          compression-level: 0
+          retention-days: 90
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
           name: coh-assets-world-audit
           path: |
             out/zones/zones-world-plan.json
+            out/zones/zone-asset-coverage.json
+            out/zones/zones-world-supplement-provenance.json
+            out/audio/zones-audio-supplement-provenance.json
+            out/audio/zones-audio-supplement-manifest.json
             out/zones/zones-world-supplement-manifest.json
           retention-days: 90
           if-no-files-found: error
@@ -128,6 +146,12 @@ jobs:
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
+          name: coh-assets-audio-inputs
+          path: out/resources
+          run-id: ${{ needs.changes.outputs.resource_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
           name: coh-monorail-native
           path: out/monorail
           run-id: ${{ needs.changes.outputs.native_run_id || github.run_id }}
@@ -143,7 +167,7 @@ jobs:
         run: |
           python3 tools/android/interactive/build_client_assets_apk.py download-donor-evidence --output out/donor-evidence
           python3 tools/android/interactive/build_client_assets_apk.py download-retained-native --output out/retained-game
-      - name: Create separately versioned Base, Reference and Zones asset volumes
+      - name: Create separately versioned Base, Reference, Zones and Audio asset volumes
         run: >-
           python3 tools/android/interactive/build_client_assets_apk.py prepare-assets
           --donor-apk out/resources/donor.apk --donor-build-report out/donor-evidence/client-recovery-apk-build-report.json

@@ -226,6 +226,11 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             zones = zone_asset_package.install(self.work, self.args.assets, self.ctx)
             self.ctx.report['client_zone_supplement'] = zones
             self.ctx.passed(**zones)
+        if zone_asset_package.present(self.args.assets, audio=True):
+            self.ctx.stage('client_all_zone_audio')
+            audio = zone_asset_package.install(self.work, self.args.assets, self.ctx, audio=True)
+            self.ctx.report['client_zone_audio_supplement'] = audio
+            self.ctx.passed(**audio)
 
     def prepare_texture_header_index(self, context):
         import texture_header_index

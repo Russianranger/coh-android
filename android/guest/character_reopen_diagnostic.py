@@ -222,11 +222,13 @@ class ZoningCharacterReopenDiagnostic(CharacterReopenDiagnostic):
         self.ctx.report['zoning_enabled'] = True
 
     def connected_event_data(self, proof):
-        return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True)
+        return dict(super().connected_event_data(proof), zoning_enabled=True, connected_on_supported_map=True,
+                    monorail_enabled=proof.get('monorail_enabled') is True)
 
     def saved_event_data(self, proof):
         return dict(super().saved_event_data(proof), zoning_enabled=True,
-                    connected_on_supported_map=True, map_id=proof['map_id'])
+                    connected_on_supported_map=True, map_id=proof['map_id'],
+                    monorail_enabled=proof.get('monorail_enabled') is True)
 
 
 def parse_reopen_arguments(argv):

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from classify_client_assets_change import client_assets_owned, CLIENT_ASSETS_ALLOWED
 
 JAVA = 'android/interactive/src/main/java/io/github/russianranger/cohclientinteractive/'
 STORAGE_SOURCES = frozenset({
@@ -1118,6 +1119,7 @@ def ui_beacon_push(event, before, head, parent, names):
 
 
 def ui_beacon_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1145,6 +1147,7 @@ def reopen_startup_repair_push(event, before, head, parent, names):
 
 
 def reopen_startup_repair_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1170,6 +1173,7 @@ def levelup_ui_repair_push(event, before, head, parent, names):
 
 
 def task_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1197,6 +1201,7 @@ def task_required(event, before, head, parent, names):
 
 
 def cleanup_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1224,6 +1229,7 @@ def cleanup_required(event, before, head, parent, names):
 
 
 def recovery_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1249,6 +1255,7 @@ def recovery_required(event, before, head, parent, names):
 
 
 def receipt_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1272,6 +1279,7 @@ def receipt_required(event, before, head, parent, names):
 
 
 def schedule_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1294,6 +1302,7 @@ def schedule_required(event, before, head, parent, names):
 
 
 def setup_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1316,6 +1325,7 @@ def setup_required(event, before, head, parent, names):
 
 
 def bundle_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1337,6 +1347,7 @@ def bundle_required(event, before, head, parent, names):
 
 
 def visual_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1357,6 +1368,7 @@ def visual_required(event, before, head, parent, names):
 
 
 def loading_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1376,6 +1388,7 @@ def loading_required(event, before, head, parent, names):
 
 
 def streaming_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1394,6 +1407,7 @@ def streaming_required(event, before, head, parent, names):
 
 
 def asset_closure_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1411,6 +1425,7 @@ def asset_closure_required(event, before, head, parent, names):
 
 
 def startup_followup_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False
@@ -1427,6 +1442,7 @@ def startup_followup_required(event, before, head, parent, names):
 
 
 def levelup_ui_repair_required(event, before, head, parent, names):
+    if client_assets_owned(event, before, head, parent, names): return False
     if client_recovery_owned(event, before, head, parent, names): return False
     if zoning_owned(event, before, head, parent, names): return False
     if render_queue_owned(event, before, head, parent, names): return False

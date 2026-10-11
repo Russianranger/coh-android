@@ -2,6 +2,7 @@
 import copy
 import json
 import unittest
+from unittest import mock
 import build_client_assets_apk as package
 
 class AssetsPublication(unittest.TestCase):
@@ -50,3 +51,24 @@ class AssetsPublication(unittest.TestCase):
         self.assertEqual(runtime['external_asset_pack']['manifest_sha256'],updates['asset-pack-manifest.json']['sha256'])
         self.assertTrue(runtime['character_monorail_enabled'])
         self.assertEqual(donor['runtime_manifest'],original)
+
+    def test_new_native_run_does_not_relabel_historical_embedded_package_identity(self):
+        import native_monorail_contract
+        helpers=package.HELPERS|package.ADDED_HELPERS|{'game-package.tar.gz','asset-pack-manifest.json','kings-row-beacon-lock.json'}
+        updates={name:package.pin(name.encode()) for name in helpers}
+        game={'repository_commit':'b'*40}
+        original={'files':{},'client_bundle':{'local_server':{'mapserver':{
+            'package_repository_commit':'b'*40,'package_run_id':123}}}}
+        donor={'_client_verification':{'files':{}},'runtime_manifest':original}
+        build={'repository_commit':'c'*40,'run_url':'https://github.com/Russianranger/coh-android/actions/runs/456'}
+        with mock.patch.object(native_monorail_contract,'progress_contract',return_value={'producer':{'sha256':'d'*64}}):
+            _,runtime=package.verification_manifests(donor,updates,'a'*40,{'files':{}},
+                {'build_input':{'contract':{'map_ids':[1,5]}}},game,build)
+        mapped=runtime['client_bundle']['local_server']['mapserver']
+        self.assertEqual(mapped['package_repository_commit'],'b'*40)
+        self.assertEqual(mapped['package_run_id'],123)
+        self.assertEqual(mapped['monorail_packaging_repository_commit'],'a'*40)
+        self.assertEqual(mapped['monorail_native_repository_commit'],'c'*40)
+        self.assertEqual(mapped['monorail_native_run_id'],456)
+        self.assertEqual(original['client_bundle']['local_server']['mapserver'],
+            {'package_repository_commit':'b'*40,'package_run_id':123})

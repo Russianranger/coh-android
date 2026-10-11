@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Package the recovery shell over the exact, physically accepted public .26 runtime.
+"""Package a small launcher and independently versioned original asset volumes.
 
-The accepted Game, its original native proof, servers, GPU driver/probes, assets,
-and graphics recipe are immutable inputs. Only explicitly reviewed Java and
-guest control helpers are compiled/replaced. Historical producers are imported
-without changing their global contracts or relabelling their receipts.
+The accepted Game, DbServer and GPU payloads retain their exact public .27 pins.
+Only the source-bound MapServer, reviewed Java/guest controls and new original
+zone resources change. Fresh-process audits reconstruct the native archive and
+check every public APK and asset-volume byte without claiming physical gains.
 """
 from __future__ import annotations
 import argparse
@@ -79,6 +79,16 @@ CHECKS = ('external_asset_import_storage_and_monorail_guards_verified',
     'retained_gameplay_postgresql_gpu_cleanup_and_recovery_guards_verified',
     'exact_027_native_graphics_assets_and_reviewed_shell_verified')
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
+    'docs/android-evidence/zone-assets-1.0.0-all-maps.json',
+    'docs/android-evidence/zone-assets-1.0.0-publication-inputs.json',
+    'docs/android-evidence/zone-assets-1.0.0-thor-errors.json',
+    'tools/android/interactive/release-client-assets-0.13.28.json',
+    'tools/android/interactive/classify_client_assets_change.py',
+    'tools/android/interactive/classify_interactive_change.py',
+    'tools/android/interactive/classify_storage_cleanup_change.py',
+    'tools/android/interactive/test_classify_client_assets_change.py',
+    'tools/android/interactive/test_classify_storage_cleanup_change.py',
+    '.github/workflows/android-game.yml','.github/workflows/android-map-progress.yml',
     'tools/android/interactive/build_client_assets_apk.py',
     'tools/android/interactive/package_external_assets.py',
     'tools/android/interactive/test_external_assets.py',
@@ -89,16 +99,20 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/test_runtime_setup_reuse.py',
     'tools/android/interactive/audit_kings_row_foundation.py',
     'tools/android/interactive/prepare_zones_world_assets.py',
+    'assets/zones-world-supplement-manifest.json',
+    'assets/zones-audio-supplement-manifest.json','assets/zones-audio-metadata.json',
+    'tools/android/interactive/prepare_zones_audio_assets.py',
+    'tools/android/interactive/audit_zone_asset_coverage.py',
     '.github/workflows/android-kings-row-native.yml',
     'tools/android/interactive/test_character_zoning.py',
     'tools/android/interactive/test_client_zoning_java.py',
-    'docs/'+NOTES_NAME,
+    'docs/'+NOTES_NAME,'docs/COH-ASSETS-0.13.28.md',
     *JAVA_CHANGES, *JAVA_ADDITIONS, *('android/guest/'+name for name in HELPERS|ADDED_HELPERS)})
 REVIEWED_DONOR_SOURCE_CHANGES = SOURCE_FILES | frozenset({'docs/HANDOFF.md'})
 FALSE_FLAGS = tuple(name for name in previous.FALSE_FLAGS if name not in {
     'native_mapserver_recompiled','world_assets_changed','asset_reimport_required'})
 TRUE_FLAGS = previous.TRUE_FLAGS + ('native_mapserver_recompiled','world_assets_changed',
-    'external_asset_pack_required','all_asset_volumes_required_for_fresh_install')
+    'external_asset_pack_required','all_asset_volumes_required_for_fresh_install','asset_reimport_required')
 RETAINED_FIELDS = tuple(name for name in previous.RETAINED_FIELDS if name != 'server_payload_extraction_preflight') + ('client_recovery',)
 ASSET_RELEASE_TAG = 'coh-assets-v'+packs.VERSION
 
@@ -216,7 +230,7 @@ def validate_donor(apk, receipt, retained_client_directory):
     base.verify_packaged_payloads(apk, donor['payloads'])
     with zipfile.ZipFile(apk) as archive:
         shell = {'classes.dex':donor['recompiled_dex'], **donor['retained_android_resources']}
-        require(retained.archive_inventory(archive) == set(donor['payloads'])|set(shell)|{'AndroidManifest.xml'}, 'Exact .26 APK inventory required')
+        require(retained.archive_inventory(archive) == set(donor['payloads'])|set(shell)|{'AndroidManifest.xml'}, 'Exact .27 APK inventory required')
         for name, expected in shell.items(): require(pin(archive.read(name)) == expected, 'Donor Android shell differs: '+name)
         require(typed_equal(read_json_value(archive.read('assets/runtime/runtime-manifest.json')), donor['runtime_manifest']), 'Donor runtime manifest differs')
         donor['_client_verification'] = read_json_value(archive.read('assets/runtime/client-manifest.json'))
@@ -273,16 +287,18 @@ def recovery_contract():
 
 def asset_contract(directory, *, verify_volumes=False):
     directory = Path(directory); manifest = packs.validate_manifest(read_json(directory/packs.MANIFEST))
-    require(manifest['version'] == packs.VERSION and set(manifest['volumes']) == {'base','reference','zones'}
+    require(manifest['version'] == packs.VERSION and set(manifest['volumes']) == {'base','reference','zones','audio'}
         and set(manifest['volumes']['base']) == packs.BASE_FILES
-        and manifest['volumes']['reference'] == [packs.REFERENCE_FILE], 'Exact versioned asset layout required')
+        and manifest['volumes']['reference'] == [packs.REFERENCE_FILE]
+        and set(manifest['volumes']['zones']) == packs.ZONE_FILES
+        and set(manifest['volumes']['audio']) == packs.AUDIO_FILES, 'Exact versioned asset layout required')
     if verify_volumes:
         for volume in manifest['volumes']:
             packs.verify_volume(directory/packs.volume_filename(packs.VERSION,volume),manifest,volume)
     return manifest
 
 
-def verification_manifests(donor, updates, commit, asset_manifest, monorail):
+def verification_manifests(donor, updates, commit, asset_manifest, monorail, game=None, native_build=None):
     require(set(updates) == HELPERS|ADDED_HELPERS|{'game-package.tar.gz','asset-pack-manifest.json','kings-row-beacon-lock.json'},
         'Exact reviewed helper, native MapServer, lock and asset descriptor inputs required')
     client = copy.deepcopy(donor['_client_verification']); client['files'].update(updates)
@@ -299,6 +315,18 @@ def verification_manifests(donor, updates, commit, asset_manifest, monorail):
     runtime['external_asset_pack'] = {'format':1,'id':packs.PACK_ID,'version':packs.VERSION,
         'manifest_sha256':updates['asset-pack-manifest.json']['sha256'],
         'manifest_bytes':updates['asset-pack-manifest.json']['bytes'], 'release_tag':ASSET_RELEASE_TAG}
+    if game is not None:
+        import native_monorail_contract as bridge_contract
+        import package_monorail_native as bridge_package
+        mapped=runtime['client_bundle']['local_server']['mapserver']
+        mapped.update(archive_pin=updates['game-package.tar.gz'],
+            package_manifest_sha256=hashlib.sha256(bridge_package.canonical(game)).hexdigest(),
+            package_repository_commit=game['repository_commit'],
+            monorail_packaging_repository_commit=commit,
+            monorail_native_repository_commit=native_build['repository_commit'],
+            monorail_native_run_id=int(native_build['run_url'].rsplit('/',1)[1]),
+            mapserver_progress_producer=bridge_contract.progress_contract(game)['producer'],
+            monorail_contract=monorail['build_input']['contract'],monorail_native_candidate=True)
     runtime['client_monorail'] = {**recovery_contract(),'repository_commit':commit,
         'donor_apk_repository_commit':DONOR_COMMIT,'mapserver_native_build':monorail,
         'publication_provenance':publication_provenance(commit)}
@@ -331,7 +359,7 @@ def extract_and_repair(apk, donor, destination, commit, asset_directory, native_
     monorail,game = bridge.patch_game(assets,native_directory,commit,native_commit)
     updates = {name:base.file_pin(assets/name) for name in HELPERS|ADDED_HELPERS|{
         'game-package.tar.gz','asset-pack-manifest.json','kings-row-beacon-lock.json'}}
-    client,runtime = verification_manifests(donor,updates,commit,descriptor,monorail)
+    client,runtime = verification_manifests(donor,updates,commit,descriptor,monorail,game,bridge.validate_package(native_directory,native_commit))
     for name,value in (('client-manifest.json',client),('runtime-manifest.json',runtime)): (assets/name).write_bytes(shared.encoded(value))
     payloads = {name:base.file_pin(destination/name) for name in sorted((set(donor['payloads'])-EXTERNAL_PAYLOADS)|ADDED_PAYLOADS)}
     payload_boundaries(payloads,donor)
@@ -461,6 +489,7 @@ def build(args):
             'application_id':base.APP_ID,'version_name':VERSION_NAME,'version_code':VERSION_CODE,'abi':'arm64-v8a',
             'scope':QUALIFICATION_SCOPE,'donor':donor_link(),'signer_certificate_sha256':certificate,'signing_key_created':False,
             'signature_verified':True,'package_badging_verified':True,'binary_manifest_version_only_verified':True,'payload_bytes_verified':True,
+            'external_asset_release_tag':ASSET_RELEASE_TAG,'asset_pack_version':packs.VERSION,
             'external_asset_pack':asset_contract(args.asset_directory),'server_payload_extraction_preflight':preflight,
             'payloads':payloads,'changed_apk_payloads':sorted(REPLACED_PAYLOADS),'added_apk_payloads':sorted(ADDED_PAYLOADS),
             'baseline_payloads_verified':BASELINE_PAYLOAD_COUNT,'retained_baseline_payloads_verified':BASELINE_PAYLOAD_COUNT-len(REPLACED_PAYLOADS)-len(EXTERNAL_PAYLOADS),
@@ -476,7 +505,7 @@ def build(args):
     shutil.copyfile(args.testing_notes,args.output.parent/NOTES_NAME)
     args.output.with_suffix('.apk.sha256').write_text(report['sha256']+'  '+APK_NAME+'\n')
     verify_report(argparse.Namespace(**vars(args),apk=args.output,build_report=args.output.parent/REPORT_NAME),commit)
-    print('Qualified recovery APK:',args.output,report['sha256']); return report
+    print('Qualified small APK:',args.output,report['sha256']); return report
 
 
 def verify_report(args,commit):
@@ -490,6 +519,8 @@ def verify_report(args,commit):
         and report.get('repository_commit') == report.get('runtime_repository_commit') == commit
         and report.get('retained_runtime_repository_commit') == DONOR_COMMIT and report.get('retained_native_repository_commit') == NATIVE_COMMIT
         and report.get('donor') == donor_link() and report.get('scope') == QUALIFICATION_SCOPE
+        and report.get('external_asset_release_tag') == ASSET_RELEASE_TAG and report.get('asset_pack_version') == packs.VERSION
+        and report.get('server_payload_extraction_preflight') == q.get('server_payload_extraction_preflight')
         and report.get('application_id') == base.APP_ID and report.get('version_name') == VERSION_NAME
         and type(report.get('version_code')) is int and report['version_code'] == VERSION_CODE and report.get('abi') == 'arm64-v8a'
         and report.get('signer_certificate_sha256') == SIGNER and report.get('signing_key_created') is False
@@ -508,6 +539,7 @@ def verify_report(args,commit):
     base.checked_file(args.apk,report); runtime = verify_derivative(args.apk,donor,report['payloads'],report['recompiled_dex'],commit,args.asset_directory,args.monorail_directory,args.native_commit)
     require(typed_equal(report.get('runtime_manifest'),runtime)
         and report.get('runtime_manifest_sha256') == report['payloads']['assets/runtime/runtime-manifest.json']['sha256'],'Runtime provenance differs')
+    require(retained.verify_apk_server_archives(args.apk) == report['server_payload_extraction_preflight'],'Reported server extraction differs from actual APK')
     retained.verify_binary_manifest(args.apk,args.donor_apk,args.build_tools); retained.verify_signature(args.apk,args.build_tools)
     base.run(args.build_tools/'zipalign','-c','4',args.apk); current.verify_badging(base.run(args.build_tools/'aapt2','dump','badging',args.apk))
     checksum = args.apk.with_suffix('.apk.sha256'); require(checksum.read_text() == report['sha256']+'  '+APK_NAME+'\n','Checksum differs')
@@ -527,7 +559,7 @@ def download_donor_evidence(args):
         for name in sorted(members):
             target = args.output/name; target.write_bytes(archive.read(name)); builder().checked_file(target,members[name])
     validate_donor_receipt(args.output/DONOR_REPORT_NAME)
-    print('Authenticated exact published .26 packaging evidence')
+    print('Authenticated exact published .27 packaging evidence')
 
 
 def download_retained_native(args):
@@ -550,7 +582,7 @@ def download_retained_native(args):
 
 
 # Private publication-only delegate, so every old release keeps its own guard.
-_publication = module('client_recovery_private_publication',Path(previous.previous.previous.__file__))
+_publication = module('client_assets_private_publication',Path(previous.previous.previous.__file__))
 for _name in ('APK_NAME','REPORT_NAME','NOTES_NAME','RELEASE_TAG','DONOR_COMMIT','DONOR_APK_NAME','DONOR_APK','NOTES'):
     setattr(_publication,_name,globals()[_name])
 validate_existing_release,download_public = _publication.validate_existing_release,_publication.download_public
@@ -571,13 +603,33 @@ def prepare_assets(args):
                 source = directory/name; builder().checked_file(source)
                 zones['runtime/'+name] = source
         import prepare_zones_world_assets as world
-        world.verify_archive(args.zones_directory/'zones-world-supplement.zip',read_json(args.zones_directory/'zones-world-supplement-manifest.json'))
+        frozen_world=world.frozen_manifest(ROOT)
+        require(read_json(args.zones_directory/'zones-world-supplement-manifest.json') == frozen_world,'Zone asset manifest differs from reviewed immutable pack')
+        world.verify_archive(args.zones_directory/'zones-world-supplement.zip',frozen_world)
+        builder().checked_file(args.zones_directory/'zones-world-supplement-provenance.json',world.PROVENANCE_PIN)
+        import generate_kings_row_beacons as beacon_generation
+        beacon_generation.validate_package(args.beacons_directory)
         import kings_row_beacon_package as beacon
         document,lock = beacon.read_manifest(args.beacons_directory/beacon.MANIFEST,args.beacons_directory/beacon.LOCK)
         require(builder().file_pin(args.beacons_directory/beacon.ARCHIVE) == lock['archive'],'Native beacon ZIP differs from qualified lock')
-        inputs.update(zones)
-        manifest,report = packs.build(inputs,args.output,zones=zones)
+        import prepare_zones_audio_assets as audio_builder
+        require(all(type(value) is dict for value in (audio_builder.ARCHIVE_PIN,audio_builder.MANIFEST_PIN,audio_builder.PROVENANCE_PIN)),
+            'Audio asset identities must be frozen before packaging')
+        for name,expected in ((audio_builder.ARCHIVE,audio_builder.ARCHIVE_PIN),(audio_builder.MANIFEST,audio_builder.MANIFEST_PIN),
+                (audio_builder.PROVENANCE,audio_builder.PROVENANCE_PIN)):
+            builder().checked_file(args.zones_directory/name,expected)
+        audio_document=read_json(args.zones_directory/audio_builder.MANIFEST)
+        require(read_json(ROOT/'assets'/audio_builder.MANIFEST) == audio_document,'Audio manifest differs from reviewed frozen content')
+        world.verify_archive(args.zones_directory/audio_builder.ARCHIVE,audio_document)
+        audio_inputs={'runtime/'+name:args.zones_directory/name for name in (audio_builder.ARCHIVE,audio_builder.MANIFEST)}
+        inputs.update(zones);inputs.update(audio_inputs)
+        manifest,report = packs.build(inputs,args.output,zones=zones,audio=audio_inputs)
     shutil.copyfile(args.beacons_directory/beacon.LOCK,args.output/beacon.LOCK)
+    report['audit_files']={}
+    for name in ('zone-asset-coverage.json','zones-world-supplement-provenance.json','zones-audio-supplement-provenance.json'):
+        source=args.zones_directory/name;builder().checked_file(source)
+        shutil.copyfile(source,args.output/name);report['audit_files'][name]=builder().file_pin(source)
+    (args.output/'asset-pack-build-report.json').write_bytes(packs.encoded(report))
     print('Built independently versioned asset pack',manifest['version'],report['volumes'])
     return report
 
@@ -587,7 +639,7 @@ def asset_release_members(directory):
     names = []
     for volume in sorted(manifest['volumes']):
         name = packs.volume_filename(packs.VERSION,volume); names.extend((name,name+'.sha256'))
-    names += [packs.MANIFEST,'asset-pack-build-report.json']
+    names += [packs.MANIFEST,'asset-pack-build-report.json','zone-asset-coverage.json','zones-world-supplement-provenance.json','zones-audio-supplement-provenance.json']
     return [directory/name for name in names]
 
 
@@ -609,6 +661,8 @@ def download_public_assets(args):
         checksum=(expected['sha256']+'  '+name+'\n').encode()
         bounded_download(prefix+name+'.sha256',args.output/(name+'.sha256'),pin(checksum))
         packs.verify_volume(path,manifest)
+    require(set(report.get('audit_files',{})) == {'zone-asset-coverage.json','zones-world-supplement-provenance.json','zones-audio-supplement-provenance.json'},'Named zone audit inventory missing')
+    for name,expected in report['audit_files'].items():bounded_download(prefix+name,args.output/name,expected)
     shutil.copyfile(args.lock,args.output/'kings-row-beacon-lock.json')
     print('All actual public asset volumes and per-member hashes verified')
 
@@ -627,7 +681,7 @@ def publish_asset_release(api,directory,commit):
             and published[name].get('digest') == 'sha256:'+record['sha256'] for name,record in pins.items()),
             'Asset version already exists with different bytes; create a new asset version')
         return existing['html_url']
-    body = ('Independent COH Assets '+packs.VERSION+'. Import all three versioned volumes once: Base, Reference and Zones. '
+    body = ('Independent COH Assets '+packs.VERSION+'. Import all four versioned volumes once: Base, Reference, Zones and Audio. '
         'Later APK releases will explicitly state whether this exact pack can be reused. '
         'This pack retains the accepted Atlas assets and adds audited frozen-source zone resources and qualified Kings Row graph. '
         'Asset inclusion does not physically qualify every other zone.\n\n' +

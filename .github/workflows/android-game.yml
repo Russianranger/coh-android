@@ -22,12 +22,20 @@ concurrency:
   cancel-in-progress: false
 jobs:
   tooling:
+    outputs:
+      legacy_native_required: ${{ steps.owner.outputs.legacy_native_required }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
+      - id: owner
+        name: Route the explicit external-assets milestone to its dedicated native qualification
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_client_assets_change.py
       - name: Verify composite inputs, data staging, bridge and lifecycle contracts
         run: |
           python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
@@ -36,6 +44,7 @@ jobs:
           python3 -m unittest discover -s tools/android -p 'test_extract_talloc_source.py' -v
   bridge:
     needs: tooling
+    if: needs.tooling.outputs.legacy_native_required != 'false'
     runs-on: windows-2025-vs2026
     timeout-minutes: 15
     steps:
@@ -87,6 +96,7 @@ jobs:
           if-no-files-found: error
   game-donors:
     needs: tooling
+    if: needs.tooling.outputs.legacy_native_required != 'false'
     runs-on: windows-2025-vs2026
     timeout-minutes: 60
     steps:

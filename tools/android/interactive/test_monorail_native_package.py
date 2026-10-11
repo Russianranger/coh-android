@@ -18,7 +18,11 @@ class MonorailPackageTests(unittest.TestCase):
             self.assertEqual(first.read_bytes(),second.read_bytes())
             with tarfile.open(first,'r:gz') as archive:
                 self.assertEqual({r.name:archive.extractfile(r).read() for r in archive.getmembers()},files)
-                self.assertTrue(all(r.mtime==1767225600 and r.uid==0 for r in archive.getmembers()))
+                self.assertTrue(all(r.mtime==0 and r.uid==0 and r.mode==0o644 for r in archive.getmembers()))
+            import local_login_server
+            output=Path(td)/'actual-guest-extraction'
+            local_login_server.extract_regular(first,output)
+            self.assertEqual({p.name:p.read_bytes() for p in output.iterdir()},files)
 
     def test_source_contract_keeps_frozen_collision_algorithms(self):
         receipt=package.source.expected_receipt()

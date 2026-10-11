@@ -52,6 +52,19 @@ class ObserverTests(unittest.TestCase):
         self.assertEqual(events.console_events(owned),line())
         del output[:10]
         with self.assertRaises(events.base.DiagnosticError):events.console_events(owned)
+    def test_reader_append_during_snapshot_is_observed_on_next_poll(self):
+        second=line(2,'position').encode()
+        class Appending(bytearray):
+            appended=False
+            def __getitem__(self,key):
+                result=super().__getitem__(key)
+                if isinstance(key,slice) and not self.appended:
+                    self.appended=True;self.extend(second)
+                return result
+        owned={'process':SimpleNamespace(output=Appending(line().encode()))}
+        self.assertEqual(events.console_events(owned),line())
+        self.assertEqual(events.console_events(owned),line()+second.decode())
+
     def test_new_source_preserves_original_event_contract_and_only_mapserver(self):
         receipt=source.expected_receipt()
         self.assertEqual(receipt['contract'],contract.CONTRACT)

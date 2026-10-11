@@ -713,7 +713,9 @@ public final class ClientRuntime {
             long duration=timing.containsKey("total_elapsed_ms")?((Number)timing.get("total_elapsed_ms")).longValue():Math.max(0,SystemClock.uptimeMillis()-((Number)timing.get("request_uptime_ms")).longValue());
             elapsed=" · "+(duration/1000)+"s total";
         }
-        if("idle".equals(phase))return ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested"+elapsed;
+        if("idle".equals(phase))return zoning.monorailRequiresReopen()&&zoning.currentMap()==1
+                ?"Back in Atlas Park · Save, Finish and Reopen to enable monorail travel"
+                :ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested"+elapsed;
         if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())
                 +(zoning.stockMonorail()||automaticTravel?" · travel follows automatically; stay in this app":" · automatic travel paused; tap Travel when ready")+elapsed;
         if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+(zoning.stockMonorail()?" ready · boarding monorail":" ready · tap Travel to continue");

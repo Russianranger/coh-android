@@ -1,0 +1,122 @@
+[
+  {
+    "archive": "sound.pigg",
+    "source_archive_bytes": 58143974,
+    "source_etag": "\"5685c7568e87ee5c2d081baa07d6b9ec\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:21:19 GMT",
+    "source_metadata_bytes": 8370,
+    "source_metadata_sha256": "6dc2c4a3b577c5a77e087e18b8e8a14147ad19554ec499007d42c409ce26b3a6"
+  },
+  {
+    "archive": "sound1.pigg",
+    "source_archive_bytes": 25072754,
+    "source_etag": "\"e4924d9c694388a4ce3fc6d71e730e93\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:20:43 GMT",
+    "source_metadata_bytes": 18296,
+    "source_metadata_sha256": "ee03e1b61fc6643d2b1d379b7aa4ba2992794e4a22dccfda8869d91bba453216"
+  },
+  {
+    "archive": "sound2.pigg",
+    "source_archive_bytes": 79026404,
+    "source_etag": "\"66d5fb94517248d8beec2e626001a77e\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:21:22 GMT",
+    "source_metadata_bytes": 32885,
+    "source_metadata_sha256": "c6cd9224eed44c5f194f373702b4693fd4870555a9b24672e156e3c9381408a0"
+  },
+  {
+    "archive": "sound3.pigg",
+    "source_archive_bytes": 68528403,
+    "source_etag": "\"54b8fa5ded4d18229214a35a29f78744\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:21:20 GMT",
+    "source_metadata_bytes": 18053,
+    "source_metadata_sha256": "623adcae09296895736c2b7b7596c7807a43e6d90b2a3536a1f049eb193ac73e"
+  },
+  {
+    "archive": "sound4.pigg",
+    "source_archive_bytes": 71485341,
+    "source_etag": "\"d58c0c7a7011846894e62735e7238f76\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:02 GMT",
+    "source_metadata_bytes": 7789,
+    "source_metadata_sha256": "34993959b9610d624f4f81fa04467c2580bed3b569ceb584716d3ab619e25d28"
+  },
+  {
+    "archive": "sound5.pigg",
+    "source_archive_bytes": 23826933,
+    "source_etag": "\"a345fc3ed5a980f150e8d0cd188e9d2d\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:21:33 GMT",
+    "source_metadata_bytes": 2378,
+    "source_metadata_sha256": "76c67bd757c8e8f79099fff7f4826bd1fb2baeb2e31d814dcb61f4ee8ad6c9d9"
+  },
+  {
+    "archive": "sound6.pigg",
+    "source_archive_bytes": 50096207,
+    "source_etag": "\"49dd27155101db1e212ac42c5cbb59d8\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:21:55 GMT",
+    "source_metadata_bytes": 10337,
+    "source_metadata_sha256": "e64401fa01c3f01961f8c4509db483599f822d4259a1d0ebfd3344c1e6114e8e"
+  },
+  {
+    "archive": "sound7.pigg",
+    "source_archive_bytes": 62118318,
+    "source_etag": "\"70b94bb2bc4a342c4c666a3a7263f654\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:34 GMT",
+    "source_metadata_bytes": 40881,
+    "source_metadata_sha256": "30ae1add373663e3cba43f37d380516269afe336e9561bd0ea353aaf71769a79"
+  },
+  {
+    "archive": "soundMusic.pigg",
+    "source_archive_bytes": 79284728,
+    "source_etag": "\"662bf94d41f7b1c4a1272a8647c6cdab\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:28 GMT",
+    "source_metadata_bytes": 9599,
+    "source_metadata_sha256": "870309230897ac886501743ea580499c2894516d832ffe97b3fd979178aad448"
+  },
+  {
+    "archive": "soundMusic1.pigg",
+    "source_archive_bytes": 105235439,
+    "source_etag": "\"72adcc85623926263701fd85739cb317\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:23:31 GMT",
+    "source_metadata_bytes": 11615,
+    "source_metadata_sha256": "e872b2675cc206912540504e179ac1c007862ee229b2d569aa76bd1c522838ed"
+  },
+  {
+    "archive": "soundMusic2.pigg",
+    "source_archive_bytes": 114928439,
+    "source_etag": "\"3d06593bf7a10fd82aee6d0b1785e013\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:23:32 GMT",
+    "source_metadata_bytes": 9032,
+    "source_metadata_sha256": "00783af8c1229f591351e3a28dc01e58b79ab1205e716fea956c092283b8eba4"
+  },
+  {
+    "archive": "soundPowers.pigg",
+    "source_archive_bytes": 18798752,
+    "source_etag": "\"e3780ec1cd7e533d64352544c93e0855\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:19 GMT",
+    "source_metadata_bytes": 20412,
+    "source_metadata_sha256": "ba85d6e6ca5c9a65fcdd0633130b2b6d656584bd0ffabeb83fa2e0cecd9f769b"
+  },
+  {
+    "archive": "soundV1.pigg",
+    "source_archive_bytes": 31974452,
+    "source_etag": "\"144b584fb9945cc3f469da101c0adb56\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:42 GMT",
+    "source_metadata_bytes": 8218,
+    "source_metadata_sha256": "207ce068463d5ec30dec4c211c9a238fbde008303694a4ab95d799a1d6bc1db7"
+  },
+  {
+    "archive": "soundV2.pigg",
+    "source_archive_bytes": 30690946,
+    "source_etag": "\"22a51e16f130755c9f3a39f946d145ae\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:22:57 GMT",
+    "source_metadata_bytes": 7930,
+    "source_metadata_sha256": "b9c23fc6ba50fa16fe89dbc8668d3847291d9a0b8baa79b40354693098efd612"
+  },
+  {
+    "archive": "soundVMusic.pigg",
+    "source_archive_bytes": 28428809,
+    "source_etag": "\"ef067838406e60eb17e5ff64bd1a8a72\"",
+    "source_last_modified": "Sun, 28 Sep 2025 02:23:02 GMT",
+    "source_metadata_bytes": 1545,
+    "source_metadata_sha256": "a6c67f016fec92ffe09ce800cb8e38cbd0f18ad9eca0b3c1cb29ba19720721c1"
+  }
+]

@@ -68,7 +68,7 @@ public final class AssetPackStore {
     public List<String> missingVolumes()throws IOException{return archive.missingVolumes();}
     public File resolve(String path)throws IOException{return archive.resolve(path);}
     public InputStream open(String path)throws IOException{return archive.open(path);}
-    public String importVolume(InputStream input)throws IOException{guard.admit();String volume=archive.importVolume(input);guard.finishWrites();return volume;}
+    public String importVolume(InputStream input)throws IOException{String volume=archive.importVolume(input,guard::admit);guard.finishWrites();return volume;}
     public JSONObject receipt()throws Exception {
         return new JSONObject().put("format",1).put("version",version).put("manifest_sha256",archive.descriptorHash())
                 .put("complete",archive.isAccepted()).put("missing_parts",new JSONArray(archive.missingVolumes()))

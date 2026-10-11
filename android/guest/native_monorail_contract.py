@@ -26,6 +26,12 @@ def embedded_receipt(package):
         and wrapper.get('receipt_sha256')==canonical_sha(receipt),'Monorail native identity differs')
     build=receipt.get('build_input',{})
     require(build.get('schema_version')==1 and build.get('build_role')=='monorail'
+        and build.get('source_commit')==retained.SOURCE
+        and set(build.get('patched_sha256',{}))=={
+            'MapServer/CMakeLists.txt','MapServer/src/svr/svr_init.c',
+            'MapServer/src/svr/svr_tick.c','MapServer/src/door.c'}
+        and set(build.get('overlay_sha256',{}))=={
+            'MapServer/src/svr/wine_monorail.c','MapServer/src/svr/wine_monorail.h'}
         and build.get('build_targets')==['MapServer'] and build.get('runtime_validation')=='unverified'
         and build.get('contract')==CONTRACT,'Monorail native bridge contract differs')
     events=build.get('events_build_input',{})
@@ -36,6 +42,8 @@ def embedded_receipt(package):
     previous['files']['MapServer.exe']=receipt.get('previous_mapserver')
     accepted=retained.embedded_receipt(previous)
     retained.events_progress_contract(previous)
+    require(receipt.get('schema_sources_sha256')==accepted['retained_cache']['schema_sources_sha256'],
+        'Monorail altered retained Parse6/schema reader source')
     comparison = copy.deepcopy(accepted['build_inputs'])
     comparison['character_events'] = events
     retained.scene_source_inputs_equivalent(comparison, accepted['build_inputs'])

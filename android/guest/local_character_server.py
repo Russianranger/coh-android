@@ -829,6 +829,9 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'physical_zoning_verified': False, 'manifest_sha256': kings_lock['manifest']['sha256']}
             self.creation_report['kings_row_beacon_graph'] = self.kings_row_beacon_graph
             self.ctx.report['kings_row_beacon_graph'] = self.kings_row_beacon_graph
+        if zone_asset_package.present(self.owner.args.assets, audio=True):
+            audio_document = zone_asset_package.package(self.owner.args.assets, audio=True)
+            self.zone_asset_exclusions.update(name[5:] for name in audio_document['files'])
         required_geometry = None
         if (self.owner.args.assets / 'atlas-beacons.zip').exists() or (self.owner.args.assets / 'atlas-beacon-manifest.json').exists():
             import atlas_beacon_package
@@ -889,6 +892,12 @@ class LocalCharacterServer(login.LocalLoginServer):
         if self.manual_atlas_startup is not None:
             self.creation_report['manual_atlas_startup'] = self.manual_atlas_startup
         checkpoint('native_dependencies_and_manual_atlas')
+        if self.map_package.get('native_monorail') is not None:
+            # A reviewed MapServer-only bridge must retain the exact parser and
+            # schema ancestry before donor caches can accelerate a fresh install.
+            # Fail closed on an unproved binary instead of quietly parsing cold.
+            self.creation_report['server_cache_native_compatibility'] = server_cache_package.verify_mapserver_compatibility(
+                self.runtime / 'MapServer.exe', self.map_package)
         try:
             donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
                 self.runtime / 'MapServer.exe', mapserver_package=self.map_package)
@@ -1057,6 +1066,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     name = '' if parent == Path('.') else parent.as_posix()
                     if name not in known:
                         cache.observe(parent, target / 'data' / parent, None, False); known.add(name)
+                        staged['directories'] += 1
                 # This finite overlay is owned regular data, not an immutable
                 # link to the imported source; retain the strict cache validator.
                 cache.private_names.append(relative.as_posix())
@@ -1075,6 +1085,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         # logging policy. Never reuse a cached session's credential file.
         config = target / 'data/server/db/servers.cfg'
         server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        cache_compatibility = server_cache_package.verify_mapserver_compatibility(target / 'MapServer.exe', self.map_package)
         donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
             mapserver_package=self.map_package)
         prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
@@ -1088,6 +1099,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
+            'server_cache_native_compatibility': cache_compatibility,
             'animation': animation, 'elapsed_seconds': round(time.monotonic() - started, 6)}
         self.creation_report['kings_row_preparation'] = report
         self.creation_report['kings_row_beacon_graph'] = graph

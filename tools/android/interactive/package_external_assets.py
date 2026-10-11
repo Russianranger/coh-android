@@ -27,6 +27,9 @@ BASE_FILES = frozenset({'atlas/atlas-text.zip', 'atlas/atlas-assets-index.tsv', 
         'client-caches.zip','atlas-beacons.zip','atlas-beacon-manifest.json',
         'character-avatar-defaults.zip','character-avatar-defaults-manifest.json'))})
 REFERENCE_FILE = 'atlas/atlas-assets.zip'
+ZONE_FILES = frozenset('runtime/'+name for name in ('zones-world-supplement.zip','zones-world-supplement-manifest.json',
+    'kings-row-beacons.zip','kings-row-beacon-manifest.json'))
+AUDIO_FILES = frozenset('runtime/'+name for name in ('zones-audio-supplement.zip','zones-audio-supplement-manifest.json'))
 
 
 def require(condition, message):
@@ -63,6 +66,7 @@ def validate_manifest(manifest):
         require(type(expected) is dict and set(expected) == {'bytes','sha256'}
             and type(expected['bytes']) is int and 0 < expected['bytes'] < MAX_VOLUME_BYTES
             and type(expected['sha256']) is str and re.fullmatch('[0-9a-f]{64}',expected['sha256']), 'Invalid asset pin')
+    require(len({name.casefold() for name in files}) == len(files), 'Case-colliding asset identity')
     membership = []
     for volume, names in volumes.items():
         require(re.fullmatch('[a-z][a-z0-9-]{0,31}',volume) and type(names) is list and names == sorted(set(names))
@@ -150,8 +154,9 @@ def stage_donor_assets(apk, donor_payloads, output):
     return result
 
 
-def build(inputs, output, *, zones, version=VERSION):
-    volumes = {'base':sorted(BASE_FILES), 'reference':[REFERENCE_FILE], 'zones':sorted(zones)}
+def build(inputs, output, *, zones, audio, version=VERSION):
+    require(set(zones) == ZONE_FILES and set(audio) == AUDIO_FILES, 'Complete frozen Zones and Audio groups required')
+    volumes = {'base':sorted(BASE_FILES), 'reference':[REFERENCE_FILE], 'zones':sorted(zones), 'audio':sorted(audio)}
     manifest = make_manifest(inputs,volumes,version=version); output = Path(output)
     output.mkdir(parents=True,exist_ok=False)
     (output/MANIFEST).write_bytes(encoded(manifest)); receipts = {}

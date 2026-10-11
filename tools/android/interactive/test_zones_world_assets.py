@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Integrity and boundary checks for the external all-zone original pack."""
 import hashlib
+import struct
 import tempfile
 import unittest
 from pathlib import Path
@@ -51,6 +52,22 @@ class ZonesPackTests(unittest.TestCase):
                      'data/object_library/X.geo', 'data/geobin/maps/city.bin',
                      'data/server/db/maps.db', 'data/sound/ogg/x.ogg/../y.ogg'):
             self.assertFalse(zones.safe_payload(path), path)
+
+    def test_zero_model_original_is_not_qualified_geometry(self):
+        def original(count):
+            model_header = bytearray(140)
+            struct.pack_into('<I', model_header, 136, count)
+            header = struct.pack('<4I', 0, 8, 0, 0) + bytes(8) + model_header
+            packed = zlib.compress(header)
+            raw = struct.pack('<4I', len(packed) + 12, 0, 8, len(header)) + packed
+            row, encoded = self.row(raw)
+            row.update(path='player_library/original_empty_fx.geo', cached_header=raw)
+            return row, encoded
+        receipt = zones.verify_payload(*original(0))
+        self.assertEqual(receipt['original_model_count'], 0)
+        self.assertFalse(receipt['model_table_verified'])
+        with self.assertRaisesRegex(ValueError, 'Nonzero unsupported'):
+            zones.verify_payload(*original(65537))
 
     def test_zip_duplicate_and_content_tamper_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

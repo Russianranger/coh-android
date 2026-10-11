@@ -73,3 +73,8 @@ class ExternalAssets(unittest.TestCase):
         path=self.root/'candidate.zip'
         with self.assertRaises(ValueError):package.write_volume(path,self.manifest,'base',self.inputs)
         self.assertFalse(path.exists())
+
+    def test_new_audio_volume_is_separate_and_exactly_owned(self):
+        self.assertEqual(package.AUDIO_FILES,{'runtime/zones-audio-supplement.zip','runtime/zones-audio-supplement-manifest.json'})
+        self.assertFalse(package.AUDIO_FILES & package.ZONE_FILES)
+        self.assertEqual(package.volume_filename('1.0.0','audio'),'COH-Assets-1.0.0-Audio.zip')

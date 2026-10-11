@@ -229,6 +229,8 @@ def generate(args):
     for path in (runtime/'data').rglob('*'):
         if path.is_file(): os.utime(path,(1767225600,1767225600))
     inputs=geometry_inputs(runtime);cold=args.work/'c';mirror=shared.mirror_cold_runtime(runtime,cold)
+    mirror.pop('created_before_visual_overlay_and_generation')
+    mirror.update(created_before_generation=True, required_geometry_installed_before_mirror=True)
     generator=runtime/'KingsRowBeaconGenerator.exe';shutil.copyfile(args.generator,generator)
     (runtime/'tools').mkdir(exist_ok=True)
     started=time.monotonic();commands=run_generation(runtime,generator,evidence,args.timeout_seconds)

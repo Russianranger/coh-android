@@ -82,7 +82,7 @@ public final class ClientActivity extends Activity {
         String version="unknown";
         try{version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(PackageManager.NameNotFoundException ignored){}
         controls.addView(text("Persistent local server · v"+version,12,false));
-        controls.addView(text("Reopen THORHERO and test travel between two Atlas Park instances. Keep your app data, imports, graphics settings, costume and powers.",13,false));
+        controls.addView(text("Reopen THORHERO and test the Atlas Park–Kings Row monorail. Keep the accepted graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
         importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
         assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);

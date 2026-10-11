@@ -124,6 +124,8 @@ def verify_assets(assets):
         # This exact world supplement is independently pinned by its manifest
         # and runtime helper; unrelated payloads keep their existing cap.
         limit = (1900*1024*1024 if name == 'zones-world-supplement.zip' else
+                 1100*1024*1024 if name == 'zones-audio-supplement.zip' else
+                 16*1024*1024 if name == 'zones-audio-supplement-manifest.json' else
                  128*1024*1024 if name == 'zones-world-supplement-manifest.json' else
                  1024*1024*1024 if name == 'client-visual-assets.zip' else
                  64*1024*1024 if name == 'client-visual-manifest.json' else

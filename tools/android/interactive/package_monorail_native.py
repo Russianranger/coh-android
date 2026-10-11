@@ -75,8 +75,8 @@ def write_game_archive(path,files):
     with Path(path).open('wb') as destination,gzip.GzipFile(filename='',mode='wb',fileobj=destination,mtime=0) as compressed:
         with tarfile.open(fileobj=compressed,mode='w') as archive:
             for name,raw in sorted(files.items()):
-                member=tarfile.TarInfo(name);member.size=len(raw);member.mtime=1767225600
-                member.mode=0o444;member.uid=member.gid=0;member.uname=member.gname=''
+                member=tarfile.TarInfo(name);member.size=len(raw);member.mtime=0
+                member.mode=0o644;member.uid=member.gid=0;member.uname=member.gname=''
                 archive.addfile(member,io.BytesIO(raw))
 
 
@@ -98,6 +98,7 @@ def patch_game(assets,native_directory,commit,native_commit=None):
     row=copy.deepcopy(build['files']['MapServer.exe']);row['bytes']=row.pop('size')
     receipt={'format':1,'role':'native_monorail','repository_commit':commit,
         'source_commit':game['source_commit'],'data_commit':game['data_commit'],'build_input':build['build_input'],
+        'schema_sources_sha256':build['schema_sources_sha256'],
         'mapserver':row,'previous_mapserver':previous,
         'retained_native_files':{n:r for n,r in game['files'].items() if n!='MapServer.exe'},
         'native_build_repository_commit':build['repository_commit'],

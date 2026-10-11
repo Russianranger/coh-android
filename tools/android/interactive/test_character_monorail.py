@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/'android/guest'))
 import character_zoning as zoning
+import character_reopen_diagnostic as reopen
 import test_character_zoning as old
 
 class StationTests(unittest.TestCase):
@@ -85,5 +86,31 @@ class StationTests(unittest.TestCase):
         v.monorail_qualified=True
         self.assertEqual(v.character_position(allow_unassigned_active_map=True),row)
         self.assertEqual(v.active_map_id,5)
+
+
+class MonorailEventAdapterTests(unittest.TestCase):
+    def test_actual_reopen_event_adapters_carry_kings_row_opt_in_to_android(self):
+        diagnostic=object.__new__(reopen.ZoningCharacterReopenDiagnostic)
+        for map_id in (1,5,101):
+            with self.subTest(map_id=map_id):
+                proof={'map_id':map_id,'baseline_character_id':1,'monorail_enabled':True,
+                       'recovery_requested':False,'recovery_verified':False}
+                connected=diagnostic.connected_event_data(proof)
+                saved=diagnostic.saved_event_data(proof)
+                for event in (connected,saved):
+                    self.assertIs(event['monorail_enabled'],True)
+                    self.assertIs(event['zoning_enabled'],True)
+                    self.assertIs(event['connected_on_supported_map'],True)
+                self.assertEqual(saved['map_id'],map_id)
+                self.assertEqual(connected['baseline_character_id'],1)
+
+    def test_legacy_event_adapters_do_not_invent_monorail_qualification(self):
+        diagnostic=object.__new__(reopen.ZoningCharacterReopenDiagnostic)
+        for opt_in in (None,False,1,'true'):
+            with self.subTest(opt_in=opt_in):
+                proof={'map_id':1,'baseline_character_id':1,'monorail_enabled':opt_in,
+                       'recovery_requested':False,'recovery_verified':False}
+                self.assertIs(diagnostic.connected_event_data(proof)['monorail_enabled'],False)
+                self.assertIs(diagnostic.saved_event_data(proof)['monorail_enabled'],False)
 
 if __name__=='__main__':unittest.main()

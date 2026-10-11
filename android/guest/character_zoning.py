@@ -1,8 +1,8 @@
-"""Finite native Atlas-instance zoning; read-only SQL and owned native evidence.
+"""Finite native station travel with read-only SQL and exact owned evidence.
 
-The .25 native client/server bytes are reused. Map 101 intentionally uses the
-stock, explicitly labelled embedded logger route: the retained immediate event
-producer observes only map 1 and its contract is never widened here.
+Legacy Atlas 1/101 retains its stock logger route and original producer contract.
+The separately qualified MapServer adds a distinct immediate stream for the
+actual Atlas/Kings Row station route; Game and DbServer bytes are unchanged.
 """
 import hashlib
 import json
@@ -307,9 +307,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         current = self._map_progress(map_id)
         if not self.live_progress(current):
             return []
-        return monorail_events.records(monorail_events.console_events(owned), session=self.owner.args.session_id,
+        values = monorail_events.records(monorail_events.console_events(owned), session=self.owner.args.session_id,
             progress=current, launch_utc_ms=owned['launch_utc_ms'], now_utc_ms=int(time.time()*1000),
             db_id=self.creation_report['character_id'], auth_id=self.auth_id, map_id=map_id)
+        self.zoning_report.setdefault('native_event_observations', {})[str(map_id)] = {
+            'event_count': len(values), 'latest_event': values[-1] if values else None,
+            'console_bytes_scanned': owned.get('monorail_scan_offset', 0),
+            'observed_utc_ms': int(time.time()*1000)}
+        return values
 
     def _authorize_station(self, record):
         path = self.runtime / ('monorail-' + str(record['map_id']) + '-reply.txt')
@@ -336,6 +341,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 continue
             self.native_station_seen[key] = record['line_sha256']
             if record['kind'] == 'station_request':
+                require(not getattr(self, 'monorail_requires_reopen', False),
+                    'After returning from the old Atlas instance, save, Finish and reopen for Kings Row')
                 request = dict(format=1, session_id=self.owner.args.session_id,
                     client_pid=self.creation_report['client_pid'], character_id=1,
                     epoch=self.epoch + 1, action='prepare', from_map_id=self.active_map_id,
@@ -375,6 +382,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'Saved Kings Row character requires the verified monorail/zone package')
         if allow_unassigned_active_map:
             self.active_map_id = value['staticmapid']
+            self.monorail_requires_reopen = self.active_map_id == 101
             self.creation_report['map_id'] = self.active_map_id
             self.zoning_report['saved_destination_map_id'] = self.active_map_id
         else:
@@ -598,7 +606,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             'target_map_name': MAPS[target]['name'], 'generated_utc_ms': int(time.time() * 1000),
             'epoch_limit': MAX_EPOCHS, **fields}
         value.update(monorail_enabled=self.monorail_enabled(),
-            travel_method='stock_monorail' if self.monorail_enabled() and self.active_map_id != 101 else 'mapmove')
+            travel_method='stock_monorail' if self.monorail_enabled() and self.active_map_id != 101
+                and not getattr(self, 'monorail_requires_reopen', False) else 'mapmove',
+            monorail_requires_reopen=getattr(self, 'monorail_requires_reopen', False))
         if self.pending is not None:
             for key in ('native_request_sequence', 'native_station_pid', 'native_station_request_verified',
                         'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',

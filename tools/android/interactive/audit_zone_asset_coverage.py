@@ -10,9 +10,11 @@ from __future__ import annotations
 import argparse
 from collections import Counter, defaultdict
 import hashlib
+import io
 import json
 from pathlib import Path, PurePosixPath
 import re
+import zipfile
 
 import audit_kings_row_foundation as kings
 import client_visual_geometry as geometry
@@ -29,7 +31,9 @@ class AllZoneSources(kings.Sources):
     ASCII. Every fallback file is recorded, and its original SHA is unchanged.
     """
     def __init__(self, root):
-        super().__init__(root)
+        # All 66 stock worlds share one cache; retain a separate finite host
+        # bound while the focused Kings Row audit keeps its original limits.
+        super().__init__(root, max_source_files=32768, max_source_total=1024 * 1024**2)
         self.legacy_byte_text = set()
 
     def read(self, name):
@@ -57,14 +61,75 @@ def map_records(root):
     return rows
 
 
+def observed_client_gaps(report, supplement, root=ROOT):
+    """Account for recorded native errors without converting metadata to FPS proof."""
+    with zipfile.ZipFile(report) as outer:
+        zones.require(outer.getinfo('android-client-report.json').file_size <= 1024**2,
+                      'Android report metadata exceeds audit bound')
+        android_report = json.loads(outer.read('android-client-report.json'))
+        zones.require(outer.getinfo('guest-report.zip').file_size <= 64 * 1024**2,
+                      'Nested report exceeds audit bound')
+        with zipfile.ZipFile(io.BytesIO(outer.read('guest-report.zip'))) as guest:
+            zones.require(guest.getinfo('client-evidence/client-console.log').file_size <= 32 * 1024**2,
+                          'Native console exceeds audit bound')
+            raw = guest.read('client-evidence/client-console.log')
+    text = raw.decode('utf-8', errors='replace')
+    categories = {
+        'missing_trick_texture': re.findall(r'Texture Trick "[^"]+" references missing texture "([^"]+)"', text),
+        'missing_custom_texture': re.findall(r'CUSTOM TEXTURE ERROR: texture not found: ([^\r\n]+)', text),
+        'missing_player_texture': re.findall(r"Player texture \d+ '([^']+)'[^\r\n]+ not found", text)}
+    retained = kings.retained_inventory(root)[0]
+    value = zones.frozen_manifest(root)
+    leaves = {PurePosixPath(name).stem for name in set(retained) | set(value['files'])
+              if name.endswith('.texture')}
+    old_leaves = {PurePosixPath(name).stem for name in retained if name.endswith('.texture')}
+    stock, _ = tricks.stock_tricks(root)
+    roots = defaultdict(list)
+    for category, names in categories.items():
+        for name in names:
+            roots[tricks.texture_stem(name)].append({'scope': category, 'alias': name, 'target': name})
+    closure = tricks.resolve_trick_closure(stock, roots, native_texture_names=leaves)
+    composites = {tricks.texture_stem(item['name']) for item in closure['stock_definition_closure']
+                  if item['composite_generation']['composite_alias_can_be_created']}
+    category_results = {}
+    for category, names in categories.items():
+        keys = {tricks.texture_stem(name) for name in names}
+        category_results[category] = {'recorded_occurrences': len(names), 'unique_keys': len(keys),
+            'new_original_texture_keys_in_pack': sorted(keys & (leaves - old_leaves)),
+            'already_retained_texture_keys': sorted(keys & old_leaves),
+            'stock_composite_alias_keys': sorted((keys - leaves) & composites),
+            'unresolved_literal_keys': sorted(keys - leaves - composites),
+            'native_retest_verified': False}
+    geometry_name = 'data/object_library/fx/flags/flag_01.geo'
+    with zipfile.ZipFile(supplement) as archive:
+        body = archive.read(geometry_name)
+    zones.require(kings.pin_bytes(body) == value['files'][geometry_name], 'Flag geometry differs')
+    proof = geometry.requested_model_proof(body, [{'model': 'GEO_Flag_04'}, {'model': 'GEO_Flag_Harness_04'}])
+    return {'report_archive': zones.pin(report), 'native_console': kings.pin_bytes(raw),
+        'source_apk_version': android_report.get('app_version'),
+        'observed_fileerror_blocks': text.count('ERRORLOG FILEERROR:'),
+        'categories': category_results, 'flag_geometry': {'file': geometry_name, **proof},
+        'expanded_missing_source_texture_keys': sorted(set(closure['requests']) - leaves - composites),
+        'ambiguous_stock_definitions': closure['ambiguous_stock_definitions'],
+        'composite_cycles': closure['cycles'],
+        'limitations': ['Each major error category was capped at 1,024 occurrences in the native report.',
+            'File/model availability is host evidence, not proof of physical rendering or improved FPS.',
+            'A stock composite alias still requires its surviving leaf dependencies and native runtime generation.']}
+
+
 def audit(root, cache, kings_audit=None):
     retained, records, originals, current = kings.retained_inventory(root)
     sources = AllZoneSources(root)
+    audio_by_source = {}
     all_resources, visual_archives, visual = {}, {}, {}
     for identity in current['provenance']['metadata_archives']:
         all_resources.update(zones.all_metadata(identity, cache)[0])
         rows = kings.sweep.metadata(identity, cache)
         visual.update(rows); visual_archives[identity['archive']] = rows
+    audio_metadata_path = root / 'assets/zones-audio-metadata.json'
+    standalone_audio = json.loads(audio_metadata_path.read_bytes()) if audio_metadata_path.is_file() else []
+    for identity in standalone_audio:
+        all_resources.update(zones.all_metadata(identity, cache)[0])
     visual = kings.preserve_retained_headers(visual, visual_archives, retained, records, originals)
     sounds = defaultdict(list)
     for name in all_resources:
@@ -72,7 +137,8 @@ def audit(root, cache, kings_audit=None):
             sounds[PurePosixPath(name).stem].append(name)
     output = {'format': 1, 'scope': 'all_named_stock_destinations_original_asset_inventory_v1',
         'source_commit': kings.SOURCE, 'data_commit': kings.DATA,
-        'frozen_metadata_archive_count': len(current['provenance']['metadata_archives']),
+        'frozen_metadata_archive_count': len(current['provenance']['metadata_archives']) + len(standalone_audio),
+        'standalone_audio_metadata': standalone_audio,
         'available_resource_count': len(all_resources),
         'maps': [], 'physical_all_zone_qualification': False,
         'full_dynamic_source_dependency_closure': False,
@@ -98,11 +164,18 @@ def audit(root, cache, kings_audit=None):
                 malformed_headers.append({'geometry': name, 'reason': str(error)})
         audio = {}
         for name in request['map_files'] + request['library_files']:
-            encoded = (root / 'upstream/i24' / sources.entries[name]['path']).read_bytes()
-            raw = encoded.decode('latin-1' if name in sources.legacy_byte_text else 'utf-8-sig')
-            for line, tokens in kings.costumes.line_tokens(raw):
-                if len(tokens) > 1 and tokens[0].casefold() == 'sound':
-                    audio.setdefault(tokens[1].casefold(), []).append({'source': name, 'line': line})
+            if name not in audio_by_source:
+                encoded = (root / 'upstream/i24' / sources.entries[name]['path']).read_bytes()
+                raw = encoded.decode('latin-1' if name in sources.legacy_byte_text else 'utf-8-sig')
+                sounds_in_file = []
+                for line, text in enumerate(kings.costumes.strip_comments(raw).splitlines(), 1):
+                    if re.match(r'^\s*Sound\s+', text, re.I):
+                        tokens = next(kings.costumes.line_tokens(text))[1]
+                        if len(tokens) > 1:
+                            sounds_in_file.append((tokens[1].casefold(), line))
+                audio_by_source[name] = sounds_in_file
+            for sound_name, line in audio_by_source[name]:
+                audio.setdefault(sound_name, []).append({'source': name, 'line': line})
         row = {**entry, 'source_present': True, 'source_graph_complete': not request['unresolved_source_edges'],
             'map_files': len(request['map_files']), 'library_files': len(request['library_files']),
             'geometry_requests': len(request['geometry']),

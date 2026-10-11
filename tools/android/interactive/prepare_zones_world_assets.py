@@ -28,8 +28,12 @@ import prepare_atlas_world_assets as donor
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE = 'zones-world-supplement.zip'
 MANIFEST = 'zones-world-supplement-manifest.json'
+PROVENANCE = 'zones-world-supplement-provenance.json'
 VERSION = '1.0.0'
 SCOPE = 'coh_all_zones_original_asset_supplement_v1'
+ARCHIVE_PIN = {'bytes': 1663681523, 'sha256': 'f12a0994cec20ab6d13c158495fe01402e89113ae756e412357e9c4a04833ad3'}
+MANIFEST_PIN = {'bytes': 4237139, 'sha256': 'f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74'}
+PROVENANCE_PIN = {'bytes': 29961724, 'sha256': '6b49594e9136925644a88246b53110f42c78f383a4c525ed0059622cc2987464'}
 MAX_FILES = 30000
 MAX_DECODED = 4 * 1024**3
 MAX_STORED = 1900 * 1024**2
@@ -240,6 +244,17 @@ def verify_archive(path, document):
     return {'files_verified': len(document['files']), 'payload_bytes': document['payload_bytes']}
 
 
+def frozen_manifest(root=ROOT):
+    path = Path(root) / 'assets' / MANIFEST
+    require(pin(path) == MANIFEST_PIN, 'Frozen zone manifest identity differs')
+    value = json.loads(path.read_bytes())
+    require(value['archive'] == {'filename': ARCHIVE, **ARCHIVE_PIN}
+            and value['provenance'] == {'filename': PROVENANCE, **PROVENANCE_PIN}
+            and value['version'] == VERSION and value['scope'] == SCOPE,
+            'Frozen zone asset version or provenance differs')
+    return value
+
+
 def prepare(root, metadata_cache, payload_cache, output, workers=8):
     require(not output.exists() and not output.is_symlink(), 'Preserve existing output; choose a new directory')
     output.mkdir(parents=True)
@@ -271,12 +286,22 @@ def prepare(root, metadata_cache, payload_cache, output, workers=8):
             and all(records[name].get('model_table_verified') is True for name in collision_names),
             'Kings Row source-world geometry closure is incomplete')
     collision_files = {name: files[name] for name in collision_names}
+    collision_models = {name: sweep.geometry.requested_model_proof(
+        selected[name]['cached_header'], source_world['geometry'][name]) for name in collision_names}
+    require(all(not row['absent_requested_models'] for row in collision_models.values()),
+            'A required Kings Row original collision model is absent')
+    # Full HTTP/source receipts are host evidence, not a launch-time JSON heap
+    # allocation on Android. The small runtime manifest binds their exact hash.
+    provenance = {'format': 1, 'scope': SCOPE, 'version': VERSION,
+                  'entries': dict(sorted(records.items()))}
+    (output / PROVENANCE).write_bytes(canonical(provenance) + b'\n')
     document = {**report, 'archive': {'filename': ARCHIVE, **pin(output / ARCHIVE)},
         'file_count': len(files), 'payload_bytes': sum(row['bytes'] for row in files.values()),
         'files_sha256': hashlib.sha256(canonical(files)).hexdigest(), 'files': files,
-        'provenance': {'entries': dict(sorted(records.items()))},
+        'provenance': {'filename': PROVENANCE, **pin(output / PROVENANCE)},
         'kings_row_collision_files': collision_files,
         'kings_row_collision_files_sha256': hashlib.sha256(canonical(collision_files)).hexdigest(),
+        'kings_row_collision_model_proofs': collision_models,
         'kings_row_source_world_graph_complete': True,
         'model_table_gaps': {name: row['model_table_gap'] for name, row in records.items()
                              if 'model_table_gap' in row},
@@ -285,6 +310,9 @@ def prepare(root, metadata_cache, payload_cache, output, workers=8):
         'physical_zoning_verified': False}
     verification = verify_archive(output / ARCHIVE, document)
     (output / MANIFEST).write_bytes(canonical(document) + b'\n')
+    require(pin(output / ARCHIVE) == ARCHIVE_PIN and pin(output / MANIFEST) == MANIFEST_PIN
+            and pin(output / PROVENANCE) == PROVENANCE_PIN,
+            'Rebuilt versioned zone asset identities differ from the frozen 1.0.0 pack')
     print(json.dumps({'archive': document['archive'], 'verification': verification}), flush=True)
     return document
 

@@ -74,9 +74,10 @@ def console_events(owned):
     """Decode only complete new event lines, never rescan the growing server log."""
     output=owned['process'].output
     offset=owned.get('monorail_scan_offset',0)
-    base.require(len(output)>=offset,'Owned monorail console was truncated')
-    chunk=owned.get('monorail_scan_tail',b'')+bytes(output[offset:])
-    owned['monorail_scan_offset']=len(output)
+    size=len(output)
+    base.require(size>=offset,'Owned monorail console was truncated')
+    chunk=owned.get('monorail_scan_tail',b'')+bytes(output[offset:size])
+    owned['monorail_scan_offset']=size
     last=chunk.rfind(b'\n')
     complete=chunk[:last+1] if last>=0 else b''
     tail=chunk[last+1:] if last>=0 else chunk

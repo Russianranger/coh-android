@@ -7,6 +7,7 @@ public final class ClientZoning {
     private int epoch, currentMap, targetMap, captures;
     private String phase="disabled", session, lastStatus="";
     private boolean monorail;
+    private boolean monorailRequiresReopen;
     private long stationPid, stationRequest;
     private final java.util.Map<Long,Long> stationSequences=new java.util.HashMap<>();
     private long pid, requestUtc, deliveredUtc, eventUtc, arrivalUptime, watermark, lastCapture=-1, lastSequence=-1;
@@ -18,6 +19,7 @@ public final class ClientZoning {
     public synchronized boolean enabled(){return !"disabled".equals(phase);}
     public synchronized boolean blocksInput(){return monorail&&("preparing".equals(phase)||"ready".equals(phase))||"delivering".equals(phase)||"transferring".equals(phase)||"capturing".equals(phase)||"failed".equals(phase);}
     public synchronized boolean stockMonorail(){return monorail;}
+    public synchronized boolean monorailRequiresReopen(){return monorailRequiresReopen;}
     public synchronized boolean commandInFlight(){return "delivering".equals(phase);}
     public synchronized boolean canPrepare(){return !monorail&&"idle".equals(phase)&&epoch<4;}
     public synchronized boolean canTravel(){return !monorail&&"ready".equals(phase);}
@@ -61,6 +63,7 @@ public final class ClientZoning {
             if(stock&&(!allowMonorail||map!=1&&map!=5||target!=(map==1?5:1)))return false;
             if(!stock&&(map==5||target==5))return false;
             monorail=stock;
+            monorailRequiresReopen=!stock&&yes(e,"monorail_requires_reopen");
             session=selectedSession;pid=selectedPid;currentMap=map;targetMap=target;phase="idle";
         }else{
             if(monorail){

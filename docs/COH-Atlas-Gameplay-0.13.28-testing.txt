@@ -1,0 +1,99 @@
+COH Atlas Gameplay 0.13.28 / version code 43
+Required assets: COH Assets 1.0.0 (all four parts)
+
+APK release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.28
+Separate asset release:
+https://github.com/Russianranger/coh-android/releases/tag/coh-assets-v1.0.0
+
+Purpose: test the actual Atlas Park <-> Kings Row monorail, on-demand zone
+preparation, independently versioned asset imports, and storage reliability.
+The accepted .25 physical performance improvement remains the baseline.
+The .27 report confirmed two Atlas instance transfers and a verified save;
+it did not qualify Kings Row or a subsequent save/reopen cycle.
+
+1. Install the APK. On a fresh installation, download and import each of:
+   COH-Assets-1.0.0-Base.zip
+   COH-Assets-1.0.0-Reference.zip
+   COH-Assets-1.0.0-Zones.zip
+   COH-Assets-1.0.0-Audio.zip
+   Use "Import asset pack part" once per ZIP; order does not matter. Do not
+   unpack the ZIPs. The status shows the required version and missing parts.
+   Each completed part is retained. If an import is interrupted, retry it;
+   there is no need to start the other completed parts again. Keep the ZIPs
+   for reinstalling. This pack includes the original reference assets, so
+   no separate old Atlas asset import is needed.
+
+   The APK and assets have independent versions. Later APK release notes
+   will explicitly name the compatible pack or request a new pack version.
+   A compatible imported pack is reused by APK updates. All four parts of
+   1.0.0 are required for this first external-asset release, including when
+   updating from .27. Importing this pack does not clear character data.
+
+2. Apply "Set up / update runtime" once after imports finish. An uninstall
+   removes the private character database and imports; runtime setup cannot
+   restore them. On a fresh install, use native character creation, log in
+   with COHLOCAL / offline and create THORHERO. Complete the normal neutral
+   wait, Save character / log out, wait for "Saved character verified", then
+   Finish. Choose "Reopen saved THORHERO" for the monorail test.
+
+   If retaining an older character saved in Atlas instance 2 (map 101), use
+   its return control to reach Atlas Park, then Save, Finish and Reopen
+   before using the monorail. The app does not start a third resident zone.
+
+3. Keep the same GPU mode, Performance preset, 800x600 selection, visual
+   settings, fan and charging state. Enable Show FPS and cap 30. Let the
+   world settle. Walk to the actual Atlas Park monorail station, click its
+   entrance and select Kings Row. No manual destination preparation or
+   command-console transfer is required. Remain close to the station while
+   preparation runs; walking away can cancel the pending station request.
+
+   Stay in the app during the first trip. Record approximate selection-to-
+   usable-world time, FPS range/dips during preparation, temperature and any
+   visible artifacts. The report records preparation, native transfer and
+   fresh destination views separately. First preparation and later cache
+   reuse are different cases; neither proves Android's filesystem cache
+   was cold. Do not treat host timing as a Thor loading measurement.
+
+4. In Kings Row confirm walking, Jump, camera and clicking have the intended
+   visible effects. Check nearby buildings, terrain, textures, NPCs and audio
+   for missing or incorrect assets. Then use the Kings Row monorail station
+   to select Atlas Park. Record the return time and responsiveness. A zone
+   already running in this session is a resident return case.
+
+   If movement is stuck, performance is unusable, or loading fails, export
+   early through Abort/Finish as available. Do not complete an immobile
+   benchmark. Capture the visible error and preserve the complete report.
+
+5. Release controls for the normal 60-second neutral wait. Select
+   "Save character / log out", wait for "Saved character verified", then
+   Finish. Export the complete outer ZIP through "Reports / export".
+   Reopen the saved character and confirm its destination and position.
+   To check the saved Kings Row case, repeat the ordinary verified save
+   while in Kings Row, then Finish and Reopen there.
+
+   After copying a report has visibly started, switching to another app
+   and back checks the foreground export path. Retain/export the internal
+   report again if the external copy fails. If Android terminates the app,
+   reopen and "Recover interrupted reports" before a new session; report
+   whether "Saved character verified" appeared before the interruption.
+   Do not deliberately terminate an unsaved character for this test.
+
+6. With the session finished, open "Storage and cleanup" and run its scan.
+   If there is a failure, export the storage report with the gameplay ZIP.
+   Review any proposed cleanup before selecting it. Character data, current
+   runtime, imported assets and startup caches remain protected. Old runtime
+   generations can still consume space until reviewed cleanup removes them.
+
+The assets contain the audited original resource inventory for other zones,
+including Kings Row's missing geometry/textures/audio and native beacon data.
+Only Atlas Park and Kings Row monorail travel is enabled in this milestone.
+Original source-era missing FX/appearance references are documented by the
+asset audit; asset availability does not establish visual correctness or
+playability of every zone. No graphics settings or features were reduced.
+
+Native/host qualification does not prove physical travel, a faster Thor load,
+all controls, or sustained 30 FPS. The accepted Game executable is reused;
+the MapServer and preparation/observation paths changed. No long Software
+comparison, lower resolution, reduced draw distance or disabled visuals is
+requested. Attach the complete outer report ZIP from the actual test.

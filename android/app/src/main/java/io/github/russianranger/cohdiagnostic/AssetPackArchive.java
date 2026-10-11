@@ -88,13 +88,17 @@ public final class AssetPackArchive {
     }
     /** One exact volume is accepted at a time; a previous full receipt is never replaced. */
     public String importVolume(InputStream selected) throws IOException {
+        return importVolume(selected,()->{});
+    }
+    /** Own the provider before admission, so memory pressure or cancellation cannot leak its fd. */
+    public String importVolume(InputStream selected,Check admission) throws IOException {
         Path staging=null;
         try(OwnedInput source=new OwnedInput(selected);FileChannel channel=FileChannel.open(base.resolve("import.lock"),StandardOpenOption.CREATE,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS)) {
             FileLock lock;
             try {lock=channel.tryLock();}catch(OverlappingFileLockException e){throw new IOException("An asset import is already running",e);}
             if(lock==null)throw new IOException("An asset import is already running");
             try(FileLock owned=lock) {
-                check.check();recoverStaging();
+                admission.check();check.check();recoverStaging();
                 long largest=0;
                 for(Set<String> names:volumes.values()){long total=0;for(String name:names)total=Math.addExact(total,pins.get(name).bytes);largest=Math.max(largest,total);}
                 long limit=Math.min(MAX_ARCHIVE,Math.addExact(largest,2L*1024*1024));
@@ -109,6 +113,8 @@ public final class AssetPackArchive {
                 String volume=null;
                 for(Map.Entry<String,Set<String>> entry:volumes.entrySet())if(entry.getValue().equals(memberNames)){volume=entry.getKey();break;}
                 if(volume==null)throw new IOException("This ZIP does not contain one complete asset pack part");
+                BasicFileAttributes objectDirectory=directoryIdentity(objects);
+                Map<String,BasicFileAttributes> previousObjects=new HashMap<>(),verifiedStaging=new HashMap<>();
                 long total=0;for(String name:memberNames)total+=pins.get(name).bytes;
                 long done=0;Set<String> seen=new HashSet<>();
                 try(ZipInputStream zip=new ZipInputStream(Files.newInputStream(archive))) {
@@ -121,14 +127,19 @@ public final class AssetPackArchive {
                             if(!Arrays.equals(descriptor,data.toByteArray()))throw new IOException("This asset pack version does not match the installed APK");
                         } else {
                             Path object=objects.resolve(pin.sha256),output=staging.resolve(pin.sha256);
-                            Path candidate=regular(object,pin.bytes)?object:output;
-                            boolean reuse=regular(candidate,pin.bytes);
-                            if(reuse)try{verifyFile(candidate,pin);}catch(IOException damaged){check.check();reuse=false;}
+                            if(!previousObjects.containsKey(pin.sha256))previousObjects.put(pin.sha256,objectIdentity(object));
+                            boolean reuse=verifiedStaging.containsKey(pin.sha256);
+                            if(reuse)requireIdentity(output,verifiedStaging.get(pin.sha256));
+                            else if(regular(object,pin.bytes)) {
+                                try{verifyFile(object,pin);reuse=true;}catch(IOException damaged){check.check();}
+                                requireIdentity(object,previousObjects.get(pin.sha256));
+                            }
                             if(reuse)copyPayload(zip,null,pin,null,done,total);
                             else {
                                 try(FileChannel file=FileChannel.open(output,StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS)) {
                                     copyPayload(zip,Channels.newOutputStream(file),pin,()->file.force(true),done,total);file.force(true);io.synced();
                                 }
+                                verifiedStaging.put(pin.sha256,objectIdentity(output));
                             }
                             done+=pin.bytes;
                         }
@@ -136,17 +147,20 @@ public final class AssetPackArchive {
                     }
                 }
                 if(!seen.equals(members.keySet()))throw new IOException("Asset ZIP local and central inventories differ");
+                requireDirectoryIdentity(objects,objectDirectory);
+                for(Map.Entry<String,BasicFileAttributes> prior:previousObjects.entrySet())
+                    requireIdentity(objects.resolve(prior.getKey()),prior.getValue());
                 // Every member has passed its own digest before any shared object is published.
                 for(String name:memberNames) {
                     check.check();Pin pin=pins.get(name);Path staged=staging.resolve(pin.sha256),object=objects.resolve(pin.sha256);
                     if(Files.exists(staged,LinkOption.NOFOLLOW_LINKS)) {
-                        if(Files.exists(object,LinkOption.NOFOLLOW_LINKS)) {
-                            // Never overwrite an existing inode: an older runtime may hard-link it.
-                            verifyFile(object,pin);Files.delete(staged);
-                        } else {
-                            if(!staged.toFile().setReadOnly())throw new IOException("Cannot protect an imported asset");
-                            Files.move(staged,object,StandardCopyOption.ATOMIC_MOVE);
-                        }
+                        requireDirectoryIdentity(objects,objectDirectory);
+                        requireIdentity(staged,verifiedStaging.get(pin.sha256));
+                        if(!staged.toFile().setReadOnly())throw new IOException("Cannot protect an imported asset");
+                        requireIdentity(object,previousObjects.get(pin.sha256));
+                        // Replace only the directory entry. A damaged previous inode is
+                        // never written or truncated; existing runtime links retain it.
+                        Files.move(staged,object,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
                     }
                 }
                 if(missingVolumes().isEmpty()) {
@@ -232,6 +246,28 @@ public final class AssetPackArchive {
         });
     }
     private static boolean regular(Path file,long bytes) throws IOException {noLinks(file);return Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)&&Files.size(file)==bytes;}
+    private static BasicFileAttributes objectIdentity(Path file) throws IOException {
+        noLinks(file);
+        try {
+            BasicFileAttributes value=Files.readAttributes(file,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS);
+            if(!value.isRegularFile()||value.fileKey()==null)throw new IOException("Asset object is not an identifiable regular file");
+            return value;
+        } catch(NoSuchFileException missing){return null;}
+    }
+    private static void requireIdentity(Path file,BasicFileAttributes expected) throws IOException {
+        BasicFileAttributes actual=objectIdentity(file);
+        if(expected==null?actual!=null:actual==null||!expected.fileKey().equals(actual.fileKey())
+                ||expected.size()!=actual.size()||!expected.lastModifiedTime().equals(actual.lastModifiedTime())
+                ||!expected.creationTime().equals(actual.creationTime()))throw new IOException("Asset object changed during import");
+    }
+    private static BasicFileAttributes directoryIdentity(Path path) throws IOException {
+        noLinks(path);BasicFileAttributes value=Files.readAttributes(path,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS);
+        if(!value.isDirectory()||value.fileKey()==null)throw new IOException("Asset directory is not identifiable");
+        return value;
+    }
+    private static void requireDirectoryIdentity(Path path,BasicFileAttributes expected) throws IOException {
+        if(!expected.fileKey().equals(directoryIdentity(path).fileKey()))throw new IOException("Asset directory changed during import");
+    }
     private static void directory(Path path) throws IOException {noLinks(path);Files.createDirectories(path);if(!Files.isDirectory(path,LinkOption.NOFOLLOW_LINKS))throw new IOException("Unsafe asset directory");}
     private static void noLinks(Path path) throws IOException {Path current=path.toAbsolutePath().getRoot();for(Path part:path.toAbsolutePath()){current=current.resolve(part);if(Files.isSymbolicLink(current))throw new IOException("Asset storage path contains a symbolic link");}}
     private static void safeName(String name) throws IOException {

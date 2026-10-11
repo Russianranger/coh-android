@@ -130,20 +130,32 @@ def identifier_snapshot(runtime_data):
     return dict(sorted(result.items()))
 
 
-def build_expected_identity(runtime_data, mapserver_path, *, mapserver_package=None):
+def verify_mapserver_compatibility(mapserver_path, mapserver_package=None):
     actual = file_pin(mapserver_path)['sha256']
-    if actual != MAPSERVER_SHA256:
-        import native_monorail_contract
-        require(isinstance(mapserver_package, dict), 'Server-cache executable identity differs')
-        receipt = native_monorail_contract.embedded_receipt(mapserver_package)
-        require(receipt['mapserver']['sha256'] == actual
-                and receipt['previous_mapserver']['sha256'] == MAPSERVER_SHA256
-                and set(receipt['build_input']['patched_sha256']) == {
-                    'MapServer/CMakeLists.txt', 'MapServer/src/svr/svr_init.c',
-                    'MapServer/src/svr/svr_tick.c', 'MapServer/src/door.c'},
-                'Server-cache bridge changed parser/source ancestry')
-        # The additive station bridge changes no ParseTable, source definition,
-        # identifier or cache reader. Keep the ORIGINAL cache donor identity.
+    proof = {'format': 1, 'actual_mapserver_sha256': actual,
+        'original_cache_donor_mapserver_sha256': MAPSERVER_SHA256,
+        'cache_donor_identity_preserved': True, 'physical_loading_gain_validated': False}
+    if actual == MAPSERVER_SHA256:
+        return dict(proof, policy='exact_original_cache_producer')
+    import native_monorail_contract
+    require(isinstance(mapserver_package, dict), 'Server-cache executable identity differs')
+    receipt = native_monorail_contract.embedded_receipt(mapserver_package)
+    require(receipt['mapserver']['sha256'] == actual
+            and receipt['previous_mapserver']['sha256'] == MAPSERVER_SHA256,
+            'Server-cache bridge changed parser/source ancestry')
+    return dict(proof, policy='qualified_monorail_overlay_preserves_Parse6_and_source_definitions',
+        native_build_repository_commit=receipt['native_build_repository_commit'],
+        native_build_manifest=receipt['native_build_manifest'],
+        monorail_receipt_sha256=mapserver_package['native_monorail']['receipt_sha256'],
+        retained_schema_sources_sha256=receipt['schema_sources_sha256'],
+        changed_source_sha256=receipt['build_input']['patched_sha256'],
+        parser_or_definition_sources_changed=False)
+
+
+def build_expected_identity(runtime_data, mapserver_path, *, mapserver_package=None):
+    verify_mapserver_compatibility(mapserver_path, mapserver_package)
+    # Compatibility preserves the ORIGINAL donor identity. The new executable
+    # has its own separate source/ABI receipt, never rewritten donor history.
     return {**compatibility_identity(), 'identifier_files': identifier_snapshot(runtime_data)}
 
 

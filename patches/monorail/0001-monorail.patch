@@ -78,7 +78,7 @@
  #include "entity/entity.h"
  #include <utilitieslib/network/netio.h>
  #include "entity/entVarUpdate.h"
-@@ -682,6 +683,32 @@
+@@ -682,6 +683,33 @@
      }
  }
  
@@ -86,6 +86,7 @@
 + * run again after the owned destination has completed live native ticks. */
 +static EntityRef cohMonorailEntity;
 +static Vec3 cohMonorailDoorPosition;
++static Vec3 cohMonorailPlayerPosition;
 +static char cohMonorailSelection[80];
 +static int cohMonorailResuming;
 +
@@ -96,7 +97,7 @@
 +    if (!cohMonorailEntity) return;
 +    e = erGetEnt(cohMonorailEntity);
 +    if (!e || !e->ready || e->dbcomm_state.map_xfer_step ||
-+        distance3Squared(ENTPOS(e), cohMonorailDoorPosition) > 2500.0f) {
++        distance3Squared(ENTPOS(e), cohMonorailPlayerPosition) > 2500.0f) {
 +        cohMonorailCancel(); cohMonorailEntity = 0; return;
 +    }
 +    result = cohMonorailPoll(db_state.map_id, e->db_id, e->auth_id);
@@ -111,7 +112,7 @@
  static void doorTransferToTarget( Entity * e, DoorEntry * door, char * spawnTarget, char * mapTarget, char * errmsg, Vec3 pos, char* selected_map_id, int is_volume ) 
  {
      MapSelection* mapSelect;
-@@ -721,6 +748,19 @@
+@@ -721,6 +749,20 @@
                                          is_volume ? DOOR_REQUEST_VOLUME : DOOR_REQUEST_CLICK, door->type == DOORTYPE_BASE_PORTER ? door->detail_id : 0);
          if (mapSelect->spawn_name[0] && ((door->monorail_line && door->monorail_line[0]) || door->type == DOORTYPE_BASE_PORTER))
              strcpy(spawnTarget,mapSelect->spawn_name); //if we picked an option with a spawn, use it
@@ -123,6 +124,7 @@
 +            if (cohMonorailRequest(db_state.map_id, mapSelect->map_id, e->db_id, e->auth_id, e->name, e->auth_name)) {
 +                cohMonorailEntity = erGetRef(e);
 +                copyVec3(pos, cohMonorailDoorPosition);
++                copyVec3(ENTPOS(e), cohMonorailPlayerPosition);
 +                sprintf(cohMonorailSelection, "%d.LinkFrom_Monorail_ParagonCity", mapSelect->map_id);
 +                sendInfoBox(e, INFO_SVR_COM, "Preparing destination. Stay near the station; travel begins when ready.");
 +            }
@@ -131,7 +133,7 @@
          if(mapSelect->map_id && DoorAnimEnter(e, door, pos, mapSelect->map_id, NULL, spawnTarget, XFER_STATIC, errmsg))
          {
              // success
-@@ -2595,6 +2635,8 @@
+@@ -2595,6 +2637,8 @@
                      for(j = 0; j < eaSize(&line->stops[i]->mapInfos); j++)
                      {
                          info = line->stops[i]->mapInfos[j];
