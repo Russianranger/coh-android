@@ -117,6 +117,11 @@ def donor_link():
         'public_byte_audit_artifact_zip': DONOR_PUBLIC_AUDIT}
 
 
+def historical_test_donor_link():
+    return {'repository_commit': previous.DONOR_COMMIT, 'apk': previous.DONOR_APK,
+            'public_url': previous.DONOR_URL}
+
+
 def publication_provenance(commit):
     owner = os.environ.get('GITHUB_RUN_ID')
     require(owner is None or re.fullmatch('[1-9][0-9]*', owner), 'Exact publication owner required')
@@ -244,7 +249,9 @@ def validate_qualification(q, commit, donor):
     contract.validate_suite_inventory()
     require(q.get('format') == 1 and q.get('status') == 'passed' and q.get('scope') == QUALIFICATION_SCOPE
         and q.get('repository_commit') == q.get('runtime_repository_commit') == commit
-        and q.get('donor') == donor_link() and q.get('java_sources') == current_sources(donor)
+        and q.get('donor') == donor_link()
+        and typed_equal(q.get('historical_test_donor'), historical_test_donor_link())
+        and q.get('java_sources') == current_sources(donor)
         and q.get('donor_dex') == donor['retained_dex']
         and q.get('changed_java_sources') == sorted(JAVA_CHANGES)
         and q.get('external_asset_pack') == donor['external_asset_pack']

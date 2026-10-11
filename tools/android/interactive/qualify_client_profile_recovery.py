@@ -80,14 +80,34 @@ def source_paths(donor):
     return sorted(closure.source_closure(names))
 
 
-def regressions():
+@contextlib.contextmanager
+def suite_donor_environment(name, historical_donor_apk):
+    # The retained native compatibility gate authenticates the original .29
+    # whole APK; the process-deterministic installer gate authenticates .30.
+    # They intentionally share a historical environment name, so bound the
+    # .29 override to its one suite and restore the candidate donor afterward.
+    key = 'COH_ANIMATION_TEST_DONOR_APK'
+    previous = os.environ.get(key)
+    if name == 'test_animation_runtime_compatibility':
+        os.environ[key] = str(historical_donor_apk.resolve())
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = previous
+
+
+def regressions(historical_donor_apk):
     validate_suite_inventory()
     results = {}
     for name in TEST_MODULES:
-        suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(name))
-        derivative.require(suite.countTestCases() > 0, name + ' has no scenarios')
         captured = io.StringIO()
-        with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):
+        with suite_donor_environment(name, historical_donor_apk), \
+                contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):
+            suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(name))
+            derivative.require(suite.countTestCases() > 0, name + ' has no scenarios')
             result = unittest.TextTestRunner(stream=captured, verbosity=2).run(suite)
         output = captured.getvalue()
         derivative.require(len(output.encode()) <= 262144,
@@ -107,8 +127,8 @@ def qualify(args):
     base = derivative.builder()
     commit = base.source_commit(args.repository_commit)
     donor = derivative.validate_donor(args.donor_apk, args.donor_build_report)
-    os.environ['COH_RECEIPT_REPAIR_TEST_DONOR_APK'] = str(args.donor_apk.resolve())
-    os.environ['COH_RECEIPT_REPAIR_TEST_DONOR_REPORT'] = str(args.donor_build_report.resolve())
+    base.checked_file(args.historical_donor_apk, derivative.previous.DONOR_APK)
+    os.environ['COH_RECEIPT_REPAIR_TEST_DONOR_APK'] = str(args.historical_donor_apk.resolve())
     os.environ['COH_PROFILE_RECOVERY_TEST_DONOR_APK'] = str(args.donor_apk.resolve())
     os.environ['COH_PROFILE_RECOVERY_TEST_DONOR_REPORT'] = str(args.donor_build_report.resolve())
     os.environ['COH_ANIMATION_TEST_DONOR_APK'] = str(args.donor_apk.resolve())
@@ -117,6 +137,24 @@ def qualify(args):
     os.environ['COH_ANIMATION_REPAIR_ASSET_CACHE'] = str(args.asset_directory.resolve())
     java = derivative.current_sources(donor)
     pins = {name: base.file_pin(ROOT/name) for name in source_paths(donor)}
+    # Fail small regression, SQL and donor-wiring gates before repeating
+    # the complete preparation. The package suite and final preparation both
+    # remain mandatory and are independently admitted below.
+    results = regressions(args.historical_donor_apk)
+    save = importlib.import_module('test_startup_bundle_save')
+    derivative.require(save.REQUIRE_POSTGRESQL is True and save.POSTGRES_FIXTURES_RUN == {
+        'cancelled_child_deletion_commits', 'duplicate_insert_23505_rollback',
+        'delete_insert_replacement_commits'}, 'All three real PostgreSQL emission fixtures required')
+    levelup = importlib.import_module('test_levelup_ui_repair_dbserver')
+    derivative.require(levelup.REQUIRE_POSTGRESQL is True
+        and levelup.POSTGRES_FIXTURES_RUN == levelup.REQUIRED_POSTGRES_FIXTURES
+        and len(levelup.POSTGRES_FIXTURES_RUN) == 4,
+        'All four real PostgreSQL level-up fixtures required')
+    profile = importlib.import_module('test_character_profile_eligibility')
+    derivative.require(profile.REQUIRE_POSTGRESQL is True
+        and profile.POSTGRES_FIXTURES_RUN == profile.REQUIRED_POSTGRES_FIXTURES
+        and len(profile.POSTGRES_FIXTURES_RUN) == 14,
+        'All fourteen real PostgreSQL empty-profile recovery and preservation fixtures required')
     with tempfile.TemporaryDirectory(prefix='coh-animation-qualification-') as temporary:
         runtime, payloads, preflight = derivative.extract_and_repair(
             args.donor_apk, donor, Path(temporary)/'donor', commit)
@@ -145,21 +183,6 @@ def qualify(args):
         and full.get('physical_execution_validated') is False
         and full.get('process_and_sql_boundary') == 'not_executed',
         'Complete actual guest preparation orchestration and truthful process boundary required')
-    results = regressions()
-    save = importlib.import_module('test_startup_bundle_save')
-    derivative.require(save.REQUIRE_POSTGRESQL is True and save.POSTGRES_FIXTURES_RUN == {
-        'cancelled_child_deletion_commits', 'duplicate_insert_23505_rollback',
-        'delete_insert_replacement_commits'}, 'All three real PostgreSQL emission fixtures required')
-    levelup = importlib.import_module('test_levelup_ui_repair_dbserver')
-    derivative.require(levelup.REQUIRE_POSTGRESQL is True
-        and levelup.POSTGRES_FIXTURES_RUN == levelup.REQUIRED_POSTGRES_FIXTURES
-        and len(levelup.POSTGRES_FIXTURES_RUN) == 4,
-        'All four real PostgreSQL level-up fixtures required')
-    profile = importlib.import_module('test_character_profile_eligibility')
-    derivative.require(profile.REQUIRE_POSTGRESQL is True
-        and profile.POSTGRES_FIXTURES_RUN == profile.REQUIRED_POSTGRES_FIXTURES
-        and len(profile.POSTGRES_FIXTURES_RUN) == 14,
-        'All fourteen real PostgreSQL empty-profile recovery and preservation fixtures required')
     for name, expected in pins.items():
         base.checked_file(ROOT/name, expected)
     checks = {name: all(results[suite]['status'] == 'passed'
@@ -169,6 +192,7 @@ def qualify(args):
         'format': 1, 'status': 'passed' if all(checks.values()) else 'failed',
         'scope': derivative.QUALIFICATION_SCOPE, 'repository_commit': commit,
         'runtime_repository_commit': commit, 'donor': derivative.donor_link(),
+        'historical_test_donor': derivative.historical_test_donor_link(),
         'source_files': pins, 'test_suites': results, 'check_suites': CHECK_SUITES,
         'checks': checks, 'tests_run': sum(value['tests_run'] for value in results.values()),
         'postgresql_emission_fixtures': sorted(save.POSTGRES_FIXTURES_RUN),
@@ -202,7 +226,7 @@ def qualify(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repository-commit', required=True)
-    for name in ('donor-apk', 'donor-build-report', 'output'):
+    for name in ('donor-apk', 'donor-build-report', 'historical-donor-apk', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--asset-directory', type=Path, default=ROOT/'out/profile-recovery-assets')
     qualify(parser.parse_args())

@@ -53,7 +53,7 @@ jobs:
     permissions: {contents: write, actions: read}
     env:
       COH_PROFILE_RECOVERY_ASSET_CACHE: '${{ github.workspace }}/out/profile-recovery-assets'
-      COH_RECEIPT_REPAIR_TEST_DONOR_APK: '${{ github.workspace }}/out/donor.apk'
+      COH_RECEIPT_REPAIR_TEST_DONOR_APK: '${{ github.workspace }}/out/historical-donor.apk'
       COH_ANIMATION_TEST_DONOR_APK: '${{ github.workspace }}/out/donor.apk'
       COH_ANIMATION_TEST_DONOR_REPORT: '${{ github.workspace }}/out/donor-evidence/client-animation-repair-apk-build-report.json'
       COH_REQUIRE_POSTGRESQL: '1'
@@ -104,10 +104,12 @@ jobs:
         run: |
           python3 tools/android/interactive/build_client_profile_recovery_apk.py download-donor --output out/donor.apk
           python3 tools/android/interactive/build_client_profile_recovery_apk.py download-donor-evidence --output out/donor-evidence
+          python3 tools/android/interactive/build_client_animation_repair_apk.py download-donor --output out/historical-donor.apk
       - name: Qualify complete actual preparation, explicit SQL/UI recovery and every retained suite
         run: >-
           python3 tools/android/interactive/qualify_client_profile_recovery.py --repository-commit "$GITHUB_SHA"
           --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-animation-repair-apk-build-report.json
+          --historical-donor-apk out/historical-donor.apk
           --output out/client-profile-recovery-qualification.json
       - uses: actions/upload-artifact@v4
         if: always()
