@@ -1,3 +1,45 @@
+# CURRENT — .28 graph qualified and retained; APK fixture repair pending publication — 2026-10-11 UTC
+
+Latest completed dedicated run [38143667104](https://github.com/Russianranger/coh-android/actions/runs/38143667104)
+(source `d5e9f9f6bfa56da36f0c118bec26c764f60ef823`) successfully generated,
+validated and uploaded the Kings Row graph. Resources, shipping MapServer and
+compiled host generator were reused from original run 38112251836. Do not
+regenerate this completed graph or rebuild those producers.
+
+Independent download of accepted artifact **11706337916** verified its 24,133,765
+bytes and SHA-256 `d66f98796e03e36ede7ab9ffbb6c7a158bbfb00aa90d60d0cdce16136a3933e0`.
+The inner graph ZIP is 23,708,626 bytes, SHA-256
+`6a7bcfba0d6f64a13d31fc6c31bd8cd366344c6ffa92b546a26ef3f132c2d64c`.
+Production package validation, all eight exact source pins, lock/graph/date
+hashes and server/cold/reopened-world log proofs passed independently. Native
+CRC is `0xec7ae491`; 281,178 combat / 281,176 connected beacons; 3,105,979 ground
+and 4,451,559 raised connections; 1,019 blocks; 32 successful paths; 8,396 input
+files; zero missing groups/root models; complete owned-process cleanup.
+Host generation/proofs took 5,038.656 seconds. This is not a Thor timing result.
+Evidence artifact 11705643922 also retains exact backup candidates.
+
+The APK job then stopped on an outdated retained test fixture passing a Mock
+where the .28 verifier requires an actual filesystem path for inode checking.
+Both affected active suites now use sparse real files, retaining all production
+fingerprint, byte-cap and full-hash checks. The retained historical Atlas recovery
+test also preserves its original native/import pins and verifies that its producer
+correctly rejects the intentionally changed .28 importer; those historical pins
+are not relabelled. All three repaired tests remain in current source qualification.
+Runtime/guest/generator code and the completed graph inputs are unchanged.
+The marker separately pins the completed graph owner, so the next run reuses
+it and performs only remaining qualification/packaging/publication work.
+
+**.28 / code 43 and Assets 1.0.0 are still not publicly published at this
+checkpoint.** .27 remains the latest completed release. Pending gates: all
+144 retained/new test suites and seven real PostgreSQL fixtures; APK SDK/signer/
+payload audit; public APK and all four asset-volume byte audits. Physical Thor
+import/setup, station travel, controls/visual/audio correctness, save/finish/
+reopen (including Kings Row), report export and storage/loading/FPS measurements
+remain untested. Preserve the accepted .25/.26 Game, DbServer and GPU baseline.
+Keep PR #1 draft, main unchanged, and both research projects separate.
+
+## Previous publication recovery checkpoint (historical)
+
 # CURRENT — .28 publication blocked by corrected Windows host validation — 2026-10-11 UTC
 
 Recovered exact development branch `codex/character-persistence-continuation`

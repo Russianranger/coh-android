@@ -109,6 +109,40 @@ class ReuseOwnerTests(unittest.TestCase):
         evidence = self.authenticate()
         self.assertEqual(evidence['beacon']['artifacts'][0]['id'], 99)
 
+    def test_later_qualified_beacons_can_be_reused_after_an_apk_fixture_failure(self):
+        beacon_owner, beacon_source = '5678', 'c' * 40
+        self.values.update(beacon_run_id=beacon_owner, beacon_commit=beacon_source)
+        self.comparison = {'status': 'ahead', 'files': [
+            {'filename': 'tools/android/interactive/test_character_reopen_guest.py'},
+            {'filename': 'tools/android/interactive/test_client_startup_followup_limits.py'},
+            {'filename': 'tools/android/interactive/test_generate_atlas_beacons.py'},
+            {'filename': 'tools/android/interactive/build_client_assets_apk.py'}]}
+        def request(path):
+            prefix = '/actions/runs/' + beacon_owner
+            if path == prefix:
+                return dict(self.run, id=int(beacon_owner), head_sha=beacon_source)
+            if path.startswith(prefix + '/jobs?'):
+                return {'total_count': 2, 'jobs': [
+                    {'id': 10, 'name': 'native / beacons', 'conclusion': 'success'},
+                    {'id': 11, 'name': 'apk', 'conclusion': 'failure'}]}
+            if path.startswith(prefix + '/artifacts?'):
+                return {'total_count': 1, 'artifacts': [dict(self.artifacts[0], id=99,
+                    name='coh-kings-row-beacons', workflow_run={
+                        'id': int(beacon_owner), 'head_sha': beacon_source})]}
+            return self.request(path)
+        evidence = reuse.authenticate_reuse(self.values, self.commit, request)
+        self.assertEqual(evidence['native']['run_id'], int(self.owner))
+        self.assertEqual(evidence['beacon']['run_id'], int(beacon_owner))
+        self.assertEqual(evidence['beacon']['repository_commit'], beacon_source)
+        self.assertEqual(evidence['beacon']['artifacts'][0]['id'], 99)
+
+    def test_fixture_repair_does_not_authorize_guest_runtime_changes(self):
+        for filename in ('android/guest/character_reopen_diagnostic.py',
+                         'android/guest/client_startup_diagnostic.py'):
+            self.comparison = {'status': 'ahead', 'files': [{'filename': filename}]}
+            with self.subTest(filename=filename), self.assertRaisesRegex(ValueError, 'Producer source changed'):
+                self.authenticate()
+
 
 if __name__ == '__main__':
     unittest.main()

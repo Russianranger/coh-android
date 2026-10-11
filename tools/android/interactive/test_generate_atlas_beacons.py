@@ -524,8 +524,33 @@ class AtlasPrimaryRecoveryTests(unittest.TestCase):
             (cache/'unsafe.bin').symlink_to(donor)
             with self.assertRaises(ValueError):generator.clear_private_geometry_caches(runtime)
 
-    def test_recovery_contract_pins_match_exact_unchanged_production_sources(self):
-        generator.validate_primary_implementation_inputs()
+    def test_historical_recovery_preserves_native_pins_and_refuses_changed_runtime_helper(self):
+        # .28 deliberately extends the runtime helper for authenticated readonly
+        # shared assets. That is not the helper used by the original Atlas
+        # producer: retain its historical pin and its fail-closed recovery gate.
+        # Native/import sources remain exact; current helper behavior is covered
+        # separately by the shared-asset regression suite.
+        world = 'android/guest/atlas_world_assets.py'
+        qualifier = 'tools/android/interactive/generate_atlas_beacons.py'
+        self.assertEqual(generator.PRIMARY_GENERATION_SOURCES[world], {
+            'bytes': 24268,
+            'sha256': '4189cff59dce2f9da6d045d754ecc1fda56a09241124f842566b1da69b5865b6',
+        })
+        for name in generator.GENERATION_SOURCES:
+            if name not in (qualifier, world):
+                with self.subTest(name=name):
+                    self.assertEqual(generator.pin(generator.ROOT/name),
+                                     generator.PRIMARY_GENERATION_SOURCES[name])
+        self.assertNotEqual(generator.pin(generator.ROOT/world),
+                            generator.PRIMARY_GENERATION_SOURCES[world])
+        import build_client_assets_apk as current
+        self.assertIn(world, current.SOURCE_FILES)
+        self.assertIn(world, current.REVIEWED_DONOR_SOURCE_CHANGES)
+        self.assertIn(Path(world).name, current.HELPERS)
+        with self.assertRaises(ValueError) as refusal:
+            generator.validate_primary_implementation_inputs()
+        self.assertEqual(str(refusal.exception),
+                         'Primary native/import input implementation changed: '+world)
         self.assertEqual(generator.PRIMARY_RECOVERY['generator']['bytes'],6880256)
         self.assertEqual(generator.PRIMARY_RECOVERY['native']['full_world_crc'],'0xb0c21ded')
 

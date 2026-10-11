@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "status": "publication_blocked_windows_validation_fixed_replacement_pending",
+  "status": "graph_qualified_publication_blocked_stale_test_fixtures",
   "version": "0.13.28",
   "version_code": 43,
   "asset_version": "1.0.0",
@@ -325,5 +325,59 @@
       "cold_world": "passed",
       "reopened_world": "passed"
     }
+  },
+  "qualified_beacon_run": {
+    "id": 38143667104,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38143667104",
+    "source_commit": "d5e9f9f6bfa56da36f0c118bec26c764f60ef823",
+    "conclusion": "failure",
+    "beacons": "success",
+    "apk": "failure",
+    "public_audit": "skipped",
+    "failure": "test_character_reopen_guest old Mock path incompatible with .28 inode fingerprint; same active fixture pattern corrected in test_client_startup_followup_limits",
+    "graph_artifact": {
+      "id": 11706337916,
+      "bytes": 24133765,
+      "sha256": "d66f98796e03e36ede7ab9ffbb6c7a158bbfb00aa90d60d0cdce16136a3933e0"
+    },
+    "inner_archive": {
+      "bytes": 23708626,
+      "sha256": "6a7bcfba0d6f64a13d31fc6c31bd8cd366344c6ffa92b546a26ef3f132c2d64c"
+    },
+    "evidence_artifact": {
+      "id": 11705643922,
+      "bytes": 25118965,
+      "sha256": "8a825d9a248185994e657f8ff7c13f2f4acae949d1dfa4e5631c502798a8d8c4"
+    },
+    "independent_package_validation": "passed",
+    "source_files_verified": 8,
+    "elapsed_native_seconds": 5038.656,
+    "native": {
+      "crc": "0xec7ae491",
+      "combat": 281178,
+      "connected": 281176,
+      "ground_connections": 3105979,
+      "raised_connections": 4451559,
+      "blocks": 1019,
+      "paths": 32,
+      "collision_inputs": 8396,
+      "missing_groups": 0,
+      "missing_root_models": 0,
+      "cold_world": "passed",
+      "reopened_world": "passed",
+      "owned_processes_after_cleanup": 0
+    },
+    "physical_thor_validated": false
+  },
+  "fixture_repair": {
+    "runtime_or_native_source_changes": false,
+    "completed_beacon_sources_changed": false,
+    "real_sparse_path_fixtures": [
+      "test_character_reopen_guest",
+      "test_client_startup_followup_limits"
+    ],
+    "historical_atlas_pin_gate_preserved_and_refusal_tested": true,
+    "all_repaired_tests_in_current_qualification": true,
+    "beacon_reuse_run_id": 38143667104
   }
 }

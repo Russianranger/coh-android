@@ -131,21 +131,30 @@ class NativeGroundTests(unittest.TestCase):
 class WorldPayloadCapTests(unittest.TestCase):
     def test_only_exact_world_archive_gets_larger_cap_and_still_requires_its_full_pin(self):
         digest = 'a' * 64
-        for filename, size, accepted in [('atlas-world-supplement.zip', 200*1024**2, True),
-                ('atlas-world-supplement.zip', 256*1024**2 + 1, False),
-                ('unrelated.zip', 128*1024**2 + 1, False),
-                ('atlas-world-supplement.zip.tmp', 200*1024**2, False)]:
-            path = Mock(); path.is_file.return_value = True; path.is_symlink.return_value = False
-            path.stat.return_value.st_size = size
-            assets = Mock(); assets.__truediv__ = Mock(return_value=path)
-            manifest = {'format': 1, 'scope': client.SCOPE,
-                        'files': {filename: {'sha256': digest, 'bytes': size}}}
-            with patch.object(client, 'read_json', return_value=manifest), patch.object(client, 'REQUIRED', set()), \
-                    patch.object(client.base, 'file_hash', return_value=digest), patch.object(client.base, 'verify_pe32'):
-                with self.subTest(filename=filename, size=size):
-                    if accepted: self.assertEqual(client.verify_assets(assets), {filename: digest})
+        with tempfile.TemporaryDirectory() as directory, patch.dict(client._VERIFIED_ASSET_STATES, clear=True):
+            assets = Path(directory)
+            for filename, size, accepted in [('atlas-world-supplement.zip', 200*1024**2, True),
+                    ('atlas-world-supplement.zip', 256*1024**2 + 1, False),
+                    ('unrelated.zip', 128*1024**2 + 1, False),
+                    ('atlas-world-supplement.zip.tmp', 200*1024**2, False)]:
+                # Sparse files exercise the real inode fingerprint without writing
+                # hundreds of MiB or replacing the production verification gate.
+                path = assets / filename
+                with path.open('wb') as stream: stream.truncate(size)
+                manifest = {'format': 1, 'scope': client.SCOPE,
+                            'files': {filename: {'sha256': digest, 'bytes': size}}}
+                with patch.object(client, 'read_json', return_value=manifest), patch.object(client, 'REQUIRED', set()), \
+                        patch.object(client.base, 'file_hash', return_value=digest) as hasher, \
+                        patch.object(client.base, 'verify_pe32'), self.subTest(filename=filename, size=size):
+                    if accepted:
+                        self.assertEqual(client.verify_assets(assets), {filename: digest})
+                        hasher.assert_called_once_with(path)
+                        hasher.return_value = 'b' * 64
+                        with self.assertRaisesRegex(server.base.DiagnosticError, 'Client input pin differs'):
+                            client.verify_assets(assets)
                     else:
                         with self.assertRaises(server.base.DiagnosticError): client.verify_assets(assets)
+                        hasher.assert_not_called()
 
 
 class ReopenServerTests(unittest.TestCase):

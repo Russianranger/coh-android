@@ -1,7 +1,7 @@
 """Exercise the real guest callers for the larger visual pack and restart tree.
 
-Payload size fixtures mock file stat/hash, and byte-boundary staging uses sparse
-readonly inputs. These checks exercise the actual guards without large buffers
+Payload size fixtures use sparse files and mock hashing; byte-boundary staging uses
+sparse readonly inputs. These checks exercise the actual guards without large buffers
 or any accepted physical game-test repetition.
 """
 from contextlib import ExitStack
@@ -10,7 +10,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT/'android/guest'))
@@ -28,24 +28,17 @@ class ClientStartupFollowupCallerLimitsTests(unittest.TestCase):
         hashes = {name: 'a'*64 for name in sizes}
         manifest = {'format': 1, 'scope': client.SCOPE,
             'files': {name: {'bytes': expected[name], 'sha256': hashes[name]} for name in sizes}}
-        paths = {}
-        for name, size in sizes.items():
-            path = Mock(name=name)
-            path.is_file.return_value = True
-            path.is_symlink.return_value = False
-            path.stat.return_value = SimpleNamespace(st_size=size)
-            paths[name] = path
-        reverse = {id(path): name for name, path in paths.items()}
-        paths.setdefault('client-manifest.json', Mock())
         def digest(path):
-            name = reverse[id(path)]
+            name = path.name
             return (digest_overrides or {}).get(name, hashes[name])
-        assets = MagicMock()
-        assets.__truediv__.side_effect = lambda name: paths[name]
-        with patch.object(client, 'read_json', return_value=manifest), \
-                patch.object(client.base, 'file_hash', side_effect=digest), \
-                patch.object(client.base, 'verify_pe32') as verify_pe:
-            result = client.verify_assets(assets)
+        with tempfile.TemporaryDirectory() as directory, patch.dict(client._VERIFIED_ASSET_STATES, clear=True):
+            assets = Path(directory)
+            for name, size in sizes.items():
+                with (assets/name).open('wb') as stream: stream.truncate(size)
+            with patch.object(client, 'read_json', return_value=manifest), \
+                    patch.object(client.base, 'file_hash', side_effect=digest), \
+                    patch.object(client.base, 'verify_pe32') as verify_pe:
+                result = client.verify_assets(assets)
         self.assertEqual(verify_pe.call_count, 3)
         self.assertEqual(result, hashes)
         return result
