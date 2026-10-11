@@ -14,8 +14,8 @@ STUBS = {
 'android/os/ParcelFileDescriptor.java': '''package android.os; import java.io.*; public class ParcelFileDescriptor implements Closeable {public static ParcelFileDescriptor dup(FileDescriptor d)throws IOException{return new ParcelFileDescriptor();} public FileDescriptor getFileDescriptor(){return new FileDescriptor();}public int getFd(){return 5;}public void close()throws IOException{}}''',
 'android/system/ErrnoException.java': '''package android.system; public class ErrnoException extends Exception {public final int errno;public ErrnoException(String function,int errno){this.errno=errno;}}''',
 'android/system/StructStat.java': '''package android.system; public class StructStat {public int st_mode,st_uid,st_gid;public long st_dev,st_ino,st_nlink;}''',
-'android/system/OsConstants.java': '''package android.system; public class OsConstants {public static final int O_RDONLY=0,O_DIRECTORY=1,O_NOFOLLOW=2,O_CLOEXEC=4,O_NONBLOCK=8,ENOENT=2,ECONNREFUSED=111,F_GETFL=3,F_SETFL=4;public static boolean S_ISREG(int n){return n==3;}public static boolean S_ISDIR(int n){return n==1;}public static boolean S_ISSOCK(int n){return n==2;}}''',
-'android/system/Os.java': '''package android.system; import java.io.*; public class Os {public static StructStat lstat(String p)throws ErrnoException{return new StructStat();}public static StructStat fstat(FileDescriptor d)throws ErrnoException{return new StructStat();}public static FileDescriptor open(String p,int f,int m)throws ErrnoException{return new FileDescriptor();}public static void close(FileDescriptor d)throws ErrnoException{}public static void mkdir(String p,int mode)throws ErrnoException{}public static void unlink(String p)throws ErrnoException{} public static String strerror(int errno){return errno==111?"Connection refused":"other error";}public static int fcntlInt(FileDescriptor d,int command,int arg)throws ErrnoException{return 0;}}''',
+'android/system/OsConstants.java': '''package android.system; public class OsConstants {public static final int O_RDONLY=0,O_NOFOLLOW=2,O_CLOEXEC=4,O_NONBLOCK=8,ENOENT=2,ECONNREFUSED=111,F_GETFL=3,F_SETFL=4;public static boolean S_ISREG(int n){return n==3;}public static boolean S_ISDIR(int n){return n==1;}public static boolean S_ISSOCK(int n){return n==2;}}''',
+'android/system/Os.java': '''package android.system; import java.io.*; public class Os {public static StructStat lstat(String p)throws ErrnoException{return new StructStat();}public static StructStat fstat(FileDescriptor d)throws ErrnoException{return new StructStat();}public static FileDescriptor open(String p,int f,int m)throws ErrnoException{return new FileDescriptor();}public static void close(FileDescriptor d)throws ErrnoException{}public static void mkdir(String p,int mode)throws ErrnoException{}public static String strerror(int errno){return errno==111?"Connection refused":"other error";}public static int fcntlInt(FileDescriptor d,int command,int arg)throws ErrnoException{return 0;}}''',
 }
 HARNESS = r'''
 package io.github.russianranger.cohclientinteractive;
@@ -128,16 +128,16 @@ class ClientSocketRecoveryTests(unittest.TestCase):
             with self.subTest(fault=fault):self.run_host(fault)
     def test_android_adapter_anchors_fixed_path_and_never_kills_or_unlinks_runtime_data(self):
         source=JAVA.read_text()
-        self.assertIn('OsConstants.O_DIRECTORY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK',source)
+        self.assertIn('OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK',source)
         self.assertIn('new File("/proc/self/fd/"+directoryFd.getFd(),"view.sock")',source)
-        self.assertEqual(source.count('Os.unlink('),1)
-        self.assertIn('Os.unlink(socketPath.getPath())',source)
+        self.assertEqual(source.count('Files.delete('),1)
+        self.assertIn('Files.delete(socketPath.toPath())',source)
         self.assertIn('Os.mkdir(directoryPath.getPath(),0700)',source)
         self.assertIn('(value.mode&0777)!=0700',source)
         self.assertIn('flags|OsConstants.O_NONBLOCK',source)
         self.assertNotIn('ProcessBuilder',source)
         self.assertNotIn('killProcess',source)
         self.assertNotIn('destroy(',source)
-        self.assertNotIn('delete(',source)
+        self.assertNotIn('.delete()',source)
 
 if __name__=='__main__':unittest.main()

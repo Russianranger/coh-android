@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import subprocess
 import tempfile
 import urllib.error
 import urllib.parse
@@ -375,6 +376,22 @@ def repair_android_manifest(source, destination):
     builder(repaired=True).verify_source_manifest(destination)
 
 
+def compile_java(base, android_jar, classes, sources):
+    """Keep actual SDK diagnostics when the historical captured runner fails."""
+    try:
+        return base.run('java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8',
+            '-cp',android_jar,'-d',classes,*sources)
+    except subprocess.CalledProcessError as failure:
+        # The retained runner merges stderr into stdout. Do not silently lose
+        # the only compiler explanation when its checked subprocess fails.
+        diagnostic = failure.output or failure.stderr or ''
+        raw = diagnostic if isinstance(diagnostic,bytes) else diagnostic.encode('utf-8',errors='replace')
+        print('Android SDK Java compilation failed; captured compiler diagnostics:',flush=True)
+        print(raw[:65536].decode('utf-8',errors='replace'),flush=True)
+        if len(raw)>65536: print('[compiler diagnostics truncated after 65536 bytes]',flush=True)
+        raise
+
+
 def build(args):
     base, current = builder(), builder(repaired=True); commit = base.source_commit(args.repository_commit)
     donor = validate_donor(args.donor_apk,args.donor_build_report,args.retained_client_directory)
@@ -400,7 +417,7 @@ def build(args):
         require({path.relative_to(generated).as_posix() for path in generated.rglob('*.java')} == {base.APP_ID.replace('.','/')+'/R.java'},'Unexpected generated Java source')
         sources,java,changed = current_java_sources(donor,generated)
         require(q.get('java_sources') == java,'Java changed after qualification')
-        base.run('java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-cp',args.android_jar,'-d',classes,*sources)
+        compile_java(base,args.android_jar,classes,sources)
         class_jar = work/'classes.jar'
         with zipfile.ZipFile(class_jar,'w',zipfile.ZIP_DEFLATED) as archive:
             for path in sorted(classes.rglob('*.class')): archive.write(path,path.relative_to(classes).as_posix())

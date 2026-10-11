@@ -5,6 +5,7 @@ import copy
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -248,6 +249,21 @@ class RecoveryPublication(unittest.TestCase):
             wrong = copy.deepcopy(receipt); wrong['actual_native_ancestry_validation'] = {}; mutations.append(wrong)
             for index,wrong in enumerate(mutations):
                 with self.subTest(index=index),self.assertRaises(ValueError): package.validate_qualification(wrong,commit,donor)
+
+    def test_failed_actual_sdk_compile_exposes_bounded_captured_diagnostics(self):
+        for diagnostic in ('ClientActivity.java:42: error: cannot find symbol\n',b'error: incompatible public API', 'x'*70000, 'é'*70000):
+            failure = subprocess.CalledProcessError(1,['java'],output=diagnostic)
+            base = mock.Mock(); base.run.side_effect = failure; output = io.StringIO()
+            with contextlib.redirect_stdout(output),self.assertRaises(subprocess.CalledProcessError) as caught:
+                package.compile_java(base,Path('android.jar'),Path('classes'),[Path('ClientActivity.java')])
+            self.assertIs(caught.exception,failure)
+            expected = diagnostic.decode() if isinstance(diagnostic,bytes) else diagnostic
+            self.assertIn(expected.encode()[:65536].decode('utf-8',errors='replace'),output.getvalue())
+            self.assertLess(len(output.getvalue().encode()),65800)
+            base.run.assert_called_once_with('java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8',
+                '-cp',Path('android.jar'),'-d',Path('classes'),Path('ClientActivity.java'))
+        base = mock.Mock(); base.run.return_value='compiled'
+        self.assertEqual(package.compile_java(base,Path('android.jar'),Path('classes'),[]),'compiled')
 
     def test_workflow_never_rebuilds_native_and_preserves_separate_public_download_SDK_audit(self):
         import yaml

@@ -244,8 +244,8 @@ public final class ClientSocketRecovery {
             root();directory();
             Identity actual=socket();requireSocket(actual,appUid);
             if(!expected.same(actual))throw refused("Private display socket changed before removal");
-            try{Os.unlink(socketPath.getPath());}
-            catch(ErrnoException failure){throw refused("Private display socket could not be removed safely");}
+            try{Files.delete(socketPath.toPath());}
+            catch(IOException failure){throw refused("Private display socket could not be removed safely");}
         }
         @Override public void close() throws IOException {
             IOException failure=null;
@@ -260,7 +260,9 @@ public final class ClientSocketRecovery {
         private static ParcelFileDescriptor openDirectory(File path,Identity expected) throws IOException {
             FileDescriptor descriptor=null;
             try {
-                descriptor=Os.open(path.getPath(),OsConstants.O_RDONLY|OsConstants.O_DIRECTORY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);
+                // O_DIRECTORY is not part of Android's public SDK. The held fd
+                // must still match the previously verified directory inode/type.
+                descriptor=Os.open(path.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);
                 if(!expected.same(identity(Os.fstat(descriptor))))throw refused("Private display directory changed while opening");
                 return ParcelFileDescriptor.dup(descriptor);
             } catch(ErrnoException failure){throw refused("Cannot anchor private display directory without following links");}
