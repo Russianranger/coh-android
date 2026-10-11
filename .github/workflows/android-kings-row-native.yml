@@ -6,11 +6,32 @@ on:
         required: false
         type: string
         default: coh-assets-resource-inputs
+      resource_run_id:
+        required: false
+        type: string
+        default: ''
+      native_run_id:
+        required: false
+        type: string
+        default: ''
+      generator_run_id:
+        required: false
+        type: string
+        default: ''
+      generator_commit:
+        required: false
+        type: string
+        default: ''
+      beacon_run_id:
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: read
   actions: read
 jobs:
   monorail:
+    if: inputs.native_run_id == ''
     runs-on: windows-2025-vs2026
     timeout-minutes: 60
     steps:
@@ -85,8 +106,9 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
   beacons:
+    if: inputs.beacon_run_id == ''
     runs-on: windows-2025-vs2026
-    timeout-minutes: 120
+    timeout-minutes: 270
     steps:
       - name: Preserve exact source bytes
         shell: pwsh
@@ -102,12 +124,31 @@ jobs:
         with:
           name: ${{ inputs.resource_artifact }}
           path: out/resources
+          run-id: ${{ inputs.resource_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Recover exact completed host generator compile
+        if: inputs.generator_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: coh-kings-row-host-generator
+          path: C:/kr-bcn-src
+          run-id: ${{ inputs.generator_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify retained host generator source receipt before execution
+        if: inputs.generator_run_id != ''
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/client_assets_reuse.py generator
+          --directory C:/kr-bcn-src --run-id "${{ inputs.generator_run_id }}"
+          --commit "${{ inputs.generator_commit }}" --output out/generator-reuse.json
       - name: Stage separate nonshippable genuine Kings Row producer
+        if: inputs.generator_run_id == ''
         shell: pwsh
         run: |
           python tools/prepare_kings_row_beacon_generator_source.py --output C:/kr-bcn-src
           if ($LASTEXITCODE -ne 0) { throw 'Kings host generator staging failed' }
       - name: Compile host-only generator without touching Game or shipping MapServer
+        if: inputs.generator_run_id == ''
         working-directory: C:/kr-bcn-src
         shell: pwsh
         run: |
@@ -116,6 +157,7 @@ jobs:
           cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
           if ($LASTEXITCODE -ne 0) { throw 'Kings host generator compile failed' }
       - name: Retain completed host compile for exact reuse if later generation fails
+        if: inputs.generator_run_id == ''
         uses: actions/upload-artifact@v4
         with:
           name: coh-kings-row-host-generator
@@ -135,7 +177,7 @@ jobs:
           --generator C:/kr-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
           --build-input C:/kr-bcn-src/kings-row-beacon-generator-build-input.json
           --repository-commit "${{ github.sha }}" --work C:/kr-bcn-run
-          --output out/kings-row-beacons --timeout-seconds 5400
+          --output out/kings-row-beacons --timeout-seconds 14400
       - uses: actions/upload-artifact@v4
         with:
           name: coh-kings-row-beacons
@@ -168,6 +210,7 @@ jobs:
         with:
           name: coh-kings-row-beacon-evidence
           path: |
+            out/generator-reuse.json
             out/kings-row-beacons/evidence/
             out/kings-row-beacons/native-build/
             out/kings-row-beacons/kings-row-beacon-generation-report.json

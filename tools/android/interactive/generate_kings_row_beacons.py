@@ -30,6 +30,7 @@ REPORT = 'kings-row-beacon-generation-report.json'
 LOCK = 'kings-row-beacon-lock.json'
 DONOR = {'bytes':1560390578,'sha256':'25afcd1c4d4afb55990e295a5fdcf4daab18389d461f2ffaf7d9455676edd49f'}
 PROFILES = ('cold_world','reopened_world')
+MAX_GENERATION_SECONDS = 14400
 SOURCE_FILES = ('tools/prepare_kings_row_beacon_generator_source.py', producer.PATCH,
                 'tools/android/interactive/generate_kings_row_beacons.py',
                 'tools/android/interactive/generate_atlas_beacons.py',
@@ -202,7 +203,7 @@ def validate_package(directory,repository_commit=None):
 
 def generate(args):
     require(os.name=='nt','Genuine native generation requires Windows')
-    require(60<=args.timeout_seconds<=5400 and re.fullmatch('[0-9a-f]{40}',args.repository_commit),'Bounded exact source invocation required')
+    require(60<=args.timeout_seconds<=MAX_GENERATION_SECONDS and re.fullmatch('[0-9a-f]{40}',args.repository_commit),'Bounded exact source invocation required')
     for name in ('donor_apk','asset_archive','zones_archive','zones_manifest','generator','build_input','work','output'):
         setattr(args,name,Path(getattr(args,name)).resolve())
     require(not args.work.exists() and not args.output.exists(),'Fresh native owned directories required')

@@ -21,7 +21,7 @@ import qualify_startup_schedule as closure
 RETAINED_TEST_MODULES = previous.TEST_MODULES
 NEW_TEST_MODULES = ('test_external_assets','test_asset_pack_import','test_storage_files','test_client_assets_package','test_client_monorail_java','test_shared_asset_inputs',
     'test_kings_row_beacons','test_monorail_native_package','test_prepare_kings_row_beacon_generator_source',
-    'test_character_monorail','test_monorail_observer','test_zone_asset_package','test_zones_world_assets','test_classify_client_assets_change','test_zones_audio_assets')
+    'test_character_monorail','test_monorail_observer','test_zone_asset_package','test_zones_world_assets','test_classify_client_assets_change','test_zones_audio_assets','test_client_assets_reuse')
 TEST_MODULES = RETAINED_TEST_MODULES + NEW_TEST_MODULES
 CHECK_SUITES = {
     'external_asset_import_storage_and_monorail_guards_verified':list(NEW_TEST_MODULES),
@@ -46,6 +46,7 @@ def source_paths(donor):
     names.update(package_monorail_native.SOURCE_FILES)
     names.update(generate_kings_row_beacons.SOURCE_FILES)
     names.add('tools/android/game/test_monorail.py')
+    names.add('tools/android/interactive/client_assets_reuse.py')
     names.update(Path(importlib.import_module(name).__file__).relative_to(ROOT).as_posix() for name in TEST_MODULES)
     # The unchanged native map contract reads these non-import source inputs.
     transfer = importlib.import_module('character_transfer').source_contract()

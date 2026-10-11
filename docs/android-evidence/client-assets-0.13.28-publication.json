@@ -1,0 +1,285 @@
+{
+  "format": 1,
+  "status": "publication_blocked_recovery_in_progress",
+  "version": "0.13.28",
+  "version_code": 43,
+  "asset_version": "1.0.0",
+  "recovered_source_commit": "492074101200f143fd19ba386f55de29ddfa5110",
+  "branch": "codex/character-persistence-continuation",
+  "draft_pr": 1,
+  "main_merged": false,
+  "original_run": {
+    "id": 38112251836,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38112251836",
+    "conclusion": "failure",
+    "resources": "success",
+    "shipping_monorail": "success",
+    "beacons": "failure",
+    "apk": "skipped",
+    "public_audit": "skipped",
+    "failure": "Kings generation time bound exceeded after 5400 seconds",
+    "observed_total_beacons": 336308,
+    "last_received_beacon_index": 174899,
+    "no_resumable_checkpoint_in_artifact": true
+  },
+  "original_artifacts": [
+    {
+      "id": 11694453333,
+      "name": "coh-kings-row-beacon-evidence",
+      "size_in_bytes": 141189,
+      "digest": "sha256:b165acc53dbd6e253e964340e0188c7aa5bc83b4690ef9526a6d80f2a01cb3bf",
+      "expired": false
+    },
+    {
+      "id": 11692805951,
+      "name": "coh-kings-row-host-generator",
+      "size_in_bytes": 16498301,
+      "digest": "sha256:8b00b330a6c6610c49e6cd1691221f1674ff4db83a71da0a047b827446de93e8",
+      "expired": false
+    },
+    {
+      "id": 11692686103,
+      "name": "coh-monorail-native",
+      "size_in_bytes": 2952522,
+      "digest": "sha256:3ecc72e3c22307d7aadbf876e22385e85bb02b8cf2c7ab38275f0864c83030c6",
+      "expired": false
+    },
+    {
+      "id": 11692636167,
+      "name": "coh-monorail-native-evidence",
+      "size_in_bytes": 33031,
+      "digest": "sha256:2436b094b16232c065a5343d6864df1145a9802d5ef50437c764263608fdafbe",
+      "expired": false
+    },
+    {
+      "id": 11692168131,
+      "name": "coh-assets-audio-inputs",
+      "size_in_bytes": 850507900,
+      "digest": "sha256:5de3e2a3ee69e0830a3a10725bec9d779eb3aff012de6b058528328ebd0c7d9b",
+      "expired": false
+    },
+    {
+      "id": 11692158049,
+      "name": "coh-assets-resource-inputs",
+      "size_in_bytes": 3874175234,
+      "digest": "sha256:1198c89779d90adcf171f8d1f161e98468daccbd1e2c1a8ee04d31d68e78a865",
+      "expired": false
+    },
+    {
+      "id": 11691644220,
+      "name": "coh-assets-world-audit",
+      "size_in_bytes": 5863350,
+      "digest": "sha256:9245c9c5c8b7bd0750049fe8dc894a4447ef298315d0edcdcb25c617673e2e2b",
+      "expired": false
+    }
+  ],
+  "other_source_runs": [
+    {
+      "id": 38112254359,
+      "name": "Thor renderer report analysis",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254319,
+      "name": "Thor client presentation candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254324,
+      "name": "Thor Atlas Park server candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254323,
+      "name": "Thor Atlas asset import candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254344,
+      "name": "Thor real DbServer candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254327,
+      "name": "Character persistence",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254499,
+      "name": "Character session and Atlas transfer",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112254308,
+      "name": "PostgreSQL backend",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251578,
+      "name": "Wine Atlas game listener ARM64 qualification",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251610,
+      "name": "Opt-in MapServer startup and tick ARM64 diagnostic",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251475,
+      "name": "Thor client streaming inventory and exact visual follow-up",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251477,
+      "name": "Thor Atlas asset closure and exact reward save acceptance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251495,
+      "name": "Thor bounded storage and fresh-profile recovery",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251480,
+      "name": "Thor bounded runtime setup memory and cancellation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251478,
+      "name": "Thor bounded runtime setup copy repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251499,
+      "name": "Thor report recovery and Atlas preparation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251524,
+      "name": "Thor Android sidebar fixed commands and Start Enter",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251585,
+      "name": "Thor verified startup cache and client lookup bundle",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251566,
+      "name": "Thor Atlas instance zoning milestone",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251591,
+      "name": "Thor client loading and LOD enemy visual repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251656,
+      "name": "Thor render worker wake repair and focused frame attribution",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251582,
+      "name": "Thor storage audit cleanup and retained runtime",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251530,
+      "name": "Thor NPC appearance and guarded Game dependency preload",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251574,
+      "name": "Thor session movement repair and focused rendering isolation",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251493,
+      "name": "Thor original UI sweep and native Atlas beacons",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251569,
+      "name": "Thor render queue wake coalescing and sparse scene timing",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251516,
+      "name": "Thor renderer attribution bounded captures and strict save diagnostics",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251583,
+      "name": "Thor task acceptance command completion and animation pack",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251589,
+      "name": "Thor native Game 30 FPS and bounded texture diagnostics",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251571,
+      "name": "Thor level-up save and append-only UI repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251584,
+      "name": "Thor client animation reuse and missing visual assets",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251568,
+      "name": "Thor real DbServer candidate",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251608,
+      "name": "Thor native Game scene and frame performance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251600,
+      "name": "Thor saved-character DbServer startup repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251595,
+      "name": "Thor same-profile startup-only reopen and task receipt cleanup",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251614,
+      "name": "Thor GPU presentation and owned cleanup repair",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251532,
+      "name": "Thor guest-only startup and gameplay performance",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251496,
+      "name": "Thor optional probed Turnip Zink GPU profile",
+      "conclusion": "success"
+    },
+    {
+      "id": 38112251479,
+      "name": "Thor Atlas-first startup and source-bound DbServer supplement",
+      "conclusion": "success"
+    }
+  ],
+  "preserved": {
+    "accepted_game": true,
+    "dbserver": true,
+    "gpu_renderer": true,
+    "character_persistence_gates": true,
+    "separate_research_workspaces": true
+  },
+  "physical_kings_row_zoning_validated": false,
+  "physical_preparation_speedup_validated": false,
+  "physical_fps_gain_validated": false,
+  "public_apk_verified": false,
+  "all_public_asset_volumes_verified": false
+}

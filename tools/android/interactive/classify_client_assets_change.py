@@ -65,6 +65,8 @@ CLIENT_ASSETS_ALLOWED = frozenset({
     'tools/android/interactive/audit_zone_asset_coverage.py',
     'tools/android/interactive/build_client_assets_apk.py',
     'tools/android/interactive/classify_client_assets_change.py',
+    'tools/android/interactive/client_assets_reuse.py',
+    'tools/android/interactive/test_client_assets_reuse.py',
     'tools/android/interactive/classify_interactive_change.py',
     'tools/android/interactive/classify_storage_cleanup_change.py',
     'tools/android/interactive/generate_kings_row_beacons.py',

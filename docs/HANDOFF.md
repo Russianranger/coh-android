@@ -1,4 +1,30 @@
-# CURRENT — .28 asset separation and Kings Row monorail work in progress — 2026-10-11 UTC
+# CURRENT — .28 publication recovered; missing beacon qualification in repair — 2026-10-11 UTC
+
+Independent recovery confirmed branch `codex/character-persistence-continuation`
+at `492074101200f143fd19ba386f55de29ddfa5110`, with PR #1 open and draft.
+No .28 APK or Assets 1.0.0 public release/tag exists at this checkpoint.
+Dedicated publication run **38112251836** failed; resources and shipping
+MapServer/Windows monorail fixture succeeded, but beacon generation exceeded
+its explicit 5,400-second limit. APK packaging and public-byte audit were
+skipped. Other successful workflow conclusions do not establish publication.
+
+The failed native log records 336,308 beacons and processing through index
+174,899 at approximately 89.5 minutes, with all four owned roles alive before
+the deadline and successful cleanup afterward. This is progress, not evidence
+of a stalled worker. No completed graph or resumable checkpoint was retained.
+The recovery preserves the compiled host generator, shipping MapServer,
+resource/audio packages and original audit evidence. Only missing graph
+generation, its unchanged collision/CRC/readback/32-route proofs, launcher
+packaging, full regression qualification and public-byte audits remain.
+
+The prior development checkout paths contain empty remnants, with no accessible
+Git index or uncommitted files to recover. A separate sparse checkout was made
+from the exact current development branch, never main. Research checkouts were
+left untouched. No accepted Game, DbServer or GPU rebuild is required. Do not
+merge PR #1. See `docs/android-evidence/client-assets-0.13.28-publication.json`
+for original run/artifact identities and explicit pending device gates.
+
+## Previous .28 implementation checkpoint (historical)
 
 The user supplied `coh-atlas-gameplay-20261011-035622.zip`, authorized changes,
 plans a fresh installation, and requested independently versioned APK/assets

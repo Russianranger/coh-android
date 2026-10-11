@@ -18,38 +18,23 @@ jobs:
       native_run_id: ${{ steps.gate.outputs.native_run_id }}
       native_commit: ${{ steps.gate.outputs.native_commit }}
       resource_run_id: ${{ steps.gate.outputs.resource_run_id }}
+      resource_commit: ${{ steps.gate.outputs.resource_commit }}
+      generator_run_id: ${{ steps.gate.outputs.generator_run_id }}
+      generator_commit: ${{ steps.gate.outputs.generator_commit }}
+      beacon_run_id: ${{ steps.gate.outputs.beacon_run_id }}
+      beacon_commit: ${{ steps.gate.outputs.beacon_commit }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with: {persist-credentials: false}
       - id: gate
         name: Preserve completed publication and explicit reusable artifact owners
         env: {GH_TOKEN: '${{ github.token }}'}
-        run: |
-          python3 - <<'PY'
-          import json,os,re,sys,urllib.error,urllib.request
-          from pathlib import Path
-          sys.path.insert(0,'tools/android/interactive')
-          import build_client_assets_apk as current
-          marker=json.loads(Path('tools/android/interactive/release-client-assets-0.13.28.json').read_text())
-          assert marker['version']=='0.13.28' and marker['asset_version']=='1.0.0'
-          values={'native_run_id':str(marker.get('native_run_id','')),'resource_run_id':str(marker.get('resource_run_id','')),
-            'native_commit':marker.get('native_commit',os.environ['GITHUB_SHA'])}
-          assert re.fullmatch('[0-9a-f]{40}',values['native_commit'])
-          assert all(not values[k] or re.fullmatch('[1-9][0-9]*',values[k]) for k in ('native_run_id','resource_run_id'))
-          assert not values['resource_run_id'] or values['native_run_id'], 'Resource reuse must also name the completed native run'
-          request=urllib.request.Request('https://api.github.com/repos/'+current.REPOSITORY+'/releases/tags/'+current.RELEASE_TAG,
-            headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
-          try:
-            with urllib.request.urlopen(request,timeout=30) as response: release=json.load(response)
-          except urllib.error.HTTPError as error:
-            if error.code!=404: raise
-            required=True
-          else:
-            current.validate_existing_release(release);required=False
-          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
-            for name,value in dict(values,required=str(required).lower()).items():output.write(name+'='+value+'\n')
-          print('Publication required:',required,'; native Game remains the accepted .25 executable')
-          PY
+        run: >-
+          python3 tools/android/interactive/client_assets_reuse.py gate
+          --marker tools/android/interactive/release-client-assets-0.13.28.json
+          --commit "$GITHUB_SHA" --output out/client-assets-reuse.json
+      - uses: actions/upload-artifact@v4
+        with: {name: coh-client-assets-reuse, path: out/client-assets-reuse.json, retention-days: 90, if-no-files-found: error}
   resources:
     needs: changes
     if: needs.changes.outputs.required == 'true' && needs.changes.outputs.resource_run_id == ''
@@ -104,13 +89,19 @@ jobs:
           if-no-files-found: error
   native:
     needs: [changes, resources]
-    if: always() && needs.changes.outputs.required == 'true' && needs.changes.outputs.native_run_id == '' && needs.resources.result == 'success'
+    if: always() && needs.changes.outputs.required == 'true' && (needs.changes.outputs.native_run_id == '' || needs.changes.outputs.beacon_run_id == '') && (needs.resources.result == 'success' || needs.changes.outputs.resource_run_id != '')
     uses: ./.github/workflows/android-kings-row-native.yml
-    with: {resource_artifact: coh-assets-resource-inputs}
+    with:
+      resource_artifact: coh-assets-resource-inputs
+      resource_run_id: ${{ needs.changes.outputs.resource_run_id }}
+      native_run_id: ${{ needs.changes.outputs.native_run_id }}
+      generator_run_id: ${{ needs.changes.outputs.generator_run_id }}
+      generator_commit: ${{ needs.changes.outputs.generator_commit }}
+      beacon_run_id: ${{ needs.changes.outputs.beacon_run_id }}
     permissions: {contents: read, actions: read}
   apk:
     needs: [changes, resources, native]
-    if: always() && needs.changes.outputs.required == 'true' && (needs.native.result == 'success' || needs.changes.outputs.native_run_id != '') && (needs.resources.result == 'success' || needs.changes.outputs.resource_run_id != '')
+    if: always() && needs.changes.outputs.required == 'true' && (needs.native.result == 'success' || (needs.changes.outputs.native_run_id != '' && needs.changes.outputs.beacon_run_id != '')) && (needs.resources.result == 'success' || needs.changes.outputs.resource_run_id != '')
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     permissions: {contents: write, actions: read}
@@ -160,8 +151,19 @@ jobs:
         with:
           name: coh-kings-row-beacons
           path: out/beacons
-          run-id: ${{ needs.changes.outputs.native_run_id || github.run_id }}
+          run-id: ${{ needs.changes.outputs.beacon_run_id || github.run_id }}
           github-token: ${{ github.token }}
+      - name: Verify shipping MapServer owner and completed beacon source independently
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/android/interactive')
+          import package_monorail_native as native
+          import generate_kings_row_beacons as beacons
+          receipt = native.validate_package('out/monorail', '${{ needs.changes.outputs.native_commit }}')
+          assert receipt['run_url'] == 'https://github.com/${{ github.repository }}/actions/runs/${{ needs.changes.outputs.native_run_id || github.run_id }}'
+          beacons.validate_package('out/beacons', '${{ needs.changes.outputs.beacon_commit }}')
+          PY
       - name: Authenticate completed .27 evidence and original unchanged Game proof
         env: {GH_TOKEN: '${{ github.token }}'}
         run: |
