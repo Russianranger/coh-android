@@ -282,7 +282,7 @@ jobs:
         run: rm -rf "$RUNNER_TEMP/coh-retained-signing"
   public-audit:
     needs: [changes, apk]
-    if: needs.changes.outputs.required == 'true'
+    if: always() && needs.changes.result == 'success' && needs.apk.result == 'success' && needs.changes.outputs.required == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
