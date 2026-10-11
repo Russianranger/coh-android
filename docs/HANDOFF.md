@@ -1,4 +1,4 @@
-# CURRENT — .28 physical startup failure reproduced; .29 packaging repair awaiting publication — 2026-10-11 UTC
+# CURRENT — .29 startup receipt repair published and public bytes verified; Thor retest pending — 2026-10-11 UTC
 
 The supplied Thor recovery report records a deterministic **pre-launch** failure:
 `Game listener donor receipt bytes differ`. Its contained fresh-character guest
@@ -18,7 +18,7 @@ The .28 public-byte audit remains valid for its stated scope; it did not execute
 these final serialized guest startup contracts. Earlier host native checks ran
 before serialization, and the subsequent preflight checked extraction/inventory.
 
-**Prepared fix: 0.13.29 / version code 44.** Restore only the authenticated key
+**Published fix: 0.13.29 / version code 44.** Restore only the authenticated key
 order in those two receipts, preserve their semantic values, and update the two
 enclosing runtime manifests. All 25 native members, guest helpers and strict
 save acceptance, DEX/resources, Game/GPU/Wine/FEX and Assets 1.0.0 remain exact.
@@ -26,23 +26,57 @@ The actual fresh-create and saved-reopen payload validators pass on independentl
 extracted repaired archive bytes. Both original failures have regressions.
 The dedicated publication lane also requires every retained .28 suite, all seven
 real PostgreSQL fixtures, SDK signer/version checks, fresh-process reconstruction
-and an audit of the actual public .29 APK. **Publication is pending at this
-commit; no physical .29 recovery or performance claim is made.**
+and an audit of the actual public .29 APK. **All these gates passed; no physical
+.29 recovery or performance claim is made.**
+
+[Download COH-Atlas-Gameplay-0.13.29.apk](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.29/COH-Atlas-Gameplay-0.13.29.apk)
+— **41,199,716 bytes**, SHA-256
+`b417827778f451335ec5299b92e4ba2f6d2a30d6c7706d4a2a4405139236171b`.
+[Checksum](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.29/COH-Atlas-Gameplay-0.13.29.apk.sha256).
+Public prerelease `coh-atlas-gameplay-v0.13.29` points to
+`cae7620da1434824540a568ca8d359ca9f6d3d79`; release ID **409852127**.
+
+[Dedicated run 38164198211](https://github.com/Russianranger/coh-android/actions/runs/38164198211)
+passed **146 suites / 1,977 tests / zero skips** and all seven real PostgreSQL
+fixtures. APK job **114543341803** passed signing, version-only Android manifest
+comparison, exact retained DEX/resources/native boundaries and independent
+fresh-process reconstruction. Separate public-audit job **114545723124** downloaded
+the actual public APK/checksum/instructions and passed the same exact reconstruction,
+unchanged guest payload checks and SDK v2/v3 signer verification. All 16 other
+associated source-commit workflow runs also completed successfully.
+
+Accepted APK artifact **11711144649**, 44,785,770 bytes, SHA-256
+`520a57269754443cc410db95f040a9eac8da501d355e7d1650d810a35062971a`.
+Qualification artifact **11711990633**, 497,384 bytes, SHA-256
+`1a52504d6f48332e76fa0a0c8dbdb8c29fd0ae54fcbcb9184c21289762538873`.
+Public-byte audit artifact **11711990819**, 575 bytes, SHA-256
+`a1a398f75a7d4d346e85d3eebdf9050dcf86fa2bbfa936f14b3f83460797ac8a`.
+The consolidated evidence is
+[client-receipt-repair-0.13.29-publication.json](android-evidence/client-receipt-repair-0.13.29-publication.json).
+
+All four Assets **1.0.0** download links/hashes remain in the table below and
+in the .29 testing instructions. Their release ID, asset IDs, lengths and digests
+are unchanged. Their complete public-byte/member audits remain owned by the
+original .28 audit; .29 reauthenticated that evidence and checked unchanged public
+metadata. It did not redownload, rebuild or republish the four asset volumes.
+The .29 APK plus all four downloads totals **4,828,019,524 bytes**. For a clean
+installation retaining downloads, plan **25–30 GiB free internal storage**;
+this is conservative headroom, not a measured Thor installed footprint.
 
 Repaired game archive: 10,943,638 bytes, SHA-256
 `36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa`.
 Its manifest has identical parsed values and SHA-256
 `520713891e4d5be9d7a64fb736ef15e37e062a104513ec37bdaf09670898dab7`.
 
-Install .29 over .28 when publication completes, then run **Set up / update
+Install .29 over .28, then run **Set up / update
 runtime** once. Keep already imported **Assets 1.0.0**; no asset reimport or
 uninstall is needed. Retry fresh creation, verified save, Finish and saved-character
 reopen first. Preserve the complete outer report ZIP. Only after that succeeds,
 continue the Atlas Park–Kings Row round trip and save/reopen gates in
 [.29 testing instructions](COH-Atlas-Gameplay-0.13.29-testing.txt).
 
-Next milestones: finish .29 CI and public-byte verification; obtain a physical
-fresh-create/save/reopen report; then qualify physical Kings Row travel, return,
+Next milestones: obtain a physical fresh-create/save/reopen report; then qualify
+physical Kings Row travel, return,
 saved destination and loading/control/performance observations. Do not substitute
 host checks for Thor evidence or begin a long optimization research session.
 PR #1 remains draft and unmerged; the separate MapServer and ARM64 feasibility
