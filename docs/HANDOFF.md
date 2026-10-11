@@ -1,11 +1,44 @@
-# CURRENT — .26 Atlas instance zoning published; .25 accepted physical baseline — 2026-10-10
+# CURRENT — .26 two transfers physically confirmed; interruption/report recovery next — 2026-10-11 UTC
 
 **The user physically tested .25 and accepts its much improved FPS as the new
 serviceable testing baseline. Sustained 30 FPS remains unmet. The user now
 requests zoning implementation; the prior FPS-first deferral is superseded.
 0.13.26 / version code 41 is published with all four publication jobs successful,
-including the independent audit of the actual public APK. Physical .26 zoning
-qualification remains pending.**
+including the independent audit of the actual public APK. The user reports two
+successful physical transfers and accepts the zoning test. Save/export was
+interrupted afterward; complete logged qualification and destination save/reopen
+remain unverified. Do not request a repeat of the successful zoning test.**
+
+The new attachment `coh-atlas-gameplay-20261011-003909.zip` (1,604,927 bytes,
+SHA-256 `edf14b2b78a62299873af0a46feb4ea609710c96ecf3d36349131aa5a891f9ee`)
+confirms app .26 and the exact published runtime manifest content, but captures
+a **later failed reopen**, not the successful gameplay session. At 00:38:58.932
+UTC (19:38:58.932 Chicago, October 10), that retry stopped after 1.684 seconds:
+"A previous private display socket remains." It contains no guest ZIP, native
+logs, zoning events, captures or saved-character event. Turnip/Performance are
+requested; this retry never starts Game and cannot establish an actual renderer
+or FPS. Its `cleanup_verified=true` does not certify cleanup of the earlier run.
+
+Android exit history records a low-memory termination (reason 3) of PID 28592 at
+20:17:06.960 UTC October 10; the .26 setup receipt also names that PID. This
+supports memory pressure as a plausible explanation, but missing original-run
+timestamps prevent attributing it to Finish or backgrounding. Two subsequent
+reason-10 records do not uniquely identify force-stop on Android 13. No Java or
+native crash trace is present. The user-observed transfers remain successful;
+their final map, precise durations and ordinary-save outcome are not invented.
+
+**Next focused work: interruption recovery and durable report export.** Source
+review found that a retry clears report pointers and fixed guest evidence before
+checking the old display socket; completed per-run archives may still exist but
+only the latest is offered in the UI. Live lifecycle/zoning evidence is kept in
+memory until final publication, and external export copying is Activity-owned.
+Preserve/recover earlier evidence before retries, checkpoint the session, check
+socket ownership/liveness before any narrowly scoped recovery, and move bounded
+export work into the foreground service. Do not blindly unlink sockets, delete
+profile data or relax save acceptance. An accepted Finish already keeps the
+foreground service through report creation; Activity backgrounding alone is not
+a demonstrated Finish defect. This feedback pass records evidence only; .26
+remains the current APK. No new build or replacement FPS/zoning benchmark was run.
 
 [Direct APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.26/COH-Atlas-Gameplay-0.13.26.apk)
 · [Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.26)
@@ -51,8 +84,9 @@ Seventy-one of 77 donor runtime payloads are byte-identical; six helpers/manifes
 changed and one zoning helper was added. Six Java sources changed and one was
 added; 13 remain unchanged. The .24 setup repair, successful GPU support,
 Software fallback, world assets, graphics settings and strict save acceptance
-are preserved. Physical .26 controls, arrival, save/reopen on 101, two-map memory/
-temperature behavior and transfer duration remain pending. Host evidence does
+are preserved. Two transfers are now user-confirmed. Complete native arrival
+traces, individual control checks, save/reopen on 101, two-map memory/temperature
+behavior and transfer duration remain unverified. Host evidence does
 not qualify Thor zoning speed or a new physical FPS gain.
 
 The complete report `coh-atlas-gameplay-20261010-183224.zip` verifies .25 runtime

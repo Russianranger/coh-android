@@ -110,6 +110,203 @@
     "successful_gpu_driver_and_both_probes_retained": true,
     "world_assets_changed": false
   },
+  "device_followups": [
+    {
+      "attachment": {
+        "bytes": 1604927,
+        "members": [
+          {
+            "bytes": 8338,
+            "name": "android-client-report.json"
+          },
+          {
+            "bytes": 109,
+            "name": "operation.log"
+          },
+          {
+            "bytes": 990,
+            "name": "runtime-setup-service.json"
+          },
+          {
+            "bytes": 1357863,
+            "name": "runtime-manifest.json"
+          },
+          {
+            "bytes": 4128,
+            "name": "identities/accepted-runtime-manifest.json"
+          },
+          {
+            "bytes": 934650,
+            "name": "identities/atlas-beacon-manifest.json"
+          },
+          {
+            "bytes": 4258210,
+            "name": "identities/atlas-world-supplement-manifest.json"
+          },
+          {
+            "bytes": 28554,
+            "name": "identities/character-avatar-defaults-manifest.json"
+          },
+          {
+            "bytes": 9284,
+            "name": "identities/client-manifest.json"
+          },
+          {
+            "bytes": 1005794,
+            "name": "identities/server-animation-manifest.json"
+          },
+          {
+            "bytes": 39041,
+            "name": "identities/server-cache-manifest.json"
+          },
+          {
+            "bytes": 32549,
+            "name": "identities/startup-dbserver-manifest.json"
+          },
+          {
+            "bytes": 1688,
+            "name": "runtime-lock.json"
+          },
+          {
+            "bytes": 923,
+            "name": "atlas-import.properties"
+          }
+        ],
+        "name": "coh-atlas-gameplay-20261011-003909.zip",
+        "sha256": "edf14b2b78a62299873af0a46feb4ea609710c96ecf3d36349131aa5a891f9ee",
+        "zip_integrity_passed": true
+      },
+      "captured_attempt": {
+        "character_saved_event": null,
+        "cleanup_scope": "No launch in this retry; not proof that the preceding live session cleaned up",
+        "cleanup_verified": true,
+        "decoded_frames": 0,
+        "elapsed_ms": 1684,
+        "error": "A previous private display socket remains. Export the report before running another check.",
+        "finish_requested": false,
+        "finished_utc_derived_from_elapsed": "2026-10-11T00:39:00.616000+00:00",
+        "input_events_sent": 0,
+        "process_exit_code": -1,
+        "profile_state": "READY",
+        "profile_state_scope": "Structural readiness, not committed SQL save proof",
+        "run_id": "1791679138932-6f3912917830",
+        "save_logout_requested": false,
+        "scope": "Later reopen preflight; not the user-reported successful zoning session",
+        "session_id": "cc1e3e4a780048e7979f6b0e97d98979",
+        "started_utc": "2026-10-11T00:38:58.932000+00:00",
+        "zoning_events": 0,
+        "zoning_samples": 0
+      },
+      "exit_history": {
+        "interpretation": "A prior .26 process has REASON_LOW_MEMORY. Missing earlier session timeline prevents binding it to Finish or backgrounding. Android 13 reason 10 is not unique to force-stop. No crash trace is present.",
+        "low_memory_record": {
+          "importance": 100,
+          "milliseconds_before_captured_retry": 15711972,
+          "pid": 28592,
+          "reason": 3,
+          "same_pid_as_026_runtime_setup": true,
+          "timestamp_utc": "2026-10-10T20:17:06.960000+00:00"
+        },
+        "records": [
+          {
+            "importance": 400,
+            "pid": 16347,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 66102,
+            "reason": 10,
+            "rss_kib": 172452,
+            "status": 0,
+            "timestamp_utc_ms": 1791663460326
+          },
+          {
+            "importance": 400,
+            "pid": 15958,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 0,
+            "reason": 10,
+            "rss_kib": 0,
+            "status": 0,
+            "timestamp_utc_ms": 1791663440717
+          },
+          {
+            "importance": 100,
+            "pid": 28592,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 138789,
+            "reason": 3,
+            "rss_kib": 243200,
+            "status": 0,
+            "timestamp_utc_ms": 1791663426960
+          },
+          {
+            "importance": 400,
+            "pid": 18270,
+            "process_name": "io.github.russianranger.cohclientinteractive",
+            "pss_kib": 99244,
+            "reason": 10,
+            "rss_kib": 209412,
+            "status": 0,
+            "timestamp_utc_ms": 1791657633952
+          }
+        ],
+        "reference": "https://developer.android.com/reference/android/app/ApplicationExitInfo"
+      },
+      "identity": {
+        "actual_Game_execution_in_captured_run": false,
+        "actual_renderer_observed": null,
+        "android_sdk": 33,
+        "app_version": "0.13.26",
+        "declared_retained_native_source": "c512e912a004b66886a7667640aa1a967e95de64",
+        "device": "AYN AYN Thor",
+        "exported_pretty_manifest_sha256": "d4653fbdf40537753e616678bd32a354a3a01a04cc13fa6b738ab7d045aa5cd5",
+        "gpu_requested": "turnip",
+        "graphics_requested": "performance",
+        "installed_runtime_manifest_sha256_reported": "6b40f4335b7ed1216bc40ddd2e8639fbc6492f2c2cf47f5e64fc891cffdea351",
+        "manifest_content_equals_published_runtime": true,
+        "manifest_serialization_note": "ClientRuntime publishes parsed manifest via toString(2); exported member bytes differ from the installed asset while JSON content matches exactly",
+        "runtime_repository_commit": "64a1833bc0d2dc1035c11188c6ae8c7fdb58244b"
+      },
+      "missing_evidence": [
+        "Original zoning session lifecycle and native arrival logs",
+        "Guest report ZIP",
+        "Saved-character SQL/native-position receipt",
+        "Actual Game renderer and FPS samples",
+        "Exact transfer destinations and durations",
+        "Crash or ANR trace"
+      ],
+      "native_or_graphics_changed": false,
+      "new_build_performed": false,
+      "next_scope": [
+        "Preserve and expose earlier evidence before a retry",
+        "Durable live-session checkpoints and interruption reports",
+        "Check ownership/liveness before narrow dead-socket recovery; never blindly unlink",
+        "Foreground-service-owned bounded report export"
+      ],
+      "no_repeat_of_user_success_requested": true,
+      "recorded_date_utc": "2026-10-11",
+      "save_acceptance_relaxed": false,
+      "source_review": {
+        "accepted_Finish_foreground_until_internal_report": true,
+        "external_export_owner": "Activity executor without foreground/wake ownership",
+        "live_zoning_lifecycle_checkpointed_before_final_report": false,
+        "old_archives_exposed_in_UI": false,
+        "older_completed_archives_may_remain": true,
+        "retry_invalidates_latest_pointer_before_preflight": true,
+        "retry_retires_fixed_guest_outputs_before_socket_preflight": true,
+        "source": "40edd1524b9ab0f1bcfaa037d8f86cdf4b5cd249"
+      },
+      "user_local_date": "2026-10-10",
+      "user_observation": {
+        "cause_confirmed": false,
+        "exact_destinations_and_final_save_verified_from_archive": false,
+        "interruption": "App disappeared after attempting Finish/report save and switching to another app",
+        "successful_transfers": 2,
+        "suspected_cause": "Android background-process termination",
+        "zoning_test_accepted": true
+      },
+      "user_timezone": "America/Chicago"
+    }
+  ],
   "device_qualification": {
     "different_city_or_mission_assets_qualified": false,
     "pending": [

@@ -96,8 +96,37 @@ were reused. Independent source/receipt review passed without repeating native
 builds or the large public APK download. Full publication evidence is in
 `android-evidence/zoning-0.13.26-publication.json`.
 
-Physical .26 arrival, map-101 save/reopen, memory/temperature behavior with two
-maps and transfer duration remain pending. The retained renderer has the accepted
-.25 physical baseline; host tests do not establish Thor zoning speed. Follow
-`COH-Atlas-Gameplay-0.13.26-testing.txt` for the round trip and separate destination
-save/reopen checks. No repeat of the accepted .25 FPS benchmark is required.
+The October 10 Chicago / October 11 UTC follow-up physically confirms **two
+successful transfers, according to the user**, followed by an interruption around
+Finish/report export and switching to another app. This is an accepted physical
+zoning result; do not request another round trip merely to replace missing logs.
+
+The supplied `coh-atlas-gameplay-20261011-003909.zip` is a valid 14-member export
+of a later 1.684-second failed reopen. Its .26 manifest content exactly matches
+the published build; requested Turnip/Performance are present, but Game never
+started in this captured attempt. The leftover private display socket blocked
+launch. There is no guest report, zoning trace, actual renderer sample or saved
+event. The prior session's exact destinations, save outcome and timings cannot
+be derived from this ZIP. Archive identity and bounded observations are appended
+under `device_followups` in `android-evidence/zoning-0.13.26-publication.json`;
+the original publication receipt flags remain historical host claims.
+
+A historical Android reason-3 exit for the .26 setup PID supports low-memory
+termination as a possibility. It is not tied to the user's Finish/background
+transition. Reason-10 records on Android 13 can also describe package/component
+changes and are not proof of force-stop. Reference:
+[Android ApplicationExitInfo](https://developer.android.com/reference/android/app/ApplicationExitInfo).
+
+Source review identifies the next bounded reliability work: preserve previous
+guest evidence before retries, retain access to older completed reports, durably
+checkpoint live session evidence, recover only demonstrably dead owned display
+sockets, and put external report copying under foreground-service ownership.
+The existing accepted Finish path already retains the foreground service until
+its internal report is complete; no specific Finish exception is demonstrated.
+No code or APK changed for this feedback record.
+
+Complete native arrival traces, map-101 save/reopen, individual controls,
+memory/temperature behavior and transfer duration remain unverified. The .25
+physical FPS baseline is retained. After the interruption/export issue is
+addressed, any further test should target those remaining gaps rather than
+repeat the accepted .25 benchmark or the already successful two transfers.
