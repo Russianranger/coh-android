@@ -1,4 +1,56 @@
-# CURRENT — .29 startup receipt repair published and public bytes verified; Thor retest pending — 2026-10-11 UTC
+# CURRENT — .29 receipt repair passed on Thor; .30 animation compatibility repair awaiting qualification — 2026-10-11 UTC
+
+The new supplied recovery archive `coh-atlas-gameplay-20261011-191259.zip`
+contains a failed guest attempt lasting **388.877 seconds** (19:05:47.896461 to
+19:12:16.773008 UTC). It pins the repaired .29 game archive and **passes the
+previous persistent-server-profile receipt gate**, PostgreSQL startup, Wine
+initialization and x86 ODBC. It then fails with **`Animation runtime/native
+identity differs`** during server runtime preparation. DbServer, MapServer and
+Game have not launched. The contained guest report records complete cleanup;
+the recovery wrapper remains `interrupted_unverified` with unverified session
+attribution. Do not infer an Android kill, timeout or GPU crash.
+
+The animation manifest correctly preserves its historical producer MapServer
+`6a5bf60b...`, but its installer checked only that exact producer as a consumer.
+The accepted monorail MapServer is `53ff6ee0...`; the preceding definition-cache
+compatibility check already authenticates it. **Prepared .30 / version code 45**
+adds an exact additional animation consumer, bound to that binary and its
+qualified monorail receipt `e0ab383a...`, then verifies the existing source
+ancestry. Both the Atlas and Kings Row callers supply the authenticated package.
+Unknown binaries, altered/rehashed receipts, corrupt animations and unowned
+paths remain rejected. Original animation manifests/Pigg bytes, all native
+binaries, DEX/resources, graphics and Assets 1.0.0 stay unchanged. Save acceptance
+and character persistence code are not relaxed.
+
+The .29 host gates covered final game-package extraction and receipt validation,
+but did not exercise the later animation installer with the monorail binary.
+The .30 gate now must execute the actual packaged guest asset installers with
+the complete original animation, cache and Atlas/Kings beacon inputs, including
+fresh and reused installations, before signing or publishing. This remains host
+asset-preparation evidence, not a full native or physical Thor boot. **At this
+commit .30 qualification/publication is pending.** See the
+[new device evidence](android-evidence/client-animation-repair-0.13.30-device-failure.json)
+and [publication status](android-evidence/client-animation-repair-0.13.30-publication.json).
+
+The apparent delay was mainly preparation: **250.224 seconds** building the
+cold server-data mirror, **56.717 seconds** first Wine initialization and
+**53.010 seconds** Atlas supplement preparation. The client worktree was reused
+in 0.215 seconds. The server mirror was sealed before failure and cleanup
+completed; reuse on the next attempt is expected but must be observed, not
+claimed as a measured speedup. Keep the existing installation and imported
+**Assets 1.0.0**. When .30 is published, update in place and run **Set up / update
+runtime** once; no asset reimport or uninstall is required.
+
+Next gates: qualified/public-byte audited .30 APK; physical startup and world
+entry; ordinary verified save, Finish and saved-character reopen; then actual
+Atlas Park–Kings Row round trip and Kings Row save/reopen. Preserve reports and
+keep graphics settings fixed. No new FPS/loading improvement is claimed.
+PR #1 remains draft/unmerged, main unchanged. MapServer optimization and ARM64
+feasibility research remain separate; do not start another research detour.
+
+---
+
+# Historical — .29 startup receipt repair published and public bytes verified; Thor retest pending — 2026-10-11 UTC
 
 The supplied Thor recovery report records a deterministic **pre-launch** failure:
 `Game listener donor receipt bytes differ`. Its contained fresh-character guest

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from classify_client_animation_repair_change import client_animation_repair_owned
 
 
 CLIENT_RECEIPT_REPAIR_MARKER = 'tools/android/interactive/release-client-receipt-repair-0.13.29.json'
@@ -58,14 +59,15 @@ def main():
         parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^@'], text=True).strip()
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
-        required = not client_receipt_repair_owned(os.environ.get('GITHUB_EVENT_NAME'),
+        context = (os.environ.get('GITHUB_EVENT_NAME'),
             os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        required = not (client_receipt_repair_owned(*context) or client_animation_repair_owned(*context))
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('legacy_native_required='+str(required).lower()+'\n')
     print('Historical qualification required' if required else
-        'Dedicated .29 receipt-order repair owns this exact push')
+        'Dedicated repair publication owns this exact push')
 
 
 if __name__ == '__main__':

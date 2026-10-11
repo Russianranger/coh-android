@@ -918,7 +918,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         if animation.exists() or animation_manifest.exists():
             import server_animation_package
             installed = server_animation_package.install(animation, animation_manifest,
-                self.runtime, context=self.ctx)
+                self.runtime, context=self.ctx, mapserver_package=self.map_package)
             self.creation_report['server_animation_pack'] = installed
             self.ctx.report['server_animation_pack'] = installed
         checkpoint('server_animation_pack')
@@ -1092,7 +1092,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             target / 'data', donor, context=self.ctx)
         import server_animation_package
         animation = server_animation_package.install(self.owner.args.assets / 'server-animations.pigg',
-            self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx)
+            self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
+            mapserver_package=self.map_package)
         graph = kings_row_beacon_package.install(self.owner.args.assets / kings_row_beacon_package.ARCHIVE,
             self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
             imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK)

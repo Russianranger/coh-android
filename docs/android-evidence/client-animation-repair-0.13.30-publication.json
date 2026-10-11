@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "status": "prepared_not_yet_qualified_or_published",
+  "version_name": "0.13.30",
+  "version_code": 45,
+  "release_tag": "coh-atlas-gameplay-v0.13.30",
+  "donor_commit": "cae7620da1434824540a568ca8d359ca9f6d3d79",
+  "donor_apk_sha256": "b417827778f451335ec5299b92e4ba2f6d2a30d6c7706d4a2a4405139236171b",
+  "donor_public_byte_audit_run_id": 38164198211,
+  "donor_public_byte_audit_artifact_id": 11711990819,
+  "asset_version": "1.0.0",
+  "asset_reimport_required": false,
+  "native_binaries_changed": false,
+  "dex_changed": false,
+  "graphics_runtime_changed": false,
+  "guest_helpers_changed": [
+    "server_animation_package.py",
+    "local_character_server.py"
+  ],
+  "strict_save_acceptance_changed": false,
+  "qualified_monorail_mapserver_sha256": "53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713",
+  "qualified_monorail_receipt_sha256": "e0ab383a91b83c258bfacbc44acf328f1a0c1435c0e4a385eb5ad643566f3178",
+  "physical_recovery_validated": false,
+  "physical_kings_row_zoning_validated": false,
+  "pending_gates": [
+    "Actual complete animation/cache/Atlas/Kings asset installer preflight",
+    "149 suites with zero skips and seven real PostgreSQL fixtures",
+    "Signed APK build and independent payload reconstruction",
+    "APK-only publication and actual public-byte audit",
+    "Thor startup/world entry and verified save/reopen",
+    "Thor Atlas Park to Kings Row round trip and destination save/reopen"
+  ],
+  "local_actual_asset_preflight": {
+    "status": "passed",
+    "scope": "actual_packaged_guest_external_asset_installers",
+    "animation_count": 5878,
+    "fresh_create_payload_verified": true,
+    "saved_reopen_payload_verified": true,
+    "atlas_cold_and_reuse_verified": true,
+    "kings_cold_and_reuse_verified": true,
+    "prepared_caches_verified": true,
+    "native_runtime_booted": false,
+    "physical_execution_validated": false,
+    "full_private_worktree_mirror_executed": false,
+    "atlas_collision_inputs": 5637,
+    "kings_collision_inputs": 8396
+  },
+  "original_029_failure_reproduction": {
+    "animation_count": 5878,
+    "error": "Animation runtime/native identity differs",
+    "full_pigg_verified_before_failure": true,
+    "native_started": false,
+    "original_packaged_helper": {
+      "bytes": 10482,
+      "sha256": "9fcbc32e2aa7f43151f4ec1c4ddc51e6c12202d81076fb5521936721f5174f81"
+    },
+    "status": "reproduced"
+  }
+}

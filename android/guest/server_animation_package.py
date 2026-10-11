@@ -29,6 +29,12 @@ MAX_PACK = 128 * 1024 * 1024
 MAX_FILE = 8 * 1024 * 1024
 MAX_MANIFEST = 2 * 1024 * 1024
 MAX_METADATA = 24 * 1024 * 1024
+# The .28/.29 monorail binary changes only station orchestration. Its complete
+# reviewed source receipt preserves animtrack, seqload, PigFileWrapper, piglib,
+# file and FolderCache. Keep the original animation producer in identity(); this
+# is an additional exact consumer, not a rewritten asset history or hash bypass.
+MONORAIL_MAPSERVER_SHA256 = '53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713'
+MONORAIL_RECEIPT_SHA256 = 'e0ab383a91b83c258bfacbc44acf328f1a0c1435c0e4a385eb5ad643566f3178'
 HEADER = struct.Struct('<IHHHHI')
 ENTRY = struct.Struct('<IiIIIIi16sI')
 NAME = re.compile(r'player_library/animations/[a-z0-9_&\-/]+\.anim\Z')
@@ -158,15 +164,39 @@ def verify_package(pigg, manifest, *, context=None):
     return document
 
 
-def install(pigg, manifest, runtime, *, context=None):
+def verify_runtime(runtime, document, *, mapserver_package=None):
+    """Authenticate the original consumer or the one reviewed monorail binary."""
+    runtime = Path(runtime)
+    require(runtime.is_dir() and not runtime.is_symlink(),
+            'Animation runtime/native identity differs')
+    actual = file_pin(runtime / 'MapServer.exe')['sha256']
+    historical = document['identity']['mapserver_sha256']
+    if actual == historical:
+        return {'format': 1, 'policy': 'exact_original_animation_producer',
+                'actual_mapserver_sha256': actual,
+                'original_animation_producer_mapserver_sha256': historical,
+                'animation_identity_preserved': True, 'native_animation_reader_changed': False}
+    require(document['identity'] == identity()
+            and actual == MONORAIL_MAPSERVER_SHA256
+            and isinstance(mapserver_package, dict)
+            and isinstance(mapserver_package.get('native_monorail'), dict)
+            and mapserver_package.get('native_monorail', {}).get('receipt_sha256') == MONORAIL_RECEIPT_SHA256,
+            'Animation runtime/native identity differs')
+    proof = caches.verify_mapserver_compatibility(runtime / 'MapServer.exe', mapserver_package)
+    require(proof['original_cache_donor_mapserver_sha256'] == historical,
+            'Animation compatibility changed the original producer')
+    return dict(proof, policy='exact_qualified_monorail_consumer_preserves_animation_loader',
+                original_animation_producer_mapserver_sha256=historical,
+                animation_identity_preserved=True, native_animation_reader_changed=False)
+
+
+def install(pigg, manifest, runtime, *, context=None, mapserver_package=None):
     """Optional private top-level ./piggs storage; never mutate data or DB files."""
     runtime = Path(runtime)
     if not Path(pigg).exists() and not Path(manifest).exists():
         return {'format': 1, 'installed': False, 'fallback': 'ordinary_loose_animation_loader'}
     document = verify_package(pigg, manifest, context=context)
-    require(runtime.is_dir() and not runtime.is_symlink()
-            and file_pin(runtime / 'MapServer.exe')['sha256'] == document['identity']['mapserver_sha256'],
-            'Animation runtime/native identity differs')
+    compatibility = verify_runtime(runtime, document, mapserver_package=mapserver_package)
     directory = runtime / 'piggs'
     if not directory.exists(): directory.mkdir(mode=0o700)
     require(directory.is_dir() and not directory.is_symlink()
@@ -180,7 +210,8 @@ def install(pigg, manifest, runtime, *, context=None):
         require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == runtime.stat().st_uid
                 and file_pin(target) == expected, 'Existing animation Pig differs')
         return {'format': 1, 'installed': True, 'reused': True, 'pigg': document['pigg'],
-                'loose_inputs_preserved': True, 'fallback': 'ordinary_loose_animation_loader'}
+                'loose_inputs_preserved': True, 'fallback': 'ordinary_loose_animation_loader',
+                'native_compatibility': compatibility}
     descriptor, pending = tempfile.mkstemp(prefix='.animation-', dir=directory)
     try:
         with os.fdopen(descriptor, 'wb') as output, Path(pigg).open('rb') as source:
@@ -195,4 +226,5 @@ def install(pigg, manifest, runtime, *, context=None):
     finally:
         if os.path.exists(pending): os.unlink(pending)
     return {'format': 1, 'installed': True, 'reused': False, 'pigg': document['pigg'],
-            'loose_inputs_preserved': True, 'fallback': 'ordinary_loose_animation_loader'}
+            'loose_inputs_preserved': True, 'fallback': 'ordinary_loose_animation_loader',
+            'native_compatibility': compatibility}

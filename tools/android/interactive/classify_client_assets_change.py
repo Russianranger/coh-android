@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from classify_client_animation_repair_change import client_animation_repair_owned
 from classify_client_receipt_repair_change import client_receipt_repair_owned
 
 CLIENT_ASSETS_ALLOWED = frozenset({
@@ -128,7 +129,7 @@ def main():
         head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
         names=subprocess.check_output(['git','diff','--name-only','-z',parent,head]).decode().rstrip('\0').split('\0')
         context=(os.environ.get('GITHUB_EVENT_NAME'),os.environ.get('COH_PUSH_BEFORE'),head,parent,names)
-        required=not (client_assets_owned(*context) or client_receipt_repair_owned(*context))
+        required=not (client_assets_owned(*context) or client_receipt_repair_owned(*context) or client_animation_repair_owned(*context))
     except (OSError,subprocess.CalledProcessError,UnicodeError):pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('legacy_native_required='+str(required).lower()+'\n')

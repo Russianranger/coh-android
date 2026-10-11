@@ -1,0 +1,8 @@
+{
+  "version": "0.13.30",
+  "version_code": 45,
+  "donor_version": "0.13.29",
+  "donor_commit": "cae7620da1434824540a568ca8d359ca9f6d3d79",
+  "asset_version": "1.0.0",
+  "publication_attempt": "authenticated-animation-installer-compatibility-repair"
+}
