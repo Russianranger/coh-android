@@ -24,6 +24,17 @@ left untouched. No accepted Game, DbServer or GPU rebuild is required. Do not
 merge PR #1. See `docs/android-evidence/client-assets-0.13.28-publication.json`
 for original run/artifact identities and explicit pending device gates.
 
+
+Recovery run [38133200295](https://github.com/Russianranger/coh-android/actions/runs/38133200295)
+is executing source `858b788532329ef3f79f3a1d5d8f1388be7f4c3e`.
+The authenticated ownership gate passed, resource and shipping MapServer jobs
+were skipped for reuse, and the retained generator source receipt passed.
+At this checkpoint native graph generation/fresh proofs remain in progress;
+APK/publication/public-byte gates have not completed. Do not rerun the completed
+resource or native compilation jobs. Inspect this run before dispatching any
+recovery. If generation finishes but later packaging fails, reuse its completed
+`coh-kings-row-beacons` artifact through the separate beacon owner fields.
+
 ## Previous .28 implementation checkpoint (historical)
 
 The user supplied `coh-atlas-gameplay-20261011-035622.zip`, authorized changes,

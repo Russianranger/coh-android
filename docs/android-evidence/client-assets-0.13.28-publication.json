@@ -281,5 +281,20 @@
   "physical_preparation_speedup_validated": false,
   "physical_fps_gain_validated": false,
   "public_apk_verified": false,
-  "all_public_asset_volumes_verified": false
+  "all_public_asset_volumes_verified": false,
+  "recovery_run": {
+    "id": 38133200295,
+    "url": "https://github.com/Russianranger/coh-android/actions/runs/38133200295",
+    "source_commit": "858b788532329ef3f79f3a1d5d8f1388be7f4c3e",
+    "status_at_checkpoint": "in_progress",
+    "ownership_gate": "passed",
+    "resource_rebuild": "skipped_reused",
+    "shipping_mapserver_rebuild": "skipped_reused",
+    "host_generator_source_receipt": "passed",
+    "native_graph_and_profiles": "in_progress",
+    "apk": "not_completed",
+    "public_byte_audit": "not_completed",
+    "generation_seconds_limit": 14400,
+    "job_minutes_limit": 270
+  }
 }
