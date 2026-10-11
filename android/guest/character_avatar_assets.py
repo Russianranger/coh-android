@@ -44,8 +44,8 @@ ALLOWED = frozenset({
 })
 
 
-def read_regular(path, limit, *, installed=False, legacy_backing=False):
-    """Read bounded owned bytes without following links or accepting hard links."""
+def read_regular(path, limit, *, installed=False, legacy_backing=False, allow_shared_source=False):
+    """Read bounded owned bytes; only pinned readonly package inputs may be shared."""
     if legacy_backing:
         require(installed and path.name.endswith('.0001')
                 and LEGACY_LINK.fullmatch(path.name[:-5]) is not None,
@@ -59,7 +59,8 @@ def read_regular(path, limit, *, installed=False, legacy_backing=False):
         owner_uids = {os.geteuid()}
         if legacy_backing:
             owner_uids.add(client.base.WineProcessOwner.status(Path('/proc/self'))['uid'])
-        require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1
+        shared_source = allow_shared_source and not installed and before.st_nlink > 1 and not before.st_mode & 0o222
+        require(stat.S_ISREG(before.st_mode) and (before.st_nlink == 1 or shared_source)
                 and before.st_uid in owner_uids and 0 < before.st_size <= limit,
                 'Invalid avatar supplement file: ' + path.name
                 + f' (mode={before.st_mode:o}, links={before.st_nlink}, owner={before.st_uid},'
@@ -70,15 +71,15 @@ def read_regular(path, limit, *, installed=False, legacy_backing=False):
         with os.fdopen(fd, 'rb', closefd=False) as source:
             raw = source.read(limit + 1)
         after = os.fstat(fd)
-        require(len(raw) == before.st_size and (after.st_size, after.st_mtime_ns, after.st_nlink)
-                == (before.st_size, before.st_mtime_ns, 1), 'Avatar supplement changed while reading')
+        require(len(raw) == before.st_size and (after.st_size, after.st_mtime_ns, after.st_ctime_ns, after.st_mode, after.st_uid, after.st_nlink)
+                == (before.st_size, before.st_mtime_ns, before.st_ctime_ns, before.st_mode, before.st_uid, before.st_nlink), 'Avatar supplement changed while reading')
         return raw
     finally:
         os.close(fd)
 
 
 def package(assets):
-    manifest_raw = read_regular(assets / MANIFEST, 128 * 1024)
+    manifest_raw = read_regular(assets / MANIFEST, 128 * 1024, allow_shared_source=True)
     require(hashlib.sha256(manifest_raw).hexdigest() == MANIFEST_SHA256,
             'Avatar supplement manifest differs from the reviewed pin')
     manifest = json.loads(manifest_raw)
@@ -88,7 +89,7 @@ def package(assets):
             and set(manifest.get('files', {})) == ALLOWED
             and manifest.get('archive') == {'filename': ARCHIVE, 'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
             'Avatar supplement provenance or allowlist differs')
-    raw = read_regular(assets / ARCHIVE, ARCHIVE_BYTES)
+    raw = read_regular(assets / ARCHIVE, ARCHIVE_BYTES, allow_shared_source=True)
     require(len(raw) == ARCHIVE_BYTES and hashlib.sha256(raw).hexdigest() == ARCHIVE_SHA256,
             'Avatar supplement archive differs from the reviewed pin')
     payloads = {}

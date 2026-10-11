@@ -187,6 +187,7 @@ public final class StorageAudit {
             add("runtime_other","Unverified runtime files and staging",false);add("downloads","Runtime download cache",true);
             add("old_reports","Older completed test reports",true);add("reports_kept","Recent and protected test reports",false);
             add("client_state","Character, server data, Wine and client caches",false);add("client_import","Imported client and server assets",false);
+            add("asset_packs","Shared asset packs and import staging",false);
             add("other","Other protected app files",false);
         }
         void add(String id,String label,boolean removable){tallies.put(id,new Tally(id,label,removable));}
@@ -260,7 +261,13 @@ public final class StorageAudit {
                         ||!(shaValue instanceof String)||!((String)shaValue).matches("[0-9a-f]{64}"))return false;
                 if(executables) {
                     Stat payload=fs.stat(path+"/assets/"+key);
-                    if(!singleRegular(payload)||payload.size!=((Number)bytesValue).longValue())return false;
+                    if(payload==null||payload.kind!=Kind.FILE||payload.size!=((Number)bytesValue).longValue())return false;
+                    if(payload.links!=1) {
+                        // Split asset packs are immutable objects shared by generation hard links.
+                        // Only the matching protected content-addressed object may authorize this.
+                        Stat shared=fs.stat("asset-packs/objects/"+shaValue);
+                        if(payload.links<2||!payload.same(shared))return false;
+                    }
                 }
             }
             for(String member:Arrays.asList("rootfs","wine","pg","assets")) {
@@ -386,6 +393,7 @@ public final class StorageAudit {
             }
         }
         String category(String path) {
+            if(path.equals("asset-packs")||path.startsWith("asset-packs/"))return "asset_packs";
             if(path.equals("client-import")||path.startsWith("client-import/"))return "client_import";
             if(path.equals("client/state")||path.startsWith("client/state/"))return "client_state";
             if(path.equals("client/reports")||path.startsWith("client/reports/"))return "reports_kept";
@@ -627,7 +635,7 @@ public final class StorageAudit {
         value.put("current_runtime_verified",plan.currentRuntimeVerified);value.put("cleanup_allowed",plan.cleanupAllowed);
         value.put("entry_count",plan.entryCount);value.put("apparent_bytes",plan.apparentBytes);value.put("allocated_bytes",plan.allocatedBytes);
         value.put("reclaimable_bytes",plan.reclaimableBytes);value.put("allocated_bytes_basis","st_blocks * 512, unique device/inode; no symlink traversal");
-        value.put("protected","All client/state and client-import, the current runtime, latest report and newest three report directories");
+        value.put("protected","All client/state, client-import and asset-packs, the current runtime, latest report and newest three report directories");
         value.put("errors",plan.errors);List<Object> categories=new ArrayList<>();
         for(Category category:plan.categories) {
             Map<String,Object> summary=new LinkedHashMap<>();summary.put("id",category.id);summary.put("label",category.label);

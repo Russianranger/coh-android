@@ -42,8 +42,11 @@ def fingerprint(info):
         info.st_mode, info.st_uid, info.st_gid, info.st_nlink]
 
 
-def checked_info(path, info, limit, *, installed=False):
-    require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+def checked_info(path, info, limit, *, installed=False, allow_shared_source=False):
+    # Only callers that authenticate a pinned archive/manifest may accept the
+    # readonly shared asset store. Extracted state and receipts remain single-link.
+    shared_source = allow_shared_source and not installed and info.st_nlink > 1 and not info.st_mode & 0o222
+    require(stat.S_ISREG(info.st_mode) and (info.st_nlink == 1 or shared_source)
         and info.st_uid == os.geteuid() and 0 < info.st_size <= limit,
         'Invalid world supplement file: ' + path.name)
     if installed:
@@ -52,8 +55,8 @@ def checked_info(path, info, limit, *, installed=False):
     return fingerprint(info)
 
 
-def file_state(path, limit, *, installed=False):
-    return checked_info(path, path.lstat(), limit, installed=installed)
+def file_state(path, limit, *, installed=False, allow_shared_source=False):
+    return checked_info(path, path.lstat(), limit, installed=installed, allow_shared_source=allow_shared_source)
 
 
 def unchanged(path, descriptor, before):
@@ -61,10 +64,10 @@ def unchanged(path, descriptor, before):
         and fingerprint(path.lstat()) == before, 'World supplement changed while reading')
 
 
-def read_regular(path, limit, *, installed=False):
+def read_regular(path, limit, *, installed=False, allow_shared_source=False):
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
-        before = checked_info(path, os.fstat(descriptor), limit, installed=installed)
+        before = checked_info(path, os.fstat(descriptor), limit, installed=installed, allow_shared_source=allow_shared_source)
         with os.fdopen(descriptor, 'rb', closefd=False) as source:
             raw = source.read(limit + 1)
         require(len(raw) == before[2], 'World supplement changed while reading')
@@ -83,7 +86,7 @@ def safe_payload(name):
 
 
 def package(assets):
-    manifest_raw = read_regular(assets / MANIFEST, MAX_MANIFEST_BYTES)
+    manifest_raw = read_regular(assets / MANIFEST, MAX_MANIFEST_BYTES, allow_shared_source=True)
     require(hashlib.sha256(manifest_raw).hexdigest() == MANIFEST_SHA256,
         'World manifest differs from reviewed metadata')
     manifest = json.loads(manifest_raw)
@@ -122,7 +125,7 @@ def reviewed_archive(assets, files, expected_state, context):
     path = assets / ARCHIVE
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
-        before = checked_info(path, os.fstat(descriptor), MAX_ARCHIVE_BYTES)
+        before = checked_info(path, os.fstat(descriptor), MAX_ARCHIVE_BYTES, allow_shared_source=True)
         require(before == expected_state and before[2] == ARCHIVE_BYTES,
             'World archive changed before verification')
         with os.fdopen(descriptor, 'rb', closefd=False) as source:
@@ -261,8 +264,8 @@ def publish_marker(worktree, value):
 
 
 def source_state(assets):
-    result = {MANIFEST: file_state(assets / MANIFEST, MAX_MANIFEST_BYTES),
-        ARCHIVE: file_state(assets / ARCHIVE, MAX_ARCHIVE_BYTES)}
+    result = {MANIFEST: file_state(assets / MANIFEST, MAX_MANIFEST_BYTES, allow_shared_source=True),
+        ARCHIVE: file_state(assets / ARCHIVE, MAX_ARCHIVE_BYTES, allow_shared_source=True)}
     require(result[ARCHIVE][2] == ARCHIVE_BYTES, 'World archive size differs from reviewed payload bytes')
     return result
 

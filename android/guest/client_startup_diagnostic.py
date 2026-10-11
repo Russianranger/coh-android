@@ -95,12 +95,26 @@ def validate_args(args):
                 'Expected absolute unlinked private paths')
 
 
+_VERIFIED_ASSET_STATES = {}
+
+
+def asset_fingerprint(path):
+    info = Path(path).lstat()
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns,
+            info.st_ctime_ns, info.st_mode, info.st_nlink)
+
+
+def verified_asset_matches(path, expected):
+    """Reuse only this process's full hash while its precise inode state is unchanged."""
+    return _VERIFIED_ASSET_STATES.get(str(Path(path))) == (expected, asset_fingerprint(path))
+
+
 def verify_assets(assets):
     manifest = read_json(assets / 'client-manifest.json')
     require(type(manifest.get('format')) is int and manifest['format'] == 1 and manifest.get('scope') == SCOPE,
             'Client manifest scope differs')
     files = manifest.get('files')
-    require(isinstance(files, dict) and REQUIRED <= set(files) and len(files) <= 64,
+    require(isinstance(files, dict) and REQUIRED <= set(files) and len(files) <= 96,
             'Client payload inventory differs')
     hashes = {}
     for name, expected in files.items():
@@ -109,7 +123,9 @@ def verify_assets(assets):
         path = assets / name
         # This exact world supplement is independently pinned by its manifest
         # and runtime helper; unrelated payloads keep their existing cap.
-        limit = (1024*1024*1024 if name == 'client-visual-assets.zip' else
+        limit = (1900*1024*1024 if name == 'zones-world-supplement.zip' else
+                 128*1024*1024 if name == 'zones-world-supplement-manifest.json' else
+                 1024*1024*1024 if name == 'client-visual-assets.zip' else
                  64*1024*1024 if name == 'client-visual-manifest.json' else
                  CACHE_BYTES_LIMIT if name in ('client-caches.zip', 'server-caches.zip') else
                  256*1024*1024 if name == 'atlas-world-supplement.zip' else 128*1024*1024)
@@ -117,9 +133,12 @@ def verify_assets(assets):
                 'Missing, linked or oversized client input: ' + name)
         digest = expected.get('sha256')
         size = expected.get('bytes', expected.get('size'))
+        before = asset_fingerprint(path)
         require(isinstance(digest, str) and re.fullmatch(r'[0-9a-f]{64}', digest)
                 and type(size) is int and path.stat().st_size == size and base.file_hash(path) == digest,
                 'Client input pin differs: ' + name)
+        require(asset_fingerprint(path) == before, 'Client input changed during verification: ' + name)
+        _VERIFIED_ASSET_STATES[str(path)] = ({'bytes': size, 'sha256': digest}, before)
         hashes[name] = digest
     for name in ('runtime-probe.exe', 'probe.dll', 'client-launcher.exe'):
         base.verify_pe32(assets / name)

@@ -246,6 +246,11 @@ def mapserver_progress_contract(package):
     require(profile == MAP_PROGRESS_PROFILE, 'Unknown MapServer progress profile')
     require(package.get('dbserver_profile') == 'loopback' and package.get('game_listener_profile') == 'loopback',
             'MapServer progress requires both explicit loopback profiles')
+    if 'native_monorail' in package:
+        import native_monorail_contract
+        candidate = native_monorail_contract.progress_contract(package)
+        map_progress_module().validate_contract(candidate['contract'], source=True)
+        return candidate
     if 'native_responsiveness' in package:
         import native_responsiveness_contract as native_candidate
         candidate = native_candidate.events_progress_contract(package)

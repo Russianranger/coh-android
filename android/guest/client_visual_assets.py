@@ -67,7 +67,7 @@ def safe_payload(name):
 
 
 def package(assets):
-    raw = world.read_regular(Path(assets) / MANIFEST, MAX_MANIFEST_BYTES)
+    raw = world.read_regular(Path(assets) / MANIFEST, MAX_MANIFEST_BYTES, allow_shared_source=True)
     require(hashlib.sha256(raw).hexdigest() == MANIFEST_SHA256,
         'Client visual manifest differs from reviewed metadata')
     value = json.loads(raw)
@@ -281,7 +281,7 @@ def appearance_files(value):
 
 
 def source_state(assets):
-    states = {name: world.file_state(Path(assets) / name, limit) for name, limit in
+    states = {name: world.file_state(Path(assets) / name, limit, allow_shared_source=True) for name, limit in
         ((MANIFEST, MAX_MANIFEST_BYTES), (ARCHIVE, MAX_ARCHIVE_BYTES))}
     require(states[ARCHIVE][2] == ARCHIVE_BYTES, 'Client visual archive size differs')
     return states
@@ -361,7 +361,7 @@ def install(worktree, assets, context):
                 verified_bytes += files[name]['bytes']
         descriptor = os.open(assets / ARCHIVE, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
         try:
-            require(world.checked_info(assets / ARCHIVE, os.fstat(descriptor), MAX_ARCHIVE_BYTES) == inputs[ARCHIVE],
+            require(world.checked_info(assets / ARCHIVE, os.fstat(descriptor), MAX_ARCHIVE_BYTES, allow_shared_source=True) == inputs[ARCHIVE],
                 'Client visual archive changed before reading')
             with os.fdopen(descriptor, 'rb', closefd=False) as source:
                 size, digest = world.hash_stream(source, context, ARCHIVE_BYTES)

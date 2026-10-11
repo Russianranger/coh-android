@@ -113,7 +113,7 @@ class Sources:
         return relative, self.pins[relative]
 
 
-def group_requests(sources):
+def group_requests(sources, map_name=MAP):
     """Import and library closure, with all unresolved edges preserved explicitly."""
     index = defaultdict(set)
     for name in sorted(sources.entries):
@@ -124,7 +124,7 @@ def group_requests(sources):
                     # strips path/__ (groupNameIdx); do not invent an alias.
                     index[tokens[1].casefold()].add(str(PurePosixPath(name).with_suffix('')))
     geometry, textures, reasons, unresolved = defaultdict(list), defaultdict(list), {}, []
-    queue, seen, groups, local_defs = [MAP], set(), [], set()
+    queue, seen, groups, local_defs = [map_name], set(), [], set()
     scene_files, sky_files, map_files = set(), set(), set()
 
     def witness(name, line, field, value):

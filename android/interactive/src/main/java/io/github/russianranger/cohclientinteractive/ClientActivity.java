@@ -18,6 +18,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
+import io.github.russianranger.cohdiagnostic.AssetPackStore;
 
 /** Bounded touch, keyboard and Thor controller session for initial Atlas gameplay. */
 public final class ClientActivity extends Activity {
@@ -49,6 +50,8 @@ public final class ClientActivity extends Activity {
         refreshDeadlineControls();updateCounter();inputHandler.postDelayed(this,32);
     }};
     private boolean bound,exporting,captureEnabled,importWaiting;
+    private TextView assetPackStatus;
+    private boolean assetStatusChecking,assetStatusLoaded,assetStatusDirty;
     private String pendingExport,pendingAction,shownSession="";
     private String pendingStorageExport;
     private android.net.Uri pendingExportDestination;
@@ -76,10 +79,14 @@ public final class ClientActivity extends Activity {
         LinearLayout controls=new LinearLayout(this);controls.setOrientation(LinearLayout.VERTICAL);controls.setPadding(0,0,dp(12),0);
         ScrollView scroll=new ScrollView(this);scroll.addView(controls);root.addView(scroll,new LinearLayout.LayoutParams(dp(224),-1));
         TextView title=text("COH Atlas Gameplay",22,true);controls.addView(title);
-        controls.addView(text("Persistent local server · v0.13.20",12,false));
+        String version="unknown";
+        try{version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(PackageManager.NameNotFoundException ignored){}
+        controls.addView(text("Persistent local server · v"+version,12,false));
         controls.addView(text("Reopen THORHERO and test travel between two Atlas Park instances. Keep your app data, imports, graphics settings, costume and powers.",13,false));
         setup=button("Set up / update runtime",()->request(ClientService.SETUP));controls.addView(setup);
-        importAssets=button("Import assets (new install only)",this::chooseImport);controls.addView(importAssets);
+        importAssets=button("Import asset pack part",this::chooseImport);controls.addView(importAssets);
+        assetPackStatus=text("Checking required asset pack…",12,false);controls.addView(assetPackStatus);
+        controls.addView(text("Fresh install: import every ZIP part from the compatible versioned Assets release, then Set up / update runtime. Each completed part is retained; the app shows any missing parts. Keep these ZIPs for reinstalling. Future APK updates reuse compatible imported assets.",12,false));
         performanceGraphics=new CheckBox(this);performanceGraphics.setText("Use performance graphics");
         performanceGraphics.setTextColor(Color.rgb(221,234,245));performanceGraphics.setTextSize(13);
         performanceGraphics.setChecked(ClientRuntime.performanceGraphicsEnabled(this));
@@ -109,10 +116,10 @@ public final class ClientActivity extends Activity {
         captureAcceptedTask=button("Capture accepted task",()->{releaseControls();if(service!=null)service.requestTaskCapture(false);});controls.addView(captureAcceptedTask);
         completeTask=button("Complete accepted task",()->{releaseControls();if(service!=null)service.requestCompleteAcceptedTask();});controls.addView(completeTask);
         captureCompletedTask=button("Capture completed task",()->{releaseControls();if(service!=null)service.requestTaskCapture(true);});controls.addView(captureCompletedTask);
-        controls.addView(text("Atlas instance zoning",16,true));
-        controls.addView(text("Tap Travel once: preparation, transfer and fresh destination views are timed together. Stay in this app until arrival. Both destinations use Atlas Park; Kings Row is unavailable until its assets are verified. Save in either supported instance.",12,false));
-        zoningStatus=text("Reopen THORHERO to start Atlas instance zoning.",12,false);controls.addView(zoningStatus);
-        travelZone=button("Travel to Atlas instance 2",this::travelToZone);controls.addView(travelZone);
+        controls.addView(text("Monorail travel",16,true));
+        controls.addView(text("Walk to the monorail station in Atlas Park, click its entrance and choose Kings Row. The destination prepares automatically before boarding. Use the Kings Row station to return to Atlas Park. Stay in this app until arrival; loading time includes preparation and fresh destination views.",12,false));
+        zoningStatus=text("Reopen THORHERO to use the monorail.",12,false);controls.addView(zoningStatus);
+        travelZone=button("Return from old Atlas instance",this::travelToZone);travelZone.setVisibility(View.GONE);controls.addView(travelZone);
         saveLogout=button("Save character / log out",this::saveCharacter);controls.addView(saveLogout);
         finish=button("Finish and save report",()->{releaseControls();if(service!=null)service.requestFinish();});controls.addView(finish);
         typeText=button("Send text / L3",this::showTextInput);controls.addView(typeText);
@@ -134,10 +141,10 @@ public final class ClientActivity extends Activity {
         status=text("Connecting",17,true);controls.addView(status);
         detail=text("Connecting to the private runtime service…",13,false);controls.addView(detail);
         counter=text("Waiting for the client",12,false);controls.addView(counter);
-        controls.addView(text("After installing this update, apply Set up / update runtime once and preserve your imported data. Reopen saved THORHERO with COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Tap Travel to Atlas instance 2 once and wait for arrival; use Travel back for the return. Keep controls released for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and choose Reports / export. After an interruption, use Recover interrupted reports to retain the available evidence. If loading stalls, Abort and export early; Reopen resumes the last saved supported instance.",12,false));
+        controls.addView(text("Import every required asset-pack part, then apply Set up / update runtime. On a fresh install, create THORHERO and complete its ordinary save before Reopen. Use COHLOCAL / offline. Keep the accepted GPU, Performance and 800×600 settings. Choose Kings Row at the actual monorail station; preparation happens on demand. After the trip, release controls for the normal 60-second neutral wait, Save character / log out, wait for Saved character verified, then Finish and Reports / export. Recover interrupted reports after an interruption. Export early if loading stalls; Reopen resumes the last verified save.",12,false));
         logs=text("",10,false);logs.setTypeface(Typeface.MONOSPACE);logs.setTextIsSelectable(true);controls.addView(logs);
         LinearLayout right=new LinearLayout(this);right.setOrientation(LinearLayout.VERTICAL);root.addView(right,new LinearLayout.LayoutParams(0,-1,1));
-        TextView caption=text("CITY OF HEROES · ATLAS PARK",12,true);right.addView(caption);
+        TextView caption=text("CITY OF HEROES · PARAGON CITY",12,true);right.addView(caption);
         FrameLayout viewport=new FrameLayout(this);right.addView(viewport,new LinearLayout.LayoutParams(-1,0,1));
         display=new ClientSurface(this);viewport.addView(display,new FrameLayout.LayoutParams(-1,-1));
         cursor=new CursorOverlay();viewport.addView(cursor,new FrameLayout.LayoutParams(-1,-1));
@@ -193,8 +200,12 @@ public final class ClientActivity extends Activity {
     }
     private void refreshZoningControls(){
         boolean available=inputActive&&service!=null&&state!=null&&!textDialogVisible&&hasWindowFocus();
-        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen THORHERO to start Atlas instance zoning.":service.zoningStatus());
-        if(travelZone!=null){travelZone.setEnabled(available&&service.canRequestZoning());travelZone.setText(service!=null&&service.zoningCurrentMap()==101?"Travel back to Atlas Park":"Travel to Atlas instance 2");}
+        if(zoningStatus!=null)setTextIfChanged(zoningStatus,service==null?"Reopen THORHERO to use the monorail.":service.zoningStatus());
+        if(travelZone!=null){
+            boolean legacy=service!=null&&service.zoningCurrentMap()==101;
+            travelZone.setVisibility(legacy?View.VISIBLE:View.GONE);
+            travelZone.setEnabled(available&&legacy&&service.canRequestZoning());travelZone.setText("Return from old Atlas instance");
+        }
     }
     private void travelToZone(){
         if(service==null||!service.canRequestZoning()||textDialogVisible||!hasWindowFocus())return;
@@ -273,6 +284,8 @@ public final class ClientActivity extends Activity {
         stop.setText(next.storageBusy?"Cancel storage scan / cleanup":"Abort operation");
     }
     private void render(ClientService.State next){
+        if(next.busy)assetStatusDirty=true;
+        if(!next.busy&&!next.storageBusy&&!assetStatusChecking&&(!assetStatusLoaded||assetStatusDirty))refreshAssetPackStatus();
         if(next.busy&&next.session.isEmpty())display.clearFrames();
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
@@ -441,6 +454,18 @@ public final class ClientActivity extends Activity {
         if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
         Intent intent=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         try{startActivityForResult(intent,IMPORT);}catch(RuntimeException e){Toast.makeText(this,"No file picker is available.",Toast.LENGTH_LONG).show();}
+    }
+    private void refreshAssetPackStatus(){
+        assetStatusChecking=true;assetStatusDirty=false;
+        final Context application=getApplicationContext();
+        Thread worker=new Thread(()->{
+            final String text=AssetPackStore.status(application);
+            runOnUiThread(()->{
+                assetStatusChecking=false;assetStatusLoaded=true;
+                if(!isDestroyed())assetPackStatus.setText(text);
+            });
+        },"coh-asset-status");
+        worker.setDaemon(true);worker.start();
     }
     private void dispatchPendingImport(){
         // A document result can arrive before the recreated Activity has rebound.

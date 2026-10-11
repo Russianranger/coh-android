@@ -1,0 +1,142 @@
+--- a/MapServer/CMakeLists.txt
++++ b/MapServer/CMakeLists.txt
+@@ -528,6 +528,7 @@
+ 	src/svr/svr_tick.c
+ 	src/svr/wine_map_progress.c
+ 	src/svr/wine_character_events.c
++	src/svr/wine_monorail.c
+ 	src/taskforce.c
+ 	src/taskpvp.c
+ 	src/taskRandom.c
+--- a/MapServer/src/svr/svr_init.c
++++ b/MapServer/src/svr/svr_init.c
+@@ -56,6 +56,7 @@
+ #include <utilitieslib/utils/FolderCache.h>
+ #include "wine_map_progress.h"
+ #include "wine_character_events.h"
++#include "wine_monorail.h"
+ #include <utilitieslib/utils/textparser.h>
+ #include <utilitieslib/utils/sysutil.h>        // for getExecutableName()
+ #include "group/groupfilelib.h"
+@@ -2032,6 +2033,11 @@
+         return 2;
+     }
+ 
++    if (cohMonorailInit() < 0) {
++        fprintf(stderr, "Monorail bridge initialization failed.\n");
++        return 2;
++    }
++
+     trickGoogleDesktopDll(server_state.silent);
+ 
+     if(server_state.create_bins)
+--- a/MapServer/src/svr/svr_tick.c
++++ b/MapServer/src/svr/svr_tick.c
+@@ -23,6 +23,7 @@
+ #include <utilitieslib/utils/FolderCache.h>
+ #include "wine_map_progress.h"
+ #include "wine_character_events.h"
++#include "wine_monorail.h"
+ #include "dbcomm/dbquery.h"
+ #include "entity/friends.h"
+ #include "container/containerEmail.h"
+@@ -454,6 +455,9 @@
+                 cohCharacterEventReady(db_state.map_id, client->entity->db_id, client->entity->auth_id,
+                     client->entity->name, client->entity->auth_name,
+                     makeIpStr(client->link->addr.sin_addr.S_un.S_addr), client->link->addr.sin_port);
++                cohZoningEvent("ready", db_state.map_id, client->entity->db_id, client->entity->auth_id,
++                    client->entity->name, client->entity->auth_name,
++                    makeIpStr(client->link->addr.sin_addr.S_un.S_addr), client->link->addr.sin_port, 0, 0, 0);
+ 
+                 for (i = 0; i < eaSize(&g_SalvageTrackedList.ppTrackedSalvage); ++i)
+                 {
+@@ -766,6 +770,9 @@
+             if (e && e->ready && !e->dbcomm_state.map_xfer_step)
+                 cohCharacterEventPosition(db_state.map_id, e->db_id, e->auth_id,
+                     e->name, e->auth_name, ENTPOSPARAMS(e));
++            if (e && e->ready && !e->dbcomm_state.map_xfer_step)
++                cohZoningEvent("position", db_state.map_id, e->db_id, e->auth_id,
++                    e->name, e->auth_name, NULL, 0, ENTPOSPARAMS(e));
+         }
+     }
+ 
+@@ -2121,6 +2128,7 @@
+             beaconRequestUpdate();
+         PERFINFO_AUTO_STOP();
+     PERFINFO_AUTO_STOP();
++    cohMonorailDoorTick();
+     cohMapProgressMark(COH_MAP_STAGE_TICK_DONE);
+ }
+ 
+--- a/MapServer/src/door.c
++++ b/MapServer/src/door.c
+@@ -4,6 +4,7 @@
+ #include "bases/baseupkeep.h"
+ #include <stdio.h>
+ #include "door.h"
++#include "svr/wine_monorail.h"
+ #include "entity/entity.h"
+ #include <utilitieslib/network/netio.h>
+ #include "entity/entVarUpdate.h"
+@@ -682,6 +683,32 @@
+     }
+ }
+ 
++/* Finite opt-in Android station queue. Stock door validation and animation
++ * run again after the owned destination has completed live native ticks. */
++static EntityRef cohMonorailEntity;
++static Vec3 cohMonorailDoorPosition;
++static char cohMonorailSelection[80];
++static int cohMonorailResuming;
++
++void cohMonorailDoorTick(void)
++{
++    Entity *e;
++    int result;
++    if (!cohMonorailEntity) return;
++    e = erGetEnt(cohMonorailEntity);
++    if (!e || !e->ready || e->dbcomm_state.map_xfer_step ||
++        distance3Squared(ENTPOS(e), cohMonorailDoorPosition) > 2500.0f) {
++        cohMonorailCancel(); cohMonorailEntity = 0; return;
++    }
++    result = cohMonorailPoll(db_state.map_id, e->db_id, e->auth_id);
++    if (!result) return;
++    cohMonorailEntity = 0;
++    if (result < 0) { sendInfoBox(e, INFO_SVR_COM, "Station preparation timed out; export the report."); return; }
++    cohMonorailResuming = 1;
++    enterDoor(e, cohMonorailDoorPosition, cohMonorailSelection, 0, NULL);
++    cohMonorailResuming = 0;
++}
++
+ static void doorTransferToTarget( Entity * e, DoorEntry * door, char * spawnTarget, char * mapTarget, char * errmsg, Vec3 pos, char* selected_map_id, int is_volume ) 
+ {
+     MapSelection* mapSelect;
+@@ -721,6 +748,19 @@
+                                         is_volume ? DOOR_REQUEST_VOLUME : DOOR_REQUEST_CLICK, door->type == DOORTYPE_BASE_PORTER ? door->detail_id : 0);
+         if (mapSelect->spawn_name[0] && ((door->monorail_line && door->monorail_line[0]) || door->type == DOORTYPE_BASE_PORTER))
+             strcpy(spawnTarget,mapSelect->spawn_name); //if we picked an option with a spawn, use it
++        if (cohMonorailEnabled() && door->monorail_line &&
++            !stricmp(door->monorail_line, "ParagonCityMonorail") && mapSelect->map_id &&
++            !cohMonorailResuming) {
++            if (is_volume || !selected_map_id || !cohMonorailMapAllowed(mapSelect->map_id) ||
++                mapSelect->map_id == db_state.map_id || strcmp(spawnTarget, "LinkFrom_Monorail_ParagonCity")) return;
++            if (cohMonorailRequest(db_state.map_id, mapSelect->map_id, e->db_id, e->auth_id, e->name, e->auth_name)) {
++                cohMonorailEntity = erGetRef(e);
++                copyVec3(pos, cohMonorailDoorPosition);
++                sprintf(cohMonorailSelection, "%d.LinkFrom_Monorail_ParagonCity", mapSelect->map_id);
++                sendInfoBox(e, INFO_SVR_COM, "Preparing destination. Stay near the station; travel begins when ready.");
++            }
++            return;
++        }
+         if(mapSelect->map_id && DoorAnimEnter(e, door, pos, mapSelect->map_id, NULL, spawnTarget, XFER_STATIC, errmsg))
+         {
+             // success
+@@ -2595,6 +2635,8 @@
+                     for(j = 0; j < eaSize(&line->stops[i]->mapInfos); j++)
+                     {
+                         info = line->stops[i]->mapInfos[j];
++                        if (cohMonorailEnabled() && !stricmp(monorailLine, "ParagonCityMonorail") &&
++                            !cohMonorailMapAllowed(info->mapID)) continue;
+ 
+                         if(info->baseMapID == info->mapID)
+                         {

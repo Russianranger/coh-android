@@ -85,6 +85,17 @@ class android {
         }
     }
 }
+class AssetPackStore {
+    interface Check {void check()throws IOException;}
+    interface Progress {void update(String phase,long done,long total);}
+    static boolean accepted;static File shared;
+    AssetPackStore(HostContext context,JSONObject manifest,Check check,Progress progress){}
+    boolean isAccepted(){return accepted;}
+    String status(){return "fixture pack not installed";}
+    JSONObject receipt(){return new JSONObject();}
+    boolean contains(String name){return name.equals("runtime/fixture.txt");}
+    File resolve(String name)throws IOException{if(shared==null)throw new IOException("missing fixture pack");return shared;}
+}
 class HostContext {
     final Map<String,byte[]> assets=new HashMap<>();
     int opens;
@@ -144,6 +155,7 @@ class HostInstaller {
     long clockMillis;
     boolean setupCleanupDeferred;
     SetupMemoryGuard setupControl;
+    AssetPackStore assetPack;
     HttpURLConnection connection;
     int supports;
     final List<String> stages=new ArrayList<>();
@@ -214,7 +226,24 @@ public class RuntimeSetupHost {
             File old=new File(installer.home,"runtime-0000000000000000");TarExtractor.file(old,"ready.json","owned old generation");
             Map<String,String> profileBefore=snapshot(profile),importBefore=snapshot(imported),oldBefore=snapshot(old);
             String scenario=args[0];
-            if(scenario.equals("memory_low")||scenario.equals("memory_unknown")) {
+            if(scenario.equals("missing_pack")||scenario.equals("shared_pack")) {
+                JSONObject next=new JSONObject(new String(context.assets.get("runtime/runtime-manifest.json"),StandardCharsets.UTF_8));next.put("external_asset_pack",new JSONObject());
+                context.assets.put("runtime/runtime-manifest.json",next.toString().getBytes(StandardCharsets.UTF_8));
+                if(scenario.equals("missing_pack")) {
+                    reject(installer::setupRuntime,"fixture pack not installed");need(TarExtractor.extracted==0&&!installer.generation.exists(),"missing pack started extraction");
+                } else {
+                    AssetPackStore.accepted=true;AssetPackStore.shared=new File(files,"shared-fixture");
+                    Files.write(AssetPackStore.shared.toPath(),context.assets.get("runtime/fixture.txt"));
+                    context.assets.remove("runtime/fixture.txt");
+                    installer.setupRuntime();Path first=new File(installer.generation,"assets/fixture.txt").toPath();
+                    need(Files.isSameFile(first,AssetPackStore.shared.toPath()),"external payload copied instead of hardlinked");
+                    need(installer.getSetupReceipt().getInt("runtime_payload_files_copied")==3&&installer.getSetupReceipt().getInt("runtime_payload_files_reused")==1,"shared payload receipt wrong");
+                    next.put("fixture_revision",3);context.assets.put("runtime/runtime-manifest.json",next.toString().getBytes(StandardCharsets.UTF_8));installer.setupRuntime();
+                    need(Files.isSameFile(first,new File(installer.generation,"assets/fixture.txt").toPath()),"next generation duplicated asset bytes");
+                    need(Files.isRegularFile(AssetPackStore.shared.toPath()),"shared store removed");
+                }
+            }
+            else if(scenario.equals("memory_low")||scenario.equals("memory_unknown")) {
                 installer.memoryLow=scenario.equals("memory_low");installer.memoryUnavailable=scenario.equals("memory_unknown");
                 reject(installer::setupRuntime,scenario.equals("memory_low")?"memory remained low":"memory information is unavailable");
                 need(TarExtractor.extracted==0&&!installer.generation.exists(),"memory admission started installation");
@@ -346,6 +375,9 @@ class RuntimeSetupReuseTests(unittest.TestCase):
                                         capture_output=True, text=True, timeout=20)
                 self.assertEqual(0, result.returncode, result.stderr)
                 self.assertEqual('PASS ' + scenario, result.stdout.strip())
+
+    def test_missing_external_pack_blocks_before_extraction_and_shared_pack_reuses_inode(self):
+        self.check('missing_pack', 'shared_pack')
 
     def test_first_install_records_cached_downloads_extracts_and_logical_asset_bytes(self):
         self.check('installed')

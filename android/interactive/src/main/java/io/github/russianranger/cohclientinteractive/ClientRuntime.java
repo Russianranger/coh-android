@@ -9,6 +9,7 @@ import android.net.LocalSocketAddress;
 import android.os.Build;
 import android.os.SystemClock;
 import io.github.russianranger.cohdiagnostic.DiagnosticRuntime;
+import io.github.russianranger.cohdiagnostic.AssetPackStore;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
@@ -403,43 +404,69 @@ public final class ClientRuntime {
     }
 
     private AtlasAssetImporter importer() throws IOException {
+        final AssetPackStore pack;
+        try {pack=manifest!=null&&manifest.has("external_asset_pack")?assetPack():null;}
+        catch(Exception failure){throw new IOException("Cannot load asset pack identity",failure);}
         return new AtlasAssetImporter(new File(home.getParentFile(), "client-import"),
-                name -> context.getAssets().open("atlas/" + name));
+                name -> pack!=null&&pack.contains("atlas/"+name)?pack.open("atlas/"+name):context.getAssets().open("atlas/" + name));
+    }
+
+    private AssetPackStore assetPack() throws Exception {
+        return new AssetPackStore(context,manifest,this::check,(phase,bytes,total)->listener.onStage(phase,
+                total>0?bytes/1048576+" / "+total/1048576+" MiB":bytes>0?bytes/1048576+" MiB":phase));
     }
 
     public Result importAssets(Uri selected) throws Exception {
-        if (selected == null) throw new IOException("Select the pinned Atlas asset ZIP first");
+        if (selected == null) throw new IOException("Select the required versioned asset pack ZIP first");
         begin("import", null);
         JSONObject report = new JSONObject();
         boolean ready = false;
+        String success = null;
+        AssetPackStore pack = null;
         try {
             loadManifest(); check();
-            importControl = new AtlasAssetImporter.Control();
-            check();
-            AtlasAssetImporter assetImporter = importer();
-            InputStream input = context.getContentResolver().openInputStream(selected);
-            if (input == null) throw new IOException("The selected asset archive could not be opened");
-            // The unchanged importer owns and closes this stream, verifies the full
-            // selected archive once, and atomically publishes its verified receipt.
-            imported = assetImporter.importArchive(input, (phase, files, totalFiles, bytes, totalBytes) -> {
-                String detail = totalFiles > 0 ? files + " / " + totalFiles + " files"
-                        : totalBytes > 0 ? (bytes / (1024 * 1024)) + " / " + (totalBytes / (1024 * 1024)) + " MiB" : phase;
-                listener.onStage(phase, detail);
-            }, importControl);
-            ready = true;
-            report.put("status", "import_complete").put("passed", false)
-                    .put("scope", "Verified asset import only; no client or game execution claimed");
+            if(manifest.has("external_asset_pack")) {
+                pack=assetPack();
+                InputStream input=context.getContentResolver().openInputStream(selected);
+                if(input==null)throw new IOException("The selected asset pack could not be opened");
+                String part=pack.importVolume(input);check();
+                if(!pack.isAccepted()) {
+                    ready=true;success="Asset pack "+pack.version+" part "+part+" verified. "+pack.status();
+                    report.put("status","asset_pack_part_complete").put("passed",false)
+                            .put("scope","Verified one asset part; remaining parts are required before runtime setup");
+                    listener.onStage("Asset part imported",success);
+                }
+            }
+            if(pack==null||pack.isAccepted()) {
+                importControl = new AtlasAssetImporter.Control();check();
+                AtlasAssetImporter assetImporter = importer();
+                // An APK update with the same pinned content keeps the existing import.
+                try {imported=pack==null?null:assetImporter.inspect();}catch(IOException incompatible){imported=null;}
+                if(imported==null) {
+                    InputStream input=pack==null?context.getContentResolver().openInputStream(selected):pack.open("atlas/atlas-assets.zip");
+                    if(input==null)throw new IOException("The selected asset archive could not be opened");
+                    imported=assetImporter.importArchive(input,(phase,files,totalFiles,bytes,totalBytes)->{
+                        String detail=totalFiles>0?files+" / "+totalFiles+" files":totalBytes>0?bytes/1048576+" / "+totalBytes/1048576+" MiB":phase;
+                        listener.onStage(phase,detail);
+                    },importControl);
+                }
+                ready=true;
+                success=(pack==null?"Verified game assets":("Asset pack "+pack.version))+" is ready. Apply Set up / update runtime, then "+profileRecoveryMessage(characterProfileState(context));
+                report.put("status","import_complete").put("passed",false)
+                        .put("scope","Verified asset import only; no client or game execution claimed");
+            }
         } catch (Exception e) {
             error = message(e);
             report.put("status", cancelled || e instanceof AtlasAssetImporter.CancelledException ? "cancelled" : "failed")
                     .put("passed", false).put("error", error);
         } finally {
+            if(pack!=null)try{report.put("external_asset_pack",pack.receipt());}catch(Exception ignored){}
             synchronized (this) { finished = true; importControl = null; }
             endedUptime = SystemClock.uptimeMillis();
             try { publish(report, false, false); } finally { endOperation(); }
         }
-        return new Result(ready, latestReport, ready ? "Verified game assets are ready. " + profileRecoveryMessage(characterProfileState(context))
-                : cancelled ? "Asset import stopped; the previous verified content is preserved."
+        return new Result(ready, latestReport, ready ? success
+                : cancelled ? "Asset import stopped; previous verified content and completed parts are preserved."
                 : "Asset import failed: " + error);
     }
 
@@ -677,7 +704,7 @@ public final class ClientRuntime {
                 && !Boolean.TRUE.equals(manifest.opt("startup_only_reopen"));
     }
     public synchronized String zoningStatus() {
-        if(!zoningEnabled())return "Atlas instance zoning becomes available after runtime update and Reopen.";
+        if(!zoningEnabled())return "Zone travel becomes available after runtime update and Reopen.";
         if(stuckRequested)return "Safe-ground recovery selected · Save and reopen before zoning.";
         if(!zoning.enabled())return "Waiting for the saved character and destination controller.";
         String phase=zoning.phase();String elapsed="";
@@ -688,8 +715,8 @@ public final class ClientRuntime {
         }
         if("idle".equals(phase))return ClientZoning.name(zoning.currentMap())+" · "+zoning.epoch()+"/4 transfers requested"+elapsed;
         if("preparing".equals(phase))return "Preparing "+ClientZoning.name(zoning.targetMap())
-                +(automaticTravel?" · travel follows automatically; stay in this app":" · automatic travel paused; tap Travel when ready")+elapsed;
-        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+" ready · tap Travel to continue";
+                +(zoning.stockMonorail()||automaticTravel?" · travel follows automatically; stay in this app":" · automatic travel paused; tap Travel when ready")+elapsed;
+        if("ready".equals(phase))return ClientZoning.name(zoning.targetMap())+(zoning.stockMonorail()?" ready · boarding monorail":" ready · tap Travel to continue");
         if("capturing".equals(phase))return "Native arrival verified · collecting fresh view "+zoning.captures()+"/3"+elapsed;
         if("prepare_failed".equals(phase))return "Destination preparation failed · current map remains available; Save or export";
         if("failed".equals(phase))return "Transfer not verified · Abort and export; Reopen preserves the saved map";
@@ -1424,7 +1451,7 @@ public final class ClientRuntime {
                     retainCheckpointPng(connected,connectedPngs.get(connectedPngs.size()-1));recordLifecycle("character_connected_views_verified");
                     if (Boolean.TRUE.equals(manifest.opt("startup_only_reopen")))
                         stage("Atlas connected for startup timing", "THORHERO connected and fresh Android views were captured. Note your loading time, then Stop and export this startup-only session. Existing tasks are preserved; no task or movement retest is requested.");
-                    else if(zoningEnabled())stage("Ready for Atlas instance zoning","Tap Travel once to prepare and enter the other Atlas instance. Both use the same Atlas Park scene. Keep current graphics settings; use ordinary Save and Finish before the session cutoff.");
+                    else if(zoningEnabled())stage("Ready for zone travel","Use the monorail station to choose Kings Row or Atlas Park. Preparation happens on demand. Keep current graphics settings; use ordinary Save and Finish before the session cutoff.");
                     else stage("Atlas ready for task check", "THORHERO connected and fresh Android views were captured. Close help and game dialogs, then tap Open task contact to speak to Matthew Habashy. Accept his first offered task, open its journal entry, and wait for Accepted task verified. Capture it before using Complete accepted task. Return to safe ground is optional if stuck.");
                     notifyInputState();
                 }
@@ -1657,7 +1684,7 @@ public final class ClientRuntime {
                                 catch (IOException e) { receiverFailure = "Cannot refresh the reopened character: " + message(e); }
                             }
                             recordLifecycle("character_connected_observed");
-                            stage("Character connected", reopen ? "The existing THORHERO connected to Atlas. Waiting for fresh Android views and the bounded session window before movement, contact interaction and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
+                            stage("Character connected", reopen ? "THORHERO connected to "+ClientZoning.name(event.optInt("map_id",1))+". Waiting for fresh Android views and the bounded session window before movement and Save become available." : "THORHERO connected to Atlas. Inspect the character and UI, then tap Save character / log out once to verify ordinary character persistence.");
                             notifyInputState();
                         }
                         if("character_zoning_preparation".equals(event.optString("type")))recordZoningPreparation((Map<?,?>)jsonValue(event));
@@ -1665,17 +1692,33 @@ public final class ClientRuntime {
                                 && characterConnectedEvent!=null && !saveLogoutRequested && !cancelled && !finished && !producerCompleted) {
                             synchronized(this) {
                                 if(zoningEvents.size()<32 && zoning.accept((Map<?,?>)jsonValue(event),session,observedClientPid,
-                                        characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames)) {
+                                        characterConnectedEvent.optInt("map_id",-1),System.currentTimeMillis(),SystemClock.uptimeMillis(),decodedFrames,
+                                        Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))) {
                                     zoningEvents.add((Map<String,Object>)jsonValue(event));
+                                    if(zoning.stockMonorail()&&"preparing".equals(zoning.phase())) {
+                                        automaticTravel=false;
+                                        Map<String,Object> timing=new LinkedHashMap<>();
+                                        long requested=event.optLong("requested_utc_ms");
+                                        long now=System.currentTimeMillis(),uptime=SystemClock.uptimeMillis();
+                                        timing.put("epoch",zoning.epoch());timing.put("requested_utc_ms",requested);
+                                        timing.put("request_uptime_ms",Math.max(0,uptime-Math.max(0,now-requested)));
+                                        timing.put("request_clock_basis","guest_wall_time_correlated_at_observation");
+                                        timing.put("automatic",true);timing.put("user_actions",1);
+                                        timing.put("travel_method","stock_monorail");zoningTimings.add(timing);
+                                        cancelPendingInput();
+                                        try { inputWorker.execute(this::releaseOnInputWorker); }
+                                        catch(RejectedExecutionException closed) { zoning.fail(); }
+                                    }
                                     if("ready".equals(zoning.phase())) {
                                         Object departure=event.opt("departure_deadline_utc_ms");
                                         zoningDepartureDeadlineUtc=departure instanceof Long||departure instanceof Integer?((Number)departure).longValue():0;
                                         markZoningTime("ready");
                                     }
                                     if("capturing".equals(zoning.phase()))markZoningTime("native_arrival");
+                                    if(zoning.stockMonorail()&&"transferring".equals(zoning.phase()))markZoningTime("delivery");
                                     recordLifecycle("zoning_"+zoning.phase()+" epoch="+zoning.epoch());
                                     if("capturing".equals(zoning.phase()))requestContactFullUpdate();
-                                    stage("Atlas instance zoning",zoningStatus());notifyInputState();
+                                    stage("Zone travel",zoningStatus());notifyInputState();
                                     dispatchPreparedZoning();
                                 } else recordLifecycle("zoning_event_rejected");
                             }
@@ -2090,7 +2133,7 @@ public final class ClientRuntime {
                         .put("android_timings",new JSONArray(zoningTimings))
                         .put("preparation_observations",new JSONArray(zoningPreparationObservations))
                         .put("preparation_observation_limit_reached",zoningPreparationObservationLimitReached)
-                        .put("scope","Finite Atlas Park instance transfer; city geometry, portals and combat remain separate"))
+                        .put("scope","Finite supported-map travel; native arrival and three fresh views required; submitted input is not proof"))
                     .put("save_request_deadline_uptime_ms", sessionBudget.saveDeadline())
                     .put("movement_deadline_uptime_ms", sessionBudget.movementDeadline())
                     .put("relocation_sent_utc_ms", relocationSentUtcMillis)

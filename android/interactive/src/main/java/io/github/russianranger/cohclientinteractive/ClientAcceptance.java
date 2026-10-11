@@ -105,7 +105,8 @@ final class ClientAcceptance {
         return characterPersistenceVerified(value,savedEvent,connectedEvent,session,clientPid,key,false);
     }
     private static boolean supportedCharacterMap(Map<?,?> value, boolean zoning) {
-        return number(value.get("map_id"),1) || (zoning && number(value.get("map_id"),101)
+        return number(value.get("map_id"),1) || (zoning && (number(value.get("map_id"),101)
+                || number(value.get("map_id"),5) && yes(value.get("monorail_enabled")))
                 && yes(value.get("zoning_enabled")) && yes(value.get("connected_on_supported_map")));
     }
     private static boolean characterPersistenceVerified(Object value, Object savedEvent, Object connectedEvent, String session, long clientPid, String key, boolean zoning) {
@@ -251,7 +252,9 @@ final class ClientAcceptance {
             if (!"character_session_budget".equals(accepted.get("type"))
                     || !session.equals(row.get("session_id")) || !number(row.get("client_pid"), clientPid)
                     || !number(row.get("format"), 1) || !number(row.get("character_id"), 1)
-                    || !(number(row.get("map_id"), 1) || zoning && number(row.get("map_id"),101) && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
+                    || !(number(row.get("map_id"), 1) || zoning && (number(row.get("map_id"),101)
+                        || number(row.get("map_id"),5) && yes(row.get("monorail_enabled")) && yes(accepted.get("monorail_enabled")))
+                        && yes(row.get("zoning_enabled")) && yes(accepted.get("zoning_enabled"))) || !number(row.get("revision"), i + 1)
                     || !"THORHERO".equals(row.get("name")) || !"COHLOCAL".equals(row.get("account"))
                     || !(i == 0 ? "connected" : "grounded").equals(row.get("phase"))) return false;
             for (String name : integers) {

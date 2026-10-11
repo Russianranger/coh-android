@@ -220,6 +220,12 @@ class CharacterCreationDiagnostic(login.ClientLoginDiagnostic):
             assets=self.args.assets, context=self.ctx)
         self.ctx.report['client_animation_pack'] = animation
         self.ctx.passed(**animation)
+        import zone_asset_package
+        if zone_asset_package.present(self.args.assets):
+            self.ctx.stage('client_all_zone_assets')
+            zones = zone_asset_package.install(self.work, self.args.assets, self.ctx)
+            self.ctx.report['client_zone_supplement'] = zones
+            self.ctx.passed(**zones)
 
     def prepare_texture_header_index(self, context):
         import texture_header_index

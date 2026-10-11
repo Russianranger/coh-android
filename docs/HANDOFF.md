@@ -1,4 +1,45 @@
-# CURRENT — .27 report recovery and automatic Atlas preparation published — 2026-10-11 UTC
+# CURRENT — .28 asset separation and Kings Row monorail work in progress — 2026-10-11 UTC
+
+The user supplied `coh-atlas-gameplay-20261011-035622.zip`, authorized changes,
+plans a fresh installation, and requested independently versioned APK/assets
+releases, a complete Kings Row/other-zone asset audit, stock monorail travel to
+Kings Row, loading improvements and storage repair. **.28 is not published or
+qualified yet. .27 remains the latest completed release.** Do not present
+in-progress source or host fixtures as a usable release or Thor qualification.
+
+Recovery verified remote development head
+`f1dc64efde4ea62c8b109aab9474ab1095567e36`, draft PR #1 and the completed .27
+publication. Main remains unchanged. The previous local checkout and analysis
+directories are empty remnants; a fresh checkout preserves them. Other
+accessible research workspaces belong to separate tasks and are read-only here.
+
+The new physical .27 report verifies actual Zink/Turnip Adreno 740, guarded
+stale-socket recovery, two Atlas transfers, ordinary committed character save
+and clean shutdown. Cold preparation is 239.987 seconds; resident preparation
+is 5.260 seconds. Native client readiness follows each transfer in approximately
+60 seconds, while completed observation trails it by another 76–79 seconds.
+Keep these measurements separate. This is not a controlled FPS comparison or
+proof of sustained 30 FPS. See `docs/COH-0.13.27-THOR-REPORT.md` and its JSON
+receipt. The accepted .25 performance baseline and .26 user observations remain.
+
+Planned versions are APK **0.13.28 / code 43** and independent asset pack
+**1.0.0**, with multiple bounded import files if required by release file limits.
+The pack must contain exact verified original resources, preserve baseline
+payloads, declare compatibility and allow reuse in future APK updates. Activation
+must require every required part, without clearing character/profile data on a
+failed import. Complete asset availability does not itself qualify every zone.
+Kings Row is map **5**, `maps/city_zones/city_01_02/city_01_02.txt`.
+
+Development is split between external pack/import, broad original-resource
+audit, Android storage descriptor ownership/diagnostics, stock transit request
+and arrival observation, and genuine Kings Row collision/beacon qualification.
+Only the MapServer changes required for transit/observation and a separate
+host-only beacon generator justify native compilation. Preserve the accepted
+Game, graphics settings, drivers, DbServer and unchanged artifacts. The next
+handoff must replace this progress section with exact completed publication
+receipts and candid remaining device checks.
+
+# Published .27 report recovery and automatic Atlas preparation — 2026-10-11 UTC
 
 **0.13.27 / version code 42 is published, with all four publication jobs passed,
 including the separate audit of the actual public APK. The accepted .25 FPS

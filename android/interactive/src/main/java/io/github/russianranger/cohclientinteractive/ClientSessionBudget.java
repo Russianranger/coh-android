@@ -33,7 +33,8 @@ public final class ClientSessionBudget {
                 || integer(event.get("client_pid")) != pid || integer(event.get("character_id")) != 1
                 || !"THORHERO".equals(event.get("name")) || !"COHLOCAL".equals(event.get("account"))
                 || !(integer(event.get("map_id")) == connectedMap && (connectedMap == 1
-                    || zoning && connectedMap == 101 && Boolean.TRUE.equals(event.get("zoning_enabled")))) || !connected
+                    || zoning && (connectedMap == 101 || connectedMap == 5 && Boolean.TRUE.equals(event.get("monorail_enabled")))
+                        && Boolean.TRUE.equals(event.get("zoning_enabled")))) || !connected
                 || !Boolean.TRUE.equals(event.get("native_client_ready_observed"))
                 || !Boolean.TRUE.equals(event.get("reopen_verified"))) return false;
         long next = integer(event.get("revision")), generated = integer(event.get("generated_utc_ms"));

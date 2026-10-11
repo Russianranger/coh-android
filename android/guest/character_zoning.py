@@ -17,10 +17,13 @@ import time
 import local_character_server as character
 import character_session_budget as session_budget
 import character_zoning_scheduler as scheduler
+import native_monorail_events as monorail_events
+import native_monorail_contract as monorail_contract
 
 base, require = character.base, character.require
-MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1},
-        101: {'name': 'Atlas Park instance 2', 'port': 7002, 'instance': 2}}
+MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1, 'world': 'City_01_01'},
+        101: {'name': 'Atlas Park instance 2', 'port': 7002, 'instance': 2, 'world': 'City_01_01'},
+        5: {'name': "King's Row", 'port': 7003, 'instance': 1, 'world': 'City_01_02'}}
 MAX_EPOCHS = 4
 PREPARE_SECONDS = 600
 WARM_PREPARE_SECONDS = 90
@@ -83,7 +86,7 @@ def parse_map_status(text, map_id, *, allow_missing=False):
     require(len(rows) == 1 and int(rows[0][0]) == map_id,
             'Zoning status lacks exact destination container')
     _, name, fields = rows[0]
-    require(name.replace('\\', '/').split('/')[-1].casefold() == 'city_01_01.txt',
+    require(name.replace('\\', '/').split('/')[-1].casefold() == MAPS[map_id]['world'].lower() + '.txt',
             'Zoning destination uses unreviewed world assets')
     not_ready = re.findall(r'\bNotReady\s+(\S+)', fields)
     require(not not_ready or not_ready == ['1'], 'Unknown zoning map not-ready flag')
@@ -158,7 +161,7 @@ def entity_records(logs, map_id, *, minimum_ms=0, now_ms=None):
     The fixed maps.db order and native StaticMapInfo assign instances 1 and 2.
     """
     require(supported(map_id), 'Unreviewed zoning log route')
-    route = 'City_01_01_' + str(MAPS[map_id]['instance'])
+    route = MAPS[map_id]['world'] + '_' + str(MAPS[map_id]['instance'])
     pattern = re.compile(r'^(?P<time>\d{6} \d{2}:\d{2}:\d{2}) '
         + re.escape(route) + r':127\.0\.0\.1:127\.0\.0\.1 +(?P<message>[^\r\n]+)$', re.I)
     seen = set()
@@ -263,9 +266,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.pending = None
         self.epoch = 0
         self.enabled_announced = False
+        self.native_station_seen = {}
         self.request_history = {}
         self.delivery_history = {}
-        self.zoning_report = {'format': 1, 'scope': 'native_Atlas_instance_handoff',
+        self.zoning_report = {'format': 1, 'scope': 'native_station_or_Atlas_instance_handoff',
             'supported_maps': MAPS, 'events': [], 'transfers': [], 'epoch_limit': MAX_EPOCHS,
             'new_city_asset_coverage': False, 'sql_game_mutations_performed': False,
             'target_seconds': 30, 'physical_zoning_validated': False}
@@ -275,6 +279,85 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             finite_process_limit=2, preparation_stage_observations=[], preparation_schedulers=[])
         self.ctx.report['character_zoning'] = self.zoning_report
         self.creation_report.update(zoning_enabled=True, connected_on_supported_map=False)
+
+    def monorail_enabled(self):
+        return getattr(self, 'monorail_qualified', False) is True
+
+    def prepare_runtime(self):
+        super().prepare_runtime()
+        if 'native_monorail' not in self.map_package:
+            return
+        monorail_contract.embedded_receipt(self.map_package)
+        graph = self.creation_report.get('kings_row_beacon_graph', {})
+        require(graph.get('verified') is True and graph.get('map_id') == 5,
+                'Kings Row native collision/beacon package is not verified')
+        self.monorail_qualified = True
+        self.creation_report['monorail_enabled'] = True
+        self.zoning_report.update(monorail_enabled=True, new_city_asset_coverage=True,
+            station_line='ParagonCityMonorail', station_maps=[1, 5],
+            readiness_transport='immediate_owned_native_console')
+
+    def monorail_environment(self, map_id):
+        return {monorail_events.ENVIRONMENT: self.owner.args.session_id,
+            monorail_events.REPLY_ENVIRONMENT: base.windows_path(
+                self.runtime / ('monorail-' + str(map_id) + '-reply.txt'))}
+
+    def map_native_events(self, map_id):
+        owned = self.maps[map_id]
+        current = self._map_progress(map_id)
+        if not self.live_progress(current):
+            return []
+        return monorail_events.records(monorail_events.console_events(owned), session=self.owner.args.session_id,
+            progress=current, launch_utc_ms=owned['launch_utc_ms'], now_utc_ms=int(time.time()*1000),
+            db_id=self.creation_report['character_id'], auth_id=self.auth_id, map_id=map_id)
+
+    def _authorize_station(self, record):
+        path = self.runtime / ('monorail-' + str(record['map_id']) + '-reply.txt')
+        require(not path.is_symlink(), 'Linked monorail reply refused')
+        temporary = path.with_suffix('.pending')
+        require(not temporary.exists() and not temporary.is_symlink(), 'Stale monorail reply staging file')
+        require(self.pending is not None and self.pending.get('phase') == 'ready'
+                and not (self.owner.args.state / 'character-logout.json').exists(),
+                'Monorail authorization cancelled for ordinary save')
+        base.private_write(temporary, monorail_events.reply(record))
+        # After publishing, native departure can race the next observer tick.
+        # Any failure from here is an uncertain handoff and must stop gameplay.
+        self.pending['native_authorization_issued'] = True
+        os.replace(temporary, path)
+
+    def _observe_station(self, now_ms):
+        for record in self.map_native_events(self.active_map_id):
+            if record['kind'] not in ('station_request', 'station_departure'):
+                continue
+            key = (self.active_map_id, record['sequence'])
+            seen = getattr(self, 'native_station_seen', {})
+            if key in seen:
+                require(seen[key] == record['line_sha256'], 'Native station request history changed')
+                continue
+            self.native_station_seen[key] = record['line_sha256']
+            if record['kind'] == 'station_request':
+                request = dict(format=1, session_id=self.owner.args.session_id,
+                    client_pid=self.creation_report['client_pid'], character_id=1,
+                    epoch=self.epoch + 1, action='prepare', from_map_id=self.active_map_id,
+                    to_map_id=record['target'], requested_utc_ms=record['utc_ms'])
+                # Set these before the first preparing event reaches Android.
+                self.station_accepting = record
+                try:
+                    self._accept_prepare(request, now_ms)
+                finally:
+                    self.station_accepting = None
+            else:
+                require(self.pending is not None and self.pending.get('native_station_request_verified')
+                    and record['request'] == self.pending['native_request_sequence']
+                    and record['pid'] == self.pending['native_station_pid']
+                    and record['target'] == self.pending['to_map_id'],
+                    'Native station departure does not match prepared request')
+                value = dict(format=1, session_id=self.owner.args.session_id,
+                    client_pid=self.creation_report['client_pid'], character_id=1, epoch=self.epoch,
+                    action='mapmove', from_map_id=self.active_map_id, to_map_id=record['target'],
+                    sent_utc_ms=record['utc_ms'])
+                self._accept_delivery(value, now_ms)
+                self.pending['delivery']['native_station_departure'] = record
 
     def character_position(self, *, allow_unassigned_active_map=False):
         values = self.sql_rows('ents', ('containerid', 'mapid', 'staticmapid', 'posx', 'posy', 'posz'),
@@ -287,7 +370,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             and (type(value['mapid']) is int and value['mapid'] == value['staticmapid']
                  or allow_unassigned_active_map and value['mapid'] is None)
             and all(type(value[k]) in (int, float) and math.isfinite(value[k]) and abs(value[k]) <= 1000000
-                    for k in ('posx', 'posy', 'posz')), 'Saved character is outside the supported Atlas instances')
+                    for k in ('posx', 'posy', 'posz')), 'Saved character is outside the supported local zones')
+        require(value['staticmapid'] != 5 or self.monorail_enabled(),
+                'Saved Kings Row character requires the verified monorail/zone package')
         if allow_unassigned_active_map:
             self.active_map_id = value['staticmapid']
             self.creation_report['map_id'] = self.active_map_id
@@ -305,7 +390,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return connected(sample, self.active_map_id)
 
     def connection_metadata(self):
-        return dict(super().connection_metadata(), connected_on_supported_map=True, zoning_enabled=True)
+        return dict(super().connection_metadata(), connected_on_supported_map=True, zoning_enabled=True,
+                    monorail_enabled=self.monorail_enabled())
 
     def _remember_active(self):
         self.maps[self.active_map_id] = {'process': self.map_process, 'progress_path': self.map_progress_path,
@@ -323,28 +409,35 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def start_map(self):
         if self.active_map_id == 1:
-            super().start_map()
+            original = self.owner.wine_env
+            if self.monorail_enabled():
+                self.owner.wine_env = dict(original, **self.monorail_environment(1))
+            try:
+                super().start_map()
+            finally:
+                self.owner.wine_env = original
             self._remember_active()
         else:
             # Android's retained stage sequence names the Atlas startup phase;
             # the exact saved instance is carried by its independent map proof.
             self.ctx.stage('local_atlas_startup')
-            baseline = parse_map_status(self.query(['-getstatus', '1', '101'], 'zoning-reopen-baseline'),
-                                        101, allow_missing=True)
+            target = self.active_map_id
+            baseline = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-baseline'),
+                                        target, allow_missing=True)
             require(baseline.get('not_started') is True, 'Saved destination already has an unowned MapServer')
-            self._spawn_map(101)
+            self._spawn_map(target)
             deadline = min(self.ctx.deadline, time.monotonic() + character.MAP_STARTUP_SECONDS)
             next_query = 0
             while True:
                 self.ctx.check()
                 require(time.monotonic() < deadline, 'Saved Atlas instance startup timed out; preserve data and export')
-                current = self._map_progress(101)
+                current = self._map_progress(target)
                 if self.live_progress(current) and time.monotonic() >= next_query:
                     next_query = time.monotonic() + 15
-                    sample = parse_map_status(self.query(['-getstatus', '1', '101'], 'zoning-reopen-ready'), 101)
-                    if ready(sample, 101) and self.live_progress(self._map_progress(101)):
-                        self.maps[101]['ready'] = True
-                        self._activate(101)
+                    sample = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-ready'), target)
+                    if ready(sample, target) and self.live_progress(self._map_progress(target)):
+                        self.maps[target]['ready'] = True
+                        self._activate(target)
                         self.creation_report.update(map_ready=True, map_startup_guard={'passed': True,
                             'protocol': sample, 'after': current, 'requires_completed_tick_before_protocol': True})
                         self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
@@ -356,6 +449,12 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def _spawn_map(self, map_id):
         require(supported(map_id) and map_id not in self.maps and len(self.maps) < 2,
                 'Duplicate or unreviewed zoning MapServer launch')
+        map_runtime = self.runtime
+        if map_id == 5:
+            prepared = self.prepare_kings_row_runtime()
+            require(prepared.get('graph', {}).get('verified') is True
+                    and prepared['graph'].get('map_id') == 5, 'Kings Row native graph installation failed')
+            map_runtime = prepared['runtime']
         character.game.check_game_port(MAPS[map_id]['port'], socket.SOCK_DGRAM)
         path = self.runtime / ('character-zoning-' + str(map_id) + '-progress.bin')
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
@@ -372,9 +471,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             environment[character.character_events.ENVIRONMENT] = self.owner.args.session_id
             self.creation_report.setdefault('immediate_native_events', {'enabled': True,
                 'contract': self.immediate_event_contract(), 'legacy_sorted_logs_used_for_ready_or_ground': False})
+        if self.monorail_enabled():
+            environment.update(self.monorail_environment(map_id))
         launch_ms = int(time.time() * 1000)
-        process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(self.runtime),
-            self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
+        process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
+            self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
             '-nosharedmemory', '-nostats', '-udp', str(MAPS[map_id]['port']), '-tcp', '0', '-map_id', str(map_id),
             '-idleExitTimeout', '0', '-donotautogroup'], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
@@ -454,9 +555,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return None
 
     def current_native_events(self):
+        if self.monorail_enabled():
+            return self.map_native_events(self.active_map_id)
         return super().current_native_events() if self.active_map_id == 1 else None
 
     def native_ready_record(self):
+        if self.monorail_enabled():
+            value = monorail_events.latest_ready(self.current_native_events())
+            return value if value is not None and value['utc_ms'] >= self.ready_floor_ms else None
         if self.active_map_id == 1:
             value = super().native_ready_record()
             if value is not None and value.get('utc_ms', 0) >= self.ready_floor_ms:
@@ -465,6 +571,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return stock_ready(self.current_logs(), self.active_map_id, self.ready_floor_ms, int(time.time() * 1000))
 
     def native_positions(self):
+        if self.monorail_enabled():
+            return [row for row in monorail_events.positions_after_ready(self.current_native_events())
+                    if row['utc_ms'] >= self.ready_floor_ms]
         if self.active_map_id == 1:
             return [p for p in super().native_positions() if p['utc_ms'] >= self.ready_floor_ms]
         return stock_positions(self.current_logs(), self.active_map_id, self.ready_floor_ms, int(time.time() * 1000))
@@ -480,15 +589,19 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return terminal_position(self.current_logs(), self.active_map_id, delivery, ready_utc_ms, now_utc_ms)
 
     def _emit(self, status, **fields):
-        target = self.pending['to_map_id'] if self.pending else (101 if self.active_map_id == 1 else 1)
+        target = self.pending['to_map_id'] if self.pending else (
+            (5 if self.monorail_enabled() else 101) if self.active_map_id == 1 else 1)
         value = {'format': 1, 'session_id': self.owner.args.session_id,
             'client_pid': self.creation_report['client_pid'], 'character_id': 1,
             'epoch': self.epoch, 'status': status, 'current_map_id': self.active_map_id,
             'target_map_id': target, 'current_map_name': MAPS[self.active_map_id]['name'],
             'target_map_name': MAPS[target]['name'], 'generated_utc_ms': int(time.time() * 1000),
             'epoch_limit': MAX_EPOCHS, **fields}
+        value.update(monorail_enabled=self.monorail_enabled(),
+            travel_method='stock_monorail' if self.monorail_enabled() and self.active_map_id != 101 else 'mapmove')
         if self.pending is not None:
-            for key in ('requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
+            for key in ('native_request_sequence', 'native_station_pid', 'native_station_request_verified',
+                        'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
                         'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
                         'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended'):
                 if key in self.pending:
@@ -531,6 +644,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 and not (self.owner.args.state / 'character-relocation.json').exists(),
                 'Finish the current recovery/save session before testing zoning')
         target = value['to_map_id']
+        require(target != 5 or self.monorail_enabled(), 'Kings Row assets/native route are not qualified')
         resident = target in self.maps
         window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
             time.monotonic(), now_ms, WARM_PREPARE_SECONDS if resident else PREPARE_SECONDS)
@@ -540,6 +654,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             deadline=time.monotonic() + window['preparation_budget_seconds'], **window,
             next_query=0, transfer_requested=False, preparation_started_utc_ms=now_ms,
             preparation_kind='resident_warm' if resident else 'cold')
+        native = getattr(self, 'station_accepting', None)
+        if native is not None:
+            self.pending.update(native_station_request=native, native_request_sequence=native['request'],
+                native_station_pid=native['pid'], native_station_request_verified=True)
         self._emit('preparing', current_map_verified=True, destination_ready=False)
         if target in self.maps:
             self.pending['phase'] = 'map_ready'
@@ -561,7 +679,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.delivery_history[self.epoch] = dict(value)
         self.pending.update(phase='arrival', delivery=dict(value), transfer_requested=True,
                             deadline=time.monotonic() + TRANSFER_SECONDS, next_query=0)
-        self._emit('transferring', current_map_verified=False, transfer_requested=True)
+        self._emit('transferring', current_map_verified=False, transfer_requested=True,
+                   sent_utc_ms=value['sent_utc_ms'],
+                   native_station_departure_verified=self.pending.get('native_station_request_verified') is True)
 
     def _observe_arrival(self, result, now_ms):
         pending = self.pending
@@ -583,8 +703,11 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 return
             # Fresh native CLIENT_READY follows world loading. An assigned
             # DbServer container alone cannot satisfy arrival.
-            minimum = pending['delivery']['sent_utc_ms'] - 999
-            native = stock_ready(self.current_logs(), target, minimum, now_ms)
+            minimum = pending['delivery']['sent_utc_ms'] - (0 if self.monorail_enabled() else 999)
+            native = (monorail_events.latest_ready(self.map_native_events(target))
+                      if self.monorail_enabled() else stock_ready(self.current_logs(), target, minimum, now_ms))
+            if native is not None and native['utc_ms'] < minimum:
+                native = None
             if native is None or native['line_sha256'] in pending.get('prior_ready_hashes', []):
                 pending['next_query'] = time.monotonic() + 3
                 return
@@ -610,24 +733,26 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.creation_report.update(client_ready_evidence=native, client_ready_observed_utc=base.utc(),
                 client_ready_observed_utc_ms=native['utc_ms'], connected_on_supported_map=True,
                 connected_on_atlas=True, map_id=target, zoning_epoch=self.epoch,
+                monorail_enabled=self.monorail_enabled(),
                 recovery_requested=False, recovery_verified=False, ordinary_stuck_observed=False,
                 on_atlas_safe_position=False, stable_ground_verified=False, committed_safe_position_verified=False)
             leg = {'epoch': self.epoch, 'from_map_id': origin, 'to_map_id': target,
                 'delivery': pending['delivery'], 'native_ready': native,
-                'character_status': sample, 'initial_character_status': pending['arrival_character'],
+                'character_status': sample, 'initial_character_status': pending.get('arrival_character', sample),
                 'map_status': pending['arrival_map'], 'owned_progress': current,
                 'elapsed_ms': now_ms - pending['delivery']['sent_utc_ms'],
-                'native_timestamp_precision_ms': 1000, 'same_client_pid': self.creation_report['client_pid'],
+                'native_timestamp_precision_ms': 1 if self.monorail_enabled() else 1000, 'same_client_pid': self.creation_report['client_pid'],
                 'observed_transfer_flag_or_disconnected': pending.get('observed_transition', False),
                 'arrival_native_verified': True, 'sql_transfer_commit_acknowledged': False}
             leg.update({key: pending[key] for key in ('requested_utc_ms', 'preparation_kind',
                 'preparation_started_utc_ms', 'preparation_ready_utc_ms', 'preparation_elapsed_ms')
                 if key in pending})
-            leg.update(native_transfer_observed_ms=leg['elapsed_ms'],
+            leg.update(travel_method='stock_monorail' if pending.get('native_station_request_verified') else 'mapmove',
+                native_transfer_observed_ms=leg['elapsed_ms'],
                 total_to_native_arrival_ms=now_ms - pending.get('requested_utc_ms',
                     pending['delivery']['sent_utc_ms']),
                 native_ready_after_send_lower_bound_ms=max(0, native['utc_ms'] - pending['delivery']['sent_utc_ms']),
-                native_ready_after_send_upper_bound_ms=max(0, native['utc_ms'] + 999 - pending['delivery']['sent_utc_ms']),
+                native_ready_after_send_upper_bound_ms=max(0, native['utc_ms'] + (0 if self.monorail_enabled() else 999) - pending['delivery']['sent_utc_ms']),
                 observer_queries_included=True, fresh_android_display_included=False)
             self.zoning_report['transfers'].append(leg)
             self._emit('arrived', current_map_verified=True, destination_ready=True,
@@ -639,7 +764,19 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             self.pending = None
             return
         if self.zoning_query is None and time.monotonic() >= pending['next_query']:
-            self._query_start(['-getstatus', '3', '1'], 'arrival_character')
+            if self.monorail_enabled():
+                # The .27 report showed five-second translated status helpers
+                # competing with loading while waiting for buffered stock logs.
+                # Wait on the immediate current-process CLIENT_READY first;
+                # then retain fresh endpoint and final exact character queries.
+                native = monorail_events.latest_ready(self.map_native_events(target))
+                if (native is None or native['utc_ms'] < pending['delivery']['sent_utc_ms']
+                        or native['line_sha256'] in pending.get('prior_ready_hashes', [])):
+                    return
+                pending['arrival_native'] = native
+                self._query_start(['-getstatus', '1', str(target)], 'arrival_map')
+            else:
+                self._query_start(['-getstatus', '3', '1'], 'arrival_character')
 
     def tick_zoning(self):
         if not self.creation_report.get('connected_on_atlas') or not self.creation_report.get('client_pid'):
@@ -658,6 +795,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         unseen_delivery = delivery_path.exists() or delivery_path.is_symlink()
         try:
             now_ms = int(time.time() * 1000)
+            if self.monorail_enabled():
+                self._observe_station(now_ms)
             delivery = read_request(delivery_path)
             if delivery is not None and delivery == self.delivery_history.get(delivery.get('epoch')):
                 unseen_delivery = False
@@ -679,7 +818,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 return
             pending, target = self.pending, self.pending['to_map_id']
             require(now < pending['deadline'], 'Zoning preparation or arrival timed out; export this report')
-            require(pending.get('transfer_requested') or
+            require(pending.get('transfer_requested') or pending.get('native_authorization_issued') or
                     not (self.owner.args.state / 'character-logout.json').exists(),
                     'Preparation cancelled for the requested ordinary save')
             result = self._query_poll()
@@ -711,7 +850,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                         ready_now_ms = int(time.time() * 1000)
                         require(time.monotonic() < pending['deadline'],
                                 'Preparation exhausted its budget before scheduler restoration')
-                        prior = stock_ready(logs, target, 0, ready_now_ms)
+                        prior = (monorail_events.latest_ready(self.map_native_events(target))
+                                 if self.monorail_enabled() else stock_ready(logs, target, 0, ready_now_ms))
                         pending.update(phase='ready', ready_utc_ms=ready_now_ms, destination_status=sample,
                             prior_ready_hashes=[prior['line_sha256']] if prior else [],
                             preparation_ready_utc_ms=ready_now_ms,
@@ -722,6 +862,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                                 'preparation_elapsed_ms', 'preparation_kind')})
                         self._emit('ready', current_map_verified=True, destination_ready=True,
                                    mapserver_pid=current['windows_pid'])
+                        if pending.get('native_station_request_verified'):
+                            self._authorize_station(pending['native_station_request'])
                         return
                 if self.zoning_query is None and self.live_progress(current) and now >= pending['next_query']:
                     pending['next_query'] = now + 10
@@ -733,7 +875,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     # Restoration failure deliberately escapes this recoverable
                     # preparation branch: never publish ready for weighted tasks.
                     self._restore_preparation(pacing)
-            uncertain = unseen_delivery or bool(self.pending and self.pending.get('transfer_requested'))
+            uncertain = unseen_delivery or bool(self.pending and (self.pending.get('transfer_requested')
+                or self.pending.get('native_authorization_issued')))
             self.zoning_report['failure'] = {'message': str(failure)[:300], 'transfer_requested': uncertain}
             self._emit('failed', message=str(failure)[:300], transfer_requested=uncertain,
                        current_map_verified=not uncertain)
@@ -747,7 +890,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
 
     def character_evidence(self):
         self.tick_zoning()
-        if self.pending is not None and self.pending.get('transfer_requested'):
+        if self.pending is not None and (self.pending.get('transfer_requested')
+                or self.pending.get('native_authorization_issued')):
             return None
         # The ordinary Atlas save path is retained, with only map-scoped native
         # witnesses and read-only finite-map position validation overridden.
@@ -756,7 +900,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def saved_metadata(self, snapshot):
         return dict(super().saved_metadata(snapshot), zoning_enabled=True,
             connected_on_supported_map=True, map_id=self.active_map_id,
-            zoning_epoch=self.epoch, ordinary_save_after_native_zoning=True)
+            monorail_enabled=self.monorail_enabled(), zoning_epoch=self.epoch, ordinary_save_after_native_zoning=True)
 
     def collect(self, target):
         super().collect(target)
@@ -779,6 +923,7 @@ def character_identity(proof, session):
         and proof.get('name') == 'THORHERO' and proof.get('account') == 'COHLOCAL'
         and type(proof.get('character_id')) is int and proof['character_id'] == 1
         and type(proof.get('auth_id')) is int and proof['auth_id'] > 0 and supported(proof.get('map_id'))
+        and (proof['map_id'] != 5 or proof.get('monorail_enabled') is True)
         and type(proof.get('before_character_id')) is int and proof['before_character_id'] == 1
         and type(proof.get('baseline_character_id')) is int and proof['baseline_character_id'] == 1
         and all(proof.get(k) is True for k in ('zoning_enabled', 'connected_on_atlas',

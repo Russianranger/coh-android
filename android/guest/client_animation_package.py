@@ -42,11 +42,12 @@ def _directory_ancestors(path):
         _regular_directory(current)
 
 
-def _regular(path, owner=None):
+def _regular(path, owner=None, *, allow_shared_source=False):
     path = Path(path)
     require(os.path.lexists(path), 'Missing client animation file: ' + str(path))
     info = path.lstat()
-    require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1
+    shared_source = allow_shared_source and info.st_nlink > 1 and not info.st_mode & 0o222
+    require(stat.S_ISREG(info.st_mode) and (info.st_nlink == 1 or shared_source)
             and (owner is None or info.st_uid == owner),
             'Linked or foreign client animation file: ' + str(path))
     return info
@@ -144,8 +145,8 @@ def install(pigg, manifest, runtime, *, assets, context=None):
                 'fallback': 'ordinary_loose_animation_loader'}
     owner = _regular_directory(runtime)
     _directory_ancestors(assets)
-    _regular(pigg, owner)
-    _regular(manifest, owner)
+    _regular(pigg, owner, allow_shared_source=True)
+    _regular(manifest, owner, allow_shared_source=True)
     manifest_before = animation.file_pin(manifest)
     document = animation.verify_package(pigg, manifest, context=context)
     proof = client_contract(runtime, assets, document, context=context)
@@ -153,10 +154,12 @@ def install(pigg, manifest, runtime, *, assets, context=None):
     # animation inputs before exposing the link; preserve their original bytes.
     for path, expected_pin in ((pigg, {key: document['pigg'][key] for key in ('bytes', 'sha256')}),
                                (manifest, manifest_before)):
-        _regular(path, owner)
+        info = _regular(path, owner, allow_shared_source=True)
         require(animation.file_pin(path) == expected_pin, 'Client animation resource changed during verification')
-        path.chmod(0o400)
-        info = _regular(path, owner)
+        # Shared store inodes are already readonly; do not alter another runtime's metadata.
+        if info.st_nlink == 1:
+            path.chmod(0o400)
+        info = _regular(path, owner, allow_shared_source=True)
         require(not info.st_mode & 0o222 and animation.file_pin(path) == expected_pin,
                 'Client animation resource read-only protection differs')
     directory = runtime / 'piggs'
@@ -189,7 +192,7 @@ def install(pigg, manifest, runtime, *, assets, context=None):
         previous_resource = Path(prior['target'])
         if previous_resource != pigg and os.path.lexists(previous_resource):
             _directory_ancestors(previous_resource.parent)
-            _regular(previous_resource, owner)
+            _regular(previous_resource, owner, allow_shared_source=True)
             require(animation.file_pin(previous_resource) == {
                 key: document['pigg'][key] for key in ('bytes', 'sha256')},
                 'Previous client animation resource differs')

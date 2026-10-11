@@ -130,8 +130,20 @@ def identifier_snapshot(runtime_data):
     return dict(sorted(result.items()))
 
 
-def build_expected_identity(runtime_data, mapserver_path):
-    require(file_pin(mapserver_path)['sha256'] == MAPSERVER_SHA256, 'Server-cache executable identity differs')
+def build_expected_identity(runtime_data, mapserver_path, *, mapserver_package=None):
+    actual = file_pin(mapserver_path)['sha256']
+    if actual != MAPSERVER_SHA256:
+        import native_monorail_contract
+        require(isinstance(mapserver_package, dict), 'Server-cache executable identity differs')
+        receipt = native_monorail_contract.embedded_receipt(mapserver_package)
+        require(receipt['mapserver']['sha256'] == actual
+                and receipt['previous_mapserver']['sha256'] == MAPSERVER_SHA256
+                and set(receipt['build_input']['patched_sha256']) == {
+                    'MapServer/CMakeLists.txt', 'MapServer/src/svr/svr_init.c',
+                    'MapServer/src/svr/svr_tick.c', 'MapServer/src/door.c'},
+                'Server-cache bridge changed parser/source ancestry')
+        # The additive station bridge changes no ParseTable, source definition,
+        # identifier or cache reader. Keep the ORIGINAL cache donor identity.
     return {**compatibility_identity(), 'identifier_files': identifier_snapshot(runtime_data)}
 
 

@@ -49,6 +49,7 @@ MAX_MANIFEST = 8 * 1024 * 1024
 MAX_GRAPH = 128 * 1024 * 1024
 MAX_INPUTS = 12288
 EPOCH = 1767225600
+RETAINED_COLLISION_SOURCES = {'MapServer/src/beacon/beaconGenerate.c': 'eeaf26ddb3b2f65628aece1c77a9ba272318dc3581e3379616dc86c3ee355c38', 'MapServer/src/beacon/beaconConnection.c': '93422a659fd2e3da9d8a522512a17a32f13b817b7c04e819e3efa38579638340', 'MapServer/src/beacon/beaconFile.c': '2693b3cd9eb2432248605810a167a4aed8ab71f569c8f2fdc89fe4aa4271ad60', 'MapServer/src/beacon/beaconPath.c': '40092b27b9b6b73e19349422570ce1f0978aedacb6cf0d648af858fd46b69e14', 'Common/group/groupfileload.c': '5fc2891ed78626b9fa38b181fd5fc975b69f000bf2f79bbb3c5527c86503e8d7', 'Common/gridcoll/gridcoll.c': 'e25032c077b32896353e79929e74c81d4735564e8a8714c0d7c739db883655d4'}
 
 
 def require(condition, message):
@@ -59,10 +60,11 @@ def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
 
 
-def regular(path, limit, *, readonly=False):
+def regular(path, limit, *, readonly=False, allow_shared_source=False):
     path = Path(path)
     info = path.lstat()
-    require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and 0 < info.st_size <= limit,
+    shared_source = allow_shared_source and info.st_nlink > 1 and not info.st_mode & 0o222
+    require(stat.S_ISREG(info.st_mode) and (info.st_nlink == 1 or shared_source) and 0 < info.st_size <= limit,
             'Linked, special, empty or oversized beacon package file')
     require(not readonly or not info.st_mode & 0o222, 'Beacon proof requires readonly input')
     return info
@@ -96,7 +98,7 @@ def input_name(name):
 
 
 def read_manifest(path):
-    regular(path, MAX_MANIFEST)
+    regular(path, MAX_MANIFEST, allow_shared_source=True)
     raw = Path(path).read_bytes()
     require(re.fullmatch('[0-9a-f]{64}', MANIFEST_SHA256) and hashlib.sha256(raw).hexdigest() == MANIFEST_SHA256,
             'Atlas beacon manifest has not been qualified or differs')
@@ -387,7 +389,7 @@ def ensure_required_geometry(worktree, assets, context):
         descriptor = os.open(assets / visual.ARCHIVE, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
         try:
             require(world.checked_info(assets / visual.ARCHIVE, os.fstat(descriptor),
-                        visual.MAX_ARCHIVE_BYTES) == source_state[visual.ARCHIVE],
+                        visual.MAX_ARCHIVE_BYTES, allow_shared_source=True) == source_state[visual.ARCHIVE],
                     'Required geometry source archive changed before reading')
             with os.fdopen(descriptor, 'rb', closefd=False) as stream, zipfile.ZipFile(stream) as archive:
                 visual.validate_archive(archive, document['files'], context)
@@ -520,12 +522,20 @@ def atomic_bytes(path, raw):
         if temporary.exists(): temporary.unlink()
 
 
-def install(archive, manifest_path, runtime, *, context, imported_inputs_readonly):
+def install(archive, manifest_path, runtime, *, context, imported_inputs_readonly, mapserver_package=None):
     started = time.monotonic(); runtime = Path(runtime)
     require(imported_inputs_readonly is True, 'Beacon installation requires the qualified readonly private world')
     value = read_manifest(manifest_path)
     profile, selected = select_profile(runtime, value, context)
-    require(pin(runtime / 'MapServer.exe', context)['sha256'] == STOCK_MAPSERVER_SHA256,
+    accepted_mapserver = STOCK_MAPSERVER_SHA256
+    if isinstance(mapserver_package, dict) and 'native_monorail' in mapserver_package:
+        import native_monorail_contract
+        receipt = native_monorail_contract.embedded_receipt(mapserver_package)
+        require(receipt['previous_mapserver']['sha256'] == STOCK_MAPSERVER_SHA256
+                and receipt['build_input'].get('retained_collision_sources') == RETAINED_COLLISION_SOURCES,
+                'Monorail MapServer changed the qualified collision/beacon algorithms')
+        accepted_mapserver = receipt['mapserver']['sha256']
+    require(pin(runtime / 'MapServer.exe', context)['sha256'] == accepted_mapserver,
             'A different MapServer cannot consume this qualified native graph')
     inputs = fingerprints(runtime, selected, context, immutable_input=True)
     targets = {name: private_target(runtime, name, context) for name in value['files']}
@@ -555,7 +565,7 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
     require(inputs == fingerprints(runtime, selected, context, immutable_input=True)
             and select_profile(runtime, value, context)[0] == profile,
             'Atlas inputs changed while establishing native graph compatibility')
-    regular(archive, 2 * MAX_GRAPH)
+    regular(archive, 2 * MAX_GRAPH, allow_shared_source=True)
     require(ARCHIVE_BYTES > 0 and pin(archive, context) == {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
             'Atlas beacon archive differs from the qualified native producer')
     installed = 0

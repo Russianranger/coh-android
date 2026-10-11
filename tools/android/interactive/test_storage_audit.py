@@ -124,6 +124,27 @@ public final class StorageAuditHost {
     case "hardlink_dedup":{f.fs.file(f.old+"/rootfs/a",6000,12);f.fs.hardlink(f.old+"/rootfs/a",f.old+"/rootfs/b");StorageAudit.Plan p=f.scan();need(candidate(p,f.old).apparentBytes>12000);long expected=candidate(p,f.old).reclaimableBytes;StorageAudit.CleanupResult r=f.clean(p,"old_runtime");need(r.completed&&r.reclaimedBytes==expected&&!f.fs.files.containsKey(f.old));break;}
     case "hardlink_protected":{long baseline=candidate(f.scan(),f.old).reclaimableBytes;Entry a=f.fs.file(f.old+"/rootfs/a",6000,12);f.fs.hardlink(f.old+"/rootfs/a","client/state/keep");StorageAudit.Plan p=f.scan();need(candidate(p,f.old).reclaimableBytes==baseline);StorageAudit.CleanupResult r=f.clean(p,"old_runtime");need(r.completed&&f.fs.files.containsKey("client/state/keep")&&f.fs.files.get("client/state/keep").links==1);break;}
     case "hardlink_external":{Entry a=f.fs.file(f.old+"/rootfs/a",6000,12);a.links=2;StorageAudit.Plan p=f.scan();need(candidate(p,f.old).reclaimableBytes<candidate(p,f.old).allocatedBytes);StorageAudit.CleanupResult r=f.clean(p,"old_runtime");need(r.completed&&r.reclaimedBytes==candidate(p,f.old).reclaimableBytes);break;}
+    case "shared_asset_pack": {
+      String object="asset-packs/objects/"+"f".repeat(64);
+      f.fs.hardlink(f.current+"/assets/current.zip",object);
+      f.fs.hardlink(object,f.old+"/assets/shared.zip");
+      f.fs.file("asset-packs/.import-123/staged",9000,18);
+      StorageAudit.Plan p=f.scan();need(p.complete&&p.currentRuntimeVerified&&p.cleanupAllowed);
+      need(!category(p,"asset_packs").removable&&category(p,"asset_packs").apparentBytes>=9000);
+      need(f.clean(p,"old_runtime").completed&&f.fs.files.containsKey(object)&&f.fs.files.containsKey(f.current+"/assets/current.zip"));
+      need(f.fs.files.containsKey("asset-packs/.import-123/staged"));break;
+    }
+    case "shared_asset_missing_object": {
+      f.fs.hardlink(f.current+"/assets/current.zip","other/unknown");need(!f.scan().cleanupAllowed);break;
+    }
+    case "shared_asset_wrong_object": {
+      f.fs.hardlink(f.current+"/assets/current.zip","other/unknown");
+      f.fs.file("asset-packs/objects/"+"f".repeat(64),100,1);need(!f.scan().cleanupAllowed);break;
+    }
+    case "shared_asset_protected_selection": {
+      f.fs.file("asset-packs/objects/"+"f".repeat(64),100,1);
+      StorageAudit.CleanupResult r=f.clean(f.scan(),"asset_packs");need(!r.completed&&r.deletedCount==0);break;
+    }
     case "download_names":{for(String prefix:Arrays.asList("base","wine","database environment","Windows runtime"))for(String suffix:Arrays.asList(".tar.gz",".tar.gz.part"))f.fs.file("m2/downloads/"+prefix+"-"+"a".repeat(64)+suffix,1000,2);f.fs.file("m2/downloads/user-backup.zip",1000,2);StorageAudit.Plan p=f.scan();need(category(p,"downloads").candidateCount==8);StorageAudit.CleanupResult r=f.clean(p,"downloads");need(r.completed&&f.fs.files.containsKey("m2/downloads/user-backup.zip")&&f.fs.files.containsKey(f.old));break;}
     case "current_missing":{f.fs.files.remove(f.current+"/ready.json");StorageAudit.Plan p=f.scan();need(p.complete&&!p.currentRuntimeVerified&&!p.cleanupAllowed);need(f.clean(p,"old_runtime").deletedCount==0);break;}
     case "current_payload_missing":{f.fs.files.remove(f.current+"/assets/current.zip");need(!f.scan().cleanupAllowed);break;}
@@ -264,6 +285,7 @@ class StorageAuditTests(unittest.TestCase):
 SCENARIOS = [
     'classify', 'read_only', 'allocated', 'hardlink_dedup', 'hardlink_protected',
     'hardlink_external', 'download_names', 'current_missing', 'current_payload_missing',
+    'shared_asset_pack', 'shared_asset_missing_object', 'shared_asset_wrong_object', 'shared_asset_protected_selection',
     'current_payload_size', 'current_symlink_executable', 'old_bad_identity', 'old_extra_root',
     'staging_protected', 'reports_retention', 'reports_incomplete', 'pointer_invalid',
     'symlink_unlink_only', 'protected_relative_reference', 'protected_absolute_reference',

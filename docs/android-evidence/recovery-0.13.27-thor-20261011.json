@@ -1,0 +1,347 @@
+{
+  "format": 1,
+  "scope": "single_physical_0.13.27_Thor_session_recovery_zoning_save_and_performance_observations",
+  "archive": {
+    "filename": "coh-atlas-gameplay-20261011-035622.zip",
+    "bytes": 16388507,
+    "sha256": "90e26ee753ca0a7d0090ee71b44a71cfdc7cdf122378c380c7924358e4d13980",
+    "outer_entries": 41,
+    "nested_guest_entries": 15,
+    "outer_crc_error": null,
+    "nested_crc_error": null,
+    "raw_archive_modified": false,
+    "source_paths": [
+      "android-client-report.json",
+      "operation.log",
+      "runtime-manifest.json",
+      "guest-report.zip/latest-report.json",
+      "guest-report.zip/client-evidence/client-console.log",
+      "guest-report.zip/client-evidence/character-atlas-console.txt",
+      "guest-report.zip/client-evidence/character-zoning-map-101-console.txt",
+      "guest-report.zip/client-evidence/character-zoning.json"
+    ]
+  },
+  "identity": {
+    "app_version": "0.13.27",
+    "runtime_manifest_sha256": "94aa2c650dfb2d4a26864eb55f6e2386d98c00c269b8e6c17af515d5faeed098",
+    "runtime_repository_commit": "31fe36f64bd23648afc4ec3ba729e7f44dd7f40b",
+    "game_producer": "c512e912a004b66886a7667640aa1a967e95de64",
+    "game_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b",
+    "device": "AYN AYN Thor",
+    "android_sdk": 33,
+    "session_id": "e3757bcfdb5145ad8e890648153c2154",
+    "started_utc": "2026-10-11T03:24:50.632858+00:00",
+    "finished_utc": "2026-10-11T03:56:13.673841+00:00",
+    "renderer_observed": {
+      "vendor": "Collabora Ltd",
+      "renderer": "zink (Turnip Adreno (TM) 740)",
+      "gl_version": "4.3 (Compatibility Profile) Mesa 22.3.6",
+      "renderer_classification": "unclassified"
+    },
+    "source_width": 800,
+    "source_height": 600,
+    "graphics_requested": "performance",
+    "gpu_requested": "turnip",
+    "effective_frame_cap": 30
+  },
+  "completion": {
+    "status": "passed",
+    "process_exit_code": 0,
+    "failures": [],
+    "checkpoint_error": null,
+    "cleanup_verified": true,
+    "ordinary_save": {
+      "type": "character_saved",
+      "stage": "actual_client_interaction",
+      "time_utc": "2026-10-11T03:55:04.277706+00:00",
+      "session_id": "e3757bcfdb5145ad8e890648153c2154",
+      "client_pid": 636,
+      "character_id": 1,
+      "name": "THORHERO",
+      "committed_sql_verified": true,
+      "reopen_verified": true,
+      "powers_preserved": true,
+      "costume_preserved": true,
+      "preserved_existing_identity": true,
+      "committed_native_position_verified": true,
+      "recovery_requested": false,
+      "recovery_verified": false,
+      "zoning_enabled": true,
+      "connected_on_supported_map": true,
+      "map_id": 1
+    },
+    "dead_owned_socket_recovered": true,
+    "new_crash_observed": false,
+    "android_exit_history": {
+      "maximum_records": 4,
+      "records": [
+        {
+          "timestamp_utc_ms": 1791682035612,
+          "reason": 10,
+          "status": 0,
+          "importance": 400,
+          "pss_kib": 76724,
+          "rss_kib": 175808,
+          "pid": 7062,
+          "process_name": "io.github.russianranger.cohclientinteractive"
+        },
+        {
+          "timestamp_utc_ms": 1791681810002,
+          "reason": 10,
+          "status": 0,
+          "importance": 400,
+          "pss_kib": 0,
+          "rss_kib": 0,
+          "pid": 6906,
+          "process_name": "io.github.russianranger.cohclientinteractive"
+        },
+        {
+          "timestamp_utc_ms": 1791681120838,
+          "reason": 10,
+          "status": 0,
+          "importance": 400,
+          "pss_kib": 88219,
+          "rss_kib": 189168,
+          "pid": 19092,
+          "process_name": "io.github.russianranger.cohclientinteractive"
+        },
+        {
+          "timestamp_utc_ms": 1791663460326,
+          "reason": 10,
+          "status": 0,
+          "importance": 400,
+          "pss_kib": 66102,
+          "rss_kib": 172452,
+          "pid": 16347,
+          "process_name": "io.github.russianranger.cohclientinteractive"
+        }
+      ],
+      "own_processes_only": true,
+      "trace_streams_requested": false,
+      "status": "available"
+    },
+    "input_events_sent": 411,
+    "input_events_failed": 0,
+    "input_effect_verified": false,
+    "controls_physically_qualified": false,
+    "post_export_reopen_test_present": false,
+    "background_export_survival_test_present": false,
+    "lifecycle_retained_events": 512,
+    "lifecycle_held_input_release_events": 487
+  },
+  "zoning": {
+    "scope": "native_Atlas_instance_handoff",
+    "new_city_asset_coverage": false,
+    "transfers": [
+      {
+        "epoch": 1,
+        "from_map_id": 1,
+        "to_map_id": 101,
+        "preparation_kind": "cold",
+        "preparation_elapsed_ms": 239986,
+        "native_transfer_observed_ms": 134886,
+        "native_ready_after_send_lower_bound_ms": 59209,
+        "native_ready_after_send_upper_bound_ms": 60208,
+        "native_timestamp_precision_ms": 1000,
+        "arrival_native_verified": true,
+        "observer_queries_included": true,
+        "native_ready_utc_ms": 1791690523000,
+        "android_timing": {
+          "epoch": 1,
+          "request_utc_ms": 1791690220083,
+          "request_uptime_ms": 99654931,
+          "from_map_id": 1,
+          "to_map_id": 101,
+          "one_action_requested": true,
+          "user_actions": 1,
+          "ready_uptime_ms": 99894918,
+          "request_to_ready_ms": 239987,
+          "delivery_uptime_ms": 99898643,
+          "request_to_delivery_ms": 243712,
+          "native_arrival_uptime_ms": 100035901,
+          "request_to_native_arrival_ms": 380970,
+          "fresh_views_uptime_ms": 100038880,
+          "request_to_fresh_views_ms": 383949,
+          "total_elapsed_ms": 383949
+        }
+      },
+      {
+        "epoch": 2,
+        "from_map_id": 101,
+        "to_map_id": 1,
+        "preparation_kind": "resident_warm",
+        "preparation_elapsed_ms": 5257,
+        "native_transfer_observed_ms": 138267,
+        "native_ready_after_send_lower_bound_ms": 59264,
+        "native_ready_after_send_upper_bound_ms": 60263,
+        "native_timestamp_precision_ms": 1000,
+        "arrival_native_verified": true,
+        "observer_queries_included": true,
+        "native_ready_utc_ms": 1791690747000,
+        "android_timing": {
+          "epoch": 2,
+          "request_utc_ms": 1791690679238,
+          "request_uptime_ms": 100116459,
+          "from_map_id": 101,
+          "to_map_id": 1,
+          "one_action_requested": true,
+          "user_actions": 1,
+          "ready_uptime_ms": 100121719,
+          "request_to_ready_ms": 5260,
+          "delivery_uptime_ms": 100124962,
+          "request_to_delivery_ms": 8503,
+          "native_arrival_uptime_ms": 100263231,
+          "request_to_native_arrival_ms": 146772,
+          "fresh_views_uptime_ms": 100265465,
+          "request_to_fresh_views_ms": 149006,
+          "total_elapsed_ms": 149006
+        }
+      }
+    ],
+    "native_server_ready_seconds": {
+      "initial_atlas": 201.30867,
+      "destination_atlas_101": 224.518097
+    },
+    "cold_destination_native_regions": {
+      "sequencers_timestamp_gap_seconds": 56.792,
+      "grouplibs_timestamp_gap_seconds": 21.07,
+      "fx_load_begin_to_complete_seconds": 29.489,
+      "story_arcs_reported_seconds": 30.03,
+      "map_loading_reported_seconds": 27.56,
+      "physics_reported_seconds": 18.57,
+      "regions_are_wall_time_not_cpu_or_gpu_measurements": true
+    },
+    "scheduler": {
+      "supported": true,
+      "changed_threads": 2,
+      "restored_threads": 2,
+      "restore_complete": true,
+      "destination_rss_peak_kib": 1915160,
+      "physical_gain_qualified": false
+    },
+    "client_transfer_scene_phase_ms": {
+      "gfx_tree_reset": [
+        6281,
+        6384
+      ],
+      "gfx_surviving_fx_preload": [
+        12420,
+        11820
+      ],
+      "groups_libraries_and_definitions": [
+        31219,
+        31408
+      ],
+      "groups_collision_and_physics": [
+        3553,
+        3552
+      ],
+      "groups_network_and_processing_inclusive": [
+        38917,
+        38618
+      ]
+    },
+    "measurement_limit": "Native ready is earlier than full observer verification. Inclusive network/processing phase contains child scene phases; do not add them twice."
+  },
+  "performance": {
+    "gameplay_windows": 55,
+    "gameplay_metrics": {
+      "frame_interval": {
+        "count": 6680,
+        "weighted_mean_ms": 80.577228,
+        "max_ms": 3388.666
+      },
+      "frame_wall": {
+        "count": 6680,
+        "weighted_mean_ms": 80.110073,
+        "max_ms": 3388.66
+      },
+      "engine_wall": {
+        "count": 6680,
+        "weighted_mean_ms": 79.406053,
+        "max_ms": 3387.583
+      },
+      "submit_wall": {
+        "count": 6680,
+        "weighted_mean_ms": 54.550025,
+        "max_ms": 1377.704
+      },
+      "pacing_wall": {
+        "count": 6680,
+        "weighted_mean_ms": 1.385727,
+        "max_ms": 20.152
+      },
+      "work_wall": {
+        "count": 6680,
+        "weighted_mean_ms": 78.724258,
+        "max_ms": 3388.655
+      }
+    },
+    "weighted_native_gameplay_hz": 12.410454,
+    "window_mean_hz_range": [
+      2.534257,
+      26.047093
+    ],
+    "queue_reports": 47,
+    "queue_last_cumulative": {
+      "commands": 2727810,
+      "armed_observations": 111189,
+      "wake_signals": 110979,
+      "wake_signal_failures": 0,
+      "pending_commands": 959544,
+      "ring_waits": 0,
+      "ring_wait_iterations": 0,
+      "ring_wait_clock_failures": 0,
+      "ring_wait_wall_ms": 0.0,
+      "ring_wait_max_ms": 0.0
+    },
+    "scene_sparse_metrics": {
+      "setup_wall": {
+        "count": 206,
+        "weighted_mean_ms": 5.174369,
+        "max_ms": 48.142
+      },
+      "sort_wall": {
+        "count": 206,
+        "weighted_mean_ms": 0.077835,
+        "max_ms": 0.289
+      },
+      "draw_wall": {
+        "count": 206,
+        "weighted_mean_ms": 2.731121,
+        "max_ms": 66.246
+      }
+    },
+    "scope_limit": "Mixed gameplay and zone-preparation session; single report, not a controlled standalone FPS comparison or FPS-delta qualification. Renderer wall time is not pure GPU time.",
+    "physical_fps_delta_qualified": false,
+    "sustained_30_fps_qualified": false
+  },
+  "asset_errors": {
+    "fileerror_blocks": 3077,
+    "texture_trick_missing_logged": 1024,
+    "custom_texture_missing_logged": 1024,
+    "costume_texture_missing_logged": 1024,
+    "texture_logging_capped": true,
+    "missing_atlas_loading_screen_matches": 3,
+    "cape_missing_submodels": [
+      "object_library/FX/Flags/Flag_01.geo/GEO_Flag_04",
+      "object_library/FX/Flags/Flag_01.geo/GEO_Flag_Harness_04"
+    ],
+    "cape_definition": "FX/JIMB/CAPES/FlagUS.cape",
+    "missing_log_counts_are_not_complete_asset_inventory": true
+  },
+  "startup": {
+    "cold_server_data_mirror_seconds": 277.264923,
+    "atlas_beacon_install_verify_seconds": 59.786064,
+    "client_visual_verify_seconds": 56.755545,
+    "prior_database_unclean_shutdown_recovered": true,
+    "current_database_shutdown_clean": true
+  },
+  "limits": [
+    "No Kings Row assets or monorail qualified by this Atlas-only session.",
+    "No storage inventory rerun in this archive.",
+    "No physical control coverage follows merely from input submission.",
+    "Old Android exit records predate this successful session.",
+    "Prior accepted .25 FPS baseline remains; no comparison delta inferred."
+  ]
+}

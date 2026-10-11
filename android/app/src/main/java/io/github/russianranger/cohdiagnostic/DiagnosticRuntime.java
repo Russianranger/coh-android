@@ -48,6 +48,7 @@ public final class DiagnosticRuntime {
     private JSONObject manifest;
     private String manifestHash;
     private File generation;
+    private AssetPackStore assetPack;
     private boolean clientProbeRequested;
     private boolean dbServerRequested;
     private String operationMode="setup";
@@ -342,6 +343,11 @@ public final class DiagnosticRuntime {
         try {
             loadManifest();check();
             setupControl=setupMemoryControl();setupControl.admit();
+            if(manifest.has("external_asset_pack")) {
+                assetPack=new AssetPackStore(context,manifest,this::check,(phase,done,total)->setupProgress(phase,done/1048576+" MiB"));
+                if(!assetPack.isAccepted())throw new IOException(assetPack.status()+" before runtime setup");
+                setupReceipt.put("external_asset_pack",assetPack.receipt());
+            }
             long assetBytes=0;
             JSONObject pinnedFiles=manifest.getJSONObject("files");
             for(Iterator<String> names=pinnedFiles.keys();names.hasNext();)assetBytes=Math.addExact(assetBytes,pinnedFiles.getJSONObject(names.next()).getLong("bytes"));
@@ -383,7 +389,17 @@ public final class DiagnosticRuntime {
                                 .put("current_asset_copied_bytes",0L).put("current_asset_source","checking_staging")
                                 .put("runtime_payload_verified_bytes",copied);
                         stage("Verifying runtime asset",name);
-                        if(reusableSetupAsset(dest,pin)) {
+                        if(assetPack!=null&&assetPack.contains("runtime/"+name)) {
+                            File shared=assetPack.resolve("runtime/"+name);
+                            verify(shared,pin);check();
+                            if(Files.exists(dest.toPath(),LinkOption.NOFOLLOW_LINKS))TarExtractor.remove(dest,setupControl);
+                            // Immutable verified archives share an inode with the protected asset store.
+                            // No archive bytes are copied for each new runtime generation.
+                            Files.createLink(dest.toPath(),shared.toPath());
+                            setupReceipt.put("current_asset_source","verified_asset_pack_hard_link")
+                                    .put("runtime_payload_files_reused",setupReceipt.getInt("runtime_payload_files_reused")+1)
+                                    .put("runtime_payload_bytes_reused",Math.addExact(setupReceipt.getLong("runtime_payload_bytes_reused"),expected));
+                        } else if(reusableSetupAsset(dest,pin)) {
                             setupReceipt.put("current_asset_source","verified_same_generation_staging")
                                     .put("current_asset_copied_bytes",expected)
                                     .put("runtime_payload_files_reused",setupReceipt.getInt("runtime_payload_files_reused")+1)

@@ -813,6 +813,22 @@ class LocalCharacterServer(login.LocalLoginServer):
         receipt = self.ctx.report.get('client_worktree', {})
         require(receipt.get('imported_inputs_readonly') is True,
                 'Atlas requires the already protected private client worktree')
+        import zone_asset_package
+        self.zone_asset_document = None
+        self.zone_asset_exclusions = set()
+        if zone_asset_package.present(self.owner.args.assets):
+            self.zone_asset_document = zone_asset_package.package(self.owner.args.assets)
+            self.zone_asset_exclusions = {name[5:] for name in self.zone_asset_document['files']}
+            import kings_row_beacon_package
+            _, kings_lock = kings_row_beacon_package.read_manifest(
+                self.owner.args.assets / kings_row_beacon_package.MANIFEST,
+                self.owner.args.assets / kings_row_beacon_package.LOCK)
+            self.kings_row_beacon_lock = kings_lock
+            self.kings_row_beacon_graph = {'verified': True, 'map_id': 5,
+                'installation_deferred': True, 'native_graph_readback_qualified': True,
+                'physical_zoning_verified': False, 'manifest_sha256': kings_lock['manifest']['sha256']}
+            self.creation_report['kings_row_beacon_graph'] = self.kings_row_beacon_graph
+            self.ctx.report['kings_row_beacon_graph'] = self.kings_row_beacon_graph
         required_geometry = None
         if (self.owner.args.assets / 'atlas-beacons.zip').exists() or (self.owner.args.assets / 'atlas-beacon-manifest.json').exists():
             import atlas_beacon_package
@@ -875,7 +891,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         checkpoint('native_dependencies_and_manual_atlas')
         try:
             donor_identity = server_cache_package.build_expected_identity(self.runtime / 'data',
-                                                                          self.runtime / 'MapServer.exe')
+                self.runtime / 'MapServer.exe', mapserver_package=self.map_package)
             self.creation_report['prepared_server_caches'] = server_cache_package.install(
                 self.owner.args.assets / server_cache_package.ARCHIVE, self.runtime / 'data',
                 donor_identity, context=self.ctx)
@@ -903,7 +919,8 @@ class LocalCharacterServer(login.LocalLoginServer):
             import atlas_beacon_package
             installed = atlas_beacon_package.install(beacon_archive, beacon_manifest,
                 self.runtime, context=self.ctx,
-                imported_inputs_readonly=receipt.get('imported_inputs_readonly'))
+                imported_inputs_readonly=receipt.get('imported_inputs_readonly'),
+                mapserver_package=self.map_package)
             self.creation_report['atlas_beacon_graph'] = installed
             self.ctx.report['atlas_beacon_graph'] = installed
         checkpoint('atlas_beacon_graph')
@@ -993,6 +1010,90 @@ class LocalCharacterServer(login.LocalLoginServer):
         super().cleanup_config()
         if hasattr(self, 'data_cache'):
             self.data_cache.release(self.runtime / 'data', self.owner.cleanup_status)
+        if hasattr(self, 'kings_row_data_cache'):
+            self.kings_row_data_cache.release(self.kings_row_runtime / 'data', self.owner.cleanup_status)
+
+    def prepare_kings_row_runtime(self):
+        """One owned Map 5 tree, prepared on first native station request only.
+
+        Immutable baseline inputs are linked, private caches/configuration copied,
+        and precisely the 52 additional collision leaves overlaid. The full
+        client supplement never enters either server's collision inventory.
+        """
+        if getattr(self, 'kings_row_prepared', None) is not None:
+            return self.kings_row_prepared
+        import zone_asset_package
+        import kings_row_beacon_package
+        require(getattr(self, 'zone_asset_document', None) is not None
+                and getattr(self, 'kings_row_beacon_graph', {}).get('verified') is True,
+                'Kings Row package and native graph qualification are required')
+        started = time.monotonic()
+        target = self.runtime.with_name(self.runtime.name + '-kings-row')
+        require(not target.exists() and not target.is_symlink(), 'Kings Row session runtime already exists')
+        target.mkdir(mode=0o700); (target / 'data').mkdir(mode=0o700)
+        self.kings_row_runtime = target
+        identity = dict(self.data_cache.identity,
+            map_id=5, kings_collision_sha256=self.zone_asset_document['kings_row_collision_files_sha256'],
+            kings_graph_manifest=self.kings_row_beacon_lock['manifest'])
+        cache = server_data_cache.ServerDataCache(self.owner.root, identity,
+            self.owner.args.session_id, self.ctx)
+        self.kings_row_data_cache = cache
+        reused = cache.checkout(target / 'data')
+        for name in self.schema['files']:
+            destination = target / name
+            destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            server_data_cache.ServerDataCache.restore_schema(self.schema_dir / name, destination, target)
+        if reused:
+            staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
+        else:
+            staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache)
+        geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx, collision_only=True)
+        if not reused:
+            known = set(cache.directory_names)
+            targets = world.resolve_targets(target, self.zone_asset_document['kings_row_collision_files'], self.ctx)
+            for leaf in targets.values():
+                relative = leaf.relative_to(target / 'data')
+                for parent in reversed(relative.parents):
+                    name = '' if parent == Path('.') else parent.as_posix()
+                    if name not in known:
+                        cache.observe(parent, target / 'data' / parent, None, False); known.add(name)
+                # This finite overlay is owned regular data, not an immutable
+                # link to the imported source; retain the strict cache validator.
+                cache.private_names.append(relative.as_posix())
+            staged['files'] += len(targets)
+            staged['bytes'] += sum(pin['bytes'] for pin in self.zone_asset_document['kings_row_collision_files'].values())
+            staged['copied_private_files'] += len(targets)
+            cache.seal(target / 'data', staged)
+        for name, pin in self.map_package['files'].items():
+            source = self.runtime / name
+            require(source.is_file() and not source.is_symlink() and base.file_hash(source) == pin['sha256'],
+                    'Kings native dependency differs from the owned Atlas runtime')
+            destination = target / name
+            require(not destination.exists() and not destination.is_symlink(), 'Kings native dependency already exists')
+            shutil.copyfile(source, destination); destination.chmod(0o400)
+        # Preserve the current private DbServer connection, including its stock
+        # logging policy. Never reuse a cached session's credential file.
+        config = target / 'data/server/db/servers.cfg'
+        server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
+            mapserver_package=self.map_package)
+        prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
+            target / 'data', donor, context=self.ctx)
+        import server_animation_package
+        animation = server_animation_package.install(self.owner.args.assets / 'server-animations.pigg',
+            self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx)
+        graph = kings_row_beacon_package.install(self.owner.args.assets / kings_row_beacon_package.ARCHIVE,
+            self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
+            imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK)
+        self.kings_row_beacon_graph = graph
+        report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
+            'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
+            'animation': animation, 'elapsed_seconds': round(time.monotonic() - started, 6)}
+        self.creation_report['kings_row_preparation'] = report
+        self.creation_report['kings_row_beacon_graph'] = graph
+        self.ctx.report['kings_row_preparation'] = report
+        self.kings_row_prepared = {'runtime': target, 'graph': graph, 'preparation': report}
+        return self.kings_row_prepared
 
     def copy_private_data(self, source, target):
         return self.stage_map_data(source, target, force_private=True)
@@ -1023,6 +1124,11 @@ class LocalCharacterServer(login.LocalLoginServer):
             require(not destination.is_symlink(), 'Linked private destination refused')
             info = current.lstat()
             relative = current.relative_to(source)
+            if relative.as_posix().casefold() in getattr(self, 'zone_asset_exclusions', set()):
+                # This same client tree may already contain all-zone visuals
+                # from an earlier session. Atlas's strict graph proof must stay
+                # identical on cold and warm starts; Map 5 overlays only its 52.
+                continue
             private = force_private or bool(relative.parts and relative.parts[0] in ('server', 'bin', 'geobin'))
             if stat.S_ISDIR(info.st_mode):
                 resolved = resolver.directory(current)

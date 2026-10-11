@@ -53,6 +53,19 @@ public final class StorageFiles implements StorageAudit.Fs {
         return current;
     }
     private File currentPath(String[] parts){File result=root;for(String part:parts)result=new File(result,part);return result;}
+    private static String diagnosticPath(String path) {
+        String safe=path.replaceAll("[\\p{Cntrl}]","?");
+        if(safe.isEmpty())return "<files>";
+        return safe.length()<=128?safe:safe.substring(0,64)+"..."+safe.substring(safe.length()-61);
+    }
+    private static IOException failure(String action,String relative,ErrnoException error) {
+        // The old wrapper discarded the only distinction between permissions, races and
+        // exhausted descriptors. Keep errno first so the bounded report preserves it.
+        return new IOException(action+": errno="+error.errno+" ("+Os.strerror(error.errno)+") at "+diagnosticPath(relative),error);
+    }
+    private static void closeOwned(FileDescriptor descriptor) {
+        if(descriptor!=null)try{Os.close(descriptor);}catch(ErrnoException ignored){}
+    }
     private static StorageAudit.Stat lstat(File file) throws IOException {
         try {
             return stat(Os.lstat(file.getPath()));
@@ -65,7 +78,13 @@ public final class StorageFiles implements StorageAudit.Fs {
         else if(OsConstants.S_ISLNK(s.st_mode))kind=StorageAudit.Kind.SYMLINK;else kind=StorageAudit.Kind.OTHER;
         return new StorageAudit.Stat(kind,s.st_dev,s.st_ino,s.st_nlink,s.st_size,s.st_blocks,s.st_mtime,s.st_ctime);
     }
-    @Override public StorageAudit.Stat stat(String relative) throws IOException {return lstat(file(relative));}
+    @Override public StorageAudit.Stat stat(String relative) throws IOException {
+        try{return lstat(file(relative));}
+        catch(IOException error){
+            if(error.getCause() instanceof ErrnoException)throw failure("Cannot inspect storage",relative,(ErrnoException)error.getCause());
+            throw error;
+        }
+    }
     @Override public String rootPath(){return root.getPath();}
     @Override public List<String> rootAliases(){return rootAliases;}
     @Override public String readLink(String relative) throws IOException {
@@ -75,7 +94,7 @@ public final class StorageFiles implements StorageAudit.Fs {
             String value=Os.readlink(target.getPath());
             if(!before.same(lstat(file(relative))))throw new IOException("Storage link changed while reading");
             return value;
-        } catch(ErrnoException e){throw new IOException("Cannot inspect private storage link",e);}
+        } catch(ErrnoException e){throw failure("Cannot inspect storage link",relative,e);}
     }
     @Override public List<String> list(String relative) throws IOException {
         List<String> names=new ArrayList<>();
@@ -89,9 +108,10 @@ public final class StorageFiles implements StorageAudit.Fs {
     @Override public void visitDirectory(String relative,StorageAudit.NameVisitor visitor) throws IOException {
         File directory=file(relative);StorageAudit.Stat before=lstat(directory);
         if(before==null||before.kind!=StorageAudit.Kind.DIRECTORY)throw new IOException("Cannot list a linked storage directory");
-        FileDescriptor descriptor=null;int count=0;
+        FileDescriptor descriptor=null;int count=0;String operation="Cannot open inventory directory without following links";
         try {
             descriptor=Os.open(directory.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);
+            operation="Cannot verify opened inventory directory";
             if(!before.same(stat(Os.fstat(descriptor))))throw new IOException("Opened inventory directory changed");
             try(ParcelFileDescriptor held=ParcelFileDescriptor.dup(descriptor);
                     DirectoryStream<Path> stream=Files.newDirectoryStream(Paths.get("/proc/self/fd/"+held.getFd()))) {
@@ -108,8 +128,8 @@ public final class StorageFiles implements StorageAudit.Fs {
                 }
             }
             if(!before.same(lstat(file(relative))))throw new IOException("Storage directory changed while listing");
-        } catch(ErrnoException e){throw new IOException("Cannot open inventory directory without following links",e);}
-        finally{if(descriptor!=null)try{Os.close(descriptor);}catch(ErrnoException ignored){}}
+        } catch(ErrnoException e){throw failure(operation,relative,e);}
+        finally{closeOwned(descriptor);}
     }
     private File journals(boolean create) throws IOException {
         if(!cacheIdentity.sameDirectory(lstat(cache)))throw new IOException("App storage scratch cache changed");
@@ -162,10 +182,10 @@ public final class StorageFiles implements StorageAudit.Fs {
         if(before==null||before.kind!=StorageAudit.Kind.FILE||before.links!=1||before.size>limit)throw new IOException("Storage identity file is linked, missing or too large");
         FileDescriptor fd;
         try{fd=Os.open(target.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);}
-        catch(ErrnoException e){throw new IOException("Cannot read private storage identity",e);}
+        catch(ErrnoException e){throw failure("Cannot open storage identity",relative,e);}
         try(InputStream in=new FileInputStream(fd)) {
             try{if(!before.same(stat(Os.fstat(fd))))throw new IOException("Opened storage identity changed");}
-            catch(ErrnoException e){throw new IOException("Cannot verify opened identity",e);}
+            catch(ErrnoException e){throw failure("Cannot verify opened identity",relative,e);}
             byte[] value=bounded(in,limit);
             if(!before.same(lstat(file(relative))))throw new IOException("Storage identity changed while reading");
             if(relative.equals("client/latest-report.txt")) {
@@ -176,6 +196,10 @@ public final class StorageFiles implements StorageAudit.Fs {
                 }
             }
             return value;
+        } finally {
+            // On Android FileInputStream(FileDescriptor) borrows the descriptor:
+            // closing the stream does NOT close an fd returned by Os.open().
+            closeOwned(fd);
         }
     }
     @Override public Map<String,Object> json(byte[] bytes) throws IOException {
@@ -195,17 +219,17 @@ public final class StorageFiles implements StorageAudit.Fs {
         if(before==null||before.kind!=StorageAudit.Kind.FILE||before.links!=1)throw new IOException("Report is not an owned regular archive");
         FileDescriptor descriptor;
         try{descriptor=Os.open(target.getPath(),OsConstants.O_RDONLY|OsConstants.O_NOFOLLOW|OsConstants.O_CLOEXEC|OsConstants.O_NONBLOCK,0);}
-        catch(ErrnoException e){throw new IOException("Cannot open completed report without following links",e);}
+        catch(ErrnoException e){throw failure("Cannot open completed report without following links",relative,e);}
         try(InputStream input=new FileInputStream(descriptor);ZipInputStream archive=new ZipInputStream(input)) {
             try{if(!before.same(stat(Os.fstat(descriptor))))throw new IOException("Opened report changed");}
-            catch(ErrnoException e){throw new IOException("Cannot verify opened report",e);}
+            catch(ErrnoException e){throw failure("Cannot verify opened report",relative,e);}
             // All interactive report publishers put this identity first. Other archives are protected.
             ZipEntry report=archive.getNextEntry();
             if(report==null||!report.getName().equals("android-client-report.json")||report.isDirectory()||report.getSize()>limit)throw new IOException("Completed client report identity is unavailable");
             Map<String,Object> result=json(bounded(archive,limit));
             if(!before.same(lstat(file(relative))))throw new IOException("Completed report changed while inspecting");
             return result;
-        }
+        } finally {closeOwned(descriptor);}
     }
     private static byte[] bounded(InputStream in,int limit) throws IOException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buffer=new byte[8192];int count;

@@ -1,0 +1,175 @@
+name: Kings Row native station bridge and genuine beacon qualification
+on:
+  workflow_call:
+    inputs:
+      resource_artifact:
+        required: false
+        type: string
+        default: coh-assets-resource-inputs
+permissions:
+  contents: read
+  actions: read
+jobs:
+  monorail:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Run actual Windows station bridge fixture
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installation) { throw 'MSVC installation not found' }
+          New-Item -ItemType Directory -Path out/contracts -Force | Out-Null
+          $batch = @"
+          @echo off
+          call "$installation\VC\Auxiliary\Build\vcvars32.bat"
+          if errorlevel 1 exit /b 1
+          python tools/android/game/test_monorail.py --require-windows
+          if errorlevel 1 exit /b 1
+          "@
+          Set-Content -Path out/contracts/native.cmd -Value $batch -Encoding ASCII
+          cmd /c .\out\contracts\native.cmd 2>&1 | Tee-Object out/contracts/native.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Native monorail fixture failed' }
+      - name: Stage new shipping MapServer only
+        shell: pwsh
+        run: |
+          python tools/prepare_monorail_source.py --output C:/monorail-src
+          if ($LASTEXITCODE -ne 0) { throw 'Monorail source staging failed' }
+      - name: Compile station-aware MapServer while retaining Game and DbServer
+        working-directory: C:/monorail-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Monorail configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Monorail compile failed' }
+      - name: Package exact shipping MapServer with source and PE receipts
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/package_monorail_native.py
+          --directory C:/monorail-src/out/build/vs2026/bin/OptDebug
+          --source C:/monorail-src --cache C:/monorail-src/out/build/vs2026/CMakeCache.txt
+          --repository-commit "${{ github.sha }}"
+          --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          --output out/native-monorail
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-monorail-native
+          path: out/native-monorail/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Collect native compile evidence on the artifact drive
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/monorail-native-evidence -Force | Out-Null
+          foreach ($name in @('monorail-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
+            $source = Join-Path C:/monorail-src $name
+            if (Test-Path $source) { Copy-Item $source out/monorail-native-evidence/ }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-monorail-native-evidence
+          path: |
+            out/contracts/
+            out/monorail-native-evidence/
+          if-no-files-found: warn
+          retention-days: 90
+  beacons:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 120
+    steps:
+      - name: Preserve exact source bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.resource_artifact }}
+          path: out/resources
+      - name: Stage separate nonshippable genuine Kings Row producer
+        shell: pwsh
+        run: |
+          python tools/prepare_kings_row_beacon_generator_source.py --output C:/kr-bcn-src
+          if ($LASTEXITCODE -ne 0) { throw 'Kings host generator staging failed' }
+      - name: Compile host-only generator without touching Game or shipping MapServer
+        working-directory: C:/kr-bcn-src
+        shell: pwsh
+        run: |
+          cmake --preset vs2026 "-DPATCH_EXECUTABLE=C:/Program Files/Git/usr/bin/patch.exe" -DCOH_PG_PERSISTENCE_TESTS=OFF
+          if ($LASTEXITCODE -ne 0) { throw 'Kings host generator configure failed' }
+          cmake --build out/build/vs2026 --config OptDebug --parallel --target MapServer
+          if ($LASTEXITCODE -ne 0) { throw 'Kings host generator compile failed' }
+      - name: Retain completed host compile for exact reuse if later generation fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: coh-kings-row-host-generator
+          path: |
+            C:/kr-bcn-src/kings-row-beacon-generator-build-input.json
+            C:/kr-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+            C:/kr-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.pdb
+          if-no-files-found: error
+          retention-days: 90
+      - name: Generate collision-complete graph and run two fresh native CRC/readback/32-route proofs
+        shell: pwsh
+        run: >-
+          python tools/android/interactive/generate_kings_row_beacons.py
+          --donor-apk out/resources/donor.apk --asset-archive out/resources/reference.zip
+          --zones-archive out/resources/zones-world-supplement.zip
+          --zones-manifest out/resources/zones-world-supplement-manifest.json
+          --generator C:/kr-bcn-src/out/build/vs2026/bin/OptDebug/MapServer.exe
+          --build-input C:/kr-bcn-src/kings-row-beacon-generator-build-input.json
+          --repository-commit "${{ github.sha }}" --work C:/kr-bcn-run
+          --output out/kings-row-beacons --timeout-seconds 5400
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coh-kings-row-beacons
+          path: |
+            out/kings-row-beacons/kings-row-beacons.zip
+            out/kings-row-beacons/kings-row-beacon-manifest.json
+            out/kings-row-beacons/kings-row-beacon-lock.json
+            out/kings-row-beacons/kings-row-beacon-generation-report.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Preserve owned native diagnostics even on failure
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path out/kings-row-beacons/native-build -Force | Out-Null
+          foreach ($name in @('kings-row-beacon-generator-build-input.json', 'out/build/vs2026/CMakeCache.txt', 'out/build/vs2026/CMakeFiles/CMakeConfigureLog.yaml')) {
+            $source = Join-Path C:/kr-bcn-src $name
+            if (Test-Path $source) { Copy-Item $source out/kings-row-beacons/native-build/ }
+          }
+          foreach ($tree in @('C:/kr-bcn-run/r', 'C:/kr-bcn-run/c')) {
+            if (Test-Path $tree) {
+              $tag = Split-Path $tree -Leaf
+              Get-ChildItem -LiteralPath $tree -Filter 'errorLogLastRun*' -File | ForEach-Object {
+                if ($_.Length -lt 134217728) { Copy-Item $_.FullName "out/kings-row-beacons/native-build/$tag-$($_.Name)" }
+              }
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coh-kings-row-beacon-evidence
+          path: |
+            out/kings-row-beacons/evidence/
+            out/kings-row-beacons/native-build/
+            out/kings-row-beacons/kings-row-beacon-generation-report.json
+          if-no-files-found: warn
+          retention-days: 90
