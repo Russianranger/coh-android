@@ -1,4 +1,50 @@
-# CURRENT — .32 Map startup and Kings preparation — published; public bytes independently verified; Thor gates pending — 2026-10-12 UTC
+# CURRENT — .32 preserved; offline startup prerequisites qualified — 2026-10-12 UTC
+
+Recovered exact remote continuation head `005bc8eaa5d88744706de19ca37cb3f8a8053c7d`
+before development. The previous agent completed .32 publication, independent
+public-byte verification, and the pending-device handoff. All twelve workflows
+triggered by that handoff succeeded; no queued/in-progress repository workflow
+or local CoH build/game process was found. Remote conversation liveness is not
+observable here. The accessible historical .28 checkout was clean; its older
+divergent local branch/patches were preserved, with no later uncommitted .32
+work found. New work starts from .32 in an isolated worktree.
+
+**No replacement APK/native binary/asset pack was built.** Published .32 remains
+the physical baseline; Assets 1.0.0, Game/Db/GPU/FEX/Wine, controller, fidelity and
+save behavior remain unchanged. PR #1 stays draft/unmerged and main untouched.
+Existing .32 production files and the exact published guide bytes are checked
+by the new host-only prerequisite lane.
+
+| New isolated prerequisite | Host-qualified scope | Remaining gate |
+| --- | --- | --- |
+| Rank 2 BIN observer | 9 tests; actual extracted stock/observed C decision and IO-trace parity across 14 cases, bounded 256 rows, decoder unchanged | Native activation is **not integrated**: UtilitiesLib normally lacks SERVER. Review source-specific activation, Win32/Wine rows/overhead, then full effective-provider/generation and per-BIN certificate authority. No freshness bypass. |
+| Rank 4 owned stream | 25 tests; C++03 core and real vendor NxStream headers, scoped ownership, checked extents, sticky failures, ASAN/UBSAN | SDK cook/load caller safety and failure cleanup, exact SDK/geometry/cooking keys, durable cache and Atlas/Kings collision parity. No physics integration/cache yet. LeakSanitizer unavailable on the managed host; paired allocator accounting is separately recorded. |
+| Enhancement observation | 17 tests; accepted schema/native field contract, complete Boosts payload and stable placement comparison, printed read-only query | Query has not run against the owned device profile. Offline equality retains SQL/session/schema/device/persistence verification false; .32 reports lack these rows. |
+
+Final source-pinned local qualification: **3 suites / 51 tests / zero skips**.
+[Recovery and exact offline evidence](android-evidence/map-startup-prerequisites-20261012.json),
+[observer scope](../database/map-startup-observer/README.md),
+[stream scope and deployment gates](MAP_STARTUP_BOUNDED_STREAM.md), and
+[enhancement observation](ENHANCEMENT_PERSISTENCE_OBSERVATION.md).
+The new `map-startup-prerequisites.yml` lane runs only these host gates, uploads
+its source-pinned receipt/logs, and cannot publish an APK or modify releases.
+Consult the workflow result at the current branch commit before treating CI as passed.
+
+[Focused .32 Thor test plan](COH-0.13.32-next-device-gates.md) separates Atlas
+persistence, first Kings arrival/save, Kings saved reopen/return, and reused-cache
+round trip. Cold admission reserves 1,140 of 1,200 connected seconds; resident
+return reserves 510 seconds. At historical ~650-second cold Kings cost, a later
+return refusal can be a finite-budget constraint. No guard/window is weakened.
+Incomplete preparation's active unfinished subphase duration remains a follow-up.
+
+**No new physical measurement, startup/RAM/FPS improvement, complete monorail or
+sub-30-second result is claimed.** Collect .32 device evidence first. Qualify
+native observer/generation and stream/cache changes individually before combining
+them, preserving the ordinary loader/collision fallback and all existing saves.
+
+---
+
+# .32 Map startup and Kings preparation — published; public bytes independently verified; Thor gates pending — 2026-10-12 UTC
 
 **Current work:** 0.13.32 / code 47, continuing the exact .31 branch state
 `1499ab467d0d6b1418c15720c9c4c160f24f5522`. The .32 APK is published and independently

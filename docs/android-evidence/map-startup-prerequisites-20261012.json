@@ -1,0 +1,272 @@
+{
+  "format": 1,
+  "role": "v01332_recovery_and_offline_continuation",
+  "date": "2026-10-12",
+  "recovered_branch": "codex/character-persistence-continuation",
+  "recovered_head": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+  "published_source": "6c4d1d74f34ecdea8fabcf6238368bf72003878f",
+  "main_unchanged": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "pr": {
+    "number": 1,
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "release": {
+    "tag": "coh-atlas-gameplay-v0.13.32",
+    "id": 410240714,
+    "version_code": 47,
+    "published_utc": "2026-10-12T06:06:23Z",
+    "apk_bytes": 42031636,
+    "apk_sha256": "8995ecef2622a7720b0ef296b0960a79cc2e914a5da2a9078379ff66732b2839",
+    "asset_version": "1.0.0",
+    "asset_volumes_reused": 4
+  },
+  "previous_stopping_point": "Publication and independent public-byte audit completed; final handoff committed; physical .32 gates still pending.",
+  "status_observation": {
+    "active_coh_build_or_game_process_found": false,
+    "github_in_progress_runs": [],
+    "github_queued_runs": [],
+    "previous_remote_codex_conversation_liveness_available": false,
+    "final_handoff_workflows": 12,
+    "final_handoff_workflows_successful": 12,
+    "accessible_preexisting_checkout": "f7e212ea28155acdd86ee9716841180db8701e8e",
+    "preexisting_checkout_clean": true,
+    "divergent_historical_local_branch_preserved": "f76490ea12e4c7fb200e8ea6300a61f8de875a4a",
+    "later_uncommitted_032_work_found": false
+  },
+  "historical_publication_validation": {
+    "run_id": 38205495073,
+    "jobs": {
+      "changes": "success",
+      "apk": "success",
+      "public-audit": "success"
+    },
+    "suites": 190,
+    "tests": 2498,
+    "skips": 0,
+    "real_postgresql_fixtures": 21,
+    "first_failed_assembly_run": 38201625610,
+    "failure_resolution": "Historical receipt order repaired; corrected complete publication and public audit passed."
+  },
+  "physical_reference": {
+    "version": "0.13.31",
+    "atlas_creation_native_ready_seconds": 234.094,
+    "atlas_reopen_native_ready_seconds": 216.496,
+    "kings_preparation_seconds": 376.161,
+    "kings_native_ready_seconds": 274.187,
+    "kings_transfer_demonstrated": false,
+    "032_device_evidence_available": false,
+    "controlled_ab_comparison": false
+  },
+  "research_reused": {
+    "report": "COH-MapServer-Startup-Research(1).pdf",
+    "report_date": "2026-10-11",
+    "completed_ranks": [
+      1,
+      5
+    ],
+    "rank2_windows_seconds": {
+      "scripts_loc": 17.4,
+      "maps": 10.5
+    },
+    "rank2_windows_include_decoding": true,
+    "rank4_physx_interval_seconds": 18.18,
+    "rank4_interval_includes_sdk_load_allocation_and_cooking": true,
+    "saving_estimates_additive_or_measured": false
+  },
+  "implemented_scope": [
+    "Source-staged bounded BIN freshness observer; native activation remains unintegrated",
+    "Owned bounded stream core and real vendor-header adapter; SDK/collision integration remains unimplemented",
+    "Read-only enhancement query contract and offline semantic observation comparator",
+    "Focused .32 Thor tests and lightweight host-only CI qualification"
+  ],
+  "host_qualification": {
+    "format": 1,
+    "role": "offline_map_startup_prerequisite_qualification",
+    "status": "passed",
+    "repository_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+    "working_tree_source_pins": {
+      ".github/workflows/map-startup-prerequisites.yml": {
+        "bytes": 1902,
+        "sha256": "d7205716dd8a57c004f9f404dce04471f5e2eef4d873a7678a88122849b5ff3b"
+      },
+      "database/map-startup-observer/README.md": {
+        "bytes": 3713,
+        "sha256": "7244d208036b8faaf2dd31add9ac89c19ebf905db7ca50d7fb7cae3dd9f7e192"
+      },
+      "database/map-startup-observer/overlay/libs/UtilitiesLib/src/utils/coh_map_bin_observer.h": {
+        "bytes": 3981,
+        "sha256": "eb91f4347fcf29629c880e9cdfd8a4f70b48ae8d174a831a3c44e7ff31b65cdd"
+      },
+      "database/map-startup-physics/qualification/bounded_stream_fixture.cpp": {
+        "bytes": 15258,
+        "sha256": "595d3843b72fbe7c2146763b8ae2cabc1afc7e1ccb1fa9fb0e2336260af7f951"
+      },
+      "database/map-startup-physics/qualification/host-prerequisite-evidence.json": {
+        "bytes": 1980,
+        "sha256": "9ffc63fae7d15768a1dedb374a590b30479978b0826bbcf501350c29395eee4e"
+      },
+      "database/map-startup-physics/qualification/nx_owned_bounded_stream.h": {
+        "bytes": 2656,
+        "sha256": "841717863ec7d4280d0d52ba290d338a82675fd0d15e8fce8bccb1d8ac5b1710"
+      },
+      "database/map-startup-physics/qualification/owned_bounded_stream.h": {
+        "bytes": 6550,
+        "sha256": "0ecc069b4fb86f0ce933cc07ba075d03fc7aa2d2bfae42827f8697b46713c4ce"
+      },
+      "tools/android/interactive/analyze_enhancement_persistence.py": {
+        "bytes": 15426,
+        "sha256": "cc5ad7c3091dfd3638a7c6d7260a877cd636d9ab603047365a0bbf696ea94635"
+      },
+      "tools/android/interactive/test_analyze_enhancement_persistence.py": {
+        "bytes": 9794,
+        "sha256": "dde125fd0cbbc180d26ee7537593e2bcd823702df80e404781190d1994e32e45"
+      },
+      "tools/prepare_map_startup_observer_source.py": {
+        "bytes": 8123,
+        "sha256": "e0e3bd7eb44e7949eca473f5611ae5def3a86a24b37aa6ab04ebbda9eb9bc88d"
+      },
+      "tools/qualify_map_startup_prerequisites.py": {
+        "bytes": 6739,
+        "sha256": "06820e4296074b8139d410bc62caee184066e6c818623094d4e239061c1d6ad7"
+      },
+      "tools/test_map_startup_bounded_stream.py": {
+        "bytes": 8518,
+        "sha256": "c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4"
+      },
+      "tools/test_map_startup_observer_source.py": {
+        "bytes": 15428,
+        "sha256": "2c57904476b974eea971dd23279b2d85e7b27933acdf192e5d34a771e053ae1d"
+      }
+    },
+    "sources_unchanged_during_tests": true,
+    "frozen_release_boundary": {
+      "baseline_commit": "005bc8eaa5d88744706de19ca37cb3f8a8053c7d",
+      "existing_production_sources_unchanged": true,
+      "published_guide_sha256": "ddf7403c0fdd97b4f6a8d37b97f3f54ebd32ff3d988e50e4b046828357c43aa6"
+    },
+    "suites": [
+      {
+        "module": "test_map_startup_observer_source",
+        "tests_run": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "unexpected_successes": 0,
+        "expected_failures": 0,
+        "elapsed_seconds": 0.335,
+        "log": "test_map_startup_observer_source.log",
+        "passed": true
+      },
+      {
+        "module": "test_map_startup_bounded_stream",
+        "tests_run": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "unexpected_successes": 0,
+        "expected_failures": 0,
+        "elapsed_seconds": 1.989,
+        "log": "test_map_startup_bounded_stream.log",
+        "passed": true
+      },
+      {
+        "module": "test_analyze_enhancement_persistence",
+        "tests_run": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "unexpected_successes": 0,
+        "expected_failures": 0,
+        "elapsed_seconds": 0.054,
+        "log": "test_analyze_enhancement_persistence.log",
+        "passed": true
+      }
+    ],
+    "component_evidence": {
+      "bounded_stream": {
+        "schema": "coh-owned-bounded-stream-host-prerequisite-v1",
+        "status": "passed",
+        "host_tests": 25,
+        "skips": 0,
+        "failures": 0,
+        "errors": 0,
+        "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+        "host_pointer_bits": 64,
+        "cxx_language": "c++03",
+        "asan": true,
+        "ubsan": true,
+        "leak_sanitizer": false,
+        "owned_allocator_allocation_release_accounting": true,
+        "real_vendor_headers_compiled": [
+          "Nx.h",
+          "NxSimpleTypes.h",
+          "NxStream.h"
+        ],
+        "fixtures": [
+          "ownership",
+          "parity",
+          "short_reads",
+          "overflow_and_cap",
+          "allocation_failure",
+          "modes",
+          "invalid_input",
+          "self_append",
+          "consumer_boundary",
+          "growth"
+        ],
+        "files_sha256": {
+          "database/map-startup-physics/qualification/owned_bounded_stream.h": "0ecc069b4fb86f0ce933cc07ba075d03fc7aa2d2bfae42827f8697b46713c4ce",
+          "database/map-startup-physics/qualification/nx_owned_bounded_stream.h": "841717863ec7d4280d0d52ba290d338a82675fd0d15e8fce8bccb1d8ac5b1710",
+          "database/map-startup-physics/qualification/bounded_stream_fixture.cpp": "595d3843b72fbe7c2146763b8ae2cabc1afc7e1ccb1fa9fb0e2336260af7f951",
+          "tools/test_map_startup_bounded_stream.py": "c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4",
+          "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/Nx.h": "d4ce3e89b45b3666f6b28650ef49e562c3eb6abc57f020600734663dd1e102fc",
+          "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h": "b0a16b2f0063008acc964fa3c3ed3743a5cefd3d12da0443b6a956a1c26f793b",
+          "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxStream.h": "14562397582bdad34f384951c6a5840dfaec928902440aab0cbf41eb4ef84899"
+        },
+        "shipping_integration": false,
+        "native_binary_built": false,
+        "sdk_cooking_executed": false,
+        "sdk_mesh_creation_executed": false,
+        "win32_wine_validated": false,
+        "collision_parity_validated": false,
+        "thor_validated": false,
+        "startup_seconds": null,
+        "ram_savings_bytes": null
+      }
+    },
+    "suites_run": 3,
+    "tests_run": 51,
+    "skipped": 0,
+    "scope": [
+      "Source-staged SERVER freshness observer and extracted native stock-equivalence fixtures",
+      "Owned bounded stream core and actual SDK-header adapter on the host, without PhysX SDK execution",
+      "Offline enhancement snapshot comparison, without SQL writes or device-session authentication"
+    ],
+    "shipping_native_binary_rebuilt": false,
+    "apk_built_or_published": false,
+    "asset_pack_rebuilt": false,
+    "freshness_bypass_enabled": false,
+    "cooked_mesh_cache_enabled": false,
+    "physical_thor_tested": false,
+    "performance_improvement_established": false,
+    "remaining_gates": [
+      "Native Win32/Wine observer execution and paired physical .32 measurements",
+      "Complete native effective-provider and immutable-generation authority before per-BIN certificates",
+      "PhysX SDK load/failure handling, exact geometry/SDK/cooking keys and Atlas/Kings collision parity",
+      "Physical persistence, both monorail directions, saved Kings reopen and complete report/cleanup"
+    ]
+  },
+  "new_apk_published": false,
+  "new_native_binary_built": false,
+  "new_asset_pack_built": false,
+  "physical_speed_fps_ram_or_monorail_improvement_claimed": false,
+  "pending": [
+    "Physical .32 persistence, performance, Kings arrival/return/reopen and complete cleanup/export",
+    "Native observer activation and Wine equivalence before closed provider/generation and per-BIN certificates",
+    "Actual SDK stream caller/failure qualification, cache keys and Atlas/Kings collision parity",
+    "Live owned-profile enhancement snapshot capture; offline SQL query has not been executed",
+    "Active failed-preparation subphase duration remains an observability follow-up"
+  ]
+}

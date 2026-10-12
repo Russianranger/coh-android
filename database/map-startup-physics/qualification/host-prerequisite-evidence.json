@@ -1,0 +1,50 @@
+{
+  "asan": true,
+  "collision_parity_validated": false,
+  "compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0",
+  "cxx_language": "c++03",
+  "errors": 0,
+  "failures": 0,
+  "files_sha256": {
+    "database/map-startup-physics/qualification/bounded_stream_fixture.cpp": "595d3843b72fbe7c2146763b8ae2cabc1afc7e1ccb1fa9fb0e2336260af7f951",
+    "database/map-startup-physics/qualification/nx_owned_bounded_stream.h": "841717863ec7d4280d0d52ba290d338a82675fd0d15e8fce8bccb1d8ac5b1710",
+    "database/map-startup-physics/qualification/owned_bounded_stream.h": "0ecc069b4fb86f0ce933cc07ba075d03fc7aa2d2bfae42827f8697b46713c4ce",
+    "tools/test_map_startup_bounded_stream.py": "c35256b60867233737bed7653076d97aab76eacfdc7efd6e9bab45b51ce58fb4",
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/Nx.h": "d4ce3e89b45b3666f6b28650ef49e562c3eb6abc57f020600734663dd1e102fc",
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h": "b0a16b2f0063008acc964fa3c3ed3743a5cefd3d12da0443b6a956a1c26f793b",
+    "upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxStream.h": "14562397582bdad34f384951c6a5840dfaec928902440aab0cbf41eb4ef84899"
+  },
+  "fixtures": [
+    "ownership",
+    "parity",
+    "short_reads",
+    "overflow_and_cap",
+    "allocation_failure",
+    "modes",
+    "invalid_input",
+    "self_append",
+    "consumer_boundary",
+    "growth"
+  ],
+  "host_pointer_bits": 64,
+  "host_tests": 25,
+  "leak_sanitizer": false,
+  "native_binary_built": false,
+  "owned_allocator_allocation_release_accounting": true,
+  "ram_savings_bytes": null,
+  "real_vendor_headers_compiled": [
+    "Nx.h",
+    "NxSimpleTypes.h",
+    "NxStream.h"
+  ],
+  "schema": "coh-owned-bounded-stream-host-prerequisite-v1",
+  "sdk_cooking_executed": false,
+  "sdk_mesh_creation_executed": false,
+  "shipping_integration": false,
+  "skips": 0,
+  "startup_seconds": null,
+  "status": "passed",
+  "thor_validated": false,
+  "ubsan": true,
+  "win32_wine_validated": false
+}
