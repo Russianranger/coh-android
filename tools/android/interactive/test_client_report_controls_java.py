@@ -16,8 +16,10 @@ class ReportControlsJava(unittest.TestCase):
         cls.directory = tempfile.TemporaryDirectory(prefix='coh-report-controls-')
         source = ACTIVITY.read_text()
         methods = '\n'.join(production_method(source, signature) for signature in
-            ('static boolean diagnosticControlsReady(', 'static String reportArchiveLabel('))
+            ('static boolean diagnosticControlsReady(', 'static String reportArchiveLabel(', 'static String reportFileLabel('))
         host = '''
+import java.io.*;
+class ClientReports {static String status;static String reportStatus(File f)throws IOException{return status;}}
 class ClientService { static class State { boolean busy,storageBusy,reportExporting,blocked; } }
 public class ReportControlsHost {
 METHODS
@@ -37,6 +39,14 @@ public static void main(String[] args){
   need(!diagnosticControlsReady(null,true,false,false));
   need(!diagnosticControlsReady(state,false,false,false));
   need(!diagnosticControlsReady(state,true,true,false));break;
+ case "outcomes":
+  File file=new File("coh-character-reopen-1-abc.zip");
+  ClientReports.status="successful";need(reportFileLabel(file).contains("Successful session"));
+  ClientReports.status="incomplete";need(reportFileLabel(file).contains("Incomplete session"));
+  ClientReports.status="failed";need(reportFileLabel(file).contains("Failed session"));
+  ClientReports.status="interrupted";need(reportFileLabel(file).contains("Interrupted"));
+  ClientReports.status="finalization_failed";need(reportFileLabel(new File("coh-interrupted-1-abc.zip")).contains("finalization failed"));
+  ClientReports.status="unknown";need(reportFileLabel(file).contains("inspect save"));break;
  case "labels":
   need(reportArchiveLabel("coh-character-reopen-1-abc.zip").contains("inspect save"));
   need(reportArchiveLabel("coh-report-failure-1-abc.zip").contains("finalization failed"));
@@ -65,6 +75,7 @@ public static void main(String[] args){
     def test_live_operation_still_excludes_diagnostic_file_work(self): self.scenario('ownership')
     def test_busy_import_storage_and_export_still_exclude_file_work(self): self.scenario('busy')
     def test_missing_service_state_and_open_picker_are_not_admitted(self): self.scenario('unavailable')
+    def test_actual_archive_outcomes_are_distinguished_without_claiming_gameplay(self):self.scenario('outcomes')
     def test_report_labels_do_not_claim_gameplay_completion(self): self.scenario('labels')
 
 

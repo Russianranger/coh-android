@@ -562,7 +562,7 @@ public final class ClientRuntime {
             builder.environment().put("PROOT_NO_SECCOMP", "1");
             write(guard(context), new JSONObject().put("status", "running").put("process_instance", PROCESS_INSTANCE)
                     .put("session_id", session).put("operation_id", runId).toString().getBytes(StandardCharsets.UTF_8));
-            stage("Starting City of Heroes", "Starting the persistent local database, DbServer and Atlas, then opening the graphical client.");
+            stage("Starting City of Heroes", "Starting the persistent local database and DbServer, verifying the saved destination, then opening its MapServer and graphical client.");
             check(); child = builder.start(); launched = true; runLaunched = true;
             Process process = child;
             output = new Thread(() -> captureOutput(process), "coh-client-output"); output.start();
@@ -651,7 +651,7 @@ public final class ClientRuntime {
         String summary = passed ? (taskGateRequired()
                 ? "One manually accepted task completed through the stock command and remained committed after ordinary logout, with matching native/SQL evidence, accepted/completed Android views and verified cleanup. Review both task views; combat, mission maps and reward turn-in remain separate."
                 : reopen
-                ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the Atlas view; rendering and gameplay require separate visual validation."
+                ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the saved world view; rendering and gameplay require separate visual validation."
                 : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
                 : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Export the latest report."
@@ -1701,6 +1701,15 @@ public final class ClientRuntime {
                             recordLifecycle("local_login_observed");
                             stage("Local server login observed", reopen ? "The server sent the saved character list. Select THORHERO and click Enter Game. Do not create or delete a character." : "The server sent the character list. Create THORHERO as a Primal Earth Hero and skip the tutorial.");
                         }
+                        if (reopen && zoningEnabled() && ClientAcceptance.savedDestinationEvent(jsonValue(event), session,
+                                Boolean.TRUE.equals(manifest.opt("character_monorail_enabled")))
+                                && characterConnectedEvent == null && !cancelled && !finished && !producerCompleted) {
+                            stage("Saved destination verified", "THORHERO is saved in "
+                                + ClientZoning.name(event.optInt("map_id", -1)) + ". Preparing its native MapServer on port "
+                                + event.optInt("port", -1) + "; existing character data is preserved.");
+                            recordLifecycle("saved_destination_verified map_id=" + event.optInt("map_id", -1)
+                                + " port=" + event.optInt("port", -1));
+                        }
                         if ((reopen ? ClientAcceptance.characterReopenConnectedEvent(jsonValue(event), session, observedClientPid,zoningEnabled()) : ClientAcceptance.characterConnectedEvent(jsonValue(event), session, observedClientPid))
                                 && characterConnectedEvent == null && loginObservedUptime >= 0
                                 && !cancelled && !finished && !producerCompleted) {
@@ -1979,7 +1988,13 @@ public final class ClientRuntime {
         boolean actualWindow = false;
         for (int i=0;i<windows.length();i++) {
             JSONObject window = windows.getJSONObject(i);
-            if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid)) actualWindow = true;
+            JSONObject character = report.optJSONObject(reopen ? "character_reopen" : "character_creation");
+            int initialMap = characterConnectedEvent == null ? 1 : characterConnectedEvent.optInt("map_id", -1);
+            int currentMap = character == null ? -1 : character.optInt("map_id", -1);
+            boolean monorailQualified = zoningEnabled() && Boolean.TRUE.equals(manifest.opt("character_monorail_enabled"))
+                    && character != null && Boolean.TRUE.equals(character.opt("monorail_enabled"));
+            if (ClientAcceptance.clientWindowAccepted(jsonValue(window), observedClientPid,
+                    initialMap, currentMap, monorailQualified)) actualWindow = true;
         }
         if (!actualWindow) return false;
         JSONObject hashes = report.optJSONObject("asset_sha256"), pins = manifest.getJSONObject("files");
@@ -2126,7 +2141,9 @@ public final class ClientRuntime {
         }
     }
 
+    private JSONObject finalGuestReport;
     private void publish(JSONObject guest, boolean passed, boolean cleanup) throws IOException {
+        finalGuestReport=guest;
         checkpoint();checkpointWorker.shutdown();
         try {if(!checkpointWorker.awaitTermination(10,TimeUnit.SECONDS))checkpointFailure="checkpoint_flush_timed_out";}
         catch(InterruptedException interrupted){Thread.currentThread().interrupt();checkpointFailure="checkpoint_flush_interrupted";}
@@ -2305,8 +2322,7 @@ public final class ClientRuntime {
                 }
             }
             ClientReports.commitNormalArchive(home.getParentFile(),part,target);
-            write(new File(work, "latest-report.txt"), target.getCanonicalPath().getBytes(StandardCharsets.UTF_8));
-            latestReport = target;freshReportRetained=true;
+            recordCommittedReport(target);
             if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
                 try { ClientReports.completedGuest(home.getParentFile(),target,session); }
                 catch(IOException unavailable) { line("Completed guest preservation receipt unavailable; recovery remains available: "+unavailable.getClass().getSimpleName()); }
@@ -2325,15 +2341,29 @@ public final class ClientRuntime {
         }
     }
 
+    private void recordCommittedReport(File target) throws IOException {
+        latestReport=target;freshReportRetained=true;
+        try { write(new File(work,"latest-report.txt"),target.getCanonicalPath().getBytes(StandardCharsets.UTF_8)); }
+        catch(IOException pointerFailure) { line("Complete current-session report retained without latest-report pointer"); }
+    }
+
     /** Keep a failed operation exportable even if qualification throws before normal publication. */
     File preserveFailureReport(Throwable failure) throws IOException {
         if(freshReportRetained || operationDir==null)return latestReport;
         return retainFailureReport(failure,false);
     }
+    private Boolean terminalSaveObservation() {
+        if(finalGuestReport==null)return null;
+        try {
+            return committedCharacterSaveObserved(jsonValue(finalGuestReport),jsonValue(characterSavedEvent),
+                    jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1);
+        }catch(Exception | OutOfMemoryError unavailable){return null;}
+    }
     private File retainFailureReport(Throwable failure,boolean cleanup) throws IOException {
         try {
             String cause=message(failure);if(cause.length()>1024)cause=cause.substring(0,1024);
             String previous=error;if(previous!=null && previous.length()>1024)previous=previous.substring(0,1024);
+            Boolean saveObservation=terminalSaveObservation();
             JSONObject terminal=new JSONObject().put("format",1).put("operation",operation).put("run_id",runId)
                     .put("session_id",session==null?JSONObject.NULL:session).put("app_id",context.getPackageName())
                     .put("app_version",appVersion()).put("status","failed_report_assembly").put("passed",false)
@@ -2341,7 +2371,13 @@ public final class ClientRuntime {
                     .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
                     .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
                     .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
+                    .put("finalized_utc_ms",System.currentTimeMillis())
                     .put("process_exit_code",processExit).put("character_save_qualification",false)
+                    .put("committed_save_observation_available",saveObservation!=null)
+                    .put("committed_save_observed",saveObservation==null?JSONObject.NULL:saveObservation)
+                    .put("character_saved_event",characterSavedEvent==null?JSONObject.NULL:characterSavedEvent)
+                    .put("character_connected_event",characterConnectedEvent==null?JSONObject.NULL:characterConnectedEvent)
+                    .put("save_logout_requested",saveLogoutRequested)
                     .put("scope","Failed-session diagnostic carrier only; original guest/checkpoint observations are retained without conferring any pass.");
             byte[] output;synchronized(this){output=log.toString().getBytes(StandardCharsets.UTF_8);}
             latestReport=ClientReports.retainTerminalFailure(home.getParentFile(),operationDir,

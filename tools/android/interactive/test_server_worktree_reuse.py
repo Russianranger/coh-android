@@ -920,6 +920,63 @@ class ServerWorktreeReuseTests(unittest.TestCase):
         self.assertEqual(warm_report['linked_immutable_files'], 0)
         self.close(warm)
 
+    def test_warm_directory_proof_uses_one_current_metadata_query_without_recreating_inputs(self):
+        for index in range(256):
+            self.source(f'defs/metadata-bucket-{index}/input.def')
+        cold = self.make(993); self.prepare(cold); self.close(cold)
+        donor = cold.data_cache.path / 'data'
+        watched = {donor / f'defs/metadata-bucket-{index}' for index in range(256)}
+        # Immutable anchor byte checks separately resolve their real parents.
+        # Count only directories outside that unchanged additional authority.
+        watched -= {donor / parent for row in cold.data_cache.record['anchors']
+                    for parent in Path(row['path']).parents}
+        queries = {path: 0 for path in watched}
+        original = Path.lstat
+
+        def observed(path, *args, **kwargs):
+            if path in queries:
+                queries[path] += 1
+            return original(path, *args, **kwargs)
+
+        warm = self.make(994)
+        with patch.object(Path, 'lstat', observed), \
+                patch.object(warm, 'stage_map_data', side_effect=AssertionError('warm recreated input tree')):
+            result = self.prepare(warm)['server_data_cache']
+        self.assertTrue(result['reused'])
+        self.assertEqual(cold.data_cache.key, warm.data_cache.key)
+        self.assertEqual(set(queries.values()), {1})
+        self.assertEqual(result['immutable_directory_metadata_queries'], result['immutable_directory_checks'])
+        self.assertEqual(result['immutable_directory_metadata_policy'],
+                         'one_current_no_follow_snapshot_per_directory')
+        self.assertGreater(result['immutable_anchor_checks'], 0)
+        self.assertGreater(result['private_entries_checked'], 0)
+        print('WARM_DIRECTORY_HOST_METADATA_METRIC ' + json.dumps({
+            'isolated_immutable_directories': len(watched),
+            'actual_candidate_metadata_queries': sum(queries.values()),
+            'previous_consecutive_query_count_for_same_directories': 2 * len(watched),
+            'physical_loading_seconds_measured': False,
+        }, sort_keys=True))
+        self.close(warm)
+
+    def test_current_warm_directory_replacement_is_refused_and_database_preserved(self):
+        self.source('defs/metadata-bucket/input.def')
+        sentinel = self.database_sentinel()
+        cold = self.make(995); self.prepare(cold); self.close(cold)
+        donor = cold.data_cache.path / 'data'
+        original = donor / 'defs/metadata-bucket'
+        retained = original.with_name('metadata-bucket-retained')
+        original.rename(retained)
+        original.mkdir()
+        (original / 'input.def').symlink_to(self.imported / 'defs/metadata-bucket/input.def')
+        warm = self.make(996)
+        result = self.prepare(warm)['server_data_cache']
+        self.assertFalse(result['reused'])
+        self.assertIn('directory changed', result['reuse_refused'])
+        self.assertTrue(retained.is_dir())
+        self.assertEqual(json.loads(cold.data_cache.marker.read_text())['status'], 'closed')
+        self.assert_database_sentinel(sentinel)
+        self.close(warm)
+
     def test_cold_receipt_seal_refuses_unsafe_directory_names_before_publication(self):
         value = self.make(992)
         self.prepare(value)

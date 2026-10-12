@@ -543,10 +543,24 @@ public final class ClientActivity extends Activity {
         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));
         for(int i=0;i<labels.length;i++){
             File report=reports.get(i);String run=report.getParentFile().getName();long utc=report.lastModified();
-            try{utc=Long.parseLong(run.substring(0,run.indexOf('-')));}catch(Exception ignored){}
-            labels[i]=format.format(new Date(utc))+" · "+reportArchiveLabel(report.getName())+" · "+storageBytes(report.length());
+            try{utc=ClientReports.reportStartedUtc(report);}catch(Exception ignored){}
+            labels[i]=format.format(new Date(utc))+" · "+reportFileLabel(report)+" · "+storageBytes(report.length());
         }
         new AlertDialog.Builder(this).setTitle("Retained reports · newest first").setItems(labels,(dialog,index)->chooseReportDestination(reports.get(index))).setNegativeButton("Cancel",null).show();
+    }
+    static String reportFileLabel(File report){
+        try {
+            switch(ClientReports.reportStatus(report)) {
+                case "successful":return "Successful session · inspect gameplay results";
+                case "incomplete":return "Incomplete session · inspect committed save";
+                case "failed":return "Failed session · diagnostic evidence";
+                case "interrupted":return "Interrupted / incomplete session";
+                case "finalization_failed":return "Report finalization failed · diagnostic evidence";
+                case "recovered":return reportArchiveLabel(report.getName());
+                default:break;
+            }
+        }catch(IOException unavailable){/* The archive remains retained; no completion is inferred. */}
+        return reportArchiveLabel(report.getName());
     }
     static String reportArchiveLabel(String name){
         if(name.startsWith("coh-interrupted-guest-"))return "Recovered guest evidence · session unverified";

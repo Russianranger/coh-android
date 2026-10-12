@@ -142,7 +142,7 @@ public class ReportsHost {
  }
  static void excessiveInventory()throws Exception{
   Path run=run();for(int n=0;n<2049;n++)Files.write(run.resolve("unrelated-"+n),new byte[0]);
-  fails(()->ClientReports.reports(root.toFile(),8));
+  need(ClientReports.reports(root.toFile(),8).isEmpty());
  }
  static void checkpointLink()throws Exception{
   Path run=run(),outside=root.resolve("outside.json");Files.write(outside,new byte[]{9});Files.createSymbolicLink(run.resolve("checkpoint.json"),outside);
@@ -243,8 +243,70 @@ public class ReportsHost {
   byte[] stable=Files.readAllBytes(carrier.toPath());for(int n=0;n<3;n++){ClientReports.recoverAll(root.toFile());List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1&&reports.get(0).equals(carrier)&&Arrays.equals(stable,Files.readAllBytes(carrier.toPath())));}
   need(Arrays.equals(Files.readAllBytes(original),new byte[]{7,7})&&Files.readAllBytes(outside)[0]==9);need(Files.isSymbolicLink(run.resolve("terminal-carrier.txt")));
  }
+ static void interruptedOptional(String mode)throws Exception {
+  Path run=run();byte[] checkpoint="{\"session_id\":\"11112222333344445555666677778888\",\"phase\":\"saved_kings_row\"}".getBytes(StandardCharsets.UTF_8);ClientReports.checkpoint(run.toFile(),checkpoint);
+  Path capture=Files.createDirectories(run.resolve("android-character")).resolve("capture-1.png");Files.write(capture,png);
+  Path outside=root.resolve("secret.txt");Files.write(outside,"DO_NOT_EXPORT".getBytes(StandardCharsets.UTF_8));
+  if(mode.equals("interrupted_link")){Files.delete(capture);Files.createSymbolicLink(capture,outside);}
+  else if(mode.equals("interrupted_oversize")){try(RandomAccessFile huge=new RandomAccessFile(capture.toFile(),"rw")){huge.setLength(4L*1024*1024+1);}}
+  else ClientReports.setSourceOpener(path->{
+   if(path.equals(capture)){
+    List<File> compact=ClientReports.reports(root.toFile(),8);need(compact.size()==1&&Arrays.equals(unzip(compact.get(0)).get("android-recovery-checkpoint.json"),checkpoint));
+    throw new IOException("optional capture failed after compact commit");
+   }return Files.newByteChannel(path,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS);
+  });
+  ClientReports.recoverAll(root.toFile());List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1);Map<String,byte[]> carrier=unzip(reports.get(0));
+  need(Arrays.equals(carrier.get("android-recovery-checkpoint.json"),checkpoint)&&!carrier.containsKey("android-character/capture-1.png"));
+  String manifest=new String(carrier.get("recovery-manifest.json"),StandardCharsets.UTF_8);need(manifest.contains("interrupted_unverified")&&manifest.contains("omitted_sources")&&manifest.contains("android-character/capture-1.png"));
+  for(byte[] bytes:carrier.values())need(!new String(bytes,StandardCharsets.UTF_8).contains("DO_NOT_EXPORT"));
+  ByteArrayOutputStream export=new ByteArrayOutputStream();need(ClientReports.export(root.toFile(),reports.get(0),export)>0);
+  byte[] stable=Files.readAllBytes(reports.get(0).toPath());ClientReports.recoverAll(root.toFile());need(ClientReports.reports(root.toFile(),8).size()==1&&Arrays.equals(stable,Files.readAllBytes(reports.get(0).toPath())));
+  need(Files.exists(capture,LinkOption.NOFOLLOW_LINKS)&&Files.readAllBytes(outside).length==13);
+ }
+ static void historicalInventory()throws Exception {
+  Path old=run();for(int n=0;n<2049;n++)Files.write(old.resolve("unrelated-"+n),new byte[0]);Path current=Files.createDirectory(old.getParent().resolve("1760222000000-0123456789ab"));Path report=completed(current);
+  need(ClientReports.reports(root.toFile(),8).size()==1&&ClientReports.reports(root.toFile(),8).get(0).toPath().equals(report));ByteArrayOutputStream exported=new ByteArrayOutputStream();need(ClientReports.export(root.toFile(),report.toFile(),exported)>0);need(Files.exists(old.resolve("unrelated-2048")));
+ }
+ static void omissionBound()throws Exception {
+  Path run=run(),outside=root.resolve("secret.txt");Files.write(outside,"DO_NOT_EXPORT".getBytes());ClientReports.checkpoint(run.toFile(),"{\"phase\":\"saved\"}".getBytes());
+  for(String name:new String[]{"android-surface","android-login","android-connected"}){Path dir=Files.createDirectories(run.resolve(name));for(int n=1;n<=256;n++)Files.createSymbolicLink(dir.resolve("capture-"+n+".png"),outside);}
+  ClientReports.recoverAll(root.toFile());File report=ClientReports.reports(root.toFile(),8).get(0);Map<String,byte[]> carrier=unzip(report);String manifest=new String(carrier.get("recovery-manifest.json"));need(manifest.contains("additional_sources_omitted")&&manifest.length()<16384&&carrier.size()==2);need(ClientReports.reportStatus(report).equals("recovered"));
+ }
+ static void provenance()throws Exception {
+  Path old=run(),current=Files.createDirectory(old.getParent().resolve("1760222000000-0123456789ab"));Path newer=completed(current);
+  String session="11112222333344445555666677778888";byte[] note=("{\"run_id\":\""+old.getFileName()+"\",\"session_id\":\""+session+"\",\"status\":\"failed_report_assembly\",\"passed\":false}").getBytes(StandardCharsets.UTF_8);
+  Files.write(old.resolve("coh-interrupted-"+old.getFileName()+".zip"),new byte[]{8});Path guest=state();Files.write(guest.resolve("latest-report.json"),"{\"session_id\":\"99992222333344445555666677778888\"}".getBytes());Files.write(guest.resolve("report.zip"),"FOREIGN_NEW_SESSION".getBytes());
+  File repaired=ClientReports.retainTerminalFailure(root.toFile(),old.toFile(),note,new byte[]{1});Map<String,byte[]> carrier=unzip(repaired);need(!carrier.containsKey("guest-report.zip")&&!carrier.containsKey("guest-output/latest-report.json"));
+  need(new String(carrier.get("recovery-manifest.json")).contains("guest-report.zip"));List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.get(0).toPath().equals(newer));need(ClientReports.reportStartedUtc(repaired)==1760111000000L);
+  for(byte[] bytes:carrier.values())need(!new String(bytes).contains("FOREIGN_NEW_SESSION"));need(Files.readAllBytes(guest.resolve("report.zip")).length==19);
+ }
+ static void corruptedInterrupted()throws Exception {
+  Path run=run();byte[] checkpoint="{\"phase\":\"save\"}".getBytes(StandardCharsets.UTF_8);ClientReports.checkpoint(run.toFile(),checkpoint);
+  Path corrupt=run.resolve("coh-interrupted-"+run.getFileName()+".zip");Files.write(corrupt,new byte[]{8,8});ClientReports.recoverAll(root.toFile());
+  List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1&&!reports.get(0).toPath().equals(corrupt));File repaired=reports.get(0);byte[] stable=Files.readAllBytes(repaired.toPath());
+  for(int i=0;i<3;i++){ClientReports.recoverAll(root.toFile());need(ClientReports.reports(root.toFile(),8).size()==1&&Arrays.equals(stable,Files.readAllBytes(repaired.toPath())));}need(Arrays.equals(Files.readAllBytes(corrupt),new byte[]{8,8}));
+ }
+ static void partialHistory()throws Exception {
+  Path old=run(),outside=root.resolve("foreign.json");Files.write(outside,new byte[]{9});Files.createSymbolicLink(old.resolve("checkpoint.json"),outside);
+  Path current=Files.createDirectory(old.getParent().resolve("1760222000000-0123456789ab"));byte[] checkpoint="{\"phase\":\"current\"}".getBytes(StandardCharsets.UTF_8);ClientReports.checkpoint(current.toFile(),checkpoint);
+  fails(()->ClientReports.recoverAll(root.toFile()));List<File> reports=ClientReports.reports(root.toFile(),8);need(reports.size()==1&&reports.get(0).getParentFile().equals(current.toFile()));need(Arrays.equals(unzip(reports.get(0)).get("android-recovery-checkpoint.json"),checkpoint));need(Files.readAllBytes(outside)[0]==9);
+ }
+ static void status(String mode)throws Exception {
+  Path run=run();Path target=run.resolve("coh-character-reopen-"+run.getFileName()+".zip");String wrapper;
+  switch(mode){
+   case "status_successful":wrapper="{\"status\":\"passed\",\"passed\":true,\"session_id\":\"11112222333344445555666677778888\"}";break;
+   case "status_incomplete":wrapper="{\"status\":\"client_incomplete\",\"passed\":false,\"committed_save_observed\":true}";break;
+   case "status_failed":wrapper="{\"status\":\"cleanup_failed\",\"passed\":false}";break;
+   case "status_interrupted":wrapper="{\"status\":\"cancelled\",\"passed\":false}";break;
+   case "status_finalization_failed":wrapper="{\"status\":\"failed_report_assembly\",\"passed\":false}";break;
+   case "status_false_pass":wrapper="{\"status\":\"passed\",\"passed\":false}";break;
+   default:wrapper="{\"nested\":{\"status\":\"passed\",\"passed\":true}}";break;
+  }
+  try(ZipOutputStream zip=new ZipOutputStream(Files.newOutputStream(target))){zip.putNextEntry(new ZipEntry("android-client-report.json"));zip.write(wrapper.getBytes(StandardCharsets.UTF_8));zip.closeEntry();}
+  String expected=mode.substring("status_".length());if(expected.equals("false_pass")||expected.equals("nested"))expected="unknown";need(ClientReports.reportStatus(target.toFile()).equals(expected));
+ }
  public static void main(String[] a)throws Exception {
-  root=Paths.get(a[1]);switch(a[0]){case "foreignTerminal":foreignTerminal();break;case "optional_open":case "optional_read":case "optional_mutation":case "optional_identity":case "optional_enrichment":optionalFault(a[0]);break;case "corruptedTerminal":corruptedTerminal();break;case "terminalRestart":terminalRestart();break;case "corruptedCompleted":corruptedCompleted();break;case "terminalUnsafe":terminalUnsafe();break;case "timeout":case "capture_failure":case "failed_validation":terminal(a[0]);break;case "checkpoint":checkpoint();break;case "preserve":preserve();break;case "empty":empty();break;case "inventory":inventory();break;case "export":export();break;case "stream":stream();break;case "changed":changed();break;case "ancestor":ancestor();break;case "pngs":pngs();break;case "bounds":bounds();break;case "completed":completed();break;case "captureLimit":captureLimit();break;case "checkpointLink":checkpointLink();break;case "injected":injected();break;case "badIdentity":badIdentity();break;case "cancelled":cancelled();break;case "outputFailure":outputFailure();break;case "captureBytes":captureBytes();break;case "excessiveInventory":excessiveInventory();break;default:links(a[0]);}System.out.println("PASS");
+  root=Paths.get(a[1]);if(a[0].startsWith("interrupted_"))interruptedOptional(a[0]);else if(a[0].equals("historicalInventory"))historicalInventory();else if(a[0].equals("omissionBound"))omissionBound();else if(a[0].equals("provenance"))provenance();else if(a[0].equals("corruptedInterrupted"))corruptedInterrupted();else if(a[0].equals("partialHistory"))partialHistory();else if(a[0].startsWith("status_"))status(a[0]);else switch(a[0]){case "foreignTerminal":foreignTerminal();break;case "optional_open":case "optional_read":case "optional_mutation":case "optional_identity":case "optional_enrichment":optionalFault(a[0]);break;case "corruptedTerminal":corruptedTerminal();break;case "terminalRestart":terminalRestart();break;case "corruptedCompleted":corruptedCompleted();break;case "terminalUnsafe":terminalUnsafe();break;case "timeout":case "capture_failure":case "failed_validation":terminal(a[0]);break;case "checkpoint":checkpoint();break;case "preserve":preserve();break;case "empty":empty();break;case "inventory":inventory();break;case "export":export();break;case "stream":stream();break;case "changed":changed();break;case "ancestor":ancestor();break;case "pngs":pngs();break;case "bounds":bounds();break;case "completed":completed();break;case "captureLimit":captureLimit();break;case "checkpointLink":checkpointLink();break;case "injected":injected();break;case "badIdentity":badIdentity();break;case "cancelled":cancelled();break;case "outputFailure":outputFailure();break;case "captureBytes":captureBytes();break;case "excessiveInventory":excessiveInventory();break;default:links(a[0]);}System.out.println("PASS");
  }
 }
 '''
@@ -264,7 +326,7 @@ class ClientReportRecoveryJavaTests(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stdout+result.stderr)
             self.assertIn('PASS',result.stdout)
 
-for _name in ('foreignTerminal','optional_open','optional_read','optional_mutation','optional_identity','optional_enrichment','corruptedTerminal','timeout','capture_failure','failed_validation','terminalUnsafe','corruptedCompleted','terminalRestart','checkpoint','preserve','empty','inventory','export','stream','changed','symlink','hardlink','directory','fifo','ancestor','pngs','bounds','completed','captureLimit','checkpointLink','injected','badIdentity','cancelled','outputFailure','captureBytes','excessiveInventory'):
+for _name in ('interrupted_link','interrupted_oversize','interrupted_open','partialHistory','corruptedInterrupted','provenance','historicalInventory','omissionBound','status_successful','status_incomplete','status_failed','status_interrupted','status_finalization_failed','status_false_pass','status_nested','foreignTerminal','optional_open','optional_read','optional_mutation','optional_identity','optional_enrichment','corruptedTerminal','timeout','capture_failure','failed_validation','terminalUnsafe','corruptedCompleted','terminalRestart','checkpoint','preserve','empty','inventory','export','stream','changed','symlink','hardlink','directory','fifo','ancestor','pngs','bounds','completed','captureLimit','checkpointLink','injected','badIdentity','cancelled','outputFailure','captureBytes','excessiveInventory'):
     setattr(ClientReportRecoveryJavaTests,'test_'+_name,lambda self,name=_name:self.scenario(name))
 
 if __name__=='__main__':unittest.main()

@@ -65,6 +65,14 @@ final class ClientAcceptance {
     }
 
     static boolean clientWindowAccepted(Object value, Object clientPid) {
+        return clientWindowAccepted(value, clientPid, 1, 1, false);
+    }
+
+    /** Map titles remain bound to this session's accepted initial/final maps. */
+    static boolean clientWindowAccepted(Object value, Object clientPid, int initialMap,
+            int currentMap, boolean monorailQualified) {
+        if (!windowMapSupported(initialMap, monorailQualified)
+                || !windowMapSupported(currentMap, monorailQualified)) return false;
         Map<?, ?> window = object(value);
         Object title = window.get("title"), width = window.get("width"), height = window.get("height");
         if (!positiveInteger(clientPid) || ((Number) clientPid).longValue() >= (1L << 32)
@@ -73,12 +81,36 @@ final class ClientAcceptance {
                 || ((Number) width).longValue() < 320 || ((Number) height).longValue() < 240
                 || ((Number) width).longValue() > Integer.MAX_VALUE
                 || ((Number) height).longValue() > Integer.MAX_VALUE) return false;
-        // The same owned window keeps its Atlas title after ordinary logout.
-        // Only this milestone's exact relative map path may supplement the menu
-        // title; arbitrary maps, traversal and text following the PID cannot pass.
-        return ((String) title).matches("City of Heroes[ \\t]+:[ \\t]+"
-                + "(?:City_Zones[\\\\/]City_01_01[\\\\/]City_01_01\\.txt[ \\t]+)?PID:[ \\t]+"
-                + ((Number) clientPid).longValue());
+        return windowTitle((String) title, ((Number) clientPid).longValue(), initialMap)
+                || currentMap != initialMap && windowTitle((String) title,
+                    ((Number) clientPid).longValue(), currentMap);
+    }
+
+    private static boolean windowMapSupported(int map, boolean monorailQualified) {
+        return map == 1 || map == 101 || map == 5 && monorailQualified;
+    }
+
+    private static boolean windowTitle(String title, long pid, int map) {
+        String world = map == 5 ? "City_01_02" : "City_01_01";
+        return title.matches("City of Heroes[ \\t]+:[ \\t]+"
+                + "(?:City_Zones[\\\\/]" + world + "[\\\\/]" + world + "\\.txt[ \\t]+)?PID:[ \\t]+" + pid);
+    }
+
+    static boolean savedDestinationEvent(Object value, String session, boolean monorailQualified) {
+        Map<?, ?> event = object(value);
+        if (session == null || !session.matches("[0-9a-f]{32}")
+                || !"saved_character_destination".equals(event.get("type"))
+                || !session.equals(event.get("session_id")) || !number(event.get("character_id"), 1)
+                || !positiveInteger(event.get("auth_id")) || ((Number) event.get("auth_id")).longValue() > 4294967295L
+                || !"THORHERO".equals(event.get("name"))
+                || !"COHLOCAL".equals(event.get("account")) || !yes(event.get("existing_character_verified"))
+                || !yes(event.get("saved_location_verified")) || !Boolean.FALSE.equals(event.get("sql_game_mutations_performed"))) return false;
+        return (number(event.get("map_id"), 1) && number(event.get("port"), 7001)
+                    && "City_01_01".equals(event.get("world")))
+                || (number(event.get("map_id"), 101) && number(event.get("port"), 7002)
+                    && "City_01_01".equals(event.get("world")))
+                || (monorailQualified && number(event.get("map_id"), 5) && number(event.get("port"), 7003)
+                    && "City_01_02".equals(event.get("world")));
     }
 
     static boolean localLoginVerified(Object value, String session, long clientPid) {

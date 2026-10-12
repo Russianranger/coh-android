@@ -334,8 +334,11 @@ class ZoningServerTests(unittest.TestCase):
             instance.map_launch_utc_ms = NOW
             instance.active_map_id = map_id
         instance._activate = Mock(side_effect=activate)
-        with patch.object(zoning.time, 'monotonic', return_value=100):
+        instance.sample_startup_observation = Mock()
+        with patch.object(zoning.time, 'monotonic', return_value=100), \
+                patch.object(zoning.character.progress, 'compare_records') as compare:
             instance.start_map()
+        compare.assert_called_once()
         instance.ctx.stage.assert_called_once_with('local_atlas_startup')
         instance._spawn_map.assert_called_once_with(101)
         instance._activate.assert_called_once_with(101)

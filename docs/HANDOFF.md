@@ -1,4 +1,75 @@
-# CURRENT — .33 report recovery and collision preparation repair; qualification/publication pending — 2026-10-12 UTC
+# CURRENT — .34 Kings Row direct reopen and report recovery candidate — qualification pending — 2026-10-12 UTC
+
+Recovered branch `codex/character-persistence-continuation` at exact remote
+`e03943f76b13192680be363dac005d6f23c7a526`, tree
+`0a043c90e092fa3f0b52c5249eb45f18023558c9`. All recovered source files match;
+no unfinished prior source changes were found. Original older trees, temporary
+artifacts and completed qualification outputs are preserved. Missing worktree
+Git metadata was reconstructed without resetting the remote. No active CoH
+build/game process or queued/running workflow was found. Remote conversation
+liveness is not observable; accessible evidence shows completed publication
+followed by an unfinished documentation update.
+[Exact recovery record](android-evidence/coh-continuation-recovery-0.13.34.json).
+Draft PR #1 stays unmerged; main stays at
+`04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
+
+**.33 is already published and independently audited.**
+[Run 38285895633](https://github.com/Russianranger/coh-android/actions/runs/38285895633)
+passed all three jobs, including signed assembly and independent actual public
+bytes/full preparation. The accepted result is **187 newly executed suites /
+2,532 cases**, plus **9 explicitly inherited suites / 76 cases** (2,608 total
+attributed cases). Version **0.13.33 / code 48**, APK SHA-256
+`482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2`.
+All companion workflows at that head completed successfully. Do not rerun its
+successful publication or recreate its release. The old pending-publication
+notes below are historical. Assets 1.0.0 and all four volumes remain compatible.
+
+**Mandatory next device starting location: THORHERO is saved in Kings Row,
+Map 5, expected port 7003.** The user physically confirmed .32 reopen/save twice,
+working graphics/combat and actual Atlas-to-Kings monorail followed by save in
+Kings. Whole-operation estimates 22 min / 13 min reopen and 12 min travel are not
+native phase measurements. Logs failed; Character Check was incomplete after
+save and cleanup UI disabled. An incomplete overall check does not invalidate
+the independently observed committed save. Direct Kings saved reopen and
+Kings-to-Atlas return remain untested physical gates.
+
+The .34 candidate addresses destination-bound startup/progress/window validation
+and remaining report recovery/export failure paths. It retains all native
+Game/MapServer/DbServer/GPU/FEX/Wine, animation/FX, resources and external assets.
+The conservative P3 stage removes one redundant immutable-directory metadata
+query during validated reuse; every original ownership/generation/anchor/private
+inventory/fallback rule remains. This is a metadata-count reduction, not a
+measured native startup/RAM/FPS gain. Rank 2 native provider/per-BIN authority
+and Rank 4 PhysX SDK/cache integration remain separately gated and nonshipping.
+[Optimization scope/evidence](COH-MAP-CACHE-CONTINUATION-0.13.34.md).
+
+Local focused gates passed: **143 saved-map/acceptance/zoning cases** and
+**209 report/storage/failure-presentation cases**, zero failures/skips. Conservative
+cache/prerequisite scopes passed **93 cases**, zero skips; some of these scopes
+overlap the startup regression set and must not be summed as unique coverage.
+Independent review found no remaining code/provenance blockers. The **3 SQL
+fixture guards** passed locally; **17 actual PostgreSQL cases were not executed
+locally** because this container has only UID 0 and PostgreSQL requires nonroot.
+The hosted gate requires every actual SQL case, with no skips, before publication.
+Current full CI, signed APK and public-byte audit are still pending. Native genuine Kings entry, movement, ordinary save/return and
+Android document-provider export are not established by fixture or preparation
+results. No physical .34 success, sub-30-second result or device speed claim is made.
+A successor may publish only after its current relevant/full integration,
+source/provenance, signed payload and independent public-byte gates pass.
+Failures remain failures; unchanged historical evidence stays attributed.
+
+[.34 Kings-first physical guide](COH-Atlas-Gameplay-0.13.34-testing.txt):
+install over the app, preserve all data and refresh runtime helpers once. Test A
+is a short direct Kings reopen, movement/state check, normal save and outer ZIP
+export. Do not spend another long zoning session until that ZIP is usable.
+Then Test B Kings-to-Atlas, Test C saved Atlas reopen, and Test D comparable cold /
+validated reuse / budget-admitted round trip. Unsupported destinations fail
+without relocation, SQL repairs, /stuck, reset or recreation. Read-only storage
+scan is available when safely idle; deletion still needs proved owned cleanup.
+
+---
+
+# Historical .33 pre-publication notes — superseded by verified publication above — 2026-10-12 UTC
 
 The user's physical .32 test successfully reopened/saved THORHERO twice and
 demonstrated graphics/combat and actual Atlas-to-Kings arrival. Approximate

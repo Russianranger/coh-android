@@ -264,6 +264,9 @@ SAVE_HARNESS = r'''
 package io.github.russianranger.cohclientinteractive;
 import java.util.*;
 public class SaveObservationHost {
+ Object finalGuestReport,characterSavedEvent,characterConnectedEvent;String session;long observedClientPid;boolean reopen;
+ static Object jsonValue(Object value){return value;}boolean zoningEnabled(){return reopen;}
+ static class Zoning {int map;int currentMap(){return map;}}final Zoning zoning=new Zoning();
  static Map<String,Object> map(Object... values){Map<String,Object> m=new LinkedHashMap<>();for(int i=0;i<values.length;i+=2)m.put((String)values[i],values[i+1]);return m;}
  METHODS
  @SuppressWarnings("unchecked") public static void main(String[] args)throws Exception {
@@ -273,7 +276,7 @@ public class SaveObservationHost {
   Map<String,Object> saved=map("type","character_saved","session_id",session,"client_pid",pid,"character_id",1L,"name","THORHERO","committed_sql_verified",true);
   Map<String,Object> connected=map("type","character_connected","session_id",session,"client_pid",pid,"character_id",1L,"name","THORHERO","account","COHLOCAL","map_id",1L);
   if(reopen){connected.put("baseline_character_id",1L);connected.put("reopen_verified",true);connected.put("existing_character_verified",true);connected.put("zoning_enabled",true);connected.put("connected_on_supported_map",true);saved.put("zoning_enabled",true);saved.put("map_id",1L);}
-  String mode=args[1];Object reportValue=report,savedValue=saved,connectedValue=connected;int currentMap=1;
+  String mode=args[1];boolean terminal=mode.startsWith("terminal_");if(terminal)mode=mode.substring(9);Object reportValue=report,savedValue=saved,connectedValue=connected;int currentMap=1;
   if(mode.equals("missing_event"))savedValue=null;
   if(mode.equals("missing_connected"))connectedValue=null;
   if(mode.equals("foreign_event"))saved.put("session_id","00000000000000000000000000000000");
@@ -304,7 +307,8 @@ public class SaveObservationHost {
   if(mode.equals("float_login_count"))proof.put("login_count",2.0);
   if(mode.equals("string_login_count"))proof.put("login_count","2");
   if(mode.equals("cleanup_failed")){report.put("passed",false);report.put("cleanup_complete",false);login.put("database_preserved",false);}
-  System.out.print(committedCharacterSaveObserved(reportValue,savedValue,connectedValue,session,pid,reopen,zoning,currentMap));
+  if(terminal){SaveObservationHost host=new SaveObservationHost();host.finalGuestReport=mode.equals("unknown")?null:reportValue;host.characterSavedEvent=savedValue;host.characterConnectedEvent=connectedValue;host.session=session;host.observedClientPid=pid;host.reopen=reopen;host.zoning.map=currentMap;System.out.print(host.terminalSaveObservation());}
+  else System.out.print(committedCharacterSaveObserved(reportValue,savedValue,connectedValue,session,pid,reopen,zoning,currentMap));
  }
 }
 '''
@@ -316,7 +320,7 @@ class CompletedGuestReportTests(unittest.TestCase):
         cls.tmp=tempfile.TemporaryDirectory(prefix='coh-completed-report-');cls.addClassCleanup(cls.tmp.cleanup);base=Path(cls.tmp.name)
         host=base/'CompletedGuestHost.java';host.write_text(REPORT_HARNESS)
         source=(JAVA/'ClientRuntime.java').read_text()
-        methods='\n'.join(method(source,s)for s in ('static boolean committedCharacterSaveObserved(', 'private static long preparationInteger('))
+        methods='\n'.join(method(source,s)for s in ('static boolean committedCharacterSaveObserved(', 'private static long preparationInteger(', 'private Boolean terminalSaveObservation('))
         save=base/'SaveObservationHost.java';save.write_text(SAVE_HARNESS.replace('METHODS',methods).replace('FIXTURE_VALUES',java_value(FIXTURES)))
         subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(base),str(REPORTS_JAVA),str(JAVA/'ClientAcceptance.java'),str(host),str(save)],check=True,capture_output=True,text=True)
 
@@ -389,6 +393,25 @@ class CompletedGuestReportTests(unittest.TestCase):
         for report in range(2):
             for mode in ('auth_out_of_range','pid_out_of_range'):
                 with self.subTest(report=report,mode=mode):self.save(report,mode)
+    def test_finalization_failure_preserves_strict_committed_save_observation(self):
+        for report in range(2):
+            self.save(report,'terminal_current',expected=True)
+            self.save(report,'terminal_cleanup_failed',expected=True)
+            self.save(report,'terminal_foreign_event')
+            self.save(report,'terminal_foreign_report')
+            self.save(report,'terminal_missing_event')
+    def test_missing_final_guest_report_keeps_save_observation_unknown(self):
+        for report in range(2):
+            result=subprocess.run(['java','-cp',self.tmp.name,'io.github.russianranger.cohclientinteractive.SaveObservationHost',str(report),'terminal_unknown'],check=True,capture_output=True,text=True,timeout=15)
+            self.assertEqual(result.stdout,'null')
+    def test_finalization_carrier_never_converts_save_observation_into_overall_pass(self):
+        source=(JAVA/'ClientRuntime.java').read_text();terminal=method(source,'private File retainFailureReport(')
+        self.assertIn('Boolean saveObservation=terminalSaveObservation()',terminal)
+        self.assertIn('.put("committed_save_observed",saveObservation==null?JSONObject.NULL:saveObservation)',terminal)
+        self.assertIn('.put("character_save_qualification",false)',terminal)
+        self.assertIn('.put("passed",false)',terminal)
+        self.assertIn('"character_saved_event"',terminal)
+        self.assertIn('"character_connected_event"',terminal)
     def test_global_pass_predicate_and_atomic_report_order_are_preserved(self):
         source=(JAVA/'ClientRuntime.java').read_text();run=method(source,'private Result runCharacter(')
         self.assertIn('passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null\n                        && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);',run)

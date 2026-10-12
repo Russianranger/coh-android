@@ -321,8 +321,13 @@ class ServerDataCache:
             # Every immutable parent is itself recorded and checked before launch.
             # Avoid rechecking the same ancestors for all 9,000 directories.
             path = Path(data) / row['path']
-            fingerprint(path, directory=True)
+            # Use one current no-follow snapshot for type, ownership, identity
+            # and mtime. The former fingerprint()+lstat() issued two consecutive
+            # metadata queries for the same directory, without an intervening
+            # operation. This does not reuse a previous invocation's snapshot
+            # or turn the directory receipt into native BIN freshness authority.
             info = path.lstat()
+            require(stat.S_ISDIR(info.st_mode), 'Linked or invalid Atlas cache path')
             require((info.st_dev, info.st_ino, info.st_uid) ==
                     (row['device'], row['inode'], row['uid']),
                     'Immutable Atlas directory changed: ' + (row['path'] or '.'))
@@ -386,6 +391,8 @@ class ServerDataCache:
         for row, observed_mtime in changed:
             row['mtime_ns'] = observed_mtime
         self.summary.update(immutable_directory_checks=len(names), immutable_anchor_checks=len(record['anchors']),
+                            immutable_directory_metadata_queries=len(names),
+                            immutable_directory_metadata_policy='one_current_no_follow_snapshot_per_directory',
                             private_entries_checked=examined, private_bytes=total,
                             immutable_anchors=record['anchors'],
                             changed_parent_directory_checks=len(changed),

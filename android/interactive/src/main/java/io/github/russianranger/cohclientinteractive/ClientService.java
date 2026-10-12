@@ -249,7 +249,11 @@ public final class ClientService extends Service {
         boolean retained=retainedReports().contains(selected);
         boolean storageSelected=storageReport!=null&&storageReport.equals(selected);
         if((!retained&&!storageSelected)||!Files.isRegularFile(selected.toPath(),LinkOption.NOFOLLOW_LINKS))throw new IOException("Select a retained report again");
-        exportOwner=ClientRuntime.acquireReportExport(this);reportExporting=true;publish();return exportOwner;
+        Object owner=ClientRuntime.acquireReportExport(this);exportOwner=owner;reportExporting=true;
+        try { publish();return owner; }
+        catch(RuntimeException | OutOfMemoryError failure) {
+            ClientRuntime.releaseStorage(owner);exportOwner=null;reportExporting=false;throw failure;
+        }
     }
     public void endReportExport(Object owner){
         ClientRuntime.releaseStorage(owner);
@@ -280,7 +284,10 @@ public final class ClientService extends Service {
                 synchronized(handoff){expired.set(true);android.content.res.AssetFileDescriptor late=opened.getAndSet(null);if(late!=null)late.close();}
                 throw new IOException("Document provider timed out");
             }
-        }catch(InterruptedException interrupted){expired.set(true);Thread.currentThread().interrupt();throw new InterruptedIOException("Report export cancelled");}
+        }catch(InterruptedException interrupted){
+            synchronized(handoff){expired.set(true);android.content.res.AssetFileDescriptor cancelled=opened.getAndSet(null);if(cancelled!=null)cancelled.close();}
+            Thread.currentThread().interrupt();throw new InterruptedIOException("Report export cancelled");
+        }
         synchronized(handoff){
             android.content.res.AssetFileDescriptor descriptor=opened.getAndSet(null);
             if(failure.get()!=null||descriptor==null||expired.get()){
@@ -315,66 +322,96 @@ public final class ClientService extends Service {
         };
     }
     /** Export ownership survives Activity replacement and switching to the document provider. */
+    private void failedReportDispatch(Object owner,PowerManager.WakeLock operationWake,Runnable timeout,boolean recovering) {
+        try {
+            if(timeout!=null)main.removeCallbacks(timeout);
+            try { getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",false).commit(); }
+            catch(RuntimeException unavailable){/* The retained source does not depend on UI preferences. */}
+        } finally {
+            try { ClientRuntime.releaseStorage(owner); }
+            finally {
+                if(operationWake!=null&&operationWake.isHeld())operationWake.release();
+                if(exportOwner==owner)exportOwner=null;
+                reportExporting=false;
+                stage=recovering?"Recovery could not start":"Export incomplete";
+                detail="The private reports are retained. Retry when this screen is idle.";
+                stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();
+            }
+        }
+    }
     private void startReportExport(Intent intent) {
-        if(busy||storageBusy||reportExporting)return;
+        if(destroyed||busy||storageBusy||reportExporting)return;
         final android.net.Uri destination=intent.getData();final String path=intent.getStringExtra("report_source");
         if(destination==null || !"content".equals(destination.getScheme()) || path==null){stopSelf();return;}
         final File selected=new File(path);final Object owner;
         try{owner=beginReportExport(selected);}catch(IOException failure){stage="Export unavailable";detail=failure.getMessage();publish();stopSelf();return;}
-        stage="Exporting report";detail="Keep the destination available. The private report remains retained.";
-        startForeground(NOTICE,notification());
-        final PowerManager.WakeLock exportWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-export");
-        exportWake.acquire(6*60*1000L);
-        getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",true).commit();
-        final java.util.concurrent.atomic.AtomicReference<java.io.OutputStream> stream=new java.util.concurrent.atomic.AtomicReference<>();
-        final AtomicBoolean timedOut=new AtomicBoolean();
-        final long exportDeadline=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(ClientReports.MAX_EXPORT_MILLIS);
-        final android.os.CancellationSignal exportCancellation=new android.os.CancellationSignal();
-        final Runnable timeout=()->{timedOut.set(true);new Thread(()->{
-            exportCancellation.cancel();java.io.OutputStream open=stream.get();if(open!=null)try{open.close();}catch(IOException ignored){}
-        },"coh-export-timeout").start();};
-        main.postDelayed(timeout,ClientReports.MAX_EXPORT_MILLIS);
-        publish();
-        worker.execute(()->{
-            boolean success=false;
-            try(android.content.res.AssetFileDescriptor destinationFile=openReportDestination(destination,exportCancellation,timedOut,exportDeadline)){
-                if(destinationFile==null||timedOut.get())throw new IOException("No export stream");
-                try(java.io.OutputStream out=boundedReportOutput(destinationFile,timedOut,exportDeadline)){
-                stream.set(out);
-                if(storageReport!=null&&storageReport.equals(selected)){
-                    long bytes=0;byte[] buffer=new byte[65536];
-                    try(InputStream in=Files.newInputStream(selected.toPath(),StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){
-                        int n;while((n=in.read(buffer))!=-1){bytes+=n;if(bytes>8L*1024*1024||timedOut.get())throw new IOException("Storage export limit reached");out.write(buffer,0,n);}
+        PowerManager.WakeLock dispatchWake=null;Runnable dispatchTimeout=null;
+        try {
+            stage="Exporting report";detail="Keep the destination available. The private report remains retained.";
+            final PowerManager.WakeLock exportWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-export");
+            dispatchWake=exportWake;
+            startForeground(NOTICE,notification());exportWake.acquire(6*60*1000L);
+            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",true).commit();
+            final java.util.concurrent.atomic.AtomicReference<java.io.OutputStream> stream=new java.util.concurrent.atomic.AtomicReference<>();
+            final AtomicBoolean timedOut=new AtomicBoolean();
+            final long exportDeadline=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(ClientReports.MAX_EXPORT_MILLIS);
+            final android.os.CancellationSignal exportCancellation=new android.os.CancellationSignal();
+            final Runnable timeout=()->{timedOut.set(true);new Thread(()->{
+                exportCancellation.cancel();java.io.OutputStream open=stream.get();if(open!=null)try{open.close();}catch(IOException ignored){}
+            },"coh-export-timeout").start();};
+            dispatchTimeout=timeout;main.postDelayed(timeout,ClientReports.MAX_EXPORT_MILLIS);publish();
+            worker.execute(()->{
+                boolean success=false;
+                try(android.content.res.AssetFileDescriptor destinationFile=openReportDestination(destination,exportCancellation,timedOut,exportDeadline)){
+                    if(destinationFile==null||timedOut.get())throw new IOException("No export stream");
+                    try(java.io.OutputStream out=boundedReportOutput(destinationFile,timedOut,exportDeadline)){
+                        stream.set(out);
+                        if(storageReport!=null&&storageReport.equals(selected)){
+                            long bytes=0;byte[] buffer=new byte[65536];
+                            try(InputStream in=Files.newInputStream(selected.toPath(),StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){
+                                int n;while((n=in.read(buffer))!=-1){bytes+=n;if(bytes>8L*1024*1024||timedOut.get())throw new IOException("Storage export limit reached");out.write(buffer,0,n);}
+                            }
+                        }else ClientReports.export(getFilesDir().getCanonicalFile(),selected,out);
+                        out.flush();if(timedOut.get())throw new IOException("Export timed out");success=true;
                     }
-                }else ClientReports.export(getFilesDir().getCanonicalFile(),selected,out);
-                out.flush();if(timedOut.get())throw new IOException("Export timed out");success=true;
-                }
-            }catch(Exception failure){success=false;}
-            finally{stream.set(null);main.removeCallbacks(timeout);ClientRuntime.releaseStorage(owner);if(exportWake.isHeld())exportWake.release();}
-            final boolean completed=success&&!timedOut.get();
-            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",false).commit();
-            main.post(()->{exportOwner=null;reportExporting=false;if(destroyed)return;stage=completed?"Report exported":"Export incomplete";
-                detail=completed?"The complete report was copied. Its private copy is still available in Reports.":"The private report is retained. Choose a destination and export again; the destination may contain a partial copy.";
-                stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
-        });
+                }catch(Exception | OutOfMemoryError failure){success=false;}
+                finally{stream.set(null);main.removeCallbacks(timeout);ClientRuntime.releaseStorage(owner);if(exportWake.isHeld())exportWake.release();}
+                final boolean completed=success&&!timedOut.get();
+                try{getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("export_busy",false).commit();}
+                catch(RuntimeException unavailable){/* Finish ownership even if UI preferences are unavailable. */}
+                main.post(()->{exportOwner=null;reportExporting=false;if(destroyed)return;stage=completed?"Report exported":"Export incomplete";
+                    detail=completed?"The complete report was copied. Its private copy is still available in Reports.":"The private report is retained. Choose a destination and export again; the destination may contain a partial copy.";
+                    stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
+            });
+        } catch(RuntimeException | OutOfMemoryError dispatchFailure) { failedReportDispatch(owner,dispatchWake,dispatchTimeout,false); }
     }
     private void recoverReports() {
-        if(busy||storageBusy||reportExporting)return;
+        if(destroyed||busy||storageBusy||reportExporting)return;
         final Object owner;
         try{owner=ClientRuntime.acquireReportExport(this);}catch(IOException failure){return;}
-        reportExporting=true;stage="Recovering reports";detail="Preserving interrupted observations and previous guest output. Recovery does not certify an incomplete test.";
-        startForeground(NOTICE,notification());
-        final PowerManager.WakeLock recoveryWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-recovery");recoveryWake.acquire(6*60*1000L);publish();
-        worker.execute(()->{File recovered=null;String failure=null;
-            try{File root=getFilesDir().getCanonicalFile();ClientReports.recoverAll(root);ClientReports.preservePrevious(root);List<File> reports=retainedReports();if(!reports.isEmpty())recovered=reports.get(0);}
-            catch(Exception problem){failure=problem.getMessage();}
-            finally{ClientRuntime.releaseStorage(owner);if(recoveryWake.isHeld())recoveryWake.release();}
-            final File selected=recovered;final String error=failure;
-            main.post(()->{reportExporting=false;if(destroyed)return;if(selected!=null)report=selected;
-                stage=error==null?"Reports recovered":"Recovery needs attention";detail=error==null?"Choose Reports to export retained evidence. Recovered guest evidence has unverified session attribution; its wrapper does not prove an Android interruption or a passed test.":"Existing evidence was retained. "+error;
-                getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("report",report==null?null:report.getPath()).commit();
-                stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
-        });
+        exportOwner=owner;reportExporting=true;
+        PowerManager.WakeLock dispatchWake=null;
+        try {
+            stage="Recovering reports";detail="Preserving interrupted observations and previous guest output. Recovery does not certify an incomplete test.";
+            final PowerManager.WakeLock recoveryWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:report-recovery");
+            dispatchWake=recoveryWake;startForeground(NOTICE,notification());recoveryWake.acquire(6*60*1000L);publish();
+            worker.execute(()->{File recovered=null;String failure=null;
+                try {
+                    File root=getFilesDir().getCanonicalFile();
+                    try{ClientReports.recoverAll(root);}catch(Exception problem){failure=problem.getClass().getSimpleName()+": "+problem.getMessage();}
+                    try{ClientReports.preservePrevious(root);}catch(Exception problem){failure=(failure==null?"":failure+"; ")+problem.getClass().getSimpleName()+": "+problem.getMessage();}
+                    // Partial recovery can have committed the most useful current
+                    // carrier. Always discover it, even if an older run failed.
+                    List<File> retained=retainedReports();if(!retained.isEmpty())recovered=retained.get(0);
+                }catch(Exception | OutOfMemoryError problem){failure=problem.getClass().getSimpleName();}
+                finally{ClientRuntime.releaseStorage(owner);if(recoveryWake.isHeld())recoveryWake.release();}
+                final File selected=recovered;final String error=failure;
+                main.post(()->{exportOwner=null;reportExporting=false;if(destroyed)return;if(selected!=null)report=selected;
+                    stage=error==null?"Reports recovered":"Recovery needs attention";detail=error==null?"Choose Reports to export retained evidence. Recovered guest evidence has unverified session attribution; its wrapper does not prove an Android interruption or a passed test.":"Safe retained evidence is available in Reports. "+error;
+                    getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("report",report==null?null:report.getPath()).commit();
+                    stopForeground(STOP_FOREGROUND_REMOVE);publish();stopSelf();});
+            });
+        } catch(RuntimeException | OutOfMemoryError dispatchFailure) { failedReportDispatch(owner,dispatchWake,null,true); }
     }
     private String currentManifestSha() throws Exception {
         MessageDigest digest=MessageDigest.getInstance("SHA-256");
@@ -734,7 +771,7 @@ public final class ClientService extends Service {
         busy=true;stopping=false;blocked=false;inputReady=false;finishing=false;characterSaved=false;canReturnGround=false;canSaveLogout=false;inputSent=0;inputFailed=0;readyDeadlineUptimeMillis=0;saveDeadlineUptimeMillis=0;movementDeadlineUptimeMillis=0;sessionPhase="menu";certified=0;logs.setLength(0);frame=null;certificationErrors.clear();
         session=(RUN.equals(action)||creating)?UUID.randomUUID().toString().replace("-",""):"";
         stage=SETUP.equals(action)?"Setting up runtime":IMPORT.equals(action)?"Importing client data":"Starting CoH client";
-        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the same reviewed asset ZIP used for Atlas.":"Starting the persistent database, DbServer and Atlas before the client. Atlas startup may take up to 40 minutes on the Thor.";
+        detail=SETUP.equals(action)?"Preparing the private runtime. Close other apps; setup pauses if available memory is low.":IMPORT.equals(action)?"Verify and import the reviewed COH asset ZIP.":"Opening the persistent database and verifying THORHERO's saved destination before starting its MapServer and client. Native startup may take up to 40 minutes on the Thor.";
         getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("was_busy",true).commit();
         selectedSession=session;
         if(setup){setupStartedUtc=System.currentTimeMillis();lastSetupCheckpointUptime=0;lastSetupPhase="";setupFailureReport=null;setupWorkerOwnsWake=true;setupAppVersion=setupAppVersion();String appId=getPackageName();setupAppId=appId.substring(0,Math.min(160,appId.length()));}

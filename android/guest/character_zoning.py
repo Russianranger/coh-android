@@ -313,6 +313,27 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
     def monorail_enabled(self):
         return getattr(self, 'monorail_qualified', False) is True
 
+    def capture_baseline(self):
+        # The inherited baseline checks the complete accepted identity and
+        # selected SQL rows before character_position selects the saved map.
+        # This event is observational: it cannot authorize relocation or login.
+        super().capture_baseline()
+        destination = MAPS[self.active_map_id]
+        position = self.creation_report['baseline']['saved_position']
+        self.zoning_report['saved_startup'] = {
+            'map_id': self.active_map_id, 'name': destination['name'],
+            'world': destination['world'], 'port': destination['port'],
+            'saved_position': dict(position), 'authority': 'preserved_postgresql_ents_staticmapid',
+            'sql_game_mutations_performed': False, 'native_ready_verified': False,
+            'character_world_entry_verified': False}
+        self.ctx.event('saved_character_destination', session_id=self.owner.args.session_id,
+            character_id=self.CHARACTER_ID, auth_id=self.baseline_snapshot['identity']['authid'],
+            name=character.CHARACTER, account=character.ACCOUNT, map_id=self.active_map_id,
+            map_name=destination['name'], world=destination['world'], port=destination['port'],
+            existing_character_verified=True, saved_location_verified=True,
+            sql_game_mutations_performed=False)
+        self.persist_startup_observation()
+
     def prepare_runtime(self):
         super().prepare_runtime()
         if 'native_monorail' not in self.map_package:
@@ -430,7 +451,13 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         return connected(sample, self.active_map_id)
 
     def connection_metadata(self):
-        return dict(super().connection_metadata(), connected_on_supported_map=True, zoning_enabled=True,
+        metadata = super().connection_metadata()
+        startup = self.zoning_report.get('saved_startup')
+        if startup is not None:
+            require(startup['map_id'] == self.active_map_id,
+                    'Initial character connection differs from the saved destination')
+            startup['character_world_entry_verified'] = True
+        return dict(metadata, connected_on_supported_map=True, zoning_enabled=True,
                     monorail_enabled=self.monorail_enabled())
 
     def _remember_active(self):
@@ -458,32 +485,55 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 self.owner.wine_env = original
             self._remember_active()
         else:
-            # Android's retained stage sequence names the Atlas startup phase;
-            # the exact saved instance is carried by its independent map proof.
+            # Retain the accepted stage identifier while displaying the exact
+            # PostgreSQL-selected destination and independently proving it.
             self.ctx.stage('local_atlas_startup')
             target = self.active_map_id
+            destination = MAPS[target]
+            self.ctx.event('stage', status='running',
+                message='Preparing ' + destination['name'] + ' for saved THORHERO',
+                map_id=target, map_name=destination['name'], world=destination['world'],
+                port=destination['port'])
             baseline = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-baseline'),
                                         target, allow_missing=True)
             require(baseline.get('not_started') is True, 'Saved destination already has an unowned MapServer')
             self._spawn_map(target)
             deadline = min(self.ctx.deadline, time.monotonic() + character.MAP_STARTUP_SECONDS)
-            next_query = 0
+            next_query = next_message = 0
             while True:
                 self.ctx.check()
-                require(time.monotonic() < deadline, 'Saved Atlas instance startup timed out; preserve data and export')
+                now = time.monotonic()
+                require(now < deadline, 'Saved ' + destination['name'] + ' startup timed out; preserve data and export')
                 current = self._map_progress(target)
-                if self.live_progress(current) and time.monotonic() >= next_query:
-                    next_query = time.monotonic() + 15
+                if self.live_progress(current) and now >= next_query:
+                    next_query = now + 15
                     sample = parse_map_status(self.query(['-getstatus', '1', str(target)], 'zoning-reopen-ready'), target)
-                    if ready(sample, target) and self.live_progress(self._map_progress(target)):
+                    after = self._map_progress(target)
+                    if ready(sample, target) and self.live_progress(after):
+                        character.progress.compare_records(after, current)
                         self.maps[target]['ready'] = True
                         self._activate(target)
                         self.creation_report.update(map_ready=True, map_startup_guard={'passed': True,
-                            'protocol': sample, 'after': current, 'requires_completed_tick_before_protocol': True})
+                            'protocol': sample, 'before': current, 'after': after,
+                            'requires_completed_tick_before_protocol': True})
                         self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
+                        startup = self.zoning_report.get('saved_startup')
+                        if startup is not None:
+                            startup.update(native_ready_verified=True, native_map=sample,
+                                native_maps_started=sorted(self.maps))
+                        self.sample_startup_observation(force=True)
                         self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
                         break
+                if now >= next_message:
+                    self.ctx.event('stage', status='running',
+                        message='Preparing ' + destination['name'] + ' for saved THORHERO',
+                        map_id=target, map_name=destination['name'], world=destination['world'],
+                        port=destination['port'])
+                    next_message = now + 5
                 time.sleep(.2)
+        startup = self.zoning_report.get('saved_startup')
+        if startup is not None:
+            startup.update(native_ready_verified=True, native_maps_started=sorted(self.maps))
         self.ready_floor_ms = self.map_launch_utc_ms - 999
 
     def _spawn_map(self, map_id):
@@ -1065,6 +1115,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             monorail_enabled=self.monorail_enabled(), zoning_epoch=self.epoch, ordinary_save_after_native_zoning=True)
 
     def collect(self, target):
+        # Keep the retained archive member for older readers, but identify its
+        # actual owning map rather than attributing a Kings console to Atlas.
+        if self.map_process is not None:
+            self.zoning_report['active_console'] = {'archive_member': 'character-atlas-console.txt',
+                'retained_member_name': True, 'map_id': self.active_map_id,
+                'map_name': MAPS[self.active_map_id]['name'], 'world': MAPS[self.active_map_id]['world'],
+                'port': MAPS[self.active_map_id]['port'], 'session_id': self.owner.args.session_id,
+                'launch_utc_ms': self.map_launch_utc_ms}
         super().collect(target)
         self.zoning_report['console_scan_work'] = {
             'destination_bytes': sum(row.get('console_bytes_scanned', 0) for row in self.maps.values()),
