@@ -303,9 +303,10 @@ public final class ClientActivity extends Activity {
         if(next.busy&&next.session.isEmpty())display.clearFrames();
         state=next;boolean capture=next.busy&&!next.session.isEmpty();if(capture!=captureEnabled){captureEnabled=capture;display.setCaptureListener(capture?captureListener:null);}setTextIfChanged(status,next.stage);setTextIfChanged(detail,next.detail);setTextIfChanged(logs,next.log);updateCounter();
         recoverReports.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&!ClientRuntime.operationInProgress());
-        boolean idle=!next.busy&&!next.storageBusy&&!next.reportExporting&&!next.blocked&&!exporting&&!ClientRuntime.operationInProgress();setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(idle);refreshAbortControl(next);export.setEnabled(!next.busy&&!next.storageBusy&&!next.reportExporting&&next.report!=null&&!exporting&&!ClientRuntime.operationInProgress());
+        boolean diagnostics=diagnosticControlsReady(next,service!=null,exporting,ClientRuntime.operationInProgress());
+        boolean idle=diagnostics&&!next.blocked;setup.setEnabled(idle);importAssets.setEnabled(idle);refreshProfileControls(next);performanceGraphics.setEnabled(idle);gpuProfile.setEnabled(idle);storage.setEnabled(diagnostics);refreshAbortControl(next);export.setEnabled(diagnostics);
         if(next.storageBusy){setTextIfChanged(status,"Storage");setTextIfChanged(detail,next.storageStatus);}
-        if(storageDialogRequested&&!next.storageBusy&&idle){storageDialogRequested=false;showStorage();}
+        if(storageDialogRequested&&diagnostics){storageDialogRequested=false;showStorage();}
         if(!next.session.isEmpty()&&!next.session.equals(shownSession)){releaseControls();shownSession=next.session;movementSuppressed=false;deadlineMovementSuppressed=false;display.setSession(shownSession);}
         boolean enabled=next.busy&&next.inputReady&&!next.finishing&&!next.blocked;
         if(inputActive&&!enabled)releaseControls();inputActive=enabled;display.setInputEnabled(enabled);
@@ -313,6 +314,10 @@ public final class ClientActivity extends Activity {
         refreshMovementControls();refreshDeadlineControls();
     }
     private void setTextIfChanged(TextView view,String value){if(!android.text.TextUtils.equals(view.getText(),value))view.setText(value);}
+    /** Failed-session diagnostics stay accessible; live ownership still excludes file work. */
+    static boolean diagnosticControlsReady(ClientService.State state,boolean serviceAvailable,boolean exporting,boolean operationOwned){
+        return state!=null&&serviceAvailable&&!state.busy&&!state.storageBusy&&!state.reportExporting&&!exporting&&!operationOwned;
+    }
     private void updateCounter(){
         if(state==null||counter==null)return;
         long remaining=state.readyDeadlineUptimeMillis>0?Math.max(0,(state.readyDeadlineUptimeMillis-SystemClock.uptimeMillis()+999)/1000):0;
@@ -458,7 +463,7 @@ public final class ClientActivity extends Activity {
     }
 
     private void request(String action){
-        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
+        if(!diagnosticControlsReady(state,service!=null,exporting,ClientRuntime.operationInProgress())||(state.blocked&&!ClientService.STORAGE_SCAN.equals(action)))return;
         if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){pendingAction=action;requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},NOTIFY);return;}
         launch(action);
     }
@@ -493,11 +498,12 @@ public final class ClientActivity extends Activity {
         while(value>=1024&&unit<units.length-1){value/=1024;unit++;}return String.format(Locale.ROOT,"%.2f %s",value,units[unit]);
     }
     private void showStorage(){
-        if(state==null||state.busy||state.storageBusy||state.reportExporting||state.blocked||exporting||ClientRuntime.operationInProgress())return;
+        if(!diagnosticControlsReady(state,service!=null,exporting,ClientRuntime.operationInProgress()))return;
         if(storageDialog!=null)storageDialog.dismiss();
         final StorageAudit.Plan plan=state.storagePlan;
         LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(16),dp(8),dp(16),dp(8));
         TextView message=new TextView(this);message.setText(state.storageStatus+"\nThese totals cover private app files; Android also counts the installed APK and its cache. Allocated size counts storage blocks once; apparent size can include shared files. Character data, current runtime, imported assets and startup caches are protected.");body.addView(message);
+        if(state.blocked){TextView blockedNote=new TextView(this);blockedNote.setText("Read-only scan and report export remain available. File deletion stays disabled until owned-process cleanup is verified.");body.addView(blockedNote);}
         final Map<String,CheckBox> choices=new LinkedHashMap<>();
         if(plan!=null){
             TextView totals=new TextView(this);totals.setText("\nTotal allocated: "+storageBytes(plan.allocatedBytes)+"\nTotal apparent: "+storageBytes(plan.apparentBytes)+"\nEstimated removable: "+storageBytes(plan.reclaimableBytes)+"\nEntries inspected: "+plan.entryCount);body.addView(totals);
@@ -510,7 +516,7 @@ public final class ClientActivity extends Activity {
             }
         }
         Button scan=new Button(this);scan.setText("Scan storage");scan.setOnClickListener(v->{storageDialog.dismiss();storageDialogRequested=true;request(ClientService.STORAGE_SCAN);});body.addView(scan);
-        Button clean=new Button(this);clean.setText("Review selected cleanup");clean.setEnabled(plan!=null&&plan.cleanupAllowed&&!choices.isEmpty());clean.setOnClickListener(v->{
+        Button clean=new Button(this);clean.setText("Review selected cleanup");clean.setEnabled(!state.blocked&&plan!=null&&plan.cleanupAllowed&&!choices.isEmpty());clean.setOnClickListener(v->{
             Set<String> selected=new LinkedHashSet<>();for(Map.Entry<String,CheckBox> choice:choices.entrySet())if(choice.getValue().isChecked())selected.add(choice.getKey());
             if(selected.isEmpty()){Toast.makeText(this,"Select a disposable category first.",Toast.LENGTH_LONG).show();return;}
             StringBuilder review=new StringBuilder("Remove these disposable files from the reviewed scan?\n");long reclaimable=0;
@@ -529,10 +535,10 @@ public final class ClientActivity extends Activity {
         ScrollView scroll=new ScrollView(this);scroll.addView(body);storageDialog=new AlertDialog.Builder(this).setTitle("Storage and cleanup").setView(scroll).setNegativeButton("Close",null).create();storageDialog.show();
     }
     private void chooseExport(){
-        if(service==null||state==null||state.busy||state.storageBusy||state.reportExporting||exporting||ClientRuntime.operationInProgress())return;
+        if(!diagnosticControlsReady(state,service!=null,exporting,ClientRuntime.operationInProgress()))return;
         final List<File> reports;
         try{reports=service.retainedReports();}catch(IOException failure){Toast.makeText(this,"Report inventory needs recovery. Use Recover interrupted reports.",Toast.LENGTH_LONG).show();return;}
-        if(reports.isEmpty()){Toast.makeText(this,"No completed report yet. Use Recover interrupted reports after an interrupted session.",Toast.LENGTH_LONG).show();return;}
+        if(reports.isEmpty()){Toast.makeText(this,"No retained report found. Recover interrupted reports, then retry Reports / export.",Toast.LENGTH_LONG).show();return;}
         String[] labels=new String[reports.size()];
         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",Locale.ROOT);format.setTimeZone(TimeZone.getTimeZone("UTC"));
         for(int i=0;i<labels.length;i++){
@@ -545,7 +551,8 @@ public final class ClientActivity extends Activity {
     static String reportArchiveLabel(String name){
         if(name.startsWith("coh-interrupted-guest-"))return "Recovered guest evidence · session unverified";
         if(name.contains("interrupted"))return "Recovered / incomplete report";
-        return "completed archive";
+        if(name.contains("report-failure"))return "Report finalization failed · diagnostic evidence";
+        return "Session report · inspect save and gameplay results";
     }
     private void chooseReportDestination(File report){
         pendingExport=report.getPath();

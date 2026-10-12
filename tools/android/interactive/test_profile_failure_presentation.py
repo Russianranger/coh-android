@@ -90,7 +90,7 @@ public class ProfileFailurePresentationHost {
             current.fields.put("scope","actual_character_reopen_guest");current.fields.put("passed",true);need(currentGuestFailureMessage(current,"current")==null);break;
         case "recovery":need(reportArchiveLabel("coh-interrupted-guest-1791749675136-abcdef123456.zip").equals("Recovered guest evidence · session unverified"));break;
         case "checkpoint":need(reportArchiveLabel("coh-interrupted-1791749675136-abcdef123456.zip").equals("Recovered / incomplete report"));break;
-        case "archive":need(reportArchiveLabel("coh-character-reopen-1791749675136-abcdef123456.zip").equals("completed archive"));break;
+        case "archive":need(reportArchiveLabel("coh-character-reopen-1791749675136-abcdef123456.zip").equals("Session report · inspect save and gameplay results"));break;
         default:throw new AssertionError();
         }
     }

@@ -69,22 +69,11 @@ def read_manifest(path,lock_path):
     return value,lock
 
 
-def inventory(runtime,value,context):
-    actual={};seen=set();count=0
-    for scope in ('data/object_library','data/maps/city_zones/city_01_02','data/tricks'):
-        sentinel=scope+'/.kings-inventory';root=atlas.actual_targets(runtime,[sentinel],context)[sentinel].parent
-        require(root.is_dir() and not root.is_symlink(),'Kings world collision root missing')
-        for path in root.rglob('*'):
-            context.check();count+=1;name=path.relative_to(runtime).as_posix();folded=name.casefold()
-            require(count<=200000 and folded not in seen,'Kings collision tree oversized or case-ambiguous');seen.add(folded)
-            require(not(path.is_symlink() and path.is_dir()),'Linked Kings collision directory')
-            suffixes=('.geo','.txt','.rootnames') if scope=='data/object_library' else ('.txt',)
-            if not path.is_dir() and path.suffix.casefold() in suffixes:actual[folded]=name
-    selected=value['input_files'];targets=atlas.actual_targets(runtime,selected,context)
-    require(set(actual)=={n.casefold() for n in selected}
-        and all(actual[n.casefold()]==targets[n].relative_to(runtime).as_posix() for n in selected),
-        'Kings runtime collision inventory has no qualified native profile')
-    return atlas.fingerprints(runtime,selected,context,immutable_input=True),targets
+def inventory(runtime,value,context,*,provider_records=None):
+    return atlas.collision_input_snapshot(runtime,value['input_files'],
+        (('data/object_library',('.geo','.txt','.rootnames')),
+         ('data/maps/city_zones/city_01_02',('.txt',)),('data/tricks',('.txt',))),context,zone='Kings',provider_records=provider_records)
+
 
 
 def private_target(runtime,name,context):
@@ -99,15 +88,19 @@ def private_target(runtime,name,context):
     return target
 
 
-def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,lock_path=None):
+def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,lock_path=None,
+            source_input_proof=None,source_cache_identity=None,owner_root=None):
     started=time.monotonic();runtime=Path(runtime)
     require(imported_inputs_readonly is True,'Qualified readonly Kings world required')
     lock_path=Path(lock_path) if lock_path else Path(manifest_path).with_name(LOCK)
-    value,lock=read_manifest(manifest_path,lock_path);inputs,input_targets=inventory(runtime,value,context)
+    value,lock=read_manifest(manifest_path,lock_path)
+    providers={} if source_input_proof is not None else None
+    inputs,input_targets=inventory(runtime,value,context,provider_records=providers)
     targets={n:private_target(runtime,n,context) for n in value['files']};marker=private_target(runtime,MARKER,context)
     result={'format':1,'verified':True,'map_id':5,'map':MAP,'native_graph_readback_qualified':True,
         'physical_zoning_verified':False,'full_world_crc':value['native']['full_world_crc'],
-        'input_files_checked':len(inputs)}
+        'input_files_checked':len(inputs),
+        'input_validation':'bounded_single_walk_inventory_and_fingerprints'}
     prior=None
     if marker.exists():
         try: atlas.regular(marker,atlas.MAX_MANIFEST);prior=json.loads(marker.read_bytes())
@@ -115,11 +108,26 @@ def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,loc
     if isinstance(prior,dict) and prior.get('policy')==POLICY and prior.get('lock')==lock and prior.get('inputs')==inputs:
         if all(p.exists() for p in targets.values()) and prior.get('graphs')==atlas.fingerprints(runtime,targets,context):
             return dict(result,status='reused_verified_graph',installed_files=0,input_payload_bytes_hashed=0,
+                        input_full_byte_proof_reused_files=0,input_full_byte_proof_reused_bytes=0,
+                        input_full_byte_proof_reuse_policy='unchanged_destination_full_byte_graph_receipt',
+                        input_full_byte_proof_reuse_basis='authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints',
                         preparation_elapsed_seconds=round(time.monotonic()-started,6))
-    hashed=0
+    shared,shared_reason=(atlas.reusable_shared_inputs(source_input_proof,value['input_files'],providers,
+        source_cache_identity,owner_root) if source_input_proof is not None else
+        (set(),'no_current_process_owned_atlas_proof'))
+    hashed=reused_bytes=0
     for name,expected in value['input_files'].items():
+        context.check()
+        if name in shared:
+            reused_bytes+=expected['bytes']
+            continue
         require(pin(input_targets[name],context)==expected,'Kings collision input differs: '+name);hashed+=expected['bytes']
-    require(inventory(runtime,value,context)[0]==inputs,'Kings inputs changed during proof')
+    result.update(input_full_byte_proof_reused_files=len(shared),input_full_byte_proof_reused_bytes=reused_bytes,
+        input_full_byte_proof_reuse_policy=shared_reason,
+        input_full_byte_proof_reuse_basis=(source_input_proof.validation_basis if shared else 'all_destination_inputs_fully_hashed'))
+    current_providers={} if providers is not None else None
+    require(inventory(runtime,value,context,provider_records=current_providers)[0]==inputs
+        and current_providers==providers,'Kings inputs changed during proof')
     atlas.regular(archive,2*atlas.MAX_GRAPH,allow_shared_source=True)
     require(pin(archive,context)==lock['archive'],'Kings graph archive differs from APK lock')
     installed=0
@@ -141,7 +149,9 @@ def install(archive,manifest_path,runtime,*,context,imported_inputs_readonly,loc
                 atlas.regular(target,atlas.MAX_GRAPH);require(pin(target,context)==expected,'Preserve existing different Kings graph')
                 target.chmod(0o400)
             else:atlas.atomic_bytes(target,raw);installed+=1
-    require(inventory(runtime,value,context)[0]==inputs,'Kings inputs changed before graph receipt')
+    current_providers={} if providers is not None else None
+    require(inventory(runtime,value,context,provider_records=current_providers)[0]==inputs
+        and current_providers==providers,'Kings inputs changed before graph receipt')
     atlas.atomic_bytes(marker,canonical({'format':1,'policy':POLICY,'lock':lock,'inputs':inputs,
         'graphs':atlas.fingerprints(runtime,targets,context)}))
     return dict(result,status='installed_verified_graph',installed_files=installed,input_payload_bytes_hashed=hashed,

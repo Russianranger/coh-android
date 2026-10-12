@@ -727,6 +727,113 @@ def validate_character_rows(rows, baseline, inventory, attributes, auth_id, *,
     return {'identity': new_identity, 'login_count': expected_login_count, 'rows': rows}
 
 
+ANIMATION_COUNTER_LINE = re.compile(rb'^COH_ANIM_CERT_V1 schema=1 pack=([0-9a-f]{64}) '
+    rb'opened=(\d{1,20}) certified=(\d{1,20}) fallback=(\d{1,20}) crypto_failed=(\d{1,20}) raw_bytes=(\d{1,20}) '
+    rb'hash_us=(\d{1,20}) stock_us=(\d{1,20}) skipped_rot_keys=(\d{1,20}) skipped_pos_keys=(\d{1,20}) '
+    rb'scanned_rot_keys=(\d{1,20}) scanned_pos_keys=(\d{1,20})$')
+ANIMATION_COUNTER_KEYS = ('opened', 'certified', 'fallback', 'crypto_failed', 'raw_bytes',
+    'hash_us', 'stock_us', 'skipped_rot_keys', 'skipped_pos_keys', 'scanned_rot_keys', 'scanned_pos_keys')
+
+
+def observe_animation_counter_bytes(state, output):
+    """Observe complete source-pinned rows from this owned console only.
+
+    A missing/partial/malformed row is unknown evidence, never activation or
+    readiness. Scan append bytes once and retain at most one bounded partial row.
+    """
+    import native_map_startup_contract as startup
+    size, offset = len(output), state.get('offset', 0)
+    if size < offset:
+        state['observation'] = {'status': 'unknown_console_truncated', 'observed': False}
+        state['offset'], state['tail'] = size, b''
+        return True
+    raw = state.get('tail', b'') + bytes(output[offset:size])
+    lines = raw.split(b'\n')
+    state['offset'], state['tail'] = size, lines.pop()[-4096:]
+    changed = False
+    for line in lines:
+        match = ANIMATION_COUNTER_LINE.fullmatch(line.rstrip(b'\r'))
+        if match is None or match[1].decode() != startup.PACK_SHA256:
+            continue
+        values = {name: int(match[index + 2]) for index, name in enumerate(ANIMATION_COUNTER_KEYS)}
+        if (any(value > 2**64 - 1 for value in values.values())
+                or values['certified'] + values['fallback'] > values['opened']):
+            continue
+        rows = state.get('rows', 0)
+        if rows >= 64:
+            continue
+        state['rows'] = rows + 1
+        state['observation'] = {'status': 'actual_owned_native_console_counter', 'observed': True,
+            'pack_sha256': match[1].decode(), 'counter_rows_observed': state['rows'], **values}
+        changed = True
+    return changed
+
+
+def observe_ready_fx_provider(runtime, prepared_runtime_identity, prepared_payload):
+    """Once-only optional private FX byte observation after native readiness.
+
+    Reads one bounded no-follow descriptor, retaining provider/ancestor ownership
+    and before/after identity. This observes remaining cache bytes, not which
+    provider the native loader opened. Failure is an explicit unknown receipt.
+    """
+    started, total = time.monotonic(), 0
+    result = {'status': 'unknown', 'observed': False, 'actual_payload': None,
+        'payload_bytes_hashed': 0, 'hash_elapsed_seconds': None,
+        'native_provider_open_observed': False,
+        'native_provider_open_status': 'unknown_without_native_io_trace',
+        'projected_payload_present': None, 'full_original_payload_present': None,
+        'matches_preparation_payload': None}
+    descriptor = None
+    try:
+        if runtime is None:
+            raise ValueError('Owned runtime path unavailable')
+        runtime = Path(runtime)
+        root = runtime.lstat()
+        actual_root = {'device': root.st_dev, 'inode': root.st_ino, 'uid': root.st_uid,
+                       'mode': stat.S_IMODE(root.st_mode)}
+        if not stat.S_ISDIR(root.st_mode) or actual_root != prepared_runtime_identity:
+            raise ValueError('Prepared private runtime identity changed')
+        ancestors = {}
+        for directory in (runtime, runtime / 'data', runtime / 'data/bin'):
+            info = directory.lstat()
+            if not stat.S_ISDIR(info.st_mode) or info.st_uid != root.st_uid:
+                raise ValueError('Private FX ancestor changed or is linked')
+            ancestors[directory] = server_fx_catalog._unchanged_leaf(info)
+        provider = runtime / server_fx_catalog.TARGET
+        descriptor = os.open(provider, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+        info = os.fstat(descriptor)
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != root.st_uid
+                or not 0 < info.st_size <= server_cache_package.MAX_FILE):
+            raise ValueError('FX provider is not a bounded owned single-link regular file')
+        before = server_fx_catalog._unchanged_leaf(info)
+        if server_fx_catalog._unchanged_leaf(provider.lstat()) != before:
+            raise ValueError('FX descriptor/path provider differs')
+        digest = hashlib.sha256()
+        with os.fdopen(descriptor, 'rb', closefd=False) as source:
+            for raw in iter(lambda: source.read(1024 * 1024), b''):
+                total += len(raw)
+                if total > info.st_size:
+                    raise ValueError('Private FX provider grew during observation')
+                digest.update(raw)
+        if (total != info.st_size or server_fx_catalog._unchanged_leaf(os.fstat(descriptor)) != before
+                or server_fx_catalog._unchanged_leaf(provider.lstat()) != before
+                or any(server_fx_catalog._unchanged_leaf(directory.lstat()) != old
+                       for directory, old in ancestors.items())):
+            raise ValueError('Private FX provider/ancestor changed during observation')
+        pin = {'bytes': total, 'sha256': digest.hexdigest()}
+        result.update(status='actual_owned_private_fx_bytes_after_native_ready', observed=True,
+            actual_payload=pin, projected_payload_present=pin == server_fx_catalog.PROJECTED,
+            full_original_payload_present=pin == server_fx_catalog.BASE,
+            matches_preparation_payload=pin == prepared_payload)
+    except (OSError, ValueError) as failure:
+        result.update(status='unknown_optional_fx_observation_failed', reason=str(failure)[:200])
+    finally:
+        if descriptor is not None: os.close(descriptor)
+        result.update(payload_bytes_hashed=total,
+                      hash_elapsed_seconds=round(time.monotonic() - started, 6))
+    return result
+
+
 class LocalCharacterServer(login.LocalLoginServer):
     require_empty_account = False
     requires_saved_character = False
@@ -1014,7 +1121,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             installed = atlas_beacon_package.install(beacon_archive, beacon_manifest,
                 self.runtime, context=self.ctx,
                 imported_inputs_readonly=receipt.get('imported_inputs_readonly'),
-                mapserver_package=self.map_package)
+                mapserver_package=self.map_package,
+                input_proof_sink=lambda proof: setattr(self, 'atlas_collision_input_proof', proof),
+                source_cache_identity=self.data_cache.identity, owner_root=self.owner.root)
             self.creation_report['atlas_beacon_graph'] = installed
             self.ctx.report['atlas_beacon_graph'] = installed
         checkpoint('atlas_beacon_graph')
@@ -1025,6 +1134,120 @@ class LocalCharacterServer(login.LocalLoginServer):
             'preparation_elapsed_seconds': round(time.monotonic() - prepared_at, 6),
             'preparation_phase_seconds': dict(phases),
             'server_data_cache': self.data_cache.summary, **staged}
+        self.record_startup_preparation(1, self.runtime,
+            self.creation_report.get('server_fx_catalog', {}),
+            self.creation_report.get('server_animation_pack', {}),
+            self.creation_report.get('atlas_beacon_graph', {}),
+            self.creation_report['private_map_data']['preparation_elapsed_seconds'], phases)
+
+    def persist_startup_observation(self):
+        """Retain bounded activation evidence even before character acceptance."""
+        rows = self.creation_report.get('map_startup_observation')
+        if not rows:
+            return
+        self.ctx.report['map_startup_observation'] = rows
+        state = getattr(self.ctx, 'state', None)
+        if state is None:  # Isolated host fixtures have no report state directory.
+            return
+        value = {'format': 1, 'session_id': self.owner.args.session_id,
+            'status': 'observations_only', 'physical_startup_gain_validated': False,
+            'maps': rows}
+        try:
+            raw = json.dumps(base.redacted_value(value, self.ctx.secrets), indent=2) + '\n'
+            require(len(raw.encode()) <= 256 * 1024, 'Startup observation exceeded bounded receipt')
+            base.private_write(Path(state) / 'map-startup-observation.json', raw)
+            # Recovery already carries this normal state file. Never upgrade
+            # running/failed character acceptance because observations exist.
+            document = json.dumps(base.redacted_value(self.ctx.report, self.ctx.secrets), indent=2) + '\n'
+            base.private_write(Path(state) / 'latest-report.json', document)
+        except (OSError, base.DiagnosticError) as failure:
+            self.creation_report['map_startup_observation_write_failure'] = str(failure)[:200]
+
+    def record_startup_preparation(self, map_id, runtime, fx, animation, graph, elapsed, phases):
+        runtime = Path(runtime)
+        actual_map = server_cache_package.file_pin(runtime / 'MapServer.exe')
+        declared_map = self.map_package['files']['MapServer.exe']
+        require(actual_map['sha256'] == declared_map['sha256']
+                and (declared_map.get('bytes', declared_map.get('size')) in (None, actual_map['bytes'])),
+                'Startup observation found a different installed MapServer')
+        provider = runtime / server_fx_catalog.TARGET
+        fx_observation = {'status': fx.get('status', 'unknown'),
+            'logical_provider': server_fx_catalog.TARGET, 'actual_payload': None,
+            'private_owned_regular_provider': False, 'projected_payload_present': False,
+            'native_provider_open_observed': False, 'native_provider_open_status': 'unknown_without_native_io_trace'}
+        if os.path.lexists(provider):
+            info = provider.lstat()
+            if stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == runtime.lstat().st_uid:
+                fx_observation['actual_payload'] = server_cache_package.file_pin(provider)
+                fx_observation['private_owned_regular_provider'] = True
+                fx_observation['projected_payload_present'] = fx_observation['actual_payload'] == server_fx_catalog.PROJECTED
+        root_info = runtime.lstat()
+        row = {'format': 1, 'map_id': map_id, 'runtime': runtime.name,
+            'private_runtime_identity': {'device': root_info.st_dev, 'inode': root_info.st_ino,
+                'uid': root_info.st_uid, 'mode': stat.S_IMODE(root_info.st_mode)},
+            'preparation_finished_utc_ms': int(time.time() * 1000), 'preparation_elapsed_seconds': elapsed,
+            'preparation_phase_seconds': dict(phases), 'actual_installed_mapserver': actual_map,
+            'source_package_mapserver_pin_equal': True, 'launched': False, 'launcher_pid': None,
+            'native_ready_verified': False, 'native_ready_elapsed_seconds': None,
+            'server_fx_provider': fx_observation,
+            'animation_storage': {'installed': animation.get('installed', False), 'payload': animation.get('pigg'),
+                'native_certificate': {'status': 'unknown_until_actual_owned_console_counter', 'observed': False}},
+            'collision_input_proof': {key: graph.get(key) for key in ('status', 'input_validation',
+                'input_files_checked', 'input_payload_bytes_hashed', 'input_full_byte_proof_reused_files',
+                'input_full_byte_proof_reused_bytes', 'input_full_byte_proof_reuse_policy',
+                'input_validation_basis', 'input_full_byte_proof_reuse_basis', 'same_process_shared_certificate_exported')},
+            'gameplay_or_collision_parity_certified_by_observation': False}
+        self.creation_report.setdefault('map_startup_observation', {})[str(map_id)] = row
+        self.persist_startup_observation()
+
+    def sample_startup_observation(self, *, force=False):
+        rows = getattr(self, 'creation_report', {}).get('map_startup_observation', {})
+        if not rows:
+            return
+        now = time.monotonic()
+        if not force and now < getattr(self, '_startup_observation_next', 0):
+            return
+        self._startup_observation_next = now + 10
+        maps = dict(getattr(self, 'maps', {}))
+        if self.map_process is not None and not maps:
+            maps[1] = {'process': self.map_process, 'ready': self.creation_report.get('map_ready') is True}
+        scans = getattr(self, '_startup_observation_scans', None)
+        if scans is None:
+            scans = self._startup_observation_scans = {}
+        changed = False
+        for map_id, owned in maps.items():
+            row, child = rows.get(str(map_id)), owned.get('process')
+            if row is None or child is None:
+                continue
+            runtime = (getattr(self, 'kings_row_runtime', None) if map_id == 5
+                       else getattr(self, 'runtime', None))
+            if row['launcher_pid'] is None:
+                if runtime is not None:
+                    actual = server_cache_package.file_pin(Path(runtime) / 'MapServer.exe')
+                    require(actual == row['actual_installed_mapserver'],
+                            'Owned launched MapServer differs from the prepared byte proof')
+                    row['actual_launched_mapserver'] = actual
+                    arguments = getattr(child.process, 'args', None)
+                    row['launch_path_binding_observed'] = (isinstance(arguments, (list, tuple))
+                        and base.windows_path(Path(runtime) / 'MapServer.exe') in arguments
+                        and '--chdir=' + str(runtime) in arguments)
+                row.update(launched=True, launcher_pid=child.process.pid,
+                    launch_utc_ms=owned.get('launch_utc_ms', getattr(self, 'map_launch_utc_ms', None)),
+                    native_process_launch_binding='exact_owned_ctx_start_child_for_this_private_runtime')
+                changed = True
+            scan = scans.setdefault(child, {})
+            if observe_animation_counter_bytes(scan, getattr(child, 'output', b'')):
+                row['animation_storage']['native_certificate'] = scan['observation']
+                changed = True
+            if owned.get('ready') is True and row['native_ready_verified'] is False:
+                row.update(native_ready_verified=True,
+                    native_ready_elapsed_seconds=round(now - child.started, 6),
+                    native_ready_time_scope='sampled_upper_bound_after_owned_existing_protocol_tick_gate; observer_delay_not_bounded')
+                row['server_fx_provider']['post_native_ready'] = observe_ready_fx_provider(
+                    runtime, row['private_runtime_identity'], row['server_fx_provider']['actual_payload'])
+                changed = True
+        if changed or force:
+            self.persist_startup_observation()
 
     def dbserver_environment(self, environment):
         environment = super().dbserver_environment(environment)
@@ -1249,7 +1472,9 @@ class LocalCharacterServer(login.LocalLoginServer):
         checkpoint('server_animation_pack')
         graph = kings_row_beacon_package.install(self.owner.args.assets / kings_row_beacon_package.ARCHIVE,
             self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
-            imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK)
+            imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK,
+            source_input_proof=getattr(self, 'atlas_collision_input_proof', None),
+            source_cache_identity=self.data_cache.identity, owner_root=self.owner.root)
         checkpoint('kings_row_beacon_graph')
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
@@ -1261,7 +1486,12 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['kings_row_preparation'] = report
         self.creation_report['kings_row_beacon_graph'] = graph
         self.ctx.report['kings_row_preparation'] = report
+        self.record_startup_preparation(5, target, fx_catalog, animation, graph, report['elapsed_seconds'], phases)
         self.kings_row_prepared = {'runtime': target, 'graph': graph, 'preparation': report}
+        # The owned Map 5 tree now keeps its own complete durable graph proof.
+        # A successful same-process preparation cannot need the Atlas leaf
+        # certificate again; failure/cancellation above deliberately retains it.
+        self.atlas_collision_input_proof = None
         return self.kings_row_prepared
 
     def copy_private_data(self, source, target):
@@ -1375,6 +1605,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.creation_report['immediate_native_events'] = {'enabled': True,
                 'contract': event_contract, 'legacy_sorted_logs_used_for_ready_or_ground': False}
         self.map_launch_utc_ms = int(time.time() * 1000)
+        self.persist_startup_observation()
         self.map_process = self.ctx.start('local-character-atlas', ['/usr/bin/env', '--chdir=' + str(self.runtime),
             self.owner.args.wine, base.windows_path(self.runtime / 'MapServer.exe'),
             '-nogui', '-db', '127.0.0.1', '-nosharedmemory', '-nostats', '-udp', '7001', '-tcp', '0', '-map_id', '1',
@@ -1386,6 +1617,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         self.creation_report['map_autogroup_policy'] = {'native_option': '-donotautogroup',
             'configured_do_not_auto_group': True, 'policy_basis': 'native_production_default'}
         self.report['mapserver_started'] = self.ctx.report['mapserver_started'] = True
+        self.sample_startup_observation(force=True)
         deadline = min(self.ctx.deadline, time.monotonic() + MAP_STARTUP_SECONDS)
         next_query = next_message = 0
         while True:
@@ -1410,6 +1642,7 @@ class LocalCharacterServer(login.LocalLoginServer):
                     progress.compare_records(after, before)
                     guard['passed'] = True
                     self.creation_report.update(map_ready=True, map_listener=bindings)
+                    self.sample_startup_observation(force=True)
                     self.ctx.passed(atlas_ready=True, map=sample, loopback_only=True)
                     return
             if now >= next_message:
@@ -1444,6 +1677,7 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def health(self):
         super().health()
+        self.sample_startup_observation()
         # Capture exact live leader/worker ownership while the Wine leader is
         # still readable. Android can deny the worker environment after that
         # leader exits; cleanup may then use only a previously authenticated,
@@ -1658,6 +1892,12 @@ class LocalCharacterServer(login.LocalLoginServer):
         return self.creation_report
 
     def collect(self, target):
+        self.sample_startup_observation(force=True)
+        startup = self.creation_report.get('map_startup_observation')
+        if startup:
+            base.private_write(target / 'map-startup-observation.json',
+                json.dumps(base.redacted_value({'format': 1, 'session_id': self.owner.args.session_id,
+                    'maps': startup, 'physical_startup_gain_validated': False}, self.ctx.secrets), indent=2) + '\n')
         # Atlas has substantially more diagnostics than the login-only mode.
         # Keep its bounded complete logs in one member of the outer support ZIP.
         # Do not widen the accepted login-only collector's two-MiB limit.

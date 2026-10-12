@@ -48,6 +48,13 @@ public final class ClientReports {
         if (identityReader != null && identityReader != reader) throw new IllegalStateException("File identity reader already initialized");
         identityReader = reader;
     }
+    interface SourceOpener { SeekableByteChannel open(Path file) throws IOException; }
+    private static volatile SourceOpener sourceOpener;
+    static synchronized void setSourceOpener(SourceOpener opener) {sourceOpener=opener;}
+    private static SeekableByteChannel openSource(Path file) throws IOException {
+        SourceOpener selected=sourceOpener;
+        return selected==null?Files.newByteChannel(file,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS):selected.open(file);
+    }
     private static final long MAX_GUEST_BYTES = 260L * 1024 * 1024;
     private static final long MAX_JSON_BYTES = 2L * 1024 * 1024;
     // A normal wrapper embeds the bounded guest JSON plus Android observations.
@@ -74,7 +81,7 @@ public final class ClientReports {
             if (!runName(run.getFileName().toString()) || !directoryEntry(run)) continue;
             for (Path file : children(run)) {
                 if (!archiveName(file.getFileName().toString())) continue;
-                try { regular(file, MAX_REPORT_BYTES); found.add(file); }
+                try { completedArchive(file); found.add(file); }
                 catch (IOException unsafe) { /* An unsafe archive is never offered for export. */ }
             }
         }
@@ -352,18 +359,200 @@ public final class ClientReports {
         for (Path run : children(root)) {
             if (!runName(run.getFileName().toString()) || !directoryEntry(run)) continue;
             Path checkpoint = run.resolve("checkpoint.json");
-            if (!Files.exists(checkpoint, LinkOption.NOFOLLOW_LINKS)) continue;
+            Path terminal=run.resolve("terminal-failure.json");
+            if (!Files.exists(checkpoint, LinkOption.NOFOLLOW_LINKS) && !Files.exists(terminal,LinkOption.NOFOLLOW_LINKS)) continue;
             boolean completed = false;
             for (Path file : children(run)) {
                 if (!archiveName(file.getFileName().toString())) continue;
-                try { regular(file, MAX_REPORT_BYTES); completed = true; break; }
+                try { completedArchive(file); completed = true; break; }
                 catch (IOException unsafe) { /* Do not follow unsafe purported reports. */ }
+            }
+            if(Files.exists(terminal,LinkOption.NOFOLLOW_LINKS)) {
+                byte[] note=readText(terminal,MAX_CHECKPOINT_BYTES).getBytes(StandardCharsets.UTF_8);
+                Path log=run.resolve("operation.log");
+                byte[] output=Files.exists(log,LinkOption.NOFOLLOW_LINKS)
+                        ?readText(log,4L*1024*1024).getBytes(StandardCharsets.UTF_8):new byte[0];
+                retainTerminalFailure(filesRoot,run.toFile(),note,output);
+                continue;
             }
             if (completed) continue;
             regular(checkpoint, MAX_CHECKPOINT_BYTES);
             Path target = run.resolve("coh-interrupted-" + run.getFileName() + ".zip");
             archive(target, captures(run), run, checkpoint, "interrupted_android_operation", true);
         }
+    }
+
+    /** A ZIP publication failure must not discard the failed session's diagnostics.
+     * Persist a compact terminal record first, then assemble an explicitly unverified
+     * carrier from individually safe bounded sources. A bad capture or guest output
+     * is listed as omitted; it cannot prevent all the other evidence being exported.
+     * This helper never certifies a save, rendering, cleanup or a successful test. */
+    public static synchronized File retainTerminalFailure(File filesRoot,File operationDir,
+                                                           byte[] terminalJson,byte[] operationLog) throws IOException {
+        Path root=reportRoot(filesRoot,true),run=operationDirectory(operationDir);
+        if(!root.equals(run.getParent()))throw new IOException("Terminal report is outside private storage");
+        if(terminalJson==null || terminalJson.length==0 || terminalJson.length>MAX_CHECKPOINT_BYTES
+                || operationLog==null || operationLog.length>4L*1024*1024)
+            throw new IOException("Terminal diagnostic evidence exceeds limit");
+        atomicBytes(run.resolve("terminal-failure.json"),terminalJson);
+        atomicBytes(run.resolve("operation.log"),operationLog);
+        // A reuse receipt is optional. Independently locate an exact
+        // current carrier, including compact carriers whose receipt write failed.
+        Path retained=findTerminalCarrier(root,terminalJson,operationLog);
+        if(retained!=null)return retained.toFile();
+        Path target=run.resolve("coh-interrupted-"+run.getFileName()+".zip");
+        if(Files.exists(target,LinkOption.NOFOLLOW_LINKS)) {
+            // Never overwrite corrupt or older evidence while selecting a new carrier.
+            Path replacement=root.resolve(System.currentTimeMillis()+"-"+UUID.randomUUID().toString().replace("-","").substring(0,12));
+            Files.createDirectory(replacement);target=replacement.resolve("coh-interrupted-"+replacement.getFileName()+".zip");
+        }
+        final Map<String,Path> sources=new LinkedHashMap<>();final List<String> omitted=new ArrayList<>();
+        byte[] checkpoint=null;Path checkpointPath=run.resolve("checkpoint.json");
+        if(Files.exists(checkpointPath,LinkOption.NOFOLLOW_LINKS)) {
+            try{ByteArrayOutputStream bytes=new ByteArrayOutputStream();copy(checkpointPath,bytes,MAX_CHECKPOINT_BYTES);checkpoint=bytes.toByteArray();}
+            catch(Exception | OutOfMemoryError unavailable){omitted.add("android-recovery-checkpoint.json");}
+        }
+        // This complete, fsynced carrier exists before any optional guest/capture
+        // open, read, archive write or mutation can fail. Only this newly owned
+        // compact file may be atomically enriched below; its path never changes.
+        writeTerminalArchive(target,terminalJson,operationLog,checkpoint,omitted,"pending",null,
+                Collections.<String,Path>emptyMap(),null,null);
+        FileIdentity compactIdentity=identity(target);
+        String[] activeSource={null};
+        try {
+            int count=0;long bytes=0;
+            for(String name:CAPTURE_DIRS) {
+                Path dir=run.resolve(name);if(!Files.exists(dir,LinkOption.NOFOLLOW_LINKS))continue;
+                try {for(Path file:children(dir)) {
+                    String relative=name+"/"+file.getFileName();if(!captureName(relative))continue;
+                    try {long length=regular(file,MAX_PNG_BYTES).size();
+                        if(++count>MAX_CAPTURES || bytes+length>MAX_CAPTURE_BYTES)throw new IOException("Capture limit");
+                        bytes+=length;sources.put(relative,file);
+                    }catch(IOException invalid){omitted.add(relative);}
+                }}catch(IOException invalid){omitted.add(name);}
+            }
+            Path state=root.getParent().resolve("state");
+            if(Files.exists(state,LinkOption.NOFOLLOW_LINKS))for(String name:GUEST_FILES)
+                terminalSource(sources,omitted,name.equals("report.zip")?"guest-report.zip":"guest-output/"+name,
+                        state.resolve(name),name.equals("report.zip")?MAX_GUEST_BYTES:MAX_JSON_BYTES);
+            writeTerminalArchive(target,terminalJson,operationLog,checkpoint,omitted,"complete",null,
+                    sources,compactIdentity,activeSource);
+        }catch(Exception | OutOfMemoryError unavailable) {
+            // A failed optional entry belongs only to a discarded staging ZIP.
+            // The committed compact carrier is still complete and exportable.
+            for(String name:sources.keySet())if(!omitted.contains(name))omitted.add(name);
+            String failureKind=unavailable.getClass().getSimpleName().replaceAll("[^A-Za-z0-9_$]","_");
+            if(failureKind.isEmpty())failureKind="Failure";
+            try {writeTerminalArchive(target,terminalJson,operationLog,checkpoint,omitted,"failed",
+                    failureKind+(activeSource[0]==null?"":":"+activeSource[0]),
+                    Collections.<String,Path>emptyMap(),compactIdentity,null);}
+            catch(Exception | OutOfMemoryError metadataUnavailable){/* Retain the complete pending compact carrier. */}
+        }
+        Path marker=run.resolve("terminal-carrier.txt");
+        String fingerprint=digestBytes(terminalJson)+":"+digestBytes(operationLog);
+        try {atomicBytes(marker,("1\n"+fingerprint+"\n"+root.relativize(target).toString().replace(File.separatorChar,'/')+"\n").getBytes(StandardCharsets.UTF_8));}
+        catch(IOException unavailable){/* Exact namespace discovery does not depend on this hint. */}
+        return target.toFile();
+    }
+    /** Bounded exact discovery prevents duplicate replacement carriers without a writable receipt. */
+    private static Path findTerminalCarrier(Path root,byte[] terminal,byte[] log) throws IOException {
+        for(Path run:children(root)) {
+            if(!runName(run.getFileName().toString()) || !directoryEntry(run))continue;
+            Path carrier=run.resolve("coh-interrupted-"+run.getFileName()+".zip");
+            if(!Files.exists(carrier,LinkOption.NOFOLLOW_LINKS))continue;
+            try{completedArchive(carrier);if(terminalCarrierMatches(carrier,terminal,log))return carrier;}
+            catch(IOException invalid){/* Partial, unsafe or foreign carriers cannot satisfy exact discovery. */}
+        }return null;
+    }
+    private static void writeTerminalArchive(Path target,byte[] terminal,byte[] log,byte[] checkpoint,
+            List<String> omitted,String enrichment,String enrichmentError,Map<String,Path> sources,
+            FileIdentity ownedCompact,String[] activeSource) throws IOException {
+        Path part=target.resolveSibling("."+target.getFileName()+"."+UUID.randomUUID()+".part");
+        try {
+            try(FileChannel channel=FileChannel.open(part,StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS);
+                ZipOutputStream zip=new ZipOutputStream(Channels.newOutputStream(channel))) {
+                StringBuilder excluded=new StringBuilder();for(String name:omitted){if(excluded.length()>0)excluded.append(',');excluded.append('"').append(name).append('"');}
+                terminalBytes(zip,"recovery-manifest.json",("{\"format\":1,\"status\":\"failed_unverified\",\"passed\":false,\"verified\":false,"
+                        +"\"recovery_kind\":\"terminal_report_failure\",\"session_attribution_verified\":false,\"enrichment_status\":\""+enrichment+"\","
+                        +"\"enrichment_error\":"+(enrichmentError==null?"null":"\""+enrichmentError+"\"")+",\"omitted_sources\":["+excluded+"]}").getBytes(StandardCharsets.UTF_8));
+                terminalBytes(zip,"android-client-report.json",terminal);terminalBytes(zip,"operation.log",log);
+                if(checkpoint!=null)terminalBytes(zip,"android-recovery-checkpoint.json",checkpoint);
+                for(Map.Entry<String,Path> source:sources.entrySet()) {
+                    if(activeSource!=null)activeSource[0]=source.getKey();
+                    zip.putNextEntry(new ZipEntry(source.getKey()));
+                    copy(source.getValue(),zip,source.getKey().equals("guest-report.zip")?MAX_GUEST_BYTES
+                            :source.getKey().startsWith("guest-output/")?MAX_JSON_BYTES:MAX_PNG_BYTES);zip.closeEntry();
+                }
+                if(activeSource!=null)activeSource[0]=null;
+                zip.finish();zip.flush();channel.force(true);
+            }
+            completedArchive(part);
+            if(ownedCompact==null) {
+                if(Files.exists(target,LinkOption.NOFOLLOW_LINKS))throw new IOException("Terminal report appeared during publication");
+                Files.move(part,target,StandardCopyOption.ATOMIC_MOVE);
+            }else {
+                regular(target,MAX_REPORT_BYTES);
+                if(!ownedCompact.key.equals(identity(target).key))throw new IOException("Owned compact carrier changed during enrichment");
+                Files.move(part,target,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
+            }
+            // The complete staged ZIP was validated and fsynced before the atomic
+            // rename. No optional read after replacement may invalidate that commit.
+        }finally{try{Files.deleteIfExists(part);}catch(IOException cleanupUnavailable){/* A part is never inventoried as a report. */}}
+    }
+    private static void terminalBytes(ZipOutputStream zip,String name,byte[] bytes) throws IOException {
+        zip.putNextEntry(new ZipEntry(name));zip.write(bytes);zip.closeEntry();
+    }
+    private static boolean terminalCarrierMatches(Path target,byte[] terminal,byte[] log) throws IOException {
+        try(ZipFile zip=new ZipFile(target.toFile())) {
+            ZipEntry manifest=zip.getEntry("recovery-manifest.json");
+            if(manifest==null || manifest.getSize()<0 || manifest.getSize()>MAX_CHECKPOINT_BYTES)return false;
+            ByteArrayOutputStream evidence=new ByteArrayOutputStream();
+            try(InputStream in=zip.getInputStream(manifest)) {
+                byte[] buffer=new byte[8192];int count;long total=0;
+                while((count=in.read(buffer))!=-1){total+=count;if(total>MAX_CHECKPOINT_BYTES)return false;evidence.write(buffer,0,count);}
+            }
+            String expectedPrefix="{\"format\":1,\"status\":\"failed_unverified\",\"passed\":false,\"verified\":false,"
+                    +"\"recovery_kind\":\"terminal_report_failure\",\"session_attribution_verified\":false,\"enrichment_status\":\"";
+            String safeName="[A-Za-z0-9_$/.-]+";
+            if(!decodeText(evidence.toByteArray()).matches(java.util.regex.Pattern.quote(expectedPrefix)
+                    +"(?:pending|complete|failed)\",\"enrichment_error\":(?:null|\""+safeName+"(?::"+safeName+")?\"),"
+                    +"\"omitted_sources\":\\[(?:\""+safeName+"\"(?:,\""+safeName+"\")*)?\\]\\}"))return false;
+            String[] names={"android-client-report.json","operation.log"};byte[][] expected={terminal,log};
+            for(int i=0;i<names.length;i++) {
+                ZipEntry entry=zip.getEntry(names[i]);if(entry==null || entry.getSize()!=expected[i].length)return false;
+                try(InputStream in=zip.getInputStream(entry)) {
+                    byte[] buffer=new byte[8192];int offset=0;
+                    for(int n;(n=in.read(buffer))!=-1;) {
+                        if(offset+n>expected[i].length)return false;
+                        for(int at=0;at<n;at++)if(buffer[at]!=expected[i][offset+at])return false;offset+=n;
+                    }
+                    if(offset!=expected[i].length)return false;
+                }
+            }return true;
+        }
+    }
+    private static void terminalSource(Map<String,Path> sources,List<String> omitted,String name,Path file,long limit) {
+        if(!Files.exists(file,LinkOption.NOFOLLOW_LINKS))return;
+        try{regular(file,limit);sources.put(name,file);}catch(IOException invalid){omitted.add(name);}
+    }
+    /** Inventory needs a complete central directory, rather than just a .zip suffix.
+     * The carrier's content is diagnostic evidence, independent of its pass value. */
+    private static void completedArchive(Path file) throws IOException {
+        BasicFileAttributes before=regular(file,MAX_REPORT_BYTES);Set<String> names=new HashSet<>();long total=0;
+        try(ZipFile zip=new ZipFile(file.toFile())) {
+            if(zip.size()==0 || zip.size()>MAX_DIRECTORY_ENTRIES)throw new IOException("Incomplete report archive");
+            java.util.Enumeration<? extends ZipEntry> entries=zip.entries();
+            while(entries.hasMoreElements()) {
+                ZipEntry entry=entries.nextElement();String name=entry.getName();
+                if(entry.isDirectory() || name.startsWith("/") || name.contains("\\") || name.contains("\u0000")
+                        || !names.add(name) || entry.getSize()<0 || entry.getSize()>MAX_REPORT_BYTES)
+                    throw new IOException("Invalid report archive inventory");
+                for(String component:name.split("/",-1))if(component.isEmpty() || component.equals(".") || component.equals(".."))
+                    throw new IOException("Invalid report archive entry");
+                total+=entry.getSize();if(total>MAX_REPORT_BYTES)throw new IOException("Report archive exceeds limit");
+            }
+        }
+        same(before,regular(file,MAX_REPORT_BYTES));
     }
 
     /** Replace a compact checkpoint atomically; JSON is supplied by the Android runtime. */
@@ -531,7 +720,7 @@ public final class ClientReports {
         FileIdentity identityBefore = identity(file);
         long deadline = System.nanoTime() + MAX_EXPORT_MILLIS * 1000000L;
         long copied = 0;
-        try (SeekableByteChannel channel = Files.newByteChannel(file, StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)) {
+        try (SeekableByteChannel channel = openSource(file)) {
             same(before, regular(file, max));
             if (!identityBefore.key.equals(identity(file).key)) throw new IOException("Diagnostic file was replaced");
             ByteBuffer data = ByteBuffer.allocate(65536);

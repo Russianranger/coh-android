@@ -14,6 +14,7 @@ import stat
 import struct
 import tempfile
 import time
+from types import MappingProxyType
 import zipfile
 
 import atlas_world_assets as world
@@ -160,42 +161,115 @@ def actual_targets(runtime, names, context):
     return world.resolve_targets(Path(runtime), names, context)
 
 
+def collision_input_snapshot(runtime, selected, scopes, context, *, required=(), zone="Atlas", provider_records=None):
+    """Inventory and fingerprint one bounded collision namespace in one walk.
+
+    DirEntry caches the type/target stat rather than rediscovering the same
+    providers via rglob, is_dir, case resolution and a later fingerprint pass.
+    Every leaf and directory remains enumerated; byte proof and the subsequent
+    independent snapshot around cold hashing are still mandatory.
+    """
+    runtime = Path(runtime)
+    declared = {name.casefold(): name for name in selected}
+    require(len(declared) == len(selected), 'Case-conflicting collision source declaration refused')
+    sentinels = {scope + '/.collision-inventory': suffixes for scope, suffixes in scopes}
+    roots = actual_targets(runtime, sentinels, context)
+    actual, seen, fingerprints_by_name, targets, directory_states = {}, set(), {}, {}, {}
+    provider_components = set(declared)
+    for name in declared:
+        provider_components.update(str(parent) for parent in PurePosixPath(name).parents)
+    for sentinel, suffixes in sentinels.items():
+        root = roots[sentinel].parent
+        world.real_directory(root)
+        pending = [root]
+        while pending:
+            context.check()
+            directory = pending.pop()
+            before = directory.lstat()
+            require(stat.S_ISDIR(before.st_mode), 'Linked collision source directory refused')
+            directory_states[directory] = before
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    context.check()
+                    path = Path(entry.path)
+                    relative = path.relative_to(runtime).as_posix()
+                    folded = relative.casefold()
+                    if folded in seen and folded in provider_components:
+                        world.require(False, 'Ambiguous case-conflicting world destination refused')
+                    require(folded not in seen, 'Case-conflicting ' + zone + ' source inventory refused')
+                    seen.add(folded)
+                    require(len(seen) <= 200000, 'Collision source inventory exceeds proof bound')
+                    # Do not follow directory links, including irrelevant leaves.
+                    info = entry.stat(follow_symlinks=False)
+                    link_target = None
+                    if stat.S_ISDIR(info.st_mode):
+                        pending.append(path)
+                        continue
+                    if stat.S_ISLNK(info.st_mode):
+                        if provider_records is not None:
+                            link_target = os.readlink(path)
+                        info = entry.stat(follow_symlinks=True)
+                        require(not stat.S_ISDIR(info.st_mode), 'Linked collision source directory refused')
+                    if path.suffix.casefold() not in suffixes:
+                        continue
+                    actual[folded] = relative
+                    require(len(actual) <= MAX_INPUTS, 'Collision source inventory exceeds proof bound')
+                    if folded not in declared:
+                        continue
+                    name = declared[folded]
+                    world.require(path.name == Path(name).name, 'Case-conflicting world leaf refused')
+                    require(stat.S_ISREG(info.st_mode) and not info.st_mode & 0o222,
+                            'Collision graph inputs must retain immutable leaf permissions')
+                    targets[name] = path
+                    fingerprints_by_name[name] = {
+                        'device': info.st_dev, 'inode': info.st_ino, 'bytes': info.st_size,
+                        'mtime_ns': info.st_mtime_ns, 'ctime_ns': info.st_ctime_ns,
+                        'mode': stat.S_IMODE(info.st_mode), 'path': relative}
+                    if provider_records is not None:
+                        provider_records[name] = {**fingerprints_by_name[name],
+                            'uid': info.st_uid, 'gid': info.st_gid, 'links': info.st_nlink,
+                            'source': link_target}
+            after = directory.lstat()
+            require((before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns)
+                    == (after.st_dev, after.st_ino, after.st_mode, after.st_mtime_ns, after.st_ctime_ns),
+                    'Collision source directory changed during inventory')
+    # Anchor every traversed directory through the end of this independent
+    # pass; a parent swap cannot redirect a proved provider silently.
+    for directory, before in directory_states.items():
+        context.check()
+        after = directory.lstat()
+        require((before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns)
+                == (after.st_dev, after.st_ino, after.st_mode, after.st_mtime_ns, after.st_ctime_ns),
+                'Collision source directory changed before inventory completion')
+    for name, target in targets.items():
+        context.check()
+        require(fingerprint(target, immutable_input=True) ==
+                {key: value for key, value in fingerprints_by_name[name].items() if key != 'path'},
+                'Collision source leaf changed before inventory completion')
+        if provider_records is not None:
+            info = target.stat()
+            require((info.st_uid, info.st_gid, info.st_nlink) == tuple(
+                provider_records[name][key] for key in ('uid', 'gid', 'links'))
+                and (os.readlink(target) if target.is_symlink() else None) == provider_records[name]['source'],
+                'Collision source provider changed before inventory completion')
+    require(all(name.casefold() in actual for name in required),
+            'Every required original Atlas geometry leaf must exist before graph installation')
+    require(set(actual) == set(declared), 'Actual ' + zone + ' source inventory has no qualified native profile')
+    return fingerprints_by_name, targets
+
+
+def profile_snapshot(runtime, manifest, context, *, provider_records=None):
+    selected = {**manifest['input_files'], **manifest['required_geometry_files']}
+    inputs, targets = collision_input_snapshot(runtime, selected,
+        (('data/object_library', ('.geo', '.txt')),
+         ('data/maps/city_zones/city_01_01', ('.txt',)), ('data/tricks', ('.txt',))),
+        context, required=manifest['required_geometry_files'], provider_records=provider_records)
+    return SERVER_GEOMETRY_PROFILE, selected, inputs, targets
+
+
 def select_profile(runtime, manifest, context):
     """Require the one complete geometry inventory proved in both fresh layouts."""
-    runtime = Path(runtime); required = manifest['required_geometry_files']
-    selected = {**manifest['input_files'], **required}
-    targets = actual_targets(runtime, selected, context)
-    for name in required:
-        context.check()
-        require(os.path.lexists(targets[name]),
-                'Every required original Atlas geometry leaf must exist before graph installation')
-    profile = SERVER_GEOMETRY_PROFILE
-    declared = {name.casefold(): name for name in selected}
-    require(len(declared) == len(selected), 'Case-conflicting Atlas source declaration refused')
-    # The enclosing server cache verifies immutable links; this finite inventory
-    # also refuses extra source leaves whose collision contribution was not proved.
-    actual, seen = {}, set()
-    for relative in ('data/object_library', 'data/maps/city_zones/city_01_01', 'data/tricks'):
-        # A non-created sentinel makes the directory a parent, so the world
-        # resolver reuses its spelling rather than treating it as a leaf.
-        sentinel = relative + '/.atlas-beacon-inventory'
-        root = actual_targets(runtime, (sentinel,), context)[sentinel].parent
-        require(root.is_dir() and not root.is_symlink(), 'Private Atlas source directory required')
-        for path in root.rglob('*'):
-            context.check()
-            relative_name = path.relative_to(runtime).as_posix()
-            folded = relative_name.casefold()
-            require(folded not in seen, 'Case-conflicting Atlas source inventory refused')
-            seen.add(folded)
-            require(not (path.is_symlink() and path.is_dir()), 'Linked Atlas source directory refused')
-            suffixes = ('.geo', '.txt') if relative == 'data/object_library' else ('.txt',)
-            if path.suffix.casefold() in suffixes and not path.is_dir():
-                actual[folded] = relative_name
-                require(len(actual) <= MAX_INPUTS, 'Atlas source inventory exceeds proof bound')
-    require(set(actual) == set(declared)
-            and all(actual[folded] == targets[name].relative_to(runtime).as_posix()
-                    for folded, name in declared.items()),
-            'Actual Atlas source inventory has no qualified native profile')
+    profile, selected, _, _ = profile_snapshot(runtime, manifest, context)
     return profile, selected
 
 
@@ -497,6 +571,88 @@ def fingerprints(runtime, names, context, *, immutable_input=False):
     return result
 
 
+# This certificate never crosses JSON/report/disk boundaries. It carries leaf
+# authority established by this installer, not by directory anchors or caller
+# supplied hashes. Source mutation and any private/copy/provider substitution
+# always return the selected leaf to the ordinary full-byte proof path.
+_SHARED_PROOF_TOKEN = object()
+
+
+class VerifiedCollisionInputs:
+    __slots__ = ('token', 'manifest_sha256', 'generation_sha256', 'owner_identity', 'pins', 'providers', 'validation_basis')
+
+    def __init__(self, token, manifest_sha256, generation_sha256, owner_identity, pins, providers,
+                 validation_basis='current_complete_input_sha256_and_same_provider_snapshots'):
+        require(token is _SHARED_PROOF_TOKEN, 'Only a completed Atlas proof can mint input authority')
+        object.__setattr__(self, 'token', token)
+        object.__setattr__(self, 'manifest_sha256', manifest_sha256)
+        object.__setattr__(self, 'generation_sha256', generation_sha256)
+        object.__setattr__(self, 'validation_basis', validation_basis)
+        object.__setattr__(self, 'owner_identity', MappingProxyType(dict(owner_identity)))
+        object.__setattr__(self, 'pins', MappingProxyType(
+            {name: MappingProxyType(dict(row)) for name, row in pins.items()}))
+        object.__setattr__(self, 'providers', MappingProxyType(
+            {name: MappingProxyType(dict(row)) for name, row in providers.items()}))
+
+    def __setattr__(self, name, value):
+        raise AttributeError('Completed collision input certificates are immutable')
+
+
+def proof_owner_identity(owner_root):
+    info = Path(owner_root).lstat()
+    require(stat.S_ISDIR(info.st_mode), 'Shared collision proof owner root must be private')
+    return {'device': info.st_dev, 'inode': info.st_ino, 'uid': info.st_uid,
+            'mode': stat.S_IMODE(info.st_mode)}
+
+
+def eligible_shared_provider(provider, identity, owner):
+    source = provider.get('source')
+    if not isinstance(source, str) or provider.get('uid') != owner['uid']:
+        return False
+    path = Path(source)
+    if not path.is_absolute() or '..' in path.parts or provider.get('mode', 0) & 0o222:
+        return False
+    roots = identity.get('source_roots', [])
+    return any(isinstance(row, dict) and isinstance(row.get('path'), str)
+               and (Path(row['path']) == path or Path(row['path']) in path.parents)
+               for row in roots)
+
+
+def mint_shared_inputs(selected, providers, identity, owner_root, *,
+                       validation_basis='current_complete_input_sha256_and_same_provider_snapshots'):
+    require(isinstance(identity, dict) and identity.get('format') == 2
+            and isinstance(identity.get('source_roots'), list)
+            and len(identity['source_roots']) == 2
+            and isinstance(identity.get('native_closure_sha256'), str),
+            'Shared collision proof requires the qualified owned cache generation')
+    owner = proof_owner_identity(owner_root)
+    eligible = {name: dict(row) for name, row in providers.items()
+                if eligible_shared_provider(row, identity, owner)}
+    return VerifiedCollisionInputs(_SHARED_PROOF_TOKEN, MANIFEST_SHA256,
+        hashlib.sha256(canonical(identity)).hexdigest(), owner,
+        {name: dict(selected[name]) for name in eligible}, eligible, validation_basis)
+
+
+def reusable_shared_inputs(proof, selected, providers, identity, owner_root):
+    if type(proof) is not VerifiedCollisionInputs or proof.token is not _SHARED_PROOF_TOKEN:
+        return set(), 'no_current_process_owned_atlas_proof'
+    if not isinstance(identity, dict) or owner_root is None:
+        return set(), 'owned_source_generation_or_contract_missing'
+    owner = proof_owner_identity(owner_root)
+    if (proof.manifest_sha256 != MANIFEST_SHA256 or proof.owner_identity != owner
+            or proof.generation_sha256 != hashlib.sha256(canonical(identity)).hexdigest()):
+        return set(), 'owned_source_generation_or_contract_changed'
+    names = set()
+    for name, expected in selected.items():
+        prior, current = proof.providers.get(name), providers.get(name)
+        if (proof.pins.get(name) == expected and isinstance(prior, MappingProxyType) and isinstance(current, dict)
+                and eligible_shared_provider(current, identity, owner)
+                and {key: value for key, value in prior.items() if key != 'path'} ==
+                    {key: value for key, value in current.items() if key != 'path'}):
+            names.add(name)
+    return names, 'exact_full_byte_proved_owned_immutable_provider'
+
+
 def private_target(runtime, name, context):
     require(name in (GRAPH, DATE, MARKER), 'Unexpected beacon target')
     current = Path(runtime)
@@ -522,11 +678,14 @@ def atomic_bytes(path, raw):
         if temporary.exists(): temporary.unlink()
 
 
-def install(archive, manifest_path, runtime, *, context, imported_inputs_readonly, mapserver_package=None):
+def install(archive, manifest_path, runtime, *, context, imported_inputs_readonly, mapserver_package=None,
+            input_proof_sink=None, source_cache_identity=None, owner_root=None):
     started = time.monotonic(); runtime = Path(runtime)
     require(imported_inputs_readonly is True, 'Beacon installation requires the qualified readonly private world')
     value = read_manifest(manifest_path)
-    profile, selected = select_profile(runtime, value, context)
+    provider_records = {} if input_proof_sink is not None else None
+    profile, selected, inputs, input_targets = profile_snapshot(runtime, value, context,
+        provider_records=provider_records)
     accepted_mapserver = STOCK_MAPSERVER_SHA256
     if isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
         import native_map_startup_contract as startup
@@ -545,7 +704,6 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
         accepted_mapserver = receipt['mapserver']['sha256']
     require(pin(runtime / 'MapServer.exe', context)['sha256'] == accepted_mapserver,
             'A different MapServer cannot consume this qualified native graph')
-    inputs = fingerprints(runtime, selected, context, immutable_input=True)
     targets = {name: private_target(runtime, name, context) for name in value['files']}
     marker = private_target(runtime, MARKER, context)
     prior = None
@@ -559,19 +717,24 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
             and prior.get('server_geometry_profile') == profile
             and all(path.exists() for path in targets.values())
             and prior.get('graph_fingerprints') == fingerprints(runtime, targets, context)):
+        if input_proof_sink is not None:
+            input_proof_sink(mint_shared_inputs(selected, provider_records, source_cache_identity, owner_root,
+                validation_basis='authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints'))
         return {'format': 3, 'status': 'reused_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
                 'full_world_crc': value['native']['full_world_crc'], 'installed_files': 0,
                 'input_files_checked': len(inputs), 'input_payload_bytes_hashed': 0,
                 'archive_decoded': False, 'fingerprint_walk': True, 'input_inventory_walk': True,
+                'input_validation': 'bounded_single_walk_inventory_and_fingerprints',
+                'input_validation_basis': 'authenticated_prior_full_byte_receipt_and_current_immutable_provider_fingerprints',
+                'same_process_shared_certificate_exported': input_proof_sink is not None,
                 'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}
     total = 0
-    input_targets = actual_targets(runtime, selected, context)
     for name, expected in selected.items():
         context.check()
         require(pin(input_targets[name], context) == expected, 'Actual Atlas collision/group input differs: ' + name)
         total += expected['bytes']
-    require(inputs == fingerprints(runtime, selected, context, immutable_input=True)
-            and select_profile(runtime, value, context)[0] == profile,
+    next_profile, _, next_inputs, _ = profile_snapshot(runtime, value, context)
+    require(next_inputs == inputs and next_profile == profile,
             'Atlas inputs changed while establishing native graph compatibility')
     regular(archive, 2 * MAX_GRAPH, allow_shared_source=True)
     require(ARCHIVE_BYTES > 0 and pin(archive, context) == {'bytes': ARCHIVE_BYTES, 'sha256': ARCHIVE_SHA256},
@@ -605,9 +768,20 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
               'input_fingerprints': inputs,
               'graph_fingerprints': fingerprints(runtime, targets, context)}
     atomic_bytes(marker, canonical(record))
+    if input_proof_sink is not None:
+        # Recheck the providers after archive work before granting a same-process
+        # certificate. This also strengthens the final cold graph guard.
+        current_providers = {}
+        _, _, current_inputs, _ = profile_snapshot(runtime, value, context, provider_records=current_providers)
+        require(current_inputs == inputs and current_providers == provider_records,
+                'Atlas providers changed before shared full-byte certificate')
+        input_proof_sink(mint_shared_inputs(selected, current_providers, source_cache_identity, owner_root))
     return {'format': 3, 'status': 'installed_verified_graph', 'map': MAP, 'server_geometry_profile': profile,
             'full_world_crc': value['native']['full_world_crc'], 'installed_files': installed,
             'input_files_checked': len(inputs), 'input_payload_bytes_hashed': total,
             'archive_decoded': True, 'fingerprint_walk': True, 'input_inventory_walk': True,
+            'input_validation': 'bounded_single_walk_inventory_and_fingerprints',
+            'input_validation_basis': 'current_complete_input_sha256_and_same_provider_snapshots',
+            'same_process_shared_certificate_exported': input_proof_sink is not None,
             'native_graph_readback_qualified': True,
             'preparation_elapsed_seconds': round(time.monotonic() - started, 6)}

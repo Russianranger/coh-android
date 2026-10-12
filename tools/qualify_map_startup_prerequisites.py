@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Qualify offline MapServer prerequisites without rebuilding published .32."""
+"""Qualify isolated offline prerequisites; never qualify a shipping successor.
+
+The published .32 guide and immutable native/publication proofs retain their
+exact historical bytes. Authorized production changes elsewhere on the branch
+are recorded, not certified or prohibited by this host-only prototype lane.
+"""
 from __future__ import annotations
 
 import argparse
@@ -15,8 +20,9 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '005bc8eaa5d88744706de19ca37cb3f8a8053c7d'
+OFFLINE_BASE = '66a273d4f8cc3e7e4a9180c12a60385f30de454f'
 MODULES = ('test_map_startup_observer_source', 'test_map_startup_bounded_stream',
-           'test_analyze_enhancement_persistence')
+           'test_analyze_enhancement_persistence', 'test_qualify_map_startup_prerequisites')
 SOURCE_FILES = (
     'tools/prepare_map_startup_observer_source.py',
     'tools/test_map_startup_observer_source.py',
@@ -24,44 +30,104 @@ SOURCE_FILES = (
     'tools/android/interactive/analyze_enhancement_persistence.py',
     'tools/android/interactive/test_analyze_enhancement_persistence.py',
     'tools/qualify_map_startup_prerequisites.py',
+    'tools/test_qualify_map_startup_prerequisites.py',
     '.github/workflows/map-startup-prerequisites.yml',
 )
 SOURCE_DIRS = ('database/map-startup-observer', 'database/map-startup-physics/qualification')
+PROTOTYPE_FILES = frozenset(SOURCE_FILES) | frozenset({
+    'database/map-startup-observer/README.md',
+    'database/map-startup-observer/overlay/libs/UtilitiesLib/src/utils/coh_map_bin_observer.h',
+    'database/map-startup-physics/qualification/host-prerequisite-evidence.json',
+    'database/map-startup-physics/qualification/owned_bounded_stream.h',
+    'database/map-startup-physics/qualification/nx_owned_bounded_stream.h',
+    'database/map-startup-physics/qualification/bounded_stream_fixture.cpp',
+})
+BOUNDARY_FILES = {
+    'docs/COH-Atlas-Gameplay-0.13.32-testing.txt': BASE,
+    'docs/android-evidence/client-map-startup-0.13.32-native.json': BASE,
+    'docs/android-evidence/client-map-startup-0.13.32-publication.json': BASE,
+    'docs/android-evidence/map-startup-prerequisites-20261012.json': OFFLINE_BASE,
+}
+PRODUCTION_ROOTS = ('android', 'upstream', 'patches', 'tools', 'database', '.github/workflows')
+DEPENDENCY_FILES = (
+    'tools/map_startup_namespace_certificate.py',
+    'tools/test_map_startup_namespace_certificate.py',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/textparser.c',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCache.c',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/FolderCacheNode.c',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/file.c',
+    'upstream/ouroboros/libs/UtilitiesLib/src/utils/structInternals.c',
+    'upstream/ouroboros/Common/seq/seqload.c',
+    'upstream/ouroboros/Common/fxinfo.c',
+    'upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxStream.h',
+    'upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/NxSimpleTypes.h',
+    'upstream/ouroboros/3rdparty/PhysX/SDKs/Foundation/include/Nx.h',
+    'docs/schema-generation-evidence/accepted-36088012666.zip',
+    'upstream/ouroboros/MapServer/src/container/containerloadsave.c',
+    'upstream/ouroboros/MapServer/src/entity/character_db.c',
+)
+
+
+def checked_record(path):
+    if not path.is_file() or path.is_symlink() or any(p.is_symlink() for p in path.parents):
+        raise ValueError('Missing or linked prerequisite input: ' + str(path))
+    raw = path.read_bytes()
+    return {'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+
+
+def production_changes(names):
+    """Observe changed/add/delete source paths; prototype ownership is finite."""
+    result = {}
+    for name in sorted(set(names) - PROTOTYPE_FILES):
+        path = ROOT / name
+        if path.is_symlink() or any(p.is_symlink() for p in path.parents):
+            # A foreign source may be linked; record the link without following
+            # it or granting qualification authority to its target.
+            result[name] = {'state': 'linked', 'qualified_by_this_lane': False}
+        elif path.is_file():
+            result[name] = {'state': 'present', **checked_record(path),
+                            'qualified_by_this_lane': False}
+        elif not path.exists():
+            result[name] = {'state': 'deleted', 'qualified_by_this_lane': False}
+        else:
+            raise ValueError('Changed source is not a regular file: ' + name)
+    return result
 
 
 def frozen_sources():
-    """Reject modifications to existing production code relative to .32."""
+    """Freeze historical evidence while observing, never approving, production."""
     names = subprocess.check_output(
-        ['git', 'diff', '--name-only', BASE, '--', 'android', 'upstream',
-         'patches', 'tools', 'database', '.github/workflows'], cwd=ROOT, text=True).splitlines()
-    retained = []
-    for name in names:
-        exists = subprocess.run(['git', 'cat-file', '-e', BASE + ':' + name],
-                                cwd=ROOT, stdout=subprocess.DEVNULL,
-                                stderr=subprocess.DEVNULL).returncode == 0
-        if exists:
-            retained.append(name)
-    if retained:
-        raise ValueError('Offline prerequisite lane changed existing .32 code: ' + ', '.join(retained))
-    guide = 'docs/COH-Atlas-Gameplay-0.13.32-testing.txt'
-    qualified = subprocess.check_output(['git', 'show', BASE + ':' + guide], cwd=ROOT)
-    if (ROOT / guide).read_bytes() != qualified:
-        raise ValueError('Published .32 guide must retain its qualified bytes')
-    return {'baseline_commit': BASE, 'existing_production_sources_unchanged': True,
-            'published_guide_sha256': hashlib.sha256(qualified).hexdigest()}
+        ['git', 'diff', '--name-only', BASE, '--', *PRODUCTION_ROOTS], cwd=ROOT, text=True).splitlines()
+    names += subprocess.check_output(
+        ['git', 'ls-files', '--others', '--exclude-standard', '--', *PRODUCTION_ROOTS],
+        cwd=ROOT, text=True).splitlines()
+    boundary = {}
+    for name, commit in BOUNDARY_FILES.items():
+        expected = subprocess.check_output(['git', 'show', commit + ':' + name], cwd=ROOT)
+        observed = checked_record(ROOT / name)
+        if observed != {'bytes': len(expected), 'sha256': hashlib.sha256(expected).hexdigest()}:
+            raise ValueError('Immutable published .32 guide/proof or historical prerequisite evidence changed: ' + name)
+        boundary[name] = {'baseline_commit': commit, **observed}
+    changed = production_changes(names)
+    return {'baseline_commit': BASE, 'immutable_published_evidence_unchanged': True,
+            'existing_production_sources_unchanged': not changed,
+            'production_changes_observed': bool(changed),
+            'changed_production_sources': changed, 'immutable_evidence_pins': boundary,
+            'published_guide_sha256': boundary['docs/COH-Atlas-Gameplay-0.13.32-testing.txt']['sha256'],
+            'successor_shipping_qualified': False,
+            'production_change_policy': 'observe_only_requires_separate_shipping_owner_acceptance'}
 
 
 def source_pins():
-    paths = {ROOT / name for name in SOURCE_FILES}
+    paths = {ROOT / name for name in (*PROTOTYPE_FILES, *DEPENDENCY_FILES)}
     for directory in SOURCE_DIRS:
-        paths.update(path for path in (ROOT / directory).rglob('*') if path.is_file())
+        current = {path.relative_to(ROOT).as_posix() for path in (ROOT / directory).rglob('*')
+                   if path.is_file() or path.is_symlink()}
+        if not current <= PROTOTYPE_FILES:
+            raise ValueError('Unreviewed offline prototype input: ' + ', '.join(sorted(current - PROTOTYPE_FILES)))
     result = {}
     for path in sorted(paths):
-        if not path.is_file() or path.is_symlink() or any(p.is_symlink() for p in path.parents):
-            raise ValueError('Missing or linked prerequisite input: ' + str(path))
-        raw = path.read_bytes()
-        result[path.relative_to(ROOT).as_posix()] = {
-            'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+        result[path.relative_to(ROOT).as_posix()] = checked_record(path)
     return result
 
 
@@ -95,7 +161,7 @@ def qualify(output):
         if not row['passed']:
             print(log.getvalue(), file=sys.stderr)
     unchanged = pins == source_pins()
-    frozen_sources()
+    frozen = frozen_sources()
     document = {
         'format': 1, 'role': 'offline_map_startup_prerequisite_qualification',
         'status': 'passed' if unchanged and all(x['passed'] for x in suites) else 'failed',
@@ -110,6 +176,9 @@ def qualify(output):
             'Source-staged SERVER freshness observer and extracted native stock-equivalence fixtures',
             'Owned bounded stream core and actual SDK-header adapter on the host, without PhysX SDK execution',
             'Offline enhancement snapshot comparison, without SQL writes or device-session authentication'],
+        'qualification_authority': 'isolated_offline_prerequisites_only',
+        'production_changes_observed': frozen['production_changes_observed'],
+        'successor_shipping_qualified': False,
         'shipping_native_binary_rebuilt': False, 'apk_built_or_published': False,
         'asset_pack_rebuilt': False, 'freshness_bypass_enabled': False,
         'cooked_mesh_cache_enabled': False, 'physical_thor_tested': False,

@@ -666,7 +666,8 @@ public final class ClientService extends Service {
         catch(Exception e){throw new IOException("Storage failure report could not be saved",e);}
     }
     private void startStorage(Intent intent,boolean cleaning){
-        if(destroyed||busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()||ClientRuntime.cleanupBlocked(this))return;
+        if(destroyed||busy||storageBusy||reportExporting||ClientRuntime.operationInProgress()
+                ||(cleaning&&ClientRuntime.cleanupBlocked(this)))return;
         final StorageAudit.Plan reviewed=storagePlan;
         final Set<String> selected=new LinkedHashSet<>();
         if(cleaning){
@@ -676,7 +677,8 @@ public final class ClientService extends Service {
             if(!new HashSet<>(Arrays.asList("old_runtime","downloads","old_reports")).containsAll(selected))return;
         }
         final Object owner;
-        try{owner=ClientRuntime.acquireStorage(this);}catch(IOException e){storageStatus=e.getMessage();publish();return;}
+        try{owner=cleaning?ClientRuntime.acquireStorage(this):ClientRuntime.acquireReportExport(this);}
+        catch(IOException e){storageStatus=e.getMessage();publish();return;}
         storageStopRequested.set(false);storageBusy=true;storageStatus=cleaning?"Cleaning the selected disposable files…":"Scanning private storage. No files are being changed…";
         final PowerManager.WakeLock storageWake;
         try{storageWake=((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"cohclient:storage");}
@@ -751,7 +753,15 @@ public final class ClientService extends Service {
         worker.execute(()->{
             ClientRuntime.Result result=null;Exception failure=null;
             try{result=setup?executeSetup(instance):importing?instance.importAssets(importUri):(resuming?instance.runResumeCreation(selectedSession):creating?instance.runFreshCreation(selectedSession):instance.run(selectedSession));}catch(Exception e){failure=e;}
+            catch(OutOfMemoryError heapFailure){failure=new IOException("Character operation stopped at its Java memory limit",heapFailure);}
             finally{if(setup)finishSetupWorker(operationWake,failure,setupOwner,result,instance.getLatestReport());}
+            if(failure!=null && !setup) {
+                try{instance.preserveFailureReport(failure);}
+                catch(Exception | OutOfMemoryError reportFailure){
+                    failure.addSuppressed(reportFailure);
+                    failure=new IOException("The operation failed and its current-session report could not be saved. Earlier retained reports remain available. "+reportFailure.getClass().getSimpleName(),failure);
+                }
+            }
             final ClientRuntime.Result outcome=result;final Exception error=failure;
             main.post(()->{
                 if(destroyed||runtime!=instance)return;

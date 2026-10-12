@@ -34,10 +34,22 @@ class ClientReportLifecycleTests(unittest.TestCase):
             'public Object beginReportExport(', 'public List<File> retainedReports(', 'private void startReportExport(', 'private android.content.res.AssetFileDescriptor openReportDestination(', 'private java.io.OutputStream boundedReportOutput('))
         harness=r'''
 package io.github.russianranger.cohclientinteractive;
-import java.io.*;import java.nio.file.*;import java.util.*;import java.util.concurrent.*;import java.util.concurrent.atomic.*;
+import java.io.*;import java.nio.file.*;import java.util.*;import java.util.zip.*;import java.util.concurrent.*;import java.util.concurrent.atomic.*;
 public class ReportLifecycleHost {
  static void need(boolean b){if(!b)throw new AssertionError();}
- static class ClientRuntime {static volatile Object held;static synchronized Object acquireReportExport(Object c)throws IOException{if(held!=null)throw new IOException();return held=new Object();}static synchronized void releaseStorage(Object o){if(held==o)held=null;}}
+ static class SystemClock {static long uptimeMillis(){return 5000;}}
+ static class ClientRuntime {
+  static volatile Object held;static boolean operationActive;static Object setupFinalizationOwner;
+  Object context,setupReservation;boolean operationOwned;File home,work,operationDir;String operation,session,runId;long startedUptime;int checkpointFailure;
+  static final String BLOCK_MESSAGE="blocked";
+  ClientRuntime(File root){home=new File(root,"m2");work=new File(root,"client");work.mkdirs();}
+  static boolean cleanupBlocked(Object c){return false;}
+  void recordLifecycle(String event){if(checkpointFailure==1)throw new IllegalStateException("checkpoint unavailable");if(checkpointFailure==2)throw new OutOfMemoryError("checkpoint memory");}
+  static synchronized Object acquireReportExport(Object c)throws IOException{if(held!=null)throw new IOException();return held=new Object();}
+  static synchronized void releaseStorage(Object o){if(held==o)held=null;}
+  BEGIN_METHOD
+ }
+
  static class Intent {String source;Intent(String s){source=s;}android.net.Uri getData(){return new android.net.Uri();}String getStringExtra(String k){return source;}}
  static class PowerManager {static final int PARTIAL_WAKE_LOCK=1;WakeLock last;WakeLock newWakeLock(int i,String s){return last=new WakeLock();}static class WakeLock {volatile boolean held;void acquire(long n){held=true;}boolean isHeld(){return held;}void release(){held=false;}}}
  static class Preferences {Map<String,Boolean> values=new HashMap<>();Preferences edit(){return this;}Preferences putBoolean(String k,boolean v){values.put(k,v);return this;}boolean commit(){return true;}}
@@ -64,7 +76,7 @@ public class ReportLifecycleHost {
  }
  static void scenario(String name)throws Exception {
   File root=Files.createTempDirectory("coh-export-private-").toFile();File run=new File(root,"client/reports/1791679100000-123456abcdef");need(run.mkdirs());
-  File report=new File(run,"coh-character-reopen-1791679100000-123456abcdef.zip");byte[] original=new byte[200000];Arrays.fill(original,(byte)3);Files.write(report.toPath(),original);
+  File report=new File(run,"coh-character-reopen-1791679100000-123456abcdef.zip");byte[] data=new byte[200000];new Random(3).nextBytes(data);try(ZipOutputStream zip=new ZipOutputStream(Files.newOutputStream(report.toPath()))){zip.putNextEntry(new ZipEntry("operation.log"));zip.write(data);zip.closeEntry();}byte[] original=Files.readAllBytes(report.toPath());
   ClientService s=new ClientService(root);PausedOutput out=new PausedOutput(name.equals("provider"));s.resolver.output=out;
   try{
    s.startReportExport(new Intent(report.getPath()));need(out.entered.await(2,TimeUnit.SECONDS));
@@ -93,9 +105,19 @@ public class ReportLifecycleHost {
   android.content.res.AssetFileDescriptor asset=new android.content.res.AssetFileDescriptor(output);asset.declared=32;
   try{try{s.boundedReportOutput(asset,new AtomicBoolean(),System.nanoTime()+TimeUnit.SECONDS.toNanos(1));throw new AssertionError();}catch(IOException expected){}need(output.bytes==0);}finally{asset.close();s.close();}
  }
- public static void main(String[] args)throws Exception{if(args[0].equals("ignored_open"))ignoredOpen();else if(args[0].equals("finite"))finiteDestination();else scenario(args[0]);System.out.println("PASS");}
+ static void beginFailure(String mode)throws Exception {
+  File root=Files.createTempDirectory("coh-begin-owner-").toFile();ClientRuntime runtime=new ClientRuntime(root);
+  if(mode.equals("begin_io"))Files.write(new File(runtime.work,"reports").toPath(),new byte[]{1});
+  else runtime.checkpointFailure=mode.equals("begin_heap")?2:1;
+  try{runtime.begin("character_reopen","1234567890abcdef1234567890abcdef");throw new AssertionError("failure expected");}
+  catch(IOException|IllegalStateException|OutOfMemoryError expected){}
+  need(!ClientRuntime.operationActive&&!runtime.operationOwned);
+  if(mode.equals("begin_io"))Files.delete(new File(runtime.work,"reports").toPath());runtime.checkpointFailure=0;
+  runtime.begin("character_reopen","1234567890abcdef1234567890abcdef");need(ClientRuntime.operationActive&&runtime.operationOwned&&runtime.operationDir.isDirectory());
+ }
+ public static void main(String[] args)throws Exception{if(args[0].startsWith("begin_"))beginFailure(args[0]);else if(args[0].equals("ignored_open"))ignoredOpen();else if(args[0].equals("finite"))finiteDestination();else scenario(args[0]);System.out.println("PASS");}
 }
-'''.replace(' METHODS',methods)
+'''.replace(' METHODS',methods).replace('  BEGIN_METHOD',sidebar.method((JAVA/'ClientRuntime.java').read_text(),'private synchronized void begin('))
         host=base/'ReportLifecycleHost.java';host.write_text(harness)
         subprocess.run(['java','-m','jdk.compiler/com.sun.tools.javac.Main','--release','8','-d',str(base),str(uri),str(cancellation),str(descriptor),str(parcel),str(constants),str(errno),str(osjava),str(RECOVERY),str(host)],check=True,capture_output=True,text=True,timeout=60)
 
@@ -108,6 +130,9 @@ public class ReportLifecycleHost {
     def test_changed_source_cannot_be_reported_complete(self):self.check('mutated')
     def test_unresponsive_provider_open_cannot_hold_service_worker(self):self.check('ignored_open')
     def test_finite_destination_cannot_write_outside_its_section(self):self.check('finite')
+    def test_report_storage_io_failure_releases_operation_owner(self):self.check('begin_io')
+    def test_checkpoint_exception_releases_operation_owner(self):self.check('begin_exception')
+    def test_checkpoint_heap_failure_releases_operation_owner(self):self.check('begin_heap')
     def test_relaunch_preserves_pointer_and_preflights_before_retirement(self):
         source=(JAVA/'ClientRuntime.java').read_text();begin=sidebar.method(source,'private synchronized void begin(')
         self.assertNotIn('latestReport = null',begin);self.assertNotIn('pointer.delete()',begin)

@@ -54,12 +54,13 @@ def client_animation_repair_owned(event, before, head, parent, names):
 
 
 def historical_repair_owned(*context):
-    # Preserve the exact historical .30 owner while routing the separately
-    # reviewed .31 Java/guest lane through its own finite allowlist.
+    # Preserve each historical owner; the marker-approved .33 APK derivative
+    # has its own finite source closure and reuses the qualified .32 natives.
     from classify_client_profile_recovery_change import client_profile_recovery_owned
     from classify_client_map_startup_change import client_map_startup_owned
+    from classify_client_report_loading_change import client_report_loading_owned
     return (client_animation_repair_owned(*context) or client_profile_recovery_owned(*context)
-        or client_map_startup_owned(*context))
+        or client_map_startup_owned(*context) or client_report_loading_owned(*context))
 
 
 def main():
@@ -76,7 +77,7 @@ def main():
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('legacy_native_required='+str(required).lower()+'\n')
     print('Historical qualification required' if required else
-        'Dedicated .30 animation compatibility repair owns this exact push')
+        'Dedicated finite derivative qualification owns this exact push')
 
 
 if __name__ == '__main__':

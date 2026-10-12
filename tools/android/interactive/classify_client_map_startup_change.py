@@ -105,14 +105,15 @@ def main():
         parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^@'], text=True).strip()
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
-        required = not client_map_startup_owned(os.environ.get('GITHUB_EVENT_NAME'),
-            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        from classify_client_report_loading_change import client_report_loading_owned
+        context = (os.environ.get('GITHUB_EVENT_NAME'), os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        required = not (client_map_startup_owned(*context) or client_report_loading_owned(*context))
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
         output.write('legacy_native_required='+str(required).lower()+'\n')
     print('Historical qualification required' if required else
-        'Dedicated .32 native component and publication workflows own this exact push')
+        'Dedicated finite derivative qualification owns this exact push')
 
 
 if __name__ == '__main__': main()

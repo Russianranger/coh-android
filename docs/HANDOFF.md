@@ -1,4 +1,84 @@
-# CURRENT — .32 preserved; offline startup prerequisites qualified — 2026-10-12 UTC
+# CURRENT — .33 report recovery and collision preparation repair; qualification/publication pending — 2026-10-12 UTC
+
+The user's physical .32 test successfully reopened/saved THORHERO twice and
+demonstrated graphics/combat and actual Atlas-to-Kings arrival. Approximate
+Reopen-to-world times were **22 minutes first / 13 minutes second**; station
+confirmation to usable Kings was **nearly 12 minutes**. Return was not attempted
+because reports were unavailable. Save/Logout was followed by Character Check
+Incomplete; recovery showed generic completed archives and Storage cleanup was
+disabled. Preserve these successful physical observations. **Loading optimization
+and report generation/export failed their physical goals.** Native phase timings,
+activation, FPS/temperature/RAM and exact failure cause cannot be derived without
+the missing outer reports. [User evidence](android-evidence/client-report-loading-0.13.32-device-result.json)
+is explicitly manual and is not an authenticated SQL/native report.
+
+Continue from exact recovered `66a273d4f8cc3e7e4a9180c12a60385f30de454f` on the
+same continuation branch. Draft PR #1 remains unmerged; main is untouched.
+Current target **0.13.33 / code 48** reuses the exact public .32 APK/native donor,
+the original Game/Map/Db/GPU/FEX/Wine/animation/FX components, all four Assets
+1.0.0 parts, graphics fidelity, controls and ordinary persistence. No native
+producer or asset pack rebuild is required. Do not re-create .32 or reset saves.
+
+Implemented candidate:
+
+- A compact current-session terminal/log/checkpoint diagnostic ZIP is committed
+  before optional captures or guest files are read. Enrichment is separately
+  staged; identity/open/read/mutation/staging failures preserve the compact
+  archive, record omissions and never confer a pass. Corrupt ZIPs cannot suppress
+  recovery, and exact carrier discovery prevents duplicate repair archives even
+  if its receipt is unwritable. Older evidence is not presented as current.
+- All begin/allocation/checkpoint failures release operation admission. Idle
+  report export and read-only storage scans remain accessible after failed cleanup;
+  actual deletion still requires verified cleanup. Report labels distinguish
+  session/failure/recovered evidence from a completed gameplay check.
+- A bounded collision inventory replaces repeated path/stat walks, retaining
+  independent complete before/after inventories and all required byte checks.
+  Kings common inputs can reuse a same-process Atlas proof only with exact logical
+  pin, owned cache generation, accepted immutable source and unchanged complete
+  physical provider identity. Changed/copied/private/unproved inputs hash normally.
+  Warm proof names its prior full-byte receipt; no fresh hash is invented.
+- Durable startup observations include prepared and launched MapServer hashes,
+  owned paths/PIDs, private FX before/after ready bytes, matched native animation
+  counters, actual hashing versus reuse and phase/readiness observations. Unknown
+  native-open evidence stays unknown. Sampled readiness is an upper bound, with
+  no maximum observer-delay claim. The proof is released after successful Kings
+  preparation rather than retained for the whole gameplay session.
+
+Focused report tests **124 passed**; root UI tests **5** and failure presentation
+**18** passed. Loading snapshot/shared/observer and retained Atlas/runtime/zoning/
+worktree gates passed their named scopes; later observer/lifetime changes passed
+the **75-case** relevant gate. Host fixture metadata work fell from **5 to 1**
+resolver calls and **1,143 to 255** pathname stats. These are host counts, not
+physical loading, FPS or RAM gains. Routing **134** and isolated prerequisite
+**60** tests passed; [routing evidence](android-evidence/client-report-loading-0.13.33-routing.json)
+preserves the .32 producer history and keeps successor shipping qualification false.
+
+Final local package/audit gate: **32 passed**, zero skips; **154** eligible bounded
+diagnostic modules passed. The full shipping inventory is **187 current suites /
+2,529 cases** plus **9 inherited unchanged-producer suites / 76 cases**. Current
+full CI execution, PostgreSQL, complete original assets, SDK signing and public
+audit remain pending; these inventory counts are not a completed shipping result.
+
+The dedicated .33 lane must execute applicable current regressions, real PostgreSQL
+fixtures, actual current helper/full Atlas/Kings cold/reuse preparation, Android
+compile/signer/DEX/payload/native/source audits, fresh signed preparation, and
+independent public-byte/full-preparation audit. Historical immutable producer/package
+results may be retained only with exact donor report/source pins and explicit
+executed-versus-inherited counts. No .33 physical qualification or speed gain is
+claimed. The three purposeful complete preparations are staged qualification,
+fresh final signed audit, and fresh actual public audit; build/publish independently
+recheck exact bytes and the source-bound signed audit receipt.
+
+[.33 installation and report-first tests](COH-Atlas-Gameplay-0.13.33-testing.txt):
+install over the app, update runtime once, preserve imports/THORHERO, prove full
+outer report export with a short Atlas save/reopen first, then measure comparable
+reuse and focused Kings arrival/save/reopen/return. Do not spend another long
+zoning session without an exportable report. Full under-30-second native loading
+and reliable return travel remain future physical gates.
+
+---
+
+# .32 preserved; offline startup prerequisites qualified — 2026-10-12 UTC
 
 Recovered exact remote continuation head `005bc8eaa5d88744706de19ca37cb3f8a8053c7d`
 before development. The previous agent completed .32 publication, independent

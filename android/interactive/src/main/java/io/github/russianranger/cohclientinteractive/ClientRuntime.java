@@ -143,6 +143,7 @@ public final class ClientRuntime {
     private volatile long decodedFrames;
     private volatile int frameWidth, frameHeight;
     private volatile File latestReport;
+    private volatile boolean freshReportRetained;
     private JSONObject manifest, clientManifest;
     private volatile long observedClientPid = -1, clientWindowFrameWatermark = -1;
     private String manifestHash, session, operation, runId, error;
@@ -333,18 +334,20 @@ public final class ClientRuntime {
             operationActive = true;
             operationOwned = true;
         }
-        try { ClientReports.recoverAll(home.getParentFile()); }
-        catch(IOException failure) {
+        try {
+            ClientReports.recoverAll(home.getParentFile());
+            operation = kind; session = selectedSession;
+            runId = System.currentTimeMillis() + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+            operationDir = new File(work, "reports/" + runId);
+            if(!operationDir.mkdirs() && !operationDir.isDirectory())throw new IOException("Cannot allocate private operation report storage");
+            startedUptime = SystemClock.uptimeMillis();
+            // A replacement report is not authoritative until its ZIP is committed.
+            // Keep the previous report discoverable even if this attempt is interrupted.
+            recordLifecycle("operation_" + kind + "_started");
+        } catch(Exception | OutOfMemoryError failure) {
             synchronized(ClientRuntime.class){operationActive=false;operationOwned=false;}
             throw failure;
         }
-        operation = kind; session = selectedSession;
-        runId = System.currentTimeMillis() + "-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        operationDir = new File(work, "reports/" + runId); operationDir.mkdirs();
-        startedUptime = SystemClock.uptimeMillis();
-        // A replacement report is not authoritative until its ZIP is committed.
-        // Keep the previous report discoverable even if this attempt is interrupted.
-        recordLifecycle("operation_" + kind + "_started");
     }
     private void endOperation() {
         try { finished = true; inputReady = false; automaticTravel=false; inputWorker.shutdownNow(); checkpointWorker.shutdown(); }
@@ -2303,12 +2306,51 @@ public final class ClientRuntime {
             }
             ClientReports.commitNormalArchive(home.getParentFile(),part,target);
             write(new File(work, "latest-report.txt"), target.getCanonicalPath().getBytes(StandardCharsets.UTF_8));
-            latestReport = target;
+            latestReport = target;freshReportRetained=true;
             if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
                 try { ClientReports.completedGuest(home.getParentFile(),target,session); }
                 catch(IOException unavailable) { line("Completed guest preservation receipt unavailable; recovery remains available: "+unavailable.getClass().getSimpleName()); }
             }
-        } catch (Exception e) { throw new IOException("Could not save a fresh client support report", e); }
+        } catch (Exception e) {
+            line("Full support report assembly failed: "+e.getClass().getSimpleName());
+            try {
+                retainFailureReport(e,cleanup);
+                error="Full support report assembly failed; a diagnostic failure report was retained. "+message(e);
+            }catch(Exception unavailable){
+                IOException failure=new IOException("Could not save a fresh client support report or its failure carrier",e);
+                failure.addSuppressed(unavailable);throw failure;
+            }
+            // Do not let an earlier acceptance value turn a fallback carrier into a pass.
+            throw new IOException("Full support report assembly failed; export the retained diagnostic failure report",e);
+        }
+    }
+
+    /** Keep a failed operation exportable even if qualification throws before normal publication. */
+    File preserveFailureReport(Throwable failure) throws IOException {
+        if(freshReportRetained || operationDir==null)return latestReport;
+        return retainFailureReport(failure,false);
+    }
+    private File retainFailureReport(Throwable failure,boolean cleanup) throws IOException {
+        try {
+            String cause=message(failure);if(cause.length()>1024)cause=cause.substring(0,1024);
+            String previous=error;if(previous!=null && previous.length()>1024)previous=previous.substring(0,1024);
+            JSONObject terminal=new JSONObject().put("format",1).put("operation",operation).put("run_id",runId)
+                    .put("session_id",session==null?JSONObject.NULL:session).put("app_id",context.getPackageName())
+                    .put("app_version",appVersion()).put("status","failed_report_assembly").put("passed",false)
+                    .put("normal_report_assembly_failed",true).put("assembly_error",cause)
+                    .put("app_error",previous==null?JSONObject.NULL:previous).put("cleanup_verified",cleanup)
+                    .put("cleanup_blocked",isCleanupBlocked()).put("cancelled",cancelled)
+                    .put("started_uptime_ms",startedUptime).put("finished_uptime_ms",endedUptime)
+                    .put("process_exit_code",processExit).put("character_save_qualification",false)
+                    .put("scope","Failed-session diagnostic carrier only; original guest/checkpoint observations are retained without conferring any pass.");
+            byte[] output;synchronized(this){output=log.toString().getBytes(StandardCharsets.UTF_8);}
+            latestReport=ClientReports.retainTerminalFailure(home.getParentFile(),operationDir,
+                    terminal.toString(2).getBytes(StandardCharsets.UTF_8),output);
+            freshReportRetained=true;
+            try{write(new File(work,"latest-report.txt"),latestReport.getCanonicalPath().getBytes(StandardCharsets.UTF_8));}
+            catch(IOException pointerFailure){line("Failure carrier retained without latest-report pointer");}
+            return latestReport;
+        }catch(Exception unavailable){throw new IOException("Could not preserve the failed session diagnostics",unavailable);}
     }
 
     private JSONObject qualificationGates(JSONObject report,boolean passed,boolean cleanup) throws Exception {
@@ -2430,7 +2472,7 @@ public final class ClientRuntime {
     private static String clean(String value) {
         return (value == null ? "" : value).replaceAll("(?i)(password|pwd|token|secret)(\\s*[=:]\\s*)([^;\\s]+)", "$1$2[redacted]");
     }
-    private static String message(Exception e) { return clean(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()); }
+    private static String message(Throwable e) { return clean(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()); }
     private String sha(File file) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         try (InputStream in = new FileInputStream(file)) {
