@@ -1,15 +1,111 @@
 """Certified MapServer candidate retention, strict proof and actual preparation."""
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
 import tempfile
 import unittest
+import zipfile
 
 import build_client_map_startup_apk as package
 
 
 class MapStartupPackageTests(unittest.TestCase):
+    def actual_inputs(self):
+        apk = Path(os.environ.get('COH_MAP_STARTUP_TEST_DONOR_APK', package.ROOT/'out/donor.apk')).resolve()
+        report = Path(os.environ.get('COH_MAP_STARTUP_TEST_DONOR_REPORT',
+            package.ROOT/'out/donor-evidence/client-profile-recovery-apk-build-report.json')).resolve()
+        inputs = Path(os.environ.get('COH_MAP_STARTUP_TEST_INPUTS', package.ROOT/'out/map-startup-inputs')).resolve()
+        self.assertTrue(apk.is_file() and report.is_file() and inputs.is_dir(),
+            'Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips')
+        donor = package.validate_donor(apk, report)
+        commit = package.builder().source_commit(os.environ.get('COH_MAP_STARTUP_TEST_SOURCE_COMMIT'))
+        return apk, donor, inputs, commit
+
+    def test_actual_component_serialization_preserves_every_historical_reader_before_preparation(self):
+        import game_diagnostic as guest
+        import package_map_startup_native as native
+        apk, donor, inputs, commit = self.actual_inputs()
+        with tempfile.TemporaryDirectory(prefix='coh-map-startup-receipts-') as temporary:
+            destination = Path(temporary)/'candidate'
+            runtime, _, preflight = package.extract_and_repair(
+                apk, donor, destination, commit, inputs, execute_preflight=False)
+            path = destination/'assets/runtime/game-package.tar.gz'
+            members = package.game_archive_members(path)
+            raw = members['game-package.json']; game = json.loads(raw)
+            self.assertEqual(guest.game_listener_contract(game), guest.evidence.GAME_LOOPBACK_METADATA)
+            self.assertTrue(guest.game_loopback_contract(game)['endpoints'])
+            receipt = native.contract.embedded_receipt(game)
+            self.assertEqual(native.contract.monorail.embedded_receipt(game)['mapserver']['sha256'],
+                             native.contract.PREVIOUS_SHA256)
+            progress = guest.mapserver_progress_contract(game)
+            self.assertEqual(progress['producer']['mapserver_sha256'], receipt['mapserver']['sha256'])
+            self.assertEqual(package.pin(members['MapServer.exe']),
+                             native.contract.pin_record(receipt['mapserver']))
+            mapped = runtime['client_bundle']['local_server']['mapserver']
+            self.assertEqual(mapped['package_manifest_sha256'], package.pin(raw)['sha256'])
+            self.assertNotEqual(mapped['package_manifest_sha256'], package.pin(native.canonical(game))['sha256'])
+            self.assertEqual(mapped['archive_pin'], package.builder().file_pin(path))
+            self.assertEqual(preflight['server_archives']['archives']['dbserver-package.tar.gz'],
+                             donor['package_preflight']['server_archives']['archives']['dbserver-package.tar.gz'])
+            original = Path(temporary)/'original.tar.gz'
+            with zipfile.ZipFile(apk) as archive:
+                original.write_bytes(archive.read('assets/runtime/game-package.tar.gz'))
+            old_members = package.game_archive_members(original)
+            old = json.loads(old_members['game-package.json'])
+            self.assertEqual(native.contract.previous_package(game), old)
+            self.assertEqual(json.dumps(game['inputs'], indent=2), json.dumps(old['inputs'], indent=2))
+            for name in ('loopback_game', 'mapserver_progress'):
+                current_manifest = json.dumps(game['inputs'][name]['manifest'], indent=2)+'\n'
+                old_manifest = json.dumps(old['inputs'][name]['manifest'], indent=2)+'\n'
+                hashes = {hashlib.sha256(raw.encode()).hexdigest() for raw in
+                          (current_manifest, current_manifest.replace('\n', '\r\n'))}
+                self.assertEqual(hashes, {hashlib.sha256(raw.encode()).hexdigest() for raw in
+                                 (old_manifest, old_manifest.replace('\n', '\r\n'))})
+                self.assertIn(game['inputs'][name]['manifest_sha256'], hashes)
+            for name in set(members)-{'MapServer.exe', 'game-package.json'}:
+                self.assertEqual(members[name], old_members[name], name)
+            # Reproduce the rejected canonical intermediate using actual
+            # qualified bytes. Both old byte guards must remain strict.
+            sorted_game = json.loads(native.canonical(game))
+            with self.assertRaisesRegex(guest.base.DiagnosticError, 'Game listener donor receipt bytes differ'):
+                guest.game_listener_contract(sorted_game)
+            with self.assertRaisesRegex(ValueError, 'Candidate MapServer producer manifest differs'):
+                guest.mapserver_progress_contract(sorted_game)
+            good_pin = package.builder().file_pin(path)
+            members['game-package.json'] = native.canonical(game)
+            native.write_game_archive(path, members)
+            restored, restored_pin = package.restore_retained_game_receipt_order(path, old_members)
+            self.assertEqual(restored, game)
+            self.assertEqual(restored_pin, package.pin(raw))
+            self.assertEqual(package.builder().file_pin(path), good_pin)
+
+    def test_actual_component_serialization_refuses_changed_retained_metadata_and_native_members(self):
+        import package_map_startup_native as native
+        apk, donor, inputs, commit = self.actual_inputs()
+        with tempfile.TemporaryDirectory(prefix='coh-map-startup-receipt-negatives-') as temporary:
+            destination = Path(temporary)/'candidate'
+            package.extract_and_repair(apk, donor, destination, commit, inputs, execute_preflight=False)
+            path = destination/'assets/runtime/game-package.tar.gz'
+            good = package.game_archive_members(path)
+            original = Path(temporary)/'original.tar.gz'
+            with zipfile.ZipFile(apk) as archive:
+                original.write_bytes(archive.read('assets/runtime/game-package.tar.gz'))
+            old_members = package.game_archive_members(original)
+            bad_metadata = copy.deepcopy(good)
+            game = json.loads(good['game-package.json'])
+            game['inputs']['loopback_game']['manifest']['runtime_execution_validated'] = True
+            bad_metadata['game-package.json'] = native.canonical(game)
+            for name, members in (
+                ('retained_metadata', bad_metadata),
+                ('retained_dbserver', dict(good, **{'DbServer.exe': b'changed retained DbServer'})),
+                ('current_mapserver', dict(good, **{'MapServer.exe': b'changed certified MapServer'})),
+                ('unknown_member', dict(good, **{'unreviewed.dll': b'unknown dependency'}))):
+                native.write_game_archive(path, members)
+                with self.subTest(mutation=name), self.assertRaises(ValueError):
+                    package.restore_retained_game_receipt_order(path, old_members)
+
     def test_atlas_legacy_workflow_always_runs_host_checks_then_uses_the_bounded_native_owner(self):
         import yaml
         workflow = yaml.safe_load((package.ROOT/'.github/workflows/android-atlas-game.yml').read_text())
@@ -208,15 +304,8 @@ class MapStartupPackageTests(unittest.TestCase):
                 package.require_signed_preflight(altered, qualification)
 
     def test_actual_public_031_and_certified_native_component_complete_cold_warm_kings_preparation(self):
-        apk = Path(os.environ.get('COH_MAP_STARTUP_TEST_DONOR_APK', package.ROOT/'out/donor.apk')).resolve()
-        report = Path(os.environ.get('COH_MAP_STARTUP_TEST_DONOR_REPORT',
-            package.ROOT/'out/donor-evidence/client-profile-recovery-apk-build-report.json')).resolve()
-        inputs = Path(os.environ.get('COH_MAP_STARTUP_TEST_INPUTS', package.ROOT/'out/map-startup-inputs')).resolve()
-        self.assertTrue(apk.is_file() and report.is_file() and inputs.is_dir(),
-            'Actual authenticated .31 APK, receipt and certified native component are mandatory; no skips')
-        donor = package.validate_donor(apk, report)
+        apk, donor, inputs, commit = self.actual_inputs()
         import package_map_startup_native as native
-        commit = package.builder().source_commit(os.environ.get('COH_MAP_STARTUP_TEST_SOURCE_COMMIT'))
         component = native.validate_component_inputs(inputs, commit)
         with tempfile.TemporaryDirectory(prefix='coh-map-startup-test-') as temporary:
             runtime, payloads, preflight = package.extract_and_repair(

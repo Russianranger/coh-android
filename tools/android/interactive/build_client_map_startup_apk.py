@@ -239,7 +239,55 @@ def payload_boundaries(payloads, donor):
         'Only certified MapServer packaging, reviewed guest repairs and five new startup/FX payloads may change')
 
 
-def verification_manifests(donor, helper_pins, commit, component, game):
+def game_archive_members(path):
+    with tarfile.open(path, 'r:gz') as archive:
+        entries = archive.getmembers()
+        require(all(row.isfile() and row.name not in ('', '.', '..')
+            and '/' not in row.name and '\\' not in row.name for row in entries)
+            and len({row.name.casefold() for row in entries}) == len(entries),
+            'Flat retained game archive members required')
+        return {row.name: archive.extractfile(row).read() for row in entries}
+
+
+def restore_retained_game_receipt_order(path, donor_members):
+    """Preserve historical raw-receipt key order after the typed native patch.
+
+    Native component packaging canonicalizes its semantic JSON receipt. The
+    retained listener verifies the original nested donor receipts as LF/CRLF
+    bytes, so restore their authenticated .31 ordering without changing values.
+    """
+    import package_map_startup_native as native
+    candidate = game_archive_members(path)
+    require(set(candidate) == set(donor_members), 'Native startup game member inventory changed')
+    old = json.loads(donor_members['game-package.json'])
+    game = json.loads(candidate['game-package.json'])
+    require(typed_equal(native.contract.previous_package(game), old),
+            'Native startup changed retained game metadata')
+    for name in candidate:
+        if name not in ('MapServer.exe', 'game-package.json'):
+            require(candidate[name] == donor_members[name], 'Retained game member changed: '+name)
+    require(pin(candidate['MapServer.exe']) == native.contract.pin_record(game['files']['MapServer.exe']),
+            'Native startup MapServer bytes differ from typed receipt')
+    ordered = copy.deepcopy(old)
+    ordered['files']['MapServer.exe'] = copy.deepcopy(game['files']['MapServer.exe'])
+    ordered['native_map_startup'] = copy.deepcopy(game['native_map_startup'])
+    require(typed_equal(ordered, game), 'Restoring receipt order changed candidate semantics')
+    native.contract.embedded_receipt(ordered)
+    raw = shared.encoded(ordered)
+    candidate['game-package.json'] = raw
+    native.write_game_archive(path, candidate)
+    # Use the unchanged guest readers immediately, before any expensive asset
+    # installation, and read the actual final serialization rather than an
+    # in-memory object whose insertion order can hide a receipt-byte error.
+    import game_diagnostic as guest
+    serialized = json.loads(raw)
+    guest.game_loopback_contract(serialized)
+    guest.game_listener_contract(serialized)
+    guest.mapserver_progress_contract(serialized)
+    return serialized, pin(raw)
+
+
+def verification_manifests(donor, helper_pins, commit, component, game, game_manifest_pin):
     import package_map_startup_native as native
     require(set(helper_pins) == {Path(name).name for name in GUEST_SOURCE_CHANGES | ADDED_GUEST_SOURCES}
         | COMPONENT_PAYLOADS | {'game-package.tar.gz'}, 'Exact reviewed runtime/startup inputs required')
@@ -252,6 +300,7 @@ def verification_manifests(donor, helper_pins, commit, component, game):
     runtime.update(repository_commit=commit, scope=QUALIFICATION_SCOPE)
     runtime['client_bundle']['local_server']['mapserver'].update(native.runtime_binding(component, game, commit))
     runtime['client_bundle']['local_server']['mapserver']['archive_pin'] = helper_pins['game-package.tar.gz']
+    runtime['client_bundle']['local_server']['mapserver']['package_manifest_sha256'] = game_manifest_pin['sha256']
     runtime['client_map_startup'] = {'format': 1, 'repository_commit': commit,
         'donor_repository_commit': DONOR_COMMIT, 'publication_provenance': publication_provenance(commit),
         'reviewed_runtime_inputs': helper_pins, 'map_startup_component': component,
@@ -296,10 +345,12 @@ def extract_and_repair(apk, donor, destination, commit, inputs_directory, *, exe
         target = assets/name
         shutil.copyfile(Path(inputs_directory)/name, target)
         helper_pins[name] = base.file_pin(target)
+    donor_game = game_archive_members(assets/'game-package.tar.gz')
     actual_component, game = native.patch_game(assets, inputs_directory, commit)
     require(typed_equal(actual_component, component), 'Native component changed during packaging')
+    game, game_manifest_pin = restore_retained_game_receipt_order(assets/'game-package.tar.gz', donor_game)
     helper_pins['game-package.tar.gz'] = base.file_pin(assets/'game-package.tar.gz')
-    client, runtime = verification_manifests(donor, helper_pins, commit, component, game)
+    client, runtime = verification_manifests(donor, helper_pins, commit, component, game, game_manifest_pin)
     for name, value in (('client-manifest.json', client), ('runtime-manifest.json', runtime)):
         (assets/name).write_bytes(shared.encoded(value))
     payloads = {name: base.file_pin(destination/name) for name in sorted(set(donor['payloads']) | ADDED_PAYLOADS)}

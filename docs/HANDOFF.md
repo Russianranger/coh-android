@@ -78,6 +78,19 @@ Source `f6c0e8497ff3e7290dc61fe9029646c8a1adb62a` fixes routing without rebuildi
 native binaries. Its changed legacy workflows and PR checks passed, with the
 PostgreSQL backend still being observed at the last status read.
 
+The first enabled APK assembly at source
+`3775ce6487ec8fda2021c674ecfc4deb0b214992`, [run 38201625610](https://github.com/Russianranger/coh-android/actions/runs/38201625610),
+passed 189 suites / 2,479 tests with zero skips, then failed closed in the
+actual candidate preparation suite before an APK was assembled or published.
+Canonical sorting of the new package JSON reordered historical embedded
+listener/progress manifests and broke their existing exact LF/CRLF byte guards.
+This is the serialization class already repaired in .29; the new wrapper must
+preserve that qualified history. The correction is limited to final APK
+assembly: retain authenticated .31 nested receipt order, bind the runtime to
+the actual serialized manifest hash, and run unchanged adjacent guest readers
+before the full asset worker. Native 17 / FX 10 producer inputs are unchanged;
+accepted binaries stay reusable. The full corrected lane remains mandatory.
+
 Publication is now enabled only with those exact accepted source/run/artifact
 pins. **No .32 APK/publication pass is claimed yet.** Next: current APK complete
 cold/reuse Atlas/Kings preparation, all 190 suites with three frozen historical
