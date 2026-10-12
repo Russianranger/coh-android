@@ -10,5 +10,6 @@
   "asset_rebuild_required": false,
   "runtime_refresh_required": true,
   "manual_gameplay_expiry_removed": true,
-  "physical_startup_below_five_minutes_validated": false
+  "physical_startup_below_five_minutes_validated": false,
+  "qualification_revision": 2
 }

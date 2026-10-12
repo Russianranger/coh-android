@@ -195,11 +195,31 @@ def validate_status(text,map_id):
     return {'map_id':map_id,'world':world,'not_started':True,'native_response_sha256':hashlib.sha256(text.encode()).hexdigest()}
 
 
+def fixture_row_proof(rows):
+    # PostgreSQL JSON prints integral real values as integers (e.g. -20), while
+    # Python's fixture spells -20.0. Preserve original SQL values and normalize
+    # only those three finite, exact-value real coordinates for the digest.
+    require(type(rows) is list and len(rows)==1 and type(rows[0]) is dict
+            and set(rows[0])==set(FIXTURE),'Disposable synthetic row shape changed')
+    normalized=copy.deepcopy(rows)
+    for key,expected in FIXTURE.items():
+        actual=rows[0][key]
+        if key in ('posx','posy','posz'):
+            require(type(actual) in (int,float) and actual==expected,
+                    'Disposable synthetic position changed: '+key)
+            normalized[0][key]=float(actual)
+        else:
+            require(type(actual) is type(expected) and actual==expected,
+                    'Disposable synthetic identity/location changed: '+key)
+    return {'raw_sql_rows':copy.deepcopy(rows),'canonical_rows':normalized,
+            'canonical_sha256':digest(normalized),
+            'numeric_normalization':'exact_fixture_real_coordinates_only'}
+
+
 def fixture_snapshot(cluster):
     query='SELECT coalesce(json_agg(x ORDER BY containerid),\'[]\'::json) FROM (SELECT '+','.join(FIXTURE)+' FROM dbo.ents) x;'
     rows=json.loads(cluster.sql(query,user='coh_game',database=cluster.meta['database']))
-    require(rows==[FIXTURE],'Disposable synthetic identity/location changed')
-    return digest(rows)
+    return fixture_row_proof(rows)
 
 
 def seed_fixture(cluster):
@@ -250,7 +270,30 @@ def validate_proof(value,repository_commit):
     require(phases[0].get('schema_snapshot')==phases[1].get('schema_snapshot')
             and phases[0].get('schema_snapshot',{}).get('table_count',0)>0
             and value.get('synthetic_fixture_digest')==digest([FIXTURE]),'Minimal native restart schema/identity differs')
+    for name in ('synthetic_fixture_before_restart','synthetic_fixture_after_restart'):
+        observed=value.get(name,{})
+        require(observed==fixture_row_proof(observed.get('raw_sql_rows'))
+                and observed['canonical_sha256']==value['synthetic_fixture_digest'],
+                'Minimal native fixture value proof differs: '+name)
     return value
+
+
+def finalize_report(report,commit,success,output):
+    """A proof-reader failure must still leave its failed report and raw facts."""
+    report['status']='failed'
+    if success and not report['failures']:
+        if source_pins()!=report.get('source_pins'):
+            report['failures'].append('Qualification sources changed during native execution')
+        else:
+            candidate=dict(report,status='passed')
+            try:
+                validate_proof(candidate,commit)
+            except Exception as error:
+                report['failures'].append('Final proof validation: '+type(error).__name__+': '+str(error)[-2000:])
+            else:
+                report['status']='passed'
+    (Path(output)/PROOF).write_bytes(encoded(report))
+    return report
 
 
 def run(args):
@@ -336,8 +379,15 @@ def run(args):
                 later=read_dispatch(progress,child,stages)
                 return later and later['loop_count']>first['loop_count'] and later['sequence']>=first['sequence']
             network.wait_for(advanced,[child],runtime,15,'native Db loop advancement after real queries')
-            if label=='fresh': report['synthetic_fixture_digest']=seed_fixture(cluster)
-            else: require(fixture_snapshot(cluster)==report['synthetic_fixture_digest'],'Synthetic saved identity/location changed')
+            if label=='fresh':
+                proof=seed_fixture(cluster)
+                report['synthetic_fixture_before_restart']=proof
+                report['synthetic_fixture_digest']=proof['canonical_sha256']
+            else:
+                proof=fixture_snapshot(cluster)
+                report['synthetic_fixture_after_restart']=proof
+                require(proof['canonical_sha256']==report['synthetic_fixture_digest'],
+                        'Synthetic saved identity/location changed')
             native_console=capture.text()+'\n'+child.text()
             require('Waiting for launchers to link up...' not in native_console,'Manual Db entered unused launcher wait')
             child.stop();capture.stop()
@@ -375,9 +425,7 @@ def run(args):
             except Exception as error:report['failures'].append('diagnostic retention: '+type(error).__name__)
         report['owned_cleanup_verified']=not report['failures'] and all(p.child.poll() is not None for p in children)
         report['finished_utc']=utc()
-        if success and not report['failures'] and source_pins()==pins:
-            report['status']='passed';validate_proof(report,commit)
-        (output/PROOF).write_bytes(encoded(report))
+        finalize_report(report,commit,success,output)
     require(report['status']=='passed','Genuine minimal Db gate failed; inspect '+str(output/PROOF))
     return report
 

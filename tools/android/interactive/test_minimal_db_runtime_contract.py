@@ -2,6 +2,7 @@
 import ast
 import copy
 import io
+import json
 from pathlib import Path
 import struct
 import sys
@@ -25,7 +26,9 @@ class MinimalDbRuntimeContractTests(unittest.TestCase):
             inputs=m.expected_inputs(),failures=[],run_id=123,
             run_url='https://github.com/Russianranger/coh-android/actions/runs/123',
             phases=[dict(copy.deepcopy(phase),name=n) for n in ('fresh','restart')],
-            synthetic_fixture_digest=m.digest([m.FIXTURE]))
+            synthetic_fixture_digest=m.digest([m.FIXTURE]),
+            synthetic_fixture_before_restart=m.fixture_row_proof([m.FIXTURE]),
+            synthetic_fixture_after_restart=m.fixture_row_proof([m.FIXTURE]))
         for name in ('actual_retained_dbserver_host_fixture_executed','actual_native_map_query_executed',
                      'postgresql_disposable_cluster_only','owned_cleanup_verified','synthetic_identity_location_restart_preserved',
                      'full_schema_and_attributes_restart_preserved','fresh_minimal_runtime_each_start'):value[name]=True
@@ -107,10 +110,38 @@ class MinimalDbRuntimeContractTests(unittest.TestCase):
             meta={'database':'coh_minimal_db'}
             def sql(self,text,**kwargs):
                 calls.append((text,kwargs));return '[{"containerid":90001,"authid":77,"authname":"COHMINIMAL","name":"MINIMALFIXTURE","staticmapid":5,"mapid":null,"posx":12.5,"posy":-20.0,"posz":40.25,"logincount":3}]'
-        self.assertEqual(m.seed_fixture(Cluster()),m.digest([m.FIXTURE]))
+        self.assertEqual(m.seed_fixture(Cluster())['canonical_sha256'],m.digest([m.FIXTURE]))
         self.assertTrue(calls[0][0].startswith('INSERT INTO dbo.ents'))
         self.assertEqual(calls[0][1],{'user':'coh_game','database':'coh_minimal_db'})
         self.assertNotIn('THORHERO',calls[0][0]);self.assertNotIn('UPDATE',calls[0][0])
+
+    def test_postgresql_integral_real_json_retains_raw_values_and_canonical_identity(self):
+        # Actual Windows run 38323435123 reached both native gates; final reader
+        # rejected -20 from PostgreSQL versus the exact-valued fixture -20.0.
+        rows=copy.deepcopy([m.FIXTURE]);rows[0]['posy']=-20
+        proof=m.fixture_row_proof(rows)
+        self.assertIs(type(proof['raw_sql_rows'][0]['posy']),int)
+        self.assertIs(type(proof['canonical_rows'][0]['posy']),float)
+        self.assertEqual(proof['canonical_sha256'],m.digest([m.FIXTURE]))
+        value=self.proof();value['synthetic_fixture_before_restart']=proof
+        value['synthetic_fixture_after_restart']=proof
+        m.validate_proof(value,'d'*40)
+        for field,replacement in (('posy',-20.001),('posy','-20'),('containerid',90001.0),
+                                  ('mapid',0),('staticmapid',1),('authname','THORHERO')):
+            invalid=copy.deepcopy(rows);invalid[0][field]=replacement
+            with self.subTest(field=field,value=replacement),self.assertRaises(ValueError):m.fixture_row_proof(invalid)
+
+    def test_final_reader_failure_still_writes_failed_native_report_with_evidence(self):
+        value=self.proof()
+        with tempfile.TemporaryDirectory() as temporary:
+            output=Path(temporary)
+            with patch.object(m,'validate_proof',side_effect=ValueError('new reader rejection')):
+                m.finalize_report(value,'d'*40,True,output)
+            saved=json.loads((output/m.PROOF).read_bytes())
+        self.assertEqual(saved['status'],'failed')
+        self.assertIn('new reader rejection',saved['failures'][0])
+        self.assertEqual(len(saved['phases']),2)
+        self.assertEqual(saved['synthetic_fixture_before_restart']['raw_sql_rows'],[m.FIXTURE])
 
     def test_world_constants_match_current_production_saved_map_table(self):
         tree=ast.parse((m.ROOT/'android/guest/character_zoning.py').read_text())
