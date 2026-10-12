@@ -4,6 +4,30 @@
   "donor_version": "0.13.31",
   "donor_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8",
   "asset_version": "1.0.0",
-  "publish_enabled": false,
-  "publication_attempt": "certified-mapserver-and-private-fx-with-complete-kings-and-retained-host-routing"
+  "publish_enabled": true,
+  "publication_attempt": "certified-mapserver-and-private-fx-with-complete-kings-and-retained-host-routing",
+  "native_component_inputs": {
+    "format": 1,
+    "status": "accepted_native_and_fx_components",
+    "native": {
+      "run_id": 38197257421,
+      "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+      "artifact": {
+        "id": 11724362649,
+        "name": "coh-map-startup-native",
+        "bytes": 3655651,
+        "sha256": "3a0df789eb97dc16b156d917e8a4d13f001efaa83240a32a297382abdd83d0c0"
+      }
+    },
+    "fx": {
+      "run_id": 38197257421,
+      "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+      "artifact": {
+        "id": 11725180616,
+        "name": "coh-map-startup-qualified-fx",
+        "bytes": 27932251,
+        "sha256": "a19ed3eab1a369282fd57536a7feafbe7efe05c6deecfe9f2ea049d3af6879c2"
+      }
+    }
+  }
 }

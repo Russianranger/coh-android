@@ -78,6 +78,7 @@ TRUE_FLAGS = ('retained_android_resources_verified', 'retained_game_and_dbserver
     'full_startup_orchestration_verified', 'native_mapserver_recompiled',
     'native_animation_and_fx_component_fixtures_verified')
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
+    'docs/android-evidence/client-map-startup-0.13.32-native.json',
     '.github/workflows/android-map-startup-native.yml',
     '.github/workflows/android-game.yml', '.github/workflows/android-map-progress.yml',
     '.github/workflows/android-atlas-game.yml', 'tools/android/run_retained_host_contracts.py',

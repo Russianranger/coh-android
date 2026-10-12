@@ -1,4 +1,4 @@
-# CURRENT — .32 Map startup and Kings preparation — implementation under qualification; publication disabled — 2026-10-12 UTC
+# CURRENT — .32 Map startup and Kings preparation — native qualified; APK/public audits pending — 2026-10-12 UTC
 
 **Current work:** 0.13.32 / code 47, continuing the exact .31 branch state
 `1499ab467d0d6b1418c15720c9c4c160f24f5522`. No .32 publication or physical
@@ -47,13 +47,44 @@ cleanup remain device gates. Assets 1.0.0 and the .25/.26-derived native
 Game/Db/GPU/runtime compatibility remain preserved.
 [Complete .32 installation, monorail and export instructions](COH-Atlas-Gameplay-0.13.32-testing.txt).
 
-Next required milestones: freeze candidate source; genuine MSVC x86 animation
-and deadline fixtures; compile only shipping MapServer plus separate nonshipping
-FX observer; six actual Wine FX/native-consumer proofs; admit exact artifacts;
-run every retained suite and current full cold/reuse Atlas/Kings preparation,
-PostgreSQL fixtures, independent DEX/signature checks; publish and audit actual
-public bytes; then focused Thor timing/zoning/save tests. Reuse accepted native
-artifacts where source/byte proofs match, without relabeling producer commits.
+Native qualification now passed in [run 38197257421](https://github.com/Russianranger/coh-android/actions/runs/38197257421)
+at source `d456f06cd82a921964a895885a03c67137cb9257`: actual Win32 animation
+5 / station-deadline 9 fixtures, shipping MapServer and separate FX observer,
+and six actual Wine native process proofs. New Map is **7,475,200 bytes**, SHA
+`fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363`.
+The accepted native/FX ZIPs, all 539 FX members / 526 raw evidence files,
+17 native / 10 FX source pins and every native ID/provider/counter proof were
+independently rechecked. Both candidate preloads observed at least 5,120
+certified tracks, zero fallback/crypto failures and 11,948,787 skipped key
+checks. The Windows fixture checked all 5,878 full raw tracks. Original history
+and Game/Db/GPU/assets remain unchanged. [Native evidence and exact accepted
+artifact pins](android-evidence/client-map-startup-0.13.32-native.json).
+
+**The traced correctness runs do not establish a speed win:** old full/compact
+203.054/203.479 s; new full/compact 216.854/204.855 s. These are instrumented
+host TSR2 preloads, not native map readiness or physical Thor loading. Data
+volume/key-scan reduction is proved; performance and memory benefits require
+paired physical cold/warm measurements. Do not describe these timings as a
+qualified optimization gain or an under-30-second result.
+
+Initial legacy Linux discovery rejected the same-basename Windows-only fixture
+and the two full-donor FX suites. The bounded host runner executes every retained
+Game module (17 / 199 tests; 12 unchanged platform skips) and Atlas module
+(11 / 223 tests; zero skips), naming only those separately mandatory owners.
+Their full FX and Windows gates remain required by the .32 pipeline. Six added
+inventory/routing controls and all 95 retained routing checks passed. Native
+producer inputs stayed byte-identical, so the accepted builds are reused.
+Source `f6c0e8497ff3e7290dc61fe9029646c8a1adb62a` fixes routing without rebuilding
+native binaries. Its changed legacy workflows and PR checks passed, with the
+PostgreSQL backend still being observed at the last status read.
+
+Publication is now enabled only with those exact accepted source/run/artifact
+pins. **No .32 APK/publication pass is claimed yet.** Next: current APK complete
+cold/reuse Atlas/Kings preparation, all 190 suites with three frozen historical
+package contracts, 21 real PostgreSQL fixtures, complete SDK/DEX/signature
+checks, publication and fresh public-byte audit. Then focused Thor timing,
+save/enhancement persistence, both monorail directions, Kings saved reopen,
+foreground export and safe cleanup. Main remains untouched and PR #1 draft.
 
 ---
 

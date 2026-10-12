@@ -70,6 +70,10 @@ images, aligned/mapped inputs, a whole-owned-PRoot seccomp trial, matched
 FEX/Wine, device-profiled PGO and an ARM64 server port require their respective
 evidence. No freshness guard, collision check or physics system is disabled.
 There is no qualified under-30-second Thor claim, FPS gain or RAM reduction.
+The heavily straced correctness preloads measured 203.054/203.479 seconds for
+the old full/compact control and 216.854/204.855 seconds for the new full/compact
+consumer. These runs do not establish a boot-speed win. The reduction in bytes
+and repeated key checks is qualified; actual Thor cold/warm timing is pending.
 
 EXISTING THOR INSTALLATION -- PRESERVE YOUR SAVED CHARACTER
 

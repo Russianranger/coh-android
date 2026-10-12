@@ -18,6 +18,7 @@ CLIENT_MAP_STARTUP_DOCS = frozenset({
     'docs/HANDOFF.md', 'docs/COH-Atlas-Gameplay-0.13.32-testing.txt',
     'docs/MAP_STARTUP_NAMESPACE_CERTIFICATE.md',
     'docs/android-evidence/client-map-startup-0.13.31-device-result.json',
+    'docs/android-evidence/client-map-startup-0.13.32-native.json',
     CLIENT_MAP_STARTUP_PUBLICATION,
 })
 CLIENT_MAP_STARTUP_ALLOWED = CLIENT_MAP_STARTUP_DOCS | frozenset({

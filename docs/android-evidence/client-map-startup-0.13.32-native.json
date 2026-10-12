@@ -1,0 +1,199 @@
+{
+  "format": 1,
+  "status": "host_native_qualified_publication_pending",
+  "version": "0.13.32",
+  "version_code": 47,
+  "producer_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+  "run_id": 38197257421,
+  "run_url": "https://github.com/Russianranger/coh-android/actions/runs/38197257421",
+  "run_conclusion": "success",
+  "artifact_inputs": {
+    "format": 1,
+    "status": "accepted_native_and_fx_components",
+    "native": {
+      "run_id": 38197257421,
+      "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+      "artifact": {
+        "id": 11724362649,
+        "name": "coh-map-startup-native",
+        "bytes": 3655651,
+        "sha256": "3a0df789eb97dc16b156d917e8a4d13f001efaa83240a32a297382abdd83d0c0"
+      }
+    },
+    "fx": {
+      "run_id": 38197257421,
+      "repository_commit": "d456f06cd82a921964a895885a03c67137cb9257",
+      "artifact": {
+        "id": 11725180616,
+        "name": "coh-map-startup-qualified-fx",
+        "bytes": 27932251,
+        "sha256": "a19ed3eab1a369282fd57536a7feafbe7efe05c6deecfe9f2ea049d3af6879c2"
+      }
+    }
+  },
+  "mapserver": {
+    "bytes": 7475200,
+    "sha256": "fea96d0a20f5e245930abd0a97e8cc1da7c4ef4c83ff8a7d5a5c283ba8071363"
+  },
+  "native_build_manifest": {
+    "bytes": 39595,
+    "sha256": "5ee56719f7abc4e12d19670c15398ba3d3b83ee14749ac7941b61e7ea4b291c1"
+  },
+  "windows_fixtures": {
+    "animation_native_tests": 5,
+    "all_raw_tracks_checked": 5878,
+    "raw_animation_bytes": 88380730,
+    "monorail_native_tests": 9,
+    "skipped": 0
+  },
+  "source_closure": {
+    "native_producer_files": 17,
+    "fx_producer_files": 10,
+    "all_current_pins_equal": true
+  },
+  "independent_archive_review": {
+    "members": 539,
+    "uncompressed_bytes": 1077008379,
+    "raw_evidence_files": 526,
+    "all_member_crc_and_sha256_checked": true,
+    "full_reader_passed": true,
+    "reader_elapsed_seconds": 94.138,
+    "raw_summary_sha256": "225d85c5319ba56c27aa90a5754013deb531cabfd0c7b9339739542e8348429f"
+  },
+  "fx_report": {
+    "bytes": 215988,
+    "sha256": "9d315e154d91247a568668a3f828cec3bccb39220b4ddb70da9b250361d2ca85"
+  },
+  "fx_payload": {
+    "bytes": 3380680,
+    "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+  },
+  "fx_manifest": {
+    "bytes": 1557,
+    "sha256": "ac29fb381b1ffe5c62b1827d3d41110b3cb8d9558c09ac3f96eb4d77b644dc99"
+  },
+  "native_ids": [
+    {
+      "indexed_names": 19606,
+      "native_schema_crc": "4cb7d9cb",
+      "ordered_native_ids_sha256": "f1058aee4a9e93383ffa952aff74e22468ff0141263a95dbe073dd8ec8a47bad",
+      "report": {
+        "bytes": 1158577,
+        "sha256": "5e58e27e59a0d62dc2454917d529ce6adf6d773653248d14d3f9f7e05c7f092d"
+      }
+    },
+    {
+      "indexed_names": 19606,
+      "native_schema_crc": "4cb7d9cb",
+      "ordered_native_ids_sha256": "f1058aee4a9e93383ffa952aff74e22468ff0141263a95dbe073dd8ec8a47bad",
+      "report": {
+        "bytes": 1158577,
+        "sha256": "5e58e27e59a0d62dc2454917d529ce6adf6d773653248d14d3f9f7e05c7f092d"
+      }
+    }
+  ],
+  "native_processes": 6,
+  "native_schema_crc": "4cb7d9cb",
+  "all_native_ids_equal": true,
+  "providers": {
+    "observer-compact": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/observer-compact/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 3380680,
+        "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+      },
+      "successful_fd_content_bytes": 3380703
+    },
+    "observer-full": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/observer-full/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 58505496,
+        "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+      },
+      "successful_fd_content_bytes": 58505519
+    },
+    "shipping-compact": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/shipping-compact/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 3380680,
+        "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+      },
+      "successful_fd_content_bytes": 3380703
+    },
+    "shipping-full": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/shipping-full/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 58505496,
+        "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+      },
+      "successful_fd_content_bytes": 58505519
+    },
+    "startup-compact": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/startup-compact/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 3380680,
+        "sha256": "ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890"
+      },
+      "successful_fd_content_bytes": 3380703
+    },
+    "startup-full": {
+      "actual_private_fx_provider": "/home/runner/work/coh-android/coh-android/out/fx-work/startup-full/data/bin/fxinfo.bin",
+      "cache_writes": 0,
+      "format": 1,
+      "fx_source_content_reads": {},
+      "private_provider_verified": true,
+      "provider": {
+        "bytes": 58505496,
+        "sha256": "3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70"
+      },
+      "successful_fd_content_bytes": 58505519
+    }
+  },
+  "candidate_animation_observation_each_pair": {
+    "certified_tracks_at_least": 5120,
+    "raw_hash_bytes_observed": 78662741,
+    "pig_successful_read_bytes": 96510962,
+    "skipped_rotation_key_checks": 10793381,
+    "skipped_position_key_checks": 1155406,
+    "fallback": 0,
+    "crypto_failed": 0,
+    "stock_scanned_keys_observed": 0
+  },
+  "traced_host_preload_seconds": {
+    "previous_full": 203.054,
+    "previous_compact": 203.479,
+    "candidate_full": 216.854,
+    "candidate_compact": 204.855
+  },
+  "performance_interpretation": "Heavily straced correctness preloads do not establish a boot-speed improvement; physical Thor cold/warm timing remains required.",
+  "native_gameplay_validated": false,
+  "physical_timing_validated": false,
+  "physical_thor_validated": false,
+  "pending_gates": [
+    "current APK full cold/reuse Atlas and Kings preparation",
+    "all retained/current regression and PostgreSQL fixtures",
+    "SDK signing and independent DEX reconstruction",
+    "public APK/checksum/instructions byte audit",
+    "physical Thor boot/save/reopen/monorail/export"
+  ]
+}
