@@ -87,6 +87,7 @@ SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     'tools/android/interactive/test_client_map_startup_package.py',
     'tools/android/interactive/package_map_startup_native.py',
     'tools/android/interactive/map_startup_inputs.py',
+    'tools/android/interactive/map_startup_proof_transport.py',
     'tools/android/interactive/qualify_runtime_asset_preflight.py',
     'tools/android/interactive/test_runtime_asset_preflight.py',
     'tools/android/interactive/qualify_full_startup_preflight.py',
@@ -312,15 +313,16 @@ def verification_manifests(donor, helper_pins, commit, component, game, game_man
 
 def actual_asset_preflight(assets):
     import qualify_runtime_asset_preflight as preflight
+    import map_startup_proof_transport as transport
     asset_cache = Path(os.environ.get('COH_MAP_STARTUP_ASSET_CACHE', ROOT/'out/map-startup-assets'))
-    return preflight.preflight(assets, preflight.ensure_assets(asset_cache))
+    return transport.preflight('runtime_assets', assets, preflight.ensure_assets(asset_cache))
 
 
 def actual_startup_preflight(assets):
     import qualify_runtime_asset_preflight as asset_preflight
-    import qualify_full_startup_preflight as startup
+    import map_startup_proof_transport as transport
     asset_cache = Path(os.environ.get('COH_MAP_STARTUP_ASSET_CACHE', ROOT/'out/map-startup-assets'))
-    return startup.preflight(assets, asset_preflight.ensure_assets(asset_cache))
+    return transport.preflight('full_startup', assets, asset_preflight.ensure_assets(asset_cache))
 
 
 def extract_and_repair(apk, donor, destination, commit, inputs_directory, *, execute_preflight=True):

@@ -53,6 +53,7 @@ CLIENT_MAP_STARTUP_ALLOWED = CLIENT_MAP_STARTUP_DOCS | frozenset({
     'tools/android/interactive/build_client_map_startup_apk.py',
     'tools/android/interactive/classify_client_map_startup_change.py',
     'tools/android/interactive/map_startup_inputs.py',
+    'tools/android/interactive/map_startup_proof_transport.py',
     'tools/android/interactive/package_map_startup_native.py',
     'tools/android/interactive/qualify_client_map_startup.py',
     'tools/android/interactive/qualify_full_startup_preflight.py',

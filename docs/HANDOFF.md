@@ -91,6 +91,16 @@ the actual serialized manifest hash, and run unchanged adjacent guest readers
 before the full asset worker. Native 17 / FX 10 producer inputs are unchanged;
 accepted binaries stay reusable. The full corrected lane remains mandatory.
 
+The follow-up transport audit identified the same order-sensitive embedded
+Game manifests in leaf/full host proofs and the outer qualification JSON.
+The APK assembly correction passed all 13 light package cases (two using the
+actual accepted native/FX components). Publication must additionally preserve
+order through the fresh worker, controller, qualification and build-report
+transport. A separate publication runner calls the frozen workers and their
+unchanged validators, preserving proof order; the native 17 / FX 10 producer
+files and guest hash guards remain unchanged. This is a host-proof transport
+correction, with complete corrected CI and physical Thor gates still required.
+
 Publication is now enabled only with those exact accepted source/run/artifact
 pins. **No .32 APK/publication pass is claimed yet.** Next: current APK complete
 cold/reuse Atlas/Kings preparation, all 190 suites with three frozen historical

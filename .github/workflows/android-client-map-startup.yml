@@ -11,7 +11,9 @@ permissions:
   actions: read
 concurrency:
   group: android-client-map-startup-publication
-  cancel-in-progress: false
+  # Only this successor stops the known-invalid proof-transport candidate.
+  # Every later push/dispatch retains the existing non-cancelling policy.
+  cancel-in-progress: ${{ github.event_name == 'push' && github.event.before == '5194e5e7177511eff27d8fa2f22eb6b5b8029ca3' }}
 jobs:
   changes:
     runs-on: ubuntu-24.04

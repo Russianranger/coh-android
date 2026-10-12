@@ -215,6 +215,10 @@ def regressions(historical_donor_apk, historical_source, payloads):
     return results
 
 
+def encoded_receipt(value):
+    return json.dumps(value, indent=2, allow_nan=False)+'\n'
+
+
 def qualify(args):
     if hasattr(time, 'tzset'):
         os.environ['TZ'] = 'UTC'
@@ -330,7 +334,7 @@ def qualify(args):
     derivative.require(not args.output.exists() and not args.output.is_symlink(),
                        'Fresh qualification output required')
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+    args.output.write_text(encoded_receipt(receipt))
     print('Qualified certified MapServer startup and full preparation:', receipt['tests_run'],
           'host scenarios; physical Thor retest pending', flush=True)
     return receipt

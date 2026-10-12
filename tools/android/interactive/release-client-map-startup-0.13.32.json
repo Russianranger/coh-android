@@ -5,7 +5,7 @@
   "donor_commit": "74fe247be85173e618f1af2c8af71b1316de4cd8",
   "asset_version": "1.0.0",
   "publish_enabled": true,
-  "publication_attempt": "certified-mapserver-and-private-fx-preserving-retained-receipt-bytes",
+  "publication_attempt": "certified-mapserver-private-fx-and-ordered-proof-transport",
   "native_component_inputs": {
     "format": 1,
     "status": "accepted_native_and_fx_components",

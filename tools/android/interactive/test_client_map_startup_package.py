@@ -23,16 +23,31 @@ class MapStartupPackageTests(unittest.TestCase):
         commit = package.builder().source_commit(os.environ.get('COH_MAP_STARTUP_TEST_SOURCE_COMMIT'))
         return apk, donor, inputs, commit
 
+    def actual_light_fixture(self):
+        cls = type(self)
+        if not hasattr(cls, '_actual_light_fixture'):
+            import package_map_startup_native as native
+            apk, donor, inputs, commit = self.actual_inputs()
+            with tempfile.TemporaryDirectory(prefix='coh-map-startup-light-fixture-') as temporary:
+                destination = Path(temporary)/'candidate'
+                runtime, _, preflight = package.extract_and_repair(
+                    apk, donor, destination, commit, inputs, execute_preflight=False)
+                members = package.game_archive_members(destination/'assets/runtime/game-package.tar.gz')
+                original = Path(temporary)/'original.tar.gz'
+                with zipfile.ZipFile(apk) as archive:
+                    original.write_bytes(archive.read('assets/runtime/game-package.tar.gz'))
+                old_members = package.game_archive_members(original)
+            cls._actual_light_fixture = (runtime, preflight, members, old_members,
+                donor['package_preflight']['server_archives']['archives']['dbserver-package.tar.gz'])
+        return copy.deepcopy(cls._actual_light_fixture)
+
     def test_actual_component_serialization_preserves_every_historical_reader_before_preparation(self):
         import game_diagnostic as guest
         import package_map_startup_native as native
-        apk, donor, inputs, commit = self.actual_inputs()
+        runtime, preflight, members, old_members, donor_dbserver_pin = self.actual_light_fixture()
         with tempfile.TemporaryDirectory(prefix='coh-map-startup-receipts-') as temporary:
-            destination = Path(temporary)/'candidate'
-            runtime, _, preflight = package.extract_and_repair(
-                apk, donor, destination, commit, inputs, execute_preflight=False)
-            path = destination/'assets/runtime/game-package.tar.gz'
-            members = package.game_archive_members(path)
+            path = Path(temporary)/'game-package.tar.gz'
+            native.write_game_archive(path, members)
             raw = members['game-package.json']; game = json.loads(raw)
             self.assertEqual(guest.game_listener_contract(game), guest.evidence.GAME_LOOPBACK_METADATA)
             self.assertTrue(guest.game_loopback_contract(game)['endpoints'])
@@ -48,11 +63,7 @@ class MapStartupPackageTests(unittest.TestCase):
             self.assertNotEqual(mapped['package_manifest_sha256'], package.pin(native.canonical(game))['sha256'])
             self.assertEqual(mapped['archive_pin'], package.builder().file_pin(path))
             self.assertEqual(preflight['server_archives']['archives']['dbserver-package.tar.gz'],
-                             donor['package_preflight']['server_archives']['archives']['dbserver-package.tar.gz'])
-            original = Path(temporary)/'original.tar.gz'
-            with zipfile.ZipFile(apk) as archive:
-                original.write_bytes(archive.read('assets/runtime/game-package.tar.gz'))
-            old_members = package.game_archive_members(original)
+                             donor_dbserver_pin)
             old = json.loads(old_members['game-package.json'])
             self.assertEqual(native.contract.previous_package(game), old)
             self.assertEqual(json.dumps(game['inputs'], indent=2), json.dumps(old['inputs'], indent=2))
@@ -83,16 +94,9 @@ class MapStartupPackageTests(unittest.TestCase):
 
     def test_actual_component_serialization_refuses_changed_retained_metadata_and_native_members(self):
         import package_map_startup_native as native
-        apk, donor, inputs, commit = self.actual_inputs()
+        _, _, good, old_members, _ = self.actual_light_fixture()
         with tempfile.TemporaryDirectory(prefix='coh-map-startup-receipt-negatives-') as temporary:
-            destination = Path(temporary)/'candidate'
-            package.extract_and_repair(apk, donor, destination, commit, inputs, execute_preflight=False)
-            path = destination/'assets/runtime/game-package.tar.gz'
-            good = package.game_archive_members(path)
-            original = Path(temporary)/'original.tar.gz'
-            with zipfile.ZipFile(apk) as archive:
-                original.write_bytes(archive.read('assets/runtime/game-package.tar.gz'))
-            old_members = package.game_archive_members(original)
+            path = Path(temporary)/'game-package.tar.gz'
             bad_metadata = copy.deepcopy(good)
             game = json.loads(good['game-package.json'])
             game['inputs']['loopback_game']['manifest']['runtime_execution_validated'] = True
@@ -105,6 +109,106 @@ class MapStartupPackageTests(unittest.TestCase):
                 native.write_game_archive(path, members)
                 with self.subTest(mutation=name), self.assertRaises(ValueError):
                     package.restore_retained_game_receipt_order(path, old_members)
+
+    def test_actual_proof_transport_preserves_old_and_new_admissions_across_every_report_boundary(self):
+        import map_startup_proof_transport as transport
+        import qualify_client_map_startup as qualification
+        import qualify_runtime_asset_preflight as leaf
+        _, _, current, old, _ = self.actual_light_fixture()
+        for generation, members in (('historical_031', old), ('certified_032', current)):
+            admission = leaf.package_native_binding(json.loads(members['game-package.json']))
+            for boundary, wrap, unwrap, encode in (
+                ('worker', lambda value: {'native_admission': value},
+                 lambda value: value['native_admission'], transport.encoded),
+                ('controller', lambda value: {'map': {'native_admission': value}},
+                 lambda value: value['map']['native_admission'], transport.encoded),
+                ('qualification', lambda value: {'package_preflight': {'full_startup': {'native_admission': value}}},
+                 lambda value: value['package_preflight']['full_startup']['native_admission'],
+                 qualification.encoded_receipt),
+                ('build_report', lambda value: {'qualification': {'package_preflight': {'full_startup': {'native_admission': value}}}},
+                 lambda value: value['qualification']['package_preflight']['full_startup']['native_admission'],
+                 package.shared.encoded)):
+                with self.subTest(generation=generation, boundary=boundary):
+                    frame = wrap(admission)
+                    received = unwrap(json.loads(encode(frame)))
+                    self.assertEqual(leaf.validate_native_binding(received), admission['authenticated_mapserver'])
+                    self.assertEqual(leaf.canonical(received), leaf.canonical(admission))
+                    self.assertEqual(json.dumps(received['game_package']['inputs'], indent=2),
+                                     json.dumps(admission['game_package']['inputs'], indent=2))
+                    with self.assertRaisesRegex(ValueError, 'Candidate MapServer producer manifest differs'):
+                        leaf.validate_native_binding(unwrap(json.loads(json.dumps(frame, sort_keys=True))))
+            for field in ('authenticated_mapserver', 'native_consumer_binding', 'game_package'):
+                bad = copy.deepcopy(admission)
+                if field == 'authenticated_mapserver': bad[field]['sha256'] = '0'*64
+                elif field == 'native_consumer_binding': bad[field]['physical_loading_gain_validated'] = True
+                else: bad[field]['inputs']['mapserver_progress']['manifest']['build_role'] = 'forged'
+                with self.subTest(generation=generation, changed=field), self.assertRaises(ValueError):
+                    leaf.validate_native_binding(json.loads(transport.encoded(bad)))
+
+    def test_proof_transport_source_pins_and_worker_imports_remain_closed(self):
+        import map_startup_proof_transport as transport
+        import classify_client_map_startup_change as owner
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        name = 'tools/android/interactive/map_startup_proof_transport.py'
+        self.assertIn(name, package.SOURCE_FILES)
+        self.assertIn(name, owner.CLIENT_MAP_STARTUP_ALLOWED)
+        for kind, (module_name, expected) in transport.WORKERS.items():
+            self.assertEqual(package.builder().file_pin(package.ROOT/'tools/android/interactive'/(module_name+'.py')),
+                             expected)
+            module = transport.worker_module(kind)
+            self.assertEqual(module.worker.__module__, module_name)
+            self.assertEqual(module.validate_proof.__module__, module_name)
+        with self.assertRaises(ValueError): transport.worker_module('unreviewed_worker')
+        with patch.object(transport.importlib, 'import_module', return_value=SimpleNamespace(__file__='/unknown/worker.py')):
+            with self.assertRaisesRegex(ValueError, 'shadowed'): transport.worker_module('runtime_assets')
+        with tempfile.TemporaryDirectory(prefix='coh-proof-source-') as temporary:
+            with patch.object(transport, 'ROOT', Path(temporary)):
+                with self.assertRaisesRegex(ValueError, 'missing'): transport.worker_module('runtime_assets')
+        with self.assertRaises(ValueError): transport.encoded({'invalid': float('nan')})
+
+    def test_proof_transport_worker_cli_runs_the_original_worker_and_both_strict_validations(self):
+        import map_startup_proof_transport as transport
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+        import sys
+        value = {'z': {'last': 1, 'first': 2}, 'a': 3}
+        for kind in transport.WORKERS:
+            with tempfile.TemporaryDirectory(prefix='coh-proof-cli-') as temporary:
+                output = Path(temporary)/'proof.json'
+                module = SimpleNamespace(worker=Mock(return_value=value), validate_proof=Mock(return_value=value))
+                arguments = ['transport', '--kind', kind, '--runtime-assets', '/runtime',
+                             '--payloads', '/payloads', '--output', str(output)]
+                with patch.object(transport, 'worker_module', return_value=module) as select, patch.object(sys, 'argv', arguments):
+                    transport.main()
+                select.assert_called_once_with(kind)
+                module.worker.assert_called_once_with(Path('/runtime'), Path('/payloads'))
+                self.assertEqual(module.validate_proof.call_count, 2)
+                self.assertEqual(output.read_bytes(), transport.encoded(value))
+                self.assertEqual(list(json.loads(output.read_bytes())), ['z', 'a'])
+                self.assertEqual(list(module.validate_proof.call_args.args[0]['z']), ['last', 'first'])
+
+    def test_proof_transport_parent_uses_a_fresh_process_original_timeouts_and_strict_received_validation(self):
+        import map_startup_proof_transport as transport
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+        import sys
+        value = {'z': {'last': 1, 'first': 2}, 'a': 3}
+        for kind, timeout in (('runtime_assets', 900), ('full_startup', 1800)):
+            observed = []
+            def run(command, **options):
+                observed.append((command, options))
+                Path(command[-1]).write_bytes(transport.encoded(value))
+                return SimpleNamespace(returncode=0, stderr='')
+            module = SimpleNamespace(validate_proof=Mock(return_value=value))
+            with patch.object(transport, 'worker_module', return_value=module), patch.object(transport.subprocess, 'run', side_effect=run):
+                self.assertEqual(transport.preflight(kind, Path('/runtime'), Path('/payloads')), value)
+            command, options = observed[0]
+            self.assertEqual(command[:4], [sys.executable, str(Path(transport.__file__).resolve()), '--kind', kind])
+            self.assertEqual(command[4:8], ['--runtime-assets', '/runtime', '--payloads', '/payloads'])
+            self.assertEqual(options['timeout'], timeout)
+            self.assertFalse(options['check'])
+            module.validate_proof.assert_called_once_with(value)
 
     def test_atlas_legacy_workflow_always_runs_host_checks_then_uses_the_bounded_native_owner(self):
         import yaml
@@ -128,6 +232,19 @@ class MapStartupPackageTests(unittest.TestCase):
         self.assertEqual(workflow['jobs']['apk']['if'],
             "github.event_name != 'pull_request' && needs.tooling.outputs.legacy_native_required != 'false'")
         self.assertEqual(workflow['jobs']['runtime']['needs'], 'apk')
+
+    def test_publication_cancellation_is_limited_to_the_known_invalid_predecessor(self):
+        import yaml
+        workflow = yaml.safe_load((package.ROOT/package.WORKFLOW).read_text())
+        concurrency = workflow['concurrency']
+        self.assertEqual(concurrency['group'], 'android-client-map-startup-publication')
+        predecessor = '5194e5e7177511eff27d8fa2f22eb6b5b8029ca3'
+        self.assertEqual(concurrency['cancel-in-progress'],
+            "${{ github.event_name == 'push' && github.event.before == '"+predecessor+"' }}")
+        for event, before, permitted in (('push', predecessor, True),
+            ('push', 'a'*40, False), ('workflow_dispatch', predecessor, False),
+            ('pull_request', predecessor, False)):
+            self.assertEqual(event == 'push' and before == predecessor, permitted)
 
     def test_inherited_legacy_owner_delegates_current_scope_without_changing_historical_specializations(self):
         import classify_client_map_startup_change as owner
