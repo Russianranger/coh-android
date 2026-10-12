@@ -191,10 +191,29 @@ def validate_current_suite_result(name, row):
     return row
 
 
+def configure_native_contract_fixture(apk):
+    """Authenticate the existing .31 parser fixture without rebuilding it.
+
+    The current serialized full-preflight suite exercises the typed native
+    reader with its historical .31 package. Its animation inputs are supplied
+    separately by the unchanged, authenticated Assets 1.0.0 fixture closure.
+    This donor is a test input, never the shipping .33 runtime donor.
+    """
+    apk = Path(apk)
+    derivative.builder().checked_file(apk, derivative.previous.DONOR_APK)
+    apk = apk.resolve()
+    os.environ['COH_MAP_STARTUP_TEST_DONOR_APK'] = str(apk)
+    return {'role': 'existing_public_031_native_parser_fixture_only',
+        'apk': derivative.previous.DONOR_APK, 'current_suites': ['test_full_startup_preflight'],
+        'shipping_runtime_donor_changed': False, 'native_binary_rebuilt': False}
+
+
 def regressions(donor):
     validate_suite_inventory(); results = {}
+    early = ('test_full_startup_preflight', 'test_runtime_asset_preflight')
     execution = tuple(name for name in NEW_TEST_MODULES if name != 'test_client_report_loading_package') + \
-        tuple(name for name in RETAINED_TEST_MODULES if name not in RETAINED_CONTRACT_MODULES) + \
+        early + tuple(name for name in RETAINED_TEST_MODULES if name not in RETAINED_CONTRACT_MODULES
+                      and name not in early) + \
         tuple(sorted(RETAINED_CONTRACT_MODULES)) + ('test_client_report_loading_package',)
     derivative.require(len(execution) == len(TEST_MODULES) and set(execution) == set(TEST_MODULES),
                        'Every retained/current qualification suite must be attributed exactly once')
@@ -231,6 +250,7 @@ def qualify(args):
     commit = base.source_commit(args.repository_commit)
     derivative.require_source_identity(commit)
     donor = derivative.validate_donor(args.donor_apk, args.donor_build_report)
+    native_contract_fixture = configure_native_contract_fixture(args.native_contract_donor_apk)
     os.environ['COH_MAP_STARTUP_ASSET_CACHE'] = str(args.asset_directory.resolve())
     os.environ['COH_PROFILE_RECOVERY_ASSET_CACHE'] = str(args.asset_directory.resolve())
     os.environ['COH_REPORT_LOADING_TEST_DONOR_APK'] = str(args.donor_apk.resolve())
@@ -301,6 +321,7 @@ def qualify(args):
         'format': 1, 'status': 'passed' if all(checks.values()) else 'failed',
         'scope': derivative.QUALIFICATION_SCOPE, 'repository_commit': commit,
         'runtime_repository_commit': commit, 'donor': derivative.donor_link(),
+        'native_contract_test_fixture': native_contract_fixture,
         'source_files': pins, 'test_suites': results, 'check_suites': CHECK_SUITES,
         'checks': checks, 'tests_run': sum(value['tests_run'] for value in results.values()),
         'current_tests_run': sum(value['tests_run'] for value in results.values() if value['tests_executed_in_current_run']),
@@ -344,7 +365,7 @@ def qualify(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repository-commit', required=True)
-    for name in ('donor-apk', 'donor-build-report', 'output'):
+    for name in ('donor-apk', 'donor-build-report', 'native-contract-donor-apk', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--asset-directory', type=Path, default=ROOT/'out/map-startup-assets')
     qualify(parser.parse_args())

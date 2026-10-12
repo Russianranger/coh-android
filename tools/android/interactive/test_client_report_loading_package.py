@@ -165,6 +165,22 @@ class ReportLoadingPackageTests(unittest.TestCase):
         self.assertEqual(len(public_audits), 1)
         public_arguments = shlex.split(public_audits[0]['run'])
         self.assertNotEqual(public_arguments[public_arguments.index('--audit-receipt')+1], audited_path)
+        staging = next(step for step in jobs['apk']['steps']
+            if 'build_client_map_startup_apk.py download-donor ' in step.get('run', ''))
+        staged_commands = [shlex.split(line) for line in staging['run'].splitlines()
+            if line.strip() and not line.lstrip().startswith('#')]
+        self.assertIn(['python3', 'tools/android/interactive/build_client_map_startup_apk.py',
+            'download-donor', '--output', 'out/native-contract-031.apk'], staged_commands)
+        self.assertIn(['python3', 'tools/android/interactive/build_client_report_loading_apk.py',
+            'download-donor', '--output', 'out/donor.apk'], staged_commands)
+        self.assertTrue(all(command[2] in ('download-donor', 'download-donor-evidence') for command in staged_commands))
+        qualify = next(step for step in jobs['apk']['steps']
+            if 'qualify_client_report_loading.py ' in step.get('run', ''))
+        qualification_arguments = shlex.split(qualify['run'])
+        self.assertEqual(qualification_arguments[qualification_arguments.index('--native-contract-donor-apk')+1],
+                         'out/native-contract-031.apk')
+        self.assertEqual(qualification_arguments[qualification_arguments.index('--donor-apk')+1], 'out/donor.apk')
+        self.assertLess(jobs['apk']['steps'].index(staging), jobs['apk']['steps'].index(qualify))
         for job in jobs.values():
             for step in job['steps']:
                 run = step.get('run', '')
@@ -444,6 +460,49 @@ class ReportLoadingPackageTests(unittest.TestCase):
         with zipfile.ZipFile(apk) as archive:
             raw = archive.read('assets/runtime/local_character_server.py')
         return donor, raw
+
+    def native_contract_fixture_apk(self):
+        default = package.ROOT/'out/native-contract-031.apk'
+        if not default.is_file():
+            default = package.ROOT.parent/'qualification/public031/COH-Atlas-Gameplay-0.13.31.apk'
+        path = Path(os.environ.get('COH_REPORT_LOADING_TEST_NATIVE_CONTRACT_APK',
+            os.environ.get('COH_MAP_STARTUP_TEST_DONOR_APK', default)))
+        self.assertTrue(path.is_file(), 'Actual public .31 parser fixture APK is required; no skips')
+        return path
+
+    def test_native_parser_fixture_admits_exact_existing_031_bytes_without_changing_shipping_donor(self):
+        import qualify_client_report_loading as qualification
+        fixture = self.native_contract_fixture_apk()
+        expected = {'bytes': 41203812,
+            'sha256': 'e56df1bcf2210aff131ba80189b1b2dee760f27066e3ee26e09c5fea1654ad80'}
+        shipping = copy.deepcopy(package.DONOR_APK)
+        self.assertEqual(package.pin(fixture.read_bytes()), expected)
+        self.assertEqual(qualification.derivative.previous.DONOR_APK, expected)
+        with patch.dict(os.environ, {'COH_MAP_STARTUP_TEST_DONOR_APK': 'previous-qualified-fixture-sentinel'}):
+            receipt = qualification.configure_native_contract_fixture(fixture)
+            self.assertEqual(os.environ['COH_MAP_STARTUP_TEST_DONOR_APK'], str(fixture.resolve()))
+        self.assertEqual(receipt, {'role': 'existing_public_031_native_parser_fixture_only',
+            'apk': expected, 'current_suites': ['test_full_startup_preflight'],
+            'shipping_runtime_donor_changed': False, 'native_binary_rebuilt': False})
+        self.assertIs(receipt['shipping_runtime_donor_changed'], False)
+        self.assertIs(receipt['native_binary_rebuilt'], False)
+        self.assertEqual(package.DONOR_APK, shipping)
+        self.assertEqual(package.DONOR_APK_NAME, 'COH-Atlas-Gameplay-0.13.32.apk')
+
+    def test_native_parser_fixture_rejects_missing_corrupt_032_or_symlink_before_mutating_environment(self):
+        import qualify_client_report_loading as qualification
+        actual = self.native_contract_fixture_apk()
+        shipping, _ = self.actual_inputs()
+        sentinel = 'previous-qualified-fixture-sentinel'
+        with tempfile.TemporaryDirectory(prefix='coh-native-parser-fixture-negative-') as temporary:
+            directory = Path(temporary)
+            corrupt = directory/'corrupt.apk'; corrupt.write_bytes(b'not the exact existing public .31 APK')
+            symlink = directory/'symlink.apk'; symlink.symlink_to(actual.resolve())
+            for path in (directory/'missing.apk', corrupt, shipping, symlink):
+                with self.subTest(rejected=path.name), patch.dict(os.environ,
+                        {'COH_MAP_STARTUP_TEST_DONOR_APK': sentinel}):
+                    with self.assertRaises(ValueError): qualification.configure_native_contract_fixture(path)
+                    self.assertEqual(os.environ['COH_MAP_STARTUP_TEST_DONOR_APK'], sentinel)
 
     def test_retained_binary_fixture_guest_methods_close_over_exact_actual_032_dependencies(self):
         import qualify_client_report_loading as qualification

@@ -92,8 +92,8 @@
     "changed_production_sources": {
       ".github/workflows/android-client-report-loading.yml": {
         "state": "present",
-        "bytes": 17419,
-        "sha256": "0af6aa9b0950ef7d030e7431aff3f2c139a35d334fcde032c3b77c3a876a4556",
+        "bytes": 17699,
+        "sha256": "cce7e9e7ffccf21660684270dc3e98282a79574d36d50390496b4d613b198e53",
         "qualified_by_this_lane": false
       },
       "android/guest/atlas_beacon_package.py": {
@@ -170,14 +170,14 @@
       },
       "tools/android/interactive/qualify_client_report_loading.py": {
         "state": "present",
-        "bytes": 21192,
-        "sha256": "021b963f7b72530bd1a94bc512f45bab015c4c655df605cff8c31b92bf9af5b9",
+        "bytes": 22366,
+        "sha256": "0fb6a2ea8de68f527d8449e1a8fddc5862c5c4becaabb59538ea6a4ae95135c1",
         "qualified_by_this_lane": false
       },
       "tools/android/interactive/release-client-report-loading-0.13.33.json": {
         "state": "present",
-        "bytes": 381,
-        "sha256": "6b863991d96c05b300fc333cf997162b593af0d839ce43506e68744302930afb",
+        "bytes": 384,
+        "sha256": "da32a893d0e8c46d64c9cc752a8527c50c95c10a9e596d0003f1e4a3ce235d48",
         "qualified_by_this_lane": false
       },
       "tools/android/interactive/test_classify_storage_cleanup_change.py": {
@@ -200,8 +200,8 @@
       },
       "tools/android/interactive/test_client_report_loading_package.py": {
         "state": "present",
-        "bytes": 56983,
-        "sha256": "444ae52e92d2d5d7635091449ab2dcb0b5cb1351ecdda8ef1a611b4e7a64edd1",
+        "bytes": 61325,
+        "sha256": "89c9d79afc9c5bb6019c7552a266831e3aea38172c73dabfb715dd9a22ad3407",
         "qualified_by_this_lane": false
       },
       "tools/android/interactive/test_client_report_recovery_java.py": {
@@ -393,17 +393,18 @@
   "physical_thor_tested": false,
   "performance_improvement_established": false,
   "candidate_snapshot_refresh": {
-    "refreshed_utc": "2026-10-12T17:15:29.504210+00:00",
+    "refreshed_utc": "2026-10-12T17:40:12.991753+00:00",
     "after_final_source_freeze_and_marker_enablement": true,
-    "corrective_candidate_parent_commit": "2f05c75c2d4ca53bcefbd9e29fbc99e78f0c0538",
+    "corrective_candidate_parent_commit": "ffa711374c9da93b75784d66cb3345a389019f16",
     "corrective_candidate_paths": [
-      "android/guest/atlas_beacon_package.py",
+      ".github/workflows/android-client-report-loading.yml",
       "docs/HANDOFF.md",
       "docs/android-evidence/client-report-loading-0.13.33-routing.json",
+      "tools/android/interactive/qualify_client_report_loading.py",
       "tools/android/interactive/release-client-report-loading-0.13.33.json",
-      "tools/android/interactive/test_collision_input_snapshot.py"
+      "tools/android/interactive/test_client_report_loading_package.py"
     ],
-    "publication_attempt": "recoverable-reports-bounded-preparation-case-order-2",
+    "publication_attempt": "recoverable-reports-preparation-pinned-parser-fixture-3",
     "qualification_enabled": true,
     "publish_enabled": true,
     "tested_input_pin_sets_unchanged_since_tests": true,

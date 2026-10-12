@@ -119,10 +119,13 @@ jobs:
         run: |
           python3 tools/android/interactive/build_client_report_loading_apk.py download-donor --output out/donor.apk
           python3 tools/android/interactive/build_client_report_loading_apk.py download-donor-evidence --output out/donor-evidence
+          # Existing .31 parser fixture only; the shipping runtime donor remains .32.
+          python3 tools/android/interactive/build_client_map_startup_apk.py download-donor --output out/native-contract-031.apk
       - name: Qualify current report/preparation repairs, exact native bytes, strict SQL and all applicable retained suites
         run: >-
           python3 tools/android/interactive/qualify_client_report_loading.py --repository-commit "$GITHUB_SHA"
           --donor-apk out/donor.apk --donor-build-report out/donor-evidence/client-map-startup-apk-build-report.json
+          --native-contract-donor-apk out/native-contract-031.apk
           --output out/client-report-loading-qualification.json
       - uses: actions/upload-artifact@v4
         if: always()

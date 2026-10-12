@@ -53,9 +53,9 @@ physical loading, FPS or RAM gains. Routing **134** and isolated prerequisite
 **60** tests passed; [routing evidence](android-evidence/client-report-loading-0.13.33-routing.json)
 preserves the .32 producer history and keeps successor shipping qualification false.
 
-Final local package/audit gate: **32 passed**, zero skips; **154** eligible bounded
+Final local package/audit gate: **34 passed**, zero skips; **154** eligible bounded
 diagnostic modules passed. The full shipping inventory is **187 current suites /
-2,530 cases** plus **9 inherited unchanged-producer suites / 76 cases**. Current
+2,532 cases** plus **9 inherited unchanged-producer suites / 76 cases**. Current
 full CI execution, PostgreSQL, complete original assets, SDK signing and public
 audit remain pending; these inventory counts are not a completed shipping result.
 
@@ -70,6 +70,21 @@ canonical-first/variant-first enumeration coverage and independent review. All
 development fixture rebuilt automatically and passed, without changing APK donor
 bytes. Available GitHub tools cannot cancel that legacy job. Retry qualification
 remains mandatory; no failure is converted to an accepted package.
+
+Second run [38283087656](https://github.com/Russianranger/coh-android/actions/runs/38283087656)
+at `ffa711374c9da93b75784d66cb3345a389019f16` passed **153 current suites / 2,116
+cases**, then stopped before APK construction on the original full-startup
+receipt-reader test's missing historical .31 fixture. The validation-only fix
+downloads the existing pinned .31 APK strictly as a parser-test input, authenticates
+it before large work, and runs full-startup/leaf-proof suites early. Shipping
+continues to use only the exact .32 donor. The unchanged **13** full-startup cases
+passed with that fixture and original qualified animations; the affected **34**
+package cases passed, zero skips. A transitive audit of all 187 current modules
+found no further historical fixture requirements. All 15 companion workflows
+passed; the legacy PR development DbServer fixture again built automatically.
+No failed run produced an APK or release; the next full qualification remains
+required. Full shipping inventory is now 2,608 attributed cases, of which 76 are
+explicitly inherited rather than newly executed.
 
 The dedicated .33 lane must execute applicable current regressions, real PostgreSQL
 fixtures, actual current helper/full Atlas/Kings cold/reuse preparation, Android
