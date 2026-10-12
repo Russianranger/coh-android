@@ -10,6 +10,104 @@ import build_client_map_startup_apk as package
 
 
 class MapStartupPackageTests(unittest.TestCase):
+    def test_atlas_legacy_workflow_always_runs_host_checks_then_uses_the_bounded_native_owner(self):
+        import yaml
+        workflow = yaml.safe_load((package.ROOT/'.github/workflows/android-atlas-game.yml').read_text())
+        tooling = workflow['jobs']['tooling']
+        self.assertEqual(tooling['outputs']['legacy_native_required'],
+                         '${{ steps.owner.outputs.legacy_native_required }}')
+        checkout = next(step for step in tooling['steps'] if step.get('uses', '').startswith('actions/checkout@'))
+        self.assertEqual(checkout['with']['fetch-depth'], 2)
+        owner = next(step for step in tooling['steps'] if step.get('id') == 'owner')
+        self.assertEqual(owner['run'], 'python3 tools/android/interactive/classify_client_assets_change.py')
+        self.assertEqual(owner['env']['COH_PUSH_BEFORE'], '${{ github.event.before }}')
+        checks = next(step for step in tooling['steps'] if step.get('name') ==
+            'Check combined app, device policy and exact accepted inputs')
+        self.assertNotIn('if', checks)
+        self.assertEqual(checks['run'].splitlines(), [
+            'python3 tools/android/run_retained_host_contracts.py --group atlasgame',
+            "python3 -m unittest discover -s tools/android/atlas -p 'test_*.py' -v",
+            'python3 tools/android/run_retained_host_contracts.py --group game'])
+        self.assertEqual(workflow['jobs']['apk']['needs'], 'tooling')
+        self.assertEqual(workflow['jobs']['apk']['if'],
+            "github.event_name != 'pull_request' && needs.tooling.outputs.legacy_native_required != 'false'")
+        self.assertEqual(workflow['jobs']['runtime']['needs'], 'apk')
+
+    def test_inherited_legacy_owner_delegates_current_scope_without_changing_historical_specializations(self):
+        import classify_client_map_startup_change as owner
+        import classify_client_assets_change as legacy
+        import classify_client_profile_recovery_change as historical
+        names = sorted(owner.CLIENT_MAP_STARTUP_ALLOWED)
+        context = ('push', 'a'*40, 'b'*40, 'a'*40, names)
+        self.assertTrue(legacy.client_animation_repair_owned(*context))
+        self.assertFalse(legacy.client_assets_owned(*context))
+        self.assertFalse(historical.client_profile_recovery_owned(*context))
+
+    def test_inherited_legacy_owner_keeps_unknown_paths_dispatch_pull_request_and_ambiguous_history_closed(self):
+        import classify_client_map_startup_change as owner
+        import classify_client_assets_change as legacy
+        names = sorted(owner.CLIENT_MAP_STARTUP_ALLOWED)
+        for context in (
+            ('push', 'a'*40, 'b'*40, 'a'*40, names+['android/guest/client_gpu_profile.py']),
+            ('workflow_dispatch', 'a'*40, 'b'*40, 'a'*40, names),
+            ('pull_request', 'a'*40, 'b'*40, 'a'*40, names),
+            ('push', 'c'*40, 'b'*40, 'a'*40, names),
+            ('push', 'a'*40, 'b'*40, 'a'*40+'\n'+'c'*40, names),
+            ('push', '0'*40, 'b'*40, '0'*40, names)):
+            with self.subTest(context=context[:4]):
+                self.assertFalse(legacy.client_animation_repair_owned(*context))
+
+    def test_legacy_linux_groups_keep_every_historical_module_and_name_only_separate_fixture_owners(self):
+        import run_retained_host_contracts as retained
+        import qualify_client_map_startup as qualification
+        for group in ('game', 'atlasgame'):
+            directory, selected, excluded = retained.inventory(group)
+            self.assertEqual(set(selected), set(retained.HISTORICAL_MODULES[group])
+                | set(retained.REQUIRED_ADDITIONS[group]))
+            self.assertTrue(all(path.parent == directory for path in selected.values()))
+            self.assertEqual(set(selected) | set(excluded),
+                {path.name for path in directory.glob('test_*.py')})
+            self.assertTrue(all(excluded.values()))
+        self.assertEqual(retained.EXCLUDED_MODULES['game'].keys(), {'test_map_startup_monorail_budget.py'})
+        self.assertEqual(retained.EXCLUDED_MODULES['atlasgame'].keys(), {
+            'test_server_fx_catalog.py', 'test_server_fx_catalog_native_proof.py'})
+        self.assertTrue({'test_server_fx_catalog', 'test_server_fx_catalog_native_proof',
+            'test_map_startup_monorail_budget'} <= set(qualification.TEST_MODULES))
+        import package_map_startup_native as native
+        self.assertIn('tools/android/game/test_map_startup_monorail_budget.py', native.SOURCE_FILES)
+
+    def test_legacy_linux_inventory_cannot_drop_retained_modules_or_silently_ignore_new_host_files(self):
+        import run_retained_host_contracts as retained
+        with tempfile.TemporaryDirectory(prefix='coh-retained-inventory-') as temporary:
+            root = Path(temporary); directory = root/'tools/android/game'; directory.mkdir(parents=True)
+            for name in set(retained.HISTORICAL_MODULES['game']) | set(retained.EXCLUDED_MODULES['game']):
+                (directory/name).write_text('# isolated source inventory fixture\n')
+            extra = directory/'test_additional_host_contract.py'; extra.write_text('# new host suite\n')
+            _, selected, excluded = retained.inventory('game', root=root)
+            self.assertIn(extra.name, selected)
+            self.assertEqual(set(excluded), {'test_map_startup_monorail_budget.py'})
+            (directory/retained.HISTORICAL_MODULES['game'][0]).unlink()
+            with self.assertRaisesRegex(ValueError, 'incomplete'):
+                retained.inventory('game', root=root)
+
+    def test_legacy_linux_loader_selects_actual_source_even_when_basename_is_shadowed(self):
+        import run_retained_host_contracts as retained
+        import sys
+        from types import ModuleType
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory(prefix='coh-retained-loader-') as temporary:
+            path = Path(temporary)/'test_shadowed.py'
+            path.write_text('import unittest\nclass ActualPath(unittest.TestCase):\n'
+                ' def test_actual_selected_source(self): self.assertEqual(2 + 2, 4)\n')
+            wrong = ModuleType('test_shadowed'); wrong.__file__ = str(path.with_name('wrong.py'))
+            with patch.dict(sys.modules, {'test_shadowed': wrong}):
+                suite, search = retained.load_suite('game', path)
+                self.assertEqual(suite.countTestCases(), 1)
+                self.assertEqual(search[0], str(path.parent))
+                result = unittest.TestResult(); suite.run(result)
+                self.assertTrue(result.wasSuccessful())
+                self.assertIs(sys.modules['test_shadowed'], wrong)
+
     def test_exact_derivative_owner_routes_reviewed_native_sources_and_final_evidence(self):
         import classify_client_map_startup_change as owner
         names = sorted(owner.CLIENT_MAP_STARTUP_ALLOWED)

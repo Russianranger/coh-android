@@ -27,23 +27,31 @@ concurrency:
   cancel-in-progress: false
 jobs:
   tooling:
+    outputs:
+      legacy_native_required: ${{ steps.owner.outputs.legacy_native_required }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          fetch-depth: 2
+      - id: owner
+        name: Route the exact current milestone to its dedicated native qualification
+        env:
+          COH_PUSH_BEFORE: ${{ github.event.before }}
+        run: python3 tools/android/interactive/classify_client_assets_change.py
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
       - name: Check combined app, device policy and exact accepted inputs
         run: |
-          python3 -m unittest discover -s tools/android/atlasgame -p 'test_*.py' -v
+          python3 tools/android/run_retained_host_contracts.py --group atlasgame
           python3 -m unittest discover -s tools/android/atlas -p 'test_*.py' -v
-          python3 -m unittest discover -s tools/android/game -p 'test_*.py' -v
+          python3 tools/android/run_retained_host_contracts.py --group game
   apk:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.tooling.outputs.legacy_native_required != 'false'
     needs: tooling
     runs-on: ubuntu-24.04
     timeout-minutes: 35

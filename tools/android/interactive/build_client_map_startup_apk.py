@@ -79,6 +79,8 @@ TRUE_FLAGS = ('retained_android_resources_verified', 'retained_game_and_dbserver
     'native_animation_and_fx_component_fixtures_verified')
 SOURCE_FILES = frozenset({WORKFLOW, QUALIFICATION_SCRIPT,
     '.github/workflows/android-map-startup-native.yml',
+    '.github/workflows/android-game.yml', '.github/workflows/android-map-progress.yml',
+    '.github/workflows/android-atlas-game.yml', 'tools/android/run_retained_host_contracts.py',
     'tools/android/interactive/classify_client_map_startup_change.py',
     'tools/android/interactive/build_client_map_startup_apk.py',
     'tools/android/interactive/test_client_map_startup_package.py',
@@ -114,6 +116,8 @@ REVIEWED_JAVA_CHANGES = frozenset('android/interactive/src/main/java/io/github/r
     'android/recovery/src/main/java/io/github/russianranger/cohclientinteractive/ClientReports.java'})
 SOURCE_FILES |= REVIEWED_JAVA_CHANGES | GUEST_SOURCE_CHANGES | ADDED_GUEST_SOURCES
 REVIEWED_DONOR_SOURCE_CHANGES = GUEST_SOURCE_CHANGES | REVIEWED_JAVA_CHANGES | frozenset({
+    '.github/workflows/android-game.yml', '.github/workflows/android-map-progress.yml',
+    '.github/workflows/android-atlas-game.yml',
     'tools/android/interactive/classify_client_profile_recovery_change.py',
     'tools/android/interactive/classify_client_animation_repair_change.py',
     'tools/android/interactive/classify_client_receipt_repair_change.py',
