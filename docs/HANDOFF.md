@@ -1,8 +1,9 @@
-# CURRENT — .32 Map startup and Kings preparation — native qualified; APK/public audits pending — 2026-10-12 UTC
+# CURRENT — .32 Map startup and Kings preparation — published; public bytes independently verified; Thor gates pending — 2026-10-12 UTC
 
 **Current work:** 0.13.32 / code 47, continuing the exact .31 branch state
-`1499ab467d0d6b1418c15720c9c4c160f24f5522`. No .32 publication or physical
-Thor pass is claimed here. Draft PR #1 remains unmerged; main is untouched.
+`1499ab467d0d6b1418c15720c9c4c160f24f5522`. The .32 APK is published and independently
+byte-verified at assembly source `6c4d1d74f34ecdea8fabcf6238368bf72003878f`; no physical .32
+Thor pass is claimed. Draft PR #1 remains unmerged; main is untouched.
 The separately commissioned MapServer/ARM64 feasibility work remains separate.
 
 The two supplied .31 recovered reports establish fresh THORHERO creation,
@@ -13,7 +14,8 @@ screens. Enhancement SQL tables were not exported, so enhancement persistence
 is user-observed. Creation's guest result passed; reopen failed only its owned
 Wine cleanup/cache-return gate after a committed save. Both outer wrappers
 are interrupted/unverified, lack Android captures and cannot authenticate
-Android-session attribution or infer the cause of an interruption.
+Android-session attribution, establish whether Android interrupted, or explain
+why the normal Android carrier is absent.
 [Sanitized device evidence](android-evidence/client-map-startup-0.13.31-device-result.json).
 
 Physical .31 Atlas native readiness was **234.094 s** for creation and
@@ -25,16 +27,16 @@ an asset-missing hypothesis with a concrete preparation/readiness budget
 failure. Previous native Map is `53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713`;
 the older report's `6a5bf…` binary is not the correct new timing baseline.
 
-Implemented candidate scope, still subject to mandatory native/public gates:
+Published scope and remaining optimization-report gates:
 
 | Report rank / issue | Implementation and qualification boundary |
 |---|---|
-| 1 — SERVER FX | Exact stock Parse6 projection, 58,505,496→3,380,680 bytes; preserves outer names/scalars/order. Genuine native full/compact ID/provider/preload comparisons required. Client full FX unchanged. |
-| 5 — animation validation | Full-byte certificate for 5,878 tracks / 88,380,730 raw bytes, SHA-256 of actual opened immutable Pig input; bounds and pose/base linking retained; stock fallback for loose/changed/unknown/crypto-failed input. Actual Win32 fixtures and shipping-consumer counters required. |
+| 1 — SERVER FX | Exact stock Parse6 projection, 58,505,496→3,380,680 bytes; preserves outer names/scalars/order. Genuine native full/compact ID/provider/preload comparisons passed. Client full FX unchanged. |
+| 5 — animation validation | Full-byte certificate for 5,878 tracks / 88,380,730 raw bytes, SHA-256 of actual opened immutable Pig input; bounds and pose/base linking retained; stock fallback for loose/changed/unknown/crypto-failed input. Actual Win32 fixtures and shipping-consumer counters verified. |
 | Kings preparation | 420 s cooperative preparation, up to 360 s native readiness, shared absolute 720 s request-age cap in guest and native bridge. Historical 600 s receipt retained as ancestry; no fabricated arrival or extended connected window. |
 | Cache reuse | Candidate Map and exact source/ABI ancestry checked before using .31 data-generation identity. Ordinary owner/source/private-cache checks remain active; actual current consumer recorded independently. |
-| Completed report | Authenticated 16-stage complete assets/audio route accepted; save observation separated from overall gates; exact completed normal carrier suppresses only identical guest recovery duplicate. |
-| Cleanup | Reuse only prior proved worker lineage across zombie leader/environment EACCES; unknown/PID-reused/revoked workers refused. Real process/sentinel regressions required. |
+| Completed report | Authenticated 16-stage complete assets/audio route accepted; save observation separated from overall gates; reuse of an intact matching normal carrier avoids creating an identical guest-recovery duplicate; existing recovered archives remain retained and unverified. |
+| Cleanup | Reuse only prior proved worker lineage across zombie leader/environment EACCES; unknown/PID-reused/revoked workers refused. Real process/sentinel regressions passed. |
 | 2 — namespace/BIN certificates | Audited; current cache metadata cannot prove every effective provider or optional absence. Next: closed native provider/generation plus conditional per-BIN scan/source proof. No production freshness bypass. |
 | 4 — cooked PhysX meshes | Audited; current shared stream has unchecked reads/ownership. Next: owned bounded stream, exact SDK/geometry/cooking keys, native producer/consumer and Atlas/Kings collision parity. No shipping physics change. |
 | 3 / 6 / 7 / 8 / 9 / 10 | Finalized common data, aligned/mapped inputs, whole-owned-PRoot acceleration trial, matched FEX/Wine, device-profiled PGO and ARM64 server port remain separately qualified milestones. |
@@ -75,8 +77,8 @@ Their full FX and Windows gates remain required by the .32 pipeline. Six added
 inventory/routing controls and all 95 retained routing checks passed. Native
 producer inputs stayed byte-identical, so the accepted builds are reused.
 Source `f6c0e8497ff3e7290dc61fe9029646c8a1adb62a` fixes routing without rebuilding
-native binaries. Its changed legacy workflows and PR checks passed, with the
-PostgreSQL backend still being observed at the last status read.
+native binaries. Its changed legacy workflows and PR checks passed. All 13 related workflows
+at the final assembly source also completed successfully, including PostgreSQL.
 
 The first enabled APK assembly at source
 `3775ce6487ec8fda2021c674ecfc4deb0b214992`, [run 38201625610](https://github.com/Russianranger/coh-android/actions/runs/38201625610),
@@ -99,15 +101,49 @@ order through the fresh worker, controller, qualification and build-report
 transport. A separate publication runner calls the frozen workers and their
 unchanged validators, preserving proof order; the native 17 / FX 10 producer
 files and guest hash guards remain unchanged. This is a host-proof transport
-correction, with complete corrected CI and physical Thor gates still required.
+correction. Complete corrected CI passed as recorded below; physical Thor
+gates remain required.
 
-Publication is now enabled only with those exact accepted source/run/artifact
-pins. **No .32 APK/publication pass is claimed yet.** Next: current APK complete
-cold/reuse Atlas/Kings preparation, all 190 suites with three frozen historical
-package contracts, 21 real PostgreSQL fixtures, complete SDK/DEX/signature
-checks, publication and fresh public-byte audit. Then focused Thor timing,
-save/enhancement persistence, both monorail directions, Kings saved reopen,
-foreground export and safe cleanup. Main remains untouched and PR #1 draft.
+**Publication passed:** [0.13.32 / code 47](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.32) at
+assembly source `6c4d1d74f34ecdea8fabcf6238368bf72003878f` / tree `706acd0f9d21de9fc68bd1fc88f2c2a7d18a3384`.
+Dedicated [run 38205495073](https://github.com/Russianranger/coh-android/actions/runs/38205495073)
+completed all three jobs successfully. Exact accepted producer artifacts were
+reused; no duplicate native build or Assets release was made.
+
+| Release evidence | Verified result |
+|---|---|
+| APK | [COH-Atlas-Gameplay-0.13.32.apk](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.32/COH-Atlas-Gameplay-0.13.32.apk) — 42,031,636 bytes |
+| APK SHA-256 | `8995ecef2622a7720b0ef296b0960a79cc2e914a5da2a9078379ff66732b2839` |
+| Signer | `92955353965f118a748f1f2cadc00dfb39b3e8ade0a6cdd7d44058a3a776c282` — same accepted certificate |
+| Regression / SQL | 190 suites / 2,498 tests / zero skips; 21 actual PostgreSQL fixtures. Three historical fixed package suites run their authenticated .31 source; current repairs run current sources. |
+| Source closure | 9,942 exact source pins independently rechecked at assembly commit |
+| Complete preparation | Actual final APK helpers, all 173,011 original import leaves / 2,977,730,517 bytes, cold/reuse Atlas and Kings, client visual/audio resources, manual Atlas DbServer and stock unused Kings DbServer |
+| SDK / DEX / public bytes | Retained signer, 24 Java sources with three reviewed edits / 21 retained; independent DEX reconstruction and complete preparation; fresh public APK/checksum/instructions equal accepted artifact |
+| Package boundary | 59 retained baseline payloads, 10 reviewed replacements and five additions; 24 native archive members unchanged, MapServer plus its typed package receipt changed; original Game/Db/GPU/FEX/Wine/assets preserved |
+| Assets | Existing immutable Assets 1.0.0, all four volumes / 4,786,819,808 bytes; current 13 file IDs/sizes/digests unchanged; prior complete public-volume audit retained |
+
+[Exact publication, artifact IDs, independent comparison and pending gates](android-evidence/client-map-startup-0.13.32-publication.json).
+Host complete preparation explicitly stubs native/SQL launch, orchestration
+readiness and process-cleanup prerequisites; separate PostgreSQL fixtures and
+native correctness processes qualify their own scopes. They do not certify
+live Android gameplay or collision parity. The published guide stays byte-identical
+to its qualified source. The guide's initial conditional publication wording
+does not override this completed evidence record.
+
+**Next physical gates:** preserve THORHERO and complete imports; install over
+the app, run Set up / update runtime once, use Reopen, verify enhancements and
+ordinary save/reopen. Measure paired fresh/reused preparation/native-ready and
+usable-world times with temperature/FPS/memory. In a separate focused session,
+request cold Kings promptly, prove actual Map 5 arrival and return, then Kings
+save/reopen. Export complete normal/failed/recovered outer Android reports and
+verify owned cleanup. No under-30-second or measured speed/RAM/FPS claim is made.
+
+**Next implementation milestones after device evidence:** rank 2 effective
+provider/generation and per-BIN scan/source certificates, then rank 4 owned
+bounded PhysX streams with exact SDK/geometry keys and native Atlas/Kings
+collision parity. Other staged proposals retain their ABI/ownership/device
+proof gates. Do not start another long optimization research session before
+delivering this release. Main remains untouched and PR #1 draft/unmerged.
 
 ---
 
