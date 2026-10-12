@@ -55,9 +55,21 @@ preserves the .32 producer history and keeps successor shipping qualification fa
 
 Final local package/audit gate: **32 passed**, zero skips; **154** eligible bounded
 diagnostic modules passed. The full shipping inventory is **187 current suites /
-2,529 cases** plus **9 inherited unchanged-producer suites / 76 cases**. Current
+2,530 cases** plus **9 inherited unchanged-producer suites / 76 cases**. Current
 full CI execution, PostgreSQL, complete original assets, SDK signing and public
 audit remain pending; these inventory counts are not a completed shipping result.
+
+First full .33 run [38281726745](https://github.com/Russianranger/coh-android/actions/runs/38281726745)
+at `2f05c75c2d4ca53bcefbd9e29fbc99e78f0c0538` stopped before any APK build or
+publication: a case-duplicate leaf could produce the single-variant diagnostic
+depending on directory enumeration order. The corrected scanner detects duplicate
+aliases before final single-leaf spelling refusal. Original Atlas **28**, snapshot
+**19** and shared-proof **12** cases passed (**59**, zero skips), with explicit
+canonical-first/variant-first enumeration coverage and independent review. All
+32 companion workflows passed that first source; an unchanged legacy PR DbServer
+development fixture rebuilt automatically and passed, without changing APK donor
+bytes. Available GitHub tools cannot cancel that legacy job. Retry qualification
+remains mandatory; no failure is converted to an accepted package.
 
 The dedicated .33 lane must execute applicable current regressions, real PostgreSQL
 fixtures, actual current helper/full Atlas/Kings cold/reuse preparation, Android

@@ -98,8 +98,8 @@
       },
       "android/guest/atlas_beacon_package.py": {
         "state": "present",
-        "bytes": 47208,
-        "sha256": "80ba0d5d283457103fdeb2d7036e24fc63f4bb5e035d05997e9d2df58abd2e1b",
+        "bytes": 47656,
+        "sha256": "323b93fd8ee820d77096653f03438cdaa47ace893b095ad1f093fd30d361a54c",
         "qualified_by_this_lane": false
       },
       "android/guest/kings_row_beacon_package.py": {
@@ -176,8 +176,8 @@
       },
       "tools/android/interactive/release-client-report-loading-0.13.33.json": {
         "state": "present",
-        "bytes": 377,
-        "sha256": "7cf7ac5af5d4d58d51c41092596b4189b0835f38dcd6a4312d170f121ff4fca8",
+        "bytes": 381,
+        "sha256": "6b863991d96c05b300fc333cf997162b593af0d839ce43506e68744302930afb",
         "qualified_by_this_lane": false
       },
       "tools/android/interactive/test_classify_storage_cleanup_change.py": {
@@ -212,8 +212,8 @@
       },
       "tools/android/interactive/test_collision_input_snapshot.py": {
         "state": "present",
-        "bytes": 18092,
-        "sha256": "a9e5ffcaf88d9bfb224c7a9eacbb2a1e0425700ac3723c33f595bc869e6c1d0d",
+        "bytes": 19202,
+        "sha256": "9fbb54be7663bffa67e2a999eab383877dc7b02f77d2181cf82ef10a3321bef7",
         "qualified_by_this_lane": false
       },
       "tools/android/interactive/test_map_startup_observation.py": {
@@ -393,8 +393,17 @@
   "physical_thor_tested": false,
   "performance_improvement_established": false,
   "candidate_snapshot_refresh": {
-    "refreshed_utc": "2026-10-12T17:02:07.473535+00:00",
+    "refreshed_utc": "2026-10-12T17:15:29.504210+00:00",
     "after_final_source_freeze_and_marker_enablement": true,
+    "corrective_candidate_parent_commit": "2f05c75c2d4ca53bcefbd9e29fbc99e78f0c0538",
+    "corrective_candidate_paths": [
+      "android/guest/atlas_beacon_package.py",
+      "docs/HANDOFF.md",
+      "docs/android-evidence/client-report-loading-0.13.33-routing.json",
+      "tools/android/interactive/release-client-report-loading-0.13.33.json",
+      "tools/android/interactive/test_collision_input_snapshot.py"
+    ],
+    "publication_attempt": "recoverable-reports-bounded-preparation-case-order-2",
     "qualification_enabled": true,
     "publish_enabled": true,
     "tested_input_pin_sets_unchanged_since_tests": true,

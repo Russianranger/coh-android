@@ -6,7 +6,7 @@
   "asset_version": "1.0.0",
   "publish_enabled": true,
   "qualification_enabled": true,
-  "publication_attempt": "recoverable-reports-and-bounded-warm-preparation",
+  "publication_attempt": "recoverable-reports-bounded-preparation-case-order-2",
   "native_rebuild_required": false,
   "asset_rebuild_required": false
 }

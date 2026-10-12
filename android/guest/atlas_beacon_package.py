@@ -175,6 +175,7 @@ def collision_input_snapshot(runtime, selected, scopes, context, *, required=(),
     sentinels = {scope + '/.collision-inventory': suffixes for scope, suffixes in scopes}
     roots = actual_targets(runtime, sentinels, context)
     actual, seen, fingerprints_by_name, targets, directory_states = {}, set(), {}, {}, {}
+    case_variant_leaf = False
     provider_components = set(declared)
     for name in declared:
         provider_components.update(str(parent) for parent in PurePosixPath(name).parents)
@@ -217,7 +218,13 @@ def collision_input_snapshot(runtime, selected, scopes, context, *, required=(),
                     if folded not in declared:
                         continue
                     name = declared[folded]
-                    world.require(path.name == Path(name).name, 'Case-conflicting world leaf refused')
+                    if path.name != Path(name).name:
+                        # Enumerate the complete namespace before choosing the
+                        # legacy diagnostic: two aliases are ambiguous even
+                        # when scandir returns the case variant first. No
+                        # authority escapes this pass before either refusal.
+                        case_variant_leaf = True
+                        continue
                     require(stat.S_ISREG(info.st_mode) and not info.st_mode & 0o222,
                             'Collision graph inputs must retain immutable leaf permissions')
                     targets[name] = path
@@ -233,6 +240,7 @@ def collision_input_snapshot(runtime, selected, scopes, context, *, required=(),
             require((before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns)
                     == (after.st_dev, after.st_ino, after.st_mode, after.st_mtime_ns, after.st_ctime_ns),
                     'Collision source directory changed during inventory')
+    world.require(not case_variant_leaf, 'Case-conflicting world leaf refused')
     # Anchor every traversed directory through the end of this independent
     # pass; a parent swap cannot redirect a proved provider silently.
     for directory, before in directory_states.items():

@@ -135,6 +135,26 @@ class CollisionInputSnapshotTests(unittest.TestCase):
         with self.assertRaisesRegex(ERRORS, 'immutable leaf permissions'):
             self.snapshot()
 
+    def test_selected_duplicate_leaf_diagnostic_is_independent_of_scandir_order(self):
+        target = self.runtime / 'data/object_library/group/Building.GEO'
+        duplicate = target.with_name('building.geo')
+        duplicate.write_bytes(target.read_bytes()); duplicate.chmod(0o444)
+        original = package.os.scandir
+        for variant_first in (False, True):
+            @contextlib.contextmanager
+            def ordered(path):
+                with original(path) as entries:
+                    captured = list(entries)
+                if Path(path) == target.parent:
+                    captured.sort(key=lambda entry: entry.name == target.name,
+                                  reverse=not variant_first)
+                yield iter(captured)
+            with self.subTest(variant_first=variant_first), \
+                    mock.patch.object(package.os, 'scandir', side_effect=ordered):
+                with self.assertRaisesRegex(package.world.client.base.DiagnosticError,
+                                            'case-conflicting world destination'):
+                    self.snapshot()
+
     def test_target_resolution_occurs_once_for_scope_sentinels_only(self):
         calls = []
         original = package.actual_targets
