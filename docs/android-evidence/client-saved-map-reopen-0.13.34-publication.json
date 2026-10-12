@@ -1,0 +1,305 @@
+{
+  "format": 1,
+  "status": "published_signed_and_independently_public_byte_audited",
+  "branch": "codex/character-persistence-continuation",
+  "recovered_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+  "assembly_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+  "assembly_tree": "485ad4efa83fd24633b2bca7b07892199ce3a6eb",
+  "main_commit": "04d62616e2e1b41b10f35a04d4c798e43680d5ba",
+  "draft_pr": 1,
+  "pr_kept_draft_unmerged": true,
+  "release_tag": "coh-atlas-gameplay-v0.13.34",
+  "workflow_run_id": 38302653186,
+  "workflow_url": "https://github.com/Russianranger/coh-android/actions/runs/38302653186",
+  "release_jobs": {
+    "changes": "success",
+    "apk": "success",
+    "public-audit": "success"
+  },
+  "version": "0.13.34",
+  "version_code": 49,
+  "apk": {
+    "bytes": 42048020,
+    "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e"
+  },
+  "notes": {
+    "bytes": 6453,
+    "sha256": "9747b5f324579c6685ffada75cb60886e0466e14a8d5add23e5e29f8c46188ea"
+  },
+  "checksum_file": {
+    "bytes": 97,
+    "sha256": "5a991730a30a3151ee0b1b892a4f79726e1761d6757ca07999397edee2232d14"
+  },
+  "donor": {
+    "run_id": 38285895633,
+    "repository_commit": "e03943f76b13192680be363dac005d6f23c7a526",
+    "apk": {
+      "bytes": 42043924,
+      "sha256": "482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2"
+    },
+    "build_report": {
+      "bytes": 8201429,
+      "sha256": "26e93ea6b3be82de6b525043eb20c83ffa84205c91f80c5371f460c695b14ba4"
+    },
+    "build_report_artifact_id": 11764118240,
+    "build_report_artifact_zip": {
+      "bytes": 50257461,
+      "sha256": "6d6312b3ef4f7b9d25252ced724cbbdb36a4712a011647a8339b5a3207857911"
+    },
+    "public_byte_audit_artifact_id": 11763964703,
+    "public_byte_audit_artifact_zip": {
+      "bytes": 752,
+      "sha256": "62338f1c99da7f2161b8e8c14044cc3e9c1af9bca058aebbb4e5cd13e44250d4"
+    }
+  },
+  "qualification": {
+    "artifact_id": 11772965116,
+    "artifact_zip": {
+      "bytes": 874954,
+      "sha256": "4f4190ac37939598187f0baf6085598ad3dd87d0cbde07af0850512e33b30d11"
+    },
+    "receipt": {
+      "bytes": 3986372,
+      "sha256": "0863eff71ab33afc7720769b867e87025d11551d4a76d358e494fc8c49fa6bbf"
+    },
+    "current_suites": 194,
+    "current_cases": 2622,
+    "current_failures": 0,
+    "current_skips": 0,
+    "inherited_suites": 6,
+    "inherited_cases": 75,
+    "checks": {
+      "retained_regressions_and_postgresql_verified": true,
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "report_finalization_and_recovery_verified": true,
+      "saved_map_startup_and_preservation_verified": true,
+      "bounded_cache_reuse_verified": true,
+      "exact_033_native_graphics_and_assets_verified": true
+    },
+    "qualified_source_files": 9967,
+    "inherited_scope": "five immutable historical packaging suites plus unchanged animation certificate suite; original nested native producer evidence retained without current execution claims",
+    "saved_map_postgresql_proof": {
+      "format": 1,
+      "status": "passed",
+      "scope": "actual_postgresql_readonly_saved_map_selection",
+      "postgresql_major": 16,
+      "fixtures": [
+        "account_identity_mismatch",
+        "atlas_assigned",
+        "atlas_instance_assigned",
+        "atlas_instance_unassigned",
+        "atlas_unassigned",
+        "foreign_account",
+        "foreign_name",
+        "inconsistent_active_map",
+        "kings_assigned",
+        "kings_unassigned",
+        "missing_costume_rows",
+        "missing_native_kings_qualification",
+        "missing_power_rows",
+        "nonfinite_saved_position",
+        "read_only_transaction_enforced",
+        "repeated_kings_selection",
+        "unsupported_saved_destination"
+      ],
+      "sql_transaction_mode": "READ ONLY",
+      "fixture_schema_isolated": true,
+      "player_database_accessed": false,
+      "native_process_booted": false,
+      "native_client_connected": false,
+      "native_save_logout_executed": false,
+      "physical_ayn_thor_validated": false,
+      "enhancement_no_mutation_scope": "actual_isolated_postgresql_full_34_field_boosts_rows",
+      "boost_fields": [
+        "containerid",
+        "subid",
+        "powerid",
+        "idx",
+        "categoryname",
+        "powersetname",
+        "boostname",
+        "level",
+        "numcombines",
+        "var0",
+        "var1",
+        "var2",
+        "var3",
+        "slottedpowerupsmask",
+        "powerupslottype0",
+        "powerupslotid0",
+        "powerupslottype1",
+        "powerupslotid1",
+        "powerupslottype2",
+        "powerupslotid2",
+        "powerupslottype3",
+        "powerupslotid3",
+        "powerupslottype4",
+        "powerupslotid4",
+        "powerupslottype5",
+        "powerupslotid5",
+        "powerupslottype6",
+        "powerupslotid6",
+        "powerupslottype7",
+        "powerupslotid7",
+        "powerupslottype8",
+        "powerupslotid8",
+        "powerupslottype9",
+        "powerupslotid9"
+      ],
+      "generated_boost_template_sha256": "295e82df5c9cd84d0571b5e5e4f44caf7a68e35faadfdb57952bf4fe9308c913",
+      "shipping_enhancement_capture_changed": false
+    },
+    "other_actual_postgresql_fixtures": {
+      "emission": [
+        "cancelled_child_deletion_commits",
+        "delete_insert_replacement_commits",
+        "duplicate_insert_23505_rollback"
+      ],
+      "levelup": [
+        "empty_child_duplicate_23505_rollback",
+        "empty_child_training_commit",
+        "missing_child_insert_commit",
+        "shuffled_child_read_training_commit"
+      ],
+      "profile_eligibility": [
+        "advanced_empty_allocator_resume_refused",
+        "ambiguous_character_reopen_refused",
+        "empty_inventory_reopen",
+        "empty_inventory_resume",
+        "foreign_character_reopen_refused",
+        "foreign_character_resume_refused",
+        "missing_inventory_creation",
+        "missing_inventory_reopen",
+        "missing_power_rows_reopen_refused",
+        "post_dbserver_allocator_race_refused",
+        "post_dbserver_character_race_refused",
+        "provisional_character_reopen_refused",
+        "saved_character_reopen",
+        "saved_character_resume_refused"
+      ]
+    }
+  },
+  "accepted_packaging": {
+    "artifact_id": 11772107531,
+    "artifact_zip": {
+      "bytes": 50269915,
+      "sha256": "9c4ba6faafb1a62cbdd0cda45b435de1ee8358b25dc65ef4842bfa2189b70d3b"
+    },
+    "build_report": {
+      "bytes": 8211105,
+      "sha256": "bc2e215ed7bbb8a047d3e52084deec1b0db0a68a4c8479f6302fd575a933fcd3"
+    },
+    "signed_audit": {
+      "bytes": 3382,
+      "sha256": "f99f74e9e6bd4d3f8b3814ad5d3ee08e1e99ab94c926f1a875862d17c5d6d7af"
+    }
+  },
+  "public_audit": {
+    "artifact_id": 11772433681,
+    "artifact_zip": {
+      "bytes": 760,
+      "sha256": "73b746509ade89565557fad37d19ad9fae51a62364ba1c21f8ccb57c314af68a"
+    },
+    "receipt": {
+      "bytes": 1291,
+      "sha256": "c2baa38f8faf25e39d28e533f8eaa89d8cbba9fdb9d203c2917f030be5eebf30"
+    },
+    "proof": {
+      "format": 1,
+      "status": "passed",
+      "repository_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+      "run_id": 38302653186,
+      "apk": {
+        "bytes": 42048020,
+        "sha256": "c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e",
+        "version_name": "0.13.34",
+        "version_code": 49
+      },
+      "public_apk_verified": true,
+      "actual_runtime_asset_installers_verified": true,
+      "full_startup_orchestration_verified": true,
+      "java_or_dex_recompiled": true,
+      "native_runtime_booted": false,
+      "retained_game_and_dbserver_verified": true,
+      "retained_game_archive_native_members": 24,
+      "native_mapserver_recompiled": false,
+      "retained_032_map_startup_component_verified": true,
+      "all_native_member_bytes_retained": true,
+      "current_tests_run": 2622,
+      "inherited_tests_retained": 75,
+      "current_suites_run": 194,
+      "inherited_suites_retained": 6,
+      "original_asset_public_byte_audit_artifact_id": 11708366753,
+      "unchanged_assets_1_0_0_metadata_verified": true,
+      "asset_release_republished": false,
+      "physical_recovery_validated": false,
+      "physical_kings_row_zoning_validated": false,
+      "physical_kings_row_reopen_validated": false,
+      "physical_fps_gain_validated": false,
+      "physical_map_startup_speedup_validated": false,
+      "sub_30_second_map_startup_validated": false
+    }
+  },
+  "local_diagnostics": {
+    "source_commit": "46904ced3d7efb6218ecf92d9e44ad597d3146d0",
+    "current_suites": 23,
+    "current_cases": 534,
+    "failures": 0,
+    "skips": 0,
+    "release_qualification": false,
+    "local_postgresql_cases_skipped": 17,
+    "local_postgresql_skip_resolved_by_actual_hosted_execution": true
+  },
+  "saved_start_destination": {
+    "character": "THORHERO",
+    "map": "Kings Row",
+    "static_map_id": 5,
+    "port": 7003,
+    "authority": "read_only_authoritative_postgresql_character_baseline"
+  },
+  "optimization": {
+    "scope": "remove_one_redundant_current_immutable_directory_metadata_query",
+    "isolated_directories_measured": 255,
+    "candidate_lstat_calls_measured": 255,
+    "former_source_implied_lstat_calls": 510,
+    "paired_latency_benchmark_executed": false,
+    "retained_4002_leaf_host_staging_fixture_cold_seconds": 0.650554,
+    "retained_4002_leaf_host_staging_fixture_warm_seconds": 0.00373,
+    "cold_warm_fixture_isolates_new_change": false,
+    "native_bin_freshness_bypass_shipped": false,
+    "physx_stream_or_cooked_cache_integration_shipped": false,
+    "device_benefit_estimate": "unknown_pending_Kings_first_device_phase_measurements",
+    "additional_retained_cache_payload_or_buffer_added": false,
+    "device_memory_measurement_executed": false
+  },
+  "assets": {
+    "version": "1.0.0",
+    "volumes": 4,
+    "unchanged": true,
+    "reimport_required": false
+  },
+  "physical_kings_row_reopen_validated": false,
+  "physical_report_export_validated": false,
+  "physical_kings_to_atlas_travel_validated": false,
+  "physical_map_startup_speedup_validated": false,
+  "sub_30_second_native_startup_validated": false,
+  "remaining_gates": [
+    "Test A direct Kings reopen, state/movement, ordinary save and usable current outer ZIP",
+    "Test B actual Kings-to-Atlas monorail and save/export",
+    "Test C saved Atlas reopen without unnecessary Kings native startup",
+    "Test D comparable cold/reused cache round trip within finite session budget",
+    "native generation/per-BIN provider authority before freshness bypass",
+    "native PhysX producer/consumer and Atlas/Kings collision parity before cache integration"
+  ],
+  "remaining_report_limits": [
+    "unsafe mandatory evidence is refused without mutation",
+    "unusable private root or root-wide inventory beyond the safe bound is refused",
+    "write failure before compact publication can prevent archive creation",
+    "document provider failures retain private source; destination can be partial"
+  ],
+  "remaining_native_evidence_limits": [
+    "Kings reward/training selected-row changes can leave inherited overall checks incomplete; save acceptance not relaxed",
+    "shipping enhancement SQL capture unchanged; live gameplay enhancement preservation still a physical gate"
+  ]
+}

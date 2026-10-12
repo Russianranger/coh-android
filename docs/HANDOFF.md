@@ -1,71 +1,157 @@
-# CURRENT — .34 Kings Row direct reopen and report recovery candidate — qualification pending — 2026-10-12 UTC
+# CURRENT — .34 saved Kings Row reopen and report recovery — published and independently audited — 2026-10-12 UTC
 
-Recovered branch `codex/character-persistence-continuation` at exact remote
-`e03943f76b13192680be363dac005d6f23c7a526`, tree
-`0a043c90e092fa3f0b52c5249eb45f18023558c9`. All recovered source files match;
-no unfinished prior source changes were found. Original older trees, temporary
-artifacts and completed qualification outputs are preserved. Missing worktree
-Git metadata was reconstructed without resetting the remote. No active CoH
-build/game process or queued/running workflow was found. Remote conversation
-liveness is not observable; accessible evidence shows completed publication
-followed by an unfinished documentation update.
-[Exact recovery record](android-evidence/coh-continuation-recovery-0.13.34.json).
-Draft PR #1 stays unmerged; main stays at
+**0.13.34 / code 49 is published, signed and independently public-byte audited.**
+Assembly source: `46904ced3d7efb6218ecf92d9e44ad597d3146d0` on
+`codex/character-persistence-continuation`; exact source tree
+`485ad4efa83fd24633b2bca7b07892199ce3a6eb`. The documentation update records
+publication without changing the APK assembly source or rerunning publication.
+Draft PR #1 remains unmerged. Main remains at
 `04d62616e2e1b41b10f35a04d4c798e43680d5ba`.
 
-**.33 is already published and independently audited.**
-[Run 38285895633](https://github.com/Russianranger/coh-android/actions/runs/38285895633)
-passed all three jobs, including signed assembly and independent actual public
-bytes/full preparation. The accepted result is **187 newly executed suites /
-2,532 cases**, plus **9 explicitly inherited suites / 76 cases** (2,608 total
-attributed cases). Version **0.13.33 / code 48**, APK SHA-256
-`482481fd14357f56a0c77069124fdce42712a06180ead8cb4c0cca2a671d4fc2`.
-All companion workflows at that head completed successfully. Do not rerun its
-successful publication or recreate its release. The old pending-publication
-notes below are historical. Assets 1.0.0 and all four volumes remain compatible.
+[Signed APK](https://github.com/Russianranger/coh-android/releases/download/coh-atlas-gameplay-v0.13.34/COH-Atlas-Gameplay-0.13.34.apk)
+— 42,048,020 bytes; SHA-256
+`c2d859621476e22add673a76c4b6aae65c2143671e50c085d020108b6e19d95e`.
+[Release](https://github.com/Russianranger/coh-android/releases/tag/coh-atlas-gameplay-v0.13.34),
+[all three successful release jobs](https://github.com/Russianranger/coh-android/actions/runs/38302653186),
+[exact publication/qualification/receipt pins](android-evidence/client-saved-map-reopen-0.13.34-publication.json).
+The independent public audit verifies the actual public APK, signer, freshly
+recompiled DEX, unchanged native/runtime/assets and complete current preparation.
+All 26 companion workflows at the assembly commit passed. No physical Thor
+success or startup improvement is claimed by these host gates.
 
-**Mandatory next device starting location: THORHERO is saved in Kings Row,
-Map 5, expected port 7003.** The user physically confirmed .32 reopen/save twice,
-working graphics/combat and actual Atlas-to-Kings monorail followed by save in
-Kings. Whole-operation estimates 22 min / 13 min reopen and 12 min travel are not
-native phase measurements. Logs failed; Character Check was incomplete after
-save and cleanup UI disabled. An incomplete overall check does not invalidate
-the independently observed committed save. Direct Kings saved reopen and
-Kings-to-Atlas return remain untested physical gates.
+## Recovery and preserved accomplishments
 
-The .34 candidate addresses destination-bound startup/progress/window validation
-and remaining report recovery/export failure paths. It retains all native
-Game/MapServer/DbServer/GPU/FEX/Wine, animation/FX, resources and external assets.
-The conservative P3 stage removes one redundant immutable-directory metadata
-query during validated reuse; every original ownership/generation/anchor/private
-inventory/fallback rule remains. This is a metadata-count reduction, not a
-measured native startup/RAM/FPS gain. Rank 2 native provider/per-BIN authority
-and Rank 4 PhysX SDK/cache integration remain separately gated and nonshipping.
-[Optimization scope/evidence](COH-MAP-CACHE-CONTINUATION-0.13.34.md).
+Recovered the complete available source tree and exact remote commit
+`e03943f76b13192680be363dac005d6f23c7a526`; no unfinished prior source changes
+were found. Original older trees and temporary qualification artifacts remain
+preserved. Broken local worktree Git metadata was reconstructed without a remote
+reset. No available CoH build/game process or queued/running workflow was found
+at recovery. Conversation liveness is not observable; the accessible old agent
+work had completed publication and left its HANDOFF update unfinished.
+[Recovery record](android-evidence/coh-continuation-recovery-0.13.34.json).
 
-Local focused gates passed: **143 saved-map/acceptance/zoning cases** and
-**209 report/storage/failure-presentation cases**, zero failures/skips. Conservative
-cache/prerequisite scopes passed **93 cases**, zero skips; some of these scopes
-overlap the startup regression set and must not be summed as unique coverage.
-Independent review found no remaining code/provenance blockers. The **3 SQL
-fixture guards** passed locally; **17 actual PostgreSQL cases were not executed
-locally** because this container has only UID 0 and PostgreSQL requires nonroot.
-The hosted gate requires every actual SQL case, with no skips, before publication.
-Current full CI, signed APK and public-byte audit are still pending. Native genuine Kings entry, movement, ordinary save/return and
-Android document-provider export are not established by fixture or preparation
-results. No physical .34 success, sub-30-second result or device speed claim is made.
-A successor may publish only after its current relevant/full integration,
-source/provenance, signed payload and independent public-byte gates pass.
-Failures remain failures; unchanged historical evidence stays attributed.
+.33 was already successfully published/audited at e03943f in run 38285895633:
+187 fresh suites/2,532 cases plus 9 inherited suites/76 cases. Its successful
+publication was not repeated. Old pending-publication notes below are historical.
 
-[.34 Kings-first physical guide](COH-Atlas-Gameplay-0.13.34-testing.txt):
-install over the app, preserve all data and refresh runtime helpers once. Test A
-is a short direct Kings reopen, movement/state check, normal save and outer ZIP
-export. Do not spend another long zoning session until that ZIP is usable.
-Then Test B Kings-to-Atlas, Test C saved Atlas reopen, and Test D comparable cold /
-validated reuse / budget-admitted round trip. Unsupported destinations fail
-without relocation, SQL repairs, /stuck, reset or recreation. Read-only storage
-scan is available when safely idle; deletion still needs proved owned cleanup.
+The user's physical .32 results remain preserved: two successful reopen/saves,
+working graphics/combat, actual Atlas-to-Kings monorail arrival and THORHERO saved
+in Kings. Approximate whole-operation 22 min / 13 min reopen and 12 min travel are not
+isolated native measurements. Reports failed, Character Check was incomplete
+following Save/Logout and cleanup was disabled. An incomplete overall check does
+not mean a committed character save failed.
+
+## Mandatory saved-map startup
+
+**THORHERO currently starts from saved Kings Row: static Map 5, port 7003.**
+The existing persistent profile and inherited identity/powers/costume baseline
+are read before map selection. PostgreSQL staticmapid, active mapid and finite
+saved position are validated; valid unassigned pre-login mapid=NULL remains
+accepted. Kings selects its native runtime/world/graph and port 7003; Atlas 1/101
+select their supported saved instance and port. Unsupported/inconsistent state
+fails diagnostically without SQL repair, relocation, /stuck or recreation.
+
+New current regressions execute production baseline selection, native command
+construction, owned progress parsing/before-after readiness checks, connection
+identity/endpoint logic, ordinary-save selected rows/position, repeated selection,
+reverse monorail state handling and cold/reused preparation selection. They
+control native/SQL boundaries where stated; a fixture connection is not actual
+native gameplay. Complete original Atlas/Kings preparation is separately executed.
+
+The definitive Java diagnostic bug was fixed: the final client-window gate
+previously accepted only Atlas's world path. Titles now bind to proved initial /
+final supported maps and the current client PID; Kings requires the qualified
+monorail/zone contract. Progress names the selected destination. Saved-startup
+readiness and world entry remain independently reported, and console attribution
+identifies the actual map even when retaining a legacy Atlas-named archive member.
+Initial Kings startup does not launch an unnecessary Atlas native MapServer.
+Shared Atlas-derived prerequisites remain preparation inputs, not an Atlas entry.
+
+## Reports and storage
+
+Interrupted recovery commits a compact checkpoint carrier before optional
+captures; failures/omissions are bounded and cannot discard that carrier. Damaged
+historical runs do not suppress safe current inventory/recovery. Repaired reports
+retain original operation timestamps/order; foreign guest sessions are omitted
+explicitly. Normal archives remain retained if the optional latest pointer fails.
+Export/recovery foreground or worker-dispatch failures release ownership/wake
+locks, and picker cancellation/missing URI/duplicate results preserve the source.
+Report labels distinguish successful, incomplete, failed, recovered/interrupted
+and finalization-failed outcomes. Terminal carriers preserve separately validated
+committed-save observations without promoting an incomplete overall check.
+
+Read-only scans remain available when safely idle even after cleanup failure.
+Deletion continues to require proved owned cleanup; unknown processes/files,
+profiles, databases and unrelated state are not removed. Unsafe mandatory evidence,
+unusable private storage, root inventories beyond the safe bound or write failure
+before compact publication can still prevent recovery. Provider failure retains
+the private report but can leave a partial destination. Physical Android export
+remains Test A's gate.
+
+## Qualification and optimization boundaries
+
+| Evidence | Result and scope |
+|---|---|
+| Current release suites | **194 suites / 2,622 cases passed**, zero failures/skips |
+| Inherited immutable contracts | **6 suites / 75 cases**, explicitly nested/source-bound to audited .33/.32 history; five packaging suites plus unchanged certificate suite |
+| Real PostgreSQL | All 17 saved-map fixtures plus 3 emission, 4 level-up and 14 profile fixtures passed; isolated read-only selection preserves full 34-field Boosts rows and extra sentinels |
+| Local committed-source diagnostics | **23 suites / 534 cases passed**, zero skips; these overlap full CI and are not added as unique coverage |
+| Initially unavailable local PostgreSQL | 3 guards passed; 17 real cases skipped locally because only UID 0 exists. Required hosted execution passed all 17; local skip is not converted into a native/device claim |
+| Complete packaged preparation | Actual original assets, full private mirrors, Atlas/Kings cold/reuse, FX/animation/graph and client inventory/audio orchestration passed; native process/SQL startup boundaries remain unexecuted |
+| Signed/public APK | SDK signer/manifest/resource/DEX/source/payload checks and independent full public-byte preparation passed |
+| Physical Kings entry/save/export/return | Pending AYN Thor tests; no physical speed, FPS, RAM or sub-30-second claim |
+
+Only five reviewed Java sources, two guest helpers and their enclosing manifests
+change APK payload behavior. Every native Game/MapServer/DbServer/GPU/FEX/Wine,
+qualified animation/FX, Android resource and Assets 1.0.0 byte retains its audited
+ancestry. Historical .29/.30/.31 APKs are authenticated reader/dependency/animation
+test inputs, not replacement shipping native components. No asset reimport or
+fresh installation is required.
+
+The conservative P3 change removes one duplicate current metadata query from each
+validated immutable-directory row. All generation/owner/type/identity/mtime,
+anchor bytes, private inventory and fallback rules remain. 255 measured isolated
+directories issued 255 lstat calls; the former source implied 510. This is not a
+paired latency test. The retained 4,002-leaf cold 0.650554 s / warm 0.003730 s host fixture
+measures existing staging reuse and does not isolate this change. No retained
+cache payload/buffer is added; actual device benefit and RSS/PSS remain unknown.
+[Full optimization audit and measured scope](COH-MAP-CACHE-CONTINUATION-0.13.34.md).
+
+Rank 2 native provider/generation/per-BIN authority and Rank 4 bounded PhysX SDK /
+cooked collision cache remain nonshipping, separately qualified future stages.
+No BIN freshness bypass, physics replacement or global production-mode shortcut
+ships. Genuine native consumer/SDK and Atlas/Kings collision parity must precede
+those changes. The original 13-page MapServer research was recovered in full.
+Native whole-game Kings direct entry/save/return and enhancement effects remain
+physical gates. Shipping enhancement SQL capture is unchanged. Atlas-specific
+reward/training witnesses can still leave a Kings selected-row gameplay change
+incomplete; save acceptance was not relaxed to hide that missing native evidence.
+
+## Next physical gates — Kings first
+
+[Complete published .34 guide](COH-Atlas-Gameplay-0.13.34-testing.txt).
+Install over the app and preserve all data, THORHERO, prefix/runtime imports and
+all four Assets 1.0.0 volumes. Run Set up / update runtime once for the helper
+refresh. Keep the accepted GPU/fidelity/controller/presentation settings.
+
+1. **Test A:** Reopen saved THORHERO directly in Kings Row, map 5 / port 7003. Verify
+   movement, position/state, powers, costume, enhancements, graphics/combat;
+   record whole-operation time/FPS/temperature. Keep this session short. Use the
+   normal neutral wait, Save/Logout, Finish and export the complete current outer
+   ZIP; export read-only storage scan JSON if applicable. Do not attempt long
+   travel before that ZIP is usable and reviewed.
+2. **Test B:** After A passes, reopen in Kings, use the actual monorail to Atlas,
+   separately measure preparation/native readiness/transfer/arrival, save in Atlas
+   and export. Respect the finite connected-session budget.
+3. **Test C:** Reopen from that saved Atlas location, verify position/state and no
+   unnecessary Kings native launch, save and export.
+4. **Test D:** After A-C pass, compare cold and validated reuse / budget-admitted
+   round trips. Resident native process reuse and warm filesystem caches are
+   distinct. Measure phase times, whole owned-workload memory where available,
+   FPS/thermals, ordinary saves and reports. Missing evidence stays unknown.
+
+If startup or transfer fails, preserve the committed character and export failure
+evidence. Do not relocate, recreate or weaken save/ownership/session guards.
 
 ---
 
