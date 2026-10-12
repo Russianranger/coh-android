@@ -73,8 +73,9 @@ def main():
         parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^@'], text=True).strip()
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         names = subprocess.check_output(['git', 'diff', '--name-only', '-z', parent, head]).decode().rstrip('\0').split('\0')
-        required = not client_profile_recovery_owned(os.environ.get('GITHUB_EVENT_NAME'),
-            os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        from classify_client_map_startup_change import client_map_startup_owned
+        context = (os.environ.get('GITHUB_EVENT_NAME'), os.environ.get('COH_PUSH_BEFORE'), head, parent, names)
+        required = not (client_profile_recovery_owned(*context) or client_map_startup_owned(*context))
     except (OSError, subprocess.CalledProcessError, UnicodeError):
         pass
     with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:

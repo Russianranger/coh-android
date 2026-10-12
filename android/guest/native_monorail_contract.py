@@ -17,6 +17,10 @@ def canonical_sha(value):
     return retained.canonical_sha(value)
 
 def embedded_receipt(package):
+    if 'native_map_startup' in package:
+        import native_map_startup_contract as startup
+        startup.embedded_receipt(package)
+        return embedded_receipt(startup.previous_package(package))
     wrapper=package.get('native_monorail',{})
     receipt=wrapper.get('receipt',{})
     require(isinstance(receipt,dict) and receipt.get('format')==1 and receipt.get('role')=='native_monorail'
@@ -60,6 +64,9 @@ def embedded_receipt(package):
     return receipt
 
 def progress_contract(package):
+    if 'native_map_startup' in package:
+        import native_map_startup_contract as startup
+        return startup.progress_contract(package)
     receipt=embedded_receipt(package)
     return {'contract':receipt['build_input']['events_build_input']['progress_contract'],
         'producer':{'repository_commit':receipt['native_build_repository_commit'],

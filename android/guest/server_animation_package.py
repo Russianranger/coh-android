@@ -176,6 +176,16 @@ def verify_runtime(runtime, document, *, mapserver_package=None):
                 'actual_mapserver_sha256': actual,
                 'original_animation_producer_mapserver_sha256': historical,
                 'animation_identity_preserved': True, 'native_animation_reader_changed': False}
+    if isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
+        import native_map_startup_contract as startup
+        proof = startup.verify_current_map(runtime / 'MapServer.exe', mapserver_package)
+        receipt = startup.embedded_receipt(mapserver_package)
+        require(document['identity'] == identity()
+                and proof['original_cache_donor_mapserver_sha256'] == historical
+                and receipt['build_input']['animation_certificate']['original_animation_pack'] == document['pigg'],
+                'Map startup original animation bytes/producer differ')
+        return dict(proof, policy='exact_original_animation_pack_with_certified_opened_raw_byte_consumer',
+                    original_animation_producer_mapserver_sha256=historical)
     require(document['identity'] == identity()
             and actual == MONORAIL_MAPSERVER_SHA256
             and isinstance(mapserver_package, dict)

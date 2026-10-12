@@ -23,16 +23,31 @@ final class ClientAcceptance {
         boolean visual = visualInputs == 4;
         if (visual && (!assetPin(pins.get("server-animations.pigg"))
                 || !assetPin(pins.get("server-animation-manifest.json")))) return -1;
+        int zoneInputs = 0;
+        for (String name : new String[]{"zone_asset_package.py", "zones-world-supplement.zip",
+                "zones-world-supplement-manifest.json", "zones-audio-supplement.zip",
+                "zones-audio-supplement-manifest.json"}) {
+            if (!pins.containsKey(name)) continue;
+            if (!assetPin(pins.get(name))) return -1;
+            zoneInputs++;
+        }
+        if (zoneInputs != 0 && zoneInputs != 5) return -1;
+        boolean zones = zoneInputs == 5;
+        // Complete zone resources extend the existing visual/animation contract.
+        // A guest stage or flag cannot select this path without the APK's full pins.
+        if (zones && !visual) return -1;
         String[] before = {"client_inputs", "client_private_data", "persistent_server_profile", "postgres_local_login",
                 "presentation_display", "wine_initialization", "local_login_odbc", "local_dbserver_startup",
                 "local_atlas_startup"};
         String[] after = {"win32_runtime_dll", "actual_client_startup", "actual_client_interaction"};
         List<?> stages = (List<?>) stagesValue;
-        if (stages.size() != before.length + after.length + (visual ? 2 : 0)) return -1;
+        if (stages.size() != before.length + after.length + (visual ? 2 : 0) + (zones ? 2 : 0)) return -1;
         int index = 0;
         for (String name : before) if (!passedStage(stages.get(index++), name)) return -1;
         if (visual && (!passedStage(stages.get(index++), "client_visual_assets")
                 || !passedStage(stages.get(index++), "client_animation_pack"))) return -1;
+        if (zones && (!passedStage(stages.get(index++), "client_all_zone_assets")
+                || !passedStage(stages.get(index++), "client_all_zone_audio"))) return -1;
         for (String name : after) if (!passedStage(stages.get(index++), name)) return -1;
         return stages.size() - 1;
     }

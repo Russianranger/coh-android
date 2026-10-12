@@ -2,6 +2,8 @@ package io.github.russianranger.cohclientinteractive;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -19,9 +21,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 /** Bounded private diagnostic preservation. Recovery records never confer a pass. */
 public final class ClientReports {
@@ -42,6 +50,8 @@ public final class ClientReports {
     }
     private static final long MAX_GUEST_BYTES = 260L * 1024 * 1024;
     private static final long MAX_JSON_BYTES = 2L * 1024 * 1024;
+    // A normal wrapper embeds the bounded guest JSON plus Android observations.
+    private static final long MAX_ANDROID_JSON_BYTES = 4L * 1024 * 1024;
     private static final int MAX_CHECKPOINT_BYTES = 256 * 1024;
     private static final int MAX_PNG_BYTES = 4 * 1024 * 1024;
     private static final long MAX_CAPTURE_BYTES = 64L * 1024 * 1024;
@@ -89,16 +99,35 @@ public final class ClientReports {
         Path state = client.resolve("state");
         if (!Files.exists(state, LinkOption.NOFOLLOW_LINKS)) return null;
         directory(state);
-        List<Path> sources = new ArrayList<>();
-        for (String name : GUEST_FILES) {
-            Path file = state.resolve(name);
-            if (!Files.exists(file, LinkOption.NOFOLLOW_LINKS)) continue;
-            regular(file, name.equals("report.zip") ? MAX_GUEST_BYTES : MAX_JSON_BYTES);
-            sources.add(file);
-        }
+        List<Path> sources = guestSources(state);
         if (sources.isEmpty()) return null;
         Path root = reportRoot(filesRoot, true);
         String fingerprint=guestFingerprint(sources);
+        Path completedMarker=root.resolve("completed-guest-preservation.txt");
+        if (Files.exists(completedMarker,LinkOption.NOFOLLOW_LINKS)) {
+            regular(completedMarker,4096);
+            String[] receipt=readText(completedMarker,4096).split("\n");
+            String observedSession=guestSession(sources,false);
+            if (receipt.length==5 && "1".equals(receipt[0]) && receipt[1].equals(observedSession)
+                    && fingerprint.equals(receipt[2]) && receipt[4].matches("[0-9a-f]{64}")) {
+                String[] relative=receipt[3].split("/",-1);
+                if (relative.length==2 && runName(relative[0]) && normalArchiveName(relative[1],relative[0])) {
+                    Path completed=root.resolve(relative[0]).resolve(relative[1]);
+                    if (Files.exists(completed,LinkOption.NOFOLLOW_LINKS)) {
+                        regular(completed,MAX_REPORT_BYTES); // Linked/foreign carriers are refused, never followed.
+                        try {
+                            if (receipt[4].equals(fileDigest(completed,MAX_REPORT_BYTES))
+                                    && completedCarrier(completed,sources,observedSession)
+                                    && fingerprint.equals(guestFingerprint(sources))
+                                    && receipt[4].equals(fileDigest(completed,MAX_REPORT_BYTES))) return completed.toFile();
+                        } catch (IOException invalidCarrier) {
+                            // A deleted, changed or truncated safe carrier requires a fresh recovery.
+                            if (Files.exists(completed,LinkOption.NOFOLLOW_LINKS)) regular(completed,MAX_REPORT_BYTES);
+                        }
+                    }
+                }
+            }
+        }
         Path marker=root.resolve("previous-guest-preservation.txt");
         if(Files.exists(marker,LinkOption.NOFOLLOW_LINKS)) {
             regular(marker,4096);java.io.ByteArrayOutputStream saved=new java.io.ByteArrayOutputStream();copy(marker,saved,4096);
@@ -121,6 +150,197 @@ public final class ClientReports {
         String receipt="1\n"+fingerprint+"\n"+root.relativize(target).toString().replace(File.separatorChar,'/')+"\n"+fileDigest(target,MAX_REPORT_BYTES)+"\n";
         atomicBytes(marker,receipt.getBytes(StandardCharsets.UTF_8));
         return target.toFile();
+    }
+
+    /** Include each bounded fixed guest request/report in the completed Android carrier.
+     * The large guest ZIP already occupies guest-report.zip and is not duplicated. */
+    public static synchronized void writeGuestOutputs(File filesRoot, ZipOutputStream zip) throws IOException {
+        Path state=directory(directory(filesRoot.toPath()).resolve("client/state"));
+        List<Path> sources=guestSources(state);
+        String before=guestFingerprint(sources);
+        for (Path source:sources) {
+            if ("report.zip".equals(source.getFileName().toString())) continue;
+            zip.putNextEntry(new ZipEntry("guest-output/"+source.getFileName()));
+            copy(source,zip,MAX_JSON_BYTES);zip.closeEntry();
+        }
+        if (!before.equals(guestFingerprint(sources))) throw new IOException("Guest evidence changed during report assembly");
+    }
+
+    /** Commit a new complete normal archive while retaining any pre-existing evidence. */
+    public static synchronized void commitNormalArchive(File filesRoot,File partial,File archive) throws IOException {
+        Path root=reportRoot(filesRoot,false);
+        if(root==null || partial==null || archive==null)throw new IOException("Missing normal report paths");
+        Path target=archive.toPath().toAbsolutePath().normalize(),part=partial.toPath().toAbsolutePath().normalize();
+        if(target.getParent()==null || !root.equals(target.getParent().getParent())
+                || !runName(target.getParent().getFileName().toString())
+                || !normalArchiveName(target.getFileName().toString(),target.getParent().getFileName().toString())
+                || !target.getParent().equals(part.getParent()) || !part.getFileName().toString().equals("support.zip.part"))
+            throw new IOException("Invalid normal report publication namespace");
+        BasicFileAttributes before=regular(part,MAX_REPORT_BYTES);FileIdentity owned=identity(part);
+        try(ZipFile complete=new ZipFile(part.toFile())){if(complete.size()==0)throw new IOException("Empty normal report ZIP");}
+        same(before,regular(part,MAX_REPORT_BYTES));
+        if(!owned.key.equals(identity(part).key))throw new IOException("Normal report part was replaced");
+        try(FileChannel committed=FileChannel.open(part,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){committed.force(true);}
+        if(Files.exists(target,LinkOption.NOFOLLOW_LINKS))throw new IOException("A retained normal report already exists");
+        Files.move(part,target,StandardCopyOption.ATOMIC_MOVE);
+        regular(target,MAX_REPORT_BYTES);
+        if(!owned.key.equals(identity(target).key))throw new IOException("Normal report publication identity differs");
+    }
+
+    /** Record reuse only after the caller atomically committed its complete normal ZIP.
+     * This receipt certifies preservation of bytes, never a successful Android/game test. */
+    public static synchronized void completedGuest(File filesRoot, File archive, String session) throws IOException {
+        if (session==null || !session.matches("[0-9a-f]{32}")) throw new IOException("Invalid completed guest session");
+        Path root=reportRoot(filesRoot,false);
+        if (root==null || archive==null) throw new IOException("Missing completed report");
+        Path target=archive.toPath().toAbsolutePath().normalize();
+        if (target.getParent()==null || !root.equals(target.getParent().getParent())
+                || !runName(target.getParent().getFileName().toString())
+                || !normalArchiveName(target.getFileName().toString(),target.getParent().getFileName().toString()))
+            throw new IOException("Completed report is outside its owned normal archive namespace");
+        regular(target,MAX_REPORT_BYTES);
+        List<Path> sources=guestSources(directory(root.getParent().resolve("state")));
+        String fingerprint=guestFingerprint(sources);
+        String before=fileDigest(target,MAX_REPORT_BYTES);
+        if (!session.equals(guestSession(sources,true)) || !completedCarrier(target,sources,session))
+            throw new IOException("Completed archive does not preserve the matching guest session");
+        String digest=fileDigest(target,MAX_REPORT_BYTES);
+        if (!before.equals(digest) || !fingerprint.equals(guestFingerprint(sources))) throw new IOException("Evidence changed before completed receipt");
+        try(FileChannel committed=FileChannel.open(target,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){committed.force(true);}
+        String receipt="1\n"+session+"\n"+fingerprint+"\n"+root.relativize(target).toString().replace(File.separatorChar,'/')+"\n"+digest+"\n";
+        atomicBytes(root.resolve("completed-guest-preservation.txt"),receipt.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static List<Path> guestSources(Path state) throws IOException {
+        directory(state);List<Path> sources=new ArrayList<>();
+        for (String name:GUEST_FILES) {
+            Path file=state.resolve(name);
+            if (!Files.exists(file,LinkOption.NOFOLLOW_LINKS)) continue;
+            regular(file,name.equals("report.zip")?MAX_GUEST_BYTES:MAX_JSON_BYTES);sources.add(file);
+        }
+        return sources;
+    }
+    private static String readText(Path source,long limit) throws IOException {
+        ByteArrayOutputStream bytes=new ByteArrayOutputStream();copy(source,bytes,limit);
+        return decodeText(bytes.toByteArray());
+    }
+    private static String decodeText(byte[] bytes) throws IOException {
+        return StandardCharsets.UTF_8.newDecoder().onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes)).toString();
+    }
+    private static String guestSession(List<Path> sources,boolean required) throws IOException {
+        for (Path source:sources) if (source.getFileName().toString().equals("latest-report.json")) {
+            try { return new SessionJson(readText(source,MAX_JSON_BYTES)).session(); }
+            catch(IOException malformed) { if(required)throw malformed;return null; }
+        }
+        if(required)throw new IOException("Missing guest session report");return null;
+    }
+    private static boolean normalArchiveName(String name,String run) {
+        return name.equals("coh-character-creation-"+run+".zip") || name.equals("coh-character-reopen-"+run+".zip");
+    }
+    private static boolean completedCarrier(Path carrier,List<Path> sources,String session) throws IOException {
+        BasicFileAttributes before=regular(carrier,MAX_REPORT_BYTES);FileIdentity owned=identity(carrier);
+        Map<String,String> expected=new LinkedHashMap<>();
+        for (Path source:sources) {
+            String name=source.getFileName().toString();
+            expected.put(name.equals("report.zip")?"guest-report.zip":"guest-output/"+name,
+                    fileDigest(source,name.equals("report.zip")?MAX_GUEST_BYTES:MAX_JSON_BYTES));
+        }
+        if (!expected.containsKey("guest-report.zip") || !expected.containsKey("guest-output/latest-report.json")) return false;
+        Set<String> seen=new HashSet<>();boolean android=false;long total=0;
+        long deadline=System.nanoTime()+MAX_EXPORT_MILLIS*1000000L;
+        // ZipFile requires the complete central directory; streaming alone also accepts a missing ZIP tail.
+        try (ZipFile central=new ZipFile(carrier.toFile());
+             InputStream input=Files.newInputStream(carrier,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS);
+             ZipInputStream zip=new ZipInputStream(input)) {
+            for (ZipEntry entry;(entry=zip.getNextEntry())!=null;) {
+                String name=entry.getName();
+                if (entry.isDirectory() || name.startsWith("/") || name.contains("\\")
+                        || name.contains("\u0000") || !seen.add(name)) throw new IOException("Unsafe or colliding completed report entry");
+                for(String component:name.split("/",-1)) if(component.isEmpty() || component.equals(".") || component.equals(".."))
+                    throw new IOException("Unsafe completed report entry path");
+                if (central.getEntry(name)==null) throw new IOException("Completed report directory differs");
+                if(name.startsWith("guest-output/") && !expected.containsKey(name)) throw new IOException("Foreign guest output in completed report");
+                java.security.MessageDigest digest;
+                try{digest=java.security.MessageDigest.getInstance("SHA-256");}
+                catch(java.security.NoSuchAlgorithmException impossible){throw new IOException("SHA-256 unavailable",impossible);}
+                ByteArrayOutputStream wrapper="android-client-report.json".equals(name)?new ByteArrayOutputStream():null;
+                long count=0;byte[] buffer=new byte[65536];
+                long maximum="guest-report.zip".equals(name)?MAX_GUEST_BYTES:wrapper!=null?MAX_ANDROID_JSON_BYTES:name.startsWith("guest-output/")?MAX_JSON_BYTES:MAX_REPORT_BYTES;
+                for(int length;(length=zip.read(buffer))!=-1;) {
+                    count+=length;total+=length;
+                    if(count>maximum || total>MAX_REPORT_BYTES || Thread.currentThread().isInterrupted() || System.nanoTime()>deadline)
+                        throw new IOException("Completed report exceeds its bounds");
+                    digest.update(buffer,0,length);if(wrapper!=null)wrapper.write(buffer,0,length);
+                }
+                zip.closeEntry();
+                if(count!=entry.getSize() || count!=central.getEntry(name).getSize()
+                        || entry.getCrc()!=central.getEntry(name).getCrc())throw new IOException("Completed report entry metadata differs");
+                if(expected.containsKey(name) && !expected.get(name).equals(digestHex(digest.digest()))) return false;
+                if(wrapper!=null) {
+                    SessionJson record=new SessionJson(decodeText(wrapper.toByteArray()));
+                    String operation=carrier.getFileName().toString().startsWith("coh-character-reopen-")?"character_reopen":"character_creation";
+                    android=session.equals(record.session()) && "1".equals(record.root.get("format"))
+                            && "io.github.russianranger.cohclientinteractive".equals(record.root.get("app_id"))
+                            && operation.equals(record.root.get("operation"))
+                            && carrier.getParent().getFileName().toString().equals(record.root.get("run_id"))
+                            && record.root.containsKey("app_version") && record.root.get("app_version").matches("[0-9]+\\.[0-9]+\\.[0-9]+");
+                }
+            }
+            if(central.size()!=seen.size())throw new IOException("Completed report inventory differs");
+        }
+        same(before,regular(carrier,MAX_REPORT_BYTES));
+        if(!owned.key.equals(identity(carrier).key))throw new IOException("Completed report was replaced");
+        return android && seen.containsAll(expected.keySet());
+    }
+
+    /** Parse only a root session identity while validating bounded JSON syntax.
+     * Nested session keys and duplicate root keys cannot establish attribution. */
+    private static final class SessionJson {
+        final String text;int offset;String session;int sessions;final Map<String,String> root=new LinkedHashMap<>();
+        SessionJson(String value){text=value;}
+        String session() throws IOException {
+            space();if(offset>=text.length() || text.charAt(offset)!='{')throw invalid();value(0);space();
+            if(offset!=text.length() || sessions!=1 || session==null || !session.matches("[0-9a-f]{32}"))throw invalid();return session;
+        }
+        IOException invalid(){return new IOException("Invalid root report session JSON");}
+        void space(){while(offset<text.length() && " \t\r\n".indexOf(text.charAt(offset))>=0)offset++;}
+        boolean take(char c){space();if(offset<text.length() && text.charAt(offset)==c){offset++;return true;}return false;}
+        String string() throws IOException {
+            if(!take('"'))throw invalid();StringBuilder result=new StringBuilder();
+            while(offset<text.length()) {
+                char c=text.charAt(offset++);if(c=='"')return result.toString();if(c<32)throw invalid();
+                if(c=='\\') {
+                    if(offset>=text.length())throw invalid();c=text.charAt(offset++);
+                    switch(c){case '"':case '\\':case '/':break;case 'b':c='\b';break;case 'f':c='\f';break;
+                        case 'n':c='\n';break;case 'r':c='\r';break;case 't':c='\t';break;
+                        case 'u':if(offset+4>text.length())throw invalid();try{c=(char)Integer.parseInt(text.substring(offset,offset+4),16);}catch(NumberFormatException wrong){throw invalid();}offset+=4;break;
+                        default:throw invalid();}
+                }result.append(c);
+            }throw invalid();
+        }
+        void value(int depth) throws IOException {
+            if(depth>64)throw invalid();space();if(offset>=text.length())throw invalid();char c=text.charAt(offset);
+            if(c=='{') {
+                offset++;if(take('}'))return;
+                do {String key=string();if(!take(':'))throw invalid();
+                    if(depth==0 && (key.equals("session_id") || key.equals("operation") || key.equals("run_id")
+                            || key.equals("app_id") || key.equals("app_version"))) {
+                        if(root.containsKey(key))throw invalid();String selected=string();root.put(key,selected);
+                        if(key.equals("session_id")){sessions++;session=selected;}
+                    } else if(depth==0 && key.equals("format")) {
+                        if(root.containsKey(key))throw invalid();space();int start=offset;value(depth+1);root.put(key,text.substring(start,offset));
+                    } else value(depth+1);
+                    if(take('}'))return;if(!take(','))throw invalid();
+                }while(true);
+            }
+            if(c=='['){offset++;if(take(']'))return;do{value(depth+1);if(take(']'))return;if(!take(','))throw invalid();}while(true);}
+            if(c=='"'){string();return;}
+            int start=offset;while(offset<text.length() && ",]} \t\r\n".indexOf(text.charAt(offset))<0)offset++;
+            String scalar=text.substring(start,offset);
+            if(!scalar.equals("true") && !scalar.equals("false") && !scalar.equals("null")
+                    && !scalar.matches("-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?"))throw invalid();
+        }
     }
 
     /** Call before creating a new operation, while no runtime operation owns these directories.

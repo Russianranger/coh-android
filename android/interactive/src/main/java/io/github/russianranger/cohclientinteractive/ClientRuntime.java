@@ -502,7 +502,7 @@ public final class ClientRuntime {
         gpuProfileRequested=gpuProfileEnabled(context);
         JSONObject report = new JSONObject();
         Thread output = null, receiver = null;
-        boolean launched = false, passed = false, cleanup = false, guestPassed = false;
+        boolean launched = false, passed = false, cleanup = false, guestPassed = false, saveRecorded = false;
         try {
             // The operation lock is held. Detect a missing/partial profile before
             // runtime hashing, thin worktree staging, or any Wine/SQL process.
@@ -630,10 +630,14 @@ public final class ClientRuntime {
                 if (receiverFailure != null && error == null) error = "Local display connection failed: " + receiverFailure;
                 passed = guestPassed && cleanup && !cancelled && error == null && receiverFailure == null
                         && inputFailed == 0 && surfaceAccepted(report) && loginSurfaceAccepted() && characterSurfaceAccepted(report);
+                saveRecorded = committedCharacterSaveObserved(jsonValue(report),jsonValue(characterSavedEvent),
+                        jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),
+                        zoningEnabled()?zoning.currentMap():1);
                 if (inputFailed > 0 && error == null) error = "Input transport failed; review the exported report.";
                 if (guestPassed && !passed && error == null) error = taskGateRequired()
                         ? "Task gate incomplete: matching native and SQL task completion, accepted/completed task views, ordinary save evidence and fresh Android save captures are required."
-                        : "Character save incomplete: matching committed SQL evidence and three fresh Android captures after the save event are required.";
+                        : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Review the individual report gates."
+                        : "Character save evidence or Android report checks incomplete. Review the individual report gates.";
                 publish(report, passed, cleanup);
             } finally {
                 child = null; endOperation();
@@ -647,6 +651,7 @@ public final class ClientRuntime {
                 ? "The existing THORHERO was reopened and saved with its identity, powers and costume preserved, fresh Android captures after connection and save, and verified cleanup. Review the Atlas view; rendering and gameplay require separate visual validation."
                 : "THORHERO was saved to the local database, with matching current-session SQL evidence, fresh Android captures and verified cleanup. World rendering, movement and gameplay still need validation.")
                 : isCleanupBlocked() ? BLOCK_MESSAGE : cancelled ? label + " check stopped. Export the latest report."
+                : saveRecorded ? "Committed character save recorded; Android report checks incomplete. Export the latest report."
                 : guestPassed ? label + " check incomplete. Export the latest report."
                 : label + " check failed. " + (error == null ? "" : error + " ") + "Export the latest report.";
         stage(passed ? label + " check complete" : isCleanupBlocked() ? "Cleanup needs attention" : cancelled ? label + " check stopped"
@@ -2167,6 +2172,9 @@ public final class ClientRuntime {
                     .put("local_login_verified", ClientAcceptance.localLoginVerified(jsonValue(guest), session, observedClientPid))
                     .put("character_creation_verified", !reopen && "character_creation".equals(operation) && passed)
                     .put("character_reopen_verified", reopen && passed)
+                    .put("committed_save_observed",committedCharacterSaveObserved(jsonValue(guest),jsonValue(characterSavedEvent),
+                            jsonValue(characterConnectedEvent),session,observedClientPid,reopen,zoningEnabled(),zoningEnabled()?zoning.currentMap():1))
+                    .put("qualification_gates",qualificationGates(guest,passed,cleanup))
                     .put("character_connected_observed_uptime_ms", connectedObservedUptime)
                     .put("character_connected_frame_watermark", connectedFrameWatermark)
                     .put("character_saved_event", characterSavedEvent == null ? JSONObject.NULL : characterSavedEvent)
@@ -2241,7 +2249,8 @@ public final class ClientRuntime {
             wrapper.put("status", status);
             File target = new File(operationDir, (reopen ? "coh-character-reopen-" : "coh-character-creation-") + runId + ".zip");
             File part = new File(operationDir, "support.zip.part");
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(part))) {
+            try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(part.toPath(),java.nio.file.StandardOpenOption.CREATE_NEW,
+                    java.nio.file.StandardOpenOption.WRITE,java.nio.file.LinkOption.NOFOLLOW_LINKS))) {
                 if (imported != null) wrapper.put("import", new JSONObject().put("generation", imported.generation)
                         .put("source_commit", imported.sourceCommit).put("data_commit", imported.dataCommit)
                         .put("repository_commit", imported.repositoryCommit).put("files", imported.count).put("bytes", imported.bytes));
@@ -2289,12 +2298,89 @@ public final class ClientRuntime {
                 if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
                     File file = new File(state, "report.zip");
                     if (file.isFile()) zipFile(out, "guest-report.zip", file, MAX_GUEST_ZIP);
+                    ClientReports.writeGuestOutputs(home.getParentFile(),out);
                 }
             }
-            Files.move(part.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            ClientReports.commitNormalArchive(home.getParentFile(),part,target);
             write(new File(work, "latest-report.txt"), target.getCanonicalPath().getBytes(StandardCharsets.UTF_8));
             latestReport = target;
+            if (("character_creation".equals(operation) || "character_reopen".equals(operation)) && runLaunched) {
+                try { ClientReports.completedGuest(home.getParentFile(),target,session); }
+                catch(IOException unavailable) { line("Completed guest preservation receipt unavailable; recovery remains available: "+unavailable.getClass().getSimpleName()); }
+            }
         } catch (Exception e) { throw new IOException("Could not save a fresh client support report", e); }
+    }
+
+    private JSONObject qualificationGates(JSONObject report,boolean passed,boolean cleanup) throws Exception {
+        JSONObject gates=new JSONObject().put("overall_passed",passed).put("owned_cleanup",cleanup)
+                .put("not_cancelled",!cancelled).put("no_runtime_error",error==null)
+                .put("display_transport",receiverFailure==null).put("input_transport",inputFailed==0)
+                .put("current_session_guest_report",session!=null && session.equals(report.optString("session_id")))
+                .put("guest_report_passed",Boolean.TRUE.equals(report.opt("passed")) && "passed".equals(report.optString("status")))
+                .put("scope","Individual observations explain incomplete checks; none replaces the unchanged overall acceptance predicate.");
+        try{gates.put("guest_acceptance",guestAccepted(report));}catch(Exception invalid){gates.put("guest_acceptance",false);}
+        try{gates.put("complete_asset_stage_contract",clientManifest!=null && ClientAcceptance.clientInteractionStageIndex(
+                jsonValue(report.optJSONArray("stages")),jsonValue(clientManifest.optJSONObject("files")))>=0);}catch(Exception invalid){gates.put("complete_asset_stage_contract",false);}
+        try{gates.put("android_client_surface",surfaceAccepted(report));}catch(Exception invalid){gates.put("android_client_surface",false);}
+        gates.put("android_login_views",loginSurfaceAccepted());
+        try{gates.put("android_character_save_views",characterSurfaceAccepted(report));}catch(Exception invalid){gates.put("android_character_save_views",false);}
+        return gates;
+    }
+
+    /** A current producer's committed ordinary save remains a separate observation
+     * when later cleanup or Android capture qualification fails. Never confers a pass. */
+    static boolean committedCharacterSaveObserved(Object reportValue,Object savedValue,Object connectedValue,
+            String selectedSession,long pid,boolean reopening,boolean zoning,int currentMap) {
+        if(!(reportValue instanceof Map) || !(savedValue instanceof Map) || !(connectedValue instanceof Map)
+                || selectedSession==null || !selectedSession.matches("[0-9a-f]{32}") || pid<=0 || pid>=4294967296L)return false;
+        Map<?,?> report=(Map<?,?>)reportValue,saved=(Map<?,?>)savedValue,connected=(Map<?,?>)connectedValue;
+        Object proofValue=report.get(reopening?"character_reopen":"character_creation"),loginValue=report.get("local_login");
+        if(!(proofValue instanceof Map) || !(loginValue instanceof Map))return false;
+        Map<?,?> proof=(Map<?,?>)proofValue,login=(Map<?,?>)loginValue;
+        if(!selectedSession.equals(report.get("session_id")) || !"android".equals(report.get("execution_platform_requested"))
+                || !(reopening?"actual_character_reopen_guest":"actual_character_creation_guest").equals(report.get("scope"))
+                || !(reopening?"actual_character_reopen":"actual_character_creation").equals(report.get("diagnostic_mode"))
+                || !ClientAcceptance.characterSavedEvent(saved,selectedSession,pid)
+                || !(reopening?ClientAcceptance.characterReopenConnectedEvent(connected,selectedSession,pid,zoning)
+                    :ClientAcceptance.characterConnectedEvent(connected,selectedSession,pid)))return false;
+        for(Map<?,?> identity:new Map<?,?>[]{proof,login})
+            if(!selectedSession.equals(identity.get("session_id")) || preparationInteger(identity.get("client_pid"))!=pid)return false;
+        long id=preparationInteger(proof.get("character_id")),auth=preparationInteger(proof.get("auth_id"));
+        if(id!=1 || auth<=0 || auth>4294967295L || preparationInteger(saved.get("character_id"))!=id
+                || preparationInteger(connected.get("character_id"))!=id || preparationInteger(login.get("auth_id"))!=auth
+                || !"THORHERO".equals(proof.get("name")) || !"COHLOCAL".equals(proof.get("account"))
+                || !"android-local-login".equals(login.get("profile")) || preparationInteger(proof.get("map_id"))!=currentMap
+                || !(currentMap==1 || zoning && (currentMap==101 || currentMap==5 && Boolean.TRUE.equals(proof.get("monorail_enabled")))))return false;
+        for(String name:new String[]{"postgres_started","server_started","mapserver_started"})if(!Boolean.TRUE.equals(report.get(name)))return false;
+        for(String name:new String[]{"local_login_verified","local_account_verified","character_list_sent","character_list_response_sent"})
+            if(!Boolean.TRUE.equals(login.get(name)))return false;
+        for(String name:new String[]{"verified","connected_on_atlas","committed_sql_verified","requested_logout_observed",
+                "logout_timer_observed","disconnected_before_sql"})if(!Boolean.TRUE.equals(proof.get(name)))return false;
+        if(!Boolean.FALSE.equals(proof.get("forced_stop_before_save")))return false;
+        if(zoning && (!Boolean.TRUE.equals(proof.get("zoning_enabled")) || !Boolean.TRUE.equals(proof.get("connected_on_supported_map"))
+                || !Boolean.TRUE.equals(saved.get("zoning_enabled")) || preparationInteger(saved.get("map_id"))!=currentMap))return false;
+        if(reopening) {
+            for(String name:new String[]{"reopen_verified","existing_character_verified","preserved_existing_identity",
+                    "native_client_ready_observed","powers_preserved","costume_preserved","selected_rows_preserved","committed_native_position_verified"})
+                if(!Boolean.TRUE.equals(proof.get(name)))return false;
+            if(preparationInteger(proof.get("before_character_id"))!=id || preparationInteger(proof.get("baseline_character_id"))!=id)return false;
+            long beforeLogin=preparationInteger(proof.get("before_login_count")),afterLogin=preparationInteger(proof.get("login_count"));
+            if(beforeLogin<=0 || beforeLogin>=2147483647L || afterLogin!=beforeLogin+1)return false;
+            boolean recovered=Boolean.TRUE.equals(proof.get("recovery_requested"));
+            for(String name:new String[]{"recovery_verified","ordinary_stuck_observed","on_atlas_safe_position","stable_ground_verified","committed_safe_position_verified"})
+                if(!Boolean.valueOf(recovered).equals(proof.get(name)))return false;
+            if(!recovered && !Boolean.FALSE.equals(proof.get("recovery_requested")))return false;
+        }
+        Object countsValue=proof.get("row_counts"),hashesValue=proof.get("table_sha256"),snapshot=proof.get("snapshot_sha256");
+        if(!(countsValue instanceof Map) || !(hashesValue instanceof Map) || !(snapshot instanceof String)
+                || !((String)snapshot).matches("[0-9a-f]{64}"))return false;
+        Map<?,?> counts=(Map<?,?>)countsValue,hashes=(Map<?,?>)hashesValue;
+        for(String table:new String[]{"ents","ents2","powers","costumeparts"}) {
+            long rows=preparationInteger(counts.get(table));Object hash=hashes.get(table);
+            if(rows<=0 || (table.equals("ents") || table.equals("ents2")) && rows!=1
+                    || !(hash instanceof String) || !((String)hash).matches("[0-9a-f]{64}"))return false;
+        }
+        return true;
     }
     private String appVersion() {
         try { return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName; }

@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import tempfile
@@ -108,6 +109,12 @@ class FullStartupPreflightTests(unittest.TestCase):
         value = {'status': 'passed', 'scope': module.SCOPE, 'process_and_sql_boundary': 'not_executed',
             'gate_inventory': [{'stage': stage, 'execution': execution, 'regression_suites': suites}
                                for stage, execution, suites in module.GATES]}
+        historical = Path(__file__).with_name('fixtures')/'monorail-game-package-0.13.31.json'
+        self.assertEqual(module.leaf.pin(historical), {'bytes': 162281,
+            'sha256': '520713891e4d5be9d7a64fb736ef15e37e062a104513ec37bdaf09670898dab7'})
+        value['native_admission'] = module.leaf.package_native_binding(json.loads(historical.read_bytes()))
+        value.update(server_fx_catalog_cold_and_reuse_verified=False,
+                     client_full_fx_unchanged=True, client_full_fx_pin=module.leaf.CLIENT_FULL_FX)
         value['original_import'] = {'files': module.COUNT, 'bytes': module.BYTES, 'all_leaf_sha256_checked': True,
             'android_import_service_executed': False, 'inventory_sha256': 'a'*64,
             'contract_sha256': hashlib.sha256(module.IMPORT_CONTRACT).hexdigest()}
@@ -187,6 +194,72 @@ class FullStartupPreflightTests(unittest.TestCase):
                 label == 'saved_reopen')
             with self.subTest(label=label), self.assertRaisesRegex(ValueError, 'cold/reuse'):
                 module.validate_proof(invalid)
+
+    def test_unknown_map_pin_or_resealed_native_ancestry_cannot_be_admitted(self):
+        proof = self.proof()
+        for field, changed in (('authenticated_mapserver', {'bytes': 1, 'sha256': 'a'*64}),
+                               ('native_consumer_binding', {}), ('format', True)):
+            invalid = copy.deepcopy(proof)
+            invalid['native_admission'][field] = changed
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                module.validate_proof(invalid)
+        invalid = copy.deepcopy(proof)
+        package = invalid['native_admission']['game_package']
+        package['native_monorail']['receipt']['build_input']['contract']['station_preparation_timeout_seconds'] = 720
+        package['native_monorail']['receipt_sha256'] = module.leaf.HISTORICAL_MONORAIL_RECEIPT
+        invalid['native_admission']['game_package_canonical_sha256'] = hashlib.sha256(module.leaf.canonical(package)).hexdigest()
+        with self.assertRaises(ValueError):
+            module.validate_proof(invalid)
+
+    def test_original_client_fx_cannot_be_replaced_by_server_projection_or_false_flag(self):
+        for field, changed in (('client_full_fx_pin', module.leaf.SERVER_PROJECTED_FX),
+                               ('client_full_fx_unchanged', False),
+                               ('server_fx_catalog_cold_and_reuse_verified', True)):
+            proof = self.proof(); proof[field] = changed
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'FX|projection'):
+                module.validate_proof(proof)
+
+    def test_candidate_serialized_proof_reauthenticates_full_wrapper_and_fx_phases(self):
+        # Reuse the separately declared parser fixture. It authenticates source
+        # ancestry but never substitutes for the actual native-build CI gate.
+        import test_map_startup_native_contract as reader
+        reader.MapStartupContractReaderTests.setUpClass()
+        fixture = reader.MapStartupContractReaderTests()
+        game = fixture.candidate()
+        native = self.root/'native'; native.mkdir()
+        (native/'MapServer.exe').write_bytes(fixture.raw)
+        actual_admission = module.leaf.native_binding(native, game)
+        (native/'MapServer.exe').write_bytes(b'changed current leaf')
+        with self.assertRaisesRegex(ValueError, 'Actual preflight MapServer differs'):
+            module.leaf.native_binding(native, game)
+        proof = self.proof()
+        proof['native_admission'] = actual_admission
+        current = proof['native_admission']['authenticated_mapserver']
+        proof['server_fx_catalog_cold_and_reuse_verified'] = True
+        for label, reuse in (('fresh_create', False), ('saved_reopen', True)):
+            phase = proof['preparation'][label]
+            phase['native_mapserver'] = copy.deepcopy(current)
+            phase['kings_row']['native_mapserver'] = copy.deepcopy(current)
+            fx = {'format': 1, 'status': 'reused_verified_server_fx_projection' if reuse
+                else 'installed_verified_server_fx_projection', 'installed_files': 0 if reuse else 1,
+                'target': 'data/bin/fxinfo.bin', 'projected': module.leaf.SERVER_PROJECTED_FX,
+                'client_fx_changed': False}
+            phase['server_fx_catalog'] = copy.deepcopy(fx)
+            phase['kings_row']['server_fx_catalog'] = copy.deepcopy(fx)
+        module.validate_proof(proof)
+        for label in ('fresh_create', 'saved_reopen'):
+            invalid = copy.deepcopy(proof)
+            invalid['preparation'][label]['kings_row']['server_fx_catalog']['client_fx_changed'] = True
+            with self.subTest(label=label), self.assertRaisesRegex(ValueError, 'FX cold/reuse proof'):
+                module.validate_proof(invalid)
+        invalid = copy.deepcopy(proof)
+        package = invalid['native_admission']['game_package']
+        receipt = package['native_map_startup']['receipt']
+        receipt['build_input']['monorail_budget']['contract']['station_preparation_timeout_seconds'] = 721
+        package['native_map_startup']['receipt_sha256'] = reader.contract.canonical_sha(receipt)
+        invalid['native_admission']['game_package_canonical_sha256'] = hashlib.sha256(module.leaf.canonical(package)).hexdigest()
+        with self.assertRaisesRegex(ValueError, 'station budget'):
+            module.validate_proof(invalid)
 
 
 if __name__ == '__main__':

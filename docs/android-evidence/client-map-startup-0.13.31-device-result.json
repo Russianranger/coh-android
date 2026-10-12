@@ -1,0 +1,1182 @@
+{
+  "format": 1,
+  "scope": "read_only_attached_physical_guest_evidence_review",
+  "reviewed_utc": "2026-10-12T01:44:03.254551+00:00",
+  "repository_release_source": "74fe247be85173e618f1af2c8af71b1316de4cd8",
+  "scope_note": "Recovered wrapper lacks verified Android-session attribution. Guest evidence independently supports native creation/reopen/ordinary committed save. User confirms physical combat and enhancement saving; enhancement SQL tables not emitted here. No crash/OOM/Android kill is inferred.",
+  "reports": [
+    {
+      "attachment": {
+        "name": "coh-atlas-gameplay-20261012-010537.zip",
+        "bytes": 3502338,
+        "sha256": "320bff15b31a06c9a90500e8b157dd2e69ba4728e74d04df5026354498d85f34"
+      },
+      "recovered_wrapper": {
+        "format": 1,
+        "status": "interrupted_unverified",
+        "passed": false,
+        "verified": false,
+        "recovery_kind": "previous_guest_outputs",
+        "session_attribution_verified": false,
+        "note": "Preserved diagnostic evidence only. No successful Finish, character save, or zoning qualification is inferred."
+      },
+      "guest_report": {
+        "bytes": 260524,
+        "sha256": "65d87cc35586502d4e4855b2302ca96237af7d3339d436041d1c2a26de4eb9c4",
+        "embedded_zip_bytes": 3452684,
+        "embedded_zip_sha256": "2bb337a100c04a531cc0b1f83739e22964e7f98ad64a9db32a2a8624d5067e37",
+        "embedded_report_identical": true,
+        "scope": "actual_character_creation_guest",
+        "session_id": "579c73a8c0ec4058b3e842966452eda9",
+        "status": "passed",
+        "passed": true,
+        "started_utc": "2026-10-12T00:36:43.732544+00:00",
+        "finished_utc": "2026-10-12T01:05:05.531134+00:00",
+        "failures": [],
+        "android_execution_validated": false,
+        "gameplay_validated": false
+      },
+      "version_attribution": {
+        "version": "0.13.31",
+        "apk_version_string_present": false,
+        "basis": "four updated/retained helper hashes agree with authenticated .31 release source; unchanged native Game/package identities",
+        "release_source": "74fe247be85173e618f1af2c8af71b1316de4cd8",
+        "expected_helper_sha256": {
+          "local_character_server.py": "0472fd103d2a90deb2a60d603aac7a39515ee6cb18ac55810820137b1c9f8689",
+          "character_creation_diagnostic.py": "eac84e21af4b593d9f2781ef5970c18ed4d7a4e10af9653f024f809c7cedf935",
+          "character_reopen_diagnostic.py": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24",
+          "character_zoning.py": "c6bb13eb60dc7f0af82c424d8e3de6772ed0d15fc4ae73d0479d1058bd438b3b"
+        },
+        "observed_helper_sha256": {
+          "local_character_server.py": "0472fd103d2a90deb2a60d603aac7a39515ee6cb18ac55810820137b1c9f8689",
+          "character_creation_diagnostic.py": "eac84e21af4b593d9f2781ef5970c18ed4d7a4e10af9653f024f809c7cedf935",
+          "character_reopen_diagnostic.py": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24",
+          "character_zoning.py": "c6bb13eb60dc7f0af82c424d8e3de6772ed0d15fc4ae73d0479d1058bd438b3b"
+        },
+        "helper_pin_match": true,
+        "game_package_sha256": "36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa",
+        "game_executable_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+      },
+      "profile_eligibility": {
+        "format": 1,
+        "checked_before_wine": true,
+        "operation": "resume_first_creation",
+        "resume_first_creation_requested": true,
+        "profile_reused": true,
+        "inventory_table_present": true,
+        "character_count": 0,
+        "empty_inventory_verified": true,
+        "sql_game_mutations_performed": false,
+        "committed_character_rows_verified": false,
+        "eligible": true,
+        "character_id_high_water": 0,
+        "supported_first_character_id": 1
+      },
+      "saved_character": {
+        "identity": {
+          "containerid": 1,
+          "authid": 1353310574,
+          "authname": "COHLOCAL",
+          "name": "THORHERO"
+        },
+        "login_count": 1,
+        "verified": true,
+        "committed_sql_verified": true,
+        "requested_logout_observed": true,
+        "logout_timer_observed": true,
+        "disconnected_before_sql": true,
+        "forced_stop_before_save": false,
+        "reopen_verified": false,
+        "saved_utc": "2026-10-12T01:04:51.464103+00:00",
+        "verified_utc": "2026-10-12T01:04:51.751333+00:00",
+        "snapshot_sha256": "39ef4d611722be6ce39766c727cc663003fb8f39ab2cfa20f37c865cbbf327bf",
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 7,
+          "costumeparts": 13
+        },
+        "table_sha256": {
+          "ents": "0e9f8b243367bc5837b532b42c825381a6a6ce8f338eb779dcae9925b48835d0",
+          "ents2": "77ec33b6b6baddab8274b33a4526e99ebc08988a603d4bb5b0989e3e53df2713",
+          "powers": "0815aea7b4637eee5b47f0138776492f9b1ab81ba9c904002c9d5525030a6e22",
+          "costumeparts": "4bab38b6af68848b01e76acc3e63b20305a8465b165f9289fd6ae829933edbbc"
+        },
+        "evidence_scope": "fresh_graphical_character_ready_on_atlas_then_requested_logout_timer_and_committed_full_character_rows",
+        "logout_timer_evidence": {
+          "path": "logs/dbserver/entity_2026-10-12-01-00-00.log",
+          "line_sha256": "7b0e283eaba7468efe828cc282d2b952496d832251a77988435b181b288b6c6f",
+          "log_timestamp": "261012 01:03:43",
+          "log_route": "embedded_dbserver_logserver",
+          "map_instance": "City_01_01_1",
+          "reason": "Logout timer expired",
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_owned_server_entity_log_live_client_logout_timer"
+        },
+        "enhancement_rows_in_snapshot": false,
+        "enhancement_preservation_scope": "user physical observation; strict emitted snapshot covers ents/ents2/powers/costumeparts, not enhancement tables"
+      },
+      "stage_timings": [
+        {
+          "stage": "client_inputs",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:36:43.738877+00:00",
+          "finished_utc": "2026-10-12T00:36:47.269755+00:00",
+          "elapsed_seconds": 3.530878
+        },
+        {
+          "stage": "client_private_data",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:36:47.270004+00:00",
+          "finished_utc": "2026-10-12T00:36:47.478192+00:00",
+          "elapsed_seconds": 0.208188
+        },
+        {
+          "stage": "persistent_server_profile",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:36:47.479485+00:00",
+          "finished_utc": "2026-10-12T00:36:47.928387+00:00",
+          "elapsed_seconds": 0.448902
+        },
+        {
+          "stage": "postgres_local_login",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:36:47.928941+00:00",
+          "finished_utc": "2026-10-12T00:36:48.317959+00:00",
+          "elapsed_seconds": 0.389018
+        },
+        {
+          "stage": "presentation_display",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:37:05.581026+00:00",
+          "finished_utc": "2026-10-12T00:37:05.791260+00:00",
+          "elapsed_seconds": 0.210234
+        },
+        {
+          "stage": "wine_initialization",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:37:05.791920+00:00",
+          "finished_utc": "2026-10-12T00:38:09.737743+00:00",
+          "elapsed_seconds": 63.945823
+        },
+        {
+          "stage": "local_login_odbc",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:38:09.738371+00:00",
+          "finished_utc": "2026-10-12T00:38:14.136719+00:00",
+          "elapsed_seconds": 4.398348
+        },
+        {
+          "stage": "local_dbserver_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:38:14.138156+00:00",
+          "finished_utc": "2026-10-12T00:39:21.679818+00:00",
+          "elapsed_seconds": 67.541662
+        },
+        {
+          "stage": "local_atlas_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:39:21.794451+00:00",
+          "finished_utc": "2026-10-12T00:43:25.625784+00:00",
+          "elapsed_seconds": 243.831333
+        },
+        {
+          "stage": "client_visual_assets",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:43:25.633852+00:00",
+          "finished_utc": "2026-10-12T00:45:18.337941+00:00",
+          "elapsed_seconds": 112.704089
+        },
+        {
+          "stage": "client_animation_pack",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:45:18.338526+00:00",
+          "finished_utc": "2026-10-12T00:45:32.453546+00:00",
+          "elapsed_seconds": 14.11502
+        },
+        {
+          "stage": "client_all_zone_assets",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:45:32.454342+00:00",
+          "finished_utc": "2026-10-12T00:48:46.296674+00:00",
+          "elapsed_seconds": 193.842332
+        },
+        {
+          "stage": "client_all_zone_audio",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:48:46.299120+00:00",
+          "finished_utc": "2026-10-12T00:49:04.599496+00:00",
+          "elapsed_seconds": 18.300376
+        },
+        {
+          "stage": "win32_runtime_dll",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:49:04.602459+00:00",
+          "finished_utc": "2026-10-12T00:49:05.678735+00:00",
+          "elapsed_seconds": 1.076276
+        },
+        {
+          "stage": "actual_client_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:50:43.001233+00:00",
+          "finished_utc": "2026-10-12T00:55:20.246845+00:00",
+          "elapsed_seconds": 277.245612
+        },
+        {
+          "stage": "actual_client_interaction",
+          "status": "passed",
+          "started_utc": "2026-10-12T00:55:20.247307+00:00",
+          "finished_utc": "2026-10-12T01:05:00.950662+00:00",
+          "elapsed_seconds": 580.703355
+        }
+      ],
+      "startup_timing": {
+        "atlas_stage_seconds": 243.831333,
+        "native_console_server_ready_seconds": 234.094055,
+        "operation_to_owned_graphical_ready_seconds": 1414.862018,
+        "operation_to_owned_graphical_ready_includes_user_login_input": true,
+        "native_console_adjacent_phase_seconds": {
+          "sequencer_loading_until_next_folder_scan": 62.795,
+          "FX_info": 30.623,
+          "story_arc_and_adjacent_load_until_global_dialogs": 33.71
+        },
+        "phase_scope": "physical native console wall timestamps; adjacent phases are bounded observations, not all exclusive cost attribution",
+        "dbserver": {
+          "runtime_preparation_seconds": 37.850393,
+          "runtime_configuration_seconds": 0.004914,
+          "native_launch_started_utc": "2026-10-12T00:38:51.993704+00:00",
+          "native_dispatch_ready_seconds": 28.810208,
+          "schema_snapshot_seconds": 0.875841,
+          "runtime_preparation_phase_seconds": {
+            "base_schema_and_native_runtime": 0.090988,
+            "required_original_geometry": 4.386826,
+            "server_data_cache_checkout": 4.188398,
+            "warm_schema_restore": 0.138714,
+            "native_dependencies_and_manual_atlas": 0.059804,
+            "prepared_server_definition_caches": 1.91576,
+            "server_animation_pack": 1.884854,
+            "atlas_beacon_graph": 25.184271
+          }
+        },
+        "guest_launcher_to_startup_observed_seconds": 213.374
+      },
+      "gpu_scope": {
+        "selected": "turnip",
+        "bounded_prerequisite_probes_passed": true,
+        "actual_game_hardware_execution_validated_by_report": false,
+        "fps_gain_validated": false
+      },
+      "cleanup": {
+        "complete": true,
+        "wine_shutdown": {
+          "stop_exit_code": 0,
+          "wait_exit_code": 0,
+          "prefix_lock_free": true,
+          "server_socket_inactive": true
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 305,
+          "scanned_tasks": 102,
+          "dead_leaders_with_live_tasks": 5,
+          "owned_live_workers": 5,
+          "leader_exit_retries": 0,
+          "candidates": 5,
+          "term_signals": 5,
+          "kill_signals": 2,
+          "pidfd_signals": 7,
+          "identity_checked_signals": 0,
+          "inspection_failures": 0,
+          "remaining": 0,
+          "complete": true,
+          "permission_read_retries": 0,
+          "worker_exit_rechecks": 0,
+          "permission_observations": [],
+          "permission_observations_omitted": 0,
+          "proc_read_retries": 0,
+          "proc_read_observations": [],
+          "proc_read_observations_omitted": 0,
+          "last_inspection_failure": null
+        },
+        "subresults": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": true
+        }
+      },
+      "nested_member_inventory": [
+        {
+          "path": "client-evidence/before-client.ppm",
+          "bytes": 1440015,
+          "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077"
+        },
+        {
+          "path": "client-evidence/character-atlas-console.txt",
+          "bytes": 138334,
+          "sha256": "c1545a7bf80dd25919c84f272b676069a0eaf5b9096b56d2ea745e68fd80cdd2"
+        },
+        {
+          "path": "client-evidence/character-saved-snapshot.json",
+          "bytes": 8306,
+          "sha256": "0d7ba1831c72099bc051447862ea525a607bc25002decc2532d47b50782bf91d"
+        },
+        {
+          "path": "client-evidence/character-server-logs.zip",
+          "bytes": 8594,
+          "sha256": "a0a1be2d4b7f7fbccf0a5c2d4cee9fa20963a970e41046d4ec98e5c154fcb5f7"
+        },
+        {
+          "path": "client-evidence/client-character-saved.ppm",
+          "bytes": 1440015,
+          "sha256": "1a441e53af14601fb00af57f66d2a30c05a87e88741183ec2a1726756b64a691"
+        },
+        {
+          "path": "client-evidence/client-console.log",
+          "bytes": 472977,
+          "sha256": "4afa1b3093c724421ef07ecc05b104ed776b9ad306aad8e8fcce6409b0ffa181"
+        },
+        {
+          "path": "client-evidence/client-local-login.ppm",
+          "bytes": 1440015,
+          "sha256": "1660bb49abb0879c7baafdedc67d635b6cea95234d778cabcc8548eede4a40b9"
+        },
+        {
+          "path": "client-evidence/client-observed.ppm",
+          "bytes": 1440015,
+          "sha256": "029c4fef6451728c2838197a6bfe216a8febeea2d8545054bd8268e683c0702c"
+        },
+        {
+          "path": "client-evidence/client-startup.ppm",
+          "bytes": 1440015,
+          "sha256": "c7fef2c226d232660db6da70606e627e00620f9793d310319b29cb017a145c8d"
+        },
+        {
+          "path": "client-evidence/local-dbserver-console.txt",
+          "bytes": 19232,
+          "sha256": "c0bc59938f6372bbc86d5757df4f041a6cf6a511aa3e1607b1fab7e18d14ee1b"
+        },
+        {
+          "path": "client-evidence/private-cache-inventory.json",
+          "bytes": 163327,
+          "sha256": "d3509ee04c1e9eeca63bc6c1c4ebc840e240af7ee11a2d74b500f0e8202cfee7"
+        },
+        {
+          "path": "latest-report.json",
+          "bytes": 260524,
+          "sha256": "65d87cc35586502d4e4855b2302ca96237af7d3339d436041d1c2a26de4eb9c4"
+        }
+      ],
+      "physical_gameplay_log_evidence": {
+        "scope": "owned native server entity/powers log, separate from report global gameplay_validated false",
+        "kills": 2,
+        "enhancement": "Generic_Endurance_Discount received and slotted into Inherent.Sprint before ordinary committed character save",
+        "events": [
+          {
+            "log": "entity_2026-10-12-01-00-00.log",
+            "line": 10,
+            "line_sha256": "800b0916b4c454460c3b58725ea503dae214b888f7ab58ae5d835f11bd638ceb",
+            "timestamp": "261012 01:01:45",
+            "event": "native_combat_kill"
+          },
+          {
+            "log": "entity_2026-10-12-01-00-00.log",
+            "line": 13,
+            "line_sha256": "5883c65c42d1a4ca5fd94a4ac1fdfb9be049b08316f3ff04203f58d67456de42",
+            "timestamp": "261012 01:01:52",
+            "event": "native_combat_kill"
+          },
+          {
+            "log": "entity_2026-10-12-01-00-00.log",
+            "line": 15,
+            "line_sha256": "03dc3d619b2141a45aaed9d9124698be5e5be3e49efd498867de7a9af1327553",
+            "timestamp": "261012 01:02:29",
+            "event": "native_enhancement_inventory_move"
+          },
+          {
+            "log": "powers_2026-10-12-01-00-00.log",
+            "line": 13,
+            "line_sha256": "a2cea210c3199571393e5fb60ffaef14d40f7c50ef871b58b2b2dabe8346e3bc",
+            "timestamp": "261012 01:02:40",
+            "event": "native_enhancement_slotted"
+          }
+        ],
+        "committed_enhancement_rows_independently_audited": false,
+        "persistence_scope": "user reports successful saving of enhancements; exported snapshot does not query enhancement SQL tables"
+      }
+    },
+    {
+      "attachment": {
+        "name": "coh-atlas-gameplay-20261012-013507.zip",
+        "bytes": 3752740,
+        "sha256": "34f98e9188fb8a0e77151135c68fa63390e5bbeaecbb776a3c85276c6ecfe066"
+      },
+      "recovered_wrapper": {
+        "format": 1,
+        "status": "interrupted_unverified",
+        "passed": false,
+        "verified": false,
+        "recovery_kind": "previous_guest_outputs",
+        "session_attribution_verified": false,
+        "note": "Preserved diagnostic evidence only. No successful Finish, character save, or zoning qualification is inferred."
+      },
+      "guest_report": {
+        "bytes": 443161,
+        "sha256": "36d62e079abc76ae67f48bd5c73bdeee2bc8d2d982c589f9b08b2003ff42dfe3",
+        "embedded_zip_bytes": 3678817,
+        "embedded_zip_sha256": "570b82b4fb3c473b8e27f73b17a572b281861000590f59709cd7cf5be9c53d31",
+        "embedded_report_identical": true,
+        "scope": "actual_character_reopen_guest",
+        "session_id": "c81989391a4d4a6d9a424d980440d6c3",
+        "status": "failed",
+        "passed": false,
+        "started_utc": "2026-10-12T01:08:03.696434+00:00",
+        "finished_utc": "2026-10-12T01:34:30.081792+00:00",
+        "failures": [
+          "Owned cleanup failed: Atlas data cache return lacks proved owned Wine cleanup"
+        ],
+        "android_execution_validated": false,
+        "gameplay_validated": false
+      },
+      "version_attribution": {
+        "version": "0.13.31",
+        "apk_version_string_present": false,
+        "basis": "four updated/retained helper hashes agree with authenticated .31 release source; unchanged native Game/package identities",
+        "release_source": "74fe247be85173e618f1af2c8af71b1316de4cd8",
+        "expected_helper_sha256": {
+          "local_character_server.py": "0472fd103d2a90deb2a60d603aac7a39515ee6cb18ac55810820137b1c9f8689",
+          "character_creation_diagnostic.py": "eac84e21af4b593d9f2781ef5970c18ed4d7a4e10af9653f024f809c7cedf935",
+          "character_reopen_diagnostic.py": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24",
+          "character_zoning.py": "c6bb13eb60dc7f0af82c424d8e3de6772ed0d15fc4ae73d0479d1058bd438b3b"
+        },
+        "observed_helper_sha256": {
+          "local_character_server.py": "0472fd103d2a90deb2a60d603aac7a39515ee6cb18ac55810820137b1c9f8689",
+          "character_creation_diagnostic.py": "eac84e21af4b593d9f2781ef5970c18ed4d7a4e10af9653f024f809c7cedf935",
+          "character_reopen_diagnostic.py": "6c6b38a88c25f23ea48a6b4be2aa4245906591a6e1ec486bb084d64bed2bfe24",
+          "character_zoning.py": "c6bb13eb60dc7f0af82c424d8e3de6772ed0d15fc4ae73d0479d1058bd438b3b"
+        },
+        "helper_pin_match": true,
+        "game_package_sha256": "36d815fd6e9b8eeebbf04de756ea05fa9ee4f29a5330a6cde15926522a4215aa",
+        "game_executable_sha256": "5f9597fac6e5c4eb2bf6ab091a8b2b5d71c341371da04dc135cef7e5fe00010b"
+      },
+      "profile_eligibility": {
+        "format": 1,
+        "checked_before_wine": true,
+        "operation": "reopen_saved_character",
+        "resume_first_creation_requested": false,
+        "profile_reused": true,
+        "inventory_table_present": true,
+        "character_count": 1,
+        "empty_inventory_verified": false,
+        "sql_game_mutations_performed": false,
+        "committed_character_rows_verified": true,
+        "eligible": true
+      },
+      "saved_character": {
+        "identity": {
+          "containerid": 1,
+          "authid": 1353310574,
+          "authname": "COHLOCAL",
+          "name": "THORHERO"
+        },
+        "login_count": 2,
+        "verified": true,
+        "committed_sql_verified": true,
+        "requested_logout_observed": true,
+        "logout_timer_observed": true,
+        "disconnected_before_sql": true,
+        "forced_stop_before_save": false,
+        "reopen_verified": true,
+        "saved_utc": "2026-10-12T01:34:14.502697+00:00",
+        "verified_utc": "2026-10-12T01:34:14.775712+00:00",
+        "snapshot_sha256": "94ba9b98ef436f2a286a87937c242538080e16c6a58d9c0df789837b06b9b94f",
+        "row_counts": {
+          "ents": 1,
+          "ents2": 1,
+          "powers": 7,
+          "costumeparts": 13
+        },
+        "table_sha256": {
+          "ents": "8d6abdce202d6e7956bfced1fcb138b9ea5e31a10fabe295e86d1cea5f456e7b",
+          "ents2": "77ec33b6b6baddab8274b33a4526e99ebc08988a603d4bb5b0989e3e53df2713",
+          "powers": "0815aea7b4637eee5b47f0138776492f9b1ab81ba9c904002c9d5525030a6e22",
+          "costumeparts": "4bab38b6af68848b01e76acc3e63b20305a8465b165f9289fd6ae829933edbbc"
+        },
+        "evidence_scope": "existing_committed_character_native_ready_then_requested_logout_and_preserved_committed_rows",
+        "logout_timer_evidence": {
+          "path": "logs/dbserver/entity_2026-10-12-01-00-00.log",
+          "line_sha256": "131d3aeae95dafe070b491e132d1700b3785d825631dab842661cf684d170653",
+          "line_ordinal": 463,
+          "log_timestamp": "261012 01:33:04",
+          "utc_ms": 1791768784000,
+          "map_id": 1,
+          "map_instance": "City_01_01_1",
+          "log_route": "embedded_dbserver_logserver",
+          "native_log_contains_session_or_client_pid": false,
+          "native_log_contains_character_db_id": false,
+          "connection_binding": "owned_map_progress_exact_dbserver_character_status_and_current_epoch",
+          "reason": "Logout timer expired",
+          "account": "COHLOCAL",
+          "name": "THORHERO",
+          "source": "current_target_stock_logout_timer"
+        },
+        "enhancement_rows_in_snapshot": false,
+        "enhancement_preservation_scope": "user physical observation; strict emitted snapshot covers ents/ents2/powers/costumeparts, not enhancement tables"
+      },
+      "stage_timings": [
+        {
+          "stage": "client_inputs",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:03.753898+00:00",
+          "finished_utc": "2026-10-12T01:08:07.477763+00:00",
+          "elapsed_seconds": 3.723865
+        },
+        {
+          "stage": "client_private_data",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:07.478006+00:00",
+          "finished_utc": "2026-10-12T01:08:07.686203+00:00",
+          "elapsed_seconds": 0.208197
+        },
+        {
+          "stage": "persistent_server_profile",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:07.689005+00:00",
+          "finished_utc": "2026-10-12T01:08:08.152856+00:00",
+          "elapsed_seconds": 0.463851
+        },
+        {
+          "stage": "postgres_local_login",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:08.153663+00:00",
+          "finished_utc": "2026-10-12T01:08:08.644230+00:00",
+          "elapsed_seconds": 0.490567
+        },
+        {
+          "stage": "presentation_display",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:18.642465+00:00",
+          "finished_utc": "2026-10-12T01:08:18.750493+00:00",
+          "elapsed_seconds": 0.108028
+        },
+        {
+          "stage": "wine_initialization",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:18.750900+00:00",
+          "finished_utc": "2026-10-12T01:08:26.666343+00:00",
+          "elapsed_seconds": 7.915443
+        },
+        {
+          "stage": "local_login_odbc",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:26.666690+00:00",
+          "finished_utc": "2026-10-12T01:08:39.677125+00:00",
+          "elapsed_seconds": 13.010435
+        },
+        {
+          "stage": "local_dbserver_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:08:39.679953+00:00",
+          "finished_utc": "2026-10-12T01:09:46.840421+00:00",
+          "elapsed_seconds": 67.160468
+        },
+        {
+          "stage": "local_atlas_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:09:47.278358+00:00",
+          "finished_utc": "2026-10-12T01:13:31.821937+00:00",
+          "elapsed_seconds": 224.543579
+        },
+        {
+          "stage": "client_visual_assets",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:13:31.835122+00:00",
+          "finished_utc": "2026-10-12T01:13:56.148562+00:00",
+          "elapsed_seconds": 24.31344
+        },
+        {
+          "stage": "client_animation_pack",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:13:56.149071+00:00",
+          "finished_utc": "2026-10-12T01:14:07.786840+00:00",
+          "elapsed_seconds": 11.637769
+        },
+        {
+          "stage": "client_all_zone_assets",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:14:07.787459+00:00",
+          "finished_utc": "2026-10-12T01:14:42.197196+00:00",
+          "elapsed_seconds": 34.409737
+        },
+        {
+          "stage": "client_all_zone_audio",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:14:42.198032+00:00",
+          "finished_utc": "2026-10-12T01:14:44.897009+00:00",
+          "elapsed_seconds": 2.698977
+        },
+        {
+          "stage": "win32_runtime_dll",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:14:44.898659+00:00",
+          "finished_utc": "2026-10-12T01:14:46.500497+00:00",
+          "elapsed_seconds": 1.601838
+        },
+        {
+          "stage": "actual_client_startup",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:15:23.644554+00:00",
+          "finished_utc": "2026-10-12T01:19:36.599523+00:00",
+          "elapsed_seconds": 252.954969
+        },
+        {
+          "stage": "actual_client_interaction",
+          "status": "passed",
+          "started_utc": "2026-10-12T01:19:36.599910+00:00",
+          "finished_utc": "2026-10-12T01:34:23.891652+00:00",
+          "elapsed_seconds": 887.291742
+        }
+      ],
+      "startup_timing": {
+        "atlas_stage_seconds": 224.543579,
+        "native_console_server_ready_seconds": 216.496078,
+        "operation_to_owned_graphical_ready_seconds": 809.84045,
+        "operation_to_owned_graphical_ready_includes_user_login_input": true,
+        "native_console_adjacent_phase_seconds": {
+          "sequencer_loading_until_next_folder_scan": 51.757,
+          "FX_info": 27.903,
+          "story_arc_and_adjacent_load_until_global_dialogs": 33.303
+        },
+        "phase_scope": "physical native console wall timestamps; adjacent phases are bounded observations, not all exclusive cost attribution",
+        "dbserver": {
+          "runtime_preparation_seconds": 35.67585,
+          "runtime_configuration_seconds": 0.006007,
+          "native_launch_started_utc": "2026-10-12T01:09:15.362405+00:00",
+          "native_dispatch_ready_seconds": 30.641462,
+          "schema_snapshot_seconds": 0.836495,
+          "runtime_preparation_phase_seconds": {
+            "base_schema_and_native_runtime": 0.093082,
+            "required_original_geometry": 0.993146,
+            "server_data_cache_checkout": 5.542228,
+            "warm_schema_restore": 0.137524,
+            "native_dependencies_and_manual_atlas": 0.065949,
+            "prepared_server_definition_caches": 1.880872,
+            "server_animation_pack": 1.944633,
+            "atlas_beacon_graph": 24.994294
+          }
+        },
+        "guest_launcher_to_startup_observed_seconds": 187.734
+      },
+      "gpu_scope": {
+        "selected": "turnip",
+        "bounded_prerequisite_probes_passed": true,
+        "actual_game_hardware_execution_validated_by_report": false,
+        "fps_gain_validated": false
+      },
+      "cleanup": {
+        "complete": false,
+        "wine_shutdown": {
+          "stop_exit_code": 0,
+          "wait_exit_code": 0,
+          "prefix_lock_free": true,
+          "server_socket_inactive": true
+        },
+        "wine_process_cleanup": {
+          "policy": "same_real_uid_and_run_token",
+          "scanned_processes": 166,
+          "scanned_tasks": 35,
+          "dead_leaders_with_live_tasks": 6,
+          "owned_live_workers": 6,
+          "leader_exit_retries": 0,
+          "candidates": 6,
+          "term_signals": 6,
+          "kill_signals": 0,
+          "pidfd_signals": 6,
+          "identity_checked_signals": 0,
+          "inspection_failures": 1,
+          "remaining": null,
+          "complete": false,
+          "permission_read_retries": 2,
+          "worker_exit_rechecks": 0,
+          "permission_observations": [
+            {
+              "group_pid": 26421,
+              "group_starttime": 27442356,
+              "worker_tid": 26443,
+              "worker_starttime": 27442557,
+              "operation": "worker_environment",
+              "errno": 13,
+              "error_type": "PermissionError",
+              "attempt": 1,
+              "worker_state_before": "R",
+              "resolution": "retry_same_live_worker",
+              "worker_state_after": "R"
+            },
+            {
+              "group_pid": 26421,
+              "group_starttime": 27442356,
+              "worker_tid": 26443,
+              "worker_starttime": 27442557,
+              "operation": "worker_environment",
+              "errno": 13,
+              "error_type": "PermissionError",
+              "attempt": 2,
+              "worker_state_before": "R",
+              "resolution": "retry_same_live_worker",
+              "worker_state_after": "R"
+            },
+            {
+              "group_pid": 26421,
+              "group_starttime": 27442356,
+              "worker_tid": 26443,
+              "worker_starttime": 27442557,
+              "operation": "worker_environment",
+              "errno": 13,
+              "error_type": "PermissionError",
+              "attempt": 3,
+              "worker_state_before": "R",
+              "resolution": "persistent_live_permission_denied",
+              "worker_state_after": "R"
+            }
+          ],
+          "permission_observations_omitted": 0,
+          "proc_read_retries": 0,
+          "proc_read_observations": [],
+          "proc_read_observations_omitted": 0,
+          "last_inspection_failure": {
+            "group_pid": 26421,
+            "group_starttime": 27442356,
+            "worker_tid": 26443,
+            "worker_starttime": 27442557,
+            "operation": "worker_environment",
+            "errno": 13,
+            "error_type": "PermissionError",
+            "attempt": 3,
+            "worker_state_before": "R",
+            "resolution": "persistent_live_permission_denied",
+            "worker_state_after": "R"
+          }
+        },
+        "subresults": {
+          "postgres_graceful": true,
+          "wine_prefix_stopped": true,
+          "owned_processes_reaped": false
+        }
+      },
+      "nested_member_inventory": [
+        {
+          "path": "client-evidence/before-client.ppm",
+          "bytes": 1440015,
+          "sha256": "c3b3d73f6bbb08ab3fa3dfa65d01f89916ba25d37a4f5fbd8cd2202edaa58077"
+        },
+        {
+          "path": "client-evidence/character-atlas-console.txt",
+          "bytes": 174652,
+          "sha256": "49840dda8eb0404550e679c57b04235a0e764d99531f7676de877af87729329d"
+        },
+        {
+          "path": "client-evidence/character-reopen-before-snapshot.json",
+          "bytes": 8306,
+          "sha256": "0d7ba1831c72099bc051447862ea525a607bc25002decc2532d47b50782bf91d"
+        },
+        {
+          "path": "client-evidence/character-saved-snapshot.json",
+          "bytes": 8306,
+          "sha256": "1d52eebc08d198a47a935f8a66d87499c6cdb4b834f59f11b6d94200b597bb49"
+        },
+        {
+          "path": "client-evidence/character-server-logs.zip",
+          "bytes": 14349,
+          "sha256": "e66a8bf9db27db044107d4563a5d31aac565667cade9775081e81597608b1952"
+        },
+        {
+          "path": "client-evidence/character-zoning-map-5-console.txt",
+          "bytes": 63568,
+          "sha256": "07827b24ff919336711a45c64202e4016906526811a58643d2da0939bf682f71"
+        },
+        {
+          "path": "client-evidence/character-zoning.json",
+          "bytes": 86186,
+          "sha256": "7a289b914a00508db5057d353c05f371324acf6cd643a4b2eaee00f8b710790a"
+        },
+        {
+          "path": "client-evidence/client-character-saved.ppm",
+          "bytes": 1440015,
+          "sha256": "88d039790383243584747f3bf73b566b3acccc28286763444c8c192bc25e1664"
+        },
+        {
+          "path": "client-evidence/client-console.log",
+          "bytes": 590620,
+          "sha256": "a3e0b92b415b94397b9133ac81a194b33074637beec370fa00e415d00f4b18f3"
+        },
+        {
+          "path": "client-evidence/client-local-login.ppm",
+          "bytes": 1440015,
+          "sha256": "a4be5e243e54e6ede3781067e3a4b66415935417174ad29994581f9d8c2dcfad"
+        },
+        {
+          "path": "client-evidence/client-observed.ppm",
+          "bytes": 1440015,
+          "sha256": "c9194ffdd19ee1fb8b49da2914c51ce1f109b338bef47cedacfad05a7467926f"
+        },
+        {
+          "path": "client-evidence/client-startup.ppm",
+          "bytes": 1440015,
+          "sha256": "d48483570266ec7c17318871b33becdba85fc5159843e4e8fac8b840c770d776"
+        },
+        {
+          "path": "client-evidence/local-dbserver-console.txt",
+          "bytes": 19409,
+          "sha256": "df3853eb89ab341cf9ecd3648588a4104853f10db83d2993e17058c3ff87b8b8"
+        },
+        {
+          "path": "client-evidence/private-cache-inventory.json",
+          "bytes": 169394,
+          "sha256": "0e04616c086fc530ad14d7cd77dc7217cd507be1a4086d7aca7e924e81f5dd17"
+        },
+        {
+          "path": "latest-report.json",
+          "bytes": 443161,
+          "sha256": "36d62e079abc76ae67f48bd5c73bdeee2bc8d2d982c589f9b08b2003ff42dfe3"
+        }
+      ],
+      "reopen_preservation": {
+        "existing_character_verified": true,
+        "preserved_existing_identity": true,
+        "powers_preserved": true,
+        "costume_preserved": true,
+        "selected_rows_preserved": true,
+        "before_login_count": 1,
+        "after_login_count": 2,
+        "independent_powers_equal": true,
+        "independent_costume_parts_equal": true,
+        "independent_identity_equal": true,
+        "snapshot_pins": [
+          {
+            "path": "character-reopen-before-snapshot.json",
+            "sha256": "0d7ba1831c72099bc051447862ea525a607bc25002decc2532d47b50782bf91d"
+          },
+          {
+            "path": "character-saved-snapshot.json",
+            "sha256": "1d52eebc08d198a47a935f8a66d87499c6cdb4b834f59f11b6d94200b597bb49"
+          }
+        ]
+      },
+      "kings_row": {
+        "status": "failed",
+        "failure": {
+          "message": "Zoning preparation or arrival timed out; export this report",
+          "transfer_requested": false
+        },
+        "preparation_failed": true,
+        "physical_zoning_validated": false,
+        "transfer_count": 0,
+        "events": [
+          {
+            "format": 1,
+            "session_id": "c81989391a4d4a6d9a424d980440d6c3",
+            "client_pid": 636,
+            "character_id": 1,
+            "epoch": 0,
+            "status": "enabled",
+            "current_map_id": 1,
+            "target_map_id": 5,
+            "current_map_name": "Atlas Park",
+            "target_map_name": "King's Row",
+            "generated_utc_ms": 1791768096331,
+            "epoch_limit": 4,
+            "current_map_verified": true,
+            "zoning_enabled": true,
+            "monorail_enabled": true,
+            "travel_method": "stock_monorail",
+            "monorail_requires_reopen": false
+          },
+          {
+            "format": 1,
+            "session_id": "c81989391a4d4a6d9a424d980440d6c3",
+            "client_pid": 636,
+            "character_id": 1,
+            "epoch": 1,
+            "status": "preparing",
+            "current_map_id": 1,
+            "target_map_id": 5,
+            "current_map_name": "Atlas Park",
+            "target_map_name": "King's Row",
+            "generated_utc_ms": 1791768151857,
+            "epoch_limit": 4,
+            "current_map_verified": true,
+            "destination_ready": false,
+            "monorail_enabled": true,
+            "travel_method": "stock_monorail",
+            "monorail_requires_reopen": false,
+            "native_request_sequence": 4,
+            "native_station_pid": 556,
+            "native_station_request_verified": true,
+            "requested_utc_ms": 1791768147733,
+            "preparation_started_utc_ms": 1791768151854,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "departure_deadline_utc_ms": 1791768873534,
+            "session_deadline_utc_ms": 1791769293534,
+            "session_budget_extended": false
+          },
+          {
+            "format": 1,
+            "session_id": "c81989391a4d4a6d9a424d980440d6c3",
+            "client_pid": 636,
+            "character_id": 1,
+            "epoch": 1,
+            "status": "failed",
+            "current_map_id": 1,
+            "target_map_id": 5,
+            "current_map_name": "Atlas Park",
+            "target_map_name": "King's Row",
+            "generated_utc_ms": 1791768756662,
+            "epoch_limit": 4,
+            "message": "Zoning preparation or arrival timed out; export this report",
+            "transfer_requested": false,
+            "current_map_verified": true,
+            "monorail_enabled": true,
+            "travel_method": "stock_monorail",
+            "monorail_requires_reopen": false,
+            "native_request_sequence": 4,
+            "native_station_pid": 556,
+            "native_station_request_verified": true,
+            "requested_utc_ms": 1791768147733,
+            "preparation_started_utc_ms": 1791768151854,
+            "preparation_kind": "cold",
+            "preparation_budget_seconds": 600,
+            "departure_deadline_utc_ms": 1791768873534,
+            "session_deadline_utc_ms": 1791769293534,
+            "session_budget_extended": false
+          }
+        ],
+        "python_preparation_completed": true,
+        "python_preparation_elapsed_seconds": 376.160678,
+        "geometry": {
+          "format": 1,
+          "version": "1.0.0",
+          "scope": "kings_row_required_collision",
+          "file_count": 52,
+          "files_sha256": "f6750e96691232c72c610daabe397724785efcf02d38e33ba970a69b1cf0bea7",
+          "manifest_sha256": "f466ad6c8ab6e84dabd16d404c3a05bcb9fbca3cfad5746852d53b04132d8f74",
+          "installed_files": 52,
+          "decoded_payload_bytes": 3329935,
+          "fingerprint_reused": false,
+          "imported_files_modified": false,
+          "prepared_caches_modified": false,
+          "runtime_visual_validated": false,
+          "physical_zoning_verified": false,
+          "elapsed_seconds": 0.626379
+        },
+        "graph": {
+          "format": 1,
+          "verified": true,
+          "map_id": 5,
+          "map": "maps/city_zones/city_01_02/city_01_02.txt",
+          "native_graph_readback_qualified": true,
+          "physical_zoning_verified": false,
+          "full_world_crc": "0xec7ae491",
+          "input_files_checked": 8396,
+          "status": "installed_verified_graph",
+          "installed_files": 2,
+          "input_payload_bytes_hashed": 500747706,
+          "preparation_elapsed_seconds": 102.965554
+        },
+        "native_dependency_pins": {
+          "CrashRpt.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 39424,
+            "sha256": "2e1f63970f1d76e111b070c2d72a3ece691f71f17aa079f1d95c39599af057d6"
+          },
+          "DbServer.exe": {
+            "source": "verified_original_game_package",
+            "bytes": 1661440,
+            "sha256": "535bfd6df77ce09bc3d1048accd95d7910552f8861c3a9c4e356d522786d585c"
+          },
+          "MapServer.exe": {
+            "source": "owned_atlas_runtime",
+            "bytes": 6892032,
+            "sha256": "53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713"
+          },
+          "NxCharacter.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 107872,
+            "sha256": "816fefac0c6b3d7da68daf3098a73e7fa0eff326ef83b3dba7f0fe2dcf0bd095"
+          },
+          "NxCooking.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 749568,
+            "sha256": "5dc0333de6b18119b04f7a1beace3f5dfaff5754af62a0f4d8def9e73a09063c"
+          },
+          "PhysXCooking.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 383840,
+            "sha256": "c6a1a1f4127bef756e8628775de18c57f93bb7cce22403efb3b519ea1f26a28d"
+          },
+          "PhysXCore.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 3567456,
+            "sha256": "c1758f8deada5dad54eb384b4f94a43f69b54c6f671cdcabef4f64d9c6f1da3a"
+          },
+          "PhysXDevice.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 65536,
+            "sha256": "6b9f40f2da693b935163935c7ab56847bf11f7160f5b268c4e4881d2973d9cb7"
+          },
+          "PhysXLoader.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 64352,
+            "sha256": "db9ea1334a6364c4d02c2e3fe826ab48fb6b07242fff00bd41feb17524fde4de"
+          },
+          "TestClientBridge.exe": {
+            "source": "owned_atlas_runtime",
+            "bytes": 145920,
+            "sha256": "13fcf1b029f092046ba8e3086bf848cb9af98c09e54b4a53f8331cbe4ff9ff2a"
+          },
+          "TestClientCreate.exe": {
+            "source": "owned_atlas_runtime",
+            "bytes": 3143680,
+            "sha256": "9905c581fe222f3543dd3e8b7658d871e50fd5b927e8eb518512db7b710e1e58"
+          },
+          "TestClientResume.exe": {
+            "source": "owned_atlas_runtime",
+            "bytes": 3146240,
+            "sha256": "e9745917dc4943791923d04d4d84578498f67411a0fad3ce1489d85278b157f1"
+          },
+          "cg.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 5667432,
+            "sha256": "52a2e2abd29fa59dd7d6dbae4f5b41f94e451bfbc3a7a21957c5cfbb51824b98"
+          },
+          "cgGL.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 350824,
+            "sha256": "63bc68bf4e7e660be910e5c2cd47bb637d136f4779a171555cbc4ef0c876b0f4"
+          },
+          "concrt140.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 314816,
+            "sha256": "63de7cc3187265b1b1871b84a11b8a91d8f249018dcfb34e910bf3eb2a193d11"
+          },
+          "cudart32_30_9.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 290408,
+            "sha256": "08c137f66758b6c342c0dd32fa45e8fc8c9f0c287997e46e515610c2aa84d0ed"
+          },
+          "msvcp140.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 618944,
+            "sha256": "f0cda2a0cf1fe6fbbf579b9098462329d3aaa7513a207af2e0f33b01456e388a"
+          },
+          "msvcp140_1.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 33728,
+            "sha256": "b08edd7954ae9954d24eb344a8b0116a980c60179ff1b92d5219639e21028cc2"
+          },
+          "msvcp140_2.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 261056,
+            "sha256": "5e3c52721f03d5f546d64dfdfa38302b1fc3eb79dc44a1ec7a3af69abb9653fe"
+          },
+          "msvcp140_atomic_wait.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 57272,
+            "sha256": "e1142584f337b9b650d6d888652cb24f7b16a7dd93476840a050047bb00f0463"
+          },
+          "msvcp140_codecvt_ids.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 30648,
+            "sha256": "d4874db10c63990323696984eb2e2e799d952a1846437924c92153065b7259e4"
+          },
+          "physxcudart_20.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 197912,
+            "sha256": "e7b1965ab2ba441c2f4040f6203c10e7d9f02bfbb794a25d2a022d95b6f01c70"
+          },
+          "vccorlib140.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 287160,
+            "sha256": "d50aab1e201dfb268d6010d4c3b5bf7a3fb8dd1f38296135b43c9e29821e5586"
+          },
+          "vcruntime140.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 123328,
+            "sha256": "2fa6efc053203460a23d3a25158f227d895d2dadc63acc1a372da97c3a4281c3"
+          },
+          "vcruntime140_threads.dll": {
+            "source": "owned_atlas_runtime",
+            "bytes": 36280,
+            "sha256": "7c372b0547fb45abd06e4bbdf5475cc99c3a915c998ef7e5c263de4762944e3b"
+          }
+        },
+        "native_server_ready_console_seconds": 274.186829,
+        "combined_python_preparation_and_native_server_ready_seconds_excludes_dispatch_poll": 650.347507,
+        "end_to_end_preparation_budget_seconds": 600,
+        "preparing_to_failed_event_seconds": 604.805,
+        "console_server_ready_after_deadline": true,
+        "strict_current_progress_protocol_readiness_accepted": false,
+        "arrival_accepted": false,
+        "native_asset_or_dependency_exception_observed": false,
+        "diagnosis": "Combined cold preparation plus native boot exceeded finite 600-second deadline. Python assets/graph/dependencies completed; native Kings console eventually printed Server ready after pending travel canceled. Player remained on Atlas and ordinary save was accepted.",
+        "stage_observations": [
+          {
+            "epoch": 1,
+            "map_id": 5,
+            "observed_utc_ms": 1791768538776,
+            "observed_monotonic_ms": 133980066,
+            "stage": "STARTUP",
+            "windows_pid": 760,
+            "tick_completed": 0,
+            "native_stage_duration_measured": false
+          }
+        ],
+        "scheduling": {
+          "format": 1,
+          "map_id": 5,
+          "policy": "temporary_plus_5_nice_exact_destination_threads",
+          "ownership": "diagnostic_and_unique_map_tokens_real_uid_group_and_thread_starttimes",
+          "capability": {
+            "supported": true,
+            "original_nice": 0,
+            "rlimit_nice_soft": 40,
+            "rlimit_nice_hard": 40,
+            "lowered_nice": 5,
+            "restored_nice": 0
+          },
+          "changed_threads": 3,
+          "restored_threads": 3,
+          "exited_threads": 0,
+          "unavailable_samples": 0,
+          "restore_complete": true,
+          "game_or_shared_wine_processes_changed": false,
+          "gpu_time_measured": false,
+          "physical_performance_gain_verified": false,
+          "rss_is_not_pss": true,
+          "shared_pages_may_be_counted_more_than_once": true,
+          "cpu_ticks_per_second": 100,
+          "resource_scope": "exact_destination_token_processes_only",
+          "weighted_checkpoint_emitted": true
+        },
+        "scheduling_sample_count": 43,
+        "observed_destination_rss_max_kib": 959108,
+        "rss_scope": "destination token only RSS, not PSS or total app memory; shared pages may double count",
+        "native_console_adjacent_phase_seconds": {
+          "sequencer_loading_until_next_folder_scan": 88.338,
+          "FX_info": 38.832,
+          "story_arc_and_adjacent_load_until_global_dialogs": 39.614
+        },
+        "native_ready_console_line": {
+          "text": "Server ready. (took 274.186829 seconds)",
+          "line": 429,
+          "timestamp_not_present_on_line": true
+        }
+      }
+    }
+  ],
+  "wrapper_disposition": {
+    "first": "recovered unverified outer wrapper despite nested guest status passed and complete cleanup; Android completion/packaging cannot be proved from this attachment",
+    "second": "recovered unverified outer wrapper, guest failure attributed to incomplete owned cleanup after live-worker environment EACCES; accepted ordinary save remains separate",
+    "investigation_needed": "launcher terminal report/packaging disposition; owned cleanup dead-leader workers; finite cold preparation timing and immutable cache reuse"
+  }
+}

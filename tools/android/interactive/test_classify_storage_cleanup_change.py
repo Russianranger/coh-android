@@ -12,6 +12,40 @@ change=importlib.util.module_from_spec(spec);spec.loader.exec_module(change)
 
 
 class StorageRoutingTests(unittest.TestCase):
+    def test_map_startup_exact_owner_defers_historical_publishers(self):
+        import classify_client_map_startup_change as startup
+        import classify_client_animation_repair_change as repair
+        for names in (sorted(startup.CLIENT_MAP_STARTUP_ALLOWED), sorted(startup.CLIENT_MAP_STARTUP_DOCS)):
+            self.assertTrue(startup.client_map_startup_owned('push','a'*40,'b'*40,'a'*40,names))
+            self.assertTrue(repair.historical_repair_owned('push','a'*40,'b'*40,'a'*40,names))
+            for function in self.gameplay_historical_publishers():
+                with self.subTest(function=function.__name__):
+                    self.assertFalse(function('push','a'*40,'b'*40,'a'*40,names))
+
+    def test_map_startup_owner_cannot_hide_game_db_renderer_assets_or_unknown_code(self):
+        import classify_client_map_startup_change as startup
+        names = sorted(startup.CLIENT_MAP_STARTUP_ALLOWED)
+        for foreign in ('upstream/ouroboros/Game/src/render/tex.c',
+                'upstream/ouroboros/DbServer/dbserver.c', 'android/native/client-launcher.c',
+                'assets/client-runtime.zip', 'assets/asset-pack-manifest.json',
+                change.JAVA+'ClientActivity.java', 'unreviewed.py'):
+            with self.subTest(foreign=foreign):
+                self.assertFalse(startup.client_map_startup_owned('push','a'*40,'b'*40,'a'*40,names+[foreign]))
+                for function in self.gameplay_historical_publishers():
+                    self.assertTrue(function('push','a'*40,'b'*40,'a'*40,names+[foreign]))
+
+    def test_map_startup_owner_requires_direct_push_and_marker_or_publication(self):
+        import classify_client_map_startup_change as startup
+        names = sorted(startup.CLIENT_MAP_STARTUP_ALLOWED)
+        for event,before,head,parent in (('workflow_dispatch','a'*40,'b'*40,'a'*40),
+                ('push','0'*40,'b'*40,'0'*40), ('push','c'*40,'b'*40,'a'*40),
+                ('push','a'*40,'b'*40,'a'*40+'\n'+'c'*40)):
+            self.assertFalse(startup.client_map_startup_owned(event,before,head,parent,names))
+        self.assertFalse(startup.client_map_startup_owned('push','a'*40,'b'*40,'a'*40,
+            sorted(startup.CLIENT_MAP_STARTUP_ALLOWED-{startup.CLIENT_MAP_STARTUP_MARKER})))
+        self.assertFalse(startup.client_map_startup_owned('push','a'*40,'b'*40,'a'*40,
+            sorted(startup.CLIENT_MAP_STARTUP_DOCS-{startup.CLIENT_MAP_STARTUP_PUBLICATION})))
+
     def test_animation_repair_exact_guest_owner_defers_all_historical_publishers(self):
         import classify_client_animation_repair_change as repair
         for names in (sorted(repair.CLIENT_ANIMATION_REPAIR_ALLOWED),
@@ -1069,7 +1103,8 @@ class StorageRoutingTests(unittest.TestCase):
             names.discard('')
         self.assertTrue(names, 'Candidate source change evidence required')
         import classify_client_profile_recovery_change as profile
-        allowed = profile.CLIENT_PROFILE_RECOVERY_ALLOWED if profile.client_profile_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_ANIMATION_REPAIR_ALLOWED if change.client_animation_repair_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECEIPT_REPAIR_ALLOWED if change.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_ASSETS_ALLOWED if change.client_assets_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECOVERY_ALLOWED if change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
+        import classify_client_map_startup_change as startup
+        allowed = startup.CLIENT_MAP_STARTUP_ALLOWED if startup.client_map_startup_owned('push','a'*40,'b'*40,'a'*40,names) else profile.CLIENT_PROFILE_RECOVERY_ALLOWED if profile.client_profile_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_ANIMATION_REPAIR_ALLOWED if change.client_animation_repair_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECEIPT_REPAIR_ALLOWED if change.client_receipt_repair_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_ASSETS_ALLOWED if change.client_assets_owned('push','a'*40,'b'*40,'a'*40,names) else change.CLIENT_RECOVERY_ALLOWED if change.client_recovery_owned('push','a'*40,'b'*40,'a'*40,names) else change.ZONING_ALLOWED if change.zoning_owned('push','a'*40,'b'*40,'a'*40,names) else change.RENDER_QUEUE_ALLOWED if change.render_queue_owned('push','a'*40,'b'*40,'a'*40,names) else change.SETUP_COPY_ALLOWED if change.setup_copy_owned('push','a'*40,'b'*40,'a'*40,names) else change.SESSION_REPAIR_ALLOWED if change.session_repair_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDER_PIPELINE_ALLOWED if change.render_pipeline_owned('push', 'a'*40, 'b'*40, 'a'*40, names) else change.GPU_PROFILE_ALLOWED if change.gpu_profile_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.gpu_profile_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.RENDERER_ATTRIBUTION_ALLOWED if change.renderer_attribution_push('push', 'a'*40, 'b'*40, 'a'*40, names) or change.renderer_attribution_docs('push', 'a'*40, 'b'*40, 'a'*40, names) else change.SIDEBAR_ALLOWED if change.sidebar_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.SIDEBAR_SOURCES-{change.JAVA+name for name in ('ClientActivity.java', 'ClientInput.java', 'InteractiveRfbClient.java', 'ClientRuntime.java', 'ClientService.java')}) else change.GAMEPLAY_PERFORMANCE_ALLOWED if change.gameplay_performance_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.GAMEPLAY_PERFORMANCE_SOURCES-change.SCENE_PERFORMANCE_ALLOWED) else change.SCENE_PERFORMANCE_ALLOWED if names & change.SCENE_PERFORMANCE_SOURCES else change.PERFORMANCE_ALLOWED if names & change.PERFORMANCE_SOURCES else change.UI_BEACON_ALLOWED if names & (change.UI_BEACON_SOURCES - change.REOPEN_STARTUP_REPAIR_ALLOWED - change.LEVELUP_UI_REPAIR_ALLOWED) else change.REOPEN_STARTUP_REPAIR_ALLOWED if change.reopen_startup_repair_push('push', 'a'*40, 'b'*40, 'a'*40, names) else change.LEVELUP_UI_REPAIR_ALLOWED if change.levelup_ui_repair_docs('push', 'a'*40, 'b'*40, 'a'*40, names) or names & (change.LEVELUP_UI_REPAIR_SOURCES - change.CLIENT_STARTUP_FOLLOWUP_ALLOWED) else change.CLIENT_STARTUP_FOLLOWUP_ALLOWED if names & (change.CLIENT_STARTUP_FOLLOWUP_SOURCES - change.CLIENT_ASSET_CLOSURE_ALLOWED) else change.CLIENT_ASSET_CLOSURE_ALLOWED if names & (change.CLIENT_ASSET_CLOSURE_SOURCES - change.CLIENT_STREAMING_ALLOWED) else change.CLIENT_STREAMING_ALLOWED if names & (change.CLIENT_STREAMING_SOURCES - change.CLIENT_LOADING_ALLOWED) else change.CLIENT_LOADING_ALLOWED if names & (change.CLIENT_LOADING_SOURCES - change.VISUAL_ALLOWED) else change.VISUAL_ALLOWED if names & (change.VISUAL_SOURCES - change.BUNDLE_ALLOWED) else change.BUNDLE_ALLOWED
         self.assertLessEqual(names, allowed, 'Candidate contains an unclassified publication path')
         fixture = 'tools/android/interactive/test_startup_bundle_save.py'
         self.assertIn(fixture, change.BUNDLE_ALLOWED)

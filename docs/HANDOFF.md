@@ -1,3 +1,64 @@
+# CURRENT — .32 Map startup and Kings preparation — implementation under qualification; publication disabled — 2026-10-12 UTC
+
+**Current work:** 0.13.32 / code 47, continuing the exact .31 branch state
+`1499ab467d0d6b1418c15720c9c4c160f24f5522`. No .32 publication or physical
+Thor pass is claimed here. Draft PR #1 remains unmerged; main is untouched.
+The separately commissioned MapServer/ARM64 feasibility work remains separate.
+
+The two supplied .31 recovered reports establish fresh THORHERO creation,
+combat, an enhancement moved/slotted, complete ordinary committed saves and
+saved reopen with preserved identity/powers/costume/map and LoginCount 1→2.
+The user confirms saved enhancements and more complete resources/loading
+screens. Enhancement SQL tables were not exported, so enhancement persistence
+is user-observed. Creation's guest result passed; reopen failed only its owned
+Wine cleanup/cache-return gate after a committed save. Both outer wrappers
+are interrupted/unverified, lack Android captures and cannot authenticate
+Android-session attribution or infer the cause of an interruption.
+[Sanitized device evidence](android-evidence/client-map-startup-0.13.31-device-result.json).
+
+Physical .31 Atlas native readiness was **234.094 s** for creation and
+**216.496 s** for reopen. Kings dependencies/collision/graph preparation
+succeeded in **376.161 s**; its native MapServer then printed ready after
+**274.187 s**, beyond the shared 600-second station deadline. No transfer
+occurred; the character remained in Atlas and saved afterward. This replaces
+an asset-missing hypothesis with a concrete preparation/readiness budget
+failure. Previous native Map is `53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713`;
+the older report's `6a5bf…` binary is not the correct new timing baseline.
+
+Implemented candidate scope, still subject to mandatory native/public gates:
+
+| Report rank / issue | Implementation and qualification boundary |
+|---|---|
+| 1 — SERVER FX | Exact stock Parse6 projection, 58,505,496→3,380,680 bytes; preserves outer names/scalars/order. Genuine native full/compact ID/provider/preload comparisons required. Client full FX unchanged. |
+| 5 — animation validation | Full-byte certificate for 5,878 tracks / 88,380,730 raw bytes, SHA-256 of actual opened immutable Pig input; bounds and pose/base linking retained; stock fallback for loose/changed/unknown/crypto-failed input. Actual Win32 fixtures and shipping-consumer counters required. |
+| Kings preparation | 420 s cooperative preparation, up to 360 s native readiness, shared absolute 720 s request-age cap in guest and native bridge. Historical 600 s receipt retained as ancestry; no fabricated arrival or extended connected window. |
+| Cache reuse | Candidate Map and exact source/ABI ancestry checked before using .31 data-generation identity. Ordinary owner/source/private-cache checks remain active; actual current consumer recorded independently. |
+| Completed report | Authenticated 16-stage complete assets/audio route accepted; save observation separated from overall gates; exact completed normal carrier suppresses only identical guest recovery duplicate. |
+| Cleanup | Reuse only prior proved worker lineage across zombie leader/environment EACCES; unknown/PID-reused/revoked workers refused. Real process/sentinel regressions required. |
+| 2 — namespace/BIN certificates | Audited; current cache metadata cannot prove every effective provider or optional absence. Next: closed native provider/generation plus conditional per-BIN scan/source proof. No production freshness bypass. |
+| 4 — cooked PhysX meshes | Audited; current shared stream has unchecked reads/ownership. Next: owned bounded stream, exact SDK/geometry/cooking keys, native producer/consumer and Atlas/Kings collision parity. No shipping physics change. |
+| 3 / 6 / 7 / 8 / 9 / 10 | Finalized common data, aligned/mapped inputs, whole-owned-PRoot acceleration trial, matched FEX/Wine, device-profiled PGO and ARM64 server port remain separately qualified milestones. |
+
+There is **no measured .32 Thor speed/RAM/FPS improvement or under-30-second
+claim**. Host preparation, native fixtures and Wine preload qualify only their
+stated scopes. Physical .32 fresh/warm boot, ordinary save/reopen, enhancements,
+both monorail directions, Kings saved reopen, controls/captures and export/
+cleanup remain device gates. Assets 1.0.0 and the .25/.26-derived native
+Game/Db/GPU/runtime compatibility remain preserved.
+[Complete .32 installation, monorail and export instructions](COH-Atlas-Gameplay-0.13.32-testing.txt).
+
+Next required milestones: freeze candidate source; genuine MSVC x86 animation
+and deadline fixtures; compile only shipping MapServer plus separate nonshipping
+FX observer; six actual Wine FX/native-consumer proofs; admit exact artifacts;
+run every retained suite and current full cold/reuse Atlas/Kings preparation,
+PostgreSQL fixtures, independent DEX/signature checks; publish and audit actual
+public bytes; then focused Thor timing/zoning/save tests. Reuse accepted native
+artifacts where source/byte proofs match, without relabeling producer commits.
+
+---
+
+## Historical .31 publication record (superseded physical-gate status above)
+
 # CURRENT — .31 first-creation recovery and Kings Row repair — published; public bytes independently verified; physical Thor gates pending — 2026-10-11 UTC
 
 **Release: 0.13.31 / version code 46. Publication status: published; public bytes independently verified; physical Thor gates pending.**

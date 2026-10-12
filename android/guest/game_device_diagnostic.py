@@ -205,13 +205,16 @@ class ManifestDirectory:
 
 
 class DeviceWineProcessOwner(base.WineProcessOwner):
-    """Handle a worker exiting during a private-token ownership read.
+    """Recheck exiting workers and retain exact previously authenticated lineage.
 
     A zombie leader can outlive its workers. Android may deny a worker's
     namespace/environment read or return ESRCH while that worker is exiting,
     before its proc directory disappears. Only verified termination or a fresh
-    complete ownership check resolves that error; a persistently unreadable live task
-    still fails closed. Signaling remains the accepted identity/pidfd policy.
+    complete ownership check resolves that error. An environment-only EACCES
+    under a dead leader also permits the exact worker independently authenticated
+    while that leader was live, with fresh UID, namespace, group/session and
+    PID/start-time checks. An unknown or changed task still fails closed.
+    Signaling remains the accepted identity/pidfd policy.
     """
     PERMISSION_ATTEMPTS = 3
     PERMISSION_PAUSE = .025
@@ -222,7 +225,159 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
         self.receipt.update(permission_read_retries=0, worker_exit_rechecks=0,
                             permission_observations=[], permission_observations_omitted=0,
                             proc_read_retries=0, proc_read_observations=[],
-                            proc_read_observations_omitted=0, last_inspection_failure=None)
+                            proc_read_observations_omitted=0, last_inspection_failure=None,
+                            lineage_ownership_rechecks=0)
+        # Read-only sampler/scheduler copies share this registry. Only complete
+        # live-leader AND live-worker token/prefix proofs enter it; cleanup never
+        # guesses ownership from a process name, PGID, parent or unreadable env.
+        self.live_lineage = {'groups': {}, 'next_sample': 0, 'samples': 0,
+                             'unavailable_samples': 0, 'last_unavailable_type': None}
+
+    def lineage_stat(self, path):
+        def read():
+            value = (path / 'stat').read_text()
+            fields = value.rsplit(') ', 1)[1].split()
+            return {'pid': int(value.split(' (', 1)[0]), 'state': fields[0],
+                    'starttime': int(fields[19]), 'process_group': int(fields[2]),
+                    'session': int(fields[3])}
+        return self.proc_read(path, 'lineage_stat', read, True)
+
+    def lineage_environment(self, path, prefix):
+        def read():
+            with (path / 'environ').open('rb') as source:
+                raw = source.read(1024 * 1024 + 1)
+            require(len(raw) <= 1024 * 1024, 'Wine lineage environment exceeds bound')
+            values = raw.split(b'\0')
+            return (self.needle in values and
+                    [value for value in values if value.startswith(b'WINEPREFIX=')]
+                    == [b'WINEPREFIX=' + os.fsencode(prefix)])
+        return self.proc_read(path, 'lineage_environment', read)
+
+    def lineage_status(self, path, pid, tgid):
+        status = self.status(path)
+        require(status['uid'] == self.real_uid and status['pid'] == pid
+                and status['tgid'] == tgid, 'Wine lineage UID or group membership changed')
+        if not self.direct_pid_view:
+            require(len(status['namespace_pids']) == self.namespace_depth,
+                    'Wine lineage PID view changed')
+        namespace = self.pid_namespace(path)
+        own_namespace = self.namespace if not self.direct_pid_view else self.pid_namespace(self.proc_root / 'self')
+        require(namespace == own_namespace, 'Wine lineage namespace changed')
+        return {**status, 'namespace': namespace}
+
+    @staticmethod
+    def stable_lineage(value):
+        return {name: entry for name, entry in value.items() if name != 'state'}
+
+    def remember_live_group(self, identity, prefix, deadline):
+        path = self.proc_root / str(identity['proc_pid'])
+        group = self.lineage_stat(path)
+        require(group['pid'] == identity['proc_pid'] and group['starttime'] == identity['starttime'],
+                'Wine lineage group identity changed')
+        if group['state'] == 'Z':
+            return
+        group_status = self.lineage_status(path, group['pid'], group['pid'])
+        if not self.lineage_environment(path, prefix):
+            self.live_lineage['groups'].pop((group['pid'], group['starttime']), None)
+            return
+        workers = {}
+        for task, worker in self.live_tasks(path, deadline):
+            require(time.monotonic() < deadline, 'Wine lineage sampling timed out')
+            try:
+                before = self.lineage_stat(task)
+                require(before['pid'] == worker['pid'] and before['starttime'] == worker['starttime'],
+                        'Wine lineage worker identity changed')
+                status = self.lineage_status(task, worker['pid'], group['pid'])
+                if not self.lineage_environment(task, prefix):
+                    prior = self.live_lineage['groups'].get((group['pid'], group['starttime']))
+                    if prior is not None:
+                        prior['workers'].pop((worker['pid'], worker['starttime']), None)
+                    continue
+                after = self.lineage_stat(task)
+                require(after['state'] != 'Z' and self.stable_lineage(after) == self.stable_lineage(before)
+                        and self.lineage_status(task, worker['pid'], group['pid']) == status,
+                        'Wine lineage worker changed during authentication')
+                require((after['process_group'], after['session']) ==
+                        (group['process_group'], group['session']), 'Wine lineage group/session differs')
+                workers[(worker['pid'], worker['starttime'])] = {'stat': after, 'status': status}
+            except FileNotFoundError:
+                continue
+        after = self.lineage_stat(path)
+        environment_verified = self.lineage_environment(path, prefix)
+        if not environment_verified:
+            self.live_lineage['groups'].pop((group['pid'], group['starttime']), None)
+        require(after['state'] != 'Z' and self.stable_lineage(after) == self.stable_lineage(group)
+                and self.lineage_status(path, group['pid'], group['pid']) == group_status
+                and environment_verified, 'Wine lineage leader changed during authentication')
+        key = (group['pid'], group['starttime'])
+        registry = self.live_lineage['groups']
+        require(len(registry) < 4096 or key in registry, 'Wine lineage group count exceeds bound')
+        require(sum(len(value['workers']) for name, value in registry.items() if name != key)
+                + len(workers) <= 4096, 'Wine lineage worker count exceeds bound')
+        # Replacing rather than merging prevents a later readable rejection or
+        # incomplete observation from lending an old task a new proof.
+        registry[key] = {'stat': group, 'status': group_status, 'workers': workers,
+                         'prefix_sha256': hashlib.sha256(os.fsencode(prefix)).hexdigest()}
+
+    def observe_live_lineage(self, deadline, *, prefix):
+        """Optional, bounded health-loop observation; never delays gameplay on error."""
+        now = time.monotonic()
+        if now < self.live_lineage['next_sample']:
+            return
+        self.live_lineage['next_sample'] = now + 5
+        deadline = min(deadline, now + 1)
+        try:
+            require(isinstance(prefix, str) and Path(prefix).is_absolute()
+                    and 0 < len(os.fsencode(prefix)) <= 4096, 'Wine lineage prefix is invalid')
+            if not self.initialized:
+                self.initialize()
+            observer = copy.copy(self)
+            observer.receipt = copy.deepcopy(self.receipt)
+            observer.dead_leaders, observer.owned_workers = set(self.dead_leaders), set(self.owned_workers)
+            for identity in observer.scan(deadline):
+                require(time.monotonic() < deadline, 'Wine lineage sampling timed out')
+                observer.remember_live_group(identity, prefix, deadline)
+            self.live_lineage['samples'] += 1
+        except Exception as exc:
+            self.live_lineage['unavailable_samples'] += 1
+            self.live_lineage['last_unavailable_type'] = type(exc).__name__
+
+    def continuing_worker_lineage(self, path, identity, task, worker, deadline):
+        record = self.live_lineage['groups'].get((identity['pid'], identity['starttime']))
+        prior = record and record['workers'].get((worker['pid'], worker['starttime']))
+        if prior is None:
+            return False
+        require(deadline is None or time.monotonic() < deadline, 'Wine lineage recheck timed out')
+        group = self.lineage_stat(path)
+        current = self.lineage_stat(task)
+        # State alone may change. Every independent stable identity and ownership
+        # field must still equal the complete authenticated live observation.
+        require(group['state'] == 'Z' and current['state'] != 'Z'
+                and self.stable_lineage(group) == self.stable_lineage(record['stat'])
+                and self.stable_lineage(current) == self.stable_lineage(prior['stat']),
+                'Cached Wine worker lineage changed')
+        # A zombie leader's ns symlink can itself disappear while workers live.
+        # Read its independent status/PID view, and prove the namespace from the
+        # exact continuing worker's ns link plus its freshly checked TGID.
+        require(self.status(path) == {name: value for name, value in record['status'].items()
+                                     if name != 'namespace'}
+                and self.lineage_status(task, worker['pid'], identity['pid']) == prior['status'],
+                'Cached Wine worker ownership changed')
+        after_group, after_worker = self.lineage_stat(path), self.lineage_stat(task)
+        require(after_group['state'] == 'Z' and after_worker['state'] != 'Z'
+                and self.stable_lineage(after_group) == self.stable_lineage(group)
+                and self.stable_lineage(after_worker) == self.stable_lineage(current),
+                'Cached Wine worker changed during ownership recheck')
+        self.receipt['lineage_ownership_rechecks'] += 1
+        return True
+
+    def cleanup(self, deadline):
+        self.receipt['live_lineage_observation'] = {
+            name: value for name, value in self.live_lineage.items() if name not in ('groups', 'next_sample')}
+        self.receipt['live_lineage_observation']['authenticated_groups'] = len(self.live_lineage['groups'])
+        self.receipt['live_lineage_observation']['authenticated_workers'] = sum(
+            len(value['workers']) for value in self.live_lineage['groups'].values())
+        return super().cleanup(deadline)
 
     def observe_proc(self, observation):
         if len(self.receipt['proc_read_observations']) < self.OBSERVATION_LIMIT:
@@ -409,6 +564,8 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         observation = self.observe_permission(identity, identity, operation, exc, 1)
                         exc.ownership_observation = observation
                 if not token_present:
+                    if unreadable is None:
+                        self.live_lineage['groups'].pop((identity['pid'], identity['starttime']), None)
                     try:
                         changed = self.process_stat(path)
                         require(changed['pid'] == identity['pid'] and changed['starttime'] == identity['starttime'],
@@ -476,6 +633,10 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         previous_denial.update(resolution='complete_ownership_read',
                             worker_state_after=current_worker['state'], token_matched=token_present)
                     if not token_present or current_worker['state'] == 'Z':
+                        if not token_present:
+                            prior = self.live_lineage['groups'].get(group_key)
+                            if prior is not None:
+                                prior['workers'].pop((worker['pid'], worker['starttime']), None)
                         break
                     worker_key = (*group_key, worker['pid'], worker['starttime'])
                     require(len(self.owned_workers) < 4096 or worker_key in self.owned_workers,
@@ -514,6 +675,26 @@ class DeviceWineProcessOwner(base.WineProcessOwner):
                         observation['resolution'] = 'same_worker_became_zombie'
                         self.receipt['worker_exit_rechecks'] += 1
                         break
+                    lineage_verified = False
+                    if (isinstance(exc, PermissionError) and exc.errno == 13
+                            and operation == 'worker_environment'):
+                        try:
+                            lineage_verified = self.continuing_worker_lineage(
+                                path, identity, task, worker, deadline)
+                        except FileNotFoundError:
+                            observation['resolution'] = 'verified_disappearance'
+                            self.receipt['worker_exit_rechecks'] += 1
+                            break
+                        except Exception as lineage_error:
+                            self.failed_recheck(observation, lineage_error, 'worker_lineage_verification')
+                    if lineage_verified:
+                        observation['resolution'] = 'verified_live_leader_and_worker_lineage'
+                        worker_key = (*group_key, worker['pid'], worker['starttime'])
+                        require(len(self.owned_workers) < 4096 or worker_key in self.owned_workers,
+                                'Wine ownership worker count exceeds bound')
+                        self.owned_workers.add(worker_key)
+                        self.receipt['owned_live_workers'] = len(self.owned_workers)
+                        return True
                     if attempt == self.PERMISSION_ATTEMPTS or (deadline is not None
                             and time.monotonic() + self.PERMISSION_PAUSE >= deadline):
                         observation['resolution'] = ('persistent_live_permission_denied'

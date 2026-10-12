@@ -20,6 +20,7 @@ import atlas_world_assets as world
 import character_avatar_assets as avatar
 import character_server_data_cache as server_data_cache
 import server_cache_package
+import server_fx_catalog
 import native_character_events as character_events
 
 base, game, dbserver, require = login.base, login.game, login.dbserver, login.require
@@ -923,6 +924,7 @@ class LocalCharacterServer(login.LocalLoginServer):
         # Mirror actual directories as the accepted client worktree does, then
         # link individual immutable files. Keep caches/configuration private.
         source_info = source.stat()
+        cache_native_package = self.data_cache_native_package()
         identity = {'format': 2, 'source_data': str(source.resolve(strict=True)),
             'source_device': source_info.st_dev, 'source_inode': source_info.st_ino,
             'source_roots': [{'path': str(root.resolve(strict=True)),
@@ -936,9 +938,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             'server_cache_compatibility_sha256': hashlib.sha256(
                 server_data_cache.canonical(server_cache_package.compatibility_identity())).hexdigest(),
             'native_closure_sha256': hashlib.sha256(server_data_cache.canonical({
-                'source_commit': self.map_package.get('source_commit', device.SOURCE_COMMIT),
-                'data_commit': self.map_package.get('data_commit', device.DATA_COMMIT),
-                'files': self.map_package['files']})).hexdigest()}
+                'source_commit': cache_native_package.get('source_commit', device.SOURCE_COMMIT),
+                'data_commit': cache_native_package.get('data_commit', device.DATA_COMMIT),
+                'files': cache_native_package['files']})).hexdigest()}
         if required_geometry is not None:
             identity['required_geometry'] = required_geometry
         self.data_cache = server_data_cache.ServerDataCache(self.owner.root, identity,
@@ -988,6 +990,11 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.creation_report['prepared_server_caches'] = {'format': 1,
                 'status': 'skipped_native_fallback', 'reason': str(failure)[:300], 'installed_files': 0}
         checkpoint('prepared_server_definition_caches')
+        self.creation_report['server_fx_catalog'] = server_fx_catalog.install(
+            self.owner.args.assets, self.runtime, context=self.ctx,
+            mapserver_package=self.map_package)
+        self.ctx.report['server_fx_catalog'] = self.creation_report['server_fx_catalog']
+        checkpoint('server_fx_catalog')
         # The stock Pig reader can consume unchanged animation bytes without
         # moving or invalidating the preserved server data/cache generation.
         # An invalid present package fails preparation; never launch a bad pig.
@@ -1035,6 +1042,22 @@ class LocalCharacterServer(login.LocalLoginServer):
                 'Manual Atlas DbServer entered the unused Launcher wait')
         self.manual_atlas_startup['native_ack_observed'] = count == 1
         return count == 1
+
+    def data_cache_native_package(self):
+        """Retain an authenticated data generation across this narrow overlay.
+
+        The native startup contract proves the unchanged directory, parser,
+        schema and dependency ancestry. Actual candidate bytes are checked
+        independently; cache ownership and source validation still run in full.
+        """
+        package = self.map_package
+        if 'native_map_startup' not in package:
+            return package
+        import native_map_startup_contract as startup
+        proof = startup.verify_current_map(self.map_package_dir / 'MapServer.exe', package)
+        self.creation_report['server_data_cache_native_consumer'] = dict(proof,
+            cache_identity_policy='retain_authenticated_station_donor_data_generation')
+        return startup.previous_package(package)
 
     def legacy_data_identity_matches(self, previous, current, receipt):
         """Qualify wrapper-only legacy keys without moving their source root.
@@ -1155,6 +1178,14 @@ class LocalCharacterServer(login.LocalLoginServer):
                 and getattr(self, 'kings_row_beacon_graph', {}).get('verified') is True,
                 'Kings Row package and native graph qualification are required')
         started = time.monotonic()
+        phase_at, phases = started, {}
+        self.creation_report['kings_row_preparation_phase_seconds'] = phases
+
+        def checkpoint(name):
+            nonlocal phase_at
+            now = time.monotonic()
+            phases[name], phase_at = round(now - phase_at, 6), now
+
         target = self.runtime.with_name(self.runtime.name + '-kings-row')
         require(not target.exists() and not target.is_symlink(), 'Kings Row session runtime already exists')
         target.mkdir(mode=0o700); (target / 'data').mkdir(mode=0o700)
@@ -1166,6 +1197,7 @@ class LocalCharacterServer(login.LocalLoginServer):
             self.owner.args.session_id, self.ctx)
         self.kings_row_data_cache = cache
         reused = cache.checkout(target / 'data')
+        checkpoint('server_data_cache_checkout')
         for name in self.schema['files']:
             destination = target / name
             destination.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -1174,7 +1206,9 @@ class LocalCharacterServer(login.LocalLoginServer):
             staged = dict(cache.record['stats'], linked_immutable_files=0, copied_private_files=0)
         else:
             staged = self.stage_map_data(self.owner.work / 'data', target / 'data', cache_recorder=cache)
+        checkpoint('warm_schema_restore' if reused else 'cold_server_data_mirror')
         geometry = zone_asset_package.install(target, self.owner.args.assets, self.ctx, collision_only=True)
+        checkpoint('required_original_collision_geometry')
         if not reused:
             known = set(cache.directory_names)
             targets = world.resolve_targets(target, self.zone_asset_document['kings_row_collision_files'], self.ctx)
@@ -1192,29 +1226,38 @@ class LocalCharacterServer(login.LocalLoginServer):
             staged['bytes'] += sum(pin['bytes'] for pin in self.zone_asset_document['kings_row_collision_files'].values())
             staged['copied_private_files'] += len(targets)
             cache.seal(target / 'data', staged)
+        checkpoint('server_data_receipt_seal')
         dependencies = self.copy_kings_native_dependencies(target)
         # Preserve the current private DbServer connection, including its stock
         # logging policy. Never reuse a cached session's credential file.
         config = target / 'data/server/db/servers.cfg'
         server_data_cache.ServerDataCache.restore_schema(self.runtime / 'data/server/db/servers.cfg', config, target)
+        checkpoint('native_dependencies_and_session_configuration')
         cache_compatibility = server_cache_package.verify_mapserver_compatibility(target / 'MapServer.exe', self.map_package)
         donor = server_cache_package.build_expected_identity(target / 'data', target / 'MapServer.exe',
             mapserver_package=self.map_package)
         prepared_caches = server_cache_package.install(self.owner.args.assets / server_cache_package.ARCHIVE,
             target / 'data', donor, context=self.ctx)
+        checkpoint('prepared_server_definition_caches')
+        fx_catalog = server_fx_catalog.install(self.owner.args.assets, target, context=self.ctx,
+            mapserver_package=self.map_package)
+        checkpoint('server_fx_catalog')
         import server_animation_package
         animation = server_animation_package.install(self.owner.args.assets / 'server-animations.pigg',
             self.owner.args.assets / 'server-animation-manifest.json', target, context=self.ctx,
             mapserver_package=self.map_package)
+        checkpoint('server_animation_pack')
         graph = kings_row_beacon_package.install(self.owner.args.assets / kings_row_beacon_package.ARCHIVE,
             self.owner.args.assets / kings_row_beacon_package.MANIFEST, target, context=self.ctx,
             imported_inputs_readonly=True, lock_path=self.owner.args.assets / kings_row_beacon_package.LOCK)
+        checkpoint('kings_row_beacon_graph')
         self.kings_row_beacon_graph = graph
         report = {'runtime': target.name, 'geometry': geometry, 'graph': graph,
             'native_dependencies': dependencies,
             'server_data_cache': cache.summary, 'prepared_server_caches': prepared_caches,
             'server_cache_native_compatibility': cache_compatibility,
-            'animation': animation, 'elapsed_seconds': round(time.monotonic() - started, 6)}
+            'animation': animation, 'server_fx_catalog': fx_catalog,
+            'phase_seconds': dict(phases), 'elapsed_seconds': round(time.monotonic() - started, 6)}
         self.creation_report['kings_row_preparation'] = report
         self.creation_report['kings_row_beacon_graph'] = graph
         self.ctx.report['kings_row_preparation'] = report
@@ -1401,6 +1444,15 @@ class LocalCharacterServer(login.LocalLoginServer):
 
     def health(self):
         super().health()
+        # Capture exact live leader/worker ownership while the Wine leader is
+        # still readable. Android can deny the worker environment after that
+        # leader exits; cleanup may then use only a previously authenticated,
+        # unchanged worker identity. Sampling is bounded and observational.
+        wine_owner = getattr(self.owner, 'wine_owner', None)
+        observe = getattr(wine_owner, 'observe_live_lineage', None)
+        if observe is not None:
+            observe(min(self.ctx.deadline, time.monotonic() + 1),
+                    prefix=self.owner.wine_env.get('WINEPREFIX'))
         if self.map_process is not None:
             crash = self.map_crash_observation()
             if crash is not None:

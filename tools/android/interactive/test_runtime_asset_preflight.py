@@ -69,5 +69,44 @@ class RuntimeAssetPreflightTests(unittest.TestCase):
         self.assertEqual(module.stable(value), {'native_runtime_booted': False, 'proof': [{'status': 'passed'}]})
         self.assertIn('elapsed_seconds', value)
 
+    def test_full_historical_wrapper_is_mandatory_and_untyped_hash_switch_refused(self):
+        fixture = Path(__file__).with_name('fixtures')/'monorail-game-package-0.13.31.json'
+        module.checked(fixture, {'bytes': 162281,
+            'sha256': '520713891e4d5be9d7a64fb736ef15e37e062a104513ec37bdaf09670898dab7'})
+        package = json.loads(fixture.read_bytes())
+        value = module.package_native_binding(package)
+        self.assertEqual(module.validate_native_binding(value), module.HISTORICAL_MAPSERVER)
+        for changed in ({'format': True}, {'authenticated_mapserver': pin(b'arbitrary map')},
+                        {'native_consumer_binding': {}}, {'game_package_canonical_sha256': 'a'*64}):
+            invalid = dict(value, **changed)
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                module.validate_native_binding(invalid)
+        with self.assertRaises(ValueError):
+            module.validate_native_binding({'expected_mapserver': module.HISTORICAL_MAPSERVER})
+
+    def test_new_startup_payloads_and_full_client_fx_source_are_explicit(self):
+        self.assertEqual(set(module.STARTUP_PAYLOADS), {'native_map_startup_contract.py',
+            'server_fx_catalog.py', 'server-fx-catalog.bin', 'server-fx-catalog-manifest.json', 'map-startup-manifest.json'})
+        self.assertEqual(module.ASSET_PINS['runtime/client-caches.zip'], {'bytes': 27071659,
+            'sha256': '5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'})
+        self.assertNotEqual(module.CLIENT_FULL_FX, module.SERVER_PROJECTED_FX)
+
+    def test_serialized_leaf_proof_cannot_change_native_admission_or_claim_device_execution(self):
+        fixture = Path(__file__).with_name('fixtures')/'monorail-game-package-0.13.31.json'
+        admission = module.package_native_binding(json.loads(fixture.read_bytes()))
+        value = {'status': 'passed', 'scope': module.SCOPE, 'native_runtime_booted': False,
+            'physical_execution_validated': False, 'full_private_worktree_mirror_executed': False,
+            'installers': {name: {'native_admission': copy.deepcopy(admission),
+                'mapserver': module.HISTORICAL_MAPSERVER, 'server_fx_catalog_cold': None,
+                'server_fx_catalog_reuse': None} for name in ('atlas', 'kings')}}
+        module.validate_proof(value)
+        for flag in ('native_runtime_booted', 'physical_execution_validated', 'full_private_worktree_mirror_executed'):
+            bad = copy.deepcopy(value); bad[flag] = True
+            with self.subTest(flag=flag), self.assertRaises(ValueError): module.validate_proof(bad)
+        bad = copy.deepcopy(value); bad['installers']['kings']['native_admission']['native_consumer_binding'] = {}
+        with self.assertRaises(ValueError): module.validate_proof(bad)
+        bad = copy.deepcopy(value); bad['installers']['atlas']['mapserver'] = pin(b'unknown native')
+        with self.assertRaises(ValueError): module.validate_proof(bad)
+
 
 if __name__ == '__main__': unittest.main()

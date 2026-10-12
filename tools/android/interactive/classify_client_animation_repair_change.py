@@ -57,7 +57,9 @@ def historical_repair_owned(*context):
     # Preserve the exact historical .30 owner while routing the separately
     # reviewed .31 Java/guest lane through its own finite allowlist.
     from classify_client_profile_recovery_change import client_profile_recovery_owned
-    return client_animation_repair_owned(*context) or client_profile_recovery_owned(*context)
+    from classify_client_map_startup_change import client_map_startup_owned
+    return (client_animation_repair_owned(*context) or client_profile_recovery_owned(*context)
+        or client_map_startup_owned(*context))
 
 
 def main():

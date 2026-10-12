@@ -528,7 +528,15 @@ def install(archive, manifest_path, runtime, *, context, imported_inputs_readonl
     value = read_manifest(manifest_path)
     profile, selected = select_profile(runtime, value, context)
     accepted_mapserver = STOCK_MAPSERVER_SHA256
-    if isinstance(mapserver_package, dict) and 'native_monorail' in mapserver_package:
+    if isinstance(mapserver_package, dict) and 'native_map_startup' in mapserver_package:
+        import native_map_startup_contract as startup
+        receipt = startup.embedded_receipt(mapserver_package)
+        require(receipt['previous_mapserver']['sha256'] == startup.PREVIOUS_SHA256
+                and receipt['build_input']['monorail_build_input'].get('retained_collision_sources') == RETAINED_COLLISION_SOURCES,
+                'Map startup changed the qualified collision/beacon algorithms')
+        startup.verify_current_map(runtime / 'MapServer.exe', mapserver_package)
+        accepted_mapserver = receipt['mapserver']['sha256']
+    elif isinstance(mapserver_package, dict) and 'native_monorail' in mapserver_package:
         import native_monorail_contract
         receipt = native_monorail_contract.embedded_receipt(mapserver_package)
         require(receipt['previous_mapserver']['sha256'] == STOCK_MAPSERVER_SHA256

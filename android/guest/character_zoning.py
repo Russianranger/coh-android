@@ -27,9 +27,26 @@ MAPS = {1: {'name': 'Atlas Park', 'port': 7001, 'instance': 1, 'world': 'City_01
 MAX_EPOCHS = 4
 PREPARE_SECONDS = 600
 WARM_PREPARE_SECONDS = 90
+# Cold Kings preparation and native startup are distinct bounded phases. The
+# .31 Thor run completed both but its single 600-second clock expired first.
+# These are lifecycle allowances, not a measured loading-speed improvement.
+KINGS_PYTHON_PREPARE_SECONDS = 420
+KINGS_NATIVE_READY_SECONDS = 360
+KINGS_TOTAL_PREPARE_SECONDS = 720
 TRANSFER_SECONDS = 180
 REQUEST_AGE_MS = 120000
 NUMBER = character.character_events.NUMBER
+PREPARATION_FIELDS = (
+    'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
+    'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
+    'python_preparation_budget_seconds', 'native_ready_budget_seconds',
+    'preparation_budget_policy', 'preparation_phase', 'preparation_deadline_utc_ms',
+    'preparation_absolute_cap_basis', 'preparation_request_age_ms',
+    'python_preparation_started_utc_ms', 'python_preparation_finished_utc_ms',
+    'python_preparation_elapsed_ms', 'runtime_preparation_elapsed_ms', 'python_preparation_completed',
+    'python_preparation_deadline_utc_ms', 'native_ready_started_utc_ms',
+    'native_ready_finished_utc_ms', 'native_ready_elapsed_ms', 'native_ready_deadline_utc_ms',
+    'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended')
 
 
 def travel_window(deadline, now, now_ms, preparation_seconds):
@@ -46,6 +63,18 @@ def travel_window(deadline, now, now_ms, preparation_seconds):
         'departure_deadline_utc_ms': now_ms + int((departure - now) * 1000),
         'session_deadline_utc_ms': now_ms + int((deadline - now) * 1000),
         'session_budget_extended': False}
+
+
+def preparation_budgets(map_id, resident):
+    require(supported(map_id) and type(resident) is bool, 'Invalid zoning preparation identity')
+    python_seconds = KINGS_PYTHON_PREPARE_SECONDS if map_id == 5 and not resident else 0
+    native_seconds = (WARM_PREPARE_SECONDS if resident else
+                      KINGS_NATIVE_READY_SECONDS if map_id == 5 else PREPARE_SECONDS)
+    return {'python_preparation_budget_seconds': python_seconds,
+            'native_ready_budget_seconds': native_seconds,
+            'preparation_budget_seconds': (KINGS_TOTAL_PREPARE_SECONDS if python_seconds
+                                           else native_seconds),
+            'preparation_budget_policy': 'bounded_python_then_native_ready_v1'}
 
 
 def scan_new_console(owned):
@@ -276,7 +305,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         self.zoning_report.update(preparations=[], native_build_reused=True,
             total_travel_includes_preparation=True, preparation_overlap_with_gameplay=True,
             cold_definition='destination_process_not_resident_filesystem_cache_unknown',
-            finite_process_limit=2, preparation_stage_observations=[], preparation_schedulers=[])
+            finite_process_limit=2, preparation_stage_observations=[], preparation_schedulers=[],
+            preparation_phase_observations=[])
         self.ctx.report['character_zoning'] = self.zoning_report
         self.creation_report.update(zoning_enabled=True, connected_on_supported_map=False)
 
@@ -324,7 +354,9 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         require(self.pending is not None and self.pending.get('phase') == 'ready'
                 and not (self.owner.args.state / 'character-logout.json').exists(),
                 'Monorail authorization cancelled for ordinary save')
+        self._check_preparation_deadline()
         base.private_write(temporary, monorail_events.reply(record))
+        self._check_preparation_deadline()
         # After publishing, native departure can race the next observer tick.
         # Any failure from here is an uncertain handoff and must stop gameplay.
         self.pending['native_authorization_issued'] = True
@@ -459,10 +491,52 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'Duplicate or unreviewed zoning MapServer launch')
         map_runtime = self.runtime
         if map_id == 5:
-            prepared = self.prepare_kings_row_runtime()
+            bounded = self.pending is not None and self.pending['to_map_id'] == map_id
+            if bounded:
+                self._check_preparation_deadline()
+                runtime_started = time.monotonic()
+                original_check = self.ctx.check
+                def check_python_preparation():
+                    original_check()  # Retain overall cancellation, output and server-health checks.
+                    self._check_preparation_deadline()
+                    require(not (self.owner.args.state / 'character-logout.json').exists(),
+                            'Preparation cancelled for the requested ordinary save')
+                # The existing mirror/hash/install loops are cooperative. Scope
+                # their phase clock to this call and restore the shared context
+                # before readiness, ordinary saves or cleanup use it again.
+                self.ctx.check = check_python_preparation
+                try:
+                    prepared = self.prepare_kings_row_runtime()
+                finally:
+                    self.ctx.check = original_check
+                    now = time.monotonic()
+                    self.pending.update(python_preparation_finished_utc_ms=int(time.time() * 1000),
+                        python_preparation_elapsed_ms=round((now - self.pending['preparation_started_monotonic']) * 1000),
+                        runtime_preparation_elapsed_ms=round((now - runtime_started) * 1000),
+                        python_preparation_completed=False)
+            else:
+                prepared = self.prepare_kings_row_runtime()
             require(prepared.get('graph', {}).get('verified') is True
                     and prepared['graph'].get('map_id') == 5, 'Kings Row native graph installation failed')
             map_runtime = prepared['runtime']
+            if bounded:
+                # Preparation may block for minutes. A clock sampled before
+                # that work cannot admit a new native process or authorize a
+                # station departure after its phase/save reserves expire.
+                now = time.monotonic()
+                now_ms = int(time.time() * 1000)
+                pending = self.pending
+                self._check_preparation_deadline()
+                require(not (self.owner.args.state / 'character-logout.json').exists(),
+                        'Preparation cancelled for the requested ordinary save')
+                pending.update(python_preparation_completed=True,
+                               preparation_phase='native_readiness', native_ready_started_utc_ms=now_ms,
+                               native_ready_started_monotonic=now)
+                pending['deadline'] = min(now + pending['native_ready_budget_seconds'],
+                    pending['preparation_overall_deadline'], pending['departure_deadline_monotonic'])
+                pending['native_ready_deadline_utc_ms'] = now_ms + int((pending['deadline'] - now) * 1000)
+                self._preparation_observation()
+                self._check_preparation_deadline()
         character.game.check_game_port(MAPS[map_id]['port'], socket.SOCK_DGRAM)
         path = self.runtime / ('character-zoning-' + str(map_id) + '-progress.bin')
         require(not path.exists() and not path.is_symlink(), 'Stale zoning map progress file')
@@ -481,6 +555,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'contract': self.immediate_event_contract(), 'legacy_sorted_logs_used_for_ready_or_ground': False})
         if self.monorail_enabled():
             environment.update(self.monorail_environment(map_id))
+        if self.pending is not None:
+            self._check_preparation_deadline()
         launch_ms = int(time.time() * 1000)
         process = self.ctx.start('local-character-zoning-' + str(map_id), ['/usr/bin/env', '--chdir=' + str(map_runtime),
             self.owner.args.wine, base.windows_path(map_runtime / 'MapServer.exe'), '-nogui', '-db', '127.0.0.1',
@@ -488,6 +564,37 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             '-idleExitTimeout', '0', '-donotautogroup'], env=environment)
         self.maps[map_id] = {'process': process, 'progress_path': path, 'previous': None,
                              'launch_utc_ms': launch_ms, 'ready': False, 'scheduler': pacing}
+
+    def _check_preparation_deadline(self):
+        """Read fresh clocks; phase allowances cannot extend the connected cap."""
+        now = time.monotonic()
+        pending = self.pending
+        require(pending is not None, 'Zoning preparation has no current request')
+        phase = pending.get('preparation_phase', 'native_readiness')
+        message = ('Kings Row Python preparation timed out before native startup; save in Atlas and export'
+                   if phase == 'python_inputs' else
+                   'Zoning native readiness timed out before departure; save on the current map and export')
+        if pending.get('phase') == 'arrival':
+            message = 'Zoning arrival timed out; preserve the profile and export this report'
+        require(now < pending['deadline'], message)
+        # Arrival has already passed the station departure gate. Its separate
+        # existing bound still ends before the neutral/save reserves.
+        if pending.get('phase') != 'arrival' and 'departure_deadline_monotonic' in pending:
+            require(now < pending['departure_deadline_monotonic'],
+                    'Preparation exhausted the reserved arrival and ordinary-save budget')
+        return now
+
+    def _preparation_observation(self):
+        """Phase diagnostics leave the strict station request state unchanged."""
+        pending = self.pending
+        value = {'epoch': self.epoch, 'map_id': pending['to_map_id'],
+            'observation_kind': 'phase_budget', 'observed_utc_ms': int(time.time() * 1000),
+            'observed_monotonic_ms': int(time.monotonic() * 1000),
+            'native_arrival_verified': False, 'physical_performance_gain_verified': False,
+            **{key: pending[key] for key in PREPARATION_FIELDS if key in pending}}
+        self.zoning_report.setdefault('preparation_phase_observations', []).append(value)
+        self.ctx.event('character_zoning_preparation', session_id=self.owner.args.session_id,
+            client_pid=self.creation_report['client_pid'], character_id=1, **value)
 
     def _scheduler_observation(self, phase, pacing):
         report = pacing.report
@@ -611,9 +718,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             monorail_requires_reopen=getattr(self, 'monorail_requires_reopen', False))
         if self.pending is not None:
             for key in ('native_request_sequence', 'native_station_pid', 'native_station_request_verified',
-                        'requested_utc_ms', 'preparation_started_utc_ms', 'preparation_ready_utc_ms',
-                        'preparation_elapsed_ms', 'preparation_kind', 'preparation_budget_seconds',
-                        'departure_deadline_utc_ms', 'session_deadline_utc_ms', 'session_budget_extended'):
+                        *PREPARATION_FIELDS):
                 if key in self.pending:
                     value[key] = self.pending[key]
         self.zoning_report['events'].append(value)
@@ -656,19 +761,46 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
         target = value['to_map_id']
         require(target != 5 or self.monorail_enabled(), 'Kings Row assets/native route are not qualified')
         resident = target in self.maps
+        budgets = preparation_budgets(target, resident)
+        now = time.monotonic()
         window = travel_window(getattr(getattr(self.owner, 'session_budget', None), 'deadline', None),
-            time.monotonic(), now_ms, WARM_PREPARE_SECONDS if resident else PREPARE_SECONDS)
+            now, now_ms, budgets['preparation_budget_seconds'])
+        initial_seconds = budgets['python_preparation_budget_seconds'] or budgets['native_ready_budget_seconds']
+        # The native bridge starts its own clock when it emits the station
+        # request, before the guest can observe it. Never grant that unseen
+        # observation delay again as extra cold Kings preparation lifetime.
+        request_age_ms = now_ms - value['requested_utc_ms']
+        absolute_seconds = budgets['preparation_budget_seconds'] - (
+            request_age_ms / 1000 if budgets['python_preparation_budget_seconds'] else 0)
+        require(absolute_seconds > 0, 'Native station request exhausted its preparation budget')
+        initial_seconds = min(initial_seconds, absolute_seconds)
         self.epoch += 1
         self.request_history[self.epoch] = dict(value)
         self.pending = dict(value, phase='baseline',
-            deadline=time.monotonic() + window['preparation_budget_seconds'], **window,
+            deadline=now + initial_seconds, **window,
             next_query=0, transfer_requested=False, preparation_started_utc_ms=now_ms,
-            preparation_kind='resident_warm' if resident else 'cold')
+            preparation_started_monotonic=now,
+            preparation_overall_deadline=now + absolute_seconds,
+            preparation_deadline_utc_ms=now_ms + round(absolute_seconds * 1000),
+            preparation_absolute_cap_basis=('validated_request_utc_ms' if budgets['python_preparation_budget_seconds']
+                                            else 'accepted_preparation_clock'),
+            preparation_request_age_ms=request_age_ms,
+            departure_deadline_monotonic=now + (window['departure_deadline_utc_ms'] - now_ms) / 1000,
+            preparation_kind='resident_warm' if resident else 'cold',
+            preparation_phase='python_inputs' if budgets['python_preparation_budget_seconds'] else 'native_readiness')
+        self.pending.update(budgets)
+        if budgets['python_preparation_budget_seconds']:
+            self.pending.update(python_preparation_started_utc_ms=now_ms,
+                python_preparation_deadline_utc_ms=now_ms + round(initial_seconds * 1000))
+        else:
+            self.pending.update(native_ready_started_utc_ms=now_ms, native_ready_started_monotonic=now,
+                native_ready_deadline_utc_ms=now_ms + round(initial_seconds * 1000))
         native = getattr(self, 'station_accepting', None)
         if native is not None:
             self.pending.update(native_station_request=native, native_request_sequence=native['request'],
                 native_station_pid=native['pid'], native_station_request_verified=True)
         self._emit('preparing', current_map_verified=True, destination_ready=False)
+        self._preparation_observation()
         if target in self.maps:
             self.pending['phase'] = 'map_ready'
         else:
@@ -686,9 +818,10 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 and value['sent_utc_ms'] < self.pending['departure_deadline_utc_ms'],
                 'Zoning command exceeded the reserved arrival and ordinary-save budget')
         require(self.live_progress(self._map_progress(value['to_map_id'])), 'Prepared destination became stale')
+        now = self._check_preparation_deadline()
         self.delivery_history[self.epoch] = dict(value)
         self.pending.update(phase='arrival', delivery=dict(value), transfer_requested=True,
-                            deadline=time.monotonic() + TRANSFER_SECONDS, next_query=0)
+                            deadline=now + TRANSFER_SECONDS, next_query=0)
         self._emit('transferring', current_map_verified=False, transfer_requested=True,
                    sent_utc_ms=value['sent_utc_ms'],
                    native_station_departure_verified=self.pending.get('native_station_request_verified') is True)
@@ -754,8 +887,7 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 'native_timestamp_precision_ms': 1 if self.monorail_enabled() else 1000, 'same_client_pid': self.creation_report['client_pid'],
                 'observed_transfer_flag_or_disconnected': pending.get('observed_transition', False),
                 'arrival_native_verified': True, 'sql_transfer_commit_acknowledged': False}
-            leg.update({key: pending[key] for key in ('requested_utc_ms', 'preparation_kind',
-                'preparation_started_utc_ms', 'preparation_ready_utc_ms', 'preparation_elapsed_ms')
+            leg.update({key: pending[key] for key in PREPARATION_FIELDS
                 if key in pending})
             leg.update(travel_method='stock_monorail' if pending.get('native_station_request_verified') else 'mapmove',
                 native_transfer_observed_ms=leg['elapsed_ms'],
@@ -827,11 +959,14 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
             if self.pending is None:
                 return
             pending, target = self.pending, self.pending['to_map_id']
-            require(now < pending['deadline'], 'Zoning preparation or arrival timed out; export this report')
+            now = self._check_preparation_deadline()
+            now_ms = int(time.time() * 1000)
             require(pending.get('transfer_requested') or pending.get('native_authorization_issued') or
                     not (self.owner.args.state / 'character-logout.json').exists(),
                     'Preparation cancelled for the requested ordinary save')
             result = self._query_poll()
+            now = self._check_preparation_deadline()
+            now_ms = int(time.time() * 1000)
             if pending['phase'] == 'arrival':
                 self._observe_arrival(result, now_ms)
                 return
@@ -840,6 +975,8 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                 require(baseline.get('not_started') is True, 'Zoning destination already belongs to another process')
                 pending['baseline'] = baseline
                 self._spawn_map(target)
+                now = self._check_preparation_deadline()
+                now_ms = int(time.time() * 1000)
                 pending['phase'] = 'map_ready'
             if pending['phase'] == 'map_ready':
                 pacing = self.maps[target].get('scheduler')
@@ -855,26 +992,30 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     if ready(sample, target) and self.live_progress(current):
                         if pacing is not None:
                             self._restore_preparation(pacing)
-                        self.maps[target]['ready'] = True
                         logs = self.current_logs()
                         ready_now_ms = int(time.time() * 1000)
-                        require(time.monotonic() < pending['deadline'],
-                                'Preparation exhausted its budget before scheduler restoration')
                         prior = (monorail_events.latest_ready(self.map_native_events(target))
                                  if self.monorail_enabled() else stock_ready(logs, target, 0, ready_now_ms))
+                        current = self._map_progress(target)
+                        require(self.live_progress(current), 'Destination progress became stale before readiness')
+                        ready_now = self._check_preparation_deadline()
+                        ready_now_ms = int(time.time() * 1000)
+                        self.maps[target]['ready'] = True
                         pending.update(phase='ready', ready_utc_ms=ready_now_ms, destination_status=sample,
                             prior_ready_hashes=[prior['line_sha256']] if prior else [],
                             preparation_ready_utc_ms=ready_now_ms,
-                            preparation_elapsed_ms=ready_now_ms - pending['requested_utc_ms'])
+                            preparation_elapsed_ms=ready_now_ms - pending['requested_utc_ms'],
+                            native_ready_finished_utc_ms=ready_now_ms,
+                            native_ready_elapsed_ms=round((ready_now - pending['native_ready_started_monotonic']) * 1000))
                         self.zoning_report.setdefault('preparations', []).append({key: pending[key]
-                            for key in ('epoch', 'from_map_id', 'to_map_id', 'requested_utc_ms',
-                                'preparation_started_utc_ms', 'preparation_ready_utc_ms',
-                                'preparation_elapsed_ms', 'preparation_kind')})
+                            for key in ('epoch', 'from_map_id', 'to_map_id', *PREPARATION_FIELDS)
+                            if key in pending})
                         self._emit('ready', current_map_verified=True, destination_ready=True,
                                    mapserver_pid=current['windows_pid'])
                         if pending.get('native_station_request_verified'):
                             self._authorize_station(pending['native_station_request'])
                         return
+                now = self._check_preparation_deadline()
                 if self.zoning_query is None and self.live_progress(current) and now >= pending['next_query']:
                     pending['next_query'] = now + 10
                     self._query_start(['-getstatus', '1', str(target)], 'prepared_map')
@@ -885,9 +1026,20 @@ class LocalCharacterZoningServer(character.LocalCharacterReopenServer):
                     # Restoration failure deliberately escapes this recoverable
                     # preparation branch: never publish ready for weighted tasks.
                     self._restore_preparation(pacing)
+            if isinstance(failure, base.Cancelled):
+                # Abort is an operation-wide request, not a recoverable cold
+                # destination timeout that permits continued gameplay/save.
+                raise
             uncertain = unseen_delivery or bool(self.pending and (self.pending.get('transfer_requested')
                 or self.pending.get('native_authorization_issued')))
             self.zoning_report['failure'] = {'message': str(failure)[:300], 'transfer_requested': uncertain}
+            if self.pending is not None:
+                failed_now = time.monotonic()
+                self.zoning_report['failure'].update(
+                    preparation_phase=self.pending.get('preparation_phase', 'native_readiness'),
+                    elapsed_since_preparation_started_ms=max(0, round((failed_now
+                        - self.pending.get('preparation_started_monotonic', failed_now)) * 1000)),
+                    session_budget_extended=False)
             self._emit('failed', message=str(failure)[:300], transfer_requested=uncertain,
                        current_map_verified=not uncertain)
             # Do not continue playing or report an ordinary save after an

@@ -26,7 +26,8 @@ import zipfile
 import qualify_runtime_asset_preflight as leaf
 
 SOURCE_FILES = ('tools/android/interactive/qualify_full_startup_preflight.py',
-                'tools/android/interactive/test_full_startup_preflight.py')
+                'tools/android/interactive/test_full_startup_preflight.py',
+                'tools/android/interactive/fixtures/monorail-game-package-0.13.31.json')
 SCOPE = 'actual_packaged_guest_full_startup_orchestration'
 COUNT, BYTES, EPOCH = 173011, 2977730517, 1767225600
 IMPORT_INPUTS = {
@@ -287,6 +288,7 @@ def phase_result(server):
         'all_preparation_phases': list(report['server_preparation_phase_seconds']),
         'native_mapserver': leaf.pin(server.runtime/'MapServer.exe'),
         'manual_atlas_dbserver': leaf.pin(server.runtime/'DbServer.exe'),
+        'server_fx_catalog': leaf.stable(report.get('server_fx_catalog')),
     }
 
 
@@ -344,7 +346,8 @@ def worker(runtime_assets, payloads):
         context.report['client_worktree'] = receipt
         context.report['character_avatar_supplement'] = avatar.install(work, assets, context)
         context.report['atlas_world_supplement'] = world.install(work, assets, context)
-        prepared = {}
+        prepared = {}; admission = None; client_fx = work/'data/bin/fxinfo.bin'
+        require(leaf.pin(client_fx) == leaf.CLIENT_FULL_FX, 'Full original client FX cache differs before preparation')
         for label, owner_class, session in (
                 ('fresh_create', server.LocalCharacterServer, '1'*32),
                 ('saved_reopen', zoning.LocalCharacterZoningServer, '2'*32)):
@@ -354,6 +357,13 @@ def worker(runtime_assets, payloads):
             instance = owner_class(owner)
             instance.payloads()
             instance.prepare_runtime()
+            current_admission = leaf.native_binding(instance.runtime, instance.map_package)
+            if admission is None:
+                admission = current_admission
+            else:
+                require(leaf.canonical(admission) == leaf.canonical(current_admission),
+                        'Creation/reopen native admission differs')
+            current_mapserver = admission['authenticated_mapserver']
             prepared[label] = phase_result(instance)
             require(instance.data_cache.summary['reused'] is (label == 'saved_reopen'),
                     'Expected production Atlas cold/reuse cache path was not executed')
@@ -371,8 +381,8 @@ def worker(runtime_assets, payloads):
             require(leaf.pin(instance.runtime/'DbServer.exe') == ATLAS_MANUAL_DBSERVER
                     and leaf.pin(instance.map_package_dir/'DbServer.exe') == ORIGINAL_DBSERVER
                     and leaf.pin(kings['runtime']/'DbServer.exe') == ORIGINAL_DBSERVER
-                    and leaf.pin(instance.runtime/'MapServer.exe') == RETAINED_MAPSERVER
-                    and leaf.pin(kings['runtime']/'MapServer.exe') == RETAINED_MAPSERVER,
+                    and leaf.pin(instance.runtime/'MapServer.exe') == current_mapserver
+                    and leaf.pin(kings['runtime']/'MapServer.exe') == current_mapserver,
                     'Atlas manual/Kings original dependency pins changed')
             require(k['server_data_cache']['reused'] is (label == 'saved_reopen')
                     and k['graph']['status'] in ('installed_verified_graph', 'reused_verified_graph')
@@ -387,7 +397,18 @@ def worker(runtime_assets, payloads):
                 'native_mapserver': leaf.pin(kings['runtime']/'MapServer.exe'),
                 'native_dbserver': leaf.pin(kings['runtime']/'DbServer.exe'),
                 'authenticated_original_dbserver': leaf.pin(instance.map_package_dir/'DbServer.exe'),
+                'server_fx_catalog': leaf.stable(k.get('server_fx_catalog')),
             }
+            require(leaf.pin(client_fx) == leaf.CLIENT_FULL_FX,
+                    'Server preparation modified the complete original client FX cache')
+            if admission['kind'] == 'typed_map_startup_candidate':
+                expected_fx = ('installed_verified_server_fx_projection' if label == 'fresh_create'
+                               else 'reused_verified_server_fx_projection')
+                require(prepared[label]['server_fx_catalog']['status'] == expected_fx
+                        and prepared[label]['kings_row']['server_fx_catalog']['status'] == expected_fx
+                        and leaf.pin(instance.runtime/'data/bin/fxinfo.bin') == leaf.SERVER_PROJECTED_FX
+                        and leaf.pin(kings['runtime']/'data/bin/fxinfo.bin') == leaf.SERVER_PROJECTED_FX,
+                        'Complete Atlas/Kings server FX cold/reuse pipeline differs')
             instance.cleanup_config()
             require(instance.data_cache.summary.get('returned_after_owned_cleanup') is True
                     and instance.kings_row_data_cache.summary.get('returned_after_owned_cleanup') is True,
@@ -403,6 +424,9 @@ def worker(runtime_assets, payloads):
             'format': 1, 'status': 'passed', 'scope': SCOPE, 'asset_version': '1.0.0',
             'packaged_guest_sources': {p.name: leaf.pin(p) for p in sorted(runtime_assets.glob('*.py'))},
             'game_archive': leaf.pin(runtime_assets/'game-package.tar.gz'),
+            'native_admission': admission,
+            'server_fx_catalog_cold_and_reuse_verified': admission['kind'] == 'typed_map_startup_candidate',
+            'client_full_fx_unchanged': True, 'client_full_fx_pin': leaf.pin(client_fx),
             'original_import': import_proof, 'preparation': prepared,
             'full_private_worktree_mirror_executed': True, 'full_prepare_runtime_executed': True,
             'fresh_create_cold_preparation_verified': True, 'saved_reopen_warm_preparation_verified': True,
@@ -443,6 +467,12 @@ def validate_proof(value):
     for flag in ('native_runtime_booted', 'physical_execution_validated', 'live_database_and_saved_character_executed'):
         require(value.get(flag) is False, 'Host preparation cannot claim native/device execution: '+flag)
     require(value.get('process_and_sql_boundary') == 'not_executed', 'Native boundary claim differs')
+    current_mapserver = leaf.validate_native_binding(value.get('native_admission'))
+    candidate = value['native_admission']['kind'] == 'typed_map_startup_candidate'
+    require(value.get('server_fx_catalog_cold_and_reuse_verified') is candidate
+            and value.get('client_full_fx_unchanged') is True
+            and leaf.canonical(value.get('client_full_fx_pin')) == leaf.canonical(leaf.CLIENT_FULL_FX),
+            'Original client FX or typed server projection scope differs')
     original = value.get('original_import', {})
     require(original.get('files') == COUNT and original.get('bytes') == BYTES
             and original.get('all_leaf_sha256_checked') is True
@@ -469,12 +499,24 @@ def validate_proof(value):
                 and phase.get('prepared_cache_status') in ('installed', 'preserved_existing_native_caches')
                 and kings.get('prepared_cache_status') in ('installed', 'preserved_existing_native_caches'),
                 'Complete production cold/reuse preparation differs: '+label)
-        require(phase.get('native_mapserver') == RETAINED_MAPSERVER
-                and kings.get('native_mapserver') == RETAINED_MAPSERVER
+        require(leaf.canonical(phase.get('native_mapserver')) == leaf.canonical(current_mapserver)
+                and leaf.canonical(kings.get('native_mapserver')) == leaf.canonical(current_mapserver)
                 and phase.get('manual_atlas_dbserver') == ATLAS_MANUAL_DBSERVER
                 and kings.get('native_dbserver') == ORIGINAL_DBSERVER
                 and kings.get('authenticated_original_dbserver') == ORIGINAL_DBSERVER,
                 'Retained Atlas manual/Kings original native pins differ: '+label)
+        if candidate:
+            expected_fx = ('reused_verified_server_fx_projection' if expected_reuse
+                           else 'installed_verified_server_fx_projection')
+            for result in (phase.get('server_fx_catalog', {}), kings.get('server_fx_catalog', {})):
+                require(isinstance(result, dict) and result.get('format') == 1
+                        and type(result.get('format')) is int and result.get('status') == expected_fx
+                        and result.get('installed_files') == (0 if expected_reuse else 1)
+                        and type(result.get('installed_files')) is int
+                        and result.get('target') == 'data/bin/fxinfo.bin'
+                        and leaf.canonical(result.get('projected')) == leaf.canonical(leaf.SERVER_PROJECTED_FX)
+                        and result.get('client_fx_changed') is False,
+                        'Complete private server FX cold/reuse proof differs: '+label)
     require(value.get('gate_inventory') == [{'stage': stage, 'execution': execution, 'regression_suites': suites}
                                           for stage, execution, suites in GATES], 'Startup gate inventory differs')
     return value

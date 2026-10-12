@@ -8,6 +8,7 @@ process, database, Android activity or physical device session.
 from __future__ import annotations
 import argparse
 import contextlib
+import copy
 import hashlib
 import json
 import os
@@ -25,13 +26,19 @@ ROOT = Path(__file__).resolve().parents[3]
 SOURCE_FILES = ('tools/android/interactive/qualify_runtime_asset_preflight.py',
                 'tools/android/interactive/test_runtime_asset_preflight.py')
 SCOPE = 'actual_packaged_guest_external_asset_installers'
+HISTORICAL_MAPSERVER = {'bytes': 6892032, 'sha256': '53ff6ee013690670abbaed39e44d66267caf8753486fbc05c64766a56d9c0713'}
+HISTORICAL_MONORAIL_RECEIPT = 'e0ab383a91b83c258bfacbc44acf328f1a0c1435c0e4a385eb5ad643566f3178'
+STARTUP_PAYLOADS = ('native_map_startup_contract.py', 'server_fx_catalog.py',
+                    'server-fx-catalog.bin', 'server-fx-catalog-manifest.json', 'map-startup-manifest.json')
+CLIENT_FULL_FX = {'bytes': 58505496, 'sha256': '3b1af6d146db65aa2a00fa9dbe4502776409cdea15f94f717e5455a3cda5fe70'}
+SERVER_PROJECTED_FX = {'bytes': 3380680, 'sha256': 'ab97aa3d9ec2a8edf1ea77d3c807e630e21c3d78555b3650bf80c1025bce8890'}
 RELEASE_URL = 'https://github.com/Russianranger/coh-android/releases/download/coh-assets-v1.0.0/'
 VOLUMES = {
     'Reference': {'bytes': 615545248, 'sha256': 'e15cf9519dbff750ed900a69a826bd424e81d6c004eaff2fe77197a1596b840e'},
     'Base': {'bytes': 1630092780, 'sha256': '6d6e3304e48b89f8fdb218754a57380b3108140ef31bddb30f699ebcf28c2e3d'},
     'Zones': {'bytes': 1693058889, 'sha256': 'f3a3f78caceeccbe00dc97723244e12910161e2c952347e70e83b56a29558087'},
 }
-ASSET_PINS = {'atlas/atlas-assets.zip': {'bytes': 615541018, 'sha256': '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'}, 'atlas/atlas-text.zip': {'bytes': 312807038,
+ASSET_PINS = {'runtime/client-caches.zip': {'bytes': 27071659, 'sha256': '5d7f5b5c1932cf755f4063092ba56a30b16d1a705c6716a98b71f9738d61c051'}, 'atlas/atlas-assets.zip': {'bytes': 615541018, 'sha256': '28b4aa8f0b3a71287e9a596df23097722bd71db9ddb9a5a906b5af9d6152cc07'}, 'atlas/atlas-text.zip': {'bytes': 312807038,
                           'sha256': '53f1892c8704b8a14612b3ea29e6d746d1c132ce6663862b1c25c5df65f63d3c'},
  'runtime/atlas-beacon-manifest.json': {'bytes': 934650,
                                         'sha256': 'ee11bb703eed85229948b30b41277c515faf80da31ccd0436171862765ba41f4'},
@@ -85,6 +92,70 @@ def checked(path, expected):
 def safe(name):
     return (isinstance(name, str) and name and not name.startswith('/') and '\\' not in name
         and ':' not in name and all(part not in ('', '.', '..') for part in name.split('/')))
+
+
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
+
+
+def package_native_binding(package):
+    """Reauthenticate the complete typed ancestry before selecting any Map pin."""
+    require(isinstance(package, dict), 'Full game package is required for native admission')
+    sys.path.insert(0, str(ROOT / 'android/guest'))
+    try:
+        import native_monorail_contract as monorail
+        if 'native_map_startup' in package:
+            import native_map_startup_contract as startup
+            receipt = startup.embedded_receipt(package)
+            current = startup.pin_record(receipt['mapserver'])
+            proof = {'format': 1, 'policy': 'qualified_startup_overlay_preserves_original_cache_and_graph_history',
+                'actual_mapserver_sha256': receipt['mapserver']['sha256'],
+                'previous_monorail_mapserver_sha256': startup.PREVIOUS_SHA256,
+                'original_cache_donor_mapserver_sha256': receipt['build_input']['animation_certificate']['original_animation_identity']['mapserver_sha256'],
+                'cache_donor_identity_preserved': True, 'animation_identity_preserved': True,
+                'native_animation_reader_changed': True, 'parser_or_definition_sources_changed': False,
+                'native_build_repository_commit': receipt['native_build_repository_commit'],
+                'native_build_manifest': receipt['native_build_manifest'],
+                'native_map_startup_receipt_sha256': package['native_map_startup']['receipt_sha256'],
+                'physical_loading_gain_validated': False}
+            kind = 'typed_map_startup_candidate'
+        else:
+            receipt = monorail.embedded_receipt(package)
+            current = {'bytes': receipt['mapserver']['bytes'], 'sha256': receipt['mapserver']['sha256']}
+            require(current == HISTORICAL_MAPSERVER
+                    and package['native_monorail']['receipt_sha256'] == HISTORICAL_MONORAIL_RECEIPT,
+                    'Historical preflight requires the exact accepted station-aware MapServer')
+            proof = {'format': 1, 'policy': 'exact_historical_monorail_consumer',
+                'actual_mapserver_sha256': current['sha256'],
+                'native_monorail_receipt_sha256': HISTORICAL_MONORAIL_RECEIPT,
+                'native_build_repository_commit': receipt['native_build_repository_commit'],
+                'native_build_manifest': receipt['native_build_manifest'], 'physical_loading_gain_validated': False}
+            kind = 'exact_historical_monorail'
+    finally:
+        sys.path.pop(0)
+    return {'format': 1, 'kind': kind, 'game_package': copy.deepcopy(package),
+        'game_package_canonical_sha256': hashlib.sha256(canonical(package)).hexdigest(),
+        'authenticated_mapserver': current, 'native_consumer_binding': proof}
+
+
+def validate_native_binding(value):
+    require(isinstance(value, dict) and set(value) == {'format', 'kind', 'game_package',
+        'game_package_canonical_sha256', 'authenticated_mapserver', 'native_consumer_binding'},
+        'Full typed native admission proof is required')
+    expected = package_native_binding(value['game_package'])
+    require(canonical(value) == canonical(expected), 'Serialized native admission changed its typed package/binding')
+    return expected['authenticated_mapserver']
+
+
+def native_binding(runtime, package):
+    value = package_native_binding(package)
+    require(pin(Path(runtime) / 'MapServer.exe') == value['authenticated_mapserver'],
+            'Actual preflight MapServer differs from its full typed package')
+    if value['kind'] == 'typed_map_startup_candidate':
+        import native_map_startup_contract as startup
+        require(canonical(startup.verify_current_map(Path(runtime) / 'MapServer.exe', package))
+                == canonical(value['native_consumer_binding']), 'Actual startup native binding differs')
+    return value
 
 
 def ensure_assets(cache_dir):
@@ -194,13 +265,36 @@ def worker(runtime_assets, external):
     require(all(Path(m.__file__).resolve().parent == runtime_assets for m in imports),
             'Preflight must import the actual packaged guest modules')
     asset_pins = validate_assets(external)
+    startup_inputs = {name for name in STARTUP_PAYLOADS if (runtime_assets / name).exists()}
+    require(not startup_inputs or startup_inputs == set(STARTUP_PAYLOADS), 'Incomplete APK startup/FX payload closure')
+    fx = None
+    if startup_inputs:
+        import server_fx_catalog as fx
+        import native_map_startup_contract as startup
+        require(all(Path(m.__file__).resolve().parent == runtime_assets for m in (fx, startup)),
+                'Startup preflight must import actual APK FX/native contracts')
     guest_sources = {p.name: pin(p) for p in sorted(runtime_assets.glob('*.py'))}
     context = Context()
     with tempfile.TemporaryDirectory(prefix='coh-actual-asset-installers-') as temporary, contextlib.ExitStack() as stack:
         root = Path(temporary); assets = root/'assets'; assets.mkdir()
         for name in asset_pins:
             os.link(external/name, assets/name)
-        for name in ('client-manifest.json', kings.LOCK): shutil.copyfile(runtime_assets/name, assets/name)
+        for name in ('client-manifest.json', kings.LOCK, *sorted(startup_inputs)):
+            shutil.copyfile(runtime_assets/name, assets/name)
+        client_fx = None
+        if fx is not None:
+            client_fx = root / 'client/data/bin/fxinfo.bin'
+            client_fx.parent.mkdir(parents=True)
+            with zipfile.ZipFile(assets / 'client-caches.zip') as source:
+                entry = source.getinfo(fx.TARGET)
+                require(not entry.is_dir() and not entry.flag_bits & 1
+                        and entry.file_size == fx.BASE['bytes'], 'Original client FX member differs')
+                raw = source.read(entry)
+            require({'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()} == fx.BASE,
+                    'Original client full FX bytes differ')
+            client_fx.write_bytes(raw)
+            client_fx.chmod(0o600)
+            client_fx_before = pin(client_fx)
         archives = [stack.enter_context(zipfile.ZipFile(assets/name)) for name in
             ('atlas-assets.zip', 'atlas-text.zip', 'atlas-world-supplement.zip', 'character-avatar-defaults.zip', 'client-visual-assets.zip')]
         archives.append(stack.enter_context(zipfile.ZipFile(runtime_assets/'client-prerequisites.zip')))
@@ -213,9 +307,12 @@ def worker(runtime_assets, external):
         candidate = json.loads((runtime_assets/'native-responsiveness.json').read_bytes())
         outputs = {}
         for label, owner in (('atlas', server.LocalCharacterServer), ('kings', server.LocalCharacterReopenServer)):
-            runtime = root/label
+            runtime = root / ('local-login-server-' + '1'*32 + ('-kings-row' if label == 'kings' else '')) if fx is not None else root/label
             login.extract_regular(runtime_assets/'game-package.tar.gz', runtime)
             package = owner.verify_map_payload(runtime, candidate)
+            admission = native_binding(runtime, package)
+            require((admission['kind'] == 'typed_map_startup_candidate') is bool(startup_inputs),
+                    'APK startup payloads and native candidate admission disagree')
             selected = dict(cache_manifest['identity']['identifier_files'])
             if label == 'atlas': selected.update(atlas_manifest['input_files']); selected.update(atlas_manifest['required_geometry_files'])
             else: selected.update({n:p for n,p in kings_manifest['input_files'].items()
@@ -228,6 +325,17 @@ def worker(runtime_assets, external):
             donor_identity = caches.build_expected_identity(runtime/'data', runtime/'MapServer.exe', mapserver_package=package)
             cold_cache = caches.install(assets/caches.ARCHIVE, runtime/'data', donor_identity, context=context)
             require(cold_cache['status'] == 'installed' and cold_cache['installed_files'] > 0, 'Prepared cache cold installer did not pass')
+            cold_fx = warm_fx = None
+            if fx is not None:
+                private_fx = runtime / fx.TARGET
+                private_fx.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(client_fx, private_fx)
+                cold_fx = fx.install(assets, runtime, context=context, mapserver_package=package)
+                warm_fx = fx.install(assets, runtime, context=context, mapserver_package=package)
+                require(cold_fx['status'] == 'installed_verified_server_fx_projection'
+                        and warm_fx['status'] == 'reused_verified_server_fx_projection'
+                        and pin(private_fx) == fx.PROJECTED and pin(client_fx) == client_fx_before == fx.BASE,
+                        'Private server FX cold/reuse or original client conservation differs')
             cold_animation = animation.install(assets/animation.PIGG, assets/animation.MANIFEST, runtime,
                                                 context=context, mapserver_package=package)
             require(cold_animation['installed'] is True and cold_animation['reused'] is False
@@ -247,6 +355,9 @@ def worker(runtime_assets, external):
                     and warm_animation['installed'] is True and warm_animation['reused'] is True
                     and warm_graph['status'] == 'reused_verified_graph', 'Actual installer warm reuse did not pass')
             outputs[label] = stable({'materialized_sources': materialized, 'collision_overlay': overlay,
+                'native_admission': admission, 'server_fx_catalog_cold': cold_fx,
+                'server_fx_catalog_reuse': warm_fx,
+                'client_full_fx_unchanged': None if fx is None else pin(client_fx) == fx.BASE,
                 'mapserver': pin(runtime/'MapServer.exe'), 'prepared_cache_cold': cold_cache,
                 'prepared_cache_reuse': warm_cache, 'animation_cold': cold_animation,
                 'animation_reuse': warm_animation, 'graph_cold': cold_graph, 'graph_reuse': warm_graph})
@@ -267,9 +378,38 @@ def preflight(runtime_assets, asset_directory):
             '--runtime-assets', str(Path(runtime_assets).resolve()), '--asset-directory', str(Path(asset_directory).resolve()),
             '--output', str(output)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=900)
         require(result.returncode == 0, 'Actual packaged asset installer preflight failed:\n'+result.stderr[-12000:])
-        value = json.loads(output.read_bytes())
-        require(value.get('status') == 'passed' and value.get('scope') == SCOPE, 'Asset preflight receipt differs')
-        return value
+        return validate_proof(json.loads(output.read_bytes()))
+
+
+def validate_proof(value):
+    require(isinstance(value, dict) and value.get('status') == 'passed' and value.get('scope') == SCOPE,
+            'Asset preflight receipt differs')
+    require(value.get('native_runtime_booted') is False and value.get('physical_execution_validated') is False
+            and value.get('full_private_worktree_mirror_executed') is False,
+            'Leaf-only preparation cannot claim native/device/full-mirror execution')
+    require(set(value.get('installers', {})) == {'atlas', 'kings'}, 'Both native asset installer proofs are required')
+    admissions = []
+    for label, result in value['installers'].items():
+        require(isinstance(result, dict), 'Malformed native installer proof: '+label)
+        current = validate_native_binding(result.get('native_admission'))
+        require(canonical(result.get('mapserver')) == canonical(current), 'Installer current Map differs: '+label)
+        admission = result['native_admission']; admissions.append(admission)
+        if admission['kind'] == 'typed_map_startup_candidate':
+            require(result.get('client_full_fx_unchanged') is True,
+                    'Original client full FX conservation absent: '+label)
+            for key, status, count in (('server_fx_catalog_cold', 'installed_verified_server_fx_projection', 1),
+                                      ('server_fx_catalog_reuse', 'reused_verified_server_fx_projection', 0)):
+                proof = result.get(key, {})
+                require(isinstance(proof, dict) and type(proof.get('format')) is int and proof['format'] == 1
+                        and proof.get('status') == status and type(proof.get('installed_files')) is int
+                        and proof['installed_files'] == count and proof.get('client_fx_changed') is False
+                        and canonical(proof.get('projected')) == canonical(SERVER_PROJECTED_FX),
+                        'Private server FX installer proof differs: '+label)
+        else:
+            require(result.get('server_fx_catalog_cold') is None and result.get('server_fx_catalog_reuse') is None,
+                    'Historical native preparation cannot claim the new FX derivative')
+    require(canonical(admissions[0]) == canonical(admissions[1]), 'Atlas/Kings typed native admissions differ')
+    return value
 
 
 def main():
@@ -282,6 +422,7 @@ def main():
     args = parser.parse_args()
     assets = args.asset_directory or ensure_assets(args.asset_cache)
     result = worker(args.runtime_assets, assets) if args.worker else preflight(args.runtime_assets, assets)
+    validate_proof(result)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, sort_keys=True, separators=(',', ':'))+'\n')
 
